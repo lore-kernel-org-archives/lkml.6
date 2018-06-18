@@ -2,136 +2,90 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFD9C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33357C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F6220852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:13:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KFYwkS0F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F6220852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E311620852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:13:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E311620852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934888AbeFRONf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:13:35 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39456 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934733AbeFRONb (ORCPT
+        id S934967AbeFRONt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:13:49 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:45524 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934898AbeFRONm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:13:31 -0400
-Received: by mail-pf0-f195.google.com with SMTP id r11-v6so8242266pfl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:13:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UUJzwfgpvKs1LpNf7zUfObyZZsWD9zUmBur3t7sFcAo=;
-        b=KFYwkS0FV/wf8gCkPEVCMxGpBZ0srhTzLP4tAb4AqBl05Yw1otuuJK7WmbAQZKdTul
-         gu47WCGk7DrNEyYKFrecjRhyohbJhA3yaG1a54MXC3H2lCvOh6lgwsrwZdodRMK7XDWO
-         7EZwbPQZQs7w/hWsaEkEDZjmUIZWXYaf+8gqM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UUJzwfgpvKs1LpNf7zUfObyZZsWD9zUmBur3t7sFcAo=;
-        b=Psg5vsguO3ov3m1poaKDb8XGIq9Dg9uXNpmFQfGc+vmEo1tGzzqmeD52oHYgdPWT5H
-         uQXGLDCOuioXnAPHCu5e6TPvRWD87HEv8vUZc2oXHAY33IUxGxsV9j4BdoRaI1xp+zNC
-         aGFHYZHe3GCNJ7JQoSMMRVRCcmHZEOksROUZRu1ENILhSNAbD1nGXfgK/lOv0ltbXy6p
-         a8BEGadNFvfnwOCNkgLXrlaEznYXCNBozw5yC2DvPab69Cl9/VYDNApbLqfuyA6irjG2
-         l1KJSVIPwvV1wXjmAYcAvWny3kScJHfOSXZ03p41W1Oy3XdGjKBmdprg1YsTi9daVp1u
-         gXiw==
-X-Gm-Message-State: APt69E341Ect88P2iIRhMqRX7nLdIaM0Xi0Mr2LU3bI6Vmz81HiTMUoA
-        OY8SsJLvwSeop1GcfgHHaLSzqQ==
-X-Google-Smtp-Source: ADUXVKLma+ohpFmtuM805xz1PF6/l70VFA4Kbu4hKlssjmC/SegENUTf4IkzJvbU2eDYwX6vfMi1eQ==
-X-Received: by 2002:a62:d09:: with SMTP id v9-v6mr13565715pfi.163.1529331211173;
-        Mon, 18 Jun 2018 07:13:31 -0700 (PDT)
-Received: from localhost.localdomain ([27.59.118.133])
-        by smtp.gmail.com with ESMTPSA id t17-v6sm25813339pfj.75.2018.06.18.07.13.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 07:13:30 -0700 (PDT)
-From:   Vinod Koul <vinod.koul@linaro.org>
-X-Google-Original-From: Vinod Koul <vkoul@kernel.org>
-To:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 3/3] hwrng: msm - Add support for prng v2
-Date:   Mon, 18 Jun 2018 19:42:59 +0530
-Message-Id: <20180618141259.23141-4-vkoul@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180618141259.23141-1-vkoul@kernel.org>
-References: <20180618141259.23141-1-vkoul@kernel.org>
+        Mon, 18 Jun 2018 10:13:42 -0400
+X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
+   d="scan'208";a="16045975"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 07:13:41 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.76.4) by
+ chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
+ 14.3.352.0; Mon, 18 Jun 2018 07:13:40 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>, <sboyd@kernel.org>
+CC:     <Cristian.Birsan@microchip.com>
+Subject: [PATCH v5 3/5] ARM: dts: at91: sama5d2: add I2S clock muxing nodes
+Date:   Mon, 18 Jun 2018 17:12:37 +0300
+Message-ID: <20180618141239.10892-4-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Qcom 8996 and later chips support prng v2 where we need to only
-implement .read callback for hwrng.
+This patch adds two clock muxes for the two I2S
+buses present on sama5d2 platforms.
 
-Add a new table for v2 which supports this and get version required for
-driver data.
-
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 ---
- drivers/char/hw_random/msm-rng.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/sama5d2.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/char/hw_random/msm-rng.c b/drivers/char/hw_random/msm-rng.c
-index 7644474035e5..3f509072a6c6 100644
---- a/drivers/char/hw_random/msm-rng.c
-+++ b/drivers/char/hw_random/msm-rng.c
-@@ -17,6 +17,7 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
- /* Device specific register offsets */
-@@ -132,10 +133,16 @@ static struct hwrng msm_rng = {
- 	.read = msm_rng_read,
- };
- 
-+static struct hwrng msm_rng_v2 = {
-+	.name = KBUILD_MODNAME,
-+	.read = msm_rng_read,
-+};
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index 61f68e5c48e9..eeb6afa1cda7 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -992,6 +992,24 @@
+ 						atmel,clk-output-range = <0 100000000>;
+ 					};
+ 				};
 +
- static int msm_rng_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
- 	struct msm_rng *rng;
-+	unsigned int version;
- 	int ret;
++				i2s_clkmux {
++					compatible = "atmel,sama5d2-clk-i2s-mux";
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					i2s0muxck: i2s0_muxclk {
++						clocks = <&i2s0_clk>, <&i2s0_gclk>;
++						#clock-cells = <0>;
++						reg = <0>;
++					};
++
++					i2s1muxck: i2s1_muxclk {
++						clocks = <&i2s1_clk>, <&i2s1_gclk>;
++						#clock-cells = <0>;
++						reg = <1>;
++					};
++				};
+ 			};
  
- 	rng = devm_kzalloc(&pdev->dev, sizeof(*rng), GFP_KERNEL);
-@@ -154,6 +161,9 @@ static int msm_rng_probe(struct platform_device *pdev)
- 		return PTR_ERR(rng->clk);
- 
- 	rng->hwrng = &msm_rng;
-+	version = (unsigned long)of_device_get_match_data(&pdev->dev);
-+	if (version)
-+		rng->hwrng = &msm_rng_v2;
- 
- 	rng->hwrng->priv = (unsigned long)rng;
- 	ret = devm_hwrng_register(&pdev->dev, rng->hwrng);
-@@ -166,7 +176,8 @@ static int msm_rng_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id msm_rng_of_match[] = {
--	{ .compatible = "qcom,prng", },
-+	{ .compatible = "qcom,prng", .data = (void *)0},
-+	{ .compatible = "qcom,prng-v2", .data = (void *)1},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, msm_rng_of_match);
+ 			qspi0: spi@f0020000 {
 -- 
-2.14.4
+2.17.1
 
