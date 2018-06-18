@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC61C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EADC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D338208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:10:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B41208B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:11:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="EHsBfzvL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D338208A6
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="ucIjn0++"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B41208B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935880AbeFRPKr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:10:47 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34707 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935444AbeFRPKV (ORCPT
+        id S935752AbeFRPLG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:11:06 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33198 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935443AbeFRPJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:10:21 -0400
-Received: by mail-pl0-f65.google.com with SMTP id g20-v6so9207174plq.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:10:21 -0700 (PDT)
+        Mon, 18 Jun 2018 11:09:46 -0400
+Received: by mail-pf0-f195.google.com with SMTP id b17-v6so8329958pfi.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:09:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2pfESoiXW7kZE4xChCGGKPZSQMnBX5sI3eDemQAvvzk=;
-        b=EHsBfzvL8GWOY24pk8dwcVmsQX2cOQ0pKwpoxENUIb++3Ak+5K7M2P9wT3WE8RLgrh
-         YLmDCFUWV+dJSQillLfx/BlCDG8Ut250QNQEXyQ8hsXfVefFraX44rgAwco9OvUMKIlF
-         1apURrqENPQRF9vCL6ezGMfBoG2MfOQrx2QuhKIIzokNvMzYkQTunfK7t2wDs463ND2/
-         mKQyaodXlYp+E1t8PUQgFGYwa29m/EU9g3SDmGzic1u7TuMkpHqidK6ZFgIT/D1CUUH7
-         nAXfLnjzGOAAF7ykD4wlhJ9ZQyBTKbp4RB4ee7R0LxUDJqR333ZjZmxCnQUnP7h3uLiy
-         q97Q==
+        bh=j63H2XWAfgc4+hZRNrwJ9sRmE0jBwvbE9xZcldKpKjY=;
+        b=ucIjn0++CH4OhaJHuDa+OZmC0pCQ06dC+GAEZUn44AVJf0BAQ4xX5W9+Z5Nk4PPcKr
+         2q7g6DV+CThuuuVAcBtFP9OfiGZepMrfMRVDTOwx1l8QVNjks6Oji4VNlPrLN+HabGtT
+         JQJFdigpH8CG9JkDKHG2mLbd270KF6mqtnUh7PBly1jE75WxxUVO6qZe6ab9SyqrQUzY
+         Vww9J0R+IsauWXMT5rzL7WInwAF4nq6q3RU5eUxE8bjORlF6FrkJTNxzIM5LiJnjIeDY
+         ik/BoYzZfOzmDGk8PMYuV7TMXtOBM3nMhpS9Xqv0owxr3OfObVbAyfpeibPeOp6W/NKM
+         epFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2pfESoiXW7kZE4xChCGGKPZSQMnBX5sI3eDemQAvvzk=;
-        b=esMtQyngpeo+G8K9k+of1LU7siHueaO9hTinGOGVYrtkunxOpmA/RaCXYmK/tmzDAJ
-         HAvbDcqNcjDg6pEtVtk+l28MNe9CZnnDDL3nv1PVA3UVoVJpEAifhy4JHXHMvFcXhnZB
-         57rZQbgsPk954ePV0ruwrx15pNlew9aSii1L3oG53oAI93hrPXydelWg9wZBTrcxcBUX
-         A0m0LySy73wJPkrJk5Fw68AwWCi5Za3X70yjXthn6WJhqnrX0lzqOLTNyawAph1Mi/kl
-         E0PcSC+nkHlVsX9iP5HU65mHVTJZ+I7X1/c0ZZL0S6cBOK6Qo5rciIdt9d2pTAbhywI2
-         Hx9w==
-X-Gm-Message-State: APt69E1CSBfyC34BRLRueg7xyyLO90odb1lbBx4Xokaapzal22cNnUeO
-        SNlQR3ZUCcCogjNLxkWKVynRq0uoCyI=
-X-Google-Smtp-Source: ADUXVKJHY0ybKm9xMrCU22gORgxP/w9WdqNmWtVqvQUESgTcsUYd136P0K6z0lNXx0xAv4sktLcGcQ==
-X-Received: by 2002:a17:902:7105:: with SMTP id a5-v6mr14448095pll.171.1529334620971;
-        Mon, 18 Jun 2018 08:10:20 -0700 (PDT)
+        bh=j63H2XWAfgc4+hZRNrwJ9sRmE0jBwvbE9xZcldKpKjY=;
+        b=o5DX6BNp0F/5+jmYG+SojmqRBfZ7P188txlIgEDBlhgRCrk4DfICKv6AqP+QXE+el7
+         +9RMV6b02RInmAGRvSf9cKRLSIwCIVHK2alghCLaJJfiIMD3KlM/1FDzt5T7XwZL3nCk
+         NKLON/tMIfergpjGPMdmMK3csa1/yW+9oRLySAqLMnzbxN8QI6mYRGfB0F9tcK7O/hFN
+         MUGYyYYADLfNChM+SDg5jtGUQWlBOqDIpaEKajsgaMyaPmTBmJdmkGpS0upXR8hBRxGK
+         fx84wSx8H8lyphcbfc/TxdTnw3PwJUqbPuZeurmswzJ89nYzZzy9ygu9Mh3OAetMOxVY
+         BuCA==
+X-Gm-Message-State: APt69E1ySdT8m2UmjSdgwHaWoDQP3zmnNPdSX4A5mfZR0JDn5VX/2X5p
+        x5V8bwLG3GbHa2EZqnHr3+N5Sj3+ick=
+X-Google-Smtp-Source: ADUXVKJYlc0eu5sZ/nHjwg49lDyx8cQpAQfJGnjHKg1f8SFuos2UKntDa/IDY8mdYqypxbPJii59iA==
+X-Received: by 2002:a63:a05d:: with SMTP id u29-v6mr11230935pgn.80.1529334585815;
+        Mon, 18 Jun 2018 08:09:45 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:6077:8eec:bc7e:d0f4])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.10.19
+        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.09.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 08:10:20 -0700 (PDT)
+        Mon, 18 Jun 2018 08:09:45 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
@@ -75,10 +75,14 @@ Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
         Andrew Pinski <apinski@cavium.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
-        Jeremy Linton <Jeremy.Linton@arm.com>
-Subject: RESEND [PATCH 5/6] arm64: compat: 32-bit vDSO setup
-Date:   Mon, 18 Jun 2018 08:06:08 -0700
-Message-Id: <20180618150613.10322-23-salyzyn@android.com>
+        Jeremy Linton <Jeremy.Linton@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: RESEND [PATCH 2/6] arm64: elf: Set AT_SYSINFO_EHDR in compat processes
+Date:   Mon, 18 Jun 2018 08:06:05 -0700
+Message-Id: <20180618150613.10322-20-salyzyn@android.com>
 X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 In-Reply-To: <20180618150613.10322-1-salyzyn@android.com>
 References: <20180618150613.10322-1-salyzyn@android.com>
@@ -89,9 +93,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kevin Brodsky <kevin.brodsky@arm.com>
 
-If the compat vDSO is enabled, install it in compat processes. In this
-case, the compat vDSO replaces the sigreturn page (it provides its own
-sigreturn trampolines).
+If the compat vDSO is enabled, we need to set AT_SYSINFO_EHDR in the
+auxiliary vector of compat processes to the address of the vDSO code
+page, so that the dynamic linker can find it (just like the regular vDSO).
+
+Note that we cast context.vdso to Elf64_Off, instead of elf_addr_t,
+because elf_addr_t is Elf32_Off in compat_binfmt_elf.c, and casting
+context.vdso to u32 would trigger a pointer narrowing warning.
 
 Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
@@ -113,137 +121,46 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 ---
- arch/arm64/kernel/vdso.c | 55 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ arch/arm64/include/asm/elf.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 8529e85a521f..9fb1e0d380ab 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -58,6 +58,7 @@ struct vdso_data *vdso_data = &vdso_data_store.data;
- /*
-  * Create and map the vectors page for AArch32 tasks.
-  */
-+#if !defined(CONFIG_VDSO32) || defined(CONFIG_KUSER_HELPERS)
- static struct page *vectors_page[] __ro_after_init;
- static const struct vm_special_mapping compat_vdso_spec[] = {
- 	{
-@@ -73,6 +74,7 @@ static const struct vm_special_mapping compat_vdso_spec[] = {
- #endif
- };
- static struct page *vectors_page[ARRAY_SIZE(compat_vdso_spec)] __ro_after_init;
-+#endif
+diff --git a/arch/arm64/include/asm/elf.h b/arch/arm64/include/asm/elf.h
+index 433b9554c6a1..bf4672a0491b 100644
+--- a/arch/arm64/include/asm/elf.h
++++ b/arch/arm64/include/asm/elf.h
+@@ -147,10 +147,10 @@ typedef struct user_fpsimd_state elf_fpregset_t;
+ })
  
- static int __init alloc_vectors_page(void)
- {
-@@ -82,6 +84,7 @@ static int __init alloc_vectors_page(void)
- 	unsigned long kuser_vpage;
- #endif
+ /* update AT_VECTOR_SIZE_ARCH if the number of NEW_AUX_ENT entries changes */
+-#define ARCH_DLINFO							\
++#define _SET_AUX_ENT_VDSO						\
+ do {									\
+ 	NEW_AUX_ENT(AT_SYSINFO_EHDR,					\
+-		    (elf_addr_t)current->mm->context.vdso);		\
++		    (Elf64_Off)current->mm->context.vdso);		\
+ 									\
+ 	/*								\
+ 	 * Should always be nonzero unless there's a kernel bug.	\
+@@ -162,6 +162,7 @@ do {									\
+ 	else								\
+ 		NEW_AUX_ENT(AT_IGNORE, 0);				\
+ } while (0)
++#define ARCH_DLINFO _SET_AUX_ENT_VDSO
  
-+#ifndef CONFIG_VDSO32
- 	extern char __aarch32_sigret_code_start[], __aarch32_sigret_code_end[];
- 	size_t sigret_sz =
- 		__aarch32_sigret_code_end - __aarch32_sigret_code_start;
-@@ -90,19 +93,24 @@ static int __init alloc_vectors_page(void)
- 	sigret_vpage = get_zeroed_page(GFP_ATOMIC);
- 	if (!sigret_vpage)
- 		return -ENOMEM;
-+#endif
- 
- #ifdef CONFIG_KUSER_HELPERS
- 	kuser_vpage = get_zeroed_page(GFP_ATOMIC);
- 	if (!kuser_vpage) {
-+#ifndef CONFIG_VDSO32
- 		free_page(sigret_vpage);
-+#endif
- 		return -ENOMEM;
- 	}
- #endif
- 
-+#ifndef CONFIG_VDSO32
- 	/* sigreturn code */
- 	memcpy((void *)sigret_vpage, __aarch32_sigret_code_start, sigret_sz);
- 	flush_icache_range(sigret_vpage, sigret_vpage + PAGE_SIZE);
- 	vectors_page[0] = virt_to_page(sigret_vpage);
-+#endif
- 
- #ifdef CONFIG_KUSER_HELPERS
- 	/* kuser helpers */
-@@ -116,6 +124,7 @@ static int __init alloc_vectors_page(void)
- }
- arch_initcall(alloc_vectors_page);
- 
-+#ifndef CONFIG_VDSO32
- int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
- {
- 	struct mm_struct *mm = current->mm;
-@@ -151,6 +160,7 @@ int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
- 
- 	return PTR_ERR_OR_ZERO(ret);
- }
-+#endif /* !CONFIG_VDSO32 */
- #endif /* CONFIG_COMPAT */
- 
- static int vdso_mremap(const struct vm_special_mapping *sm,
-@@ -221,6 +231,23 @@ static int __init vdso_mappings_init(const char *name,
- 	return 0;
- }
- 
-+#ifdef CONFIG_COMPAT
+ #define ARCH_HAS_SETUP_ADDITIONAL_PAGES
+ struct linux_binprm;
+@@ -209,7 +210,11 @@ typedef compat_elf_greg_t		compat_elf_gregset_t[COMPAT_ELF_NGREG];
+ ({									\
+ 	set_thread_flag(TIF_32BIT);					\
+  })
 +#ifdef CONFIG_VDSO32
-+
-+static struct vdso_mappings vdso32_mappings __ro_after_init;
-+
-+static int __init vdso32_init(void)
-+{
-+	extern char vdso32_start[], vdso32_end[];
-+
-+	return vdso_mappings_init("vdso32", vdso32_start, vdso32_end,
-+				  &vdso32_mappings);
-+}
-+arch_initcall(vdso32_init);
-+
-+#endif /* CONFIG_VDSO32 */
-+#endif /* CONFIG_COMPAT */
-+
- static struct vdso_mappings vdso_mappings __ro_after_init;
- 
- static int __init vdso_init(void)
-@@ -263,6 +290,34 @@ static int vdso_setup(struct mm_struct *mm,
- 	return PTR_ERR_OR_ZERO(ret);
- }
- 
-+#ifdef CONFIG_COMPAT
-+#ifdef CONFIG_VDSO32
-+int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
-+{
-+	struct mm_struct *mm = current->mm;
-+	void *ret;
-+
-+	if (down_write_killable(&mm->mmap_sem))
-+		return -EINTR;
-+
-+	ret = ERR_PTR(vdso_setup(mm, &vdso32_mappings));
-+#ifdef CONFIG_KUSER_HELPERS
-+	if (!IS_ERR(ret))
-+		/* Map the kuser helpers at the ABI-defined high address. */
-+		ret = _install_special_mapping(mm, AARCH32_KUSER_HELPERS_BASE,
-+					       PAGE_SIZE,
-+					       VM_READ|VM_EXEC|
-+					       VM_MAYREAD|VM_MAYEXEC,
-+					       &compat_vdso_spec[1]);
++#define COMPAT_ARCH_DLINFO	_SET_AUX_ENT_VDSO
++#else
+ #define COMPAT_ARCH_DLINFO
 +#endif
-+
-+	up_write(&mm->mmap_sem);
-+
-+	return PTR_ERR_OR_ZERO(ret);
-+}
-+#endif /* CONFIG_VDSO32 */
-+#endif /* CONFIG_COMPAT */
-+
- int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- {
- 	struct mm_struct *mm = current->mm;
+ extern int aarch32_setup_vectors_page(struct linux_binprm *bprm,
+ 				      int uses_interp);
+ #define compat_arch_setup_additional_pages \
 -- 
 2.18.0.rc1.244.gcf134e6275-goog
 
