@@ -5,94 +5,92 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D02C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2ED4C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47B4E2083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:35:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B4E2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 595942083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:35:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 595942083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934594AbeFRNe6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:34:58 -0400
-Received: from mga05.intel.com ([192.55.52.43]:58959 "EHLO mga05.intel.com"
+        id S934638AbeFRNfW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:35:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49270 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933557AbeFRNe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:34:57 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 06:34:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
-   d="scan'208";a="58548044"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Jun 2018 06:34:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id A657CFA; Mon, 18 Jun 2018 16:34:55 +0300 (EEST)
-Date:   Mon, 18 Jun 2018 16:34:55 +0300
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv3 16/17] x86/mm: Handle encrypted memory in
- page_to_virt() and __pa()
-Message-ID: <20180618133455.aumn4wihygvds543@black.fi.intel.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-17-kirill.shutemov@linux.intel.com>
- <f8b9da42-1f7b-529c-bfdd-e82f669f6fe8@intel.com>
+        id S933557AbeFRNfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:35:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id CA51BABE4;
+        Mon, 18 Jun 2018 13:35:19 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 4DF95DAC2E; Mon, 18 Jun 2018 15:32:29 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 15:32:28 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     clm@fb.com, dsterba@suse.com, jbacik@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, anand.jain@oracle.com
+Subject: Re: general protection fault in find_device
+Message-ID: <20180618133228.GL24375@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Nikolay Borisov <nborisov@suse.com>,
+        clm@fb.com, dsterba@suse.com, jbacik@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, anand.jain@oracle.com
+References: <000000000000e5da7e056ee43449@google.com>
+ <45200a61-58c3-b7f0-d8e4-5108f8369ac5@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f8b9da42-1f7b-529c-bfdd-e82f669f6fe8@intel.com>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+In-Reply-To: <45200a61-58c3-b7f0-d8e4-5108f8369ac5@suse.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 06:43:08PM +0000, Dave Hansen wrote:
-> > diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-> > index efc0d4bb3b35..d6edcabacfc7 100644
-> > --- a/arch/x86/include/asm/mktme.h
-> > +++ b/arch/x86/include/asm/mktme.h
-> > @@ -43,6 +43,9 @@ void mktme_disable(void);
-> >  void setup_direct_mapping_size(void);
-> >  int sync_direct_mapping(void);
-> >  
-> > +#define page_to_virt(x) \
-> > +	(__va(PFN_PHYS(page_to_pfn(x))) + page_keyid(x) * direct_mapping_size)
+On Mon, Jun 18, 2018 at 10:03:18AM +0300, Nikolay Borisov wrote:
+> So this suggests some inconsistency on fs_devices->devices list. On a
+> quick look indeed it doesn't seem clear what the locking rules for this
+> list are. In device_list_add in the !device case a device is added with
+> fs_devices->device_list_Mutex held and using list_add_rcu. In the same
+> function if we want to read the list ie invoke find_devices (because we
+> have found an fsid) we are using plain list_for_each_entry (ie not the
+> _rcu version and i don't see device_list_mutex being held while
+> iterating the list). Additionally in btrfs_free_extra_devids the
+> fs_devices->devices list is iterated with uuid_mutex being held and not
+> device_list_mutex. In open_fs_devices we don't get any protection
+> whatsoever while reading the list.
+
+The uuid_mutex or device_list_mutex is provided by a caller up the
+stack.
+
+> Same thing in
+> btrfs_find_next_active_device. If the list is supposed to be
+> RCU-protected then the rules are:
 > 
-> This looks like a super important memory management function being
-> defined in some obscure Intel-specific feature header.  How does that work?
+> 1. There needs to be an out of band (ie not RCU) mutual exclusion of
+> modifiers
 
-No magic. It overwrites define in <linux/mm.h>.
+that's device_list_mutex for fs_devices::devices
 
-> >  #else
-> >  #define mktme_keyid_mask	((phys_addr_t)0)
-> >  #define mktme_nr_keyids		0
-> > diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-> > index 53c32af895ab..ffad496aadad 100644
-> > --- a/arch/x86/include/asm/page_64.h
-> > +++ b/arch/x86/include/asm/page_64.h
-> > @@ -23,7 +23,7 @@ static inline unsigned long __phys_addr_nodebug(unsigned long x)
-> >  	/* use the carry flag to determine if x was < __START_KERNEL_map */
-> >  	x = y + ((x > y) ? phys_base : (__START_KERNEL_map - PAGE_OFFSET));
-> >  
-> > -	return x;
-> > +	return x % direct_mapping_size;
-> >  }
+> 2. Iterating the list should use _rcu list primitives.
 > 
-> What are the performance implications of this patch?
+> Currently I don't see those 2 invariants being enforced in every code path.
 
-Let me collect the numbers.
+Where is it not enforced for example?
 
--- 
- Kirill A. Shutemov
+If the device_list_mutex is held, list traversal does not use
+list_for_each_entry_rcu, otherwise it does (eg the DEV_INFO ioctl or
+btrfs_show_devname).
+
+The problem that triggers this report is IMO in device_list_add that
+uses the device list unprotected. Anand sent patches for that, but they
+were titled as 'cleanups' so I skipped them for the merge window.
+
+Candidate fixes are:
+
+https://patchwork.kernel.org/patch/10437705/
+https://patchwork.kernel.org/patch/10437713/
