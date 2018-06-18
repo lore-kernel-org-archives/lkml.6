@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DE7C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60691C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99D9C208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D9C208A5
+	by mail.kernel.org (Postfix) with ESMTP id 138A1208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:14:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138A1208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936825AbeFRKNx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:13:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53064 "EHLO
+        id S934425AbeFRIQc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:16:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934435AbeFRIQd (ORCPT
+        with ESMTP id S934385AbeFRIQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:16:33 -0400
+        Mon, 18 Jun 2018 04:16:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8DA5C7A;
-        Mon, 18 Jun 2018 08:16:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 378BBC7A;
+        Mon, 18 Jun 2018 08:16:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        Simon Gaiser <simon@invisiblethingslab.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 039/279] ASoC: topology: Check widget kcontrols before deref.
-Date:   Mon, 18 Jun 2018 10:10:24 +0200
-Message-Id: <20180618080610.422957064@linuxfoundation.org>
+Subject: [PATCH 4.16 037/279] xen: xenbus_dev_frontend: Really return response string
+Date:   Mon, 18 Jun 2018 10:10:22 +0200
+Message-Id: <20180618080610.343312695@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,39 +52,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+From: Simon Gaiser <simon@invisiblethingslab.com>
 
-[ Upstream commit 05bdcf12905533b8628627b6634608cd3b57c607 ]
+[ Upstream commit ebf04f331fa15a966262341a7dc6b1a0efd633e4 ]
 
-Validate the topology input before we dereference the pointer.
+xenbus_command_reply() did not actually copy the response string and
+leaked stack content instead.
 
-Signed-off-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 9a6161fe73bd ("xen: return xenstore command failures via response instead of rc")
+Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/soc-topology.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/xen/xenbus/xenbus_dev_frontend.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -510,7 +510,7 @@ static void remove_widget(struct snd_soc
- 	 */
- 	if (dobj->widget.kcontrol_type == SND_SOC_TPLG_TYPE_ENUM) {
- 		/* enumerated widget mixer */
--		for (i = 0; i < w->num_kcontrols; i++) {
-+		for (i = 0; w->kcontrols != NULL && i < w->num_kcontrols; i++) {
- 			struct snd_kcontrol *kcontrol = w->kcontrols[i];
- 			struct soc_enum *se =
- 				(struct soc_enum *)kcontrol->private_value;
-@@ -528,7 +528,7 @@ static void remove_widget(struct snd_soc
- 		kfree(w->kcontrol_news);
- 	} else {
- 		/* volume mixer or bytes controls */
--		for (i = 0; i < w->num_kcontrols; i++) {
-+		for (i = 0; w->kcontrols != NULL && i < w->num_kcontrols; i++) {
- 			struct snd_kcontrol *kcontrol = w->kcontrols[i];
+--- a/drivers/xen/xenbus/xenbus_dev_frontend.c
++++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
+@@ -403,7 +403,7 @@ static int xenbus_command_reply(struct x
+ {
+ 	struct {
+ 		struct xsd_sockmsg hdr;
+-		const char body[16];
++		char body[16];
+ 	} msg;
+ 	int rc;
  
- 			if (dobj->widget.kcontrol_type
+@@ -412,6 +412,7 @@ static int xenbus_command_reply(struct x
+ 	msg.hdr.len = strlen(reply) + 1;
+ 	if (msg.hdr.len > sizeof(msg.body))
+ 		return -E2BIG;
++	memcpy(&msg.body, reply, msg.hdr.len);
+ 
+ 	mutex_lock(&u->reply_mutex);
+ 	rc = queue_reply(&u->read_buffers, &msg, sizeof(msg.hdr) + msg.hdr.len);
 
 
