@@ -2,141 +2,159 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDE8C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 433D1C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC835208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:19:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZDujZu3g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC835208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id EFF2D20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:19:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF2D20864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936899AbeFRKTA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:19:00 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43080 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933409AbeFRKS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:18:57 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5IADnUh193802;
-        Mon, 18 Jun 2018 10:18:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=+4WdmHIXGalIxVJ754jvmJYpuTp1XA5A7Kamod648Tc=;
- b=ZDujZu3g7oNPhVdy/w4I2LVYq/OVWLw2dNdnYCUgBFWvk/Z0zqkKFlnjHhZ0eby7jH+E
- qVyA/3xK8wjPhmW2FmqmLhvn/WHhNeb5hx3GvtE0rXfPD605wQcMaXjGHrsIj0iRdk9f
- tIZaApXwHRPCRqcNNTUMTI7a5F7uDkS76LG/jEcopdJSXIXgVNJR6f3oLf+QJM6q+QEi
- cm+wtCqdf+iYh/j++9n3j5pICaQvsVvKWl4mVT74slKjaG5QfsIYkZdNSEZf21uClSuq
- tXSmY0TjBePCDRzBifvy0QUE0fAzNbhpTIXfFGL9ETqUUdduPApo3koMsqq2zuOezWpT sA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2jmu6xkdyq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Jun 2018 10:18:49 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5IAImBt019763
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Jun 2018 10:18:48 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5IAIkm6013077;
-        Mon, 18 Jun 2018 10:18:46 GMT
-Received: from mwanda (/197.157.0.62)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Jun 2018 03:18:45 -0700
-Date:   Mon, 18 Jun 2018 13:18:38 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Hugo Lefeuvre <hle@owl.eu.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Marcus Wolf <linux@wolf-entwicklungen.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: pi433: fix race condition in pi433_open
-Message-ID: <20180618101838.gzbrxabilnqyilsi@mwanda>
-References: <20180618022400.GA1893@hle-laptop.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618022400.GA1893@hle-laptop.local>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8927 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806180125
+        id S936880AbeFRKTc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:19:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59298 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933409AbeFRKT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:19:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73C7280D;
+        Mon, 18 Jun 2018 03:19:29 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 812E43F25D;
+        Mon, 18 Jun 2018 03:19:26 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com
+Cc:     mingo@kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        albert@sifive.com, arnd@arndb.de, benh@kernel.crashing.org,
+        geert@linux-m68k.org, ink@jurassic.park.msu.ru,
+        linux@armlinux.org.uk, mattst88@gmail.com, mpe@ellerman.id.au,
+        palmer@sifive.com, paulus@samba.org, rth@twiddle.net,
+        vgupta@synopsys.com
+Subject: [PATCHv3 00/18] atomics: API cleanups
+Date:   Mon, 18 Jun 2018 11:19:01 +0100
+Message-Id: <20180618101919.51973-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 10:24:00PM -0400, Hugo Lefeuvre wrote:
-> Whenever pi433_open and pi433_remove execute concurrently, a race
-> condition potentially resulting in use-after-free might happen.
-> 
-> Let T1 and T2 be two kernel threads.
-> 
-> 1. T1 executes pi433_open and stops before "device->users++".
-> 2. The pi433 device was removed inbetween, so T2 executes pi433_remove
->    and frees device because the user count has not been incremented yet.
-> 3. T1 executes "device->users++" (use-after-free).
-> 
-> This race condition happens because the check of minor number and
-> user count increment does not happen atomically.
-> 
-> Fix: Extend scope of minor_lock in pi433_open().
-> 
-> Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
-> ---
->  drivers/staging/pi433/pi433_if.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-> index 94e0bfcec991..73c511249f7f 100644
-> --- a/drivers/staging/pi433/pi433_if.c
-> +++ b/drivers/staging/pi433/pi433_if.c
-> @@ -957,11 +957,13 @@ static int pi433_open(struct inode *inode, struct file *filp)
->  
->  	mutex_lock(&minor_lock);
->  	device = idr_find(&pi433_idr, iminor(inode));
-> -	mutex_unlock(&minor_lock);
->  	if (!device) {
-> +		mutex_unlock(&minor_lock);
->  		pr_debug("device: minor %d unknown.\n", iminor(inode));
->  		return -ENODEV;
->  	}
-> +	device->users++;
-> +	mutex_unlock(&minor_lock);
->  
->  	if (!device->rx_buffer) {
->  		device->rx_buffer = kmalloc(MAX_MSG_SIZE, GFP_KERNEL);
+This series contains a few cleanups of the atomic API, fixing
+inconsistencies between atomic_* and atomic64_*, and minimizing
+repetition in arch code. This is nicer for arch code, and the improved
+regularity will help when generating the atomic headers in future.
 
-We need to decrement device->users-- on the error paths as well.
-This function was already slightly broken with respect to counting the
-users, but let's not make it worse.
+Since v1 [1]:
+* Add missing inc_not_zero #define for x86_32
+* Remove newly redundant test op definitions for riscv
+* Remove atomic_inc_not_zero_hint()
+* Make inc/dec ops optional
 
-I think it's still a tiny bit racy because it's not an atomic type.
+Since v2 [2]
+* Make test ops return bool
+* Clean up ifdeffery for andnot opes
+* Update comments for clarity
+* Rebase to v4.18-rc1
+* Accumulate acks
+* Fix typos
 
-I'm not sure the error handling in open() works either.  It's releasing
-device->rx_buffer but there could be another user.  The ->rx_buffer
-should be allocated in probe() instead of open() probably, no?  And then
-freed in pi433_remove().  Then once we put that in the right layer
-it means we can just get rid of ->users...
+The bulk of the patches reorganise things so architectures consistently
+provide <atomic>_fetch_add_unless(), with atomic_fetch_add_unless()
+provided as a wrapper by core code. A generic fallback is provided for
+<atomic>_fetch_add_unless(), based on <atomic>_read() and
+<atomic>_try_cmpxchg().
 
-The lines:
+Other patches in the series add common fallbacks for:
 
-  1008                  if (!device->spi)
-  1009                          kfree(device);
+* atomic64_inc_not_zero() 
+* <atomic>_inc_and_test()
+* <atomic>_dec_and_test()
+* <atomic>_sub_and_test()
+* <atomic>add_negative()
+* <atomic>_*inc*()
+* <atomic>_*dec*()
 
-make no sort of sense at all...  Fortunately it's not posssible for
-device->spi to be NULL so it's dead code.
+... as almost all architectures provide (near-)identical implementation
+of these today. Where an architecture provides a non-trivial definition,
+it is updated to provide a matching preprocessor symbol, and the
+instrumented atomics are updated correspondingly.
 
-regards,
-dan carpenter
+The end result is a strongly negative diffstat, though <linux/atomic.h>
+grows by a reasonable amount. We could halve this in future by
+templating the various fallbacks for atomic{,64}_t with code generation.
+
+I've pushed this out to my atomics/api-cleanup branch [3] on kernel.org.
+
+Thanks,
+Mark.
+
+[1] https://lkml.kernel.org/r/20180523133533.1076-1-mark.rutland@arm.com
+[2] https://lkml.kernel.org/r/20180529154346.3168-1-mark.rutland@arm.com
+[3] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git atomics/api-cleanup
+
+Mark Rutland (18):
+  atomics/treewide: s/__atomic_add_unless/atomic_fetch_add_unless/
+  atomics/treewide: remove redundant atomic_inc_not_zero() definitions
+  atomics/treewide: remove atomic_inc_not_zero_hint()
+  atomics: make conditional ops return bool
+  atomics/treewide: make atomic64_inc_not_zero() optional
+  atomics/treewide: make atomic_fetch_add_unless() optional
+  atomics: prepare for atomic64_fetch_add_unless()
+  atomics/generic: define atomic64_fetch_add_unless()
+  atomics/alpha: define atomic64_fetch_add_unless()
+  atomics/arc: define atomic64_fetch_add_unless()
+  atomics/arm: define atomic64_fetch_add_unless()
+  atomics/powerpc: define atomic64_fetch_add_unless()
+  atomics/riscv: define atomic64_fetch_add_unless()
+  atomics/treewide: make atomic64_fetch_add_unless() optional
+  atomics/treewide: make test ops optional
+  atomics/treewide: make unconditional inc/dec ops optional
+  atomics/treewide: make conditional inc/dec ops optional
+  atomics/treewide: clean up andnot ifdeffery
+
+ arch/alpha/include/asm/atomic.h           |  56 ++--
+ arch/arc/include/asm/atomic.h             |  86 ++-----
+ arch/arm/include/asm/atomic.h             |  55 +---
+ arch/arm64/include/asm/atomic.h           |  47 +---
+ arch/h8300/include/asm/atomic.h           |  15 +-
+ arch/hexagon/include/asm/atomic.h         |  18 +-
+ arch/ia64/include/asm/atomic.h            |  81 ------
+ arch/m68k/include/asm/atomic.h            |  24 +-
+ arch/mips/include/asm/atomic.h            | 172 -------------
+ arch/openrisc/include/asm/atomic.h        |   4 +-
+ arch/parisc/include/asm/atomic.h          | 107 --------
+ arch/powerpc/include/asm/atomic.h         |  52 ++--
+ arch/riscv/include/asm/atomic.h           | 149 +----------
+ arch/s390/include/asm/atomic.h            |  65 -----
+ arch/sh/include/asm/atomic.h              |  35 ---
+ arch/sparc/include/asm/atomic_32.h        |  24 +-
+ arch/sparc/include/asm/atomic_64.h        |  65 +----
+ arch/sparc/lib/atomic32.c                 |   4 +-
+ arch/x86/include/asm/atomic.h             |  30 +--
+ arch/x86/include/asm/atomic64_32.h        |  61 +----
+ arch/x86/include/asm/atomic64_64.h        |  48 +---
+ arch/xtensa/include/asm/atomic.h          |  98 -------
+ drivers/block/rbd.c                       |   2 +-
+ drivers/infiniband/core/rdma_core.c       |   2 +-
+ fs/afs/rxrpc.c                            |   2 +-
+ include/asm-generic/atomic-instrumented.h |  71 ++++-
+ include/asm-generic/atomic.h              |  33 ---
+ include/asm-generic/atomic64.h            |  15 +-
+ include/linux/atomic.h                    | 415 +++++++++++++++++++++++-------
+ kernel/bpf/syscall.c                      |   4 +-
+ lib/atomic64.c                            |  12 +-
+ net/atm/pppoatm.c                         |   2 +-
+ net/rxrpc/call_object.c                   |   2 +-
+ net/rxrpc/conn_object.c                   |   4 +-
+ net/rxrpc/local_object.c                  |   2 +-
+ net/rxrpc/peer_object.c                   |   2 +-
+ 36 files changed, 511 insertions(+), 1353 deletions(-)
+
+-- 
+2.11.0
 
