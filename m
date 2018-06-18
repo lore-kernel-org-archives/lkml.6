@@ -2,115 +2,128 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E28A7C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B262C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D6620836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:56:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55B8120693
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:57:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ekko/zFJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D6620836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rc0XwAe+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B8120693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936954AbeFRU4w (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 16:56:52 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41902 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935937AbeFRU4t (ORCPT
+        id S936985AbeFRU5m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 16:57:42 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42241 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935708AbeFRU5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 16:56:49 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w8-v6so8170136ply.8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 13:56:49 -0700 (PDT)
+        Mon, 18 Jun 2018 16:57:40 -0400
+Received: by mail-lf0-f67.google.com with SMTP id z207-v6so5398151lff.9;
+        Mon, 18 Jun 2018 13:57:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/Sl3vfp9MwUw3VPUIHW1sx95xFUiRxfmcRWmzKaDKZQ=;
-        b=ekko/zFJiV0890mx9xYG5EQOXAcrW+T0dDF7nUSwXh0hF4rkovzixyuz6d1OTxvVu7
-         amDrLuziA4iTZ5VWtCuSPTCNu3oWL1F90osNWNvaHz0Kszgvlt1kcjaPrTnIN/r6hJTW
-         NC9+43IqrlGWwLMA2TANn6pwqpM1F6BNHP2Kg=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=sPVgCXb4ZY8xg/zNvqWZonRN7shcaye+HKwhvc/K1S4=;
+        b=Rc0XwAe+pQlmVKTk6USl/gxaAOw1hShjyiLhAqMmpMKsUDuGFHM16oEHAEbwt5HjzD
+         9fMzTh86+XaLXqB2RgHiDnVhgvGanmhQ4a2mlzHJ7Z++KTbOa1LYAgEWwHqekA9K/kWg
+         FAtpyImIMgKDkTIAgVOjaHqTIvhPNTnM0Rvu311J6Vqw0hvWDeFHtAkB09BE1xaTpvuB
+         TrQU9tiEyWRJ8DgKDI0qzb33RCVn2HQKJVrsCA5RpXz763HfV+aD0lXwNK0pcpBPw/zV
+         uCALLEW9yUj9A2p40Nfx/sQsSL92yhV67vC7/zoKTmKlmQuXQ0/EcH58nxXKVDtvU/lg
+         5v2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/Sl3vfp9MwUw3VPUIHW1sx95xFUiRxfmcRWmzKaDKZQ=;
-        b=scnE+eMLGZ8ggwFx2UQ6oHUi9gnXaj09xvt1ETZnBmHNvGtMX3Syyw8vnUJV58f34b
-         8dk7Ev6NK5ieOQeA3APJnpLdawvOQmohwpbkUEciOMx6QGz6xwieaP8AtljEYlGdUnIB
-         w5bzbKCApc4ePz81/9ZmVbUcY2mI6kGX2aMRoMd6DKVlEODqoCfrlZxHFFUPvN2Q7mJv
-         32QjIc+OBC35XawyeZdDDqsmceM5mMbeqTZrzzVckNKx/SbQJVhqgOfJeKkpSRRaCY60
-         yTNDQKaaeGC1oPDmiDr1KtPQEibvmX0J0eCfsNzoDFnF3MBbmPMUKeZehqzFneAJF5GM
-         vVig==
-X-Gm-Message-State: APt69E3QI0PHIm+jR3KK/NvMuCzNwyW7dTzUmnFLVtFvTLgbC5SlZ7TL
-        67LF1NGgTC05RsR17FkliF/ySw==
-X-Google-Smtp-Source: ADUXVKLhBwWvuXLTdWX0f4qyORNabfYlzMjNbzH7Sfhyrd7SBJagmN3s3LZ7CdZEg5OBBdWxOXySOg==
-X-Received: by 2002:a17:902:74cc:: with SMTP id f12-v6mr15827323plt.7.1529355408777;
-        Mon, 18 Jun 2018 13:56:48 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:0:1000:1501:38e4:86fe:ec0c:4007])
-        by smtp.gmail.com with ESMTPSA id n70-v6sm34167955pfh.140.2018.06.18.13.56.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 13:56:48 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     andy.gross@linaro.org
-Cc:     sboyd@kernel.org, tdas@codeaurora.org, rplsssn@codeaurora.org,
-        ilina@codeaurora.org, Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] arm64: dts: sdm845: Add rpmh-clk node
-Date:   Mon, 18 Jun 2018 13:56:16 -0700
-Message-Id: <20180618205616.102750-2-dianders@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-In-Reply-To: <20180618205616.102750-1-dianders@chromium.org>
-References: <20180618205616.102750-1-dianders@chromium.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=sPVgCXb4ZY8xg/zNvqWZonRN7shcaye+HKwhvc/K1S4=;
+        b=GQ2T5cnyvI69rZVoyLuGr5eO/SHVXuKUJEtxli1m+7iTT8UK8++cF/1o/vHiHCo17Z
+         kV6tYTin04HjaWYSmsy4cBSC24gsEjrF/rf41xd51fuyh0jachJ3kOgMau9PrFMeeGv7
+         yXFrS9oUtLppPzgrXoVj7rfLNKS5Vhy+x/cgcxz3uvHkUSSLFXeLTeGjt4wER6TJdYXQ
+         c5IoT4b5vr3NcT6sYcbU0+zwh9xtcD6ud+ovoYhK7oDUQrxCPpHFiLHXOGz9A9/mcRXt
+         ariE9UnFUxqsccPkgi+4iVfUcvFHiUpokfFpr8jkGvMDlsQQ2wXdbRUpGE4NzSQOcuBq
+         0GRA==
+X-Gm-Message-State: APt69E3xFg6JK++8ilXTnfrwHlQP3d22fxOoITkHtEOEmOBrThKyNiEZ
+        CcwdBHS+RnMIvPmyP7H5XOWusQXPiGhiAADLnmBm3b8k
+X-Google-Smtp-Source: ADUXVKLbwd3xpJB+fi9w2VuR8cuBI//hKk0I0oZ1VcAtPANzWur4j60Cx/JOpj5taFgWo9ioz3UasWFSSi9P6N5tiBY=
+X-Received: by 2002:a19:ce87:: with SMTP id e129-v6mr8842778lfg.57.1529355458317;
+ Mon, 18 Jun 2018 13:57:38 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:5394:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 13:57:07
+ -0700 (PDT)
+In-Reply-To: <1523447304-21037-1-git-send-email-faiz_abbas@ti.com>
+References: <1523447304-21037-1-git-send-email-faiz_abbas@ti.com>
+From:   Robert Nelson <robertcnelson@gmail.com>
+Date:   Mon, 18 Jun 2018 15:57:07 -0500
+Message-ID: <CAOCHtYjrgRTAz4ZfkQVWL0YzC8SGbC9p1b8VYJ1TWLy5JXs3mQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: am33xx: Add pinmux data for mmc1 in am335x-evm,
+ evmsk and beaglebone
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     linux kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the rpmh-clk node to sdm845 based on the examples in the
-bindings.
+On Wed, Apr 11, 2018 at 6:48 AM, Faiz Abbas <faiz_abbas@ti.com> wrote:
+> am335x-evm, am335x-evmsk and am335x-beaglebone are currently relying on
+> pinmux set by the bootloader to set the correct value for mmc1. Fix
+> this by adding pinmux data for the same in kernel.
+>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>  arch/arm/boot/dts/am335x-bone-common.dtsi | 9 ++++++++-
+>  arch/arm/boot/dts/am335x-evm.dts          | 9 ++++++++-
+>  arch/arm/boot/dts/am335x-evmsk.dts        | 9 ++++++++-
+>  3 files changed, 24 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/am335x-bone-common.dtsi b/arch/arm/boot/dts/am335x-bone-common.dtsi
+> index e67b4d6..f9e8667 100644
+> --- a/arch/arm/boot/dts/am335x-bone-common.dtsi
+> +++ b/arch/arm/boot/dts/am335x-bone-common.dtsi
+> @@ -161,7 +161,14 @@
+>
+>         mmc1_pins: pinmux_mmc1_pins {
+>                 pinctrl-single,pins = <
+> -                       AM33XX_IOPAD(0x960, PIN_INPUT | MUX_MODE7) /* GPIO0_6 */
+> +                       AM33XX_IOPAD(0x960, PIN_INPUT | MUX_MODE7)              /* spio0_cs1.gpio0_6 */
+> +                       AM33XX_IOPAD(0x8fc, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_dat0.mmc0_dat0 */
+> +                       AM33XX_IOPAD(0x8f8, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_dat1.mmc0_dat1 */
+> +                       AM33XX_IOPAD(0x8f4, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_dat2.mmc0_dat2 */
+> +                       AM33XX_IOPAD(0x8f0, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_dat3.mmc0_dat3 */
+> +                       AM33XX_IOPAD(0x904, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_cmd.mmc0_cmd */
+> +                       AM33XX_IOPAD(0x900, PIN_INPUT_PULLUP | MUX_MODE0)       /* mmc0_clk.mmc0_clk */
+> +                       AM33XX_IOPAD(0x9a0, PIN_INPUT | MUX_MODE4)              /* mcasp0_aclkr.mmc0_sdwp */
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-NOTE: to apply this patch cleanly, apply it atop:
-  arm64: dts: qcom: sdm845: Add I2C, SPI, and UART9 nodes
-  https://patchwork.kernel.org/patch/10462691/
+We went one pin too far on the Beagle's here:
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+0x9a0 ( mcasp0_aclkr.mmc0_sdwp ) = Routed to P9_42, (muxed with C18,
+to a shared pin on the header), so not connected to the microSD
+socket...
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 19b006293d3b..c61ae815a697 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -6,6 +6,7 @@
-  */
- 
- #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-+#include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
- 
-@@ -1001,6 +1002,11 @@
- 					  <WAKE_TCS    3>,
- 					  <ACTIVE_TCS  2>,
- 					  <CONTROL_TCS 1>;
-+
-+			rpmhcc: clock-controller {
-+				compatible = "qcom,sdm845-rpmh-clk";
-+				#clock-cells = <1>;
-+			};
- 		};
- 
- 		intc: interrupt-controller@17a00000 {
+https://github.com/beagleboard/beaglebone-black/blob/master/BBB_SCH.pdf
+
+Looking at this evm schematic, it looks like 0x9a0 should be removed
+too, but I'm not sure on all revisions:
+
+http://processors.wiki.ti.com/images/a/a2/TMDSSK3358_3H0009_REV1_2B_SCH.pdf
+
+Regards,
+
 -- 
-2.18.0.rc1.244.gcf134e6275-goog
-
+Robert Nelson
+https://rcn-ee.com/
