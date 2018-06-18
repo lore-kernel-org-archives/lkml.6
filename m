@@ -6,55 +6,56 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B44FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAB7C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA1D120852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:06:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 746F020852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:06:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="KgiTh/+p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA1D120852
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="P8xUq/Ik"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 746F020852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935415AbeFRPGa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:06:30 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34994 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964788AbeFRPG0 (ORCPT
+        id S965217AbeFRPGj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:06:39 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:42185 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935427AbeFRPGf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:06:26 -0400
-Received: by mail-pf0-f195.google.com with SMTP id c22-v6so8330200pfi.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:06:26 -0700 (PDT)
+        Mon, 18 Jun 2018 11:06:35 -0400
+Received: by mail-pg0-f65.google.com with SMTP id c10-v6so7662265pgu.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:06:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7vjN77+/jno5qXEzAbHU4IedwkWZWvdSAvtUazi+EIg=;
-        b=KgiTh/+p44//6+Jk9ICR80odAbqKftnhIjrH5Vola7ujb5x/Nx1xIEIBXyMFLrsrGT
-         LGb5R87p9n7U45YeQCYPIY2L/OSOGQcYlZ/ERNrq+Ane21VUSWPerLvsRUF+FFcwawIl
-         +Lh/uv+9r9T5h/kdDmfXF8sCZjmQTfnwU16goHdrAp6oob6Zu/qt1G8er6ZDnhj4lHks
-         4mCdp8gZfbm7GvGGRIdfhQ65sKuQhgWVJiybuA8oB+Tj3btq6wDtGgKTHIpBWBdP87xs
-         Z4GIjxIT4Hua/vkYGxzAf0/oO1HsniTrZFF+435GRlApy4f+nfpWIlKBoagavtcBSL2U
-         0CQA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=PWSA8YbjNb3oiv9hZyIcAulkGwZy2kUuKoc3BzHF5n8=;
+        b=P8xUq/IkVNw1G/exqDtSmVyyXoaDmVtgN/5X8zD4hntfJbkgH/dOLwiIBe0z5/j7VX
+         9E+Wps5DcPv7S0o6gLiLlSs8my9cXdSYwAGujhJSq1+Jx7q147mwcBMmGwotioO77ehM
+         5L2r1loKdJvy3g7PJsKUCNurc0IDsEBZhIaOneNSGx2TiGkp6/uVGjMksG0vWPbvx8Ch
+         5L4I1SXpXFqFZi6GNPp7B8GNYLiVBr6dQLq15ZL+iCKEDPG5RHr9fEV/qqoE+3LyQv7d
+         iY4FxBWjJLJvlD6/QJF68ce8Lajag03go31aex291StbVzhmdc5CK7wL0RJCe4JoFxHP
+         Z0ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7vjN77+/jno5qXEzAbHU4IedwkWZWvdSAvtUazi+EIg=;
-        b=XNDftmMsfCh3fRVqTHrCe81DCWNtfzDQJhJ/KOFw7Aak1iktDwdCJ02AiTHCDY1lN3
-         2Nbr0mo8VQr3Da1bQIyXzFoikSmciCJJSJUTOViismbzuCoLxO96DXzHCupgoNKvI+aK
-         9qYsfIdOONxsEHkENkM+oiihJ+0fHx/0dKRONdyakZGhMrou2S5B8TqsodPf0TPeX0u+
-         us/tGHu2EUFz+ULqhZG1OCqVhdEK83s0+Qsa5HAkSfcngROM1a6mNxT+yOibhmPmssk8
-         DvtRpGkxviAwZvrZaxHyFKCaI1FoDBvdgQKK/RjHcq7Xo1i0rtQYprOB30zJAlSYPM+l
-         BrlA==
-X-Gm-Message-State: APt69E1N0+OZdc/8f+1SPoflJWrErf/C1hQISHDjtbZRxlcCs0/qxUU2
-        +ql3qdvyZgBDJj0qXqxGFbXKgs4aVII=
-X-Google-Smtp-Source: ADUXVKI0Xi3EXMGSh5f6O18cSs1hDe+iUFxPe8G7gzG3MZG0Fgd8sUFwWI5CzheFlW5Ff882tUph9A==
-X-Received: by 2002:a65:50cb:: with SMTP id s11-v6mr11120003pgp.384.1529334385909;
-        Mon, 18 Jun 2018 08:06:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=PWSA8YbjNb3oiv9hZyIcAulkGwZy2kUuKoc3BzHF5n8=;
+        b=mmc1Y2QSRW4sbgGy0R1dXTJjZuu0nC1RceBJMW9Zb1pkxRD7bHBAWx4ij8cvAIbgvd
+         koBLkBKd8x/rj2Rr25cue4v7MQSwsdtwqI5Ad/7fxxx78ZSKawCPx+JBu/xT+B0RKvg7
+         pY95gobMGgZxUO87/t/IO4B+4q3miWrJoOyWuHGTFTcZlVCZIUvDUhmhoqcMvrfqD55S
+         2wIWGvNMIIqLy8C4zyhO1Db51RiyWTC8cBEVxbQVcq1eoj7yxusDgOpfaIZUSjHeBmsu
+         0x/MOAQnLqZ+GIxb8pgCiTRUJnaBJ0cYfsQ9UWctdHdiOMwLjECcRo59MVgq7CTmNFKB
+         op8Q==
+X-Gm-Message-State: APt69E2LrAywLVgvalN6ZvPqfCLCbjAWwwQsNOSKzQ+TT2TEB6tdjVjl
+        iohsGsppEpob0fvlUOarTIjnjomaTlg=
+X-Google-Smtp-Source: ADUXVKIiR1BtymXZj3vFbY5R5QJetxQmckWGlp39qRvjWB1lVrQqOyOU+pDtKajHYru9Bu4JtDqkgg==
+X-Received: by 2002:a63:3759:: with SMTP id g25-v6mr11545510pgn.59.1529334394984;
+        Mon, 18 Jun 2018 08:06:34 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:6077:8eec:bc7e:d0f4])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.06.24
+        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.06.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 08:06:25 -0700 (PDT)
+        Mon, 18 Jun 2018 08:06:34 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Mark Salyzyn <salyzyn@android.com>,
@@ -74,47 +75,35 @@ Cc:     Mark Salyzyn <salyzyn@android.com>,
         Andrew Pinski <apinski@cavium.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
-        Jeremy Linton <Jeremy.Linton@arm.com>
-Subject: RESEND arm+arm64+aarch32 vdso rewrite
-Date:   Mon, 18 Jun 2018 08:05:46 -0700
-Message-Id: <20180618150613.10322-1-salyzyn@android.com>
+        Jeremy Linton <Jeremy.Linton@arm.com>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: RESEND [PATCH v5 01/12] arm: vdso: rename vdso_datapage variables
+Date:   Mon, 18 Jun 2018 08:05:47 -0700
+Message-Id: <20180618150613.10322-2-salyzyn@android.com>
 X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+In-Reply-To: <20180618150613.10322-1-salyzyn@android.com>
+References: <20180618150613.10322-1-salyzyn@android.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following 23 patches are rebased and resent, and represent a
-rewrite of the arm and arm64 vDSO into C, adding support for arch32
-(32-bit user space hosted 64-bit kernels) and into a common library
-that other (arm, or non-arm) architectures may utilize.
+Take an effort to recode the arm64 vdso code from assembler to C
+previously submitted by Andrew Pinski <apinski@cavium.com>, rework
+it for use in both arm and arm64, overlapping any optimizations
+for each architecture. But instead of landing it in arm64, land the
+result into lib/vdso and unify both implementations to simplify
+future maintenance.
 
-[PATCH v5 01/12] arm: vdso: rename vdso_datapage variables
-[PATCH v5 02/12] arm: vdso: add include file defining __get_datapage()
-[PATCH v5 03/12] arm: vdso: inline assembler operations to compiler.h
-[PATCH v5 04/12] arm: vdso: do calculations outside reader loops
-[PATCH v6 05/12] arm: vdso: Add support for CLOCK_MONOTONIC_RAW
-[PATCH v5 06/12] arm: vdso: add support for clock_getres
-[PATCH v5 07/12] arm: vdso: disable profiling
-[PATCH v5 08/12] arm: vdso: Add ARCH_CLOCK_FIXED_MASK
-[PATCH v5 09/12] arm: vdso: move vgettimeofday.c to lib/vdso/
-[PATCH v5 10/12] arm64: vdso: replace gettimeofday.S with global vgettimeofday.C
-[PATCH v6 11/12] lib: vdso: Add support for CLOCK_BOOTTIME
-[PATCH v5 12/12] lib: vdso: do not expose gettimeofday, if no arch supported timer
-[PATCH] lib: vdso: add support for time
-[PATCH v2 1/3] arm64: compat: Split the sigreturn trampolines and kuser helpers (C sources)
-[PATCH v2 2/3] arm64: compat: Split the sigreturn trampolines and kuser helpers (assembler sources)
-[PATCH v2 3/3] arm64: compat: Add CONFIG_KUSER_HELPERS
-[PATCH] arm64: compat: Expose offset to registers in sigframes
-[PATCH 1/6] arm64: compat: Use vDSO sigreturn trampolines if available
-[PATCH 2/6] arm64: elf: Set AT_SYSINFO_EHDR in compat processes
-[PATCH 3/6] arm64: Refactor vDSO init/setup
-[PATCH v2 4/6] arm64: compat: Add a 32-bit vDSO
-[PATCH 5/6] arm64: compat: 32-bit vDSO setup
-[PATCH 6/6] arm64: Wire up and expose the new compat vDSO
+Rename seq_count to tb_seq_count. Rename tk_is_cntvct to use_syscall.
+Rename cs_mult to cs_mono_mult. All to align with the variables in the
+arm64 vdso datapage. Rework vdso_read_begin() and vdso_read_retry()
+functions to reflect modern access patterns for tb_seq_count field.
 
-This patch series' above has been applied to the latest Pixel phones
-and resulted in a 0.4% battery improvement.
+Update copyright message to reflect the start of the contributions in
+this series.
 
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
 Cc: James Morse <james.morse@arm.com>
@@ -135,3 +124,216 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: Jeremy Linton <Jeremy.Linton@arm.com>
+
+v2:
+- split first CL into 1 of 7 pieces
+
+v4:
+- update commit message to reflect reasoning
+
+v5:
+- rebase
+---
+ arch/arm/include/asm/vdso_datapage.h |  6 +--
+ arch/arm/kernel/vdso.c               | 17 ++++----
+ arch/arm/vdso/vgettimeofday.c        | 61 +++++++++++++++-------------
+ 3 files changed, 45 insertions(+), 39 deletions(-)
+
+diff --git a/arch/arm/include/asm/vdso_datapage.h b/arch/arm/include/asm/vdso_datapage.h
+index 9be259442fca..fa3e1856244d 100644
+--- a/arch/arm/include/asm/vdso_datapage.h
++++ b/arch/arm/include/asm/vdso_datapage.h
+@@ -29,8 +29,8 @@
+  * 32 bytes.
+  */
+ struct vdso_data {
+-	u32 seq_count;		/* sequence count - odd during updates */
+-	u16 tk_is_cntvct;	/* fall back to syscall if false */
++	u32 tb_seq_count;	/* sequence count - odd during updates */
++	u16 use_syscall;	/* fall back to syscall if true */
+ 	u16 cs_shift;		/* clocksource shift */
+ 	u32 xtime_coarse_sec;	/* coarse time */
+ 	u32 xtime_coarse_nsec;
+@@ -38,7 +38,7 @@ struct vdso_data {
+ 	u32 wtm_clock_sec;	/* wall to monotonic offset */
+ 	u32 wtm_clock_nsec;
+ 	u32 xtime_clock_sec;	/* CLOCK_REALTIME - seconds */
+-	u32 cs_mult;		/* clocksource multiplier */
++	u32 cs_mono_mult;	/* clocksource multiplier */
+ 
+ 	u64 cs_cycle_last;	/* last cycle value */
+ 	u64 cs_mask;		/* clocksource mask */
+diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
+index f4dd7f9663c1..c2c57f6b8c60 100644
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -276,14 +276,14 @@ void arm_install_vdso(struct mm_struct *mm, unsigned long addr)
+ 
+ static void vdso_write_begin(struct vdso_data *vdata)
+ {
+-	++vdso_data->seq_count;
++	++vdso_data->tb_seq_count;
+ 	smp_wmb(); /* Pairs with smp_rmb in vdso_read_retry */
+ }
+ 
+ static void vdso_write_end(struct vdso_data *vdata)
+ {
+ 	smp_wmb(); /* Pairs with smp_rmb in vdso_read_begin */
+-	++vdso_data->seq_count;
++	++vdso_data->tb_seq_count;
+ }
+ 
+ static bool tk_is_cntvct(const struct timekeeper *tk)
+@@ -307,10 +307,10 @@ static bool tk_is_cntvct(const struct timekeeper *tk)
+  * counter again, making it even, indicating to userspace that the
+  * update is finished.
+  *
+- * Userspace is expected to sample seq_count before reading any other
+- * fields from the data page.  If seq_count is odd, userspace is
++ * Userspace is expected to sample tb_seq_count before reading any other
++ * fields from the data page.  If tb_seq_count is odd, userspace is
+  * expected to wait until it becomes even.  After copying data from
+- * the page, userspace must sample seq_count again; if it has changed
++ * the page, userspace must sample tb_seq_count again; if it has changed
+  * from its previous value, userspace must retry the whole sequence.
+  *
+  * Calls to update_vsyscall are serialized by the timekeeping core.
+@@ -328,18 +328,19 @@ void update_vsyscall(struct timekeeper *tk)
+ 
+ 	vdso_write_begin(vdso_data);
+ 
+-	vdso_data->tk_is_cntvct			= tk_is_cntvct(tk);
++	vdso_data->use_syscall			= !tk_is_cntvct(tk);
+ 	vdso_data->xtime_coarse_sec		= tk->xtime_sec;
+ 	vdso_data->xtime_coarse_nsec		= (u32)(tk->tkr_mono.xtime_nsec >>
+ 							tk->tkr_mono.shift);
+ 	vdso_data->wtm_clock_sec		= wtm->tv_sec;
+ 	vdso_data->wtm_clock_nsec		= wtm->tv_nsec;
+ 
+-	if (vdso_data->tk_is_cntvct) {
++	if (!vdso_data->use_syscall) {
+ 		vdso_data->cs_cycle_last	= tk->tkr_mono.cycle_last;
+ 		vdso_data->xtime_clock_sec	= tk->xtime_sec;
+ 		vdso_data->xtime_clock_snsec	= tk->tkr_mono.xtime_nsec;
+-		vdso_data->cs_mult		= tk->tkr_mono.mult;
++		vdso_data->cs_mono_mult		= tk->tkr_mono.mult;
++		/* tkr_mono.shift == tkr_raw.shift */
+ 		vdso_data->cs_shift		= tk->tkr_mono.shift;
+ 		vdso_data->cs_mask		= tk->tkr_mono.mask;
+ 	}
+diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
+index a9dd619c6c29..8cf13af1323c 100644
+--- a/arch/arm/vdso/vgettimeofday.c
++++ b/arch/arm/vdso/vgettimeofday.c
+@@ -1,18 +1,25 @@
+ /*
+- * Copyright 2015 Mentor Graphics Corporation.
++ * Userspace implementations of gettimeofday() and friends.
+  *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2 of the
+- * License.
++ * Copyright (C) 2017 Cavium, Inc.
++ * Copyright (C) 2015 Mentor Graphics Corporation
++ * Copyright (C) 2012 ARM Limited
+  *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License for more details.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
+  *
+  * You should have received a copy of the GNU General Public License
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * Author: Will Deacon <will.deacon@arm.com>
++ * Rewriten from arch64 version into C by: Andrew Pinski <apinski@cavium.com>
++ * Reworked and rebased over arm version by: Mark Salyzyn <salyzyn@android.com>
+  */
+ 
+ #include <linux/compiler.h>
+@@ -31,32 +38,30 @@
+ 
+ extern struct vdso_data *__get_datapage(void);
+ 
+-static notrace u32 __vdso_read_begin(const struct vdso_data *vdata)
+-{
+-	u32 seq;
+-repeat:
+-	seq = READ_ONCE(vdata->seq_count);
+-	if (seq & 1) {
+-		cpu_relax();
+-		goto repeat;
+-	}
+-	return seq;
+-}
+-
+ static notrace u32 vdso_read_begin(const struct vdso_data *vdata)
+ {
+ 	u32 seq;
+ 
+-	seq = __vdso_read_begin(vdata);
++	do {
++		seq = READ_ONCE(vdata->tb_seq_count);
++
++		if ((seq & 1) == 0)
++			break;
+ 
+-	smp_rmb(); /* Pairs with smp_wmb in vdso_write_end */
++		cpu_relax();
++	} while (true);
++
++	smp_rmb(); /* Pairs with second smp_wmb in update_vsyscall */
+ 	return seq;
+ }
+ 
+ static notrace int vdso_read_retry(const struct vdso_data *vdata, u32 start)
+ {
+-	smp_rmb(); /* Pairs with smp_wmb in vdso_write_begin */
+-	return vdata->seq_count != start;
++	u32 seq;
++
++	smp_rmb(); /* Pairs with first smp_wmb in update_vsyscall */
++	seq = READ_ONCE(vdata->tb_seq_count);
++	return seq != start;
+ }
+ 
+ static notrace long clock_gettime_fallback(clockid_t _clkid,
+@@ -127,7 +132,7 @@ static notrace u64 get_ns(struct vdso_data *vdata)
+ 
+ 	cycle_delta = (cycle_now - vdata->cs_cycle_last) & vdata->cs_mask;
+ 
+-	nsec = (cycle_delta * vdata->cs_mult) + vdata->xtime_clock_snsec;
++	nsec = (cycle_delta * vdata->cs_mono_mult) + vdata->xtime_clock_snsec;
+ 	nsec >>= vdata->cs_shift;
+ 
+ 	return nsec;
+@@ -141,7 +146,7 @@ static notrace int do_realtime(struct timespec *ts, struct vdso_data *vdata)
+ 	do {
+ 		seq = vdso_read_begin(vdata);
+ 
+-		if (!vdata->tk_is_cntvct)
++		if (vdata->use_syscall)
+ 			return -1;
+ 
+ 		ts->tv_sec = vdata->xtime_clock_sec;
+@@ -164,7 +169,7 @@ static notrace int do_monotonic(struct timespec *ts, struct vdso_data *vdata)
+ 	do {
+ 		seq = vdso_read_begin(vdata);
+ 
+-		if (!vdata->tk_is_cntvct)
++		if (vdata->use_syscall)
+ 			return -1;
+ 
+ 		ts->tv_sec = vdata->xtime_clock_sec;
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
+
