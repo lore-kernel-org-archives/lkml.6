@@ -2,99 +2,113 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54065C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC69C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4B420852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:05:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U2ulJp/T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4B420852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F278720852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:06:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F278720852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935570AbeFRLFa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 07:05:30 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:38955 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934189AbeFRLFN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:05:13 -0400
-Received: by mail-oi0-f65.google.com with SMTP id t22-v6so14423147oih.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 04:05:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ZbPyoHOtRk+PZVFJa9b0g7fbrzIs/kbH7VZI+36O4MQ=;
-        b=U2ulJp/TnCxfKa/OQG9zsQuzEawC343xM0iDD83S9Ha5TJ/pFi++AYubHi6WD5lsza
-         2fGV9ri0xIwF606kL8RLP4sjJMZMcjEGc5daxvOAx1QRgLHAA1FuSESX5230hp36OEem
-         aTFcmX6g9PdK4B+ARXCPw840uOiQd8mejnCijmE4M0PaN1bAAGPtnq8EAW29nbJSDJ9u
-         iGO0sE9uQ6rlxrqzLxaETIKWEAr9GOSfuY8vyZQHEJ6Boh74dn+UdMCdnZRgUg7/YpOg
-         /VBAlIHMxWGxOxlOfB0jZzAtMn+Jve2c44APY32ZCpIiOyuEr6Cih3bxwOubeu5rPKjh
-         QNYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZbPyoHOtRk+PZVFJa9b0g7fbrzIs/kbH7VZI+36O4MQ=;
-        b=YjmkN4R1C2hHDe2adM2myf/FdhZstaLST/VDvoC7cFOj4qw7JUEJqKWMi2EV83vbIt
-         bvQ2uQ68Z4qrFnTyaFL20I1JW5AbtwHFw7l10veFfC6bUbzCQHkLBO2InDzZAZ2Nu/zN
-         Yw7Wqtu4IwlqXKYDa5eE7GpfNStf72GySie+YHf4umf5C1vHN00h5HgbKaT1Qku36TTq
-         haihFa7ebh3SvnXwiIyExsNr3aV3Gsu7cGjsymMIcCBVyD54rDm56seZj8XUHTdfYSvH
-         +fQLb3pF3KvH+tuX/H8hBF3GQmgJYWYOuK+dLud6t1SIjKutpHRf3zO0bbKYA5ZzKF2x
-         a6vQ==
-X-Gm-Message-State: APt69E2uDdtfELf6xj/miZajc23rS+uo6KKVLzDtnncatfb/udNvvQJr
-        F7ViUbse1VXKgTeaaVfnRiXumkr5I4VMhHnPFOE=
-X-Google-Smtp-Source: ADUXVKLBANkf8KrU82afj1/sttNN0abaaDaQ1yKgB2Vlba/ENMeRgDuXBv6xosMjw50kgU/odLUljsnf56L9clyuJJE=
-X-Received: by 2002:aca:808:: with SMTP id 8-v6mr6904343oii.198.1529319912953;
- Mon, 18 Jun 2018 04:05:12 -0700 (PDT)
+        id S935830AbeFRLGV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 07:06:21 -0400
+Received: from sauhun.de ([88.99.104.3]:48294 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933895AbeFRLGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 07:06:18 -0400
+Received: from localhost (OFScd-05p9-223.ppp11.odn.ad.jp [182.158.75.223])
+        by pokefinder.org (Postfix) with ESMTPSA id 1832354006A;
+        Mon, 18 Jun 2018 13:06:14 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 20:06:11 +0900
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH 00/11] Split i2c_lock_adapter into i2c_lock_root and
+ i2c_lock_segment
+Message-ID: <20180618110610.cwvkke6klc46kzvz@ninjato>
+References: <20180615101506.8012-1-peda@axentia.se>
 MIME-Version: 1.0
-Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 04:05:12
- -0700 (PDT)
-In-Reply-To: <1be8dc197f842d3be31a15315594a25c8ad8f298.1529309235.git.leonard.crestez@nxp.com>
-References: <1be8dc197f842d3be31a15315594a25c8ad8f298.1529309235.git.leonard.crestez@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 18 Jun 2018 08:05:12 -0300
-Message-ID: <CAOMZO5AhN9K0wDZcsimM3f4O7KFp+7JkzjNmFJ9FDnJ131wX7A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ARM: dts: imx6qdl-sabreauto: Add sensors
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="m2cccclcdv7g6rv4"
+Content-Disposition: inline
+In-Reply-To: <20180615101506.8012-1-peda@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 5:15 AM, Leonard Crestez
-<leonard.crestez@nxp.com> wrote:
-> The following sensors are on I2C3 on the baseboard:
-> * isil,isl29023 light sensor
-> * fsl,mag3110 magnetometer
-> * fsl,mma8451 accelerometer
->
-> Added under i2cmux/i2c@1 because they're not otherwise accessible.
->
-> These are all supported by iio with following configs:
-> * CONFIG_SENSORS_ISL29018
-> * CONFIG_MAG3110
-> * CONFIG_MMA8452
->
-> Tested with raw reads from iio sysfs.
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+--m2cccclcdv7g6rv4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+
+> I suggest that Wolfram takes this series through the I2C tree
+> and creates an immutable branch for the other subsystems. The
+
+I'd prefer this, too. Are the other subsystem maintainers fine with
+that?
+
+I am very positive on the series. I just have one comment which I just
+posted. It looks good in general.
+
+
+--m2cccclcdv7g6rv4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsnkiEACgkQFA3kzBSg
+KbaHRg/+LIDv2KYrGb+WRGPsvVW8pckrYy46rfvncOf6y84rD6/fOb6yBmh8d/X9
+knn6/6n6qCSkRIsEGt2qiGN0/wi+SscJ1sSYb8nFwe2vaYFkwpGLAutys9o6Y7nZ
+rmqnfcnEVIyY6w5eN2ZEZymToscwjRHmf8s4LOe8QvPTf9FSP22ZxAg0LdwRZCAZ
+588k6cUKFmd0XpCrW/1EvbMPxAz58T0gZDAJ6M1MLJiZZvK8PKAwl21kXeFW9/PY
+rkpjcpz6MsBik3OGw83YW3ZzrQ48XqrnknkNFt7/CP+TcCUI7wRuCAjuNPW0Nstr
+HzUKry57BfEA2G//GZxKmjSzy8ZGuLu6UBgl81cJsjnw93FAsbNlsJBRxWT5PRZS
+2ZELyjwtDoQOchXnwFz6JdssbjYp6KvbAEL7osl9lAiMf+DpNmkbwATkMWwAlHVp
+bPtuKxueH0ABWwuUVu6Xzxh4hVVQxBE2MvlVzVmNLv5gTx7XMISJM+8GZ5pjR5iv
+f2Jh7pRuzPfyk8GD7GMbIn4b0MOlX3xR2nBVT9jS5t0rtQAUouSJ0BhPIZO6HH/s
+J62e1enNni++DfR6pLZKaLT5xILgLCoZv9CRw1saX+86RvsX8vFrNt9B3RCTeUJu
+/c4IVYf52xA+CxviyqcZqYDjYrrirHMP2LjRclvMyPBzsE/wy/E=
+=HnqL
+-----END PGP SIGNATURE-----
+
+--m2cccclcdv7g6rv4--
