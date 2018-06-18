@@ -2,118 +2,128 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC250C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 05:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EE9C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 05:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6216E208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 05:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 347D020864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 05:34:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="ZbNG0WWt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jrf92pBd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6216E208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gregn.net header.i=@gregn.net header.b="Xfbl7umq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347D020864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gregn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754659AbeFRF3H (ORCPT
+        id S1754539AbeFRFeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 01:29:07 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:45315 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752868AbeFRF3F (ORCPT
+        Mon, 18 Jun 2018 01:34:50 -0400
+Received: from vserver.gregn.net ([174.136.110.154]:37132 "EHLO
+        vserver.gregn.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752361AbeFRFet (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 01:29:05 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id CB71B2134B;
-        Mon, 18 Jun 2018 01:29:04 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 18 Jun 2018 01:29:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :content-transfer-encoding:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=G+Dt0r+Qwwm5m7HCzANthiYlAXgxP
-        XUFBloM8+TN4nQ=; b=ZbNG0WWtacmVXrtXb6/Jzpt+OXAbXahDgW9aCtv4zTnDf
-        To7VF2w5SZcdezDD7De5OsYyQpW6hJt+IAfGPzTcZ4r7ycf758u3b6gYs6fuxuN0
-        VYC4T5weXJalS5QefT8+DcI8I88yNO0xHVcVmKwzRia1uXB8M/EIvQAtFbXApwgv
-        5pdARHh9wCGzZ3gEGUPdxCqsz1ScZO2L6P1LWnawvlih/JYxDaBzTESw38gH0Y07
-        7x7yrPHw7JXFUwW3uGRMWHl8jQ53MWjGYaPBehK5U4yyJpXRMPUT4Cs+oo0dm7Rq
-        JUi1I9vmxZYb3DnlHrrkUPRc2RvusSTmxERQEbfew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=G+Dt0r
-        +Qwwm5m7HCzANthiYlAXgxPXUFBloM8+TN4nQ=; b=Jrf92pBdNOnS2XBuV2hGVl
-        MdFDeNWduuvr/t5VSmuXWjyqG1NtZPy8twHI9zo2r98izQGb80dJ78eFTOPmjYSv
-        8mzwg18CFlo/iCSUz351czJez6APRVdl1yAqmQXyQqb3ckQITonfL6T05+zhzb/x
-        CIRgi1URNsM+IXl6s3oLN/u9QAucjWfAkpLIPJjhDK6JbgCDHci914mem8DPycFT
-        rn5KUE2SibQm3P1h0oIXJZkOJEcLLsLNeSXOb0h1s7qpahmjisITeaTg1mnWoY9T
-        rHY/8zKwetI5bP8oYK+SuxziwGetNiA/c2oAkV0kk8ZWwT3MEGcfSOqES33u2Ueg
-        ==
-X-ME-Proxy: <xmx:IEMnW61CIF08su13-OdGYngx331z7COZR16XU5R8XsDepLeJPGnJ8g>
-    <xmx:IEMnW_0dakheu7n61GJt_CC5-isa-sftnfZENr7t0CjIx0YtrVHjMg>
-    <xmx:IEMnW_ytuMqjeW1yaP90dDUU8JoA-W5WsFV30MQ1gdlzCwLjKp9Ktw>
-    <xmx:IEMnWzUtQSbks9iGdhHNpK39-dyZFqFRodbLRK4HNFxnMFts0t0jJA>
-    <xmx:IEMnW0rTqNQ7oE8IX1BvL7lwq1IiZ24aZdEZao_0DTMPxYWHijWF_g>
-    <xmx:IEMnW6EldIrNg5jiGmhXz6Bhg340gsgpoFfdWu18fHT-LmjbXz-sEQ>
-X-ME-Sender: <xms:IEMnWwjZFuLwawA15axgRrIjc4xEk-CztA2YAa4V2Im1k4Y44pFHPA>
-Received: from localhost (124-171-19-110.dyn.iinet.net.au [124.171.19.110])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CCF4F102C0;
-        Mon, 18 Jun 2018 01:29:03 -0400 (EDT)
-Date:   Mon, 18 Jun 2018 15:29:00 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the random tree
-Message-ID: <20180618052900.GA4579@eros>
-References: <20180608133748.58a272d5@canb.auug.org.au>
- <20180618133523.30db3ba0@canb.auug.org.au>
+        Mon, 18 Jun 2018 01:34:49 -0400
+Received: from vbox.gregn.net (unknown [IPv6:2001:470:d:6c5:dccc:19d1:b333:b8a8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by vserver.gregn.net (Postfix) with ESMTPSA id 5BED422DA;
+        Sun, 17 Jun 2018 22:35:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gregn.net; s=default;
+        t=1529300119; bh=pOA7Phcl9YSRIPc+RMMCmwSir5FCHjLqAit2LEqUeoY=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=Xfbl7umqrN1dKBXC7g9ycCuzXnfravJ0T6WbODVcg+qRSjhulC/60A72Q09Fcs0MA
+         3u0STLzHxoIvHX7rPLAt+Xi6Ff8WIokih2WoEA0q7il9zbaQpLwDzfuWW2jfkgIwFn
+         IT9Y0wiOrCiVXIdxEpp21QUwVaNgRPv7N5Og3id39JPH9fhY7Hr2gIn2S1WpXyABMD
+         yyE81qogwGHAM9MTRRrYcrOElG45s9WMCTczfXPChmBBKNxNy6JwfDfUlcZMit7GiR
+         KPGv9KGZnqapi4akuifRO0SBZa1YjKy0OOplquAOCvyoD5yuQhs3eCjt0NpW4lFv6Y
+         qVRI6YvDfDnZA==
+Received: from greg by vbox.gregn.net with local (Exim 4.84_2)
+        (envelope-from <greg@gregn.net>)
+        id 1fUmoO-0001pZ-Sw; Sun, 17 Jun 2018 22:34:44 -0700
+Date:   Sun, 17 Jun 2018 22:34:44 -0700
+From:   Gregory Nowak <greg@gregn.net>
+To:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        "Speakup is a screen review system for Linux." 
+        <speakup@linux-speakup.org>, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: speakup: refactor synths array to use a list
+Message-ID: <20180618053444.GA1614@gregn.net>
+References: <20180604095212.GA18381@tanglefoot>
+ <20180606132628.fxykchbznrwzgwqt@var.youpi.perso.aquilenet.fr>
+ <20180611225703.csi47cdafhy6rxcf@var.youpi.perso.aquilenet.fr>
+ <20180611235122.GA28343@gregn.net>
+ <20180612063105.7urgjfckrwjvqs6k@var.youpi.perso.aquilenet.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20180618133523.30db3ba0@canb.auug.org.au>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180612063105.7urgjfckrwjvqs6k@var.youpi.perso.aquilenet.fr>
+X-PGP-Key: http://www.gregn.net/pubkey.asc
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Virus-Scanned: clamav-milter 0.99.4 at vserver
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 01:35:23PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Fri, 8 Jun 2018 13:37:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > After merging the random tree, today's linux-next build (arm
-> > multi_v7_defconfig) produced this warning:
-> >=20
-> > lib/vsprintf.c:1668:13: warning: 'have_filled_random_ptr_key' defined b=
-ut not used [-Wunused-variable]
-> >  static bool have_filled_random_ptr_key __read_mostly;
-> >              ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> >=20
-> > Introduced by commit
-> >=20
-> >   bfe80ed3d7c7 ("vsprintf: add command line option debug_boot_weak_hash=
-")
->=20
-> I am still getting this ...
+On Tue, Jun 12, 2018 at 08:31:06AM +0200, Samuel Thibault wrote:
+> The load/unload is about the module itself, i.e. modprobe speakup_bns ;
+> modprobe speakup_soft, switch between them, then rmmod speakup_bns ;
+> speakup_soft or the converse (to exercise both orders).
 
-This is fixed in:
+# uname -a
+Linux p41box 4.17.1 #1 SMP Sat Jun 16 11:19:57 MST 2018 i686 GNU/Linux
+# lsmod |grep "speakup"
+speakup_bns            16384  0
+speakup_soft           16384  1
+speakup                94208  3 speakup_bns,speakup_soft
 
-	[PATCH v7 0/4] enable early printing of hashed pointers
+With /sys/accessibility/speakup/synth set to bns, I am getting output
+alternately from the bns and from soft. It's as if speakup can't make
+up its mind which synthesizer is being used. When I echo soft
+>/sys/accessibility/speakup/synth, I get no speech at all from either
+synthesizer. Doing rmmod of all three speakup modules comes back with
+no errors. There is also no unusual output in dmesg, I can see both
+synthesizers being registered and unregistered as I switch between
+them.
+
+I can also reproduce this behavior with speakup_soft, and speakup_dummy
+specifically:
+
+1. modprobe speakup_soft and modprobe speakup_dummy
+
+2. The synthesizer should now be set to dummy in
+   /sys/accessibility/speakup/synth.
+
+3. Use the speakup review keys, press enter a number of times. You
+   should observe output from both the software speech, and from the
+   serial port alternating between each other.
+
+4. echo soft >/sys/accessibility/speakup/synth
+
+5. You should observe no output from either software speech or the
+   serial port as you use speakup review keys, or press enter
+   repeatedly.
+
+6. echo dummy >/sys/accessibility/speakup/synth
+
+7. You should alternately get speech from the software synthesizer and
+   from the serial port.
+
+I built my kernel from the 4.17.1 kernel.org sources, and the patch
+that Samuel reposted applied cleanly with no errors.
+
+Greg
 
 
-FYI v8 to come with unrelated change removing EXPORT_SYMBOL() (as suggested
-on LKML in response to v7)
+-- 
+web site: http://www.gregn.net
+gpg public key: http://www.gregn.net/pubkey.asc
+skype: gregn1
+(authorization required, add me to your contacts list first)
+If we haven't been in touch before, e-mail me before adding me to your contacts.
 
-
-
-thanks,
-Tobin.
+--
+Free domains: http://www.eu.org/ or mail dns-manager@EU.org
