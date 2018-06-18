@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F71C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF50C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21BEE20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21BEE20864
+	by mail.kernel.org (Postfix) with ESMTP id B205220864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B205220864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030515AbeFRIiv (ORCPT
+        id S1030503AbeFRIis (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:38:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36454 "EHLO
+        Mon, 18 Jun 2018 04:38:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36466 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968071AbeFRIgn (ORCPT
+        with ESMTP id S968104AbeFRIgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:36:43 -0400
+        Mon, 18 Jun 2018 04:36:45 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C187CBB;
-        Mon, 18 Jun 2018 08:36:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1739FC5C;
+        Mon, 18 Jun 2018 08:36:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
-        linux-can@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, David Gilhooley <dgilhooley@nvidia.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 133/189] can: dev: increase bus-off message severity
-Date:   Mon, 18 Jun 2018 10:13:49 +0200
-Message-Id: <20180618081214.568513882@linuxfoundation.org>
+Subject: [PATCH 4.14 134/189] arm64: Add MIDR encoding for NVIDIA CPUs
+Date:   Mon, 18 Jun 2018 10:13:50 +0200
+Message-Id: <20180618081214.616776194@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -52,45 +51,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+From: David Gilhooley <dgilhooley@nvidia.com>
 
-[ Upstream commit 71c23a821c6bcacba71a094efe49ee689605906b ]
+[ Upstream commit 1b06bd8dd95f7a19ab33fdf0f477c94950822ab3 ]
 
-bus-off is usually caused by hardware malfunction or configuration error
-(baud rate mismatch) and causes a complete loss of communication.
+This patch adds the MIDR encodings for NVIDIA as well as
+the Denver and Carmel CPUs used in Tegra SoCs.
 
-Increase the "bus-off" message's severity from netdev_dbg() to
-netdev_info() to make it visible to the user.
-
-A can interface going into bus-off is similar in severity to ethernet's
-"Link is Down" message, which is also printed at info level.
-
-It is debatable whether the the "restarted" message should also be
-changed to netdev_info() to make the interface state changes
-comprehensible from the kernel log. I have chosen to keep the
-"restarted" message at dbg for now as the "bus-off" message should be
-enough for the user to notice and investigate the problem.
-
-Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Cc: linux-can@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: David Gilhooley <dgilhooley@nvidia.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/can/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/cputype.h |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/can/dev.c
-+++ b/drivers/net/can/dev.c
-@@ -604,7 +604,7 @@ void can_bus_off(struct net_device *dev)
- {
- 	struct can_priv *priv = netdev_priv(dev);
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -75,6 +75,7 @@
+ #define ARM_CPU_IMP_CAVIUM		0x43
+ #define ARM_CPU_IMP_BRCM		0x42
+ #define ARM_CPU_IMP_QCOM		0x51
++#define ARM_CPU_IMP_NVIDIA		0x4E
  
--	netdev_dbg(dev, "bus-off\n");
-+	netdev_info(dev, "bus-off\n");
+ #define ARM_CPU_PART_AEM_V8		0xD0F
+ #define ARM_CPU_PART_FOUNDATION		0xD00
+@@ -98,6 +99,9 @@
+ #define QCOM_CPU_PART_FALKOR		0xC00
+ #define QCOM_CPU_PART_KRYO		0x200
  
- 	netif_carrier_off(dev);
++#define NVIDIA_CPU_PART_DENVER		0x003
++#define NVIDIA_CPU_PART_CARMEL		0x004
++
+ #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
+ #define MIDR_CORTEX_A55 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A55)
+ #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
+@@ -112,6 +116,8 @@
+ #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
+ #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
+ #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
++#define MIDR_NVIDIA_DENVER MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_DENVER)
++#define MIDR_NVIDIA_CARMEL MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_CARMEL)
+ 
+ #ifndef __ASSEMBLY__
  
 
 
