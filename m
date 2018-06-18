@@ -3,123 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53312C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A56EFC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1436720864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:17:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1436720864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 69810208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:17:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69810208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966865AbeFRJRG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:17:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59162 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966613AbeFRI2W (ORCPT
+        id S966877AbeFRJRV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:17:21 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:48949 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S966608AbeFRJRT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:28:22 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11857D1E;
-        Mon, 18 Jun 2018 08:28:21 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 277/279] ARM: kexec: fix kdump register saving on panic()
-Date:   Mon, 18 Jun 2018 10:14:22 +0200
-Message-Id: <20180618080620.133552872@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
-References: <20180618080608.851973560@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Mon, 18 Jun 2018 05:17:19 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0T2wsk0g_1529313417;
+Received: from localhost(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T2wsk0g_1529313417)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 18 Jun 2018 17:17:05 +0800
+From:   Xunlei Pang <xlpang@linux.alibaba.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Ben Segall <bsegall@google.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] sched/fair: Advance global expiration when period timer is restarted
+Date:   Mon, 18 Jun 2018 17:16:57 +0800
+Message-Id: <20180618091657.21939-1-xlpang@linux.alibaba.com>
+X-Mailer: git-send-email 2.14.1.40.g8e62ba1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+I noticed the group frequently got throttled even it consumed
+low cpu usage, this caused some jitters on the response time
+to some of our business containers enabling cpu quota.
 
-------------------
+It's very easy to reproduce:
+mkdir /sys/fs/cgroup/cpu/test
+cd /sys/fs/cgroup/cpu/test
+echo 100000 > cpu.cfs_quota_us
+echo $$ > tasks
+then repeat:
+cat cpu.stat |grep nr_throttled  // nr_throttled will increase
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+After some analysis, we found that cfs_rq::runtime_remaining will
+be cleared by expire_cfs_rq_runtime() due to two equal but stale
+"cfs_{b|q}->runtime_expires" after period timer is re-armed.
 
-[ Upstream commit 2d7b3c64431245c95b05a441669c074da10db943 ]
+The global expiration should be advanced accordingly when the
+bandwidth period timer is restarted.
 
-When a panic() occurs, the kexec code uses smp_send_stop() to stop
-the other CPUs, but this results in the CPU register state not being
-saved, and gdb is unable to inspect the state of other CPUs.
-
-Commit 0ee59413c967 ("x86/panic: replace smp_send_stop() with kdump
-friendly version in panic path") addressed the issue on x86, but
-ignored other architectures.  Address the issue on ARM by splitting
-out the crash stop implementation to crash_smp_send_stop() and
-adding the necessary protection.
-
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
 ---
- arch/arm/kernel/machine_kexec.c |   34 ++++++++++++++++++++++------------
- 1 file changed, 22 insertions(+), 12 deletions(-)
+ kernel/sched/fair.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/arch/arm/kernel/machine_kexec.c
-+++ b/arch/arm/kernel/machine_kexec.c
-@@ -95,6 +95,27 @@ void machine_crash_nonpanic_core(void *u
- 		cpu_relax();
- }
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9f384264e832..bb006e671609 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5204,13 +5204,18 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
  
-+void crash_smp_send_stop(void)
-+{
-+	static int cpus_stopped;
-+	unsigned long msecs;
+ void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+ {
++	u64 overrun;
 +
-+	if (cpus_stopped)
+ 	lockdep_assert_held(&cfs_b->lock);
+ 
+-	if (!cfs_b->period_active) {
+-		cfs_b->period_active = 1;
+-		hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
+-		hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
+-	}
++	if (cfs_b->period_active)
 +		return;
 +
-+	atomic_set(&waiting_for_crash_ipi, num_online_cpus() - 1);
-+	smp_call_function(machine_crash_nonpanic_core, NULL, false);
-+	msecs = 1000; /* Wait at most a second for the other cpus to stop */
-+	while ((atomic_read(&waiting_for_crash_ipi) > 0) && msecs) {
-+		mdelay(1);
-+		msecs--;
-+	}
-+	if (atomic_read(&waiting_for_crash_ipi) > 0)
-+		pr_warn("Non-crashing CPUs did not react to IPI\n");
-+
-+	cpus_stopped = 1;
-+}
-+
- static void machine_kexec_mask_interrupts(void)
- {
- 	unsigned int i;
-@@ -120,19 +141,8 @@ static void machine_kexec_mask_interrupt
++	cfs_b->period_active = 1;
++	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
++	cfs_b->runtime_expires += (overrun + 1) * ktime_to_ns(cfs_b->period);
++	cfs_b->expires_seq++;
++	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
+ }
  
- void machine_crash_shutdown(struct pt_regs *regs)
- {
--	unsigned long msecs;
--
- 	local_irq_disable();
--
--	atomic_set(&waiting_for_crash_ipi, num_online_cpus() - 1);
--	smp_call_function(machine_crash_nonpanic_core, NULL, false);
--	msecs = 1000; /* Wait at most a second for the other cpus to stop */
--	while ((atomic_read(&waiting_for_crash_ipi) > 0) && msecs) {
--		mdelay(1);
--		msecs--;
--	}
--	if (atomic_read(&waiting_for_crash_ipi) > 0)
--		pr_warn("Non-crashing CPUs did not react to IPI\n");
-+	crash_smp_send_stop();
- 
- 	crash_save_cpu(regs, smp_processor_id());
- 	machine_kexec_mask_interrupts();
-
+ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+-- 
+2.14.1.40.g8e62ba1
 
