@@ -2,128 +2,126 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA354C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 00:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B8B4C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 00:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55BE2208B6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 00:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF3AC20020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 00:15:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S59XC7uS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55BE2208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="KdP+3fDI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF3AC20020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754481AbeFRAAK (ORCPT
+        id S1754504AbeFRAPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 20:00:10 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39114 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754383AbeFRAAI (ORCPT
+        Sun, 17 Jun 2018 20:15:50 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:36677 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754411AbeFRAPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 20:00:08 -0400
-Received: by mail-pf0-f193.google.com with SMTP id r11-v6so7259019pfl.6;
-        Sun, 17 Jun 2018 17:00:08 -0700 (PDT)
+        Sun, 17 Jun 2018 20:15:47 -0400
+Received: by mail-pl0-f66.google.com with SMTP id a7-v6so8044487plp.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 17:15:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6I3Rk+XVG5DCzpHQAYBNwGSxhzfj1pRJa6gqMHgE5KI=;
-        b=S59XC7uS1ApMdD5seBu7wsXk0kk12Li5ukHCkqu7Lt4KVT3yZfVxHfW7cbe933ZeT0
-         zsWB28iWvKHJGzc28JpYoe/YBTuYrSwgdNHGbaYUxTNHcOW4KiJn3DLdzJ5UpghsoULf
-         i8aN4w2WVaEavY059OEbMoZiI5wq42iubm6M02cxioXOdMaGkko/rPDBLQAAeOCEp4Z5
-         XKTDjs77w00zTggIB2S+QWK46h6V5/t7OUQSv620ELFWJTU7+i1gmKZ/4KG6cMBgjMHa
-         PdOtwA6/P2MTfKdMrCvFn4u8DNkJPvHbSXr+umwAsO1SM6dp33/N37vhA7g+LakKomN2
-         v0hQ==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+3Yy088ci3nAjW4MeMftDns+Is1kiImcM22W5nU1ro8=;
+        b=KdP+3fDISridbzOMLlpQjBGP6BsuzRZXcpbFAtJq/rkjoiUbtAL6bgQuEywSE+Seda
+         vQs4UYNGee1OTXdlIMquz3oLdCwxUg3ggItdeBLWtDtPwtFg99wSYBJdrggyTcyQab+X
+         HhbVD47aC1MUEidttIBp/J79ZSacLs70RdagI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6I3Rk+XVG5DCzpHQAYBNwGSxhzfj1pRJa6gqMHgE5KI=;
-        b=A9sTGgQG6gW9GdJnmNhJ2oSCSXyC0mTZwZNabNKE1u3cWmRHmfoQxx5k359QTWEpU0
-         tZdjU9j689OPZLHrctokFvvVPTG2jHFU3HeqbnnEoQmXyqI28MnBsD9SVETeErI13gnF
-         DglspHTLMuuXD1SmiOi07VZZsKG6ecrCEF2xc+TvXe0JWumN/7xa0chNB4nm3IcUeZ6A
-         H9JabbxLDpVm+IfLcqqLvAsZjZWybKfDjGQde0voVjkkSkIioE6pi3gQNsGkdDqfwkKH
-         FOhZxzLJb+zATS7HsmZQ4ocXfy2dl4ANyh9sBDx8e6lnXGwpcHUGLfsQxyyexwThiaKc
-         nRVw==
-X-Gm-Message-State: APt69E3HAmktqpX2Gj+tRPB62D3hzaHczSiUV6ryDwuT/1FFqs8d90YV
-        4IOXEbTNnWyAWQrL+gTzpLIVuG9TRDI=
-X-Google-Smtp-Source: ADUXVKIMHi5PsPohm0C8DG4TjnWI/nILy/bXob3SAMx0Q2GqErE7NY9iMYturo/j5F/9vSAHqnHhuQ==
-X-Received: by 2002:a62:df12:: with SMTP id u18-v6mr11207815pfg.230.1529280007401;
-        Sun, 17 Jun 2018 17:00:07 -0700 (PDT)
-Received: from localhost.localdomain ([101.23.151.28])
-        by smtp.gmail.com with ESMTPSA id r79-v6sm26855096pfe.115.2018.06.17.17.00.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Jun 2018 17:00:06 -0700 (PDT)
-From:   youling257 <youling257@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-        andy@infradead.org, dvhart@infradead.org, hdegoede@redhat.com,
-        youling257 <youling257@gmail.com>
-Subject: [PATCH v4] platform/x86: touchscreen_dmi: Add info for the ONDA V891W Dual OS tablet
-Date:   Mon, 18 Jun 2018 07:58:12 +0800
-Message-Id: <20180617235812.18596-1-youling257@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+3Yy088ci3nAjW4MeMftDns+Is1kiImcM22W5nU1ro8=;
+        b=I7rT418EforiRK9TS7J7H/drsrFIo2ABv6B8lei56Jdz91/wzs4MDbTDRlS5QiQ2z5
+         dxpmGyT+yX2KwEVlQy2vgAEEglfZDv/KANczHUjwUyDRDLRiCMRI8nlGcbKq5LM0w106
+         BFyOM8KjgdBdPd0bvdHqCtVkkb8trzj/9qYOGx4gZogql3lhZ7HkoZhBpHxWmK7JFRTF
+         t04u5cexdKiFmWZBo5SEXqEI8AxXbcNDwIfTpAcCvqqta5tD4cQK7DpzRz8r9avVqSyF
+         +Oy1R2sHO7D1y1goLR4vBbjqm1qZMeCRUt2AtjIXippdvxGK0+NyHCU6ciC7WAnaELwH
+         XmQg==
+X-Gm-Message-State: APt69E0mHx1apkMD+KpDvck/94xG+E06mDkqN0J9IX4yaFEVuyqOadu/
+        dppAjhMlgEonpnmDoq0DH/OAuA==
+X-Google-Smtp-Source: ADUXVKJZRIXnNXQZl6oyVOszx87aa12twlrlpqiag8wof8YJ7FTFXvM5I9dzLo6DtWJ0T3ylhCSj+w==
+X-Received: by 2002:a17:902:4424:: with SMTP id k33-v6mr11683418pld.242.1529280946886;
+        Sun, 17 Jun 2018 17:15:46 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id j15-v6sm28571400pfk.40.2018.06.17.17.15.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 17 Jun 2018 17:15:45 -0700 (PDT)
+Date:   Sun, 17 Jun 2018 17:15:45 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>, tglx@linutronix.de,
+        namhyung@kernel.org, mathieu.desnoyers@efficios.com,
+        linux-rt-users@vger.kernel.org,
+        Tom Zanussi <tom.zanussi@linux.intel.com>, peterz@infradead.org
+Subject: Re: [PATCH RFC] tracing: Call triggers only if event passes filter
+ checks
+Message-ID: <20180618001545.GA187086@joelaf.mtv.corp.google.com>
+References: <20180615010113.127718-1-joel@joelfernandes.org>
+ <20180616224329.02e37ef4aee72c7d5685818e@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180616224329.02e37ef4aee72c7d5685818e@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add touchscreen info for the ONDA V891W Dual OS tablet
+On Sat, Jun 16, 2018 at 10:43:29PM +0900, Masami Hiramatsu wrote:
+> On Thu, 14 Jun 2018 18:01:13 -0700
+> Joel Fernandes <joelaf@google.com> wrote:
+> 
+> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > 
+> > Currently, trace event triggers are called regardless of if the event
+> > filter checks pass or fail. Thus if one were to enable event triggers
+> > and filters at the same time, then the triggers will always be called
+> > even if the filter checks didn't pass.
+> > 
+> > This is a problem for a usecase I was experimenting with: measuring the
+> > time preemption is disabled using synthetic events and dump the stack
+> > using the stacktrace trigger if the total preempt off time was greater
+> > than a threshold. Following are the commands for the same:
+> > 
+> > Create synthetic event:
+> > 
+> > echo 'preemptdisable u64 lat' >> \
+> > 	      /sys/kernel/debug/tracing/synthetic_events
+> > 
+> > echo 'hist:keys=cpu:ts0=common_timestamp.usecs:scpu=cpu' >> \
+> > 	      /sys/kernel/debug/tracing/events/preemptirq/preempt_disable/trigger
+> > 
+> > echo 'hist:keys=cpu:wakeup_lat=common_timestamp.usecs-$ts0:\
+> > onmatch(preemptirq.preempt_disable).preemptdisable($wakeup_lat)' >> \
+> > 	        /sys/kernel/debug/tracing/events/preemptirq/preempt_enable/trigger
+> > 
+> > Enable synthetic event:
+> > 
+> > echo stacktrace > /sys/kernel/debug/tracing/events/synthetic/preemptdisable/trigger
+> > echo 'lat > 400' > /sys/kernel/debug/tracing/events/synthetic/preemptdisable/filter
+> 
+> Have you tried if statement as below?
+> 
+> echo "stacktrace if lat > 400" > /sys/kernel/debug/tracing/events/synthetic/preemptdisable/trigger
+> 
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: youling257 <youling257@gmail.com>
----
- drivers/platform/x86/touchscreen_dmi.c | 27 ++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Yes I tried this and it works, thanks!
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 6284946cb0d1..2ad9327c8c0f 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -221,6 +221,24 @@ static const struct ts_dmi_data onda_v891w_v1_data = {
- 	.properties	= onda_v891w_v1_props,
- };
- 
-+static const struct property_entry onda_v891w_v3_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 35),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 15),
-+	PROPERTY_ENTRY_U32("touchscreen-size-x", 1625),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 1135),
-+	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
-+	PROPERTY_ENTRY_STRING("firmware-name",
-+			      "gsl3676-onda-v891w-v3.fw"),
-+	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-+	PROPERTY_ENTRY_BOOL("silead,home-button"),
-+	{ }
-+};
-+
-+static const struct ts_dmi_data onda_v891w_v3_data = {
-+	.acpi_name	= "MSSL1680:00",
-+	.properties	= onda_v891w_v3_props,
-+};
-+
- static const struct property_entry pipo_w2s_props[] = {
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
- 	PROPERTY_ENTRY_U32("touchscreen-size-y", 880),
-@@ -481,6 +499,15 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
- 			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "ONDA.W89EBBN08"),
- 		},
- 	},
-+	{
-+		/* ONDA V891w Dual OS P891DCF2V1A01274 64GB */
-+		.driver_data = (void *)&onda_v891w_v3_data,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "ONDA Tablet"),
-+			DMI_MATCH(DMI_BIOS_VERSION, "ONDA.D890HBBNR0A"),
-+		},
-+	},
- 	{
- 		/* Pipo W2S */
- 		.driver_data = (void *)&pipo_w2s_data,
--- 
-2.17.1
+Steven also suggested the same thing in his reply as well.
+
+thanks,
+
+ - Joel
 
