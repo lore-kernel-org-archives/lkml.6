@@ -3,105 +3,263 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C190C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20291C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2B5208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:23:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D2B5208E8
+	by mail.kernel.org (Postfix) with ESMTP id C304A20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:25:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C304A20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755150AbeFRPXd (ORCPT
+        id S1754882AbeFRPZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:23:33 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:56387 "EHLO
+        Mon, 18 Jun 2018 11:25:21 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:52391 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754110AbeFRPXb (ORCPT
+        with ESMTP id S1752650AbeFRPZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:23:31 -0400
+        Mon, 18 Jun 2018 11:25:19 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
  (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0Lpvbr-1g6Tvv3fKp-00fjAT; Mon, 18 Jun 2018 17:23:09 +0200
+ 0MeSpb-1fr8vp0PGR-00QFaP; Mon, 18 Jun 2018 17:24:38 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Steffen Klassert <steffen.klassert@secunet.com>,
+To:     Harsh Jain <harsh@chelsio.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
         Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Hans Liljestrand <ishkamiel@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/3] ipv6: xfrm: use 64-bit timestamps
-Date:   Mon, 18 Jun 2018 17:22:14 +0200
-Message-Id: <20180618152242.1566661-2-arnd@arndb.de>
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Atul Gupta <atul.gupta@chelsio.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     y2038@lists.linaro.org, Michael Werner <werner@chelsio.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Christoph Paasch <cpaasch@apple.com>,
+        Lawrence Brakmo <brakmo@fb.com>,
+        Ursula Braun <ubraun@linux.vnet.ibm.com>,
+        Priyaranjan Jha <priyarjha@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Ivan Delalande <colona@arista.com>,
+        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH net-next 3/3] tcp: use monotonic timestamps for PAWS
+Date:   Mon, 18 Jun 2018 17:22:15 +0200
+Message-Id: <20180618152242.1566661-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180618152242.1566661-1-arnd@arndb.de>
 References: <20180618152242.1566661-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:MumUtdStB+H7OHowHs5Dcrf+8C5zawBp39altZ0CBRX/P/rSezf
- /ZYMxO1hj5Enwdvff3psaUnnoPR22wB/9MSlojFjgpihmzsfq3njgQE57C3mWhAUqw6SZXi
- GTKN4qGBZYyBgk6tFvw94pEsjkHWCNQC0XaVKJD6NMWbqn7cQSR9gd34y3d9SxW9oMh4vb4
- hLBQ112szslLAyYfBuAIA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:DdqbT/qtOlo=:Jz7ILWoAsbYd7qjuavkI0B
- wvTMNERisN6+ye9w1Eq0bbuy3wxgXpiErRcoLY1UcF3CG4N7aJefPWLeVnhXacAdH8aQZUss6
- 5Q1kQ+emx+SX0q+xz+fGmyiRZZvUrQfGnDxPc0yhGmBVVAHWG94QzIZ1r8KBHoEHsdBJXb2rL
- wTFCp/7YAkR13cOQx1l1Nd7yUuvkH8rshBvNCFA/0uOtxnKgLw+9R4jDgnz9AebeDsgj5Y0IS
- YOoZO/aJLjTYqU2s90F6jYpjhNhUjy48ILtg63fYCqYmrws/4L6ehEKaerA0p57ofUmnuYFk+
- PrUS/7dulARJr26ozgyUpWzSa5snlENtEW7+5cm3LhHQCRsvXIO+o9uD8un6HnsODuCLv+zvc
- xhpIQzO1dqm1y/PyOaieVomrQe43SlYW8zObFJsow2z2XpQUiYxrXHuBRgyYFpbI3mbpY1ijs
- WpvGApiUY4e3zrXe8P+e01qZvDrmjRUGZqwGXdEpD97cY6/EH5/rXdsThosxj+TMUMCKp2XlK
- vra4mLcl0dmdnGZdWzw2WQ4OZn5jnymJ0Eb0lN0wPECHGtPGyqypWE4Pm0cS/AIQNA0CxFct4
- m2PviToQL+OI+CA2Y8jxJE07uvgkC8t+lZoVUe45IyCP/pwBUSEFpEWKT76KdRoTHzYgVltYm
- ekNuyQZ+/j6rWlBHXfxE5RC75CGcp/LVitkeC6h8bmjmjaTi4quc9b3boc0UNFskVijE=
+X-Provags-ID: V03:K1:TUIITLvZu2yN6QopA1uuKmjdlBDhcSlgEpqY1/XmHmVWuiBVdl7
+ FOVK83eJeO8lOTop4J/298j93XlY6cTdjTrRbkTd+Slt5g5q2IIFUURMLAmI5bwZFQDGi8K
+ QQFpqnTa/wlcZ3CuLEVRaHY2JhFXCXxezguasnvO25rOQI+mEax8p9FvH6Ts3xEOzg3Ez1G
+ z6aEpClIMjMXnU6khg6Dg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:PNDTWzFe/kM=:hhAQ7JffTvXK1MENezUmZz
+ z2TFjK9VUrl50gAMJVpThn6GW78mRwnHjNGc7TlAdG57Me0o0ea3MPuz8r28uVB49/CWcz8KZ
+ jpzm4BbDmhrXB6zMkGBiJEknBNdHzOWnNRtLX4QWUWvPlCXBStDmnnuCMp+Aaj7QJZYRMSNR8
+ HswWAq6F6yKgqf5Akbm7IuwqFVKQrcOJQnhucHmrasTutpgbplxtYwa7eKEkfh78ihQSSmuIT
+ Y7tXx/EUBEtBQaqPLsSDZL80dagFkjkIyX9f/48SjImNFW7UfGAhhjvX4b7uvMTgnHaDx+DTy
+ N2TY4cZHmHbAmqRJBoQeNYYryFihI6+8cfPXXvyFNS+aJR5bNzVqvKwa3fN5DlfRKWDaLMOXZ
+ yEwnIhh+MqOfUQG0EGfoXWoev+z8tywT0g9w+GorGGM3IhQhz4fJstye3vNV1aRnYulndkrx0
+ 9Cd9jrhsaqstgR43rtcScgwMXw/Kxz+Mn0m/m/UlOBMecunhg57oKToVgzdtJ/ym8QR741+/6
+ NxWAKGjdOYreq6U7lOMplWHWTIgwzTroqvLHAaTPuKXGlFbJGfDbN4y6lQLy+0wFO4GUeax0r
+ FfMFu6W8iCFDqbNn35E8x+DRSTVvuaUsmBcdgDhj6ciJMdJHnuvOKbbVwAZP4iGT5r6DZ29qF
+ /ouK8tIVzyElWWrMN8WdkrcU++l/RXLg7ALLnRxo0erM1yyAeIja0sszzT0nI17d8vx0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_seconds() is deprecated because it can overflow on 32-bit
-architectures.  For the xfrm_state->lastused member, we treat the data
-as a 64-bit number already, so we just need to use the right accessor
-that works on both 32-bit and 64-bit machines.
+Using get_seconds() for timestamps is deprecated since it can lead
+to overflows on 32-bit systems. While the interface generally doesn't
+overflow until year 2106, the specific implementation of the TCP PAWS
+algorithm breaks in 2038 when the intermediate signed 32-bit timestamps
+overflow.
+
+A related problem is that the local timestamps in CLOCK_REALTIME form
+lead to unexpected behavior when settimeofday is called to set the system
+clock backwards or forwards by more than 24 days.
+
+While the first problem could be solved by using an overflow-safe method
+of comparing the timestamps, a nicer solution is to use a monotonic
+clocksource with ktime_get_seconds() that simply doesn't overflow (at
+least not until 136 years after boot) and that doesn't change during
+settimeofday().
+
+To make 32-bit and 64-bit architectures behave the same way here, and
+also save a few bytes in the tcp_options_received structure, I'm changing
+the type to a 32-bit integer, which is now safe on all architectures.
+
+Finally, the ts_recent_stamp field also (confusingly) gets used to store
+a jiffies value in tcp_synq_overflow()/tcp_synq_no_recent_overflow().
+This is currently safe, but changing the type to 32-bit requires
+some small changes there to keep it working.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/net/xfrm.h       | 2 +-
- net/ipv6/xfrm6_mode_ro.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/chelsio/chtls/chtls_cm.c |  2 +-
+ include/linux/tcp.h                     |  4 ++--
+ include/net/tcp.h                       | 15 ++++++++-------
+ net/ipv4/tcp_input.c                    |  2 +-
+ net/ipv4/tcp_ipv4.c                     |  2 +-
+ net/ipv4/tcp_minisocks.c                |  8 ++++----
+ 6 files changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index 557122846e0e..d9031415402f 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -225,7 +225,7 @@ struct xfrm_state {
- 	long		saved_tmo;
+diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
+index 2bb6f0380758..0997e166ea57 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_cm.c
++++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
+@@ -1673,7 +1673,7 @@ static void chtls_timewait(struct sock *sk)
+ 	struct tcp_sock *tp = tcp_sk(sk);
  
- 	/* Last used time */
--	unsigned long		lastused;
-+	time64_t		lastused;
- 
- 	struct page_frag xfrag;
- 
-diff --git a/net/ipv6/xfrm6_mode_ro.c b/net/ipv6/xfrm6_mode_ro.c
-index 07d36573f50b..da28e4407b8f 100644
---- a/net/ipv6/xfrm6_mode_ro.c
-+++ b/net/ipv6/xfrm6_mode_ro.c
-@@ -55,7 +55,7 @@ static int xfrm6_ro_output(struct xfrm_state *x, struct sk_buff *skb)
- 	__skb_pull(skb, hdr_len);
- 	memmove(ipv6_hdr(skb), iph, hdr_len);
- 
--	x->lastused = get_seconds();
-+	x->lastused = ktime_get_real_seconds();
- 
- 	return 0;
+ 	tp->rcv_nxt++;
+-	tp->rx_opt.ts_recent_stamp = get_seconds();
++	tp->rx_opt.ts_recent_stamp = ktime_get_seconds();
+ 	tp->srtt_us = 0;
+ 	tcp_time_wait(sk, TCP_TIME_WAIT, 0);
  }
+diff --git a/include/linux/tcp.h b/include/linux/tcp.h
+index 72705eaf4b84..f911b9b09b16 100644
+--- a/include/linux/tcp.h
++++ b/include/linux/tcp.h
+@@ -89,7 +89,7 @@ struct tcp_sack_block {
+ 
+ struct tcp_options_received {
+ /*	PAWS/RTTM data	*/
+-	long	ts_recent_stamp;/* Time we stored ts_recent (for aging) */
++	int	ts_recent_stamp;/* Time we stored ts_recent (for aging) */
+ 	u32	ts_recent;	/* Time stamp to echo next		*/
+ 	u32	rcv_tsval;	/* Time stamp value             	*/
+ 	u32	rcv_tsecr;	/* Time stamp echo reply        	*/
+@@ -425,7 +425,7 @@ struct tcp_timewait_sock {
+ 	/* The time we sent the last out-of-window ACK: */
+ 	u32			  tw_last_oow_ack_time;
+ 
+-	long			  tw_ts_recent_stamp;
++	int			  tw_ts_recent_stamp;
+ #ifdef CONFIG_TCP_MD5SIG
+ 	struct tcp_md5sig_key	  *tw_md5_key;
+ #endif
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index 0448e7c5d2b4..f8c32dc36ea1 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -471,19 +471,20 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb);
+  */
+ static inline void tcp_synq_overflow(const struct sock *sk)
+ {
+-	unsigned long last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
+-	unsigned long now = jiffies;
++	unsigned int last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
++	unsigned int now = jiffies;
+ 
+-	if (time_after(now, last_overflow + HZ))
++	if (time_after32(now, last_overflow + HZ))
+ 		tcp_sk(sk)->rx_opt.ts_recent_stamp = now;
+ }
+ 
+ /* syncookies: no recent synqueue overflow on this listening socket? */
+ static inline bool tcp_synq_no_recent_overflow(const struct sock *sk)
+ {
+-	unsigned long last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
++	unsigned int last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
++	unsigned int now = jiffies;
+ 
+-	return time_after(jiffies, last_overflow + TCP_SYNCOOKIE_VALID);
++	return time_after32(now, last_overflow + TCP_SYNCOOKIE_VALID);
+ }
+ 
+ static inline u32 tcp_cookie_time(void)
+@@ -1361,7 +1362,7 @@ static inline bool tcp_paws_check(const struct tcp_options_received *rx_opt,
+ {
+ 	if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <= paws_win)
+ 		return true;
+-	if (unlikely(get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_24DAYS))
++	if (unlikely(ktime_get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_24DAYS))
+ 		return true;
+ 	/*
+ 	 * Some OSes send SYN and SYNACK messages with tsval=0 tsecr=0,
+@@ -1391,7 +1392,7 @@ static inline bool tcp_paws_reject(const struct tcp_options_received *rx_opt,
+ 
+ 	   However, we can relax time bounds for RST segments to MSL.
+ 	 */
+-	if (rst && get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_MSL)
++	if (rst && ktime_get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_MSL)
+ 		return false;
+ 	return true;
+ }
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 355d3dffd021..0eb314774aec 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -3449,7 +3449,7 @@ static void tcp_send_challenge_ack(struct sock *sk, const struct sk_buff *skb)
+ static void tcp_store_ts_recent(struct tcp_sock *tp)
+ {
+ 	tp->rx_opt.ts_recent = tp->rx_opt.rcv_tsval;
+-	tp->rx_opt.ts_recent_stamp = get_seconds();
++	tp->rx_opt.ts_recent_stamp = ktime_get_seconds();
+ }
+ 
+ static void tcp_replace_ts_recent(struct tcp_sock *tp, u32 seq)
+diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
+index bea17f1e8302..41d03153c5bf 100644
+--- a/net/ipv4/tcp_ipv4.c
++++ b/net/ipv4/tcp_ipv4.c
+@@ -155,7 +155,7 @@ int tcp_twsk_unique(struct sock *sk, struct sock *sktw, void *twp)
+ 	   and use initial timestamp retrieved from peer table.
+ 	 */
+ 	if (tcptw->tw_ts_recent_stamp &&
+-	    (!twp || (reuse && get_seconds() - tcptw->tw_ts_recent_stamp > 1))) {
++	    (!twp || (reuse && ktime_get_seconds() - tcptw->tw_ts_recent_stamp > 1))) {
+ 		tp->write_seq = tcptw->tw_snd_nxt + 65535 + 2;
+ 		if (tp->write_seq == 0)
+ 			tp->write_seq = 1;
+diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
+index 1dda1341a223..1f652beb79ca 100644
+--- a/net/ipv4/tcp_minisocks.c
++++ b/net/ipv4/tcp_minisocks.c
+@@ -144,7 +144,7 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
+ 		tw->tw_substate	  = TCP_TIME_WAIT;
+ 		tcptw->tw_rcv_nxt = TCP_SKB_CB(skb)->end_seq;
+ 		if (tmp_opt.saw_tstamp) {
+-			tcptw->tw_ts_recent_stamp = get_seconds();
++			tcptw->tw_ts_recent_stamp = ktime_get_seconds();
+ 			tcptw->tw_ts_recent	  = tmp_opt.rcv_tsval;
+ 		}
+ 
+@@ -189,7 +189,7 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
+ 
+ 		if (tmp_opt.saw_tstamp) {
+ 			tcptw->tw_ts_recent	  = tmp_opt.rcv_tsval;
+-			tcptw->tw_ts_recent_stamp = get_seconds();
++			tcptw->tw_ts_recent_stamp = ktime_get_seconds();
+ 		}
+ 
+ 		inet_twsk_put(tw);
+@@ -534,7 +534,7 @@ struct sock *tcp_create_openreq_child(const struct sock *sk,
+ 
+ 		if (newtp->rx_opt.tstamp_ok) {
+ 			newtp->rx_opt.ts_recent = req->ts_recent;
+-			newtp->rx_opt.ts_recent_stamp = get_seconds();
++			newtp->rx_opt.ts_recent_stamp = ktime_get_seconds();
+ 			newtp->tcp_header_len = sizeof(struct tcphdr) + TCPOLEN_TSTAMP_ALIGNED;
+ 		} else {
+ 			newtp->rx_opt.ts_recent_stamp = 0;
+@@ -600,7 +600,7 @@ struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
+ 			 * it can be estimated (approximately)
+ 			 * from another data.
+ 			 */
+-			tmp_opt.ts_recent_stamp = get_seconds() - ((TCP_TIMEOUT_INIT/HZ)<<req->num_timeout);
++			tmp_opt.ts_recent_stamp = ktime_get_seconds() - ((TCP_TIMEOUT_INIT/HZ)<<req->num_timeout);
+ 			paws_reject = tcp_paws_reject(&tmp_opt, th->rst);
+ 		}
+ 	}
 -- 
 2.9.0
 
