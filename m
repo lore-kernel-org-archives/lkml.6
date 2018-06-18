@@ -6,102 +6,103 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D69CC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB188C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E8B20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E8B20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7013A20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7013A20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933417AbeFRIHS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:07:18 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:60037 "EHLO extserv.mm-sol.com"
+        id S933487AbeFRIHx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:07:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55646 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932763AbeFRIHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:07:16 -0400
-Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 1BD4DCD2F;
-        Mon, 18 Jun 2018 11:07:15 +0300 (EEST)
-From:   Todor Tomov <todor.tomov@linaro.org>
-To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 1/2] media: ov5645: Supported external clock is 24MHz
-Date:   Mon, 18 Jun 2018 11:06:58 +0300
-Message-Id: <1529309219-27404-1-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S932650AbeFRIHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 04:07:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DEF97ACCB;
+        Mon, 18 Jun 2018 08:07:50 +0000 (UTC)
+Subject: Re: [PATCH v2] x86/pti: don't report XenPV as vulnerable
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
+        Mike Latimer <mlatimer@suse.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <nycvar.YFH.7.76.1806150025220.6203@cbobk.fhfr.pm>
+ <a5bfcabb-827b-fbf7-9395-de9332697c25@suse.com>
+ <nycvar.YFH.7.76.1806150801530.6203@cbobk.fhfr.pm>
+ <ff9f4a24-6e69-cc7b-ba75-e82c9182a805@suse.com>
+ <nycvar.YFH.7.76.1806150815440.6203@cbobk.fhfr.pm>
+ <821642fe-775b-e68c-2a66-73b73c810289@suse.com>
+ <nycvar.YFH.7.76.1806150837100.6203@cbobk.fhfr.pm>
+ <37a18a24-7825-9e75-39a7-a66086a5e3a6@suse.com>
+ <nycvar.YFH.7.76.1806152304400.6203@cbobk.fhfr.pm>
+ <c8d238e9-2109-3fd2-01b8-37a7c5815fce@suse.com>
+ <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <457f3e13-12e6-ed2f-5165-e413801a2172@suse.com>
+Date:   Mon, 18 Jun 2018 10:07:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The external clock frequency was set to 23.88MHz by mistake
-because of a platform which cannot get closer to 24MHz.
-The supported by the driver external clock is 24MHz so
-set it correctly and also fix the values of the pixel
-clock and link clock.
-However allow 1% tolerance to the external clock as this
-difference is small enough to be insignificant.
+On 18/06/18 09:59, Jiri Kosina wrote:
+> From: Jiri Kosina <jkosina@suse.cz>
+> 
+> Xen PV domain kernel is not by design affected by meltdown as it's 
+> enforcing split CR3 itself. Let's not report such systems as "Vulnerable" 
+> in sysfs (we're also already forcing PTI to off in X86_HYPER_XEN_PV 
+> cases); the security of the system ultimately depends on presence of 
+> mitigation in Hypervisor, which can't be easily detected from DomU; let's 
+> report that.
+> 
+> Reported-and-tested-by: Mike Latimer <mlatimer@suse.com>
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
----
- drivers/media/i2c/ov5645.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Acked-by: Juergen Gross <jgross@suse.com>
 
-diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-index b3f7625..1722cda 100644
---- a/drivers/media/i2c/ov5645.c
-+++ b/drivers/media/i2c/ov5645.c
-@@ -510,8 +510,8 @@ static const struct reg_value ov5645_setting_full[] = {
- };
- 
- static const s64 link_freq[] = {
--	222880000,
--	334320000
-+	224000000,
-+	336000000
- };
- 
- static const struct ov5645_mode_info ov5645_mode_info_data[] = {
-@@ -520,7 +520,7 @@ static const struct ov5645_mode_info ov5645_mode_info_data[] = {
- 		.height = 960,
- 		.data = ov5645_setting_sxga,
- 		.data_size = ARRAY_SIZE(ov5645_setting_sxga),
--		.pixel_clock = 111440000,
-+		.pixel_clock = 112000000,
- 		.link_freq = 0 /* an index in link_freq[] */
- 	},
- 	{
-@@ -528,7 +528,7 @@ static const struct ov5645_mode_info ov5645_mode_info_data[] = {
- 		.height = 1080,
- 		.data = ov5645_setting_1080p,
- 		.data_size = ARRAY_SIZE(ov5645_setting_1080p),
--		.pixel_clock = 167160000,
-+		.pixel_clock = 168000000,
- 		.link_freq = 1 /* an index in link_freq[] */
- 	},
- 	{
-@@ -536,7 +536,7 @@ static const struct ov5645_mode_info ov5645_mode_info_data[] = {
- 		.height = 1944,
- 		.data = ov5645_setting_full,
- 		.data_size = ARRAY_SIZE(ov5645_setting_full),
--		.pixel_clock = 167160000,
-+		.pixel_clock = 168000000,
- 		.link_freq = 1 /* an index in link_freq[] */
- 	},
- };
-@@ -1145,7 +1145,8 @@ static int ov5645_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
--	if (xclk_freq != 23880000) {
-+	/* external clock must be 24MHz, allow 1% tolerance */
-+	if (xclk_freq < 23760000 || xclk_freq > 24240000) {
- 		dev_err(dev, "external clock frequency %u is not supported\n",
- 			xclk_freq);
- 		return -EINVAL;
--- 
-2.7.4
 
+Juergen
