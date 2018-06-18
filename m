@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B336DC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 526ACC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1BA20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:15:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1BA20874
+	by mail.kernel.org (Postfix) with ESMTP id 0BD9520874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:15:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BD9520874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933730AbeFRIP1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:15:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52772 "EHLO
+        id S933788AbeFRIPb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:15:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52784 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933604AbeFRIPY (ORCPT
+        with ESMTP id S933604AbeFRIP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:15:24 -0400
+        Mon, 18 Jun 2018 04:15:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00C81C77;
-        Mon, 18 Jun 2018 08:15:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A11FDC74;
+        Mon, 18 Jun 2018 08:15:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Redfearn <matt.redfearn@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-mips@linux-mips.org,
-        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Andrew Duggan <aduggan@synaptics.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 016/279] MIPS: dts: Boston: Fix PCI bus dtc warnings:
-Date:   Mon, 18 Jun 2018 10:10:01 +0200
-Message-Id: <20180618080609.481222337@linuxfoundation.org>
+Subject: [PATCH 4.16 002/279] Input: synaptics-rmi4 - fix an unchecked out of memory error path
+Date:   Mon, 18 Jun 2018 10:09:47 +0200
+Message-Id: <20180618080608.948785864@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -54,60 +52,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matt Redfearn <matt.redfearn@mips.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 2c2bf522ed8cbfaac666f7dc65cfd38de2b89f0f ]
+[ Upstream commit 839c42273617787318da7baf6151d553108f5e17 ]
 
-dtc recently (v1.4.4-8-g756ffc4f52f6) added PCI bus checks. Fix the
-warnings now emitted:
+When extending the rmi_spi buffers, we must check that no out of memory
+error occurs, otherwise we may access data above the currently allocated
+memory.
 
-arch/mips/boot/dts/img/boston.dtb: Warning (pci_bridge): /pci@10000000: missing bus-range for PCI bridge
-arch/mips/boot/dts/img/boston.dtb: Warning (pci_bridge): /pci@12000000: missing bus-range for PCI bridge
-arch/mips/boot/dts/img/boston.dtb: Warning (pci_bridge): /pci@14000000: missing bus-range for PCI bridge
+Propagate the error code returned by 'rmi_spi_manage_pools()' instead.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-mips@linux-mips.org
-Cc: devicetree@vger.kernel.org
-Patchwork: https://patchwork.linux-mips.org/patch/19070/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Andrew Duggan <aduggan@synaptics.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/boot/dts/img/boston.dts |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/input/rmi4/rmi_spi.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/mips/boot/dts/img/boston.dts
-+++ b/arch/mips/boot/dts/img/boston.dts
-@@ -51,6 +51,8 @@
- 		ranges = <0x02000000 0 0x40000000
- 			  0x40000000 0 0x40000000>;
+--- a/drivers/input/rmi4/rmi_spi.c
++++ b/drivers/input/rmi4/rmi_spi.c
+@@ -147,8 +147,11 @@ static int rmi_spi_xfer(struct rmi_spi_x
+ 	if (len > RMI_SPI_XFER_SIZE_LIMIT)
+ 		return -EINVAL;
  
-+		bus-range = <0x00 0xff>;
-+
- 		interrupt-map-mask = <0 0 0 7>;
- 		interrupt-map = <0 0 0 1 &pci0_intc 1>,
- 				<0 0 0 2 &pci0_intc 2>,
-@@ -79,6 +81,8 @@
- 		ranges = <0x02000000 0 0x20000000
- 			  0x20000000 0 0x20000000>;
+-	if (rmi_spi->xfer_buf_size < len)
+-		rmi_spi_manage_pools(rmi_spi, len);
++	if (rmi_spi->xfer_buf_size < len) {
++		ret = rmi_spi_manage_pools(rmi_spi, len);
++		if (ret < 0)
++			return ret;
++	}
  
-+		bus-range = <0x00 0xff>;
-+
- 		interrupt-map-mask = <0 0 0 7>;
- 		interrupt-map = <0 0 0 1 &pci1_intc 1>,
- 				<0 0 0 2 &pci1_intc 2>,
-@@ -107,6 +111,8 @@
- 		ranges = <0x02000000 0 0x16000000
- 			  0x16000000 0 0x100000>;
- 
-+		bus-range = <0x00 0xff>;
-+
- 		interrupt-map-mask = <0 0 0 7>;
- 		interrupt-map = <0 0 0 1 &pci2_intc 1>,
- 				<0 0 0 2 &pci2_intc 2>,
+ 	if (addr == 0)
+ 		/*
 
 
