@@ -3,36 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13D4C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F58C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB4C420864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB4C420864
+	by mail.kernel.org (Postfix) with ESMTP id 798FC208E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 798FC208E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967513AbeFRIdf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:33:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35532 "EHLO
+        id S967528AbeFRIdk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:33:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967497AbeFRIdc (ORCPT
+        with ESMTP id S967507AbeFRIdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:32 -0400
+        Mon, 18 Jun 2018 04:33:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C9ABC49;
-        Mon, 18 Jun 2018 08:33:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 791AEC3C;
+        Mon, 18 Jun 2018 08:33:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/189] i2c: sprd: Fix the i2c count issue
-Date:   Mon, 18 Jun 2018 10:12:53 +0200
-Message-Id: <20180618081212.365784477@linuxfoundation.org>
+Subject: [PATCH 4.14 095/189] dt-bindings: panel: lvds: Fix path to display timing bindings
+Date:   Mon, 18 Jun 2018 10:13:11 +0200
+Message-Id: <20180618081213.040620418@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -49,54 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Baolin Wang <baolin.wang@linaro.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 2a010461207cc96bee5ab81748325dec1972976f ]
+[ Upstream commit f130307054a59ca21d2396f386be77ebd2e8ca96 ]
 
-We found the I2C controller count register is unreliable sometimes,
-that will cause I2C to lose data. Thus we can read the data count
-from 'i2c_dev->count' instead of the I2C controller count register.
-
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: 14da3ed8dd08c581 ("devicetree/bindings: display: Document common
+panel properties")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-sprd.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/display/panel/panel-common.txt |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-sprd.c
-+++ b/drivers/i2c/busses/i2c-sprd.c
-@@ -368,13 +368,12 @@ static irqreturn_t sprd_i2c_isr_thread(i
- 	struct sprd_i2c *i2c_dev = dev_id;
- 	struct i2c_msg *msg = i2c_dev->msg;
- 	bool ack = !(readl(i2c_dev->base + I2C_STATUS) & I2C_RX_ACK);
--	u32 i2c_count = readl(i2c_dev->base + I2C_COUNT);
- 	u32 i2c_tran;
+--- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
++++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+@@ -38,7 +38,7 @@ Display Timings
+   require specific display timings. The panel-timing subnode expresses those
+   timings as specified in the timing subnode section of the display timing
+   bindings defined in
+-  Documentation/devicetree/bindings/display/display-timing.txt.
++  Documentation/devicetree/bindings/display/panel/display-timing.txt.
  
- 	if (msg->flags & I2C_M_RD)
- 		i2c_tran = i2c_dev->count >= I2C_FIFO_FULL_THLD;
- 	else
--		i2c_tran = i2c_count;
-+		i2c_tran = i2c_dev->count;
  
- 	/*
- 	 * If we got one ACK from slave when writing data, and we did not
-@@ -412,14 +411,13 @@ static irqreturn_t sprd_i2c_isr(int irq,
- {
- 	struct sprd_i2c *i2c_dev = dev_id;
- 	struct i2c_msg *msg = i2c_dev->msg;
--	u32 i2c_count = readl(i2c_dev->base + I2C_COUNT);
- 	bool ack = !(readl(i2c_dev->base + I2C_STATUS) & I2C_RX_ACK);
- 	u32 i2c_tran;
- 
- 	if (msg->flags & I2C_M_RD)
- 		i2c_tran = i2c_dev->count >= I2C_FIFO_FULL_THLD;
- 	else
--		i2c_tran = i2c_count;
-+		i2c_tran = i2c_dev->count;
- 
- 	/*
- 	 * If we did not get one ACK from slave when writing data, then we
+ Connectivity
 
 
