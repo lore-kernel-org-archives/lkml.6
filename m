@@ -3,157 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC097C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF419C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72BF5208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72BF5208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A1C25208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1C25208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935435AbeFRKHZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:07:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54078 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934770AbeFRIRT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:17:19 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5153AC7A;
-        Mon, 18 Jun 2018 08:17:18 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 054/279] netfilter: nf_tables: NAT chain and extensions require NF_TABLES
-Date:   Mon, 18 Jun 2018 10:10:39 +0200
-Message-Id: <20180618080611.076710405@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
-References: <20180618080608.851973560@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S935558AbeFRKHc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:07:32 -0400
+Received: from mga14.intel.com ([192.55.52.115]:35644 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935167AbeFRKHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:07:24 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 03:07:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
+   d="scan'208";a="50186109"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 18 Jun 2018 03:07:20 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id D6FF2F8; Mon, 18 Jun 2018 13:07:21 +0300 (EEST)
+Date:   Mon, 18 Jun 2018 13:07:21 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv3 09/17] x86/mm: Implement page_keyid() using page_ext
+Message-ID: <20180618100721.qvm4maovfhxbfoo7@black.fi.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-10-kirill.shutemov@linux.intel.com>
+ <169af1d8-7fb6-5e1a-4f34-0150570018cc@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <169af1d8-7fb6-5e1a-4f34-0150570018cc@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Jun 13, 2018 at 06:20:10PM +0000, Dave Hansen wrote:
+> > +int page_keyid(const struct page *page)
+> > +{
+> > +	if (mktme_status != MKTME_ENABLED)
+> > +		return 0;
+> > +
+> > +	return lookup_page_ext(page)->keyid;
+> > +}
+> > +EXPORT_SYMBOL(page_keyid);
+> 
+> Please start using a proper X86_FEATURE_* flag for this.  It will give
+> you all the fancy static patching that you are missing by doing it this way.
 
-------------------
+There's no MKTME CPU feature.
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+Well, I guess we can invent syntactic one or just use static key directly.
 
-[ Upstream commit 39f2ff0816e5421476c2bc538b68b4bb0708a78e ]
+Let's see how it behaves performance-wise before optimizing this.
 
-Move these options inside the scope of the 'if' NF_TABLES and
-NF_TABLES_IPV6 dependencies. This patch fixes:
-
-   net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_nat_do_chain':
->> net/ipv6/netfilter/nft_chain_nat_ipv6.c:37: undefined reference to `nft_do_chain'
-   net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_chain_nat_ipv6_exit':
->> net/ipv6/netfilter/nft_chain_nat_ipv6.c:94: undefined reference to `nft_unregister_chain_type'
-   net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_chain_nat_ipv6_init':
->> net/ipv6/netfilter/nft_chain_nat_ipv6.c:87: undefined reference to `nft_register_chain_type'
-
-that happens with:
-
-CONFIG_NF_TABLES=m
-CONFIG_NFT_CHAIN_NAT_IPV6=y
-
-Fixes: 02c7b25e5f54 ("netfilter: nf_tables: build-in filter chain type")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/netfilter/Kconfig |   55 ++++++++++++++++++++++-----------------------
- 1 file changed, 28 insertions(+), 27 deletions(-)
-
---- a/net/ipv6/netfilter/Kconfig
-+++ b/net/ipv6/netfilter/Kconfig
-@@ -48,6 +48,34 @@ config NFT_CHAIN_ROUTE_IPV6
- 	  fields such as the source, destination, flowlabel, hop-limit and
- 	  the packet mark.
- 
-+if NF_NAT_IPV6
-+
-+config NFT_CHAIN_NAT_IPV6
-+	tristate "IPv6 nf_tables nat chain support"
-+	help
-+	  This option enables the "nat" chain for IPv6 in nf_tables. This
-+	  chain type is used to perform Network Address Translation (NAT)
-+	  packet transformations such as the source, destination address and
-+	  source and destination ports.
-+
-+config NFT_MASQ_IPV6
-+	tristate "IPv6 masquerade support for nf_tables"
-+	depends on NFT_MASQ
-+	select NF_NAT_MASQUERADE_IPV6
-+	help
-+	  This is the expression that provides IPv4 masquerading support for
-+	  nf_tables.
-+
-+config NFT_REDIR_IPV6
-+	tristate "IPv6 redirect support for nf_tables"
-+	depends on NFT_REDIR
-+	select NF_NAT_REDIRECT
-+	help
-+	  This is the expression that provides IPv4 redirect support for
-+	  nf_tables.
-+
-+endif # NF_NAT_IPV6
-+
- config NFT_REJECT_IPV6
- 	select NF_REJECT_IPV6
- 	default NFT_REJECT
-@@ -107,39 +135,12 @@ config NF_NAT_IPV6
- 
- if NF_NAT_IPV6
- 
--config NFT_CHAIN_NAT_IPV6
--	depends on NF_TABLES_IPV6
--	tristate "IPv6 nf_tables nat chain support"
--	help
--	  This option enables the "nat" chain for IPv6 in nf_tables. This
--	  chain type is used to perform Network Address Translation (NAT)
--	  packet transformations such as the source, destination address and
--	  source and destination ports.
--
- config NF_NAT_MASQUERADE_IPV6
- 	tristate "IPv6 masquerade support"
- 	help
- 	  This is the kernel functionality to provide NAT in the masquerade
- 	  flavour (automatic source address selection) for IPv6.
- 
--config NFT_MASQ_IPV6
--	tristate "IPv6 masquerade support for nf_tables"
--	depends on NF_TABLES_IPV6
--	depends on NFT_MASQ
--	select NF_NAT_MASQUERADE_IPV6
--	help
--	  This is the expression that provides IPv4 masquerading support for
--	  nf_tables.
--
--config NFT_REDIR_IPV6
--	tristate "IPv6 redirect support for nf_tables"
--	depends on NF_TABLES_IPV6
--	depends on NFT_REDIR
--	select NF_NAT_REDIRECT
--	help
--	  This is the expression that provides IPv4 redirect support for
--	  nf_tables.
--
- endif # NF_NAT_IPV6
- 
- config IP6_NF_IPTABLES
-
-
+-- 
+ Kirill A. Shutemov
