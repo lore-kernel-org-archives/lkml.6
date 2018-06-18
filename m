@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1BCC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF70C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C16B620864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:16:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C16B620864
+	by mail.kernel.org (Postfix) with ESMTP id 9E004208E2
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:16:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E004208E2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934122AbeFRIQK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:16:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52964 "EHLO
+        id S934313AbeFRIQP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:16:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52974 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934242AbeFRIQI (ORCPT
+        with ESMTP id S934242AbeFRIQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:16:08 -0400
+        Mon, 18 Jun 2018 04:16:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63C80C75;
-        Mon, 18 Jun 2018 08:16:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 989FCC50;
+        Mon, 18 Jun 2018 08:16:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Xiaowei Song <songxiaowei@hisilicon.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 031/279] powerpc/64s: Default l1d_size to 64K in RFI fallback flush
-Date:   Mon, 18 Jun 2018 10:10:16 +0200
-Message-Id: <20180618080610.113679785@linuxfoundation.org>
+Subject: [PATCH 4.16 032/279] PCI: kirin: Fix reset gpio name
+Date:   Mon, 18 Jun 2018 10:10:17 +0200
+Message-Id: <20180618080610.150815184@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,50 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-[ Upstream commit 9dfbf78e4114fcaf4ef61c49885c3ab5bad40d0b ]
+[ Upstream commit 5db8f8d1099bd93a64a80b609dbcce887327ffc8 ]
 
-If there is no d-cache-size property in the device tree, l1d_size could
-be zero. We don't actually expect that to happen, it's only been seen
-on mambo (simulator) in some configurations.
+As documented in the devicetree bindings (pci/kirin-pcie.txt) and the
+reset gpio name must be 'reset-gpios'. However, current driver
+erroneously looks for a 'reset-gpio' resource which makes the driver
+probe fail. Fix it.
 
-A zero-size l1d_size leads to the loop in the asm wrapping around to
-2^64-1, and then walking off the end of the fallback area and
-eventually causing a page fault which is fatal.
-
-Just default to 64K which is correct on some CPUs, and sane enough to
-not cause a crash on others.
-
-Fixes: aa8a5e0062ac9 ('powerpc/64s: Add support for RFI flush of L1-D cache')
-Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-[mpe: Rewrite comment and change log]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: fc5165db245a ("PCI: kirin: Add HiSilicon Kirin SoC PCIe controller driver")
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+[lorenzo.pieralisi@arm.com: updated the commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Xiaowei Song <songxiaowei@hisilicon.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/setup_64.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/pci/dwc/pcie-kirin.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -864,6 +864,17 @@ static void init_fallback_flush(void)
- 	int cpu;
+--- a/drivers/pci/dwc/pcie-kirin.c
++++ b/drivers/pci/dwc/pcie-kirin.c
+@@ -487,7 +487,7 @@ static int kirin_pcie_probe(struct platf
+ 		return ret;
  
- 	l1d_size = ppc64_caches.l1d.size;
-+
-+	/*
-+	 * If there is no d-cache-size property in the device tree, l1d_size
-+	 * could be zero. That leads to the loop in the asm wrapping around to
-+	 * 2^64-1, and then walking off the end of the fallback area and
-+	 * eventually causing a page fault which is fatal. Just default to
-+	 * something vaguely sane.
-+	 */
-+	if (!l1d_size)
-+		l1d_size = (64 * 1024);
-+
- 	limit = min(ppc64_bolted_size(), ppc64_rma_size);
+ 	kirin_pcie->gpio_id_reset = of_get_named_gpio(dev->of_node,
+-						      "reset-gpio", 0);
++						      "reset-gpios", 0);
+ 	if (kirin_pcie->gpio_id_reset < 0)
+ 		return -ENODEV;
  
- 	/*
 
 
