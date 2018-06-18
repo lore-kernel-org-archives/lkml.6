@@ -2,126 +2,124 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBBBC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC38C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1D5A2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:40:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BIUDydEZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D5A2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id CF6982086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:41:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6982086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935088AbeFROkd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:40:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56286 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934367AbeFROka (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:40:30 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5IEctu9182275;
-        Mon, 18 Jun 2018 14:40:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2017-10-26; bh=5RIZ49z4R05Qv+exmZouM/1GAm6RFvWJsnPmGMoguB0=;
- b=BIUDydEZ9bASxSvr7BouR/NAfOVZBWbiCVmtJC5kFSTYZm68b9F8UBwVBWuf4ottco8v
- ohKrRRMS8bvhwLxz7KRqpDyhPn3A8FaNHiBzNxJg1BNnKY9+DesoVAaqGqXJvJP/Orbg
- eR3AwS9//GPZ7xB+btF4WMWISrnJ6k9JDUiRickLZ280R1HVMbwO0pevIG+Mgy36xqMq
- WQgJvqljHCbxc2cb45NEEf6RNHrDeX2brvomKS3JafUs/p+vtUNssW/LFvjbMVxq9j1G
- aQlMAMRaKiVzuAkENoThcQy4uajE7ekSSgBpB1gf4LEFB3JAV/sWsGp8MPkL9gUgXpm/ OQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2jmu6xmayt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Jun 2018 14:40:25 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5IEeOqG011547
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Jun 2018 14:40:24 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5IEeNVj027530;
-        Mon, 18 Jun 2018 14:40:23 GMT
-Received: from mwanda (/197.157.0.62)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Jun 2018 07:40:23 -0700
-Date:   Mon, 18 Jun 2018 17:40:11 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     kbuild@01.org, Taniya Das <tdas@codeaurora.org>
-Cc:     kbuild-all@01.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>, robh@kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rohit Kumar <rohitkr@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH 2/2] clk: qcom: Add lpass clock controller driver for
- SDM845
-Message-ID: <20180618144011.v5uwk4lkiuynggl3@mwanda>
+        id S935140AbeFROlK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:41:10 -0400
+Received: from mga11.intel.com ([192.55.52.93]:11442 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934367AbeFROlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 10:41:09 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 07:41:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
+   d="scan'208";a="58212199"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Jun 2018 07:41:05 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 9B3E4FA; Mon, 18 Jun 2018 17:41:06 +0300 (EEST)
+Date:   Mon, 18 Jun 2018 17:41:06 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv3 16/17] x86/mm: Handle encrypted memory in
+ page_to_virt() and __pa()
+Message-ID: <20180618144106.2gga6w55zbbnnjhb@black.fi.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-17-kirill.shutemov@linux.intel.com>
+ <f8b9da42-1f7b-529c-bfdd-e82f669f6fe8@intel.com>
+ <20180618133455.aumn4wihygvds543@black.fi.intel.com>
+ <48fe7072-e92d-959a-67f7-ded82124f79f@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528961943-12506-3-git-send-email-tdas@codeaurora.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8927 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806180174
+In-Reply-To: <48fe7072-e92d-959a-67f7-ded82124f79f@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Taniya,
+On Mon, Jun 18, 2018 at 01:59:18PM +0000, Dave Hansen wrote:
+> On 06/18/2018 06:34 AM, Kirill A. Shutemov wrote:
+> > On Wed, Jun 13, 2018 at 06:43:08PM +0000, Dave Hansen wrote:
+> >>> diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
+> >>> index efc0d4bb3b35..d6edcabacfc7 100644
+> >>> --- a/arch/x86/include/asm/mktme.h
+> >>> +++ b/arch/x86/include/asm/mktme.h
+> >>> @@ -43,6 +43,9 @@ void mktme_disable(void);
+> >>>  void setup_direct_mapping_size(void);
+> >>>  int sync_direct_mapping(void);
+> >>>  
+> >>> +#define page_to_virt(x) \
+> >>> +	(__va(PFN_PHYS(page_to_pfn(x))) + page_keyid(x) * direct_mapping_size)
+> >>
+> >> This looks like a super important memory management function being
+> >> defined in some obscure Intel-specific feature header.  How does that work?
+> > 
+> > No magic. It overwrites define in <linux/mm.h>.
+> 
+> It frankly looks like magic to me.  How can this possibly work without
+> ensuring that asm/mktme.h is #included everywhere on every file compiled
+> for the entire architecture?
 
-Thank you for the patch! Perhaps something to improve:
+asm/mktme.h is included from asm/page.h. It is functionally identical
+other architectures.
 
-url:    https://github.com/0day-ci/linux/commits/Taniya-Das/Add-support-for-LPASS-clock-controller-for-SDM845/20180614-155144
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> If we look at every definition of page_to_virt() on every architecture
+> in the kernel, we see it uniquely defined in headers that look rather
+> generic.  I don't see any precedent for feature-specific definitions.
 
-smatch warnings:
-drivers/clk/qcom/lpasscc-sdm845.c:197 lpass_clocks_sdm845_probe() warn: passing zero to 'PTR_ERR'
+I do.
 
-# https://github.com/0day-ci/linux/commit/035d2520712de752be68d10a37650b65b6aee154
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 035d2520712de752be68d10a37650b65b6aee154
-vim +/PTR_ERR +197 drivers/clk/qcom/lpasscc-sdm845.c
+m68k and microblaze have different definitions of the macro depending
+on CONFIG_MMU.
 
-035d2520 Taniya Das 2018-06-14  179  
-035d2520 Taniya Das 2018-06-14  180  static int lpass_clocks_sdm845_probe(struct platform_device *pdev,
-035d2520 Taniya Das 2018-06-14  181  				     struct device_node *np,
-035d2520 Taniya Das 2018-06-14  182  				     const struct qcom_cc_desc *desc)
-035d2520 Taniya Das 2018-06-14  183  {
-035d2520 Taniya Das 2018-06-14  184  	struct regmap *regmap;
-035d2520 Taniya Das 2018-06-14  185  	struct resource res;
-035d2520 Taniya Das 2018-06-14  186  	void __iomem *base;
-035d2520 Taniya Das 2018-06-14  187  
-035d2520 Taniya Das 2018-06-14  188  	if (of_address_to_resource(np, 0, &res))
-035d2520 Taniya Das 2018-06-14  189  		return -ENOMEM;
-035d2520 Taniya Das 2018-06-14  190  
-035d2520 Taniya Das 2018-06-14  191  	base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
-035d2520 Taniya Das 2018-06-14  192  	if (IS_ERR(base))
-035d2520 Taniya Das 2018-06-14  193  		return -ENOMEM;
-035d2520 Taniya Das 2018-06-14  194  
-035d2520 Taniya Das 2018-06-14  195  	regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
-035d2520 Taniya Das 2018-06-14  196  	if (!regmap)
-035d2520 Taniya Das 2018-06-14 @197  		return PTR_ERR(regmap);
-                                                       ^^^^^^^^^^^^^^^
-035d2520 Taniya Das 2018-06-14  198  
-035d2520 Taniya Das 2018-06-14  199  	return qcom_cc_really_probe(pdev, desc, regmap);
-035d2520 Taniya Das 2018-06-14  200  }
-035d2520 Taniya Das 2018-06-14  201  
+On arm64 it depends on CONFIG_SPARSEMEM_VMEMMAP.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> > arch/arm64/include/asm/memory.h:#define page_to_virt(page)	((void *)((__page_to_voff(page)) | PAGE_OFFSET))
+> > arch/hexagon/include/asm/page.h:#define page_to_virt(page)	__va(page_to_phys(page))
+> > arch/m68k/include/asm/page_mm.h:#define page_to_virt(page) ({						\
+> > arch/m68k/include/asm/page_no.h:#define page_to_virt(page)	__va(((((page) - mem_map) << PAGE_SHIFT) + PAGE_OFFSET))
+> > arch/microblaze/include/asm/page.h:#  define page_to_virt(page)   __va(page_to_pfn(page) << PAGE_SHIFT)
+> > arch/microblaze/include/asm/page.h:#  define page_to_virt(page)	(pfn_to_virt(page_to_pfn(page)))
+> > arch/nios2/include/asm/page.h:#define page_to_virt(page)	\
+> > arch/riscv/include/asm/page.h:#define page_to_virt(page)	(pfn_to_virt(page_to_pfn(page)))
+> > arch/s390/include/asm/page.h:#define page_to_virt(page)	pfn_to_virt(page_to_pfn(page))
+> > arch/xtensa/include/asm/page.h:#define page_to_virt(page)	__va(page_to_pfn(page) << PAGE_SHIFT)
+> 
+> *If* you do this, I think it 100% *HAS* to be done in a central header,
+> like x86's page.h.  We need a single x86 macro for this, not something
+> which can and will change based on #include ordering and Kconfig.
+
+I don't agree.
+
+asm/mktme.h included from the single header -- asm/page.h -- and has clear
+path to linux/mm.h where the default page_to_virt() is defined.
+
+I don't see a reason to move it out of feature-specific header. The
+default page_to_virt() is perfectly fine without MKTME. And it will be
+obvious on grep.
+
+-- 
+ Kirill A. Shutemov
