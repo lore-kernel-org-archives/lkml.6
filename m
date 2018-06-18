@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1B8C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B811C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE2B20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE2B20864
+	by mail.kernel.org (Postfix) with ESMTP id 52A5220864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52A5220864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936103AbeFRIYW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:24:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56000 "EHLO
+        id S936162AbeFRIYb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:24:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56014 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936039AbeFRIYT (ORCPT
+        with ESMTP id S936091AbeFRIYW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:24:19 -0400
+        Mon, 18 Jun 2018 04:24:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 720F8C5C;
-        Mon, 18 Jun 2018 08:24:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3909CBAD;
+        Mon, 18 Jun 2018 08:24:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Sean Paul <seanpaul@chromium.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 194/279] drm/omap: fix possible NULL ref issue in tiler_reserve_2d
-Date:   Mon, 18 Jun 2018 10:12:59 +0200
-Message-Id: <20180618080616.944061639@linuxfoundation.org>
+Subject: [PATCH 4.16 195/279] drm/omap: check return value from soc_device_match
+Date:   Mon, 18 Jun 2018 10:13:00 +0200
+Message-Id: <20180618080616.985131718@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -54,41 +54,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit 6a0f0c55619f0b82a677cab72e77c3444a5eee58 ]
+[ Upstream commit 4d6cb5e2fee52af17001e92950f0894304706ee4 ]
 
-tiler_reserve_2d allocates memory but does not check if it got the
-memory. Add the check and return ENOMEM on failure.
+soc_device_match() can return NULL, so add a check and fail if
+soc_device_match() fails.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180329104038.29154-2-tomi.valkeinen@ti.com
-Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180502091159.7071-2-tomi.valkeinen@ti.com
+Reviewed-by: Benoit Parrot <bparrot@ti.com>
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/omapdrm/dss/hdmi4_core.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -401,12 +401,16 @@ int tiler_unpin(struct tiler_block *bloc
- struct tiler_block *tiler_reserve_2d(enum tiler_fmt fmt, uint16_t w,
- 		uint16_t h, uint16_t align)
+--- a/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
++++ b/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
+@@ -922,8 +922,13 @@ int hdmi4_core_init(struct platform_devi
  {
--	struct tiler_block *block = kzalloc(sizeof(*block), GFP_KERNEL);
-+	struct tiler_block *block;
- 	u32 min_align = 128;
- 	int ret;
- 	unsigned long flags;
- 	u32 slot_bytes;
+ 	const struct hdmi4_features *features;
+ 	struct resource *res;
++	const struct soc_device_attribute *soc;
  
-+	block = kzalloc(sizeof(*block), GFP_KERNEL);
-+	if (!block)
-+		return ERR_PTR(-ENOMEM);
+-	features = soc_device_match(hdmi4_soc_devices)->data;
++	soc = soc_device_match(hdmi4_soc_devices);
++	if (!soc)
++		return -ENODEV;
 +
- 	BUG_ON(!validfmt(fmt));
++	features = soc->data;
+ 	core->cts_swmode = features->cts_swmode;
+ 	core->audio_use_mclk = features->audio_use_mclk;
  
- 	/* convert width/height to slots */
 
 
