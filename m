@@ -2,99 +2,123 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62306C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C984EC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E09C2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:05:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E09C2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 853DF208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:06:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4H9wsda"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853DF208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933381AbeFRNFZ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:05:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36292 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932657AbeFRNFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:05:24 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 53ADD2071B; Mon, 18 Jun 2018 15:05:22 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DD10520650;
-        Mon, 18 Jun 2018 15:05:21 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 15:05:21 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [RFC PATCH 1/2] mtd: rawnand: handle ONFI revision number field
- being 0
-Message-ID: <20180618150521.067ef156@xps13>
-In-Reply-To: <20180618045255.8015-2-chris.packham@alliedtelesis.co.nz>
-References: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
-        <20180618045255.8015-2-chris.packham@alliedtelesis.co.nz>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S933501AbeFRNGB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:06:01 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41150 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752650AbeFRNGA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:06:00 -0400
+Received: by mail-lf0-f66.google.com with SMTP id d24-v6so24538927lfa.8;
+        Mon, 18 Jun 2018 06:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=6M+7FVl7UAWt995uN4YV/iXiVEMLJuYi9KC5rV4Xvhg=;
+        b=j4H9wsdaYCqdHSP+6oWZ7o6zAEfdposVdzVWiLtf4hUB+vwh95AnoRrPLr6eK6ygds
+         OV/3viYrpu5HY7JYKhTuJPaw67TX2oPrfbb+E+L4YXEGlfP3kq42z+GRQ3K1G5LtGmbi
+         c1McID+r5PvL+UaLwBX+oTcOl+ByxTVjYCr3Ovly0EB2t2Lx9ifD1bAy2UU/UrAyDDje
+         qzz2T6jiRHaXYM+IJoWpZe+FCWSslYSIG1M3ix8QAWlyy4Yn52+PgSiRkgw9t8GTevp8
+         uzm86ksSjwTNmJh1Onb7M1mbo5W8woUNKcsJe+bIPw9PlB5JbYwmnNvxMQQzJWdKTZyN
+         DjgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=6M+7FVl7UAWt995uN4YV/iXiVEMLJuYi9KC5rV4Xvhg=;
+        b=LXbtQjm0nTHbM+B7DYszraxZXrsBBWTlZNnmer7HGF4whMnMXsEJz3a4IhHzVlBO3F
+         sZhxHl3DOj/rA1ofBKie97wccqOzHmWa8ZxQeFAeuA0vmav3RYSREM6b/OKk2Uqp27Ua
+         3jWU1+x+RGAf6zHXF7kDSWN54RJ/UeOqZLI4w8ZAJ+OYFI/KMYft2LlI5TvBG68Xejtk
+         6r1B5+30whb+Y5oAKOcnpzbU4PpTAarihoSRzcowqY9hzz/EC3pa77YJLJHy1D2NlpzG
+         heESE9yjWMJi8eC/lqH78b2j7rmTxSXCdDM3njUTQUNcqrXeREmUw8FYM6sW48sZBHhi
+         KYHQ==
+X-Gm-Message-State: APt69E2t7CdBbtM3NOo6fs5GGgCYwrSqCPutYAujzTyvdNRbdttKfV6W
+        S1Vp82MiUuYed98Rnvms+6Us9sNz3iPreNzNkjc=
+X-Google-Smtp-Source: ADUXVKKBH7gQ+x0RIza7Op3bS3fG4rHXF5OhBK61doYJog3K6k2s2IVUxioizgqr1XbI3ryDgB59urGQOm1g8QO8h6Q=
+X-Received: by 2002:a19:141f:: with SMTP id k31-v6mr2833908lfi.23.1529327158393;
+ Mon, 18 Jun 2018 06:05:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 06:05:57
+ -0700 (PDT)
+In-Reply-To: <20180616005323.7938-1-paul.burton@mips.com>
+References: <20180616005323.7938-1-paul.burton@mips.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Jun 2018 15:05:57 +0200
+X-Google-Sender-Auth: nQn1PvnOf7LVKkGPFKtvcJW8Yog
+Message-ID: <CAK8P3a2Yz-02On2K2U0+8+tR8RQCQ+KWh7CrtqL9L+FweP+TPQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Resolve -Wattribute-alias warnings from SYSCALL_DEFINEx()
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Matthew Wilcox <matthew@wil.cx>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Khem Raj <raj.khem@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Gideon Israel Dsouza <gidisrael@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chris,
+On Sat, Jun 16, 2018 at 2:53 AM, Paul Burton <paul.burton@mips.com> wrote:
+> This series introduces infrastructure allowing compiler diagnostics to
+> be disabled or their severity modified for specific pieces of code, with
+> suitable abstractions to prevent that code from becoming tied to a
+> specific compiler.
+>
+> This infrastructure is then used to disable the -Wattribute-alias
+> warning around syscall definitions, which rely on type mismatches to
+> sanitize arguments.
+>
+> Finally PowerPC-specific #pragma's are removed now that the generic code
+> is handling this.
+>
+> The series takes Arnd's RFC patches & addresses the review comments they
+> received. The most notable effect of this series to to avoid warnings &
+> build failures caused by -Wattribute-alias when compiling the kernel
+> with GCC 8.
+>
+> Applies cleanly atop master as of 9215310cf13b ("Merge
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net").
+>
 
-On Mon, 18 Jun 2018 16:52:54 +1200, Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
+Sorry I dropped the ball on this earlier, and thanks a lot for picking
+it up again! From what I can tell, your version addresses all issues
+I was aware of, so we should merge that.
 
-> Some Micron NAND chips (MT29F1G08ABAFAWP-ITE:F) report 00 00 for the
-> revision number field of the ONFI parameter page. Rather than rejecting
-> these outright assume ONFI version 1.0 if the revision number is 00 00.
-> 
-
-Thanks for getting your hands into this.
-
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> At the moment I haven't qualified this check on anything, I should
-> probably at least include vendor == MICRON.
-
-The more I think about it the more I convince myself that this is not
-needed. If the 4 first bytes are "ONFI", then the chip is ONFI...
-
-Then what you do below is simple and readable and (sadly) probably
-right.
-
-> 
-> As far as I can tell revision number == 0 is not permitted by the ONFI
-> spec but this wouldn't be the first time a vendor has ignored a spec. On
-> the other hand maybe I'm reading the spec wrong and someone here will
-> say "oh 0 means ...".
-> 
->  drivers/mtd/nand/raw/nand_base.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 0cd3e216b95c..1691c7005ae4 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5184,6 +5184,8 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  		chip->parameters.onfi.version = 20;
->  	else if (val & (1 << 1))
->  		chip->parameters.onfi.version = 10;
-> +	else if (val == 0)
-> +		chip->parameters.onfi.version = 10;
->  
->  	if (!chip->parameters.onfi.version) {
->  		pr_info("unsupported ONFI version: %d\n", val);
-
-Regards,
-Miquèl
+      Arnd
