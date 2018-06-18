@@ -6,66 +6,93 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A237BC5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15414C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F29C2075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F29C2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
+	by mail.kernel.org (Postfix) with ESMTP id B95FF2075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:38:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B95FF2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936402AbeFRUiT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 16:38:19 -0400
-Received: from botnar.kaiser.cx ([176.28.20.183]:43784 "EHLO botnar.kaiser.cx"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935073AbeFRUiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 16:38:17 -0400
-Received: from martin by botnar.kaiser.cx with local (Exim 4.72)
-        (envelope-from <martin@botnar.kaiser.cx>)
-        id 1fV0tU-0000r7-HE; Mon, 18 Jun 2018 22:36:56 +0200
-Date:   Mon, 18 Jun 2018 22:36:56 +0200
-From:   Martin Kaiser <martin@kaiser.cx>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: rawnand: mxc: set spare area size register
- explicitly
-Message-ID: <20180618203656.GA1926@botnar.kaiser.cx>
-References: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
- <1528637487-25172-1-git-send-email-martin@kaiser.cx>
- <20180618160929.421bee73@bbrezillon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618160929.421bee73@bbrezillon>
-User-Agent: Mutt/1.5.20 (2009-06-14)
+        id S935727AbeFRUiI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 16:38:08 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:57970 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934880AbeFRUiH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 16:38:07 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fV0ub-0003Ao-Mr; Mon, 18 Jun 2018 22:38:05 +0200
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v4 1/3] bitfield: fix *_encode_bits()
+Date:   Mon, 18 Jun 2018 22:37:48 +0200
+Message-Id: <20180618203750.28658-1-johannes@sipsolutions.net>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+There's a bug in *_encode_bits() in using ~field_multiplier() for
+the check whether or not the constant value fits into the field,
+this is wrong and clearly ~field_mask() was intended. This was
+triggering for me for both constant and non-constant values.
 
-Thus wrote Boris Brezillon (boris.brezillon@bootlin.com):
+Additionally, make this case actually into an compile error.
+Declaring the extern function that will never exist with just a
+warning is pointless as then later we'll just get a link error.
 
-> > Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> > Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > Cc: stable@vger.kernel.org
+While at it, also fix the indentation in those lines I'm touching.
 
-> Hm, a Cc-stable tag without its associated Fixes tag, I don't like that.
-> Can you find which commit introduced this bug?
+Finally, as suggested by Andy Shevchenko, add some tests and for
+that introduce also u8 helpers. The tests don't compile without
+the fix, showing that it's necessary.
 
-the particular corner case that I fixed has never really worked. As my
-fix updates the preset operation, I'd suggest adding a Fixes tag pointing
-at the first commit that introduced the preset operation.
+Fixes: 00b0c9b82663 ("Add primitives for manipulating bitfields both in host- and fixed-endian.")
+Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
+---
+v2: replace stray tab by space
+v3: u8 helpers, tests
+v4: minor cleanup (Andy)
+    split into two patches (Andy)
 
-I'll resend my patch with this tag added.
+If you don't mind, I'd like to take this through the networking
+tree(s) as a fix since I have some pending code that depends on
+it.
+---
+ include/linux/bitfield.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
+diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+index cf2588d81148..147a7bb341dd 100644
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -104,7 +104,7 @@
+ 		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
+ 	})
+ 
+-extern void __compiletime_warning("value doesn't fit into mask")
++extern void __compiletime_error("value doesn't fit into mask")
+ __field_overflow(void);
+ extern void __compiletime_error("bad bitfield mask")
+ __bad_mask(void);
+@@ -121,8 +121,8 @@ static __always_inline u64 field_mask(u64 field)
+ #define ____MAKE_OP(type,base,to,from)					\
+ static __always_inline __##type type##_encode_bits(base v, base field)	\
+ {									\
+-        if (__builtin_constant_p(v) &&	(v & ~field_multiplier(field)))	\
+-			    __field_overflow();				\
++	if (__builtin_constant_p(v) && (v & ~field_mask(field)))	\
++		__field_overflow();					\
+ 	return to((v & field_mask(field)) * field_multiplier(field));	\
+ }									\
+ static __always_inline __##type type##_replace_bits(__##type old,	\
+-- 
+2.14.4
 
-   Martin
