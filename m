@@ -6,34 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E2C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDACEC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 640E420864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:27:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640E420864
+	by mail.kernel.org (Postfix) with ESMTP id 94B2B20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94B2B20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966542AbeFRI1y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:27:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58390 "EHLO
+        id S966555AbeFRI17 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:27:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58406 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966524AbeFRI1w (ORCPT
+        with ESMTP id S966524AbeFRI1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:27:52 -0400
+        Mon, 18 Jun 2018 04:27:55 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60733C5C;
-        Mon, 18 Jun 2018 08:27:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 94074BAD;
+        Mon, 18 Jun 2018 08:27:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Ellermen <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 266/279] clk: imx6ull: use OSC clock during AXI rate change
-Date:   Mon, 18 Jun 2018 10:14:11 +0200
-Message-Id: <20180618080619.702417546@linuxfoundation.org>
+Subject: [PATCH 4.16 242/279] x86/pkeys/selftests: Factor out "instruction page"
+Date:   Mon, 18 Jun 2018 10:13:47 +0200
+Message-Id: <20180618080618.793993947@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,35 +57,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit 2e5be528ab0182ad4b42b9feea3b80f85f37179b ]
+[ Upstream commit 3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262 ]
 
-On i.MX6 ULL using PLL3 seems to cause a freeze when setting
-the parent to IMX6UL_CLK_PLL3_USB_OTG. This only seems to appear
-since commit 6f9575e55632 ("clk: imx: Add CLK_IS_CRITICAL flag
-for busy divider and busy mux"), probably because the clock is
-now forced to be on.
+We currently have an execute-only test, but it is for
+the explicit mprotect_pkey() interface.  We will soon
+add a test for the implicit mprotect(PROT_EXEC)
+enterface.  We need this code in both tests.
 
-Fixes: 6f9575e55632("clk: imx: Add CLK_IS_CRITICAL flag for busy divider and busy mux")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180509171347.C64AB733@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/imx/clk-imx6ul.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/x86/protection_keys.c |   21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -461,7 +461,7 @@ static void __init imx6ul_clocks_init(st
- 	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -1253,12 +1253,9 @@ void test_ptrace_of_child(int *ptr, u16
+ 	free(plain_ptr_unaligned);
+ }
  
- 	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
--	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_PLL3_USB_OTG]);
-+	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_OSC]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_CLK2]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE], clks[IMX6UL_CLK_PLL2_BUS]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_PRE]);
+-void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
++void *get_pointer_to_instructions(void)
+ {
+ 	void *p1;
+-	int scratch;
+-	int ptr_contents;
+-	int ret;
+ 
+ 	p1 = ALIGN_PTR_UP(&lots_o_noops_around_write, PAGE_SIZE);
+ 	dprintf3("&lots_o_noops: %p\n", &lots_o_noops_around_write);
+@@ -1268,7 +1265,23 @@ void test_executing_on_unreadable_memory
+ 	/* Point 'p1' at the *second* page of the function: */
+ 	p1 += PAGE_SIZE;
+ 
++	/*
++	 * Try to ensure we fault this in on next touch to ensure
++	 * we get an instruction fault as opposed to a data one
++	 */
+ 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
++
++	return p1;
++}
++
++void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
++{
++	void *p1;
++	int scratch;
++	int ptr_contents;
++	int ret;
++
++	p1 = get_pointer_to_instructions();
+ 	lots_o_noops_around_write(&scratch);
+ 	ptr_contents = read_ptr(p1);
+ 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
 
 
