@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC72C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7B0C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3EC120864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:22:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EC120864
+	by mail.kernel.org (Postfix) with ESMTP id 77FA3208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:23:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77FA3208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966534AbeFRJWb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:22:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57600 "EHLO
+        id S966493AbeFRJXK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:23:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57546 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936753AbeFRI1Y (ORCPT
+        with ESMTP id S966389AbeFRI1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:27:24 -0400
+        Mon, 18 Jun 2018 04:27:09 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CDBAC74;
-        Mon, 18 Jun 2018 08:27:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 71AF1C7A;
+        Mon, 18 Jun 2018 08:27:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 258/279] i2c: pmcmsp: return message count on master_xfer success
-Date:   Mon, 18 Jun 2018 10:14:03 +0200
-Message-Id: <20180618080619.404190374@linuxfoundation.org>
+Subject: [PATCH 4.16 253/279] afs: Fix the handling of CB.InitCallBackState3 to find the server by UUID
+Date:   Mon, 18 Jun 2018 10:13:58 +0200
+Message-Id: <20180618080619.211203367@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,31 +49,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Rosin <peda@axentia.se>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit de9a8634f1cb4560a35696d472cc7f1383d9b866 ]
+[ Upstream commit 001ab5a67ee5d191c64aebf4b4ef8c7a0dcfd2bc ]
 
-Returning zero is wrong in this case.
+Fix the handling of the CB.InitCallBackState3 service call to find the
+record of a server that we're using by looking it up by the UUID passed as
+the parameter rather than by its address (of which it might have many, and
+which may change).
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Fixes: 1b144df1d7d6 ("i2c: New PMC MSP71xx TWI bus driver")
+Fixes: c35eccb1f614 ("[AFS]: Implement the CB.InitCallBackState3 operation.")
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-pmcmsp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/afs/cmservice.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/i2c/busses/i2c-pmcmsp.c
-+++ b/drivers/i2c/busses/i2c-pmcmsp.c
-@@ -567,7 +567,7 @@ static int pmcmsptwi_master_xfer(struct
- 		return -1;
- 	}
+--- a/fs/afs/cmservice.c
++++ b/fs/afs/cmservice.c
+@@ -341,7 +341,6 @@ static int afs_deliver_cb_init_call_back
+  */
+ static int afs_deliver_cb_init_call_back_state3(struct afs_call *call)
+ {
+-	struct sockaddr_rxrpc srx;
+ 	struct afs_server *server;
+ 	struct afs_uuid *r;
+ 	unsigned loop;
+@@ -398,8 +397,9 @@ static int afs_deliver_cb_init_call_back
  
--	return 0;
-+	return num;
- }
- 
- static u32 pmcmsptwi_i2c_func(struct i2c_adapter *adapter)
+ 	/* we'll need the file server record as that tells us which set of
+ 	 * vnodes to operate upon */
+-	rxrpc_kernel_get_peer(call->net->socket, call->rxcall, &srx);
+-	server = afs_find_server(call->net, &srx);
++	rcu_read_lock();
++	server = afs_find_server_by_uuid(call->net, call->request);
++	rcu_read_unlock();
+ 	if (!server)
+ 		return -ENOTCONN;
+ 	call->cm_server = server;
 
 
