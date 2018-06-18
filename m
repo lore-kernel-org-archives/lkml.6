@@ -2,114 +2,122 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A31C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD60C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D8F20020
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:26:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="O7fIOlGr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D8F20020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id B3A252075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:29:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A252075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935527AbeFRR0J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 13:26:09 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43473 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754642AbeFRR0H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 13:26:07 -0400
-Received: by mail-pl0-f66.google.com with SMTP id c41-v6so9389099plj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 10:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FTwPQv27wuexWI11SsYTJ/Jcg511fw1brRSTvDsMTCo=;
-        b=O7fIOlGruQGihbbLzCi6atsw+N5C6WUO6gtxZr/ERnoCoziK1Wxk4XHdJgmOaBIqPQ
-         HRj1Ww6Jc5iHfVj0HBanob6vFivjtxZj5VnWvaRr1zbhmZOxnD3xaLbIMKTwN+NLcBQy
-         eMxVfS414B2PhO4F5CN5QRXepANRv4FNg4G+B/7Q08ikQmeKR9rm5+Fv+zb1Q+bCRcPf
-         8GEPWlrgbZt41d6uBsu3/2FQRCAMQq3XRfATw41XctOpD3lrccNgnp+Dutwx03fddFWF
-         lRyeXBsbR99sbdEQJeh2cVfRNVojfA/i9QxK1gaW+k0cKEdV6vCv0wLHmOd5SjJ8eUlz
-         mFiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FTwPQv27wuexWI11SsYTJ/Jcg511fw1brRSTvDsMTCo=;
-        b=IADGMAdgIUfQDJ63/UA778sGa8p3bpSMCuePJnKChzLNjQQMMWHNV8xi/q0VWdoLjO
-         fdbmaYpjBSB21zQxvzJ6m3YycXb1dq/1Hmr8ylMYcgXZ+XKuIy84IXRdP+F64dMRDYuu
-         LhSmn4Ua5mNZSHG9udqMRcVm0xcokrwb6+QbZio/OU9E6Wv0irQL/eCc9CA5ihtMt1oo
-         ZtapzUTNtQb5fuwbdilvWNiZK702sBJtcntyevJudO8yU3MBKaGP1LUpICP/yDfaaID6
-         xZ/8OloQTV9kovVNtNPkt8MijdPHANb30EgGold6nVBJqneiDD15EpAbFK9pbzOfXgrt
-         m2Uw==
-X-Gm-Message-State: APt69E3g16mCuc+hx6cODInDByFsFuTrvhnNkJo+vX5Wey7jS7Yi+ygf
-        DUKVgnA6sxz43PctkDsRQk4tOQ==
-X-Google-Smtp-Source: ADUXVKIO7bEYGxEtmaRsim86IXXQCgLtC3R5oiNGsmWzSH3LWnyoE/gdXtJGxHWbbL4JnC6463jVjw==
-X-Received: by 2002:a17:902:8d86:: with SMTP id v6-v6mr11530365plo.325.1529342766655;
-        Mon, 18 Jun 2018 10:26:06 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id 63-v6sm22076910pfo.1.2018.06.18.10.26.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 10:26:06 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fUxun-0008Ke-Bh; Mon, 18 Jun 2018 11:26:05 -0600
-Date:   Mon, 18 Jun 2018 11:26:05 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     willy@infradead.org
-Cc:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
-        linux-rdma@vger.kernel.org,
-        =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Matthew Wilcox <mawilcox@microsoft.com>
-Subject: Re: [PATCH v3 2/2] IB/mad: Use IDR for agent IDs
-Message-ID: <20180618172605.GA32003@ziepe.ca>
-References: <20180613123403.25233-1-willy@infradead.org>
- <20180613123403.25233-3-willy@infradead.org>
+        id S935459AbeFRR3I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 13:29:08 -0400
+Received: from mga05.intel.com ([192.55.52.43]:5831 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935303AbeFRR3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 13:29:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 10:29:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,240,1526367600"; 
+   d="scan'208";a="233536705"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga005.jf.intel.com with ESMTP; 18 Jun 2018 10:29:05 -0700
+Subject: Re: [RFC PATCH] x86/arch_prctl: Add ARCH_SET_XCR0 to mask XCR0
+ per-thread
+To:     Keno Fischer <keno@juliacomputing.com>
+References: <1529195582-64207-1-git-send-email-keno@alumni.harvard.edu>
+ <d8503ac3-b6a4-d6cc-3db7-4e092724b79d@linux.intel.com>
+ <CABV8kRwhrQ75g9y7v4Mq05CfZ9khhVQCwkp052jcNOvKs6-2Fg@mail.gmail.com>
+ <11347d3a-8491-1545-d47d-a1cb2fb9b410@linux.intel.com>
+ <CABV8kRyWFJN1r8HtNrDGMCEDUEiCS=p0n8xucO9T5B1AvCDZVA@mail.gmail.com>
+ <eaf86ae1-75f3-b49c-781c-33ebac532eb2@linux.intel.com>
+ <CABV8kRzqaxNwS-eyLCUr13eQVYjUvr=Nf=G3gch_tB9Aqo2A2A@mail.gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <andi@firstfloor.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Kyle Huey <khuey@kylehuey.com>,
+        Robert O'Callahan <robert@ocallahan.org>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <2b212eb7-6bcd-1767-0ed5-2f137c7d33d6@linux.intel.com>
+Date:   Mon, 18 Jun 2018 10:29:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613123403.25233-3-willy@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CABV8kRzqaxNwS-eyLCUr13eQVYjUvr=Nf=G3gch_tB9Aqo2A2A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 05:34:03AM -0700, willy@infradead.org wrote:
-> Allocate agent IDs from a global IDR instead of an atomic variable.
-> This eliminates the possibility of reusing an ID which is already in
-> use after 4 billion registrations.  We limit the assigned ID to be less
-> than 2^24 as the mlx4 driver uses the most significant byte of the agent
-> ID to store the slave number.  Users unlucky enough to see a collision
-> between agent numbers and slave numbers see messages like:
-> 
->  mlx4_ib: egress mad has non-null tid msb:1 class:4 slave:0
-> 
-> and the MAD layer stops working.
-> 
-> We look up the agent under protection of the RCU lock, which means we
-> have to free the agent using kfree_rcu, and only increment the reference
-> counter if it is not 0.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> Reported-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-> Acked-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-> Tested-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-> ---
->  drivers/infiniband/core/mad.c      | 83 ++++++++++++++++++------------
->  drivers/infiniband/core/mad_priv.h |  7 +--
->  2 files changed, 55 insertions(+), 35 deletions(-)
+On 06/18/2018 10:22 AM, Keno Fischer wrote:
+>> No, I'm saying that depending on faults is not a viable solution.  We
+>> are not guaranteed to get faults in all the cases you would need to fix up.
+>>
+>> XSAVE*/XRSTOR* are not even *called* in some of those cases.
+> Ah, my apologies, I was under the mistaken impression that xsaves also
+> read xcomp_bv to inform the layout, rather than using the RFBM and then
+> updating the xcomp_bv field. Let me think about this some more and see
+> what I can come up with.
 
-Applied to for-next, thanks everyone
-
-Jason
+It's not even that.  If you do this, xstate_comp_offsets[] will
+potentially need to be recalculated for each XCR0 value.  Granted, we've
+pretty nicely consolidated these references in the kernel into very few
+spots, but you still need to fix that up.
