@@ -6,71 +6,83 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E22BC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49D0C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E6D20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:45:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E6D20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A1A4C208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A4C208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934213AbeFRLpd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 07:45:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34370 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933381AbeFRLpc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:45:32 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA1A1D0E;
-        Mon, 18 Jun 2018 11:45:31 +0000 (UTC)
-Date:   Mon, 18 Jun 2018 13:45:29 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jay Buddhabhatti <jay.buddhabhatti@softnautics.com>
-Cc:     thomas.petazzoni@free-electrons.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: fbtft: Add missing blank line after function
- definition
-Message-ID: <20180618114529.GA6421@kroah.com>
-References: <1529321261-7727-1-git-send-email-jay.buddhabhatti@softnautics.com>
+        id S933691AbeFRLsh convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 07:48:37 -0400
+Received: from muru.com ([72.249.23.125]:47716 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933134AbeFRLsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 07:48:36 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 95F558081;
+        Mon, 18 Jun 2018 11:51:16 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 04:48:32 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: Charge counter on droid 4
+Message-ID: <20180618114832.GR112168@atomide.com>
+References: <20180615080014.GA29192@amd>
+ <20180615083156.GA32102@amd>
+ <20180618065827.GN112168@atomide.com>
+ <20180618074023.GA16955@amd>
+ <20180618082858.GO112168@atomide.com>
+ <20180618093459.GA21391@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529321261-7727-1-git-send-email-jay.buddhabhatti@softnautics.com>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180618093459.GA21391@amd>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 04:57:41PM +0530, Jay Buddhabhatti wrote:
-> Reslove checkpatch warnings by adding missing blank line after
-> function definition.
+* Pavel Machek <pavel@ucw.cz> [180618 09:37]:
+> On Mon 2018-06-18 01:28:58, Tony Lindgren wrote:
+> > * Pavel Machek <pavel@ucw.cz> [180618 07:43]:
+> > > 
+> > > So... there are mA, mAh values. Those come from hardware, and I
+> > > believe we should keep them.
+> > > 
+> > > But there are also mW, mWh values, which are synthetic. Userland can
+> > > compute them from mV, mA values... and it is confusing that kernel
+> > > provides them. (My tendency was to start computing these synthetic
+> > > values in userland, to compare them with "real hardware" values from
+> > > kernel. But then I looked at kernel implementation, and realized they
+> > > are synthetic, tooo...)
+> > 
+> > Hmm mWh value is based on the hardware sampled shunt
+> > values and number of samples gathered between the
+> > two readings. I'd rather call the calculated values
+> > based on userland reading mV and mA values "synthetic" :)
 > 
-> Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@softnautics.com>
-> ---
->  drivers/staging/fbtft/fb_s6d1121.c | 1 +
->  drivers/staging/fbtft/fb_ssd1289.c | 1 +
->  drivers/staging/fbtft/fb_st7735r.c | 1 +
->  3 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/staging/fbtft/fb_s6d1121.c b/drivers/staging/fbtft/fb_s6d1121.c
-> index b902442..b0c7a77 100644
-> --- a/drivers/staging/fbtft/fb_s6d1121.c
-> +++ b/drivers/staging/fbtft/fb_s6d1121.c
-> @@ -154,6 +154,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
->  
->  	return 0;
->  }
-> +
->  #undef CURVE
->  
->  static struct fbtft_display display = {
+> As far as I know, shunt resistors provide you with current (mA) not
+> power (mW) measurement... and cpcap-battery computes power_now as
+> voltage * current. I'd rather have kernel tell me "hardware can't
+> measure power" and do "voltage*current" computation in userspace.
 
-There already is a blank line here, no need to add another one.  Looks
-like checkpatch.pl is being a bit too over-eager here, sorry.
+Yup you are correct the hardware samples mA and we still need
+to calculate mW based on the voltage.
 
-thanks,
+But considering it works and seems to match the power supply
+provided average power consumption numbers pretty well and at
+least I'm using it.. What is your reasoning for removing such
+a usable interface?
 
-greg k-h
+Regards,
+
+Tony
