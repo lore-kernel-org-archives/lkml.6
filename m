@@ -3,116 +3,143 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434B9C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FE7C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:18:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0932F20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:18:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0932F20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4693620864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:18:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4693620864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936930AbeFRKSP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:18:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52820 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933852AbeFRIPg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:15:36 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF627C77;
-        Mon, 18 Jun 2018 08:15:35 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mihai Carabas <mihai.carabas@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 005/279] x86: Add check for APIC access address for vmentry of L2 guests
-Date:   Mon, 18 Jun 2018 10:09:50 +0200
-Message-Id: <20180618080609.061522739@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
-References: <20180618080608.851973560@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S936945AbeFRKSc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:18:32 -0400
+Received: from mga18.intel.com ([134.134.136.126]:26855 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933852AbeFRKSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:18:30 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 03:18:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
+   d="scan'208";a="50188052"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga008.jf.intel.com with ESMTP; 18 Jun 2018 03:18:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id A9E03F8; Mon, 18 Jun 2018 13:18:28 +0300 (EEST)
+Date:   Mon, 18 Jun 2018 13:18:28 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv3 10/17] x86/mm: Implement prep_encrypted_page() and
+ arch_free_page()
+Message-ID: <20180618101828.hxp2dw3fmfxwk2ka@black.fi.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-11-kirill.shutemov@linux.intel.com>
+ <36997c9c-73c0-1d9d-6251-10315a4158f0@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36997c9c-73c0-1d9d-6251-10315a4158f0@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Jun 13, 2018 at 06:26:10PM +0000, Dave Hansen wrote:
+> On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
+> > prep_encrypted_page() also takes care about zeroing the page. We have to
+> > do this after KeyID is set for the page.
+> 
+> This is an implementation detail that has gone unmentioned until now but
+> has impacted at least half a dozen locations in previous patches.  Can
+> you rectify that, please?
 
-------------------
+It was mentioned in commit message of 04/17.
 
-From: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+> > +void prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
+> > +{
+> > +	int i;
+> > +
+> > +	/*
+> > +	 * The hardware/CPU does not enforce coherency between mappings of the
+> > +	 * same physical page with different KeyIDs or encrypt ion keys.
+> 
+> What are "encrypt ion"s? :)
 
-[ Upstream commit f0f4cf5b306620282db0c59ff963012e1973e025 ]
+:P
 
-According to the sub-section titled 'VM-Execution Control Fields' in the
-section titled 'Basic VM-Entry Checks' in Intel SDM vol. 3C, the following
-vmentry check must be enforced:
+> > +	 * We are responsible for cache management.
+> > +	 *
+> > +	 * We flush cache before allocating encrypted page
+> > +	 */
+> > +	clflush_cache_range(page_address(page), PAGE_SIZE << order);
+> > +
+> > +	for (i = 0; i < (1 << order); i++) {
+> > +		WARN_ON_ONCE(lookup_page_ext(page)->keyid);
+> 
+> /* All pages coming out of the allocator should have KeyID 0 */
+> 
 
-    If the 'virtualize APIC-accesses' VM-execution control is 1, the
-    APIC-access address must satisfy the following checks:
+Okay.
 
-	- Bits 11:0 of the address must be 0.
-	- The address should not set any bits beyond the processor's
-	  physical-address width.
+> > +		lookup_page_ext(page)->keyid = keyid;
+> > +		/* Clear the page after the KeyID is set. */
+> > +		if (zero)
+> > +			clear_highpage(page);
+> > +	}
+> > +}
+> 
+> How expensive is this?
 
-This patch adds the necessary check to conform to this rule. If the check
-fails, we cause the L2 VMENTRY to fail which is what the associated unit
-test (following patch) expects.
+It just shifts cost of zeroing from page allocator here. It should not
+have huge effect.
 
-Reviewed-by: Mihai Carabas <mihai.carabas@oracle.com>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/kvm/vmx.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> > +void arch_free_page(struct page *page, int order)
+> > +{
+> > +	int i;
+> > 
+> 
+> 	/* KeyId-0 pages were not used for MKTME and need no work */
+> 
+> ... or something
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -10338,6 +10338,16 @@ static inline bool nested_vmx_prepare_ms
- 	return true;
- }
- 
-+static int nested_vmx_check_apic_access_controls(struct kvm_vcpu *vcpu,
-+					  struct vmcs12 *vmcs12)
-+{
-+	if (nested_cpu_has2(vmcs12, SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES) &&
-+	    !page_address_valid(vcpu, vmcs12->apic_access_addr))
-+		return -EINVAL;
-+	else
-+		return 0;
-+}
-+
- static int nested_vmx_check_apicv_controls(struct kvm_vcpu *vcpu,
- 					   struct vmcs12 *vmcs12)
- {
-@@ -11006,6 +11016,9 @@ static int check_vmentry_prereqs(struct
- 	if (nested_vmx_check_msr_bitmap_controls(vcpu, vmcs12))
- 		return VMXERR_ENTRY_INVALID_CONTROL_FIELD;
- 
-+	if (nested_vmx_check_apic_access_controls(vcpu, vmcs12))
-+		return VMXERR_ENTRY_INVALID_CONTROL_FIELD;
-+
- 	if (nested_vmx_check_tpr_shadow_controls(vcpu, vmcs12))
- 		return VMXERR_ENTRY_INVALID_CONTROL_FIELD;
- 
+Okay.
 
+> > +	if (!page_keyid(page))
+> > +		return;
+> 
+> Is page_keyid() optimized so that all this goes away automatically when
+> MKTME is compiled out or unsupported?
 
+If MKTME is not enabled compile-time, this translation unit doesn't
+compile at all.
+
+I have not yet optimized for run-time unsupported case. I'll optimized it
+based on performance measurements.
+
+> > +	for (i = 0; i < (1 << order); i++) {
+> > +		WARN_ON_ONCE(lookup_page_ext(page)->keyid > mktme_nr_keyids);
+> > +		lookup_page_ext(page)->keyid = 0;
+> > +	}
+> > +
+> > +	clflush_cache_range(page_address(page), PAGE_SIZE << order);
+> > +}
+> 
+> 
+> 
+> 
+
+-- 
+ Kirill A. Shutemov
