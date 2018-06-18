@@ -3,305 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850F8C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5109AC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3219020836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:11:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3219020836
+	by mail.kernel.org (Postfix) with ESMTP id 087EA2075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:17:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087EA2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936267AbeFRWLd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 18:11:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43796 "EHLO mx1.redhat.com"
+        id S936119AbeFRWRT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 18:17:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45110 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933036AbeFRWLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 18:11:32 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        id S934807AbeFRWRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 18:17:18 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 808157DAC3;
-        Mon, 18 Jun 2018 22:11:31 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 04088111DCEB;
-        Mon, 18 Jun 2018 22:11:26 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5IMBQwW026086;
-        Mon, 18 Jun 2018 18:11:26 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5IMBQMI026082;
-        Mon, 18 Jun 2018 18:11:26 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 18 Jun 2018 18:11:26 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     jing xia <jing.xia.mail@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: dm bufio: Reduce dm_bufio_lock contention
-In-Reply-To: <20180615130925.GI24039@dhcp22.suse.cz>
-Message-ID: <alpine.LRH.2.02.1806181003560.4201@file01.intranet.prod.int.rdu2.redhat.com>
-References: <1528790608-19557-1-git-send-email-jing.xia@unisoc.com> <20180612212007.GA22717@redhat.com> <alpine.LRH.2.02.1806131001250.15845@file01.intranet.prod.int.rdu2.redhat.com> <CAN=25QMQiJ7wvfvYvmZnEnrkeb-SA7_hPj+N2RnO8y-aVO8wOQ@mail.gmail.com>
- <20180614073153.GB9371@dhcp22.suse.cz> <alpine.LRH.2.02.1806141424510.30404@file01.intranet.prod.int.rdu2.redhat.com> <20180615073201.GB24039@dhcp22.suse.cz> <alpine.LRH.2.02.1806150724260.15022@file01.intranet.prod.int.rdu2.redhat.com>
- <20180615115547.GH24039@dhcp22.suse.cz> <alpine.LRH.2.02.1806150832100.26650@file01.intranet.prod.int.rdu2.redhat.com> <20180615130925.GI24039@dhcp22.suse.cz>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        by mx1.redhat.com (Postfix) with ESMTPS id C711687A6E;
+        Mon, 18 Jun 2018 22:17:17 +0000 (UTC)
+Received: from treble (ovpn-123-40.rdu2.redhat.com [10.10.123.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 87BF32156880;
+        Mon, 18 Jun 2018 22:17:17 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 17:17:16 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Manoj Gupta <manojgupta@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: clang: objtool: native_machine_emergency_restart() falls through
+ to next function
+Message-ID: <20180618221716.3qizmt3mph377ovi@treble>
+References: <20180615211441.GO88063@google.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 18 Jun 2018 22:11:31 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 18 Jun 2018 22:11:31 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180615211441.GO88063@google.com>
+User-Agent: NeoMutt/20180323
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 18 Jun 2018 22:17:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 18 Jun 2018 22:17:17 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 15 Jun 2018, Michal Hocko wrote:
-
-> On Fri 15-06-18 08:47:52, Mikulas Patocka wrote:
-> > 
-> > 
-> > On Fri, 15 Jun 2018, Michal Hocko wrote:
-> > 
-> > > On Fri 15-06-18 07:35:07, Mikulas Patocka wrote:
-> > > > 
-> > > > Because mempool uses it. Mempool uses allocations with "GFP_NOIO | 
-> > > > __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN". An so dm-bufio uses 
-> > > > these flags too. dm-bufio is just a big mempool.
-> > > 
-> > > This doesn't answer my question though. Somebody else is doing it is not
-> > > an explanation. Prior to your 41c73a49df31 there was no GFP_NOIO
-> > > allocation AFAICS. So why do you really need it now? Why cannot you
-> > 
-> > dm-bufio always used "GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | 
-> > __GFP_NOWARN" since the kernel 3.2 when it was introduced.
-> > 
-> > In the kernel 4.10, dm-bufio was changed so that it does GFP_NOWAIT 
-> > allocation, then drops the lock and does GFP_NOIO with the dropped lock 
-> > (because someone was likely experiencing the same issue that is reported 
-> > in this thread) - there are two commits that change it - 9ea61cac0 and 
-> > 41c73a49df31.
+On Fri, Jun 15, 2018 at 02:14:41PM -0700, Matthias Kaehlcke wrote:
+> Hi Josh,
 > 
-> OK, I see. Is there any fundamental reason why this path has to do one
-> round of GFP_IO or it can keep NOWAIT, drop the lock, sleep and retry
-> again?
-
-If the process is woken up, there was some buffer added to the freelist, 
-or refcount of some buffer was dropped to 0. In this case, we don't want 
-to drop the lock and use GFP_NOIO, because the freed buffer may disappear 
-when we drop the lock.
-
-> [...]
-> > > is the same class of problem, honestly, I dunno. And I've already said
-> > > that stalling __GFP_NORETRY might be a good way around that but that
-> > > needs much more consideration and existing users examination. I am not
-> > > aware anybody has done that. Doing changes like that based on a single
-> > > user is certainly risky.
-> > 
-> > Why don't you set any rules how these flags should be used?
+> with your work on objtool and the upcoming implementation of
+> -fno-delete-null-pointer-checks (https://reviews.llvm.org/D47894,
+> https://reviews.llvm.org/D47895) in clang most objtool warnings
+> for clang builds will be fixed.
 > 
-> It is really hard to change rules during the game. You basically have to
-> examine all existing users and that is well beyond my time scope. I've
-> tried that where it was possible. E.g. __GFP_REPEAT and turned it into a
-> well defined semantic. __GFP_NORETRY is a bigger beast.
+> However even with -fno-delete-null-pointer-checks we currently still
+> get a warning about native_machine_emergency_restart():
 > 
-> Anyway, I believe that it would be much safer to look at the problem
-> from a highlevel perspective. You seem to be focused on __GFP_NORETRY
-> little bit too much IMHO. We are not throttling callers which explicitly
-> do not want to or cannot - see current_may_throttle. Is it possible that
-> both your md and mempool allocators can either (ab)use PF_LESS_THROTTLE
-> or use other means? E.g. do you have backing_dev_info at that time?
-> -- 
-> Michal Hocko
-> SUSE Labs
-
-I grepped the kernel for __GFP_NORETRY and triaged them. I found 16 cases 
-without a fallback - those are bugs that make various functions randomly 
-return -ENOMEM.
-
-Most of the callers provide callback.
-
-There is another strange flag - __GFP_RETRY_MAYFAIL - it provides two 
-different functions - if the allocation is larger than 
-PAGE_ALLOC_COSTLY_ORDER, it retries the allocation as if it were smaller. 
-If the allocations is smaller than PAGE_ALLOC_COSTLY_ORDER, 
-__GFP_RETRY_MAYFAIL will avoid the oom killer (larger order allocations 
-don't trigger the oom killer at all).
-
-So, perhaps __GFP_RETRY_MAYFAIL could be used instead of __GFP_NORETRY in 
-the cases where the caller wants to avoid trigerring the oom killer (the 
-problem is that __GFP_NORETRY causes random failure even in no-oom 
-situations but __GFP_RETRY_MAYFAIL doesn't).
-
-
-So my suggestion is - fix these obvious bugs when someone allocates memory 
-with __GFP_NORETRY without any fallback - and then, __GFP_NORETRY could be 
-just changed to return NULL instead of sleeping.
-
-
-
-
-arch/arm/mm/dma-mapping.c - fallback to a smaller size without __GFP_NORETRY
-
-arch/mips/mm/dma-default.c - says that it uses __GFP_NORETRY to avoid the 
-oom killer, provides no fallback - it seems to be a BUG
-
-arch/sparc/mm/tsb.c - fallback to a smaller size without __GFP_NORETRY
-
-arch/x86/include/asm/floppy.h - __GFP_NORETRY doesn't seem to serve any 
-purpose, it may cause random failures during initialization, can be 
-removed - BUG
-
-arch/powerpc/mm/mmu_context_iommu.c - uses it just during moving pages, 
-there's no problem with failure
-
-arch/powerpc/platforms/pseries/cmm.c - a vm balloon driver, no problem 
-with failure
-
-block/bio.c - falls back to mempool
-
-block/blk-mq.c - errorneous use of __GFP_NORETRY during initialization, it 
-falls back to a smaller size, but doesn't drop the __GFP_NORETRY flag 
-(BUG)
-
-drivers/gpu/drm/i915/i915_gem.c - it starts with __GFP_NORETRY and on 
-failure, it ORs it with __GFP_RETRY_MAYFAIL (which of these conflicting 
-flags wins?)
-
-drivers/gpu/drm/i915/i915_gem_gtt.c - __GFP_NORETRY is used during 
-initialization (BUG), it shouldn't be used
-
-drivers/gpu/drm/i915/i915_gem_execbuffer.c - fallback to a smaller size without __GFP_NORETRY
-
-drivers/gpu/drm/i915/i915_gem_internal.c - fallback to a smaller size without __GFP_NORETRY
-size
-
-drivers/gpu/drm/i915/i915_gem_userptr.c - seems to provide fallback
-
-drivers/gpu/drm/i915/i915_gpu_error.c - fallback to a smaller size without __GFP_NORETRY
-
-drivers/gpu/drm/etnaviv/etnaviv_dump.c - coredump on error path, no 
-problem if it fails
-
-drivers/gpu/drm/ttm/ttm_page_alloc.c - uses __GFP_NORETRY for transparent 
-hugepages, no problem with failure
-
-drivers/gpu/drm/ttm/ttm_page_alloc_dma.c - uses __GFP_NORETRY for 
-transparent hugepages, no problem with failure
-
-drivers/gpu/drm/msm/msm_gem_submit.c - uses __GFP_NORETRY to process ioctl 
-and lacks a fallback - it is a BUG - __GFP_NORETRY should be dropped
-
-drivers/hv/hv_balloon.c - a vm balloon driver, no problem with failure
-
-drivers/crypto/chelsio/chtls/chtls_io.c - fallback to a smaller size without __GFP_NORETRY
-
-drivers/xen/balloon.c - a vm balloon driver, no problem with failure
-
-drivers/mtd/mtdcore.c - fallback to a smaller size without __GFP_NORETRY
-
-drivers/md/dm-verity-target.c - skips prefetch on failure, no problem
-
-drivers/md/dm-writecache.c - falls back to a smaller i/os on failure
-
-drivers/md/dm-bufio.c - reserves some buffers on creation and falls back 
-to them
-
-drivers/md/dm-integrity.c - falls back to sector-by-sector verification
-
-drivers/md/dm-kcopyd.c - falls back to reserved pages
-
-drivers/md/dm-crypt.c - falls back to mempool
-
-drivers/iommu/dma-iommu.c - fallback to a smaller size without __GFP_NORETRY
-
-drivers/mmc/core/mmc_test.c - fallback to a smaller size, but doesn't drop 
-__GFP_NORETRY - BUG
-
-drivers/staging/android/ion/ion_system_heap.c - fallback to a smaller size without __GFP_NORETRY
-
-fs/cachefiles/ - uses __GFP_NORETRY extensively - since this is just a 
-cache, so failure supposedly shouldn't be problem - but it's hard to 
-verify the whole driver that it handles failures properly
-
-fs/xfs/xfs_buf.c - uses __GFP_NORETRY only on readahead
-
-fs/fscache/cookie.c - no fallback, but if it fails, the caller will just 
-invalidate the cache entry - no problem
-
-fs/fscache/page.c - like above - failure will just inhibit caching
-
-fs/nfs/write.c - fails only if allowed by the arugment never_fail
-
-include/linux/kexec.h - no fallback - it seems to be a BUG
-
-include/linux/pagemap.h - uses __GFP_NORETRY only on readahead
-
-kernel/bpf/syscall.c - it says it need __GFP_NORETRY to avoid oom killer - 
-provides no fallback, so it seems to be BUG
-
-kernel/events/ring_buffer.c - falls back to a smaller size, but doesn't drop 
-__GFP_NORETRY - BUG
-
-kernel/groups.c - falls back to vmalloc (should it use kvmalloc?)
-
-kernel/trace/ring_buffer.c - no fallback - BUG
-
-kernel/trace/trace.c - no fallback - BUG
-
-kernel/power/swap.c - falls back, but there is useless WARN_ON_ONCE(1) on 
-the fallback path
-
-lib/debugobjects.c - turns off debugging on alloaction failure
-
-lib/rhashtable.c - uses __GFP_NORETRY only with GFP_ATOMIC - __GFP_NORETRY 
-is useless
-
-mm/hugetlb.c - no problem if hugepage allocation fails
-
-mm/mempool.c - falls back to mempool
-
-mm/kmemleak.c - disables kmemleak on allocation failure
-
-mm/page_alloc.c/__page_frag_cache_refill - fallback to a smaller size without __GFP_NORETRY
-
-mm/zswap.c/zswap_pool_create - used during pool creation - probably a BUG
-mm/zswap.c/zswap_frontswap_store - used when compressing a page - probably 
-ok to fail
-
-mm/memcontrol.c - I don't know if it is a bug
-
-mm/shmem.c - used during hugepage allocation - ok to fail
-
-mm/slub.c - fallback to a smaller size without __GFP_NORETRY
-
-mm/util.c - fallback to vmalloc
-
-net/packet/af_packet.c - fallback without __GFP_NORETRY
-
-net/xdp/xsk_queue.c - no fallback - BUG
-
-net/core/skbuff.c - fallback to a smaller size without __GFP_NORETRY
-
-net/core/sock.c - fallback to a smaller size without __GFP_NORETRY
-
-net/netlink/af_netlink.c - it's ok to fail when decreasing the size of skb
-
-net/smc/smc_core.c - falls back to a smaller size, but doesn't drop 
-__GFP_NORETRY - BUG
-
-net/netfilter/x_tables.c - __GFP_NORETRY is used to avoid the oom killer
-- provides no fallback - it seems to be a BUG
-
-security/integrity/ima/ima_crypto.c - fallback to a smaller size without __GFP_NORETRY
-
-sound/core/memalloc.c - __GFP_NORETRY is used to avoid the oom killer
-- provides no fallback - it seems to be a BUG
-
-Mikulas
+> arch/x86/kernel/reboot.o: warning: objtool:
+>   native_machine_emergency_restart()
+>   falls through to next function machine_power_off()
+> 
+> This only occurs when building with -Oz.
+> 
+> One of our compiler engineers looked into this, LLVM optimizes the
+> return statement away since the function has an endless loop, and
+> actually never returns.
+> 
+> Is there a way to tell objtool that the function is not expected to
+> return (I tried the attribute __noreturn, but it doesn't make a
+> difference), or do we have to tell clang to restrain from optimizing
+> returns out?
+> 
+> To repro:
+> 
+> git checkout v4.16
+> make CC=clang defconfig
+> echo "CONFIG_CC_OPTIMIZE_FOR_SIZE=y" >> .config
+> make CC=clang arch/x86/kernel/reboot.o
+
+Hi Matthias,
+
+Objtool can't detect 'noreturn' functions, so unfortunately we have to
+keep a manual list.  Does this fix it?
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 5409f6f6c48d..ace3f85701c8 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -139,6 +139,7 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 		"lbug_with_loc",
+ 		"fortify_panic",
+ 		"usercopy_abort",
++		"machine_real_restart",
+ 	};
+ 
+ 	if (func->bind == STB_WEAK)
