@@ -2,131 +2,136 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D88B2C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB03C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C56020693
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3063A2083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:52:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOnYYSgj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C56020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JWQRlx0D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3063A2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755432AbeFRWwR (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 18:52:17 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:39077 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755329AbeFRWwP (ORCPT
+        id S936981AbeFRWwd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 18:52:33 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38963 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755329AbeFRWwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 18:52:15 -0400
-Received: by mail-vk0-f68.google.com with SMTP id r83-v6so10570223vkf.6;
-        Mon, 18 Jun 2018 15:52:14 -0700 (PDT)
+        Mon, 18 Jun 2018 18:52:31 -0400
+Received: by mail-pf0-f193.google.com with SMTP id r11-v6so8901978pfl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 15:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DUh/BdUCoOISWT8eUOYXHilFbNBpolZpltroZB1lHPA=;
-        b=EOnYYSgjOmYfxpIlbr/UpILzEobhKDRO2X6WRU26DmZoTj5hYwgP66yu1eW2GyW9W/
-         Uu5BuEPQZ0L/4LzgTtf7ib+cWeBlC+Lp+upqRf2YjKxcwSpuxC/pNdoZuun4IPJjlCF1
-         iCPn/uwQeM0KVIWr3NEorIkStTXKIWbmkV5w0XnWpiDTuNAz5vNBo6d3FdlOqR52q37w
-         C7hOkhEs5tHB7DJionOHzsNgjKJDysaZj+Azaq8cmE9wxMBRMsMueTk/zggSgAZkDQ++
-         rR8QLXYFGZykiu/BnS8Qroo52VvrhdNfDshgvA8H2KTehBerZ3VfDMe3z4Dq3kOWpCGe
-         igZA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+0KhMZy+jqAxchpr9dpEkSZ4D5Ja6NnxrpbdNtLkw7E=;
+        b=JWQRlx0DP0sAtDUqjqxeLRYX6U26nAsyrFBNyYMTR8YNQymZ/N6hSrEXEvj2LPefit
+         igq215SlmVnk9Q4O4EdeNaJ+UJr7SfpWbyPaCzz5CBADzK910ltuJXuxzRCkdTCn9cOj
+         TvOAyDiOVymMsRQk1VH3QzHxWcoj2tG42HTBs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DUh/BdUCoOISWT8eUOYXHilFbNBpolZpltroZB1lHPA=;
-        b=In8kQb17s8yKu+N3ZkUfG91mpIl6JwKV2csKPvV7+aR2ZnM/DODEIonXzRvrrZGhTC
-         xU92V+++GVtFigGi+7GQdTmntblMGYIpdSorMfPBnttzr5ibii6y58nkgO0XHCVqBKQ/
-         rd8iuEfnRdVkPdGgUg8XfnmWDiggO/vzSmhWxzHUtwHbt/7Uaf3OWgT3NAHxWL+7Q8yL
-         MKGT/23sv8nhlxrVSYu0C7gHH5CLU9tvZm5E0kSm+Y0QEhYOn48luE6ZwqJ6W9X3Qwit
-         /n2DS4YS3XU8GsioJ/4atJrCOFPATE+Kr2msZgwOllShD1l5L9bDh3gKJ62KCU/wzvxO
-         DY1A==
-X-Gm-Message-State: APt69E1ow/oiMGOMCB9HisIot4IpcRHt2V2/8BuA8xC2MdbXrvfm5H2S
-        UkYrStGaX5tmJDLy5fh8lowf7RTivEJs80rp/5U=
-X-Google-Smtp-Source: ADUXVKLz3MfpLJeewHY84JA9WzfHiPG4nfw2CJ8tI1FKur/OqLRXJENznNUzWLKMalRd6Jyp4lPOX7TbwzTqpmBszDo=
-X-Received: by 2002:a1f:d1c5:: with SMTP id i188-v6mr8413950vkg.131.1529362334309;
- Mon, 18 Jun 2018 15:52:14 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+0KhMZy+jqAxchpr9dpEkSZ4D5Ja6NnxrpbdNtLkw7E=;
+        b=U/hdtcVFqbRoeedju5faAeCwLX/3dEaJbHFvult1bIe2iIhsD6mBALY+hewkFflPlf
+         e05ukOxxnyz+8dCSylFrSdYfIOFjWoEHVck3IRQ+A1/bgInpSliqbrrqn9KZGC7MRcQg
+         YodaM75flYWg/dGFIERPMbgC9ZUI4K0sOjOFMQuWnxdcE3wXR7v+FpU+yidWClqubZq/
+         0Si/U+0xPlX24q9bJ0WV4PZWGyF9T7XGrkh9aOjWuvtDjXOodMj7VE9QLnjrMtU67rQX
+         wq6KMep+iX3YpdS1+DvPbMaaguWMJrD+ccQBKJIkpVZttEIWin5NWYnwiU1y+e3z0hl4
+         VWJw==
+X-Gm-Message-State: APt69E1KJzu1SUyR9TvSV9+BUQv87yPQBFX0LJndZvpmMaLRm5Vno8Rc
+        P2TVeEWOXCkNM6EiQ4tmI3rOXA==
+X-Google-Smtp-Source: ADUXVKKAZQ9LTUlT4lFqQbwR0GShoPxbkJ/tWsD03Z1+TnaDjfCVuT2LDLrawd/0xolBR6Vhe1X3KA==
+X-Received: by 2002:a65:62d9:: with SMTP id m25-v6mr12382424pgv.371.1529362351311;
+        Mon, 18 Jun 2018 15:52:31 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id i4-v6sm24360796pfk.133.2018.06.18.15.52.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Jun 2018 15:52:30 -0700 (PDT)
+Date:   Mon, 18 Jun 2018 15:52:30 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Manoj Gupta <manojgupta@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: clang: objtool: native_machine_emergency_restart() falls through
+ to next function
+Message-ID: <20180618225230.GW88063@google.com>
+References: <20180615211441.GO88063@google.com>
+ <20180618221716.3qizmt3mph377ovi@treble>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 15:52:13
- -0700 (PDT)
-In-Reply-To: <CAKdAkRTHOORds7aEauv4rp3_=PnGi=Nv-VS3-nAb9MztJPKG=Q@mail.gmail.com>
-References: <20180618131003.88110-1-andriy.shevchenko@linux.intel.com>
- <20180618131003.88110-4-andriy.shevchenko@linux.intel.com>
- <20180618141404.68124daab97bd0f3a3051544@linux-foundation.org> <CAKdAkRTHOORds7aEauv4rp3_=PnGi=Nv-VS3-nAb9MztJPKG=Q@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 19 Jun 2018 01:52:13 +0300
-Message-ID: <CAHp75VdoL=qTBKMp+FB=RdNRqbZgv9=hJ=kYAAAYFTUpxFAr6g@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        agk@redhat.com, Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        shli@kernel.org, linux-raid@vger.kernel.org,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180618221716.3qizmt3mph377ovi@treble>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 1:01 AM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> On Mon, Jun 18, 2018 at 2:14 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->>
->> On Mon, 18 Jun 2018 16:10:01 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->>
->> > A lot of code become ugly because of open coding allocations for bitmaps.
->> >
->> > Introduce three helpers to allow users be more clear of intention
->> > and keep their code neat.
->> >
->> > ...
->> >
->> > +unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
->> > +{
->> > +     return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
->> > +}
->> > +EXPORT_SYMBOL(bitmap_alloc);
->> > +
->> > +unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags)
->> > +{
->> > +     return bitmap_alloc(nbits, flags | __GFP_ZERO);
->> > +}
->> > +EXPORT_SYMBOL(bitmap_zalloc);
->> > +
->> > +void bitmap_free(const unsigned long *bitmap)
->> > +{
->> > +     kfree(bitmap);
->> > +}
->> > +EXPORT_SYMBOL(bitmap_free);
->> > +
->>
->> I suggest these functions are small and simple enough to justify
->> inlining them.
->>
->
-> We can't as we end up including bitmap.h (by the way of cpumask.h)
-> form slab.h, so we gen circular dependency. Maybe if we removed memcg
-> stuff from slab.h so we do not need to include workqueue.h...
+On Mon, Jun 18, 2018 at 05:17:16PM -0500, Josh Poimboeuf wrote:
+> On Fri, Jun 15, 2018 at 02:14:41PM -0700, Matthias Kaehlcke wrote:
+> > Hi Josh,
+> > 
+> > with your work on objtool and the upcoming implementation of
+> > -fno-delete-null-pointer-checks (https://reviews.llvm.org/D47894,
+> > https://reviews.llvm.org/D47895) in clang most objtool warnings
+> > for clang builds will be fixed.
+> > 
+> > However even with -fno-delete-null-pointer-checks we currently still
+> > get a warning about native_machine_emergency_restart():
+> > 
+> > arch/x86/kernel/reboot.o: warning: objtool:
+> >   native_machine_emergency_restart()
+> >   falls through to next function machine_power_off()
+> > 
+> > This only occurs when building with -Oz.
+> > 
+> > One of our compiler engineers looked into this, LLVM optimizes the
+> > return statement away since the function has an endless loop, and
+> > actually never returns.
+> > 
+> > Is there a way to tell objtool that the function is not expected to
+> > return (I tried the attribute __noreturn, but it doesn't make a
+> > difference), or do we have to tell clang to restrain from optimizing
+> > returns out?
+> > 
+> > To repro:
+> > 
+> > git checkout v4.16
+> > make CC=clang defconfig
+> > echo "CONFIG_CC_OPTIMIZE_FOR_SIZE=y" >> .config
+> > make CC=clang arch/x86/kernel/reboot.o
+> 
+> Hi Matthias,
+> 
+> Objtool can't detect 'noreturn' functions, so unfortunately we have to
+> keep a manual list.  Does this fix it?
+> 
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 5409f6f6c48d..ace3f85701c8 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -139,6 +139,7 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
+>  		"lbug_with_loc",
+>  		"fortify_panic",
+>  		"usercopy_abort",
+> +		"machine_real_restart",
+>  	};
+>  
+>  	if (func->bind == STB_WEAK)
 
-I will look at it. It might be doable.
-Though I dunno what MM people would say about this. Anyone's name
-comes to your mind to ask?
+Yes this helps, thanks for having a look!
 
--- 
-With Best Regards,
-Andy Shevchenko
+Could you send this as an official patch or should I do it (crediting
+you)?
+
+Thanks
+
+Matthias
