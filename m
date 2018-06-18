@@ -1,83 +1,97 @@
-Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B42C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 09:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19551C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13B022087E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 09:08:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13B022087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B9FBF20020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:28:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zwq8he5k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FBF20020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932609AbeFPJI3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 05:08:29 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:53073 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932204AbeFPJI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 05:08:27 -0400
-Received: from DGGEMA404-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 28189D9361BAA;
-        Sat, 16 Jun 2018 17:08:24 +0800 (CST)
-Received: from DGGEMA503-MBX.china.huawei.com ([169.254.1.111]) by
- DGGEMA404-HUB.china.huawei.com ([10.3.20.45]) with mapi id 14.03.0382.000;
- Sat, 16 Jun 2018 17:08:23 +0800
-From:   gengdongjiu <gengdongjiu@huawei.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIIHYyXSB1c2I6IHhoY2k6IHJlbW92ZSB0aGUgY29kZSBi?=
- =?gb2312?Q?uild_warning?=
-Thread-Topic: [PATCH v2] usb: xhci: remove the code build warning
-Thread-Index: AQHT/aPv1nuhYmQTHUO8ri6ZrJ2nNaRgqQwAgAH9yYA=
-Date:   Sat, 16 Jun 2018 09:08:23 +0000
-Message-ID: <0184EA26B2509940AA629AE1405DD7F201CE2843@DGGEMA503-MBX.china.huawei.com>
-References: <20180606143659.1476-1-gengdongjiu@huawei.com>
- <20180615104004.GA2993@kroah.com>
-In-Reply-To: <20180615104004.GA2993@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.56.137]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S935388AbeFRR2H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 13:28:07 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34482 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755035AbeFRR2F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 13:28:05 -0400
+Received: by mail-pl0-f66.google.com with SMTP id g20-v6so9407216plq.1;
+        Mon, 18 Jun 2018 10:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=usOd83h4X1BW/PHIq2Khx7PTLKe0GW+IESd1VM5Klxk=;
+        b=Zwq8he5k83Pq7ysb10IoFXx8w2+mkvrMQaLBQvAX0RtUjCZ1jIdoxd4McC9qJIILh+
+         k1ekq/dknqiXY5/rzTrNL/3DHxEnHEqyTFYtIVqTb77QebqV72RSX1aS97WO1nvygjDf
+         P8j/zYiW/70OuHCfRMsdUHpYwu0J7FemsUfAcTAIUZWiGVnZ6T4TiBBtbe+Et5WTBvJt
+         MdJ7+ctDos3C88dGSMe36OzLFzvxdgcDYLv8NCBd8oZRsOWL4wFmAFqCnbV1CO3Z7tUv
+         FzNYp4Ow0WyvKmR6cka7iim77gR5XO1/ZDK49bMxakn9vPMG9iTTjIOHGQ7/fkFXx3eD
+         MuZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=usOd83h4X1BW/PHIq2Khx7PTLKe0GW+IESd1VM5Klxk=;
+        b=o4fFZ+Kst5C5KpFFGWxBQZmpb0+p9AUeTk5J5bt2HVz/I0wwdmhyPiC2aWdBOU7rRr
+         LIeDNXk3EQLQ5bi5xmZ/IwNjz7m6N2eKwBte0q0T+lHGiSHLbUNPJuluehSEtR5UzMHw
+         MVShLiJ1TRUZZSYkgtdqdGQKI2xeHc/YAvyvZRfMZupLZ6sffIZ04BdXUzW25VSrO+zX
+         lGx3YRVcs4FoyB3odXeYxacjsgatrQEXdjdY3axzI5pdEsiTvt2bjO/bxkroFlXn8iUl
+         Kxb+4Cz8kZQCdOOlXKOuGaV/LB7L7QerbibWny51dqBG1nzDZagZ6miA0OfFCzuP8KcR
+         RO6w==
+X-Gm-Message-State: APt69E0zZITKpvryUBd0JOEUvDyaJvlkh2UsNKszHqtKmBQqaVKolbPf
+        n7h03zDQUE2xIEJt3pJeJdo=
+X-Google-Smtp-Source: ADUXVKI9gb8rh9sdf3frtt7YTphYQj9ILLcmxK27eVfBwg80MDNQqfx6b4SqBJ/qZyQpz/Uh+/dPXA==
+X-Received: by 2002:a17:902:b110:: with SMTP id q16-v6mr15105376plr.286.1529342885370;
+        Mon, 18 Jun 2018 10:28:05 -0700 (PDT)
+Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
+        by smtp.gmail.com with ESMTPSA id m1-v6sm21906828pfh.155.2018.06.18.10.28.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Jun 2018 10:28:04 -0700 (PDT)
+Date:   Mon, 18 Jun 2018 10:28:03 -0700
+From:   Eric Biggers <ebiggers3@gmail.com>
+To:     efremov@linux.com
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: Re: [PATCH] crypto: skcipher: remove static declaration of export
+ function
+Message-ID: <20180618172803.GA8022@gmail.com>
+References: <20180617174959.29864-1-efremov@linux.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180617174959.29864-1-efremov@linux.com>
+User-Agent: Mutt/1.10+28 (db52f11e) (2018-06-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBXZWQsIEp1biAwNiwgMjAxOCBhdCAxMDozNjo1OVBNICswODAwLCBEb25naml1IEdlbmcg
-d3JvdGU6DQo+ID4gSW5pdGlhbGl6ZSB0aGUgJ2VycicgdmFyaWF0ZSB0byByZW1vdmUgdGhlIGJ1
-aWxkIHdhcm5pbmcsIHRoZSB3YXJuaW5nDQo+ID4gaXMgc2hvd24gYXMgYmVsb3c6DQo+ID4NCj4g
-PiBkcml2ZXJzL3VzYi9ob3N0L3hoY2ktdGVncmEuYzogSW4gZnVuY3Rpb24gJ3RlZ3JhX3h1c2Jf
-bWJveF90aHJlYWQnOg0KPiA+IGRyaXZlcnMvdXNiL2hvc3QveGhjaS10ZWdyYS5jOjU1Mjo2OiB3
-YXJuaW5nOiAnZXJyJyBtYXkgYmUgdXNlZA0KPiA+IHVuaW5pdGlhbGl6ZWQgaW4gdGhpcyBmdW5j
-dGlvbiBbLVd1bmluaXRpYWxpemVkXQ0KPiA+IGRyaXZlcnMvdXNiL2hvc3QveGhjaS10ZWdyYS5j
-OjQ4Mjo2OiBub3RlOiAnZXJyJyB3YXMgZGVjbGFyZWQgaGVyZQ0KPiA+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogRG9uZ2ppdSBHZW5nIDxnZW5nZG9uZ2ppdUBodWF3ZWkuY29tPg0KPiA+IEFja2VkLWJ5
-OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPg0KPiA+IC0tLQ0KPiA+IEhvdyB0
-byByZXByb2R1Y2U6DQo+ID4gMS4gbWFrZSBkZWZjb25maWcgQVJDSD1hcm0NCj4gPiAyLiBtYWtl
-IC1qMTAwIENST1NTX0NPTVBJTEU9YXJtLWxpbnV4LWdudWVhYmktIEFSQ0g9YXJtDQo+ID4NCj4g
-PiBUaGVuIHlvdSBjYW4gc2VlIGJlbG93IHdhcm5pbmdzOg0KPiA+IGRyaXZlcnMvdXNiL2hvc3Qv
-eGhjaS10ZWdyYS5jOiBJbiBmdW5jdGlvbiAndGVncmFfeHVzYl9tYm94X3RocmVhZCc6DQo+ID4g
-ZHJpdmVycy91c2IvaG9zdC94aGNpLXRlZ3JhLmM6NTUyOjY6IHdhcm5pbmc6ICdlcnInIG1heSBi
-ZSB1c2VkDQo+ID4gdW5pbml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uIFstV3VuaW5pdGlhbGl6
-ZWRdDQo+ID4gZHJpdmVycy91c2IvaG9zdC94aGNpLXRlZ3JhLmM6NDgyOjY6IG5vdGU6ICdlcnIn
-IHdhcyBkZWNsYXJlZCBoZXJlDQo+IA0KPiBXaGF0IGNoYW5nZWQgZnJvbSB2MT8gIEFsd2F5cyBw
-dXQgdGhhdCBiZWxvdyB0aGUgLS0tIGxpbmUuDQo+IA0KPiBQbGVhc2UgZml4IHVwIGFuZCByZXNl
-bmQgYSB2My4NCg0KDQpUaGFua3MsIEkganVzdGx5IGFkZCAiQWNrZWQtYnk6IFRoaWVycnkgUmVk
-aW5nIDx0cmVkaW5nQG52aWRpYS5jb20+IiBpbiB0aGUgVjIgY29tcGFyZWQgd2l0aCB2MQ0KQW55
-d2F5IEkgd2lsbCBwdXQgdGhhdCBiZWxvdyBhbmQgcmVzZW5kIGEgdjMuDQoNCj4gDQo+IHRoYW5r
-cywNCj4gDQo+IGdyZWcgay1oDQo=
+On Sun, Jun 17, 2018 at 08:49:59PM +0300, efremov@linux.com wrote:
+> The function skcipher_walk_next declared as static and marked as
+> EXPORT_SYMBOL. It's a bit confusing since export symbol means that
+> we want others to use this function. The area of visibility for such
+> function is its .c file and all other modules. Other *.c files of the
+> same module can't use it, despite all other modules can. Relying on
+> that such behavior was not the original intention, the patch just
+> removes the static keyword.
+> 
+> Found by Linux Driver Verification project (linuxtesting.org).
+> 
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+
+Why not remove the EXPORT_SYMBOL instead?  It has no users outside the file.
+
+- Eric
