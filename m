@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD245C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8735C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 935F820864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 935F820864
+	by mail.kernel.org (Postfix) with ESMTP id 6962C20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6962C20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030455AbeFRIi2 (ORCPT
+        id S1030469AbeFRIid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:38:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37042 "EHLO
+        Mon, 18 Jun 2018 04:38:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030439AbeFRIiZ (ORCPT
+        with ESMTP id S1030439AbeFRIi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:38:25 -0400
+        Mon, 18 Jun 2018 04:38:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7DBAC5C;
-        Mon, 18 Jun 2018 08:38:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D28C5CB9;
+        Mon, 18 Jun 2018 08:38:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -39,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 164/189] x86/pkeys/selftests: Add a test for pkey 0
-Date:   Mon, 18 Jun 2018 10:14:20 +0200
-Message-Id: <20180618081215.814116546@linuxfoundation.org>
+Subject: [PATCH 4.14 155/189] x86/pkeys/selftests: Give better unexpected fault error messages
+Date:   Mon, 18 Jun 2018 10:14:11 +0200
+Message-Id: <20180618081215.462194707@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -60,13 +60,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit 3488a600d90bcaf061b104dbcfbdc8d99b398312 ]
+[ Upstream commit 55556b0b2016806b2e16a20b62d143383983a34a ]
 
-Protection key 0 is the default key for all memory and will
-not normally come back from pkey_alloc().  But, you might
-still want pass it to mprotect_pkey().
+do_not_expect_pk_fault() is a helper that we call when we do not expect
+a PK fault to have occurred.  But, it is a function, which means that
+it obscures the line numbers from pkey_assert().  It also gives no
+details.
 
-This check ensures that you can use pkey 0.
+Replace it with an implementation that gives nice line numbers and
+also lets callers pass in a more descriptive message about what
+happened that caused the unexpected fault.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -78,59 +81,49 @@ Cc: Ram Pai <linuxram@us.ibm.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171356.9E40B254@viggo.jf.intel.com
+Link: http://lkml.kernel.org/r/20180509171338.55D13B64@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/protection_keys.c |   30 ++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ tools/testing/selftests/x86/protection_keys.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 --- a/tools/testing/selftests/x86/protection_keys.c
 +++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -1184,6 +1184,35 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 	}
+@@ -954,10 +954,11 @@ void expected_pk_fault(int pkey)
+ 	last_si_pkey = -1;
  }
  
-+/*
-+ * pkey 0 is special.  It is allocated by default, so you do not
-+ * have to call pkey_alloc() to use it first.  Make sure that it
-+ * is usable.
-+ */
-+void test_mprotect_with_pkey_0(int *ptr, u16 pkey)
-+{
-+	long size;
-+	int prot;
-+
-+	assert(pkey_last_malloc_record);
-+	size = pkey_last_malloc_record->size;
-+	/*
-+	 * This is a bit of a hack.  But mprotect() requires
-+	 * huge-page-aligned sizes when operating on hugetlbfs.
-+	 * So, make sure that we use something that's a multiple
-+	 * of a huge page when we can.
-+	 */
-+	if (size >= HPAGE_SIZE)
-+		size = HPAGE_SIZE;
-+	prot = pkey_last_malloc_record->prot;
-+
-+	/* Use pkey 0 */
-+	mprotect_pkey(ptr, size, prot, 0);
-+
-+	/* Make sure that we can set it back to the original pkey. */
-+	mprotect_pkey(ptr, size, prot, pkey);
-+}
-+
- void test_ptrace_of_child(int *ptr, u16 pkey)
- {
- 	__attribute__((__unused__)) int peek_result;
-@@ -1378,6 +1407,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey)
- 	test_kernel_gup_write_to_write_disabled_region,
- 	test_executing_on_unreadable_memory,
- 	test_implicit_mprotect_exec_only_memory,
-+	test_mprotect_with_pkey_0,
- 	test_ptrace_of_child,
- 	test_pkey_syscalls_on_non_allocated_pkey,
- 	test_pkey_syscalls_bad_args,
+-void do_not_expect_pk_fault(void)
+-{
+-	pkey_assert(last_pkru_faults == pkru_faults);
+-}
++#define do_not_expect_pk_fault(msg)	do {			\
++	if (last_pkru_faults != pkru_faults)			\
++		dprintf0("unexpected PK fault: %s\n", msg);	\
++	pkey_assert(last_pkru_faults == pkru_faults);		\
++} while (0)
+ 
+ int test_fds[10] = { -1 };
+ int nr_test_fds;
+@@ -1243,7 +1244,7 @@ void test_ptrace_of_child(int *ptr, u16
+ 	pkey_assert(ret != -1);
+ 	/* Now access from the current task, and expect NO exception: */
+ 	peek_result = read_ptr(plain_ptr);
+-	do_not_expect_pk_fault();
++	do_not_expect_pk_fault("read plain pointer after ptrace");
+ 
+ 	ret = ptrace(PTRACE_DETACH, child_pid, ignored, 0);
+ 	pkey_assert(ret != -1);
+@@ -1287,7 +1288,7 @@ void test_executing_on_unreadable_memory
+ 	 */
+ 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
+ 	lots_o_noops_around_write(&scratch);
+-	do_not_expect_pk_fault();
++	do_not_expect_pk_fault("executing on PROT_EXEC memory");
+ 	ptr_contents = read_ptr(p1);
+ 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
+ 	expected_pk_fault(pkey);
 
 
