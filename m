@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2A6C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AF6C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39DAA208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39DAA208A6
+	by mail.kernel.org (Postfix) with ESMTP id E7320208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7320208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964915AbeFRPAo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:00:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41755 "EHLO mail.bootlin.com"
+        id S964886AbeFRPAm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:00:42 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41782 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964808AbeFRPAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S964811AbeFRPAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Jun 2018 11:00:38 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 13625207A5; Mon, 18 Jun 2018 17:00:36 +0200 (CEST)
+        id 3093120850; Mon, 18 Jun 2018 17:00:36 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2B01220DD9;
+        by mail.bootlin.com (Postfix) with ESMTPSA id E299820DCC;
         Mon, 18 Jun 2018 17:00:23 +0200 (CEST)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -68,9 +68,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-sunxi@googlegroups.com,
         Hugues Fruchet <hugues.fruchet@st.com>,
         Randy Li <ayaka@soulik.info>
-Subject: [PATCH v4 18/19] ARM: dts: sun7i-a20: Add Video Engine and reserved memory nodes
-Date:   Mon, 18 Jun 2018 16:58:42 +0200
-Message-Id: <20180618145843.14631-19-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 19/19] ARM: dts: sun8i-a33: Add Video Engine and reserved memory nodes
+Date:   Mon, 18 Jun 2018 16:58:43 +0200
+Message-Id: <20180618145843.14631-20-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
 References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
@@ -80,7 +80,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This adds nodes for the Video Engine and the associated reserved memory
-for the A20. Up to 96 MiB of memory are dedicated to the CMA pool.
+for the A33. Up to 96 MiB of memory are dedicated to the CMA pool.
 
 The VPU can only map the first 256 MiB of DRAM, so the reserved memory
 pool has to be located in that area. Following Allwinner's decision in
@@ -89,11 +89,11 @@ reserved for this purpose.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 9afd82f9ec79..479272f02686 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -161,6 +161,21 @@
+diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
+index 97a976b3b1ef..c5c108a11285 100644
+--- a/arch/arm/boot/dts/sun8i-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a33.dtsi
+@@ -181,6 +181,21 @@
  		reg = <0x40000000 0x80000000>;
  	};
  
@@ -112,29 +112,30 @@ index 9afd82f9ec79..479272f02686 100644
 +		};
 +	};
 +
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -464,6 +479,19 @@
+ 	sound: sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "sun8i-a33-audio";
+@@ -262,6 +277,20 @@
  			};
  		};
  
-+		vpu: video-codec@1c0e000 {
-+			compatible = "allwinner,sun7i-a20-video-engine";
++		vpu: video-codec@01c0e000 {
++			compatible = "allwinner,sun8i-a33-video-engine";
 +			reg = <0x01c0e000 0x1000>;
 +
-+			clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
++			clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>,
 +				 <&ccu CLK_DRAM_VE>;
 +			clock-names = "ahb", "mod", "ram";
 +
-+			resets = <&ccu RST_VE>;
-+			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++			resets = <&ccu RST_BUS_VE>;
++
++			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
 +			allwinner,sram = <&ve_sram 1>;
 +		};
 +
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun7i-a20-mmc";
- 			reg = <0x01c0f000 0x1000>;
+ 		crypto: crypto-engine@1c15000 {
+ 			compatible = "allwinner,sun4i-a10-crypto";
+ 			reg = <0x01c15000 0x1000>;
 -- 
 2.17.0
 
