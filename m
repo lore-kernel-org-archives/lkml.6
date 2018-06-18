@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA89C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1694C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62704208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:28:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62704208D5
+	by mail.kernel.org (Postfix) with ESMTP id 872F420864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:28:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 872F420864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966060AbeFRJ2U (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:28:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56780 "EHLO
+        id S966182AbeFRJ2u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:28:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56372 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965354AbeFRIZl (ORCPT
+        with ESMTP id S965790AbeFRIZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:25:41 -0400
+        Mon, 18 Jun 2018 04:25:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CBDAC9D;
-        Mon, 18 Jun 2018 08:25:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80A3FC84;
+        Mon, 18 Jun 2018 08:25:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rich Felker <dalias@libc.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 223/279] sh: switch to NO_BOOTMEM
-Date:   Mon, 18 Jun 2018 10:13:28 +0200
-Message-Id: <20180618080618.068832202@linuxfoundation.org>
+Subject: [PATCH 4.16 219/279] ARM: dts: imx51-zii-rdu1: fix touchscreen bindings
+Date:   Mon, 18 Jun 2018 10:13:24 +0200
+Message-Id: <20180618080617.908677406@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,204 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rob Herring <robh@kernel.org>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
-[ Upstream commit ac21fc2dcb405cf250ad3f1228f64f64930d9211 ]
+[ Upstream commit 6d3299aef7df7225ecff653feedafb5d1646998b ]
 
-Commit 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
-inadvertently switched the DT unflattening allocations from memblock to
-bootmem which doesn't work because the unflattening happens before
-bootmem is initialized. Swapping the order of bootmem init and
-unflattening could also fix this, but removing bootmem is desired. So
-enable NO_BOOTMEM on SH like other architectures have done.
+This fixes errors in RDU1 device tree that cause touch screens not
+working.
 
-Fixes: 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
-Reported-by: Rich Felker <dalias@libc.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Rich Felker <dalias@libc.org>
+Fixes: ceef0396f367 ("ARM: dts: imx: add ZII RDU1 board")
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sh/Kconfig        |    1 
- arch/sh/kernel/setup.c |    1 
- arch/sh/mm/init.c      |   68 ++++---------------------------------------------
- arch/sh/mm/numa.c      |   19 -------------
- 4 files changed, 7 insertions(+), 82 deletions(-)
+ arch/arm/boot/dts/imx51-zii-rdu1.dts |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -9,6 +9,7 @@ config SUPERH
- 	select HAVE_IDE if HAS_IOPORT_MAP
- 	select HAVE_MEMBLOCK
- 	select HAVE_MEMBLOCK_NODE_MAP
-+	select NO_BOOTMEM
- 	select ARCH_DISCARD_MEMBLOCK
- 	select HAVE_OPROFILE
- 	select HAVE_GENERIC_DMA_COHERENT
---- a/arch/sh/kernel/setup.c
-+++ b/arch/sh/kernel/setup.c
-@@ -11,7 +11,6 @@
- #include <linux/ioport.h>
- #include <linux/init.h>
- #include <linux/initrd.h>
--#include <linux/bootmem.h>
- #include <linux/console.h>
- #include <linux/root_dev.h>
- #include <linux/utsname.h>
---- a/arch/sh/mm/init.c
-+++ b/arch/sh/mm/init.c
-@@ -211,59 +211,15 @@ void __init allocate_pgdat(unsigned int
+--- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
++++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+@@ -518,7 +518,7 @@
+ 	};
  
- 	NODE_DATA(nid) = __va(phys);
- 	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
--
--	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
- #endif
+ 	touchscreen@20 {
+-		compatible = "syna,rmi4_i2c";
++		compatible = "syna,rmi4-i2c";
+ 		reg = <0x20>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_ts>;
+@@ -536,8 +536,8 @@
  
- 	NODE_DATA(nid)->node_start_pfn = start_pfn;
- 	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
- }
- 
--static void __init bootmem_init_one_node(unsigned int nid)
--{
--	unsigned long total_pages, paddr;
--	unsigned long end_pfn;
--	struct pglist_data *p;
--
--	p = NODE_DATA(nid);
--
--	/* Nothing to do.. */
--	if (!p->node_spanned_pages)
--		return;
--
--	end_pfn = pgdat_end_pfn(p);
--
--	total_pages = bootmem_bootmap_pages(p->node_spanned_pages);
--
--	paddr = memblock_alloc(total_pages << PAGE_SHIFT, PAGE_SIZE);
--	if (!paddr)
--		panic("Can't allocate bootmap for nid[%d]\n", nid);
--
--	init_bootmem_node(p, paddr >> PAGE_SHIFT, p->node_start_pfn, end_pfn);
--
--	free_bootmem_with_active_regions(nid, end_pfn);
--
--	/*
--	 * XXX Handle initial reservations for the system memory node
--	 * only for the moment, we'll refactor this later for handling
--	 * reservations in other nodes.
--	 */
--	if (nid == 0) {
--		struct memblock_region *reg;
--
--		/* Reserve the sections we're already using. */
--		for_each_memblock(reserved, reg) {
--			reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
--		}
--	}
--
--	sparse_memory_present_with_active_regions(nid);
--}
--
- static void __init do_init_bootmem(void)
- {
- 	struct memblock_region *reg;
--	int i;
- 
- 	/* Add active regions with valid PFNs. */
- 	for_each_memblock(memory, reg) {
-@@ -279,9 +235,12 @@ static void __init do_init_bootmem(void)
- 
- 	plat_mem_setup();
- 
--	for_each_online_node(i)
--		bootmem_init_one_node(i);
-+	for_each_memblock(memory, reg) {
-+		int nid = memblock_get_region_node(reg);
- 
-+		memory_present(nid, memblock_region_memory_base_pfn(reg),
-+			memblock_region_memory_end_pfn(reg));
-+	}
- 	sparse_init();
- }
- 
-@@ -322,7 +281,6 @@ void __init paging_init(void)
- {
- 	unsigned long max_zone_pfns[MAX_NR_ZONES];
- 	unsigned long vaddr, end;
--	int nid;
- 
- 	sh_mv.mv_mem_init();
- 
-@@ -377,21 +335,7 @@ void __init paging_init(void)
- 	kmap_coherent_init();
- 
- 	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
--
--	for_each_online_node(nid) {
--		pg_data_t *pgdat = NODE_DATA(nid);
--		unsigned long low, start_pfn;
--
--		start_pfn = pgdat->bdata->node_min_pfn;
--		low = pgdat->bdata->node_low_pfn;
--
--		if (max_zone_pfns[ZONE_NORMAL] < low)
--			max_zone_pfns[ZONE_NORMAL] = low;
--
--		printk("Node %u: start_pfn = 0x%lx, low = 0x%lx\n",
--		       nid, start_pfn, low);
--	}
--
-+	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
- 	free_area_init_nodes(max_zone_pfns);
- }
- 
---- a/arch/sh/mm/numa.c
-+++ b/arch/sh/mm/numa.c
-@@ -8,7 +8,6 @@
-  * for more details.
-  */
- #include <linux/module.h>
--#include <linux/bootmem.h>
- #include <linux/memblock.h>
- #include <linux/mm.h>
- #include <linux/numa.h>
-@@ -26,9 +25,7 @@ EXPORT_SYMBOL_GPL(node_data);
-  */
- void __init setup_bootmem_node(int nid, unsigned long start, unsigned long end)
- {
--	unsigned long bootmap_pages;
- 	unsigned long start_pfn, end_pfn;
--	unsigned long bootmem_paddr;
- 
- 	/* Don't allow bogus node assignment */
- 	BUG_ON(nid >= MAX_NUMNODES || nid <= 0);
-@@ -48,25 +45,9 @@ void __init setup_bootmem_node(int nid,
- 					     SMP_CACHE_BYTES, end));
- 	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
- 
--	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
- 	NODE_DATA(nid)->node_start_pfn = start_pfn;
- 	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
- 
--	/* Node-local bootmap */
--	bootmap_pages = bootmem_bootmap_pages(end_pfn - start_pfn);
--	bootmem_paddr = memblock_alloc_base(bootmap_pages << PAGE_SHIFT,
--				       PAGE_SIZE, end);
--	init_bootmem_node(NODE_DATA(nid), bootmem_paddr >> PAGE_SHIFT,
--			  start_pfn, end_pfn);
--
--	free_bootmem_with_active_regions(nid, end_pfn);
--
--	/* Reserve the pgdat and bootmap space with the bootmem allocator */
--	reserve_bootmem_node(NODE_DATA(nid), start_pfn << PAGE_SHIFT,
--			     sizeof(struct pglist_data), BOOTMEM_DEFAULT);
--	reserve_bootmem_node(NODE_DATA(nid), bootmem_paddr,
--			     bootmap_pages << PAGE_SHIFT, BOOTMEM_DEFAULT);
--
- 	/* It's up */
- 	node_set_online(nid);
- 
+ 		rmi4-f11@11 {
+ 			reg = <0x11>;
+-			touch-inverted-y;
+-			touch-swapped-x-y;
++			touchscreen-inverted-y;
++			touchscreen-swapped-x-y;
+ 			syna,sensor-type = <1>;
+ 		};
+ 	};
 
 
