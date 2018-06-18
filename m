@@ -3,189 +3,190 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 545FCC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E8AC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB9202086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:33:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03275208B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:35:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="JmLwCCi8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9202086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="ag6yp3Ur"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03275208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934354AbeFRLdE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 07:33:04 -0400
-Received: from mail-eopbgr80134.outbound.protection.outlook.com ([40.107.8.134]:65248
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        id S934130AbeFRLfa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 07:35:30 -0400
+Received: from mail-by2nam01on0075.outbound.protection.outlook.com ([104.47.34.75]:27969
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933337AbeFRLc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:32:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+        id S933381AbeFRLf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 07:35:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5V4DIdOzbx2bCgXwjuo7mL6VF0eWlKRiQUD76r0qUsA=;
- b=JmLwCCi8MG6T3quiY0ESOuavSiUqDlOHGR3TpVXnE6fI7PUcM+iE48dBpE+dit/wxyNNbE0dJdQKW9nuDNUpSZwP6458O7rnyEXPRWxelozx3cFlx6qYX6X22Hl8X2paB74Ub0NPpRpCe9ZyYXtZcVZsJrO42NSdl7/sKpWbqrk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-Received: from [192.168.13.3] (85.226.244.23) by
- VI1PR0201MB2463.eurprd02.prod.outlook.com (2603:10a6:800:54::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.820.15; Mon, 18 Jun
- 2018 11:32:52 +0000
-Subject: Re: [PATCH 01/11] i2c: add helpers for locking the I2C segment
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+ bh=/5L+NM0ItaN6egVC0VDvKRaLxwvl0WoYVKlN10TYUhg=;
+ b=ag6yp3UrUZTUi1iLWVAyL3Wm+ApjmADqy5M6ineSFyRSZ4EZbeAJ+TtTAtDsvFBBqe2UK60aUbvi4yyjmtQlj8J2LaeL5YU1Gc4sc6Bc62xxoFCxrfTHBUqVP2sgYfQ7eWraneYsot8XYvWsxc2wp6/dn+A4cIo48bSfcyiyXvo=
+Received: from localhost.localdomain (155.4.205.56) by
+ BN7PR05MB4577.namprd05.prod.outlook.com (2603:10b6:406:f2::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.14; Mon, 18 Jun 2018 11:35:20 +0000
+Subject: Re: [PATCH v3 2/2] locking: Implement an algorithm choice for
+ Wound-Wait mutexes
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org
-References: <20180615101506.8012-1-peda@axentia.se>
- <20180615101506.8012-2-peda@axentia.se>
- <20180618110502.cb5s24srp4frahm6@ninjato>
-From:   Peter Rosin <peda@axentia.se>
-Organization: Axentia Technologies AB
-Message-ID: <b860025e-3d4b-f333-80b4-3831dd969757@axentia.se>
-Date:   Mon, 18 Jun 2018 13:32:47 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, stern@rowland.harvard.edu
+References: <20180615120827.3989-1-thellstrom@vmware.com>
+ <20180615120827.3989-2-thellstrom@vmware.com>
+ <20180615164604.GD2458@hirez.programming.kicks-ass.net>
+From:   Thomas Hellstrom <thellstrom@vmware.com>
+Message-ID: <88ca74e5-0d26-4e18-7596-229d12f4afc4@vmware.com>
+Date:   Mon, 18 Jun 2018 13:35:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180618110502.cb5s24srp4frahm6@ninjato>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+In-Reply-To: <20180615164604.GD2458@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: HE1PR0502CA0013.eurprd05.prod.outlook.com
- (2603:10a6:3:e3::23) To VI1PR0201MB2463.eurprd02.prod.outlook.com
- (2603:10a6:800:54::23)
+Content-Language: en-US
+X-Originating-IP: [155.4.205.56]
+X-ClientProxiedBy: HE1PR07CA0001.eurprd07.prod.outlook.com
+ (2603:10a6:7:67::11) To BN7PR05MB4577.namprd05.prod.outlook.com
+ (2603:10b6:406:f2::11)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ea2ce1c3-a5cb-45c0-6e1d-08d5d50f3c5a
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0201MB2463;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2463;3:mgIMjzOokgX9tAJsMQhIO3FbQ8bjFoh2Tvirqob2ZiiSOgpTYoqwS2HtxzrdZQaUYAd9sX7clOfnke3rTLVRKg8LbP91gKktewYFk6Pfi6MQRyJ0ilGXfxPfSoi/DN9scwveH0GDV41dhM7TzXB62whRvpCnrtykVf+Rv77x/fOUGkwrIQTGH3VdQljkdG5/5/CMA8vXiF1+Cv1wLJQrBYOumYuM0yVTvu06vt3MyVxzVSo81eFzXBAHR+vgzMml;25:Bky/8kgCIVG1kwqSSLax3trthDIMUN1GMVktNK3czjX5R0wY6c3mY/T5KO+nj+Rq/IjiGETeeNunEowF4G+qBRp2ppmqIzUAKFfTcByVFGqa/b/a9NTSQGIJYDh3rshSlunnmJbISVoiYNrnFnRcuZQPcGX9IhRgzOrBJByK9/OZlL+i5WaJiiFTIASk88KJ2bnrGYgg81rNzdKdDoijcUmKr6yRlmppO/42KCBBUI81BUhZhEAhccHQGMA1zHsJgjwh7Y4+Eldt0NpT/gyU6IuJtu9lV6IQGfRUHLA5APZ5aOAVbe7jUcWmGFKtkjMGUvJyGRaCWWQ8izjultzRng==;31:kRGwaJm4clb5r0N56PZZTngdKgTMHldAscu5ehkMa+mxom0MMaJMuKkQdU2M58oogloPpwQOPlPGSpF8dI3zg7+Q3a6ftro2So7w/8G7+JYoNZC5wWFg0zZ6HPeIFBn5vWlS51Y7eKbtbtOuI/eatTHEPx1c/96zFUjhweyFaWkmI8OFC++Zt2mK5azfyrHE1+DVecPA5K4SiY2MiTTSXAoz5tueGpWJrz28RQ2lE/Q=
-X-MS-TrafficTypeDiagnostic: VI1PR0201MB2463:
-X-Microsoft-Antispam-PRVS: <VI1PR0201MB246307B8B1F4C4A5A71B0F8EBC710@VI1PR0201MB2463.eurprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 55dc153c-df01-49fa-c9a6-08d5d50f9466
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR05MB4577;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4577;3:vbjD5pJMwsRDeD0aN4mf/5nZn1fjI9lGBzC1Utsnfbhxdc0+VcGVK+C37krJmzuFYeI0u2C6Diex5k3ktKxLX0mv02L7h5rEHt3CVJxRpvomSjCrA72PjZUsRdsb2y8kfE4eyxeW/Vq0maATLsrBLV+QAmfk0vF2Hqah6WdcCdr71m0c+S2WMDNF0tK5V8QUEpwv5SObVV8pI24rqzTrLiuWnOAOwo9BdQSpuGMN5ae3pgAjEnJgiGoD+jOFn1nN;25:8dykBVp/43KO9bdK4DT+Hn8Xdf6yDz1IWWJXSMhNOdVQX1HIfhw93PsN4ZvQTccSCrZWyLnAxL7wniEFFeCsZpYZ+c8fyeFki9rEJ/CJcmW/bA5Na7GcQMs25wPMXHPcKxXKuk6Gh+14P5nFU54JxKNTeMZVka7ieuj2ozrHXMUpR6yivj+D2W4iCHtoT17cD7pL2edvNjZWnvYeBu6qrrGi9LmT5aEIONHlVMeXHioD6nMHQNoyzyr1m/O9CxPk49qx0x33Yi89n5FfoYyhpbBOpeJzEUmIp0g17ThZ5qrClRDnl+OB8NnnNXFAP5jPMLaFKXn74x4jEuIiPYiV3A==;31:CJCwZOejSI7pwmhnFkuohF/D4KIJ23wtClJKlK0P2ddewp1eIuSl20ZZ36/4XQrd+xMxYBi1UxFAlHwkaGdUQcNV9s5SEFzzCRzsQeZHpEIRUCNntWcUFUmpj8GFwHhKfs9Tmu7lo806pJmn43wJAbkHEokFQ5f7rdSCV1ZQsQhqhToYMojr7bZ/ZU+AeQoamBG7OGEqHX6tNuvlUrgRJHczYw33gNkSc9k0KgfbWW8=
+X-MS-TrafficTypeDiagnostic: BN7PR05MB4577:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=thellstrom@vmware.com; 
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4577;20:WpZAYQ9totHVypOOK3hkYHDMyaH/a6EESOyQBNLhHqaKzjIhP8n2HIGlFD7J0TeoJNBrubgWr4pTmvHRDE2RCIFjjhS0kBtce1IbbrLYbdsy6ofUwWFokTPj1FmqnDtNtIIkeg7I3dqyHV9EzRjumSVY9eGbtVakpG42+0ZZkJmTstMz7cWrJITApPE7Z3scHbgCwQYv068TvLtrvun3Na3ATV5RvOfVgvzPcxkhKubM3h0LJgmMYOH86Uhi+u0L3Kz/9/to4MMnuFZsUbSC8o55Watl0UL90r/kX3S5T6RccdRZBFt2JTs12f9vdXVmjxUNfIBz2+zGV33DnnQmL7eNCm1/oHmPYBr8Xh03CDYDAJN59Gu3fVmbNZnMxyXrBpeW8e+uGNLkqs+JzCUnjz5RKaVFxp6rwrl2LQWev//r+kBJSXKU4ClqaJD7tMxKYpJbjA62rMlrRIhWIErha4YM+4xgVTVtU1eIESl5Twr4sN/sA//FGjpPdbSpeMFb;4:qYgApuySlKNk1+eNU5epnqhzDh+mpBGRqCJjkzd2rqm547w3/HBCXiN6HdIiwNSvbSp3YCNAfg6LBZ4UgqDAWngCed+SKpVZgg5ypdTqYniDee+pLg1gAgOQmHfrsrSaJ8gxgP32F1A/uiO2zvitQ5T6utSUK7GSNzH6WF6rs9kfkXrJ85TZw9P29V4xjk2UOPs+aqxVewp9/B/tFBN88knOw/kJ0CDs5eEkVxs7OaxNdC5I3IFRFEnrtsk96Mxtc4eJleqYaNMUvhVEEKfEeA==
+X-Microsoft-Antispam-PRVS: <BN7PR05MB45772DF260C97D23F978AC6DA1710@BN7PR05MB4577.namprd05.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(2016111802025)(20161123564045)(20161123562045)(20161123558120)(6043046)(6072148)(201708071742011)(7699016);SRVR:VI1PR0201MB2463;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0201MB2463;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2463;4:+aG6mex0UpsXix2xq8FV5DiIhDmpSc65VGIwbR8XCHiq962IJYCdlx1KAKapUODkC5OqORFARufxlFqtXX6hFmFONjAvoMxOQ8NwdOrTIeVhNSTn+htMDSo6q+whJb2TS5ntvx16H2D/QosGUnG/ovtsbxPjTsV582tPAqkmZfWIOCA8EQsj2sSZcXw2shydU1MfJJaNGVeqFxbJkdt59OtAEEwrKOEsZ1G2RGCRQ9CY4CU21NYLKPbSbYIcK+/fqXFSXkdf53Q0/syQWNQdjw==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BN7PR05MB4577;BCL:0;PCL:0;RULEID:;SRVR:BN7PR05MB4577;
 X-Forefront-PRVS: 0707248B64
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(396003)(376002)(39830400003)(346002)(39380400002)(366004)(54094003)(189003)(199004)(74482002)(8676002)(68736007)(117156002)(66066001)(3260700006)(8666007)(6486002)(11346002)(229853002)(478600001)(65956001)(47776003)(23746002)(4326008)(386003)(6666003)(36916002)(25786009)(446003)(86362001)(8936002)(16526019)(77096007)(65806001)(76176011)(81156014)(26005)(59450400001)(81166006)(3846002)(305945005)(7736002)(36756003)(58126008)(53936002)(6246003)(65826007)(316002)(39060400002)(53546011)(50466002)(106356001)(476003)(2616005)(2906002)(230700001)(64126003)(16576012)(52116002)(486006)(186003)(31686004)(5660300001)(97736004)(54906003)(31696002)(7416002)(6916009)(7406005)(105586002)(6116002)(956004)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0201MB2463;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: axentia.se does not designate
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(39860400002)(376002)(366004)(396003)(346002)(199004)(189003)(316002)(52116002)(23676004)(52146003)(2486003)(2616005)(476003)(446003)(31696002)(11346002)(956004)(67846002)(47776003)(105586002)(106356001)(86362001)(486006)(65806001)(65956001)(26005)(58126008)(54906003)(76176011)(6506007)(59450400001)(53546011)(386003)(66066001)(16526019)(186003)(36756003)(25786009)(65826007)(305945005)(6246003)(2906002)(4326008)(478600001)(68736007)(3846002)(230700001)(53936002)(6512007)(7416002)(50466002)(64126003)(7736002)(6116002)(6666003)(6916009)(5660300001)(6486002)(8676002)(81156014)(81166006)(8936002)(97736004)(229853002)(31686004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR05MB4577;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: vmware.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;VI1PR0201MB2463;23:7QM9pg+Fkz2RiZyJ06VOJrAaV1ChuamDvbj?=
- =?Windows-1252?Q?JjCnoS+wRX1Lp97DwLi/W9CQ6LCWOOc+v6LDbj0a5fOQzm6vwF/9eWw8?=
- =?Windows-1252?Q?TMBBiA6oEW/hJcVAdy/C1IkTIMpbtwDvPT996uXx+59jJpfz9cKujub4?=
- =?Windows-1252?Q?cy74V9ho/BfXL9jbkJBgmScl7pbqFWjh7flMwsW8q/p8BDLb60AlmcjX?=
- =?Windows-1252?Q?7WXKWT+sZl0t6GntP0+PFUqgUwK3AkjR4YzZPHr5CKNjQDuFRKovVKVX?=
- =?Windows-1252?Q?cERLCh1vlKyJP1OL958kYrnQ4xBZNXIpITr1OlpfvV9QJV1YMQ/g+2bI?=
- =?Windows-1252?Q?uz8Y507cwGxDGSLwNnw2RKvHXRCXVsCstvWVDtnBP1wDArE5jobp7Fsj?=
- =?Windows-1252?Q?sl2qGmMdmx9nlIZwhVQlaydx28fjT44zzMFEFDC19pQb6P9P1IPfDhJQ?=
- =?Windows-1252?Q?8Wb72hEM1ncb9coA5Ba/fUQ+YpvoYvLlIdYDZQBdgfdH9GEQusbQZGt2?=
- =?Windows-1252?Q?xs4oCMk8VlqwWslx+LCrqelgm5CWdVizx6ljk4N7M1338RnecsD4g0Yh?=
- =?Windows-1252?Q?RqNsTm+Y6waCCPGEHcaAoBoKyqnK1R04JpTny/SW4gC+ApQ/ig9i5W/w?=
- =?Windows-1252?Q?TxFyr5nOXL7qS1u4NCsRN7B/jk7fpLw61y3DX6ONvTcZywtZjseZO/5U?=
- =?Windows-1252?Q?oLTZqcX3GoT4lRhyX6nG8OTUJt7HaDPaBNWk8NhK1F7J2rhEg6BJl2Qr?=
- =?Windows-1252?Q?wjqU7xtZXP8+STBcJCjQkL/ibKHZcm/DmfJ18Rxwwp0W2AHI5+pbgqaK?=
- =?Windows-1252?Q?seLwsXzyOeVmVkBjX5QK8ZilQy4hDoJBwPoO8t2EUKZE3rP0j3UAUTP2?=
- =?Windows-1252?Q?yiL6gzV4ml3I5UfqLozAYeDevGXhO/1ALCfq5zPH4ReaF7F9NARJOybF?=
- =?Windows-1252?Q?aOrQDx/3EdOS5NWzWjPO11qTHTjE1xiFSmTiWtkg3raYMilPWuJrKUN/?=
- =?Windows-1252?Q?fYvt5CWh+kullx2KtmHgnlCfVbuYE2JsUVZQl4BwiUTcRcRe+uhHnKAz?=
- =?Windows-1252?Q?uzVox6oajL8SxeyeCSeqdsHXVVM0vo/B/nQr/J69dd5fJcTrJyDzJrMW?=
- =?Windows-1252?Q?8zP5cQ3+iDBnAPdHsIJxEfaEk/H5WvYBmrrp3BFKrdW+0PuQuwAm1fhK?=
- =?Windows-1252?Q?ddGZcRPVuA39BYumrzhy4YYQMa5SOCwSsqmwVZpRhmXxGJ2LpIxe/+co?=
- =?Windows-1252?Q?Fs1bDU/4Bl1UalCR1GqVKBHHSqRZBXiQXlJ5l+W3cRLHGdQG3rLBurBv?=
- =?Windows-1252?Q?N2ssanZwhMjsLGo/3EHiDwg0nsB21qg3QeJsPc8zr63ViNeydMCerziR?=
- =?Windows-1252?Q?ZWzK+c3vOQABZ172vgk9HvWIAjR0tviJ2dp52IXQc6i5GFn9Xw9ISzjU?=
- =?Windows-1252?Q?/jqSenKw49EXu9jzpTYXDi389rRn7lNIL5aoF8aHUmIA0FE20DewhY1k?=
- =?Windows-1252?Q?ltbfE8kJQTLFycjbHZQQuztiDFOyGfeJPS8Moy9oVPXcHCjV5IcTzdpD?=
- =?Windows-1252?Q?wxaOHR1L05TzEpLsj0bKRlUx40tnPzZ/YCo7PEGb++UeZfKF+B4ZlLTC?=
- =?Windows-1252?Q?O/LwhzZ9wXuBEKnXNU3rLu0BWJYD2lXFORT1kHsM5mgUMSaf/0IpnnCZ?=
- =?Windows-1252?Q?LACYHJW2db3LYivKH58saNaawDXdon7LEMUhsJAvDVyp7ONsqdXgp3bn?=
- =?Windows-1252?Q?TUz7MTdyDQDQ0QfxG31G4W9yI9oTurysoBRqk3Gs=3D?=
-X-Microsoft-Antispam-Message-Info: ze8LLxjBfH2v2mNqNj4CMx2UbEBXStPhWzgaiBTgOlTcCgqwIMM1VnNIILD7/W9XjAPCvH+h2F/toU/wqgPdAsvEg/by7b82TGirtGREeU4AlRZwkYvAYzecrPg4fCezuwrlAVpwAOEmHFgYWfRLLdg0WuMQRr1giW6CPAI9/ugZq4oitZHw0lkQjI6ncI4q
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2463;6:HiH7W7aTN99YSOlOSzagm5On9eZqydsv3OwXRS9rWLLhDFhxyBt7arqBDDPDlg2HeLdEi/DDQFjQ7ee4iItbsG5Zo33gajuLWiyQULH3VjHfg5Me1tSN4jZ1amVu3gxCprMJMeGFl924h3PX2ReO6soJar3eelpf7/kayGguIdhbkE9UeicIDCfkk9uNGg7guout6Fz1dy/M43aotLMIJmMMJj8r6scHTaHM8D1cm6hyQ7J1RyeD4b0VOhkw/4wJ6We2MeowMqfnN3TtLuz/oR9W9ycJ8gshCMMpeCeqFAMPV22Y+/9qqjRW4o80BCZ/7J0fZAn4NPU25r5xvAwQrqR9FXeKWMGjqRksxUrrPRTSpFKid3iERGccxYJEUfoP2vIljYQGN9CVb1qoR8bJ92MuKfdNKGRrGRw0pGG7Dccjr1cAv18crTKaBDY7/q7CnxMYZzHlMHsU3KfEFV3MXw==;5:JfZyCfnIs9wT8cT5LAHpR+eHMjU+i34PHMCJBcrbyuyxYmDmqYx4tl3lxmOp9u9KVr/SCUhCMku9grcrNt1+yIHk92l5BdJ+05LH3DRVe6SBiB2FU77aA0prAO0RueGtiSkH3wPqtl5b1N0my6cDald8wdncD8mi0CdOybfv3wg=;24:Wv8e8SBwCBN58/Nh4j3540sr1BhSve77nu4KQmXnx+R3WLmEUPAXHJAhZaw3ZVFUlc7aOVwVn4rOUSiBRj6r25GgF9rjek0bbPpaMV4fVtE=
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjdQUjA1TUI0NTc3OzIzOlpPWmwrZFZIRWtwWVBwNGZnTVp0RWlIQ3d6?=
+ =?utf-8?B?N0ZPSWhPdnNVVVNndVZzamduL2IyUkZlNlBCNmlaYUZMSGZWUWE4anRNMUV4?=
+ =?utf-8?B?TThsTkFnMlpkRE1qYUdYUHZEVXhZYzRmM3owQTJQOGk1WjcvRzZTQVFEaDZr?=
+ =?utf-8?B?TitORTJUWEh1QWtWREo4ZlN6NWJHTnhkZWhRczFCckdzR1Y2RFVxU2pOYXRn?=
+ =?utf-8?B?SWhuRlZNWStZTzYwaWJjdzNIVGM2VVl2eHpUdUtuQThiVE5IeU5QVFd2WWhs?=
+ =?utf-8?B?N0pENHFTWTI3TGJVQUVDMWNXRTU5Vkx3aXdIR2xrQkx5cnJvQ3N2dWx3YXVK?=
+ =?utf-8?B?NjJxUkRmQTBTWG9TVGJBVFNsQ25vYWc1ZjhKbFZiTXFBRVZsYm1hbmFOdnJt?=
+ =?utf-8?B?Z2tBdjYxUFNId2t5U2g4bFh2dmFKUjJpNXJJMUdMbkFzbmcyQmVTejJFTUpU?=
+ =?utf-8?B?MjdLb25hV0pQMlFkRE1VazY4MDZLVWxuMmJvbjdmWnorVE85L0loZ284aWo3?=
+ =?utf-8?B?NW95QVo4WWR3R2ZVeUpsb05Yd2lrUThLeTNNS0FPWFJ1dVNzSUhlcytpSlBU?=
+ =?utf-8?B?OTJ2cVFPNWtDaENpU0grL3VYNnd3TzMyMjNWeGpMbUhxR2RlaXpJUDlLZ0Q0?=
+ =?utf-8?B?NjR2SGdNTS8xTjY2K2ZINWdWM0NYWEpOM3VoNC9yTGhwMyt1Nnlhckx0YVV4?=
+ =?utf-8?B?T0VNRWdEa01ESzI0N1hmeFhSSUJPS0U5VWJISHdHNy9jNmpUdjViTEJEWVdi?=
+ =?utf-8?B?YTlqbUJoRWtrVTBjaGhkQWdxRHdHWXVkWklobEIwanF2YmtZVVZ3OXVjYjFt?=
+ =?utf-8?B?d3JOQ0tPMmRIaDZnUExHSWh1ZGhzTCtPNGRibldDbUpxQWF1eDFQS2dyZG5t?=
+ =?utf-8?B?ZnFrbVU0b01NNUNnK3I2MGRTeFVWb09MK0Z2RUVyK2VUS0o4bkNVWlZta1dM?=
+ =?utf-8?B?clN1dUswd0VHN2Q1SzZzRnI5TkdoNExnOFRTMVVJd09hWlNYeXgyYnBHWEpG?=
+ =?utf-8?B?b3hzb0dXSjdlYWpIT0U0dEx2T1ZYZytPRFU3T0E3VDRzeWpLdVdaa3ZOVVNv?=
+ =?utf-8?B?eHZMMEx1SDlCbTI0aGVrWVpqcE5KWHZSczMveUdCVXNrQjV0b0s3V3Avejg1?=
+ =?utf-8?B?cGEwUjM2RDNhM3VNV05tYm10VEdxcXVoWEVBaE0wRUpZenRiVHZpcnlZYmhj?=
+ =?utf-8?B?NXp3NklKMFI3UGhjY0NhMnZZV2FORzJrWmRlZkVybjE4Mnpqb2UyS3ZFWk9x?=
+ =?utf-8?B?dVpFYWdkNXdPd2Q3TkNmU2M2YXJmWjRQNVlJSFNpNm9BZjZjVGt2OE1OZXNl?=
+ =?utf-8?B?RzVIVlhQb3Z6dS8vWnhZbCtYeXBJanZJRTJkSDNwaGdXZDJLWXZEcms3a3p5?=
+ =?utf-8?B?WTg0SEFnWkhTaExndHJaV0Y4V2ozdUhUWUxWZ2xYd25jZGFiMnE4QnRDaDN6?=
+ =?utf-8?B?aXF6TGllcnpBREdpK1BDWmJ3YmY0S2JGcmt2VUVvL2dQUXRZM214a2QxbklP?=
+ =?utf-8?B?NFZqMFgvV1R4NW5JZjhLcGo2VXVnRERiV0hSY3BpWUY2dkVJMlpOK3A1ZGU2?=
+ =?utf-8?B?bzJ5YmpxNFNMeG1OdnA2b1JsampodmVsTDVVVTNpdmdFOUxoMVJycnJzK2dh?=
+ =?utf-8?B?LzFqSWFSU1BwcktSSkhvb2dsRDFjN2RsSHZrOHQrNU9hQ2psVnFESkZVRFhn?=
+ =?utf-8?B?SXBoYk1pUURGZGk3eUNIcEllVVZ2cTAzM0NkVzUwaFQ2R2toTVhndG1QaTlr?=
+ =?utf-8?B?U1VWYWxhV3E2dWd3Z1RYTldUdHpIOTd2YmZnTHJwN1ZSaWNyanc3bG5RejRC?=
+ =?utf-8?B?UThVOExiTmlsWkpFU0VqM1UwQUVscEpPYUlJWFJHVmt1Z1FPcW5KTzdvazY3?=
+ =?utf-8?B?TnM5cmlIcVNCdk9xZ01hV0o2MUlITVhHQ2U4Sk1jSG9idlFSQ1UzL0ZIcmlL?=
+ =?utf-8?B?eElKMlFVaUNNbzFWRzRwNkdPWmd0M0diR01EWlhFVG5QVXpHcnZVdUJpemZj?=
+ =?utf-8?B?Z1FQUkxHSlR0K0hWdjNkRU1yME9Bb0p1N240VVdlMjJMVG9udTkxQUJ6bGpz?=
+ =?utf-8?Q?E09I=3D?=
+X-Microsoft-Antispam-Message-Info: QmvSBXbrRzI2q8fdTd8gha4nsS8cSPJm7wiXcrlyhw7aHwSajJLG5FZBpHJll5FXMfmptYK6yLI6LeGOINTfrl3vBUpwAVvFB6WYEB6opaM7HKEaA0+UInc1ECQOT03GKmIJQbXKLMLAqRu68REQIXVNf2VfcLF/6cQyBdCl9Ra17u7YINONNSKhGMQ/rrmdPew2BadHBXqwz6Go54A0TvWVb8XczR/bEhFAiQccGvFhnpeLsM6m40TXdyWuiWUGz98tfox6/GMY7kbr6+ynyYhXI9uxXcfjG3pmUvaATbVzQHsiU8gPq3SvHyrMpUDv
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4577;6:hrepUufG9Zwt3+rC03eoPrSXqBVhhg6185B4QRp634rI+2epXdEU9B+WDgYwllDeDyuuLxrYrD2TxZfVbsA9/sNA5UNoZUEbZlHOjE2xlt9xl1+NTOcDkOm8StyGgh2rRJ6umidd1W0UCB9GbTlnoTFJ3JaufOkF1mCD/vd4DD2yMI+585kez0Mcc3QF3N8MxN9KPqB7GJGEPa35/b3Af8p6uOHTww7JwQoxgwqv9XyrkalzUcxsk/XJteID6I3VEqRVVGXJgbH9tCX5SQRzZhBrQ5A27Ow0EUaMs6rU+OamADLs3tlfYOo4Fil3YGEij8H41tbjBbPf9aeR6ou7DB5TObXGXWJ2yamMPNnO4vETUwm2sF7W5CGtKh9fFecmVe2zFTrZEJjPR4yKFTDcaPvJ+1Jl0ZicG7UG82kEZ/CCGex7n2dUuDS732UmPUccbN6jPvaR9JHab3Eo+nVi3A==;5:zx3Pgn2Z0eTqd+rCSVyXjyxq3neIg4uTULV74KWMP1gDbsxOnZslG1XslGPyjfj8E8KBcHmaNe6bgIzinS18ajFDAa6oP59Ye5PbvILvYXh6ct9u+O2Nw1PO0TXrRS4GWS35Ln+tifo/7sMRU8oPV8Gfy6Zi0V7cUd/kZDE1qCk=;24:Xoi9q283wLTg2nJx8HPTnabV9C0/mDzuERxcCTwgbQcIzyaj8dACLW28f1ZUYCq7c8ou166o5lgZDHJDab0ddx7sGt0B0lYPf8v5dgnCeaM=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2463;7:gL+pN8DDXV9/EapPsr9gJ127EzkLw7g5LekTX5DnMT5tm5JgPeJY10ZouIVubxevN6pU6aq5uNK7A1tN3iAerHWldVEpVB4zFhIUMXLPhIZ+sHgex39LBsmfvn8CDJ/xDIHZTT2bMETD6WYp19aE8Xy5y1Y7nPWtz237r9ITT/nPNXDtwhS6AdoBrnzhPAOPC77OQsyVSjSVLSlJGmpJYQbqcZl6osFV5TJTmyHoQmF5vAhfQrLF51EYABueLCp9
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2018 11:32:52.6109 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea2ce1c3-a5cb-45c0-6e1d-08d5d50f3c5a
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4577;7:pRvSeLWG9obANBGB+VQEu+GIJUp0NjjWvwwJ9xU/EOCBMw21lJZU401yuUPtQZmbF3/Bq+QqPMqQj132Y1dsXNtZJrMKG5j45ruOZ+4TXl3E6MF1xLndsATEHiwi/EoeV2IpunHQfUkdF7FqxrFbKRLC83r1RJ72e+ceNzciqmv7gvejCJlOvwCrlxImB5PlyDafQtL5itEoocnwAW1uArAX+v8mEV+Lv/k2fwXntAVbbfkObCmup1ZTIzO6expV;20:GXZlN3gKxocmxZEWZOpG8nDcOOLinyxgu1SemY7PkMRbLd4hyFXeMnTPSmUDG4qr5H/ire4HISjDbqFYM2Gf7zOV5Rffp5j0p+fZvibJLZZUXDozbda7FmeJkXa3+9czrZOmNKTg52bHeyx7wnE9edt1nsPmOD3Rv7v/ub6dXf8=
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2018 11:35:20.0699 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55dc153c-df01-49fa-c9a6-08d5d50f9466
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0201MB2463
+X-MS-Exchange-CrossTenant-Id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR05MB4577
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-18 13:05, Wolfram Sang wrote:
-> 
->> +static inline void
->> +i2c_lock_segment(struct i2c_adapter *adapter)
->> +{
->> +	i2c_lock_bus(adapter, I2C_LOCK_SEGMENT);
->> +}
+On 06/15/2018 06:46 PM, Peter Zijlstra wrote:
+> On Fri, Jun 15, 2018 at 02:08:27PM +0200, Thomas Hellstrom wrote:
+>
+>> @@ -772,6 +856,25 @@ __ww_mutex_add_waiter(struct mutex_waiter *waiter,
+>>   	}
+>>   
+>>   	list_add_tail(&waiter->list, pos);
+>> +	if (__mutex_waiter_is_first(lock, waiter))
+>> +		__mutex_set_flag(lock, MUTEX_FLAG_WAITERS);
 >> +
->> +static inline int
->> +i2c_trylock_segment(struct i2c_adapter *adapter)
->> +{
->> +	return i2c_trylock_bus(adapter, I2C_LOCK_SEGMENT);
->> +}
+>> +	/*
+>> +	 * Wound-Wait: if we're blocking on a mutex owned by a younger context,
+>> +	 * wound that such that we might proceed.
+>> +	 */
+>> +	if (!is_wait_die) {
+>> +		struct ww_mutex *ww = container_of(lock, struct ww_mutex, base);
 >> +
->> +static inline void
->> +i2c_unlock_segment(struct i2c_adapter *adapter)
->> +{
->> +	i2c_unlock_bus(adapter, I2C_LOCK_SEGMENT);
->> +}
-> 
-> I wonder if i2c_lock_segment() and i2c_lock_root_adapter() are really
-> more readable and convenient than i2c_lock_bus() with the flag. I think
-> the flags have speaking names, too.
-> 
-> Is that an idea to remove these functions altogether and start using
-> i2c_lock_bus()?
+>> +		/*
+>> +		 * See ww_mutex_set_context_fastpath(). Orders setting
+>> +		 * MUTEX_FLAG_WAITERS (atomic operation) vs the ww->ctx load,
+>> +		 * such that either we or the fastpath will wound @ww->ctx.
+>> +		 */
+>> +		smp_mb__after_atomic();
+>> +
+>> +		__ww_mutex_wound(lock, ww_ctx, ww->ctx);
+>> +	}
+> I think we want the smp_mb__after_atomic() in the same branch as
+> __mutex_set_flag(). So something like:
+>
+> 	if (__mutex_waiter_is_first()) {
+> 		__mutex_set_flag();
+> 		if (!is_wait_die)
+> 			smp_mb__after_atomic();
+> 	}
+>
+> Or possibly even without the !is_wait_die. The rules for
+> smp_mb__*_atomic() are such that we want it unconditional after an
+> atomic, otherwise the semantics get too fuzzy.
+>
+> Alan (rightfully) complained about that a while ago when he was auditing
+> users.
+>
+>
+Hmm, yes that's understandable, although I must admit that when one of 
+the accesses we want to order is actually an atomic this shouldn't 
+really be causing much confusion.
 
-That would be fine with me. I don't have a strong opinion and agree that
-both are readable enough...
+But I'll think I'll change it back to an smp_mb() then. It's in a 
+slowpath, and awkward constructs around smp_mb__after_atomic() might be 
+causing grief in the future.
 
-It would make for a reduction of the number of lines so that's nice, but
-the macro in drivers/i2c/busses/i2c-gpio.c (patch 11) would not fit in
-the current \-width (or whatever you'd call that line of backslashes to
-the right in a multi-line macro).
+/Thomas
 
-Does anyone have a strong opinion?
 
-Cheers,
-Peter
