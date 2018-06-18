@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EA5C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C66C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1936208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1936208D5
+	by mail.kernel.org (Postfix) with ESMTP id BAE2B20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAE2B20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967402AbeFRIdG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:33:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35384 "EHLO
+        id S967550AbeFRJBv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:01:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35394 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967386AbeFRIdE (ORCPT
+        with ESMTP id S967387AbeFRIdF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:04 -0400
+        Mon, 18 Jun 2018 04:33:05 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C0FBBBE;
-        Mon, 18 Jun 2018 08:33:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12E6ACA8;
+        Mon, 18 Jun 2018 08:33:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 085/189] RDMA/cma: Fix use after destroy access to net namespace for IPoIB
-Date:   Mon, 18 Jun 2018 10:13:01 +0200
-Message-Id: <20180618081212.662016762@linuxfoundation.org>
+Subject: [PATCH 4.14 086/189] RDMA/iwpm: fix memory leak on map_info
+Date:   Mon, 18 Jun 2018 10:13:02 +0200
+Message-Id: <20180618081212.698312920@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -51,151 +50,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 2918c1a900252b4a0c730715ec205437c7daf79d ]
+[ Upstream commit f96416cea7bce9afe619c15e87fced70f93f9098 ]
 
-There are few issues with validation of netdevice and listen id lookup
-for IB (IPoIB) while processing incoming CM request as below.
+In the cases where iwpm_hash_bucket is NULL and where function
+get_mapinfo_hash_bucket returns NULL then the map_info is never added
+to hash_bucket_head and hence there is a leak of map_info. Fix this
+by nullifying hash_bucket_head and if that is null we know that
+that map_info was not added to hash_bucket_head and hence map_info
+should be free'd.
 
-1. While performing lookup of bind_list in cma_ps_find(), net namespace
-of the netdevice can get deleted in cma_exit_net(), resulting in use
-after free access of idr and/or net namespace structures.
-This lookup occurs from the workqueue context (and not userspace
-context where net namespace is always valid).
+Detected by CoverityScan, CID#1222481 ("Resource Leak")
 
-           CPU0                              CPU1
-           ====                              ====
-
- bind_list = cma_ps_find();
-                                     move netdevice to new namespace
-                                     delete net namespace
-                                        cma_exit_net()
-                                           idr_destroy(idr);
-
- [..]
- cma_find_listener(bind_list, ..);
-
-2. While netdevice is validated for IP address in given net namespace,
-netdevice's net namespace and/or ifindex can change in
-cma_get_net_dev() and cma_match_net_dev().
-
-Above issues are overcome by using rcu lock along with netdevice
-UP/DOWN state as described below.
-When a net namespace is getting deleted, netdevice is closed and
-shutdown before moving it back to init_net namespace.
-change_net_namespace() synchronizes with any existing use of netdevice
-before changing the netdev properties such as net or ifindex.
-Once netdevice IFF_UP flags is cleared, such fields are not guaranteed
-to be valid.
-Therefore, rcu lock along with netdevice state check ensures that,
-while route lookup and cm_id lookup is in progress, netdevice of
-interest won't migrate to any other net namespace.
-This ensures that associated net namespace of netdevice won't get
-deleted while rcu lock is held for netdevice which is in IFF_UP state.
-
-Fixes: fa20105e09e9 ("IB/cma: Add support for network namespaces")
-Fixes: 4be74b42a6d0 ("IB/cma: Separate port allocation to network namespaces")
-Fixes: f887f2ac87c2 ("IB/cma: Validate routing of incoming requests")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Fixes: 30dc5e63d6a5 ("RDMA/core: Add support for iWARP Port Mapper user space service")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/cma.c |   53 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 43 insertions(+), 10 deletions(-)
+ drivers/infiniband/core/iwpm_util.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -420,6 +420,8 @@ struct cma_hdr {
- #define CMA_VERSION 0x00
- 
- struct cma_req_info {
-+	struct sockaddr_storage listen_addr_storage;
-+	struct sockaddr_storage src_addr_storage;
- 	struct ib_device *device;
- 	int port;
- 	union ib_gid local_gid;
-@@ -1372,11 +1374,11 @@ static bool validate_net_dev(struct net_
- }
- 
- static struct net_device *cma_get_net_dev(struct ib_cm_event *ib_event,
--					  const struct cma_req_info *req)
-+					  struct cma_req_info *req)
+--- a/drivers/infiniband/core/iwpm_util.c
++++ b/drivers/infiniband/core/iwpm_util.c
+@@ -114,7 +114,7 @@ int iwpm_create_mapinfo(struct sockaddr_
+ 			struct sockaddr_storage *mapped_sockaddr,
+ 			u8 nl_client)
  {
--	struct sockaddr_storage listen_addr_storage, src_addr_storage;
--	struct sockaddr *listen_addr = (struct sockaddr *)&listen_addr_storage,
--			*src_addr = (struct sockaddr *)&src_addr_storage;
-+	struct sockaddr *listen_addr =
-+			(struct sockaddr *)&req->listen_addr_storage;
-+	struct sockaddr *src_addr = (struct sockaddr *)&req->src_addr_storage;
- 	struct net_device *net_dev;
- 	const union ib_gid *gid = req->has_gid ? &req->local_gid : NULL;
- 	int err;
-@@ -1391,11 +1393,6 @@ static struct net_device *cma_get_net_de
- 	if (!net_dev)
- 		return ERR_PTR(-ENODEV);
- 
--	if (!validate_net_dev(net_dev, listen_addr, src_addr)) {
--		dev_put(net_dev);
--		return ERR_PTR(-EHOSTUNREACH);
--	}
--
- 	return net_dev;
- }
- 
-@@ -1531,15 +1528,51 @@ static struct rdma_id_private *cma_id_fr
+-	struct hlist_head *hash_bucket_head;
++	struct hlist_head *hash_bucket_head = NULL;
+ 	struct iwpm_mapping_info *map_info;
+ 	unsigned long flags;
+ 	int ret = -EINVAL;
+@@ -142,6 +142,9 @@ int iwpm_create_mapinfo(struct sockaddr_
  		}
  	}
- 
-+	/*
-+	 * Net namespace might be getting deleted while route lookup,
-+	 * cm_id lookup is in progress. Therefore, perform netdevice
-+	 * validation, cm_id lookup under rcu lock.
-+	 * RCU lock along with netdevice state check, synchronizes with
-+	 * netdevice migrating to different net namespace and also avoids
-+	 * case where net namespace doesn't get deleted while lookup is in
-+	 * progress.
-+	 * If the device state is not IFF_UP, its properties such as ifindex
-+	 * and nd_net cannot be trusted to remain valid without rcu lock.
-+	 * net/core/dev.c change_net_namespace() ensures to synchronize with
-+	 * ongoing operations on net device after device is closed using
-+	 * synchronize_net().
-+	 */
-+	rcu_read_lock();
-+	if (*net_dev) {
-+		/*
-+		 * If netdevice is down, it is likely that it is administratively
-+		 * down or it might be migrating to different namespace.
-+		 * In that case avoid further processing, as the net namespace
-+		 * or ifindex may change.
-+		 */
-+		if (((*net_dev)->flags & IFF_UP) == 0) {
-+			id_priv = ERR_PTR(-EHOSTUNREACH);
-+			goto err;
-+		}
+ 	spin_unlock_irqrestore(&iwpm_mapinfo_lock, flags);
 +
-+		if (!validate_net_dev(*net_dev,
-+				 (struct sockaddr *)&req.listen_addr_storage,
-+				 (struct sockaddr *)&req.src_addr_storage)) {
-+			id_priv = ERR_PTR(-EHOSTUNREACH);
-+			goto err;
-+		}
-+	}
-+
- 	bind_list = cma_ps_find(*net_dev ? dev_net(*net_dev) : &init_net,
- 				rdma_ps_from_service_id(req.service_id),
- 				cma_port_from_service_id(req.service_id));
- 	id_priv = cma_find_listener(bind_list, cm_id, ib_event, &req, *net_dev);
-+err:
-+	rcu_read_unlock();
- 	if (IS_ERR(id_priv) && *net_dev) {
- 		dev_put(*net_dev);
- 		*net_dev = NULL;
- 	}
--
- 	return id_priv;
++	if (!hash_bucket_head)
++		kfree(map_info);
+ 	return ret;
  }
  
 
