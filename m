@@ -3,139 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A75C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A81F4C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A4052075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:30:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 607082083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:30:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="ml1wgbMR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A4052075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="of2PVhSH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607082083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936040AbeFRSa2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 14:30:28 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:24160 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935793AbeFRSaZ (ORCPT
+        id S936057AbeFRSax (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 14:30:53 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:39901 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935726AbeFRSav (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 14:30:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1529346623;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=DQzZGpF4a17fuNCHJRQdBlxsq08yXTJ/ASNTGqqcEVs=;
-        b=ml1wgbMRuyNVpZYoEE121GYU0/jjMMzQXr+otYGjFiw5Bi08mlvTybeDRhraGqoyzb
-        e21rVeEo9Mhdi/UcMrLO2ifLuDY9sPgZF7tl0SmHdErVWUJawOCiAx/yo+kp6ucDHR2T
-        2a5TNL3hdI6W5glFTbNHABTRy5Zg3du7ZnUq8nM7220KSZ+coDt0d7t0XNXirXI3hY5G
-        qdIAehOpq0PIgML+wzNXqgrmZCCTER52svrX/nOb4tSYS1In6wD1TprCYAxkohDPY/5w
-        RLpwtQzocRiAJtRBU1UPQqu7CnKPCR4/TmxHYNZ7S/x/GYdpWfGdZ7J8xdR4wwBkI5/u
-        ycSg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qEjr9Tw=="
-X-RZG-CLASS-ID: mo00
-Received: from mbp-13-nikolaus.fritz.box
-        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
-        with ESMTPSA id D025bfu5IIUIGE6
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 18 Jun 2018 20:30:18 +0200 (CEST)
+        Mon, 18 Jun 2018 14:30:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=P73iOVbSMFmoNgy2UU4Wxtbqskuv55ZFHjkm4uTre4k=; b=of2PVhSHISc8wqtEquuyaK6Sq2
+        ZQPMHmyNh6zCyzsHqs59IXuuVeyg1pR7E4Z9uxQSb8XKL7mgVOgOSIUnXMM3qW75CDa6keeHy/Lwr
+        iRhXBZpwZ7YJbx+vG9CdXFCZmu2toHytbh8wWlHCqxdOSRLgU/xwWsLpoQYSayUIE8Qa0x701tX+K
+        ceF85KJjHSRgpTL2TxE4XuS7mrWemrKxxzCHKa2M2egS9xrL2LIK/NfyXs7SyIP9dSjdwFwRmCfGU
+        Ud6i4a4u+RIwK94JctVxVp3+64wey5F98ro5OoUY29rbyTsvQuHY+iBdcDEDCQ3pdKe70VYPfxKXs
+        NPdLs0CQ==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:38136 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fUyvS-000DgH-L3; Mon, 18 Jun 2018 18:30:51 +0000
+Date:   Mon, 18 Jun 2018 11:30:49 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.16 000/279] 4.16.17-stable review
+Message-ID: <20180618183049.GB29875@roeck-us.net>
+References: <20180618080608.851973560@linuxfoundation.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [Letux-kernel] BUG: drivers/pinctrl/core: races in pinctrl_groups and deferred probing
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180618181744.GS112168@atomide.com>
-Date:   Mon, 18 Jun 2018 20:30:17 +0200
-Cc:     Christ van Willegen <cvwillegen@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        kernel@pyra-handheld.com,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <404C63D9-169E-4051-88E0-2856F3602A72@goldelico.com>
-References: <20180615111318.GJ112168@atomide.com> <029F115C-480E-485A-B547-9D5873925CEF@goldelico.com> <4DE2E482-B0D3-4799-9E2D-74E2180B305B@goldelico.com> <CAHp75Vf7-xcsoSJ--9nJYbxpwSfDv201UwnxJHoFbwtD187SPw@mail.gmail.com> <20180618091433.GP112168@atomide.com> <BB5DB278-9827-4351-99DF-54C875B1879F@goldelico.com> <20180618095428.GQ112168@atomide.com> <CA+Ot1OxNj30KgHWJHXgWbnXYkNXTNvd_t-b6+uG3u=z8+pZf2Q@mail.gmail.com> <20180618115122.GT26255@atomide.com> <CDD8B994-59E9-42DC-A77D-AF4F35EBF101@goldelico.com> <20180618181744.GS112168@atomide.com>
-To:     Tony Lindgren <tony@atomide.com>
-X-Mailer: Apple Mail (2.3124)
+Content-Disposition: inline
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+On Mon, Jun 18, 2018 at 10:09:45AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.16.17 release.
+> There are 279 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Jun 20 08:05:28 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-> Am 18.06.2018 um 20:17 schrieb Tony Lindgren <tony@atomide.com>:
->=20
-> * H. Nikolaus Schaller <hns@goldelico.com> [180618 16:46]:
->=20
->>=20
->> I can also demonstrate that the duplication has gone:
->=20
-> OK good to hear.
->=20
->> And I was no longer able to reproduce the strcmp(NULL) issue. So it =
-is either better hidden
->> or gone.
->=20
-> It should not be possible with checks preventing registering
-> a group or function with no name. I'll try to repost the whole
-> series tomorrow with that added.
+For v4.16.16-279-g957de89:
 
-Fine.
+Build results:
+	total: 145 pass: 145 fail: 0
+Qemu test results:
+	total: 152 pass: 152 fail: 0
 
->=20
->> So code just needs group cleanup on failed probing and fixing the =
-mutex around pinctrl_generic_add_group().
->>=20
->> I think we need the mutex because a race still can happen when =
-create_pinctrl() is calling pcs_dt_node_to_map()
->> and pinctrl_generic_add_group() w/o being locked on =
-pinctrl_maps_mutex.
->>=20
->> The race I suspect is that two drivers are trying to insert the same =
-name and may come
->> both to the conclusion that it does not yet exist. And both insert =
-into the radix tree.
->>=20
->> The window of risk is small though... It is in =
-pinctrl_generic_add_group() between calling
->> pinctrl_generic_group_name_to_selector() and radix_tree_insert() so =
-we probably won't
->> see it in real hardware tests.
->=20
-> Hmm but that race should be already fixed with mutex held
-> by the pin controller drivers with these fixes? Or am I
-> missing something still?
+Details are available at http://kerneltests.org/builders/.
 
-Hm. Maybe we refer to a different mutex?
-
-I had seen the call sequence
-
-create_pinctrl()-> pinctrl_dt_to_map() -> pcs_dt_node_to_map() -> =
-pinctrl_generic_add_group()
-
-w/o any lock inside.
-
-There is a mutex_lock(&pinctrl_maps_mutex); in create_pinctrl(), but =
-locked after that.
-
-Or is there a lock outside of create_pinctrl()?
-
-If I look into the stack dumps, call nesting is
-
-driver_probe_device() -> pinctrl_bind_pins() -> devm_pinctrl_get() -> =
-create_pinctrl()
-
-They all do no locking.
-
-Maybe I am missing something.
-
-BR,
-Nikolaus
-
-
+Guenter
