@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004C5C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E945C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA36C208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:06:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA36C208D5
+	by mail.kernel.org (Postfix) with ESMTP id 32F4920852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:07:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F4920852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967319AbeFRJGb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:06:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34186 "EHLO
+        id S967147AbeFRIbb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:31:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936812AbeFRIbl (ORCPT
+        with ESMTP id S966693AbeFRIb0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:31:41 -0400
+        Mon, 18 Jun 2018 04:31:26 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9678C75;
-        Mon, 18 Jun 2018 08:31:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30DBFC75;
+        Mon, 18 Jun 2018 08:31:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Tung Nguyen <tung.q.nguyen@dektech.com.au>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 060/189] arm64: ptrace: remove addr_limit manipulation
-Date:   Mon, 18 Jun 2018 10:12:36 +0200
-Message-Id: <20180618081211.727433367@linuxfoundation.org>
+Subject: [PATCH 4.14 029/189] tipc: fix infinite loop when dumping link monitor summary
+Date:   Mon, 18 Jun 2018 10:12:05 +0200
+Message-Id: <20180618081210.458252426@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,66 +51,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Tung Nguyen <tung.q.nguyen@dektech.com.au>
 
-[ Upstream commit 59275a0c037ed6fabd6354730f1e3104264ab719 ]
+[ Upstream commit 36a50a989ee8267588de520b8704b85f045a3220 ]
 
-We transiently switch to KERNEL_DS in compat_ptrace_gethbpregs() and
-compat_ptrace_sethbpregs(), but in either case this is pointless as we
-don't perform any uaccess during this window.
+When configuring the number of used bearers to MAX_BEARER and issuing
+command "tipc link monitor summary", the command enters infinite loop
+in user space.
 
-let's rip out the redundant addr_limit manipulation.
+This issue happens because function tipc_nl_node_dump_monitor() returns
+the wrong 'prev_bearer' value when all potential monitors have been
+scanned.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+The correct behavior is to always try to scan all monitors until either
+the netlink message is full, in which case we return the bearer identity
+of the affected monitor, or we continue through the whole bearer array
+until we can return MAX_BEARERS. This solution also caters for the case
+where there may be gaps in the bearer array.
+
+Signed-off-by: Tung Nguyen <tung.q.nguyen@dektech.com.au>
+Signed-off-by: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/ptrace.c |    6 ------
- 1 file changed, 6 deletions(-)
+ net/tipc/monitor.c |    2 +-
+ net/tipc/node.c    |   11 ++++-------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -1194,9 +1194,7 @@ static int compat_ptrace_gethbpregs(stru
- {
- 	int ret;
- 	u32 kdata;
--	mm_segment_t old_fs = get_fs();
+--- a/net/tipc/monitor.c
++++ b/net/tipc/monitor.c
+@@ -768,7 +768,7 @@ int __tipc_nl_add_monitor(struct net *ne
  
--	set_fs(KERNEL_DS);
- 	/* Watchpoint */
- 	if (num < 0) {
- 		ret = compat_ptrace_hbp_get(NT_ARM_HW_WATCH, tsk, num, &kdata);
-@@ -1207,7 +1205,6 @@ static int compat_ptrace_gethbpregs(stru
- 	} else {
- 		ret = compat_ptrace_hbp_get(NT_ARM_HW_BREAK, tsk, num, &kdata);
- 	}
--	set_fs(old_fs);
+ 	ret = tipc_bearer_get_name(net, bearer_name, bearer_id);
+ 	if (ret || !mon)
+-		return -EINVAL;
++		return 0;
  
- 	if (!ret)
- 		ret = put_user(kdata, data);
-@@ -1220,7 +1217,6 @@ static int compat_ptrace_sethbpregs(stru
- {
- 	int ret;
- 	u32 kdata = 0;
--	mm_segment_t old_fs = get_fs();
+ 	hdr = genlmsg_put(msg->skb, msg->portid, msg->seq, &tipc_genl_family,
+ 			  NLM_F_MULTI, TIPC_NL_MON_GET);
+--- a/net/tipc/node.c
++++ b/net/tipc/node.c
+@@ -2113,8 +2113,8 @@ int tipc_nl_node_dump_monitor(struct sk_
+ 	struct net *net = sock_net(skb->sk);
+ 	u32 prev_bearer = cb->args[0];
+ 	struct tipc_nl_msg msg;
++	int bearer_id;
+ 	int err;
+-	int i;
  
- 	if (num == 0)
+ 	if (prev_bearer == MAX_BEARERS)
  		return 0;
-@@ -1229,12 +1225,10 @@ static int compat_ptrace_sethbpregs(stru
- 	if (ret)
- 		return ret;
+@@ -2124,16 +2124,13 @@ int tipc_nl_node_dump_monitor(struct sk_
+ 	msg.seq = cb->nlh->nlmsg_seq;
  
--	set_fs(KERNEL_DS);
- 	if (num < 0)
- 		ret = compat_ptrace_hbp_set(NT_ARM_HW_WATCH, tsk, num, &kdata);
- 	else
- 		ret = compat_ptrace_hbp_set(NT_ARM_HW_BREAK, tsk, num, &kdata);
--	set_fs(old_fs);
+ 	rtnl_lock();
+-	for (i = prev_bearer; i < MAX_BEARERS; i++) {
+-		prev_bearer = i;
++	for (bearer_id = prev_bearer; bearer_id < MAX_BEARERS; bearer_id++) {
+ 		err = __tipc_nl_add_monitor(net, &msg, prev_bearer);
+ 		if (err)
+-			goto out;
++			break;
+ 	}
+-
+-out:
+ 	rtnl_unlock();
+-	cb->args[0] = prev_bearer;
++	cb->args[0] = bearer_id;
  
- 	return ret;
+ 	return skb->len;
  }
 
 
