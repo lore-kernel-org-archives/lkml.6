@@ -2,102 +2,131 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE76C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D88B2C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB4720693
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:49:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB4720693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 8C56020693
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:52:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EOnYYSgj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C56020693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937001AbeFRWtM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 18:49:12 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56238 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S936977AbeFRWtK (ORCPT
+        id S1755432AbeFRWwR (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 18:52:17 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:39077 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755329AbeFRWwP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 18:49:10 -0400
-Received: from [2a02:8011:400e:2:cbab:f00:c93f:614] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fV2xQ-0005jc-8v; Mon, 18 Jun 2018 23:49:08 +0100
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fV2xH-0001GC-GP; Mon, 18 Jun 2018 23:48:59 +0100
-Message-ID: <4512507e46a150638432084f9404a2da55979cce.camel@decadent.org.uk>
-Subject: Re: [PATCH] firmware: Update Kconfig help text for Google firmware
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Julius Werner <jwerner@chromium.org>
-Cc:     Thierry Escande <thierry.escande@collabora.com>,
-        LKML <linux-kernel@vger.kernel.org>, pm.debian@googlemail.com
-Date:   Mon, 18 Jun 2018 23:48:59 +0100
-In-Reply-To: <CAODwPW8aPTACtWcQAFCdAkjT3jHNCu1rKxCh4uYJfj_QnBrTdA@mail.gmail.com>
-References: <20180616220531.GB14131@decadent.org.uk>
-         <CAODwPW8aPTACtWcQAFCdAkjT3jHNCu1rKxCh4uYJfj_QnBrTdA@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-fFXjFIaIBuZk/XnNhcM/"
-X-Mailer: Evolution 3.28.2-1 
-Mime-Version: 1.0
-X-SA-Exim-Connect-IP: 2a02:8011:400e:2:cbab:f00:c93f:614
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 18 Jun 2018 18:52:15 -0400
+Received: by mail-vk0-f68.google.com with SMTP id r83-v6so10570223vkf.6;
+        Mon, 18 Jun 2018 15:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=DUh/BdUCoOISWT8eUOYXHilFbNBpolZpltroZB1lHPA=;
+        b=EOnYYSgjOmYfxpIlbr/UpILzEobhKDRO2X6WRU26DmZoTj5hYwgP66yu1eW2GyW9W/
+         Uu5BuEPQZ0L/4LzgTtf7ib+cWeBlC+Lp+upqRf2YjKxcwSpuxC/pNdoZuun4IPJjlCF1
+         iCPn/uwQeM0KVIWr3NEorIkStTXKIWbmkV5w0XnWpiDTuNAz5vNBo6d3FdlOqR52q37w
+         C7hOkhEs5tHB7DJionOHzsNgjKJDysaZj+Azaq8cmE9wxMBRMsMueTk/zggSgAZkDQ++
+         rR8QLXYFGZykiu/BnS8Qroo52VvrhdNfDshgvA8H2KTehBerZ3VfDMe3z4Dq3kOWpCGe
+         igZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=DUh/BdUCoOISWT8eUOYXHilFbNBpolZpltroZB1lHPA=;
+        b=In8kQb17s8yKu+N3ZkUfG91mpIl6JwKV2csKPvV7+aR2ZnM/DODEIonXzRvrrZGhTC
+         xU92V+++GVtFigGi+7GQdTmntblMGYIpdSorMfPBnttzr5ibii6y58nkgO0XHCVqBKQ/
+         rd8iuEfnRdVkPdGgUg8XfnmWDiggO/vzSmhWxzHUtwHbt/7Uaf3OWgT3NAHxWL+7Q8yL
+         MKGT/23sv8nhlxrVSYu0C7gHH5CLU9tvZm5E0kSm+Y0QEhYOn48luE6ZwqJ6W9X3Qwit
+         /n2DS4YS3XU8GsioJ/4atJrCOFPATE+Kr2msZgwOllShD1l5L9bDh3gKJ62KCU/wzvxO
+         DY1A==
+X-Gm-Message-State: APt69E1ow/oiMGOMCB9HisIot4IpcRHt2V2/8BuA8xC2MdbXrvfm5H2S
+        UkYrStGaX5tmJDLy5fh8lowf7RTivEJs80rp/5U=
+X-Google-Smtp-Source: ADUXVKLz3MfpLJeewHY84JA9WzfHiPG4nfw2CJ8tI1FKur/OqLRXJENznNUzWLKMalRd6Jyp4lPOX7TbwzTqpmBszDo=
+X-Received: by 2002:a1f:d1c5:: with SMTP id i188-v6mr8413950vkg.131.1529362334309;
+ Mon, 18 Jun 2018 15:52:14 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 15:52:13
+ -0700 (PDT)
+In-Reply-To: <CAKdAkRTHOORds7aEauv4rp3_=PnGi=Nv-VS3-nAb9MztJPKG=Q@mail.gmail.com>
+References: <20180618131003.88110-1-andriy.shevchenko@linux.intel.com>
+ <20180618131003.88110-4-andriy.shevchenko@linux.intel.com>
+ <20180618141404.68124daab97bd0f3a3051544@linux-foundation.org> <CAKdAkRTHOORds7aEauv4rp3_=PnGi=Nv-VS3-nAb9MztJPKG=Q@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 19 Jun 2018 01:52:13 +0300
+Message-ID: <CAHp75VdoL=qTBKMp+FB=RdNRqbZgv9=hJ=kYAAAYFTUpxFAr6g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        agk@redhat.com, Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        shli@kernel.org, linux-raid@vger.kernel.org,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 19, 2018 at 1:01 AM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> On Mon, Jun 18, 2018 at 2:14 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>>
+>> On Mon, 18 Jun 2018 16:10:01 +0300 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>>
+>> > A lot of code become ugly because of open coding allocations for bitmaps.
+>> >
+>> > Introduce three helpers to allow users be more clear of intention
+>> > and keep their code neat.
+>> >
+>> > ...
+>> >
+>> > +unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+>> > +{
+>> > +     return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
+>> > +}
+>> > +EXPORT_SYMBOL(bitmap_alloc);
+>> > +
+>> > +unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags)
+>> > +{
+>> > +     return bitmap_alloc(nbits, flags | __GFP_ZERO);
+>> > +}
+>> > +EXPORT_SYMBOL(bitmap_zalloc);
+>> > +
+>> > +void bitmap_free(const unsigned long *bitmap)
+>> > +{
+>> > +     kfree(bitmap);
+>> > +}
+>> > +EXPORT_SYMBOL(bitmap_free);
+>> > +
+>>
+>> I suggest these functions are small and simple enough to justify
+>> inlining them.
+>>
+>
+> We can't as we end up including bitmap.h (by the way of cpumask.h)
+> form slab.h, so we gen circular dependency. Maybe if we removed memcg
+> stuff from slab.h so we do not need to include workqueue.h...
 
---=-fFXjFIaIBuZk/XnNhcM/
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I will look at it. It might be doable.
+Though I dunno what MM people would say about this. Anyone's name
+comes to your mind to ask?
 
-On Mon, 2018-06-18 at 13:04 -0700, Julius Werner wrote:
-[...]
-> nit: Technically, most of the stuff is useful on all coreboot devices,
-> not just Chromebooks. (Ideally we'd want to factor that out into a
-> separate drivers/firmware/coreboot, but it's a bit tricky because the
-> same memconsole frontend is used for both coreboot and a proprietary
-> Google server BIOS, so it's a little tricky to decide where everything
-> should go. Nobody had the time to go untangle it yet.)
-[...]
-> GSMI is also used by Chromebooks AFAIK. (I think it's sort of become a
-> general coreboot interface by now as well, although the name still
-> says Google.)
-
-OK, I'll send a v2 to fix these.
-
-Ben.
-
---=20
-Ben Hutchings
-I'm not a reverse psychological virus.
-Please don't copy me into your signature.
-
-
---=-fFXjFIaIBuZk/XnNhcM/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlsoNtsACgkQ57/I7JWG
-EQntyQ/8CNYwxqQcQr5r8O7eZVbISU/I7rwlIP1fw8JYLcCqZNJ7PC7QeL6wadam
-TGgHkj6niyo6dyS40GAwtCzJbAMHi6eooA8nVfq737Md7bUr27Z06QZ3HAzhe4Fr
-W+GsxP981CQ3ym7BuiqViSbdMFw4YGYEmw6G1MkZaa/cojUNY/aaB1MVkvRkNWfl
-gluJZ+Xo2EERgULq5BAS+LyO9c9xhRrCsx5fM1ZaQxMHg1CjR1dPb+/8drcMjff9
-uvDl0OtThsY+xG9VzejMXix65O51N4QQHqPNs3/P9MEhSOu/WX8tFpnJ9wNWHTyy
-hWEUmZIUf89rNmmBxLKeg5UvdtTdw7jpEMzwaQxlBl8eTTlc28RwmcJrKtUrqi6v
-0QOIA2RPSflvztSIlJ7sJWVD4XnAqsTZShBIS9x+EUAK91trU7aBRbTBOHO0KEs7
-3k6E7mii7Jf6H8azjisKiKw/ZXKQbnFKiVZIk88cJ/2UbZ2THOhaI+xVaIZ0cXDZ
-tptJLVCri/HLbO/38IOce5R3cY7lXUUisDpTXg3uUOoO3/WfV1YFp0EAcxYkZxq5
-PCwPfTR/J1fHTHTPnDkK3tKxb6T0V2zLwTm7cs5Uipz7EStMHqqPqofNevIQLGv/
-B3RtGmTuy0Z4TJS7+Ondxk6K/pnKwhoQOoZ32cpSmcbeJ8uwxMA=
-=c5mx
------END PGP SIGNATURE-----
-
---=-fFXjFIaIBuZk/XnNhcM/--
+-- 
+With Best Regards,
+Andy Shevchenko
