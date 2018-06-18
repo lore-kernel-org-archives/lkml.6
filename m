@@ -2,186 +2,154 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2ED9C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1AEC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858382075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:44:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EMCLb5kS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858382075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 1FBCD2075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:46:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FBCD2075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936026AbeFRSos (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 14:44:48 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:32942 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935744AbeFRSoq (ORCPT
+        id S936040AbeFRSqA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 14:46:00 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:35003 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935726AbeFRSp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 14:44:46 -0400
-Received: by mail-pl0-f65.google.com with SMTP id 6-v6so8963842plb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 11:44:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=qclJu/pTz22JNcqCiGeWjj6iuINZnY6hTV8iHyLrdbI=;
-        b=EMCLb5kSN4Pu6sH+5JMGS3aUvWsqYShWw+0bvtV+dKshHPy84jpZpRLIVVT+Q5v/2A
-         MHQSIdY9s45qglIUz0rIpjm1Fw6hHwPHwjjlY4eGIZn9qpluKfAM5U6fLGeEchgpO17e
-         MQebkDxGatbvQVjToR6qQswoGh1torkwJCHbyInzsY133IjN4fIizL+1zBD8hjDaH3NM
-         B2Envt6YYqMZTw3Ca/j/QnCIXYllt5+geSH2IzkYPBALfmpa0srP8oPgYBPZDWyVliRK
-         LOCgoVOO99qG5R559Evl5u5OkghDinAa0qAD0MPO5KmtA+JS+2FjuVDdhsSMvoqb8fJi
-         McIQ==
+        Mon, 18 Jun 2018 14:45:58 -0400
+Received: by mail-ot0-f196.google.com with SMTP id q17-v6so19679336otg.2;
+        Mon, 18 Jun 2018 11:45:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=qclJu/pTz22JNcqCiGeWjj6iuINZnY6hTV8iHyLrdbI=;
-        b=g/Pk4CvGfbthd78tMOfM3dY2deMxVYiCFfvShxyV5PTuzE9VmK7qTSrrQXc4LX64xu
-         8zCk2bfjp0zs+O3fSACzbIU2UfUPn3uu5X4Bn225WM1ptmUshYd16WHB1bgzUXJDUQJx
-         KyAVOhtzTBOckaOjLMq298lFC4dBOMcdOgt3JNyHcIh3N3TESUuAt5X/tH1S5CfzCDlx
-         YmQq0exfENbfvPu5ueaSAi2Qlcacfc/89fScpeOVcGJlZfctwO/Y2J0e8btDe3dQ429j
-         Xfde8UpSK8l4J01N0PubgIjAB5grm0JEtij0bGr/CcY5TZI4g8Gxi25fmir4/eKbfxp/
-         jRFg==
-X-Gm-Message-State: APt69E1g4JB6wrw/p98oonShhuS+6/fEBTw0XBgJSyGy6nVu6DGlj7rv
-        5cwxteYQHJmc1DgGTB9DSTmtEAAs5ho=
-X-Google-Smtp-Source: ADUXVKJy2yjop7JEwIhqERtHFZ/ZRWFDZEtb8zOH/v1BrJHxL905mlgokqNNK+Jc+9p+hw/6EZ/1XQ==
-X-Received: by 2002:a17:902:2884:: with SMTP id f4-v6mr15335099plb.204.1529347485459;
-        Mon, 18 Jun 2018 11:44:45 -0700 (PDT)
-Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cb:201:549c:c572:5008:d36f])
-        by smtp.gmail.com with ESMTPSA id n70-v6sm33907689pfh.140.2018.06.18.11.44.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 11:44:43 -0700 (PDT)
-From:   bsegall@google.com
-To:     Xunlei Pang <xlpang@linux.alibaba.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ben Segall <bsegall@google.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] sched/fair: Fix bandwidth timer clock drift condition
-References: <20180618091618.21480-1-xlpang@linux.alibaba.com>
-Date:   Mon, 18 Jun 2018 11:44:42 -0700
-In-Reply-To: <20180618091618.21480-1-xlpang@linux.alibaba.com> (Xunlei Pang's
-        message of "Mon, 18 Jun 2018 17:16:17 +0800")
-Message-ID: <xm26sh5korxh.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0P/JJdL5fmKTxfde4ygPlkmLN20iMKsAZh4CE1cZQ9w=;
+        b=RjeGsqS0IXwDOirELCK/Bii8VhCtz76rqBNvrVZOZ7S91B0EzIsrPgJJtWS7f3pd/K
+         B3wH0u3cDItlY++oEh6SH4M3ke8Yruun4UuIZWsUqqfkMLKtfhMFgU28iY+GR8DeD+rr
+         dIIlaoJP8cw4rrc1aNC5i6q2xc3p/bFO51SNuPVfTV6SfMQQJflszFOGu3wQQNbrHPtw
+         m7LFdyt7kBSnDfldJa302BVe4d/qhpjtUlzqLdqVL42iaCDUC8m5sOrKVnFUEBnQo9zE
+         g89iuk7Km+nx6dIntctVyEkAALFDI6v7T3HWjuKySsAQSQK9xzhFmcbvHJAOP3oJKrL5
+         YJHg==
+X-Gm-Message-State: APt69E0XTWJ2wDqa0XdHQZnVqUdHFMN4JRiUt3FO9wbzGgRyT5MJwHG4
+        kdA+uTeaqKo1nZABLnN6Ly3DWHUcR7eDoedCuno=
+X-Google-Smtp-Source: ADUXVKJUwrBfDsoo8AgIYkt+i/hDYTohLhLSICO8PUOjudUcqXTvvYIrXfI07I1+ZyJMouPRix+YXDE5ksAfPO7oqxY=
+X-Received: by 2002:a9d:5b3a:: with SMTP id x55-v6mr8777062oth.127.1529347558123;
+ Mon, 18 Jun 2018 11:45:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180615185645.8921-1-malat@debian.org> <fbb95c11-240c-1a11-0a62-0483908c577e@gmail.com>
+ <CA+7wUsysaip70ARGQ7Byg1Zktfg0Y1esjEc9HxBGU4sKL8crhg@mail.gmail.com>
+ <9d88677a-f2be-2089-79df-15df4e9a5dd6@gmail.com> <m2tvq1672p.fsf@linux-m68k.org>
+ <e1a9b126-3226-72d0-82b2-b69ca5f59ccb@gmail.com> <87o9g8geu0.fsf@igel.home> <816ef746-5278-1d51-1d9d-55593e377681@gmail.com>
+In-Reply-To: <816ef746-5278-1d51-1d9d-55593e377681@gmail.com>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Mon, 18 Jun 2018 20:45:46 +0200
+Message-ID: <CA+7wUszG3Tmq5qT7o7w7ttAU+bzyJfRORL_Qzk4wUG6y2gZUuw@mail.gmail.com>
+Subject: Re: [PATCH] Revert "net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends"
+To:     eric.dumazet@gmail.com
+Cc:     schwab@linux-m68k.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christophe LEROY <christophe.leroy@c-s.fr>,
+        Meelis Roos <mroos@linux.ee>, netdev@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xunlei Pang <xlpang@linux.alibaba.com> writes:
-
-> The current condition to judge clock drift in expire_cfs_rq_runtime()
-> is wrong, the two runtime_expires are actually the same when clock
-> drift happens, so this condtion can never hit. The orginal design was
-> correctly done by commit a9cf55b28610 ("sched: Expire invalid runtime"),
-> but was changed to be the current one due to its locking issue.
+On Mon, Jun 18, 2018 at 8:18 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
 >
-> This patch introduces another way, it adds a new field in both structure
-> cfs_rq and cfs_bandwidth to record the expiration update sequence, and
-> use them to figure out if clock drift happens(true if they equal).
+>
+>
+> On 06/18/2018 10:54 AM, Andreas Schwab wrote:
+> > On Jun 17 2018, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> >
+> >> Oh this is silly, please try :
+> >>
+> >> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> >> index c642304f178ce0a4e1358d59e45032a39f76fb3f..54dd9c18ecad817812898d6f335e1794a07dabbe 100644
+> >> --- a/net/core/skbuff.c
+> >> +++ b/net/core/skbuff.c
+> >> @@ -1845,10 +1845,9 @@ EXPORT_SYMBOL(___pskb_trim);
+> >>  int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len)
+> >>  {
+> >>         if (skb->ip_summed == CHECKSUM_COMPLETE) {
+> >> -               int delta = skb->len - len;
+> >> +               __wsum csumdiff = skb_checksum(skb, len, skb->len - len, 0);
+> >>
+> >> -               skb->csum = csum_sub(skb->csum,
+> >> -                                    skb_checksum(skb, len, delta, 0));
+> >> +               skb->csum = csum_block_sub(skb->csum, csumdiff, len);
+> >>         }
+> >>         return __pskb_trim(skb, len);
+> >>  }
+> >
+> > That doesn't help either.
+> >
+> > Andreas.
+> >
+>
+> Then maybe NIC provided csum is not correct.
+>
+> It does not compute a checksum on all the frame, but part of it.
+>
+> You could use this patch to double check.
+>
+> diff --git a/drivers/net/ethernet/sun/sungem.c b/drivers/net/ethernet/sun/sungem.c
+> index 7a16d40a72d13cf1d522e8a3a396c826fe76f9b9..277859ea73e35271a10b02011120fca248ec8e71 100644
+> --- a/drivers/net/ethernet/sun/sungem.c
+> +++ b/drivers/net/ethernet/sun/sungem.c
+> @@ -857,6 +857,11 @@ static int gem_rx(struct gem *gp, int work_to_do)
+>
+>                 csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
+>                 skb->csum = csum_unfold(csum);
+> +               {
+> +               __wsum rsum = csum_partial(skb->data + ETH_HLEN, len - ETH_HLEN, 0);
+> +               if (csum != csum_fold(rsum))
+> +                       pr_err_ratelimited("sungem wrong csum : %x/%x, len %u bytes\n", csum, csum_fold(rsum), len);
+> +               }
+>                 skb->ip_summed = CHECKSUM_COMPLETE;
+>                 skb->protocol = eth_type_trans(skb, gp->dev);
+>
+>
 
-It might just be simplest to revert the comparison change - if we read a
-torn value, the worst that happens is we extend incorrectly, and that
-is exactly what happens if we just read the old value.
+Here is what I get on my side
 
-An extra int isn't exactly the worst thing though, so whichever.
+[   53.628847] sungem: sungem wrong csum : 4e04/f97, len 64 bytes
+[   53.667063] sungem: sungem wrong csum : eea8/6eec, len 149 bytes
+[   58.648952] sungem: sungem wrong csum : 2095/3d06, len 64 bytes
+[   58.669414] sungem: sungem wrong csum : 5245/b50, len 149 bytes
+[   63.674451] sungem: sungem wrong csum : 2d8/5abd, len 149 bytes
+[   68.678233] sungem: sungem wrong csum : b8fc/a498, len 149 bytes
+[   73.685771] sungem: sungem wrong csum : 374/5a21, len 149 bytes
+[   78.689089] sungem: sungem wrong csum : d81/5014, len 149 bytes
+[   83.683261] sungem: sungem wrong csum : 4e04/f97, len 64 bytes
+[   83.690193] sungem: sungem wrong csum : c2f7/9a9d, len 149 bytes
+[   88.692511] sungem: sungem wrong csum : f4d8/68bc, len 149 bytes
+[   93.699915] sungem: sungem wrong csum : 1370/4a25, len 149 bytes
+[   98.703136] sungem: sungem wrong csum : e1b5/7bdf, len 149 bytes
+[  103.704230] sungem: sungem wrong csum : 5321/a74, len 149 bytes
+[  108.688912] sungem: sungem wrong csum : 2095/3d06, len 64 bytes
+[  108.706559] sungem: sungem wrong csum : ddbc/7fd8, len 149 bytes
+[  113.713189] sungem: sungem wrong csum : 5a65/330, len 149 bytes
+[  113.891697] sungem: sungem wrong csum : 4e04/f97, len 64 bytes
+[  118.717151] sungem: sungem wrong csum : f7c8/65cc, len 149 bytes
+[  123.722680] sungem: sungem wrong csum : 3d7a/201b, len 149 bytes
+[  128.726524] sungem: sungem wrong csum : c8fd/9497, len 149 bytes
+[  133.732045] sungem: sungem wrong csum : de0d/7f87, len 149 bytes
+[  135.529163] sungem: sungem wrong csum : 3089/b6dd, len 96 bytes
+[  135.529208] eth0: hw csum failure
+[  135.529220] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #7
+[  135.529226] Call Trace:
+[  135.529243] [dffedbe0] [c069ddac]
+__skb_checksum_complete+0xf0/0x108 (unreliable)
+
 
 >
-> This fix is also needed by the following patch.
 >
-> Fixes: 51f2176d74ac ("sched/fair: Fix unlocked reads of some cfs_b->quota/period")
-> Cc: Ben Segall <bsegall@google.com>
-> Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
-> ---
->  kernel/sched/fair.c  | 14 ++++++++------
->  kernel/sched/sched.h |  6 ++++--
->  2 files changed, 12 insertions(+), 8 deletions(-)
 >
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index e497c05aab7f..9f384264e832 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4590,6 +4590,7 @@ void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
->  	now = sched_clock_cpu(smp_processor_id());
->  	cfs_b->runtime = cfs_b->quota;
->  	cfs_b->runtime_expires = now + ktime_to_ns(cfs_b->period);
-> +	cfs_b->expires_seq++;
->  }
->  
->  static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
-> @@ -4612,6 +4613,7 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->  	struct task_group *tg = cfs_rq->tg;
->  	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(tg);
->  	u64 amount = 0, min_amount, expires;
-> +	int expires_seq;
->  
->  	/* note: this is a positive sum as runtime_remaining <= 0 */
->  	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
-> @@ -4629,6 +4631,7 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->  		}
->  	}
->  	expires = cfs_b->runtime_expires;
-> +	expires_seq = cfs_b->expires_seq;
->  	raw_spin_unlock(&cfs_b->lock);
->  
->  	cfs_rq->runtime_remaining += amount;
-> @@ -4637,8 +4640,10 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->  	 * spread between our sched_clock and the one on which runtime was
->  	 * issued.
->  	 */
-> -	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
-> +	if ((s64)(expires - cfs_rq->runtime_expires) > 0) {
->  		cfs_rq->runtime_expires = expires;
-> +		cfs_rq->expires_seq = expires_seq;
-> +	}
->  
->  	return cfs_rq->runtime_remaining > 0;
->  }
-> @@ -4664,12 +4669,9 @@ static void expire_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->  	 * has not truly expired.
->  	 *
->  	 * Fortunately we can check determine whether this the case by checking
-> -	 * whether the global deadline has advanced. It is valid to compare
-> -	 * cfs_b->runtime_expires without any locks since we only care about
-> -	 * exact equality, so a partial write will still work.
-> +	 * whether the global deadline(cfs_b->expires_seq) has advanced.
->  	 */
-> -
-> -	if (cfs_rq->runtime_expires != cfs_b->runtime_expires) {
-> +	if (cfs_rq->expires_seq == cfs_b->expires_seq) {
->  		/* extend local deadline, drift is bounded above by 2 ticks */
->  		cfs_rq->runtime_expires += TICK_NSEC;
->  	} else {
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 6601baf2361c..e977e04f8daf 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -334,9 +334,10 @@ struct cfs_bandwidth {
->  	u64			runtime;
->  	s64			hierarchical_quota;
->  	u64			runtime_expires;
-> +	int			expires_seq;
->  
-> -	int			idle;
-> -	int			period_active;
-> +	short			idle;
-> +	short			period_active;
->  	struct hrtimer		period_timer;
->  	struct hrtimer		slack_timer;
->  	struct list_head	throttled_cfs_rq;
-> @@ -551,6 +552,7 @@ struct cfs_rq {
->  
->  #ifdef CONFIG_CFS_BANDWIDTH
->  	int			runtime_enabled;
-> +	int			expires_seq;
->  	u64			runtime_expires;
->  	s64			runtime_remaining;
