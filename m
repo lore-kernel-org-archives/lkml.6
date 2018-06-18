@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC129C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86848C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1DC020850
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DC020850
+	by mail.kernel.org (Postfix) with ESMTP id 29C72208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:59:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29C72208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967703AbeFRI6y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:58:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35608 "EHLO
+        id S936469AbeFRI7i (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:59:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967558AbeFRIdt (ORCPT
+        with ESMTP id S967497AbeFRIdi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:49 -0400
+        Mon, 18 Jun 2018 04:33:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05FCCC49;
-        Mon, 18 Jun 2018 08:33:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CEA0C49;
+        Mon, 18 Jun 2018 08:33:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Richard Kuo <rkuo@codeaurora.org>,
+        stable@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 100/189] hexagon: add memset_io() helper
-Date:   Mon, 18 Jun 2018 10:13:16 +0200
-Message-Id: <20180618081213.237174056@linuxfoundation.org>
+Subject: [PATCH 4.14 096/189] ARM: OMAP2+: powerdomain: use raw_smp_processor_id() for trace
+Date:   Mon, 18 Jun 2018 10:13:12 +0200
+Message-Id: <20180618081213.080135239@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,39 +50,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Tero Kristo <t-kristo@ti.com>
 
-[ Upstream commit a57ab96ef9dde231d4d46edba4d5f73720edc16a ]
+[ Upstream commit 33e9572483031a79ad0a4468064675144d9269ec ]
 
-We already have memcpy_toio(), but not memset_io(), so let's
-add the obvious version to allow building an allmodconfig kernel
-without errors like
+smp_processor_id() checks preemption if CONFIG_DEBUG_PREEMPT is enabled,
+causing a warning dump during boot:
 
-drivers/gpu/drm/ttm/ttm_bo_util.c: In function 'ttm_bo_move_memcpy':
-drivers/gpu/drm/ttm/ttm_bo_util.c:390:3: error: implicit declaration of function 'memset_io' [-Werror=implicit-function-declaration]
+[    5.042377] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+[    5.050281] caller is pwrdm_set_next_pwrst+0x48/0x88
+[    5.055330] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.14.24-g57341df0b4 #1
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Richard Kuo <rkuo@codeaurora.org>
+Use the raw_smp_processor_id() for the trace instead, this value does
+not need to be perfectly correct. The alternative of disabling preempt
+is too heavy weight operation to be applied in PM hot path for just
+tracing purposes.
+
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/hexagon/include/asm/io.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/mach-omap2/powerdomain.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/hexagon/include/asm/io.h
-+++ b/arch/hexagon/include/asm/io.h
-@@ -216,6 +216,12 @@ static inline void memcpy_toio(volatile
- 	memcpy((void *) dst, src, count);
- }
- 
-+static inline void memset_io(volatile void __iomem *addr, int value,
-+			     size_t size)
-+{
-+	memset((void __force *)addr, value, size);
-+}
-+
- #define PCI_IO_ADDR	(volatile void __iomem *)
- 
- /*
+--- a/arch/arm/mach-omap2/powerdomain.c
++++ b/arch/arm/mach-omap2/powerdomain.c
+@@ -188,7 +188,7 @@ static int _pwrdm_state_switch(struct po
+ 				       ((prev & OMAP_POWERSTATE_MASK) << 0));
+ 			trace_power_domain_target_rcuidle(pwrdm->name,
+ 							  trace_state,
+-							  smp_processor_id());
++							  raw_smp_processor_id());
+ 		}
+ 		break;
+ 	default:
+@@ -518,7 +518,7 @@ int pwrdm_set_next_pwrst(struct powerdom
+ 	if (arch_pwrdm && arch_pwrdm->pwrdm_set_next_pwrst) {
+ 		/* Trace the pwrdm desired target state */
+ 		trace_power_domain_target_rcuidle(pwrdm->name, pwrst,
+-						  smp_processor_id());
++						  raw_smp_processor_id());
+ 		/* Program the pwrdm desired target state */
+ 		ret = arch_pwrdm->pwrdm_set_next_pwrst(pwrdm, pwrst);
+ 	}
 
 
