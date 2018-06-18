@@ -2,144 +2,133 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA19CC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8106AC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64C982075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C0CB2075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:04:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IxQjoplg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64C982075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="lUptStrV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C0CB2075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755391AbeFRT5C (ORCPT
+        id S1755363AbeFRUEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:57:02 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:36476 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755344AbeFRT47 (ORCPT
+        Mon, 18 Jun 2018 16:04:39 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36057 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754227AbeFRUEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:56:59 -0400
-Received: by mail-ua0-f195.google.com with SMTP id c23-v6so11504664uan.3;
-        Mon, 18 Jun 2018 12:56:58 -0700 (PDT)
+        Mon, 18 Jun 2018 16:04:37 -0400
+Received: by mail-ot0-f194.google.com with SMTP id c15-v6so19956006otl.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 13:04:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Pi9gENfzOZQEObvEnMp1V3mn1A4hE5NRpwJSebd8olE=;
-        b=IxQjoplg6RFSPBMbQ20agJdk0slOcE0r84VMxkptp0ElWVZ1XKMVUOex/kKUrWgp3i
-         4R4GkMZD+VittMd3FIEFTDAa31PjbYof5xHzDk55/z9STeCHRXqpM0v0Ys/cUg9mFfIs
-         AY1zztz1ez4+0cA/GW1YfsTjScz3I0T5gHKDcPekJRf2drrS2Qbx3VFZcG+fmL5hIwop
-         DAKFRA88pIW3NpBdtE5ItyeYiCAiokWFfpOrY4Mf6zB25NkHyVXG2m6s2glGA9N9INSg
-         fiObhRA/egrG1s+YMJ1nmNRTwetbpOJ/jRyXObM5ezyIrT/C2CvIneGARiIVzuVe4fTc
-         5M0A==
+        bh=ycvtm2IqbrzlFlVDk0CAc/Jo5GRhSVfrpXFFv/YbED8=;
+        b=lUptStrVk9B4FXgZIzMmiGeC1afJzwr6tF1TD2GVOsBiUjB4SXjTjBAKyV26uivhPM
+         CVz6RBVii3ASOHW34VcylbpPGoWM9CZ5vt2LUreeXkPDAaKjp8CfRQdl2WiFRB1u6qqc
+         rFBelp0h9UI3bkjA2mKpz/6oUIQtQ7jEf74YISE5nyhCplda3Lom964/x7y2XuOvMIqC
+         OGxdHJf1F4jNgJ/wt1Ypfu+a3aNw9VD4mr8ny1VB+kwmULyDjN0S57z2Ave3i7+IoTyQ
+         zSEEiWl0yW8xuWQJFwxD9KoezqcJ+yslavZM0+R0a5ClaA9VoeZu2Pf96v94W0E7Tigh
+         mW+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Pi9gENfzOZQEObvEnMp1V3mn1A4hE5NRpwJSebd8olE=;
-        b=h9YxQ8PQVXH0BIjyDxIPPQs9jGV/XGqTKGBFtX4ighB2GugFdwO+lMbUd7CmO1n7/C
-         m7lGbKi6Zs8T+AthkImCfepfWOXtjFzt5/dQoBBTnlKjuaUJiO8YH46gYxtnK/idahL5
-         bTsZuR5RgH1zBYu4V46ifxLgrMiq/vVfeU8z/GKzOwBaJHqtdEnU2KI/kDe4LInK9NXa
-         xlC/ReX2sMXAKvdeNCbfo07+AQ9MDWw3JPYN4ScPSJVMg5K55NvQEma+I5Z0qnpsBUsM
-         a71h0gPdkWPRoNbeHozMazBr6758lsCHbcSXhMqsPvSOkdHHEs15qHF4QZeaV0+CGVr9
-         yC4A==
-X-Gm-Message-State: APt69E1AswnmUN/ngclbHOY2CZUcDRaafZOltgXEPBmr4qB51sT2Y8kX
-        QUoW1xEY6mSvPzqMIm9Wvhua5chsIaKfJ6CEDBE=
-X-Google-Smtp-Source: ADUXVKLkq2gbkArH/wskHMoqJiY//TV5nB7I2XaHAcWoM/1C6FKX42z9h3CHD2aNqWyek9hUJMzQAY6sIl+u9uBxFds=
-X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr8613438uae.12.1529351818518;
- Mon, 18 Jun 2018 12:56:58 -0700 (PDT)
+        bh=ycvtm2IqbrzlFlVDk0CAc/Jo5GRhSVfrpXFFv/YbED8=;
+        b=VUH2fPRh5l69WaAp9R90eGOm0Gb1eV6pAtMw0oaFtwEJ/4Jj0eZbVynPiAgT+Mayyq
+         J55gSdXquaUqxHHTwi3/tbdYxv1hiqgpFriOQZkMXWqgxegPs7jrc1wWWZUg/dH9F4Z7
+         aR+DO2nX4mTTp7hpr7EDf+07wUCVCnae6S76KmMkVwFjCb/a9FF9gAnLcI1Cq8ta3FIg
+         8RK8XWE0nH9/buEQDs7+PZKtkBLt8rlmVlerPVzRSOxKetn1oxRSInSf/qyQ4KCD0o7R
+         kWZ/EvoQwOX4GP/quV/64D5XQT1VNGdfEBa0X2vmCTdEXgzgyeuY4DYQDC20QJyjLEjJ
+         2FPg==
+X-Gm-Message-State: APt69E3+7Pro15C+09Sg7jR3d926+p2aUhFpDqteIV3GoVZc6C96jWbp
+        AtQiG3WS3tGhRvt67HNzjkWbvtxxOuVf7hyRmN3ZXg==
+X-Google-Smtp-Source: ADUXVKLB/VHpPimb0p7m35ECTXgluou6mvc/xnv8hEJH0Zra5K3xTMl4rsOGUMaAmWv20WADYkkEsjL4jxlDlO3kbPs=
+X-Received: by 2002:a9d:7311:: with SMTP id e17-v6mr8239361otk.162.1529352277101;
+ Mon, 18 Jun 2018 13:04:37 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 12:56:57
+Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 13:04:36
  -0700 (PDT)
-In-Reply-To: <780cba4e119110f2d2a81e237874592cff4d7868.camel@perches.com>
-References: <20180615132017.23889-1-andriy.shevchenko@linux.intel.com>
- <20180615132017.23889-6-andriy.shevchenko@linux.intel.com>
- <20180615214231.GA371@yury-thinkpad> <CAHp75VcxYPCLYq1J8qqjPdgDdQnWDgZKkavmyEWD8GNxcW2mWg@mail.gmail.com>
- <0a3d86d7746792a2f848cef386941fc182653515.camel@perches.com>
- <8cfbdf809f531f8aa315fe1679c3273858038f41.camel@linux.intel.com> <780cba4e119110f2d2a81e237874592cff4d7868.camel@perches.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 18 Jun 2018 22:56:57 +0300
-Message-ID: <CAHp75VcJLEmDTe0bCx7UkH4xMH44VUrvuFqdc++OYyE-JKd_cg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] Input: evdev - Switch to bitmap_zalloc()
-To:     Joe Perches <joe@perches.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yury Norov <ynorov@caviumnetworks.com>, agk@redhat.com,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        shli@kernel.org, linux-raid@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
+In-Reply-To: <20180618193158.GE6805@ziepe.ca>
+References: <20180617012510.20139-3-jhubbard@nvidia.com> <CAPcyv4i=eky-QrPcLUEqjsASuRUrFEWqf79hWe0mU8xtz6Jk-w@mail.gmail.com>
+ <20180617200432.krw36wrcwidb25cj@ziepe.ca> <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
+ <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com> <20180618081258.GB16991@lst.de>
+ <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com> <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
+ <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com> <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
+ <20180618193158.GE6805@ziepe.ca>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 18 Jun 2018 13:04:36 -0700
+Message-ID: <CAPcyv4jbwtOqG_473SeK12LKghMo6mCDWRuTxqYVP6R-sLhpoA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     John Hubbard <jhubbard@nvidia.com>, Christoph Hellwig <hch@lst.de>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 6:49 PM, Joe Perches <joe@perches.com> wrote:
-> On Mon, 2018-06-18 at 15:02 +0300, Andy Shevchenko wrote:
->> On Sat, 2018-06-16 at 12:16 -0700, Joe Perches wrote:
->> > On Sat, 2018-06-16 at 21:45 +0300, Andy Shevchenko wrote:
->> > > On Sat, Jun 16, 2018 at 12:46 AM Yury Norov <ynorov@caviumnetworks.c
->> > > om> wrote:
->> > > > On Fri, Jun 15, 2018 at 04:20:17PM +0300, Andy Shevchenko wrote:
->> > > > > Switch to bitmap_zalloc() to show clearly what we are
->> > > > > allocating.
->> > > > > Besides that it returns pointer of bitmap type instead of opaque
->> > > > > void *.
->> > >
->> > >
->> > > > > +       mem = bitmap_alloc(maxbit, GFP_KERNEL);
->> > > > >         if (!mem)
->> > > > >                 return -ENOMEM;
->> > > >
->> > > > But in commit message you say you switch to bitmap_zalloc(). IIUC
->> > > > bitmap_alloc() is OK here. But could you please update comment to
->> > > > avoid confusing.
->> > >
->> > > There are two places, one with alloc, another with zalloc.
->> > > I will clarify this in commit message of next version.
->> > >
->> > > > > +       mask = bitmap_zalloc(cnt, GFP_KERNEL);
->> > > > >         if (!mask)
->> > > > >                 return -ENOMEM;
->> > > > >
->> > > > >         error = bits_from_user(mask, cnt - 1, codes_size, codes,
->> > > > > compat);
->> > > >
->> > > > If my understanding of bits_from_user() correct, here you can also
->> > > > use
->> > > > bitmap_alloc(), true?
+On Mon, Jun 18, 2018 at 12:31 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Mon, Jun 18, 2018 at 12:21:46PM -0700, Dan Williams wrote:
+>> On Mon, Jun 18, 2018 at 11:14 AM, John Hubbard <jhubbard@nvidia.com> wrote:
+>> > On 06/18/2018 10:56 AM, Dan Williams wrote:
+>> >> On Mon, Jun 18, 2018 at 10:50 AM, John Hubbard <jhubbard@nvidia.com> wrote:
+>> >>> On 06/18/2018 01:12 AM, Christoph Hellwig wrote:
+>> >>>> On Sun, Jun 17, 2018 at 01:28:18PM -0700, John Hubbard wrote:
+>> >>>>> Yes. However, my thinking was: get_user_pages() can become a way to indicate that
+>> >>>>> these pages are going to be treated specially. In particular, the caller
+>> >>>>> does not really want or need to support certain file operations, while the
+>> >>>>> page is flagged this way.
+>> >>>>>
+>> >>>>> If necessary, we could add a new API call.
+>> >>>>
+>> >>>> That API call is called get_user_pages_longterm.
+>> >>>
+>> >>> OK...I had the impression that this was just semi-temporary API for dax, but
+>> >>> given that it's an exported symbol, I guess it really is here to stay.
+>> >>
+>> >> The plan is to go back and provide api changes that bypass
+>> >> get_user_page_longterm() for RDMA. However, for VFIO and others, it's
+>> >> not clear what we could do. In the VFIO case the guest would need to
+>> >> be prepared handle the revocation.
 >> >
->> > Also it might be useful to have a separate bitmap_from_user
->> > to alloc and copy.
+>> > OK, let's see if I understand that plan correctly:
+>> >
+>> > 1. Change RDMA users (this could be done entirely in the various device drivers'
+>> > code, unless I'm overlooking something) to use mmu notifiers, and to do their
+>> > DMA to/from non-pinned pages.
 >>
->> Maybe. I didn't check if there are such users except this driver.
->>
->> Anyway, it's out of scope of the series.
+>> The problem with this approach is surprising the RDMA drivers with
+>> notifications of teardowns. It's the RDMA userspace applications that
+>> need the notification, and it likely needs to be explicit opt-in, at
+>> least for the non-ODP drivers.
 >
-> That seems incorrect as you are introducing alloc/free helpers.
+> Well, more than that, we have no real plan on how to accomplish this,
+> or any idea if it can even really work.. Most userspace give up
+> control of the memory lifetime to the remote side of the connection
+> and have no way to recover it other than a full teardown.
 >
-> Perhaps bitmap_dup_user [or some better name] could or should
-> be one of the helpers.
+> Given that John is trying to fix a kernel oops, I don't think we
+> should tie progress on it to the RDMA notification idea.
+>
+> .. and given that John is trying to fix a kernel oops, maybe the
+> weird/bad/ugly behavior of ftruncte is a better bug to have than for
+> unprivileged users to be able to oops the kernel???
 
-Can you help with estimation how many existing users need this kind of
-functionality? One of them evdev, which has an open coded variant.
-
-Also, pay attention to that fact we have already bitmap_parse_user()
-and bitmap_parlelist_user() which are called by several users.
-
-If the estimation will show something like 3+, it would definitely
-make sense, otherwise, I wouldn't like spend time on it.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Trading one bug for another is not a fix. We did not fix the
+DAX-dma-vs-trruncate bug by breaking truncate() guarantees.
