@@ -6,56 +6,58 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90300C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBAAC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EEDE208B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3317208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FJYs9Nsu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EEDE208B1
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="EzRl/uoY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3317208A5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934992AbeFRMAf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:00:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46026 "EHLO
+        id S935026AbeFRMAs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:00:48 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46056 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934931AbeFRMAc (ORCPT
+        with ESMTP id S933575AbeFRMAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:00:32 -0400
+        Mon, 18 Jun 2018 08:00:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=cODi900G5xOZ0pXRFs7Lle3IzqrbKHVoAbh19dn8oYo=; b=FJYs9NsuyDX3
-        VK/951n25ukAnIfvtLLN1lir0XtqOQF/UA8TgMuJuj++X700eLAERP5YWaxoziMqf0niEVqsPgb+h
-        kwb+1KqCzQhol8NQL5wRqwCYY++F/37SQzHZmAb3brcVMVUNF/1iaIuXaIG/bHpXKUFNvLgDaG6O2
-        G4pyY=;
+        List-Archive; bh=eTWgGsHLWrLfdk3CjNcQhRfrR4Is4SVG47RkqKb2Yjg=; b=EzRl/uoYGowG
+        cDRymknFmUDWE0pUIFmqgML/AFljllzjo5j20nQyfrWg7Zzys8ATuWWxlR43ySu8ltpi5c9w2OhIR
+        xpqH761pkmX0PNP3zPD7ba0F6kC3CzUa5o7EKo/fYFiJV2kBoWbsQn3NPz97lcOuqy4sU6CIKVeRh
+        8GtFQ=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspa-0007yo-MX; Mon, 18 Jun 2018 12:00:22 +0000
+        id 1fUspW-0007yX-Rn; Mon, 18 Jun 2018 12:00:18 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspa-0000EU-8H; Mon, 18 Jun 2018 13:00:22 +0100
+        id 1fUspW-0000CY-C2; Mon, 18 Jun 2018 13:00:18 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Mark Brown <broonie@kernel.org>,
+        Shuming Fan <shumingf@realtek.com>,
+        Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, ldv-project@linuxtesting.org,
-        alsa-devel@alsa-project.org, Heiko Stuebner <heiko@sntech.de>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        linux-rockchip@lists.infradead.org, sil2review@lists.osadl.org,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rockchip: put device_node on remove" to the asoc tree
-In-Reply-To:  <1528582854-8402-1-git-send-email-khoroshilov@ispras.ru>
-Message-Id: <E1fUspa-0000EU-8H@debutante>
-Date:   Mon, 18 Jun 2018 13:00:22 +0100
+Subject: Applied "ASoC: rt1305: Use ULL suffixes for 64-bit constants" to the asoc tree
+In-Reply-To:  <1528379448-3937-1-git-send-email-geert@linux-m68k.org>
+Message-Id: <E1fUspW-0000CY-C2@debutante>
+Date:   Mon, 18 Jun 2018 13:00:18 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +65,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rockchip: put device_node on remove
+   ASoC: rt1305: Use ULL suffixes for 64-bit constants
 
 has been applied to the asoc tree at
 
@@ -88,85 +90,51 @@ to this mail.
 Thanks,
 Mark
 
-From a56df73ba5960848f60f609c68770d2638bf1dd5 Mon Sep 17 00:00:00 2001
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Date: Sun, 10 Jun 2018 01:20:54 +0300
-Subject: [PATCH] ASoC: rockchip: put device_node on remove
+From 4f29b663c08d369fe320a148179996c94cf7d01b Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 7 Jun 2018 15:50:48 +0200
+Subject: [PATCH] ASoC: rt1305: Use ULL suffixes for 64-bit constants
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-snd_rk_mc_probe() gets a couple of device nodes with of_parse_phandle(),
-but there is no release of them.
+With gcc 4.1.2:
 
-The patch adds remove handler and proper error handling in the probe.
+    sound/soc/codecs/rt1305.c: In function ‘rt1305_calibrate’:
+    sound/soc/codecs/rt1305.c:1069: warning: integer constant is too large for ‘long’ type
+    sound/soc/codecs/rt1305.c:1086: warning: integer constant is too large for ‘long’ type
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Add the missing "ULL" suffixes to fix this.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 29bc643ddd7efb74 ("ASoC: rt1305: Add RT1305/RT1306 amplifier driver")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/rockchip/rockchip_rt5645.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+ sound/soc/codecs/rt1305.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_rt5645.c b/sound/soc/rockchip/rockchip_rt5645.c
-index 4db4fd56db35..881c32498808 100644
---- a/sound/soc/rockchip/rockchip_rt5645.c
-+++ b/sound/soc/rockchip/rockchip_rt5645.c
-@@ -181,7 +181,8 @@ static int snd_rk_mc_probe(struct platform_device *pdev)
- 	if (!rk_dailink.cpu_of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'rockchip,i2s-controller' missing or invalid\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto put_codec_of_node;
- 	}
+diff --git a/sound/soc/codecs/rt1305.c b/sound/soc/codecs/rt1305.c
+index f4c8c45f4010..421b8fb2fa04 100644
+--- a/sound/soc/codecs/rt1305.c
++++ b/sound/soc/codecs/rt1305.c
+@@ -1066,7 +1066,7 @@ static void rt1305_calibrate(struct rt1305_priv *rt1305)
+ 	pr_debug("Left_rhl = 0x%x rh=0x%x rl=0x%x\n", rhl, rh, rl);
+ 	pr_info("Left channel %d.%dohm\n", (r0ohm/10), (r0ohm%10));
  
- 	rk_dailink.platform_of_node = rk_dailink.cpu_of_node;
-@@ -190,17 +191,36 @@ static int snd_rk_mc_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev,
- 			"Soc parse card name failed %d\n", ret);
--		return ret;
-+		goto put_cpu_of_node;
- 	}
+-	r0l = 562949953421312;
++	r0l = 562949953421312ULL;
+ 	if (rhl != 0)
+ 		do_div(r0l, rhl);
+ 	pr_debug("Left_r0 = 0x%llx\n", r0l);
+@@ -1083,7 +1083,7 @@ static void rt1305_calibrate(struct rt1305_priv *rt1305)
+ 	pr_debug("Right_rhl = 0x%x rh=0x%x rl=0x%x\n", rhl, rh, rl);
+ 	pr_info("Right channel %d.%dohm\n", (r0ohm/10), (r0ohm%10));
  
- 	ret = devm_snd_soc_register_card(&pdev->dev, card);
- 	if (ret) {
- 		dev_err(&pdev->dev,
- 			"Soc register card failed %d\n", ret);
--		return ret;
-+		goto put_cpu_of_node;
- 	}
- 
- 	return ret;
-+
-+put_cpu_of_node:
-+	of_node_put(rk_dailink.cpu_of_node);
-+	rk_dailink.cpu_of_node = NULL;
-+put_codec_of_node:
-+	of_node_put(rk_dailink.codec_of_node);
-+	rk_dailink.codec_of_node = NULL;
-+
-+	return ret;
-+}
-+
-+static int snd_rk_mc_remove(struct platform_device *pdev)
-+{
-+	of_node_put(rk_dailink.cpu_of_node);
-+	rk_dailink.cpu_of_node = NULL;
-+	of_node_put(rk_dailink.codec_of_node);
-+	rk_dailink.codec_of_node = NULL;
-+
-+	return 0;
- }
- 
- static const struct of_device_id rockchip_rt5645_of_match[] = {
-@@ -212,6 +232,7 @@ MODULE_DEVICE_TABLE(of, rockchip_rt5645_of_match);
- 
- static struct platform_driver snd_rk_mc_driver = {
- 	.probe = snd_rk_mc_probe,
-+	.remove = snd_rk_mc_remove,
- 	.driver = {
- 		.name = DRV_NAME,
- 		.pm = &snd_soc_pm_ops,
+-	r0r = 562949953421312;
++	r0r = 562949953421312ULL;
+ 	if (rhl != 0)
+ 		do_div(r0r, rhl);
+ 	pr_debug("Right_r0 = 0x%llx\n", r0r);
 -- 
 2.17.1
 
