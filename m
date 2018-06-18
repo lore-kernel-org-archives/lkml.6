@@ -2,486 +2,126 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6CAC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77026C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08BD12075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:04:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08BD12075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mess.org
+	by mail.kernel.org (Postfix) with ESMTP id 237052075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:06:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxJcdxls"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 237052075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755494AbeFRXE2 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 19:04:28 -0400
-Received: from gofer.mess.org ([88.97.38.141]:57467 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755329AbeFRXE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 19:04:27 -0400
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id 392746028F; Tue, 19 Jun 2018 00:04:24 +0100 (BST)
-Date:   Tue, 19 Jun 2018 00:04:24 +0100
-From:   Sean Young <sean@mess.org>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Y Song <ys114321@gmail.com>, Matthias Reichl <hias@horus.com>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: [PATCH v4] bpf: attach type BPF_LIRC_MODE2 should not depend on
- CONFIG_CGROUP_BPF
-Message-ID: <20180618230423.nk2ey2755p2zkqmv@gofer.mess.org>
-References: <20180618171216.gearpr755pm3wot7@gofer.mess.org>
- <201806190203.kfm0Xhda%fengguang.wu@intel.com>
+        id S935681AbeFRXGj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 19:06:39 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:38129 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755344AbeFRXGh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 19:06:37 -0400
+Received: by mail-ua0-f196.google.com with SMTP id 59-v6so11836401uas.5;
+        Mon, 18 Jun 2018 16:06:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=dboFUCsRjY4HUtCafVSbJvDAvEuo64xakQ4GD34SN8U=;
+        b=kxJcdxlsnfbdY9RTVKiwpoJKA/mFWVHw9zqXCjEdnYjg2sjVuW912RmyPRXy9fQGBp
+         E6SjIV4cJvStueKrWrVc4GLpaWxNcS/J9JhLIO14HAfYhCCe6IhnPVlslcQ4uTSJQcua
+         0bK63ejM9cqZQrODEOKBmyFZUCFJ3hjgSLvGEyBTp/oiNqEvSMCKIEWavDyyWgErTwgq
+         ryRiR5iQy1Z43/OFxs5qTYjk3iznVHqeWHAhUn0C3hirA3P7BEXRpzRNduMgeuF2+ePX
+         ph3mgQGkNG5691yKOVEMB8yrZBFqsHvoxbfHtKm/7BrfxyOPA4ctCFnGH5g9/px05enD
+         zXvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=dboFUCsRjY4HUtCafVSbJvDAvEuo64xakQ4GD34SN8U=;
+        b=TUQYSyfLxX2ecSMOj8bz7Lcglhyr6iTHMagGO9DUJebkw1Wbmx87X9sdeL66x9NDVR
+         ZlAPdcmmewrxtspI8H1bDL7audyPykCtMu+4IrtWSRZyp9+owL0Gi8Ral4fEOn+q+lwk
+         j8kxsYikT8kM3UpGnnpt6aR2YT1PWrj/3YFtxS67uZsNOf9S1t63+Fj0OBqTTVcES+if
+         KXrJEXSZpg8WsMn8onhTUtAYMXFXtGnRDkxQxukPjeNDNP7mAyHimv0ivVgS2sFv1aJY
+         7cdSruFV2VcFG1A4Y+FKsYoKn+3lztgN7Cei1pHyYt7yTp6WuYjbjZO8+O5A+oZMEa/W
+         2EKw==
+X-Gm-Message-State: APt69E3oMv8b6AfQtxn/srFzqz3YNSrDEPSpUQjwxwz74pOvV0Zp7RCK
+        WxA5+JwL/aYnXk+9YSK/sbSGRRgvV3Qg1RzELWA=
+X-Google-Smtp-Source: ADUXVKLbjW2ZtjhnpXwmUDL3vFVhKuvX7z8zzElFfh0g3NTyuFGj0K+tu3I4pukofW9MeRWQ/8QuiSHbd1cfzNXLfEE=
+X-Received: by 2002:ab0:1b9b:: with SMTP id k27-v6mr9032964uai.122.1529363196789;
+ Mon, 18 Jun 2018 16:06:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201806190203.kfm0Xhda%fengguang.wu@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 16:06:36
+ -0700 (PDT)
+In-Reply-To: <20180618154430.1af3d42f@t450s.home>
+References: <20180618193636.16210-1-logang@deltatee.com> <20180618193636.16210-2-logang@deltatee.com>
+ <20180618154430.1af3d42f@t450s.home>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 19 Jun 2018 02:06:36 +0300
+Message-ID: <CAHp75VefSEvpUvsdi=W6rEiOX01zaJeMtxQMDqmSthPJP3uJFA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] PCI: Make specifying PCI devices in kernel
+ parameters reusable
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the kernel is compiled with CONFIG_CGROUP_BPF not enabled, it is not
-possible to attach, detach or query IR BPF programs to /dev/lircN devices,
-making them impossible to use. For embedded devices, it should be possible
-to use IR decoding without cgroups or CONFIG_CGROUP_BPF enabled.
+On Tue, Jun 19, 2018 at 12:44 AM, Alex Williamson
+<alex.williamson@redhat.com> wrote:
+> On Mon, 18 Jun 2018 13:36:34 -0600
+> Logan Gunthorpe <logang@deltatee.com> wrote:
 
-This change requires some refactoring, since bpf_prog_{attach,detach,query}
-functions are now always compiled, but their code paths for cgroups need
-moving out. Rather than a #ifdef CONFIG_CGROUP_BPF in kernel/bpf/syscall.c,
-moving them to kernel/bpf/cgroup.c and kernel/bpf/sockmap.c does not
-require #ifdefs since that is already conditionally compiled.
+> I realize this is not a change in behavior, but since we're spelling it
+> out in a proper comment rather than burying it in the implementation,
+> using 0 as a wildcard is rather questionable behavior.  It always
+> surprises me when I read this because pci_match_one_device() uses
+> PCI_ANY_ID (~0) as a wildcard and as a result of struct pci_device_id
+> using __u32 for these fields, we actually need to specify ffffffff on
+> the commandline to get a wildcard match for dynamic ids.  The latter is
+> tedious to use, but I think it's more correct, and the use of a __u32 is
+> probably attributed to the fact that 0xffff is only reserved for vendor
+> ID, the spec doesn't seem to reserve any entries from the vendor's
+> device ID range.
+>
+> There's probably really no path to resolve these, but acknowledging the
+> difference in this comment block might be helpful in the future.
 
-Signed-off-by: Sean Young <sean@mess.org>
----
- drivers/media/rc/bpf-lirc.c | 14 +-----
- include/linux/bpf-cgroup.h  | 26 ++++++++++
- include/linux/bpf.h         |  8 +++
- include/linux/bpf_lirc.h    |  5 +-
- kernel/bpf/cgroup.c         | 52 ++++++++++++++++++++
- kernel/bpf/sockmap.c        | 18 +++++++
- kernel/bpf/syscall.c        | 98 ++++++++-----------------------------
- 7 files changed, 130 insertions(+), 91 deletions(-)
+...or introduce a parser part to allow user supply "any" instead of
+numeric value.
 
-diff --git a/drivers/media/rc/bpf-lirc.c b/drivers/media/rc/bpf-lirc.c
-index 40826bba06b6..fcfab6635f9c 100644
---- a/drivers/media/rc/bpf-lirc.c
-+++ b/drivers/media/rc/bpf-lirc.c
-@@ -207,29 +207,19 @@ void lirc_bpf_free(struct rc_dev *rcdev)
- 	bpf_prog_array_free(rcdev->raw->progs);
- }
- 
--int lirc_prog_attach(const union bpf_attr *attr)
-+int lirc_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog)
- {
--	struct bpf_prog *prog;
- 	struct rc_dev *rcdev;
- 	int ret;
- 
- 	if (attr->attach_flags)
- 		return -EINVAL;
- 
--	prog = bpf_prog_get_type(attr->attach_bpf_fd,
--				 BPF_PROG_TYPE_LIRC_MODE2);
--	if (IS_ERR(prog))
--		return PTR_ERR(prog);
--
- 	rcdev = rc_dev_get_from_fd(attr->target_fd);
--	if (IS_ERR(rcdev)) {
--		bpf_prog_put(prog);
-+	if (IS_ERR(rcdev))
- 		return PTR_ERR(rcdev);
--	}
- 
- 	ret = lirc_bpf_attach(rcdev, prog);
--	if (ret)
--		bpf_prog_put(prog);
- 
- 	put_device(&rcdev->dev);
- 
-diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-index 975fb4cf1bb7..79795c5fa7c3 100644
---- a/include/linux/bpf-cgroup.h
-+++ b/include/linux/bpf-cgroup.h
-@@ -188,12 +188,38 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
- 									      \
- 	__ret;								      \
- })
-+int cgroup_bpf_prog_attach(const union bpf_attr *attr,
-+			   enum bpf_prog_type ptype, struct bpf_prog *prog);
-+int cgroup_bpf_prog_detach(const union bpf_attr *attr,
-+			   enum bpf_prog_type ptype);
-+int cgroup_bpf_prog_query(const union bpf_attr *attr,
-+			  union bpf_attr __user *uattr);
- #else
- 
-+struct bpf_prog;
- struct cgroup_bpf {};
- static inline void cgroup_bpf_put(struct cgroup *cgrp) {}
- static inline int cgroup_bpf_inherit(struct cgroup *cgrp) { return 0; }
- 
-+static inline int cgroup_bpf_prog_attach(const union bpf_attr *attr,
-+					 enum bpf_prog_type ptype,
-+					 struct bpf_prog *prog)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int cgroup_bpf_prog_detach(const union bpf_attr *attr,
-+					 enum bpf_prog_type ptype)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int cgroup_bpf_prog_query(const union bpf_attr *attr,
-+					union bpf_attr __user *uattr)
-+{
-+	return -EINVAL;
-+}
-+
- #define cgroup_bpf_enabled (0)
- #define BPF_CGROUP_PRE_CONNECT_ENABLED(sk) (0)
- #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk,skb) ({ 0; })
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 995c3b1e59bf..7c87ec22d465 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -684,6 +684,8 @@ static inline void bpf_map_offload_map_free(struct bpf_map *map)
- struct sock  *__sock_map_lookup_elem(struct bpf_map *map, u32 key);
- struct sock  *__sock_hash_lookup_elem(struct bpf_map *map, void *key);
- int sock_map_prog(struct bpf_map *map, struct bpf_prog *prog, u32 type);
-+int sockmap_get_from_fd(const union bpf_attr *attr, int type,
-+			struct bpf_prog *prog);
- #else
- static inline struct sock  *__sock_map_lookup_elem(struct bpf_map *map, u32 key)
- {
-@@ -702,6 +704,12 @@ static inline int sock_map_prog(struct bpf_map *map,
- {
- 	return -EOPNOTSUPP;
- }
-+
-+static inline int sockmap_get_from_fd(const union bpf_attr *attr, int type,
-+				      struct bpf_prog *prog)
-+{
-+	return -EINVAL;
-+}
- #endif
- 
- #if defined(CONFIG_XDP_SOCKETS)
-diff --git a/include/linux/bpf_lirc.h b/include/linux/bpf_lirc.h
-index 5f8a4283092d..9d9ff755ec29 100644
---- a/include/linux/bpf_lirc.h
-+++ b/include/linux/bpf_lirc.h
-@@ -5,11 +5,12 @@
- #include <uapi/linux/bpf.h>
- 
- #ifdef CONFIG_BPF_LIRC_MODE2
--int lirc_prog_attach(const union bpf_attr *attr);
-+int lirc_prog_attach(const union bpf_attr *attr, struct bpf_prog *prog);
- int lirc_prog_detach(const union bpf_attr *attr);
- int lirc_prog_query(const union bpf_attr *attr, union bpf_attr __user *uattr);
- #else
--static inline int lirc_prog_attach(const union bpf_attr *attr)
-+static inline int lirc_prog_attach(const union bpf_attr *attr,
-+				   struct bpf_prog *prog)
- {
- 	return -EINVAL;
- }
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index f7c00bd6f8e4..f0ae8a3d01f9 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -428,6 +428,58 @@ int __cgroup_bpf_query(struct cgroup *cgrp, const union bpf_attr *attr,
- 	return ret;
- }
- 
-+int cgroup_bpf_prog_attach(const union bpf_attr *attr,
-+			   enum bpf_prog_type ptype, struct bpf_prog *prog)
-+{
-+	struct cgroup *cgrp;
-+	int ret;
-+
-+	cgrp = cgroup_get_from_fd(attr->target_fd);
-+	if (IS_ERR(cgrp))
-+		return PTR_ERR(cgrp);
-+
-+	ret = cgroup_bpf_attach(cgrp, prog, attr->attach_type,
-+				attr->attach_flags);
-+	cgroup_put(cgrp);
-+
-+	return ret;
-+}
-+
-+int cgroup_bpf_prog_detach(const union bpf_attr *attr, enum bpf_prog_type ptype)
-+{
-+	struct bpf_prog *prog;
-+	struct cgroup *cgrp;
-+	int ret;
-+
-+	cgrp = cgroup_get_from_fd(attr->target_fd);
-+	if (IS_ERR(cgrp))
-+		return PTR_ERR(cgrp);
-+
-+	prog = bpf_prog_get_type(attr->attach_bpf_fd, ptype);
-+	if (IS_ERR(prog))
-+		prog = NULL;
-+
-+	ret = cgroup_bpf_detach(cgrp, prog, attr->attach_type, 0);
-+	if (prog)
-+		bpf_prog_put(prog);
-+	cgroup_put(cgrp);
-+	return ret;
-+}
-+
-+int cgroup_bpf_prog_query(const union bpf_attr *attr,
-+			  union bpf_attr __user *uattr)
-+{
-+	struct cgroup *cgrp;
-+	int ret;
-+
-+	cgrp = cgroup_get_from_fd(attr->query.target_fd);
-+	if (IS_ERR(cgrp))
-+		return PTR_ERR(cgrp);
-+	ret = cgroup_bpf_query(cgrp, attr, uattr);
-+	cgroup_put(cgrp);
-+	return ret;
-+}
-+
- /**
-  * __cgroup_bpf_run_filter_skb() - Run a program for packet filtering
-  * @sk: The socket sending or receiving traffic
-diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
-index 52a91d816c0e..81d0c55a77aa 100644
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -1915,6 +1915,24 @@ int sock_map_prog(struct bpf_map *map, struct bpf_prog *prog, u32 type)
- 	return 0;
- }
- 
-+int sockmap_get_from_fd(const union bpf_attr *attr, int type,
-+			struct bpf_prog *prog)
-+{
-+	int ufd = attr->target_fd;
-+	struct bpf_map *map;
-+	struct fd f;
-+	int err;
-+
-+	f = fdget(ufd);
-+	map = __bpf_map_get(f);
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
-+
-+	err = sock_map_prog(map, prog, attr->attach_type);
-+	fdput(f);
-+	return err;
-+}
-+
- static void *sock_map_lookup(struct bpf_map *map, void *key)
- {
- 	return NULL;
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 0fa20624707f..93993c03c9ac 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1489,8 +1489,6 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
- 	return err;
- }
- 
--#ifdef CONFIG_CGROUP_BPF
--
- static int bpf_prog_attach_check_attach_type(const struct bpf_prog *prog,
- 					     enum bpf_attach_type attach_type)
- {
-@@ -1505,40 +1503,6 @@ static int bpf_prog_attach_check_attach_type(const struct bpf_prog *prog,
- 
- #define BPF_PROG_ATTACH_LAST_FIELD attach_flags
- 
--static int sockmap_get_from_fd(const union bpf_attr *attr,
--			       int type, bool attach)
--{
--	struct bpf_prog *prog = NULL;
--	int ufd = attr->target_fd;
--	struct bpf_map *map;
--	struct fd f;
--	int err;
--
--	f = fdget(ufd);
--	map = __bpf_map_get(f);
--	if (IS_ERR(map))
--		return PTR_ERR(map);
--
--	if (attach) {
--		prog = bpf_prog_get_type(attr->attach_bpf_fd, type);
--		if (IS_ERR(prog)) {
--			fdput(f);
--			return PTR_ERR(prog);
--		}
--	}
--
--	err = sock_map_prog(map, prog, attr->attach_type);
--	if (err) {
--		fdput(f);
--		if (prog)
--			bpf_prog_put(prog);
--		return err;
--	}
--
--	fdput(f);
--	return 0;
--}
--
- #define BPF_F_ATTACH_MASK \
- 	(BPF_F_ALLOW_OVERRIDE | BPF_F_ALLOW_MULTI)
- 
-@@ -1546,7 +1510,6 @@ static int bpf_prog_attach(const union bpf_attr *attr)
- {
- 	enum bpf_prog_type ptype;
- 	struct bpf_prog *prog;
--	struct cgroup *cgrp;
- 	int ret;
- 
- 	if (!capable(CAP_NET_ADMIN))
-@@ -1583,12 +1546,15 @@ static int bpf_prog_attach(const union bpf_attr *attr)
- 		ptype = BPF_PROG_TYPE_CGROUP_DEVICE;
- 		break;
- 	case BPF_SK_MSG_VERDICT:
--		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_MSG, true);
-+		ptype = BPF_PROG_TYPE_SK_MSG;
-+		break;
- 	case BPF_SK_SKB_STREAM_PARSER:
- 	case BPF_SK_SKB_STREAM_VERDICT:
--		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, true);
-+		ptype = BPF_PROG_TYPE_SK_SKB;
-+		break;
- 	case BPF_LIRC_MODE2:
--		return lirc_prog_attach(attr);
-+		ptype = BPF_PROG_TYPE_LIRC_MODE2;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1602,17 +1568,20 @@ static int bpf_prog_attach(const union bpf_attr *attr)
- 		return -EINVAL;
- 	}
- 
--	cgrp = cgroup_get_from_fd(attr->target_fd);
--	if (IS_ERR(cgrp)) {
--		bpf_prog_put(prog);
--		return PTR_ERR(cgrp);
-+	switch (ptype) {
-+	case BPF_PROG_TYPE_SK_SKB:
-+	case BPF_PROG_TYPE_SK_MSG:
-+		ret = sockmap_get_from_fd(attr, ptype, prog);
-+		break;
-+	case BPF_PROG_TYPE_LIRC_MODE2:
-+		ret = lirc_prog_attach(attr, prog);
-+		break;
-+	default:
-+		ret = cgroup_bpf_prog_attach(attr, ptype, prog);
- 	}
- 
--	ret = cgroup_bpf_attach(cgrp, prog, attr->attach_type,
--				attr->attach_flags);
- 	if (ret)
- 		bpf_prog_put(prog);
--	cgroup_put(cgrp);
- 
- 	return ret;
- }
-@@ -1622,9 +1591,6 @@ static int bpf_prog_attach(const union bpf_attr *attr)
- static int bpf_prog_detach(const union bpf_attr *attr)
- {
- 	enum bpf_prog_type ptype;
--	struct bpf_prog *prog;
--	struct cgroup *cgrp;
--	int ret;
- 
- 	if (!capable(CAP_NET_ADMIN))
- 		return -EPERM;
-@@ -1657,29 +1623,17 @@ static int bpf_prog_detach(const union bpf_attr *attr)
- 		ptype = BPF_PROG_TYPE_CGROUP_DEVICE;
- 		break;
- 	case BPF_SK_MSG_VERDICT:
--		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_MSG, false);
-+		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_MSG, NULL);
- 	case BPF_SK_SKB_STREAM_PARSER:
- 	case BPF_SK_SKB_STREAM_VERDICT:
--		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, false);
-+		return sockmap_get_from_fd(attr, BPF_PROG_TYPE_SK_SKB, NULL);
- 	case BPF_LIRC_MODE2:
- 		return lirc_prog_detach(attr);
- 	default:
- 		return -EINVAL;
- 	}
- 
--	cgrp = cgroup_get_from_fd(attr->target_fd);
--	if (IS_ERR(cgrp))
--		return PTR_ERR(cgrp);
--
--	prog = bpf_prog_get_type(attr->attach_bpf_fd, ptype);
--	if (IS_ERR(prog))
--		prog = NULL;
--
--	ret = cgroup_bpf_detach(cgrp, prog, attr->attach_type, 0);
--	if (prog)
--		bpf_prog_put(prog);
--	cgroup_put(cgrp);
--	return ret;
-+	return cgroup_bpf_prog_detach(attr, ptype);
- }
- 
- #define BPF_PROG_QUERY_LAST_FIELD query.prog_cnt
-@@ -1687,9 +1641,6 @@ static int bpf_prog_detach(const union bpf_attr *attr)
- static int bpf_prog_query(const union bpf_attr *attr,
- 			  union bpf_attr __user *uattr)
- {
--	struct cgroup *cgrp;
--	int ret;
--
- 	if (!capable(CAP_NET_ADMIN))
- 		return -EPERM;
- 	if (CHECK_ATTR(BPF_PROG_QUERY))
-@@ -1717,14 +1668,9 @@ static int bpf_prog_query(const union bpf_attr *attr,
- 	default:
- 		return -EINVAL;
- 	}
--	cgrp = cgroup_get_from_fd(attr->query.target_fd);
--	if (IS_ERR(cgrp))
--		return PTR_ERR(cgrp);
--	ret = cgroup_bpf_query(cgrp, attr, uattr);
--	cgroup_put(cgrp);
--	return ret;
-+
-+	return cgroup_bpf_prog_query(attr, uattr);
- }
--#endif /* CONFIG_CGROUP_BPF */
- 
- #define BPF_PROG_TEST_RUN_LAST_FIELD test.duration
- 
-@@ -2371,7 +2317,6 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
- 	case BPF_OBJ_GET:
- 		err = bpf_obj_get(&attr);
- 		break;
--#ifdef CONFIG_CGROUP_BPF
- 	case BPF_PROG_ATTACH:
- 		err = bpf_prog_attach(&attr);
- 		break;
-@@ -2381,7 +2326,6 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
- 	case BPF_PROG_QUERY:
- 		err = bpf_prog_query(&attr, uattr);
- 		break;
--#endif
- 	case BPF_PROG_TEST_RUN:
- 		err = bpf_prog_test_run(&attr, uattr);
- 		break;
+>> +                     pr_info("PCI: Can't parse resource_alignment parameter: pci:%s\n",
+
+> The "pci:" prefix on %s doesn't make sense now, it was used above when
+> the pointer was already advanced past this token, now I believe it would
+> lead to "pci:pci:xxxx:yyyy" or "pci:xx:yy.z".  Thanks,
+
+I'm just wondering if we can use pci_info() here, Or it makes no sense?
+Also, the original loglevel was an "error".
+
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
