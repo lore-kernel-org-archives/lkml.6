@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 376F9C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAAFC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2FE320864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2FE320864
+	by mail.kernel.org (Postfix) with ESMTP id 2F6BF20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6BF20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964939AbeFRIU3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:20:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55076 "EHLO
+        id S964973AbeFRIUg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:20:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964908AbeFRIUZ (ORCPT
+        with ESMTP id S964908AbeFRIUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:20:25 -0400
+        Mon, 18 Jun 2018 04:20:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C89FDC83;
-        Mon, 18 Jun 2018 08:20:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B050FC7A;
+        Mon, 18 Jun 2018 08:20:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 115/279] i2c: sprd: Prevent i2c accesses after suspend is called
-Date:   Mon, 18 Jun 2018 10:11:40 +0200
-Message-Id: <20180618080613.572323919@linuxfoundation.org>
+Subject: [PATCH 4.16 117/279] RDMA/mlx5: Properly check return value of mlx5_get_uars_page
+Date:   Mon, 18 Jun 2018 10:11:42 +0200
+Message-Id: <20180618080613.654060805@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,65 +51,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Baolin Wang <baolin.wang@linaro.org>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit da33aa03fa34c918faf2c371ebda0dd961d7ccb2 ]
+[ Upstream commit 444261ca6ff201fa03de97a5041237e67a9d8d31 ]
 
-Add one flag to indicate if the i2c controller has been in suspend state,
-which can prevent i2c accesses after i2c controller is suspended following
-system suspend.
+Starting from commit 72f36be06138 ("net/mlx5: Fix mlx5_get_uars_page to
+return error code") the mlx5_get_uars_page() call returns error in case
+of failure, but it was mistakenly overlooked in the merge commit.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: e7996a9a77fc ("Merge tag v4.15 of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git")
+Reported-by: Alaa Hleihel <alaa@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-sprd.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/infiniband/hw/mlx5/main.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/i2c/busses/i2c-sprd.c
-+++ b/drivers/i2c/busses/i2c-sprd.c
-@@ -86,6 +86,7 @@ struct sprd_i2c {
- 	u32 count;
- 	int irq;
- 	int err;
-+	bool is_suspended;
- };
- 
- static void sprd_i2c_set_count(struct sprd_i2c *i2c_dev, u32 count)
-@@ -283,6 +284,9 @@ static int sprd_i2c_master_xfer(struct i
- 	struct sprd_i2c *i2c_dev = i2c_adap->algo_data;
- 	int im, ret;
- 
-+	if (i2c_dev->is_suspended)
-+		return -EBUSY;
-+
- 	ret = pm_runtime_get_sync(i2c_dev->dev);
- 	if (ret < 0)
- 		return ret;
-@@ -586,11 +590,23 @@ static int sprd_i2c_remove(struct platfo
- 
- static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -4833,9 +4833,7 @@ static void mlx5_ib_stage_cong_debugfs_c
+ static int mlx5_ib_stage_uar_init(struct mlx5_ib_dev *dev)
  {
-+	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-+
-+	i2c_lock_adapter(&i2c_dev->adap);
-+	i2c_dev->is_suspended = true;
-+	i2c_unlock_adapter(&i2c_dev->adap);
-+
- 	return pm_runtime_force_suspend(pdev);
+ 	dev->mdev->priv.uar = mlx5_get_uars_page(dev->mdev);
+-	if (!dev->mdev->priv.uar)
+-		return -ENOMEM;
+-	return 0;
++	return PTR_ERR_OR_ZERO(dev->mdev->priv.uar);
  }
  
- static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
- {
-+	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-+
-+	i2c_lock_adapter(&i2c_dev->adap);
-+	i2c_dev->is_suspended = false;
-+	i2c_unlock_adapter(&i2c_dev->adap);
-+
- 	return pm_runtime_force_resume(pdev);
- }
- 
+ static void mlx5_ib_stage_uar_cleanup(struct mlx5_ib_dev *dev)
 
 
