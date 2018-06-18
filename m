@@ -2,101 +2,145 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DEBC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035DAC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33944208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:14:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=juliacomputing-com.20150623.gappssmtp.com header.i=@juliacomputing-com.20150623.gappssmtp.com header.b="W9EY6qqa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33944208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=juliacomputing.com
+	by mail.kernel.org (Postfix) with ESMTP id BA928208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:14:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA928208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755219AbeFRPOO (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:14:14 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52273 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755176AbeFRPOL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:14:11 -0400
-Received: by mail-it0-f68.google.com with SMTP id m194-v6so12533331itg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:14:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=juliacomputing-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=CftzRDh9vXJ+cSm8zI0N/aOokJQ87m0Io5qxvP7s/2o=;
-        b=W9EY6qqa7Lyfl9cbMuE+x2tbxPoBQZecVZs5XOBLqQ5U3I9HyGWd3nVB6hu/cve3th
-         JsYIAvupzNPAOzIWHXgeS7ZsLwzj/gRWryagrs5AKjzA+rdVhHY+8pvYhBn6f7Mwv5JK
-         bMMY8kRZrGh3jXyhG0Tb2SGeNncoOZ7+C8hL//GaoHYA5tKQRnWJnnVm48WrWmIW5lnx
-         3bbUP0dTkLThp5uYbq0e/uM7E7VF1BnY7COkBzyCvPjRa4LxU72IU696VyrImTl/l/5B
-         odx/GggGRUDWZRzIwbkSsH0EdrpKqcrlrPjxDCGkk+ZrBBSnoj5EWOcYEM5qyGbDSHC9
-         eU/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=CftzRDh9vXJ+cSm8zI0N/aOokJQ87m0Io5qxvP7s/2o=;
-        b=X11Uxe7Rp2zOv8BAM6bccwfyVA9uxGSyQeRWblWpSN/eJmODDMIJZu0NwH1Rd+C+fJ
-         dvlmZ/t/L7BGKXZ6sLq90mh9nxm30vVOJ9ukQ7WGf+ujve+I9plJ9Nz8jdikH46acMpy
-         2ZmQ0Tb9Kis4snrpOcVz+Vz7y4Y2ZTm7IS/RkIWVQGzpo0m8fog4vu0CJK2jnhqUejs8
-         VbZcjk61EhxmAiMqfoZ76NGqleLuAPcSrzAOdsEVH5ci92IcaWfCxYUVU6XqRJiae0eA
-         O5BsbhKtFxhCtaOtqv4qvn9aT3F7KfKq9sv8XwrDTCmI2UtDulRQ9vjg20hBvMgSomw8
-         SZ2A==
-X-Gm-Message-State: APt69E1QoHRuSJcAcRPhuxk6/jeyU4DekbFT/RiWXtjwZ/meOiRGs1TB
-        Hm/g3hauVOzhSAUpR1ASRKfeqKTUzGQv3UGnjW7uGw==
-X-Google-Smtp-Source: ADUXVKKratUtn2vRXP/bGnviWrvVRNTSKz06OovzXahXYfNB1kjgg3CsMeqXDtHSPNX6CzfrTBvGf0RaHKWo30ZzGk4=
-X-Received: by 2002:a24:5ccb:: with SMTP id q194-v6mr9200259itb.133.1529334850625;
- Mon, 18 Jun 2018 08:14:10 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:494a:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:13:29
- -0700 (PDT)
-In-Reply-To: <11347d3a-8491-1545-d47d-a1cb2fb9b410@linux.intel.com>
-References: <1529195582-64207-1-git-send-email-keno@alumni.harvard.edu>
- <d8503ac3-b6a4-d6cc-3db7-4e092724b79d@linux.intel.com> <CABV8kRwhrQ75g9y7v4Mq05CfZ9khhVQCwkp052jcNOvKs6-2Fg@mail.gmail.com>
- <11347d3a-8491-1545-d47d-a1cb2fb9b410@linux.intel.com>
-From:   Keno Fischer <keno@juliacomputing.com>
-Date:   Mon, 18 Jun 2018 11:13:29 -0400
-Message-ID: <CABV8kRyWFJN1r8HtNrDGMCEDUEiCS=p0n8xucO9T5B1AvCDZVA@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86/arch_prctl: Add ARCH_SET_XCR0 to mask XCR0 per-thread
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
-        Andi Kleen <andi@firstfloor.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Kyle Huey <khuey@kylehuey.com>,
-        "Robert O'Callahan" <robert@ocallahan.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S933440AbeFRPOs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:14:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41567 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935421AbeFRPAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:00:23 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8EB8720CFE; Mon, 18 Jun 2018 17:00:21 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2795720703;
+        Mon, 18 Jun 2018 17:00:20 +0200 (CEST)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: [PATCH v4 14/19] media: v4l: Add definition for Allwinner's MB32-tiled NV12 format
+Date:   Mon, 18 Jun 2018 16:58:38 +0200
+Message-Id: <20180618145843.14631-15-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
+References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> 4) Catch the fault thrown by xsaves/xrestors in this situation, update
->>     XCR0, redo the xsaves/restores, put XCR0 back and continue
->>     execution after the faulting instruction.
->
-> I'm worried about the kernel pieces that go digging in the XSAVE data
-> getting confused more than the hardware getting confused.
+This introduces support for Allwinner's MB32-tiled NV12 format, where
+each plane is divided into macroblocks of 32x32 pixels. Hence, the size
+of each plane has to be aligned to 32 bytes. The pixels inside each
+macroblock are coded as they would be if the macroblock was a single
+plane, line after line.
 
-So you prefer this option? If so, I can try to have a go at implementing it
-this way and seeing if I run into any trouble.
+The MB32-tiled NV12 format is used by the video engine on Allwinner
+platforms: it is the default format for decoded frames (and the only one
+available in the oldest supported platforms).
 
->> At least currently, it is my understanding that `xfeatures_mask` only has
->> user features, am I mistaken about that?
->
-> We're slowing adding supervisor support.  I think accounting for
-> supervisor features is a requirement for any new XSAVE code.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Sure, I don't think this is in any way incompatible with that (though
-probably also informs that we want to keep the memory layout the
-same if possible).
+diff --git a/Documentation/media/uapi/v4l/pixfmt-reserved.rst b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
+index 38af1472a4b4..9a68b6a787bf 100644
+--- a/Documentation/media/uapi/v4l/pixfmt-reserved.rst
++++ b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
+@@ -243,7 +243,20 @@ please make a proposal on the linux-media mailing list.
+ 	It is an opaque intermediate format and the MDP hardware must be
+ 	used to convert ``V4L2_PIX_FMT_MT21C`` to ``V4L2_PIX_FMT_NV12M``,
+ 	``V4L2_PIX_FMT_YUV420M`` or ``V4L2_PIX_FMT_YVU420``.
+-
++    * .. _V4L2-PIX-FMT-MB32-NV12:
++
++      - ``V4L2_PIX_FMT_MB32_NV12``
++      - 'MN12'
++      - Two-planar NV12-based format used by the Allwinner video engine
++        hardware, with 32x32 tiles for the luminance plane and 32x64 tiles
++        for the chrominance plane. Each tile is a linear pixel data
++        representation within its own bounds. Each tile follows the previous
++        one linearly (as in, from left to right, top to bottom).
++
++        The frame dimensions are aligned to match an integer number of
++        tiles, resulting in 32-aligned resolutions for the luminance plane
++        and 16-aligned resolutions for the chrominance plane (with 2x2
++        subsampling).
+ 
+ .. tabularcolumns:: |p{6.6cm}|p{2.2cm}|p{8.7cm}|
+ 
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 98961d5acb1a..c44d7134e8d5 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1294,6 +1294,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 		case V4L2_PIX_FMT_SE401:	descr = "GSPCA SE401"; break;
+ 		case V4L2_PIX_FMT_S5C_UYVY_JPG:	descr = "S5C73MX interleaved UYVY/JPEG"; break;
+ 		case V4L2_PIX_FMT_MT21C:	descr = "Mediatek Compressed Format"; break;
++		case V4L2_PIX_FMT_MB32_NV12:	descr = "Allwinner tiled NV12 format"; break;
+ 		default:
+ 			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
+ 			if (fmt->description[0])
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 5e950a6f20df..cbbeeaec9710 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -670,6 +670,7 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
+ #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
+ #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
++#define V4L2_PIX_FMT_MB32_NV12 v4l2_fourcc('M', 'N', '1', '2') /* Allwinner tiled NV12 format */
+ 
+ /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
+ #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */
+-- 
+2.17.0
+
