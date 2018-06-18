@@ -6,85 +6,177 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FAFC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCA7C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDCDE208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCDE208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3ED61208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ED61208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935257AbeFRKFL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:05:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54296 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934927AbeFRIRt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:17:49 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3762C75;
-        Mon, 18 Jun 2018 08:17:48 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 065/279] scsi: storvsc: Set up correct queue depth values for IDE devices
-Date:   Mon, 18 Jun 2018 10:10:50 +0200
-Message-Id: <20180618080611.520345544@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
-References: <20180618080608.851973560@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S935293AbeFRKFV convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:05:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57902 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934635AbeFRKFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:05:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 76CFE20850; Mon, 18 Jun 2018 12:05:17 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 11744207A5;
+        Mon, 18 Jun 2018 12:04:39 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 12:04:39 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Abhishek Sahu <absahu@codeaurora.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v3 01/16] mtd: rawnand: helper function for setting up
+ ECC configuration
+Message-ID: <20180618120439.09b41495@xps13>
+In-Reply-To: <7cf002e3d7ebd46476554477dd92716f@codeaurora.org>
+References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
+        <1527250904-21988-2-git-send-email-absahu@codeaurora.org>
+        <20180526095807.5caf5800@xps13>
+        <44d4939cf8411a0dc693b8dd11fb57c7@codeaurora.org>
+        <20180607143759.361edb3f@xps13>
+        <7cf002e3d7ebd46476554477dd92716f@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Hi Abhishek,
 
-------------------
+On Mon, 11 Jun 2018 14:46:00 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
 
-From: Long Li <longli@microsoft.com>
+> On 2018-06-07 18:07, Miquel Raynal wrote:
+> > Hi Abhishek,  
+> > > On Mon, 28 May 2018 11:16:29 +0530, Abhishek Sahu  
+> > <absahu@codeaurora.org> wrote:  
+> > >> On 2018-05-26 14:12, Miquel Raynal wrote:
+> >> > Hi Abhishek,  
+> >> > > On Fri, 25 May 2018 17:51:29 +0530, Abhishek Sahu  
+> >> > <absahu@codeaurora.org> wrote:  
+> >> > >> commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,  
+> >> >> match, maximize ECC settings") provides generic helpers which
+> >> >> drivers can use for setting up ECC parameters.  
+> >> >> >> Since same board can have different ECC strength nand chips so  
+> >> >> following is the logic for setting up ECC strength and ECC step
+> >> >> size, which can be used by most of the drivers.  
+> >> >> >> 1. If both ECC step size and ECC strength are already set  
+> >> >>    (usually by DT) then just check whether this setting
+> >> >>    is supported by NAND controller.
+> >> >> 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
+> >> >>    supported by NAND controller.
+> >> >> 3. Otherwise, try to match the ECC step size and ECC strength closest
+> >> >>    to the chip's requirement. If available OOB size can't fit the chip
+> >> >>    requirement then select maximum ECC strength which can be fit with
+> >> >>    available OOB size.  
+> >> >> >> This patch introduces nand_ecc_choose_conf function which calls the  
+> >> >> required helper functions for the above logic. The drivers can use
+> >> >> this single function instead of calling the 3 helper functions
+> >> >> individually.  
+> >> >> >> CC: Masahiro Yamada <yamada.masahiro@socionext.com>  
+> >> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> >> >> ---
+> >> >> * Changes from v2:  
+> >> >> >>   1. Renamed function to nand_ecc_choose_conf.  
+> >> >>   2. Minor code reorganization to remove warning and 2 function calls
+> >> >>      for nand_maximize_ecc.  
+> >> >> >> * Changes from v1:  
+> >> >>   NEW PATCH  
+> >> >> >>  drivers/mtd/nand/raw/nand_base.c | 42 >> ++++++++++++++++++++++++++++++++++++++++  
+> >> >>  drivers/mtd/nand/raw/nand_base.c | 31 +++++++++++++++++++++++++++++++
+> >> >>  include/linux/mtd/rawnand.h      |  3 +++
+> >> >>  2 files changed, 34 insertions(+)  
+> >> >> >> diff --git a/drivers/mtd/nand/raw/nand_base.c >> b/drivers/mtd/nand/raw/nand_base.c  
+> >> >> index 72f3a89..e52019d 100644
+> >> >> --- a/drivers/mtd/nand/raw/nand_base.c
+> >> >> +++ b/drivers/mtd/nand/raw/nand_base.c
+> >> >> @@ -6249,6 +6249,37 @@ int nand_maximize_ecc(struct nand_chip *chip,
+> >> >>  }
+> >> >>  EXPORT_SYMBOL_GPL(nand_maximize_ecc);  
+> >> >> >> +/**  
+> >> >> + * nand_ecc_choose_conf - Set the ECC strength and ECC step size
+> >> >> + * @chip: nand chip info structure
+> >> >> + * @caps: ECC engine caps info structure
+> >> >> + * @oobavail: OOB size that the ECC engine can use
+> >> >> + *
+> >> >> + * Choose the ECC configuration according to following logic
+> >> >> + *
+> >> >> + * 1. If both ECC step size and ECC strength are already set (usually >> by DT)
+> >> >> + *    then check if it is supported by this controller.
+> >> >> + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
+> >> >> + * 3. Otherwise, try to match the ECC step size and ECC strength >> closest
+> >> >> + *    to the chip's requirement. If available OOB size can't fit the >> chip
+> >> >> + *    requirement then fallback to the maximum ECC step size and ECC >> strength.
+> >> >> + *
+> >> >> + * On success, the chosen ECC settings are set.
+> >> >> + */
+> >> >> +int nand_ecc_choose_conf(struct nand_chip *chip,
+> >> >> +			 const struct nand_ecc_caps *caps, int oobavail)
+> >> >> +{
+> >> >> +	if (chip->ecc.size && chip->ecc.strength)
+> >> >> +		return nand_check_ecc_caps(chip, caps, oobavail);
+> >> >> +
+> >> >> +	if (!(chip->ecc.options & NAND_ECC_MAXIMIZE) &&
+> >> >> +	    !nand_match_ecc_req(chip, caps, oobavail))
+> >> >> +		return 0;
+> >> >> +
+> >> >> +	return nand_maximize_ecc(chip, caps, oobavail);
+> >> > > I personally don't mind if nand_maximize_ecc() is called twice in  
+> >> > the function if it clarifies the logic. Maybe the following will be
+> >> > more clear for the user?  
+> >> >>   Thanks Miquel.  
+> >>   Both the implementations are fine.
+> >>   The above implementation (which was in Denali NAND driver) code was >> also
+> >>   clear. We can go for any of these implementation.  
+> >> >>   Shall I update this ?  
+> > > Yes, please :)  
+> >   
+>   Thanks Miquel for confirming.
+>   I will update accordingly.
+> 
+>   Also, one more question.
+> 
+>   Shall I make other functions (nand_check_ecc_caps, nand_maximize_ecc
+>   and nand_match_ecc_req) static.  Since currently,
+>   Denali NAND driver was only using these functions.
+> 
+>   And Now, this nand_ecc_choose_conf will be help
+>   in all the cases.
+> 
+>   For nand_check_ecc_caps: call nand_ecc_choose_conf with
+>                             chip->ecc.size && chip->ecc.strength
+> 
+>   For nand_maximize_ecc: call nand_ecc_choose_conf with
+>                          NAND_ECC_MAXIMIZE
+> 
+>   For other cases, nand_match_ecc_req will be called.
+> 
+>   So we will have one external function which will be
+>   easy to maintain in future.
 
-[ Upstream commit f286299c1d0ba5e2ca0377610307b370fe178767 ]
-
-Unlike SCSI and FC, we don't use multiple channels for IDE.  Also fix
-the calculation for sub-channels.
-
-Signed-off-by: Long Li <longli@microsoft.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/storvsc_drv.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -1722,11 +1722,14 @@ static int storvsc_probe(struct hv_devic
- 		max_targets = STORVSC_MAX_TARGETS;
- 		max_channels = STORVSC_MAX_CHANNELS;
- 		/*
--		 * On Windows8 and above, we support sub-channels for storage.
-+		 * On Windows8 and above, we support sub-channels for storage
-+		 * on SCSI and FC controllers.
- 		 * The number of sub-channels offerred is based on the number of
- 		 * VCPUs in the guest.
- 		 */
--		max_sub_channels = (num_cpus / storvsc_vcpus_per_sub_channel);
-+		if (!dev_is_ide)
-+			max_sub_channels =
-+				(num_cpus - 1) / storvsc_vcpus_per_sub_channel;
- 	}
- 
- 	scsi_driver.can_queue = (max_outstanding_req_per_channel *
+If nobody else uses these function outside of the core, then the
+symbols should not be exported, their prototypes not in rawnand.h and
+they should be declared static.
 
 
+Regards,
+Miquèl
