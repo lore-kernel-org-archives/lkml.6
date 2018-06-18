@@ -3,56 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4BAC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A844C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 184EF208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEC7C2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:06:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="rQNd4nYr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 184EF208E8
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="L4zkzYT8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEC7C2086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934367AbeFRL75 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 07:59:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44680 "EHLO
+        id S934847AbeFRMGU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:06:20 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55844 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934191AbeFRL7y (ORCPT
+        with ESMTP id S933523AbeFRMGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:59:54 -0400
+        Mon, 18 Jun 2018 08:06:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=UOk5+30kYEyT7YjnQdZj1jbTXJcg/ayvNy+Bsk57o1o=; b=rQNd4nYrN3cr
-        KKISVibfA91RPDaAs2ifbX/NjRcl+2oQqz90oDGOqT+K0riFiGJz5citn/ziipk/I6uLnmImDopd+
-        A4ssVqpC+VIpKWpi0CyPY9c0f7OVWiRC3d0tSJ/AS/kxbGt+7nLVu/DT/8jMp5yuRDsQ28A0wBO7K
-        xTKJE=;
+        List-Archive; bh=y25mpxVzIr/NXI78lLFF4QPjCQLdyaGXlmPcs+8QVEo=; b=L4zkzYT8sWpJ
+        PN60g85GcvRQXntMhzEgStAIK8DcT426EklbqPJZGCBKf8kFscvXYjIFMepPrMzluJtzm8wMU/+IF
+        +8AcdaW9dr++6MVmR0XmVdSSX8z17m2+oTa/ApRqJrFnVTfy40euhFO4yFEbJ3DxkoTcvehy5I3l2
+        WZOT0=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUsp6-0007wa-Kc; Mon, 18 Jun 2018 11:59:52 +0000
+        id 1fUsvF-000826-Le; Mon, 18 Jun 2018 12:06:13 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUsp6-0008RD-6w; Mon, 18 Jun 2018 12:59:52 +0100
+        id 1fUsvF-0001ML-8t; Mon, 18 Jun 2018 13:06:13 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: TSCS42xx: Add headphone auto switching" to the asoc tree
-In-Reply-To:  <cec911cd9111bb4ae25bb9ec2df3af134bc49c58.1528143829.git.steven.eckhoff.opensource@gmail.com>
-Message-Id: <E1fUsp6-0008RD-6w@debutante>
-Date:   Mon, 18 Jun 2018 12:59:52 +0100
+To:     Janek Kotas <jank@cadence.com>
+Cc:     Jan Kotas <jank@cadence.com>, Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: cadence: Change usleep_range() to udelay(), for atomic context" to the spi tree
+In-Reply-To:  <65980D27-1B52-43A3-A7CA-33B804A62AC5@cadence.com>
+Message-Id: <E1fUsvF-0001ML-8t@debutante>
+Date:   Mon, 18 Jun 2018 13:06:13 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,11 +60,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: TSCS42xx: Add headphone auto switching
+   spi: cadence: Change usleep_range() to udelay(), for atomic context
 
-has been applied to the asoc tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,63 +85,67 @@ to this mail.
 Thanks,
 Mark
 
-From 53af408cd9f2d1c66bc081c1d82797bfe44af3e5 Mon Sep 17 00:00:00 2001
-From: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
-Date: Mon, 4 Jun 2018 15:47:02 -0500
-Subject: [PATCH] ASoC: TSCS42xx: Add headphone auto switching
+From 931c4e9a72ae91d59c5332ffb6812911a749da8e Mon Sep 17 00:00:00 2001
+From: Janek Kotas <jank@cadence.com>
+Date: Mon, 4 Jun 2018 11:24:44 +0000
+Subject: [PATCH] spi: cadence: Change usleep_range() to udelay(), for atomic
+ context
 
-Add headphone auto switching controls
+The path "spi: cadence: Add usleep_range() for
+cdns_spi_fill_tx_fifo()" added a usleep_range() function call,
+which cannot be used in atomic context.
+However the cdns_spi_fill_tx_fifo() function can be called during
+an interrupt which may result in a kernel panic:
 
-Signed-off-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+BUG: scheduling while atomic: grep/561/0x00010002
+Modules linked in:
+Preemption disabled at:
+[<ffffff800858ea28>] wait_for_common+0x48/0x178
+CPU: 0 PID: 561 Comm: grep Not tainted 4.17.0 #1
+Hardware name: Cadence CSP (DT)
+Call trace:
+ dump_backtrace+0x0/0x198
+ show_stack+0x14/0x20
+ dump_stack+0x8c/0xac
+ __schedule_bug+0x6c/0xb8
+ __schedule+0x570/0x5d8
+ schedule+0x34/0x98
+ schedule_hrtimeout_range_clock+0x98/0x110
+ schedule_hrtimeout_range+0x10/0x18
+ usleep_range+0x64/0x98
+ cdns_spi_fill_tx_fifo+0x70/0xb0
+ cdns_spi_irq+0xd0/0xe0
+ __handle_irq_event_percpu+0x9c/0x128
+ handle_irq_event_percpu+0x34/0x88
+ handle_irq_event+0x48/0x78
+ handle_fasteoi_irq+0xbc/0x1b0
+ generic_handle_irq+0x24/0x38
+ __handle_domain_irq+0x84/0xf8
+ gic_handle_irq+0xc4/0x180
+
+This patch replaces the function call with udelay() which can be
+used in an atomic context, like an interrupt.
+
+Signed-off-by: Jan Kotas <jank@cadence.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 ---
- sound/soc/codecs/tscs42xx.c | 6 ++++++
- sound/soc/codecs/tscs42xx.h | 8 ++++++++
- 2 files changed, 14 insertions(+)
+ drivers/spi/spi-cadence.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
-index 5d596e4dab0c..7396a6e5277e 100644
---- a/sound/soc/codecs/tscs42xx.c
-+++ b/sound/soc/codecs/tscs42xx.c
-@@ -647,6 +647,12 @@ static const struct snd_kcontrol_new tscs42xx_snd_controls[] = {
- 	/* Mic Bias */
- 	SOC_SINGLE("Mic Bias Boost Switch", 0x71, 0x07, 1, 0),
+diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
+index f3dad6fcdc35..a568f35522f9 100644
+--- a/drivers/spi/spi-cadence.c
++++ b/drivers/spi/spi-cadence.c
+@@ -319,7 +319,7 @@ static void cdns_spi_fill_tx_fifo(struct cdns_spi *xspi)
+ 		 */
+ 		if (cdns_spi_read(xspi, CDNS_SPI_ISR) &
+ 		    CDNS_SPI_IXR_TXFULL)
+-			usleep_range(10, 20);
++			udelay(10);
  
-+	/* Headphone Auto Switching */
-+	SOC_SINGLE("Headphone Auto Switching Switch",
-+			R_CTL, FB_CTL_HPSWEN, 1, 0),
-+	SOC_SINGLE("Headphone Detect Polarity Toggle Switch",
-+			R_CTL, FB_CTL_HPSWPOL, 1, 0),
-+
- 	/* Coefficient Ram */
- 	COEFF_RAM_CTL("Cascade1L BiQuad1", BIQUAD_SIZE, 0x00),
- 	COEFF_RAM_CTL("Cascade1L BiQuad2", BIQUAD_SIZE, 0x05),
-diff --git a/sound/soc/codecs/tscs42xx.h b/sound/soc/codecs/tscs42xx.h
-index 814c8f3c4a68..6b3a21081635 100644
---- a/sound/soc/codecs/tscs42xx.h
-+++ b/sound/soc/codecs/tscs42xx.h
-@@ -34,6 +34,7 @@ enum {
- #define R_DACSR         0x19
- #define R_PWRM1         0x1A
- #define R_PWRM2         0x1B
-+#define R_CTL		0x1C
- #define R_CONFIG0       0x1F
- #define R_CONFIG1       0x20
- #define R_DMICCTL       0x24
-@@ -1110,6 +1111,13 @@ enum {
- #define RV_PWRM2_VREF_DISABLE \
- 	 RV(FV_PWRM2_VREF_DISABLE, FB_PWRM2_VREF)
- 
-+/******************************
-+ *      R_CTL (0x1C)          *
-+ ******************************/
-+
-+/* Fiel Offsets */
-+#define FB_CTL_HPSWEN                        7
-+#define FB_CTL_HPSWPOL                       6
- 
- /******************************
-  *      R_CONFIG0 (0x1F)      *
+ 		if (xspi->txbuf)
+ 			cdns_spi_write(xspi, CDNS_SPI_TXD, *xspi->txbuf++);
 -- 
 2.17.1
 
