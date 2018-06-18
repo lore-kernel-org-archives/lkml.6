@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B5AC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A29D6C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE6F8208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:44:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6F8208A5
+	by mail.kernel.org (Postfix) with ESMTP id 6220E208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:44:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6220E208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934392AbeFRNoN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:44:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51258 "EHLO mx2.suse.de"
+        id S1754519AbeFRNor (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:44:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51380 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932762AbeFRNoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:44:11 -0400
+        id S1752835AbeFRNop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:44:45 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id AD719ABE4;
-        Mon, 18 Jun 2018 13:44:09 +0000 (UTC)
-Subject: Re: [PATCH 1/3] bcache: do not assign in if condition
- register_bcache()
+        by mx2.suse.de (Postfix) with ESMTP id 3F41BACEA;
+        Mon, 18 Jun 2018 13:44:44 +0000 (UTC)
+Subject: Re: [PATCH 2/3] bcache: do not assign in if condition in
+ bcache_init()
 To:     Florian Schmaus <flo@geekplace.eu>,
         Kent Overstreet <kent.overstreet@gmail.com>,
         linux-bcache@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org
 References: <20180618100902.4015-1-flo@geekplace.eu>
- <20180618100902.4015-2-flo@geekplace.eu>
+ <20180618100902.4015-3-flo@geekplace.eu>
 From:   Coly Li <colyli@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
@@ -77,12 +78,12 @@ Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
  UmCNKa43mNFktMrwU21J5lVXEwBuTY6JlHOAl0Fgo28X+eTa8fx2Uiz9OVgWe03ebJGIGowe
  XTgqVWJMsKM1tmW+QFmgtczDGRYCZ6OQYpqt0SoTg1yx5MN4RzUtlLka2qLfPiOGUUN3qNJ5
  nP+spvF+s+dHtLjjhy7AL86N01a6S0rwaClVVv0XTucvIntwccIx0CZfUKlfn5BWnB64Ig==
-Message-ID: <8b109cdf-3bc7-4342-b925-8eea533d73b4@suse.de>
-Date:   Mon, 18 Jun 2018 21:44:00 +0800
+Message-ID: <ef26a060-689d-8ee9-57fb-b8473ca97fea@suse.de>
+Date:   Mon, 18 Jun 2018 21:44:35 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
  Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180618100902.4015-2-flo@geekplace.eu>
+In-Reply-To: <20180618100902.4015-3-flo@geekplace.eu>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -106,27 +107,31 @@ Thanks.
 Coly Li
 
 > ---
->  drivers/md/bcache/super.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  drivers/md/bcache/super.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index fa4058e43202..db7177d422e5 100644
+> index db7177d422e5..f09f4f046315 100644
 > --- a/drivers/md/bcache/super.c
 > +++ b/drivers/md/bcache/super.c
-> @@ -2163,8 +2163,12 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
->  	if (!try_module_get(THIS_MODULE))
->  		return -EBUSY;
+> @@ -2328,9 +2328,15 @@ static int __init bcache_init(void)
+>  		return bcache_major;
+>  	}
 >  
-> -	if (!(path = kstrndup(buffer, size, GFP_KERNEL)) ||
-> -	    !(sb = kmalloc(sizeof(struct cache_sb), GFP_KERNEL)))
-> +	path = kstrndup(buffer, size, GFP_KERNEL);
-> +	if (!path)
+> -	if (!(bcache_wq = alloc_workqueue("bcache", WQ_MEM_RECLAIM, 0)) ||
+> -	    !(bcache_kobj = kobject_create_and_add("bcache", fs_kobj)) ||
+> -	    bch_request_init() ||
+> +	bcache_wq = alloc_workqueue("bcache", WQ_MEM_RECLAIM, 0);
+> +	if (!bcache_wq)
 > +		goto err;
 > +
-> +	sb = kmalloc(sizeof(struct cache_sb), GFP_KERNEL);
-> +	if (!sb)
+> +	bcache_kobj = kobject_create_and_add("bcache", fs_kobj);
+> +	if (!bcache_kobj)
+> +		goto err;
+> +
+> +	if (bch_request_init() ||
+>  	    bch_debug_init(bcache_kobj) || closure_debug_init() ||
+>  	    sysfs_create_files(bcache_kobj, files))
 >  		goto err;
->  
->  	err = "failed to open device";
 > 
 
