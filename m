@@ -3,70 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14AF1C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AE7C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC19C20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:07:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC19C20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id 0593320864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:09:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0593320864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755144AbeFRHHp (ORCPT
+        id S1755150AbeFRHJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 03:07:45 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:49514 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755175AbeFRHHn (ORCPT
+        Mon, 18 Jun 2018 03:09:08 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:41816 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755005AbeFRHJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 03:07:43 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fUoGK-00079S-48; Mon, 18 Jun 2018 09:07:40 +0200
-Message-ID: <1529305659.3490.0.camel@sipsolutions.net>
-Subject: Re: linux-next: manual merge of the mac80211-next tree with Linus'
- tree
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Wireless <linux-wireless@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Date:   Mon, 18 Jun 2018 09:07:39 +0200
-In-Reply-To: <20180618112943.4ceadf24@canb.auug.org.au>
-References: <20180618112943.4ceadf24@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 18 Jun 2018 03:09:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 78D5660A3578;
+        Mon, 18 Jun 2018 09:09:03 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 4yt0hmYtQKsb; Mon, 18 Jun 2018 09:09:03 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 2572260A357A;
+        Mon, 18 Jun 2018 09:09:03 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id qbcFGYhikr8P; Mon, 18 Jun 2018 09:09:03 +0200 (CEST)
+Received: from blindfold.localnet (unknown [82.150.214.1])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id ED03160A3568;
+        Mon, 18 Jun 2018 09:09:02 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kbuild@vger.kernel.org,
+        "linux-stable #4 . 14+" <stable@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 1/3] mtd: rawnand: denali_dt: add more clocks based on IP datasheet
+Date:   Mon, 18 Jun 2018 09:09:02 +0200
+Message-ID: <5816516.AqyscFuYxX@blindfold>
+In-Reply-To: <1529025532-22087-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1529025532-22087-1-git-send-email-yamada.masahiro@socionext.com> <1529025532-22087-2-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-18 at 11:29 +1000, Stephen Rothwell wrote:
-> Hi all,
+Am Freitag, 15. Juni 2018, 03:18:50 CEST schrieb Masahiro Yamada:
+> According to the Denali User's Guide, this IP needs three clocks:
 > 
-> Today's linux-next merge of the mac80211-next tree got a conflict in:
+>  - clk: controller core clock
 > 
->   net/mac80211/scan.c
+>  - clk_x: bus interface clock
 > 
-> between commit:
+>  - ecc_clk: clock at which ECC circuitry is run
 > 
->   6396bb221514 ("treewide: kzalloc() -> kcalloc()")
+> Currently, denali_dt.c requires a single anonymous clock and its
+> frequency.  However, the driver needs to get the frequency of "clk_x"
+> not "clk".  This is confusing because people tend to assume the
+> anonymous clock means the core clock.  In fact, I got a report of
+> SOCFPGA breakage because the timing parameters are calculated based
+> on a wrong frequency.
 > 
-> from Linus' tree and commit:
+> Instead of the cheesy implementation, the clocks in the real hardware
+> should be represented in the driver and the DT-binding.
 > 
->   b9771d41aee7 ("mac80211: support scan features for improved scan privacy")
+> However, adding new clocks would break the existing platforms.  For the
+> backward compatibility, the driver still accepts a single clock just as
+> before.  If clk_x is missing, clk_x_rate is set to a hardcoded value.
+> This is fine for existing DT of Socionext UniPhier, and also fixes the
+> issue of Altera (Intel) SOCFPGA because both platforms use 200 MHz for
+> the bus interface clock.
 > 
-> from the mac80211-next tree.
+> Fixes: 1bb88666775e ("mtd: nand: denali: handle timing parameters by setup_data_interface()")
+> Cc: linux-stable <stable@vger.kernel.org> #4.14+
+> Reported-by: Richard Weinberger <richard@nod.at>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Thanks Stephen!
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Reported-by: Philipp Rosenberger <p.rosenberger@linutronix.de>
 
-I guess there isn't all that much I can do, unless davem pulls Linus's
-tree in and then I can pull his and resolve it. We'll see.
-
-johannes
+Thanks,
+//richard
