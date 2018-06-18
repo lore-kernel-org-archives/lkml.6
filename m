@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB42C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2A6C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1CF208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1CF208A6
+	by mail.kernel.org (Postfix) with ESMTP id 39DAA208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39DAA208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964804AbeFRPA3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:00:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41386 "EHLO mail.bootlin.com"
+        id S964915AbeFRPAo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:00:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41755 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935361AbeFRPAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:00:19 -0400
+        id S964808AbeFRPAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:00:38 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2F63F20DD7; Mon, 18 Jun 2018 17:00:17 +0200 (CEST)
+        id 13625207A5; Mon, 18 Jun 2018 17:00:36 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5E09920650;
-        Mon, 18 Jun 2018 17:00:16 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2B01220DD9;
+        Mon, 18 Jun 2018 17:00:23 +0200 (CEST)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-sunxi@googlegroups.com,
         Hugues Fruchet <hugues.fruchet@st.com>,
         Randy Li <ayaka@soulik.info>
-Subject: [PATCH v4 09/19] ARM: dts: sun7i-a20: Also use dedicated SRAM controller compatible
-Date:   Mon, 18 Jun 2018 16:58:33 +0200
-Message-Id: <20180618145843.14631-10-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 18/19] ARM: dts: sun7i-a20: Add Video Engine and reserved memory nodes
+Date:   Mon, 18 Jun 2018 16:58:42 +0200
+Message-Id: <20180618145843.14631-19-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
 References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
@@ -79,25 +79,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the newly-introduced SRAM controller compatible for the A20, aside
-of its A10 fashion.
+This adds nodes for the Video Engine and the associated reserved memory
+for the A20. Up to 96 MiB of memory are dedicated to the CMA pool.
+
+The VPU can only map the first 256 MiB of DRAM, so the reserved memory
+pool has to be located in that area. Following Allwinner's decision in
+downstream software, the last 96 MiB of the first 256 MiB of RAM are
+reserved for this purpose.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
 diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index e529e4ff2174..f64eab4ce6f1 100644
+index 9afd82f9ec79..479272f02686 100644
 --- a/arch/arm/boot/dts/sun7i-a20.dtsi
 +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -240,7 +240,8 @@
- 		ranges;
+@@ -161,6 +161,21 @@
+ 		reg = <0x40000000 0x80000000>;
+ 	};
  
- 		sram-controller@1c00000 {
--			compatible = "allwinner,sun4i-a10-sram-controller";
-+			compatible = "allwinner,sun7i-a20-sram-controller",
-+				     "allwinner,sun4i-a10-sram-controller";
- 			reg = <0x01c00000 0x30>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
++		cma_pool: cma@4a000000 {
++			compatible = "shared-dma-pool";
++			size = <0x6000000>;
++			alloc-ranges = <0x4a000000 0x6000000>;
++			reusable;
++			linux,cma-default;
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+@@ -464,6 +479,19 @@
+ 			};
+ 		};
+ 
++		vpu: video-codec@1c0e000 {
++			compatible = "allwinner,sun7i-a20-video-engine";
++			reg = <0x01c0e000 0x1000>;
++
++			clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
++				 <&ccu CLK_DRAM_VE>;
++			clock-names = "ahb", "mod", "ram";
++
++			resets = <&ccu RST_VE>;
++			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++			allwinner,sram = <&ve_sram 1>;
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun7i-a20-mmc";
+ 			reg = <0x01c0f000 0x1000>;
 -- 
 2.17.0
 
