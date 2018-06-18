@@ -2,102 +2,135 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 848A1C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD38C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4099020852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:04:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4099020852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 482AD208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:04:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="W4s9Y0RS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 482AD208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967366AbeFRJEF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:04:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34328 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967277AbeFRIcS (ORCPT
+        id S967076AbeFRJEW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:04:22 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55759 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967275AbeFRIcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:32:18 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BC1AC3C;
-        Mon, 18 Jun 2018 08:32:17 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        kvmarm@lists.cs.columbia.edu, Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 071/189] KVM: arm/arm64: vgic: fix possible spectre-v1 in vgic_mmio_read_apr()
-Date:   Mon, 18 Jun 2018 10:12:47 +0200
-Message-Id: <20180618081212.145698964@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
-References: <20180618081209.254234434@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Mon, 18 Jun 2018 04:32:16 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v16-v6so12567804wmh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 01:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Irc22/bvfU1TrQYW/Xpkl9MXBBBmeXF/9pb1lAv2h68=;
+        b=W4s9Y0RSFgpS/bYZeHAKNR4M+fSKfReTtE6tSI5nw/+OCjUacyYYyKtAcuzPP2z4qY
+         QfcEfAp3uvxfKFbASHfVD05nfyXczCkmJ+orMry8A/Hr4IecFruK27Rzlhg4sbrwF48/
+         zUBrFtJOgCvo6C9xM4gPsTVKWPZTrcYPFx7wU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Irc22/bvfU1TrQYW/Xpkl9MXBBBmeXF/9pb1lAv2h68=;
+        b=EYP8dtOGbENPs3U4xT688UcIsoXI5Fzq+e+iR4AOT9/ujmuBEuIFiX9tWhEeSki1s2
+         DophCKEijFOcK3xw/brSw0ZHLPMnZmq1ynYgd8VS5DUvbm84snAxONeFXiu2Ovvf9s56
+         WJSJW7mjanUjoJAhg79kypOBW3NWgvjUScoRrW7LYTG8sd/0JIlDZnId09ZuL9OnaUQF
+         BUdS2BesSgo/0JOKwcxRGBU4uTdoUC/FpwoiiscUjitc+MTPWJAsaY+5dcZqFkpfBWym
+         Qp1Yu+U79CwwU0PHAa+mdOvqv0p/J3lNzpOq6XgXLPF+MOqKPuxKC8KVJTUyu3gQrxaP
+         H/cg==
+X-Gm-Message-State: APt69E1WOqQESDdBOLQ6k2vMoUB3QDRtp8RFnipxiSBQKcQ5Jamq6y36
+        CUFqIdpVyyF62uB3CIYQHtwoYw==
+X-Google-Smtp-Source: ADUXVKIbvLcC490gUMPUYKS1zfTFB1KxheV/TyOcMYpemLDZoMc2Nx+W5xy+3XH55dAilp6COpxz5w==
+X-Received: by 2002:a50:a844:: with SMTP id j62-v6mr10338249edc.210.1529310735071;
+        Mon, 18 Jun 2018 01:32:15 -0700 (PDT)
+Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id r10-v6sm6261992edo.77.2018.06.18.01.32.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 18 Jun 2018 01:32:14 -0700 (PDT)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Pramod Kumar <pramod.kumar@broadcom.com>
+Subject: [PATCH v2 2/3] arm64: dts: stingray: Add Stingray Thermal DT support.
+Date:   Mon, 18 Jun 2018 14:01:18 +0530
+Message-Id: <1529310679-13482-3-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529310679-13482-1-git-send-email-srinath.mannam@broadcom.com>
+References: <1529310679-13482-1-git-send-email-srinath.mannam@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+From: Pramod Kumar <pramod.kumar@broadcom.com>
 
-------------------
+Add DT nodes for thermal zones memory base address
+to read temperature.
 
-From: Mark Rutland <mark.rutland@arm.com>
-
-[ Upstream commit 5e1ca5e23b167987d5b6d8b08f2d5b7dd2d13f49 ]
-
-It's possible for userspace to control n. Sanitize n when using it as an
-array index.
-
-Note that while it appears that n must be bound to the interval [0,3]
-due to the way it is extracted from addr, we cannot guarantee that
-compiler transformations (and/or future refactoring) will ensure this is
-the case, and given this is a slow path it's better to always perform
-the masking.
-
-Found by smatch.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
 ---
- virt/kvm/arm/vgic/vgic-mmio-v2.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ .../arm64/boot/dts/broadcom/stingray/stingray.dtsi | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
---- a/virt/kvm/arm/vgic/vgic-mmio-v2.c
-+++ b/virt/kvm/arm/vgic/vgic-mmio-v2.c
-@@ -14,6 +14,8 @@
- #include <linux/irqchip/arm-gic.h>
- #include <linux/kvm.h>
- #include <linux/kvm_host.h>
-+#include <linux/nospec.h>
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+index 99aaff0..db1cc67 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi
+@@ -593,4 +593,41 @@
+ 			status = "disabled";
+ 		};
+ 	};
 +
- #include <kvm/iodev.h>
- #include <kvm/arm_vgic.h>
- 
-@@ -320,6 +322,9 @@ static unsigned long vgic_mmio_read_apr(
- 
- 		if (n > vgic_v3_max_apr_idx(vcpu))
- 			return 0;
++	tmons {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x8f100000 0x100>;
 +
-+		n = array_index_nospec(n, 4);
++		tmon_ihost0: thermal@0 {
++			compatible = "brcm,sr-thermal";
++			reg = <0x0 0x4>;
++		};
 +
- 		/* GICv3 only uses ICH_AP1Rn for memory mapped (GICv2) guests */
- 		return vgicv3->vgic_ap1r[n];
- 	}
-
++		tmon_ihost1: thermal@4 {
++			compatible = "brcm,sr-thermal";
++			reg = <0x4 0x4>;
++		};
++
++		tmon_ihost2: thermal@8 {
++			compatible = "brcm,sr-thermal";
++			reg = <0x8 0x4>;
++		};
++
++		tmon_ihost3: thermal@c {
++			compatible = "brcm,sr-thermal";
++			reg = <0xc 0x4>;
++		};
++
++		tmon_crmu: thermal@10 {
++			compatible = "brcm,sr-thermal";
++			reg = <0x10 0x4>;
++		};
++
++		tmon_nitro: thermal@14 {
++			compatible = "brcm,sr-thermal";
++			reg = <0x14 0x4>;
++		};
++	};
+ };
+-- 
+2.7.4
 
