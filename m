@@ -6,38 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC589C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C083C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 708AA20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708AA20864
+	by mail.kernel.org (Postfix) with ESMTP id 32C05208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C05208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935848AbeFRIWm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:22:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55594 "EHLO
+        id S935868AbeFRIWr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:22:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55622 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965575AbeFRIWi (ORCPT
+        with ESMTP id S935849AbeFRIWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:22:38 -0400
+        Mon, 18 Jun 2018 04:22:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E429C8D;
-        Mon, 18 Jun 2018 08:22:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCD19C94;
+        Mon, 18 Jun 2018 08:22:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gaurav Kohli <gkohli@codeaurora.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Lijun Ou <oulijun@huawei.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 160/279] kthread, sched/wait: Fix kthread_parkme() wait-loop
-Date:   Mon, 18 Jun 2018 10:12:25 +0200
-Message-Id: <20180618080615.443831198@linuxfoundation.org>
+Subject: [PATCH 4.16 135/279] RDMA/hns: Fix the qp context state diagram
+Date:   Mon, 18 Jun 2018 10:12:00 +0200
+Message-Id: <20180618080614.424727362@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -54,71 +50,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: oulijun <oulijun@huawei.com>
 
-[ Upstream commit 741a76b350897604c48fb12beff1c9b77724dc96 ]
+[ Upstream commit 6e1a70943cecdca9bb13b601b1a9772a7bdcc2c3 ]
 
-Gaurav reported a problem with __kthread_parkme() where a concurrent
-try_to_wake_up() could result in competing stores to ->state which,
-when the TASK_PARKED store got lost bad things would happen.
+According to RoCE protocol, it is possible to
+transition from error to error state for modifying
+qp in hip08. This patch fix it.
 
-The comment near set_current_state() actually mentions this competing
-store, but only mentions the case against TASK_RUNNING. This same
-store, with different timing, can happen against a subsequent !RUNNING
-store.
-
-This normally is not a problem, because as per that same comment, the
-!RUNNING state store is inside a condition based wait-loop:
-
-  for (;;) {
-    set_current_state(TASK_UNINTERRUPTIBLE);
-    if (!need_sleep)
-      break;
-    schedule();
-  }
-  __set_current_state(TASK_RUNNING);
-
-If we loose the (first) TASK_UNINTERRUPTIBLE store to a previous
-(concurrent) wakeup, the schedule() will NO-OP and we'll go around the
-loop once more.
-
-The problem here is that the TASK_PARKED store is not inside the
-KTHREAD_SHOULD_PARK condition wait-loop.
-
-There is a genuine issue with sleeps that do not have a condition;
-this is addressed in a subsequent patch.
-
-Reported-by: Gaurav Kohli <gkohli@codeaurora.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Lijun Ou <oulijun@huawei.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/kthread.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -177,12 +177,13 @@ void *kthread_probe_data(struct task_str
- 
- static void __kthread_parkme(struct kthread *self)
- {
--	__set_current_state(TASK_PARKED);
--	while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
-+	for (;;) {
-+		set_current_state(TASK_PARKED);
-+		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
-+			break;
- 		if (!test_and_set_bit(KTHREAD_IS_PARKED, &self->flags))
- 			complete(&self->parked);
- 		schedule();
--		__set_current_state(TASK_PARKED);
- 	}
- 	clear_bit(KTHREAD_IS_PARKED, &self->flags);
- 	__set_current_state(TASK_RUNNING);
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -3166,7 +3166,8 @@ static int hns_roce_v2_modify_qp(struct
+ 		   (cur_state == IB_QPS_RTR && new_state == IB_QPS_ERR) ||
+ 		   (cur_state == IB_QPS_RTS && new_state == IB_QPS_ERR) ||
+ 		   (cur_state == IB_QPS_SQD && new_state == IB_QPS_ERR) ||
+-		   (cur_state == IB_QPS_SQE && new_state == IB_QPS_ERR)) {
++		   (cur_state == IB_QPS_SQE && new_state == IB_QPS_ERR) ||
++		   (cur_state == IB_QPS_ERR && new_state == IB_QPS_ERR)) {
+ 		/* Nothing */
+ 		;
+ 	} else {
 
 
