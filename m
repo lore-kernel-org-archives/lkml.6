@@ -6,142 +6,139 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB6FC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF17C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71760208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:44:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71760208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 22C36208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:46:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C36208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934550AbeFRNo6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:44:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56932 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754091AbeFRNoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:44:55 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0B6C7402178A;
-        Mon, 18 Jun 2018 13:44:55 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B99A52026D68;
-        Mon, 18 Jun 2018 13:44:54 +0000 (UTC)
-Date:   Mon, 18 Jun 2018 09:44:54 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Alasdair Kergon <agk@redhat.com>, dm-devel@redhat.com,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v3 1/5] md: Avoid namespace collision with bitmap API
-Message-ID: <20180618134454.GA25547@redhat.com>
-References: <20180618131003.88110-1-andriy.shevchenko@linux.intel.com>
- <20180618131003.88110-2-andriy.shevchenko@linux.intel.com>
+        id S934511AbeFRNqE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:46:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51549 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933383AbeFRNqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:46:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id AC34BADF4;
+        Mon, 18 Jun 2018 13:46:00 +0000 (UTC)
+Subject: Re: [PATCH 3/3] bcache: do not assign in if condition in
+ bcache_device_init()
+To:     Florian Schmaus <flo@geekplace.eu>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-bcache@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20180618100902.4015-1-flo@geekplace.eu>
+ <20180618100902.4015-4-flo@geekplace.eu>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <79b31a5a-ef33-2f4e-6dfd-38c67304ded8@suse.de>
+Date:   Mon, 18 Jun 2018 21:45:53 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618131003.88110-2-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 18 Jun 2018 13:44:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 18 Jun 2018 13:44:55 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
+In-Reply-To: <20180618100902.4015-4-flo@geekplace.eu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18 2018 at  9:09am -0400,
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> bitmap API (include/linux/bitmap.h) has 'bitmap' prefix for its methods.
+On 2018/6/18 6:09 PM, Florian Schmaus wrote:
+> Fixes an error condition reported by checkpatch.pl which is caused by
+> assigning a variable in an if condition.
 > 
-> On the other hand MD bitmap API is special case.
-> Adding 'md' prefix to it to avoid name space collision.
-> 
-> No functional changes intended.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Florian Schmaus <flo@geekplace.eu>
 > ---
->  drivers/md/dm-raid.c                          |   6 +-
->  drivers/md/md-bitmap.c                        | 301 +++++++++---------
->  drivers/md/md-bitmap.h                        |  46 +--
->  drivers/md/md-cluster.c                       |  16 +-
->  drivers/md/md.c                               |  44 +--
->  .../md/persistent-data/dm-space-map-common.c  |  12 +-
->  drivers/md/raid1.c                            |  20 +-
->  drivers/md/raid10.c                           |  26 +-
->  drivers/md/raid5-cache.c                      |   2 +-
->  drivers/md/raid5.c                            |  24 +-
->  10 files changed, 244 insertions(+), 253 deletions(-)
-
-Seems my previous mail just missed your v3 cutoff but...
-
-<snip>
-
-All of these drivers/md/persistent-data/dm-space-map-common.c renames
-are wrong.  DM is the only consumer (it is confusing because all DM and
-MD code lives in drivers/md/ despite only sharing a bit of MD code).
-
-Anyway, please rename bitmap methods in this file to have a "dm_bitmap"
-prefix instead.  Thanks.
-
-Mike
-
-> diff --git a/drivers/md/persistent-data/dm-space-map-common.c b/drivers/md/persistent-data/dm-space-map-common.c
-> index 829b4ce057d8..049e999fc6c4 100644
-> --- a/drivers/md/persistent-data/dm-space-map-common.c
-> +++ b/drivers/md/persistent-data/dm-space-map-common.c
-> @@ -69,7 +69,7 @@ static struct dm_block_validator index_validator = {
->   */
->  #define BITMAP_CSUM_XOR 240779
+>  drivers/md/bcache/super.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index f09f4f046315..4a2a028c8754 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -796,11 +796,12 @@ static int bcache_device_init(struct bcache_device *d, unsigned block_size,
+>  		return idx;
 >  
-> -static void bitmap_prepare_for_write(struct dm_block_validator *v,
-> +static void md_bitmap_prepare_for_write(struct dm_block_validator *v,
->  				     struct dm_block *b,
->  				     size_t block_size)
->  {
-> @@ -81,7 +81,7 @@ static void bitmap_prepare_for_write(struct dm_block_validator *v,
->  						       BITMAP_CSUM_XOR));
+>  	if (bioset_init(&d->bio_split, 4, offsetof(struct bbio, bio),
+> -			BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER) ||
+> -	    !(d->disk = alloc_disk(BCACHE_MINORS))) {
+> -		ida_simple_remove(&bcache_device_idx, idx);
+> -		return -ENOMEM;
+> -	}
+> +				BIOSET_NEED_BVECS|BIOSET_NEED_RESCUER))
+
+Signed-off-by: Coly Li <colyli@suse.de>
+I fix the above indent and added the patch into for-next patch set. Thanks.
+
+Coly Li
+
+> +		goto err;
+> +
+> +	d->disk = alloc_disk(BCACHE_MINORS);
+> +	if (!d->disk)
+> +		goto err;
+>  
+>  	set_capacity(d->disk, sectors);
+>  	snprintf(d->disk->disk_name, DISK_NAME_LEN, "bcache%i", idx);
+> @@ -834,6 +835,11 @@ static int bcache_device_init(struct bcache_device *d, unsigned block_size,
+>  	blk_queue_write_cache(q, true, true);
+>  
+>  	return 0;
+> +
+> +err:
+> +	ida_simple_remove(&bcache_device_idx, idx);
+> +	return -ENOMEM;
+> +
 >  }
 >  
-> -static int bitmap_check(struct dm_block_validator *v,
-> +static int md_bitmap_check(struct dm_block_validator *v,
->  			struct dm_block *b,
->  			size_t block_size)
->  {
-> @@ -108,8 +108,8 @@ static int bitmap_check(struct dm_block_validator *v,
->  
->  static struct dm_block_validator dm_sm_bitmap_validator = {
->  	.name = "sm_bitmap",
-> -	.prepare_for_write = bitmap_prepare_for_write,
-> -	.check = bitmap_check
-> +	.prepare_for_write = md_bitmap_prepare_for_write,
-> +	.check = md_bitmap_check,
->  };
->  
->  /*----------------------------------------------------------------*/
-> @@ -124,7 +124,7 @@ static void *dm_bitmap_data(struct dm_block *b)
->  
->  #define WORD_MASK_HIGH 0xAAAAAAAAAAAAAAAAULL
->  
-> -static unsigned bitmap_word_used(void *addr, unsigned b)
-> +static unsigned md_bitmap_word_used(void *addr, unsigned b)
->  {
->  	__le64 *words_le = addr;
->  	__le64 *w_le = words_le + (b >> ENTRIES_SHIFT);
-> @@ -170,7 +170,7 @@ static int sm_find_free(void *addr, unsigned begin, unsigned end,
->  {
->  	while (begin < end) {
->  		if (!(begin & (ENTRIES_PER_WORD - 1)) &&
-> -		    bitmap_word_used(addr, begin)) {
-> +		    md_bitmap_word_used(addr, begin)) {
->  			begin += ENTRIES_PER_WORD;
->  			continue;
->  		}
+>  /* Cached device */
+> 
+
