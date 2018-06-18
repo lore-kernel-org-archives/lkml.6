@@ -2,102 +2,112 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274EDC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF9FC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4E5C20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:53:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB42920864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:53:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="fdVSfxE1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E5C20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hzUjGDde";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="KA5gsvlt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB42920864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754681AbeFRExX (ORCPT
+        id S1754736AbeFRExg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 00:53:23 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:43546 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754335AbeFRExL (ORCPT
+        Mon, 18 Jun 2018 00:53:36 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:45037 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754264AbeFRExd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 00:53:11 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B71B48365B;
-        Mon, 18 Jun 2018 16:53:09 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1529297589;
-        bh=MsHRKkmMBU8yiP7oseOrcgnrCHuxg5q8zeQjSqwVdy4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=fdVSfxE1pR9q1xc1WqEiXz6X2kf7EaWJqSCF3gzML+bQzC2HhQq/tzjjbkMnHiSsY
-         +YsrtLWHJl7Iy96BHGypNVxGFBhswihYnPHkyYx8oBAHzZUQBZLxwkPmSXsRShSZq1
-         Nf0gAteMJ8cMg2pdNVQzgcPJcxWjKtOlZb0cm8bY=
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b273ab40000>; Mon, 18 Jun 2018 16:53:08 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 2E8D613EED3;
-        Mon, 18 Jun 2018 16:53:12 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 1881B1E2626; Mon, 18 Jun 2018 16:53:09 +1200 (NZST)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: [RFC PATCH 2/2] mtd: rawnand: marvell: Support page size of 2048 with 8-bit ECC
-Date:   Mon, 18 Jun 2018 16:52:55 +1200
-Message-Id: <20180618045255.8015-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
-References: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
+        Mon, 18 Jun 2018 00:53:33 -0400
+Received: by mail-qt0-f193.google.com with SMTP id l33-v6so14084946qta.11;
+        Sun, 17 Jun 2018 21:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ytW6lLIuezYtSNdm05BBBv2PMzV8nTKMJfeqohHLF+0=;
+        b=hzUjGDdef4MpMBvFsyI8Wx0wyladSrY4WC2A4wM80j2NThmnQ+mCQJuNPwfan7pCfD
+         ThwjiZ26Gu5j+T6ro2mJAdm3l0GJ6k7PtSL5nJwGheS4mgcjQRNaj+PxIMt2HYfi7vAw
+         aNcq4ZDsGWBG5rR6Jp2DgYtvK0gV0QM+rskYHvipBruN5SJvjSeYvqoW8LWej6Zu4+fs
+         05lpJQ4oEONHoSGs/LN/QK0N2hDFcdNO17sxZimCGcug8lBq53P74pyaJjxHZZwtNs+O
+         hDrKXz1uJVDVUjRZH+Juf/IL+jIGj5tPBoZmZ9thP8sjyqDeEyoXjtX9O3uRfvi0sc2d
+         oh2g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ytW6lLIuezYtSNdm05BBBv2PMzV8nTKMJfeqohHLF+0=;
+        b=KA5gsvlt1vNcm2ktPFnpsfGtoqD09tBoyaxYy3IKEsJIvJ2T0zDShodxp9FbVcUvOB
+         14gTA0kys9H8gXcLdqQN8XwA0Yp1K0M7LzvGcA6EHsmziXaSnk9zLdzKAWGR5zc5L73J
+         Y9JZs3EWcWZjeQKvoRV4TM5H6oksVvuUW9K0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=ytW6lLIuezYtSNdm05BBBv2PMzV8nTKMJfeqohHLF+0=;
+        b=YOJ1cHN4LHNPSb23adpm/JmI8t1geB1ra4g0eoa895kP8QK4dFkJce14looK44hjCm
+         C86p4dA46wUVx/croFYZiOL1XYDX2Hu2+jZI+4VqBuY+04suR/4kt7ghc/Z3Fgf3cjFP
+         0RyfggfGtRU2Z3qs+bYouVuvRXl1zyzazF6WJsdEOgzFDUzGg4YskHNggFI2S9HZRlKm
+         X3YRI2SZGgFOwLZ9jwWQHWzW7y8O8CdvUlGui9M8rlszlVk5QJIK2/our2ZvVHOqtOjK
+         P41ppYdC3kA3S13WpNqwqDiqTvfnTTz+Vxz3cCYUf67IqOFMxMuLJ2HVHDXJIMad+pLe
+         ve/g==
+X-Gm-Message-State: APt69E3qxV+g+ggcjxknZNRvIlUkvOcJsxyz6Quw9Nx3TSGoN5ynYhom
+        tGuPZ5VBOUE8gb4h8uVBQYForRrNd77SB8Fr+k0=
+X-Google-Smtp-Source: ADUXVKJrxLom5UaDGM9crISlamJsMekd9RTCqtu6DycqgkpoeJzUivLzRLpGmalq2dufQETanYcuHYSy2dssU9cPFEI=
+X-Received: by 2002:a0c:a2e5:: with SMTP id g92-v6mr9467795qva.60.1529297612264;
+ Sun, 17 Jun 2018 21:53:32 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac8:184d:0:0:0:0:0 with HTTP; Sun, 17 Jun 2018 21:53:11
+ -0700 (PDT)
+In-Reply-To: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
+References: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Mon, 18 Jun 2018 14:23:11 +0930
+X-Google-Sender-Auth: i6fPovjnUgifzriJvrIQUh7WwGc
+Message-ID: <CACPK8XcA7RmerPbK_5pCh_NJQqZ_5pAVD4najW9e4rf1FYL4SQ@mail.gmail.com>
+Subject: Re: [PATCH v10 0/7] i2c: Add FSI-attached I2C master algorithm
+To:     Eddie James <eajames@linux.vnet.ibm.com>
+Cc:     linux-i2c@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Peter Rosin <peda@axentia.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MT29F1G08ABAFAWP-ITE:F chip has 2048 byte pages and requires a
-minimum ECC strength of 8-bits. Allow for this combination of
-requirements using the marvell_nand controller.
+On 14 June 2018 at 05:06, Eddie James <eajames@linux.vnet.ibm.com> wrote:
+> This series adds an algorithm for an I2C master physically located on an FSI
+> slave device. The I2C master has multiple ports, each of which may be connected
+> to an I2C slave. Access to the I2C master registers is achieved over FSI bus.
+>
+> Due to the multi-port nature of the I2C master, the driver instantiates a new
+> I2C adapter for each port connected to a slave. The connected ports should be
+> defined in the device tree under the I2C master device.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
-I've tried to follow the recommended AN-379 from Marvell. They do seem
-to have information that covers this particular set of chip requirements
-but I'm not confident I've translated their code correctly into the
-current marvell_nand implementation.
+Looks good Eddie. I had a read over what you have, and I would be
+happy to see this merged in 4.19.
 
-This is enough to make the nand_scan work but ubi/ubifs fails to initialise
-and/or mount so I may have something completely wrong. This may also be
-because this chip has internal ECC enabled which cannot be disabled. I
-turned up an old thread on this from April last year[1] but I didn't see
-anything resulting from this. Can this combination of ECC
-implementations even co-exist?
+Reviewed-By: Joel Stanley <joel@jms.id.au>
 
-[1] - http://lists.infradead.org/pipermail/linux-mtd/2017-April/073370.html
+Also, I have merged this into the 4.17 based openbmc tree for testing
+while we wait for it to be merged upstream.
 
- drivers/mtd/nand/raw/marvell_nand.c | 1 +
- 1 file changed, 1 insertion(+)
+Cheers,
 
-diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
-index ebb1d141b900..5712df553a8e 100644
---- a/drivers/mtd/nand/raw/marvell_nand.c
-+++ b/drivers/mtd/nand/raw/marvell_nand.c
-@@ -217,6 +217,7 @@ static const struct marvell_hw_ecc_layout marvell_nfc_layouts[] = {
- 	MARVELL_LAYOUT(  512,   512,  1,  1,  1,  512,  8,  8,  0,  0,  0),
- 	MARVELL_LAYOUT( 2048,   512,  1,  1,  1, 2048, 40, 24,  0,  0,  0),
- 	MARVELL_LAYOUT( 2048,   512,  4,  1,  1, 2048, 32, 30,  0,  0,  0),
-+	MARVELL_LAYOUT( 2048,   512,  8,  1,  1, 1024, 0, 30,  1024,  32,  30),
- 	MARVELL_LAYOUT( 4096,   512,  4,  2,  2, 2048, 32, 30,  0,  0,  0),
- 	MARVELL_LAYOUT( 4096,   512,  8,  5,  4, 1024,  0, 30,  0, 64, 30),
- };
--- 
-2.17.1
-
+Joel
