@@ -2,97 +2,73 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56545C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFFEC5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5AA02083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:41:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="af+pCnWT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5AA02083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 95FDB2083D
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:42:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95FDB2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935510AbeFRVlt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 17:41:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39758 "EHLO mail.kernel.org"
+        id S964919AbeFRVmH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 17:42:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755076AbeFRVls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 17:41:48 -0400
-Received: from localhost (unknown [198.217.64.131])
+        id S935628AbeFRVmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 17:42:06 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 168E720693;
-        Mon, 18 Jun 2018 21:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529358108;
-        bh=ByktAGxblbcmKtyQWeSXbmNn3tqcUBs4k7WpQnjllvg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=af+pCnWTh1eC4UyFHKG0pu9kBqfSzA11Oz1bwoLxdnKpOlZDArd5H7rKYqYhShGQJ
-         WTHB9wNoId0W9uhI35THc+5FRqpAaKljQMc2f+Hg5cfSVykHtYVKHieozio+tpxvMI
-         DC6EejEBmgDG1lI8osOOTgoX7XaYN1YNTWzbhGF0=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] MAINTAINERS: Add me as an x86 entry code maintainer
-Date:   Mon, 18 Jun 2018 14:41:36 -0700
-Message-Id: <c2394b008adfb6e7480f3b1193386537e96a6a69.1529358034.git.luto@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        by mail.kernel.org (Postfix) with ESMTPSA id BFC2020836;
+        Mon, 18 Jun 2018 21:42:04 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 17:42:03 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
+        raistlin@linux.it, linux-kernel@vger.kernel.org,
+        juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com,
+        joel@joelfernandes.org
+Subject: Re: [RESEND PATCH v12 2/2] sched/rt: Add support for
+ SD_PREFER_SIBLING on find_lowest_rq()
+Message-ID: <20180618174203.4a1b4cf0@gandalf.local.home>
+In-Reply-To: <1529297889-24551-3-git-send-email-byungchul.park@lge.com>
+References: <1529297889-24551-1-git-send-email-byungchul.park@lge.com>
+        <1529297889-24551-3-git-send-email-byungchul.park@lge.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And update my email address.
+On Mon, 18 Jun 2018 13:58:09 +0900
+Byungchul Park <byungchul.park@lge.com> wrote:
 
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
+> Hello Steven,
+> 
+> I've changed the code a little bit to avoid a compile warning caused by
+> 'const' args of find_cpu(). Can I keep your Reviewed-by?
+> 
+> BEFORE:
+> static int find_cpu(const struct cpumask *mask,
+> 		    const struct sched_domain *sd,
+> 		    const struct sched_domain *prefer)
+> 
+> AFTER:
+> static int find_cpu(const struct cpumask *mask,
+> 		    struct sched_domain *sd,
+> 		    struct sched_domain *prefer)
+> 
+> (I temporarily removed the Reviewed-by you gave me.)
+> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Linus has been saying that I might as well maintain this stuff for years.
-What do you all think?
+I would fix sched_domain_span() to take a constant and keep the
+previous patch.
 
-MAINTAINERS | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9d5eeff51b5f..624c3fd11d04 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15575,6 +15575,13 @@ S:	Maintained
- F:	Documentation/x86/
- F:	arch/x86/
- 
-+X86 ENTRY CODE
-+M:	Andy Lutomirski <luto@kernel.org>
-+L:	linux-kernel@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/asm
-+S:	Maintained
-+F:	arch/x86/entry/
-+
- X86 MCE INFRASTRUCTURE
- M:	Tony Luck <tony.luck@intel.com>
- M:	Borislav Petkov <bp@alien8.de>
-@@ -15597,7 +15604,7 @@ F:	drivers/platform/x86/
- F:	drivers/platform/olpc/
- 
- X86 VDSO
--M:	Andy Lutomirski <luto@amacapital.net>
-+M:	Andy Lutomirski <luto@kernel.org>
- L:	linux-kernel@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vdso
- S:	Maintained
--- 
-2.17.1
-
+-- Steve
