@@ -2,144 +2,181 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC27C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23331C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59EE20020
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:50:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A6320020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="jTzjRASm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59EE20020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wnc81QBx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6A6320020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755381AbeFRQuf (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:50:35 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:37758 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755119AbeFRQue (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:50:34 -0400
-Received: by mail-oi0-f66.google.com with SMTP id l22-v6so15472452oib.4
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 09:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zceNZnGkDjzzhptHZsGNVcVvwAsWQKK9OlqOY+WU1Kc=;
-        b=jTzjRASmQZGfwe/UlzI4P6jffO7l9YagsSSQaG9HmZsnQ7iuYxxLacn6bZKwvy7Y0b
-         VbMZg7NFc+zOwhTzP/O5gwazYh2GzVyPyt/Wjnqa5mCHr8R2J74OZdE0LZk0Km3ZY9RK
-         LiSakcOYrqrQbsvyj6QFz1JCmbfSbh6cMyuR1sNIEGLflecBpwa+RtyhxvSKjKvYjb7a
-         zHFavldvUHsffhz3iOWo9vnwYpI4kWuNCnFE4PNC1qLtwXkL7w6QPp415vxSbwjHGuXf
-         vSqhOVR4qan4vmkQraxK5FrAjbeygyV4vsHsQzbFNNBP9zlMSd7NTTIM5xWXFqEZdLx1
-         3Pdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zceNZnGkDjzzhptHZsGNVcVvwAsWQKK9OlqOY+WU1Kc=;
-        b=V0d3cGje1fFUnAvwAaETExLwzrh/8UQvBzcv6HWGLg1+0noppAvrAv49vetpSWjuLx
-         LcwgveS2v8XVdVVOAz7RmzENuMVVesGV3y1RZenOSRDqYji2XCq7xRjV57xvpyExBsuV
-         qcrNpoA87a63QUMWOr42U4mGkSpIvCJm7M57KBk86DFAT93NG7AYBTgwjbUaQMyw3iXr
-         63ADa09Drq/ltc+QYgx3ltBXUHiVeRANoF7CaPCw59nC1MFC+2W5A7N6JNo4QhQci3uT
-         dxstQqWT2GH4y45xJoj5f5nig/hSWWc2RbTeEtDIfZrVOfFpZu1UONnIzIDPsSfCAfir
-         rz2w==
-X-Gm-Message-State: APt69E208vnrKLQB5b/FewJIAu7cJMGUUWQbM0tpPEEi3h2ECnK1BITH
-        HM+9JmCQTN1xVBcYKEhdeKKRtrqrC6Xw0GKH3pYwpQ==
-X-Google-Smtp-Source: ADUXVKJUeJeX0D7aDsSW/8Ap4N61Rtea6sNLt7/6Rj0fhuu9lYeFoY3M33AattyDl1VWdXVaTlAcNukjqAQsOq4Iwq4=
-X-Received: by 2002:aca:ab15:: with SMTP id u21-v6mr7703426oie.272.1529340633488;
- Mon, 18 Jun 2018 09:50:33 -0700 (PDT)
+        id S933942AbeFRQuy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 12:50:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755119AbeFRQux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 12:50:53 -0400
+Received: from mail-yb0-f176.google.com (mail-yb0-f176.google.com [209.85.213.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B973208B1;
+        Mon, 18 Jun 2018 16:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529340652;
+        bh=GFwzWGDN7Vwwmbm2hovlunAW3dXAB2YTMs64Y9Jjdds=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Wnc81QBxGnAFb0xrCII9FiIhtHKvPBUlMYa6FJzWOrEYHXPmOlLRBX7Vbll6Tl15m
+         D1En7AqHkVhAB8fZs3svSKYDCoVoSuNtiOsDu04ex6FrYQOU5+Kb+O6zRVS+B2RMi9
+         Y/rGfzYTZOLff5Q0lnNacSXxnE+dW+ZuIrs2Lw3E=
+Received: by mail-yb0-f176.google.com with SMTP id d123-v6so6207993ybh.9;
+        Mon, 18 Jun 2018 09:50:52 -0700 (PDT)
+X-Gm-Message-State: APt69E39nFqwB+4lrpZJ7QRDATpwMsdguPn3K7BFWGspO070mPTq3DoJ
+        MAcEuk5G7NW0Ev3mvVlMLkYVQdoXetnU9Q8rK3I=
+X-Google-Smtp-Source: ADUXVKJBdXkEZEwKhdQzNEysOCBiyr/qmuy/QFh0EkPi70aL4zzRwsk422XSeNjJ1H05EKu9C6ZGwcMVQbaAUIyoCAQ=
+X-Received: by 2002:a25:40c2:: with SMTP id n185-v6mr6798486yba.122.1529340651526;
+ Mon, 18 Jun 2018 09:50:51 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 09:50:33
- -0700 (PDT)
-In-Reply-To: <20180618132712.4b4eddc9@canb.auug.org.au>
-References: <20180618132712.4b4eddc9@canb.auug.org.au>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 18 Jun 2018 09:50:33 -0700
-Message-ID: <CAPcyv4idNE8ErxNm5bb3rG4jUeZU9HJRmO03omMJxSN-8FYN+w@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the xarray tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a5b:bcb:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 09:50:11 -0700 (PDT)
+In-Reply-To: <1529251416-14814-1-git-send-email-frowand.list@gmail.com>
+References: <1529251416-14814-1-git-send-email-frowand.list@gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Mon, 18 Jun 2018 11:50:11 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTh3dR7peT_3fz==EDk0oxd2UZEEooPn6zTrpJ+=NJT_A@mail.gmail.com>
+Message-ID: <CANk1AXTh3dR7peT_3fz==EDk0oxd2UZEEooPn6zTrpJ+=NJT_A@mail.gmail.com>
+Subject: Re: [RFC PATCH] of: overlay: update phandle cache on overlay apply
+ and remove
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 8:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> After merging the xarray tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> In file included from arch/powerpc/include/asm/bug.h:128:0,
->                  from include/linux/bug.h:5,
->                  from arch/powerpc/include/asm/cmpxchg.h:9,
->                  from arch/powerpc/include/asm/atomic.h:11,
->                  from include/linux/atomic.h:5,
->                  from fs/dax.c:17:
-> fs/dax.c: In function 'dax_lock_page':
-> fs/dax.c:392:21: error: implicit declaration of function 'radix_tree_exceptional_entry'; did you mean 'radix_tree_exception'? [-Werror=implicit-function-declaration]
->        WARN_ON_ONCE(!radix_tree_exceptional_entry(entry))) {
->                      ^
-> include/asm-generic/bug.h:69:25: note: in definition of macro 'WARN_ON_ONCE'
->   int __ret_warn_on = !!(condition);   \
->                          ^~~~~~~~~
-> fs/dax.c:395:15: error: implicit declaration of function 'slot_locked'; did you mean 'iget_locked'? [-Werror=implicit-function-declaration]
->    } else if (!slot_locked(mapping, slot)) {
->                ^~~~~~~~~~~
->                iget_locked
-> fs/dax.c:396:4: error: implicit declaration of function 'lock_slot'; did you mean 'local_set'? [-Werror=implicit-function-declaration]
->     lock_slot(mapping, slot);
->     ^~~~~~~~~
->     local_set
-> fs/dax.c:402:28: error: passing argument 1 of 'dax_entry_waitqueue' from incompatible pointer type [-Werror=incompatible-pointer-types]
->    wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
->                             ^~~~~~~
-> fs/dax.c:152:27: note: expected 'struct xa_state *' but argument is of type 'struct address_space *'
->  static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
->                            ^~~~~~~~~~~~~~~~~~~
-> fs/dax.c:402:37: warning: passing argument 2 of 'dax_entry_waitqueue' makes pointer from integer without a cast [-Wint-conversion]
->    wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
->                                      ^~~~~
-> fs/dax.c:152:27: note: expected 'void *' but argument is of type 'long unsigned int'
->  static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
->                            ^~~~~~~~~~~~~~~~~~~
-> fs/dax.c:402:8: error: too many arguments to function 'dax_entry_waitqueue'
->    wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
->         ^~~~~~~~~~~~~~~~~~~
-> fs/dax.c:152:27: note: declared here
->  static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
->                            ^~~~~~~~~~~~~~~~~~~
-> fs/dax.c: In function 'dax_unlock_page':
-> fs/dax.c:424:2: error: implicit declaration of function 'dax_unlock_mapping_entry'; did you mean 'dax_delete_mapping_entry'? [-Werror=implicit-function-declaration]
->   dax_unlock_mapping_entry(mapping, page->index);
->   ^~~~~~~~~~~~~~~~~~~~~~~~
->   dax_delete_mapping_entry
->
-> Caused by commits in the xarray tree interacting with commit
->
->   9b3d53936caa ("filesystem-dax: Introduce dax_lock_page()")
->
-> from the nvdimm tree.
->
-> Willy thanks for the heads up about this.
->
-> I have applied the following merge fix patch (taken from the diff between
-> the -next tree at this point and the xarray-20180615 branch from the
-> xarray tree) for today.
+On Sun, Jun 17, 2018 at 11:03 AM,  <frowand.list@gmail.com> wrote:
 
-I was hoping that dax_lock_page() and the memory_failure() handling
-could go in before the xarray rework. This helps -stable and distros
-that need to backport this error handling support. Willy, would you be
-amenable to rebasing on top of the next rev of the
-dax+memory_failure() work?
+Hi Frank,
 
-Apologies for the thrash.
+Thanks again for the fast response while traveling.  The RFC looks
+good in my testing and review.
+
+> From: Frank Rowand <frank.rowand@sony.com>
+>
+> A comment in the review of the patch adding the phandle cache said that
+> the cache would have to be updated when modules are applied and removed.
+> This patch implements the cache updates.
+>
+> Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
+> Reported-by: Alan Tull <atull@kernel.org>
+> Suggested-by: Alan Tull <atull@kernel.org>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Tested-by: Alan Tull <atull@kernel.org>
+Reviewed-by: Alan Tull <atull@kernel.org>
+
+> ---
+>
+> Compiles for one configuration.
+> NOT boot tested.
+> Not run through my normal process to check for new warnings, etc.
+>
+> It is late, I'm tired, my brain is fuzzy.  I need to review this more to have
+> any confidence in it.  But I wanted to get a version out for Alan to see (and
+> test if he wants).
+>
+>  drivers/of/base.c       |  6 +++---
+>  drivers/of/of_private.h |  2 ++
+>  drivers/of/overlay.c    | 12 ++++++++++++
+>  3 files changed, 17 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 848f549164cd..466e3c8582f0 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -102,7 +102,7 @@ static u32 phandle_cache_mask;
+>   *   - the phandle lookup overhead reduction provided by the cache
+>   *     will likely be less
+>   */
+> -static void of_populate_phandle_cache(void)
+> +void of_populate_phandle_cache(void)
+>  {
+>         unsigned long flags;
+>         u32 cache_entries;
+> @@ -134,8 +134,7 @@ static void of_populate_phandle_cache(void)
+>         raw_spin_unlock_irqrestore(&devtree_lock, flags);
+>  }
+>
+> -#ifndef CONFIG_MODULES
+> -static int __init of_free_phandle_cache(void)
+> +int of_free_phandle_cache(void)
+>  {
+>         unsigned long flags;
+>
+> @@ -148,6 +147,7 @@ static int __init of_free_phandle_cache(void)
+>
+>         return 0;
+>  }
+> +#if !defined(CONFIG_MODULES)
+>  late_initcall_sync(of_free_phandle_cache);
+>  #endif
+>
+> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+> index 891d780c076a..216175d11d3d 100644
+> --- a/drivers/of/of_private.h
+> +++ b/drivers/of/of_private.h
+> @@ -79,6 +79,8 @@ int of_resolve_phandles(struct device_node *tree);
+>  #if defined(CONFIG_OF_OVERLAY)
+>  void of_overlay_mutex_lock(void);
+>  void of_overlay_mutex_unlock(void);
+> +int of_free_phandle_cache(void);
+> +void of_populate_phandle_cache(void);
+>  #else
+>  static inline void of_overlay_mutex_lock(void) {};
+>  static inline void of_overlay_mutex_unlock(void) {};
+> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> index 7baa53e5b1d7..3f76e58fbec4 100644
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -804,6 +804,8 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
+>                 goto err_free_overlay_changeset;
+>         }
+>
+> +       of_populate_phandle_cache();
+> +
+>         ret = __of_changeset_apply_notify(&ovcs->cset);
+>         if (ret)
+>                 pr_err("overlay changeset entry notify error %d\n", ret);
+> @@ -1046,8 +1048,18 @@ int of_overlay_remove(int *ovcs_id)
+>
+>         list_del(&ovcs->ovcs_list);
+>
+> +       /*
+> +        * Empty and disable phandle cache.  Must empty here so that
+> +        * changeset notifiers do not use stale cache entry for a removed
+> +        * phandle.
+> +        */
+> +       of_free_phandle_cache();
+> +
+>         ret_apply = 0;
+>         ret = __of_changeset_revert_entries(&ovcs->cset, &ret_apply);
+> +
+> +       of_populate_phandle_cache();
+> +
+>         if (ret) {
+>                 if (ret_apply)
+>                         devicetree_state_flags |= DTSF_REVERT_FAIL;
+> --
+> Frank Rowand <frank.rowand@sony.com>
+>
