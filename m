@@ -2,118 +2,203 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70811C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50ECAC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FD6B20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:43:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD6B20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D5F822075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:46:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="EMFvbDb0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F822075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936864AbeFRTns (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:43:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33146 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S936040AbeFRTnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:43:47 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 539B7402333A;
-        Mon, 18 Jun 2018 19:43:46 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 104BF20389E0;
-        Mon, 18 Jun 2018 19:43:46 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id C560C2209E9; Mon, 18 Jun 2018 15:43:45 -0400 (EDT)
-Date:   Mon, 18 Jun 2018 15:43:45 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org,
-        Daniel Walsh <dwalsh@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: overlayfs: caller_credentials option bypass creator_cred
-Message-ID: <20180618194345.GA15973@redhat.com>
-References: <20180618154222.19279-1-salyzyn@android.com>
- <20180618185448.GA8749@redhat.com>
- <f141f883-0dbd-10ea-83b9-a1b38119b0c5@android.com>
+        id S964900AbeFRTqP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:46:15 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:43186 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936040AbeFRTqN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:46:13 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id C799B1E04A8
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:46:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1529351172; bh=G1AV+ziE4gP0zQpJJwsg5EtmnLt+BnXzHqUQt3ZExQE=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=EMFvbDb08BfDtYWgyde/zb/2PsZkfjDcRca6ILCp8xuYwBQj9/PjzP1QXJHAjtqhX
+         th8hHwYhaoTzsAaaqRVK7E1RF2CUhJvn3MI6sWZeULVuNisx8iFH9JbGZcJYwbdEUU
+         /mxKxHAycq+KvdEYyjCGRUlhGMhb36FP59b2mULFwp4yBgRAK8o7EzTizj5u4VfIOb
+         +vViWPnVIAMrKcFz1fqBDdv/Vv1dox5gQv++TtYrluPSL8Y9a1phP3MXeTBXRfbtpP
+         PTXzmzh/Bkoq1TmW0QY0rE3g7mxrh6Fod7E1HUL9v6/fq54fx5fcXnpyY+Nskd5eDq
+         9nvG6yZKtbMYg==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 270C856D1;
+        Mon, 18 Jun 2018 12:46:11 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 18 Jun 2018 12:46:11 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
+ 18 Jun 2018 21:46:08 +0200
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: RE: [PATCH] ARC: Add PCIe support for ARC HSDK platform
+Thread-Topic: [PATCH] ARC: Add PCIe support for ARC HSDK platform
+Thread-Index: AQHUBxUCRm/JCNyjD0Wi++lZvsvcaKRmACsAgAAvhYCAADskAA==
+Date:   Mon, 18 Jun 2018 19:46:06 +0000
+Message-ID: <4881796E12491D4BB15146FE0209CE64680F2862@DE02WEMBXB.internal.synopsys.com>
+References: <3e9a2f384fd831fb2639ad99ec43ce0f019ac17c.1529333762.git.gustavo.pimentel@synopsys.com>
+ <ba4b10e967fb39d18eba7a5c70abb167308481f5.camel@synopsys.com>
+ <562939df-4c97-c19b-72e3-14196a651c40@synopsys.com>
+In-Reply-To: <562939df-4c97-c19b-72e3-14196a651c40@synopsys.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
+ =?utf-8?B?bk5jWVdKeWIyUnJhVzVjWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
+ =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
+ =?utf-8?B?elhHMXpaeTB6WVdOa1lURXlNQzAzTXpNd0xURXhaVGd0WW1VMllpMDRPR0l4?=
+ =?utf-8?B?TVRGalpHVXlNVGRjWVcxbExYUmxjM1JjTTJGalpHRXhNakl0TnpNek1DMHhN?=
+ =?utf-8?B?V1U0TFdKbE5tSXRPRGhpTVRFeFkyUmxNakUzWW05a2VTNTBlSFFpSUhONlBT?=
+ =?utf-8?B?SXhOell6SWlCMFBTSXhNekUzTXpneU5EYzJNamN4TXpVMU1UVWlJR2c5SWxG?=
+ =?utf-8?B?YWFERjNTVzEwWm5CalZUWk5SRUpVV1RWcFUzbEhSaTlTT0QwaUlHbGtQU0lp?=
+ =?utf-8?B?SUdKc1BTSXdJaUJpYnowaU1TSWdZMms5SW1OQlFVRkJSVkpJVlRGU1UxSlZS?=
+ =?utf-8?B?azVEWjFWQlFVaFpTVUZCUVdJeWFWZzVVRUZtVlVGWFdrY3pXWEZUWlhGUk4x?=
+ =?utf-8?B?cHJZbVJwY0VvMmNFUnpUa0ZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRklRVUZCUVVGSFEwRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGRlFVRlJRVUpCUVVGQmRXSXZVRkIzUVVGQlFVRkJRVUZCUVVGQlFVRkJT?=
+ =?utf-8?B?alJCUVVGQ2JVRkhhMEZpWjBKb1FVYzBRVmwzUW14QlJqaEJZMEZDYzBGSFJV?=
+ =?utf-8?B?RmlaMEoxUVVkclFXSm5RbTVCUmpoQlpIZENhRUZJVVVGYVVVSjVRVWN3UVZs?=
+ =?utf-8?B?UlFubEJSM05CUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlowRkJRVUZCUVc1blFVRkJSMWxCWW5kQ01VRkhORUZhUVVKNVFVaHJRVmgz?=
+ =?utf-8?B?UW5kQlIwVkJZMmRDTUVGSE5FRmFVVUo1UVVoTlFWaDNRbTVCUjFsQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRMEZCUVVGQlFVTmxRVUZCUVZwblFuWkJTRlZCWW1kQ2Ew?=
+ =?utf-8?B?RklTVUZsVVVKbVFVaEJRVmxSUW5sQlNGRkJZbWRDYkVGSVNVRmpkMEptUVVo?=
+ =?utf-8?B?TlFWbFJRblJCU0UxQlpGRkNkVUZIWTBGWWQwSnFRVWM0UVdKblFtMUJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZDUVVGQlFVRkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSnRRVWM0?=
+ =?utf-8?B?UVdSUlFuVkJSMUZCWTJkQ05VRkdPRUZqUVVKb1FVaEpRV1JCUW5WQlIxVkJZ?=
+ =?utf-8?B?MmRDZWtGR09FRmpkMEpvUVVjd1FXTjNRakZCUnpSQlduZENaa0ZJU1VGYVVV?=
+ =?utf-8?B?SjZRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJt?=
+ =?utf-8?B?ZEJRVUZIV1VGaWQwSXhRVWMwUVZwQlFubEJTR3RCV0hkQ2QwRkhSVUZqWjBJ?=
+ =?utf-8?B?d1FVYzBRVnBSUW5sQlNFMUJXSGRDZWtGSE1FRmhVVUpxUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZE?=
+ =?utf-8?B?UVVGQlFVRkJRMlZCUVVGQldtZENka0ZJVlVGaVowSnJRVWhKUVdWUlFtWkJT?=
+ =?utf-8?B?RUZCV1ZGQ2VVRklVVUZpWjBKc1FVaEpRV04zUW1aQlNFMUJaRUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlNVRkJRVUZCUVVvMFFVRkJRbTFCUnpoQlpGRkNkVUZIVVVG?=
+ =?utf-8?B?alowSTFRVVk0UVdOQlFtaEJTRWxCWkVGQ2RVRkhWVUZqWjBKNlFVWTRRV1JC?=
+ =?utf-8?B?UW5wQlJ6QkJXWGRCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkZRVUZCUVVGQlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVkWlFXSjNR?=
+ =?utf-8?B?akZCUnpSQldrRkNlVUZJYTBGWWQwSjNRVWRGUVdOblFqQkJSelJCV2xGQ2VV?=
+ =?utf-8?B?RklUVUZZZDBJeFFVY3dRVmwzUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVG?=
+ =?utf-8?B?QlFVRmFkMEl3UVVoTlFWaDNRbmRCU0VsQlluZENhMEZJVlVGWmQwSXdRVVk0?=
+ =?utf-8?B?UVdSQlFubEJSMFZCWVZGQ2RVRkhhMEZpWjBKdVFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpR?=
+ =?utf-8?B?VUZCUVVGQlNqUkJRVUZDZWtGSFJVRmlRVUpzUVVoTlFWaDNRbWhCUjAxQldY?=
+ =?utf-8?B?ZENka0ZJVlVGaVowSXdRVVk0UVdOQlFuTkJSMFZCWW1kQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCWjBGQlFVRkJRVzVuUVVGQlNFMUJXVkZDYzBGSFZVRmpkMEpt?=
+ =?utf-8?B?UVVoRlFXUlJRblpCU0ZGQldsRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGUlFVRkJRVUZCUVVGQlEwRkJRVUZCUVVObFFVRkJRV04zUW5WQlNF?=
+ =?utf-8?B?RkJZM2RDWmtGSGQwRmhVVUpxUVVkVlFXSm5RbnBCUjFWQldIZENNRUZIVlVG?=
+ =?utf-8?B?alowSjBRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkNRVUZCUVVGQlFVRkJRVWxCUVVGQlFVRktORUZC?=
+ =?utf-8?B?UVVJeVFVZGpRVmgzUW5KQlIxVkJaVkZDTTBGSE9FRmpaMEpyUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUlVGQlFVRkJRVUZCUVVGblFV?=
+ =?utf-8?B?RkJRVUZCSWk4K1BDOXRaWFJoUGc9PQ==?=
+x-dg-rorf: 
+x-originating-ip: [10.13.178.24]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f141f883-0dbd-10ea-83b9-a1b38119b0c5@android.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 18 Jun 2018 19:43:46 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 18 Jun 2018 19:43:46 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vgoyal@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 12:18:25PM -0700, Mark Salyzyn wrote:
-> On 06/18/2018 11:54 AM, Vivek Goyal wrote:
-> > On Mon, Jun 18, 2018 at 08:42:15AM -0700, Mark Salyzyn wrote:
-> > > All accesses to the lower filesystems reference the creator (mount)
-> > > and not the source context.  This is a security issue.
-> > Can you elaborate with an example that how this is a security issue.
-> > mounter's check is in addition to caller's check. So we have two
-> > checks in ovl_permission(). overlay inode gets the credentials from
-> > underlying inode and we first check if caller is allowed to the
-> > operation and if that's allowed, then we check if mounter is allowed
-> > to do the operation.
-> init which does the mount and represents the creator_cred which is granted a
-> restricted MAC to do just what it needs to do, eg mount, but not be able to
-> access the files. The caller comes in and is rejected because init domain is
-> not allowed, even though the caller's domain is. MAC does not require
-> overlap in privileges between the creator and the user.
-
-[ CC dan walsh, stephen smalley ]
-
-Ok. So this is not about security risk as such. It is more about that
-it does not work in particular configuration where caller is allowed to
-something but the mounter is not allowed to do that operation, so
-operation fails.
-
-(IIUC, recently this was raised as an issue if NFS is lower layer and
-server is doing root squashing. Then root on client can do mount but might
-not have access to a file while caller does have).
-
-Will it be acceptable to write security policies in such a way so that
-mounter has access as well.
-
-Current model does assume that mounter has privileges on underlying files.
-
-I think this works reasonably well with SELinux model of doing context
-mounts. So if a "context=foo_label" mount is done, that changes labels
-on overlay inodes (and ignore lables on disk). Mounter is the one allowing
-this overriding. Now if we mounter allows this, then mounter should have
-atleast access to underlying files. Otherwise this becomes equivalent
-of that as long as mounter can do mount then it is providing access to
-all files on disk/dir (with context mount). And mounter itself might not
-be able to do those operations.
-
-Core idea is, trying to make sure mounter of overlay does not provide
-more priviliges to caller through a mount point if mounter itself does
-not have privilege to do certain operations.
-
-Another place it works well is that one does not have to provide
-read/write labels on lower file. So in case of containers, SELinux can
-just provide read labels to files in shared image dir, and as long
-as mounter has read permission, it can copy up file and provide a writable
-copy to the client. If we don't do mounter's check, that means caller
-needs to have write permission to lower layer as well. And if caller
-breaks out of container, it could directly write lower layer and attcking
-another containers. So this was another use case in mind while coming
-up with this model.
-
-I am not saying that current model is the best way of doing things. Just
-giving some context about why we thought it is a good idea.
-
-Thanks
-Vivek
+SGkgVmluZWV0LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFZpbmVl
+dCBHdXB0YQ0KPiBTZW50OiBNb25kYXksIEp1bmUgMTgsIDIwMTggOToxMSBQTQ0KPiBUbzogQWxl
+eGV5IEJyb2RraW4gPGFicm9ka2luQHN5bm9wc3lzLmNvbT47IGd1c3Rhdm8ucGltZW50ZWxAc3lu
+b3BzeXMuY29tDQo+IENjOiByb2JoQGtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7IEV1Z2VuaXkuUGFsdHNldkBzeW5vcHN5cy5jb207IHNib3lkQGNvZGVhdXJvcmEub3Jn
+OyBsaW51eC1zbnBzLQ0KPiBhcmNAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTog
+W1BBVENIXSBBUkM6IEFkZCBQQ0llIHN1cHBvcnQgZm9yIEFSQyBIU0RLIHBsYXRmb3JtDQo+IA0K
+PiBPbiAwNi8xOC8yMDE4IDA4OjIwIEFNLCBBbGV4ZXkgQnJvZGtpbiB3cm90ZToNCj4gPj4gK3N0
+YXRpYyB2b2lkIF9faW5pdCBoc2RrX2VuYWJsZV9ncGlvX2ludGNfd2lyZSh2b2lkKQ0KPiA+PiAr
+ew0KPiA+PiArCXUzMiB2YWwgPSBHUElPX0hBUFNfSU5UOw0KPiA+PiArDQo+ID4+ICsJaW93cml0
+ZTMyKDB4ZmZmZmZmZmYsICh2b2lkIF9faW9tZW0gKikgR1BJT19JTlRNQVNLKTsNCj4gPj4gKwlp
+b3dyaXRlMzIofnZhbCwgKHZvaWQgX19pb21lbSAqKSBHUElPX0lOVE1BU0spOw0KPiA+PiArCWlv
+d3JpdGUzMigweDAwMDAwMDAwLCAodm9pZCBfX2lvbWVtICopIEdQSU9fSU5UVFlQRV9MRVZFTCk7
+DQo+ID4+ICsJaW93cml0ZTMyKDB4ZmZmZmZmZmYsICh2b2lkIF9faW9tZW0gKikgR1BJT19JTlRf
+UE9MQVJJVFkpOw0KPiA+PiArCWlvd3JpdGUzMih2YWwsICh2b2lkIF9faW9tZW0gKikgR1BJT19J
+TlRFTik7DQo+ID4+ICt9DQo+ID4gSSB3b3VsZCBzdWdnZXN0IHRvIGhhdmUgYSBtYXAgb2YgcmVh
+bGx5IHVzZWQgbGluZXMgYW5kIGVuYWJsZSBhbGwgb2YgdGhlbQ0KPiA+IGluc3RlYWQgb2YgYWRk
+aW5nIG9uZS1ieS1vbmUgb2NjYXNpb25hbGx5Lg0KPiANCj4gTW9yZSBpbXBvcnRhbnRseSwgYWRk
+aW5nIGFueSBjb2RlIGluIHRoaXMgZmlsZSBpcyBhbiBhYnNvbHV0ZSBhYm9taW5hdGlvbiBhbmQg
+b25seQ0KPiBkZXNpcmVkIGlmIHRoaXMgaXMgYSBwbGF0Zm9ybSBzcGVjaWZpYyBoYWNrIHdoaWNo
+IGNhbid0IGJlIGFkZGVkIGluIHRoZSBnZW5lcmljDQo+IGRyaXZlciBhbmQvb3Igc3BlY2lmaWVk
+IHZpYSB0aGUgRGV2aWNlIFRyZWUuIEhlcmUgaXQgc2VlbXMgbGlrZSB3ZSBhcmUgZW5hYmxpbmcN
+Cj4gc29tZSBncGlvIGxpbmVzIHdoaWNoIGxpa2VseSBjb3VsZCBiZSBkb25lIHZpYSB0aGUgZ3Bp
+byBkcml2ZXIgcGF0aHMgPw0KDQpTZWUgbXkgY29tbWVudCBtdWNoIGhpZ2hlciAtIHdoYXQgd2Un
+cmUgZG9pbmcgaGVyZSBpcyBwcmV0dHkgbXVjaCB0aGUgc2FtZSBhcw0KV2l0aCBBWFMxMHggLSB3
+ZSBpbXBsZW1lbnQgd2lyZXMgd2hpY2ggY29ubmVjdCBpbnB1dCBpbnRlcnJ1cHQgbGluZXMgdG8g
+SURVLg0KVGh1cyBJJ20gbm90IHN1cmUgaWYgaXQgd29ydGggbWVzc2luZyB3aXRoIERXIEFQQiBH
+UElPIElOVEMgZHJpdmVyIHdoaWNoIGFzIEkgbWVudGlvbmVkDQpBcyB3ZWxsIHdvbid0IHdvcmsg
+YXMgaXQgaXMgYW5kIHdlJ2xsIG5lZWQgdG8gcGF0Y2ggaXQgdG8gc3VwcG9ydCBtdWx0aXBsZSBv
+dXRwdXRzIG1vZGUuDQoNCi1BbGV4ZXkNCg==
