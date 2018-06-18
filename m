@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340ADC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF017C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE60D20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE60D20874
+	by mail.kernel.org (Postfix) with ESMTP id 6A6D520874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:34:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6D520874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967655AbeFRIeS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:34:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35692 "EHLO
+        id S967669AbeFRIeU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:34:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35678 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966579AbeFRIeO (ORCPT
+        with ESMTP id S967633AbeFRIeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:34:14 -0400
+        Mon, 18 Jun 2018 04:34:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA99BBAD;
-        Mon, 18 Jun 2018 08:34:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7848CBAD;
+        Mon, 18 Jun 2018 08:34:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matan Barak <matanb@mellanox.com>,
+        stable@vger.kernel.org, Greg Thelen <gthelen@google.com>,
+        Tarick Bedeir <tarick@google.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
         Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 084/189] IB/uverbs: Fix validating mandatory attributes
-Date:   Mon, 18 Jun 2018 10:13:00 +0200
-Message-Id: <20180618081212.624825013@linuxfoundation.org>
+Subject: [PATCH 4.14 083/189] IB: make INFINIBAND_ADDR_TRANS configurable
+Date:   Mon, 18 Jun 2018 10:12:59 +0200
+Message-Id: <20180618081212.588036958@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,40 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matan Barak <matanb@mellanox.com>
+From: Greg Thelen <gthelen@google.com>
 
-[ Upstream commit f604db645a66b7ba4f21c426fe73253928dada41 ]
+[ Upstream commit f7cb7b85be55a4906b4b4b30596db1043dae6335 ]
 
-Previously, if a method contained mandatory attributes in a namespace
-that wasn't given by the user, these attributes weren't validated.
-Fixing this by iterating over all specification namespaces.
+Allow INFINIBAND without INFINIBAND_ADDR_TRANS because fuzzing has been
+finding fair number of CM bugs.  So provide option to disable it.
 
-Fixes: fac9658cabb9 ("IB/core: Add new ioctl interface")
-Signed-off-by: Matan Barak <matanb@mellanox.com>
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Cc: Tarick Bedeir <tarick@google.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/uverbs_ioctl.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/infiniband/Kconfig |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/uverbs_ioctl.c
-+++ b/drivers/infiniband/core/uverbs_ioctl.c
-@@ -191,6 +191,15 @@ static int uverbs_validate_kernel_mandat
- 			return -EINVAL;
- 	}
+--- a/drivers/infiniband/Kconfig
++++ b/drivers/infiniband/Kconfig
+@@ -60,9 +60,12 @@ config INFINIBAND_ON_DEMAND_PAGING
+ 	  pages on demand instead.
  
-+	for (; i < method_spec->num_buckets; i++) {
-+		struct uverbs_attr_spec_hash *attr_spec_bucket =
-+			method_spec->attr_buckets[i];
-+
-+		if (!bitmap_empty(attr_spec_bucket->mandatory_attrs_bitmask,
-+				  attr_spec_bucket->num_attrs))
-+			return -EINVAL;
-+	}
-+
- 	return 0;
- }
+ config INFINIBAND_ADDR_TRANS
+-	bool
++	bool "RDMA/CM"
+ 	depends on INFINIBAND
+ 	default y
++	---help---
++	  Support for RDMA communication manager (CM).
++	  This allows for a generic connection abstraction over RDMA.
  
+ config INFINIBAND_ADDR_TRANS_CONFIGFS
+ 	bool
 
 
