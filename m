@@ -6,177 +6,74 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C24C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B399FC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3980620862
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:08:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3980620862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 78D8520862
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:08:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D8520862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936754AbeFRKIk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:08:40 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:30081 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935939AbeFRKHt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:07:49 -0400
-X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
-   d="scan'208";a="13149594"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 03:07:49 -0700
-Received: from m19893.microchip.com (10.10.76.4) by
- chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 18 Jun 2018 03:07:47 -0700
-From:   Radu Pirea <radu.pirea@microchip.com>
-To:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v8 3/6] mfd: at91-usart: added mfd driver for usart
-Date:   Mon, 18 Jun 2018 13:08:26 +0300
-Message-ID: <20180618100829.13875-4-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618100829.13875-1-radu.pirea@microchip.com>
-References: <20180618100829.13875-1-radu.pirea@microchip.com>
+        id S935025AbeFRKGo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:06:44 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58978 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934228AbeFRKGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:06:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFABA80D;
+        Mon, 18 Jun 2018 03:06:40 -0700 (PDT)
+Received: from [192.168.67.35] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 538653F25D;
+        Mon, 18 Jun 2018 03:06:39 -0700 (PDT)
+Subject: Re: [Xen-devel] [PATCH v2] drm/xen-front: fix pointer casts
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
+        boris.ostrovsky@oracle.com
+Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        David Airlie <airlied@linux.ie>
+References: <20180523113630.29811-1-andr2000@gmail.com>
+ <b516542b-a0f5-cbce-d351-25b88a7f3288@suse.com>
+ <a8cff47d-a990-924a-0a63-b6f3aea3279b@gmail.com>
+From:   Andre Przywara <andre.przywara@arm.com>
+Message-ID: <ad523698-9c33-3fe1-9eeb-165cc775a936@arm.com>
+Date:   Mon, 18 Jun 2018 11:06:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <a8cff47d-a990-924a-0a63-b6f3aea3279b@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This mfd driver is just a wrapper over atmel_serial driver and
-spi-at91-usart driver. Selection of one of the drivers is based on a
-property from device tree. If the property is not specified, the default
-driver is atmel_serial.
+Hi,
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- drivers/mfd/Kconfig      |  9 +++++
- drivers/mfd/Makefile     |  1 +
- drivers/mfd/at91-usart.c | 71 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+)
- create mode 100644 drivers/mfd/at91-usart.c
+On 25/05/18 06:32, Oleksandr Andrushchenko wrote:
+> On 05/23/2018 02:46 PM, Juergen Gross wrote:
+>> On 23/05/18 13:36, Oleksandr Andrushchenko wrote:
+>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>>
+>>> Building for a 32-bit target results in warnings from casting
+>>> between a 32-bit pointer and a 64-bit integer. Fix the warnings
+>>> by casting those pointers to uintptr_t first.
+>>>
+>>> Signed-off-by: Oleksandr Andrushchenko
+>>> <oleksandr_andrushchenko@epam.com>
+>> Reviewed-by: Juergen Gross <jgross@suse.com>
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index b860eb5aa194..a886672b960d 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -99,6 +99,15 @@ config MFD_AAT2870_CORE
- 	  additional drivers must be enabled in order to use the
- 	  functionality of the device.
- 
-+config MFD_AT91_USART
-+	tristate "AT91 USART Driver"
-+	select MFD_CORE
-+	help
-+	  Select this to get support for AT91 USART IP. This is a wrapper
-+	  over at91-usart-serial driver and usart-spi-driver. Only one function
-+	  can be used at a time. The choice is done at boot time by the probe
-+	  function of this MFD driver according to a device tree property.
-+
- config MFD_ATMEL_FLEXCOM
- 	tristate "Atmel Flexcom (Flexible Serial Communication Unit)"
- 	select MFD_CORE
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index d9d2cf0d32ef..db1332aa96db 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -185,6 +185,7 @@ obj-$(CONFIG_MFD_SPMI_PMIC)	+= qcom-spmi-pmic.o
- obj-$(CONFIG_TPS65911_COMPARATOR)	+= tps65911-comparator.o
- obj-$(CONFIG_MFD_TPS65090)	+= tps65090.o
- obj-$(CONFIG_MFD_AAT2870_CORE)	+= aat2870-core.o
-+obj-$(CONFIG_MFD_AT91_USART)	+= at91-usart.o
- obj-$(CONFIG_MFD_ATMEL_FLEXCOM)	+= atmel-flexcom.o
- obj-$(CONFIG_MFD_ATMEL_HLCDC)	+= atmel-hlcdc.o
- obj-$(CONFIG_MFD_ATMEL_SMC)	+= atmel-smc.o
-diff --git a/drivers/mfd/at91-usart.c b/drivers/mfd/at91-usart.c
-new file mode 100644
-index 000000000000..ba5754a1b7af
---- /dev/null
-+++ b/drivers/mfd/at91-usart.c
-@@ -0,0 +1,71 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for AT91 USART
-+ *
-+ * Copyright (C) 2018 Microchip Technology
-+ *
-+ * Author: Radu Pirea <radu.pirea@microchip.com>
-+ *
-+ */
-+
-+#include <dt-bindings/mfd/at91-usart.h>
-+
-+#include <linux/module.h>
-+#include <linux/mfd/core.h>
-+#include <linux/property.h>
-+
-+static struct mfd_cell at91_usart_spi_subdev = {
-+		.name = "at91_usart_spi",
-+		.of_compatible = "microchip,at91sam9g45-usart-spi",
-+	};
-+
-+static struct mfd_cell at91_usart_serial_subdev = {
-+		.name = "atmel_usart_serial",
-+		.of_compatible = "atmel,at91rm9200-usart-serial",
-+	};
-+
-+static int at91_usart_mode_probe(struct platform_device *pdev)
-+{
-+	struct mfd_cell cell;
-+	u32 opmode = AT91_USART_MODE_SERIAL;
-+
-+	device_property_read_u32(&pdev->dev, "atmel,usart-mode", &opmode);
-+
-+	switch (opmode) {
-+	case AT91_USART_MODE_SPI:
-+		cell = at91_usart_spi_subdev;
-+		break;
-+	case AT91_USART_MODE_SERIAL:
-+		cell = at91_usart_serial_subdev;
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "atmel,usart-mode has an invalid value %u\n",
-+			opmode);
-+		return -EINVAL;
-+	}
-+
-+	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO, &cell, 1,
-+			      NULL, 0, NULL);
-+}
-+
-+static const struct of_device_id at91_usart_mode_of_match[] = {
-+	{ .compatible = "atmel,at91rm9200-usart" },
-+	{ .compatible = "atmel,at91sam9260-usart" },
-+	{ /* sentinel */ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, at91_flexcom_of_match);
-+
-+static struct platform_driver at91_usart_mfd = {
-+	.probe	= at91_usart_mode_probe,
-+	.driver	= {
-+		.name		= "at91_usart_mode",
-+		.of_match_table	= at91_usart_mode_of_match,
-+	},
-+};
-+
-+module_platform_driver(at91_usart_mfd);
-+
-+MODULE_AUTHOR("Radu Pirea <radu.pirea@microchip.com>");
-+MODULE_DESCRIPTION("AT91 USART MFD driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+> Thank you, applied to drm-misc-next
 
+Is this the right branch? Shouldn't this go to drm-misc-fixes instead,
+so it reaches the tree before the 4.18 release?
+Just stumbled over the issue when compiling 4.18-rc1 for arm32, so it
+definitely needs fixing in this cycle.
+
+Cheers,
+Andre.
