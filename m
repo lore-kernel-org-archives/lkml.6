@@ -2,100 +2,75 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED21C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A63C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A998620863
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:48:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZI6hAjL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A998620863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D9504208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:51:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9504208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935295AbeFROsz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:48:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934674AbeFROsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:48:54 -0400
-Received: from mail-io0-f176.google.com (mail-io0-f176.google.com [209.85.223.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90744208E0;
-        Mon, 18 Jun 2018 14:48:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529333333;
-        bh=IdpB9pbAd6YpbJ6jAgx2JZoljKxYox+glG3obiIUmlI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=HZI6hAjLLq61mkyXhYw/1hjLiDjn5ia9n2ImmDO/sOeIyXAHgvHUyxZeTAhehO2hE
-         bbXI2D1h9q0BZ0pkBUN/ikCORasMsiE5BFmnDdry7xbzQTSi9uXRIfWj2rXDayplR9
-         uI8l3sd6/7IBEDu97yR1hw/RXsoJUHMPEgTQ/9GA=
-Received: by mail-io0-f176.google.com with SMTP id d22-v6so17021671iof.13;
-        Mon, 18 Jun 2018 07:48:53 -0700 (PDT)
-X-Gm-Message-State: APt69E11XURiQNx809RmeETRQbIYpqa+C5/fFDXNJ6maTwdKhRiI66Dr
-        dmlWesGPq2CWFNaERxMuuWikSISRAD5O3+moWQ==
-X-Google-Smtp-Source: ADUXVKIg+mYipVHYfppCV89sMMhyWoKaCBfV5WlAKJrvHMC0ECp6XM/yO62BDzv7UFnKC5splK9QiVo+mxOHM1X+aXw=
-X-Received: by 2002:a6b:bd47:: with SMTP id n68-v6mr10926662iof.111.1529333332858;
- Mon, 18 Jun 2018 07:48:52 -0700 (PDT)
+        id S935243AbeFROvo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:51:44 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:42412 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934674AbeFROvn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 10:51:43 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5IEpbB6017854;
+        Mon, 18 Jun 2018 23:51:37 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Mon, 18 Jun 2018 23:51:37 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5IEpZ86017846
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 18 Jun 2018 23:51:36 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: general protection fault in loop_validate_file
+To:     syzbot <syzbot+2f228435b0b9ec0ba068@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <0000000000006a6282056eeb71da@google.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <e9bd0998-b9ea-0028-b429-58baac69b877@I-love.SAKURA.ne.jp>
+Date:   Mon, 18 Jun 2018 23:51:30 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 07:48:32
- -0700 (PDT)
-In-Reply-To: <20180618123932.GA28476@centauri.lan>
-References: <20180614111138.8923-1-niklas.cassel@linaro.org>
- <20180614111138.8923-6-niklas.cassel@linaro.org> <20180618110642.GA6928@sirena.org.uk>
- <20180618123932.GA28476@centauri.lan>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 18 Jun 2018 08:48:32 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJQ0GbFtnpP9-YCEcVKHDdHbT5hshZGvNDQw=u5ZANdvg@mail.gmail.com>
-Message-ID: <CAL_JsqJQ0GbFtnpP9-YCEcVKHDdHbT5hshZGvNDQw=u5ZANdvg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] ASoC: qdsp6: Add depends on OF
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0000000000006a6282056eeb71da@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 6:39 AM, Niklas Cassel <niklas.cassel@linaro.org> wrote:
-> On Mon, Jun 18, 2018 at 12:06:42PM +0100, Mark Brown wrote:
->> On Thu, Jun 14, 2018 at 01:11:36PM +0200, Niklas Cassel wrote:
->> > of_platform_device_destroy is only defined when building
->> > with CONFIG_OF=y. Add a depends on OF.
->>
->> Is it sensible that of_platform_device_destroy() is only defined when
->> building with CONFIG_OF=y?
->
-> I'm redirecting that question to the device tree maintainers.
->
-> There are a few of_* functions in include/linux/of_platform.h
-> that are only defined when CONFIG_OF=y:
->
-> of_platform_device_create()
-> of_platform_device_destroy()
-> of_platform_bus_probe()
-> of_device_alloc()
->
-> Rob, Frank, do you want me to create static inline dummy versions of these?
+On 2018/06/18 23:33, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    ce397d215ccd Linux 4.18-rc1
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=129dfccf800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f390986c4f7cd566
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2f228435b0b9ec0ba068
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
 
-No, because generally you should not be using these functions
-directly. Yes, there are some users, but if you look at the tree,
-there are few or isolated (PowerPC) users. Using
-of_platform_populate/of_platform_depopulate is preferred.
+This is a known bug. We are waiting for response from Jens Axboe at
+http://lkml.kernel.org/r/748bce03-afda-4ed2-13b3-1fcd01d57770@kernel.dk .
 
-Rob
+#syz dup: general protection fault in lo_ioctl (2)
