@@ -5,61 +5,105 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA35C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF09C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5801E2075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:42:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5801E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id 061AD2075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:42:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 061AD2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaiser.cx
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936947AbeFRUmd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 16:42:33 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:58046 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936907AbeFRUmc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 16:42:32 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fV0ys-0003Hk-No; Mon, 18 Jun 2018 22:42:30 +0200
-Message-ID: <1529354549.3092.36.camel@sipsolutions.net>
-Subject: Re: [PATCH v3] bitfield: fix *_encode_bits()
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Date:   Mon, 18 Jun 2018 22:42:29 +0200
-In-Reply-To: <CAHp75VesXgrh-XR-3bFMOF6eE0K=NyRvyY1tw1yOX44rJS9fag@mail.gmail.com> (sfid-20180618_224029_738852_AF216451)
-References: <20180618195618.17536-1-johannes@sipsolutions.net>
-         <CAHp75VdY+PF0Edm_py+UiD3nz77HTQps_8uaRh+Sa3C+UKECKA@mail.gmail.com>
-         <1529353683.3092.32.camel@sipsolutions.net>
-         <CAHp75VesXgrh-XR-3bFMOF6eE0K=NyRvyY1tw1yOX44rJS9fag@mail.gmail.com>
-         (sfid-20180618_224029_738852_AF216451)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S936965AbeFRUmu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 16:42:50 -0400
+Received: from botnar.kaiser.cx ([176.28.20.183]:44542 "EHLO botnar.kaiser.cx"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935389AbeFRUmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 16:42:46 -0400
+Received: from dslb-188-096-148-178.188.096.pools.vodafone-ip.de ([188.96.148.178] helo=reykholt.kaiser.cx)
+        by botnar.kaiser.cx with esmtpsa (TLSv1:AES128-SHA:128)
+        (Exim 4.72)
+        (envelope-from <martin@kaiser.cx>)
+        id 1fV0yt-0000x2-Gx; Mon, 18 Jun 2018 22:42:31 +0200
+From:   Martin Kaiser <martin@kaiser.cx>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Kaiser <martin@kaiser.cx>, stable@vger.kernel.org
+Subject: [PATCH v3] mtd: rawnand: mxc: set spare area size register explicitly
+Date:   Mon, 18 Jun 2018 22:41:03 +0200
+Message-Id: <1529354463-23526-1-git-send-email-martin@kaiser.cx>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
+References: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-18 at 23:40 +0300, Andy Shevchenko wrote:
+The v21 version of the NAND flash controller contains a Spare Area Size
+Register (SPAS) at offset 0x10. Its setting defaults to the maximum
+spare area size of 218 bytes. The size that is set in this register is
+used by the controller when it calculates the ECC bytes internally in
+hardware.
 
-> The idea is to print what was the input, expected output and actual result.
-> Then you would see what exactly is broken.
+Usually, this register is updated from settings in the IIM fuses when
+the system is booting from NAND flash. For other boot media, however,
+the SPAS register remains at the default setting, which may not work for
+the particular flash chip on the board. The same goes for flash chips
+whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
+sector size and 128 bytes spare area size can't be configured in the IIM
+fuses on imx25 systems).
 
-Yeah, I guess we could. I did some of that work.
+Set the SPAS register explicitly during the preset operation. Derive the
+register value from mtd->oobsize that was detected during probe by
+decoding the flash chip's ID bytes.
 
-> I dunno how much we may take away from this certain test case, though
-> it would be better for my opinion.
+While at it, rename the define for the spare area register's offset to
+NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
+different from the register on v21 controllers.
 
-TBH though, I'm not sure I want to do this (right now at least). I don't
-think we gain anything from it, it's so basic ... so to me it's just
-pointless extra code.
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Cc: stable@vger.kernel.org
+Fixes: d484018 ("mtd: mxc_nand: set NFC registers after reset")
+---
+changes in v3
+   - add a Fixes tag pointing to the commit that introduced the
+     preset() operation
 
-johannes
+changes in v2
+   - fix the commit message
+   - use '/ 2' instead of shift operator for division
+
+ drivers/mtd/nand/raw/mxc_nand.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
+index 45786e7..26cef21 100644
+--- a/drivers/mtd/nand/raw/mxc_nand.c
++++ b/drivers/mtd/nand/raw/mxc_nand.c
+@@ -48,7 +48,7 @@
+ #define NFC_V1_V2_CONFIG		(host->regs + 0x0a)
+ #define NFC_V1_V2_ECC_STATUS_RESULT	(host->regs + 0x0c)
+ #define NFC_V1_V2_RSLTMAIN_AREA		(host->regs + 0x0e)
+-#define NFC_V1_V2_RSLTSPARE_AREA	(host->regs + 0x10)
++#define NFC_V21_RSLTSPARE_AREA		(host->regs + 0x10)
+ #define NFC_V1_V2_WRPROT		(host->regs + 0x12)
+ #define NFC_V1_UNLOCKSTART_BLKADDR	(host->regs + 0x14)
+ #define NFC_V1_UNLOCKEND_BLKADDR	(host->regs + 0x16)
+@@ -1274,6 +1274,9 @@ static void preset_v2(struct mtd_info *mtd)
+ 	writew(config1, NFC_V1_V2_CONFIG1);
+ 	/* preset operation */
+ 
++	/* spare area size in 16-bit half-words */
++	writew(mtd->oobsize / 2, NFC_V21_RSLTSPARE_AREA);
++
+ 	/* Unlock the internal RAM Buffer */
+ 	writew(0x2, NFC_V1_V2_CONFIG);
+ 
+-- 
+2.1.4
+
