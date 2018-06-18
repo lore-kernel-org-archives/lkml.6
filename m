@@ -2,98 +2,78 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C5CC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5001CC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:07:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED8620836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:05:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGKq8TLh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED8620836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E419B2075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:07:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E419B2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935743AbeFRSFD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 14:05:03 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:40582 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935505AbeFRSE7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 14:04:59 -0400
-Received: by mail-yw0-f196.google.com with SMTP id p129-v6so5952778ywg.7;
-        Mon, 18 Jun 2018 11:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l83y+8latgHcmjUkgXdqiHP+aMwxNlaOma9f6/lVFPk=;
-        b=MGKq8TLhnrEZ2LMRDX9oGqkclQwlo+yWSwfCsMOPdMuyhelBfvlfADulybEEJ7o9i/
-         jAtlPR6/dRUlk+EbV9NiHaTG7VwW7H5EpmJniDgXVDgm5jUHkQWCGYTQ1yJ3FgmLPMqW
-         otyOT8imk0fFWRh3kSSUzp1ZWFaXlE+pjnPquHxuH8Z59qLxQ02ydXozy5Heke+wpHNd
-         o2lDWkbhmG6pD54mC0yAAb7CWTHCj6NYduYY1Hn1LJyI/U2F1iR14YYVTMNI23dCmCHh
-         xXaVCM+IQ3dXapQX3Ez+TtUQsm0hz6nvuv6FSeGRY7YqBzaZbTOWu0p/C9VhoRBHQbc+
-         h7fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l83y+8latgHcmjUkgXdqiHP+aMwxNlaOma9f6/lVFPk=;
-        b=qYeNNJ70qCOjObEy0R6T92WMnEd7Og7isyAyzOpgM3zZe0PeikdIWSW/7VWLgFsGB0
-         BXh8vic1I8S+XZDMxitcTNOOQfV5PXzlRImyY5j9YJBDtTI+GuPD/nYQIWUtkRwjvhtF
-         Xut0UI1ayFF/CIh8VZOq5uuVeGY8hONo/LwhPjFOoM/WYPQuyI2NxyLURE1x1MrMLX+s
-         SrvFc/wr8XbhxwBIHTTu7ENsAaw3bsvnChbKQ2fXY/r3cnwUs+87DThWk3b2GkGztHim
-         fgFhfIkA+sdyGCVZ6eelmomumZ1ibZdDA+UI0Ss38T4L+hWSXi79Upa+5DDYDo42pxbL
-         zwuA==
-X-Gm-Message-State: APt69E1SzdWpJ1PrM+qmH1Q3BcltajiH/SpdWmu1m9P0KbU0p0sjjPT/
-        Bt5qbjaing6CvyXuQ713Wes=
-X-Google-Smtp-Source: ADUXVKIjPmOnz3+DBkr9p7r7QRHRBCXreAbrETTQhBs09SQryquQSPDqxOziDWfx6cw5XehnxNjW1w==
-X-Received: by 2002:a0d:e1d5:: with SMTP id k204-v6mr6278224ywe.365.1529345098775;
-        Mon, 18 Jun 2018 11:04:58 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::3:b910])
-        by smtp.gmail.com with ESMTPSA id n3-v6sm6270326ywd.78.2018.06.18.11.04.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 11:04:57 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 11:04:56 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dan.carpenter@oracle.com
-Subject: Re: [PATCH] libahci: Fix possible Spectre-v1 pmp indexing in
- ahci_led_store()
-Message-ID: <20180618180456.GB1351649@devbig577.frc2.facebook.com>
-References: <1528453593-225313-1-git-send-email-john.garry@huawei.com>
+        id S964828AbeFRSHU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 14:07:20 -0400
+Received: from mga05.intel.com ([192.55.52.43]:7641 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935531AbeFRSHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 14:07:18 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 11:07:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,240,1526367600"; 
+   d="scan'208";a="238174363"
+Received: from mjozwowi-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.183])
+  by fmsmga005.fm.intel.com with ESMTP; 18 Jun 2018 11:07:14 -0700
+Date:   Mon, 18 Jun 2018 21:07:12 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Louis Collard <louiscollard@chromium.org>
+Cc:     linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org
+Subject: Re: [PATCH] tpm: Add module parameter for hwrng quality.
+Message-ID: <20180618180712.GB20697@linux.intel.com>
+References: <20180608065438.110109-1-louiscollard@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528453593-225313-1-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180608065438.110109-1-louiscollard@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 06:26:33PM +0800, John Garry wrote:
-> Currently smatch warns of possible Spectre-V1 issue in ahci_led_store():
-> drivers/ata/libahci.c:1150 ahci_led_store() warn: potential spectre issue 'pp->em_priv' (local cap)
+On Fri, Jun 08, 2018 at 02:54:38PM +0800, Louis Collard wrote:
+> It is now possible for drivers to easily specify a hwrng quality, however
+> most do not currently do this, and in cases where they do, it may be
+> desirable to override the driver-specified value with a user-specified
+> one. This patch adds a parameter to set or override the hwrng quality.
 > 
-> Userspace controls @pmp from following callchain:
-> em_message->store()
-> ->ata_scsi_em_message_store()
-> -->ap->ops->em_store()
-> --->ahci_led_store()
+> Signed-off-by: Louis Collard <louiscollard@chromium.org>
+> ---
+>  drivers/char/tpm/tpm-chip.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> After the mask+shift @pmp is effectively an 8b value, which is used to
-> index into an array of length 8, so sanitize the array index.
-> 
-> Signed-off-by: John Garry <john.garry@huawei.com>
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 0a62c19937b6..4def49cfc634 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -33,6 +33,11 @@
+>  DEFINE_IDR(dev_nums_idr);
+>  static DEFINE_MUTEX(idr_lock);
+>  
+> +static short override_rng_quality = -1;
+> +module_param(override_rng_quality, short, 0644);
 
-Applied to libata/for-4.18-fixes.
+Should this be 600 i.e. not to leak this information?
 
-Thanks.
-
--- 
-tejun
+/Jarkko
