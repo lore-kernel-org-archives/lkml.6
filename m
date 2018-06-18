@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5075C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDF9C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7998F20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:09:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7998F20852
+	by mail.kernel.org (Postfix) with ESMTP id 57C37208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:09:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C37208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936873AbeFRJJG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:09:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33788 "EHLO
+        id S936883AbeFRJJk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:09:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33736 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967010AbeFRIat (ORCPT
+        with ESMTP id S966990AbeFRIah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:30:49 -0400
+        Mon, 18 Jun 2018 04:30:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5DB89C75;
-        Mon, 18 Jun 2018 08:30:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13C3BC83;
+        Mon, 18 Jun 2018 08:30:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Helge Deller <deller@gmx.de>,
+        stable@vger.kernel.org, Jiang Biao <jiang.biao2@zte.com.cn>,
+        Wen Yang <wen.yang99@zte.com.cn>, Tejun Heo <tj@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 042/189] parisc: time: Convert read_persistent_clock() to read_persistent_clock64()
-Date:   Mon, 18 Jun 2018 10:12:18 +0200
-Message-Id: <20180618081211.033940279@linuxfoundation.org>
+Subject: [PATCH 4.14 039/189] blkcg: init root blkcg_gq under lock
+Date:   Mon, 18 Jun 2018 10:12:15 +0200
+Message-Id: <20180618081210.924961581@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,35 +51,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Baolin Wang <baolin.wang@linaro.org>
+From: Jiang Biao <jiang.biao2@zte.com.cn>
 
-[ Upstream commit f76cdd00ef0e39d880139b074e3b247594dff95a ]
+[ Upstream commit 901932a3f9b2b80352896be946c6d577c0a9652c ]
 
-The read_persistent_clock() uses a timespec, which is not year 2038 safe
-on 32bit systems. On parisc architecture, we have implemented generic
-RTC drivers that can be used to compensate the system suspend time, but
-the RTC time can not represent the nanosecond resolution, so this patch
-just converts to read_persistent_clock64() with timespec64.
+The initializing of q->root_blkg is currently outside of queue lock
+and rcu, so the blkg may be destroied before the initializing, which
+may cause dangling/null references. On the other side, the destroys
+of blkg are protected by queue lock or rcu. Put the initializing
+inside the queue lock and rcu to make it safer.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Helge Deller <deller@gmx.de>
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+CC: Tejun Heo <tj@kernel.org>
+CC: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/parisc/kernel/time.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-cgroup.c |   17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
---- a/arch/parisc/kernel/time.c
-+++ b/arch/parisc/kernel/time.c
-@@ -205,7 +205,7 @@ static int __init rtc_init(void)
- device_initcall(rtc_init);
- #endif
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -1149,18 +1149,16 @@ int blkcg_init_queue(struct request_queu
+ 	rcu_read_lock();
+ 	spin_lock_irq(q->queue_lock);
+ 	blkg = blkg_create(&blkcg_root, q, new_blkg);
++	if (IS_ERR(blkg))
++		goto err_unlock;
++	q->root_blkg = blkg;
++	q->root_rl.blkg = blkg;
+ 	spin_unlock_irq(q->queue_lock);
+ 	rcu_read_unlock();
  
--void read_persistent_clock(struct timespec *ts)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
- 	static struct pdc_tod tod_data;
- 	if (pdc_tod_read(&tod_data) == 0) {
+ 	if (preloaded)
+ 		radix_tree_preload_end();
+ 
+-	if (IS_ERR(blkg))
+-		return PTR_ERR(blkg);
+-
+-	q->root_blkg = blkg;
+-	q->root_rl.blkg = blkg;
+-
+ 	ret = blk_throtl_init(q);
+ 	if (ret) {
+ 		spin_lock_irq(q->queue_lock);
+@@ -1168,6 +1166,13 @@ int blkcg_init_queue(struct request_queu
+ 		spin_unlock_irq(q->queue_lock);
+ 	}
+ 	return ret;
++
++err_unlock:
++	spin_unlock_irq(q->queue_lock);
++	rcu_read_unlock();
++	if (preloaded)
++		radix_tree_preload_end();
++	return PTR_ERR(blkg);
+ }
+ 
+ /**
 
 
