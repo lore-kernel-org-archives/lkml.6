@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B97C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC097C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB7F208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB7F208D5
+	by mail.kernel.org (Postfix) with ESMTP id 72BF5208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72BF5208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935140AbeFRKHD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:07:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54120 "EHLO
+        id S935435AbeFRKHZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:07:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934808AbeFRIRY (ORCPT
+        with ESMTP id S934770AbeFRIRT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:17:24 -0400
+        Mon, 18 Jun 2018 04:17:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7CE1C84;
-        Mon, 18 Jun 2018 08:17:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5153AC7A;
+        Mon, 18 Jun 2018 08:17:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 022/279] dt-bindings: dmaengine: rcar-dmac: document R8A77965 support
-Date:   Mon, 18 Jun 2018 10:10:07 +0200
-Message-Id: <20180618080609.725096329@linuxfoundation.org>
+Subject: [PATCH 4.16 054/279] netfilter: nf_tables: NAT chain and extensions require NF_TABLES
+Date:   Mon, 18 Jun 2018 10:10:39 +0200
+Message-Id: <20180618080611.076710405@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,32 +50,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-[ Upstream commit b89bc283286b105e50aab9ab35992c0237ac77d8 ]
+[ Upstream commit 39f2ff0816e5421476c2bc538b68b4bb0708a78e ]
 
-Add documentation for r8a77965 compatible string to rcar-dmac device
-tree bindings documentation.
+Move these options inside the scope of the 'if' NF_TABLES and
+NF_TABLES_IPV6 dependencies. This patch fixes:
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Rob Herring <robh@kernel.org>
+   net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_nat_do_chain':
+>> net/ipv6/netfilter/nft_chain_nat_ipv6.c:37: undefined reference to `nft_do_chain'
+   net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_chain_nat_ipv6_exit':
+>> net/ipv6/netfilter/nft_chain_nat_ipv6.c:94: undefined reference to `nft_unregister_chain_type'
+   net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_chain_nat_ipv6_init':
+>> net/ipv6/netfilter/nft_chain_nat_ipv6.c:87: undefined reference to `nft_register_chain_type'
+
+that happens with:
+
+CONFIG_NF_TABLES=m
+CONFIG_NFT_CHAIN_NAT_IPV6=y
+
+Fixes: 02c7b25e5f54 ("netfilter: nf_tables: build-in filter chain type")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt |    1 +
- 1 file changed, 1 insertion(+)
+ net/ipv6/netfilter/Kconfig |   55 ++++++++++++++++++++++-----------------------
+ 1 file changed, 28 insertions(+), 27 deletions(-)
 
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -25,6 +25,7 @@ Required Properties:
- 		- "renesas,dmac-r8a7794" (R-Car E2)
- 		- "renesas,dmac-r8a7795" (R-Car H3)
- 		- "renesas,dmac-r8a7796" (R-Car M3-W)
-+		- "renesas,dmac-r8a77965" (R-Car M3-N)
- 		- "renesas,dmac-r8a77970" (R-Car V3M)
+--- a/net/ipv6/netfilter/Kconfig
++++ b/net/ipv6/netfilter/Kconfig
+@@ -48,6 +48,34 @@ config NFT_CHAIN_ROUTE_IPV6
+ 	  fields such as the source, destination, flowlabel, hop-limit and
+ 	  the packet mark.
  
- - reg: base address and length of the registers block for the DMAC
++if NF_NAT_IPV6
++
++config NFT_CHAIN_NAT_IPV6
++	tristate "IPv6 nf_tables nat chain support"
++	help
++	  This option enables the "nat" chain for IPv6 in nf_tables. This
++	  chain type is used to perform Network Address Translation (NAT)
++	  packet transformations such as the source, destination address and
++	  source and destination ports.
++
++config NFT_MASQ_IPV6
++	tristate "IPv6 masquerade support for nf_tables"
++	depends on NFT_MASQ
++	select NF_NAT_MASQUERADE_IPV6
++	help
++	  This is the expression that provides IPv4 masquerading support for
++	  nf_tables.
++
++config NFT_REDIR_IPV6
++	tristate "IPv6 redirect support for nf_tables"
++	depends on NFT_REDIR
++	select NF_NAT_REDIRECT
++	help
++	  This is the expression that provides IPv4 redirect support for
++	  nf_tables.
++
++endif # NF_NAT_IPV6
++
+ config NFT_REJECT_IPV6
+ 	select NF_REJECT_IPV6
+ 	default NFT_REJECT
+@@ -107,39 +135,12 @@ config NF_NAT_IPV6
+ 
+ if NF_NAT_IPV6
+ 
+-config NFT_CHAIN_NAT_IPV6
+-	depends on NF_TABLES_IPV6
+-	tristate "IPv6 nf_tables nat chain support"
+-	help
+-	  This option enables the "nat" chain for IPv6 in nf_tables. This
+-	  chain type is used to perform Network Address Translation (NAT)
+-	  packet transformations such as the source, destination address and
+-	  source and destination ports.
+-
+ config NF_NAT_MASQUERADE_IPV6
+ 	tristate "IPv6 masquerade support"
+ 	help
+ 	  This is the kernel functionality to provide NAT in the masquerade
+ 	  flavour (automatic source address selection) for IPv6.
+ 
+-config NFT_MASQ_IPV6
+-	tristate "IPv6 masquerade support for nf_tables"
+-	depends on NF_TABLES_IPV6
+-	depends on NFT_MASQ
+-	select NF_NAT_MASQUERADE_IPV6
+-	help
+-	  This is the expression that provides IPv4 masquerading support for
+-	  nf_tables.
+-
+-config NFT_REDIR_IPV6
+-	tristate "IPv6 redirect support for nf_tables"
+-	depends on NF_TABLES_IPV6
+-	depends on NFT_REDIR
+-	select NF_NAT_REDIRECT
+-	help
+-	  This is the expression that provides IPv4 redirect support for
+-	  nf_tables.
+-
+ endif # NF_NAT_IPV6
+ 
+ config IP6_NF_IPTABLES
 
 
