@@ -2,72 +2,71 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22EBC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2A9C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 923DD208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9491208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:47:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLExMCxN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923DD208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kX4ODAlr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9491208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934140AbeFRPrc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:47:32 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43375 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933524AbeFRPra (ORCPT
+        id S934536AbeFRPrl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:47:41 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:33007 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933524AbeFRPri (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:47:30 -0400
-Received: by mail-lf0-f66.google.com with SMTP id x13-v6so9962420lff.10;
-        Mon, 18 Jun 2018 08:47:29 -0700 (PDT)
+        Mon, 18 Jun 2018 11:47:38 -0400
+Received: by mail-io0-f196.google.com with SMTP id d185-v6so17263495ioe.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:47:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=qgzqnrQalWsGW1RJVA40c2sIz7hW8l0vaoU27TZiEco=;
-        b=ZLExMCxNBYTqhWy/KRYNEbP0v74/bZNn2kC6fDdbzepymZqDoIeuClUhYhnJ+EoWfF
-         UIN5wwdwqJR641ZAdWtJGAkBvuCvcBPf1UTYx4ICUSKs5Ah6b9SWNEOM5c9L8BgfCswh
-         AKUgVhEakh6cPSTev7Vx/qNPdOK1IYihMz+/ScngoHxVWjeR2v7+pNgodcnAydjFQsJV
-         Tv6GpXSQF57ZUd/ijPLNxh5yU52v4uuzk+dg0juk+9nikbudkE8WrJm8pIPHcxmO12MT
-         hY9ubxMw8UejiPLA6VM6/u2m2j7Lx211ay/7C10bCbR+zE4Kehck4bFVvNrYhjrjG8RD
-         PP2A==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=tOnjkKeADz3nJ/gip7p6u950ufjqLcXizLv/Itz+7U0=;
+        b=kX4ODAlr9a/PVTwGZEAzsqsY/NtiI/iBnaoI7J/RGLOptSVkhIkzKBkoWSCGmbLqPm
+         lMSIoNDXqI/6oiPEh2PjFqqzNH3RPHBPcuH1BjiArexgWaSVhoYqc3ad4AuwvZsofv+z
+         7ghjcvWqkHUVNkp/cu6/7K7gD+zhTL3Diq000=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=qgzqnrQalWsGW1RJVA40c2sIz7hW8l0vaoU27TZiEco=;
-        b=JvfQSbNoKe/pObgPSmeDEq6wudzbs3RXRXwHUMfUajRf4Rc6OK6L01340logzozQts
-         IpYXohU6CJCfuRkS5ZxqNSC6ddfLMC/BHNGQS0RK0mAd0E7v1H5s9WuXR98NFk5Uommr
-         Z6Khehp6Y9twbF4UIT/kkI7AaLVLCGYKK2vFmTd60dBqtyy0VmTe/xiO8Z8Zl1IY2pp1
-         aGzWAdIcezC4Orh2tOtRfMgFb929XgMqRUOPz4WYo9Ww3yVWQkLJcQ1/JAxrzBDcVsza
-         8sMbVeYxl3Pk069k6tiPCoKTBjtn8gRdiD7Hckgsf9CFnT1fO/RF37GPTANtIW3F+ugl
-         1qZA==
-X-Gm-Message-State: APt69E2VmnIsV2L7/oTwiVZw3KzGY+ZGijLGg8CaGmOPEZck7pkpehe2
-        Et9OTb9v7OUiizZDxg1PUtb7rpGJWtidMR3Z0mw=
-X-Google-Smtp-Source: ADUXVKI5mFeSzSlEh8xn8+Kudft9xYR5VJUplKTE26kDGptmPtSvO12sUb+AfOrDy+rWglC2Hq3gQP3JbDNKhCOFS8c=
-X-Received: by 2002:a2e:9ac4:: with SMTP id p4-v6mr8528334ljj.60.1529336849179;
- Mon, 18 Jun 2018 08:47:29 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=tOnjkKeADz3nJ/gip7p6u950ufjqLcXizLv/Itz+7U0=;
+        b=LYDuSnpawoiPA6sxvYMZJSqudyh4Yqz+lonz2xV8n/3tCIyN4vfICBmn/C/4ai9D8a
+         JJu5KoIixxkz1/i3sXCDzjwYEHqgLHhssTyRhHARStDrvfyWVGBTqxtHJMpEpPCgQo1A
+         0j4fWdurY9vKDIwJ+tnmvCODOnvCL7i3NxMXoTfzpcxStG3jNbOHuZg8TdNBlapZ4a9y
+         kFxaWeGuRmjTQMZ2sYF8vLg/TKNhz2/Ps+C08wKB8pYR8ZFSRD2ZHSt//X7GdRjgRLBw
+         lJPp5QsEsFVBnd0hPxs0pJzgdscBy4pzoATpYNHXzIQIQi8P/GLs23oKOXhsLHrEidiD
+         4kFw==
+X-Gm-Message-State: APt69E0xB7K8MHi/i1o8pTQrzQ42l/L//BdFO9YYG1xw/PYCCBvJKU9o
+        2Wp+pjzcF5U1YloQKuztDQFMKLrc4E0i9vMqpE+OMA==
+X-Google-Smtp-Source: ADUXVKIN0Q+0SmweCmAOO7vfVHaZBY6sEyGI6Tg99f+ZY5w/KV8NJywFreWM1N08BTLx+AJNRXycaPA8NwLi8q+ygGI=
+X-Received: by 2002:a6b:dd0b:: with SMTP id f11-v6mr10388845ioc.173.1529336857804;
+ Mon, 18 Jun 2018 08:47:37 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:47:28
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:47:37
  -0700 (PDT)
-In-Reply-To: <20180618150715.GA30470@amd>
-References: <20180618144210.72367-1-arnd@arndb.de> <20180618150715.GA30470@amd>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 18 Jun 2018 17:47:28 +0200
-X-Google-Sender-Auth: GmNvrDGxJQNLPUaVoGXl3Pz7yAU
-Message-ID: <CAK8P3a1K19WoEGaqrj6Fx0GYyj1jmA50dS+dMJuF7ugkwjCiug@mail.gmail.com>
-Subject: Re: [PATCH] leds: ledtrig-activity: use ktime_get_boot_ns()
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Kees Cook <keescook@chromium.org>, Willy Tarreau <w@1wt.eu>,
-        linux-leds@vger.kernel.org,
+In-Reply-To: <20180618141811.3353245-1-arnd@arndb.de>
+References: <20180618141811.3353245-1-arnd@arndb.de>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 18 Jun 2018 17:47:37 +0200
+Message-ID: <CAKv+Gu-r_+b_tCXeZeE6=EN3=1N98rheODOwV_4mpb9GMzdqrQ@mail.gmail.com>
+Subject: Re: [PATCH] efi: cper: avoid using get_seconds()
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038@lists.linaro.org, Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Yazen Ghannam <yazen.ghannam@amd.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        gengdongjiu <gengdongjiu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,49 +74,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 5:07 PM, Pavel Machek <pavel@ucw.cz> wrote:
-> Hi!
+On 18 June 2018 at 16:17, Arnd Bergmann <arnd@arndb.de> wrote:
+> get_seconds() is deprecated because of the 32-bit time overflow
+> in y2038/y2106 on 32-bit architectures. The way it is used in
+> cper_next_record_id() causes an overflow in 2106 when unsigned UTC
+> seconds overflow, even on 64-bit architectures.
 >
->> get_monotonic_boottime() is deprecated, so let's convert this to
->> the simpler ktime_get_boot_ns().
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> This starts using ktime_get_real_seconds() to give us more than 32 bits
+> of timestamp on all architectures, and then changes the algorithm to use
+> 39 bits for the timestamp after the y2038 wrap date, plus an always-1
+> bit at the top. This gives us another 127 epochs of 136 years, with
+> strictly monotonically increasing sequence numbers across boots.
 >
-> Have you tested it?
-
-No, only build-tested.
-
->> diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
->> index 5081894082bd..589c1bc4d0b9 100644
->> --- a/drivers/leds/trigger/ledtrig-activity.c
->> +++ b/drivers/leds/trigger/ledtrig-activity.c
->> @@ -37,7 +37,6 @@ static void led_activity_function(struct timer_list *t)
->>       struct activity_data *activity_data = from_timer(activity_data, t,
->>                                                        timer);
->>       struct led_classdev *led_cdev = activity_data->led_cdev;
->> -     struct timespec boot_time;
->>       unsigned int target;
->>       unsigned int usage;
->>       int delay;
->> @@ -57,7 +56,7 @@ static void led_activity_function(struct timer_list *t)
->>               return;
->>       }
->>
->> -     get_monotonic_boottime(&boot_time);
->> +     curr_boot = ktime_get_boot_ns();
->>
->>       cpus = 0;
->>       curr_used = 0;
->> @@ -76,7 +75,6 @@ static void led_activity_function(struct timer_list *t)
->>        * down to 16us, ensuring we won't overflow 32-bit computations below
->>        * even up to 3k CPUs, while keeping divides cheap on smaller systems.
->>        */
->> -     curr_boot = timespec_to_ns(&boot_time) * cpus;
+> This is almost certainly overkill, but seems better than just extending
+> the deadline from 2038 to 2106.
 >
-> Original code is pretty weird (notice the * cpus), so I'm
-> double-checking.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/firmware/efi/cper.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+> index 3bf0dca378a6..b73fc4cab083 100644
+> --- a/drivers/firmware/efi/cper.c
+> +++ b/drivers/firmware/efi/cper.c
+> @@ -48,8 +48,21 @@ u64 cper_next_record_id(void)
+>  {
+>         static atomic64_t seq;
+>
+> -       if (!atomic64_read(&seq))
+> -               atomic64_set(&seq, ((u64)get_seconds()) << 32);
+> +       if (!atomic64_read(&seq)) {
+> +               time64_t time = ktime_get_real_seconds();
+> +
+> +               /*
+> +                * This code is unlikely to still be needed in year 2106,
+> +                * but just in case, let's use a few more bits for timestamps
+> +                * after y2038 to be sure they keep increasing monotonically
+> +                * for the next few hundred years...
+> +                */
+> +               if (time < 0x80000000)
+> +                       atomic64_set(&seq, (ktime_get_real_seconds()) << 32);
+> +               else
+> +                       atomic64_set(&seq, 0x8000000000000000ull |
+> +                                          ktime_get_real_seconds() << 24);
+> +       }
 
-Ok, dropping the *cpus was not intentional, I'll repost a version that puts
-it that back. Thanks for pointing this out!
+Given that these values are never decoded and interpreted as
+timestamps, can't we simply switch to the second flavour immediately?
 
-       Arnd
+>
+>         return atomic64_inc_return(&seq);
+>  }
+> --
+> 2.9.0
+>
