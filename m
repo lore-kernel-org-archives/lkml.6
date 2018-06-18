@@ -4,92 +4,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F275C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F01D8C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDCF9208B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C058208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:05:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NcnACHza"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDCF9208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="M6SvDUDI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C058208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935141AbeFRMFU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:05:20 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:36960 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934786AbeFRMFC (ORCPT
+        id S935207AbeFRMFW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:05:22 -0400
+Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:52971 "EHLO
+        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934790AbeFRME6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:05:02 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5IC3p7e176900;
-        Mon, 18 Jun 2018 12:05:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2017-10-26;
- bh=IthjKZJKYvkZUJCypEdwOCg9FA5GKBu+XQRCN4uPUA4=;
- b=NcnACHzaIFTu4NtUVhvlZMybwyDiwmjSZ6lgbu7jBfMQ2y9o8gLQIhEiwWW1i3wHEIYV
- rmK4sY4RtBbZdzEnu96zU9opLYYu9b08mCUCcDpD/kyynhE7B2a53eqVVqLfX8tDa65/
- b1Dm+SaWaz3f90twEuToEikzQn8Qj7BC3c/rGhvQngDNldY2qNSd724ZUS4MUYJrWr3s
- +KiGaLWH6S0pLsb4tUZViczczb46A1c5SJPFlew8xa9IH73OnztPCky87C4Su/QORsTz
- m0PP4fuJSwPKKpCyeER2eTsUxIXAuHnM6wJfab7kNLcc3cJE4hkBHcFexnyAj/bloIR1 uw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jmr2mbw0x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Jun 2018 12:05:00 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5IC4xCu012418
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Jun 2018 12:04:59 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5IC4xwd005627;
-        Mon, 18 Jun 2018 12:04:59 GMT
-Received: from liran-pc.ravello.local (/213.57.127.2)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Jun 2018 05:04:58 -0700
-From:   Liran Alon <liran.alon@oracle.com>
-To:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     idan.brown@oracle.com, Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH] net: net_failover: fix typo in net_failover_slave_register()
-Date:   Mon, 18 Jun 2018 15:04:05 +0300
-Message-Id: <1529323445-23777-1-git-send-email-liran.alon@oracle.com>
-X-Mailer: git-send-email 1.9.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8927 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=465
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806180146
+        Mon, 18 Jun 2018 08:04:58 -0400
+X-Greylist: delayed 493 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Jun 2018 08:04:58 EDT
+Received: from mx-rz-3.rrze.uni-erlangen.de (mx-rz-3.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::16])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 418V1m5HlSz1y6S;
+        Mon, 18 Jun 2018 13:56:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
+        t=1529323004; bh=VuzJraIjlQmM9oQIXQvoJQzGPdopD9k7qSm2ZyLEtYA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From:To:CC:
+         Subject;
+        b=M6SvDUDISuzg2e48+gjHiYA42Db3NZvb1CsJaoUSw+XSPBRRJcm5k/VDH7aHW8X4E
+         QxUWRyuWPATSA3+h4pmnv4jJs8XwT/czrPBPh63jVFeEITFUn+DXZ4liZ7zOVGyNH2
+         G3SKBhWvtfXCk5QzrwNeajMMVWrxksvb6Xdw0VAAsoWHwK+GyS6tmiKZ9HKr0Wpcj1
+         h0E4KFFdgv1emVK+GllRub+RaEZJdP6GhYpro8HvyviJhfB7qjftskDOazqVWk5V/u
+         day931G1reQrTjJwW/zXkwJefNnJOuv8qEHGx4A6ecNVMFRP1GOLXrof/JClk3Nhwu
+         CzfVg1OVbRjCg==
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 131.188.11.37
+Received: from faumail.fau.de (smtp-auth.fau.de [131.188.11.37])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX19ov6isG38nVuh4zGmP8NQ+ujgivVapYAw=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 418V1k4bcmz1y8r;
+        Mon, 18 Jun 2018 13:56:42 +0200 (CEST)
+Received: from
+ lCNWPlPjsYJKrW5ckuCGyD/ycu1PrZ2yuUwESm0OsbzXM4S4ggaMNxLrLc5TXA7+
+ by faumail.uni-erlangen.de
+ with HTTP (HTTP/1.1 POST); Mon, 18 Jun 2018 13:56:42 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 18 Jun 2018 13:56:42 +0200
+From:   "Sommer, Roman" <roman.sommer@fau.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@i4.cs.fau.de, Daniel Graefe <daniel.graefe@fau.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        =?UTF-8?Q?Hans_P=2E_M=C3=B6ller_Eb?= =?UTF-8?Q?ner?= 
+        <hmoller@uc.cl>, Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?Q?Fabi=C3=A1n_Inostroza?= <soulsonceonfire@gmail.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] sound/line6: checkpatch: fix block comment style
+In-Reply-To: <20180618112134.GA4289@kroah.com>
+References: <1529317779-15908-1-git-send-email-roman.sommer@fau.de>
+ <1529317779-15908-2-git-send-email-roman.sommer@fau.de>
+ <20180618112134.GA4289@kroah.com>
+Message-ID: <6dd9eb6c3dc6d57eb140696bed4e4a6c@fau.de>
+X-Sender: roman.sommer@fau.de
+User-Agent: Roundcube Webmail/1.2.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sync both unicast and multicast lists instead of unicast twice.
+On 2018-06-18 13:21, Greg Kroah-Hartman wrote:
+> On Mon, Jun 18, 2018 at 12:29:37PM +0200, Roman Sommer wrote:
+>> CC: Jaroslav Kysela <perex@perex.cz>
+>> CC: Takashi Iwai <tiwai@suse.com>
+>> CC: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+>> CC: "Hans P. Möller Ebner" <hmoller@uc.cl>
+>> CC: Kees Cook <keescook@chromium.org>
+>> CC: Kate Stewart <kstewart@linuxfoundation.org>
+>> CC: Thomas Gleixner <tglx@linutronix.de>
+>> CC: "Fabián Inostroza" <soulsonceonfire@gmail.com>
+>> CC: Bhumika Goyal <bhumirks@gmail.com>
+>> CC: Philippe Ombredanne <pombredanne@nexb.com>
+>> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> CC: alsa-devel@alsa-project.org
+>> CC: linux-kernel@vger.kernel.org
+>> 
+>> This patch fixed the style of multiline comments in sound/usb/line6.
+> 
+> Why is all of those cc: lines in the changelog body?
+> 
+> Very odd...
+> 
+> greg k-h
 
-Fixes: cfc80d9a116 ("net: Introduce net_failover driver")
-Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
-Signed-off-by: Liran Alon <liran.alon@oracle.com>
----
- drivers/net/net_failover.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Greg,
 
-diff --git a/drivers/net/net_failover.c b/drivers/net/net_failover.c
-index 83f7420ddea5..4f390fa557e4 100644
---- a/drivers/net/net_failover.c
-+++ b/drivers/net/net_failover.c
-@@ -527,7 +527,7 @@ static int net_failover_slave_register(struct net_device *slave_dev,
- 
- 	netif_addr_lock_bh(failover_dev);
- 	dev_uc_sync_multiple(slave_dev, failover_dev);
--	dev_uc_sync_multiple(slave_dev, failover_dev);
-+	dev_mc_sync_multiple(slave_dev, failover_dev);
- 	netif_addr_unlock_bh(failover_dev);
- 
- 	err = vlan_vids_add_by_dev(slave_dev, failover_dev);
--- 
-1.9.1
+Sorry for the mess-up here, they were meant for the header only.
 
+I used a newline to group people in the patches which I now know I 
+should
+not do.
+
+
+Roman
