@@ -3,29 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D7BC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1E3C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E3D6208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:05:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3D6208A5
+	by mail.kernel.org (Postfix) with ESMTP id C2F3C208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:05:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F3C208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964852AbeFRPAk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:00:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41734 "EHLO mail.bootlin.com"
+        id S964775AbeFRPA1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:00:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41211 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964806AbeFRPAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:00:37 -0400
+        id S935321AbeFRPAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:00:15 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7DDC2207C2; Mon, 18 Jun 2018 17:00:35 +0200 (CEST)
+        id C0D6A207A5; Mon, 18 Jun 2018 17:00:13 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6743D20650;
-        Mon, 18 Jun 2018 17:00:22 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id D51F820850;
+        Mon, 18 Jun 2018 17:00:11 +0200 (CEST)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -68,9 +67,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-sunxi@googlegroups.com,
         Hugues Fruchet <hugues.fruchet@st.com>,
         Randy Li <ayaka@soulik.info>
-Subject: [PATCH v4 17/19] ARM: dts: sun5i: Add Video Engine and reserved memory nodes
-Date:   Mon, 18 Jun 2018 16:58:41 +0200
-Message-Id: <20180618145843.14631-18-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 03/19] dt-bindings: sram: sunxi: Add A13 binding for the C1 SRAM region
+Date:   Mon, 18 Jun 2018 16:58:27 +0200
+Message-Id: <20180618145843.14631-4-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
 References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
@@ -79,63 +78,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds nodes for the Video Engine and the associated reserved memory
-for sun5i-based platforms. Up to 96 MiB of memory are dedicated to the
-CMA pool.
-
-The VPU can only map the first 256 MiB of DRAM, so the reserved memory
-pool has to be located in that area. Following Allwinner's decision in
-downstream software, the last 96 MiB of the first 256 MiB of RAM are
-reserved for this purpose.
+This introduces a dedicated binding for the C1 SRAM region for the A13
+sunxi platform.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 6fa9e28edc59..3138f791b6b2 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -108,6 +108,21 @@
- 		};
- 	};
+diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+index 5af5bafd5572..ddc82cbd7f4d 100644
+--- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
++++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+@@ -32,6 +32,9 @@ The valid sections compatible for A10 are:
+     - allwinner,sun4i-a10-sram-c1
+     - allwinner,sun4i-a10-sram-d
  
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
++The valid sections compatible for A13 are:
++    - allwinner,sun5i-a13-sram-c1
 +
-+		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
-+		cma_pool: cma@4a000000 {
-+			compatible = "shared-dma-pool";
-+			size = <0x6000000>;
-+			alloc-ranges = <0x4a000000 0x6000000>;
-+			reusable;
-+			linux,cma-default;
-+		};
-+	};
-+
- 	soc@1c00000 {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -292,6 +307,19 @@
- 			};
- 		};
+ The valid sections compatible for A64 are:
+     - allwinner,sun50i-a64-sram-c
  
-+		vpu: video-codec@1c0e000 {
-+			compatible = "allwinner,sun5i-a13-video-engine";
-+			reg = <0x01c0e000 0x1000>;
-+
-+			clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
-+				 <&ccu CLK_DRAM_VE>;
-+			clock-names = "ahb", "mod", "ram";
-+
-+			resets = <&ccu RST_VE>;
-+			interrupts = <53>;
-+			allwinner,sram = <&ve_sram 1>;
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun5i-a13-mmc";
- 			reg = <0x01c0f000 0x1000>;
 -- 
 2.17.0
 
