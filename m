@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
 	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6F3C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E3FC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E5F208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4313C208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:38:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WNHoEypw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c9S71m7u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E5F208A5
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ajMqFRlX";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YpRkdTaa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4313C208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934834AbeFRNh4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:37:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42340 "EHLO
+        id S934873AbeFRNiE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:38:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42584 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933569AbeFRNhw (ORCPT
+        with ESMTP id S933569AbeFRNiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:37:52 -0400
+        Mon, 18 Jun 2018 09:38:00 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C4B2D60227; Mon, 18 Jun 2018 13:37:51 +0000 (UTC)
+        id 1D9AD60B25; Mon, 18 Jun 2018 13:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529329071;
-        bh=kHRZ7ft/r6oshUK0ah65du67Qyyb3LebaU14Uuvoueo=;
+        s=default; t=1529329080;
+        bh=0C1y+aYH80ZXUU4Sxa4aqGtPXpitrmbsXRlPXqEev4I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WNHoEypws5Ta7IZ4gScp7XDHeNqOMmDvc2jXO98LGWvv+QMvAzu7dcH61UFQbvQfk
-         8u1RlwILTcoEgsr7AO15V1By6fgOcGIq3JWEJUIyRmux5VnbaXy/hXf4KCj+IuRnwM
-         dFym9HXAZ12bhTMLF0cRVyL9tHjV/lBDKLA5mwlA=
+        b=ajMqFRlX2s4j8lgwEV+LUhNj+OgYoAhjfh+gIkhg9uVnZXn+Mr0YMPGg+MOtrRsau
+         DL3L/zpJoixFHNKsoAY/GryuT0RPTCZHRjRCc+f8l1n/xYu1oRcYlQvIZE2iVIrI6K
+         QPFQ2Vil3TEhc5I8D04DdNfD6zemSvyRqFQ0901U=
 Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4ADC960B16;
-        Mon, 18 Jun 2018 13:37:47 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3832D60227;
+        Mon, 18 Jun 2018 13:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529329070;
-        bh=kHRZ7ft/r6oshUK0ah65du67Qyyb3LebaU14Uuvoueo=;
+        s=default; t=1529329078;
+        bh=0C1y+aYH80ZXUU4Sxa4aqGtPXpitrmbsXRlPXqEev4I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c9S71m7ubBPMELDO1YUypzp5eF1g655X/6Lu4rfNznOmH5vu9QPaiG6Ev2znLgmr1
-         BIVCYm724qsAIqMSDk38g4HkiD0BYwlLRYTKREfA1MAftmdXXhkrE+tvyNrPv8+k6r
-         sAMK00ZHBLZWvCODdc423tMzACk6/WKtWGddsmbw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4ADC960B16
+        b=YpRkdTaas9DAfhS5LsH48ZJYIOlZzuhHKRA+eGp4tjgIB//X3NMZ++7vC5gEwiWw+
+         B+4O8Mon6GhqzaJCAWTV+XmD7Rv8kRoGfq2entI9OCLzEDCF4PWENwgX2BzouMEu1j
+         OO09SKFhV3gkzgmGCCpAhLBzEOS9znmzoFbu3sHE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3832D60227
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
 From:   Raju P L S S S N <rplsssn@codeaurora.org>
@@ -57,9 +57,9 @@ Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org,
         evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
         ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH v11 05/10] drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
-Date:   Mon, 18 Jun 2018 19:07:15 +0530
-Message-Id: <1529329040-2606-6-git-send-email-rplsssn@codeaurora.org>
+Subject: [PATCH v11 07/10] drivers: qcom: rpmh: cache sleep/wake state requests
+Date:   Mon, 18 Jun 2018 19:07:17 +0530
+Message-Id: <1529329040-2606-8-git-send-email-rplsssn@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529329040-2606-1-git-send-email-rplsssn@codeaurora.org>
 References: <1529329040-2606-1-git-send-email-rplsssn@codeaurora.org>
@@ -70,226 +70,363 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lina Iyer <ilina@codeaurora.org>
 
-Sleep and wake requests are sent when the application processor
-subsystem of the SoC is entering deep sleep states like in suspend.
-These requests help lower the system power requirements when the
-resources are not in use.
+Active state requests are sent immediately to the RSC controller, while
+sleep and wake state requests are cached in this driver to avoid taxing
+the RSC controller repeatedly. The cached values will be sent to the
+controller when the rpmh_flush() is called.
 
-Sleep and wake requests are written to the TCS slots but are not
-triggered at the time of writing. The TCS are triggered by the firmware
-after the last of the CPUs has executed its WFI. Since these requests
-may come in different batches of requests, it is the job of this
-controller driver to find and arrange the requests into the available
-TCSes.
+Generally, flushing is a system PM activity and may be called from the
+system PM drivers when the system is entering suspend or deeper sleep
+modes during cpuidle.
+
+Also allow invalidating the cached requests, so they may be re-populated
+again.
 
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
 Reviewed-by: Evan Green <evgreen@chromium.org>
 Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-
 ---
+Changes in v11:
+	- Remove IS_ERR check for ctrlr
+	- Remove rsc_drv instance from rpmh_ctrlr
+	- Initialize cache list in probe
+
+Changes in v10:
+	- Add EXPORT_SYMBOL
+
 Changes in v9:
-        - Bounds check in find_match()
-        - Bounds check in find_slots()
-        - Fix comment in tcs_ctrl_write()
-        - Remove EXPORT_SYMBOL
+	- Remove EXPORT_SYMBOL
+	- Rename lock to cache_lock
+	- Improve comments
 
-Changes in v8:
-	- Bounds check in find_match()
+Changes in v6:
+	- replace rpmh_client with device *
 
-Changes in v7:
-	- Bug fix in find_match()
+Changes in v4:
+	- remove locking for ->dirty in invalidate
+	- fix send_single
+Changes in v3:
+	- Remove locking for flush function
+	- Improve comments
 ---
- drivers/soc/qcom/rpmh-internal.h |   8 +++
- drivers/soc/qcom/rpmh-rsc.c      | 121 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 129 insertions(+)
+ drivers/soc/qcom/rpmh-internal.h |   8 +-
+ drivers/soc/qcom/rpmh-rsc.c      |   3 +
+ drivers/soc/qcom/rpmh.c          | 200 ++++++++++++++++++++++++++++++++++++++-
+ include/soc/qcom/rpmh.h          |  11 +++
+ 4 files changed, 215 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-index f8e0f2a..a464db4 100644
+index a464db4..ce6dedb4 100644
 --- a/drivers/soc/qcom/rpmh-internal.h
 +++ b/drivers/soc/qcom/rpmh-internal.h
-@@ -14,6 +14,7 @@
- #define MAX_CMDS_PER_TCS		16
- #define MAX_TCS_PER_TYPE		3
- #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
-+#define MAX_TCS_SLOTS			(MAX_CMDS_PER_TCS * MAX_TCS_PER_TYPE)
- 
- struct rsc_drv;
- 
-@@ -29,6 +30,8 @@
-  * @ncpt:      number of commands in each TCS
-  * @lock:      lock for synchronizing this TCS writes
-  * @req:       requests that are sent from the TCS
-+ * @cmd_cache: flattened cache of cmds in sleep/wake TCS
-+ * @slots:     indicates which of @cmd_addr are occupied
+@@ -66,10 +66,14 @@ struct rpmh_request {
+ /**
+  * struct rpmh_ctrlr: our representation of the controller
+  *
+- * @drv: the controller instance
++ * @cache: the list of cached requests
++ * @cache_lock: synchronize access to the cache data
++ * @dirty: was the cache updated since flush
   */
- struct tcs_group {
- 	struct rsc_drv *drv;
-@@ -39,6 +42,8 @@ struct tcs_group {
- 	int ncpt;
- 	spinlock_t lock;
- 	const struct tcs_request *req[MAX_TCS_PER_TYPE];
-+	u32 *cmd_cache;
-+	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
+ struct rpmh_ctrlr {
+-	struct rsc_drv *drv;
++	struct list_head cache;
++	spinlock_t cache_lock;
++	bool dirty;
  };
  
  /**
-@@ -92,6 +97,9 @@ struct rsc_drv {
- };
- 
- int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
-+int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
-+			     const struct tcs_request *msg);
-+int rpmh_rsc_invalidate(struct rsc_drv *drv);
- 
- void rpmh_tx_done(const struct tcs_request *msg, int r);
- 
 diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 59fa41f..b87f9b0 100644
+index a68dcd1..c703e61 100644
 --- a/drivers/soc/qcom/rpmh-rsc.c
 +++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -110,6 +110,12 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
- 	case RPMH_ACTIVE_ONLY_STATE:
- 		type = ACTIVE_TCS;
- 		break;
-+	case RPMH_WAKE_ONLY_STATE:
-+		type = WAKE_TCS;
-+		break;
-+	case RPMH_SLEEP_STATE:
-+		type = SLEEP_TCS;
-+		break;
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
-@@ -349,6 +355,108 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
- 	return ret;
+@@ -634,6 +634,9 @@ static int rpmh_rsc_probe(struct platform_device *pdev)
+ 	/* Enable the active TCS to send requests immediately */
+ 	write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, drv->tcs[ACTIVE_TCS].mask);
+ 
++	spin_lock_init(&drv->ctrlr.cache_lock);
++	INIT_LIST_HEAD(&drv->ctrlr.cache);
++
+ 	dev_set_drvdata(&pdev->dev, drv);
+ 
+ 	return devm_of_platform_populate(&pdev->dev);
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index 969f1d5..e42649d 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -8,10 +8,12 @@
+ #include <linux/interrupt.h>
+ #include <linux/jiffies.h>
+ #include <linux/kernel.h>
++#include <linux/list.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
++#include <linux/spinlock.h>
+ #include <linux/types.h>
+ #include <linux/wait.h>
+ 
+@@ -36,6 +38,21 @@
+ 
+ #define ctrlr_to_drv(ctrlr) container_of(ctrlr, struct rsc_drv, ctrlr)
+ 
++/**
++ * struct cache_req: the request object for caching
++ *
++ * @addr: the address of the resource
++ * @sleep_val: the sleep vote
++ * @wake_val: the wake vote
++ * @list: linked list obj
++ */
++struct cache_req {
++	u32 addr;
++	u32 sleep_val;
++	u32 wake_val;
++	struct list_head list;
++};
++
+ static struct rpmh_ctrlr *get_rpmh_ctrlr(const struct device *dev)
+ {
+ 	struct rsc_drv *drv = dev_get_drvdata(dev->parent);
+@@ -60,26 +77,106 @@ void rpmh_tx_done(const struct tcs_request *msg, int r)
+ 		complete(compl);
  }
  
-+static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
-+		      int len)
++static struct cache_req *__find_req(struct rpmh_ctrlr *ctrlr, u32 addr)
 +{
-+	int i, j;
++	struct cache_req *p, *req = NULL;
 +
-+	/* Check for already cached commands */
-+	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
-+		if (tcs->cmd_cache[i] != cmd[0].addr)
-+			continue;
-+		if (i + len >= tcs->num_tcs * tcs->ncpt)
-+			goto seq_err;
-+		for (j = 0; j < len; j++) {
-+			if (tcs->cmd_cache[i + j] != cmd[j].addr)
-+				goto seq_err;
++	list_for_each_entry(p, &ctrlr->cache, list) {
++		if (p->addr == addr) {
++			req = p;
++			break;
 +		}
-+		return i;
 +	}
 +
-+	return -ENODATA;
-+
-+seq_err:
-+	WARN(1, "Message does not match previous sequence.\n");
-+	return -EINVAL;
++	return req;
 +}
 +
-+static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
-+		      int *tcs_id, int *cmd_id)
++static struct cache_req *cache_rpm_request(struct rpmh_ctrlr *ctrlr,
++					   enum rpmh_state state,
++					   struct tcs_cmd *cmd)
 +{
-+	int slot, offset;
-+	int i = 0;
-+
-+	/* Find if we already have the msg in our TCS */
-+	slot = find_match(tcs, msg->cmds, msg->num_cmds);
-+	if (slot >= 0)
-+		goto copy_data;
-+
-+	/* Do over, until we can fit the full payload in a TCS */
-+	do {
-+		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
-+						  i, msg->num_cmds, 0);
-+		if (slot == tcs->num_tcs * tcs->ncpt)
-+			return -ENOMEM;
-+		i += tcs->ncpt;
-+	} while (slot + msg->num_cmds - 1 >= i);
-+
-+copy_data:
-+	bitmap_set(tcs->slots, slot, msg->num_cmds);
-+	/* Copy the addresses of the resources over to the slots */
-+	for (i = 0; i < msg->num_cmds; i++)
-+		tcs->cmd_cache[slot + i] = msg->cmds[i].addr;
-+
-+	offset = slot / tcs->ncpt;
-+	*tcs_id = offset + tcs->offset;
-+	*cmd_id = slot % tcs->ncpt;
-+
-+	return 0;
-+}
-+
-+static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
-+{
-+	struct tcs_group *tcs;
-+	int tcs_id = 0, cmd_id = 0;
++	struct cache_req *req;
 +	unsigned long flags;
-+	int ret;
 +
-+	tcs = get_tcs_for_msg(drv, msg);
-+	if (IS_ERR(tcs))
-+		return PTR_ERR(tcs);
++	spin_lock_irqsave(&ctrlr->cache_lock, flags);
++	req = __find_req(ctrlr, cmd->addr);
++	if (req)
++		goto existing;
 +
-+	spin_lock_irqsave(&tcs->lock, flags);
-+	/* find the TCS id and the command in the TCS to write to */
-+	ret = find_slots(tcs, msg, &tcs_id, &cmd_id);
-+	if (!ret)
-+		__tcs_buffer_write(drv, tcs_id, cmd_id, msg);
-+	spin_unlock_irqrestore(&tcs->lock, flags);
++	req = kzalloc(sizeof(*req), GFP_ATOMIC);
++	if (!req) {
++		req = ERR_PTR(-ENOMEM);
++		goto unlock;
++	}
 +
++	req->addr = cmd->addr;
++	req->sleep_val = req->wake_val = UINT_MAX;
++	INIT_LIST_HEAD(&req->list);
++	list_add_tail(&req->list, &ctrlr->cache);
++
++existing:
++	switch (state) {
++	case RPMH_ACTIVE_ONLY_STATE:
++		if (req->sleep_val != UINT_MAX)
++			req->wake_val = cmd->data;
++		break;
++	case RPMH_WAKE_ONLY_STATE:
++		req->wake_val = cmd->data;
++		break;
++	case RPMH_SLEEP_STATE:
++		req->sleep_val = cmd->data;
++		break;
++	default:
++		break;
++	};
++
++	ctrlr->dirty = true;
++unlock:
++	spin_unlock_irqrestore(&ctrlr->cache_lock, flags);
++
++	return req;
++}
++
+ /**
+- * __rpmh_write: send the RPMH request
++ * __rpmh_write: Cache and send the RPMH request
+  *
+  * @dev: The device making the request
+  * @state: Active/Sleep request type
+  * @rpm_msg: The data that needs to be sent (cmds).
++ *
++ * Cache the RPMH request and send if the state is ACTIVE_ONLY.
++ * SLEEP/WAKE_ONLY requests are not sent to the controller at
++ * this time. Use rpmh_flush() to send them to the controller.
+  */
+ static int __rpmh_write(const struct device *dev, enum rpmh_state state,
+ 			struct rpmh_request *rpm_msg)
+ {
+ 	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++	int ret = -EINVAL;
++	struct cache_req *req;
++	int i;
+ 
+ 	rpm_msg->msg.state = state;
+ 
+-	if (state != RPMH_ACTIVE_ONLY_STATE)
+-		return -EINVAL;
++	/* Cache the request in our store and link the payload */
++	for (i = 0; i < rpm_msg->msg.num_cmds; i++) {
++		req = cache_rpm_request(ctrlr, state, &rpm_msg->msg.cmds[i]);
++		if (IS_ERR(req))
++			return PTR_ERR(req);
++	}
++
++	rpm_msg->msg.state = state;
+ 
+-	WARN_ON(irqs_disabled());
++	if (state == RPMH_ACTIVE_ONLY_STATE) {
++		WARN_ON(irqs_disabled());
++		ret = rpmh_rsc_send_data(ctrlr_to_drv(ctrlr), &rpm_msg->msg);
++	} else {
++		ret = rpmh_rsc_write_ctrl_data(ctrlr_to_drv(ctrlr), &rpm_msg->msg);
++		/* Clean up our call by spoofing tx_done */
++		rpmh_tx_done(&rpm_msg->msg, ret);
++	}
+ 
+-	return rpmh_rsc_send_data(ctrlr_to_drv(ctrlr), &rpm_msg->msg);
 +	return ret;
+ }
+ 
+ /**
+@@ -114,3 +211,96 @@ int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 	return (ret > 0) ? 0 : -ETIMEDOUT;
+ }
+ EXPORT_SYMBOL(rpmh_write);
++
++static int is_req_valid(struct cache_req *req)
++{
++	return (req->sleep_val != UINT_MAX &&
++		req->wake_val != UINT_MAX &&
++		req->sleep_val != req->wake_val);
++}
++
++static int send_single(const struct device *dev, enum rpmh_state state,
++		       u32 addr, u32 data)
++{
++	DEFINE_RPMH_MSG_ONSTACK(dev, state, NULL, rpm_msg);
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++
++	/* Wake sets are always complete and sleep sets are not */
++	rpm_msg.msg.wait_for_compl = (state == RPMH_WAKE_ONLY_STATE);
++	rpm_msg.cmd[0].addr = addr;
++	rpm_msg.cmd[0].data = data;
++	rpm_msg.msg.num_cmds = 1;
++
++	return rpmh_rsc_write_ctrl_data(ctrlr_to_drv(ctrlr), &rpm_msg.msg);
 +}
 +
 +/**
-+ * rpmh_rsc_write_ctrl_data: Write request to the controller
++ * rpmh_flush: Flushes the buffered active and sleep sets to TCS
 + *
-+ * @drv: the controller
-+ * @msg: the data to be written to the controller
++ * @dev: The device making the request
 + *
-+ * There is no response returned for writing the request to the controller.
++ * Return: -EBUSY if the controller is busy, probably waiting on a response
++ * to a RPMH request sent earlier.
++ *
++ * This function is always called from the sleep code from the last CPU
++ * that is powering down the entire system. Since no other RPMH API would be
++ * executing at this time, it is safe to run lockless.
 + */
-+int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
++int rpmh_flush(const struct device *dev)
 +{
-+	if (!msg || !msg->cmds || !msg->num_cmds ||
-+	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
-+		pr_err("Payload error\n");
-+		return -EINVAL;
++	struct cache_req *p;
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++	int ret;
++
++	if (!ctrlr->dirty) {
++		pr_debug("Skipping flush, TCS has latest data.\n");
++		return 0;
 +	}
 +
-+	/* Data sent to this API will not be sent immediately */
-+	if (msg->state == RPMH_ACTIVE_ONLY_STATE)
-+		return -EINVAL;
-+
-+	return tcs_ctrl_write(drv, msg);
-+}
-+
- static int rpmh_probe_tcs_config(struct platform_device *pdev,
- 				 struct rsc_drv *drv)
- {
-@@ -424,6 +532,19 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
- 		tcs->mask = ((1 << tcs->num_tcs) - 1) << st;
- 		tcs->offset = st;
- 		st += tcs->num_tcs;
-+
-+		/*
-+		 * Allocate memory to cache sleep and wake requests to
-+		 * avoid reading TCS register memory.
-+		 */
-+		if (tcs->type == ACTIVE_TCS)
++	/*
++	 * Nobody else should be calling this function other than system PM,
++	 * hence we can run without locks.
++	 */
++	list_for_each_entry(p, &ctrlr->cache, list) {
++		if (!is_req_valid(p)) {
++			pr_debug("%s: skipping RPMH req: a:%#x s:%#x w:%#x",
++				 __func__, p->addr, p->sleep_val, p->wake_val);
 +			continue;
++		}
++		ret = send_single(dev, RPMH_SLEEP_STATE, p->addr, p->sleep_val);
++		if (ret)
++			return ret;
++		ret = send_single(dev, RPMH_WAKE_ONLY_STATE,
++				  p->addr, p->wake_val);
++		if (ret)
++			return ret;
++	}
 +
-+		tcs->cmd_cache = devm_kcalloc(&pdev->dev,
-+					      tcs->num_tcs * ncpt, sizeof(u32),
-+					      GFP_KERNEL);
-+		if (!tcs->cmd_cache)
-+			return -ENOMEM;
- 	}
++	ctrlr->dirty = false;
++
++	return 0;
++}
++EXPORT_SYMBOL(rpmh_flush);
++
++/**
++ * rpmh_invalidate: Invalidate all sleep and active sets
++ * sets.
++ *
++ * @dev: The device making the request
++ *
++ * Invalidate the sleep and active values in the TCS blocks.
++ */
++int rpmh_invalidate(const struct device *dev)
++{
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
++	int ret;
++
++	ctrlr->dirty = true;
++
++	do {
++		ret = rpmh_rsc_invalidate(ctrlr_to_drv(ctrlr));
++	} while (ret == -EAGAIN);
++
++	return ret;
++}
++EXPORT_SYMBOL(rpmh_invalidate);
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index c1d0f90..42e62a0 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -14,12 +14,23 @@
+ int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 	       const struct tcs_cmd *cmd, u32 n);
  
- 	drv->num_tcs = st;
++int rpmh_flush(const struct device *dev);
++
++int rpmh_invalidate(const struct device *dev);
++
+ #else
+ 
+ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 			     const struct tcs_cmd *cmd, u32 n)
+ { return -ENODEV; }
+ 
++
++static inline int rpmh_flush(const struct device *dev)
++{ return -ENODEV; }
++
++static inline int rpmh_invalidate(const struct device *dev)
++{ return -ENODEV; }
++
+ #endif /* CONFIG_QCOM_RPMH */
+ 
+ #endif /* __SOC_QCOM_RPMH_H__ */
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
 
