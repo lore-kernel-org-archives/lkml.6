@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A509FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C97C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 699E220864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 699E220864
+	by mail.kernel.org (Postfix) with ESMTP id B363920864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B363920864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968032AbeFRIgE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:36:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36160 "EHLO
+        id S1030199AbeFRIgH (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:36:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36170 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968000AbeFRIgC (ORCPT
+        with ESMTP id S968000AbeFRIgE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:36:02 -0400
+        Mon, 18 Jun 2018 04:36:04 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6035CCB4;
-        Mon, 18 Jun 2018 08:36:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 424DECB4;
+        Mon, 18 Jun 2018 08:36:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marian Rotariu <mrotariu@bitdefender.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Emil Tantilov <emil.s.tantilov@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 143/189] x86: Delay skip of emulated hypercall instruction
-Date:   Mon, 18 Jun 2018 10:13:59 +0200
-Message-Id: <20180618081214.981134476@linuxfoundation.org>
+Subject: [PATCH 4.14 144/189] ixgbe: return error on unsupported SFP module when resetting
+Date:   Mon, 18 Jun 2018 10:14:00 +0200
+Message-Id: <20180618081215.022474860@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,85 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marian Rotariu <mrotariu@bitdefender.com>
+From: Emil Tantilov <emil.s.tantilov@intel.com>
 
-[ Upstream commit 6356ee0c9602004e0a3b4b2dad68ee2ee9385b17 ]
+[ Upstream commit bbb2707623f3ccc48695da2433f06d7c38193451 ]
 
-The IP increment should be done after the hypercall emulation, after
-calling the various handlers. In this way, these handlers can accurately
-identify the the IP of the VMCALL if they need it.
+Add check for unsupported module and return the error code.
+This fixes a Coverity hit due to unused return status from setup_sfp.
 
-This patch keeps the same functionality for the Hyper-V handler which does
-not use the return code of the standard kvm_skip_emulated_instruction()
-call.
-
-Signed-off-by: Marian Rotariu <mrotariu@bitdefender.com>
-[Hyper-V hypercalls also need kvm_skip_emulated_instruction() - Paolo]
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Emil Tantilov <emil.s.tantilov@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/hyperv.c |    2 +-
- arch/x86/kvm/x86.c    |   19 +++++++++++--------
- 2 files changed, 12 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1223,7 +1223,7 @@ static int kvm_hv_hypercall_complete_use
- 	struct kvm_run *run = vcpu->run;
- 
- 	kvm_hv_hypercall_set_result(vcpu, run->hyperv.u.hcall.result);
--	return 1;
-+	return kvm_skip_emulated_instruction(vcpu);
- }
- 
- int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6297,12 +6297,13 @@ void kvm_vcpu_deactivate_apicv(struct kv
- int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- {
- 	unsigned long nr, a0, a1, a2, a3, ret;
--	int op_64_bit, r;
-+	int op_64_bit;
- 
--	r = kvm_skip_emulated_instruction(vcpu);
--
--	if (kvm_hv_hypercall_enabled(vcpu->kvm))
--		return kvm_hv_hypercall(vcpu);
-+	if (kvm_hv_hypercall_enabled(vcpu->kvm)) {
-+		if (!kvm_hv_hypercall(vcpu))
-+			return 0;
-+		goto out;
-+	}
- 
- 	nr = kvm_register_read(vcpu, VCPU_REGS_RAX);
- 	a0 = kvm_register_read(vcpu, VCPU_REGS_RBX);
-@@ -6323,7 +6324,7 @@ int kvm_emulate_hypercall(struct kvm_vcp
- 
- 	if (kvm_x86_ops->get_cpl(vcpu) != 0) {
- 		ret = -KVM_EPERM;
--		goto out;
-+		goto out_error;
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
+@@ -3413,6 +3413,9 @@ static s32 ixgbe_reset_hw_X550em(struct
+ 		hw->phy.sfp_setup_needed = false;
  	}
  
- 	switch (nr) {
-@@ -6343,12 +6344,14 @@ int kvm_emulate_hypercall(struct kvm_vcp
- 		ret = -KVM_ENOSYS;
- 		break;
- 	}
--out:
-+out_error:
- 	if (!op_64_bit)
- 		ret = (u32)ret;
- 	kvm_register_write(vcpu, VCPU_REGS_RAX, ret);
++	if (status == IXGBE_ERR_SFP_NOT_SUPPORTED)
++		return status;
 +
-+out:
- 	++vcpu->stat.hypercalls;
--	return r;
-+	return kvm_skip_emulated_instruction(vcpu);
- }
- EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
- 
+ 	/* Reset PHY */
+ 	if (!hw->phy.reset_disable && hw->phy.ops.reset)
+ 		hw->phy.ops.reset(hw);
 
 
