@@ -6,44 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE25FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3579EC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 701D320864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:31:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 701D320864
+	by mail.kernel.org (Postfix) with ESMTP id F060B20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F060B20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967041AbeFRIa7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:30:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33838 "EHLO
+        id S967056AbeFRIbE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:31:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33872 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966813AbeFRIa5 (ORCPT
+        with ESMTP id S966813AbeFRIbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:30:57 -0400
+        Mon, 18 Jun 2018 04:31:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EE43C75;
-        Mon, 18 Jun 2018 08:30:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEFE6C87;
+        Mon, 18 Jun 2018 08:31:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Jerome Glisse" <jglisse@redhat.com>,
-        Daniel Colascione <dancol@google.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 045/189] mm, pagemap: fix swap offset value for PMD migration entry
-Date:   Mon, 18 Jun 2018 10:12:21 +0200
-Message-Id: <20180618081211.150638361@linuxfoundation.org>
+Subject: [PATCH 4.14 046/189] proc: revalidate kernel thread inodes to root:root
+Date:   Mon, 18 Jun 2018 10:12:22 +0200
+Message-Id: <20180618081211.193806618@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -60,66 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huang Ying <ying.huang@intel.com>
+From: Alexey Dobriyan <adobriyan@gmail.com>
 
-[ Upstream commit 88c28f2469151b031f8cea9b28ed5be1b74a4172 ]
+[ Upstream commit 2e0ad552f5f8cd0fda02bc45fcd2b89821c62fd1 ]
 
-The swap offset reported by /proc/<pid>/pagemap may be not correct for
-PMD migration entries.  If addr passed into pagemap_pmd_range() isn't
-aligned with PMD start address, the swap offset reported doesn't
-reflect this.  And in the loop to report information of each sub-page,
-the swap offset isn't increased accordingly as that for PFN.
+task_dump_owner() has the following code:
 
-This may happen after opening /proc/<pid>/pagemap and seeking to a page
-whose address doesn't align with a PMD start address.  I have verified
-this with a simple test program.
+	mm = task->mm;
+	if (mm) {
+		if (get_dumpable(mm) != SUID_DUMP_USER) {
+			uid = ...
+		}
+	}
 
-BTW: migration swap entries have PFN information, do we need to restrict
-whether to show them?
+Check for ->mm is buggy -- kernel thread might be borrowing mm
+and inode will go to some random uid:gid pair.
 
-[akpm@linux-foundation.org: fix typo, per Huang, Ying]
-Link: http://lkml.kernel.org/r/20180408033737.10897-1-ying.huang@intel.com
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrei Vagin <avagin@openvz.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: "Jerome Glisse" <jglisse@redhat.com>
-Cc: Daniel Colascione <dancol@google.com>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Link: http://lkml.kernel.org/r/20180412220109.GA20978@avx2
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/proc/task_mmu.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/proc/base.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1327,9 +1327,11 @@ static int pagemap_pmd_range(pmd_t *pmdp
- #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
- 		else if (is_swap_pmd(pmd)) {
- 			swp_entry_t entry = pmd_to_swp_entry(pmd);
-+			unsigned long offset = swp_offset(entry);
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1694,6 +1694,12 @@ void task_dump_owner(struct task_struct
+ 	kuid_t uid;
+ 	kgid_t gid;
  
-+			offset += (addr & ~PMD_MASK) >> PAGE_SHIFT;
- 			frame = swp_type(entry) |
--				(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
-+				(offset << MAX_SWAPFILES_SHIFT);
- 			flags |= PM_SWAP;
- 			if (pmd_swp_soft_dirty(pmd))
- 				flags |= PM_SOFT_DIRTY;
-@@ -1349,6 +1351,8 @@ static int pagemap_pmd_range(pmd_t *pmdp
- 				break;
- 			if (pm->show_pfn && (flags & PM_PRESENT))
- 				frame++;
-+			else if (flags & PM_SWAP)
-+				frame += (1 << MAX_SWAPFILES_SHIFT);
- 		}
- 		spin_unlock(ptl);
- 		return err;
++	if (unlikely(task->flags & PF_KTHREAD)) {
++		*ruid = GLOBAL_ROOT_UID;
++		*rgid = GLOBAL_ROOT_GID;
++		return;
++	}
++
+ 	/* Default to the tasks effective ownership */
+ 	rcu_read_lock();
+ 	cred = __task_cred(task);
 
 
