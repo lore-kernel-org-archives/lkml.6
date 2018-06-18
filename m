@@ -6,33 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDA6C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31863C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9636C20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9636C20874
+	by mail.kernel.org (Postfix) with ESMTP id ECE7120874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE7120874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966615AbeFRI2Q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:28:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59074 "EHLO
+        id S966630AbeFRI2U (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:28:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59096 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966579AbeFRI2N (ORCPT
+        with ESMTP id S966613AbeFRI2Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:28:13 -0400
+        Mon, 18 Jun 2018 04:28:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F09CECEF;
-        Mon, 18 Jun 2018 08:28:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0F48D5D;
+        Mon, 18 Jun 2018 08:28:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Ellermen <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 248/279] afs: Fix address list parsing
-Date:   Mon, 18 Jun 2018 10:13:53 +0200
-Message-Id: <20180618080619.024537548@linuxfoundation.org>
+Subject: [PATCH 4.16 239/279] x86/pkeys/selftests: Remove dead debugging code, fix dprint_in_signal
+Date:   Mon, 18 Jun 2018 10:13:44 +0200
+Message-Id: <20180618080618.682438301@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -49,79 +57,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit 01fd79e6de74a447c5657913a335d9ce6508cdb1 ]
+[ Upstream commit a50093d60464dd51d1ae0c2267b0abe9e1de77f3 ]
 
-The parsing of port specifiers in the address list obtained from the DNS
-resolution upcall doesn't work as in4_pton() and in6_pton() will fail on
-encountering an unexpected delimiter (in this case, the '+' marking the
-port number).  However, in*_pton() can't be given multiple specifiers.
+There is some noisy debug code at the end of the signal handler.  It was
+disabled by an early, unconditional "return".  However, that return also
+hid a dprint_in_signal=0, which kept dprint_in_signal=1 and effectively
+locked us into permanent dprint_in_signal=1 behavior.
 
-Fix this by finding the delimiter in advance and not relying on in*_pton()
-to find the end of the address for us.
+Remove the return and the dead code, fixing dprint_in_signal.
 
-Fixes: 8b2a464ced77 ("afs: Add an address list concept")
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180509171342.846B9B2E@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/afs/addr_list.c |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c |   16 ----------------
+ 1 file changed, 16 deletions(-)
 
---- a/fs/afs/addr_list.c
-+++ b/fs/afs/addr_list.c
-@@ -121,7 +121,7 @@ struct afs_addr_list *afs_parse_text_add
- 	p = text;
- 	do {
- 		struct sockaddr_rxrpc *srx = &alist->addrs[alist->nr_addrs];
--		char tdelim = delim;
-+		const char *q, *stop;
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -325,22 +325,6 @@ void signal_handler(int signum, siginfo_
+ 	dprintf1("WARNING: set PRKU=0 to allow faulting instruction to continue\n");
+ 	pkru_faults++;
+ 	dprintf1("<<<<==================================================\n");
+-	return;
+-	if (trapno == 14) {
+-		fprintf(stderr,
+-			"ERROR: In signal handler, page fault, trapno = %d, ip = %016lx\n",
+-			trapno, ip);
+-		fprintf(stderr, "si_addr %p\n", si->si_addr);
+-		fprintf(stderr, "REG_ERR: %lx\n",
+-				(unsigned long)uctxt->uc_mcontext.gregs[REG_ERR]);
+-		exit(1);
+-	} else {
+-		fprintf(stderr, "unexpected trap %d! at 0x%lx\n", trapno, ip);
+-		fprintf(stderr, "si_addr %p\n", si->si_addr);
+-		fprintf(stderr, "REG_ERR: %lx\n",
+-				(unsigned long)uctxt->uc_mcontext.gregs[REG_ERR]);
+-		exit(2);
+-	}
+ 	dprint_in_signal = 0;
+ }
  
- 		if (*p == delim) {
- 			p++;
-@@ -130,28 +130,33 @@ struct afs_addr_list *afs_parse_text_add
- 
- 		if (*p == '[') {
- 			p++;
--			tdelim = ']';
-+			q = memchr(p, ']', end - p);
-+		} else {
-+			for (q = p; q < end; q++)
-+				if (*q == '+' || *q == delim)
-+					break;
- 		}
- 
--		if (in4_pton(p, end - p,
-+		if (in4_pton(p, q - p,
- 			     (u8 *)&srx->transport.sin6.sin6_addr.s6_addr32[3],
--			     tdelim, &p)) {
-+			     -1, &stop)) {
- 			srx->transport.sin6.sin6_addr.s6_addr32[0] = 0;
- 			srx->transport.sin6.sin6_addr.s6_addr32[1] = 0;
- 			srx->transport.sin6.sin6_addr.s6_addr32[2] = htonl(0xffff);
--		} else if (in6_pton(p, end - p,
-+		} else if (in6_pton(p, q - p,
- 				    srx->transport.sin6.sin6_addr.s6_addr,
--				    tdelim, &p)) {
-+				    -1, &stop)) {
- 			/* Nothing to do */
- 		} else {
- 			goto bad_address;
- 		}
- 
--		if (tdelim == ']') {
--			if (p == end || *p != ']')
--				goto bad_address;
-+		if (stop != q)
-+			goto bad_address;
-+
-+		p = q;
-+		if (q < end && *q == ']')
- 			p++;
--		}
- 
- 		if (p < end) {
- 			if (*p == '+') {
 
 
