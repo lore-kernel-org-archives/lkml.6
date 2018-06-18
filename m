@@ -6,114 +6,100 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D73CC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABACC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5D30208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:18:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5D30208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 19794208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:27:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19794208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934375AbeFRMSR convert rfc822-to-8bit (ORCPT
+        id S1755101AbeFRM1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:18:17 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34896 "EHLO mail.bootlin.com"
+        Mon, 18 Jun 2018 08:27:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39666 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933501AbeFRMSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:18:15 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2212B207C2; Mon, 18 Jun 2018 14:18:13 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 722A620650;
-        Mon, 18 Jun 2018 14:18:00 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 14:18:00 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mtd@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
-        linux-kbuild@vger.kernel.org,
-        "linux-stable #4 . 14+" <stable@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 1/3] mtd: rawnand: denali_dt: add more clocks based
- on IP datasheet
-Message-ID: <20180618141800.2b8b9721@xps13>
-In-Reply-To: <20180618094636.0e40c518@bbrezillon>
-References: <1529025532-22087-1-git-send-email-yamada.masahiro@socionext.com>
-        <1529025532-22087-2-git-send-email-yamada.masahiro@socionext.com>
-        <5816516.AqyscFuYxX@blindfold>
-        <20180618094636.0e40c518@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751560AbeFRM1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 08:27:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A6907ADD3;
+        Mon, 18 Jun 2018 12:27:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A7C251E0A81; Mon, 18 Jun 2018 14:27:29 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 14:27:29 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-block@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
+Message-ID: <20180618122729.f5gh7nuaibuvf3e7@quack2.suse.cz>
+References: <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
+ <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
+ <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
+ <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz>
+ <20180611160131.GQ1351649@devbig577.frc2.facebook.com>
+ <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz>
+ <20180611172053.GR1351649@devbig577.frc2.facebook.com>
+ <20180612155754.x5k2yndh5t6wlmpy@quack2.suse.cz>
+ <20180613143315.GS1351649@devbig577.frc2.facebook.com>
+ <20180615120620.uyc7h6sudbpsecnm@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180615120620.uyc7h6sudbpsecnm@quack2.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-
-On Mon, 18 Jun 2018 09:46:36 +0200, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-
-> On Mon, 18 Jun 2018 09:09:02 +0200
-> Richard Weinberger <richard@nod.at> wrote:
-> 
-> > Am Freitag, 15. Juni 2018, 03:18:50 CEST schrieb Masahiro Yamada:  
-> > > According to the Denali User's Guide, this IP needs three clocks:
-> > > 
-> > >  - clk: controller core clock
-> > > 
-> > >  - clk_x: bus interface clock
-> > > 
-> > >  - ecc_clk: clock at which ECC circuitry is run
-> > > 
-> > > Currently, denali_dt.c requires a single anonymous clock and its
-> > > frequency.  However, the driver needs to get the frequency of "clk_x"
-> > > not "clk".  This is confusing because people tend to assume the
-> > > anonymous clock means the core clock.  In fact, I got a report of
-> > > SOCFPGA breakage because the timing parameters are calculated based
-> > > on a wrong frequency.
-> > > 
-> > > Instead of the cheesy implementation, the clocks in the real hardware
-> > > should be represented in the driver and the DT-binding.
-> > > 
-> > > However, adding new clocks would break the existing platforms.  For the
-> > > backward compatibility, the driver still accepts a single clock just as
-> > > before.  If clk_x is missing, clk_x_rate is set to a hardcoded value.
-> > > This is fine for existing DT of Socionext UniPhier, and also fixes the
-> > > issue of Altera (Intel) SOCFPGA because both platforms use 200 MHz for
-> > > the bus interface clock.
-> > > 
-> > > Fixes: 1bb88666775e ("mtd: nand: denali: handle timing parameters by setup_data_interface()")
-> > > Cc: linux-stable <stable@vger.kernel.org> #4.14+
-> > > Reported-by: Richard Weinberger <richard@nod.at>
-> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>    
+On Fri 15-06-18 14:06:20, Jan Kara wrote:
+> On Wed 13-06-18 07:33:15, Tejun Heo wrote:
+> > Hello, Jan.
 > > 
-> > Reviewed-by: Richard Weinberger <richard@nod.at>  
+> > On Tue, Jun 12, 2018 at 05:57:54PM +0200, Jan Kara wrote:
+> > > > Yeah, right, so the root cause is that we're walking the wb_list while
+> > > > holding lock and expecting the object to stay there even after lock is
+> > > > released.  Hmm... we can use a mutex to synchronize the two
+> > > > destruction paths.  It's not like they're hot paths anyway.
+> > > 
+> > > Hmm, do you mean like having a per-bdi or even a global mutex that would
+> > > protect whole wb_shutdown()? Yes, that should work and we could get rid of
+> > > WB_shutting_down bit as well with that. Just it seems a bit strange to
+> > 
+> > Yeap.
+> > 
+> > > introduce a mutex only to synchronize these two shutdown paths - usually
+> > > locks protect data structures and in this case we have cgwb_lock for
+> > > that so it looks like a duplication from a first look.
+> > 
+> > Yeah, I feel a bit reluctant too but I think that's the right thing to
+> > do here.  This is an inherently weird case where there are two ways
+> > that an object can go away with the immediate drain requirement from
+> > one side.  It's not a hot path and the dumber the synchronization the
+> > better, right?
 > 
-> Maybe a
-> 
-> Tested-by: Richard Weinberger <richard@nod.at>
-> 
-> ?
-> 
-> > Reported-by: Philipp Rosenberger <p.rosenberger@linutronix.de>  
-> 
-> Should I replace your Reported-by by this one or simply add it?
-> 
-> Miquel, I'll take this patch in mtd/fixes, and let you take the 2
-> others in nand/next. That means you'll have to back merge v4.18-rc2
-> into the nand/next tree, or base your tree on v4.18-rc2 instead of
-> v4.18-rc1.
+> Yeah, fair enough. Something like attached patch? It is indeed considerably
+> simpler than fixing synchronization using WB_shutting_down. This one even
+> got some testing using scsi_debug, I want to do more testing next week with
+> more cgroup writeback included.
 
-Sure.
+OK, the test has passed some beating with cgroup writeback running. I'll do
+official posting shortly.
 
-Miquèl
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
