@@ -2,264 +2,207 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B087AC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 03:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C187C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 03:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53CF3208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 03:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEFE3208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 03:40:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EexptU5i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53CF3208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vEFWhKDt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEFE3208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932475AbeFRDiX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 23:38:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:41875 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754550AbeFRDiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 23:38:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 418Gyf0fPFz9s0W;
-        Mon, 18 Jun 2018 13:38:18 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529293099;
-        bh=Sh0OH+G7x96aXb5dZC8pV/Rf4kXVzlLHmZ9RnHL/RFE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EexptU5i7hNOObWitlvlBXOWp+5hrOp8Pgh3MuWtNet6+C9f5RHAaI0tfciuQPSds
-         y6/pqF2hhMRxeRPTopnwVR3zfyem3NOlQVWFQM7SECdCGY80Qx5Xqt7XEvxmtY4Sm2
-         2daAeZkt5PRHRD8EqggAgHknhkBunNF+lycKVEqRqjhWUyuBD7Qf+fgIEzr+BV92t5
-         RcjLWYR/m5LuYBNGvZt90iNcuFvYVIfX1O/hg9OHyjEdNHZQDi95eYs2Nb9nmSv8EB
-         MGb4Y/u4Pae/tvXURBKvyKArc5kNKVHkbnBmhoCB0R+M3iSpjTwaQ0ebtknRnxYE7O
-         T2FBJtIr5henA==
-Date:   Mon, 18 Jun 2018 13:38:17 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>,
-        David Sterba <dsterba@suse.cz>
-Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
-Message-ID: <20180618133817.6faba27e@canb.auug.org.au>
-In-Reply-To: <20180403122919.3c503f74@canb.auug.org.au>
-References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180131095446.443670dc@canb.auug.org.au>
-        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180201092551.759f32be@canb.auug.org.au>
-        <20180314101704.51aaae7f@canb.auug.org.au>
-        <20180403122919.3c503f74@canb.auug.org.au>
+        id S1754592AbeFRDkg (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 23:40:36 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43922 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754525AbeFRDke (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 23:40:34 -0400
+Received: by mail-lf0-f65.google.com with SMTP id x13-v6so6954323lff.10;
+        Sun, 17 Jun 2018 20:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=e/w2kQQHxzlmA1zyKdUdlN+5OYqE7edlFjhNCLdZOfQ=;
+        b=vEFWhKDtNQ/BJyY75q2DURdnj2rM4TJv9upKLmUDQmMdGnCBH1lzYtvA4PxX/Y+G/6
+         me+/enp6XiQ4qxy9V+zmYgAYDR1DiLx7Vg7QFTIGGMxI9P1bsJs552TgxFQeWuZIomTT
+         IIHGPdlbE4TdbHwzHvlTp0h2D6RubCD40IJb0pwB/jyPv4OfbL81LjE26lTY3mUmK3co
+         /IxoPzf0pa41KuQCX2oJURa4LfFsccqiOImP3R6P0y3+k4Eo1V+Q2behOpivTVBpSF/g
+         o0fHVjwiSNDLAPygvwpDgkYCFB69gRptuii8SDhYykIkrtC2BlIar2TnXnpNPOI2IVn/
+         EljA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=e/w2kQQHxzlmA1zyKdUdlN+5OYqE7edlFjhNCLdZOfQ=;
+        b=Rpct7foozOhwXF8xcwSSPr94FXE2dSA2M/sKbJmlFM+ymAN6aqQWRAUFxOT2nmYCzc
+         EM/eiNE16z0EsoCOviy0XmQbr7T8F/VBmomOO+039fAKymAwNMDbT7If5yolqUvrQeUg
+         F247IcnzAV0Isa0pdAR1lSSmf/FKhedFQr1mYXsD4RqhJyuRgSKcBgSerND7cQc8bzSo
+         HCjpbA9cgavjqpo08GvcvvaJZXg9NVloRohyr6vVAqmlYMT4Q3E7pNE157SARxHUT2LC
+         xVNeW3Bwpg4ltblV63vHPqknLYY86Dai4tb665pby760vBllb+ldaNaCrhcw6FoAu9J5
+         7alA==
+X-Gm-Message-State: APt69E2Smr6bBu0iEUM2/2wyxsZiz/9YlPgrWEBIGUs9lo7nzxUg6yxW
+        FjZoWMZq3hL6oKK2vkYHvCrEFHtGVjNW2j/XOVc=
+X-Google-Smtp-Source: ADUXVKLx4uoic23Gfu2pIzaPjXr8vLczgeSW91eGLlw98N1oxxiRaIOWaiFFqH2tZNvhmcpshiQYx4J9K0MH9p7O/Wo=
+X-Received: by 2002:a19:a111:: with SMTP id k17-v6mr6537985lfe.60.1529293232308;
+ Sun, 17 Jun 2018 20:40:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lqihSEbz3Vi4iT6k5.T6NlI"; protocol="application/pgp-signature"
+Received: by 2002:a19:2b43:0:0:0:0:0 with HTTP; Sun, 17 Jun 2018 20:40:31
+ -0700 (PDT)
+In-Reply-To: <20180531175902.GC11565@jcrouse-lnx.qualcomm.com>
+References: <20180521172948.GA18605@jordon-HP-15-Notebook-PC>
+ <CAFqt6zY8VJ791_6C_pqrGgjG91T1kirEmUyA3JC+3JsN8QjFAw@mail.gmail.com> <20180531175902.GC11565@jcrouse-lnx.qualcomm.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 18 Jun 2018 09:10:31 +0530
+Message-ID: <CAFqt6zaVbJWCvCf8AF5nKPCpqrSi1Aweog2=V9xzJFzWGbmd3w@mail.gmail.com>
+Subject: Re: [Freedreno] [PATCH] gpu: drm: msm: Change return type to vm_fault_t
+To:     Souptick Joarder <jrdr.linux@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, airlied@linux.ie,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, jcrouse@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/lqihSEbz3Vi4iT6k5.T6NlI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Chris,
-
-On Tue, 3 Apr 2018 12:29:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Thu, May 31, 2018 at 11:29 PM, Jordan Crouse <jcrouse@codeaurora.org> wrote:
+> On Mon, May 28, 2018 at 12:38:41PM +0530, Souptick Joarder wrote:
+>> On Mon, May 21, 2018 at 10:59 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> > Use new return type vm_fault_t for fault handler. For
+>> > now, this is just documenting that the function returns
+>> > a VM_FAULT value rather than an errno. Once all instances
+>> > are converted, vm_fault_t will become a distinct type.
+>> >
+>> > Ref- commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>> >
+>> > Previously vm_insert_mixed() returns err which driver
+>> > mapped into VM_FAULT_* type. The new function
+>> > vmf_insert_mixed() will replace this inefficiency by
+>> > returning VM_FAULT_* type.
+>> >
+>> > vmf_error() is the newly introduce inline function
+>> > in 4.17-rc6.
+>> >
+>> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> > ---
+>> >  drivers/gpu/drm/msm/msm_drv.h |  3 ++-
+>> >  drivers/gpu/drm/msm/msm_gem.c | 33 ++++++++++-----------------------
+>> >  2 files changed, 12 insertions(+), 24 deletions(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+>> > index 0a653dd..44b4ca7 100644
+>> > --- a/drivers/gpu/drm/msm/msm_drv.h
+>> > +++ b/drivers/gpu/drm/msm/msm_drv.h
+>> > @@ -33,6 +33,7 @@
+>> >  #include <linux/of_graph.h>
+>> >  #include <linux/of_device.h>
+>> >  #include <asm/sizes.h>
+>> > +#include <linux/mm_types.h>
+>> >
+>> >  #include <drm/drmP.h>
+>> >  #include <drm/drm_atomic.h>
+>> > @@ -188,7 +189,7 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
+>> >  int msm_gem_mmap_obj(struct drm_gem_object *obj,
+>> >                         struct vm_area_struct *vma);
+>> >  int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+>> > -int msm_gem_fault(struct vm_fault *vmf);
+>> > +vm_fault_t msm_gem_fault(struct vm_fault *vmf);
+>> >  uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj);
+>> >  int msm_gem_get_iova(struct drm_gem_object *obj,
+>> >                 struct msm_gem_address_space *aspace, uint64_t *iova);
+>> > diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+>> > index 07376de..27a5ab5 100644
+>> > --- a/drivers/gpu/drm/msm/msm_gem.c
+>> > +++ b/drivers/gpu/drm/msm/msm_gem.c
+>> > @@ -217,7 +217,7 @@ int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>> >         return msm_gem_mmap_obj(vma->vm_private_data, vma);
+>> >  }
+>> >
+>> > -int msm_gem_fault(struct vm_fault *vmf)
+>> > +vm_fault_t msm_gem_fault(struct vm_fault *vmf)
+>> >  {
+>> >         struct vm_area_struct *vma = vmf->vma;
+>> >         struct drm_gem_object *obj = vma->vm_private_data;
+>> > @@ -225,15 +225,18 @@ int msm_gem_fault(struct vm_fault *vmf)
+>> >         struct page **pages;
+>> >         unsigned long pfn;
+>> >         pgoff_t pgoff;
+>> > -       int ret;
+>> > +       int err;
+>> > +       vm_fault_t ret;
+>> >
+>> >         /*
+>> >          * vm_ops.open/drm_gem_mmap_obj and close get and put
+>> >          * a reference on obj. So, we dont need to hold one here.
+>> >          */
+>> > -       ret = mutex_lock_interruptible(&msm_obj->lock);
+>> > -       if (ret)
+>> > +       err = mutex_lock_interruptible(&msm_obj->lock);
+>> > +       if (err) {
+>> > +               ret = VM_FAULT_NOPAGE;
+>> >                 goto out;
+>> > +       }
+>> >
+>> >         if (WARN_ON(msm_obj->madv != MSM_MADV_WILLNEED)) {
+>> >                 mutex_unlock(&msm_obj->lock);
+>> > @@ -243,7 +246,7 @@ int msm_gem_fault(struct vm_fault *vmf)
+>> >         /* make sure we have pages attached now */
+>> >         pages = get_pages(obj);
+>> >         if (IS_ERR(pages)) {
+>> > -               ret = PTR_ERR(pages);
+>> > +               ret = vmf_error(PTR_ERR(pages));
+>> >                 goto out_unlock;
+>> >         }
+>> >
+>> > @@ -255,27 +258,11 @@ int msm_gem_fault(struct vm_fault *vmf)
+>> >         VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
+>> >                         pfn, pfn << PAGE_SHIFT);
+>> >
+>> > -       ret = vm_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+>> > -
+>> > +       ret = vmf_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
+>> >  out_unlock:
+>> >         mutex_unlock(&msm_obj->lock);
+>> >  out:
+>> > -       switch (ret) {
+>> > -       case -EAGAIN:
+>> > -       case 0:
+>> > -       case -ERESTARTSYS:
+>> > -       case -EINTR:
+>> > -       case -EBUSY:
+>> > -               /*
+>> > -                * EBUSY is ok: this just means that another thread
+>> > -                * already did the job.
+>> > -                */
+>> > -               return VM_FAULT_NOPAGE;
+>> > -       case -ENOMEM:
+>> > -               return VM_FAULT_OOM;
+>> > -       default:
+>> > -               return VM_FAULT_SIGBUS;
+>> > -       }
+>> > +       return ret;
+>> >  }
+>> >
+>> >  /** get mmap offset */
+>> > --
+>> > 1.9.1
+>> >
+>>
+>> Any comment for this patch ?
 >
-> Ping?
->=20
-> On Wed, 14 Mar 2018 10:17:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > On Thu, 1 Feb 2018 09:25:51 +1100 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote: =20
-> > >
-> > > On Tue, 30 Jan 2018 16:25:35 -0800 Jaegeuk Kim <jaegeuk@kernel.org> w=
-rote:   =20
-> > > >
-> > > > On 01/31, Stephen Rothwell wrote:     =20
-> > > > >=20
-> > > > > On Tue, 30 Jan 2018 14:32:20 -0800 Jaegeuk Kim <jaegeuk@kernel.or=
-g> wrote:       =20
-> > > > > >
-> > > > > > Could you please consider the below pull request?
-> > > > > >=20
-> > > > > > Thanks,
-> > > > > >=20
-> > > > > > The following changes since commit ace52288edf0cb5e7a52b681f057=
-f86224c49c27:
-> > > > > >=20
-> > > > > >   Merge tag 'for-linus-20171218' of git://git.infradead.org/lin=
-ux-mtd (2017-12-18 16:18:01 -0800)
-> > > > > >=20
-> > > > > > are available in the Git repository at:
-> > > > > >=20
-> > > > > >   git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.gi=
-t tags/f2fs-for-4.16-rc1
-> > > > > >=20
-> > > > > > for you to fetch changes up to 1c1d35df71104c76a4a2e25862926f22=
-c334c9d6:
-> > > > > >=20
-> > > > > >   f2fs: support inode creation time (2018-01-25 14:10:39 -0800)=
-       =20
-> > > > >=20
-> > > > > This has an interesting conflict with the btrfs tree:
-> > > > >=20
-> > > > > -----------------------------------------------------------------=
-------
-> > > > > After merging the f2fs tree, today's linux-next build (x86_64
-> > > > > allmodconfig) failed like this:
-> > > > >=20
-> > > > > /home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super=
-':
-> > > > > /home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPW=
-B' undeclared (first use in this function); did you mean 'S_CGROUPWB'?
-> > > > >   sb->s_iflags |=3D SB_I_CGROUPWB;
-> > > > >                   ^~~~~~~~~~~~~
-> > > > >                   S_CGROUPWB
-> > > > >=20
-> > > > > Caused by commit
-> > > > >=20
-> > > > >   578c647879f7 ("f2fs: implement cgroup writeback support")
-> > > > >=20
-> > > > > interacting with commit
-> > > > >=20
-> > > > >   34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with pe=
-r-inode S_CGROUPWB"
-> > > > >=20
-> > > > > from the btrfs tree.
-> > > > >=20
-> > > > > I have reverted the f2fs tree commit for today, but a better reso=
-lution
-> > > > > would be appreciated.
-> > > > > -----------------------------------------------------------------=
-------
-> > > > >=20
-> > > > > I have seen no response to the above email and have been revertin=
-g that
-> > > > > commit since Jan 18.       =20
-> > > >=20
-> > > > I think this can be addressed by:
-> > > >=20
-> > > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > > > index 89c838bfb067..c743b73976d0 100644
-> > > > --- a/fs/f2fs/inode.c
-> > > > +++ b/fs/f2fs/inode.c
-> > > > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
-> > > >                 new_fl |=3D S_DIRSYNC;
-> > > >         if (f2fs_encrypted_inode(inode))
-> > > >                 new_fl |=3D S_ENCRYPTED;
-> > > > +       new_fl |=3D S_CGROUPWB;
-> > > >         inode_set_flags(inode, new_fl,
-> > > >                         S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIR=
-SYNC|
-> > > > -                       S_ENCRYPTED);
-> > > > +                       S_ENCRYPTED|S_CGROUPWB);
-> > > >  }
-> > > >=20
-> > > >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inod=
-e *ri)
-> > > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > > > index 8173ae688814..ebcd58476fc7 100644
-> > > > --- a/fs/f2fs/super.c
-> > > > +++ b/fs/f2fs/super.c
-> > > > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block=
- *sb, void *data, int silent)
-> > > >         sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
-> > > >                 (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
-> > > >         memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid=
-));
-> > > > -       sb->s_iflags |=3D SB_I_CGROUPWB;
-> > > >=20
-> > > >         /* init f2fs-specific super block info */
-> > > >         sbi->valid_super_block =3D valid_super_block;
-> > > >      =20
-> > >=20
-> > > I have applied that (by hand) as a merge fix patch for the merge of t=
-eh
-> > > btrfs tree for today.  Thanks for the resolution.   =20
-> >=20
-> > I am still applying this to the merge of the btrfs tree every day ...
-> >=20
-> > Commit
-> >   578c647879f7 ("f2fs: implement cgroup writeback support")
-> > was merged into Linus' tree on Jan 31.
-> >=20
-> > Here is the actual merge fix patch:
-> >=20
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Thu, 1 Feb 2018 09:21:06 +1100
-> > Subject: [PATCH] f2fs: fixup for cgroup/writeback change
-> >=20
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  fs/f2fs/inode.c | 3 ++-
-> >  fs/f2fs/super.c | 1 -
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > index 205add3d0f3a..f34652c4288f 100644
-> > --- a/fs/f2fs/inode.c
-> > +++ b/fs/f2fs/inode.c
-> > @@ -48,9 +48,10 @@ void f2fs_set_inode_flags(struct inode *inode)
-> >  		new_fl |=3D S_DIRSYNC;
-> >  	if (f2fs_encrypted_inode(inode))
-> >  		new_fl |=3D S_ENCRYPTED;
-> > +	new_fl |=3D S_CGROUPWB;
-> >  	inode_set_flags(inode, new_fl,
-> >  			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|
-> > -			S_ENCRYPTED);
-> > +			S_ENCRYPTED|S_CGROUPWB);
-> >  }
-> > =20
-> >  static void __get_inode_rdev(struct inode *inode, struct f2fs_inode *r=
-i)
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 8173ae688814..ebcd58476fc7 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -2560,7 +2560,6 @@ static int f2fs_fill_super(struct super_block *sb=
-, void *data, int silent)
-> >  	sb->s_flags =3D (sb->s_flags & ~SB_POSIXACL) |
-> >  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
-> >  	memcpy(&sb->s_uuid, raw_super->uuid, sizeof(raw_super->uuid));
-> > -	sb->s_iflags |=3D SB_I_CGROUPWB;
-> > =20
-> >  	/* init f2fs-specific super block info */
-> >  	sbi->valid_super_block =3D valid_super_block;
-> > --=20
-> > 2.15.1 =20
+> Sorry for the delay, I wanted to get a chance to test it. It seems to pass the
+> usual regression tests. LGTM.
+>
 
-Another merge window has passed and I am still holding this tree and its
-merge fixes ...  Tomorrow I will drop the btrfs tree and rename the
-btrfs-kdave tree to btrfs.  OK?
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/lqihSEbz3Vi4iT6k5.T6NlI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsnKSkACgkQAVBC80lX
-0Gz2pQf8CwiIWv1DfNT94kiVhiQAKEcxxiHgC8sB9O+N7PVUsejdk+xZOLLG8Lb1
-uy8+Hbx7U3VmayvSt1DIoFw9WvuImgLsyFFMt4/EXEeY0Dfwx45IfULB7fUozIL6
-aYSLqJKv6MgpUTkUzSHY3BCRk5IpQ/YCWtUMf9pKQpGHdtVCwaiuFn22CwkTmcgy
-f5U/OPt3KdfJdLxBrWcEswOYpNN+eAlXSgylxfxCy2XLei0TqpALGHaKGOk6KOIm
-OOVB3KvO/z/Lj//jghz66H/FcFCtjgh+xLFlhO+v4HKudOwUR+gDT5wiA3Ftw/lQ
-NbpSXnxvCx3MqDQMuefSh6gtsGzBIg==
-=yEb9
------END PGP SIGNATURE-----
-
---Sig_/lqihSEbz3Vi4iT6k5.T6NlI--
+Jordan, This patch is not merged in 4.18-rc-1.
