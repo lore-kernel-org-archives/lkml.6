@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DEEC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D056C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D03D020864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:17:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03D020864
+	by mail.kernel.org (Postfix) with ESMTP id 0787D20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:17:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0787D20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934887AbeFRIRm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:17:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54214 "EHLO
+        id S934911AbeFRIRp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:17:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54238 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934068AbeFRIRj (ORCPT
+        with ESMTP id S934884AbeFRIRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:17:39 -0400
+        Mon, 18 Jun 2018 04:17:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 018E6C7F;
-        Mon, 18 Jun 2018 08:17:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 32F62C7A;
+        Mon, 18 Jun 2018 08:17:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oder Chiou <oder_chiou@realtek.com>,
+        stable@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 026/279] ASoC: rt5514: Add the missing register in the readable table
-Date:   Mon, 18 Jun 2018 10:10:11 +0200
-Message-Id: <20180618080609.918659356@linuxfoundation.org>
+Subject: [PATCH 4.16 017/279] spi: sh-msiof: Fix bit field overflow writes to TSCR/RSCR
+Date:   Mon, 18 Jun 2018 10:10:02 +0200
+Message-Id: <20180618080609.521743434@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,45 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "oder_chiou@realtek.com" <oder_chiou@realtek.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-[ Upstream commit 5ef5ac8de125fe6b4b23293bee026ca7ea1529b9 ]
+[ Upstream commit 10b4640833e95eeacaef8060bc1b35e636df3218 ]
 
-The patch adds the missing register in the readable table.
+The change fixes a bit field overflow which allows to write to higher
+bits while calculating SPI transfer clock and setting BRPS and BRDV
+bit fields, the problem is reproduced if 'parent_rate' to 'spi_hz'
+ratio is greater than 1024, for instance
 
-Signed-off-by: Oder Chiou <oder_chiou@realtek.com>
+  p->min_div      = 2,
+  MSO rate        = 33333333,
+  SPI device rate = 10000
+
+results in
+
+  k          = 5, i.e. BRDV = 0b100 or 1/32 prescaler output,
+  BRPS       = 105,
+  TSCR value = 0x6804, thus MSSEL and MSIMM bit fields are non-zero.
+
+Fixes: 65d5665bb260 ("spi: sh-msiof: Update calculation of frequency dividing")
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/codecs/rt5514.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/spi/spi-sh-msiof.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/soc/codecs/rt5514.c
-+++ b/sound/soc/codecs/rt5514.c
-@@ -89,6 +89,7 @@ static const struct reg_default rt5514_r
- 	{RT5514_PLL3_CALIB_CTRL5,	0x40220012},
- 	{RT5514_DELAY_BUF_CTRL1,	0x7fff006a},
- 	{RT5514_DELAY_BUF_CTRL3,	0x00000000},
-+	{RT5514_ASRC_IN_CTRL1,		0x00000003},
- 	{RT5514_DOWNFILTER0_CTRL1,	0x00020c2f},
- 	{RT5514_DOWNFILTER0_CTRL2,	0x00020c2f},
- 	{RT5514_DOWNFILTER0_CTRL3,	0x10000362},
-@@ -181,6 +182,7 @@ static bool rt5514_readable_register(str
- 	case RT5514_PLL3_CALIB_CTRL5:
- 	case RT5514_DELAY_BUF_CTRL1:
- 	case RT5514_DELAY_BUF_CTRL3:
-+	case RT5514_ASRC_IN_CTRL1:
- 	case RT5514_DOWNFILTER0_CTRL1:
- 	case RT5514_DOWNFILTER0_CTRL2:
- 	case RT5514_DOWNFILTER0_CTRL3:
-@@ -238,6 +240,7 @@ static bool rt5514_i2c_readable_register
- 	case RT5514_DSP_MAPPING | RT5514_PLL3_CALIB_CTRL5:
- 	case RT5514_DSP_MAPPING | RT5514_DELAY_BUF_CTRL1:
- 	case RT5514_DSP_MAPPING | RT5514_DELAY_BUF_CTRL3:
-+	case RT5514_DSP_MAPPING | RT5514_ASRC_IN_CTRL1:
- 	case RT5514_DSP_MAPPING | RT5514_DOWNFILTER0_CTRL1:
- 	case RT5514_DSP_MAPPING | RT5514_DOWNFILTER0_CTRL2:
- 	case RT5514_DSP_MAPPING | RT5514_DOWNFILTER0_CTRL3:
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -283,6 +283,7 @@ static void sh_msiof_spi_set_clk_regs(st
+ 	}
+ 
+ 	k = min_t(int, k, ARRAY_SIZE(sh_msiof_spi_div_table) - 1);
++	brps = min_t(int, brps, 32);
+ 
+ 	scr = sh_msiof_spi_div_table[k].brdv | SCR_BRPS(brps);
+ 	sh_msiof_write(p, TSCR, scr);
 
 
