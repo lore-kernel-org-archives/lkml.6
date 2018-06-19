@@ -3,95 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F01CC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06147C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C918E20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C918E20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B0E8720693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:01:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E8720693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937349AbeFSGBW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:01:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57847 "EHLO mail.bootlin.com"
+        id S937360AbeFSGBy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 02:01:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:42812 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937104AbeFSGBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:01:21 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4459A208B3; Tue, 19 Jun 2018 08:01:20 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F245C2073D;
-        Tue, 19 Jun 2018 08:01:09 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 08:01:10 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [RFC PATCH v2 2/6] mtd: rawnand: add manufacturer fixup for
- ONFI parameter page
-Message-ID: <20180619080110.633b9077@bbrezillon>
-In-Reply-To: <20180619053125.16792-3-chris.packham@alliedtelesis.co.nz>
-References: <20180619053125.16792-1-chris.packham@alliedtelesis.co.nz>
-        <20180619053125.16792-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S937085AbeFSGBx (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:01:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D933E1529;
+        Mon, 18 Jun 2018 23:01:52 -0700 (PDT)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D04063F25D;
+        Mon, 18 Jun 2018 23:01:49 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 07:01:42 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, acme@kernel.org,
+        jolsa@kernel.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, me@kylehuey.com,
+        Linux-kernel@vger.kernel.org, vincent.weaver@maine.edu,
+        will.deacon@arm.com, eranian@google.com, namhyung@kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v1 1/2] perf/core: Use sysctl to turn on/off dropping
+ leaked kernel samples
+Message-ID: <20180619060142.62nppodwkauhnm5j@salmiak>
+References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
+ <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
+ <20180615113608.6m74sm7gpl5p6oqe@lakrids.cambridge.arm.com>
+ <52c75f12-1f91-405d-0b05-0aa6a9c09306@linux.intel.com>
+ <20180618104522.GI2458@hirez.programming.kicks-ass.net>
+ <f66f6738-c612-1535-3661-dcc654750fa8@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f66f6738-c612-1535-3661-dcc654750fa8@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018 17:31:21 +1200
-Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
-
-> This is called after the ONFI parameter page checksum is verified
-> and allows us to override the contents of the parameter page.
+On Tue, Jun 19, 2018 at 09:39:02AM +0800, Jin, Yao wrote:
 > 
-> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-> ---
-> Changes in v2:
-> - New
 > 
->  drivers/mtd/nand/raw/nand_base.c | 4 ++++
->  include/linux/mtd/rawnand.h      | 1 +
->  2 files changed, 5 insertions(+)
+> On 6/18/2018 6:45 PM, Peter Zijlstra wrote:
+> > On Mon, Jun 18, 2018 at 02:55:32PM +0800, Jin, Yao wrote:
+> > > Thanks for providing the patch. I understand this approach.
+> > > 
+> > > In my opinion, the skid window is from counter overflow to interrupt
+> > > delivered. While if the skid window is too *big* (e.g. user -> kernel), it
+> > > should be not very useful. So personally, I'd prefer to drop the samples.
+> > 
+> > I really don't get your insitence on dropping the sample. Dropping
+> > samples is bad. Furthermore, doing what Mark suggests actually improves
+> > the result by reducing the skid, if the event happened before we entered
+> > (as it damn well should) then the user regs, which point at the entry
+> > site, are a better approximation than our in-kernel set.
+> > 
+> > So not only do you not loose the sample, you actually get a better
+> > sample.
+> > 
 > 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 0cd3e216b95c..65250308c82d 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5172,6 +5172,10 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  		}
->  	}
->  
-> +	if (chip->manufacturer.desc && chip->manufacturer.desc->ops &&
-> +	    chip->manufacturer.desc->ops->fixup_onfi_param_page)
-> +		chip->manufacturer.desc->ops->fixup_onfi_param_page(chip, p);
-> +
->  	/* Check version */
->  	val = le16_to_cpu(p->revision);
->  	if (val & (1 << 5))
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index 3e8ec3b8a39c..6db42091ee5e 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -783,6 +783,7 @@ struct nand_manufacturer_ops {
->  	void (*detect)(struct nand_chip *chip);
->  	int (*init)(struct nand_chip *chip);
->  	void (*cleanup)(struct nand_chip *chip);
-> +	void (*fixup_onfi_param_page)(struct nand_chip *chip, struct nand_onfi_params *p);
->  };
->  
->  /**
+> OK, that's fine, thanks!
+> 
+> I guess Mark will post this patch, right?
 
+I'll try to spin something shortly -- I'm just figuring out how this should
+work with guest sampling.
+
+Thanks,
+Mark.
