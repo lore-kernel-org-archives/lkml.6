@@ -2,110 +2,106 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF264C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FB6C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2C420661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 992132075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:15:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jTDyWxM6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B2C420661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="feZXq5j2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992132075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030218AbeFSQPk (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:15:40 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52672 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966800AbeFSQNJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:13:09 -0400
-Received: by mail-wm0-f68.google.com with SMTP id p126-v6so1338921wmb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:13:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WHl8y2e/CNxRLOFMGZ23TuP+wCFFLpgrtDsLMJiqlxg=;
-        b=jTDyWxM67bZIvl1zbpKV9K/r0m1UzwrXuvlTj4lwzpgChSzcoO+KRl1P6I1dCAXngJ
-         VoUXAwxliDPFZM6O8AVW56KBiejXwYXrtRWVhHCD/j/k6Wg0QIsqzmEEGNj3mVRCvY6W
-         IgkWnsVbV4X6Z/RImmc7h5PiMTEVLz3lRGUe8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=WHl8y2e/CNxRLOFMGZ23TuP+wCFFLpgrtDsLMJiqlxg=;
-        b=nfjZZ0QS6RJ7IJTzaeDXbLnfV/XgS7mYVqLU/Pr16dhO+PY+ftzkh/OQLPhFMwE/fZ
-         caCMCkpYucW3pU6s3dYN5uqNHT5acY8I6Qx0YxHsl2xHSo4ikHZMbEXi58uA5STZqpcj
-         7Sa9mA7v2HVBl6oK11+1/G07vxrSJcHPzXdCRWZeOnJwOHj2j1+cr7RSzZiPhLCn1hPH
-         3IaMn56U42EangMjrZz5aXi8nfiYLtBGgndeVmbfdKcCCp3+wsvA26mKRI7EaJOmc5A2
-         rAxLyGtMhd08QYDxThO0NtZHyDKqk60ju4SZOeRw5w18g1GoRHSVScHyFNq/HwGm5lL4
-         35nw==
-X-Gm-Message-State: APt69E023Z1mva0UIJpgY+/rqgOZawZO7iDile3TFFbNHQ8AwzTQEb8c
-        gp/W31L1pAFdZGt0PrM8F20SWg==
-X-Google-Smtp-Source: ADUXVKJhvOEHcZ/VP57h0cJXumvT7sT4BN3GfgDluWBKVzLMGDhRYGXJwhvWbmev5GxHGhZsICoZGw==
-X-Received: by 2002:a1c:17d4:: with SMTP id 203-v6mr11849072wmx.75.1529424788535;
-        Tue, 19 Jun 2018 09:13:08 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id r5-v6sm47248wrp.59.2018.06.19.09.13.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 19 Jun 2018 09:13:07 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     robh+dt@kernel.org, kramasub@codeaurora.org, sdharia@quicinc.com,
-        linux-kernel@vger.kernel.org, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 2/5] slimbus: core: rearrange slim_eaddr structure
-Date:   Tue, 19 Jun 2018 17:12:58 +0100
-Message-Id: <20180619161301.4556-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180619161301.4556-1-srinivas.kandagatla@linaro.org>
-References: <20180619161301.4556-1-srinivas.kandagatla@linaro.org>
+        id S967181AbeFSQPn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:15:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966516AbeFSQPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:15:41 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C176F20652;
+        Tue, 19 Jun 2018 16:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529424940;
+        bh=bd2cluXv+hyCFQ+NJwo5m4hwGGgkA4vyiSMYY5jvTHw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=feZXq5j2I53urvZShiVD1urbBNAZ/R+W9GZeOMU/y87l1vCOgaTH17sv2pGmX7G8B
+         oZzooRm6jnLa7ko7rQV314Xcv02Y5Fy4EenzdafOXcjBPzc4OnK0lXsDGtvB+4J/OO
+         3/T7q7Tqgxx5Qh2J5Gv0h2hbwe8+Z5SbsVPQreIc=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-arch@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+Subject: [PATCH -tip v6 23/27] sparc64: kprobes: Don't call the ->break_handler() in sparc64 kprobes code
+Date:   Wed, 20 Jun 2018 01:15:17 +0900
+Message-Id: <152942491684.15209.8114703769135529984.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152942424698.15209.15245996287444292393.stgit@devbox>
+References: <152942424698.15209.15245996287444292393.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rearrange struct slim_eaddr so that the structure is packed correctly
-to be able to send in SLIMBus messages.
+Don't call the ->break_handler() from the sparc64 kprobes code,
+because it was only used by jprobes which got removed.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org
 ---
- include/linux/slimbus.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/sparc/kernel/kprobes.c |   11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/slimbus.h b/include/linux/slimbus.h
-index efa36a852dc3..63801bcc5e60 100644
---- a/include/linux/slimbus.h
-+++ b/include/linux/slimbus.h
-@@ -14,16 +14,16 @@ extern struct bus_type slimbus_bus;
+diff --git a/arch/sparc/kernel/kprobes.c b/arch/sparc/kernel/kprobes.c
+index f555711da8f1..c684c96ef2e9 100644
+--- a/arch/sparc/kernel/kprobes.c
++++ b/arch/sparc/kernel/kprobes.c
+@@ -147,18 +147,12 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
+ 			kcb->kprobe_status = KPROBE_REENTER;
+ 			prepare_singlestep(p, regs, kcb);
+ 			return 1;
+-		} else {
+-			if (*(u32 *)addr != BREAKPOINT_INSTRUCTION) {
++		} else if (*(u32 *)addr != BREAKPOINT_INSTRUCTION) {
+ 			/* The breakpoint instruction was removed by
+ 			 * another cpu right after we hit, no further
+ 			 * handling of this interrupt is appropriate
+ 			 */
+-				ret = 1;
+-				goto no_kprobe;
+-			}
+-			p = __this_cpu_read(current_kprobe);
+-			if (p->break_handler && p->break_handler(p, regs))
+-				goto ss_probe;
++			ret = 1;
+ 		}
+ 		goto no_kprobe;
+ 	}
+@@ -184,7 +178,6 @@ static int __kprobes kprobe_handler(struct pt_regs *regs)
+ 	if (p->pre_handler && p->pre_handler(p, regs))
+ 		return 1;
  
- /**
-  * struct slim_eaddr - Enumeration address for a SLIMbus device
-- * @manf_id: Manufacturer Id for the device
-- * @prod_code: Product code
-- * @dev_index: Device index
-  * @instance: Instance value
-+ * @dev_index: Device index
-+ * @prod_code: Product code
-+ * @manf_id: Manufacturer Id for the device
-  */
- struct slim_eaddr {
--	u16 manf_id;
--	u16 prod_code;
--	u8 dev_index;
- 	u8 instance;
-+	u8 dev_index;
-+	u16 prod_code;
-+	u16 manf_id;
- } __packed;
- 
- /**
--- 
-2.16.2
+-ss_probe:
+ 	prepare_singlestep(p, regs, kcb);
+ 	kcb->kprobe_status = KPROBE_HIT_SS;
+ 	return 1;
 
