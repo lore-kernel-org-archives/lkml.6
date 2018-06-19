@@ -2,161 +2,388 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2358FC5AE5A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C41C5AE5A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC7020661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:11:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9jCNbAE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBC7020661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AE9020661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:11:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE9020661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967221AbeFSUK7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 16:10:59 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:41353 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966695AbeFSUK5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 16:10:57 -0400
-Received: by mail-pg0-f65.google.com with SMTP id l65-v6so359276pgl.8;
-        Tue, 19 Jun 2018 13:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4gRCrZ0q1kLRuLWZyGmcEl8XBBXPaF8yR8s0LnK5blw=;
-        b=X9jCNbAE8SnLKao3vbemdQJJAK5Hk8wnC8SY3uEOkIJRRJhbI9gCCvLDUDJfU00VnY
-         nY9vZ9YENQnTYbSILeMnXjSbFo75TeMZ/hR6tAVNNWlXz6vdKpVh8JACj1ysUtZiPVnN
-         sTWbQeLqBGam5cve21NuxGT8mhrHBE+JZ8QcD7EP6Nml9opwjBSPC3JJd7YcAwwcB6Vk
-         3UCpWIigVU1MGkKY3556wtPz30hKvVSqcf01nnFJcJOHdhZ2LDuDn9OLpa25i7/Jyxbw
-         DpKIjPvEqKWh3GxVhYzTQjvP3TKw9Y3SDA48PL0nFXnVutKGHOd4FS1Eu+Z6NFFftHhB
-         +6/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4gRCrZ0q1kLRuLWZyGmcEl8XBBXPaF8yR8s0LnK5blw=;
-        b=bruIQ1NcphIy1w4QxUg2DqNIYlfR19+y1+pcS2W2tUrxrV10MdeliuqQhPZxrJZ4ed
-         D2RZH5lUNfLgWrin+BRXHZcgmCg4Ecs7EtZhw9kusa0M3qusw5CG5PeLx3XHDR7bgG7F
-         0lUkE8/LIZgXu6JjaeVC/YWXXDilaf9/beRtx7P/KGGJWks5x8M/xUsbNIAdx63+Db6Q
-         EN6w4DzjcV4VT1oy3+D0Q0o2XuxXEF/4t9Nw0r4iQyQ5+ICOJlbSAmswaCafhE7Lkj6Y
-         2158QoORdHhxkRjS2saIMTKlftYma2eFg0NYoElAyXQvMXIMa5JcODHTvchivhf19Pvv
-         8/rA==
-X-Gm-Message-State: APt69E139qi2Qb2hGVzuhM7M/5hkACzXc2ucP21srVFzQZ02N8Ps/ZgH
-        wtM7ziKlG2U6YDilOrcthkPk9+Pj
-X-Google-Smtp-Source: ADUXVKLsJa5oLQbQObXof9Ez55x3dTOx5cowJK/tIbpmFLwEqhxBakLS5HhhY4NacmEYoseT7E4N9w==
-X-Received: by 2002:a65:62d9:: with SMTP id m25-v6mr15872107pgv.371.1529439057266;
-        Tue, 19 Jun 2018 13:10:57 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id 76-v6sm654093pfr.172.2018.06.19.13.10.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 13:10:56 -0700 (PDT)
-Subject: Re: [PATCH] Revert "net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are
- friends"
-To:     Andreas Schwab <schwab@linux-m68k.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christophe LEROY <christophe.leroy@c-s.fr>,
-        Meelis Roos <mroos@linux.ee>, netdev@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <20180615185645.8921-1-malat@debian.org>
- <fbb95c11-240c-1a11-0a62-0483908c577e@gmail.com>
- <CA+7wUsysaip70ARGQ7Byg1Zktfg0Y1esjEc9HxBGU4sKL8crhg@mail.gmail.com>
- <9d88677a-f2be-2089-79df-15df4e9a5dd6@gmail.com>
- <m2tvq1672p.fsf@linux-m68k.org>
- <e1a9b126-3226-72d0-82b2-b69ca5f59ccb@gmail.com> <87o9g8geu0.fsf@igel.home>
- <816ef746-5278-1d51-1d9d-55593e377681@gmail.com>
- <CA+7wUszG3Tmq5qT7o7w7ttAU+bzyJfRORL_Qzk4wUG6y2gZUuw@mail.gmail.com>
- <21523399-92ee-f8da-1a3e-0561f62850b7@gmail.com>
- <dd6f13bc-c5f2-85f8-c08d-837bc024fc7c@gmail.com> <87po0mvbgl.fsf@igel.home>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <e1790720-911b-4d04-2215-752ec612e3d7@gmail.com>
-Date:   Tue, 19 Jun 2018 13:10:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S967245AbeFSULV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 16:11:21 -0400
+Received: from mga17.intel.com ([192.55.52.151]:20245 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967194AbeFSULT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 16:11:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 13:11:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,244,1526367600"; 
+   d="gz'50?scan'50,208,50";a="209427630"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by orsmga004.jf.intel.com with ESMTP; 19 Jun 2018 13:11:16 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fVMyB-000W2y-QJ; Wed, 20 Jun 2018 04:11:15 +0800
+Date:   Wed, 20 Jun 2018 04:11:02 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc:     kbuild-all@01.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, joro@8bytes.org,
+        gregkh@linuxfoundation.org, rafael.j.wysocki@intel.com,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: Re: [PATCH 1/2] iommu: Introduce interface for unsetting bus IOMMU
+Message-ID: <201806200454.6xzM7B56%fengguang.wu@intel.com>
+References: <1529426734-20639-2-git-send-email-suravee.suthikulpanit@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <87po0mvbgl.fsf@igel.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="9jxsPFA5p3P2qPhR"
+Content-Disposition: inline
+In-Reply-To: <1529426734-20639-2-git-send-email-suravee.suthikulpanit@amd.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 06/19/2018 12:10 PM, Andreas Schwab wrote:
-> On Jun 18 2018, Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> 
->> DUMP_PREFIX_ADDRESS might give us more information (say alignment problem, or crossing page boundaries)
-> 
-> DUMP_PREFIX_ADDRESS is useless for that purpose.
-> 
-> Here are some samples of broken csums:
-> 
-> [  853.849225] sungem: sungem wrong csum : 9886/07be, len 94 bytes, c0000001fa187e02
-> [  853.849232] raw data: 00000000: 00 0d 93 43 81 62 18 d6 c7 51 b8 1c 08 00 45 10  ...C.b...Q....E.
-> [  853.849235] raw data: 00000010: 00 4c cb a0 40 00 40 11 d9 97 c0 a8 0a 01 c0 a8  .L..@.@.........
-> [  853.849237] raw data: 00000020: 0a 07 00 7b 00 7b 00 38 69 e1 1c 03 0c f7 00 00  ...{.{.8i.......
-> [  853.849240] raw data: 00000030: 08 f0 00 00 15 f0 c0 35 67 67 de d3 ca c9 d9 5b  .......5gg.....[
-> [  853.849242] raw data: 00000040: 1f ff de d3 d2 86 8f 67 fa f2 de d3 d2 86 8f 38  .......g.......8
-> [  853.849244] raw data: 00000050: 2f ff de d3 d2 86 8f 3b ff ff d1 93 bc 50        /......;.....P
+Hi Suravee,
 
-Thanks.
+I love your patch! Perhaps something to improve:
 
-4 bytes in excess.
+[auto build test WARNING on iommu/next]
+[also build test WARNING on v4.18-rc1 next-20180619]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Might be the FCS, and it does not look like provided csum has a relation with it.
+url:    https://github.com/0day-ci/linux/commits/Suravee-Suthikulpanit/iommu-amd-Handle-IOMMU-initialization-failure/20180620-022013
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
+reproduce: make htmldocs
 
-For some reason FCS stripping was disabled by :
+All warnings (new ones prefixed by >>):
 
-commit 3e32011d4da6424b3bc65b1e1a047e30ac9882c7
-Author: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Date:   Mon May 19 09:39:11 2003 -0700
+   WARNING: convert(1) not found, for SVG to PDF conversion install ImageMagick (https://www.imagemagick.org)
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.ibss' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.connect' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.keys' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.ie' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.ie_len' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.bssid' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.ssid' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.default_key' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.default_mgmt_key' not described in 'wireless_dev'
+   include/net/cfg80211.h:4216: warning: Function parameter or member 'wext.prev_bssid_valid' not described in 'wireless_dev'
+   include/net/mac80211.h:2282: warning: Function parameter or member 'radiotap_timestamp.units_pos' not described in 'ieee80211_hw'
+   include/net/mac80211.h:2282: warning: Function parameter or member 'radiotap_timestamp.accuracy' not described in 'ieee80211_hw'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.rates' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.rts_cts_rate_idx' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.use_rts' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.use_cts_prot' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.short_preamble' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.skip_table' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.jiffies' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.vif' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.hw_key' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.flags' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'control.enqueue_time' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'ack' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'ack.cookie' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'status.rates' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'status.ack_signal' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'status.ampdu_ack_len' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'status.ampdu_len' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'status.antenna' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'status.tx_time' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'status.is_valid_ack_signal' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'status.status_driver_data' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'driver_rates' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'pad' not described in 'ieee80211_tx_info'
+   include/net/mac80211.h:955: warning: Function parameter or member 'rate_driver_data' not described in 'ieee80211_tx_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'rx_stats_avg' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'rx_stats_avg.signal' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'rx_stats_avg.chain_signal' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.filtered' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.retry_failed' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.retry_count' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.lost_packets' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.last_tdls_pkt_time' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.msdu_retries' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.msdu_failed' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.last_ack' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.last_ack_signal' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'status_stats.ack_signal_filled' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'tx_stats.packets' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'tx_stats.bytes' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'tx_stats.last_rate' not described in 'sta_info'
+   net/mac80211/sta_info.h:586: warning: Function parameter or member 'tx_stats.msdu' not described in 'sta_info'
+   kernel/sched/fair.c:3719: warning: Function parameter or member 'flags' not described in 'attach_entity_load_avg'
+   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.cb' not described in 'dma_buf'
+   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.poll' not described in 'dma_buf'
+   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_excl.active' not described in 'dma_buf'
+   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.cb' not described in 'dma_buf'
+   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.poll' not described in 'dma_buf'
+   include/linux/dma-buf.h:307: warning: Function parameter or member 'cb_shared.active' not described in 'dma_buf'
+   include/linux/dma-fence-array.h:54: warning: Function parameter or member 'work' not described in 'dma_fence_array'
+   include/linux/gpio/driver.h:142: warning: Function parameter or member 'request_key' not described in 'gpio_irq_chip'
+   include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.sign' not described in 'iio_chan_spec'
+   include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.realbits' not described in 'iio_chan_spec'
+   include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.storagebits' not described in 'iio_chan_spec'
+   include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.shift' not described in 'iio_chan_spec'
+   include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.repeat' not described in 'iio_chan_spec'
+   include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.endianness' not described in 'iio_chan_spec'
+   include/linux/iio/hw-consumer.h:1: warning: no structured comments found
+>> include/linux/device.h:143: warning: Function parameter or member 'iommu_nb' not described in 'bus_type'
+   include/linux/input/sparse-keymap.h:46: warning: Function parameter or member 'sw' not described in 'key_entry'
+   include/linux/mtd/rawnand.h:752: warning: Function parameter or member 'timings.sdr' not described in 'nand_data_interface'
+   include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf' not described in 'nand_op_data_instr'
+   include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf.in' not described in 'nand_op_data_instr'
+   include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf.out' not described in 'nand_op_data_instr'
+   include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx' not described in 'nand_op_instr'
+   include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.cmd' not described in 'nand_op_instr'
+   include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.addr' not described in 'nand_op_instr'
+   include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.data' not described in 'nand_op_instr'
+   include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.waitrdy' not described in 'nand_op_instr'
+   include/linux/mtd/rawnand.h:1016: warning: Function parameter or member 'ctx' not described in 'nand_op_parser_pattern_elem'
+   include/linux/mtd/rawnand.h:1016: warning: Function parameter or member 'ctx.addr' not described in 'nand_op_parser_pattern_elem'
+   include/linux/mtd/rawnand.h:1016: warning: Function parameter or member 'ctx.data' not described in 'nand_op_parser_pattern_elem'
+   include/linux/mtd/rawnand.h:1319: warning: Function parameter or member 'manufacturer.desc' not described in 'nand_chip'
+   include/linux/mtd/rawnand.h:1319: warning: Function parameter or member 'manufacturer.priv' not described in 'nand_chip'
+   include/linux/regulator/driver.h:222: warning: Function parameter or member 'resume_early' not described in 'regulator_ops'
+   drivers/regulator/core.c:4306: warning: Excess function parameter 'state' description in 'regulator_suspend_late'
+   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw0' not described in 'irb'
+   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw1' not described in 'irb'
+   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw2' not described in 'irb'
+   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.esw3' not described in 'irb'
+   arch/s390/include/asm/cio.h:245: warning: Function parameter or member 'esw.eadm' not described in 'irb'
+   drivers/usb/typec/mux.c:186: warning: Function parameter or member 'mux' not described in 'typec_mux_unregister'
+   drivers/usb/typec/mux.c:186: warning: Excess function parameter 'sw' description in 'typec_mux_unregister'
+   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_pin' not described in 'drm_driver'
+   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_unpin' not described in 'drm_driver'
+   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_res_obj' not described in 'drm_driver'
+   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_get_sg_table' not described in 'drm_driver'
+   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_import_sg_table' not described in 'drm_driver'
+   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_vmap' not described in 'drm_driver'
+   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_vunmap' not described in 'drm_driver'
+   include/drm/drm_drv.h:610: warning: Function parameter or member 'gem_prime_mmap' not described in 'drm_driver'
+   drivers/gpu/drm/drm_prime.c:342: warning: Function parameter or member 'attach' not described in 'drm_gem_unmap_dma_buf'
+   drivers/gpu/drm/drm_prime.c:342: warning: Function parameter or member 'sgt' not described in 'drm_gem_unmap_dma_buf'
+   drivers/gpu/drm/drm_prime.c:342: warning: Function parameter or member 'dir' not described in 'drm_gem_unmap_dma_buf'
+   drivers/gpu/drm/drm_prime.c:438: warning: Function parameter or member 'dma_buf' not described in 'drm_gem_dmabuf_kmap_atomic'
+   drivers/gpu/drm/drm_prime.c:438: warning: Function parameter or member 'page_num' not described in 'drm_gem_dmabuf_kmap_atomic'
+   drivers/gpu/drm/drm_prime.c:450: warning: Function parameter or member 'dma_buf' not described in 'drm_gem_dmabuf_kunmap_atomic'
+   drivers/gpu/drm/drm_prime.c:450: warning: Function parameter or member 'page_num' not described in 'drm_gem_dmabuf_kunmap_atomic'
+   drivers/gpu/drm/drm_prime.c:450: warning: Function parameter or member 'addr' not described in 'drm_gem_dmabuf_kunmap_atomic'
+   drivers/gpu/drm/drm_prime.c:461: warning: Function parameter or member 'dma_buf' not described in 'drm_gem_dmabuf_kmap'
+   drivers/gpu/drm/drm_prime.c:461: warning: Function parameter or member 'page_num' not described in 'drm_gem_dmabuf_kmap'
+   drivers/gpu/drm/drm_prime.c:473: warning: Function parameter or member 'dma_buf' not described in 'drm_gem_dmabuf_kunmap'
+   drivers/gpu/drm/drm_prime.c:473: warning: Function parameter or member 'page_num' not described in 'drm_gem_dmabuf_kunmap'
+   drivers/gpu/drm/drm_prime.c:473: warning: Function parameter or member 'addr' not described in 'drm_gem_dmabuf_kunmap'
+   include/media/v4l2-dev.h:42: warning: Enum value 'VFL_TYPE_MAX' not described in enum 'vfl_devnode_type'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'dev_scratch' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'ip_defrag_offset' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'skb_mstamp' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member '__cloned_offset' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'head_frag' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member '__unused' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member '__pkt_type_offset' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'pfmemalloc' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'encapsulation' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'encap_hdr_csum' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'csum_valid' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'csum_complete_sw' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'csum_level' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'inner_protocol_type' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'remcsum_offload' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'offload_fwd_mark' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'offload_mr_fwd_mark' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'sender_cpu' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'reserved_tailroom' not described in 'sk_buff'
+   include/linux/skbuff.h:850: warning: Function parameter or member 'inner_ipproto' not described in 'sk_buff'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_addrpair' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_portpair' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_ipv6only' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_net_refcnt' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_v6_daddr' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_v6_rcv_saddr' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_cookie' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_listener' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_tw_dr' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_rcv_wnd' not described in 'sock_common'
+   include/net/sock.h:234: warning: Function parameter or member 'skc_tw_rcv_nxt' not described in 'sock_common'
+   include/net/sock.h:488: warning: Function parameter or member 'sk_backlog.rmem_alloc' not described in 'sock'
+   include/net/sock.h:488: warning: Function parameter or member 'sk_backlog.len' not described in 'sock'
+   include/net/sock.h:488: warning: Function parameter or member 'sk_backlog.head' not described in 'sock'
+   include/net/sock.h:488: warning: Function parameter or member 'sk_backlog.tail' not described in 'sock'
+   include/net/sock.h:488: warning: Function parameter or member 'sk_wq_raw' not described in 'sock'
+   include/net/sock.h:488: warning: Function parameter or member 'tcp_rtx_queue' not described in 'sock'
+   include/net/sock.h:488: warning: Function parameter or member 'sk_route_forced_caps' not described in 'sock'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'adj_list.upper' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'adj_list.lower' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'gso_partial_features' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'switchdev_ops' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'l3mdev_ops' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'xfrmdev_ops' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'name_assign_type' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'ieee802154_ptr' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'mpls_ptr' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'xdp_prog' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'gro_flush_timeout' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'nf_hooks_ingress' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member '____cacheline_aligned_in_smp' not described in 'net_device'
+   include/linux/netdevice.h:1955: warning: Function parameter or member 'qdisc_hash' not described in 'net_device'
+   include/linux/phylink.h:56: warning: Function parameter or member '__ETHTOOL_DECLARE_LINK_MODE_MASK(advertising' not described in 'phylink_link_state'
+   include/linux/phylink.h:56: warning: Function parameter or member '__ETHTOOL_DECLARE_LINK_MODE_MASK(lp_advertising' not described in 'phylink_link_state'
 
-    [SUNGEM]: Updates from PowerPC people.
-    
-    Support more chips and split out all the complex PHY
-    handling into a seperate file.
+vim +143 include/linux/device.h
 
+^1da177e Linus Torvalds 2005-04-16 @143  
 
-Since this NIC never had CHECKSUM_COMPLETE support (since we have to trim each skb,
-thus were forcing ip_summed to CHECKSUM_NONE) we probably should remove it and be happy.
+:::::: The code at line 143 was first introduced by commit
+:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
 
-Unless you guys find a way to let the NIC strip the FCS, and double check the csum is a real csum ;)
+:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
 
-diff --git a/drivers/net/ethernet/sun/sungem.c b/drivers/net/ethernet/sun/sungem.c
-index 7a16d40a72d13cf1d522e8a3a396c826fe76f9b9..85439308375e95c3854e4a1561697d69ec85399b 100644
---- a/drivers/net/ethernet/sun/sungem.c
-+++ b/drivers/net/ethernet/sun/sungem.c
-@@ -760,7 +760,6 @@ static int gem_rx(struct gem *gp, int work_to_do)
-        struct net_device *dev = gp->dev;
-        int entry, drops, work_done = 0;
-        u32 done;
--       __sum16 csum;
- 
-        if (netif_msg_rx_status(gp))
-                printk(KERN_DEBUG "%s: rx interrupt, done: %d, rx_new: %d\n",
-@@ -855,9 +854,6 @@ static int gem_rx(struct gem *gp, int work_to_do)
-                        skb = copy_skb;
-                }
- 
--               csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
--               skb->csum = csum_unfold(csum);
--               skb->ip_summed = CHECKSUM_COMPLETE;
-                skb->protocol = eth_type_trans(skb, gp->dev);
- 
-                napi_gro_receive(&gp->napi, skb);
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
+--9jxsPFA5p3P2qPhR
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--9jxsPFA5p3P2qPhR--
