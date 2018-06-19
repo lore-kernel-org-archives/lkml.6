@@ -2,96 +2,89 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A633AC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC8AC5AE5A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62A7D20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:30:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A7D20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7EAE820693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:32:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="Zamc2yx2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EAE820693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757006AbeFSUaD (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 16:30:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44838 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755265AbeFSUaC (ORCPT
+        id S967221AbeFSUc3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 16:32:29 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:51133 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967142AbeFSUc0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 16:30:02 -0400
-Received: from localhost (unknown [61.115.201.97])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2AD3EB6;
-        Tue, 19 Jun 2018 20:30:00 +0000 (UTC)
-Date:   Wed, 20 Jun 2018 05:29:59 +0900
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [RFC PATCH v2] driver core: add a debugfs entry to show deferred
- devices
-Message-ID: <20180619202959.GA19129@kroah.com>
-References: <20180619183356.32106-1-javierm@redhat.com>
- <CAHp75Vcn39N9rZ0UO3szGrODVLxek4X746uWs+RPXwy4i0s1Ug@mail.gmail.com>
- <CAHp75VdpHdanWJmcwLBRTSDoDkbpPxuAGwwVO0hosXSRn4PUoA@mail.gmail.com>
+        Tue, 19 Jun 2018 16:32:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=z2Qkst2xiExcW131eNlTd5Ks2t0a7C67VBqzCJcrXOI=; b=Zamc2yx2G+cCbzyR7QoA4sl0BI
+        QJjFdCz36vclQmaLuyd14K17OJ+/ZPPbMvp+upG1ykst6agu5u2NmX0L1uNe4Sg9kipVhZizt+S9t
+        MdbePqSQqfyImVGnsFDLUDZ0GB9iS8stTTtvvMu20jwYGWQJ0Vj23EGk2moXGectVfBzCdqSuCkY7
+        QbyJaInl71F4rNjqLz32fURKVqL4o6DGaJthjJtMejPijVMkpU/Q9k7N1qBGH979N0g0x6+36F54Z
+        Rq67c0DXcGGMJnZ/ydZpgjxWyLsfTEhH2EsdIos6I3kvwiR5q632TFfSH8VHF8R4yYEfHqfY4wHPJ
+        ZbU9R4RQ==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:46184 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fVNIe-00AfB2-Gs; Tue, 19 Jun 2018 20:32:25 +0000
+Date:   Tue, 19 Jun 2018 13:32:23 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
+        mark.rutland@arm.com, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Make badr macro compatible with newer GAS versions
+Message-ID: <20180619203223.GA28370@roeck-us.net>
+References: <20180619192633.21846-1-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VdpHdanWJmcwLBRTSDoDkbpPxuAGwwVO0hosXSRn4PUoA@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180619192633.21846-1-ard.biesheuvel@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 10:55:20PM +0300, Andy Shevchenko wrote:
-> On Tue, Jun 19, 2018 at 10:53 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Tue, Jun 19, 2018 at 9:33 PM, Javier Martinez Canillas
-> > <javierm@redhat.com> wrote:
-> >> For debugging purposes it may be useful to know what are the devices whose
-> >> probe function was deferred. Add a debugfs entry showing that information.
+On Tue, Jun 19, 2018 at 09:26:31PM +0200, Ard Biesheuvel wrote:
+> Work around the mindless and backward incompatible change in GAS that
+> prevents us from using a simple addition to set the Thumb bit in local
+> symbol references taken using 'adr' instructions (#2)
 > 
-> >> +static int deferred_devs_open(struct inode *inode, struct file *file)
-> >> +{
-> >> +       return single_open(file, deferred_devs_show, inode->i_private);
-> >> +}
-> >> +
-> >> +static const struct file_operations deferred_devs_fops = {
-> >> +       .owner = THIS_MODULE,
-> >> +       .open = deferred_devs_open,
-> >> +       .read = seq_read,
-> >> +       .llseek = seq_lseek,
-> >> +       .release = single_release,
-> >> +};
-> >
-> > Isn't this DEFINE_SHOW_ATTRIBUTE() ?
+> As a preparatory step, remove badr occurrences in ARM code sequences
+> contained in Thumb2 kernels.
 > 
-> Besides that, you are summoning Greg's dark side :-)
-> See below.
+> Ard Biesheuvel (2):
+>   ARM: avoid badr macro for switching to Thumb-2 mode
+>   ARM: assembler: prevent ADR from setting the Thumb bit twice
 > 
-> >> +       if (IS_ENABLED(CONFIG_DEBUG_FS)) {
-> >> +               deferred_devices = debugfs_create_file("deferred_devices",
-> >> +                                                      0444, NULL, NULL,
-> >> +                                                      &deferred_devs_fops);
-> 
-> >> +               if (!deferred_devices)
-> >> +                       return -ENOMEM;
-> 
-> This must not prevent the execution. So, the check introduces actually
-> a regression.
 
-Awe, you beat me to it :)
+This doesn't work for images built with a toolchain based on gcc 7.3.0
+and binutils 2.28.1. It _does_ work for images built with gcc 7.3.0/
+binutils 2.30.
 
-Also, I don't usually comment on RFC patches, as that shows the author
-really doesn't think that the code is ready to be reviewed/merged...
-
-thanks,
-
-greg k-h
+Guenter
