@@ -6,45 +6,47 @@ X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4735FC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 435C3C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F397D20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F397D20693
+	by mail.kernel.org (Postfix) with ESMTP id E7BBC20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BBC20693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754552AbeFTDFG (ORCPT
+        id S1754554AbeFTDFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 23:05:06 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:58289 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754240AbeFTDDn (ORCPT
+        Tue, 19 Jun 2018 23:05:21 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:36637 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754232AbeFTDDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Jun 2018 23:03:43 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 19 Jun 2018 20:03:06 -0700
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 19 Jun 2018 20:03:36 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 43DEB40DF4;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 17C9240DFC;
         Tue, 19 Jun 2018 20:03:40 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC:     Nadav Amit <namit@vmware.com>, Alok Kataria <akataria@vmware.com>,
+CC:     Nadav Amit <namit@vmware.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        <virtualization@lists.linux-foundation.org>
-Subject: [PATCH v5 6/9] x86: prevent inline distortion by paravirt ops
-Date:   Tue, 19 Jun 2018 12:48:51 -0700
-Message-ID: <20180619194854.69486-7-namit@vmware.com>
+        Kees Cook <keescook@chromium.org>,
+        Jan Beulich <JBeulich@suse.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH v5 3/9] x86: refcount: prevent gcc distortions
+Date:   Tue, 19 Jun 2018 12:48:48 -0700
+Message-ID: <20180619194854.69486-4-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180619194854.69486-1-namit@vmware.com>
 References: <20180619194854.69486-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,142 +63,178 @@ The solution is to set an assembly macro and call it from the inlined
 assembly block. As a result GCC considers the inline assembly block as
 a single instruction.
 
-The effect of the patch is a more aggressive inlining, which also
-causes a size increase of kernel.
+This patch allows to inline functions such as __get_seccomp_filter().
+Interestingly, this allows more aggressive inlining while reducing the
+kernel size.
 
    text	   data	    bss	    dec	    hex	filename
-18147336 10226688 2957312 31331336 1de1408 ./vmlinux before
-18162555 10226288 2957312 31346155 1de4deb ./vmlinux after (+14819)
+18140970 10225412 2957312 31323694 1ddf62e ./vmlinux before
+18140140 10225284 2957312 31322736 1ddf270 ./vmlinux after (-958)
 
 Static text symbols:
-Before:	40053
-After:	39942	(-111)
+Before:	40302
+After:	40286	(-16)
 
-Cc: Alok Kataria <akataria@vmware.com>
+Functions such as kref_get(), free_user(), fuse_file_get() now get
+inlined.
+
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: virtualization@lists.linux-foundation.org
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Jan Beulich <JBeulich@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/paravirt_types.h | 56 +++++++++++++--------------
- arch/x86/kernel/macros.S              |  1 +
- 2 files changed, 28 insertions(+), 29 deletions(-)
+ arch/x86/include/asm/refcount.h | 74 ++++++++++++++++++++-------------
+ arch/x86/kernel/macros.S        |  1 +
+ 2 files changed, 46 insertions(+), 29 deletions(-)
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 180bc0bff0fb..a3d886238b58 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -343,23 +343,11 @@ extern struct pv_lock_ops pv_lock_ops;
- #define paravirt_clobber(clobber)		\
- 	[paravirt_clobber] "i" (clobber)
- 
--/*
-- * Generate some code, and mark it as patchable by the
-- * apply_paravirt() alternate instruction patcher.
-- */
--#define _paravirt_alt(insn_string, type, clobber)	\
--	"771:\n\t" insn_string "\n" "772:\n"		\
--	".pushsection .parainstructions,\"a\"\n"	\
--	_ASM_ALIGN "\n"					\
--	_ASM_PTR " 771b\n"				\
--	"  .byte " type "\n"				\
--	"  .byte 772b-771b\n"				\
--	"  .short " clobber "\n"			\
--	".popsection\n"
--
- /* Generate patchable code, with the default asm parameters. */
--#define paravirt_alt(insn_string)					\
--	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
-+#define paravirt_alt							\
-+	"PARAVIRT_CALL type=\"%c[paravirt_typenum]\""			\
-+	" clobber=\"%c[paravirt_clobber]\""				\
-+	" pv_opptr=\"%c[paravirt_opptr]\""
- 
- /* Simple instruction patching code. */
- #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
-@@ -387,16 +375,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
- 
- int paravirt_disable_iospace(void);
- 
--/*
-- * This generates an indirect call based on the operation type number.
-- * The type number, computed in PARAVIRT_PATCH, is derived from the
-- * offset into the paravirt_patch_template structure, and can therefore be
-- * freely converted back into a structure offset.
-- */
--#define PARAVIRT_CALL					\
--	ANNOTATE_RETPOLINE_SAFE				\
--	"call *%c[paravirt_opptr];"
--
- /*
-  * These macros are intended to wrap calls through one of the paravirt
-  * ops structs, so that they can be later identified and patched at
-@@ -534,7 +512,7 @@ int paravirt_disable_iospace(void);
- 		/* since this condition will never hold */		\
- 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
- 			asm volatile(pre				\
--				     paravirt_alt(PARAVIRT_CALL)	\
-+				     paravirt_alt			\
- 				     post				\
- 				     : call_clbr, ASM_CALL_CONSTRAINT	\
- 				     : paravirt_type(op),		\
-@@ -544,7 +522,7 @@ int paravirt_disable_iospace(void);
- 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
- 		} else {						\
- 			asm volatile(pre				\
--				     paravirt_alt(PARAVIRT_CALL)	\
-+				     paravirt_alt			\
- 				     post				\
- 				     : call_clbr, ASM_CALL_CONSTRAINT	\
- 				     : paravirt_type(op),		\
-@@ -571,7 +549,7 @@ int paravirt_disable_iospace(void);
- 		PVOP_VCALL_ARGS;					\
- 		PVOP_TEST_NULL(op);					\
- 		asm volatile(pre					\
--			     paravirt_alt(PARAVIRT_CALL)		\
-+			     paravirt_alt				\
- 			     post					\
- 			     : call_clbr, ASM_CALL_CONSTRAINT		\
- 			     : paravirt_type(op),			\
-@@ -691,6 +669,26 @@ struct paravirt_patch_site {
- extern struct paravirt_patch_site __parainstructions[],
- 	__parainstructions_end[];
- 
-+#else	/* __ASSEMBLY__ */
+diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+index 4cf11d88d3b3..6b2809a4d8e9 100644
+--- a/arch/x86/include/asm/refcount.h
++++ b/arch/x86/include/asm/refcount.h
+@@ -4,6 +4,41 @@
+  * x86-specific implementation of refcount_t. Based on PAX_REFCOUNT from
+  * PaX/grsecurity.
+  */
 +
-+/*
-+ * This generates an indirect call based on the operation type number.
-+ * The type number, computed in PARAVIRT_PATCH, is derived from the
-+ * offset into the paravirt_patch_template structure, and can therefore be
-+ * freely converted back into a structure offset.
-+ */
-+.macro PARAVIRT_CALL type:req clobber:req pv_opptr:req
-+771:	ANNOTATE_RETPOLINE_SAFE
-+	call *\pv_opptr
-+772:	.pushsection .parainstructions,"a"
-+	_ASM_ALIGN
-+	_ASM_PTR 771b
-+	.byte \type
-+	.byte 772b-771b
-+	.short \clobber
++#ifdef __ASSEMBLY__
++
++#include <asm/asm.h>
++#include <asm/bug.h>
++
++.macro REFCOUNT_EXCEPTION counter:req
++	.pushsection .text..refcount
++111:	lea \counter, %_ASM_CX
++112:	ud2
++	ASM_UNREACHABLE
 +	.popsection
++113:	_ASM_EXTABLE_REFCOUNT(112b, 113b)
 +.endm
 +
- #endif	/* __ASSEMBLY__ */
++/* Trigger refcount exception if refcount result is negative. */
++.macro REFCOUNT_CHECK_LT_ZERO counter:req
++	js 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
++/* Trigger refcount exception if refcount result is zero or negative. */
++.macro REFCOUNT_CHECK_LE_ZERO counter:req
++	jz 111f
++	REFCOUNT_CHECK_LT_ZERO counter="\counter"
++.endm
++
++/* Trigger refcount exception unconditionally. */
++.macro REFCOUNT_ERROR counter:req
++	jmp 111f
++	REFCOUNT_EXCEPTION counter="\counter"
++.endm
++
++#else /* __ASSEMBLY__ */
++
+ #include <linux/refcount.h>
  
- #endif	/* _ASM_X86_PARAVIRT_TYPES_H */
+ /*
+@@ -14,34 +49,11 @@
+  * central refcount exception. The fixup address for the exception points
+  * back to the regular execution flow in .text.
+  */
+-#define _REFCOUNT_EXCEPTION				\
+-	".pushsection .text..refcount\n"		\
+-	"111:\tlea %[counter], %%" _ASM_CX "\n"		\
+-	"112:\t" ASM_UD2 "\n"				\
+-	ASM_UNREACHABLE					\
+-	".popsection\n"					\
+-	"113:\n"					\
+-	_ASM_EXTABLE_REFCOUNT(112b, 113b)
+-
+-/* Trigger refcount exception if refcount result is negative. */
+-#define REFCOUNT_CHECK_LT_ZERO				\
+-	"js 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+-
+-/* Trigger refcount exception if refcount result is zero or negative. */
+-#define REFCOUNT_CHECK_LE_ZERO				\
+-	"jz 111f\n\t"					\
+-	REFCOUNT_CHECK_LT_ZERO
+-
+-/* Trigger refcount exception unconditionally. */
+-#define REFCOUNT_ERROR					\
+-	"jmp 111f\n\t"					\
+-	_REFCOUNT_EXCEPTION
+ 
+ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "addl %1,%0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: "ir" (i)
+ 		: "cc", "cx");
+@@ -50,7 +62,7 @@ static __always_inline void refcount_add(unsigned int i, refcount_t *r)
+ static __always_inline void refcount_inc(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "incl %0\n\t"
+-		REFCOUNT_CHECK_LT_ZERO
++		"REFCOUNT_CHECK_LT_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -58,7 +70,7 @@ static __always_inline void refcount_inc(refcount_t *r)
+ static __always_inline void refcount_dec(refcount_t *r)
+ {
+ 	asm volatile(LOCK_PREFIX "decl %0\n\t"
+-		REFCOUNT_CHECK_LE_ZERO
++		"REFCOUNT_CHECK_LE_ZERO counter=\"%[counter]\""
+ 		: [counter] "+m" (r->refs.counter)
+ 		: : "cc", "cx");
+ }
+@@ -66,13 +78,15 @@ static __always_inline void refcount_dec(refcount_t *r)
+ static __always_inline __must_check
+ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+ {
+-	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
++				  "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				  r->refs.counter, "er", i, "%0", e, "cx");
+ }
+ 
+ static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+ {
+-	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl", REFCOUNT_CHECK_LT_ZERO,
++	GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
++				 "REFCOUNT_CHECK_LT_ZERO counter=\"%0\"",
+ 				 r->refs.counter, "%0", e, "cx");
+ }
+ 
+@@ -90,7 +104,7 @@ bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+ 
+ 		/* Did we try to increment from/to an undesirable state? */
+ 		if (unlikely(c < 0 || c == INT_MAX || result < c)) {
+-			asm volatile(REFCOUNT_ERROR
++			asm volatile("REFCOUNT_ERROR counter=\"%[counter]\""
+ 				     : : [counter] "m" (r->refs.counter)
+ 				     : "cc", "cx");
+ 			break;
+@@ -106,4 +120,6 @@ static __always_inline __must_check bool refcount_inc_not_zero(refcount_t *r)
+ 	return refcount_add_not_zero(1, r);
+ }
+ 
++#endif /* __ASSEMBLY__ */
++
+ #endif
 diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 66ccb8e823b1..71d8b716b111 100644
+index cee28c3246dc..f1fe1d570365 100644
 --- a/arch/x86/kernel/macros.S
 +++ b/arch/x86/kernel/macros.S
-@@ -10,3 +10,4 @@
- #include <asm/refcount.h>
- #include <asm/alternative-asm.h>
- #include <asm/bug.h>
-+#include <asm/paravirt.h>
+@@ -7,3 +7,4 @@
+  */
+ 
+ #include <linux/compiler.h>
++#include <asm/refcount.h>
 -- 
 2.17.0
 
