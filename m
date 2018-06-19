@@ -2,120 +2,111 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 894DDC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB26C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CFA120836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:52:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CFA120836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id E3AB520693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:54:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Mx7ZJ9z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AB520693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966455AbeFSNwX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:52:23 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:52749 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965731AbeFSNwV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:52:21 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        id S966286AbeFSNyi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:54:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965681AbeFSNyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:54:36 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 0AD2830000377;
-        Tue, 19 Jun 2018 15:52:20 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id C49695B54E; Tue, 19 Jun 2018 15:52:19 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 15:52:19 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: fix suspend/resume in davinci_emac
-Message-ID: <20180619135219.GA7312@wunner.de>
-References: <20180619124400.11878-1-brgl@bgdev.pl>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16C882083D;
+        Tue, 19 Jun 2018 13:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529416476;
+        bh=1nhY4RYV8AsZ8AGYddmdO1Vd7noDswZOhZm+yS3D1MA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1Mx7ZJ9z2I9YYAPytx9hgGxp4ttIVId9F9Rl1lKUEnSUXAysg2D5YgFcbOEDDLZt1
+         xtUCvjQqM/TGdxkD2zTZq7tKCfA7qZ7p8CqGR4cgixAytGw2WaEohhRPQdgQN5yOlX
+         L7+V72YDtwsdG/gWRCe6RmzGHybmLsh1rg5wiZwY=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id D195F1413AA; Tue, 19 Jun 2018 10:54:28 -0300 (-03)
+Date:   Tue, 19 Jun 2018 10:54:28 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1]: perf tests: check that complex event name is parsed
+ correctly
+Message-ID: <20180619135428.GE20477@kernel.org>
+References: <ad30b774-219b-7b80-c610-4e9e298cf8a7@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619124400.11878-1-brgl@bgdev.pl>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <ad30b774-219b-7b80-c610-4e9e298cf8a7@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 02:44:00PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Em Tue, Jun 19, 2018 at 11:45:40AM +0300, Alexey Budankov escreveu:
 > 
-> This patch reverts commit 3243ff2a05ec ("net: ethernet: davinci_emac:
-> Deduplicate bus_find_device() by name matching") and adds a comment
-> which should stop anyone from reintroducing the same "fix" in the future.
+> Extend regression testing to cover case of complex event names enabled 
+> by the patch "perf record: enable arbitrary event names thru name= modifier".
 > 
-> We can't use bus_find_device_by_name() here because the device name is
-> not guaranteed to be 'davinci_mdio'. On some systems it can be
-> 'davinci_mdio.0' so we need to use strncmp() against the first part of
-> the string to correctly match it.
-> 
-> Fixes: 3243ff2a05ec ("net: ethernet: davinci_emac: Deduplicate bus_find_device() by name matching")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> tools/perf/perf test
+>  1: vmlinux symtab matches kallsyms                       : Skip
+>  2: Detect openat syscall event                           : Ok
+>  3: Detect openat syscall event on all cpus               : Ok
+>  4: Read samples using the mmap interface                 : Ok
+>  5: Test data source output                               : Ok
+>  6: Parse event definition strings                        : Ok		<===!
+>  7: Simple expression parser                              : Ok
+> ...
 
-Acked-by: Lukas Wunner <lukas@wunner.de>
+Applied and added this to the commit log:
 
-My apologies Bartosz, it wasn't clear to me that the driver deliberately
-only matched against the prefix of the name.  Sorry for the breakage.
+Committer testing:
 
+  # perf test "event definition"
+   6: Parse event definition strings                        : Ok
+  # perf test -v 6 2> /tmp/before
+  # perf test -v 6 2> /tmp/after
+  # diff -u /tmp/before /tmp/after
+  --- /tmp/before       2018-06-19 10:50:21.485572638 -0300
+  +++ /tmp/after        2018-06-19 10:50:40.886572896 -0300
+  @@ -1,6 +1,6 @@
+    6: Parse event definition strings                        :
+   --- start ---
+  -test child forked, pid 24259
+  +test child forked, pid 24904
+   running test 0 'syscalls:sys_enter_openat'Using CPUID GenuineIntel-6-3D
+   registering plugin: /root/.traceevent/plugins/plugin_kvm.so
+   registering plugin: /root/.traceevent/plugins/plugin_hrtimer.so
+  @@ -136,9 +136,11 @@
+   running test 50 '4:0x6530160/name=numpmu/'
+   running test 51 'L1-dcache-misses/name=cachepmu/'
+   running test 52 'intel_pt//u'
+  +running test 53 'cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk'
+   running test 0 'cpu/config=10,config1,config2=3,period=1000/u'
+   running test 1 'cpu/config=1,name=krava/u,cpu/config=2/u'
+   running test 2 'cpu/config=1,call-graph=fp,time,period=100000/,cpu/config=2,call-graph=no,time=0,period=2000/'
+  +running test 3 'cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp'
+   el-capacity -> cpu/event=0x54,umask=0x2/
+   el-conflict -> cpu/event=0x54,umask=0x1/
+   el-start -> cpu/event=0xc8,umask=0x1/
 
-> ---
->  drivers/net/ethernet/ti/davinci_emac.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-> index 06d7c9e4dcda..a1a6445b5a7e 100644
-> --- a/drivers/net/ethernet/ti/davinci_emac.c
-> +++ b/drivers/net/ethernet/ti/davinci_emac.c
-> @@ -1385,6 +1385,11 @@ static int emac_devioctl(struct net_device *ndev, struct ifreq *ifrq, int cmd)
->  		return -EOPNOTSUPP;
->  }
->  
-> +static int match_first_device(struct device *dev, void *data)
-> +{
-> +	return !strncmp(dev_name(dev), "davinci_mdio", 12);
-> +}
-> +
->  /**
->   * emac_dev_open - EMAC device open
->   * @ndev: The DaVinci EMAC network adapter
-> @@ -1484,8 +1489,14 @@ static int emac_dev_open(struct net_device *ndev)
->  
->  	/* use the first phy on the bus if pdata did not give us a phy id */
->  	if (!phydev && !priv->phy_id) {
-> -		phy = bus_find_device_by_name(&mdio_bus_type, NULL,
-> -					      "davinci_mdio");
-> +		/* NOTE: we can't use bus_find_device_by_name() here because
-> +		 * the device name is not guaranteed to be 'davinci_mdio'. On
-> +		 * some systems it can be 'davinci_mdio.0' so we need to use
-> +		 * strncmp() against the first part of the string to correctly
-> +		 * match it.
-> +		 */
-> +		phy = bus_find_device(&mdio_bus_type, NULL, NULL,
-> +				      match_first_device);
->  		if (phy) {
->  			priv->phy_id = dev_name(phy);
->  			if (!priv->phy_id || !*priv->phy_id)
-> -- 
-> 2.17.1
-> 
