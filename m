@@ -2,94 +2,149 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8D2C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6287CC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A2DF2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D5920875
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:13:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYDML+Ry"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A2DF2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WJb0I4qg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D5920875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967154AbeFSQMs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:12:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966879AbeFSQMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:12:46 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5335920661;
-        Tue, 19 Jun 2018 16:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529424766;
-        bh=Qpl6EHWZ7cA1Fbqgdfw/Ll+jcdb8sds5r74Fiz8iGKE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HYDML+Rynyz0PzE1/F1l8dBYqWadVZ0GsdWa/NUtlOXnRxeln6ml6OQbL9o3JxihT
-         5V73yOKxUW6PMYbrtb83dFZRB2ExxpWszDLWLPuOgfzmq1i3+DtCJxFBaR2KwFs2xR
-         QrmJNXerVNE1uY2LycLRrVOAWmOYOCP32WKYcHKk=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH -tip v6 17/27] arm64: kprobes: Don't call the ->break_handler() in arm64 kprobes code
-Date:   Wed, 20 Jun 2018 01:12:22 +0900
-Message-Id: <152942474231.15209.17684808374429473004.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152942424698.15209.15245996287444292393.stgit@devbox>
-References: <152942424698.15209.15245996287444292393.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S967172AbeFSQNN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:13:13 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52667 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966916AbeFSQNI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:13:08 -0400
+Received: by mail-wm0-f67.google.com with SMTP id p126-v6so1338803wmb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=orK3jueeD8iKHAfbK5diacUPArijIBIe08XpYi0WLvQ=;
+        b=WJb0I4qguAGnG8ViBOzfU+r1pGCxGFPMypZWxGj8Zy1JE1ASQ6jYNxoscXsvLtKpd8
+         hS66suuO7+lKL28ruoTr7NLUEjLW/Cl9DoO9ZhIiy284QAsmnzUjBEzYWVY8EIfpX0GD
+         2cPeZ/EcLO1TQMjFoZIOJ2hdpT20XVYY7y0Xc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=orK3jueeD8iKHAfbK5diacUPArijIBIe08XpYi0WLvQ=;
+        b=iIXY4GbyP2LgUgouDCDQcInu6YyNPjoUQA+rBnzKCl4OXjPo3orPXbSBXZXIRCNMMK
+         44Pix3VKd35rV/NE6rhZlnbRa2KP7OIrYqlSOsfvLp+yvFzqwKXhujkgkRK3QmRXWysL
+         PMn871586VxkvEtbRQDlagy4IEYfzZtyWMCqFH/bCvXdPztRXJJuTArbylsWnOn0lhtX
+         nuFrXYZoevcdY5MugAjqqp2oC87QjbgEJ5xb6Nkuw99uOsw19IEONveah2JkYM6qZhsq
+         wWcdhLaoo1P5/jOydl7+iL7C0zENmK3GAYmDZOyDo0rvfimZf39jR7lEDdh4s7TUAQZ8
+         Ftwg==
+X-Gm-Message-State: APt69E1q1k9Bu7+04e0SVNZ5BAoqxAz5WA+nGk2F+AZdHYpj51TuMCpi
+        lQOOb6jtaW8StE5VZ4hGSQ1Ufg==
+X-Google-Smtp-Source: ADUXVKJJrca/iXnzyscjhaZffEwMAAysjQ1yhUuHzl2BQ7apHN4Coo+xI5WUxVP/vidnfSDbAX6Asg==
+X-Received: by 2002:a1c:4189:: with SMTP id o131-v6mr11655598wma.7.1529424787406;
+        Tue, 19 Jun 2018 09:13:07 -0700 (PDT)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id r5-v6sm47248wrp.59.2018.06.19.09.13.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 19 Jun 2018 09:13:06 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     robh+dt@kernel.org, kramasub@codeaurora.org, sdharia@quicinc.com,
+        linux-kernel@vger.kernel.org, broonie@kernel.org,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v4 1/5] slimbus: core: add of_slim_device_get() helper
+Date:   Tue, 19 Jun 2018 17:12:57 +0100
+Message-Id: <20180619161301.4556-2-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180619161301.4556-1-srinivas.kandagatla@linaro.org>
+References: <20180619161301.4556-1-srinivas.kandagatla@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't call the ->break_handler() from the arm64 kprobes code,
-because it was only used by jprobes which got removed.
+On SLIMBus controllers like Qcom NGD(non ported device), controller
+can request logical address once the remote side is powered, having a
+helper function like this to explicitly enumerate the bus is helpful.
+Also codec drivers which are taking to interface device would need
+such a helper too.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- arch/arm64/kernel/probes/kprobes.c |    8 --------
- 1 file changed, 8 deletions(-)
+ drivers/slimbus/core.c  | 39 +++++++++++++++++++++++++++++++++++++++
+ include/linux/slimbus.h |  2 ++
+ 2 files changed, 41 insertions(+)
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 3ca2351109a6..076c3c0775a6 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -408,14 +408,6 @@ static void __kprobes kprobe_handler(struct pt_regs *regs)
- 				return;
- 			}
- 		}
--	} else if ((le32_to_cpu(*(kprobe_opcode_t *) addr) ==
--	    BRK64_OPCODE_KPROBES) && cur_kprobe) {
--		/* We probably hit a jprobe.  Call its break handler. */
--		if (cur_kprobe->break_handler  &&
--		     cur_kprobe->break_handler(cur_kprobe, regs)) {
--			setup_singlestep(cur_kprobe, regs, kcb, 0);
--			return;
--		}
- 	}
- 	/*
- 	 * The breakpoint instruction was removed right
+diff --git a/drivers/slimbus/core.c b/drivers/slimbus/core.c
+index 7ddfc675b131..88248a4ecad9 100644
+--- a/drivers/slimbus/core.c
++++ b/drivers/slimbus/core.c
+@@ -356,6 +356,45 @@ struct slim_device *slim_get_device(struct slim_controller *ctrl,
+ }
+ EXPORT_SYMBOL_GPL(slim_get_device);
+ 
++static int of_slim_match_dev(struct device *dev, void *data)
++{
++	struct device_node *np = data;
++	struct slim_device *sbdev = to_slim_device(dev);
++
++	return (sbdev->dev.of_node == np);
++}
++
++static struct slim_device *of_find_slim_device(struct slim_controller *ctrl,
++					       struct device_node *np)
++{
++	struct slim_device *sbdev;
++	struct device *dev;
++
++	dev = device_find_child(ctrl->dev, np, of_slim_match_dev);
++	if (dev) {
++		sbdev = to_slim_device(dev);
++		return sbdev;
++	}
++
++	return NULL;
++}
++
++/**
++ * of_slim_get_device() - get handle to a device using dt node.
++ *
++ * @ctrl: Controller on which this device will be added/queried
++ * @np: node pointer to device
++ *
++ * Return: pointer to a device if it has already reported. Creates a new
++ * device and returns pointer to it if the device has not yet enumerated.
++ */
++struct slim_device *of_slim_get_device(struct slim_controller *ctrl,
++				       struct device_node *np)
++{
++	return of_find_slim_device(ctrl, np);
++}
++EXPORT_SYMBOL_GPL(of_slim_get_device);
++
+ static int slim_device_alloc_laddr(struct slim_device *sbdev,
+ 				   bool report_present)
+ {
+diff --git a/include/linux/slimbus.h b/include/linux/slimbus.h
+index c36cf121d2cd..efa36a852dc3 100644
+--- a/include/linux/slimbus.h
++++ b/include/linux/slimbus.h
+@@ -138,6 +138,8 @@ static inline void slim_set_devicedata(struct slim_device *dev, void *data)
+ 	dev_set_drvdata(&dev->dev, data);
+ }
+ 
++struct slim_device *of_slim_get_device(struct slim_controller *ctrl,
++				       struct device_node *np);
+ struct slim_device *slim_get_device(struct slim_controller *ctrl,
+ 				    struct slim_eaddr *e_addr);
+ int slim_get_logical_addr(struct slim_device *sbdev);
+-- 
+2.16.2
 
