@@ -6,143 +6,219 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 469DBC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81ECAC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04C1C205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C1C205C9
+	by mail.kernel.org (Postfix) with ESMTP id 3C6F7205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6F7205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966646AbeFSPoP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:44:15 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:33157 "EHLO
+        id S966720AbeFSPoh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:44:37 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:53989 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966193AbeFSPoN (ORCPT
+        with ESMTP id S964999AbeFSPof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:44:13 -0400
+        Tue, 19 Jun 2018 11:44:35 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0LupZV-1gDC9l053J-0101XE; Tue, 19 Jun 2018 17:33:24 +0200
+ (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MSTdP-1fcDsf2nmN-00TRzx; Tue, 19 Jun 2018 17:44:26 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Steve French <sfrench@samba.org>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        David Howells <dhowells@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] cifs: use 64-bit timestamps for fscache
-Date:   Tue, 19 Jun 2018 17:27:59 +0200
-Message-Id: <20180619153255.3634720-2-arnd@arndb.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     y2038@lists.linaro.org, Jan Kara <jack@suse.cz>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] reiserfs: use monotonic time for j_trans_start_time
+Date:   Tue, 19 Jun 2018 17:43:14 +0200
+Message-Id: <20180619154343.3640484-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180619153255.3634720-1-arnd@arndb.de>
-References: <20180619153255.3634720-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:qxAaGmQKval2Htg1xz1M+yzaV/JcTkAAro5o3OtZaOkFa9rVvNb
- +PTxu8UJ+QoH0GqoexiI0jlErOtDObWfcT6/H1wZ0BGFzc+KBtYD5Df1O3jEXSXmiKp0XUC
- q3aibvGsB1Zzfl11PeZAYSFunABRG0fxjioa1tHeE5QA3HOJCPr4rtsm59NXEgZhnZEuOkO
- tpnihWMty46CxQwu392dQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:rXqREHusXe8=:nb4ADdMgSlQsqiCmz772fN
- DcczVHf7Jwd0mW6wwXXdsVL4sOvmuoUX8Tr36CHIw9sTkvmLTcqy7vW/BfWAIUgLNwyzgUBnG
- 45A4IUPT57koqr60qkOItURcTm+NNnCZGWQbKDoe75bfjMlRlEeYLHonMYrV293VdnMsEOQPs
- HX8Uow4VjVqHVbfu9xS8HCdsN//yKVxEwkWoBlxhFP7WiDMCjUx/6T4l3EYCMM2IXrPnv1/E8
- 6whhyklCxUxoJ9p/MS694Ec2Hhlq6MCTvYC6M3ewIeSgd5GA1L1hvoj6wUNX7f1ktLWeQvk8F
- OJjL2AmtWgJrur8ruumHKi35oQWrR3xeIIfUUwcYYzZzRrM0wkz8fFx+wKrm9r3Syk3uA/aB0
- 18xQQF5rK7bxNoNL4/snSijvajX+hMN0SUFmny2BXlOfTlfdVQHU92IlTP52eDXZAbQ5eklTR
- VzF23pcNfTF80M64S1aDaX6n+ShuskzD1UlK3wr9WZxKAEYbk9Saw+6MPbI+jA2yUquVTxBGf
- LPzhF+ZbOGyKBGFzaMqCilfUmuu5nbArNtyckqufUnaDvprqMsmWkqPEB88O8bsIMnaufes9s
- 1xYuyEQSvFcwVQosUDZu6RMicbN2aYqO0hzwm3Gm6HBIBtWqt7FbkMsDTe3f9N+yLNGJF8dFE
- Dbodd2DkyRjqsVA342+0FSGoKyTyeAE0+v/mPWkr2pA0obkL1KBuGdvfAferYGns8qX0=
+In-Reply-To: <20180619154343.3640484-1-arnd@arndb.de>
+References: <20180619154343.3640484-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:+zzcWiLbZF4eRVpZBZyHbYgyWmydPM4yH5ASZxe+8CP6IHZpbT0
+ OjdSxSrB4TTRhLYDaq2SXdQkHWx7IqhumAjSQOE0Vzyo5rUGOP3DLb9AUsZvZergDkvhDZO
+ Cpmsx1VOy/OE358bWnIf7YJgltKG9rghWPP7H6NVb5H7KN9tuqBw/oyQqa9+3H8vdAk7Gpp
+ a1Bcw+FBkMeoPqkXiSKqQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:U4Oi6eDsVqo=:9zQ2lRqPxqCn5HGFdwK2Ms
+ uy9ico2jkgsIAhubCyoRWufPcMNq8CzkZzMeUfFymaduLPNW6s304gQppdUywlpFsPVyQWFpd
+ CoRYlSgbqzrYp0az4Kpw7957nFfKPRgmE8bdu3g3+BgwhG/eiTyC8Z/0rTtjR1svNx2yyiJsk
+ raiIY0HI3nf5t5Nqf8UKf1Bae613WawL4/Xb9cNuRRtAnhwdD9on7EHadIAEuV1M4hx9/P+oB
+ HkqCVQEsSdZ2HpBxTknt9FSx0QJoF19vL5NeuDhYqcrItX2eOiGDsK86Ji8kIgW3fKBVAxhyr
+ ok4VXlJoR5Zfg/NOn+J9k+SzOaLoYikCilB5qcq22NHNkmPkeuDmDIfWerrTFWARWxFTUKGer
+ NKrTnyS0PNJFNBPggbY6KYJHVDnPN7hubI3TfBoGhj/aXpXkf0lMYSyFZAH1Jh/hC3zIwgL5H
+ RGnwKykrXAJ5UJ3LOdYKgt/vXRqSYCs3HQelrjzHjRWxR81KaQwFhK3LSkI+EarEAJqUXIJ2G
+ XNZcP5+LabY3kUpl10sHI4VDCd3h2XS3GrP6vZsDrApyGLDo/W6u62jWlyUfaTKBYNVJdG8fK
+ LD/kCqeRWkoSNyha1AjW4WZdM/S4T9snNPSVv6SzQO8nRMadoFlimX2kSDooHQfDPiMuBOq/y
+ 3Bs+olLgJxwS7ivUqNvU5EdrK1gp5DqUaHzF1wTE2tlPKvQOrimYx/NsqfdX+oMDTiLM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the fscache, we just need the timestamps as cookies to check for
-changes, so we don't really care about the overflow, but it's better
-to stop using the deprecated timespec so we don't have to go through
-explicit conversion functions.
+Using CLOCK_REALTIME time_t timestamps breaks on 32-bit systems
+in 2038, and gives surprising results with a concurrent settimeofday().
 
-To avoid comparing uninitialized padding values that are copied
-while assigning the timespec values, this rearranges the members of
-cifs_fscache_inode_auxdata to avoid padding, and assigns them
-individually.
+This changes the reiserfs journal timestamps to use ktime_get_seconds()
+instead, which makes it use a 64-bit CLOCK_MONOTONIC stamp.
+
+In the procfs output, the monotonic timestamp needs to be converted
+back to CLOCK_REALTIME to keep the existing ABI.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/cifs/cache.c   |  6 ++++--
- fs/cifs/fscache.c | 12 ++++++++----
- fs/cifs/fscache.h |  8 +++++---
- 3 files changed, 17 insertions(+), 9 deletions(-)
+ fs/reiserfs/journal.c  | 22 +++++++++++-----------
+ fs/reiserfs/procfs.c   |  8 ++++++--
+ fs/reiserfs/reiserfs.h |  2 +-
+ 3 files changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/fs/cifs/cache.c b/fs/cifs/cache.c
-index e1553d1e0e50..b7420e605b28 100644
---- a/fs/cifs/cache.c
-+++ b/fs/cifs/cache.c
-@@ -128,8 +128,10 @@ fscache_checkaux cifs_fscache_inode_check_aux(void *cookie_netfs_data,
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 1e7f733b2a12..e809da912c00 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -2381,7 +2381,7 @@ static int journal_read(struct super_block *sb)
+ 	struct reiserfs_journal_desc *desc;
+ 	unsigned int oldest_trans_id = 0;
+ 	unsigned int oldest_invalid_trans_id = 0;
+-	time_t start;
++	time64_t start;
+ 	unsigned long oldest_start = 0;
+ 	unsigned long cur_dblock = 0;
+ 	unsigned long newest_mount_id = 9;
+@@ -2395,7 +2395,7 @@ static int journal_read(struct super_block *sb)
+ 	cur_dblock = SB_ONDISK_JOURNAL_1st_BLOCK(sb);
+ 	reiserfs_info(sb, "checking transaction log (%pg)\n",
+ 		      journal->j_dev_bd);
+-	start = get_seconds();
++	start = ktime_get_seconds();
  
- 	memset(&auxdata, 0, sizeof(auxdata));
- 	auxdata.eof = cifsi->server_eof;
--	auxdata.last_write_time = timespec64_to_timespec(cifsi->vfs_inode.i_mtime);
--	auxdata.last_change_time = timespec64_to_timespec(cifsi->vfs_inode.i_ctime);
-+	auxdata.last_write_time_sec = cifsi->vfs_inode.i_mtime.tv_sec;
-+	auxdata.last_change_time_sec = cifsi->vfs_inode.i_ctime.tv_sec;
-+	auxdata.last_write_time_nsec = cifsi->vfs_inode.i_mtime.tv_nsec;
-+	auxdata.last_change_time_nsec = cifsi->vfs_inode.i_ctime.tv_nsec;
+ 	/*
+ 	 * step 1, read in the journal header block.  Check the transaction
+@@ -2556,7 +2556,7 @@ static int journal_read(struct super_block *sb)
+ 	if (replay_count > 0) {
+ 		reiserfs_info(sb,
+ 			      "replayed %d transactions in %lu seconds\n",
+-			      replay_count, get_seconds() - start);
++			      replay_count, ktime_get_seconds() - start);
+ 	}
+ 	/* needed to satisfy the locking in _update_journal_header_block */
+ 	reiserfs_write_lock(sb);
+@@ -2914,7 +2914,7 @@ int journal_transaction_should_end(struct reiserfs_transaction_handle *th,
+ 				   int new_alloc)
+ {
+ 	struct reiserfs_journal *journal = SB_JOURNAL(th->t_super);
+-	time_t now = get_seconds();
++	time64_t now = ktime_get_seconds();
+ 	/* cannot restart while nested */
+ 	BUG_ON(!th->t_trans_id);
+ 	if (th->t_refcount > 1)
+@@ -3023,7 +3023,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
+ 			      struct super_block *sb, unsigned long nblocks,
+ 			      int join)
+ {
+-	time_t now = get_seconds();
++	time64_t now = ktime_get_seconds();
+ 	unsigned int old_trans_id;
+ 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
+ 	struct reiserfs_transaction_handle myth;
+@@ -3056,7 +3056,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
+ 		PROC_INFO_INC(sb, journal.journal_relock_writers);
+ 		goto relock;
+ 	}
+-	now = get_seconds();
++	now = ktime_get_seconds();
  
- 	if (memcmp(data, &auxdata, datalen) != 0)
- 		return FSCACHE_CHECKAUX_OBSOLETE;
-diff --git a/fs/cifs/fscache.c b/fs/cifs/fscache.c
-index 85145a763021..ea6ace9c2417 100644
---- a/fs/cifs/fscache.c
-+++ b/fs/cifs/fscache.c
-@@ -129,8 +129,10 @@ static void cifs_fscache_acquire_inode_cookie(struct cifsInodeInfo *cifsi,
- 
- 	memset(&auxdata, 0, sizeof(auxdata));
- 	auxdata.eof = cifsi->server_eof;
--	auxdata.last_write_time = timespec64_to_timespec(cifsi->vfs_inode.i_mtime);
--	auxdata.last_change_time = timespec64_to_timespec(cifsi->vfs_inode.i_ctime);
-+	auxdata.last_write_time_sec = cifsi->vfs_inode.i_mtime.tv_sec;
-+	auxdata.last_change_time_sec = cifsi->vfs_inode.i_ctime.tv_sec;
-+	auxdata.last_write_time_nsec = cifsi->vfs_inode.i_mtime.tv_nsec;
-+	auxdata.last_change_time_nsec = cifsi->vfs_inode.i_ctime.tv_nsec;
- 
- 	cifsi->fscache =
- 		fscache_acquire_cookie(tcon->fscache,
-@@ -166,8 +168,10 @@ void cifs_fscache_release_inode_cookie(struct inode *inode)
- 	if (cifsi->fscache) {
- 		memset(&auxdata, 0, sizeof(auxdata));
- 		auxdata.eof = cifsi->server_eof;
--		auxdata.last_write_time = timespec64_to_timespec(cifsi->vfs_inode.i_mtime);
--		auxdata.last_change_time = timespec64_to_timespec(cifsi->vfs_inode.i_ctime);
-+		auxdata.last_write_time_sec = cifsi->vfs_inode.i_mtime.tv_sec;
-+		auxdata.last_change_time_sec = cifsi->vfs_inode.i_ctime.tv_sec;
-+		auxdata.last_write_time_nsec = cifsi->vfs_inode.i_mtime.tv_nsec;
-+		auxdata.last_change_time_nsec = cifsi->vfs_inode.i_ctime.tv_nsec;
- 
- 		cifs_dbg(FYI, "%s: (0x%p)\n", __func__, cifsi->fscache);
- 		fscache_relinquish_cookie(cifsi->fscache, &auxdata, false);
-diff --git a/fs/cifs/fscache.h b/fs/cifs/fscache.h
-index c7e3ac251e16..8c0862e41306 100644
---- a/fs/cifs/fscache.h
-+++ b/fs/cifs/fscache.h
-@@ -31,9 +31,11 @@
-  * Auxiliary data attached to CIFS inode within the cache
+ 	/*
+ 	 * if there is no room in the journal OR
+@@ -3119,7 +3119,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
+ 	}
+ 	/* we are the first writer, set trans_id */
+ 	if (journal->j_trans_start_time == 0) {
+-		journal->j_trans_start_time = get_seconds();
++		journal->j_trans_start_time = ktime_get_seconds();
+ 	}
+ 	atomic_inc(&journal->j_wcount);
+ 	journal->j_len_alloc += nblocks;
+@@ -3559,11 +3559,11 @@ static void flush_async_commits(struct work_struct *work)
   */
- struct cifs_fscache_inode_auxdata {
--	struct timespec	last_write_time;
--	struct timespec	last_change_time;
--	u64		eof;
-+	u64 last_write_time_sec;
-+	u64 last_change_time_sec;
-+	u32 last_write_time_nsec;
-+	u32 last_change_time_nsec;
-+	u64 eof;
- };
+ void reiserfs_flush_old_commits(struct super_block *sb)
+ {
+-	time_t now;
++	time64_t now;
+ 	struct reiserfs_transaction_handle th;
+ 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
  
- /*
+-	now = get_seconds();
++	now = ktime_get_seconds();
+ 	/*
+ 	 * safety check so we don't flush while we are replaying the log during
+ 	 * mount
+@@ -3613,7 +3613,7 @@ void reiserfs_flush_old_commits(struct super_block *sb)
+ static int check_journal_end(struct reiserfs_transaction_handle *th, int flags)
+ {
+ 
+-	time_t now;
++	time64_t now;
+ 	int flush = flags & FLUSH_ALL;
+ 	int commit_now = flags & COMMIT_NOW;
+ 	int wait_on_commit = flags & WAIT;
+@@ -3694,7 +3694,7 @@ static int check_journal_end(struct reiserfs_transaction_handle *th, int flags)
+ 	}
+ 
+ 	/* deal with old transactions where we are the last writers */
+-	now = get_seconds();
++	now = ktime_get_seconds();
+ 	if ((now - journal->j_trans_start_time) > journal->j_max_trans_age) {
+ 		commit_now = 1;
+ 		journal->j_next_async_flush = 1;
+diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
+index e39b3910d24d..520f9003c13a 100644
+--- a/fs/reiserfs/procfs.c
++++ b/fs/reiserfs/procfs.c
+@@ -303,6 +303,10 @@ static int show_journal(struct seq_file *m, void *unused)
+ 	struct reiserfs_sb_info *r = REISERFS_SB(sb);
+ 	struct reiserfs_super_block *rs = r->s_rs;
+ 	struct journal_params *jp = &rs->s_v1.s_journal;
++	ktime_t j_trans_start_ktime = ktime_set(JF(j_trans_start_time), 0);
++
++	/* print as CLOCK_REALTIME */
++	j_trans_start_ktime = ktime_mono_to_real(j_trans_start_ktime);
+ 
+ 	seq_printf(m,		/* on-disk fields */
+ 		   "jp_journal_1st_block: \t%i\n"
+@@ -325,7 +329,7 @@ static int show_journal(struct seq_file *m, void *unused)
+ 		   "j_bcount: \t%lu\n"
+ 		   "j_first_unflushed_offset: \t%lu\n"
+ 		   "j_last_flush_trans_id: \t%u\n"
+-		   "j_trans_start_time: \t%li\n"
++		   "j_trans_start_time: \t%lli\n"
+ 		   "j_list_bitmap_index: \t%i\n"
+ 		   "j_must_wait: \t%i\n"
+ 		   "j_next_full_flush: \t%i\n"
+@@ -366,7 +370,7 @@ static int show_journal(struct seq_file *m, void *unused)
+ 		   JF(j_bcount),
+ 		   JF(j_first_unflushed_offset),
+ 		   JF(j_last_flush_trans_id),
+-		   JF(j_trans_start_time),
++		   ktime_divns(j_trans_start_ktime, NSEC_PER_SEC),
+ 		   JF(j_list_bitmap_index),
+ 		   JF(j_must_wait),
+ 		   JF(j_next_full_flush),
+diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
+index 1536ebbaf6ab..d0fc829bd760 100644
+--- a/fs/reiserfs/reiserfs.h
++++ b/fs/reiserfs/reiserfs.h
+@@ -330,7 +330,7 @@ struct reiserfs_journal {
+ 
+ 	struct buffer_head *j_header_bh;
+ 
+-	time_t j_trans_start_time;	/* time this transaction started */
++	time64_t j_trans_start_time;	/* time this transaction started */
+ 	struct mutex j_mutex;
+ 	struct mutex j_flush_mutex;
+ 
 -- 
 2.9.0
 
