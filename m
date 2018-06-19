@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF34C5AE5A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8CDC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AAB420661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:07:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50166208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:09:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tMCcDuFG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AAB420661
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nv4Z/4KG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50166208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030665AbeFSUHU (ORCPT
+        id S1030711AbeFSUJd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 16:07:20 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:37234 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030259AbeFSUHT (ORCPT
+        Tue, 19 Jun 2018 16:09:33 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:42746 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030645AbeFSUJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 16:07:19 -0400
-Received: by mail-ua0-f196.google.com with SMTP id l14-v6so645503uao.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 13:07:19 -0700 (PDT)
+        Tue, 19 Jun 2018 16:09:31 -0400
+Received: by mail-vk0-f67.google.com with SMTP id s187-v6so579723vke.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 13:09:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=RQ3qEp9q1EtUZ9u/wTrFMDpZ2Tb+5Mr2TSNokFwUYDU=;
-        b=tMCcDuFGK/K52rFpePzv8+7i0HrXuQ17oOakGObMcCwENgkpH12D6NXadsTAcrqLSr
-         CGdeLAYGyB5PuZIVCPV6YXXKbmqfvd67zZbEiT+7yU7Ne/waQIStpUoBzS0tQ91EqNYe
-         Pne2ihsOVyEE/i67ZfE7PV180L/EyL5/StCu96Myrf+L9yBPgdod9jzTGrb1Zhs+cW+T
-         xGmSS1zrVhhhUnavvJnwENdx2VJV7iv2dyLrKf4JgPzg+oX8oA6C/gt825krEVdKz+c2
-         g+QkiXiQSc4i0Y2bwXuSKKFoSOY2sm7MXn7Bg0Li5JywGCvbdi4uxHJ11w3jD//6PWbT
-         Az+g==
+        bh=bL2LYEU7AWbgmzm3aAj4bxXXVJEPKp2k9UgJecYG7K4=;
+        b=Nv4Z/4KGx5I/CnwJBhyUJNm04Flefiuc8PZqAfgl0rlstIuaFYjwk6UHcmDLgEipBs
+         Pos3kGroq2+CQGiCet9r4lLmzcDJVIBvuNO8pr2KyHX/YLi0CUMW44KuBJWsoNZ7lBSE
+         FLdTFuvp70+85n50p2iWQjBv2ympvQLU/Db9aucjeqkAOKxPO48CYfayhfbcK2ms4dc2
+         D61JMkMOCas9DIwlzuZcNnGeTo+zBGSXyQ1qdtSb06vOZHJ2R6Z3ILFSbSpSA+LW39Or
+         9Ex0f+/n6BqlgQJuTVLHbNBAhCmeoyUY/rMVYRcNWolJMDOABfePVoelw+tdL0AWhe9G
+         hf8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=RQ3qEp9q1EtUZ9u/wTrFMDpZ2Tb+5Mr2TSNokFwUYDU=;
-        b=FNz2AnhJzUU5uU1Wifepcn5bNshvrJ/yxM9zzQzjPHLE+oNVdATzOAAC7Y/a8hKfPd
-         ChxLZsol8Rjkac/FUBjy01ThtH7gR22L2l3j5/NgbEZeAJSVBy91LRAY9V6+zRwREHko
-         4nHUd+FO3PR2p2wHUsnQkcpPQryvjm3VEmWwxxehjdUSoJBn8++r0q81W8E7p8RrgXif
-         pQpu1DtnkllynvUWr58WCABZRMvOWQwZjqBZg96CgLytnyX0xhmAxTessY8yhoNcwqI5
-         TFvUIXH7JPjOZO2ZmUonXdRXQRDPP6EWB4t+pFivat4Xn4heVIz7Y1ElBYkiRWIn+/Uh
-         ccLw==
-X-Gm-Message-State: APt69E1IePWnuPIn+TcUYhuRjBT5IwfFy6wZrNP2s7yYyD/tAnnm+Cl3
-        Eao/lzW5HNzORUhvZbTc6yWSJO5zXjOasOFGAKBCVqnN
-X-Google-Smtp-Source: ADUXVKKZk/XGtNny/g6FtFTiVHdqFvzKG3Rv7c9DsJKEyg5uTaIyfix+XncObo5zuh1zBZYW78MNLpbeE5mjdNRK2q8=
-X-Received: by 2002:ab0:1b9b:: with SMTP id k27-v6mr11519182uai.122.1529438838834;
- Tue, 19 Jun 2018 13:07:18 -0700 (PDT)
+        bh=bL2LYEU7AWbgmzm3aAj4bxXXVJEPKp2k9UgJecYG7K4=;
+        b=Yl+wf3QBsg9nIiyk4XAnGvUmK2+vMXpodQ4eXb2MGRR02cTan+rhca9AmJYtUgke5a
+         +4mKy4dR8qsHvVKggWKxEBpS0SeNV3UX+WW0Dc/hGVbgAG5RRxv84VtVn8dZriEqhmKn
+         f2IeuQS9orT2YEMJfHPGr823i3+9QKikIxa4NPQKmm9UWZ0NjX17vTxOxG+RtZw6yw75
+         bPErcrSWCQDbc6tn6EeuBk0KnazYkJK06I4tmDdWOkyj/0crD7e9AdGXuaVR5ZS8NGmH
+         t5/HrhmdVzpnH4Q/s3nwTE2OLDLpWiysvXM5nGxZde85MYqjupYRDuZhcX4niwR512fH
+         4cQw==
+X-Gm-Message-State: APt69E3IsYy5fWvPpt2pN2UFIQZTio2KgcHmEM7tjZlrQHYLT1BEH+ed
+        xOw0TLfr2wT6q/DioqkjdSfZlsf5cgnXCSKoF5Y=
+X-Google-Smtp-Source: ADUXVKLSAMBYrb64VqoJsRwzaLapKQoWxJLDSFiDtS+zU1YcLmGZhWB2nLQmZxIktmH6h/zwrDjVtdixVYG9UwuDYL4=
+X-Received: by 2002:a1f:a8d6:: with SMTP id r205-v6mr1556019vke.129.1529438971137;
+ Tue, 19 Jun 2018 13:09:31 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 13:07:18
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 13:09:30
  -0700 (PDT)
-In-Reply-To: <20180619195605.31321-3-johnfwhitmore@gmail.com>
-References: <20180619195605.31321-1-johnfwhitmore@gmail.com> <20180619195605.31321-3-johnfwhitmore@gmail.com>
+In-Reply-To: <20180619195605.31321-4-johnfwhitmore@gmail.com>
+References: <20180619195605.31321-1-johnfwhitmore@gmail.com> <20180619195605.31321-4-johnfwhitmore@gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 19 Jun 2018 23:07:18 +0300
-Message-ID: <CAHp75VchsRzaADMkRam8HXb3x860mP=L3W=ELf0F1FP-notMiQ@mail.gmail.com>
-Subject: Re: [PATCH 2/9] staging: rtl8192u: Correct indentation of switch
- statement - Coding Style
+Date:   Tue, 19 Jun 2018 23:09:30 +0300
+Message-ID: <CAHp75VebpdEujHFeE=_ZHqHSKq+LD2V5SqL6J+YM_2R2CX4jiQ@mail.gmail.com>
+Subject: Re: [PATCH 3/9] staging: rtl8192u: Truncate block comments to 80
+ character length - Style
 To:     John Whitmore <johnfwhitmore@gmail.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org,
@@ -76,18 +76,23 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Jun 19, 2018 at 10:55 PM, John Whitmore <johnfwhitmore@gmail.com> wrote:
-> Removed an extra indentation from the code of the various case options in a
-> switch statement.
+> Where possible truncation of block comments to the 80 character length
+> prefered by the coding style.
 
-> +               //no MCS rate
-> +               for (i = 0; i <= 15; i++)
-> +                       pOperateMCS[i] = 0;
+Is it somehow automated?!
 
-This would be just memset().
+>         /*
+> -        * 8190 only, Realtek proprietary aggregation mode
+> -        * Set MPDUDensity=2,   1: Set MPDUDensity=2(32k)  for Realtek AP and set MPDUDensity=0(8k) for others
+> +        * 8190 only, Realtek proprietary aggregation mode Set MPDUDensity=2,
+> +        * 1: Set MPDUDensity=2(32k) for Realtek AP
+> +        * and set MPDUDensity=0(8k) for others
+>          */
 
-> +               break;
+This is just an example how it should NOT be done.
+The original looks better than the result in terms of understanding.
 
-
+Had you (re-)read the result?
 
 -- 
 With Best Regards,
