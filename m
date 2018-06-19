@@ -2,93 +2,126 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D80C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C412DC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 977212083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A3F62083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:25:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LKI4Lk+t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 977212083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="nd7imqtf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3F62083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967066AbeFSQY0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:24:26 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34145 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966208AbeFSQYY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:24:24 -0400
-Received: by mail-wr0-f194.google.com with SMTP id a12-v6so302951wro.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cj0WsDlqHbO9uZygIM6FHZzW1EO+bWc3SeUHxvu3tDM=;
-        b=LKI4Lk+tODLytye+gg/yj6iKVVQ08vPrNxh3ncImGbOyRsLIMzEAJFcK/z0Msv/r/e
-         0Wp9TojQhxOEqjC1gFCi7xcrU5oFvVv0+8PuEj3vStouF77dMd9+JWsLs3bYfkuesOP5
-         mP2NldECX2LtX+DG+Hv0QmGhU77gj0peaSeDKw8EXN70PZ2Rn48Tl7w9OtFmbthRH6rR
-         Tx1pfejSY2LTLlt8GQ7BNbJ3UVKKaPref6jagjVu7u8k1IiZ7VHkciNbaSlk1a//DSko
-         K4F51LzUUG5Ck+wgeFPw8SYqLZBLMtCPxqVePH3FerjMOhwSXE+nHRXp9vDGkVOQSiVG
-         nDfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cj0WsDlqHbO9uZygIM6FHZzW1EO+bWc3SeUHxvu3tDM=;
-        b=lk7WEmKWLgKYKZFZo9/wF9aoqmm6o+VzdtntYO0WTdBXTGfHSvavWX4YRTp99OEYvE
-         7Gr/td0L65Gl9Wzxk88Yn7Jxv+M5gwH+7ry0xQpB2eXbkWJ6frkQUL7CI3+mxYePWuNU
-         XRXujCQjBPP15g82gQSG+YJ40MLOIobLjUhhkpXZZ3q/5CScn8vu3v+W85+PMekI3kEo
-         8KJcFMVPa75kTXdrfJY4JKrw7Z36DtjiwGjDbxDslf8QWJmAHY+idiZojUDOYaGCDAp8
-         1KRfLXzYL5h4fRvwWHwlCkl0plznROopkvjH1iWyt3XYBFLJLz1OuvjlNJkFxxb4+m17
-         rcgQ==
-X-Gm-Message-State: APt69E3QlTcfYIM2GI17o2bHaxjMRcWHHbPGLJU7loL+LpOcd1ibFjc3
-        1SPvcZ3ZCHDHFmLC/5uf9bM9Tqgq
-X-Google-Smtp-Source: ADUXVKJ1VX/3RzzRNKHvFscQGkC/CkWX9xsIvUy5Bi5RrEuS8rk4znhAHTHv3MFqFZclEa4Ve3ZkPQ==
-X-Received: by 2002:adf:8837:: with SMTP id d52-v6mr14318511wrd.41.1529425463269;
-        Tue, 19 Jun 2018 09:24:23 -0700 (PDT)
-Received: from localhost (m85-94-188-39.andorpac.ad. [85.94.188.39])
-        by smtp.gmail.com with ESMTPSA id l5-v6sm33325wrn.92.2018.06.19.09.24.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 09:24:22 -0700 (PDT)
-From:   Vitor Fernandes Ferreira <vferr.862729@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Vitor Fernandes Ferreira <vferr.862729@gmail.com>
-Subject: [PATCH] Staging: comedi: fix operator '=' coding style issue
-Date:   Tue, 19 Jun 2018 18:23:52 +0200
-Message-Id: <20180619162352.12324-1-vferr.862729@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S966989AbeFSQZX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:25:23 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:48458 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966208AbeFSQZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:25:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
+        ; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=IjzRyh3dGjs3iY1KTmpl8JPs/rIgpmEkG8uepgThUhg=; b=nd7imqtf/Bt7PIXzfoMP72TpvJ
+        fcVl5OhKp5LuMWMtBUzrPXPexpbfBrKHpgX7cPhiUwFi700FVyXbJ15hbfZ8W/XH5wMX62k9qiK9M
+        1yqEscaFfNPDQwB1xjupB5TmDP0srDPuWD8XtBQfssqtlhrioexcIeIw2/B1SwcVsumM=;
+Date:   Tue, 19 Jun 2018 12:27:41 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH 3/3] fs, mm: account buffer_head to kmemcg
+Message-ID: <20180619162741.GC27423@cmpxchg.org>
+References: <20180619051327.149716-1-shakeelb@google.com>
+ <20180619051327.149716-4-shakeelb@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619051327.149716-4-shakeelb@google.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Vitor Fernandes Ferreira <vferr.862729@gmail.com>
----
- drivers/staging/comedi/comedi_fops.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon, Jun 18, 2018 at 10:13:27PM -0700, Shakeel Butt wrote:
+> The buffer_head can consume a significant amount of system memory and
+> is directly related to the amount of page cache. In our production
+> environment we have observed that a lot of machines are spending a
+> significant amount of memory as buffer_head and can not be left as
+> system memory overhead.
+> 
+> Charging buffer_head is not as simple as adding __GFP_ACCOUNT to the
+> allocation. The buffer_heads can be allocated in a memcg different from
+> the memcg of the page for which buffer_heads are being allocated. One
+> concrete example is memory reclaim. The reclaim can trigger I/O of pages
+> of any memcg on the system. So, the right way to charge buffer_head is
+> to extract the memcg from the page for which buffer_heads are being
+> allocated and then use targeted memcg charging API.
+> 
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Greg Thelen <gthelen@google.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  fs/buffer.c                | 14 +++++++++++++-
+>  include/linux/memcontrol.h |  7 +++++++
+>  mm/memcontrol.c            | 21 +++++++++++++++++++++
+>  3 files changed, 41 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 8194e3049fc5..26389b7a3cab 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -815,10 +815,17 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
+>  	struct buffer_head *bh, *head;
+>  	gfp_t gfp = GFP_NOFS;
+>  	long offset;
+> +	struct mem_cgroup *old_memcg;
+> +	struct mem_cgroup *memcg = get_mem_cgroup_from_page(page);
+>  
+>  	if (retry)
+>  		gfp |= __GFP_NOFAIL;
+>  
+> +	if (memcg) {
+> +		gfp |= __GFP_ACCOUNT;
+> +		old_memcg = memalloc_memcg_save(memcg);
+> +	}
 
-diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-index 1f3b1106f478..e18b61cdbdeb 100644
---- a/drivers/staging/comedi/comedi_fops.c
-+++ b/drivers/staging/comedi/comedi_fops.c
-@@ -79,8 +79,8 @@ MODULE_PARM_DESC(comedi_default_buf_size_kb,
- 		 "default asynchronous buffer size in KiB (default "
- 		 __MODULE_STRING(CONFIG_COMEDI_DEFAULT_BUF_SIZE_KB) ")");
- 
--unsigned int comedi_default_buf_maxsize_kb
--	= CONFIG_COMEDI_DEFAULT_BUF_MAXSIZE_KB;
-+unsigned int comedi_default_buf_maxsize_kb =
-+	CONFIG_COMEDI_DEFAULT_BUF_MAXSIZE_KB;
- module_param(comedi_default_buf_maxsize_kb, uint, 0644);
- MODULE_PARM_DESC(comedi_default_buf_maxsize_kb,
- 		 "default maximum size of asynchronous buffer in KiB (default "
--- 
-2.17.1
+Please move the get_mem_cgroup_from_page() call out of the
+declarations and down to right before the if (memcg) branch.
 
+>  	head = NULL;
+>  	offset = PAGE_SIZE;
+>  	while ((offset -= size) >= 0) {
+> @@ -835,6 +842,11 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
+>  		/* Link the buffer to its page */
+>  		set_bh_page(bh, page, offset);
+>  	}
+> +out:
+> +	if (memcg) {
+> +		memalloc_memcg_restore(old_memcg);
+> +#ifdef CONFIG_MEMCG
+> +		css_put(&memcg->css);
+> +#endif
+
+Please add a put_mem_cgroup() ;)
+
+Otherwise this looks fine to me.
