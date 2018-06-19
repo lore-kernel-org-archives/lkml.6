@@ -6,75 +6,67 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F27C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF19C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1405A20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:28:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1405A20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 047652083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:29:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047652083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757179AbeFSO2p (ORCPT
+        id S1757273AbeFSO3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:28:45 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:56560 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756803AbeFSO2n (ORCPT
+        Tue, 19 Jun 2018 10:29:12 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:34854 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757224AbeFSO3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:28:43 -0400
-Received: from [148.252.241.226] (helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fVHcf-0002c4-DF; Tue, 19 Jun 2018 15:28:41 +0100
-Message-ID: <1529418520.2289.296.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 00/24] 4.4.138-stable review
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Date:   Tue, 19 Jun 2018 15:28:40 +0100
-In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
-References: <20180614132724.483802160@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 19 Jun 2018 10:29:11 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fVHcv-0005nG-OZ; Tue, 19 Jun 2018 22:28:57 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fVHcr-0007E7-U1; Tue, 19 Jun 2018 22:28:53 +0800
+Date:   Tue, 19 Jun 2018 22:28:53 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Vinod Koul <vinod.koul@linaro.org>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
+Message-ID: <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
+References: <20180618141259.23141-1-vkoul@kernel.org>
+ <20180618141259.23141-4-vkoul@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180618141259.23141-4-vkoul@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-14 at 16:04 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.138 release.
-> There are 24 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Jun 18, 2018 at 07:42:59PM +0530, Vinod Koul wrote:
+> Qcom 8996 and later chips support prng v2 where we need to only
+> implement .read callback for hwrng.
 > 
-> Responses should be made by Sat Jun 16 13:27:15 UTC 2018.
-> Anything received after that time might be too late.
+> Add a new table for v2 which supports this and get version required for
+> driver data.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.138-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-[...]
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
 
-3.18 and 4.4 are still missing this important fix to early parameter
-parsing:
+Is this really a pseudo-RNG? If so it needs to be moved over to
+the algif_rng interface.
 
-commit 02afeaae9843733a39cd9b11053748b2d1dc5ae7
-Author: Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Tue Dec 22 14:52:38 2015 -0800
+hwrng is for true hardware RNGs only, because it may be directly
+fed into /dev/random.
 
-    x86/boot: Fix early command-line parsing when matching at end
-
-Ben.
-
+Thanks,
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
