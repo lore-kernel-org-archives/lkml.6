@@ -3,96 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CD2C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B69C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D9EE20020
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D9EE20020
+	by mail.kernel.org (Postfix) with ESMTP id B8B1F2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:51:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8B1F2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966953AbeFSPti (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:49:38 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:57773 "EHLO
+        id S966861AbeFSPvZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:51:25 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:53049 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966516AbeFSPth (ORCPT
+        with ESMTP id S966555AbeFSPvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:49:37 -0400
+        Tue, 19 Jun 2018 11:51:24 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MOXED-1faXXN1Yu5-005r4S; Tue, 19 Jun 2018 17:49:16 +0200
+ (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0MYeLS-1fj6Oj1pdy-00VROj; Tue, 19 Jun 2018 17:51:11 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Christoph Hellwig <hch@infradead.org>
+To:     Dave Kleikamp <shaggy@kernel.org>
 Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] sysvfs: use ktime_get_real_seconds() for superblock stamp
-Date:   Tue, 19 Jun 2018 17:48:58 +0200
-Message-Id: <20180619154914.3859394-1-arnd@arndb.de>
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH] jfs: use time64_t for otime
+Date:   Tue, 19 Jun 2018 17:51:02 +0200
+Message-Id: <20180619155110.3950450-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:Sg7eTiDAzpyigzeqGUXSU8OqqUr67b/yzO/ewNI1FiF3wvSNyas
- yZz2KvobGZd9Tw1fAE3/KiA2yxo6GAgVIcAEAIPh949VSvcdmsKwJRxABsbMQ0nAPkvc34g
- +RiTYATRvEdyXp8Ac1YOfn4dgreXYGbJu6LorJ/YXoV1Vlng2zQaaOFDDLnrd0GzO2GsBEf
- A+1bvJvEPFBBF43NWs8BQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:y7GeZa4+4zA=:71Azyz0qU4AOIrdWH/olHV
- K7t7EcqNdM7AjJ76s1xlzuHRDmTvGRLxW3nWTXlJsGWeacVygI1gW9Kzf2Nfi6fps2yzhNXHn
- Hkyg3qdMQzzr+oFB03lov+Jg/9fMYouj/156XUt+eQEipMtXHUzLiTWzStsVayTZfqCdoVJD7
- +5BqASpBQhOAb7EJq0zdc/zfkyWyQY3/xYntO1WgX3FOKLw7bIxjrOZbNJCtshBQ5VlsPSseO
- c682LpAfniqMplAczB68R6S0SIFf9aTVwqkSTwz73qaqQ5E7RDKL/7RX3AbhhyDv4ozCxfOnd
- /ZHz7MMzXcWVoy2r1TRdUf1zqStoOpsYi9Qs+LrDH5K5nn5E9Fwu5oByrG/61J9JaisPPFBb+
- 0i909GP8Pw0cozR6aagBa6TSLupgTHJERwta4C8zRPxMR0x4NpintzfkMFaO6e29/PdbDtxiF
- WzdpSGbzhxtLAQc/vjr0J1pl20U1b0ji+tCyVmlqJId+F3mtuW+CudA5BoUNy1YT4C6kzNM98
- tg+viRv2o4KYl7C5Z79OEVTmtyGT88YtzOGGVKMNXkl5IJW4J3vPQQCrInvAK0+hGbFF4L9mk
- ocO5Mv/GukSbMf7gJXLBGVN9CrhF8cq9AiNRMCDVN8fxMm+xmYTdTewdbKGcSfXOJOASMQH5s
- Vn63j41iuSt55tJ6MSwpZz80ulOFXgBdBqUJC6K04EMmN6yh/Gztyo+TF1F4KO6HqQLI=
+X-Provags-ID: V03:K1:O6nfG/zPSAATmGKLLiNfuY3DOBplkWNX4ISrhaRKX9G0JpJjKqg
+ 5L38YWeF7FGurjpRho3S8IPeHQW2edDZ03KHr21+cADo4KEOoTZ5qhG8YjX9DGaaJPvHQQz
+ nLmAHZC7R2hQQQdm9AdO6yjopPWkwrQKGv/0jYjAe5amdElrJoHpxWqD6DpXwTPVt6j04Tg
+ O7RDmsHnF6JNJV3+fVEQw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:z/2X8TFxDP0=:aSdzr2LT3ev+Uei7ObnkqA
+ DmRTIA+fFI6/SF4FWRXWlmqWAdd6oChFtoi0t8pj7zQBOp2bvQSvJReK6LQwvwXP65VM5cmQh
+ pEcNgnY+xkIPnrEGzi1nrFuBuQzVEfCWdHf64RuFlanh+FBksUBOHD1flxS2Ok++56CdDumAu
+ jeP1kfGZIWEi6cTt+gPXGT9zTir4lTQu2NQOJLyJIqc+G50oNkLZdniaOrsYOuq0Db5czWFJ/
+ 8K1Bxi1cqmxy0pmRcqrwmG9WVZfFea54edDbljJrjFG9o7ByOdyzsHLFQFSkVZcLfThGcKfM7
+ hF7uJZC5Jv3j5LBcZx7OG9iaRQ2JEwDAbxDn2k37bwzwuOVtECy7GeAA9md01hiF1qDG7R+99
+ pdN2ufaN6rHgXRJ9NNm6FhbhGPzsAXnWlOSzWhynhDqTf87rJoWrUe8ttna/blBVZIOCVs+HX
+ x/3YID23J0RI8AQ4fGed32Q03p/SJKo2xXfOwEXeTxRFkOA3qDr5xJV04g8PCTExLoGcEEzDC
+ vIiKWfYSoOPLrSF6Uj5DvHTjRn3xR10Tvqev5u57Gr/SkBM4fTTRNiV8h+BLSRvFPdzOy8BIS
+ Crzlm6orM10HGtnwcO4rG25yKy/eWrKEpyIbqh/J6YHF/JIKTcxWnPTPLm3TkZcH4xSF3s69U
+ VtEX2rT1SItXlEvDrJd+6S77dyejO+agTDZnCIoR4StvfVnc74TF+gBicMfaIBYJKIao=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_seconds() is deprecated in favor of ktime_get_real_seconds(),
-which returns a 64-bit timestamp.
+The file creation time in the inode uses time_t which is defined differently
+on 32-bit and 64-bit architectures and deprecated. The representation in
+the inode uses an unsigned 32-bit number, but this gets wrapped around
+after year 2038 when assigned to a time_t.
 
-In the SYSV file system, the superblock timestamp is only 32 bits
-wide, and it is used to check whether a file system is clean, so
-the best solution seems to be to force a wraparound and explicitly
-convert it to an unsigned 32-bit value.
+This changes the type to time64_t, so we can support the full range of
+timestamps between 1970 and 2106 on 32-bit systems like we do on 64-bit
+systems already, and matching what we do for the atime/ctime/mtime stamps
+since the introduction of 64-bit timestamps in VFS.
 
-This is independent of the inode timestamps that are also 32-bit
-wide on disk and that come from current_time().
+Note: the otime stamp is not actually used anywhere at the moment in
+the kernel, it is just set when writing a file, so none of this really
+makes a difference unless we implement setting the btime field in the
+getattr() callback.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/sysv/inode.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/jfs/jfs_incore.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
-index bec9f79adb25..499a20a5a010 100644
---- a/fs/sysv/inode.c
-+++ b/fs/sysv/inode.c
-@@ -35,7 +35,7 @@
- static int sysv_sync_fs(struct super_block *sb, int wait)
- {
- 	struct sysv_sb_info *sbi = SYSV_SB(sb);
--	unsigned long time = get_seconds(), old_time;
-+	u32 time = (u32)ktime_get_real_seconds(), old_time;
- 
- 	mutex_lock(&sbi->s_lock);
- 
-@@ -46,8 +46,8 @@ static int sysv_sync_fs(struct super_block *sb, int wait)
- 	 */
- 	old_time = fs32_to_cpu(sbi, *sbi->s_sb_time);
- 	if (sbi->s_type == FSTYPE_SYSV4) {
--		if (*sbi->s_sb_state == cpu_to_fs32(sbi, 0x7c269d38 - old_time))
--			*sbi->s_sb_state = cpu_to_fs32(sbi, 0x7c269d38 - time);
-+		if (*sbi->s_sb_state == cpu_to_fs32(sbi, 0x7c269d38u - old_time))
-+			*sbi->s_sb_state = cpu_to_fs32(sbi, 0x7c269d38u - time);
- 		*sbi->s_sb_time = cpu_to_fs32(sbi, time);
- 		mark_buffer_dirty(sbi->s_bh2);
- 	}
+diff --git a/fs/jfs/jfs_incore.h b/fs/jfs/jfs_incore.h
+index 1f26d1910409..d5c46f86b2ef 100644
+--- a/fs/jfs/jfs_incore.h
++++ b/fs/jfs/jfs_incore.h
+@@ -43,7 +43,7 @@ struct jfs_inode_info {
+ 	pxd_t	ixpxd;		/* inode extent descriptor	*/
+ 	dxd_t	acl;		/* dxd describing acl	*/
+ 	dxd_t	ea;		/* dxd describing ea	*/
+-	time_t	otime;		/* time created	*/
++	time64_t otime;		/* time created	*/
+ 	uint	next_index;	/* next available directory entry index */
+ 	int	acltype;	/* Type of ACL	*/
+ 	short	btorder;	/* access order	*/
 -- 
 2.9.0
 
