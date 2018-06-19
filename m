@@ -6,62 +6,68 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FE9C5AE5A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA014C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B8F7205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:46:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 803E0205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:47:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B2HFOmVm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8F7205C9
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oYKFrOHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 803E0205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030524AbeFSTnp (ORCPT
+        id S1030642AbeFSTrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 15:43:45 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:39332 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030373AbeFSTnm (ORCPT
+        Tue, 19 Jun 2018 15:47:02 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:12431 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030449AbeFSTno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 15:43:42 -0400
+        Tue, 19 Jun 2018 15:43:44 -0400
 Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5JJhchO013459;
-        Tue, 19 Jun 2018 14:43:38 -0500
+        by lelnx193.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5JJgsaH017771;
+        Tue, 19 Jun 2018 14:42:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529437418;
-        bh=8RlblOSc7AB8wmEKQxY3Q9urf0Rn1vadrIb43GEIQSA=;
+        s=ti-com-17Q1; t=1529437374;
+        bh=7IIjYPSNgHlvAoN7xZGMzy0KyEvT6twQwuTUYyX4JzQ=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=B2HFOmVmKz+OjVbB/y7HE2Nhrq401LduufrDbC3WaLabAXII8lnr9Qk/FaMfjOc8H
-         fPIT0zArfESL115YZ5CGvipcIAgzXuDHMit7QWR5IwiTTAUFaXXI/jHC9CzBbpE7Hq
-         /X+/dohXv8rPpjguYIM7J+p4Rp2U5JeEkA75qZ+8=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5JJhcvh024514;
-        Tue, 19 Jun 2018 14:43:38 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+        b=oYKFrOHdH2EYBVIuLDXdSzsC/rZuceF0L1BY5pnkGj5b4WCtabzDTeoj/RYtaxOet
+         +aT67cEb5bPNFIZ4GquA7XIuVtyY9WNN+hkHPv09HLRTXiY7QNLAhGOgpWNuUucxhs
+         jQrAvOEsyXoY6esykjTBnSTtCTTr9QC89jp93uww=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5JJgs75023378;
+        Tue, 19 Jun 2018 14:42:54 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 19
- Jun 2018 14:43:37 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ Jun 2018 14:42:53 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 19 Jun 2018 14:43:37 -0500
+ Tue, 19 Jun 2018 14:42:53 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5JJhbvN032510;
-        Tue, 19 Jun 2018 14:43:37 -0500
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5JJgrrm017143;
+        Tue, 19 Jun 2018 14:42:53 -0500
 From:   Nishanth Menon <nm@ti.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
+To:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>
-CC:     Nishanth Menon <nm@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH 4/6] mailbox: ti-msgmgr: Move the memory region name to descriptor
-Date:   Tue, 19 Jun 2018 14:43:35 -0500
-Message-ID: <20180619194337.31522-5-nm@ti.com>
+CC:     Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: [PATCH 5/5] arm64: dts: ti: Add support for AM654 EVM base board
+Date:   Tue, 19 Jun 2018 14:42:53 -0500
+Message-ID: <20180619194253.27288-6-nm@ti.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180619194337.31522-1-nm@ti.com>
-References: <20180619194337.31522-1-nm@ti.com>
+In-Reply-To: <20180619194253.27288-1-nm@ti.com>
+References: <20180619194253.27288-1-nm@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -70,66 +76,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For newer generation of the hardware, the naming of the region is
-decided at integration level and there could be additional regions
-as well. Hence move the region naming to be described from compatible
-descriptor.
+The EValuation Module(EVM) platform for AM654 consists of a
+common Base board + one or more of daughter cards, which include:
+a) "Personality Modules", which can be specific to a profile, such as
+ ICSSG enabled or Multi-media (including audio).
+b) SERDES modules, which may be 2 lane PCIe or two port PCIe + USB2
+c) Camera daughter card
+d) various display panels
 
+Among other options. There are two basic configurations defined which
+include an "EVM" configuration and "IDK" (Industrial development kit)
+which differ in the specific combination of daughter cards that are
+used.
+
+To simplify support, we choose to support just the base board as the
+core device tree file and all daughter cards would be expected to be
+device tree overlays.
+
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
-Changes since RFC: None
-RFC: https://patchwork.kernel.org/patch/10447653/
 
- drivers/mailbox/ti-msgmgr.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Changes since RFC:
+* Since defaults are enabled, and uart has been spun off, dropped the
+  redundant nodes from baseboard dts
 
-diff --git a/drivers/mailbox/ti-msgmgr.c b/drivers/mailbox/ti-msgmgr.c
-index 7d2eb4b359ba..7167cc708f44 100644
---- a/drivers/mailbox/ti-msgmgr.c
-+++ b/drivers/mailbox/ti-msgmgr.c
-@@ -48,6 +48,8 @@ struct ti_msgmgr_valid_queue_desc {
-  * @tx_polled:		Do I need to use polled mechanism for tx
-  * @tx_poll_timeout_ms: Timeout in ms if polled
-  * @valid_queues:	List of Valid queues that the processor can access
-+ * @data_region_name:	Name of the proxy data region
-+ * @status_region_name:	Name of the proxy status region
-  * @num_valid_queues:	Number of valid queues
-  *
-  * This structure is used in of match data to describe how integration
-@@ -63,6 +65,8 @@ struct ti_msgmgr_desc {
- 	bool tx_polled;
- 	int tx_poll_timeout_ms;
- 	const struct ti_msgmgr_valid_queue_desc *valid_queues;
-+	const char *data_region_name;
-+	const char *status_region_name;
- 	int num_valid_queues;
- };
+RFC: https://patchwork.kernel.org/patch/10447741/
+
+ MAINTAINERS                                    |  1 +
+ arch/arm64/boot/dts/Makefile                   |  1 +
+ arch/arm64/boot/dts/ti/Makefile                |  9 +++++++
+ arch/arm64/boot/dts/ti/k3-am654-base-board.dts | 36 ++++++++++++++++++++++++++
+ 4 files changed, 47 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/Makefile
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6785ceaf5b0b..e9e916d1fb52 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2093,6 +2093,7 @@ M:	Nishanth Menon <nm@ti.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+ F:	Documentation/devicetree/bindings/arm/ti/k3.txt
++F:	arch/arm64/boot/dts/ti/Makefile
+ F:	arch/arm64/boot/dts/ti/k3-*
  
-@@ -531,6 +535,8 @@ static const struct ti_msgmgr_desc k2g_desc = {
- 	.queue_count = 64,
- 	.max_message_size = 64,
- 	.max_messages = 128,
-+	.data_region_name = "queue_proxy_region",
-+	.status_region_name = "queue_state_debug_region",
- 	.data_first_reg = 16,
- 	.data_last_reg = 31,
- 	.status_cnt_mask = Q_STATE_ENTRY_COUNT_MASK,
-@@ -582,13 +588,13 @@ static int ti_msgmgr_probe(struct platform_device *pdev)
- 	inst->desc = desc;
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
--					   "queue_proxy_region");
-+					   desc->data_region_name);
- 	inst->queue_proxy_region = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(inst->queue_proxy_region))
- 		return PTR_ERR(inst->queue_proxy_region);
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
--					   "queue_state_debug_region");
-+					   desc->status_region_name);
- 	inst->queue_state_debug_region = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(inst->queue_state_debug_region))
- 		return PTR_ERR(inst->queue_state_debug_region);
+ ARM/TEXAS INSTRUMENT KEYSTONE ARCHITECTURE
+diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+index 3543bc324553..4690364d584b 100644
+--- a/arch/arm64/boot/dts/Makefile
++++ b/arch/arm64/boot/dts/Makefile
+@@ -23,5 +23,6 @@ subdir-y += rockchip
+ subdir-y += socionext
+ subdir-y += sprd
+ subdir-y += synaptics
++subdir-y += ti
+ subdir-y += xilinx
+ subdir-y += zte
+diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+new file mode 100644
+index 000000000000..63e619d0b5b8
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/Makefile
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Make file to build device tree binaries for boards based on
++# Texas Instruments Inc processors
++#
++# Copyright (C) 2016-2018 Texas Instruments Incorporated - http://www.ti.com/
++#
++
++dtb-$(CONFIG_ARCH_K3_AM6_SOC) += k3-am654-base-board.dtb
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+new file mode 100644
+index 000000000000..af6956fdc13f
+--- /dev/null
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+@@ -0,0 +1,36 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2016-2018 Texas Instruments Incorporated - http://www.ti.com/
++ */
++
++/dts-v1/;
++
++#include "k3-am654.dtsi"
++
++/ {
++	compatible =  "ti,am654-evm", "ti,am654";
++	model = "Texas Instruments AM654 Base Board";
++
++	chosen {
++		stdout-path = "serial2:115200n8";
++		bootargs = "earlycon=ns16550a,mmio32,0x02800000";
++	};
++
++	memory@80000000 {
++		device_type = "memory";
++		/* 4G RAM */
++		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
++		      <0x00000008 0x80000000 0x00000000 0x80000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		secure_ddr: secure_ddr@9e800000 {
++			reg = <0 0x9e800000 0 0x01800000>; /* for OP-TEE */
++			alignment = <0x1000>;
++			no-map;
++		};
++	};
++};
 -- 
 2.15.1
 
