@@ -2,101 +2,78 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E212C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F8CC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F5520836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:05:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F5520836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 138E420836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:08:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cYUZAOZ/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138E420836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966280AbeFSLFY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 07:05:24 -0400
-Received: from mga18.intel.com ([134.134.136.126]:58308 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965688AbeFSLFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 07:05:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 04:05:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
-   d="scan'208";a="68172791"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga002.jf.intel.com with ESMTP; 19 Jun 2018 04:05:17 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fVERm-000E84-1w; Tue, 19 Jun 2018 19:05:14 +0800
-Date:   Tue, 19 Jun 2018 19:05:07 +0800
-From:   kbuild test robot <fengguang.wu@intel.com>
-To:     Maciej Purski <m.purski@samsung.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH] drm/bridge: tc358764: fix noderef.cocci warnings
-Message-ID: <20180619110506.GA20216@lkp-ib03>
-References: <1529396370-18761-8-git-send-email-m.purski@samsung.com>
+        id S937650AbeFSLH6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 07:07:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60062 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937595AbeFSLH5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 07:07:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+wAgsRKAr6ZA2lFKxLFISl5fk+HU2qag6MOsxjIe2VA=; b=cYUZAOZ/8juK+wiciKvyIwXNQ
+        KL1Gglg4zDEDjhpueVnO/F+pJcgXk3cjqVNcX44vTGU8hEmZtoVE25fD9rm93KbyxYnI5fEGBy6Nl
+        PiWsAH3hSH2tBEEpN2WN+iTBzZ816CI0eNZb74BmiU4ya3WhpU2rP6Cvd/UU+46W3XXRx7BUn56AP
+        UrkT3uiC+6qEYyBGof79rn8WmI9Y7XOFua08N2gptI7dxn3sFl66qZiy5KysLmFennRA6jQ9yMpH7
+        z8kvakrWL0+5FdwtP67nxnjt12YHl1wQDvoEy09Pp6h6kTKac0vs+bPW9RKYZL+LKJ27qfYZFch5W
+        tUgo0+IBg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVEU5-0002CU-D4; Tue, 19 Jun 2018 11:07:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E646320298BAC; Tue, 19 Jun 2018 13:07:34 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 13:07:34 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180619110734.GO2458@hirez.programming.kicks-ass.net>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529396370-18761-8-git-send-email-m.purski@samsung.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180521142505.6522-4-quentin.perret@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <fengguang.wu@intel.com>
+On Mon, May 21, 2018 at 03:24:58PM +0100, Quentin Perret wrote:
+> +struct em_freq_domain {
+> +	struct em_cs_table *cs_table;
+> +	cpumask_t cpus;
+> +};
 
-drivers/gpu/drm/bridge/tc358764.c:179:60-66: ERROR: application of sizeof to pointer
-
- sizeof when applied to a pointer typed expression gives the size of
- the pointer
-
-Generated by: scripts/coccinelle/misc/noderef.cocci
-
-Fixes: 147fe90c9d51 ("drm/bridge: tc358764: Add DSI to LVDS bridge driver")
-CC: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
----
-
- tc358764.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/drivers/gpu/drm/bridge/tc358764.c
-+++ b/drivers/gpu/drm/bridge/tc358764.c
-@@ -176,7 +176,8 @@ static int tc358764_read(struct tc358764
- 	ssize_t ret;
- 
- 	cpu_to_le16s(&addr);
--	ret = mipi_dsi_generic_read(dsi, &addr, sizeof(addr), val, sizeof(val));
-+	ret = mipi_dsi_generic_read(dsi, &addr, sizeof(addr), val,
-+				    sizeof(*val));
- 	if (ret >= 0)
- 		le32_to_cpus(val);
- 
+https://lkml.kernel.org/r/20180612125930.GP12217@hirez.programming.kicks-ass.net
