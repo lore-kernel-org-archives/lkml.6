@@ -3,102 +3,158 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E863C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1A8C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE81C2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:16:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECB5920020
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:16:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fXKA3Wn5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE81C2075E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JafN8s6S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB5920020
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967172AbeFSRQV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:16:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41142 "EHLO
+        id S967195AbeFSRQn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:16:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41172 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966646AbeFSRQT (ORCPT
+        with ESMTP id S966819AbeFSRQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:16:19 -0400
+        Tue, 19 Jun 2018 13:16:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eEOKeI7SGBf8f/8ulA3k7DcqqoJZ9rL5/5Ug6Q4jvkQ=; b=fXKA3Wn50oABGlqEu2TtdUI8v
-        M37+25WAPDLRRZI7kIv1++HoiSNF2IOAU/w5WfdN1n1wcWHWiQgEIu19njftqbybYGrEfnSZfYNhq
-        rgcUNGTzVh66HBaM8AT5BP2/5f//dSFZvtILs9X7RDFFSHDK/4+00aPjL5UczL8xifba52Yujmz2z
-        /GnOEJ3v02j/+en9Qiwa3vPna37mUyvNAu5Tzv+xt9dbW9DhHfZ8ip5V+UWvggy93nsvMF4RHRFwR
-        f8pOsVfqSocGnd2fs/CL2HONmotOdPGAGhhM058wykQ/3ZDQQK+OYvbZQrHEPzumTJ1LwshaDgmdJ
-        GrZdPiSSA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVKEq-0004do-Of; Tue, 19 Jun 2018 17:16:16 +0000
-Subject: Re: [RFC v7 1/1] mconf: global i-search in menu prompts
-To:     Dirk Gouders <dirk@gouders.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-References: <20180617121534.4809-1-dirk@gouders.net>
- <20180617121534.4809-2-dirk@gouders.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6e23227d-f3ed-2197-7458-b060b8c90b64@infradead.org>
-Date:   Tue, 19 Jun 2018 10:16:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+         bh=6emQNh++UzDOqYRQb8xqC6h5z80Dp8EyRhTHtuzZYpw=; b=JafN8s6SgFSstt9kytRzxdumd
+        KEXQHlRl26LRIqQHMyW8rjAaIn9xm5b3IfHq//YvR99NTZwvhnTw0zScmKr9zf0RMbZpyjzpW4yuf
+        QYsyWKML/wnxoh6PJjP602C8r7aHW6sGVLC2+fMuNCpENsEAxqPyKvCUIxDlNg3H/DTcFyG1g74ZS
+        g6t4HQm0mYWuhdnr3Y0e0vpecM9+KYlsrdLAtwSrJYntnP+4kT9v2zu6/PoFhfmWKFRbmuMmdYfvL
+        2jFN1zNoFXZWy50mffZVKJqz2dtPC099EdbGIUJ5hwNHmVcnwzIHBhtvEwTqxHnK0l72Drj0LXFCu
+        egOmQQ94g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVKFC-0004fS-Mp; Tue, 19 Jun 2018 17:16:38 +0000
+Date:   Tue, 19 Jun 2018 10:16:38 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Message-ID: <20180619171638.GE1438@bombadil.infradead.org>
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
+ <20180619092230.GA1438@bombadil.infradead.org>
+ <20180619164037.GA6679@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180617121534.4809-2-dirk@gouders.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619164037.GA6679@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dirk,
-
-On 06/17/2018 05:15 AM, Dirk Gouders wrote:
+On Tue, Jun 19, 2018 at 10:40:37AM -0600, Ross Zwisler wrote:
+> On Tue, Jun 19, 2018 at 02:22:30AM -0700, Matthew Wilcox wrote:
+> > On Mon, Jun 18, 2018 at 09:12:57PM -0600, Ross Zwisler wrote:
+> > > Hit another deadlock.  This one reproduces 100% of the time in my setup with
+> > > XFS + DAX + generic/340.  It doesn't reproduce for me at all with
+> > > next-20180615.  Here's the output from "echo w > /proc/sysrq-trigger":
+> > 
+> > *sigh*.  I wonder what the differences are between our setups ...
+> > 
+> > > [   92.849119] sysrq: SysRq : Show Blocked State
+> > > [   92.850506]   task                        PC stack   pid father
+> > > [   92.852299] holetest        D    0  1651   1466 0x00000000
+> > > [   92.853912] Call Trace:
+> > > [   92.854610]  __schedule+0x2c5/0xad0
+> > > [   92.855612]  schedule+0x36/0x90
+> > > [   92.856602]  get_unlocked_entry+0xce/0x120
+> > > [   92.857756]  ? dax_insert_entry+0x2b0/0x2b0
+> > > [   92.858931]  grab_mapping_entry+0x19e/0x250
+> > > [   92.860119]  dax_iomap_pte_fault+0x115/0x1140
+> > > [   92.860836]  dax_iomap_fault+0x37/0x40
+> > ...
+> > > This looks very similar to the one I reported last week with generic/269.
+> > 
+> > Yeah, another missing wakeup, no doubt.  Can you bisect this?  That was
+> > how I found the last one; bisected it to a single patch and stared very
+> > hard at the patch until I saw it.  I'm not going to be in a position to
+> > tinker with my DAX setup until the first week of July.
 > 
-> At any time, at most one i-search is active and the navigation path to
-> the current menu is displayed in the subtitle, the second line in the
-> menu window.
-
-Nice.
-
-And the highlight of the current menu item is also nice when TAB is used to
-switch to the buttons.  As well as toggling the help text based on context.
-
-
-> Navigation example:
+> It bisected to this commit:
 > 
-> To navigate to options concerning NFS file systems, simply type 'n',
-> 'f' and 's'.
+> b4b4daa7e8fb0ad0fee35d3e28d00e97c849a6cb is the first bad commit
+> commit b4b4daa7e8fb0ad0fee35d3e28d00e97c849a6cb
+> Author: Matthew Wilcox <willy@infradead.org>
+> Date:   Thu Mar 29 22:58:27 2018 -0400
 > 
-> Hint: use the 'z' key with focus on buttons to search for invisible
->       prompts.
+>     dax: Convert page fault handlers to XArray
+> 
+>     This is the last part of DAX to be converted to the XArray so
+>     remove all the old helper functions.
+> 
+>     Signed-off-by: Matthew Wilcox <willy@infradead.org>
 
-I think what this says is that the 'z' key is a toggle for the display of
-some (invisible) prompts.  Is that correct?
+I think I see a bug.  No idea if it's the one you're hitting ;-)
 
-
-
-I reliably (consistently) get a segfault.  I have hit it several times.
-Here is one way to get it:
-
-$ make menuconfig
-and then enter:
-/debug\
-
+I had been intending to not use the 'entry' to decide whether we were
+waiting on a 2MB or 4kB page, but rather the xas.  I shelved that idea,
+but not before dropping the DAX_PMD flag being passed from the PMD
+pagefault caller.  So if I put that back ...
 
 
-thanks,
--- 
-~Randy
+diff --git a/fs/dax.c b/fs/dax.c
+index 9919b6b545fb..75cc160d2f0b 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -367,13 +367,13 @@ static struct page *dax_busy_page(void *entry)
+  * a VM_FAULT code, encoded as an xarray internal entry.  The ERR_PTR values
+  * overlap with xarray value entries.
+  */
+-static
+-void *grab_mapping_entry(struct xa_state *xas, struct address_space *mapping)
++static void *grab_mapping_entry(struct xa_state *xas,
++		struct address_space *mapping, unsigned long size)
+ {
+ 	bool pmd_downgrade = false; /* splitting 2MiB entry into 4k entries? */
+ 	void *locked = dax_make_entry(pfn_to_pfn_t(0),
+-						DAX_EMPTY | DAX_LOCKED);
+-	void *unlocked = dax_make_entry(pfn_to_pfn_t(0), DAX_EMPTY);
++						size | DAX_EMPTY | DAX_LOCKED);
++	void *unlocked = dax_make_entry(pfn_to_pfn_t(0), size | DAX_EMPTY);
+ 	void *entry;
+ 
+ retry:
+@@ -1163,7 +1163,7 @@ static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	if (write && !vmf->cow_page)
+ 		flags |= IOMAP_WRITE;
+ 
+-	entry = grab_mapping_entry(&xas, mapping);
++	entry = grab_mapping_entry(&xas, mapping, 0);
+ 	if (xa_is_internal(entry)) {
+ 		ret = xa_to_internal(entry);
+ 		goto out;
+@@ -1396,7 +1396,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	 * page is already in the tree, for instance), it will return
+ 	 * VM_FAULT_FALLBACK.
+ 	 */
+-	entry = grab_mapping_entry(&xas, mapping);
++	entry = grab_mapping_entry(&xas, mapping, DAX_PMD);
+ 	if (xa_is_internal(entry)) {
+ 		result = xa_to_internal(entry);
+ 		goto fallback;
+
