@@ -2,164 +2,130 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E569EC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47416C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9995D2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E619A2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:39:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WgwUo3Sd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9995D2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="jBNMa07T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E619A2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755883AbeFSGgh (ORCPT
+        id S1755582AbeFSGjt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:36:37 -0400
-Received: from ozlabs.org ([203.11.71.1]:47647 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750736AbeFSGgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:36:35 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 418yss2rNPz9s1R;
-        Tue, 19 Jun 2018 16:36:33 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529390193;
-        bh=UFb05F0vMAh9S4LDF8KXiIuar7iKlishUhBYJTxy5Js=;
-        h=Date:From:To:Cc:Subject:From;
-        b=WgwUo3SdEQ9Tlp4OBH7gnJdHtC3NpDETzAKbh0RqJXOPQbmOnKywa0ahqbJOweWvj
-         CHw59Ag0z1r/4QxZr6DRgEoP156m+miJmjD1Uqg48tk4Ir5zn1SsyXAKDfaR879aHp
-         VZkhgxevseiBJG3XOwpU85P9YmpPy6vrzqBkiQZSNENWOuNf3gYcQTmqHc9nstKymt
-         RP34G1cy4W3cVhvJN/91mdUKQYeeiPcRUPBgRBwmn44fPayQkWDTPDlwnkV/qyEVpD
-         tn02xp27FK8trsHDfSNYQtMMgM7ZCTUgeruTssxCXkQ18VZT8YSqwwZIJagTOn9QRZ
-         9MyrevYqmZBbQ==
-Date:   Tue, 19 Jun 2018 16:36:32 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Tue, 19 Jun 2018 02:39:49 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:15954 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750728AbeFSGjr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:39:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1529390385;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=6su3TgDBoT2iYdZEWkZhLkrV+OeqEhAE+p9uxsLAUZg=;
+        b=jBNMa07TWffVvxqMmXyfBBezmQ53/oUP7Q9lv6g2zJWz0q0sfGtWeqb7Vsp/IlUDAK
+        TLmQQHK6UZ3TdGEbw9JrRakylynSYX8ZF5bWcX+PI75y04w0bLCSfkZpxFB+6ZGcOajm
+        MLAL+q9t177oEyV6fG+cK21UCnaN7dp8I5piJ3rizLf7qR+UofRQcey6w2w3mIvOjY+9
+        0ibaOcbc5zyVYtDlzIr6cI77jIV+dJCUUbUxJaMyXV8JmrurFZzYpYML4PHKipcC6gxi
+        6wZWUoahmUuV4jtBDAHaMV7ha1mLk3L5ZEXHA4ktaaS69be+YSePjBkx/bavNLvgcpBX
+        kMKg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisdN1FjmY"
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
+        with ESMTPSA id D025bfu5J6daHgv
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 19 Jun 2018 08:39:36 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [Letux-kernel] BUG: drivers/pinctrl/core: races in pinctrl_groups and deferred probing
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20180619061102.GU112168@atomide.com>
+Date:   Tue, 19 Jun 2018 08:39:35 +0200
+Cc:     Christ van Willegen <cvwillegen@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Roman Gushchin <guro@fb.com>
-Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
-Message-ID: <20180619163632.42ac1ae5@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/K=qe0EjkZgqvclx5/Tu7eMK"; protocol="application/pgp-signature"
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        kernel@pyra-handheld.com,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4435BD7A-AE0D-45A5-9D6A-277175ABE489@goldelico.com>
+References: <20180618091433.GP112168@atomide.com> <BB5DB278-9827-4351-99DF-54C875B1879F@goldelico.com> <20180618095428.GQ112168@atomide.com> <CA+Ot1OxNj30KgHWJHXgWbnXYkNXTNvd_t-b6+uG3u=z8+pZf2Q@mail.gmail.com> <20180618115122.GT26255@atomide.com> <CDD8B994-59E9-42DC-A77D-AF4F35EBF101@goldelico.com> <20180618181744.GS112168@atomide.com> <404C63D9-169E-4051-88E0-2856F3602A72@goldelico.com> <20180619043408.GT112168@atomide.com> <631A1D2F-093A-498F-8923-FC9CD20E11A8@goldelico.com> <20180619061102.GU112168@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/K=qe0EjkZgqvclx5/Tu7eMK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Tony,
 
-Hi all,
+> Am 19.06.2018 um 08:11 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> * H. Nikolaus Schaller <hns@goldelico.com> [180619 04:54]:
+>>>> I had seen the call sequence
+>>>>=20
+>>>>=20
+>>>>=20
+>>>> w/o any lock inside.
+>=20
+> So the sequence above has mutex added around adding the pin
+> controller specific functions and groups by the patch series
+> I posted for both pcs_parse_bits_in_pinctrl_entry() and
+> pcs_parse_one_pinctrl_entry(). So I think the above should
+> be fixed now. But please confirm to make sure I'm not mistaken.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+Ah, now I see.
 
-  kernel/cgroup/cgroup.c
+My dump_stack() added to pinctrl_generic_add_group() reported
 
-between commit:
+[    6.155487] Hardware name: Generic OMAP36xx (Flattened Device Tree)
+[    6.162048] [<c01106ec>] (unwind_backtrace) from [<c010c058>] =
+(show_stack+0x10/0x14)
+[    6.170166] [<c010c058>] (show_stack) from [<c074bc28>] =
+(dump_stack+0x7c/0x9c)
+[    6.177734] [<c074bc28>] (dump_stack) from [<c042bbec>] =
+(pinctrl_generic_add_group+0x48/0x90)
+[    6.186614] [<c042bbec>] (pinctrl_generic_add_group) from =
+[<c043203c>] (pcs_dt_node_to_map+0x4b0/0x81c)
+[    6.196441] [<c043203c>] (pcs_dt_node_to_map) from [<c042ffd4>] =
+(pinctrl_dt_to_map+0x1ec/0x2b8)
+[    6.205535] [<c042ffd4>] (pinctrl_dt_to_map) from [<c042d028>] =
+(create_pinctrl+0x58/0x2f8)
+[    6.214141] [<c042d028>] (create_pinctrl) from [<c042d388>] =
+(devm_pinctrl_get+0x2c/0x6c)
+[    6.222625] [<c042d388>] (devm_pinctrl_get) from [<c04f2e9c>] =
+(pinctrl_bind_pins+0x3c/0x138)
+[    6.231445] [<c04f2e9c>] (pinctrl_bind_pins) from [<c04d3eb8>] =
+(driver_probe_device+0xe8/0x318)
+[    6.240509] [<c04d3eb8>] (driver_probe_device) from [<c04d4168>] =
+(__driver_attach+0x80/0xa4)
+[    6.249328] [<c04d4168>] (__driver_attach) from [<c04d264c>] =
+(bus_for_each_dev+0x58/0x7c)
 
-  58e4e43911f8 ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
+Apparently I didn't notice that pcs_parse_*_pinctrl_entry() are called
+inside pcs_dt_node_to_map() and are part of the call sequence.
 
-from the vfs tree and commit:
+Hence your new mutex locks calls to pinctrl_generic_add_group() as
+needed.
 
-  dbe8cec5a8a3 ("mm, oom: add cgroup v2 mount option for cgroup-aware OOM k=
-iller")
+Obviously, the compiler has optimized away the nested calls to static
+functions and I had no previous experience with how the whole pinctrl =
+code
+works (learning by debugging :).
 
-from the akpm-current tree.
+So it looks sane and no need for further locks.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+BR and thanks,
+Nikolaus
 
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/cgroup/cgroup.c
-index 33a11d941d11,de25822590d0..000000000000
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@@ -1734,23 -1734,28 +1734,30 @@@ int cgroup_show_path(struct seq_file *s
-  	return len;
-  }
- =20
- -static int parse_cgroup_root_flags(char *data, unsigned int *root_flags)
- +static int cgroup2_parse_option(struct fs_context *fc, char *token)
-  {
- -	char *token;
- +	struct cgroup_fs_context *ctx =3D cgroup_fc2context(fc);
- =20
- -	*root_flags =3D 0;
- -
- -	if (!data)
- +	if (!strcmp(token, "nsdelegate")) {
- +		ctx->flags |=3D CGRP_ROOT_NS_DELEGATE;
- +		return 0;
- +	}
-++	if (!strcmp(token, "groupoom")) {
-++		ctx->flags |=3D CGRP_GROUP_OOM;
-+ 		return 0;
-++	}
- =20
- -	while ((token =3D strsep(&data, ",")) !=3D NULL) {
- -		if (!strcmp(token, "nsdelegate")) {
- -			*root_flags |=3D CGRP_ROOT_NS_DELEGATE;
- -			continue;
- -		} else if (!strcmp(token, "groupoom")) {
- -			*root_flags |=3D CGRP_GROUP_OOM;
- -			continue;
- -		}
- +	return -EINVAL;
- +}
- =20
- -		pr_err("cgroup2: unknown option \"%s\"\n", token);
- -		return -EINVAL;
- +static int cgroup_show_options(struct seq_file *seq, struct kernfs_root *=
-kf_root)
- +{
-- 	if (current->nsproxy->cgroup_ns =3D=3D &init_cgroup_ns &&
-- 	    cgrp_dfl_root.flags & CGRP_ROOT_NS_DELEGATE)
-- 		seq_puts(seq, ",nsdelegate");
-++	if (current->nsproxy->cgroup_ns =3D=3D &init_cgroup_ns) {
-++		if (cgrp_dfl_root.flags & CGRP_ROOT_NS_DELEGATE)
-++			seq_puts(seq, ",nsdelegate");
-++		if (cgrp_dfl_root.flags & CGRP_GROUP_OOM)
-++			seq_puts(seq, ",groupoom");
-+ 	}
- -
-  	return 0;
-  }
- =20
-
---Sig_/K=qe0EjkZgqvclx5/Tu7eMK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsopHAACgkQAVBC80lX
-0GxoxQf8CGNCAoRCwOUnaH803iUFa0VRIzffQeqLCBplgkoGAKlGy9qxt6uZkcUK
-fRac+A0if+dxpLoFvQMYpcXZAjXhvrIqhGXPiT7yesig+iKJBrgcbcwaLD+kw2kC
-Iil6p7NqrUJWVLDBqH/476Jk+kmAQVtu2mjYUQuejIzTS35lOdrxb9tx6sb5HRgZ
-mY071Vd+XpKgOyGdjNCXiJky/THTgeUfAPWXIaQqwupjjCEX81U6Hcnttbo5Ls5O
-INUrItJ5DS2MrSDAYeotZ+q23v2fE+sa6LSKqBglWmpCaUq11zZNOsN7d2amOtEp
-XrpdLgWvMDsjdGsCri3XitYi+2ERXQ==
-=XHK3
------END PGP SIGNATURE-----
-
---Sig_/K=qe0EjkZgqvclx5/Tu7eMK--
