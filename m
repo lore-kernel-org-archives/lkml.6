@@ -2,127 +2,93 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,SUBJ_ALL_CAPS,
+	T_DKIMWL_WL_MED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE13C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6DAC5AE5A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2859A2083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DECA020661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:34:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7GNC/TH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2859A2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="14EYuX1n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DECA020661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030488AbeFST2G (ORCPT
+        id S1030470AbeFSTeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 15:28:06 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:46563 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967238AbeFST1s (ORCPT
+        Tue, 19 Jun 2018 15:34:05 -0400
+Received: from mail-io0-f170.google.com ([209.85.223.170]:41165 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966676AbeFSTeD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 15:27:48 -0400
-Received: by mail-wr0-f193.google.com with SMTP id v13-v6so768577wrp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 12:27:48 -0700 (PDT)
+        Tue, 19 Jun 2018 15:34:03 -0400
+Received: by mail-io0-f170.google.com with SMTP id t5-v6so1281189ioa.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 12:34:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vXkMZMdtqXwQabFANthjvHFgEKPyu0gVz46zl6OeIVE=;
-        b=i7GNC/THtkqIFgVKnHdxUVIbmlKJIQy7v3p4BwEj1erCZvwTmWIa+/hKBzYZjD56Xu
-         vMlyj27HMPXKIPMNFtnWvldICGi16v2J1M9Azc3oD69HaghjPgbPIKjvcmISiImH0rnq
-         ++UP/h6sU4C+UubeUp2yZaTEL9W4nKhSquTcU=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=m6LcF2X6OELxUawXN6hDcKumBxuyR2EuzAw8eBlnbk8=;
+        b=14EYuX1nSVnrWLytpJnFC0eBObA47oSmkPfq33j6b1QMO9ey9CY1ZKyw+nYDbb/fV9
+         /RlCmOZPYqLxtyDWgZFf/w2rDDRFVLtaRkJhOV7xJKOBdcTvnQJxK9pOkbh97DtuAABy
+         xzec7RzBAWu/2D41w25sBiVNCEf5m2m8PGVCjePoqwnESFwZUXtcOt+vlINROppr7iEg
+         9yKESImTuXV3WrnM2hBsCzZ7WFacGgSyBZTLydRN9jTGUnWbQrhwcznrbu0Vj99BsiHv
+         mFlOg3irXRIMnSs/SOr32XjDfqRWpFYVR7w0tSv7CgPN15l9KSR6jIx7pppXWY7hEEiz
+         ketg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vXkMZMdtqXwQabFANthjvHFgEKPyu0gVz46zl6OeIVE=;
-        b=gQ3r1qy/ea1v5/P2TWVwN42LifKdBtnh8cyySSQPeJ3DSRKWktlmrkS1SBqYMTmYmT
-         U9azr7hNee4hsBJNhrEL34ybrumJaf3IqCxSC/+t/faES/PlrW4MFrdp9UeN4ypeUX94
-         E6M/XFEN2/ta60IHgXtF3mMBxTXa7vXypcBfv+6LYXvrqltssfPqXPVUvqtBe0rECmhP
-         87Pgt6Iez9xM42SUJNNM/i6F+HpxhKZ63SUDyny3wPEDt2IOuoov4fDxMcWyu9O5Rm21
-         sOP4zHRL9g1PpNGZSTbuYnX1rNggSFQd8hK3wPkS9i6TPdKxhhNM94j7r/lZxqYgXbRk
-         4cug==
-X-Gm-Message-State: APt69E0axfwloUWAtuBFhrctDww70tmVw6XzJ6jebJy+ot+USEx7QhS3
-        xoyn3l6KWEUG+lZl3PFC9f+VJg==
-X-Google-Smtp-Source: ADUXVKJKV+gJwOTs4fGYuHpPN3yjYMiNZER6ZjBPGf9SRdEeq1x5pe1rQY+fgb87l6jZVuSXVbagsA==
-X-Received: by 2002:adf:88ca:: with SMTP id g10-v6mr14060672wrg.62.1529436467570;
-        Tue, 19 Jun 2018 12:27:47 -0700 (PDT)
-Received: from dogfood.home ([2a01:cb1d:112:6f00:a06d:5653:4fd5:13a])
-        by smtp.gmail.com with ESMTPSA id c53-v6sm982601wrg.12.2018.06.19.12.27.46
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=m6LcF2X6OELxUawXN6hDcKumBxuyR2EuzAw8eBlnbk8=;
+        b=aSNN3LpRZU2B2bv0CNcKj7b/sXVBdDI7yL+dWBXznJqW0oX20qa+1Nb+Y4zLlm/HbG
+         UQCxlIRjmLQLkKff5swNlCMt9+CD6vyRCdnNGOHiDgQs45fnRdRVQutqpumqLFvsYsZf
+         si2rcNDD6OiaAPjJWTVXDjhtULCjyhKhPHgESBPmlqo8z0NTMYEZQpC5Qs9AuRULG/x2
+         p/v1rLV6NQgfuy6YeKUENgKN6b5o7uZFy+fbTHKLtmvz+OS87iocwHTjjhI0PwmVQEBs
+         cLGgc646I9K/yD96b5ZUJC/F53gimciKjClr+P3EbWNCoWKU5bzvmIiPee/fPpGsK9rp
+         feAw==
+X-Gm-Message-State: APt69E2aT4almKsrU5OiHBxoT7zCVyn+vEfujgsTzhovdWgvwCgXBcFV
+        J3aeNFK1GRImVu1341s0rOmbjRrBGUM=
+X-Google-Smtp-Source: ADUXVKJV7NuKqgmEJ0l7L95EJ2V0ErLkHUY5Ya7Iqad7Si0JJG3sY34201sud13KtW4glVAnHmJ89A==
+X-Received: by 2002:a6b:a282:: with SMTP id l124-v6mr14655819ioe.256.1529436842420;
+        Tue, 19 Jun 2018 12:34:02 -0700 (PDT)
+Received: from [192.168.1.167] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id i189-v6sm334086itf.22.2018.06.19.12.34.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 12:27:46 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux@armlinux.org.uk, linux@roeck-us.net, mark.rutland@arm.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH 2/2] ARM: assembler: prevent ADR from setting the Thumb bit twice
-Date:   Tue, 19 Jun 2018 21:26:33 +0200
-Message-Id: <20180619192633.21846-3-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180619192633.21846-1-ard.biesheuvel@linaro.org>
-References: <20180619192633.21846-1-ard.biesheuvel@linaro.org>
+        Tue, 19 Jun 2018 12:34:01 -0700 (PDT)
+Subject: Re: REMOVE CODING STYLE WARNING
+To:     Kitone Elvis Peter <elviskitone@gmail.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180619142738.GA12449@kitone-HP-ProBook-4530s>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0b851687-0663-69b0-6c37-305cabc0b543@kernel.dk>
+Date:   Tue, 19 Jun 2018 13:34:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180619142738.GA12449@kitone-HP-ProBook-4530s>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To work around recent issues where ADR references to Thumb function
-symbols may or may not have the Thumb bit set already when they are
-resolved by GAS, reference the symbol indirectly via a local symbol
-typed as 'function', and emit the reference in a way that prevents
-the assembler from resolving it directly. Instead, it will be fixed
-up by the linker, which behaves consistently and according to spec
-when it comes to relocations of symbols with function annotation
-targetting wide ADR instructions.
+On 6/19/18 8:27 AM, Kitone Elvis Peter wrote:
+> Added a license identifier for this file to remove the malformed
+> license warning. This will specify which license the file is
+> using.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/arm/include/asm/assembler.h | 22 +++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+This is the third (and last) time I'll explain this. Go read
 
-diff --git a/arch/arm/include/asm/assembler.h b/arch/arm/include/asm/assembler.h
-index 6ae42ad29518..ee2d4eb26318 100644
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -195,13 +195,33 @@
- 	.irp	c,,eq,ne,cs,cc,mi,pl,vs,vc,hi,ls,ge,lt,gt,le,hs,lo
- 	.macro	badr\c, rd, sym
- #ifdef CONFIG_THUMB2_KERNEL
--	adr\c	\rd, \sym + 1
-+	__badr	\c, \rd, \sym
- #else
- 	adr\c	\rd, \sym
- #endif
- 	.endm
- 	.endr
- 
-+	/*
-+	 * GAS's behavior with respect to setting the Thumb bit on addresses
-+	 * of locally defined symbols taken using adr instructions is
-+	 * inconsistent, and so we are better off letting the linker handle
-+	 * it instead. So emit the reference as a relocation, and force a
-+	 * wide encoding so that we can support both forward and backward
-+	 * references, and avoid the R_ARM_THM_PC8 relocation that operates
-+	 * on the narrow encoding, which is documented as not taking the
-+	 * Thumb bit into account. (IHI 0044E ELF for the ARM Architecture)
-+	 *
-+	 * Note that this needs to be a separate macro or \@ does not work
-+	 * correctly.
-+	 */
-+	.macro		__badr, c, rd, sym
-+	.set		.Lsym\@, \sym
-+	.type		.Lsym\@, %function
-+	.reloc		., R_ARM_THM_ALU_PREL_11_0, .Lsym\@
-+	adr\c\().w	\rd, .
-+	.endm
-+
- /*
-  * Get current thread_info.
-  */
+Documentation/process/submitting-patches.rst
+
+and format your patches properly.
+
 -- 
-2.17.1
+Jens Axboe
 
