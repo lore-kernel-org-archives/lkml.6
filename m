@@ -2,167 +2,101 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E6EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC39C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3531920874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:22:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WZg3/m8n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3531920874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EF3520874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:22:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF3520874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756377AbeFSIWJ (ORCPT
+        id S1756484AbeFSIWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:22:09 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44951 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937314AbeFSIUE (ORCPT
+        Tue, 19 Jun 2018 04:22:51 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:50825 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756451AbeFSIWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:20:04 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180619082001euoutp02cab07cb841117fafd33f1ae4b979a05b~5geyq6t4c1395713957euoutp02V;
-        Tue, 19 Jun 2018 08:20:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180619082001euoutp02cab07cb841117fafd33f1ae4b979a05b~5geyq6t4c1395713957euoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1529396402;
-        bh=MjYV6Z0spjvBKdUtalbQImc093hTlmAsPryLiObkG9M=;
-        h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=WZg3/m8n5GskpnPFYRpkHdMP8vSfQjF17ZfzPr7l6vvQ4LRRL1YxvGS+4DaYo6Rn2
-         nFs9UwzrE5YYx1xz0z/MGN1ACxkh9R4pKN0IlbpKUswN47EENOkO+P8mlf8Txd99Ot
-         mGzU671VEDP95kb85E42yeA6amsBhHinxr/S7VpU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180619082001eucas1p239bed3c04b50496cacdec48d6b35b9fb~5gex4LTgC2285022850eucas1p2O;
-        Tue, 19 Jun 2018 08:20:01 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id DF.79.17380.0BCB82B5; Tue, 19
-        Jun 2018 09:20:00 +0100 (BST)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180619082000eucas1p1c5cc2b526583c3fd5e9fc13656ed4858~5gew6nTKj0546705467eucas1p1W;
-        Tue, 19 Jun 2018 08:20:00 +0000 (GMT)
-X-AuditID: cbfec7f4-6f9ff700000043e4-dc-5b28bcb0df50
-Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id CE.56.04178.FACB82B5; Tue, 19
-        Jun 2018 09:20:00 +0100 (BST)
-Received: from AMDC2075.DIGITAL.local ([106.120.51.25]) by
-        eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
-        (built May  5 2014)) with ESMTPA id <0PAK00EJ59T2RV00@eusync4.samsung.com>;
-        Tue, 19 Jun 2018 09:19:59 +0100 (BST)
-From:   Maciej Purski <m.purski@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v3 4/9] dt-bindings: display: add DT bindings for BOE
- HV070WSA-100 panel
-Date:   Tue, 19 Jun 2018 10:19:25 +0200
-Message-id: <1529396370-18761-5-git-send-email-m.purski@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-reply-to: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTURzHO7v37l6ni8tUPJlIDLJhS+0BnehBhMaF/ukP01BKZ14fNB9s
-        07KXomXOx3yMcD5SSU2bS22alZRDG60SXWI+QZdN8k0PLTGkcl7773O+v8/vnN8PDoWJsglP
-        Kj5RxSoSZXIxX4B3vFmz7mt9KQkPyPouRePN/QQq6H/HQ5k5SwR6omshULV5I/v48ysfldiK
-        cDQ7OYCjQvsChqzWVhL1ZS6SSF1cRyKjfZhAg52VfKSzdvFQzdw4jh6bJ0hUPzLAQ3demUmk
-        087x0VpnFX7SnTFUGQAzqCngMS/KJ0imIqeMYIx6NZ959usTwdjyLDymrS6d0bTrAbNs9D4r
-        CBMci2bl8amswv9EpCBOV2gDyUXCq5+rjUQG0DjnAicK0odghXWUzAUCSkQ3AmgY7sMdBRG9
-        DGDv++25gNqUCrvEnPMQwKy1rK2GvwCqa2dJh8SnfaHhboQjd6P1ALaNLgHHAaPvEfBD9QLh
-        uNWVDoNNU4PAwTi9Gw5pzZsspANhc34VwY3kDcf61ZiDneggWH5/lcflWhKatP4cB8Kp+UaM
-        Y1c4b2knOfaC6pzuLf86fDTXgDuGgHQGgCsTg1sNR+Fry8DmYxi9HZZ0lGLcmkKYky3iFAY2
-        j5oAt6UOwOJ6KygCO2rANj3wYFOUCbGs8kAie8VPKUtQpiTG+l1KSjCCjd/R+8ey8hx0rkf1
-        AJoCYhehpGVPuIiQpSrTEnoApDCxm/BpvSRcJIyWpV1jFUkRihQ5q+wBOylc7CG8KLkVJqJj
-        ZSr2Mssms4r/VR7l5JkBguJt0770t9DpsejR0grjTFRwqWrR70HoWPp6g73PVDepkV6YiDgn
-        XzYt3ohzOR1yW1vifnO4tXvIOVj6Jb7Rdt4WtXc1P1jy1oNsCFC5eh2PHvGx+5SFxOxqqqmt
-        DhnrmD2TX/nbMzCInc6lYw+fOrhukLoYCwzrRyKD8mZifohxZZxsvy+mUMr+AYWrIEgZAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xa7ob9mhEGyxaxGRxa905VovecyeZ
-        LJo63rJabJyxntVi/hGg2JWv79ksJt2fwGLx4t5FFov+x6+ZLc6f38BucbbpDbtF58Ql7Bab
-        Hl9jtbi8aw6bxYzz+5gsFry8xWKx9shddoul1y8yWbTuPcJuMWPySzaLn7vmsTiIeqyZt4bR
-        43JfL5PHzll32T1md8xk9di0qpPNY/u3B6we97uPM3lsXlLv0bdlFaPH501yAVxRXDYpqTmZ
-        ZalF+nYJXBkz+u8zFkzgrXg0fxNrA2MfdxcjB4eEgIlE/z6lLkYuDiGBJYwS85q3snUxcgI5
-        jUwSs64LgNSwCWhJrGmPB6kREVjFKDH17x12EIdZYDarxKtHExhBGoQFoiRWP7wMZrMIqEpc
-        nXwEzOYVcJFY1zOPFcSWEJCTuHmukxnE5hRwlZg19zsTxDIXiRerrzBNYORZwMiwilEktbQ4
-        Nz232FCvODG3uDQvXS85P3cTIzDstx37uXkH46WNwYcYBTgYlXh4GzaqRwuxJpYVV+YeYpTg
-        YFYS4d26VCNaiDclsbIqtSg/vqg0J7X4EKM0B4uSOO95g8ooIYH0xJLU7NTUgtQimCwTB6dU
-        A2NLiOyH7vcJnAlBcnZa5i3foj9dy+p9KZ5s2LrUddccfdUDWXImLJJH7i/mL1476Vvtqv+H
-        Fm38X5LJM7u44f6kipKnYXPSD+w/ISN5b2X9nFs6szfG3Xwm+s5jrvhOPu2t/F+3LZoo/Iun
-        YHfp+4A36Uy3D+TWs8duyLfoVlCvNNjOdtX5yT0lluKMREMt5qLiRADdd2QkdwIAAA==
-X-CMS-MailID: 20180619082000eucas1p1c5cc2b526583c3fd5e9fc13656ed4858
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180619082000eucas1p1c5cc2b526583c3fd5e9fc13656ed4858
-References: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
-        <CGME20180619082000eucas1p1c5cc2b526583c3fd5e9fc13656ed4858@eucas1p1.samsung.com>
+        Tue, 19 Jun 2018 04:22:49 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0Md4Bm-1fnPVr0NSU-00IFt7; Tue, 19 Jun 2018 10:22:25 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Willy Tarreau <w@1wt.eu>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] leds: ledtrig-activity: use ktime_get_boot_ns()
+Date:   Tue, 19 Jun 2018 10:18:56 +0200
+Message-Id: <20180619082215.2990745-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:6B9Kc0gW1wWG6RrWqxclm+xuFsTarDW1MoaWpneIQ7FF45wS/7I
+ uyyFueouU4q2nhevhMOvyMOxF3iQZ2zHzubvBfpg3pePplCn5SaJQagaRe3N1X0WGGZ5Ki3
+ Qnaa1sNfOKqGGNolMufY2lF4eSnK/vMbJT9W5lk2rLjpUSzSEw5+YMeu9T6Bn1yMqeSwaMQ
+ kjblgsfE96MLIEB8FtroA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ByOyyQaY3tc=:c0fxuJZ6ei8JoLHqidmJYk
+ DD1aHM2feWvhcLAG+zhlmEKX1LydSp6gYm9vIdg0+Wz7vgZJJJkuke7OSbDaIIPuQKoEugE+/
+ Tvap5C2bvcal86a7ND5DhNyMR/4oSW4sTUeSbWqw7VoTSGrFlpSX3uwvNYcBTiKptruBZt55o
+ NJp5Mf8YnZaL/y9wU2jWuzcjgELXb56WEVW3aGOHDi6uX16kImX8TAMogvSJwjiiYvD5CbSB+
+ KIg3Kq2Gc5TkxdGRwbdePbRY+xagQToW0mEovDpalQY1k4OG/P+aUddbFw45JFQHKxWJl68gq
+ Nadr9aFJ6SuC3uZmgxKYbdP0EdSmSktshbuoHVD/+lZr4h3dDQjcpFfIGbMv0+24n/qYZmyge
+ NHkMZdpg4y5w1e1Gqq+JTTswMtw/M5NaJ0O7cMMW4Tdsglpy6Vr3sm0kQVfU0q+mEu4yVS4JF
+ PSwZkyXHe/zJIB/vM4aPayyQxdlM03+P6W2Gecwy3hIzXqqg4I5tLsD7eQ7OGL3VaI2Rq+bAY
+ 73HM5wXzENd7rnGc5l5+PG1UwXdipxror1TTTc4HPPmZJ4aOQN73u/67p+vUD+KIivwmWYroj
+ MvpboScuFuk/KNf1LZnY//aKXCBsZmKUdn670zlBGEKLKfV8zEmUwO7uKJKoJaE3z6q8xUTPS
+ GweTrs8AYMswURZcibmEpwWuavjaXj9aXYDX5MdWBkdodcCGB3Tw0aZKQaEyZQmNMFAI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+get_monotonic_boottime() is deprecated, so let's convert this to
+the simpler ktime_get_boot_ns().
 
-The patch adds bindings to BOE HV070-WSA WSVGA panel.
-Bindings are compatible with simple panel bindings.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- .../bindings/display/panel/boe,hv070wsa-100.txt    | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
+v2: don't drop 'cpus' multiplication, as Pavel and Willy point out
+    that needs to be kept
+---
+ drivers/leds/trigger/ledtrig-activity.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt b/Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
-new file mode 100644
-index 0000000..9e8eea8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/boe,hv070wsa-100.txt
-@@ -0,0 +1,28 @@
-+BOE HV070WSA-100 7.01" WSVGA TFT LCD panel
-+
-+Required properties:
-+- compatible: should be "boe,hv070wsa-100"
-+- power-supply: regulator to provide the VCC supply voltage (3.3 volts)
-+- enable-gpio: GPIO pin to enable and disable panel (active high)
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-+
-+The device node can contain one 'port' child node with one child
-+'endpoint' node, according to the bindings defined in [1]. This
-+node should describe panel's video bus.
-+
-+[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Example:
-+
-+	panel: panel {
-+		compatible = "boe,hv070wsa-100";
-+		power-supply = <&vcc_3v3_reg>;
-+		enable-gpios = <&gpd1 3 GPIO_ACTIVE_HIGH>;
-+		port {
-+			panel_ep: endpoint {
-+				remote-endpoint = <&bridge_out_ep>;
-+			};
-+		};
-+	};
+diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
+index 5081894082bd..6c6f8a9b8d9a 100644
+--- a/drivers/leds/trigger/ledtrig-activity.c
++++ b/drivers/leds/trigger/ledtrig-activity.c
+@@ -37,7 +37,6 @@ static void led_activity_function(struct timer_list *t)
+ 	struct activity_data *activity_data = from_timer(activity_data, t,
+ 							 timer);
+ 	struct led_classdev *led_cdev = activity_data->led_cdev;
+-	struct timespec boot_time;
+ 	unsigned int target;
+ 	unsigned int usage;
+ 	int delay;
+@@ -57,8 +56,6 @@ static void led_activity_function(struct timer_list *t)
+ 		return;
+ 	}
+ 
+-	get_monotonic_boottime(&boot_time);
+-
+ 	cpus = 0;
+ 	curr_used = 0;
+ 
+@@ -76,7 +73,7 @@ static void led_activity_function(struct timer_list *t)
+ 	 * down to 16us, ensuring we won't overflow 32-bit computations below
+ 	 * even up to 3k CPUs, while keeping divides cheap on smaller systems.
+ 	 */
+-	curr_boot = timespec_to_ns(&boot_time) * cpus;
++	curr_boot = ktime_get_boot_ns() * cpus;
+ 	diff_boot = (curr_boot - activity_data->last_boot) >> 16;
+ 	diff_used = (curr_used - activity_data->last_used) >> 16;
+ 	activity_data->last_boot = curr_boot;
 -- 
-2.7.4
+2.9.0
 
