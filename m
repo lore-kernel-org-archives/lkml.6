@@ -3,51 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95693C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870B6C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FBA02083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:39:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 429A220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:39:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HO7dFisb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GImTlZuU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FBA02083A
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="L8KqHwVe";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i4bsOKxU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 429A220874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965185AbeFSFjp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:39:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57948 "EHLO
+        id S965188AbeFSFjw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 01:39:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58080 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964895AbeFSFjm (ORCPT
+        with ESMTP id S964895AbeFSFjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:39:42 -0400
+        Tue, 19 Jun 2018 01:39:49 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 11E9A60B1A; Tue, 19 Jun 2018 05:39:42 +0000 (UTC)
+        id 3F74160B23; Tue, 19 Jun 2018 05:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529386782;
-        bh=OgY6vU1PLd02JA03RxHUuIPl099mDbw+QmDm/+cyvzc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HO7dFisblBBfyocpN8Q0H0UG+4y3zUQsR+OZAGCk6z+blcnSaSxMyjPDdnb/I877H
-         95XtVd6nbf3BkkHOMBdVB0prKgvM7N2eblbLwj7jD8hcpBuWIKEHtz/FImlVTe0dyj
-         ylu0UdjYcCv8+pf/4jEi3+xFZ0aa+4eXHF3EIchA=
+        s=default; t=1529386788;
+        bh=md5kESCjcLlRwmzrmU7heBVE64YZNDLtpAm/+EmX98o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=L8KqHwVe/FQEKRUUQ3gmrT58WYCWoYim63TS8b8/E5KGfe5b4ULZZCwB2+GZAjzk7
+         HykxI/4eZ405Q098tvk3aogh+f9QcoYRB4rgtch43gMb9p/Q6q58UPcWUYyB3NQXmi
+         2qnwxH2+yCZt4T5Fgml/1ndFuV+he362m3WbEZoQ=
 Received: from hydcbspbld03.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: vviswana@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B18F7604A6;
-        Tue, 19 Jun 2018 05:39:35 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D123C60B22;
+        Tue, 19 Jun 2018 05:39:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529386781;
-        bh=OgY6vU1PLd02JA03RxHUuIPl099mDbw+QmDm/+cyvzc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GImTlZuUE/JDz8SVai+v0+wxQN9Iq38h5hz7pmGLjdS13mBpVD6e4Ds1jB9fCE9Q/
-         lzMjD47qDlL6QcqMfGBIGQyjS11ww4Dembpy5wbbNDKDGadOnVE8f+JATToeFm+r1U
-         QTWTVHvXZ+BM8FSmzc4gATvf7AraZ7nzASK5h97c=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B18F7604A6
+        s=default; t=1529386787;
+        bh=md5kESCjcLlRwmzrmU7heBVE64YZNDLtpAm/+EmX98o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=i4bsOKxUt0+pvFbLpyZu1Yhp4kq0Znp8qjBfDGl/E4Ij3zY9ci0IXQbNxAovNyNjH
+         EKQnSqfXEi920tq9l7GTCBQgZn2wl4+hjFiPNVvWedR7ZTpZSkkSj6ox89KTBKmpVk
+         PxrsqP9cULdDypHncmmcxCk1uzmowFFDKOVO5MWY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D123C60B22
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
 From:   Vijay Viswanath <vviswana@codeaurora.org>
@@ -61,58 +61,132 @@ Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         vviswana@codeaurora.org, bjorn.andersson@linaro.org,
         riteshh@codeaurora.org, vbadigan@codeaurora.org,
         dianders@google.com, sayalil@codeaurora.org
-Subject: [PATCH V3 0/4] Changes for SDCC5 version
-Date:   Tue, 19 Jun 2018 11:09:17 +0530
-Message-Id: <1529386761-4923-1-git-send-email-vviswana@codeaurora.org>
+Subject: [PATCH V3 1/4] mmc: sdhci-msm: Define new Register address map
+Date:   Tue, 19 Jun 2018 11:09:18 +0530
+Message-Id: <1529386761-4923-2-git-send-email-vviswana@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529386761-4923-1-git-send-email-vviswana@codeaurora.org>
+References: <1529386761-4923-1-git-send-email-vviswana@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With SDCC5, the MCI register space got removed and the offset/order of
-several registers have changed. Based on SDCC version used and the register,
-we need to pick the base address and offset.
+From: Sayali Lokhande <sayalil@codeaurora.org>
 
-Depends on patch series: "[PATCH V5 0/2] mmc: sdhci-msm: Configuring IO_PAD support for sdhci-msm"
+For SDCC version 5.0.0, MCI registers are removed from SDCC
+interface and some registers are moved to HC.
+Define a new data structure where we can statically define
+the address offsets for the registers in different SDCC versions.
 
-Changes since RFC:
-	Dropped voltage regulator changes in sdhci-msm
-	Split the "Register changes for sdcc V5" patch
-	Instead of checking mci removal for deciding which base addr to use,
-	new function pointers are defined for the 2 variants of sdcc: 
-		1) MCI present
-		2) V5 (mci removed)
-	Instead of string comparing with the compatible string from DT file,
-	the sdhci_msm_probe will now pick the data associated with the
-	compatible entry and use it to load variant specific address offsets
-	and msm variant specific read/write ops.
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 89 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-Changes since V1:
-	Removed unused msm_reab & msm_writeb APIs
-	Changed certain register addresses from uppercase to lowercase hex
-	letters
-	Removed extra lines and spaces
-	Split "[PATCH V1 0/3] Changes for SDCC5 version" patch into two,
-	one for Documentation and other for the driver changes.
-
-Changes since V2:
-	Used lower case for macro function defenitions
-	Removed unused function pointers for msm_readb & msm_writeb
-
-
-Sayali Lokhande (3):
-  mmc: sdhci-msm: Define new Register address map
-  Documentation: sdhci-msm: Add new compatible string for SDCC v5
-  mmc: host: Register changes for sdcc V5
-
-Vijay Viswanath (1):
-  mmc: sdhci-msm: Add msm version specific ops and data structures
-
- .../devicetree/bindings/mmc/sdhci-msm.txt          |   7 +-
- drivers/mmc/host/sdhci-msm.c                       | 511 ++++++++++++++++-----
- 2 files changed, 391 insertions(+), 127 deletions(-)
-
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index bb11916..4050c99 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -137,6 +137,95 @@
+ /* Timeout value to avoid infinite waiting for pwr_irq */
+ #define MSM_PWR_IRQ_TIMEOUT_MS 5000
+ 
++struct sdhci_msm_offset {
++	u32 core_hc_mode;
++	u32 core_mci_data_cnt;
++	u32 core_mci_status;
++	u32 core_mci_fifo_cnt;
++	u32 core_mci_version;
++	u32 core_generics;
++	u32 core_testbus_config;
++	u32 core_testbus_sel2_bit;
++	u32 core_testbus_ena;
++	u32 core_testbus_sel2;
++	u32 core_pwrctl_status;
++	u32 core_pwrctl_mask;
++	u32 core_pwrctl_clear;
++	u32 core_pwrctl_ctl;
++	u32 core_sdcc_debug_reg;
++	u32 core_dll_config;
++	u32 core_dll_status;
++	u32 core_vendor_spec;
++	u32 core_vendor_spec_adma_err_addr0;
++	u32 core_vendor_spec_adma_err_addr1;
++	u32 core_vendor_spec_func2;
++	u32 core_vendor_spec_capabilities0;
++	u32 core_ddr_200_cfg;
++	u32 core_vendor_spec3;
++	u32 core_dll_config_2;
++	u32 core_ddr_config;
++	u32 core_ddr_config_2;
++};
++
++static const struct sdhci_msm_offset sdhci_msm_v5_offset = {
++	.core_mci_data_cnt = 0x35c,
++	.core_mci_status = 0x324,
++	.core_mci_fifo_cnt = 0x308,
++	.core_mci_version = 0x318,
++	.core_generics = 0x320,
++	.core_testbus_config = 0x32c,
++	.core_testbus_sel2_bit = 3,
++	.core_testbus_ena = (1 << 31),
++	.core_testbus_sel2 = (1 << 3),
++	.core_pwrctl_status = 0x240,
++	.core_pwrctl_mask = 0x244,
++	.core_pwrctl_clear = 0x248,
++	.core_pwrctl_ctl = 0x24c,
++	.core_sdcc_debug_reg = 0x358,
++	.core_dll_config = 0x200,
++	.core_dll_status = 0x208,
++	.core_vendor_spec = 0x20c,
++	.core_vendor_spec_adma_err_addr0 = 0x214,
++	.core_vendor_spec_adma_err_addr1 = 0x218,
++	.core_vendor_spec_func2 = 0x210,
++	.core_vendor_spec_capabilities0 = 0x21c,
++	.core_ddr_200_cfg = 0x224,
++	.core_vendor_spec3 = 0x250,
++	.core_dll_config_2 = 0x254,
++	.core_ddr_config = 0x258,
++	.core_ddr_config_2 = 0x25c,
++};
++
++static const struct sdhci_msm_offset sdhci_msm_mci_offset = {
++	.core_hc_mode = 0x78,
++	.core_mci_data_cnt = 0x30,
++	.core_mci_status = 0x34,
++	.core_mci_fifo_cnt = 0x44,
++	.core_mci_version = 0x050,
++	.core_generics = 0x70,
++	.core_testbus_config = 0x0cc,
++	.core_testbus_sel2_bit = 4,
++	.core_testbus_ena = (1 << 3),
++	.core_testbus_sel2 = (1 << 4),
++	.core_pwrctl_status = 0xdc,
++	.core_pwrctl_mask = 0xe0,
++	.core_pwrctl_clear = 0xe4,
++	.core_pwrctl_ctl = 0xe8,
++	.core_sdcc_debug_reg = 0x124,
++	.core_dll_config = 0x100,
++	.core_dll_status = 0x108,
++	.core_vendor_spec = 0x10c,
++	.core_vendor_spec_adma_err_addr0 = 0x114,
++	.core_vendor_spec_adma_err_addr1 = 0x118,
++	.core_vendor_spec_func2 = 0x110,
++	.core_vendor_spec_capabilities0 = 0x11c,
++	.core_ddr_200_cfg = 0x184,
++	.core_vendor_spec3 = 0x1b0,
++	.core_dll_config_2 = 0x1b4,
++	.core_ddr_config = 0x1b8,
++	.core_ddr_config_2 = 0x1bc,
++};
++
+ struct sdhci_msm_host {
+ 	struct platform_device *pdev;
+ 	void __iomem *core_mem;	/* MSM SDCC mapped address */
 -- 
  Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
