@@ -2,196 +2,109 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72165C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE78C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D7D120693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DAC020836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:44:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RMHpvysD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D7D120693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="jh8weIUC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAC020836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030372AbeFSRn4 (ORCPT
+        id S1030394AbeFSRoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:43:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49282 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030330AbeFSRny (ORCPT
+        Tue, 19 Jun 2018 13:44:24 -0400
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:36884 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030323AbeFSRoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:43:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NlJF3uWgWIYD55wUutUVRjnEPN8ufpH8hSRBrzKsFb8=; b=RMHpvysDLDON5aNRtfZrvdE2g
-        McNrmmD/HmMU09aTumxJx6GrJSgzniYjVlZ3G0valbfxdkwt37+kO0RGNSsHI9utN3PVlakDMD/3n
-        46DUDWzqP3Qo5N0NlCEN0NFnadXRfjyVMPJuJBHS9k8Hin7T/la868w3gacis/HfKsNEdaz4LDZNd
-        MBo1TtibZbEBY96rfemg6sAW2M3h1A4ITFxHt0smOYfiGA75pzQsWpU0Ce4Lrmx6d4oMHz/krXKAv
-        kcekZzlJHZ66bo8iUlUiueHr+ZC2OJ3eFuMw7DbvTeWMvxqKAJWgOK5Wka44z28nHR9jxkBFUZdB7
-        po2az4LBA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVKfS-000550-Lu; Tue, 19 Jun 2018 17:43:46 +0000
-Subject: Re: [RFC v7 1/1] mconf: global i-search in menu prompts
-To:     Dirk Gouders <dirk@gouders.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-References: <20180617121534.4809-1-dirk@gouders.net>
- <20180617121534.4809-2-dirk@gouders.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <01450eac-3c65-efa1-8a9e-aaea98088bac@infradead.org>
-Date:   Tue, 19 Jun 2018 10:43:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 13:44:22 -0400
+Received: by mail-lf0-f43.google.com with SMTP id g21-v6so785845lfb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:44:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CVD3elAZ/NJLIqc1EwsGwLUXQ5h946VLlebpdv8Py0M=;
+        b=jh8weIUCM4ditSTJCvlRDPEoiWMJSFKm9m7/eYJUsJ2iDslN1nG2vTb5Ik+GyRf/yT
+         WRBpFip+EFy4+AOSRqdHd4RWNJ056TSF+Kzx0VqiuHLYAUYcrmLUzZ3zkGORjEP4qFUT
+         G5WYUMJLgfaZLJj/WuR6XOiHLkfck/wySaaS6LJ2le4HbcNi9i0dQzS5ZzR7TKEi51fj
+         dXo9QqSIxvA8/qNihERcr1Jp0kPHaVmQlKJowNhxD0X5du+NUtZBlnhQ7NWymnkx3EkB
+         rKGZijGujzkTCSkQiOhfpgu+ScVEG5dQDD0Mdu7JxcwTvULr6NIMJSv29C92t+9KG+NX
+         6BFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CVD3elAZ/NJLIqc1EwsGwLUXQ5h946VLlebpdv8Py0M=;
+        b=BOUd7iVkhw30G39ApJD7fw4OgAYmY0BrMGAMc+OfAJI6YtJn3owWavt5K11aHhSpmi
+         8uKUHSIsA3Bh71qi46cvbfeZgXX77lXS20TM5xrlRv1pb04Fc9xKGVoTBlvwJ4twEOh5
+         sU9x1ZH8WAAPSc2qpnzk8JAfD4spPWD0NLWt7eudbrxPvhowv7gMB504e7+5gTTL7fXm
+         KyJelTiqfg+gTyI/Zi/6Wk5e2ovyw2osZHwveuDM254K9Gk0oy/wGvA0AyCRWXWL3Arr
+         wefoUE2Ke2Nhq8nlCYJAc/NRI5ZacK2QguYQ2jo7SBNKHfLLeaLJiJBCzi/BSwT6x+3G
+         +R2Q==
+X-Gm-Message-State: APt69E0s1XMd0jsZpJdGZHzufZCCueycPsclJJnkRJ0nwn00Y4eT+9fe
+        RKfac9TxNlUIQ6FREIuO0E82EKZowfFIZZ+hJs/u
+X-Google-Smtp-Source: ADUXVKJYx8qhXU3g5jfFZZhRSlFbMQ4Tf2iuyh1TR5Wl48bntZInbMGcJGexSnjR2Q4f/ORZUm59YlCvo2aTkigUijo=
+X-Received: by 2002:a19:5c12:: with SMTP id q18-v6mr9107197lfb.145.1529430260907;
+ Tue, 19 Jun 2018 10:44:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180617121534.4809-2-dirk@gouders.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180612080912.7827-1-peter.enderborg@sony.com> <20180612080912.7827-11-peter.enderborg@sony.com>
+In-Reply-To: <20180612080912.7827-11-peter.enderborg@sony.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 19 Jun 2018 13:44:10 -0400
+Message-ID: <CAHC9VhQXk4tMZ_fp=rbygEs2ZyT2O07PJB4jdKKY7+eO3wSC5g@mail.gmail.com>
+Subject: Re: [PATCH 10/13] selinux: Cleanup printk logging in netport
+To:     peter.enderborg@sony.com
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>, danielj@mellanox.com,
+        dledford@redhat.com, selinux@tycho.nsa.gov,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, serge@hallyn.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/17/2018 05:15 AM, Dirk Gouders wrote:
-
-> Signed-off-by: Dirk Gouders <dirk@gouders.net>
+On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
+<peter.enderborg@sony.com> wrote:
+>
+> Replace printk with pr_* to avoid checkpatch warnings.
+>
+> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 > ---
->  scripts/kconfig/lxdialog/checklist.c |   2 +-
->  scripts/kconfig/lxdialog/dialog.h    |   3 +-
->  scripts/kconfig/lxdialog/inputbox.c  |   2 +-
->  scripts/kconfig/lxdialog/menubox.c   | 181 +++++++++++++++++++++---
->  scripts/kconfig/lxdialog/util.c      |  45 +++++-
->  scripts/kconfig/lxdialog/yesno.c     |   2 +-
->  scripts/kconfig/mconf.c              | 202 +++++++++++++++++++++++++--
->  7 files changed, 398 insertions(+), 39 deletions(-)
+>  security/selinux/netport.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-Hi Dirk,
+Merged, thanks.
 
-A few typos below...
+> diff --git a/security/selinux/netport.c b/security/selinux/netport.c
+> index 9ed4c5064a5e..7a141cadbffc 100644
+> --- a/security/selinux/netport.c
+> +++ b/security/selinux/netport.c
+> @@ -173,9 +173,8 @@ static int sel_netport_sid_slow(u8 protocol, u16 pnum, u32 *sid)
+>  out:
+>         spin_unlock_bh(&sel_netport_lock);
+>         if (unlikely(ret)) {
+> -               printk(KERN_WARNING
+> -                      "SELinux: failure in sel_netport_sid_slow(),"
+> -                      " unable to determine network port label\n");
+> +               pr_warn("SELinux: failure in %s(), unable to determine network port label\n",
+> +                       __func__);
+>                 kfree(new);
+>         }
+>         return ret;
+> --
+> 2.15.1
 
-
-> diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
-> index 5294ed159b98..e2e6fc973f6f 100644
-> --- a/scripts/kconfig/mconf.c
-> +++ b/scripts/kconfig/mconf.c
-> @@ -21,6 +21,12 @@
->  #include "lkc.h"
->  #include "lxdialog/dialog.h"
->  
-> +extern int focus_on_buttons;
-> +extern char isearch_str[];
-> +static struct menu **flat_menu; /* serialized menu tree */
-> +static int flat_menu_max = 10;
-> +static int in_isearch;	      /* Ensure at most one instance of i-search is active */
-> +
->  static const char mconf_readme[] =
->  "Overview\n"
->  "--------\n"
-> @@ -36,20 +42,74 @@ static const char mconf_readme[] =
->  "while *, M or whitespace inside braces means to build in, build as\n"
->  "a module or to exclude the feature respectively.\n"
->  "\n"
-> -"To change any of these features, highlight it with the cursor\n"
-> -"keys and press <Y> to build it in, <M> to make it a module or\n"
-> +"Operation modes\n"
-> +"---------------\n"
-> +"Menuconfig operates in two modes, depending on the focus that can be\n"
-> +"either on the menu or the buttons below it. The focus is on the\n"
-> +"buttons if one button (the selected one) is highlighted, otherwise it\n"
-> +"is on the menu.\n"
-> +"\n"
-> +"To change any of the above features, it has to be navigated to (see\n"
-> +"below) so that it is highlited, focus then has to be on the buttons\n"
-
-                         highlighted,
-
-> +"before you press <Y> to build it in, <M> to make it a module or\n"
->  "<N> to remove it.  You may also press the <Space Bar> to cycle\n"
->  "through the available options (i.e. Y->N->M->Y).\n"
->  "\n"
-> +"Navigation\n"
-> +"----------\n"
-> +"The following keys work independent of the current focus:\n"
-
-                            independently
-
-> +"\n"
-> +"o vertical arrow keys are used to navigate to menu items\n"
-> +"\n"
-> +"o horizontal arrow keys put the focus on the buttons and cycle\n"
-> +"  between the buttons.\n"
-> +"\n"
-> +"o <PAGE UP> and <PAGE DOWN> scroll invisible items into view.\n"
-> +"\n"
-> +"o <ENTER> visits a submenu\n"
-> +"  Submenus are designated by \"--->\", empty ones by \"----\".\n"
-> +"\n"
-> +"o <ESC><ESC> leaves a submenu or (in the main menu) exits menuconfig\n"
-> +"  and clears the current i-search string."
-> +"\n"
-> +"o <TAB> is reserved to toggle the focus between menu and buttons\n"
-> +"\n"
-> +"When menuconfig starts, the focus is on the menu and i-search mode\n"
-> +"is active.  I-search performs continuous cyclic searches for an entered\n"
-> +"string in the prompt texts of the whole menu tree.\n"
-> +"\n"
-> +"Subsequent characters can be entered to build a search-string the\n"
-> +"menu items are searched for and each time a character is added the\n"
-> +"current string is searched for starting from the current position in\n"
-> +"the menu tree.  If a match is found it is immediately navigated to.\n"
-> +"\n"
-> +"Keys with a special meaning are:\n"
-> +"\n"
-> +"o <BACKSPACE> removes the last character from the current search string\n"
-> +"\n"
-> +"o <DEL> clears the search string\n"
-> +"\n"
-> +"o <\\> (backslash) can be used to find further matches of a string\n"
-> +"\n"
-> +"When the focus is on the buttons the following keys can be used:\n"
-> +"\n"
-> +"o <x> can be used for exit identical to <ESC><ESC>\n"
-> +"\n"
-> +"o <y>, <n>, <m> or <SPACE> change the selected item\n"
-> +"\n"
-> +"o <+> and <-> keys navigate menu items identical to vertical arrow\n"
-> +"  keys\n"
-> +"\n"
-> +"o <h> or <?> display help messages\n"
-> +"\n"
-> +"o <z> toggles the display of hidden options\n"
-
-Ah, there it is!  Thanks.
-
-> +"\n"
->  "Some additional keyboard hints:\n"
->  "\n"
->  "Menus\n"
->  "----------\n"
-> -"o  Use the Up/Down arrow keys (cursor keys) to highlight the item you\n"
-> -"   wish to change or the submenu you wish to select and press <Enter>.\n"
-> -"   Submenus are designated by \"--->\", empty ones by \"----\".\n"
-> -"\n"
-> -"   Shortcut: Press the option's highlighted letter (hotkey).\n"
-> +"o  Hotkeys (available with focus on buttons): Press the target option's\n"
-> +"             highlighted letter (hotkey).\n"
->  "             Pressing a hotkey more than once will sequence\n"
->  "             through all visible items which use that hotkey.\n"
->  "\n"
-
-
-thanks,
 -- 
-~Randy
+paul moore
+www.paul-moore.com
