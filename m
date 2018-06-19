@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470DDC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA95C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB83220661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23F982075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:14:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3crgxRb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB83220661
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ghs8WsKz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F982075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967077AbeFSQOp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:14:45 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50927 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967048AbeFSQNL (ORCPT
+        id S967028AbeFSQOn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:14:43 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41648 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967119AbeFSQNL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Jun 2018 12:13:11 -0400
-Received: by mail-wm0-f67.google.com with SMTP id e16-v6so1345407wmd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:13:10 -0700 (PDT)
+Received: by mail-wr0-f194.google.com with SMTP id h10-v6so234139wrq.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:13:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/hk81tJs0U8+gliTNmT2DEM7iWq6ptBWABuzVXdd4kw=;
-        b=d3crgxRbgUJ3t1ILCZfGHJTpUuUiNfu027+yhgImA6FqQAb51J/KYErKJAULAxnEJX
-         P8l8lvQNBFHNo4KWiIige6J64iUD3r0VFYO7wvacO5E/bDs1Qn0XboxbJB3oRlhFPJTz
-         MgltP8Ay/yY3pmVnCgT1fs0javbG2IFuqNDJA=
+        bh=PJdsAyA3boANJ8Oig23dpaUGq6oUImWdAfDoOGWfLfE=;
+        b=ghs8WsKz1qg3X17IJAAOgGVu3bkBS3d/CF2oSzS04FPZR8GX3W2LJ3e5Qp8anIP+hm
+         OQo2dM7eow0wrmgzZnpBoZy7kXuXG0bgdxO5coQw24It9KQhmKuRgq59JpYHT7AwRXex
+         RXFTUMHCIPn0DtDtTQnCpnzBzavCiopp0lujk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/hk81tJs0U8+gliTNmT2DEM7iWq6ptBWABuzVXdd4kw=;
-        b=CNSqBiZ4LcZi2BWNNS6QgRHS1JeZsjv/RHk9rB34Ld8+bRdiRElcJFP577zTLj7R/x
-         /mEXkcGh5bx6FcB+zGBRmDzxlS7NwSkhy//wvC/GRYmZXhXuCassYwm6qCzj0ot8/DCl
-         pizWZJ6hBvy7A07cWf19RT9Xi9X3YqT0EdMrJ/P2XGA/mIcgSPWEK7NTcvxeGXcdpmkS
-         Tx7wvdB+rCLSOUx9kaphxJlTvRTWLn75jUUFLAwZHOiHdHqzpmFNfYlUv3cv4eSWf9Zy
-         esC8ggxQt68OAW20PvH0jxECqckAIHsfEQRrhLg3UtztiLoaRfxFOKHpk5PUKt4WOMNR
-         U9PQ==
-X-Gm-Message-State: APt69E36ilY59zhRDCUTMOJKWfb+0SMlAGe2SQDfnj82bIexd2ulzmSl
-        kr6g5NtRpDD45aYQ2I8Z36bcww==
-X-Google-Smtp-Source: ADUXVKJ1EFPDj1Dxepll+6FQ2eus0I8HI9buft+8L487vDzLj7d+cNmqzxkAmHLv/vHIe8TK+wUPrA==
-X-Received: by 2002:a1c:a010:: with SMTP id j16-v6mr11803065wme.61.1529424789545;
-        Tue, 19 Jun 2018 09:13:09 -0700 (PDT)
+        bh=PJdsAyA3boANJ8Oig23dpaUGq6oUImWdAfDoOGWfLfE=;
+        b=HVDqqP1skBXw1gVauwYkSBiNxMbZtGHoKsy45o6usfgusN7rvaXG1T/KnUtUmgVmAG
+         xEhBwzPWlcQ8F717WEw0aHfQnJcwm8bCo8s+VEn/6gIylyjHGyeVzfhOkvuikVDJOpgc
+         AE0bChJfKesXJSHA8hE7hBtRBc4PtwTSd3o3UXLUKFOBDj124pyVgsmb/CrOAUqi3ZMj
+         KUrWaLroyOnJxxw5ffWs0rFabcdQg/zQYQXnKu1/4NwjmqKJ3J6UcCczycIb7VBkMWCg
+         FwrwL9Yd05D35OOw7/1eIzdBsNbzGEVzNVypZGqBR2zfpIIMBaylgbkQjhCXYMjZovCC
+         EtoA==
+X-Gm-Message-State: APt69E01n596hAu6mvn9e2IKWuBkT4ObUvaPa+DMNd0ClM5iDwvsrEm8
+        7ipTHs9NY9jbqMpclDjRfaq+Yw==
+X-Google-Smtp-Source: ADUXVKIi1F9atWZuK5M50TiyMYWFZfc4+a2wfLjTNmZ6XyzuesFz4PRy90PjMs/t/Gg/J5JW7CjIxA==
+X-Received: by 2002:adf:afe3:: with SMTP id y35-v6mr16031859wrd.176.1529424790628;
+        Tue, 19 Jun 2018 09:13:10 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id r5-v6sm47248wrp.59.2018.06.19.09.13.08
+        by smtp.gmail.com with ESMTPSA id r5-v6sm47248wrp.59.2018.06.19.09.13.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 19 Jun 2018 09:13:09 -0700 (PDT)
+        Tue, 19 Jun 2018 09:13:10 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     robh+dt@kernel.org, kramasub@codeaurora.org, sdharia@quicinc.com,
         linux-kernel@vger.kernel.org, broonie@kernel.org,
         linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 3/5] slimbus: messaging: add slim_alloc/free_txn_tid()
-Date:   Tue, 19 Jun 2018 17:12:59 +0100
-Message-Id: <20180619161301.4556-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v4 4/5] slimbus: ngd: dt-bindings: Add slim ngd dt bindings
+Date:   Tue, 19 Jun 2018 17:13:00 +0100
+Message-Id: <20180619161301.4556-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180619161301.4556-1-srinivas.kandagatla@linaro.org>
 References: <20180619161301.4556-1-srinivas.kandagatla@linaro.org>
@@ -70,163 +70,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds slim_alloc_txn_tid() and slim_free_txn_tid() api
-to allow controllers like ngd to allocate tids for user specific
-commands. This also cleans up the existing code to use single place
-for tid allocations and free.
-
-This patch also make the tid allocation cyclic one, its very useful
-to track the transactions back during debug.
+This patch adds bindings for Qualcomm SLIMBus NGD controller.
+SLIMBus NGD controller is a light-weight driver responsible for
+communicating with SLIMBus slaves directly over the bus using messaging
+interface and communicating with master component residing on ADSP for
+bandwidth and data-channel management
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Tested-by: Craig Tatlor <ctatlor97@gmail.com>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/slimbus/messaging.c | 74 +++++++++++++++++++++++++++++++--------------
- drivers/slimbus/slimbus.h   |  2 ++
- 2 files changed, 54 insertions(+), 22 deletions(-)
+ .../bindings/slimbus/slim-ngd-qcom-ctrl.txt        | 84 ++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
 
-diff --git a/drivers/slimbus/messaging.c b/drivers/slimbus/messaging.c
-index e3605ed1c459..d5879142dbef 100644
---- a/drivers/slimbus/messaging.c
-+++ b/drivers/slimbus/messaging.c
-@@ -29,22 +29,19 @@ void slim_msg_response(struct slim_controller *ctrl, u8 *reply, u8 tid, u8 len)
- 
- 	spin_lock_irqsave(&ctrl->txn_lock, flags);
- 	txn = idr_find(&ctrl->tid_idr, tid);
--	if (txn == NULL) {
--		spin_unlock_irqrestore(&ctrl->txn_lock, flags);
-+	spin_unlock_irqrestore(&ctrl->txn_lock, flags);
+diff --git a/Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt b/Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
+new file mode 100644
+index 000000000000..e94a2ad3a710
+--- /dev/null
++++ b/Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
+@@ -0,0 +1,84 @@
++Qualcomm SLIMBus Non Generic Device (NGD) Controller binding
 +
-+	if (txn == NULL)
- 		return;
--	}
- 
- 	msg = txn->msg;
- 	if (msg == NULL || msg->rbuf == NULL) {
- 		dev_err(ctrl->dev, "Got response to invalid TID:%d, len:%d\n",
- 				tid, len);
--		spin_unlock_irqrestore(&ctrl->txn_lock, flags);
- 		return;
- 	}
- 
--	idr_remove(&ctrl->tid_idr, tid);
--	spin_unlock_irqrestore(&ctrl->txn_lock, flags);
--
-+	slim_free_txn_tid(ctrl, txn);
- 	memcpy(msg->rbuf, reply, len);
- 	if (txn->comp)
- 		complete(txn->comp);
-@@ -55,6 +52,48 @@ void slim_msg_response(struct slim_controller *ctrl, u8 *reply, u8 tid, u8 len)
- }
- EXPORT_SYMBOL_GPL(slim_msg_response);
- 
-+/**
-+ * slim_alloc_txn_tid() - Allocate a tid to txn
-+ *
-+ * @ctrl: Controller handle
-+ * @txn: transaction to be allocated with tid.
-+ *
-+ * Return: zero on success with valid txn->tid and error code on failures.
-+ */
-+int slim_alloc_txn_tid(struct slim_controller *ctrl, struct slim_msg_txn *txn)
-+{
-+	unsigned long flags;
-+	int ret = 0;
++SLIMBus NGD controller is a light-weight driver responsible for communicating
++with SLIMBus slaves directly over the bus using messaging interface and
++communicating with master component residing on ADSP for bandwidth and
++data-channel management
 +
-+	spin_lock_irqsave(&ctrl->txn_lock, flags);
-+	ret = idr_alloc_cyclic(&ctrl->tid_idr, txn, 0,
-+				SLIM_MAX_TIDS, GFP_ATOMIC);
-+	if (ret < 0) {
-+		spin_unlock_irqrestore(&ctrl->txn_lock, flags);
-+		return ret;
-+	}
-+	txn->tid = ret;
-+	spin_unlock_irqrestore(&ctrl->txn_lock, flags);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(slim_alloc_txn_tid);
++Please refer to slimbus/bus.txt for details of the common SLIMBus bindings.
 +
-+/**
-+ * slim_free_txn_tid() - Freee tid of txn
-+ *
-+ * @ctrl: Controller handle
-+ * @txn: transaction whose tid should be freed
-+ */
-+void slim_free_txn_tid(struct slim_controller *ctrl, struct slim_msg_txn *txn)
-+{
-+	unsigned long flags;
++- compatible:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "qcom,slim-ngd-v<MAJOR>.<MINOR>.<STEP>"
++	must be one of the following.
++	"qcom,slim-ngd-v1.5.0" for MSM8996
++	"qcom,slim-ngd-v2.1.0" for SDM845
 +
-+	spin_lock_irqsave(&ctrl->txn_lock, flags);
-+	idr_remove(&ctrl->tid_idr, txn->tid);
-+	spin_unlock_irqrestore(&ctrl->txn_lock, flags);
-+}
-+EXPORT_SYMBOL_GPL(slim_free_txn_tid);
++- reg:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: must specify the base address and size of the controller
++		    register space.
++- dmas
++	Usage: required
++	Value type: <array of phandles>
++	Definition: List of rx and tx dma channels
 +
- /**
-  * slim_do_transfer() - Process a SLIMbus-messaging transaction
-  *
-@@ -72,8 +111,7 @@ int slim_do_transfer(struct slim_controller *ctrl, struct slim_msg_txn *txn)
- {
- 	DECLARE_COMPLETION_ONSTACK(done);
- 	bool need_tid = false, clk_pause_msg = false;
--	unsigned long flags;
--	int ret, tid, timeout;
-+	int ret, timeout;
- 
- 	/*
- 	 * do not vote for runtime-PM if the transactions are part of clock
-@@ -97,34 +135,26 @@ int slim_do_transfer(struct slim_controller *ctrl, struct slim_msg_txn *txn)
- 	need_tid = slim_tid_txn(txn->mt, txn->mc);
- 
- 	if (need_tid) {
--		spin_lock_irqsave(&ctrl->txn_lock, flags);
--		tid = idr_alloc(&ctrl->tid_idr, txn, 0,
--				SLIM_MAX_TIDS, GFP_ATOMIC);
--		txn->tid = tid;
-+		ret = slim_alloc_txn_tid(ctrl, txn);
-+		if (ret)
-+			return ret;
- 
- 		if (!txn->msg->comp)
- 			txn->comp = &done;
- 		else
- 			txn->comp = txn->comp;
--
--		spin_unlock_irqrestore(&ctrl->txn_lock, flags);
--
--		if (tid < 0)
--			return tid;
- 	}
- 
- 	ret = ctrl->xfer_msg(ctrl, txn);
- 
--	if (ret && need_tid && !txn->msg->comp) {
-+	if (!ret && need_tid && !txn->msg->comp) {
- 		unsigned long ms = txn->rl + HZ;
- 
- 		timeout = wait_for_completion_timeout(txn->comp,
- 						      msecs_to_jiffies(ms));
- 		if (!timeout) {
- 			ret = -ETIMEDOUT;
--			spin_lock_irqsave(&ctrl->txn_lock, flags);
--			idr_remove(&ctrl->tid_idr, tid);
--			spin_unlock_irqrestore(&ctrl->txn_lock, flags);
-+			slim_free_txn_tid(ctrl, txn);
- 		}
- 	}
- 
-diff --git a/drivers/slimbus/slimbus.h b/drivers/slimbus/slimbus.h
-index 79f8e05d92dd..2ba6545fa716 100644
---- a/drivers/slimbus/slimbus.h
-+++ b/drivers/slimbus/slimbus.h
-@@ -240,6 +240,8 @@ int slim_unregister_controller(struct slim_controller *ctrl);
- void slim_msg_response(struct slim_controller *ctrl, u8 *reply, u8 tid, u8 l);
- int slim_do_transfer(struct slim_controller *ctrl, struct slim_msg_txn *txn);
- int slim_ctrl_clk_pause(struct slim_controller *ctrl, bool wakeup, u8 restart);
-+int slim_alloc_txn_tid(struct slim_controller *ctrl, struct slim_msg_txn *txn);
-+void slim_free_txn_tid(struct slim_controller *ctrl, struct slim_msg_txn *txn);
- 
- static inline bool slim_tid_txn(u8 mt, u8 mc)
- {
++- dma-names
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "rx" and "tx".
++
++- interrupts:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: must list controller IRQ.
++
++#address-cells
++	Usage: required
++	Value type: <u32>
++	Definition: Should be 1, reflecting the instance id of ngd.
++
++#size-cells
++	Usage: required
++	Value type: <u32>
++	Definition: Should be 0
++
++= NGD Devices
++Each subnode represents an instance of NGD, must contain the following
++properties:
++
++- reg:
++	Usage: required
++	Value type: <u32>
++	Definition: Should be instance id of ngd.
++
++#address-cells
++	Usage: required
++	Refer to slimbus/bus.txt for details of the common SLIMBus bindings.
++
++#size-cells
++	Usage: required
++	Refer to slimbus/bus.txt for details of the common SLIMBus bindings.
++
++= EXAMPLE
++
++slim@91c0000 {
++	compatible = "qcom,slim-ngd-v1.5.0";
++	reg = <0x91c0000 0x2c000>;
++	interrupts = <0 163 0>;
++	dmas =	<&slimbam 3>, <&slimbam 4>;
++	dma-names = "rx", "tx";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	ngd@1 {
++		reg = <1>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		codec@1 {
++			compatible = "slim217,1a0";
++			reg  = <1 0>;
++		};
++	};
++};
 -- 
 2.16.2
 
