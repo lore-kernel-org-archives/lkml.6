@@ -2,109 +2,122 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB76DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55997C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ECF3205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:27:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ECF3205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DBFE205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:28:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="fsvLlxUS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DBFE205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966597AbeFSP1b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:27:31 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52430 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966230AbeFSP1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:27:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44C1E80D;
-        Tue, 19 Jun 2018 08:27:30 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 13FF93F557;
-        Tue, 19 Jun 2018 08:27:30 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id B2D6E1AE3797; Tue, 19 Jun 2018 16:28:05 +0100 (BST)
-Date:   Tue, 19 Jun 2018 16:28:05 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     YaoJun <yaojun8558363@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: mm: mark tramp_pg_dir read-only
-Message-ID: <20180619152805.GN13984@arm.com>
-References: <20180530044806.18449-1-yaojun8558363@gmail.com>
- <20180530091457.GB2452@arm.com>
- <CAKv+Gu8Zc7eQbG-Ww51GXUCEmhe2J03vbq5vVdyaKra-s13KrA@mail.gmail.com>
- <20180619152035.GM13984@arm.com>
- <CAKv+Gu-Mad64U63jjuKGjhg=h2wdoEKm2vywzATBYr-t_UY_bQ@mail.gmail.com>
+        id S966603AbeFSP2o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:28:44 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:37261 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966208AbeFSP2k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:28:40 -0400
+Received: by mail-ot0-f193.google.com with SMTP id 101-v6so114657oth.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=9QAS1Pneyq//YppdOPuvDHRb2eEE9apSIF+nUedfPjU=;
+        b=fsvLlxUS+16Ef3qe0u5Bx6I4XNLBM7S1u85N/61itWpsoZw1f9nwnD8dCck3ULORpt
+         nrHNdHjTbGcl2MpY5w9yFhTSzAyltJ3mxiwca8j5Z/0St8Ha+4Z89X20nOhTBJxaSHr3
+         JRX/xh3QR9wWHVcBHKDg5hJoxEBBuPCoD5YiOnIDn/z934IkxSYC4it2UgNLh745L7KG
+         HF2hnXxTASUe+vAE0LO0qaNBpLbKFEMmCS1O4wt7feQ2Zvs3fGfnEr36Cu8pLNj3a3Ez
+         i/bg0T/DrrMd1vmz7ca0OQ3yByx64/K5QnV4+xsJJIy8d4KMziem5QEOzjwvqZek20sO
+         lb9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=9QAS1Pneyq//YppdOPuvDHRb2eEE9apSIF+nUedfPjU=;
+        b=oYi1Uku66rkpA9uZO11uk+vxnm0gisnSl9aosRXYNgdsZHGDcY5vABnWRC9XtVF1RE
+         DIx3PLIEidNex9ss2BoywcvYNtO4nLVm13g25uWXRJx2Vq6R6wJsGGt7Ilu2Nphkhc/q
+         HFjQoG4kb72vtlF2z3yREoFaz3IQlnZkM+eh/vAfdaiUSA5CJofKdcM1JtXrHcPYIp62
+         DhI7XFFxLLemxdGiktLP2a8TGT+rhhHSAUn2HzwxK0+wE5i7b3S7sW3eIEwN67jRjaKC
+         2Bo1QsIJ2Z5hsQ/qYCM9KZQzGpQmBgc6e9XCkBU2S1euqKYn05lOOXsTbGlbhpaXA0Xd
+         1NRg==
+X-Gm-Message-State: APt69E0ZtLwxeRSxhsTd1iHNwF5bxg1lm7jI+z5KaxZ2vGRWZzPtnNRE
+        DMm7QOINaJPTlyefUTxZaaGh5+n6ySZxVmOq44jGpQ==
+X-Google-Smtp-Source: ADUXVKKOnR0Q1aYynQGL5s/P1SZHrLkXoRzzpUA0Hf9kQTLxS6YNJ5qm6uYpoTN250YUDoAzosk6b40w4Qjzu+CnlgQ=
+X-Received: by 2002:a9d:2371:: with SMTP id k46-v6mr11386084otd.210.1529422119634;
+ Tue, 19 Jun 2018 08:28:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-Mad64U63jjuKGjhg=h2wdoEKm2vywzATBYr-t_UY_bQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 08:28:39
+ -0700 (PDT)
+In-Reply-To: <AT5PR8401MB1169ECE7D26644D39DB735D5AB700@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+References: <1461620099-11933-1-git-send-email-toshi.kani@hpe.com>
+ <1461620099-11933-2-git-send-email-toshi.kani@hpe.com> <CAA9_cmenbY9GStibRjO0BfTq0kzzzqThiLeOygJsT9L03BFsBQ@mail.gmail.com>
+ <1529350667.14039.119.camel@hpe.com> <CAPcyv4jbctFgCob58sjQZ8msGOT7GBe=+Z_2P6YvNrrK-ztMag@mail.gmail.com>
+ <AT5PR8401MB1169FA8B55B36BAE8DF0F6EBAB710@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+ <CAPcyv4goV+VR15qpio-wqDpDS3nXsfYEbTSk1Ws6DPp6ECKcRQ@mail.gmail.com> <AT5PR8401MB1169ECE7D26644D39DB735D5AB700@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 19 Jun 2018 08:28:39 -0700
+Message-ID: <CAPcyv4joz7OemcKvJMJVhqKEVgSMpfLbm2DRP9B=S3vRPUAGkQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with ACPI 6.1
+To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+Cc:     "Kani, Toshi" <toshi.kani@hpe.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "Moore, Robert" <robert.moore@intel.com>,
+        "Li, Juston" <juston.li@intel.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 05:23:41PM +0200, Ard Biesheuvel wrote:
-> On 19 June 2018 at 17:20, Will Deacon <will.deacon@arm.com> wrote:
-> > Hi Ard,
-> >
-> > Sorry, I forgot to reply to this.
-> >
-> > On Wed, May 30, 2018 at 11:53:20AM +0200, Ard Biesheuvel wrote:
-> >> On 30 May 2018 at 11:14, Will Deacon <will.deacon@arm.com> wrote:
-> >> > On Wed, May 30, 2018 at 12:48:06PM +0800, YaoJun wrote:
-> >> >> To protect against KSMA(Kernel Space Mirroring Attack), make
-> >> >> tramp_pg_dir read-only. The principle of KSMA is to insert a
-> >> >> carefully constructed PGD entry into the translation table.
-> >> >> The type of this entry is block, which maps the kernel text
-> >> >> and its access permissions bits are 01. The user process can
-> >> >> then modify kernel text directly through this mapping. In this
-> >> >> way, an arbitrary write can be converted to multiple arbitrary
-> >> >> writes.
-> >> >>
-> >> >> Signed-off-by: YaoJun <yaojun8558363@gmail.com>
-> >> >> ---
-> >> >>  arch/arm64/mm/mmu.c | 4 ++++
-> >> >>  1 file changed, 4 insertions(+)
-> >> >>
-> >> >> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> >> >> index 2dbb2c9f1ec1..ac4b22c7e435 100644
-> >> >> --- a/arch/arm64/mm/mmu.c
-> >> >> +++ b/arch/arm64/mm/mmu.c
-> >> >> @@ -551,6 +551,10 @@ static int __init map_entry_trampoline(void)
-> >> >>       __create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
-> >> >>                            prot, pgd_pgtable_alloc, 0);
-> >> >>
-> >> >> +     update_mapping_prot(__pa_symbol(tramp_pg_dir),
-> >> >> +                             (unsigned long)tramp_pg_dir,
-> >> >> +                             PGD_SIZE, PAGE_KERNEL_RO);
-> >> >
-> >> > Hmm, I like the idea but is there a risk that the page table has been mapped
-> >> > as part of a block entry, which we can't safely split at this point (i.e.
-> >> > we'll run into one of the BUG_ONs in the mapping code)?
-> >> >
-> >>
-> >> We'd need to create a separate segment for it initially so the mapping
-> >> is already at the right granularity.
-> >
-> > Why do you think that's the case? I can't see anything that guarantees this
-> > for the page table itself.
-> >
-> 
-> We'd need to pass NO_BLOCK_MAPPINGS to map_kernel_segment(),
-> obviously, but that shouldn't hurt since that segment is relatively
-> tiny anyway.
+On Tue, Jun 19, 2018 at 7:31 AM, Elliott, Robert (Persistent Memory)
+<elliott@hpe.com> wrote:
+>
+>
+>> -----Original Message-----
+>> From: Dan Williams [mailto:dan.j.williams@intel.com]
+>> Sent: Monday, June 18, 2018 4:47 PM
+>> To: Elliott, Robert (Persistent Memory) <elliott@hpe.com>
+>> Cc: Kani, Toshi <toshi.kani@hpe.com>; linux-kernel@vger.kernel.org; linux-
+>> nvdimm@lists.01.org; Moore, Robert <robert.moore@intel.com>; Li, Juston
+>> <juston.li@intel.com>; rjw@rjwysocki.net; linux-acpi@vger.kernel.org
+>> Subject: Re: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with
+>> ACPI 6.1
+>
+>
+>> Let's take something simple like Vendor ID. What is the Vendor ID for
+>> these DIMMs and what does Linux print in sysfs?
+>
+> Here are some examples (kernel 4.17):
+>
+> $ cd /sys/bus/nd/devices/nmem0/nfit
+> $ grep -s . *
+> device:0x314e
+> dsm_mask:0x3c76
+> family:1
+> flags:smart_notify
+> format:0x0101
+> formats:1
+> handle:0x1
+> id:802c-0f-1612-122f8255[SPD bytes 320-328, in that order left-to-right]
+> phys_id:0x16
+> rev_id:0x3100
+> serial:0x122f8255
+> subsystem_device:0x3141
+> subsystem_rev_id:0x0100
+> subsystem_vendor:0x8034[Cypress Semiconductor]
+> vendor:0x802c[Micron]
 
-Ah right, with NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS, I agree that we're good.
-Ideally, we'd move {idmap,swapper,tramp}_pg_dir into .rodata...
-
-Will
+Ok, so the lowest significant byte of the Micron id is supposed to be
+0x2c and this text representation matches that. So the bytes are being
+endian swapped when written to the SPD?
