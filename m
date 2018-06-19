@@ -6,104 +6,105 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB2EC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65791C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB96120652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1C2A20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:27:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="WJz+D6Pl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB96120652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q/B6cI0y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1C2A20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967116AbeFSRY0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:24:26 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:53130 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966703AbeFSRYX (ORCPT
+        id S1030273AbeFSR1J (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:27:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48090 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966646AbeFSR1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:24:23 -0400
+        Tue, 19 Jun 2018 13:27:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=aoyI3jFh5slogyV6H2FDKWOjfjA6ATksx29dzZNhIf0=; b=WJz+D6PlUq0DQgXNsqqPyCPeyY
-        HrQj+A50oKDBowqebc1QIebd0jteFMILz+x9iRF2H4Z/epX34Y89+5Yfsvz2I35TFYQZ7gLDpB/nn
-        ZyzynMHvROqbnnd5oWkVn0vFu7OAk48B5omtzL3N4H/kKaCqn/4sGsnQWR6M751JPCD8+KfN27c8s
-        D5Znngq+d4LHvC4APGxxK731OMhWjAqmcm2oGf/rxKtGV9KCyBWsugaarqz8vbQl96hAgecYVVUWV
-        OJVShiIGAl/zyU61dvIpiuy4UrUYA+oEC77AJlLZJzUnncI12ETAcQKQ4Uf1Xsya0FlU92zX5QAAV
-        pQ/4pjxg==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:45280 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fVKMh-0057JI-9J; Tue, 19 Jun 2018 17:24:23 +0000
-Date:   Tue, 19 Jun 2018 10:24:22 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] ARM: Use logical or instead of addition for badr
- address calculation
-Message-ID: <20180619172422.GB16846@roeck-us.net>
-References: <1529384828-2452-1-git-send-email-linux@roeck-us.net>
- <CAKv+Gu8Byj7G3Awnq4Y90Wot=GJTx0gO5A7-960au9ZkBBL2=A@mail.gmail.com>
- <b8bff03d-91a7-0e53-a44e-d1924beb382d@roeck-us.net>
- <CAKv+Gu-T8Fx3Nry7pUdOoOeRU-Ns89w3oo4itmu1q4FzYF5Rag@mail.gmail.com>
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vXnN97+IkJ5WZv0RfUrd/xjNQZ8L/UTHY0kBNocozlM=; b=q/B6cI0yG9VR37nu1ERFYbhQU
+        YmXMK+dmyGKQVnBX7IY9QTUAMsoTYiAxnfxt7R2sFO5ef3GrKlimauiG2eA2ugxgzY/OulwpdtXNE
+        l0E0YI7kLsXrhZEz0AYX7y0iaobi/dKs8l6kRRG+18rZU+eHx4uXUumQDu5OehUuyd8ocnGpn8ugI
+        RvXxn0LQEZ4eyhrbb8/ptd3UaP4uFLSeaKSjB92ntw4LVPbIwU1ZSkihiweumjWs10PelUDg1m+io
+        p3C6kEfwlH71nHGqUTFu5Jl5h496XFZe1EVVIm2uErmPGcDPpGCG4sW3i7rGxGayBePhy8KRvjfeq
+        cfsB4oRUA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVKPI-0000SP-K2; Tue, 19 Jun 2018 17:27:04 +0000
+Subject: Re: [RFC v7 0/1] mconf: global i-search in menu prompts
+To:     Dirk Gouders <dirk@gouders.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+References: <20180617121534.4809-1-dirk@gouders.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <87d68443-ad2c-50e0-ef10-f6a9f349c050@infradead.org>
+Date:   Tue, 19 Jun 2018 10:27:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-T8Fx3Nry7pUdOoOeRU-Ns89w3oo4itmu1q4FzYF5Rag@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20180617121534.4809-1-dirk@gouders.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 03:35:07PM +0200, Ard Biesheuvel wrote:
-> >>
-> >> +       /* this needs to be a separate macro or \@ does not work correctly
-> >> */
-> >> +       .macro  __badr, c, rd, sym
-> >> +       .eqv    .Lsym\@, \sym
-> >> +       adr\c   \rd, .Lsym\@ + 1
-> >
-> >
-> > Wild shot, but the following works for me.
-> >
-> >         .eqv    .Lsym\@, \sym + 1
-> >         adr\c   \rd, .Lsym\@
-> >
-> > Does it make sense ?
-> >
+On 06/17/2018 05:15 AM, Dirk Gouders wrote:
+> Hello,
 > 
-> Interesting. Do you mean this works with your 2.30 binutils that
-> triggers the original issue?
+> Most noticeable changes are that the exact starting position before
+> doing i-search is now remebered and i-search stays on the current item
+> if a character was added and the new string also matches this item.
+
+Nice.
+
+> Also, compiler warnings were eliminated and A_UNDERLINE was replaced
+> with A_STANDOUT to mark active menu items when the focus is on the
+> buttons, because I tested mconf on a tty where underlines were not
+> visible.  For a complete list of changes see below.
+
+This highlight/standout is good, helpful.
+
+> Dirk
 > 
+> Changes in v7:
+> 
+> 
+> * Rework i-search instructions text
 
-Yes, it does. It is also the solution used for some graphics libraries,
-though of course now I don't find the link anymore.
+For the (old) menu_instructions[] string:  that has a hard time fitting in
+80x25 or 80x30 console.  I.e., it is being truncated.  I had to resize the
+console to 90x30 to see all of it.  Oh well.
 
-Guess this is going nowhere given Russell's response, so I'll just
-live with it, like obviously everyone else does already. I built
-a toolchain using gcc 7.3.0 and binutils 2.28.1 which "solves"
-the problem for me.
+> * Remember exact starting position in menu
+> 
+> * Stay on menu item if it matches pattern with a character added
+> 
+> * Fix print_autowrap for short texts
+> 
+> * Focus on buttons: use A_STANDOUT for current menu item
 
-Guenter
+:)
+
+[snip]
+
+
+I like it.
+
+thanks,
+-- 
+~Randy
