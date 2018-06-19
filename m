@@ -2,103 +2,133 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F35C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B99DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 357672083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:10:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357672083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hofr.at
+	by mail.kernel.org (Postfix) with ESMTP id DF17A2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:14:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eftIlb0O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF17A2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937418AbeFSIJ7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:09:59 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:33697 "EHLO
-        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1756374AbeFSIJ5 (ORCPT
+        id S1756398AbeFSIOJ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:14:09 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44476 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755972AbeFSIOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:09:57 -0400
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id AD6C25C2144; Tue, 19 Jun 2018 08:08:34 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 08:08:34 +0000
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        natechancellor@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] staging: board: drop refcount in success case
-Message-ID: <20180619080834.GA31882@osadl.at>
-References: <1529347999-9316-1-git-send-email-hofrat@osadl.org>
- <20180619073709.schatjhjoitfc3fs@mwanda>
- <CAMuHMdVuGAh7rya0CJtALDmjyHpQJv=uHA=-n1fLS7s+CnUoXg@mail.gmail.com>
+        Tue, 19 Jun 2018 04:14:04 -0400
+Received: by mail-pg0-f66.google.com with SMTP id p21-v6so8802031pgd.11;
+        Tue, 19 Jun 2018 01:14:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JBv/2cDEKc6ZVrTO+cM2IvSnV0jVonOT+gNssO73Pf4=;
+        b=eftIlb0OgivDD09D1VFf2xvU485q+z+lqyqrzDeQBMYyNQMILKdCQSVj+yLbS1FLpj
+         /JpBzL0tbJLvkC521gDjupQRM3m712U3OHWIZfivnfV5DR5AMiK11Xos95UZsme6UauV
+         kDMRRrx2DeaUms2aR8ZIa7hJIxNw422YYYxBtHSq73A4MCUpGOrpfAXyzqet8jAqzsCW
+         Ov9nBweSlxAzjADl5stXAazacYwVAsZ8rgcXs5dAeyDdGvBBvhS0YwWgkEkAXxmK/HBJ
+         hdGv102jxfuypW1DN8i7fvokf6zQldhzZV0kpfwq7BqUaOdJ+GOgyQ8EvvbBQjYJJfOr
+         g68Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JBv/2cDEKc6ZVrTO+cM2IvSnV0jVonOT+gNssO73Pf4=;
+        b=HGflxcTKTXIOzG8BOsf5Jb5wucsWoCCqxm3k6hyEY8iKoowPx3iDlUkDeOhsZHJ0CD
+         yXgUDGYdnZRkaep59cBkCsTyzTvA4VSi2syRxnJnXp+luOw1H82ZvGS5PwYUD9bb/Kbv
+         juPNhurMM9ZSczGz8CRGrKdvj0Ng1eBwyrpsKqNyFXndsUoNiH7kFLKjoPYvzPsTRvQl
+         l+QZalcPGo1k3EjMXNC6oJsjMRnW3zGtBs9Z3TMIuV1YPQEeUquZEVjQqyVXmqOlQnnq
+         qRlRYoGiyMB2H8ojESLwump2ufeb0Dr4WpEY5iKg+f0S/XiaOns+1nv9IZKTI0Y42dZ0
+         YGyg==
+X-Gm-Message-State: APt69E3m8ztY7sZC1hPSOwrUTTXORoQV8qNDcppCnrXPdlH9IdgRuyDm
+        TZApoh3f7sy6mTZvS4XudAw=
+X-Google-Smtp-Source: ADUXVKLeBhoEHJ/1R0ZSDvPKAY7Vb3UsFwfKh8I9cjc/oYLUgR5Toi9sX2WzJbZkMJBBGFnPNC4aFg==
+X-Received: by 2002:a62:808f:: with SMTP id j137-v6mr17051741pfd.91.1529396043845;
+        Tue, 19 Jun 2018 01:14:03 -0700 (PDT)
+Received: from rodete-desktop-imager.corp.google.com ([2401:fa00:d:10:affa:813f:5380:6613])
+        by smtp.gmail.com with ESMTPSA id c191-v6sm26819355pfg.48.2018.06.19.01.14.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 01:14:02 -0700 (PDT)
+From:   Minchan Kim <minchan.kernel@gmail.com>
+X-Google-Original-From: Minchan Kim <minchan@kernel.org>
+Date:   Tue, 19 Jun 2018 17:13:57 +0900
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-api@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 6/7] mm, proc: add KReclaimable to /proc/meminfo
+Message-ID: <20180619081357.GA95482@rodete-desktop-imager.corp.google.com>
+References: <20180618091808.4419-1-vbabka@suse.cz>
+ <20180618091808.4419-7-vbabka@suse.cz>
+ <20180618143317.eb8f5d7b6c667784343ef902@linux-foundation.org>
+ <650c3fab-3137-4fe6-272a-f4ec104855a7@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVuGAh7rya0CJtALDmjyHpQJv=uHA=-n1fLS7s+CnUoXg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <650c3fab-3137-4fe6-272a-f4ec104855a7@suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 09:51:44AM +0200, Geert Uytterhoeven wrote:
-> On Tue, Jun 19, 2018 at 9:37 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > On Mon, Jun 18, 2018 at 08:53:19PM +0200, Nicholas Mc Guire wrote:
-> > >  The call to of_find_compatible_node() returns irqc_node with refcount
-> > > incremented thus it must be explicitly decremented here after it was
-> > > checked for non-NULL.
-> > >
-> > > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > > Fixes: commit 72ee8626eeb1 ("staging: board: Add support for translating hwirq to virq numbers")
-> > > ---
-> > >
-> > > Problem located with an experimental coccinelle script
-> > >
-> > > Patch was compile-tested with: x86_64_defconfig + STAGING=y, STAGING_BOARD=y
-> > >
-> > > Patch is against 4.18-rc1 (localversion-next is next-20180618)
-> > >
-> > >  drivers/staging/board/board.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/drivers/staging/board/board.c b/drivers/staging/board/board.c
-> > > index cb6feb3..8ee48e5 100644
-> > > --- a/drivers/staging/board/board.c
-> > > +++ b/drivers/staging/board/board.c
-> > > @@ -64,12 +64,13 @@ int __init board_staging_gic_setup_xlate(const char *gic_match,
-> > >       irqc_node = of_find_compatible_node(NULL, NULL, gic_match);
-> > >
-> > >       WARN_ON(!irqc_node);
-> > >       if (!irqc_node)
-> > >               return -ENOENT;
-> > >
-> > > +     of_node_put(irqc_node);
-> >
-> > I don't feel like this is the right thing...  We should keep the
-> > reference until we're done with it.  Which apparently is never?
+On Tue, Jun 19, 2018 at 09:30:03AM +0200, Vlastimil Babka wrote:
+> On 06/18/2018 11:33 PM, Andrew Morton wrote:
+> > On Mon, 18 Jun 2018 11:18:07 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
+> > 
+> >> The vmstat NR_KERNEL_MISC_RECLAIMABLE counter is for kernel non-slab
+> >> allocations that can be reclaimed via shrinker. In /proc/meminfo, we can show
+> >> the sum of all reclaimable kernel allocations (including slab) as
+> >> "KReclaimable". Add the same counter also to per-node meminfo under /sys
+> > 
+> > Why do you consider this useful enough to justify adding it to
+> > /pro/meminfo?  How will people use it, what benefit will they see, etc?
 > 
-> Indeed. The reference must not be released in this function, as it's stored in
-> a global variable, and used later.
+> Let's add this:
+> 
+> With this counter, users will have more complete information about
+> kernel memory usage. Non-slab reclaimable pages (currently just the ION
+> allocator) will not be missing from /proc/meminfo, making users wonder
+> where part of their memory went. More precisely, they already appear in
+> MemAvailable, but without the new counter, it's not obvious why the
+> value in MemAvailable doesn't fully correspond with the sum of other
+> counters participating in it.
 
-yup -  I had simply interpreted this incorrectly as checking only and
-overlooked that this was a global variable.
+Hmm, if we could get MemAvailable with sum of other counters participating
+in it, MemAvailable wouldn't be meaninful. IMO, MemAvailable don't need to
+be matched with other counters.
+
+The benefit of ION KReclaimable in real field is there are some sluggish
+problem bugreport under memory pressure and found ION page pool is too
+much without shrinking. In that case, that meminfo would be useful to
+know something was broken in the system.
+
+In that point of view, a concern to me is if we put more KReclaimable
+pages(e.g., binder is candidate), it ends up we couldn't identify what
+caches are too much among them. That means we needs KReclaimableInfo(like
+slabinfo) to show each type's KReclaimable pages in future.
+
+Anyway, it's good for first step.
 
 > 
-> As all users are __init, it could be released when the init section is freeed,
-> in theory, but there's no callback for that.
+> > Maybe you've undersold this whole patchset, but I'm struggling a bit to
+> > see what the end-user benefits are.  What would be wrong with just
+> > sticking with what we have now?
 > 
-> Hence:
-> NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-thanks for the clarification - sorry for the noise.
-
-thx
-hofrat
+> Fair enough, I will add more info in reply to the cover letter.
+> 
