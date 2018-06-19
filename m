@@ -2,110 +2,119 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF318C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B415C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9301E20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:00:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9301E20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BCD520836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:02:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CHkA1qSs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BCD520836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937645AbeFSLAu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 07:00:50 -0400
-Received: from mga01.intel.com ([192.55.52.88]:34279 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937542AbeFSLAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 07:00:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 04:00:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
-   d="scan'208";a="65365341"
-Received: from um.fi.intel.com (HELO um) ([10.237.72.212])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Jun 2018 04:00:47 -0700
-Received: from ash by um with local (Exim 4.91)
-        (envelope-from <alexander.shishkin@linux.intel.com>)
-        id 1fVENR-0004TQ-F0; Tue, 19 Jun 2018 14:00:45 +0300
-Date:   Tue, 19 Jun 2018 14:00:44 +0300
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        id S937661AbeFSLCg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 07:02:36 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38722 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937591AbeFSLCe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 07:02:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=t6lg73DyadxcLf5Sae6k0+ma+WH8+i6QvtVXh6xrJHY=; b=CHkA1qSsYvEQxcOjvebUsL1nn
+        B8j0MsYy5W9hX25hsiT39OlYH2LILR5FEgRsSJTm6lNpIzgNYTZwgCuXgcDZeAPwCovZsvKf0xAL9
+        zeGXPQ0dSRg+939lXLryc0QsHc/Q7waex7DDhka5ynvXcKrW42Vo/DcQWiuWEm1gQa+sYI1UmkMVo
+        7qVvSljz+WWCWkxLMbQptOFWdTxgnLk7Ifzb/YdP/BR/KruBDpi+zRAIuhz7MVG4Yd/mNpeXxA6Fb
+        AzwWx0UbfYW7P1s1gRcyZ1twUBsWx88CfyJZtcphhV/IoKVg4MaKgGyDaZ3uPO8jgKq6wZGUvhNMY
+        /AVwce6cw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVEOm-0007nY-Mn; Tue, 19 Jun 2018 11:02:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9071020298BAC; Tue, 19 Jun 2018 13:02:05 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 13:02:05 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Hellstrom <thellstrom@vmware.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
         Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-kernel@vger.kernel.org, jolsa@redhat.com
-Subject: Re: [PATCH v1 4/6] perf: Allow using AUX data in perf samples
-Message-ID: <20180619110044.qid7jdgmgicvhn4u@um.fi.intel.com>
-References: <20180612075117.65420-1-alexander.shishkin@linux.intel.com>
- <20180612075117.65420-5-alexander.shishkin@linux.intel.com>
- <20180614194720.GA12217@hirez.programming.kicks-ass.net>
+        Jonathan Corbet <corbet@lwn.net>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 1/3] locking: WW mutex cleanup
+Message-ID: <20180619110205.GE2476@hirez.programming.kicks-ass.net>
+References: <20180619082445.11062-1-thellstrom@vmware.com>
+ <20180619082445.11062-2-thellstrom@vmware.com>
+ <20180619094409.GK2458@hirez.programming.kicks-ass.net>
+ <8ea67e74-5ed4-2157-8e51-43f15047b3e4@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180614194720.GA12217@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <8ea67e74-5ed4-2157-8e51-43f15047b3e4@vmware.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 09:47:20PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 12, 2018 at 10:51:15AM +0300, Alexander Shishkin wrote:
-> > @@ -6112,6 +6219,32 @@ void perf_prepare_sample(struct perf_event_header *header,
-> >  
-> >  	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
-> >  		data->phys_addr = perf_virt_to_phys(data->addr);
-> > +
-> > +	if (sample_type & PERF_SAMPLE_AUX) {
-> > +		u64 size;
-> > +
-> > +		header->size += sizeof(u64); /* size */
-> > +
-> > +		/*
-> > +		 * Given the 16bit nature of header::size, an AUX sample can
-> > +		 * easily overflow it, what with all the preceding sample bits.
-> > +		 * Make sure this doesn't happen by using up to U16_MAX bytes
-> > +		 * per sample in total (rounded down to 8 byte boundary).
-> > +		 */
-> > +		size = min_t(size_t, U16_MAX - header->size,
-> > +			     event->attr.aux_sample_size);
-> > +		size = rounddown(size, 8);
-> > +		size = perf_aux_sample_size(event, data, size);
-> > +
-> > +		WARN_ON_ONCE(size + header->size > U16_MAX);
-> > +		header->size += size;
-> > +	}
-> > +	/*
-> > +	 * If you're adding more sample types here, you likely need to do
-> > +	 * something about the overflowing header::size, like repurpose the
-> > +	 * lowest 3 bits of size, which should be always zero at the moment.
-> > +	 */
+On Tue, Jun 19, 2018 at 12:44:52PM +0200, Thomas Hellstrom wrote:
+> On 06/19/2018 11:44 AM, Peter Zijlstra wrote:
+> > On Tue, Jun 19, 2018 at 10:24:43AM +0200, Thomas Hellstrom wrote:
+> > > From: Peter Ziljstra <peterz@infradead.org>
+> > > 
+> > > Make the WW mutex code more readable by adding comments, splitting up
+> > > functions and pointing out that we're actually using the Wait-Die
+> > > algorithm.
+> > > 
+> > > Cc: Ingo Molnar <mingo@redhat.com>
+> > > Cc: Jonathan Corbet <corbet@lwn.net>
+> > > Cc: Gustavo Padovan <gustavo@padovan.org>
+> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> > > Cc: Sean Paul <seanpaul@chromium.org>
+> > > Cc: David Airlie <airlied@linux.ie>
+> > > Cc: Davidlohr Bueso <dave@stgolabs.net>
+> > > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> > > Cc: Josh Triplett <josh@joshtriplett.org>
+> > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> > > Cc: Philippe Ombredanne <pombredanne@nexb.com>
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: linux-doc@vger.kernel.org
+> > > Cc: linux-media@vger.kernel.org
+> > > Cc: linaro-mm-sig@lists.linaro.org
+> > > Co-authored-by: Thomas Hellstrom <thellstrom@vmware.com>
+> > > Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+> > > ---
+> > >   Documentation/locking/ww-mutex-design.txt |  12 +-
+> > >   include/linux/ww_mutex.h                  |  28 ++---
+> > >   kernel/locking/mutex.c                    | 202 ++++++++++++++++++------------
+> > >   3 files changed, 145 insertions(+), 97 deletions(-)
+> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > 
-> Bugger yes.. I fairly quickly (but still too late) realized we should've
-> used that u16 in u64 increments to allow up to 512K instead of 64K
-> events.
->
-> Still, even 64K samples are pretty terrifyingly huge. They'll be
-> _sloowww_.
+> Hi Peter,
 > 
-> In any case, I suppose we can grab one of the attribute bits to rev. the
-> output format -- a la sample_id_all. Do we really want to do that? 512K
-> samples.... *shudder*.
+> Do you want to add a SOB, since you're the main author?
 
-Well, as far as PT goes, even a 4K sample carries a thousands of branches,
-I can't imagine ever needing more than 64K, but I didn't really want to make
-the call. Same goes for the width of aux_sample_size, which should match what
-we can theoretically output.
+Sure, here goes:
 
-Also as a thought, we could use the perf_adjust_period() to also reduce the
-sample size dynamically if it takes too long to copy.
-
-Regards,
---
-Alex
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
