@@ -3,108 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0D1C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A80C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3E52083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:41:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F3E52083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 77FF92083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:41:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77FF92083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965994AbeFSKlq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:41:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54077 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965898AbeFSKlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:41:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3D5C8ABF4;
-        Tue, 19 Jun 2018 10:41:43 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id BD0721E0AAF; Tue, 19 Jun 2018 12:41:42 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 12:41:42 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180619104142.lpilc6esz7w3a54i@quack2.suse.cz>
-References: <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
- <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com>
- <20180618081258.GB16991@lst.de>
- <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
- <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
- <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
- <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
- <0e6053b3-b78c-c8be-4fab-e8555810c732@nvidia.com>
- <20180619082949.wzoe42wpxsahuitu@quack2.suse.cz>
- <20180619090255.GA25522@bombadil.infradead.org>
+        id S966077AbeFSKly (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 06:41:54 -0400
+Received: from mail-vk0-f45.google.com ([209.85.213.45]:36599 "EHLO
+        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965898AbeFSKlt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:41:49 -0400
+Received: by mail-vk0-f45.google.com with SMTP id o138-v6so11367344vkd.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 03:41:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=g5MHwvXNHatuYvkVwN7d2Qe5FSHu0pFv1zQqSQ+NQfw=;
+        b=Pf4phijZi9JqhqcVt12mX7aKt0mHt+5OTb0fulYmMJZ7WCPdH+IvA2fSeOjzx69Lt2
+         RPnpPXjg6ZyZImS7UBzE3Yq6HLclRuyR/lwAP6WZxZ8jRzef1dx1gulpy020+KfrIZ0P
+         4iZcpxD7wH3WWRz2/dQ1M5f/UqLYv0EnVzFhiYwHmq4bvtd1B58vj7rOjieW/QPkQRvf
+         p0a24QGjuSQ/8SGunvkBQsfmseZHIcGJMC9qJXDrm/kWjO2GtlAwMHK8bI190W72Ixp4
+         7fWdC1KZVqBc7bMRqW08gb/lD+fJ/D34Rf2n+ClFmkDKHny0nGtcSoD0edz5cISxAGBw
+         O/EA==
+X-Gm-Message-State: APt69E1dXx05j53bHWOEmWwBUnG6BVdH3Sm2UHkmJrjRVeeVLeqVGOD+
+        RkMCIAnuxwtZGpzNUNVXrC3Qt0MgFVo+gHM0TjQvcoVO3k4=
+X-Google-Smtp-Source: ADUXVKLxIooaQbNuVaETX56AG5EKQGAxGGRRLehkCbrYyeGpYZoekvYKWxkUuiEXh2xA+SmGEZJm8356IKv5rpSBj18=
+X-Received: by 2002:a1f:9a10:: with SMTP id c16-v6mr9374172vke.128.1529404908702;
+ Tue, 19 Jun 2018 03:41:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619090255.GA25522@bombadil.infradead.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Received: by 2002:ab0:2255:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 03:41:48
+ -0700 (PDT)
+From:   Li Wang <liwang@redhat.com>
+Date:   Tue, 19 Jun 2018 18:41:48 +0800
+Message-ID: <CAEemH2egA1hoECjTSaao8n_YBZ3ypycMSUwZh+Ece28phL4F2Q@mail.gmail.com>
+Subject: ltp/read_all_sys (read_all -d /sys -q -r 10) cause system panic with kernel-4.18.0-rc1
+To:     linux-kernel <linux-kernel@vger.kernel.org>, ltp@lists.linux.it
+Cc:     Himanshu Madhani <hmadhani@redhat.com>, oberman@redhat.com,
+        William.Kuzeja@stratus.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Tran, Quinn" <quinn.tran@cavium.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 19-06-18 02:02:55, Matthew Wilcox wrote:
-> On Tue, Jun 19, 2018 at 10:29:49AM +0200, Jan Kara wrote:
-> > And for record, the problem with page cache pages is not only that
-> > try_to_unmap() may unmap them. It is also that page_mkclean() can
-> > write-protect them. And once PTEs are write-protected filesystems may end
-> > up doing bad things if DMA then modifies the page contents (DIF/DIX
-> > failures, data corruption, oopses). As such I don't think that solutions
-> > based on page reference count have a big chance of dealing with the
-> > problem.
-> > 
-> > And your page flag approach would also need to take page_mkclean() into
-> > account. And there the issue is that until the flag is cleared (i.e., we
-> > are sure there are no writers using references from GUP) you cannot
-> > writeback the page safely which does not work well with your idea of
-> > clearing the flag only once the page is evicted from page cache (hint, page
-> > cache page cannot get evicted until it is written back).
-> > 
-> > So as sad as it is, I don't see an easy solution here.
-> 
-> Pages which are "got" don't need to be on the LRU list.  They'll be
-> marked dirty when they're put, so we can use page->lru for fun things
-> like a "got" refcount.  If we use bit 1 of page->lru for PageGot, we've
-> got 30/62 bits in the first word and a full 64 bits in the second word.
+Hi,
 
-Interesting idea! It would destroy the aging information for the page but
-for pages accessed through GUP references that is very much vague concept
-anyway. It might be a bit tricky as pulling a page out of LRU requires page
-lock but I don't think that's a huge problem. And page cache pages not on
-LRU exist even currently when they are under reclaim so hopefully there
-won't be too many places in MM that would need fixing up for such pages.
+I'm hitting this panic when running ltp/read_all_sys on kernel-v4.18-rc1.
 
-I'm also still pondering the idea of inserting a "virtual" VMA into vma
-interval tree in the inode - as the GUP references are IMHO closest to an
-mlocked mapping - and that would achieve all the functionality we need as
-well. I just didn't have time to experiment with it.
+Test env:
+FUJITSU PRIMERGY RX200 S6 GS01
+Intel(R) Xeon(R) CPU E5620 @ 2.40GHz
+16384 MB memory, 598 GB disk space
 
-And then there's the aspect that both these approaches are a bit too
-heavyweight for some get_user_pages_fast() users (e.g. direct IO) - Al Viro
-had an idea to use page lock for that path but e.g. fs/direct-io.c would have
-problems due to lock ordering constraints (filesystem ->get_block would
-suddently get called with the page lock held). But we can probably leave
-performance optimizations for phase two.
 
-								Honza
+[ 5915.705844] BUG: unable to handle kernel NULL pointer dereference
+at 00000000000000b8
+[ 5915.714587] PGD 800000042bcf7067 P4D 800000042bcf7067 PUD 423f4e067 PMD 0
+[ 5915.722254] Oops: 0000 [#1] SMP PTI
+[ 5915.726147] CPU: 6 PID: 18535 Comm: read_all Tainted: P
+IOE     4.18.0-rc1 #1
+[ 5915.734980] Hardware name: FUJITSU
+PRIMERGY RX200 S6             /D3031, BIOS 6.00 Rev. 1.10.3031
+     01/20/2012
+[ 5915.749654] RIP: 0010:qla_dfs_tgt_counters_show+0x92/0x2a0 [qla2xxx]
+[ 5915.756733] Code: b6 86 22 01 00 00 66 85 c0 74 63 83 e8 01 4c 8b
+9e b8 00 00 00 31 f6 0f b7 c0 48 8d 3c c5 08 00 00 00 49 8b 04 33 48
+83 c6 08 <48> 03 90 b8 00 00 00 48 03 88 c0 00 00 00 4c 03 80 c8 00 00
+00 4c
+[ 5915.777816] RSP: 0018:ffffaf04109e3d60 EFLAGS: 00010202
+[ 5915.783645] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[ 5915.791606] RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000040
+[ 5915.799568] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[ 5915.807529] R10: ffff956823a74798 R11: ffff956824a29000 R12: 0000000000000000
+[ 5915.815489] R13: 0000000000000000 R14: ffff9567badfc280 R15: 0000000000000000
+[ 5915.823451] FS:  00007f27336a1740(0000) GS:ffff95683fd80000(0000)
+knlGS:0000000000000000
+[ 5915.832479] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 5915.838890] CR2: 00000000000000b8 CR3: 000000042960a003 CR4: 00000000000206e0
+[ 5915.846850] Call Trace:
+[ 5915.849583]  ? __kmalloc_node+0x195/0x280
+[ 5915.854056]  ? seq_read+0x33e/0x3f0
+[ 5915.857946]  seq_read+0x120/0x3f0
+[ 5915.861643]  full_proxy_read+0x50/0x70
+[ 5915.865827]  __vfs_read+0x36/0x190
+[ 5915.869622]  vfs_read+0x87/0x130
+[ 5915.873223]  ksys_read+0x52/0xc0
+[ 5915.876823]  do_syscall_64+0x5b/0x180
+[ 5915.880910]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5915.886547] RIP: 0033:0x7f2733280790
+[ 5915.890532] Code: 73 01 c3 48 8b 0d 18 88 20 00 f7 d8 64 89 01 48
+83 c8 ff c3 66 0f 1f 44 00 00 83 3d 59 cc 20 00 00 75 10 b8 00 00 00
+00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e fc ff ff 48 89
+04 24
+[ 5915.911617] RSP: 002b:00007ffef181c738 EFLAGS: 00000246 ORIG_RAX:
+0000000000000000
+[ 5915.920064] RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 00007f2733280790
+[ 5915.928025] RDX: 00000000000003ff RSI: 00007ffef181cbf0 RDI: 0000000000000006
+[ 5915.935986] RBP: 0000000000000b7b R08: 0000000000000000 R09: 00007ffef181c690
+[ 5915.943949] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2733688000
+[ 5915.951909] R13: 00007ffef181cbf0 R14: 0000000000000028 R15: 0000000000000030
+[ 5915.959871] Modules linked in: dummy veth binfmt_misc sctp overlay
+tun fuse vfat fat btrfs xor zstd_decompress zstd_compress xxhash
+raid6_pq ext4 mbcache jbd2 loop sunrpc intel_powerclamp coretemp
+kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul
+ghash_clmulni_intel pcbc ipmi_ssif aesni_intel crypto_simd iTCO_wdt
+ipmi_si cryptd iTCO_vendor_support glue_helper gpio_ich ipmi_devintf
+sg acpi_power_meter ipmi_msghandler i2c_i801 pcspkr lpc_ich
+i7core_edac acpi_cpufreq ip_tables xfs libcrc32c sd_mod sr_mod cdrom
+mgag200 drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops
+ttm ata_generic pata_acpi qla2xxx drm igb ata_piix nvme_fc mptsas
+libata nvme_fabrics scsi_transport_sas dca crc32c_intel mptscsih
+i2c_algo_bit nvme_core i2c_core mptbase scsi_transport_fc dm_mirror
+dm_region_hash dm_log
+[ 5916.038566]  dm_mod [last unloaded: ltp_insmod01]
+[ 5916.043814] CR2: 00000000000000b8
+[ 5916.047513] BUG: unable to handle kernel NULL pointer dereference
+at 00000000000000b8
+[ 5916.047537] ---[ end trace 1dddacfb06305174 ]---
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Li Wang
