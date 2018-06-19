@@ -3,260 +3,197 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41864C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EB2C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA4FD20836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:38:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA4FD20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 0487E20836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:40:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0487E20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966084AbeFSMiU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:38:20 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:58459 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937707AbeFSMiQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:38:16 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MbhXp-1foADT129N-00J4X3; Tue, 19 Jun 2018 14:37:34 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Harsh Jain <harsh@chelsio.com>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        Michael Werner <werner@chelsio.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Christoph Paasch <cpaasch@apple.com>,
-        Lawrence Brakmo <brakmo@fb.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] [net-next, v2] tcp: use monotonic timestamps for PAWS
-Date:   Tue, 19 Jun 2018 14:36:36 +0200
-Message-Id: <20180619123724.2535981-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:nGNf3Br2BKk68areSnAhlepsYxrCf7ZDopLMMAOugbKPF086z7j
- 5m194V706AMPJGLIwcHM4kg8PjN2dGKjmVETOIyYa3VclFS3HGZ5uVeihfkEPyKvWKE8AtB
- xy1qXfIAThz0D69TduHwwhsLF7MiDPsdcR2EtIQ8XTgkpCpVyYFFl48gmzhXS9CJpZrYfs1
- 3FOBPwjKlv8rT+oci1jHw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:QRV2xxjVjD0=:Gwslp0WHSIbMLAFLGqhUIg
- zbznaE48q0rBe3liftW+9FBYgdq21neBF2ORKs+9TlDLYXalCW/2ZARH7xJWVN/iv5ac2UNff
- MQ0Zy6GspJ6rBijD/LJKNpG90h2v01TSbmr5N7M4tfhtzhsesO/g+SN2MV0Sw+DTyWyysR5yr
- OHud1pCe+vuSNVl/Sgit2TAW7uJxxRfMBispCDsekLwKAUV5fLCMMmu3Q2N8lf1IUPwiGOYK0
- Exn923dWdXP0TV01e59FJlhnJ4ekMprmwtOy6gTQAao1WY9b9OV/X1oYkS990K/fPjkmPkh7J
- 5Sw5g+G+AUzFHElY/fQhT6DCHay8v5QQTt6oH+8Nm5KqRUN8+iAGeHV9dkKAQBbLwUWkCY3g5
- VVGh/80QLWZBa5vmYR8TmuDD8tLpjQM0E+PIO5BVnSpJZGVvjX+qf9ECdWNYqKdoz9G8nmLLr
- Q6pzVOChLoWKc2i84NZ47UL4TcqmknZC9iweXV6BUMjsVicZlQhGHcMGPwWQRnnsh3UMXD6zg
- 1OXKWpWekFT3npHrUG8skC5zobn7ijhTJ1imLnjxKn212FVZsu58rLX6MFMWC/rkzjuzAVxQq
- fwL3jM/PuKNRQwMaYz27w1HFsjiH5oyS6WEGf0K6PLTSkUSU3LOdaucTSzgXxgJpFHD7TMUqR
- O9GnTLodjI9KJXi7/UW4zyI8YHMJT0e3vajP8iwa+JZkvGeGLbrEITJQmj7IC7PpAel4=
+        id S937810AbeFSMk2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:40:28 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48223 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S937705AbeFSMk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:40:26 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3A60EA28A3CCC;
+        Tue, 19 Jun 2018 20:40:21 +0800 (CST)
+Received: from [127.0.0.1] (10.177.19.210) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Tue, 19 Jun 2018
+ 20:40:13 +0800
+Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
+To:     Michal Hocko <mhocko@kernel.org>
+References: <5ed798a0-6c9c-086e-e5e8-906f593ca33e@huawei.com>
+ <20180607122152.GP32433@dhcp22.suse.cz>
+ <a880df29-b656-d98d-3037-b04761c7ed78@huawei.com>
+ <20180611085237.GI13364@dhcp22.suse.cz>
+ <16c4db2f-bc70-d0f2-fb38-341d9117ff66@huawei.com>
+ <20180611134303.GC75679@bhelgaas-glaptop.roam.corp.google.com>
+ <20180611145330.GO13364@dhcp22.suse.cz>
+ <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
+ <87bmce60y3.fsf@e105922-lin.cambridge.arm.com>
+ <8b715082-14d4-f10b-d2d6-b23be7e4bf7e@huawei.com>
+ <20180619120714.GE13685@dhcp22.suse.cz>
+CC:     Punit Agrawal <punit.agrawal@arm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        <tnowicki@caviumnetworks.com>, <linux-pci@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        <linux-mm@kvack.org>, <wanghuiqiang@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zhongjiang <zhongjiang@huawei.com>,
+        linux-arm <linux-arm-kernel@lists.infradead.org>
+From:   Xie XiuQi <xiexiuqi@huawei.com>
+Message-ID: <1f5ec805-483d-8781-7bc9-4d040d4a33ce@huawei.com>
+Date:   Tue, 19 Jun 2018 20:40:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180619120714.GE13685@dhcp22.suse.cz>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.19.210]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using get_seconds() for timestamps is deprecated since it can lead
-to overflows on 32-bit systems. While the interface generally doesn't
-overflow until year 2106, the specific implementation of the TCP PAWS
-algorithm breaks in 2038 when the intermediate signed 32-bit timestamps
-overflow.
+Hi Michal,
 
-A related problem is that the local timestamps in CLOCK_REALTIME form
-lead to unexpected behavior when settimeofday is called to set the system
-clock backwards or forwards by more than 24 days.
+On 2018/6/19 20:07, Michal Hocko wrote:
+> On Tue 19-06-18 20:03:07, Xie XiuQi wrote:
+> [...]
+>> I tested on a arm board with 128 cores 4 numa nodes, but I set CONFIG_NR_CPUS=72.
+>> Then node 3 is not be created, because node 3 has no memory, and no cpu.
+>> But some pci device may related to node 3, which be set in ACPI table.
+> 
+> Could you double check that zonelists for node 3 are generated
+> correctly?
+> 
 
-While the first problem could be solved by using an overflow-safe method
-of comparing the timestamps, a nicer solution is to use a monotonic
-clocksource with ktime_get_seconds() that simply doesn't overflow (at
-least not until 136 years after boot) and that doesn't change during
-settimeofday().
+zonelists for node 3 is not created at all.
 
-To make 32-bit and 64-bit architectures behave the same way here, and
-also save a few bytes in the tcp_options_received structure, I'm changing
-the type to a 32-bit integer, which is now safe on all architectures.
+Kernel parse SRAT table to create node info, but in this case,
+SRAT table is parsed not completed. Only the first 72 items are parsed.
+In SRAT table, we haven't seen node 3 information yet, because cpu_to_node_map[72] is too small.
 
-Finally, the ts_recent_stamp field also (confusingly) gets used to store
-a jiffies value in tcp_synq_overflow()/tcp_synq_no_recent_overflow().
-This is currently safe, but changing the type to 32-bit requires
-some small changes there to keep it working.
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30000 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30001 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30002 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30003 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30100 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30101 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30102 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30103 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30200 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30201 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30202 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30203 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30300 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30301 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30302 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30303 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30400 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30401 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30402 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30403 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30500 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30501 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30502 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30503 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30600 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30601 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30602 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30603 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30700 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30701 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30702 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 0 -> MPIDR 0x30703 -> Node 0
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10000 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10001 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10002 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10003 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10100 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10101 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10102 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10103 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10200 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10201 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10202 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10203 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10300 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10301 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10302 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10303 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10400 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10401 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10402 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10403 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10500 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10501 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10502 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10503 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10600 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10601 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10602 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10603 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10700 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10701 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10702 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 1 -> MPIDR 0x10703 -> Node 1
+[    0.000000] ACPI: NUMA: SRAT: PXM 2 -> MPIDR 0x70000 -> Node 2
+[    0.000000] ACPI: NUMA: SRAT: PXM 2 -> MPIDR 0x70001 -> Node 2
+[    0.000000] ACPI: NUMA: SRAT: PXM 2 -> MPIDR 0x70002 -> Node 2
+[    0.000000] ACPI: NUMA: SRAT: PXM 2 -> MPIDR 0x70003 -> Node 2
+[    0.000000] ACPI: NUMA: SRAT: PXM 2 -> MPIDR 0x70100 -> Node 2
+[    0.000000] ACPI: NUMA: SRAT: PXM 2 -> MPIDR 0x70101 -> Node 2
+[    0.000000] ACPI: NUMA: SRAT: PXM 2 -> MPIDR 0x70102 -> Node 2
+[    0.000000] ACPI: NUMA: SRAT: PXM 2 -> MPIDR 0x70103 -> Node 2
+[    0.000000] ACPI: NUMA: SRAT: cpu_to_node_map[72] is too small, may not be able to use all cpus
+[    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x2080000000-0x23ffffffff]
+[    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x7fffffff]
+[    0.000000] ACPI: SRAT: Node 2 PXM 2 [mem 0x402000000000-0x4023ffffffff]
+[    0.000000] NUMA: NODE_DATA [mem 0x23ffffe780-0x23ffffffff]
+[    0.000000] NUMA: Initmem setup node 1 [<memory-less node>]
+[    0.000000] NUMA: NODE_DATA [mem 0x4023fffed780-0x4023fffeefff]
+[    0.000000] NUMA: NODE_DATA(1) on node 2
+[    0.000000] NUMA: NODE_DATA [mem 0x4023fffebf00-0x4023fffed77f]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    [mem 0x0000000000000000-0x00000000ffffffff]
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00004023ffffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000000000-0x000000003942ffff]
+[    0.000000]   node   0: [mem 0x0000000039430000-0x000000003956ffff]
+[    0.000000]   node   0: [mem 0x0000000039570000-0x000000003963ffff]
+[    0.000000]   node   0: [mem 0x0000000039640000-0x00000000396fffff]
+[    0.000000]   node   0: [mem 0x0000000039700000-0x000000003971ffff]
+[    0.000000]   node   0: [mem 0x0000000039720000-0x0000000039b6ffff]
+[    0.000000]   node   0: [mem 0x0000000039b70000-0x000000003eb5ffff]
+[    0.000000]   node   0: [mem 0x000000003eb60000-0x000000003eb8ffff]
+[    0.000000]   node   0: [mem 0x000000003eb90000-0x000000003fbfffff]
+[    0.000000]   node   0: [mem 0x0000002080000000-0x00000023ffffffff]
+[    0.000000]   node   2: [mem 0x0000402000000000-0x00004023ffffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000000000000-0x00000023ffffffff]
+[    0.000000] Could not find start_pfn for node 1
+[    0.000000] Initmem setup node 1 [mem 0x0000000000000000-0x0000000000000000]
+[    0.000000] Initmem setup node 2 [mem 0x0000402000000000-0x00004023ffffffff]
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: use time_before32()/time_after32() everywhere as suggested
-    Eric Dumazet
----
- drivers/crypto/chelsio/chtls/chtls_cm.c |  2 +-
- include/linux/tcp.h                     |  4 ++--
- include/net/tcp.h                       | 17 ++++++++++-------
- net/ipv4/tcp_input.c                    |  2 +-
- net/ipv4/tcp_ipv4.c                     |  3 ++-
- net/ipv4/tcp_minisocks.c                |  8 ++++----
- 6 files changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
-index 2bb6f0380758..0997e166ea57 100644
---- a/drivers/crypto/chelsio/chtls/chtls_cm.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
-@@ -1673,7 +1673,7 @@ static void chtls_timewait(struct sock *sk)
- 	struct tcp_sock *tp = tcp_sk(sk);
- 
- 	tp->rcv_nxt++;
--	tp->rx_opt.ts_recent_stamp = get_seconds();
-+	tp->rx_opt.ts_recent_stamp = ktime_get_seconds();
- 	tp->srtt_us = 0;
- 	tcp_time_wait(sk, TCP_TIME_WAIT, 0);
- }
-diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-index 72705eaf4b84..f911b9b09b16 100644
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -89,7 +89,7 @@ struct tcp_sack_block {
- 
- struct tcp_options_received {
- /*	PAWS/RTTM data	*/
--	long	ts_recent_stamp;/* Time we stored ts_recent (for aging) */
-+	int	ts_recent_stamp;/* Time we stored ts_recent (for aging) */
- 	u32	ts_recent;	/* Time stamp to echo next		*/
- 	u32	rcv_tsval;	/* Time stamp value             	*/
- 	u32	rcv_tsecr;	/* Time stamp echo reply        	*/
-@@ -425,7 +425,7 @@ struct tcp_timewait_sock {
- 	/* The time we sent the last out-of-window ACK: */
- 	u32			  tw_last_oow_ack_time;
- 
--	long			  tw_ts_recent_stamp;
-+	int			  tw_ts_recent_stamp;
- #ifdef CONFIG_TCP_MD5SIG
- 	struct tcp_md5sig_key	  *tw_md5_key;
- #endif
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 0448e7c5d2b4..535dfb7f2ab4 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -471,19 +471,20 @@ struct sock *cookie_v4_check(struct sock *sk, struct sk_buff *skb);
-  */
- static inline void tcp_synq_overflow(const struct sock *sk)
- {
--	unsigned long last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
--	unsigned long now = jiffies;
-+	unsigned int last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
-+	unsigned int now = jiffies;
- 
--	if (time_after(now, last_overflow + HZ))
-+	if (time_after32(now, last_overflow + HZ))
- 		tcp_sk(sk)->rx_opt.ts_recent_stamp = now;
- }
- 
- /* syncookies: no recent synqueue overflow on this listening socket? */
- static inline bool tcp_synq_no_recent_overflow(const struct sock *sk)
- {
--	unsigned long last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
-+	unsigned int last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
-+	unsigned int now = jiffies;
- 
--	return time_after(jiffies, last_overflow + TCP_SYNCOOKIE_VALID);
-+	return time_after32(now, last_overflow + TCP_SYNCOOKIE_VALID);
- }
- 
- static inline u32 tcp_cookie_time(void)
-@@ -1361,7 +1362,8 @@ static inline bool tcp_paws_check(const struct tcp_options_received *rx_opt,
- {
- 	if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <= paws_win)
- 		return true;
--	if (unlikely(get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_24DAYS))
-+	if (unlikely(!time_before32(ktime_get_seconds(),
-+				    rx_opt->ts_recent_stamp + TCP_PAWS_24DAYS)))
- 		return true;
- 	/*
- 	 * Some OSes send SYN and SYNACK messages with tsval=0 tsecr=0,
-@@ -1391,7 +1393,8 @@ static inline bool tcp_paws_reject(const struct tcp_options_received *rx_opt,
- 
- 	   However, we can relax time bounds for RST segments to MSL.
- 	 */
--	if (rst && get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_MSL)
-+	if (rst && !time_before32(ktime_get_seconds(),
-+				  rx_opt->ts_recent_stamp + TCP_PAWS_MSL))
- 		return false;
- 	return true;
- }
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 355d3dffd021..0eb314774aec 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -3449,7 +3449,7 @@ static void tcp_send_challenge_ack(struct sock *sk, const struct sk_buff *skb)
- static void tcp_store_ts_recent(struct tcp_sock *tp)
- {
- 	tp->rx_opt.ts_recent = tp->rx_opt.rcv_tsval;
--	tp->rx_opt.ts_recent_stamp = get_seconds();
-+	tp->rx_opt.ts_recent_stamp = ktime_get_seconds();
- }
- 
- static void tcp_replace_ts_recent(struct tcp_sock *tp, u32 seq)
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index bea17f1e8302..dc415c66a33a 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -155,7 +155,8 @@ int tcp_twsk_unique(struct sock *sk, struct sock *sktw, void *twp)
- 	   and use initial timestamp retrieved from peer table.
- 	 */
- 	if (tcptw->tw_ts_recent_stamp &&
--	    (!twp || (reuse && get_seconds() - tcptw->tw_ts_recent_stamp > 1))) {
-+	    (!twp || (reuse && time_after32(ktime_get_seconds(),
-+					    tcptw->tw_ts_recent_stamp)))) {
- 		tp->write_seq = tcptw->tw_snd_nxt + 65535 + 2;
- 		if (tp->write_seq == 0)
- 			tp->write_seq = 1;
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index 1dda1341a223..1f652beb79ca 100644
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -144,7 +144,7 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
- 		tw->tw_substate	  = TCP_TIME_WAIT;
- 		tcptw->tw_rcv_nxt = TCP_SKB_CB(skb)->end_seq;
- 		if (tmp_opt.saw_tstamp) {
--			tcptw->tw_ts_recent_stamp = get_seconds();
-+			tcptw->tw_ts_recent_stamp = ktime_get_seconds();
- 			tcptw->tw_ts_recent	  = tmp_opt.rcv_tsval;
- 		}
- 
-@@ -189,7 +189,7 @@ tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sk_buff *skb,
- 
- 		if (tmp_opt.saw_tstamp) {
- 			tcptw->tw_ts_recent	  = tmp_opt.rcv_tsval;
--			tcptw->tw_ts_recent_stamp = get_seconds();
-+			tcptw->tw_ts_recent_stamp = ktime_get_seconds();
- 		}
- 
- 		inet_twsk_put(tw);
-@@ -534,7 +534,7 @@ struct sock *tcp_create_openreq_child(const struct sock *sk,
- 
- 		if (newtp->rx_opt.tstamp_ok) {
- 			newtp->rx_opt.ts_recent = req->ts_recent;
--			newtp->rx_opt.ts_recent_stamp = get_seconds();
-+			newtp->rx_opt.ts_recent_stamp = ktime_get_seconds();
- 			newtp->tcp_header_len = sizeof(struct tcphdr) + TCPOLEN_TSTAMP_ALIGNED;
- 		} else {
- 			newtp->rx_opt.ts_recent_stamp = 0;
-@@ -600,7 +600,7 @@ struct sock *tcp_check_req(struct sock *sk, struct sk_buff *skb,
- 			 * it can be estimated (approximately)
- 			 * from another data.
- 			 */
--			tmp_opt.ts_recent_stamp = get_seconds() - ((TCP_TIMEOUT_INIT/HZ)<<req->num_timeout);
-+			tmp_opt.ts_recent_stamp = ktime_get_seconds() - ((TCP_TIMEOUT_INIT/HZ)<<req->num_timeout);
- 			paws_reject = tcp_paws_reject(&tmp_opt, th->rst);
- 		}
- 	}
+
 -- 
-2.9.0
+Thanks,
+Xie XiuQi
 
