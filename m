@@ -2,84 +2,115 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA45C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48762C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D86282075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:18:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="p7xRANft"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D86282075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 08D5620652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:19:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D5620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937875AbeFSPSw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:18:52 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:44111 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937547AbeFSPSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:18:51 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 4a2b1dae
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 19 Jun 2018 15:12:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=5APhmAkGtfDau38ojwhDyNxyy7s=; b=p7xRAN
-        ftb7tmQO91Ujmy9IAmfsW1OAH7R4HdIqrb+HW4dfzi1Qayd82yW+85TIAiioNNQK
-        lF0lRlwVvJX4wY9T51zP3io3ANQ9HkWBh6hVnDlg89OYVAv1RDjszLRnbZBTZ6Vx
-        3eEzbrbGziI4u8ErIhIDvNlrH4rmdL8FVBnk6oMpq4wNR5L015SRrz7MgoOj2tx3
-        ATNmZMQTkbI1kEzB9f+tDOxiojyCxgiiU7olsUusW5KKOw5OwUV6UrJyWGrBiYMk
-        KL2Ac2Cle0X3Gl4p6LzhqJbCPklScMGpdBC2ZDOmMiGTYYs1LoXrMTCXRqRun0aF
-        Ovy47Dqtk/PYFwjw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 04c37c80 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Tue, 19 Jun 2018 15:12:56 +0000 (UTC)
-Received: by mail-ot0-f175.google.com with SMTP id r18-v6so96942otk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:18:49 -0700 (PDT)
-X-Gm-Message-State: APt69E14r4B7kR9cGqMfFA5dY2YJRtnF/9JABpDwOiIWpVFAbM1cQmRF
-        rkZTD5siaIKdSR2RF6a44gM3FUp+nONlSBdqim0=
-X-Google-Smtp-Source: ADUXVKIL3wENGJmnCH7cbw0NM5ozKtRaPyD01ehaMghOQKob6aegx7OVIVUCt1CMKRv8lDVniliplf+arUx6ar9LKiA=
-X-Received: by 2002:a9d:542e:: with SMTP id j46-v6mr11917168oth.41.1529421528130;
- Tue, 19 Jun 2018 08:18:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHmME9rtoPwxUSnktxzKso14iuVCWT7BE_-_8PAC=pGw1iJnQg@mail.gmail.com>
- <CALvZod6Dxx79ztxzHsDVe6pj7Fa7ydJAjMf_EHV9H15+AsVwdA@mail.gmail.com>
- <CAHmME9qvRDQOJYdSPaAf-hg5raacu4TBgStLy7NzFL+j+dXheQ@mail.gmail.com>
- <CACT4Y+YLySJMfG4kCJ2FiPpPtN6sgU6k2FoZUYMFrJGLj+vDjw@mail.gmail.com>
- <CAHmME9oeoSbRZyf6qJTg+q-zZanYGu4q=YOZNqCCbRAFu15R9w@mail.gmail.com> <CALvZod7MfTTwbfG3zC1kGrZB1Cf0UAnbvdbqhC5Dm=uy6=DtOg@mail.gmail.com>
-In-Reply-To: <CALvZod7MfTTwbfG3zC1kGrZB1Cf0UAnbvdbqhC5Dm=uy6=DtOg@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 19 Jun 2018 17:18:36 +0200
-X-Gmail-Original-Message-ID: <CAHmME9q7aKGNiYauCjyy6Fu+bryPphEoLEMbAObTJgTrTfS2uw@mail.gmail.com>
-Message-ID: <CAHmME9q7aKGNiYauCjyy6Fu+bryPphEoLEMbAObTJgTrTfS2uw@mail.gmail.com>
-Subject: Re: Possible regression in "slab, slub: skip unnecessary kasan_cache_shutdown()"
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>, aryabinin@virtuozzo.com,
-        Alexander Potapenko <glider@google.com>, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev@googlegroups.com, Linux-MM <linux-mm@kvack.org>,
+        id S937897AbeFSPTY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:19:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S937493AbeFSPTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:19:21 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 478B67DAC3;
+        Tue, 19 Jun 2018 15:19:21 +0000 (UTC)
+Received: from [10.36.117.92] (ovpn-117-92.ams2.redhat.com [10.36.117.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 997932156700;
+        Tue, 19 Jun 2018 15:19:19 +0000 (UTC)
+Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in
+ update_permission_bitmask()
+To:     Nick Desaulniers <ndesaulniers@google.com>, joe@perches.com
+Cc:     Matthias Kaehlcke <mka@chromium.org>, rkrcmar@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20180615174731.47588-1-mka@chromium.org>
+ <CAKwvOd=n3CdFhL-cFueOEO7ahOoTY6zfvJApXimQ1tBF6XzSOA@mail.gmail.com>
+ <d4f32707a89030733217b23b557b38504f0d83ca.camel@perches.com>
+ <20180615182945.GN88063@google.com>
+ <c852072704e82ac5342f344c5862d20ce5559c21.camel@perches.com>
+ <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
+ UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
+ AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
+ sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
+ FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
+ VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
+ Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
+ znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
+ IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
+ du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
+ dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
+ utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
+ Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
+ wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
+ fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
+ 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
+ zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
+ oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
+ uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
+ plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
+ HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
+ 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
+ iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
+ 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
+ /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
+ 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
+Date:   Tue, 19 Jun 2018 17:19:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 19 Jun 2018 15:19:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 19 Jun 2018 15:19:21 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 5:08 PM Shakeel Butt <shakeelb@google.com> wrote:
-> > > Are you using SLAB or SLUB? We stress kernel pretty heavily, but with
-> > > SLAB, and I suspect Shakeel may also be using SLAB. So if you are
-> > > using SLUB, there is significant chance that it's a bug in the SLUB
-> > > part of the change.
-> >
-> > Nice intuition; I am indeed using SLUB rather than SLAB...
-> >
->
-> Can you try once with SLAB? Just to make sure that it is SLUB specific.
+On 15/06/2018 20:45, Nick Desaulniers wrote:
+>>
+>>> In any case I think it it preferable to fix the code over disabling
+>>> the warning, unless the warning is bogus or there are just too many
+>>> occurrences.
+>> Maybe.
+> Spurious warning today, actual bug tomorrow?  I prefer to not to
+> disable warnings wholesale.  They don't need to find actual bugs to be
+> useful.  Flagging code that can be further specified does not hurt.
+> Part of the effort to compile the kernel with different compilers is
+> to add warning coverage, not remove it.  That said, there may be
+> warnings that are never useful (or at least due to some invariant that
+> only affects the kernel).  I cant think of any off the top of my head,
+> but I'm also not sure this is one.
 
-Sorry, I meant to mention that earlier. I tried with SLAB; the crash
-does not occur. This appears to be SLUB-specific.
+This one really makes the code uglier though, so I'm not really inclined
+to applying the patch.
+
+Paolo
