@@ -3,135 +3,189 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B9DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EB8C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6442075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:56:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6442075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bristot.me
+	by mail.kernel.org (Postfix) with ESMTP id D910620874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:56:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D910620874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966024AbeFSMw3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:52:29 -0400
-Received: from smtp-sp200-218.kinghost.net ([177.185.200.218]:39370 "EHLO
-        smtp-sp200-218.kinghost.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S937711AbeFSMw0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:52:26 -0400
-X-Greylist: delayed 481 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Jun 2018 08:52:25 EDT
-Received: from smtp200-farm64.kinghost.net (smtp200-farm64 [127.0.0.1])
-        (using TLSv1 with cipher ADH-CAMELLIA256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-sp200-218.kinghost.net (Postfix) with ESMTPS id 8C74F13CC601C;
-        Tue, 19 Jun 2018 09:44:10 -0300 (BRT)
-Received: from smtpi-sp--242.kinghost.net (smtpi-sp-242.kinghost.net [177.185.201.242])
-        (using TLSv1 with cipher ADH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp200-farm64.kinghost.net (Postfix) with ESMTPS id 7E00260A5471B;
-        Tue, 19 Jun 2018 09:44:10 -0300 (BRT)
-Received: from t460s.bristot.redhat.com (nat-cataldo.sssup.it [193.205.81.5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daniel@bristot.eti.br)
-        by smtpi-sp--242.kinghost.net (Postfix) with ESMTPSA id BEB0E600320B;
-        Tue, 19 Jun 2018 09:44:02 -0300 (-03)
-Subject: Re: [PATCH v4 1/2] timers: Don't wake ktimersoftd on every tick
-To:     Haris Okanovic <haris.okanovic@ni.com>,
-        Mike Galbraith <efault@gmx.de>
-Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <alpine.DEB.2.20.1707182206110.2425@nanos>
- <20180306233944.11271-1-haris.okanovic@ni.com>
- <1523332961.4827.1.camel@gmx.de>
- <c2664fbe-52e7-1044-e9f9-de4875047ee8@ni.com>
-From:   Daniel Bristot de Oliveira <daniel@bristot.me>
-Message-ID: <0c3d5147-a2c2-4773-c4f1-af5745a27384@bristot.me>
-Date:   Tue, 19 Jun 2018 14:43:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S937950AbeFSM4b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:56:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39149 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937770AbeFSM4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:56:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B6FA0ACD9;
+        Tue, 19 Jun 2018 12:56:28 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 21563A0A1B; Tue, 19 Jun 2018 14:56:28 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 14:56:28 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: regression: /proc/$pid/cmdline lacks trailing '\0' in 4.18-rc1
+Message-ID: <20180619125628.fso5wyqsgo7hgh33@unicorn.suse.cz>
+References: <20180619060754.voy2nziqwl5ehfp5@unicorn.suse.cz>
+ <20180619092254.kmww3fpqjqcsjrna@unicorn.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <c2664fbe-52e7-1044-e9f9-de4875047ee8@ni.com>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SND-ID: E3DhL4HZvWApxdeEu0+R3k19tF2vhIUMcvigv4x0qidpkEMv/61pVU+Ic2kX
-        C2E5z/9xJ4WEtUyKW/eV3FZ7zkN1fvCQFye4Vp0qZLm01piczU3HP74rsPbz
-        ZXyFMdLIy0bF624020sdR4sNVdkqDbKvfF0l7vWZD6wrBZpS9WMuto9nHuve
-        4sYzXwHb4dnblPCyIo+SeCWeGAROmW2xzx82recItwlrJacw1Hfm4+FEw2F7
-        UeZgJXPCOFt40Rma+dDN2WtDrMHkhcPFG1WOneOUb8n+kDDWsF6hVDqpCvO4
-        btTm2HCpTHVi10khRnMALkBj9zsVDLZ0VWtmVtf0vnQTRz3BjFoVw7Of7VDp
-        W4mqEFFGpGxOYj+xYjZe195+1ZqhqxSfVm6mN8H2tv5AmFcdkVryX5524IBA
-        T/Yplimtpd4tuuA5UtiVIa/jl8RMU5N+lILkWzNS4RSx3VNp0+iALZIcLZER
-        uubJw9Z7RI/JJQmG/UcMOCJT8ZC3E8bU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619092254.kmww3fpqjqcsjrna@unicorn.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 04/12/2018 05:00 PM, Haris Okanovic wrote:
-> Hi Mike,
+On Tue, Jun 19, 2018 at 11:22:55AM +0200, Michal Kubecek wrote:
+> On Tue, Jun 19, 2018 at 08:07:55AM +0200, Michal Kubecek wrote:
+> > In v4.18-rc1, /proc/$pid/cmdline is missing final null byte which used
+> > to be there in v4.17 and older kernels:
+> > 
+> > 4.17.1:
+> > tweed:~ # cat /proc/self/cmdline | od -t c
+> > 0000000   c   a   t  \0   /   p   r   o   c   /   s   e   l   f   /   c
+> > 0000020   m   d   l   i   n   e  \0
+> > 0000027
+> > 
+> > 4.18-rc1:
+> > lion:~ # cat /proc/self/cmdline | od -t c
+> > 0000000   c   a   t  \0   /   p   r   o   c   /   s   e   l   f   /   c
+> > 0000020   m   d   l   i   n   e
+> > 0000026
+> > 
+> > The code has been rewritten quite a lot in 4.18-rc1 so I didn't find yet
+> > where exactly does the change come from. Still looking.
 > 
-> I haven't tested the patch with wireshark until now. My system also
-> hangs shortly after it starts. I'm pretty sure I hit workqueues in my
-> earlier tests via the block driver, but it's clearly not whatever
-> wireshark is using. I'll look at it and try to post a fix. CCing the
-> list to avoid this patch until then.
-
-Hi Haris,
-
-Do we have any update regarding a newer version of this patch?
-
--- Daniel
-
-> Thanks,
-> Haris
+> The issue was introduced by commit 5ab827189965 ("fs/proc: simplify and
+> clarify get_mm_cmdline() function"). The problem is that when looking
+> for the null character at or after args_end, strnlen() is used and it
+> returns the length _without_ the null character (if there is one) so
+> that we don't copy it.
 > 
-> 
-> On 04/09/2018 11:02 PM, Mike Galbraith wrote:
->> Hi,
->>
->> Are these patches dead, or are you planning another submission?  I ask
->> because I discovered that with them applied, firing up wireshark hangs
->> the box 100% repeatably, with wireshark never fully initializing.
->>
->> Applying them to an otherwise virgin 4.14.20-rt17 to be sure...
->>
->> crash> bt 6016PID: 6016   TASK: ffff95dd68572180  CPU: 2   COMMAND:
->> "dumpcap"
->>   #0 [ffffb490094f3bc0] __schedule at ffffffffa56d55b9
->>   #1 [ffffb490094f3c40] schedule at ffffffffa56d5a03
->>   #2 [ffffb490094f3c58] schedule_timeout at ffffffffa56d8467
->>   #3 [ffffb490094f3cd8] wait_for_completion at ffffffffa56d6e34
->>   #4 [ffffb490094f3d18] __wait_rcu_gp at ffffffffa50e59cd
->>   #5 [ffffb490094f3d58] synchronize_rcu at ffffffffa50ec14e
->>   #6 [ffffb490094f3d98] packet_set_ring at ffffffffc0c74da0 [af_packet]
->>   #7 [ffffb490094f3e50] packet_setsockopt at ffffffffc0c75d23 [af_packet]
->>   #8 [ffffb490094f3ef8] sys_setsockopt at ffffffffa558a5e2
->>   #9 [ffffb490094f3f30] do_syscall_64 at ffffffffa5001b05
->> #10 [ffffb490094f3f50] entry_SYSCALL_64_after_hwframe at ffffffffa5800065
->>      RIP: 00007f3107a1cfaa  RSP: 00007ffc9745c2e8  RFLAGS: 00000246
->>      RAX: ffffffffffffffda  RBX: 0000000000000001  RCX: 00007f3107a1cfaa
->>      RDX: 0000000000000005  RSI: 0000000000000107  RDI: 0000000000000003
->>      RBP: 000055ae1d8eb470   R8: 000000000000001c   R9: 0000000000000002
->>      R10: 00007ffc9745c350  R11: 0000000000000246  R12: 00007ffc9745c350
->>      R13: 0000000000000000  R14: 000055ae1d8eb200  R15: 000055ae1d8eb2d0
->>      ORIG_RAX: 0000000000000036  CS: 0033  SS: 002b
->> crash> dmesg
->> ...
->> [  483.808197] BUG: workqueue lockup - pool cpus=2 node=0 flags=0x0
->> nice=0 stuck for 52s!
->> [  483.808204] Showing busy workqueues and worker pools:
->> [  483.808206] workqueue events: flags=0x0
->> [  483.808208]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
->> [  483.808211]     pending: check_corruption
->> [  492.695124] sysrq: SysRq : Trigger a crash
->>
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-rt-users" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I'll submit a patch once I test it.
+
+It was more complicated than I thought. The patch below seems to resolve
+the issue but I'll need to run more tests before I'm confident to submit
+it officially.
+
+Michal Kubecek
+
+
+
+From: Michal Kubecek <mkubecek@suse.cz>
+Date: Tue, 19 Jun 2018 14:47:23 +0200
+Subject: [PATCH] proc: add missing '\0' back to /proc/$pid/cmdline
+
+Recent rewrite introduced a regression, /proc/$pid/cmdline is missing the
+trailing null character:
+
+mike@lion:/tmp> cat /proc/self/cmdline | od -t c
+0000000   c   a   t  \0   /   p   r   o   c   /   s   e   l   f   /   c
+0000020   m   d   l   i   n   e
+0000026
+
+This is because strnlen() is used to search for the null character but it
+returns the length without it so that we need to copy one byte more (but
+only if we actually found a null character). And once we pass the null
+character to userspace we need to make sure next read returns 0 (EOF).
+
+This is another problem, even if rather theoretical one: if userspace seeks
+to arg_end or past it, we only start checking for null character from that
+position so that we may return random segment of environment rather then
+EOF.
+
+Resolve both by always starting no later than at arg_end-1 (so that we
+always catch the right null character) but don't copy data until we reach
+the requested start position.
+
+Fixes: 5ab827189965 ("fs/proc: simplify and clarify get_mm_cmdline() function")
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ fs/proc/base.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b6572944efc3..ac60405f5015 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -209,7 +209,8 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 			      size_t count, loff_t *ppos)
+ {
+ 	unsigned long arg_start, arg_end, env_start, env_end;
+-	unsigned long pos, len;
++	unsigned long req_pos, pos, len;
++	bool end_found = false;
+ 	char *page;
+ 
+ 	/* Check if process spawned far enough to have cmdline. */
+@@ -236,25 +237,27 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 		env_start = env_end = arg_end;
+ 
+ 	/* We're not going to care if "*ppos" has high bits set */
+-	pos = arg_start + *ppos;
++	req_pos = arg_start + *ppos;
+ 
+ 	/* .. but we do check the result is in the proper range */
+-	if (pos < arg_start || pos >= env_end)
++	if (req_pos < arg_start || req_pos >= env_end)
+ 		return 0;
+ 
+ 	/* .. and we never go past env_end */
+-	if (env_end - pos < count)
++	if (env_end - req_pos < count)
+ 		count = env_end - pos;
+ 
++	pos = min_t(unsigned long, req_pos, arg_end - 1);
+ 	page = (char *)__get_free_page(GFP_KERNEL);
+ 	if (!page)
+ 		return -ENOMEM;
+ 
+ 	len = 0;
+-	while (count) {
++	while (count && !end_found) {
+ 		int got;
+-		size_t size = min_t(size_t, PAGE_SIZE, count);
++		size_t size = count + (pos < req_pos ? req_pos - pos : 0);
+ 
++		size = min_t(size_t, PAGE_SIZE, size);
+ 		got = access_remote_vm(mm, pos, page, size, FOLL_ANON);
+ 		if (got <= 0)
+ 			break;
+@@ -276,11 +279,23 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 				n = arg_end - pos - 1;
+ 
+ 			/* Cut off at first NUL after 'n' */
+-			got = n + strnlen(page+n, got-n);
++			n += strnlen(page+n, got-n);
++			got = min_t(int, got, n + 1);
++			end_found = !page[n];
+ 			if (!got)
+ 				break;
+ 		}
+ 
++		if (pos + got <= req_pos) {
++			/* got > 0 here so that pos always advances */
++			pos += got;
++			continue;
++		}
++
++		if (pos < req_pos) {
++			got -= (req_pos - pos);
++			pos = req_pos;
++		}
+ 		got -= copy_to_user(buf, page, got);
+ 		if (unlikely(!got)) {
+ 			if (!len)
+-- 
+2.17.1
+
