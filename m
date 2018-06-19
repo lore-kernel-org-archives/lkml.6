@@ -3,98 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D26C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66011C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F4D2083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:36:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F4D2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 226F52083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:37:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226F52083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754009AbeFSWgn (ORCPT
+        id S1753741AbeFSWhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 18:36:43 -0400
-Received: from mga01.intel.com ([192.55.52.88]:5219 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751655AbeFSWgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 18:36:41 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 15:36:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,244,1526367600"; 
-   d="scan'208";a="64631087"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Jun 2018 15:36:40 -0700
-Date:   Tue, 19 Jun 2018 15:36:15 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [RFC PATCH 7/8] x86/lib_user_wait.h: Add APIs for user wait
- instructions
-Message-ID: <20180619223615.GB114883@romley-ivt3.sc.intel.com>
-References: <1529118375-90191-1-git-send-email-fenghua.yu@intel.com>
- <1529118375-90191-8-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1806191109580.1692@nanos.tec.linutronix.de>
- <20180619222718.GD112652@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806200032430.10546@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806200032430.10546@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 19 Jun 2018 18:37:43 -0400
+Received: from smtprelay0130.hostedemail.com ([216.40.44.130]:50854 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750949AbeFSWhk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 18:37:40 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id D46BA181D3419;
+        Tue, 19 Jun 2018 22:37:39 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: hall50_7cd9f9c20dd23
+X-Filterd-Recvd-Size: 2121
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 19 Jun 2018 22:37:37 +0000 (UTC)
+Message-ID: <3013aae1803c096645887864d1b161efbfba7c77.camel@perches.com>
+Subject: Re: [PATCH 1/5] net: emaclite: Use __func__ instead of hardcoded
+ name
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Michal Simek <michal.simek@xilinx.com>,
+        netdev <netdev@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 19 Jun 2018 15:37:36 -0700
+In-Reply-To: <CAHp75VcKuqnUgynqXvACS7zY5=6aRxqymGE1w3Yh8sshehSm2g@mail.gmail.com>
+References: <1529320103-7711-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+         <1529320103-7711-2-git-send-email-radhey.shyam.pandey@xilinx.com>
+         <CAHp75VcKuqnUgynqXvACS7zY5=6aRxqymGE1w3Yh8sshehSm2g@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 12:34:32AM +0200, Thomas Gleixner wrote:
-> On Tue, 19 Jun 2018, Fenghua Yu wrote:
-> > On Tue, Jun 19, 2018 at 11:12:05AM +0200, Thomas Gleixner wrote:
-> > > On Fri, 15 Jun 2018, Fenghua Yu wrote:
-> > > 
-> > > > A few new user wait instructions UMONITOR, UMWAIT, and TPAUSE are
-> > > > published in the latest Intel Instruction Set Extensions document.
-> > > > 
-> > > > Define the APIs for user or kernel to use the instructions.
-> > > 
-> > > You're not defining APIs. You're adding a pile of misdesigned helper
-> > > functions which again add static storage per compilation unit and CPUID
-> > > fiddling.
-> > > 
-> > > If you want to add proper APIs then add the stuff to the VDSO and be done
-> > > with it.
+On Wed, 2018-06-20 at 00:36 +0300, Andy Shevchenko wrote:
+> On Mon, Jun 18, 2018 at 2:08 PM, Radhey Shyam Pandey
+> <radhey.shyam.pandey@xilinx.com> wrote:
+> > Switch hardcoded function name with a reference to __func__ making
+> > the code more maintainable. Address below checkpatch warning:
 > > 
-> > The user wait instructions are mainly called by user apps; but they can
-> > be used in kernel as well.
+> > WARNING: Prefer using '"%s...", __func__' to using 'xemaclite_mdio_read',
+> > this function's name, in a string
+> > +               "xemaclite_mdio_read(phy_id=%i, reg=%x) == %x\n",
 > > 
-> > I'm planning to provide five APIs to user:
-> > 1. If user wait feature is supported
-> > 2. nsec to tsc translation
-> > 3. umonitor function that exectes UMONITOR instruction
-> > 4. umwait function that executes UMWAIT instruction
-> > 5. tpause function that executes TPAUSE instruction
+> > WARNING: Prefer using '"%s...", __func__' to using 'xemaclite_mdio_write',
+> > this function's name, in a string
+> > +               "xemaclite_mdio_write(phy_id=%i, reg=%x, val=%x)\n",
 > > 
-> > Seems 1-2 can be implemented in VDSO. But should I implement 3-5 in
-> > VDSO/kernel as well?
 > 
-> If you want a real API, then yes. If not, then an UAPI header is definitely
-> not the place for this.
+> For dev_dbg() the __func__ should be completely dropped away.
 
-Sure. I will implement the APIs in VDSO.
+Not really the same.
 
-Thanks.
+dev_dbg without CONFIG_DYNAMIC_DEBUG does not have
+the ability to prefix __func__.
 
--Fenghua
