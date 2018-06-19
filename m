@@ -2,117 +2,101 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CC8C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE01FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24FD32083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:38:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WNujjurJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24FD32083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id A7EC72075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:38:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7EC72075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965814AbeFSHh7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 03:37:59 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:59098 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937104AbeFSHh5 (ORCPT
+        id S965649AbeFSHfH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 03:35:07 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:43758 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965361AbeFSHfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:37:57 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5J7Xrbj077195;
-        Tue, 19 Jun 2018 07:37:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=oLmrTfFF5ibT/EKby+VelNTtxCNFqbuff6j6ZbTJ4lw=;
- b=WNujjurJALhfNvVcyK5ffWsKLxm11VuEHBE+PKiiWmnCEL4ZgzDoPc8kMqV0YlO8Q0u+
- +4R0581aVNWlE9G1hl6i3eY/fu99+lhKCPDSjkQJVAlOYLoUhvnHNgtsLIZ8Jt9qhCb5
- gYxshEd4REQwAaweCHUzFe2+HelgXFMV8zryLXfq5fO9WNj96MP99HRNEzULQLcUYY00
- Pj+pHqw8ji+YuNwkH325HOJlEJGsbUzgklXTR0U27gGfYliCFj9mpIsTY5zF02kA40Gv
- YbWSdbaXwfFCtBkX9lvEd+5IGHf1zYGXrUYvJJIvPZSWQzLB1jvU+DvI9GR8niLvwECj Qg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwpvv5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 07:37:25 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5J7bOr0008217
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 07:37:24 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5J7bMkR032168;
-        Tue, 19 Jun 2018 07:37:23 GMT
-Received: from mwanda (/197.157.34.185)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Jun 2018 00:37:21 -0700
-Date:   Tue, 19 Jun 2018 10:37:09 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] staging: board: drop refcount in success case
-Message-ID: <20180619073709.schatjhjoitfc3fs@mwanda>
-References: <1529347999-9316-1-git-send-email-hofrat@osadl.org>
+        Tue, 19 Jun 2018 03:35:00 -0400
+X-UUID: 7ca6e5a932f543ec85aed34fa1430df1-20180619
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 591359162; Tue, 19 Jun 2018 15:34:54 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 19 Jun 2018 15:34:52 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Tue, 19 Jun 2018 15:34:52 +0800
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH v6 09/29] drm/mediatek: add component DSI3
+Date:   Tue, 19 Jun 2018 15:34:10 +0800
+Message-ID: <1529393670-26862-10-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529393670-26862-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1529393670-26862-1-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529347999-9316-1-git-send-email-hofrat@osadl.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806190088
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 08:53:19PM +0200, Nicholas Mc Guire wrote:
->  The call to of_find_compatible_node() returns irqc_node with refcount
-> incremented thus it must be explicitly decremented here after it was
-> checked for non-NULL.
-> 
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> Fixes: commit 72ee8626eeb1 ("staging: board: Add support for translating hwirq to virq numbers")
-> ---
-> 
-> Problem located with an experimental coccinelle script
-> 
-> Patch was compile-tested with: x86_64_defconfig + STAGING=y, STAGING_BOARD=y
-> 
-> Patch is against 4.18-rc1 (localversion-next is next-20180618)
-> 
->  drivers/staging/board/board.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/staging/board/board.c b/drivers/staging/board/board.c
-> index cb6feb3..8ee48e5 100644
-> --- a/drivers/staging/board/board.c
-> +++ b/drivers/staging/board/board.c
-> @@ -64,12 +64,13 @@ int __init board_staging_gic_setup_xlate(const char *gic_match,
->  	irqc_node = of_find_compatible_node(NULL, NULL, gic_match);
->  
->  	WARN_ON(!irqc_node);
->  	if (!irqc_node)
->  		return -ENOENT;
->  
-> +	of_node_put(irqc_node);
+This patch add the component DSI3
 
-I don't feel like this is the right thing...  We should keep the
-reference until we're done with it.  Which apparently is never?
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 ++
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-But I don't know the code at all so I could be wrong.
-
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index 071f9f5aefea..17b681686471 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -228,6 +228,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
+ 	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
+ 	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		2, NULL },
++	[DDP_COMPONENT_DSI3]	= { MTK_DSI,		3, NULL },
+ 	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
+ 	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
+ 	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
+@@ -280,6 +281,7 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
+ 	    comp_id == DDP_COMPONENT_DPI1 ||
+ 	    comp_id == DDP_COMPONENT_DSI0 ||
+ 	    comp_id == DDP_COMPONENT_DSI2 ||
++	    comp_id == DDP_COMPONENT_DSI3 ||
+ 	    comp_id == DDP_COMPONENT_PWM0) {
+ 		comp->regs = NULL;
+ 		comp->clk = NULL;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+index 8d152b337f15..7413ffeb3c9d 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+@@ -51,6 +51,7 @@ enum mtk_ddp_comp_id {
+ 	DDP_COMPONENT_DSI0,
+ 	DDP_COMPONENT_DSI1,
+ 	DDP_COMPONENT_DSI2,
++	DDP_COMPONENT_DSI3,
+ 	DDP_COMPONENT_GAMMA,
+ 	DDP_COMPONENT_OD0,
+ 	DDP_COMPONENT_OD1,
+-- 
+2.12.5
 
