@@ -2,156 +2,125 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 061DDC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6385BC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8C9205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:19:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 241A0205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:19:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XQUQ8Hiy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8C9205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zTNqu0Fn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 241A0205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967187AbeFSSTR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 14:19:17 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54614 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967022AbeFSSTO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 14:19:14 -0400
-Received: by mail-wm0-f67.google.com with SMTP id o13-v6so1864472wmf.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 11:19:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=xa3cYJjMBQXv7geUsRpzb7J7TR6WDACHMUpXEH0lJ78=;
-        b=XQUQ8HiytUMtkJxq1uTkFRYSFc+hV7rAc+6octSbiRPcliRs1k4jDHlXhExi3yzGJl
-         EMVHzAmFYP+0FhQS4ek0hWqbABl2kah9WU1+POvCV0VtEkb8i4pBNPFmymkfsoH8Kixm
-         VQ0uGbHiDHMk0msTO4GlD9mW8a2vipxt2LsPA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=xa3cYJjMBQXv7geUsRpzb7J7TR6WDACHMUpXEH0lJ78=;
-        b=fWs7/ajl3YrCdBVxZ0beqhU7gh0QG6Ezf+DUK9iffAFL4pgFGYM5aHbOZH3bJ8VKiJ
-         YVuzYtaash3no6/u6Sw6ULu/XzDpFGirBeDorcJ7Jftlc37wIIoa6175bYzTjTkzSTZj
-         Ibfb5DoR8s3r6Ra8L6Yk4rv/KtnN8g6omCL7LC/TlOGfT/+VSZmqrz2iVlhl0sf+Qhjt
-         wtXVw4RWVitPS/jk4XhYnbNw6KNboS1b7mpCH+Gcq4rl3gd8EzXL+sO7RUyny74AGVd6
-         JywMpGdT2XLCmWRws2B95zuWl53lRu8TLC3diceExsqPpFSXtnPUtTvyk76I42jaol49
-         JtOw==
-X-Gm-Message-State: APt69E2Nmq7XKneLZgiSSzdEAHQISbnSsupEYbdDddEG3rJ1+DwrAKJ2
-        t0vcyK49xyioFk3ZI9/yZ0CLCTcP+yI=
-X-Google-Smtp-Source: ADUXVKJSTH3FlF87tkcLWhrcNbEXekpftEQqYPnW8wyRvzzEg5C491QRnuT2AUhxFyTt/VOq2ARXaw==
-X-Received: by 2002:a50:8bfa:: with SMTP id n55-v6mr15635923edn.216.1529432353127;
-        Tue, 19 Jun 2018 11:19:13 -0700 (PDT)
-Received: from [192.168.178.129] (f140230.upc-f.chello.nl. [80.56.140.230])
-        by smtp.gmail.com with ESMTPSA id u23-v6sm716862edm.7.2018.06.19.11.19.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 11:19:11 -0700 (PDT)
-Subject: Re: [PATCH V2] brcmfmac: stop watchdog before detach and free
- everything
-To:     Michael Trimarchi <michael@amarulasolutions.com>
-References: <1527493857-2220-1-git-send-email-michael@amarulasolutions.com>
- <5B0D1C9E.4000800@broadcom.com> <20180530090633.GA15390@panicking>
-Cc:     Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        Ian Molton <ian@mnementh.co.uk>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <5B294920.5050909@broadcom.com>
-Date:   Tue, 19 Jun 2018 20:19:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.0
+        id S967208AbeFSSTt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 14:19:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967022AbeFSSTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 14:19:48 -0400
+Received: from jouet.infradead.org (179.176.7.12.dynamic.adsl.gvt.net.br [179.176.7.12])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7060E205C9;
+        Tue, 19 Jun 2018 18:19:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529432387;
+        bh=FSxjvmbBgYA2qWx0aQERtINeV4bPNneWazpd/Daj9/E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zTNqu0FnGEC2Cqd9dwpabkn6RH7CFtHs0heb9WblyKx4Oao5JpeW4iIvAJYbfHAnu
+         x+glLmyIOm94/Vo3BLsFb2IZooGniDULGe/lYtfmBFlGNeSlYZA5/XdOYtaV84wEGO
+         ASLIpMAJlr2eRqRuX1xwAD1Ny6BFzM4BK07zjqBI=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 9811E1401E5; Tue, 19 Jun 2018 15:19:43 -0300 (-03)
+Date:   Tue, 19 Jun 2018 15:19:43 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Leo Yan <leo.yan@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Kim Phillips <kim.phillips@arm.com>
+Subject: Re: [PATCH v1 0/6] perf cs-etm: Fix tracing packet handling and
+ minor refactoring
+Message-ID: <20180619181943.GL20477@kernel.org>
+References: <1529298599-3876-1-git-send-email-leo.yan@linaro.org>
+ <CANLsYkyxuz+tPrC7wb1omsw+qj=7ZB5t6FRbqZz54994g62q6g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180530090633.GA15390@panicking>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANLsYkyxuz+tPrC7wb1omsw+qj=7ZB5t6FRbqZz54994g62q6g@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/30/2018 11:06 AM, Michael Trimarchi wrote:
-> Using built-in in kernel image without a firmware in filesystem
-> or in the kernel image can lead to a kernel NULL pointer deference.
-> Watchdog need to be stopped in brcmf_sdio_remove
->
-> The system is going down NOW!
-> [ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual address 000002f8
-> Sent SIGTERM to all processes
-> [ 1348.121412] Mem abort info:
-> [ 1348.126962]   ESR = 0x96000004
-> [ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
-> [ 1348.135948]   SET = 0, FnV = 0
-> [ 1348.138997]   EA = 0, S1PTW = 0
-> [ 1348.142154] Data abort info:
-> [ 1348.145045]   ISV = 0, ISS = 0x00000004
-> [ 1348.148884]   CM = 0, WnR = 0
-> [ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
-> [ 1348.158475] [00000000000002f8] pgd=0000000000000000
-> [ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-> [ 1348.168927] Modules linked in: ipv6
-> [ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted 4.17.0-rc5-next-20180517 #18
-> [ 1348.180757] Hardware name: Amarula A64-Relic (DT)
-> [ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
-> [ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
-> [ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
-> [ 1348.200253] sp : ffff00000b85be30
-> [ 1348.203561] x29: ffff00000b85be30 x28: 0000000000000000
-> [ 1348.208868] x27: ffff00000b6cb918 x26: ffff80003b990638
-> [ 1348.214176] x25: ffff0000087b1a20 x24: ffff80003b94f800
-> [ 1348.219483] x23: ffff000008e620c8 x22: ffff000008f0b660
-> [ 1348.224790] x21: ffff000008c6a858 x20: 00000000fffffe00
-> [ 1348.230097] x19: ffff80003b94f800 x18: 0000000000000001
-> [ 1348.235404] x17: 0000ffffab2e8a74 x16: ffff0000080d7de8
-> [ 1348.240711] x15: 0000000000000000 x14: 0000000000000400
-> [ 1348.246018] x13: 0000000000000400 x12: 0000000000000001
-> [ 1348.251324] x11: 00000000000002c4 x10: 0000000000000a10
-> [ 1348.256631] x9 : ffff00000b85bc40 x8 : ffff80003be11870
-> [ 1348.261937] x7 : ffff80003dfc7308 x6 : 000000078ff08b55
-> [ 1348.267243] x5 : 00000139e1058400 x4 : 0000000000000000
-> [ 1348.272550] x3 : dead000000000100 x2 : 958f2788d6618100
-> [ 1348.277856] x1 : 00000000fffffe00 x0 : 0000000000000000
+Em Tue, Jun 19, 2018 at 11:46:02AM -0600, Mathieu Poirier escreveu:
+> On Sun, 17 Jun 2018 at 23:10, Leo Yan <leo.yan@linaro.org> wrote:
+> >
+> > Due the current code is missing to handle cs-etm start tracing packet
+> > and CS_ETM_TRACE_ON packet, we fail to generate branch sample for them.
+> >
+> > This patch series is to fix cs-etm tracing packet handling:
+> >
+> > Patch 0001 is to add invalid address macro for readable coding;
+> >
+> > Patch 0002 is one minor fixing to return error code for instruction
+> > sample failure;
+> >
+> > Patches 0003~0006 are fixing patches for start tracing packet
+> > and CS_ETM_TRACE_ON packet.
+> >
+> > This patch series is applied on acme tree [1] on branch perf/core with
+> > latest commit: e238cf2e3d2e ("perf intel-pt: Fix packet decoding of CYC
+> > packets").  Also applied successfully this patch series on Linus tree
+> > on 4.18-rc1.
+> >
+> > This patch series has been verified on Hikey620 platform with below two
+> > commands:
+> > perf script --itrace=i10000il128 -F cpu,event,ip,addr,sym -k ./vmlinux
+> > perf script -F cpu,event,ip,addr,sym -k ./vmlinux
+> >
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
+> >
+> >
+> > Leo Yan (6):
+> >   perf cs-etm: Introduce invalid address macro
+> >   perf cs-etm: Bail out immediately for instruction sample failure
+> >   perf cs-etm: Fix start tracing packet handling
+> >   perf cs-etm: Support dummy address value for CS_ETM_TRACE_ON packet
+> >   perf cs-etm: Generate branch sample when receiving a CS_ETM_TRACE_ON
+> >     packet
+> >   perf cs-etm: Generate branch sample for CS_ETM_TRACE_ON packet
+> >
+> >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++--
+> >  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
+> >  tools/perf/util/cs-etm.c                        | 71 +++++++++++++++++++++----
+> >  3 files changed, 68 insertions(+), 14 deletions(-)
+> 
+> Good day Arnaldo,
+> 
+> I am good with this set:
+> 
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> Please consider for inclusion in your tree if you are satisfied with the work.
 
-Forgot about this one.
+I'll take a look and get it into perf/core, now I'm concentrating on
+perf/urgent work.
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> ---
->   drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 7 +++++++
->   1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-> index 412a05b..061f69d 100644
-> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-> @@ -4294,6 +4294,13 @@ void brcmf_sdio_remove(struct brcmf_sdio *bus)
->   	brcmf_dbg(TRACE, "Enter\n");
->
->   	if (bus) {
-> +		/* Stop watchdog task */
-> +		if (bus->watchdog_tsk) {
-> +			send_sig(SIGTERM, bus->watchdog_tsk, 1);
-> +			kthread_stop(bus->watchdog_tsk);
-> +			bus->watchdog_tsk = NULL;
-> +		}
-> +
->   		/* De-register interrupt handler */
->   		brcmf_sdiod_intr_unregister(bus->sdiodev);
->
->
+Thanks,
 
+- Arnaldo
