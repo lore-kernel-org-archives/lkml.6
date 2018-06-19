@@ -2,136 +2,192 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F80C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 416D7C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F09E20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3B2120661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="bBpTNjNM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F09E20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="08IumoFB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3B2120661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967122AbeFSQLM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:11:12 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42458 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967032AbeFSQKA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:10:00 -0400
-Received: by mail-wr0-f196.google.com with SMTP id w10-v6so224839wrk.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ADA5Q+NCfXV/mZjpNHccIMsB+3ZlXTeJHda7DVng7Y8=;
-        b=bBpTNjNMWGfBcInQXTydKWpkkzcjkPqmELo2IC3aJzFG5vhhO68Kl96rVhzwWD1lef
-         j8cQ0jxsj22Ss3QHCRSC+GhP3MS/5v5XGYgz5neFqGnCIXtslLfJlF3XIr8X3xS/S68C
-         JvpsMO1HZjwTdBmbFzyehVZBc2J6s6kEK2+NUivE+WXhDCEM21uNdaqEEMW8XTR4MZx1
-         5Fm8dpGDSFkNYlZJLR7W7U7pjEhJhw+GytVpU9eirODwjqU16uxel0nkHnYZ+bzAlKKN
-         9LJju5NCLurKsHI9elnm35xyE/EHyMAM6ZMkmOcM0kmDP56stxfuYo0hd53yRDfXfVGo
-         1rxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ADA5Q+NCfXV/mZjpNHccIMsB+3ZlXTeJHda7DVng7Y8=;
-        b=MXfmbRjhtnae8dJAqlTccwNmtjEsyUczlVoPkJFGQxkWrXMltf+FmZ+GyP3Ex5UFgG
-         h+8iIAcCPGKGp4kpQ9QjFmoQzYhJcP+fUd/AmP7vPSIh4katAUdpd9fYk9DtKdbYa954
-         AvODcYGQKdGEdT6ixMrwvNNtpLcZhE0a4e3yQ1uFlMsqP5xWrfSr7sysQC0EqGxmHSZb
-         AOVJsfbeZIu16XWZeldHVbbw2rvuXAzCOysROQH4CEpptZKx59pP5ThTLEjGBuXw1dU6
-         90GpJ+VJ7pycd/WbrWH5oJ0PwsDkpL/q/Wkl9GaABPpCxTI7nZYP8ubzo/8Xn3FNTL47
-         YSUA==
-X-Gm-Message-State: APt69E3hc12RJRf0mp1t2Z2Z9/yibdy4y30N6GFi8DWgYuaisx/Z4eq+
-        FCtOdk//yExXfKwvQGXlDBuWew==
-X-Google-Smtp-Source: ADUXVKIjwij/lqALI0QK9YRl+rz93jyfhcl1g3LG1YppsoNM97E1BP/TFx/dIhp5JSeAX6U1YLHj9g==
-X-Received: by 2002:adf:9d02:: with SMTP id k2-v6mr14388213wre.213.1529424599631;
-        Tue, 19 Jun 2018 09:09:59 -0700 (PDT)
-Received: from brgl-bgdev.lan (LFbn-1-7080-22.w90-116.abo.wanadoo.fr. [90.116.249.22])
-        by smtp.gmail.com with ESMTPSA id 74-v6sm619327wmt.31.2018.06.19.09.09.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 09:09:58 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Rob Herring <robh@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 1/3] net: ethernet: fix suspend/resume in davinci_emac
-Date:   Tue, 19 Jun 2018 18:09:48 +0200
-Message-Id: <20180619160950.6283-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180619160950.6283-1-brgl@bgdev.pl>
-References: <20180619160950.6283-1-brgl@bgdev.pl>
+        id S967129AbeFSQLW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:11:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966480AbeFSQLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:11:19 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 872AB20652;
+        Tue, 19 Jun 2018 16:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529424679;
+        bh=yXHp+gHjnUtp6PJ0eI5OXBNNNDqSGffcH7gfSJKJs9Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=08IumoFBZbn07SR8gp0R9OjhxY9VCdV9zGaXFxP3pXDVYTUyWsVM/yqQ8hOjj7g95
+         JGFVStUWs5GcS1BsVJCtFPLUaOHlfcpqLYW86Jt3LBhBBq8xAEf1JGx25Hfgdxe0UR
+         2pEZklF37S3B0KwgBJTfMtHVvdyXr+5Cb0Gxz5O8=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-arch@vger.kernel.org, x86@kernel.org
+Subject: [PATCH -tip v6 14/27] kprobes/x86: Don't call ->break_handler() in x86 kprobes
+Date:   Wed, 20 Jun 2018 01:10:55 +0900
+Message-Id: <152942465549.15209.15889693025972771135.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152942424698.15209.15245996287444292393.stgit@devbox>
+References: <152942424698.15209.15245996287444292393.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Don't call ->break_handler() and remove break_handler
+related code from x86 since that was only used by jprobe
+which got removed.
 
-This patch reverts commit 3243ff2a05ec ("net: ethernet: davinci_emac:
-Deduplicate bus_find_device() by name matching") and adds a comment
-which should stop anyone from reintroducing the same "fix" in the future.
-
-We can't use bus_find_device_by_name() here because the device name is
-not guaranteed to be 'davinci_mdio'. On some systems it can be
-'davinci_mdio.0' so we need to use strncmp() against the first part of
-the string to correctly match it.
-
-Fixes: 3243ff2a05ec ("net: ethernet: davinci_emac: Deduplicate bus_find_device() by name matching")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/net/ethernet/ti/davinci_emac.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ Changes in v6:
+  - Move post handler emulation code into kprobe_ftrace_handler()
+---
+ arch/x86/include/asm/kprobes.h   |    2 +-
+ arch/x86/kernel/kprobes/common.h |   10 ---------
+ arch/x86/kernel/kprobes/core.c   |    7 ------
+ arch/x86/kernel/kprobes/ftrace.c |   42 ++++++++++----------------------------
+ 4 files changed, 12 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-index 06d7c9e4dcda..a1a6445b5a7e 100644
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1385,6 +1385,11 @@ static int emac_devioctl(struct net_device *ndev, struct ifreq *ifrq, int cmd)
- 		return -EOPNOTSUPP;
+diff --git a/arch/x86/include/asm/kprobes.h b/arch/x86/include/asm/kprobes.h
+index 06782c2efa04..c8cec1b39b88 100644
+--- a/arch/x86/include/asm/kprobes.h
++++ b/arch/x86/include/asm/kprobes.h
+@@ -78,7 +78,7 @@ struct arch_specific_insn {
+ 	 * boostable = true: This instruction has been boosted: we have
+ 	 * added a relative jump after the instruction copy in insn,
+ 	 * so no single-step and fixup are needed (unless there's
+-	 * a post_handler or break_handler).
++	 * a post_handler).
+ 	 */
+ 	bool boostable;
+ 	bool if_modifier;
+diff --git a/arch/x86/kernel/kprobes/common.h b/arch/x86/kernel/kprobes/common.h
+index ae38dccf0c8f..2b949f4fd4d8 100644
+--- a/arch/x86/kernel/kprobes/common.h
++++ b/arch/x86/kernel/kprobes/common.h
+@@ -105,14 +105,4 @@ static inline unsigned long __recover_optprobed_insn(kprobe_opcode_t *buf, unsig
  }
+ #endif
  
-+static int match_first_device(struct device *dev, void *data)
-+{
-+	return !strncmp(dev_name(dev), "davinci_mdio", 12);
-+}
-+
- /**
-  * emac_dev_open - EMAC device open
-  * @ndev: The DaVinci EMAC network adapter
-@@ -1484,8 +1489,14 @@ static int emac_dev_open(struct net_device *ndev)
+-#ifdef CONFIG_KPROBES_ON_FTRACE
+-extern int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-			   struct kprobe_ctlblk *kcb);
+-#else
+-static inline int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-				  struct kprobe_ctlblk *kcb)
+-{
+-	return 0;
+-}
+-#endif
+ #endif
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 1b2d1acba810..0ac16a0d93e5 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -709,13 +709,6 @@ int kprobe_int3_handler(struct pt_regs *regs)
+ 		regs->ip = (unsigned long)addr;
+ 		preempt_enable_no_resched();
+ 		return 1;
+-	} else if (kprobe_running()) {
+-		p = __this_cpu_read(current_kprobe);
+-		if (p->break_handler && p->break_handler(p, regs)) {
+-			if (!skip_singlestep(p, regs, kcb))
+-				setup_singlestep(p, regs, kcb, 0);
+-			return 1;
+-		}
+ 	} /* else: not a kprobe fault; let the kernel handle it */
  
- 	/* use the first phy on the bus if pdata did not give us a phy id */
- 	if (!phydev && !priv->phy_id) {
--		phy = bus_find_device_by_name(&mdio_bus_type, NULL,
--					      "davinci_mdio");
-+		/* NOTE: we can't use bus_find_device_by_name() here because
-+		 * the device name is not guaranteed to be 'davinci_mdio'. On
-+		 * some systems it can be 'davinci_mdio.0' so we need to use
-+		 * strncmp() against the first part of the string to correctly
-+		 * match it.
-+		 */
-+		phy = bus_find_device(&mdio_bus_type, NULL, NULL,
-+				      match_first_device);
- 		if (phy) {
- 			priv->phy_id = dev_name(phy);
- 			if (!priv->phy_id || !*priv->phy_id)
--- 
-2.17.1
+ 	preempt_enable_no_resched();
+diff --git a/arch/x86/kernel/kprobes/ftrace.c b/arch/x86/kernel/kprobes/ftrace.c
+index 8dc0161cec8f..02a6dd1b6bd0 100644
+--- a/arch/x86/kernel/kprobes/ftrace.c
++++ b/arch/x86/kernel/kprobes/ftrace.c
+@@ -25,36 +25,6 @@
+ 
+ #include "common.h"
+ 
+-static nokprobe_inline
+-void __skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-		      struct kprobe_ctlblk *kcb, unsigned long orig_ip)
+-{
+-	/*
+-	 * Emulate singlestep (and also recover regs->ip)
+-	 * as if there is a 5byte nop
+-	 */
+-	regs->ip = (unsigned long)p->addr + MCOUNT_INSN_SIZE;
+-	if (unlikely(p->post_handler)) {
+-		kcb->kprobe_status = KPROBE_HIT_SSDONE;
+-		p->post_handler(p, regs, 0);
+-	}
+-	__this_cpu_write(current_kprobe, NULL);
+-	if (orig_ip)
+-		regs->ip = orig_ip;
+-}
+-
+-int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-		    struct kprobe_ctlblk *kcb)
+-{
+-	if (kprobe_ftrace(p)) {
+-		__skip_singlestep(p, regs, kcb, 0);
+-		preempt_enable_no_resched();
+-		return 1;
+-	}
+-	return 0;
+-}
+-NOKPROBE_SYMBOL(skip_singlestep);
+-
+ /* Ftrace callback handler for kprobes -- called under preepmt disabed */
+ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+ 			   struct ftrace_ops *ops, struct pt_regs *regs)
+@@ -80,7 +50,17 @@ void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+ 		__this_cpu_write(current_kprobe, p);
+ 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
+ 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
+-			__skip_singlestep(p, regs, kcb, orig_ip);
++			/*
++			 * Emulate singlestep (and also recover regs->ip)
++			 * as if there is a 5byte nop
++			 */
++			regs->ip = (unsigned long)p->addr + MCOUNT_INSN_SIZE;
++			if (unlikely(p->post_handler)) {
++				kcb->kprobe_status = KPROBE_HIT_SSDONE;
++				p->post_handler(p, regs, 0);
++			}
++			regs->ip = orig_ip;
++			__this_cpu_write(current_kprobe, NULL);
+ 			preempt_enable_no_resched();
+ 		}
+ 		/*
 
