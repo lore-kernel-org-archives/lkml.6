@@ -2,107 +2,150 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B5BC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF1FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C81320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:41:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C81320693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D240020875
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:45:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KKxeGYYL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D240020875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755718AbeFSGlE (ORCPT
+        id S1755816AbeFSGp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:41:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46980 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750816AbeFSGlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:41:02 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1AA3281A4E99;
-        Tue, 19 Jun 2018 06:41:01 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-116-135.ams2.redhat.com [10.36.116.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 567847C37;
-        Tue, 19 Jun 2018 06:40:55 +0000 (UTC)
-Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
-To:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     "H. J. Lu" <hjl.tools@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
- <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
- <1528403417.5265.35.camel@2b52.sc.intel.com>
- <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
- <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
- <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de>
- <CAMe9rOoCiXQ4iVD3j_AHGrvEXtoaVVZVs7H7fCuqNEuuR5j+2Q@mail.gmail.com>
- <CALCETrXO8R+RQPhJFk4oiA4PF77OgSS2Yro_POXQj1zvdLo61A@mail.gmail.com>
- <CAMe9rOpLxPussn7gKvn0GgbOB4f5W+DKOGipe_8NMam+Afd+RA@mail.gmail.com>
- <CALCETrWmGRkQvsUgRaj+j0CP4beKys+TT5aDR5+18nuphwr+Cw@mail.gmail.com>
- <CAMe9rOpzcCdje=bUVs+C1WrY6GuwA-8AUFVLOG325LGz7KHJxw@mail.gmail.com>
- <alpine.DEB.2.21.1806122046520.1592@nanos.tec.linutronix.de>
- <CAMe9rOrGjJf0aMnUjAP38MqvOiW3=iXGQjcUT3O=f9pE85hXaw@mail.gmail.com>
- <CALCETrVsh5t-V1Sm88LsZE_+DS0GE_bMWbcoX3SjD6GnrB08Pw@mail.gmail.com>
- <CAGXu5jK0gospOXRpN6zYiQPXOZeE=YpVAz2qu4Zc3-32v85+EQ@mail.gmail.com>
-From:   Florian Weimer <fweimer@redhat.com>
-Message-ID: <e152e1a7-e3b1-c3c4-ce1a-874e97300b37@redhat.com>
-Date:   Tue, 19 Jun 2018 08:40:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jK0gospOXRpN6zYiQPXOZeE=YpVAz2qu4Zc3-32v85+EQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 19 Jun 2018 06:41:01 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 19 Jun 2018 06:41:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
+        Tue, 19 Jun 2018 02:45:58 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:43400 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751767AbeFSGn4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:43:56 -0400
+Received: by mail-pl0-f68.google.com with SMTP id c41-v6so10395577plj.10
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 23:43:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=P8CdaOGVTAyb3AJS+5wYUO46UJr+fNO9qIgKbngI8F4=;
+        b=KKxeGYYLkWUwZZwkIQ7QIq8XXif2+b7tDEf1W0NIBt6qyu94zpjhc974ayq9ovGUwr
+         uVeV839nW/akXvgylufQNt1T/ttuPvCt8o0A11m+IZkshi/6fb5y0KtEi3A/wsmoCsUH
+         n0JzB35hw5g5JWEPpCzc/gp4Rlj+JyR+YqFdY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=P8CdaOGVTAyb3AJS+5wYUO46UJr+fNO9qIgKbngI8F4=;
+        b=dUnrPIueNpAcooUVqohqnz1qKdKXKG7BtNgNZwi36E7y/rUDDi6xF279NIzPostvuY
+         zoO0LloaAG+FeTwvhPFipN8Hlr7I4lPKpgctgZ7+mnb5fB9QjCvntRVNR5CsPU2SFVzd
+         xBxPSF+zz7Z9XxKAgB7rSWMZPfpMzLtoFlhwFl4VVh2Fn8ktMIcay/XmZ6ffZx8tAqXR
+         zD0T3+cuzYUQ15RWlrj4qwYfeRAbXVMWkg6fuv93uHDmO7EuNal9YQRpea802b6BHg9+
+         LyKM7LWftg5/Z9YGQvKSO6FaRA1PHPPuf1+AGGXrOY9zw7enXgXb5BC5PXNef7a9nOj5
+         yrnw==
+X-Gm-Message-State: APt69E3MAiota12cXSPaY1GkmPr9dTjwam78g/3StG53I0fERdMHlopc
+        m3hv3vNRNHOgiRp4o/5J7ksmOg==
+X-Google-Smtp-Source: ADUXVKLce4gwW7GCagKxS1ooXxLGwaiiEyKWAyiTiL6laI4gppFuX6/yAyhkeKuyztXY0I0SblrLZA==
+X-Received: by 2002:a17:902:6a89:: with SMTP id n9-v6mr17338099plk.302.1529390636361;
+        Mon, 18 Jun 2018 23:43:56 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id r26-v6sm40889214pfj.180.2018.06.18.23.43.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 23:43:55 -0700 (PDT)
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     catalin.marinas@arm.com, will.deacon@arm.com,
+        akpm@linux-foundation.org, ard.biesheuvel@linaro.org
+Cc:     tbaicar@codeaurora.org, bhsharma@redhat.com, dyoung@redhat.com,
+        james.morse@arm.com, mark.rutland@arm.com, al.stone@linaro.org,
+        graeme.gregory@linaro.org, hanjun.guo@linaro.org,
+        lorenzo.pieralisi@arm.com, sudeep.holla@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v2 0/4] arm64: kexec,kdump: fix boot failures on acpi-only system
+Date:   Tue, 19 Jun 2018 15:44:20 +0900
+Message-Id: <20180619064424.6642-1-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/19/2018 02:52 AM, Kees Cook wrote:
-> Adding Florian to CC, but if something gets CET enabled, it really
-> shouldn't have a way to turn it off. If there's a way to turn it off,
-> all the ROP research will suddenly turn to exactly one gadget before
-> doing the rest of the ROP: turning off CET. Right now ROP is: use
-> stack-pivot gadget, do everything else. Allowed CET to turn off will
-> just add one step: use CET-off gadget, use stack-pivot gadget, do
-> everything else. :P
-> 
-> Following Linus's request for "slow introduction" of new security
-> features, likely the best approach is to default to "relaxed" (with a
-> warning about down-grades), and allow distros/end-users to pick
-> "forced" if they know their libraries are all CET-enabled.
+This patch series is a set of bug fixes to address kexec/kdump
+failures which are sometimes observed on ACPI-only system and reported
+in LAK-ML before.
 
-The dynamic linker can tell beforehand (before executing any user code) 
-whether a process image supports CET.  So there doesn't have to be 
-anything gradual about it per se to preserve backwards compatibility.
+In short, the phenomena are:
+1. kexec'ed kernel can fail to boot because some ACPI table is corrupted
+   by a new kernel (or other data) being loaded into System RAM. Currently
+   kexec may possibly allocate space ignoring such "reserved" regions.
+   We will see no messages after "Bye!"
 
-The idea to turn off CET probably comes from the desire to support 
-dlopen.  I'm not sure if this is really necessary because the complexity 
-is rather nasty.  (We currently do something similar for executable 
-stacks.)  I'd rather have a switch to turn off the feature upon process 
-start.  Things like NSS and PAM modules need to be recompiled early.  (I 
-hope that everything that goes directly to the network via custom 
-protocols or hardware such as smartcards is proxied via daemons these days.)
+2. crash dump (kdump) kernel can fail to boot and get into panic due to
+   an alignment fault when accessing ACPI tables. This can happen because
+   those tables are not always properly aligned while they are mapped
+   non-cacheable (ioremap'ed) as they are not recognized as part of System
+   RAM under the current implementation.
 
-Thanks,
-Florian
+After discussing several possibilities to address those issues,
+the agreed approach, in my understanding, is
+* to add resource entries for every "reserved", i.e. memblock_reserve(),
+  regions to /proc/iomem.
+  (NOMAP regions, also marked as "reserved," remains at top-level for
+  backward compatibility. User-space can tell the difference between
+  reserved-system-ram and reserved-address-space.)
+* For case (1), user space (kexec-tools) should rule out such regions
+  in searching for free space for loaded data.
+* For case (2), the kernel should access ACPI tables by mapping
+  them with appropriate memory attributes described in UEFI memory map.
+  (This means that it doesn't require any changes in /proc/iomem, and
+  hence user space.)
+
+Please find past discussions about /proc/iomem in [1].
+--- more words from James ---
+Our attempts to fix this just in the kernel reached a dead end, because Kdump
+needs to include reserved-system-ram, whereas kexec has to avoid it. User-space
+needs to be able to tell reserved-system-ram and reserved-address-space apart.
+Hence we need to expose that information, and pick it up in user-space.
+
+Patched-kernel and unpatch-user-space will work the same way it does today, as
+the additional reserved regions are ignored by user-space.
+
+Unpatched-kernel and patched-user-space will also work the same way it does
+today as the additional reserved regions are missing.
+--->8---
+
+Patch#1 addresses kexec case, for which you are also required to update
+user space. See necessary patches in [2]. If you want to review Patch#1,
+please also take a look at and review [2].
+
+Patch#2 to #4 addresses kdump case. This is a revised version after
+Ard's comments.[3]
+
+Changes in v2 (2018, June 19, 2018)
+* re-organise v1's patch#2 and #3 into v2's #2, #3 and #4
+  not to break bisect
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-March/565980.html
+[2] https://git.linaro.org/people/takahiro.akashi/kexec-tools.git arm64/resv_mem
+[3] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-April/573655.html
+
+AKASHI Takahiro (3):
+  efi/arm: map UEFI memory map even w/o runtime services enabled
+  efi/arm: map UEFI memory map earlier on boot
+  arm64: acpi: fix alignment fault in accessing ACPI
+
+James Morse (1):
+  arm64: export memblock_reserve()d regions via /proc/iomem
+
+ arch/arm64/include/asm/acpi.h      | 23 ++++++++++++------
+ arch/arm64/kernel/acpi.c           | 11 +++------
+ arch/arm64/kernel/setup.c          | 38 ++++++++++++++++++++++++++++++
+ drivers/firmware/efi/arm-runtime.c | 27 ++++++++++-----------
+ init/main.c                        |  3 +++
+ 5 files changed, 72 insertions(+), 30 deletions(-)
+
+-- 
+2.17.0
+
