@@ -1,160 +1,136 @@
 Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB61C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A78BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10F2F20661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Pf4IDyTk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10F2F20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F7A720020
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7A720020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966923AbeFSPtZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:49:25 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33863 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966597AbeFSPtW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:49:22 -0400
-Received: by mail-lf0-f65.google.com with SMTP id v84-v6so268017lfa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PYkioP9HWK9UXany/VJq8BSZNE8uC7ACgeTcxVaxsE8=;
-        b=Pf4IDyTkZfrGoC8+IMhKDTdrguzrx6iSe+Trt9fhopmkclT2r3+gdx8DQKZKsPR39U
-         V4voMKOrExnROGu0tCXd1Pk9YE2mB3yvOtXwS+kTmHmkX45+LXwhzA/WFWiuwBTdKH1x
-         04Gs+IhXBK99/ayhPhlaLJWi0+TF1Ks8Jne6ZZvQt6ey9vKBZQA58IN9sfQH76FD1fQc
-         QHRIcxvxLuznJwviEJt3vS9vGWX+XKJcKU9D66XC9k3yx80fRVAoTEuQ4wHsGNcGleTU
-         U/X+MjyUIsTAnTEmxI/lymrOOgBB0qYQlVz1Wo4cPP3JQ/JUvSUcdQs3ET4ZljUf1z5o
-         BtXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PYkioP9HWK9UXany/VJq8BSZNE8uC7ACgeTcxVaxsE8=;
-        b=KY0T0pBA/ZyK0BJ51RLAkfsaxPUX3Ve0uEP38wTIddZAIPSi/mxbx0ymsNZgU7yt+b
-         KeGEWd8uqKRbFY0OFZamVzOjIHNr9TRFmNteUKJQ/4rv6znQzjeBQODtcWfm8sII2vXC
-         PmRVLDwMQ3OvHk6INaFB+bVv352SOukXTOrq1TlEpBIu2VwMf+qXBEt+Plrx/18RLj/v
-         Z823FUx4knfwUGCXMjhDVnWqeltumiXMkQaaaxiQIOWnagNk/9o/VIJLyDGLpf08E1IJ
-         GS4CWOnSFZmrcB8tktfHdCkFpJz7KggTZ2ZFownJJmJ5o9px8YsttRn+v6bed3ejjCsB
-         QlZQ==
-X-Gm-Message-State: APt69E3GmJFVyWwFdtEvYC6LpprUC+Qy4ABW5/10kD5GNbdxI5uHGFCl
-        ymPs1OJM1GB7falEMvdN26YCAL3nzqiyBTR+ZjOs0bM=
-X-Google-Smtp-Source: ADUXVKIHLcA3DD6w2SsufewEo1RLpjP4zr1J+YUZAEfmY7HqpPcb0QnmOEJ509iQmzEQGrmZjNkqGk1HLs5p9qLmNDY=
-X-Received: by 2002:a19:d5c7:: with SMTP id m190-v6mr1056772lfg.12.1529423361355;
- Tue, 19 Jun 2018 08:49:21 -0700 (PDT)
+        id S966938AbeFSPt3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:49:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:52914 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966597AbeFSPt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:49:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AE111596;
+        Tue, 19 Jun 2018 08:49:26 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D08A93F557;
+        Tue, 19 Jun 2018 08:49:25 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 80E481AE3797; Tue, 19 Jun 2018 16:50:01 +0100 (BST)
+Date:   Tue, 19 Jun 2018 16:50:01 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     YaoJun <yaojun8558363@gmail.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: mm: mark tramp_pg_dir read-only
+Message-ID: <20180619155001.GP13984@arm.com>
+References: <20180530044806.18449-1-yaojun8558363@gmail.com>
+ <20180530091457.GB2452@arm.com>
+ <CAKv+Gu8Zc7eQbG-Ww51GXUCEmhe2J03vbq5vVdyaKra-s13KrA@mail.gmail.com>
+ <20180619152035.GM13984@arm.com>
+ <CAKv+Gu-Mad64U63jjuKGjhg=h2wdoEKm2vywzATBYr-t_UY_bQ@mail.gmail.com>
+ <20180619152805.GN13984@arm.com>
+ <CAKv+Gu81zgvcLd-N_MMENykxcm6ENvvfCuWOoMGsrfUf9Usy5g@mail.gmail.com>
+ <20180619153754.GO13984@arm.com>
+ <CAKv+Gu-x-e+M7_28m=zMeZ2=1p6DXWvu2L4K988jpfYjK+=JaA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180612080912.7827-1-peter.enderborg@sony.com> <20180612080912.7827-3-peter.enderborg@sony.com>
-In-Reply-To: <20180612080912.7827-3-peter.enderborg@sony.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 19 Jun 2018 11:49:10 -0400
-Message-ID: <CAHC9VhQezCR-P_5-RV1dGYcoP40k-eCC4GYqUOANvfggzRmV+A@mail.gmail.com>
-Subject: Re: [PATCH 02/13] selinux: Cleanup printk logging in ebitmap
-To:     peter.enderborg@sony.com
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        James Morris <jmorris@namei.org>, danielj@mellanox.com,
-        dledford@redhat.com, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, serge@hallyn.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-x-e+M7_28m=zMeZ2=1p6DXWvu2L4K988jpfYjK+=JaA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
-<peter.enderborg@sony.com> wrote:
->
-> Replace printk with pr_* to avoid checkpatch warnings.
->
-> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
-> ---
->  security/selinux/ss/ebitmap.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
+On Tue, Jun 19, 2018 at 05:40:26PM +0200, Ard Biesheuvel wrote:
+> On 19 June 2018 at 17:37, Will Deacon <will.deacon@arm.com> wrote:
+> > On Tue, Jun 19, 2018 at 05:29:03PM +0200, Ard Biesheuvel wrote:
+> >> On 19 June 2018 at 17:28, Will Deacon <will.deacon@arm.com> wrote:
+> >> > On Tue, Jun 19, 2018 at 05:23:41PM +0200, Ard Biesheuvel wrote:
+> >> >> On 19 June 2018 at 17:20, Will Deacon <will.deacon@arm.com> wrote:
+> >> >> > Hi Ard,
+> >> >> >
+> >> >> > Sorry, I forgot to reply to this.
+> >> >> >
+> >> >> > On Wed, May 30, 2018 at 11:53:20AM +0200, Ard Biesheuvel wrote:
+> >> >> >> On 30 May 2018 at 11:14, Will Deacon <will.deacon@arm.com> wrote:
+> >> >> >> > On Wed, May 30, 2018 at 12:48:06PM +0800, YaoJun wrote:
+> >> >> >> >> To protect against KSMA(Kernel Space Mirroring Attack), make
+> >> >> >> >> tramp_pg_dir read-only. The principle of KSMA is to insert a
+> >> >> >> >> carefully constructed PGD entry into the translation table.
+> >> >> >> >> The type of this entry is block, which maps the kernel text
+> >> >> >> >> and its access permissions bits are 01. The user process can
+> >> >> >> >> then modify kernel text directly through this mapping. In this
+> >> >> >> >> way, an arbitrary write can be converted to multiple arbitrary
+> >> >> >> >> writes.
+> >> >> >> >>
+> >> >> >> >> Signed-off-by: YaoJun <yaojun8558363@gmail.com>
+> >> >> >> >> ---
+> >> >> >> >>  arch/arm64/mm/mmu.c | 4 ++++
+> >> >> >> >>  1 file changed, 4 insertions(+)
+> >> >> >> >>
+> >> >> >> >> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> >> >> >> >> index 2dbb2c9f1ec1..ac4b22c7e435 100644
+> >> >> >> >> --- a/arch/arm64/mm/mmu.c
+> >> >> >> >> +++ b/arch/arm64/mm/mmu.c
+> >> >> >> >> @@ -551,6 +551,10 @@ static int __init map_entry_trampoline(void)
+> >> >> >> >>       __create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
+> >> >> >> >>                            prot, pgd_pgtable_alloc, 0);
+> >> >> >> >>
+> >> >> >> >> +     update_mapping_prot(__pa_symbol(tramp_pg_dir),
+> >> >> >> >> +                             (unsigned long)tramp_pg_dir,
+> >> >> >> >> +                             PGD_SIZE, PAGE_KERNEL_RO);
+> >> >> >> >
+> >> >> >> > Hmm, I like the idea but is there a risk that the page table has been mapped
+> >> >> >> > as part of a block entry, which we can't safely split at this point (i.e.
+> >> >> >> > we'll run into one of the BUG_ONs in the mapping code)?
+> >> >> >> >
+> >> >> >>
+> >> >> >> We'd need to create a separate segment for it initially so the mapping
+> >> >> >> is already at the right granularity.
+> >> >> >
+> >> >> > Why do you think that's the case? I can't see anything that guarantees this
+> >> >> > for the page table itself.
+> >> >> >
+> >> >>
+> >> >> We'd need to pass NO_BLOCK_MAPPINGS to map_kernel_segment(),
+> >> >> obviously, but that shouldn't hurt since that segment is relatively
+> >> >> tiny anyway.
+> >> >
+> >> > Ah right, with NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS, I agree that we're good.
+> >> > Ideally, we'd move {idmap,swapper,tramp}_pg_dir into .rodata...
+> >> >
+> >>
+> >> idmap and tramp yes, but swapper needs to be modifiable at runtime, no?
+> >
+> > Right, but couldn't we swizzle the permissions in e.g. set_pmd? We could
+> > even predicate that on a sanity check of the prot.
+> >
+> 
+> Swizzle the permissions of the entire .rodata segment? That sounds
+> doable, but there is a whole class of data that belongs in this
+> category, and I think PaX/grsecurity had an API for that (but I don't
+> think anyone is upstreaming that yet). So let's not reinvent that
+> wheel for swapper_pg_dir only.
 
-Merged, thanks.
+I wasn't thinking of the whole .rodata segment -- just the page containing
+the entry being modified, but ok. I was hoping to avoid getting involved
+with the PaX/grsec stuff as it seems rather toxic from what I've seen.
 
-> diff --git a/security/selinux/ss/ebitmap.c b/security/selinux/ss/ebitmap.c
-> index 5ae8c61b75bf..8f624f80055b 100644
-> --- a/security/selinux/ss/ebitmap.c
-> +++ b/security/selinux/ss/ebitmap.c
-> @@ -362,7 +362,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
->         count = le32_to_cpu(buf[2]);
->
->         if (mapunit != BITS_PER_U64) {
-> -               printk(KERN_ERR "SELinux: ebitmap: map size %u does not "
-> +               pr_err("SELinux: ebitmap: map size %u does not "
->                        "match my size %zd (high bit was %d)\n",
->                        mapunit, BITS_PER_U64, e->highbit);
->                 goto bad;
-> @@ -383,19 +383,19 @@ int ebitmap_read(struct ebitmap *e, void *fp)
->         for (i = 0; i < count; i++) {
->                 rc = next_entry(&startbit, fp, sizeof(u32));
->                 if (rc < 0) {
-> -                       printk(KERN_ERR "SELinux: ebitmap: truncated map\n");
-> +                       pr_err("SELinux: ebitmap: truncated map\n");
->                         goto bad;
->                 }
->                 startbit = le32_to_cpu(startbit);
->
->                 if (startbit & (mapunit - 1)) {
-> -                       printk(KERN_ERR "SELinux: ebitmap start bit (%d) is "
-> +                       pr_err("SELinux: ebitmap start bit (%d) is "
->                                "not a multiple of the map unit size (%u)\n",
->                                startbit, mapunit);
->                         goto bad;
->                 }
->                 if (startbit > e->highbit - mapunit) {
-> -                       printk(KERN_ERR "SELinux: ebitmap start bit (%d) is "
-> +                       pr_err("SELinux: ebitmap start bit (%d) is "
->                                "beyond the end of the bitmap (%u)\n",
->                                startbit, (e->highbit - mapunit));
->                         goto bad;
-> @@ -405,8 +405,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
->                         struct ebitmap_node *tmp;
->                         tmp = kmem_cache_zalloc(ebitmap_node_cachep, GFP_KERNEL);
->                         if (!tmp) {
-> -                               printk(KERN_ERR
-> -                                      "SELinux: ebitmap: out of memory\n");
-> +                               pr_err("SELinux: ebitmap: out of memory\n");
->                                 rc = -ENOMEM;
->                                 goto bad;
->                         }
-> @@ -418,7 +417,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
->                                 e->node = tmp;
->                         n = tmp;
->                 } else if (startbit <= n->startbit) {
-> -                       printk(KERN_ERR "SELinux: ebitmap: start bit %d"
-> +                       pr_err("SELinux: ebitmap: start bit %d"
->                                " comes after start bit %d\n",
->                                startbit, n->startbit);
->                         goto bad;
-> @@ -426,7 +425,7 @@ int ebitmap_read(struct ebitmap *e, void *fp)
->
->                 rc = next_entry(&map, fp, sizeof(u64));
->                 if (rc < 0) {
-> -                       printk(KERN_ERR "SELinux: ebitmap: truncated map\n");
-> +                       pr_err("SELinux: ebitmap: truncated map\n");
->                         goto bad;
->                 }
->                 map = le64_to_cpu(map);
-> --
-> 2.15.1
->
-
-
--- 
-paul moore
-www.paul-moore.com
+Will
