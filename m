@@ -3,163 +3,298 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4568EC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D03C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F19BB20661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:59:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19BB20661
+	by mail.kernel.org (Postfix) with ESMTP id 90D1E20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:00:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D1E20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966878AbeFSP7f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:59:35 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:36113 "EHLO
+        id S966894AbeFSQAB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:00:01 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:45551 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966823AbeFSP7d (ORCPT
+        with ESMTP id S965783AbeFSP77 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:59:33 -0400
+        Tue, 19 Jun 2018 11:59:59 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MYHJs-1fiYa5275k-00UncD; Tue, 19 Jun 2018 17:58:29 +0200
+ (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0Mbb9R-1fnntS12Ll-00IyXi; Tue, 19 Jun 2018 17:59:27 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Gang He <ghe@suse.com>, Alex Chen <alex.chen@huawei.com>,
-        piaojun <piaojun@huawei.com>, Eric Ren <zren@suse.com>,
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Andreas Dilger <adilger@dilger.ca>,
         Deepa Dinamani <deepa.kernel@gmail.com>,
-        Larry Chen <lchen@suse.com>, ocfs2-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ocfs2: dlmglue: clean up timestamp handling
-Date:   Tue, 19 Jun 2018 17:58:07 +0200
-Message-Id: <20180619155826.4106487-1-arnd@arndb.de>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] jffs2: use 64-bit intermediate timestamps
+Date:   Tue, 19 Jun 2018 17:59:03 +0200
+Message-Id: <20180619155925.4107498-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:YL6FV2+7bJSirRzfNYFrms3DDgm0QuOHraNIKTwM7HMd+NM5tiF
- c4elAoqV/CVGw9wmGn9ukWT7czTRn1jKLbYdwuNOyUm/vv3odV10sEvUBhiEJO84qUNh4t+
- bd3pSiYWWvCTdbsF0JCNZ+WxRJyPBQ6csv6W4Al+0LGM/zNEwF7+xByB0cY+FNlQGlxh/F2
- gQ8z4WkCJfJl80neBAEVg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:79ql++emtRY=:3owj7DTM2xXRxcTD25GD1l
- GaKhcWDoZXw8w4pUqMGGLswRROwwqwltyfwtKOVLYD1Qa5dFSbD4VdPOqasveL+gvNzZyh9x5
- d5fSb/iTn6d3iHVj/iQ88gtCc9lL41b7ATnkoj3di12J4KZMPoULIcWSQ7NxR39aKdrffpEzI
- ZXpM3YSR+R6pVRgxu3WxKIy8NbU/hPH0zuQOYveHZxpos7RjCAPqaOrk28CADP6ufq/TOSqbE
- osWdH2gdxrksbMv0myPRVxIyJqe2tiDWcwQaU7k5U25WSS+0dZHOeAy7AD73EwS4pMKN3mpu4
- s07tis92H9wPAYLOFbd2zgnrTKZ/Jk4GbDoWdGhVRRLM1PvH8d9gs7wc8h2Na93nAM2TVJQOg
- 8szvleGKMRwcOdUlSx9LytwWXmS8qO/Q1d9E6BrNWLNejKsJO1dOSvPtbKel0G+UybRsAKxdW
- pIsB9pnh3YECdeSQSTBqGEloI4JDD205rosgBHO3jijWYN+QF4xM6PY/E5dFkEG3Micy9v6f5
- CopEnjjRQ3ZBNThuI7OScJEnET7UErHWJBZfJ93K+/rAfKt4Y6MEdyru0vAOaVkLTSaCoaxKJ
- b71NqK9CSnmMeRfL//OmgFRjITLT+wPnEZrNWO+qxT8A0X9F9B8W6hvd6jiu0nEvb8kCPxa1A
- HvTQ7aoPypzYBgUM1JxlfIyfZJoHC0DsAjgCcI0GPUdJG3V+lDoWdlTJPuEEuOK92zuA=
+X-Provags-ID: V03:K1:eeKxuE4Qe5q1IB2NdpY1z+HTlGBDbAjRgdgsDvvYmIEMpgX9QDZ
+ wXu2XXZrO2V4GzipYC7/avsKP1vgIYgtugK/7TPrCcwmOvyVT5qTtmF1V2n3hHHWNJ5+IgP
+ BA6kgCBNBBZNnstEvRtBY94yJRO2CrrCXdmh7Ophr/Ii1AF2JyJ76BLZwJMS982/hCiPs8C
+ w6WAT/EiJNquyVaSPnF7A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WnXYo3caGrA=:pRS4FbaEyswuGg+QMEXrfO
+ 01PkDgyO+Au3G9hOtySEnHQPPAOSi+W5ZbQ6ix5pAyy5Rv8QKGzz5V1fP+3Z/jDkZO1b1f3c3
+ J8fTzaL8RmgDaD5gbE4YZ9TqEyDxSySXKK7EhGhve3mk+u+SrqQNJ+QzxuSv6d4KM5+MntCuH
+ bbFU3lqpE6CLajXg0CKaQIA5Gz2KGTkXxFwBUffYvM04SYurD2o+bX2/ff3mctsuM494fW7as
+ Dg4OJAWutcy9G5y1ccU0WArtt2gk4LBuuRo0AWp4VZB3sRqUgwwWFAu07x2fp2RCMJqgQLQws
+ 7S3kPccz2p8W/9zc/3KjKSVmAXM4bg1FJlJcl+o4d62Bq1k079VhRKDGo9AACmoISEviHV93v
+ DVOIey7a5FhlFbfc0S9XOrBgPScBaJJy0u/AHaumevYyoV3C0Vgk8KtJLnVR1htE/64ps0gvT
+ Wweqmk/VkQhXTz4cUjWQqbRhzB4ls1A6rRoTI7+2qvfRhMXhzQR0FT70SbtTUwPGC2hYdeROo
+ U5aHJJGVLTnbTWwMBpStzXGdr+Py1x6otYO9cZ9XH6wId0FC9sQQF6BDbw2iEJgOkOP9zbbDs
+ vnKNQHeqty0nWwWsu5mZCjAmX/OcZIbNEddgO3UlGQyLcZgXwpO8W1xbjxAe4aiYs6t9h7jt0
+ fd7XoNX9ZtvKeYiBJez8sdAaFV/C4agNs0ENzJZJ+YDS9nIOYGS6EdkaYoC//3/VTY2M=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The handling of timestamps outside of the 1970..2038 range in the dlm
-glue is rather inconsistent: on 32-bit architectures, this has always
-wrapped around to negative timestamps in the 1902..1969 range, while on
-64-bit kernels all timestamps are interpreted as positive 34 bit numbers
-in the 1970..2514 year range.
+The VFS now uses timespec64 timestamps consistently, but jffs2 still
+converts them to 32-bit numbers on the storage medium. As the helper
+functions for the conversion (get_seconds() and timespec_to_timespec64())
+are now deprecated, let's change them over to the more modern
+replacements.
 
-Now that the VFS code handles 64-bit timestamps on all architectures,
-we can make the behavior more consistent here, and return the same result
-that we had on 64-bit already, making the file system y2038 safe in the
-process. Outside of dlmglue, it already uses 64-bit on-disk timestamps
-anway, so that part is fine.
-
-For consistency, I'm changing ocfs2_pack_timespec() to clamp
-anything outside of the supported range to the minimum and maximum
-values. This avoids a possible ambiguity of values before 1970
-in particular, which used to be interpreted as times at the end of the
-2514 range previously.
+This keeps the traditional interpretation of those values, where
+the on-disk 32-bit numbers are taken to be negative numbers, i.e.
+dates before 1970, on 32-bit machines, but future numbers past 2038
+on 64-bit machines.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/ocfs2/dlmglue.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+ fs/jffs2/dir.c      | 32 ++++++++++++++++----------------
+ fs/jffs2/file.c     |  6 +++---
+ fs/jffs2/fs.c       | 12 ++++++------
+ fs/jffs2/os-linux.h |  3 ++-
+ 4 files changed, 27 insertions(+), 26 deletions(-)
 
-diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-index 0ff424c6d17c..50610a9ed9f4 100644
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -2121,10 +2121,10 @@ static void ocfs2_downconvert_on_unlock(struct ocfs2_super *osb,
+diff --git a/fs/jffs2/dir.c b/fs/jffs2/dir.c
+index b2944f9218f7..f20cff1194bb 100644
+--- a/fs/jffs2/dir.c
++++ b/fs/jffs2/dir.c
+@@ -201,7 +201,7 @@ static int jffs2_create(struct inode *dir_i, struct dentry *dentry,
+ 	if (ret)
+ 		goto fail;
  
- /* LVB only has room for 64 bits of time here so we pack it for
-  * now. */
--static u64 ocfs2_pack_timespec(struct timespec *spec)
-+static u64 ocfs2_pack_timespec(struct timespec64 *spec)
- {
- 	u64 res;
--	u64 sec = spec->tv_sec;
-+	u64 sec = clamp_t(time64_t, spec->tv_sec, 0, 0x3ffffffffull);
- 	u32 nsec = spec->tv_nsec;
+-	dir_i->i_mtime = dir_i->i_ctime = timespec_to_timespec64(ITIME(je32_to_cpu(ri->ctime)));
++	dir_i->i_mtime = dir_i->i_ctime = ITIME(je32_to_cpu(ri->ctime));
  
- 	res = (sec << OCFS2_SEC_SHIFT) | (nsec & OCFS2_NSEC_MASK);
-@@ -2140,7 +2140,6 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
- 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
- 	struct ocfs2_lock_res *lockres = &oi->ip_inode_lockres;
- 	struct ocfs2_meta_lvb *lvb;
--	struct timespec ts;
+ 	jffs2_free_raw_inode(ri);
  
- 	lvb = ocfs2_dlm_lvb(&lockres->l_lksb);
+@@ -227,14 +227,14 @@ static int jffs2_unlink(struct inode *dir_i, struct dentry *dentry)
+ 	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
+ 	struct jffs2_inode_info *dead_f = JFFS2_INODE_INFO(d_inode(dentry));
+ 	int ret;
+-	uint32_t now = get_seconds();
++	uint32_t now = JFFS2_NOW();
  
-@@ -2161,15 +2160,12 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
- 	lvb->lvb_igid      = cpu_to_be32(i_gid_read(inode));
- 	lvb->lvb_imode     = cpu_to_be16(inode->i_mode);
- 	lvb->lvb_inlink    = cpu_to_be16(inode->i_nlink);
--	ts = timespec64_to_timespec(inode->i_atime);
- 	lvb->lvb_iatime_packed  =
--		cpu_to_be64(ocfs2_pack_timespec(&ts));
--	ts = timespec64_to_timespec(inode->i_ctime);
-+		cpu_to_be64(ocfs2_pack_timespec(&inode->i_atime));
- 	lvb->lvb_ictime_packed =
--		cpu_to_be64(ocfs2_pack_timespec(&ts));
--	ts = timespec64_to_timespec(inode->i_mtime);
-+		cpu_to_be64(ocfs2_pack_timespec(&inode->i_ctime));
- 	lvb->lvb_imtime_packed =
--		cpu_to_be64(ocfs2_pack_timespec(&ts));
-+		cpu_to_be64(ocfs2_pack_timespec(&inode->i_mtime));
- 	lvb->lvb_iattr    = cpu_to_be32(oi->ip_attr);
- 	lvb->lvb_idynfeatures = cpu_to_be16(oi->ip_dyn_features);
- 	lvb->lvb_igeneration = cpu_to_be32(inode->i_generation);
-@@ -2178,7 +2174,7 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
- 	mlog_meta_lvb(0, lockres);
+ 	ret = jffs2_do_unlink(c, dir_f, dentry->d_name.name,
+ 			      dentry->d_name.len, dead_f, now);
+ 	if (dead_f->inocache)
+ 		set_nlink(d_inode(dentry), dead_f->inocache->pino_nlink);
+ 	if (!ret)
+-		dir_i->i_mtime = dir_i->i_ctime = timespec_to_timespec64(ITIME(now));
++		dir_i->i_mtime = dir_i->i_ctime = ITIME(now);
+ 	return ret;
  }
+ /***********************************************************************/
+@@ -260,7 +260,7 @@ static int jffs2_link (struct dentry *old_dentry, struct inode *dir_i, struct de
+ 	type = (d_inode(old_dentry)->i_mode & S_IFMT) >> 12;
+ 	if (!type) type = DT_REG;
  
--static void ocfs2_unpack_timespec(struct timespec *spec,
-+static void ocfs2_unpack_timespec(struct timespec64 *spec,
- 				  u64 packed_time)
- {
- 	spec->tv_sec = packed_time >> OCFS2_SEC_SHIFT;
-@@ -2187,7 +2183,6 @@ static void ocfs2_unpack_timespec(struct timespec *spec,
+-	now = get_seconds();
++	now = JFFS2_NOW();
+ 	ret = jffs2_do_link(c, dir_f, f->inocache->ino, type, dentry->d_name.name, dentry->d_name.len, now);
  
- static void ocfs2_refresh_inode_from_lvb(struct inode *inode)
- {
--	struct timespec ts;
- 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
- 	struct ocfs2_lock_res *lockres = &oi->ip_inode_lockres;
- 	struct ocfs2_meta_lvb *lvb;
-@@ -2215,15 +2210,12 @@ static void ocfs2_refresh_inode_from_lvb(struct inode *inode)
- 	i_gid_write(inode, be32_to_cpu(lvb->lvb_igid));
- 	inode->i_mode    = be16_to_cpu(lvb->lvb_imode);
- 	set_nlink(inode, be16_to_cpu(lvb->lvb_inlink));
--	ocfs2_unpack_timespec(&ts,
-+	ocfs2_unpack_timespec(&inode->i_atime,
- 			      be64_to_cpu(lvb->lvb_iatime_packed));
--	inode->i_atime = timespec_to_timespec64(ts);
--	ocfs2_unpack_timespec(&ts,
-+	ocfs2_unpack_timespec(&inode->i_mtime,
- 			      be64_to_cpu(lvb->lvb_imtime_packed));
--	inode->i_mtime = timespec_to_timespec64(ts);
--	ocfs2_unpack_timespec(&ts,
-+	ocfs2_unpack_timespec(&inode->i_ctime,
- 			      be64_to_cpu(lvb->lvb_ictime_packed));
--	inode->i_ctime = timespec_to_timespec64(ts);
- 	spin_unlock(&oi->ip_lock);
+ 	if (!ret) {
+@@ -268,7 +268,7 @@ static int jffs2_link (struct dentry *old_dentry, struct inode *dir_i, struct de
+ 		set_nlink(d_inode(old_dentry), ++f->inocache->pino_nlink);
+ 		mutex_unlock(&f->sem);
+ 		d_instantiate(dentry, d_inode(old_dentry));
+-		dir_i->i_mtime = dir_i->i_ctime = timespec_to_timespec64(ITIME(now));
++		dir_i->i_mtime = dir_i->i_ctime = ITIME(now);
+ 		ihold(d_inode(old_dentry));
+ 	}
+ 	return ret;
+@@ -400,7 +400,7 @@ static int jffs2_symlink (struct inode *dir_i, struct dentry *dentry, const char
+ 	rd->pino = cpu_to_je32(dir_i->i_ino);
+ 	rd->version = cpu_to_je32(++dir_f->highest_version);
+ 	rd->ino = cpu_to_je32(inode->i_ino);
+-	rd->mctime = cpu_to_je32(get_seconds());
++	rd->mctime = cpu_to_je32(JFFS2_NOW());
+ 	rd->nsize = namelen;
+ 	rd->type = DT_LNK;
+ 	rd->node_crc = cpu_to_je32(crc32(0, rd, sizeof(*rd)-8));
+@@ -418,7 +418,7 @@ static int jffs2_symlink (struct inode *dir_i, struct dentry *dentry, const char
+ 		goto fail;
+ 	}
+ 
+-	dir_i->i_mtime = dir_i->i_ctime = timespec_to_timespec64(ITIME(je32_to_cpu(rd->mctime)));
++	dir_i->i_mtime = dir_i->i_ctime = ITIME(je32_to_cpu(rd->mctime));
+ 
+ 	jffs2_free_raw_dirent(rd);
+ 
+@@ -543,7 +543,7 @@ static int jffs2_mkdir (struct inode *dir_i, struct dentry *dentry, umode_t mode
+ 	rd->pino = cpu_to_je32(dir_i->i_ino);
+ 	rd->version = cpu_to_je32(++dir_f->highest_version);
+ 	rd->ino = cpu_to_je32(inode->i_ino);
+-	rd->mctime = cpu_to_je32(get_seconds());
++	rd->mctime = cpu_to_je32(JFFS2_NOW());
+ 	rd->nsize = namelen;
+ 	rd->type = DT_DIR;
+ 	rd->node_crc = cpu_to_je32(crc32(0, rd, sizeof(*rd)-8));
+@@ -561,7 +561,7 @@ static int jffs2_mkdir (struct inode *dir_i, struct dentry *dentry, umode_t mode
+ 		goto fail;
+ 	}
+ 
+-	dir_i->i_mtime = dir_i->i_ctime = timespec_to_timespec64(ITIME(je32_to_cpu(rd->mctime)));
++	dir_i->i_mtime = dir_i->i_ctime = ITIME(je32_to_cpu(rd->mctime));
+ 	inc_nlink(dir_i);
+ 
+ 	jffs2_free_raw_dirent(rd);
+@@ -588,7 +588,7 @@ static int jffs2_rmdir (struct inode *dir_i, struct dentry *dentry)
+ 	struct jffs2_inode_info *f = JFFS2_INODE_INFO(d_inode(dentry));
+ 	struct jffs2_full_dirent *fd;
+ 	int ret;
+-	uint32_t now = get_seconds();
++	uint32_t now = JFFS2_NOW();
+ 
+ 	for (fd = f->dents ; fd; fd = fd->next) {
+ 		if (fd->ino)
+@@ -598,7 +598,7 @@ static int jffs2_rmdir (struct inode *dir_i, struct dentry *dentry)
+ 	ret = jffs2_do_unlink(c, dir_f, dentry->d_name.name,
+ 			      dentry->d_name.len, f, now);
+ 	if (!ret) {
+-		dir_i->i_mtime = dir_i->i_ctime = timespec_to_timespec64(ITIME(now));
++		dir_i->i_mtime = dir_i->i_ctime = ITIME(now);
+ 		clear_nlink(d_inode(dentry));
+ 		drop_nlink(dir_i);
+ 	}
+@@ -712,7 +712,7 @@ static int jffs2_mknod (struct inode *dir_i, struct dentry *dentry, umode_t mode
+ 	rd->pino = cpu_to_je32(dir_i->i_ino);
+ 	rd->version = cpu_to_je32(++dir_f->highest_version);
+ 	rd->ino = cpu_to_je32(inode->i_ino);
+-	rd->mctime = cpu_to_je32(get_seconds());
++	rd->mctime = cpu_to_je32(JFFS2_NOW());
+ 	rd->nsize = namelen;
+ 
+ 	/* XXX: This is ugly. */
+@@ -733,7 +733,7 @@ static int jffs2_mknod (struct inode *dir_i, struct dentry *dentry, umode_t mode
+ 		goto fail;
+ 	}
+ 
+-	dir_i->i_mtime = dir_i->i_ctime = timespec_to_timespec64(ITIME(je32_to_cpu(rd->mctime)));
++	dir_i->i_mtime = dir_i->i_ctime = ITIME(je32_to_cpu(rd->mctime));
+ 
+ 	jffs2_free_raw_dirent(rd);
+ 
+@@ -797,7 +797,7 @@ static int jffs2_rename (struct inode *old_dir_i, struct dentry *old_dentry,
+ 	type = (d_inode(old_dentry)->i_mode & S_IFMT) >> 12;
+ 	if (!type) type = DT_REG;
+ 
+-	now = get_seconds();
++	now = JFFS2_NOW();
+ 	ret = jffs2_do_link(c, JFFS2_INODE_INFO(new_dir_i),
+ 			    d_inode(old_dentry)->i_ino, type,
+ 			    new_dentry->d_name.name, new_dentry->d_name.len, now);
+@@ -853,14 +853,14 @@ static int jffs2_rename (struct inode *old_dir_i, struct dentry *old_dentry,
+ 		 * caller won't do it on its own since we are returning an error.
+ 		 */
+ 		d_invalidate(new_dentry);
+-		new_dir_i->i_mtime = new_dir_i->i_ctime = timespec_to_timespec64(ITIME(now));
++		new_dir_i->i_mtime = new_dir_i->i_ctime = ITIME(now);
+ 		return ret;
+ 	}
+ 
+ 	if (d_is_dir(old_dentry))
+ 		drop_nlink(old_dir_i);
+ 
+-	new_dir_i->i_mtime = new_dir_i->i_ctime = old_dir_i->i_mtime = old_dir_i->i_ctime = timespec_to_timespec64(ITIME(now));
++	new_dir_i->i_mtime = new_dir_i->i_ctime = old_dir_i->i_mtime = old_dir_i->i_ctime = ITIME(now);
+ 
+ 	return 0;
  }
+diff --git a/fs/jffs2/file.c b/fs/jffs2/file.c
+index 481afd4c2e1a..7d8654a1472e 100644
+--- a/fs/jffs2/file.c
++++ b/fs/jffs2/file.c
+@@ -175,7 +175,7 @@ static int jffs2_write_begin(struct file *filp, struct address_space *mapping,
+ 		ri.uid = cpu_to_je16(i_uid_read(inode));
+ 		ri.gid = cpu_to_je16(i_gid_read(inode));
+ 		ri.isize = cpu_to_je32(max((uint32_t)inode->i_size, pageofs));
+-		ri.atime = ri.ctime = ri.mtime = cpu_to_je32(get_seconds());
++		ri.atime = ri.ctime = ri.mtime = cpu_to_je32(JFFS2_NOW());
+ 		ri.offset = cpu_to_je32(inode->i_size);
+ 		ri.dsize = cpu_to_je32(pageofs - inode->i_size);
+ 		ri.csize = cpu_to_je32(0);
+@@ -283,7 +283,7 @@ static int jffs2_write_end(struct file *filp, struct address_space *mapping,
+ 	ri->uid = cpu_to_je16(i_uid_read(inode));
+ 	ri->gid = cpu_to_je16(i_gid_read(inode));
+ 	ri->isize = cpu_to_je32((uint32_t)inode->i_size);
+-	ri->atime = ri->ctime = ri->mtime = cpu_to_je32(get_seconds());
++	ri->atime = ri->ctime = ri->mtime = cpu_to_je32(JFFS2_NOW());
  
+ 	/* In 2.4, it was already kmapped by generic_file_write(). Doesn't
+ 	   hurt to do it again. The alternative is ifdefs, which are ugly. */
+@@ -308,7 +308,7 @@ static int jffs2_write_end(struct file *filp, struct address_space *mapping,
+ 			inode->i_size = pos + writtenlen;
+ 			inode->i_blocks = (inode->i_size + 511) >> 9;
+ 
+-			inode->i_ctime = inode->i_mtime = timespec_to_timespec64(ITIME(je32_to_cpu(ri->ctime)));
++			inode->i_ctime = inode->i_mtime = ITIME(je32_to_cpu(ri->ctime));
+ 		}
+ 	}
+ 
+diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
+index 0ecfb8ea38cd..eab04eca95a3 100644
+--- a/fs/jffs2/fs.c
++++ b/fs/jffs2/fs.c
+@@ -146,9 +146,9 @@ int jffs2_do_setattr (struct inode *inode, struct iattr *iattr)
+ 		return PTR_ERR(new_metadata);
+ 	}
+ 	/* It worked. Update the inode */
+-	inode->i_atime = timespec_to_timespec64(ITIME(je32_to_cpu(ri->atime)));
+-	inode->i_ctime = timespec_to_timespec64(ITIME(je32_to_cpu(ri->ctime)));
+-	inode->i_mtime = timespec_to_timespec64(ITIME(je32_to_cpu(ri->mtime)));
++	inode->i_atime = ITIME(je32_to_cpu(ri->atime));
++	inode->i_ctime = ITIME(je32_to_cpu(ri->ctime));
++	inode->i_mtime = ITIME(je32_to_cpu(ri->mtime));
+ 	inode->i_mode = jemode_to_cpu(ri->mode);
+ 	i_uid_write(inode, je16_to_cpu(ri->uid));
+ 	i_gid_write(inode, je16_to_cpu(ri->gid));
+@@ -280,9 +280,9 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
+ 	i_uid_write(inode, je16_to_cpu(latest_node.uid));
+ 	i_gid_write(inode, je16_to_cpu(latest_node.gid));
+ 	inode->i_size = je32_to_cpu(latest_node.isize);
+-	inode->i_atime = timespec_to_timespec64(ITIME(je32_to_cpu(latest_node.atime)));
+-	inode->i_mtime = timespec_to_timespec64(ITIME(je32_to_cpu(latest_node.mtime)));
+-	inode->i_ctime = timespec_to_timespec64(ITIME(je32_to_cpu(latest_node.ctime)));
++	inode->i_atime = ITIME(je32_to_cpu(latest_node.atime));
++	inode->i_mtime = ITIME(je32_to_cpu(latest_node.mtime));
++	inode->i_ctime = ITIME(je32_to_cpu(latest_node.ctime));
+ 
+ 	set_nlink(inode, f->inocache->pino_nlink);
+ 
+diff --git a/fs/jffs2/os-linux.h b/fs/jffs2/os-linux.h
+index c2fbec19c616..acbe1f722f2d 100644
+--- a/fs/jffs2/os-linux.h
++++ b/fs/jffs2/os-linux.h
+@@ -31,7 +31,8 @@ struct kvec;
+ #define JFFS2_F_I_GID(f) (i_gid_read(OFNI_EDONI_2SFFJ(f)))
+ #define JFFS2_F_I_RDEV(f) (OFNI_EDONI_2SFFJ(f)->i_rdev)
+ 
+-#define ITIME(sec) ((struct timespec){sec, 0})
++#define ITIME(sec) ((struct timespec64){(int32_t)sec, 0})
++#define JFFS2_NOW() (ktime_get_real_seconds())
+ #define I_SEC(tv) ((tv).tv_sec)
+ #define JFFS2_F_I_CTIME(f) (OFNI_EDONI_2SFFJ(f)->i_ctime.tv_sec)
+ #define JFFS2_F_I_MTIME(f) (OFNI_EDONI_2SFFJ(f)->i_mtime.tv_sec)
 -- 
 2.9.0
 
