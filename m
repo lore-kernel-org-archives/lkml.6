@@ -2,171 +2,93 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC918C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C785EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D942075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:14:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D942075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 6B7A320020
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:14:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="NkKkmqab"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7A320020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030216AbeFSROO (ORCPT
+        id S1030255AbeFSROa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:14:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37880 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S967137AbeFSROM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:14:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8334AABD9;
-        Tue, 19 Jun 2018 17:14:10 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 12:14:07 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        y2038@lists.linaro.org, Eric Ren <zren@suse.com>,
-        linux-kernel@vger.kernel.org,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        ocfs2-devel@oss.oracle.com
-Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: dlmglue: clean up timestamp handling
-Message-ID: <20180619171407.yoncg72ed2vncf62@merlin>
-References: <20180619155826.4106487-1-arnd@arndb.de>
+        Tue, 19 Jun 2018 13:14:30 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:37552 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966578AbeFSRO1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 13:14:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=72xtdwjzXWMRiljhbDuUkrgV3SzDTmRMVjPSmuaiLpk=; b=NkKkmqabXYMBl30Ct2h0Rm/YKq
+        AC8OaTMyGExkOsZ6StDpvIKuHan3B0Bm4XjikFBijsU+EO+XWUB7DthYLApQ0DxHQ2GmfDhAWztrm
+        +E1DKs6nZAcuz2jJb9O5vyGJsHn4E19uzElLH6nDEnNbnNxjTcrRoh2tWlwFchucB0Qd1Osy62UFM
+        Ex0STFM4KpxH+ZB+i0J6Bu1LYXHssHYO5UBvNbybHJwob/zpKyDz+bgAEILgVKE0HMvg06svIVKiB
+        3pM5Xv2y5lmSmVPefJ7bjbdtDC2wJ3fNLol9SYaQ8e7woqHZGkvPA7e3dVSIB8shuTSuUjIJcwmpJ
+        molZK4PA==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:45230 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fVKD3-004qIk-Ay; Tue, 19 Jun 2018 17:14:25 +0000
+Date:   Tue, 19 Jun 2018 10:14:24 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] ARM: Use logical or instead of addition for badr
+ address calculation
+Message-ID: <20180619171424.GA16846@roeck-us.net>
+References: <1529384828-2452-1-git-send-email-linux@roeck-us.net>
+ <CAKv+Gu8Byj7G3Awnq4Y90Wot=GJTx0gO5A7-960au9ZkBBL2=A@mail.gmail.com>
+ <b8bff03d-91a7-0e53-a44e-d1924beb382d@roeck-us.net>
+ <CAKv+Gu-T8Fx3Nry7pUdOoOeRU-Ns89w3oo4itmu1q4FzYF5Rag@mail.gmail.com>
+ <20180619151235.GH17671@n2100.armlinux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619155826.4106487-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180619151235.GH17671@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 19, 2018 at 04:12:35PM +0100, Russell King - ARM Linux wrote:
+> 
+> So, I'm going to continue sitting on the fence on this, and basically
+> take the attitude that it's better that people don't use the new
+> binutils until binutils people can provide us with an officially
+> sanctioned solution that's going to work for both older and future
+> assemblers.
+> 
+I would so much love if people were working together instead of against
+each other :-(. Never mind, I'll try a toolchain with binutils 2.28.1.
+At least that is still supported with buildroot.
 
-
-On 06-19 17:58, Arnd Bergmann wrote:
-> The handling of timestamps outside of the 1970..2038 range in the dlm
-> glue is rather inconsistent: on 32-bit architectures, this has always
-> wrapped around to negative timestamps in the 1902..1969 range, while on
-> 64-bit kernels all timestamps are interpreted as positive 34 bit numbers
-> in the 1970..2514 year range.
-> 
-> Now that the VFS code handles 64-bit timestamps on all architectures,
-> we can make the behavior more consistent here, and return the same result
-> that we had on 64-bit already, making the file system y2038 safe in the
-> process. Outside of dlmglue, it already uses 64-bit on-disk timestamps
-> anway, so that part is fine.
-> 
-> For consistency, I'm changing ocfs2_pack_timespec() to clamp
-> anything outside of the supported range to the minimum and maximum
-> values. This avoids a possible ambiguity of values before 1970
-> in particular, which used to be interpreted as times at the end of the
-> 2514 range previously.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Will all values written to LVB be the same with or without the patch?
-I am considering the situation where in a cluster some machines have this
-patch and some don't. Depending on that, this may require a version
-change.
-
-> ---
->  fs/ocfs2/dlmglue.c | 26 +++++++++-----------------
->  1 file changed, 9 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-> index 0ff424c6d17c..50610a9ed9f4 100644
-> --- a/fs/ocfs2/dlmglue.c
-> +++ b/fs/ocfs2/dlmglue.c
-> @@ -2121,10 +2121,10 @@ static void ocfs2_downconvert_on_unlock(struct ocfs2_super *osb,
->  
->  /* LVB only has room for 64 bits of time here so we pack it for
->   * now. */
-> -static u64 ocfs2_pack_timespec(struct timespec *spec)
-> +static u64 ocfs2_pack_timespec(struct timespec64 *spec)
->  {
->  	u64 res;
-> -	u64 sec = spec->tv_sec;
-> +	u64 sec = clamp_t(time64_t, spec->tv_sec, 0, 0x3ffffffffull);
->  	u32 nsec = spec->tv_nsec;
->  
->  	res = (sec << OCFS2_SEC_SHIFT) | (nsec & OCFS2_NSEC_MASK);
-> @@ -2140,7 +2140,6 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
->  	struct ocfs2_inode_info *oi = OCFS2_I(inode);
->  	struct ocfs2_lock_res *lockres = &oi->ip_inode_lockres;
->  	struct ocfs2_meta_lvb *lvb;
-> -	struct timespec ts;
->  
->  	lvb = ocfs2_dlm_lvb(&lockres->l_lksb);
->  
-> @@ -2161,15 +2160,12 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
->  	lvb->lvb_igid      = cpu_to_be32(i_gid_read(inode));
->  	lvb->lvb_imode     = cpu_to_be16(inode->i_mode);
->  	lvb->lvb_inlink    = cpu_to_be16(inode->i_nlink);
-> -	ts = timespec64_to_timespec(inode->i_atime);
->  	lvb->lvb_iatime_packed  =
-> -		cpu_to_be64(ocfs2_pack_timespec(&ts));
-> -	ts = timespec64_to_timespec(inode->i_ctime);
-> +		cpu_to_be64(ocfs2_pack_timespec(&inode->i_atime));
->  	lvb->lvb_ictime_packed =
-> -		cpu_to_be64(ocfs2_pack_timespec(&ts));
-> -	ts = timespec64_to_timespec(inode->i_mtime);
-> +		cpu_to_be64(ocfs2_pack_timespec(&inode->i_ctime));
->  	lvb->lvb_imtime_packed =
-> -		cpu_to_be64(ocfs2_pack_timespec(&ts));
-> +		cpu_to_be64(ocfs2_pack_timespec(&inode->i_mtime));
->  	lvb->lvb_iattr    = cpu_to_be32(oi->ip_attr);
->  	lvb->lvb_idynfeatures = cpu_to_be16(oi->ip_dyn_features);
->  	lvb->lvb_igeneration = cpu_to_be32(inode->i_generation);
-> @@ -2178,7 +2174,7 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
->  	mlog_meta_lvb(0, lockres);
->  }
->  
-> -static void ocfs2_unpack_timespec(struct timespec *spec,
-> +static void ocfs2_unpack_timespec(struct timespec64 *spec,
->  				  u64 packed_time)
->  {
->  	spec->tv_sec = packed_time >> OCFS2_SEC_SHIFT;
-> @@ -2187,7 +2183,6 @@ static void ocfs2_unpack_timespec(struct timespec *spec,
->  
->  static void ocfs2_refresh_inode_from_lvb(struct inode *inode)
->  {
-> -	struct timespec ts;
->  	struct ocfs2_inode_info *oi = OCFS2_I(inode);
->  	struct ocfs2_lock_res *lockres = &oi->ip_inode_lockres;
->  	struct ocfs2_meta_lvb *lvb;
-> @@ -2215,15 +2210,12 @@ static void ocfs2_refresh_inode_from_lvb(struct inode *inode)
->  	i_gid_write(inode, be32_to_cpu(lvb->lvb_igid));
->  	inode->i_mode    = be16_to_cpu(lvb->lvb_imode);
->  	set_nlink(inode, be16_to_cpu(lvb->lvb_inlink));
-> -	ocfs2_unpack_timespec(&ts,
-> +	ocfs2_unpack_timespec(&inode->i_atime,
->  			      be64_to_cpu(lvb->lvb_iatime_packed));
-> -	inode->i_atime = timespec_to_timespec64(ts);
-> -	ocfs2_unpack_timespec(&ts,
-> +	ocfs2_unpack_timespec(&inode->i_mtime,
->  			      be64_to_cpu(lvb->lvb_imtime_packed));
-> -	inode->i_mtime = timespec_to_timespec64(ts);
-> -	ocfs2_unpack_timespec(&ts,
-> +	ocfs2_unpack_timespec(&inode->i_ctime,
->  			      be64_to_cpu(lvb->lvb_ictime_packed));
-> -	inode->i_ctime = timespec_to_timespec64(ts);
->  	spin_unlock(&oi->ip_lock);
->  }
->  
-> -- 
-> 2.9.0
-> 
-> 
-> _______________________________________________
-> Ocfs2-devel mailing list
-> Ocfs2-devel@oss.oracle.com
-> https://oss.oracle.com/mailman/listinfo/ocfs2-devel
-
--- 
-Goldwyn
+Guenter
