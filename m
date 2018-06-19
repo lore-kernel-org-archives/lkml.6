@@ -2,107 +2,225 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B486C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B9AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00AA720874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91BBD20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:22:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHmNs6t0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AA720874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dRs4geMy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91BBD20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965681AbeFSGPz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:15:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965628AbeFSGPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:15:51 -0400
-Received: from localhost (unknown [5.29.173.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D04A20661;
-        Tue, 19 Jun 2018 06:15:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529388951;
-        bh=2rXwaeCoJtxv0wC5UH1amBJANT5ZUv5FmaKRz9zKIRc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mHmNs6t06ztD7Q/rTyZ9fLtsvTNOO8JOIQZN60pW2w5tavxp2fpCbYFHRiQmX9sbj
-         w9Udr2DS8TU8I43HeySNVqOsLb36cnXdcpGj875W/yb1Io6r32d9fOLWhxD+ugYTYn
-         Ayz1XM+CqBPJu3z/N8PJp4edPe5OY/a893MNFVq8=
-Date:   Tue, 19 Jun 2018 09:15:48 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, john.hubbard@gmail.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180619061548.GC7557@mtr-leonro.mtl.com>
-References: <20180617012510.20139-1-jhubbard@nvidia.com>
- <20180617012510.20139-3-jhubbard@nvidia.com>
- <CAPcyv4i=eky-QrPcLUEqjsASuRUrFEWqf79hWe0mU8xtz6Jk-w@mail.gmail.com>
- <20180617200432.krw36wrcwidb25cj@ziepe.ca>
- <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
- <20180618081113.GA16991@lst.de>
+        id S1755852AbeFSGWc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 02:22:32 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39972 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754527AbeFSGWa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:22:30 -0400
+Received: by mail-pg0-f65.google.com with SMTP id w8-v6so5643912pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 23:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8a3zIXleatqf+SNc1r1dTdYTup9b4Y1pkDOL8vgcklY=;
+        b=dRs4geMyvzlmACmnjqXW6L+oMs8KaNH8tFm7sjAyHEIhnDELmlXEKDxPvASu8MBF7Y
+         vOW7mLcWOmrer1pWGcDcEGHL5M94SYf5zKP/VfTsJZvnyVkeKxPAZiUOG8Vg0SLJxNPE
+         1zsVUT6jtufoH3JOYlHqjaO+bEQWTLREmlq8w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8a3zIXleatqf+SNc1r1dTdYTup9b4Y1pkDOL8vgcklY=;
+        b=bPnEMUOMbXF3NMHgWJDlXh+ODxFb5FP6vmPgxnPYeRdlZNj7qR4n6cMzhkWv55Xzcx
+         wyOgYlxIAhnKZFro/Uye1B9Ev3hlh6Rt+wD+47KOCZduAyzPT6hlACpCto4kAgkTwVD1
+         SdZW4dUquafk2ozfTesaWfFOu42KIH+/yJdIVhdeqZRPOXXpumGPKiJz1Gq6pFokrSWv
+         GfljGapC0XZO0IUeRX5vNRMiTlflnuVr1clFbcQdaR0XqoiqP+P88ydHbt9i2wR94Qwx
+         j0mTtNHEaAmHcZyBmVepDpiTR39qRsGgXStHx7/pXKDbFSoaL9NEFgV5+BHhhVC7z2MV
+         Fufg==
+X-Gm-Message-State: APt69E2oILBBty3rPYE42LiiOd/BaDihFNoR8v6k7HuzmEKeIfAr8jbl
+        E46+hqfsA8eNR70dAJ+6qpjgVw==
+X-Google-Smtp-Source: ADUXVKLXwogfXvCJYEtdDt/fyXVfIRxIRGPWfmcJI0/Zo5wxpcyIyXAvbjbHJP/xtqc7xLQzzaeizQ==
+X-Received: by 2002:a62:9bc9:: with SMTP id e70-v6mr16475511pfk.15.1529389350152;
+        Mon, 18 Jun 2018 23:22:30 -0700 (PDT)
+Received: from localhost ([122.171.103.96])
+        by smtp.gmail.com with ESMTPSA id j3-v6sm20505635pgp.47.2018.06.18.23.22.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 23:22:29 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 11:52:27 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v8] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Message-ID: <20180619062227.uyan2t63fqwxj3eb@vireshk-i7>
+References: <1529387906-3838-1-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180618081113.GA16991@lst.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1529387906-3838-1-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 19-06-18, 07:58, Daniel Lezcano wrote:
+> +++ b/drivers/powercap/idle_injection.c
+> @@ -0,0 +1,375 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2018 Linaro Limited
+> + *
+> + * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
+> + *
+> + * The idle injection framework proposes a way to force a cpu to enter
+> + * an idle state during a specified amount of time for a specified
+> + * period.
+> + *
+> + * It relies on the smpboot kthreads which handles, via its main loop,
+> + * the common code for hotplugging and [un]parking.
+> + *
+> + * At init time, all the kthreads are created.
+> + *
+> + * A cpumask is specified as parameter for the idle injection
+> + * registering function. The kthreads will be synchronized regarding
+> + * this cpumask.
+> + *
+> + * The idle + run duration is specified via the helpers and then the
+> + * idle injection can be started at this point.
+> + *
+> + * A kthread will call play_idle() with the specified idle duration
+> + * from above.
+> + *
+> + * A timer is set after waking up all the tasks, to the next idle
+> + * injection cycle.
+> + *
+> + * The task handling the timer interrupt will wakeup all the kthreads
+> + * belonging to the cpumask.
+> + *
+> + * Stopping the idle injection is synchonuous, when the function
 
---7iMSBzlTiPOCCT2k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+                                     synchronous
 
-On Mon, Jun 18, 2018 at 10:11:13AM +0200, Christoph Hellwig wrote:
-> On Sun, Jun 17, 2018 at 01:10:04PM -0700, Dan Williams wrote:
-> > I believe kernel behavior regression is a primary concern as now
-> > fallocate() and truncate() can randomly fail where they didn't before.
->
-> Fail or block forever due to actions of other unprivileged users.
->
-> That is a complete no-go.
+> + * returns, there is the guarantee there is no more idle injection
+> + * kthread in activity.
+> + *
+> + * It is up to the user of this framework to provide a lock at an
+> + * upper level to prevent stupid things to happen, like starting while
+> + * we are unregistering.
+> + */
 
-They will fail "properly" with some error, which is better than current
-situation where those unprivileged users can trigger oops.
+> +static void idle_injection_wakeup(struct idle_injection_device *ii_dev)
+> +{
+> +	struct idle_injection_thread *iit;
+> +	unsigned int cpu;
+> +
+> +	for_each_cpu_and(cpu, to_cpumask(ii_dev->cpumask), cpu_online_mask) {
+> +		iit = per_cpu_ptr(&idle_injection_thread, cpu);
+> +		iit->should_run = 1;
+> +		wake_up_process(iit->tsk);
+> +	}
+> +}
 
-Thanks
+Thread A                                        Thread B
 
---7iMSBzlTiPOCCT2k
-Content-Type: application/pgp-signature; name="signature.asc"
+                                                CPU3 hotplug out
+                                                -> idle_injection_park()
+                                                  iit(of-CPU3)->should_run = 0;
 
------BEGIN PGP SIGNATURE-----
+idle_injection_wakeup()
+ for_each_cpu_and(online)..
+   CPU3-selected
+                                                clear CPU3 from cpu-online mask.
 
-iQIcBAEBAgAGBQJbKJ+UAAoJEORje4g2clin69QP/jWFR8E7MKYfBqiosGF6OPVf
-qxjEVTcaIMnnC6GrMykfAnOg7ApYKitetux5SV3+h+EChVTck2nQacbNKGC+kRJ1
-bPKSM2qVPUSgcsfj5kDPXHslVZdhnuYp066rnGkc7CJEfnrMTpcexgOkCQW7iQb/
-B+dpa2VaC5G14XoxVBpONweQ+NedTSX8lLemYazAsY6nm8uwVDAQqdk8bu2F0ayp
-zoarTVCwYV7ENdv0rTkhLyPtB207GHoeCweSU/kj7mdj8Pbaf1CDzxIlOvY4djSC
-Ia5fscHImRT29r8oIIlTI7JfLwsQaPye03o0AZ++qPhwmlGfspJy1dwYea0eMChl
-CvgSigrS22txh367GZ70hn9lpHIAeuUP85RVVODN3tXokJS5cJNHT4n5lwdItcii
-GDaXUzVx+a1Qio3J/mb/4MvLstCbE1Y4r2nYj2ag5gL1XuLPdqp8icYM6OEPQ2lf
-B6z8OF6uQu0bzXj/m//Rep1bhwRnVjgrTVDzc67+hscq/BswhhAx04+COquTEXxv
-TpHOraax/ZLN31lLQ/3QUIMKUZNvuhWVl2ARQJXtb8hmbPo+zQYkuP+ip8DmD5ny
-wvtHqR04dCCwDEp1VmoPFe3PJy+zQvBHe18OyjyuarokNQNZCVAO0pNfivzibwFm
-m1W/BwqX6Z3QRrQrQtYA
-=LD7E
------END PGP SIGNATURE-----
 
---7iMSBzlTiPOCCT2k--
+   iit(of-CPU3)->should_run = 1;
+   wake_up_process()
+
+With the above sequence of events, is it possible that the iit->should_run
+variable is set to 1 while the CPU is offlined ? And so the crash we discussed
+in the previous version may still exist ? Sorry I am not able to take my mind
+away from thinking about these stupid races :(
+
+> +
+> +/**
+> + * idle_injection_wakeup_fn - idle injection timer callback
+> + * @timer: a hrtimer structure
+> + *
+> + * This function is called when the idle injection timer expires which
+> + * will wake up the idle injection tasks and these ones, in turn, play
+> + * idle a specified amount of time.
+> + *
+> + * Return: HRTIMER_RESTART.
+> + */
+> +static enum hrtimer_restart idle_injection_wakeup_fn(struct hrtimer *timer)
+> +{
+> +	unsigned int run_duration_ms;
+> +	unsigned int idle_duration_ms;
+> +	struct idle_injection_device *ii_dev =
+> +		container_of(timer, struct idle_injection_device, timer);
+> +
+> +	run_duration_ms = READ_ONCE(ii_dev->run_duration_ms);
+> +	idle_duration_ms = READ_ONCE(ii_dev->idle_duration_ms);
+> +
+> +	idle_injection_wakeup(ii_dev);
+> +
+> +	hrtimer_forward_now(timer,
+> +			    ms_to_ktime(idle_duration_ms + run_duration_ms));
+> +
+> +	return HRTIMER_RESTART;
+> +}
+> +
+> +/**
+> + * idle_injection_fn - idle injection routine
+> + * @cpu: the CPU number the task belongs to
+> + *
+> + * The idle injection routine will stay idle the specified amount of
+> + * time
+> + */
+> +static void idle_injection_fn(unsigned int cpu)
+> +{
+> +	struct idle_injection_device *ii_dev;
+> +	struct idle_injection_thread *iit;
+> +
+> +	ii_dev = per_cpu(idle_injection_device, cpu);
+> +	iit = per_cpu_ptr(&idle_injection_thread, cpu);
+> +
+> +	/*
+> +	 * Boolean used by the smpboot main loop and used as a
+> +	 * flip-flop in this function
+> +	 */
+> +	iit->should_run = 0;
+> +
+> +	play_idle(READ_ONCE(ii_dev->idle_duration_ms));
+> +}
+
+Maybe we shouldn't change things now (too much effort already went into it
+already), I just wanted to share an idea that popped up in my mind. Maybe we
+could have used the msleep() or similar API with run_duration_ms from the
+kthread instead of the whole hrtimer stuff. Maybe that would have been simpler
+to manage? Maybe not :)
+
+The patch looks fine otherwise. I don't have any other (negative) feedback :)
+
+-- 
+viresh
