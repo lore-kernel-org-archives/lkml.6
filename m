@@ -2,112 +2,158 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28409C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A772C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D592083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:51:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C168D20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:55:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iyqgjHAE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D592083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YfK6IR5A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C168D20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030433AbeFSRvf (ORCPT
+        id S1030350AbeFSRz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:51:35 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:60348 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966706AbeFSRve (ORCPT
+        Tue, 19 Jun 2018 13:55:28 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42576 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966999AbeFSRz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:51:34 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5JHmauo071608
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 17:51:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=L1Y3aJMaADaRYY5Ax3UX3WVKcoiEsPEuWCNs0cTsN2E=;
- b=iyqgjHAEqNHsBSKQDEJMFu37TDOp6VvvOl2PHIwdKW1kxsfmUSoJqTUFRSpYQy5VUswE
- 0YbbsLQckOiGI71ZzMaZDGRjijUHLm5Z1Jm5FpSpETaLZYWQiEzjYFqgaWYvpElwE+bY
- dBOasXh+SMk8KbxxPT1/UCQhvfvaiIPuV4Onv+JYiIIkBKd8WBgHyJdZoBhF6SZnGq6N
- U8WN7Rgpgnqz9++ag8fKRy6DVkv39rcK8P6FaFbvYyKOEim18/uZgs694/B/ZwYzsFIk
- YLxReGTr9F/mbFLauyV4AXFsUZCl0w5mTrLKYQxjsqJsG2hwcJs03EJI2bzEoCjeHIp/ gw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2jmt01hase-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 17:51:33 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5JHpV6g024856
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 17:51:31 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5JHpVXg027812
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 17:51:31 GMT
-Received: from mail-ot0-f179.google.com (/74.125.82.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Jun 2018 10:51:30 -0700
-Received: by mail-ot0-f179.google.com with SMTP id d19-v6so634989oti.8
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:51:30 -0700 (PDT)
-X-Gm-Message-State: APt69E08YmvERHzaJ5Q83PEC+VwT3ABRwOOv9SucfaEgR2LfG40k0/QN
-        6BYYShn4CBJnnIT/ASxuB9ECLdyVFOqlSMQ2FUU=
-X-Google-Smtp-Source: ADUXVKIlrobkXmdvwZWIrCq48VpNr2UV0BhPaQHa0SIwNDuRt/O9OlW832Ru9m/38/NklZZMuMUS7MeLbQIgLj0t320=
-X-Received: by 2002:a9d:4609:: with SMTP id y9-v6mr10048311ote.259.1529430690299;
- Tue, 19 Jun 2018 10:51:30 -0700 (PDT)
+        Tue, 19 Jun 2018 13:55:26 -0400
+Received: by mail-pl0-f66.google.com with SMTP id w17-v6so241860pll.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VuZ48z+peeyQY1/AwvcY8tt6GoMvZmEMjmO0YYPNK6U=;
+        b=YfK6IR5AMmnAcJ/J9Ph4E0IQQk65rd3KgXej8YzDoO/wVhhgkvKBmzTDWE6LvLMoj4
+         LurzWI3RiOZ3EhdTWRGxOz70fBjoiY4XKtKuv/hvtI3TDEc3sdo1JReQdkPfGSK8t5dz
+         k6Z/PS1GNJRbhxlRKVUOaIAWMP67rw7uAUOmM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VuZ48z+peeyQY1/AwvcY8tt6GoMvZmEMjmO0YYPNK6U=;
+        b=GZU8E675r4uAVOQ0xmfS8wgExnOfbZdXJDNCQDHyTk+fxGj4ZFynTsECWzio3OeQL1
+         4ztUPtd81i1Tial8OhLL8rKXoY6sPsIhc/onaMe9SVIX5AGjrTam6E9k07H+yLmu6D1c
+         LKKMYA5ye2pNnfh6KLb8DdChyyQXa3i4bKErNS3adJt8idB7AHrEExK5DVWfKDBYBW7z
+         u0xMwHQgAhaeGooSINg0jJRRFh+buJGbXwBBiohjJ7uY7kp/9hmxkhX/f4FGezd3+y6x
+         6mM0XhwUE4CTntsLHS2Q7/OcLuJoIyQmQs6hjMSlerDczbAXs7Q4clmm1fFV3HxFLVC5
+         DcZQ==
+X-Gm-Message-State: APt69E1BLlLLh9CaLEMb2FUOLmEj1sNi0KUbyP6w0qYsAxlLodl+gdJL
+        LmPE4fbn6N9jkqv1yHXiHppGCA==
+X-Google-Smtp-Source: ADUXVKKuioYLs4Wcrk1kEHNF0YeCPy5w4xq05mbQK1VMaNN+YSSBOUKIT9sG34vfvM5hNml6Ad0XWQ==
+X-Received: by 2002:a17:902:103:: with SMTP id 3-v6mr19994470plb.229.1529430926061;
+        Tue, 19 Jun 2018 10:55:26 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id j15-v6sm488448pfk.40.2018.06.19.10.55.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 10:55:25 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 10:55:24 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Enric Balletbo Serra <eballetbo@gmail.com>
+Cc:     Brian Norris <briannorris@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, viresh.kumar@linaro.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 12/12] mfd: cros_ec: Add throttler sub-device
+Message-ID: <20180619175524.GZ88063@google.com>
+References: <20180614194712.102134-1-mka@chromium.org>
+ <20180614194712.102134-13-mka@chromium.org>
+ <20180618232109.GB154056@rodete-desktop-imager.corp.google.com>
+ <CAFqH_520Z4nAkXsnKeO9ZGqSSfPg_7f7pjJs=t=ryQTBExfwoA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
- <20180615174204.30581-2-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806191928040.10546@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1806191928040.10546@nanos.tec.linutronix.de>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Tue, 19 Jun 2018 13:50:54 -0400
-X-Gmail-Original-Message-ID: <CAGM2reYc7bgcqjqhvattvRMQefxpNXU3FkXJdC1XrGQVpRzsxQ@mail.gmail.com>
-Message-ID: <CAGM2reYc7bgcqjqhvattvRMQefxpNXU3FkXJdC1XrGQVpRzsxQ@mail.gmail.com>
-Subject: Re: [PATCH v10 1/7] x86/tsc: remove tsc_disabled flag
-To:     tglx@linutronix.de
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        john.stultz@linaro.org, sboyd@codeaurora.org, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        hpa@zytor.com, douly.fnst@cn.fujitsu.com, peterz@infradead.org,
-        prarit@redhat.com, feng.tang@intel.com,
-        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=507
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806190197
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAFqH_520Z4nAkXsnKeO9ZGqSSfPg_7f7pjJs=t=ryQTBExfwoA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > tsc_disabled is set when notsc is passed as kernel parameter. The reason we
-> > have notsc is to avoid timing problems on multi-socket systems.  We already
-> > have a mechanism, however, to detect and resolve these issues by invoking
-> > tsc unstable path. Thus, make notsc to behave the same as tsc=unstable.
->
-> notsc also excludes TSC from being used at all, while with your change its
-> suddenly used in sched_clock().
+Hi Enric,
 
-Hi Thomas,
+On Tue, Jun 19, 2018 at 10:41:01AM +0200, Enric Balletbo Serra wrote:
+> Hi Matthias,
+> 
+> I am also interested on the answer of Brian comments :). One small comment.
+> 
+> Missatge de Brian Norris <briannorris@chromium.org> del dia dt., 19 de
+> juny 2018 a les 1:22:
+> >
+> > Hi,
+> >
+> > On Thu, Jun 14, 2018 at 12:47:12PM -0700, Matthias Kaehlcke wrote:
+> > > Instantiate the CrOS EC throttler if it is enabled in the kernel
+> > > configuration.
+> > >
+> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > ---
+> > > Changes in v3:
+> > > - patch added to series
+> > >
+> > >  drivers/mfd/cros_ec.c | 16 ++++++++++++++++
+> > >  1 file changed, 16 insertions(+)
+> > >
+> > > diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> > > index 36156a41499c..5f52b6e2c21a 100644
+> > > --- a/drivers/mfd/cros_ec.c
+> > > +++ b/drivers/mfd/cros_ec.c
+> > > @@ -91,6 +91,10 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
+> > >       return cros_ec_cmd_xfer(ec_dev, &buf.msg);
+> > >  }
+> > >
+> > > +static const struct mfd_cell ec_throttler_cell = {
+> > > +     { .name = "cros-ec-throttler" }
+> > > +};
+> > > +
+> 
+> As Brian said I think that this should go in cros_ec_dev?
 
-Thank you for the review. I will reword the patch comment. Currently,
-at the end it says: "Thus, make notsc to behave the same as
-tsc=unstable." To emphasize this, I will change the patch title to
-this:
+Not sure about this, see my reply to Brian.
 
-x86/tsc: redefine notsc to behave as tsc=unstable
+> Even when only there is one cell we tend to use the array format (see
+> i.e the cros-ec-rtc and the others in cros_ec_dev).
+> 
+> +static const struct mfd_cell ec_throttler_cells[] = {
+> +     { .name = "cros-ec-throttler" }
+> +};
 
-And in the comment I will mention that as a consequence of this change
-tsc is going to be used by sched_clock() when notsc is provided.
+Ok, will change.
 
-Thank you,
-Pavel
+> > >  int cros_ec_register(struct cros_ec_device *ec_dev)
+> > >  {
+> > >       struct device *dev = ec_dev->dev;
+> > > @@ -153,6 +157,18 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+> > >               }
+> > >       }
+> > >
+> > > +     if (IS_ENABLED(CONFIG_CROS_EC_THROTTLER)) {
+> > > +             err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
+> > > +                                   &ec_throttler_cell, 1, NULL, ec_dev->irq,
+> 
+> ARRAY_SIZE(ec_throttler_cells)
+
+Ack
+
+Thanks
+
+Matthias
