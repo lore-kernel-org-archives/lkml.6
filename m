@@ -6,63 +6,64 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A87C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694D9C5AE5A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82CE820836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18A8A205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:45:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BI2qful5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82CE820836
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lFKieYgd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A8A205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030690AbeFSTot (ORCPT
+        id S1030717AbeFSTpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 15:44:49 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:39568 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967180AbeFSToo (ORCPT
+        Tue, 19 Jun 2018 15:45:04 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:43186 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966747AbeFSTo7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 15:44:44 -0400
+        Tue, 19 Jun 2018 15:44:59 -0400
 Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5JJiNBF013531;
-        Tue, 19 Jun 2018 14:44:23 -0500
+        by lelnx194.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5JJipJo014312;
+        Tue, 19 Jun 2018 14:44:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529437463;
-        bh=vC/hVCEnsnqgO16+5+0pBTbwFdr+b44P2IzODUUMfes=;
+        s=ti-com-17Q1; t=1529437491;
+        bh=m8IdMhS6rbzYAI22SHT9fE63vEWnVwzmJPYy8qeKG1U=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=BI2qful5xuX5zCUeH7ySkqDEaO8IgVI771Ll2B2JAlweEl8Ji7tFJYnFZnnEwp1el
-         CRrkLfDGLCSj9jrRpgvfzH1BxAwJ+jofIgwEKre4Z3BcUGtvhc4Fwbz8+ZGM/0XSId
-         Yxz1ta5CtSd1AEu9xeCuXMmOqieY/3eYH9pG4QjA=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5JJiMFG010275;
-        Tue, 19 Jun 2018 14:44:23 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+        b=lFKieYgdDZ84LJlEHjl1ZOL/AJnX3mhzICGxWYWVy2i51Ol/k8E73IZ8PxKrq4a9G
+         yVTOmkAM2t/dJz7VBUgx1bTp8LZJgbth+csTBOIz9uCvVglzgt0QEFMfChycaQ+RVL
+         rMEml7xkpIj80Jz2PvpSPfNqip14vt10z/qh8Y/Q=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5JJioVu010688;
+        Tue, 19 Jun 2018 14:44:50 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 19
- Jun 2018 14:44:22 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ Jun 2018 14:44:50 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 19 Jun 2018 14:44:22 -0500
+ Tue, 19 Jun 2018 14:44:50 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5JJiMj5000623;
-        Tue, 19 Jun 2018 14:44:22 -0500
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5JJiokw018210;
+        Tue, 19 Jun 2018 14:44:50 -0500
 From:   Nishanth Menon <nm@ti.com>
 To:     Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>
-CC:     Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 1/2] Documentation: dt: keystone: ti-sci: Add optional host-id parameter
-Date:   Tue, 19 Jun 2018 14:44:20 -0500
-Message-ID: <20180619194421.3432-2-nm@ti.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, Nishanth Menon <nm@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Tero Kristo <t-kristo@ti.com>, Vignesh R <vigneshr@ti.com>,
+        Jiri Slaby <jslaby@suse.com>, Sekhar Nori <nsekhar@ti.com>
+Subject: [PATCH 2/2] serial: 8250_omap: Add support for AM654 UART controller
+Date:   Tue, 19 Jun 2018 14:44:50 -0500
+Message-ID: <20180619194450.6353-3-nm@ti.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180619194421.3432-1-nm@ti.com>
-References: <20180619194421.3432-1-nm@ti.com>
+In-Reply-To: <20180619194450.6353-1-nm@ti.com>
+References: <20180619194450.6353-1-nm@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -71,53 +72,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Texas Instrument's System Control Interface (TISCI) permits
-the ability for OSs running in virtual machines to be able to
-independently communicate with the firmware without the need going
-through an hypervisor.
+AM654 uses a UART controller that is compatible (partially) with
+existing 8250 UART, however, has a few differences with respect to DMA
+support and control paths. Introduce a base definition that allows us
+to build up the differences in follow on patches.
 
-The "host-id" in effect is the hardware representation of the
-host (example: VMs locked to a core) as identified to the System
-Controller. Hypervisors can either fill in appropriate host-ids in dt
-used for each VM instance OR may use prebuilt blobs where the host-ids
-are pre-populated, as appropriate for the OS running in the VMs.
-
-This is introduced as an optional parameter to maintain consistency
-with legacy device tree blobs.
-
-We call this with a vendor prefix to prevent any possible confusion
-with SCSI ID (m68k) kernel option.
-
+Cc: Sekhar Nori <nsekhar@ti.com>
+Cc: Vignesh R <vigneshr@ti.com>
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
-Changes since RFC:
-* Commit message update to elaborate usage in VM
 
-RFC: https://patchwork.kernel.org/patch/10447753/
+Changes since RFC: Driver change has been split out with corresponding description.
 
- Documentation/devicetree/bindings/arm/keystone/ti,sci.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+RFC: https://patchwork.kernel.org/patch/10447641/
 
-diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt b/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-index 31f5f9a104cc..b56a02c10ae6 100644
---- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-+++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-@@ -45,11 +45,15 @@ Optional Properties:
- 	debug_messages - Map the Debug message region
- - reg:  register space corresponding to the debug_messages
- - ti,system-reboot-controller: If system reboot can be triggered by SoC reboot
-+- ti,host-id: Integer value corresponding to the host ID assigned by Firmware
-+	for identification of host processing entities such as virtual
-+	machines
+ drivers/tty/serial/8250/8250_omap.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index 1b337fee07ed..a019286f8bb6 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -1115,6 +1115,7 @@ static const u8 am3352_habit = OMAP_DMA_TX_KICK | UART_ERRATA_CLOCK_DISABLE;
+ static const u8 dra742_habit = UART_ERRATA_CLOCK_DISABLE;
  
- Example (K2G):
- -------------
- 	pmmc: pmmc {
- 		compatible = "ti,k2g-sci";
-+		ti,host-id = <2>;
- 		mbox-names = "rx", "tx";
- 		mboxes= <&msgmgr &msgmgr_proxy_pmmc_rx>,
- 			<&msgmgr &msgmgr_proxy_pmmc_tx>;
+ static const struct of_device_id omap8250_dt_ids[] = {
++	{ .compatible = "ti,am654-uart" },
+ 	{ .compatible = "ti,omap2-uart" },
+ 	{ .compatible = "ti,omap3-uart" },
+ 	{ .compatible = "ti,omap4-uart", .data = &omap4_habit, },
 -- 
 2.15.1
 
