@@ -3,74 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2470C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16164C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788F720652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:22:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788F720652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cs.cmu.edu
+	by mail.kernel.org (Postfix) with ESMTP id C5B3B20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:23:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B3B20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966895AbeFSRWf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:22:35 -0400
-Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:55466 "EHLO
-        hurricane.elijah.cs.cmu.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966502AbeFSRWe (ORCPT
+        id S967078AbeFSRXP convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:23:15 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:60858 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966551AbeFSRXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:22:34 -0400
-X-Greylist: delayed 1549 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Jun 2018 13:22:33 EDT
-Received: from [127.0.0.1] (helo=cs.cmu.edu)
-        by hurricane.elijah.cs.cmu.edu with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <jaharkes@cs.cmu.edu>)
-        id 1fVJvt-0004HT-3S; Tue, 19 Jun 2018 12:56:41 -0400
-Date:   Tue, 19 Jun 2018 12:56:33 -0400
-From:   Jan Harkes <jaharkes@cs.cmu.edu>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038@lists.linaro.org, Jonathan Corbet <corbet@lwn.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] coda: stop using 'struct timespec' in user API
-Message-ID: <20180619165633.acyxrweiedyhvre7@cs.cmu.edu>
-Mail-Followup-To: Arnd Bergmann <arnd@arndb.de>, y2038@lists.linaro.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>, linux-doc@vger.kernel.org,
+        Tue, 19 Jun 2018 13:23:13 -0400
+Received: from [148.252.241.226] (helo=xylophone.i.decadent.org.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fVKLT-0007JZ-SQ; Tue, 19 Jun 2018 18:23:08 +0100
+Date:   Tue, 19 Jun 2018 18:23:06 +0100
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        stable@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
         linux-kernel@vger.kernel.org
-References: <20180619153822.3638475-1-arnd@arndb.de>
+Subject: [PATCH 4.4] nvme-pci: initialize queue memory before interrupts
+Message-ID: <20180619172306.atcqdzb2tdk3ivvt@xylophone.i.decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619153822.3638475-1-arnd@arndb.de>
-User-Agent: NeoMutt/20180512
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180613171320.GB28828@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 05:37:35PM +0200, Arnd Bergmann wrote:
-> Unfortunately, this breaks the layout of the coda_vattr structure, so
-> we need to redefine that in terms of something that does not change.
-> I'm introducing a new 'struct vtimespec' structure here that keeps
-> the existing layout, and the same change has to be done in the coda
-> user space copy of linux/coda.h before anyone can use that on a 32-bit
-> architecture with 64-bit time_t.
+From: Keith Busch <keith.busch@intel.com>
 
-This looks good to me.
+commit 161b8be2bd6abad250d4b3f674bdd5480f15beeb upstream.
 
-> An open question is what should happen to actual times past y2038,
-> as they are now truncated to the last valid date when sent to user
+A spurious interrupt before the nvme driver has initialized the completion
+queue may inadvertently cause the driver to believe it has a completion
+to process. This may result in a NULL dereference since the nvmeq's tags
+are not set at this point.
 
-That is definitely quite a hard problem because this propagates all the
-way back to the Coda file servers and how they store metadata.
-In fact the existing client-server protocol only uses 32-bit time in
-seconds, so we already lose the nanosecond resolution and 64-bit systems
-don't actually benefit from having the extra bits in their struct timespec.
+The patch initializes the host's CQ memory so that a spurious interrupt
+isn't mistaken for a real completion.
 
-Not exposing an internal kernel datatype is definitely an improvement,
-so this is an ACK for me.
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+[bwh: Backported to 4.4: adjust context]
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ drivers/nvme/host/pci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Jan
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index e86fcc9e9852..01f47b68b6e7 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1589,11 +1589,11 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 	if (result < 0)
+ 		goto release_cq;
+ 
++	nvme_init_queue(nvmeq, qid);
+ 	result = queue_request_irq(dev, nvmeq, nvmeq->irqname);
+ 	if (result < 0)
+ 		goto release_sq;
+ 
+-	nvme_init_queue(nvmeq, qid);
+ 	return result;
+ 
+  release_sq:
+@@ -1797,6 +1797,7 @@ static int nvme_configure_admin_queue(struct nvme_dev *dev)
+ 		goto free_nvmeq;
+ 
+ 	nvmeq->cq_vector = 0;
++	nvme_init_queue(nvmeq, 0);
+ 	result = queue_request_irq(dev, nvmeq, nvmeq->irqname);
+ 	if (result) {
+ 		nvmeq->cq_vector = -1;
+@@ -3165,7 +3166,6 @@ static void nvme_probe_work(struct work_struct *work)
+ 		goto disable;
+ 	}
+ 
+-	nvme_init_queue(dev->queues[0], 0);
+ 	result = nvme_alloc_admin_tags(dev);
+ 	if (result)
+ 		goto disable;
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
 
