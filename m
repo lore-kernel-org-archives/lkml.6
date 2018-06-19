@@ -2,141 +2,94 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EF7C5AE59
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6468C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 963D220693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 718D92075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:53:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R4Q1P6f9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963D220693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODvRaonM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718D92075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937081AbeFSBuM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 21:50:12 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:40847 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934880AbeFSBuK (ORCPT
+        id S937095AbeFSBxG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 21:53:06 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:46218 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936834AbeFSBxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 21:50:10 -0400
-Received: by mail-qk0-f194.google.com with SMTP id r66-v6so10550498qkr.7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 18:50:10 -0700 (PDT)
+        Mon, 18 Jun 2018 21:53:05 -0400
+Received: by mail-ua0-f196.google.com with SMTP id d7-v6so11984231uam.13
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 18:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=0ibjPmdK67/VJOvCzG+NsNGMvU2IPKZSLnyxb4dVOAo=;
-        b=R4Q1P6f9BjQA318v5ryW5hT363XbOdeS6SUxIyi/tkIFBVdlUXcSdGro43Q7Ouja0Y
-         sw4i8cZ271NQObV0x/XcxZqYFj2oEOzjXTibKmb4Zd6s1zywGgQzzJY6vgSJuVSkA9pL
-         SdC3L75qEMr1AguWiqZrHc3OIVROhdK859tpo=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WxY/cwNcW1PS8XxmyQrYB6nSFA1vc5hdAsk4jNzwlbY=;
+        b=ODvRaonMVeflgmHT88QQ3ianTpafML54g2mY2aC3vGnJUDQPcy7+F5jmADF5QxVwI2
+         7VdFwH+pA5s9LcTlIJ7ux70w5oZ0PPW4K5MU/6DzCPjKGVGCVamzD/a1iEAxj92S1nBr
+         Fp8O2QQjSL/DFb3srfmsMLg/cTFgtfaPxhwjO8cFDLOsEJbqWYSgc+RdZF0qqDOB1SE/
+         cZ6e7FTDJ5qiutx4K7tFplFNDD98Ce1ueczKQP/GNnOTyIy7K5OWXgad1SrRGvra1/cS
+         OsYtW375X3yplj0Zh1Nao7UV2z1E67Vl3v105MD8zVxPTpG51Vd3VyywVacKL5+zf7i1
+         7PHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=0ibjPmdK67/VJOvCzG+NsNGMvU2IPKZSLnyxb4dVOAo=;
-        b=Z3mjBLbpdIE6BEWK94NjwCxw7aaAdLm/4XOEjxkbKgQRG1V5oqejZAbCyjJbP77+Bh
-         px/5sTQXSE27XQSwR/T3KcBupuQYWwUpkGm/Ifal5mCC3u6VjTW2VrY0E5T7idPFmeh+
-         Nn1h5cO+nM+anK46RbReVgefX9z4J1sfFwybl4/So17m3G14Vgzn7ZpVSsTn2RYP9TGg
-         J+MLjjpf75GGOO6+IMiXPf7ycm73pDbsnIs7QRKDV912ICDG48VcCOTqDFGRCkPy6muI
-         pG/Xn4d5N6LEiUFRP0nA/qXqzYsPuzvmm4UdRls4deMeiHoNmIVn7S4XKgX0CZZ9tuxa
-         13NQ==
-X-Gm-Message-State: APt69E2+ysC7CWv+Aw0c5aUc5qbDRtKqfE/iWy/PlSymXVgn3PLLXcIK
-        1hrzRi1jw+PEjiXl9AhZFHQciQ==
-X-Google-Smtp-Source: ADUXVKIyEe5PaybT0eTo1jTnSnHhR8ROmfxxx/eZdKQ2Tcg80PQ+lgW7eeA+paWQMExqquKwybkwxg==
-X-Received: by 2002:a37:2e46:: with SMTP id u67-v6mr11713489qkh.106.1529373010310;
-        Mon, 18 Jun 2018 18:50:10 -0700 (PDT)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id k129-v6sm9764134qkd.13.2018.06.18.18.50.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 18:50:09 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 21:50:08 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dave Mielke <Dave@mielke.cc>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] vt: coherence validation code for the unicode
- screen buffer
-In-Reply-To: <CAHp75VfG_4zw+NPuHTUyH-gzdktiCKVcnWcwo0D_fAgfPbdk+A@mail.gmail.com>
-Message-ID: <nycvar.YSQ.7.76.1806182110450.16670@knanqh.ubzr>
-References: <20180617190706.14614-1-nicolas.pitre@linaro.org> <20180617190706.14614-5-nicolas.pitre@linaro.org> <CAHp75VfG_4zw+NPuHTUyH-gzdktiCKVcnWcwo0D_fAgfPbdk+A@mail.gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WxY/cwNcW1PS8XxmyQrYB6nSFA1vc5hdAsk4jNzwlbY=;
+        b=ZYYleIzQX1toowza5fO5JvhgkSSr12TE63jqCfCKfE17dO+xdzp/r+6xtC8Qry1WA2
+         H8lTuy9XRP/wDDMV89lrc4TjLXoaSUyXd6hFg4I3g5K3ROt/VWUOkywCOtijVGJ2sUAj
+         BKkYKqw/RRSO5VnIU9XuD5QZEQnAOwFwx7SaiEpI9oV2Qu785gb9RwktrDouKMV80o55
+         x7QP2JXDV3KHYS0BnEmVWAxHuqn3Cx1j6uFwsgmgil6Ib8SOLdwAtGF9m3tZWK9Pw27T
+         tEgps13iUMgDQ7hV7N05G5cXUMQK1uPkoqD8xFxkUbqmKb+hPOhg/fEeiC13ka4XNrJt
+         FS3A==
+X-Gm-Message-State: APt69E0lIzjQn5ejwxV9WE7eHPxyWzTWJiD4NC8GIEX0StMxhayWieTw
+        kQ+NezFPSFgg6XM5ZON6zaMRQdpT9WZtDEyl+xM=
+X-Google-Smtp-Source: ADUXVKKsWsYEwKgmT93+djVUfY9GVdwQUsAGIb6uMD1Ojymb14v/7Y68Uxv/2Yq82CexQs7DS7/Q0qz1+1UKrz0u7UM=
+X-Received: by 2002:a9f:29c2:: with SMTP id s60-v6mr9666696uas.126.1529373184405;
+ Mon, 18 Jun 2018 18:53:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Received: by 2002:ab0:549e:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 18:53:03
+ -0700 (PDT)
+In-Reply-To: <20180618095653.1538471-1-arnd@arndb.de>
+References: <20180618095653.1538471-1-arnd@arndb.de>
+From:   Balbir Singh <bsingharora@gmail.com>
+Date:   Tue, 19 Jun 2018 11:53:03 +1000
+Message-ID: <CAKTCnzmTV6g8NhkUv1sj=iMQemOTZK7eN_59dqjbpFnrGdsk2A@mail.gmail.com>
+Subject: Re: [PATCH] powerpc: xmon: use ktime_get_coarse_boottime64
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, y2038@lists.linaro.org,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018, Andy Shevchenko wrote:
+On Mon, Jun 18, 2018 at 7:56 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> get_monotonic_boottime() is deprecated, and may not be safe to call in
+> every context, as it has to read a hardware clocksource.
+>
+> This changes xmon to print the time using ktime_get_coarse_boottime64()
+> instead, which avoids the old timespec type and the HW access.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-> On Sun, Jun 17, 2018 at 10:07 PM, Nicolas Pitre
-> <nicolas.pitre@linaro.org> wrote:
-> > Make sure the unicode screen buffer matches the video screen content.
-> > This is provided for debugging convenience and disabled by default.
-> 
-> > +#define VC_UNI_SCREEN_DEBUG 0
-> 
-> > +       if (!VC_UNI_SCREEN_DEBUG || !uniscr)
-> > +               return;
-> 
-> Hmm... Interesting. I would rather go with
-> #ifdef ..._DEBUG
-> ...
-> #else
-> return;
-> #endif
-> 
-> It will relax requirement on how to define _DEBUG. I don't recall I
-> see something like you proposing in the kernel for the same purpose.
+Looks good to me!
 
-Some random examples:
+Acked-by: Balbir Singh <bsingharora@gmail.com>
 
-include/crypto/scatterwalk.h:106;
-                if (ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE && !PageSlab(page))
-
-include/math-emu/single.h:68:
-    if (!FP_INHIBIT_RESULTS)
-
-This form also allows for the compiler to parse and validate the code 
-whether or not the feature is enabled, while still optimizing it away in 
-the end if not enabled.
-
-> > +
-> > +       WARN_CONSOLE_UNLOCKED();
-> > +
-> > +       /*
-> > +        * Make sure our unicode screen translates into the same glyphs
-> > +        * as the actual screen. This is brutal indeed.
-> > +        */
-> > +       p = (unsigned short *)vc->vc_origin;
-> > +       mask = vc->vc_hi_font_mask | 0xff;
-> > +       for (y = 0; y < vc->vc_rows; y++) {
-> > +               char32_t *line = uniscr->lines[y];
-> > +               for (x = 0; x < vc->vc_cols; x++) {
-> > +                       u16 glyph = scr_readw(p++) & mask;
-> > +                       char32_t uc = line[x];
-> > +                       int tc = conv_uni_to_pc(vc, uc);
-> > +                       if (tc == -4)
-> > +                               tc = conv_uni_to_pc(vc, 0xfffd);
-> > +                       if (tc == -4)
-> > +                               tc = conv_uni_to_pc(vc, '?');
-> > +                       if (tc != glyph)
-> 
-> > +                               pr_notice("%s: mismatch at %d,%d: "
-> > +                                         "glyph=%#x tc=%#x\n", __func__,
-> > +                                         x, y, glyph, tc);
-> 
-> Don't split format string in printk(). checkpatch will not warn on longer lines.
-
-I didn't do it like that for checkpatch but to keep the code readable.
-I don't particularly care either ways though.
-
-
-Nicolas
+Balbir Singh
