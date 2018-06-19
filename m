@@ -2,171 +2,150 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D70C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC534C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E6DE2083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:02:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E6DE2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emtrion.com
+	by mail.kernel.org (Postfix) with ESMTP id 6171120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:02:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TxnyVi+S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6171120874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757136AbeFSKB7 (ORCPT
+        id S1757173AbeFSKC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:01:59 -0400
-Received: from mail3.emtrion.de ([80.150.99.69]:15925 "EHLO mail3.emtrion.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756533AbeFSKBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:01:41 -0400
-X-Greylist: delayed 328 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Jun 2018 06:01:37 EDT
-Received: from tuelinux-v3.emtrion.local (2003:5a:a012:1:7eac:eac5:fc1b:7f56)
- by bmk019s01.emtrion.local (2003:5a:a012:1:d9c:d045:28a7:5f84) with Microsoft
- SMTP Server (TLS) id 8.3.485.1; Tue, 19 Jun 2018 11:56:08 +0200
-From:   <jan.tuerk@emtrion.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] dt-bindings: display: Document the EDT et* displays in one file.
-Date:   Tue, 19 Jun 2018 11:55:43 +0200
-Message-ID: <20180619095546.24445-1-jan.tuerk@emtrion.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180427132445.3458-2-jan.tuerk@emtrion.com>
-References: <20180427132445.3458-2-jan.tuerk@emtrion.com>
+        Tue, 19 Jun 2018 06:02:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33722 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756442AbeFSKCZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:02:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GnRUZU+YNPV9hRDIH4MQR776E6J6fLwT2o+7JVZWQ8M=; b=TxnyVi+Sc21Dqpeskv/7jcMGm
+        Z5p/4LqOm8Adf1IMzegJ1iPp9LBYoDL5Vocv0spnmzx6LR/rfLk/1MeZ23BXVRs5/A1IlKYOzkpmX
+        f/ead+WZhcu+MGIbJpqRCmJqikFU2OHvYQjVm8WJMUOzej+02+ukRcv7sY4TWKYryr+WAJq3kMkVH
+        1MdaqaR73e44pNppfp8JRmaL70umB2P8GkUrzeoXtAz0lfg2jc9r2HnxxOOzoyok9C57/CONz+Wdk
+        GQFeyycj82CysqrehiFnk0Sh5FJ5W4ZPkBwdc2Uu8OtE35rzfkpXOvgwTOAWksVGriTfUEQZ934EK
+        GdZEmiSig==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVDSu-0001SY-Et; Tue, 19 Jun 2018 10:02:20 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B534620268507; Tue, 19 Jun 2018 12:02:18 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 12:02:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+Message-ID: <20180619100218.GN2458@hirez.programming.kicks-ass.net>
+References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-11.0.0.4283-8.100.1062-23916.005
-X-TM-AS-Result: No--10.688400-8.000000-31
-X-TM-AS-MatchedID: 705441-700378-702796-702311-701475-703523-188019-700016-7
-        03529-704410-847575-700454-704425-700324-702900-704568-702890-712124-711139
-        -702762-139504-148004-148036-42000-42003-55
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Tuerk <jan.tuerk@emtrion.com>
+On Tue, Jun 19, 2018 at 07:34:16AM +0800, Yang Shi wrote:
 
-Document the Emerging Display Technology Corp. (EDT) using the
-simple-panel binding in one single file.
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index fc41c05..e84f80c 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2686,6 +2686,141 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	return __split_vma(mm, vma, addr, new_below);
+>  }
+>  
+> +/* Consider PUD size or 1GB mapping as large mapping */
+> +#ifdef HPAGE_PUD_SIZE
+> +#define LARGE_MAP_THRESH	HPAGE_PUD_SIZE
+> +#else
+> +#define LARGE_MAP_THRESH	(1 * 1024 * 1024 * 1024)
+> +#endif
+> +
+> +/* Unmap large mapping early with acquiring read mmap_sem */
+> +static int do_munmap_zap_early(struct mm_struct *mm, unsigned long start,
+> +			       size_t len, struct list_head *uf)
+> +{
+> +	unsigned long end = 0;
+> +	struct vm_area_struct *vma = NULL, *prev, *last, *tmp;
+> +	bool success = false;
+> +	int ret = 0;
+> +
+> +	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE - start)
+> +		return -EINVAL;
+> +
+> +	len = (PAGE_ALIGN(len));
+> +	if (len == 0)
+> +		return -EINVAL;
+> +
+> +	/* Just deal with uf in regular path */
+> +	if (unlikely(uf))
+> +		goto regular_path;
+> +
+> +	if (len >= LARGE_MAP_THRESH) {
+> +		down_read(&mm->mmap_sem);
+> +		vma = find_vma(mm, start);
+> +		if (!vma) {
+> +			up_read(&mm->mmap_sem);
+> +			return 0;
+> +		}
+> +
+> +		prev = vma->vm_prev;
+> +
+> +		end = start + len;
+> +		if (vma->vm_start > end) {
+> +			up_read(&mm->mmap_sem);
+> +			return 0;
+> +		}
+> +
+> +		if (start > vma->vm_start) {
+> +			int error;
+> +
+> +			if (end < vma->vm_end &&
+> +			    mm->map_count > sysctl_max_map_count) {
+> +				up_read(&mm->mmap_sem);
+> +				return -ENOMEM;
+> +			}
+> +
+> +			error = __split_vma(mm, vma, start, 0);
+> +			if (error) {
+> +				up_read(&mm->mmap_sem);
+> +				return error;
+> +			}
+> +			prev = vma;
+> +		}
+> +
+> +		last = find_vma(mm, end);
+> +		if (last && end > last->vm_start) {
+> +			int error = __split_vma(mm, last, end, 1);
+> +
+> +			if (error) {
+> +				up_read(&mm->mmap_sem);
+> +				return error;
+> +			}
+> +		}
+> +		vma = prev ? prev->vm_next : mm->mmap;
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
----
- .../bindings/display/panel/edt,et-series.txt  | 39 +++++++++++++++++++
- .../display/panel/edt,et057090dhu.txt         |  7 ----
- .../display/panel/edt,et070080dh6.txt         | 10 -----
- .../display/panel/edt,etm0700g0dh6.txt        | 10 -----
- 4 files changed, 39 insertions(+), 27 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/edt,et-series.txt
- delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,et057090dhu.txt
- delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,et070080dh6.txt
- delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,etm0700g0dh6.txt
-
-[Changes from v4 of emCON patch-series] 
- - rebased to mainline/master
- - split as requested by Shawn Guo
-
-As requested by Sha
-
-diff --git a/Documentation/devicetree/bindings/display/panel/edt,et-series.txt b/Documentation/devicetree/bindings/display/panel/edt,et-series.txt
-new file mode 100644
-index 000000000000..f56b99ebd9be
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/edt,et-series.txt
-@@ -0,0 +1,39 @@
-+Emerging Display Technology Corp. Displays
-+==========================================
-+
-+
-+Display bindings for EDT Display Technology Corp. Displays which are
-+compatible with the simple-panel binding, which is specified in
-+simple-panel.txt
-+
-+
-+5,7" WVGA TFT Panels
-+--------------------
-+
-++-----------------+---------------------+-------------------------------------+
-+| Identifier      | compatbile          | description                         |
-++=================+=====================+=====================================+
-+| ET057090DHU     | edt,et057090dhu     | 5.7" VGA TFT LCD panel              |
-++-----------------+---------------------+-------------------------------------+
-+
-+
-+7,0" WVGA TFT Panels
-+--------------------
-+
-++-----------------+---------------------+-------------------------------------+
-+| Identifier      | compatbile          | description                         |
-++=================+=====================+=====================================+
-+| ETM0700G0DH6    | edt,etm070080dh6    | WVGA TFT Display with capacitive    |
-+|                 |                     | Touchscreen                         |
-++-----------------+---------------------+-------------------------------------+
-+| ETM0700G0BDH6   | edt,etm070080bdh6   | Same as ETM0700G0DH6 but with       |
-+|                 |                     | inverted pixel clock.               |
-++-----------------+---------------------+-------------------------------------+
-+| ETM0700G0EDH6   | edt,etm070080edh6   | Same display as the ETM0700G0BDH6,  |
-+|                 |                     | but with changed Hardware for the   |
-+|                 |                     | backlight and the touch interface   |
-++-----------------+---------------------+-------------------------------------+
-+| ET070080DH6     | edt,etm070080dh6    | Same timings as the ETM0700G0DH6,   |
-+|                 |                     | but with resistive touch.           |
-++-----------------+---------------------+-------------------------------------+
-+
-diff --git a/Documentation/devicetree/bindings/display/panel/edt,et057090dhu.txt b/Documentation/devicetree/bindings/display/panel/edt,et057090dhu.txt
-deleted file mode 100644
-index 4903d7b1d947..000000000000
---- a/Documentation/devicetree/bindings/display/panel/edt,et057090dhu.txt
-+++ /dev/null
-@@ -1,7 +0,0 @@
--Emerging Display Technology Corp. 5.7" VGA TFT LCD panel
--
--Required properties:
--- compatible: should be "edt,et057090dhu"
--
--This binding is compatible with the simple-panel binding, which is specified
--in simple-panel.txt in this directory.
-diff --git a/Documentation/devicetree/bindings/display/panel/edt,et070080dh6.txt b/Documentation/devicetree/bindings/display/panel/edt,et070080dh6.txt
-deleted file mode 100644
-index 20cb38e836e4..000000000000
---- a/Documentation/devicetree/bindings/display/panel/edt,et070080dh6.txt
-+++ /dev/null
-@@ -1,10 +0,0 @@
--Emerging Display Technology Corp. ET070080DH6 7.0" WVGA TFT LCD panel
--
--Required properties:
--- compatible: should be "edt,et070080dh6"
--
--This panel is the same as ETM0700G0DH6 except for the touchscreen.
--ET070080DH6 is the model with resistive touch.
--
--This binding is compatible with the simple-panel binding, which is specified
--in simple-panel.txt in this directory.
-diff --git a/Documentation/devicetree/bindings/display/panel/edt,etm0700g0dh6.txt b/Documentation/devicetree/bindings/display/panel/edt,etm0700g0dh6.txt
-deleted file mode 100644
-index ee4b18053e40..000000000000
---- a/Documentation/devicetree/bindings/display/panel/edt,etm0700g0dh6.txt
-+++ /dev/null
-@@ -1,10 +0,0 @@
--Emerging Display Technology Corp. ETM0700G0DH6 7.0" WVGA TFT LCD panel
--
--Required properties:
--- compatible: should be "edt,etm0700g0dh6"
--
--This panel is the same as ET070080DH6 except for the touchscreen.
--ETM0700G0DH6 is the model with capacitive multitouch.
--
--This binding is compatible with the simple-panel binding, which is specified
--in simple-panel.txt in this directory.
--- 
-2.17.1
-
+Hold up, two things: you having to copy most of do_munmap() didn't seem
+to suggest a helper function? And second, since when are we allowed to
+split VMAs under a read lock?
