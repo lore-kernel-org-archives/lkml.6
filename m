@@ -5,54 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AFFC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60696C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24BA120661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:47:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24BA120661
+	by mail.kernel.org (Postfix) with ESMTP id 174C820661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:47:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174C820661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967336AbeFSVrX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:47:23 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:38357 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964888AbeFSVrS (ORCPT
+        id S967361AbeFSVr1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 17:47:27 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:43771 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967294AbeFSVrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:47:18 -0400
-Received: by mail-yw0-f196.google.com with SMTP id w13-v6so450949ywa.5
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 14:47:17 -0700 (PDT)
+        Tue, 19 Jun 2018 17:47:19 -0400
+Received: by mail-yw0-f195.google.com with SMTP id r19-v6so441973ywc.10
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 14:47:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wLVnH7vIuGi0xSrrr/f9kAJNZm3q+kno8SThjP7bEPk=;
-        b=rJI9EiVbtyuNC+1y+z/Bw5lvq+1OcNqR8eyCPq8XtrRPYlyinHJo6F7RGquE4jhBKS
-         cKgpMqEnKCwEP2jIy2LbZDKQ4a1aI5va2TDKukJfQEgBux0wSlWQrWgtg/dOMfONnJLQ
-         q6TLtauvajHgFmcw81kM/7w1Jdd7Zep1KJkIsvXraI727y9YzcPECti2qoA2Rg4kJib5
-         JHBnb5Fs5ZD13Fqwgn8XrFH3JQYnbqXviNzCto608NPrZvyVfCy8sfPVwd6PPUGjmFkN
-         Pav0V7ZIOBiHzx1c94HBaQk99cx9okbA2zhtFs8ZCwNsePrGv5W8KK35SgPUJsWnDXbu
-         ZgQg==
-X-Gm-Message-State: APt69E2A9mrNrhV/pmzo/9lNBUy3JKt1IJi6mcUcj6vBo1FZ+gGoylEm
-        VDxQkKQV8Oex6oTLCRxA/A==
-X-Google-Smtp-Source: ADUXVKK95K8qb9qEUxyZffW815yMRebygAB5bY6ffYmiYsR8JhWIoRoWunrDUe6Q+dKD/gP3UWe7Kw==
-X-Received: by 2002:a0d:c905:: with SMTP id l5-v6mr9331254ywd.308.1529444837527;
-        Tue, 19 Jun 2018 14:47:17 -0700 (PDT)
+        bh=8RXql62/dQvZpkpAbxhcxM+PugjdkCOIwRwB4Nmmg1k=;
+        b=NC3yEbjMJB2p4qlK/Cq2PvVJJ5uv2xpriy+LxF7Em2Mh6KTiz7xbOru/V7WpP3BmeN
+         HG2Cl75b4MnbTgqlriVWSzICcA41fhhmx4QoHtGz6EZAepbe7cfw0AlwXjfJ9GjJzMFl
+         uobs+b1+TmiWgZ8H4ZZOS2yjSuZnR0g6iUKN58ltO8KzwIsKWuud0jBy665AjWOOf+Kr
+         mb9/Ewy2ZsbybveVK+eOsHuPTrKdRTD7gbz3JrzSvC8ama/nbIqyclePLUTh+uP/V9rU
+         fxJ5SNM0dPJ3ybcN45YkOUvHBN0TJF6hyoK7wydwgTw1ovoid2gnzONtnD4rIGzOjUnH
+         LuRg==
+X-Gm-Message-State: APt69E0r2JW6xzFBv74SuOfsRE0vN1PlTbGUGGHMnVKU65U5INhiVj+U
+        +oi4Ked4l1cx5YC9l8q/xw==
+X-Google-Smtp-Source: ADUXVKJZiJ6h2fYXypqCdEj79PpwEojYfikwuP4+wenuiCzgT5xRq77x3ANdUD+ZlWapubFLbvPiTw==
+X-Received: by 2002:a81:ad44:: with SMTP id l4-v6mr9285131ywk.68.1529444838893;
+        Tue, 19 Jun 2018 14:47:18 -0700 (PDT)
 Received: from localhost.localdomain (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.googlemail.com with ESMTPSA id x66-v6sm333612ywc.76.2018.06.19.14.47.16
+        by smtp.googlemail.com with ESMTPSA id x66-v6sm333612ywc.76.2018.06.19.14.47.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 14:47:16 -0700 (PDT)
+        Tue, 19 Jun 2018 14:47:18 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
         James Hogan <jhogan@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        Kevin Cernekee <cernekee@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH 3/5] MIPS: bmips: remove unnecessary call to register "simple-bus"
-Date:   Tue, 19 Jun 2018 15:47:08 -0600
-Message-Id: <20180619214710.22066-4-robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+Subject: [PATCH 4/5] MIPS: generic: remove unnecessary of_platform_populate call
+Date:   Tue, 19 Jun 2018 15:47:09 -0600
+Message-Id: <20180619214710.22066-5-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180619214710.22066-1-robh@kernel.org>
 References: <20180619214710.22066-1-robh@kernel.org>
@@ -61,39 +59,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DT core will register "simple-bus" by default, so it is not necessary
-for arch specific code to do so unless there are custom match entries,
+The DT core will call of_platform_populate, so it is not necessary for
+arch specific code to call it unless there are custom match entries,
 auxdata or parent device. Neither of those apply here, so remove the call.
 
-Cc: Kevin Cernekee <cernekee@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: James Hogan <jhogan@kernel.org>
 Cc: linux-mips@linux-mips.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- arch/mips/bmips/setup.c | 7 -------
- 1 file changed, 7 deletions(-)
+ arch/mips/generic/init.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/arch/mips/bmips/setup.c b/arch/mips/bmips/setup.c
-index 3b6f687f177c..231fc5ce375e 100644
---- a/arch/mips/bmips/setup.c
-+++ b/arch/mips/bmips/setup.c
-@@ -202,13 +202,6 @@ void __init device_tree_init(void)
- 	of_node_put(np);
+diff --git a/arch/mips/generic/init.c b/arch/mips/generic/init.c
+index 5ba6fcc26fa7..07ec08462d70 100644
+--- a/arch/mips/generic/init.c
++++ b/arch/mips/generic/init.c
+@@ -14,7 +14,6 @@
+ #include <linux/init.h>
+ #include <linux/irqchip.h>
+ #include <linux/of_fdt.h>
+-#include <linux/of_platform.h>
+ 
+ #include <asm/bootinfo.h>
+ #include <asm/fw/fw.h>
+@@ -208,18 +207,6 @@ void __init arch_init_irq(void)
+ 	irqchip_init();
  }
  
--int __init plat_of_setup(void)
+-static int __init publish_devices(void)
 -{
--	return __dt_register_buses("simple-bus", NULL);
+-	if (!of_have_populated_dt())
+-		panic("Device-tree not present");
+-
+-	if (of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL))
+-		panic("Failed to populate DT");
+-
+-	return 0;
 -}
+-arch_initcall(publish_devices);
 -
--arch_initcall(plat_of_setup);
--
- static int __init plat_dev_init(void)
+ void __init prom_free_prom_memory(void)
  {
- 	of_clk_init(NULL);
+ }
 -- 
 2.17.1
 
