@@ -2,132 +2,97 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F342BC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4466AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72BF2083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:08:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72BF2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id EC3E220875
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:08:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PHqEcM2s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3E220875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757256AbeFSOIk (ORCPT
+        id S1757270AbeFSOI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:08:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51136 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757216AbeFSOIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:08:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99CF980D;
-        Tue, 19 Jun 2018 07:08:38 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.207.54])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 851CE3F246;
-        Tue, 19 Jun 2018 07:08:35 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 15:08:26 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Punit Agrawal <punit.agrawal@arm.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, Xie XiuQi <xiexiuqi@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        tnowicki@caviumnetworks.com, linux-pci@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-mm@kvack.org, wanghuiqiang@huawei.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zhongjiang <zhongjiang@huawei.com>,
-        linux-arm <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
-Message-ID: <20180619140818.GA16927@e107981-ln.cambridge.arm.com>
-References: <a880df29-b656-d98d-3037-b04761c7ed78@huawei.com>
- <20180611085237.GI13364@dhcp22.suse.cz>
- <16c4db2f-bc70-d0f2-fb38-341d9117ff66@huawei.com>
- <20180611134303.GC75679@bhelgaas-glaptop.roam.corp.google.com>
- <20180611145330.GO13364@dhcp22.suse.cz>
- <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
- <87bmce60y3.fsf@e105922-lin.cambridge.arm.com>
- <8b715082-14d4-f10b-d2d6-b23be7e4bf7e@huawei.com>
- <20180619120714.GE13685@dhcp22.suse.cz>
- <874lhz3pmn.fsf@e105922-lin.cambridge.arm.com>
+        Tue, 19 Jun 2018 10:08:58 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:52792 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755376AbeFSOI4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 10:08:56 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5JE4JRp032375;
+        Tue, 19 Jun 2018 14:08:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=stxPTpc/02UwYOqTT9a5jOsxFQ5YLZcFcfW3Va4NG6c=;
+ b=PHqEcM2srMMKF9N5X3g/j4JOkUI208Hp3iRrFep2TqB9bVqtfa3ZLYUYwg09dkYoY1uA
+ S7YUeEuaNYtKKsjODzVMNxxiffkEC12qftuvxoF6xOtr5WznDLK5AaNoAwjunuPckYaE
+ a1M/MaPun9OwfJbjQlJcys1NhrtYvUwgHAc3hDssVBffJ1qMuV/3z8OWO5LoISKck3W/
+ tQTQ2MeofCVrOqQg5H2U9ztQanbOusWwFXz506iII7hD3PzqQxt656Sb3bAStloyx6w0
+ tKEkAxCmjSX55vh5ehaOa6We8UDtLIpShbO76Y2/p8nFejHupk7Hfwhnsi6L9Skgdgo2 Ig== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2jmr2mgex7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 14:08:25 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5JE8NbV002440
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 14:08:23 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5JE8LZq016065;
+        Tue, 19 Jun 2018 14:08:21 GMT
+Received: from mwanda (/197.157.34.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Jun 2018 07:08:20 -0700
+Date:   Tue, 19 Jun 2018 17:08:05 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Hugo Lefeuvre <hle@owl.eu.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Marcus Wolf <linux@wolf-entwicklungen.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: pi433: fix race condition in pi433_open
+Message-ID: <20180619140804.rly7oey6jsbznfg3@mwanda>
+References: <20180618022400.GA1893@hle-laptop.local>
+ <20180618101838.gzbrxabilnqyilsi@mwanda>
+ <20180619030850.GA1876@hle-laptop.local>
+ <20180619104248.z5nbbakwhjgscufb@mwanda>
+ <20180619134220.GA2396@hle-laptop.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <874lhz3pmn.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180619134220.GA2396@hle-laptop.local>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=565
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806190159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 01:52:16PM +0100, Punit Agrawal wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
+On Tue, Jun 19, 2018 at 09:42:20AM -0400, Hugo Lefeuvre wrote:
+> This TODO seems to be related to this misunderstanding too:
 > 
-> > On Tue 19-06-18 20:03:07, Xie XiuQi wrote:
-> > [...]
-> >> I tested on a arm board with 128 cores 4 numa nodes, but I set CONFIG_NR_CPUS=72.
-> >> Then node 3 is not be created, because node 3 has no memory, and no cpu.
-> >> But some pci device may related to node 3, which be set in ACPI table.
-> >
-> > Could you double check that zonelists for node 3 are generated
-> > correctly?
+>  890         /* TODO? guard against device removal before, or while,
+>  891          * we issue this ioctl. --> device_get()
+>  892          */
 > 
-> The cpus in node 3 aren't onlined and there's no memory attached - I
-> suspect that no zonelists are built for this node.
-> 
-> We skip creating a node, if the number of SRAT entries parsed exceeds
-> NR_CPUS[0]. This in turn prevents onlining the numa node and so no
-> zonelists will be created for it.
-> 
-> I think the problem will go away if the cpus are restricted via the
-> kernel command line by setting nr_cpus.
-> 
-> Xie, can you try the below patch on top of the one enabling memoryless
-> nodes? I'm not sure this is the right solution but at least it'll
-> confirm the problem.
+> Device removal can't happen before or during the ioctl execution.
 
-This issue looks familiar (or at least related):
+Correct.  Just delete the comment.
 
-git log d3bd058826aa
+regards,
+dan carpenter
 
-The reason why the NR_CPUS guard is there is to avoid overflowing
-the early_node_cpu_hwid array. IA64 does something different in
-that respect compared to x86, we have to have a look into this.
 
-Regardless, AFAICS the proximity domains to nodes mappings should not
-depend on CONFIG_NR_CPUS, it seems that there is something wrong in that
-in ARM64 ACPI SRAT parsing.
-
-Lorenzo
-
-> 
-> Thanks,
-> Punit
-> 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/kernel/acpi_numa.c?h=v4.18-rc1#n73
-> 
-> -- >8 --
-> diff --git a/arch/arm64/kernel/acpi_numa.c b/arch/arm64/kernel/acpi_numa.c
-> index d190a7b231bf..fea0f7164f1a 100644
-> --- a/arch/arm64/kernel/acpi_numa.c
-> +++ b/arch/arm64/kernel/acpi_numa.c
-> @@ -70,11 +70,9 @@ void __init acpi_numa_gicc_affinity_init(struct acpi_srat_gicc_affinity *pa)
->         if (!(pa->flags & ACPI_SRAT_GICC_ENABLED))
->                 return;
-> 
-> -   if (cpus_in_srat >= NR_CPUS) {
-> + if (cpus_in_srat >= NR_CPUS)
->                 pr_warn_once("SRAT: cpu_to_node_map[%d] is too small, may not be able to use all cpus\n",
->                              NR_CPUS);
-> -           return;
-> -   }
-> 
->         pxm = pa->proximity_domain;
->         node = acpi_map_pxm_to_node(pxm);
