@@ -6,218 +6,84 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81ECAC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 076C9C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C6F7205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6F7205C9
+	by mail.kernel.org (Postfix) with ESMTP id B516020661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B516020661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966720AbeFSPoh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:44:37 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:53989 "EHLO
+        id S966784AbeFSPok (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:44:40 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:35599 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964999AbeFSPof (ORCPT
+        with ESMTP id S964999AbeFSPoi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:44:35 -0400
+        Tue, 19 Jun 2018 11:44:38 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
  (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MSTdP-1fcDsf2nmN-00TRzx; Tue, 19 Jun 2018 17:44:26 +0200
+ 0LfcCc-1fya533Zww-00pMdY; Tue, 19 Jun 2018 17:44:36 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>
 Cc:     y2038@lists.linaro.org, Jan Kara <jack@suse.cz>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] reiserfs: use monotonic time for j_trans_start_time
-Date:   Tue, 19 Jun 2018 17:43:14 +0200
-Message-Id: <20180619154343.3640484-2-arnd@arndb.de>
+        Arnd Bergmann <arnd@arndb.de>, reiserfs-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] reiserfs: use 64-bit values in print_time
+Date:   Tue, 19 Jun 2018 17:43:15 +0200
+Message-Id: <20180619154343.3640484-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180619154343.3640484-1-arnd@arndb.de>
 References: <20180619154343.3640484-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:+zzcWiLbZF4eRVpZBZyHbYgyWmydPM4yH5ASZxe+8CP6IHZpbT0
- OjdSxSrB4TTRhLYDaq2SXdQkHWx7IqhumAjSQOE0Vzyo5rUGOP3DLb9AUsZvZergDkvhDZO
- Cpmsx1VOy/OE358bWnIf7YJgltKG9rghWPP7H6NVb5H7KN9tuqBw/oyQqa9+3H8vdAk7Gpp
- a1Bcw+FBkMeoPqkXiSKqQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:U4Oi6eDsVqo=:9zQ2lRqPxqCn5HGFdwK2Ms
- uy9ico2jkgsIAhubCyoRWufPcMNq8CzkZzMeUfFymaduLPNW6s304gQppdUywlpFsPVyQWFpd
- CoRYlSgbqzrYp0az4Kpw7957nFfKPRgmE8bdu3g3+BgwhG/eiTyC8Z/0rTtjR1svNx2yyiJsk
- raiIY0HI3nf5t5Nqf8UKf1Bae613WawL4/Xb9cNuRRtAnhwdD9on7EHadIAEuV1M4hx9/P+oB
- HkqCVQEsSdZ2HpBxTknt9FSx0QJoF19vL5NeuDhYqcrItX2eOiGDsK86Ji8kIgW3fKBVAxhyr
- ok4VXlJoR5Zfg/NOn+J9k+SzOaLoYikCilB5qcq22NHNkmPkeuDmDIfWerrTFWARWxFTUKGer
- NKrTnyS0PNJFNBPggbY6KYJHVDnPN7hubI3TfBoGhj/aXpXkf0lMYSyFZAH1Jh/hC3zIwgL5H
- RGnwKykrXAJ5UJ3LOdYKgt/vXRqSYCs3HQelrjzHjRWxR81KaQwFhK3LSkI+EarEAJqUXIJ2G
- XNZcP5+LabY3kUpl10sHI4VDCd3h2XS3GrP6vZsDrApyGLDo/W6u62jWlyUfaTKBYNVJdG8fK
- LD/kCqeRWkoSNyha1AjW4WZdM/S4T9snNPSVv6SzQO8nRMadoFlimX2kSDooHQfDPiMuBOq/y
- 3Bs+olLgJxwS7ivUqNvU5EdrK1gp5DqUaHzF1wTE2tlPKvQOrimYx/NsqfdX+oMDTiLM=
+X-Provags-ID: V03:K1:52k9zeNWrwsdYEhT04fve0Mkyatoe2paE7NXA9DXR/xTGb+bCSi
+ 74f2ak6fl7sNyt2UYeSlbTtWDhq6IdxOunhsbQ7PUPkTaO4A8qIetj8W9Qq1C/t5v+1A9mW
+ wfaQfH3RVZRLveDO/7B6E8HI16NPKh/tr35uw35pgomT19FancGashdlC7ljOvdeakojhsH
+ 0ia9Ou6Sf1xJyMs2OyPTQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Aacv8960YZY=:GvqKP78lPufsLVgzPi1PEt
+ p35ys5uba0cpcKTZ6Lq/kgtpNrCWAJzxsalEbAF7b91ZklbOjaLnCz6kODU8/5f8tKoiiRINj
+ sI82PNwsA65oBgBqrC5P2gfZslC1h/ZOBAhuqSa9jn95PhZq+fwqHfX0Kpn+48CHLbzaeE4u1
+ CBFj2/pdJfyqfAi3R/5pMRjs8aeaCxvhMSg1n31tk0hLV8yP3OSrHvX79QqLmsM83D2hgfNq+
+ Hg2T6uY8bmE3LgTLwNWcaIk2E+qwmHrDqlWGDbchSwOh14JxbODUUbG5FRYrmd9LvscIRdWfX
+ T0+BvrcdC4sy1Kh3GQ3vZd92AOtraO5toYk63VGdUih9leeFSBMKRwOhH3wmGK4AfucTKfJ/m
+ K7I1TsB2dLSJYqV4fTL+FEmPjoomKcEqDa73A79do82EJPmS4uQMp4QHj01OBQUGQxFEXC+Kg
+ iPXYVsEJ2Bm1SkgFgcMBverftGIr3jR7aRB1vMhib0o/+CGpjGCSdCY4AU/av+hPUBfe6iPbx
+ Niew5gZEyCt9Ldo5uzfwyrm3Jpv8p9m/oKPO2N7ajDysU27opmr2ygmSJWd6Dh1L/7WP+yS8i
+ wUfe1Qb4Y0ZsNIZdUwT7I4UVZ7j+S4Ywa3RW1Cs/lYXAZBOmNnzZNmQtFfFeewIqAWi2FOGcL
+ plbKs5Qh2TgGjzTF0MryIF2hrQ5ObJY52p1TbXFD0SZj3GTJ0vHcfVYXWYaG7ct5g4NA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using CLOCK_REALTIME time_t timestamps breaks on 32-bit systems
-in 2038, and gives surprising results with a concurrent settimeofday().
-
-This changes the reiserfs journal timestamps to use ktime_get_seconds()
-instead, which makes it use a 64-bit CLOCK_MONOTONIC stamp.
-
-In the procfs output, the monotonic timestamp needs to be converted
-back to CLOCK_REALTIME to keep the existing ABI.
+Inode timestamps are now 64-bit wide even on 32-bit machines, and reiserfs
+interprets the 32-bit on-disk timestamps as unsigned when returning them
+to user space with statx(), so for consistency we should print them
+the same way in the emergency console logs.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/reiserfs/journal.c  | 22 +++++++++++-----------
- fs/reiserfs/procfs.c   |  8 ++++++--
- fs/reiserfs/reiserfs.h |  2 +-
- 3 files changed, 18 insertions(+), 14 deletions(-)
+ fs/reiserfs/item_ops.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
-index 1e7f733b2a12..e809da912c00 100644
---- a/fs/reiserfs/journal.c
-+++ b/fs/reiserfs/journal.c
-@@ -2381,7 +2381,7 @@ static int journal_read(struct super_block *sb)
- 	struct reiserfs_journal_desc *desc;
- 	unsigned int oldest_trans_id = 0;
- 	unsigned int oldest_invalid_trans_id = 0;
--	time_t start;
-+	time64_t start;
- 	unsigned long oldest_start = 0;
- 	unsigned long cur_dblock = 0;
- 	unsigned long newest_mount_id = 9;
-@@ -2395,7 +2395,7 @@ static int journal_read(struct super_block *sb)
- 	cur_dblock = SB_ONDISK_JOURNAL_1st_BLOCK(sb);
- 	reiserfs_info(sb, "checking transaction log (%pg)\n",
- 		      journal->j_dev_bd);
--	start = get_seconds();
-+	start = ktime_get_seconds();
+diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
+index e3c558d1b78c..d0ab3a763962 100644
+--- a/fs/reiserfs/item_ops.c
++++ b/fs/reiserfs/item_ops.c
+@@ -33,11 +33,11 @@ static int sd_is_left_mergeable(struct reiserfs_key *key, unsigned long bsize)
+ 	return 0;
+ }
  
- 	/*
- 	 * step 1, read in the journal header block.  Check the transaction
-@@ -2556,7 +2556,7 @@ static int journal_read(struct super_block *sb)
- 	if (replay_count > 0) {
- 		reiserfs_info(sb,
- 			      "replayed %d transactions in %lu seconds\n",
--			      replay_count, get_seconds() - start);
-+			      replay_count, ktime_get_seconds() - start);
- 	}
- 	/* needed to satisfy the locking in _update_journal_header_block */
- 	reiserfs_write_lock(sb);
-@@ -2914,7 +2914,7 @@ int journal_transaction_should_end(struct reiserfs_transaction_handle *th,
- 				   int new_alloc)
+-static char *print_time(time_t t)
++static char *print_time(time64_t t)
  {
- 	struct reiserfs_journal *journal = SB_JOURNAL(th->t_super);
--	time_t now = get_seconds();
-+	time64_t now = ktime_get_seconds();
- 	/* cannot restart while nested */
- 	BUG_ON(!th->t_trans_id);
- 	if (th->t_refcount > 1)
-@@ -3023,7 +3023,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
- 			      struct super_block *sb, unsigned long nblocks,
- 			      int join)
- {
--	time_t now = get_seconds();
-+	time64_t now = ktime_get_seconds();
- 	unsigned int old_trans_id;
- 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
- 	struct reiserfs_transaction_handle myth;
-@@ -3056,7 +3056,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
- 		PROC_INFO_INC(sb, journal.journal_relock_writers);
- 		goto relock;
- 	}
--	now = get_seconds();
-+	now = ktime_get_seconds();
+ 	static char timebuf[256];
  
- 	/*
- 	 * if there is no room in the journal OR
-@@ -3119,7 +3119,7 @@ static int do_journal_begin_r(struct reiserfs_transaction_handle *th,
- 	}
- 	/* we are the first writer, set trans_id */
- 	if (journal->j_trans_start_time == 0) {
--		journal->j_trans_start_time = get_seconds();
-+		journal->j_trans_start_time = ktime_get_seconds();
- 	}
- 	atomic_inc(&journal->j_wcount);
- 	journal->j_len_alloc += nblocks;
-@@ -3559,11 +3559,11 @@ static void flush_async_commits(struct work_struct *work)
-  */
- void reiserfs_flush_old_commits(struct super_block *sb)
- {
--	time_t now;
-+	time64_t now;
- 	struct reiserfs_transaction_handle th;
- 	struct reiserfs_journal *journal = SB_JOURNAL(sb);
- 
--	now = get_seconds();
-+	now = ktime_get_seconds();
- 	/*
- 	 * safety check so we don't flush while we are replaying the log during
- 	 * mount
-@@ -3613,7 +3613,7 @@ void reiserfs_flush_old_commits(struct super_block *sb)
- static int check_journal_end(struct reiserfs_transaction_handle *th, int flags)
- {
- 
--	time_t now;
-+	time64_t now;
- 	int flush = flags & FLUSH_ALL;
- 	int commit_now = flags & COMMIT_NOW;
- 	int wait_on_commit = flags & WAIT;
-@@ -3694,7 +3694,7 @@ static int check_journal_end(struct reiserfs_transaction_handle *th, int flags)
- 	}
- 
- 	/* deal with old transactions where we are the last writers */
--	now = get_seconds();
-+	now = ktime_get_seconds();
- 	if ((now - journal->j_trans_start_time) > journal->j_max_trans_age) {
- 		commit_now = 1;
- 		journal->j_next_async_flush = 1;
-diff --git a/fs/reiserfs/procfs.c b/fs/reiserfs/procfs.c
-index e39b3910d24d..520f9003c13a 100644
---- a/fs/reiserfs/procfs.c
-+++ b/fs/reiserfs/procfs.c
-@@ -303,6 +303,10 @@ static int show_journal(struct seq_file *m, void *unused)
- 	struct reiserfs_sb_info *r = REISERFS_SB(sb);
- 	struct reiserfs_super_block *rs = r->s_rs;
- 	struct journal_params *jp = &rs->s_v1.s_journal;
-+	ktime_t j_trans_start_ktime = ktime_set(JF(j_trans_start_time), 0);
-+
-+	/* print as CLOCK_REALTIME */
-+	j_trans_start_ktime = ktime_mono_to_real(j_trans_start_ktime);
- 
- 	seq_printf(m,		/* on-disk fields */
- 		   "jp_journal_1st_block: \t%i\n"
-@@ -325,7 +329,7 @@ static int show_journal(struct seq_file *m, void *unused)
- 		   "j_bcount: \t%lu\n"
- 		   "j_first_unflushed_offset: \t%lu\n"
- 		   "j_last_flush_trans_id: \t%u\n"
--		   "j_trans_start_time: \t%li\n"
-+		   "j_trans_start_time: \t%lli\n"
- 		   "j_list_bitmap_index: \t%i\n"
- 		   "j_must_wait: \t%i\n"
- 		   "j_next_full_flush: \t%i\n"
-@@ -366,7 +370,7 @@ static int show_journal(struct seq_file *m, void *unused)
- 		   JF(j_bcount),
- 		   JF(j_first_unflushed_offset),
- 		   JF(j_last_flush_trans_id),
--		   JF(j_trans_start_time),
-+		   ktime_divns(j_trans_start_ktime, NSEC_PER_SEC),
- 		   JF(j_list_bitmap_index),
- 		   JF(j_must_wait),
- 		   JF(j_next_full_flush),
-diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
-index 1536ebbaf6ab..d0fc829bd760 100644
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -330,7 +330,7 @@ struct reiserfs_journal {
- 
- 	struct buffer_head *j_header_bh;
- 
--	time_t j_trans_start_time;	/* time this transaction started */
-+	time64_t j_trans_start_time;	/* time this transaction started */
- 	struct mutex j_mutex;
- 	struct mutex j_flush_mutex;
+-	sprintf(timebuf, "%ld", t);
++	sprintf(timebuf, "%lld", t);
+ 	return timebuf;
+ }
  
 -- 
 2.9.0
