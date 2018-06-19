@@ -2,127 +2,258 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAC6C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4ACC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F30120652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F30120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EBAF2083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Y/FUWbBY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EBAF2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967044AbeFSRDK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:03:10 -0400
-Received: from mga12.intel.com ([192.55.52.136]:22922 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966775AbeFSRDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:03:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 10:03:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,243,1526367600"; 
-   d="scan'208";a="48294842"
-Received: from 2b52.sc.intel.com ([143.183.136.147])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Jun 2018 10:03:07 -0700
-Message-ID: <1529427588.23068.7.camel@intel.com>
-Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com, Florian Weimer <fweimer@redhat.com>
-Date:   Tue, 19 Jun 2018 09:59:48 -0700
-In-Reply-To: <CAGXu5jJNgu4bW_Zthqjfpe9gLxK0zxG8QFEqqK+pJNebz6tUaw@mail.gmail.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-         <20180607143807.3611-7-yu-cheng.yu@intel.com>
-         <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
-         <1528403417.5265.35.camel@2b52.sc.intel.com>
-         <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
-         <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
-         <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de>
-         <CAMe9rOoCiXQ4iVD3j_AHGrvEXtoaVVZVs7H7fCuqNEuuR5j+2Q@mail.gmail.com>
-         <CALCETrXO8R+RQPhJFk4oiA4PF77OgSS2Yro_POXQj1zvdLo61A@mail.gmail.com>
-         <CAMe9rOpLxPussn7gKvn0GgbOB4f5W+DKOGipe_8NMam+Afd+RA@mail.gmail.com>
-         <CALCETrWmGRkQvsUgRaj+j0CP4beKys+TT5aDR5+18nuphwr+Cw@mail.gmail.com>
-         <CAMe9rOpzcCdje=bUVs+C1WrY6GuwA-8AUFVLOG325LGz7KHJxw@mail.gmail.com>
-         <alpine.DEB.2.21.1806122046520.1592@nanos.tec.linutronix.de>
-         <CAMe9rOrGjJf0aMnUjAP38MqvOiW3=iXGQjcUT3O=f9pE85hXaw@mail.gmail.com>
-         <CALCETrVsh5t-V1Sm88LsZE_+DS0GE_bMWbcoX3SjD6GnrB08Pw@mail.gmail.com>
-         <CAGXu5jK0gospOXRpN6zYiQPXOZeE=YpVAz2qu4Zc3-32v85+EQ@mail.gmail.com>
-         <569B4719-6283-4575-A16E-D0A78D280F4E@amacapital.net>
-         <CAGXu5jJNgu4bW_Zthqjfpe9gLxK0zxG8QFEqqK+pJNebz6tUaw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S967094AbeFSRDT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:03:19 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36890 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966775AbeFSRDQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 13:03:16 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 31-v6so176563plc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=dQqPsypTD9rYzVNKYLlxcGBZypOJyVwz4mfiPeKAZ9w=;
+        b=Y/FUWbBYe47RmwEoZLTNUvEdBwVBAwsCwMGHLTa4BKLeTrJi9IgY/f7h9GCBwYMMbw
+         62VM0O7ldevZe9HGWcv8vtLOtGWkq9ncSQwMDoJ5zqALGQmQ4hckcsH8gLarmDX+mdws
+         1pzivauprU3LQF+0NeKG6Zv6KpPfUZM6qWguWMMXhGzulMjUulyXZzy08i4APSLFdnc2
+         t0Vmz8X+7Qt9HNzt8DCath302DI1zZLroyxamGpdBsTJz7VYbtSoUXE4vuJYbsEBHlYk
+         X5tsSEOzXZUKGcOps8pBy4plb71SXKRtMUQ2l7rBBlJpkCK7xVAqVsYSUNhQSKA1+5sT
+         +NPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=dQqPsypTD9rYzVNKYLlxcGBZypOJyVwz4mfiPeKAZ9w=;
+        b=elRoIqJFBGuLQmhd1gBrkJHQ04RJKfzaamVDjmLWUvETjvVgicwDWG8KShYWak2VKC
+         abDmdAmAhJeZumJy4WBsU8jje+Z1kQXH6K3ScNUnqG0X4CxUZEGDheV5IOnkpfifZo2k
+         LV7+Xy0NXbQBrIm4nKqthSeGLr4/mZG4yIZf2ENdyrMmlK1C1J3qPsBitDqO5Listt9J
+         Wn7mbwgOCZLv+ojByT1zJDR911sfFiT0/J53l7QPafhnwnOkM2YRJdWBspK91/0fjOKr
+         pqQjQLw29NqrSid1vqxSn3zl2XxftMNIpWVN/dug6mh9L/uJ9uFcD+hKXQG6JavvHywd
+         NLAQ==
+X-Gm-Message-State: APt69E1l2NZGoLSnw94jLONTB8wW/dxep2dw1Dj2G0mM6Vgr2AoN2OnJ
+        oOiunqiYu/HkzFlZDn6re3fr6Q==
+X-Google-Smtp-Source: ADUXVKJyXGaMx0YUhVzy7SkJXSuXghemoVJGjOzH9l/cNGzEXouxQ4yTZWyfjt8vlfnOTO5YJr/xGA==
+X-Received: by 2002:a17:902:7896:: with SMTP id q22-v6mr19332970pll.243.1529427795958;
+        Tue, 19 Jun 2018 10:03:15 -0700 (PDT)
+Received: from localhost ([2605:e000:151d:96f:170:3319:9294:4203])
+        by smtp.gmail.com with ESMTPSA id w11-v6sm194523pfn.71.2018.06.19.10.03.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 10:03:15 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+From:   Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20180619134051.16726-2-jbrunet@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
+        David Brown <david.brown@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
+References: <20180619134051.16726-1-jbrunet@baylibre.com>
+ <20180619134051.16726-2-jbrunet@baylibre.com>
+Message-ID: <20180619170307.33232.70445@harbor.lan>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/2] clk: qcom: drop CLK_SET_RATE_GATE from sdc clocks
+Date:   Tue, 19 Jun 2018 10:03:07 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-19 at 09:44 -0700, Kees Cook wrote:
-> On Tue, Jun 19, 2018 at 7:50 AM, Andy Lutomirski <luto@amacapital.net
-> > wrote:
-> > 
-> > > 
-> > > On Jun 18, 2018, at 5:52 PM, Kees Cook <keescook@chromium.org>
-> > > wrote:
-> > > Following Linus's request for "slow introduction" of new security
-> > > features, likely the best approach is to default to "relaxed"
-> > > (with a
-> > > warning about down-grades), and allow distros/end-users to pick
-> > > "forced" if they know their libraries are all CET-enabled.
-> > I still don’t get what “relaxed” is for.  I think the right design
-> > is:
-> > 
-> > Processes start with CET on or off depending on the ELF note, but
-> > they start with CET unlocked no matter what. They can freely switch
-> > CET on and off (subject to being clever enough not to crash if they
-> > turn it on and then return right off the end of the shadow stack)
-> > until they call ARCH_CET_LOCK.
-> I'm fine with this. I'd expect modern loaders to just turn on CET and
-> ARCH_CET_LOCK immediately and be done with it. :P
+Quoting Jerome Brunet (2018-06-19 06:40:50)
+> the mmci driver (drivers/mmc/host/mmci.c) does the following sequence:
+> * clk_prepare_enable()
+> * clk_set_rate()
+> =
 
-This is the current implementation.  If the loader has CET in its ELF
-header, it is executed with CET on.  The loader will turn off CET if
-the application being loaded does not support it (in the ELF header).
- The loader calls ARCH_CET_LOCK before passing to the application.  But
-how do we handle dlopen?
+> on SDCx_clk which is a children of SDCx_src. SDCx_src has
+> CLK_SET_RATE_GATE so this sequence should not be allowed but this was not
+> enforced. IOW, the flag is ignored. Dropping the flag won't change
+> anything to the current behaviour of the platform.
+> =
 
-> > 
-> > Ptrace gets new APIs to turn CET on and off and to lock and unlock
-> > it.  If an attacker finds a “ptrace me and turn off CET” gadget,
-> > then they might as well just do “ptrace me and write shell code”
-> > instead. It’s basically the same gadget. Keep in mind that the
-> > actual sequence of syscalls to do this is incredibly complicated.
-> Right -- if an attacker can control ptrace of the target, we're way
-> past CET. The only concern I have, though, is taking advantage of
-> expected ptracing. For example: browsers tend to have crash handlers
-> that launch a ptracer. If ptracing disabled CET for all threads, this
-> won't by safe: an attacker just gains control in two threads, crashes
-> one to get the ptracer to attach, which disables CET in the other
-> thread and the attacker continues ROP as normal. As long as the
-> ptrace
-> disabling is thread-specific, I think this will be okay.
+> CLK_SET_RATE_GATE is being fixed and enforced now. If the flag was kept,
+> the mmci driver would receive -EBUSY when calling clk_set_rate()
+> =
 
-If ptrace can turn CET on/off and it is thread-specific, do we still
-need ptrace lock/unlock?
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Yu-cheng
+Applied to clk-qcom-set-rate-gate.
+
+Thanks,
+Mike
+
+> ---
+>  drivers/clk/qcom/gcc-ipq806x.c | 3 ---
+>  drivers/clk/qcom/gcc-mdm9615.c | 2 --
+>  drivers/clk/qcom/gcc-msm8660.c | 5 -----
+>  drivers/clk/qcom/gcc-msm8960.c | 5 -----
+>  4 files changed, 15 deletions(-)
+> =
+
+> diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806=
+x.c
+> index 28eb200d0f1e..5f61225657ab 100644
+> --- a/drivers/clk/qcom/gcc-ipq806x.c
+> +++ b/drivers/clk/qcom/gcc-ipq806x.c
+> @@ -1220,7 +1220,6 @@ static struct clk_rcg sdc1_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1269,7 +1268,6 @@ static struct clk_rcg sdc3_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1353,7 +1351,6 @@ static struct clk_rcg tsif_ref_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm961=
+5.c
+> index b99dd406e907..849046fbed6d 100644
+> --- a/drivers/clk/qcom/gcc-mdm9615.c
+> +++ b/drivers/clk/qcom/gcc-mdm9615.c
+> @@ -947,7 +947,6 @@ static struct clk_rcg sdc1_src =3D {
+>                         .parent_names =3D gcc_cxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -996,7 +995,6 @@ static struct clk_rcg sdc2_src =3D {
+>                         .parent_names =3D gcc_cxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> diff --git a/drivers/clk/qcom/gcc-msm8660.c b/drivers/clk/qcom/gcc-msm866=
+0.c
+> index c347a0d44bc8..7e930e25c79f 100644
+> --- a/drivers/clk/qcom/gcc-msm8660.c
+> +++ b/drivers/clk/qcom/gcc-msm8660.c
+> @@ -1558,7 +1558,6 @@ static struct clk_rcg sdc1_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1607,7 +1606,6 @@ static struct clk_rcg sdc2_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1656,7 +1654,6 @@ static struct clk_rcg sdc3_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1705,7 +1702,6 @@ static struct clk_rcg sdc4_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1754,7 +1750,6 @@ static struct clk_rcg sdc5_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> diff --git a/drivers/clk/qcom/gcc-msm8960.c b/drivers/clk/qcom/gcc-msm896=
+0.c
+> index eb551c75fba6..fd495e0471bb 100644
+> --- a/drivers/clk/qcom/gcc-msm8960.c
+> +++ b/drivers/clk/qcom/gcc-msm8960.c
+> @@ -1628,7 +1628,6 @@ static struct clk_rcg sdc1_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1677,7 +1676,6 @@ static struct clk_rcg sdc2_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1726,7 +1724,6 @@ static struct clk_rcg sdc3_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1775,7 +1772,6 @@ static struct clk_rcg sdc4_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> @@ -1824,7 +1820,6 @@ static struct clk_rcg sdc5_src =3D {
+>                         .parent_names =3D gcc_pxo_pll8,
+>                         .num_parents =3D 2,
+>                         .ops =3D &clk_rcg_ops,
+> -                       .flags =3D CLK_SET_RATE_GATE,
+>                 },
+>         }
+>  };
+> -- =
+
+> 2.14.3
+>=20
