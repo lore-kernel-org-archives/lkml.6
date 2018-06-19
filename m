@@ -2,91 +2,169 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8029C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6B1C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE8120693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:09:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9766720661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:10:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKPqMplk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE8120693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YXugDi2E";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zjc6ccHn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9766720661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756004AbeFSGJS (ORCPT
+        id S1756117AbeFSGKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:09:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750917AbeFSGJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:09:16 -0400
-Received: from mail-wm0-f42.google.com (mail-wm0-f42.google.com [74.125.82.42])
+        Tue, 19 Jun 2018 02:10:17 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48262 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755611AbeFSGKP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:10:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 61B7E60376; Tue, 19 Jun 2018 06:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529388615;
+        bh=WWQKkjoNwSk17qZqZ78FLMKwyBSASPpHJMus57KH0dw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YXugDi2Es34bhyKvZNUNknRU6yeCrwbGspRZuIF2UApkfoJtZEehU8GgmBPKXFzS+
+         MKs0Vjxrg2D1gYxdgmTbCt3BDHazi1XChJpmoc5Ur1Wvy1V1o5VMbfOCcEzLRu+RPl
+         poEx6871YSvLtyU1UzLLOdC85LqXb5DSTW/vU1O0=
+Received: from akhilpo-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A776D208A1;
-        Tue, 19 Jun 2018 06:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529388556;
-        bh=gnYboGmOh99GKRD8ycTKR29b4eWi0Hw8uX56V1JsCrE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=JKPqMplk2I13u1fA1HmMCA1IJVarGbOEaWZ+8ZHWBk6J4JNtb2IrKgw25DJIHC69v
-         6tIO2q763n8jWdfq3yi8Ee6+iTOXUO7NN5XyX98tI+OjgfxYKXpubfrX71/9CSIVll
-         sTlc5gknf9kYxmaMi5wmE8xACbHzT+u8CR9tSXY8=
-Received: by mail-wm0-f42.google.com with SMTP id r125-v6so19645838wmg.2;
-        Mon, 18 Jun 2018 23:09:15 -0700 (PDT)
-X-Gm-Message-State: APt69E0ZMqwohRidYcXOwWzb4QLO8S+koBrhZpV5y/xtHEgNY9kP0ypA
-        /dpmY9jP/ILOQfLBXc1OHjPCCgdkBeqFPztvw+g=
-X-Google-Smtp-Source: ADUXVKK6sGjDQX22lDzZxNH48sF2/TT8RUhjhlTX8zO5UnOomRSsZNzXiCltAOZbgYtSXPhGvQo/Cs/OsrTfK6Jncss=
-X-Received: by 2002:a1c:6d85:: with SMTP id b5-v6mr10024441wmi.135.1529388554156;
- Mon, 18 Jun 2018 23:09:14 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 23:09:13
- -0700 (PDT)
-In-Reply-To: <8268db75d4698a4fba9aa11de7e8f6d6f20a0515.camel@perches.com>
-References: <20180618191645.15247-1-krzk@kernel.org> <8268db75d4698a4fba9aa11de7e8f6d6f20a0515.camel@perches.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 19 Jun 2018 08:09:13 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdXv0449yHmsw9w4ASnjkwm2tF5hLc_F3VjvopD7LbJmQ@mail.gmail.com>
-Message-ID: <CAJKOXPdXv0449yHmsw9w4ASnjkwm2tF5hLc_F3VjvopD7LbJmQ@mail.gmail.com>
-Subject: Re: [PATCH] ARC: dts: Remove leading 0x from node unit addresses
-To:     Joe Perches <joe@perches.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        devicetree@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        (Authenticated sender: akhilpo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 44E88604D4;
+        Tue, 19 Jun 2018 06:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529388614;
+        bh=WWQKkjoNwSk17qZqZ78FLMKwyBSASPpHJMus57KH0dw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Zjc6ccHnt8DDEQ6zb0SiB41ZVFNKwEsnT19nYYTxNZAzgy0dnpt9pyuo1OdV6mkp8
+         91qJuSi5C5/ZcY/ofN0AREG//8IGBe5OYnrOLab/NxsAlxyxny2PtiFvwRHbv7bpgp
+         9ci+gKha91qGVsCo/KlB+oZ4A+vyAt2A8HRInXro=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 44E88604D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=akhilpo@codeaurora.org
+From:   Akhil P Oommen <akhilpo@codeaurora.org>
+To:     sumit.semwal@linaro.org, gustavo@padovan.org
+Cc:     linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
+        linux-kernel@vger.kernel.org, jcrouse@codeaurora.org,
+        smasetty@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH] dma-buf/fence: Take refcount on the module that owns the fence
+Date:   Tue, 19 Jun 2018 11:40:05 +0530
+Message-Id: <1529388605-10044-1-git-send-email-akhilpo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 June 2018 at 22:07, Joe Perches <joe@perches.com> wrote:
-> On Mon, 2018-06-18 at 21:16 +0200, Krzysztof Kozlowski wrote:
->> Remove leading 0x from all node unit addresses with a sed command:
->>
->>     sed -E -i -e "s/@0x([0-9a-fA-F\.]+)\s?\{/@\L\1 \{/g" arch/arc/boot/dts/*.dts*
->>
->> This fixes DTC warnings like:
->>
->>     Warning (unit_address_format): /cpu_card/dw-apb-gpio@0x2000: unit name should not have leading "0x"
->
-> Do all of these need fixing?
->
-> Aren't there dozens of these in arch/arm and elsewhere too?
+Each fence object holds function pointers of the module that initialized
+it. Allowing the module to unload before this fence's release is
+catastrophic. So, keep a refcount on the module until the fence is
+released.
 
-Yeah, all of them need fixing too... and now I found patch from
-Mathieu doing this for Arc:
-https://patchwork.kernel.org/patch/10112715/
-He also sent patches for other archs.
+Signed-off-by: Akhil P Oommen <akhilpo@codeaurora.org>
+---
+ drivers/dma-buf/dma-fence.c | 15 ++++++++++++---
+ include/linux/dma-fence.h   | 10 ++++++++--
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-This patch can be ignored then.
+diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
+index 4edb9fd..0be8053 100644
+--- a/drivers/dma-buf/dma-fence.c
++++ b/drivers/dma-buf/dma-fence.c
+@@ -18,6 +18,7 @@
+  * more details.
+  */
+ 
++#include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/export.h>
+ #include <linux/atomic.h>
+@@ -168,6 +169,7 @@ void dma_fence_release(struct kref *kref)
+ {
+ 	struct dma_fence *fence =
+ 		container_of(kref, struct dma_fence, refcount);
++	struct module *module = fence->owner;
+ 
+ 	trace_dma_fence_destroy(fence);
+ 
+@@ -178,6 +180,8 @@ void dma_fence_release(struct kref *kref)
+ 		fence->ops->release(fence);
+ 	else
+ 		dma_fence_free(fence);
++
++	module_put(module);
+ }
+ EXPORT_SYMBOL(dma_fence_release);
+ 
+@@ -556,8 +560,9 @@ struct default_wait_cb {
+  * to check which fence is later by simply using dma_fence_later.
+  */
+ void
+-dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
+-	       spinlock_t *lock, u64 context, unsigned seqno)
++_dma_fence_init(struct module *module, struct dma_fence *fence,
++		const struct dma_fence_ops *ops, spinlock_t *lock,
++		u64 context, unsigned seqno)
+ {
+ 	BUG_ON(!lock);
+ 	BUG_ON(!ops || !ops->wait || !ops->enable_signaling ||
+@@ -571,7 +576,11 @@ struct default_wait_cb {
+ 	fence->seqno = seqno;
+ 	fence->flags = 0UL;
+ 	fence->error = 0;
++	fence->owner = module;
++
++	if (!try_module_get(module))
++		fence->owner = NULL;
+ 
+ 	trace_dma_fence_init(fence);
+ }
+-EXPORT_SYMBOL(dma_fence_init);
++EXPORT_SYMBOL(_dma_fence_init);
+diff --git a/include/linux/dma-fence.h b/include/linux/dma-fence.h
+index eb9b05a..8159125 100644
+--- a/include/linux/dma-fence.h
++++ b/include/linux/dma-fence.h
+@@ -36,6 +36,8 @@
+ 
+ /**
+  * struct dma_fence - software synchronization primitive
++ * @owner: the module that contains fence_ops functions.
++ *	   Usually THIS_MODULE.
+  * @refcount: refcount for this fence
+  * @ops: dma_fence_ops associated with this fence
+  * @rcu: used for releasing fence with kfree_rcu
+@@ -71,6 +73,7 @@
+  * been completed, or never called at all.
+  */
+ struct dma_fence {
++	struct module *owner;
+ 	struct kref refcount;
+ 	const struct dma_fence_ops *ops;
+ 	struct rcu_head rcu;
+@@ -249,8 +252,11 @@ struct dma_fence_ops {
+ 				   char *str, int size);
+ };
+ 
+-void dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
+-		    spinlock_t *lock, u64 context, unsigned seqno);
++#define dma_fence_init(fence, ops, lock, context, seqno) _dma_fence_init( \
++		THIS_MODULE, fence, ops, lock, context, seqno)
++void _dma_fence_init(struct module *module, struct dma_fence *fence,
++		const struct dma_fence_ops *ops, spinlock_t *lock, u64 context,
++		unsigned seqno);
+ 
+ void dma_fence_release(struct kref *kref);
+ void dma_fence_free(struct dma_fence *fence);
+-- 
+1.9.1
 
-Best regards,
-Krzysztof
