@@ -2,92 +2,104 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130C9C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D0EC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A76872075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:45:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=paulo.ac header.i=@paulo.ac header.b="J4357JWQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A76872075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulo.ac
+	by mail.kernel.org (Postfix) with ESMTP id 5D1252075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:45:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D1252075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030239AbeFSQpT (ORCPT
+        id S1030259AbeFSQpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:45:19 -0400
-Received: from mail.paulo.ac ([34.238.86.106]:54124 "EHLO mail.paulo.ac"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966510AbeFSQpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:45:18 -0400
-X-Greylist: delayed 468 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Jun 2018 12:45:18 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.paulo.ac (Postfix) with ESMTP id 2DF19C00362;
-        Tue, 19 Jun 2018 16:37:30 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at paulo.ac
-Authentication-Results: mail.paulo.ac (amavisd-new); dkim=pass (1024-bit key)
-        header.d=paulo.ac
-Received: from mail.paulo.ac ([127.0.0.1])
-        by localhost (mail.paulo.ac [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id U5sxj1vTeN9c; Tue, 19 Jun 2018 16:37:26 +0000 (UTC)
-Received: from localhost (unknown [191.32.35.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.paulo.ac (Postfix) with ESMTPSA id 00C3CC76528;
-        Tue, 19 Jun 2018 16:37:25 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.paulo.ac 00C3CC76528
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=paulo.ac; s=default;
-        t=1529426246; bh=3aB7YPUoItxy5+Rr2TwGBSwxc5F+deXDf712zhFp8JY=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=J4357JWQTsQTRJZM/4yWkNYqUc/Ws6H7prqt/UJqCP/7oCyH6DB0DP7E7AF8LDRq9
-         d0/uZJvMPds4octE9Tn6Aign7FyniukE/zNSzI/KnjSHc6vs0cn0TC0vjelIX+Cgc8
-         EPizt7rig5sxmXH95qCvqdUYfiji/iAtlsjX0Lnw=
-From:   Paulo Alcantara <paulo@paulo.ac>
-To:     Arnd Bergmann <arnd@arndb.de>, Steve French <sfrench@samba.org>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        Kees Cook <keescook@chromium.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] cifs: use timespec64 internally
-In-Reply-To: <20180619153255.3634720-1-arnd@arndb.de>
-References: <20180619153255.3634720-1-arnd@arndb.de>
-Date:   Tue, 19 Jun 2018 13:36:31 -0300
-Message-ID: <8736xibunk.fsf@paulo.ac>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 19 Jun 2018 12:45:46 -0400
+Received: from smtprelay0211.hostedemail.com ([216.40.44.211]:54303 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1030242AbeFSQpo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:45:44 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 667BC18058ED1;
+        Tue, 19 Jun 2018 16:45:43 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: crib39_6bd415231285a
+X-Filterd-Recvd-Size: 3371
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 19 Jun 2018 16:45:40 +0000 (UTC)
+Message-ID: <e66cad5399b741b8d5c06c8ea772c8b84caf1150.camel@perches.com>
+Subject: Re: [PATCH 03/13] selinux: Cleanup printk logging in policydb
+From:   Joe Perches <joe@perches.com>
+To:     Paul Moore <paul@paul-moore.com>, peter.enderborg@sony.com
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>, danielj@mellanox.com,
+        dledford@redhat.com, selinux@tycho.nsa.gov,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, serge@hallyn.com
+Date:   Tue, 19 Jun 2018 09:45:39 -0700
+In-Reply-To: <CAHC9VhTULXGAjbRSeriXm6g=aQbaG6XcfXtROVoJr632yis=Gw@mail.gmail.com>
+References: <20180612080912.7827-1-peter.enderborg@sony.com>
+         <20180612080912.7827-4-peter.enderborg@sony.com>
+         <CAHC9VhTULXGAjbRSeriXm6g=aQbaG6XcfXtROVoJr632yis=Gw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+On Tue, 2018-06-19 at 12:41 -0400, Paul Moore wrote:
+> On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
+> <peter.enderborg@sony.com> wrote:
+> > 
+> > Replace printk with pr_* to avoid checkpatch warnings and
+> > replace KERN_CONT with 2 longer prints.
+> > 
+> > Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
+> > ---
+> >  security/selinux/ss/policydb.c | 91 +++++++++++++++++++++---------------------
+> >  1 file changed, 46 insertions(+), 45 deletions(-)
+> 
+> Merged, thank you.  While removing the separate KERN_CONT message
+> introduces some duplication, I think that's the right thing to do.
+> 
+> > diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+[]
+> > @@ -504,7 +504,7 @@ static void hash_eval(struct hashtab *h, const char *hash_name)
+> >         struct hashtab_info info;
+> > 
+> >         hashtab_stat(h, &info);
+> > -       printk(KERN_DEBUG "SELinux: %s:  %d entries and %d/%d buckets used, "
+> > +       pr_debug("SELinux: %s:  %d entries and %d/%d buckets used, "
+> >                "longest chain length %d\n", hash_name, h->nel,
+> >                info.slots_used, h->size, info.max_chain_len);
+> >  }
+> > @@ -533,15 +533,17 @@ static int policydb_index(struct policydb *p)
+> >  {
+> >         int i, rc;
+> > 
+> > -       printk(KERN_DEBUG "SELinux:  %d users, %d roles, %d types, %d bools",
+> > -              p->p_users.nprim, p->p_roles.nprim, p->p_types.nprim, p->p_bools.nprim);
+> >         if (p->mls_enabled)
+> > -               printk(KERN_CONT ", %d sens, %d cats", p->p_levels.nprim,
+> > -                      p->p_cats.nprim);
+> > -       printk(KERN_CONT "\n");
+> > +               pr_debug("SELinux:  %d users, %d roles, %d types, %d bools, %d sens, %d cats",
+> > +                        p->p_users.nprim, p->p_roles.nprim, p->p_types.nprim,
+> > +                        p->p_bools.nprim, p->p_levels.nprim, p->p_cats.nprim);
+> > +       else
+> > +               pr_debug("SELinux:  %d users, %d roles, %d types, %d bools",
+> > +                        p->p_users.nprim, p->p_roles.nprim, p->p_types.nprim,
+> > +                        p->p_bools.nprim);
 
-> In cifs, the timestamps are stored in memory in the cifs_fattr structure,
-> which uses the deprecated 'timespec' structure. Now that the VFS code
-> has moved on to 'timespec64', the next step is to change over the fattr
-> as well.
->
-> This also makes 32-bit and 64-bit systems behave the same way, and
-> no longer overflow the 32-bit time_t in year 2038.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  fs/cifs/cifsencrypt.c |  4 ++--
->  fs/cifs/cifsglob.h    |  6 +++---
->  fs/cifs/cifsproto.h   |  6 +++---
->  fs/cifs/cifssmb.c     | 12 ++++++------
->  fs/cifs/inode.c       | 34 ++++++++++++++++------------------
->  fs/cifs/netmisc.c     | 19 ++++++++++---------
->  6 files changed, 40 insertions(+), 41 deletions(-)
+This lost the terminating newline on each pr_debug
 
-Reviewed-by: Paulo Alcantara <palcantara@suse.de>
-
-Thanks
-Paulo
