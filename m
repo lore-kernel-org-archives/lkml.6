@@ -2,182 +2,534 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD12FC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8D5C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 795562083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:34:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jjnEjjaP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k90U0rk6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 795562083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 9CAB52083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:35:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CAB52083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=olimex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937459AbeFSIeu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:34:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46436 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937236AbeFSIer (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:34:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7917B60AD8; Tue, 19 Jun 2018 08:34:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529397286;
-        bh=kycO8PmLk4U5/14Jv3eZxz63jfUzmPOXfNs2ptj1lKA=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=jjnEjjaPUPQSZj4yG4VlLa2Eymshjj+9skbAB7j96kC0wpjT2ZEbnE2q93f/TuLUQ
-         +eBsagbGIVdIW8vQXjhO+P+LOBNQU8E4qtpZuDHEB2RY11yKI7f2jXytlaT1zEbk5x
-         mKYaVr055LCyKlBZJRoGe7RNQXjZPRf4Vjp4HoOQ=
-Received: from mail-qt0-f169.google.com (mail-qt0-f169.google.com [209.85.216.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 80A5760AD8;
-        Tue, 19 Jun 2018 08:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529397285;
-        bh=kycO8PmLk4U5/14Jv3eZxz63jfUzmPOXfNs2ptj1lKA=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=k90U0rk6g3B5xuKf9neYS2/gElITu73U/TKeE2Vl9REvGKLxIKpzqXEXxGDCvL0sq
-         Zw2y/Iyg9ACy/vZe2/b8OdPgnz51Q39qu6nX57u4XHhP6fW+loAYOecxRXF6JlIP2b
-         iFKz911VN1qZeoZImJjVJUZcf7QfIULSg0Mfqlno=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 80A5760AD8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt0-f169.google.com with SMTP id y20-v6so2619946qto.8;
-        Tue, 19 Jun 2018 01:34:45 -0700 (PDT)
-X-Gm-Message-State: APt69E0BwjRsrZjlhzI+AYxZkEvPO8zJ0KEMzXppjM1M8jQz6a1Xyg3F
-        jbRQ3jHec2xm+RXYJeYCXaK0264e9Z63AdTxMD0=
-X-Google-Smtp-Source: ADUXVKKPZjqHH39oc9bBFR+fzxjAV+RkDwEbIdXiICDYAj5hyoQlJt0+5PX8Gv3IrGBKq+FMOqS6e8UOD3DY4lqUSj8=
-X-Received: by 2002:ac8:720f:: with SMTP id a15-v6mr13574749qtp.243.1529397284699;
- Tue, 19 Jun 2018 01:34:44 -0700 (PDT)
+        id S937339AbeFSIfX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:35:23 -0400
+Received: from olimex.com ([184.105.72.32]:51147 "EHLO olimex.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937314AbeFSIfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 04:35:18 -0400
+Received: from localhost.localdomain ([195.238.85.143])
+        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AES(128):Mac=SHA256) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 01:35:09 -0700
+From:   Stefan Mavrodiev <stefan@olimex.com>
+To:     Stefan Mavrodiev <stefan@olimex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        dri-devel@lists.freedesktop.org (open list:DRM PANEL DRIVERS),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/1] drm/panel: Add support for Olimex LCD-OLinuXino panel
+Date:   Tue, 19 Jun 2018 11:34:02 +0300
+Message-Id: <1529397260-16340-1-git-send-email-stefan@olimex.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Received: by 2002:ac8:1082:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 01:34:44
- -0700 (PDT)
-In-Reply-To: <20180615165232.GE2202@arm.com>
-References: <20180615105329.26800-1-vivek.gautam@codeaurora.org> <20180615165232.GE2202@arm.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Tue, 19 Jun 2018 14:04:44 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iFm29ufb2Pr7Gb-2O_aN3GQLH4rcyWhbQGZ3QiwCC8vPg@mail.gmail.com>
-Message-ID: <CAFp+6iFm29ufb2Pr7Gb-2O_aN3GQLH4rcyWhbQGZ3QiwCC8vPg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] iommu/arm-smmu: Add support to use Last level cache
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        pdaly@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+This patch adds Olimex Ltd. LCD-OLinuXino bridge panel driver. The
+panel is used with different LCDs (currently from 480x272 to 1280x800).
+Small EEPROM chip is used for identification, which holds some
+factory data and timing requirements.
 
+Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+---
+ .../display/panel/olimex,lcd-olinuxino.txt         |  42 +++
+ MAINTAINERS                                        |   6 +
+ drivers/gpu/drm/panel/Kconfig                      |  10 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 360 +++++++++++++++++++++
+ 5 files changed, 419 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
 
-On Fri, Jun 15, 2018 at 10:22 PM, Will Deacon <will.deacon@arm.com> wrote:
-> Hi Vivek,
->
-> On Fri, Jun 15, 2018 at 04:23:29PM +0530, Vivek Gautam wrote:
->> Qualcomm SoCs have an additional level of cache called as
->> System cache or Last level cache[1]. This cache sits right
->> before the DDR, and is tightly coupled with the memory
->> controller.
->> The cache is available to all the clients present in the
->> SoC system. The clients request their slices from this system
->> cache, make it active, and can then start using it. For these
->> clients with smmu, to start using the system cache for
->> dma buffers and related page tables [2], few of the memory
->> attributes need to be set accordingly.
->> This change makes the related memory Outer-Shareable, and
->> updates the MAIR with necessary protection.
->>
->> The MAIR attribute requirements are:
->>     Inner Cacheablity = 0
->>     Outer Cacheablity = 1, Write-Back Write Allocate
->>     Outer Shareablity = 1
->
-> Hmm, so is this cache coherent with the CPU or not?
-
-Thanks for reviewing.
-Yes, this LLC is cache coherent with CPU, so we mark for Outer-cacheable.
-The different masters such as GPU as able to allocated and activate a slice
-in this Last Level Cache.
-
-> Why don't normal
-> non-cacheable mappings allocated in the LLC by default?
-
-Sorry, I couldn't fully understand your question here.
-Few of the masters on qcom socs are not io-coherent, so for them
-the IC has to be marked as 0.
-But they are able to use the LLC with OC marked as 1.
-
-Handling the IO-coherency is possibly a separate change to address?
-
->
->> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->> index f7a96bcf94a6..8058e7205034 100644
->> --- a/drivers/iommu/arm-smmu.c
->> +++ b/drivers/iommu/arm-smmu.c
->> @@ -249,6 +249,7 @@ struct arm_smmu_domain {
->>       struct mutex                    init_mutex; /* Protects smmu pointer */
->>       spinlock_t                      cb_lock; /* Serialises ATS1* ops and TLB syncs */
->>       struct iommu_domain             domain;
->> +     bool                            has_sys_cache;
->>  };
->>
->>  struct arm_smmu_option_prop {
->> @@ -862,6 +863,8 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
->>
->>       if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
->>               pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
->> +     if (smmu_domain->has_sys_cache)
->> +             pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_SYS_CACHE;
->>
->>       smmu_domain->smmu = smmu;
->>       pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
->> @@ -1477,6 +1480,9 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
->>       case DOMAIN_ATTR_NESTING:
->>               *(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
->>               return 0;
->> +     case DOMAIN_ATTR_USE_SYS_CACHE:
->> +             *((int *)data) = smmu_domain->has_sys_cache;
->> +             return 0;
->
-> I really don't like exposing this to clients directly like this,
-> particularly as there aren't any in-tree users. I would prefer that we
-> provide a way for the io-pgtable code to have its MAIR values overridden
-> so that all non-coherent DMA ends up using the system cache.
-
-From the way it looks from the users of LLC (as also pointed to by Jordan),
-the masters have to request and activate their slices in the cache, and then
-they can start using it. Before that the transaction don't go through LLC.
-
-But I will try to find out more on this.
-
-Thanks & Regards
-Vivek
-
->
-> Will
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt b/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
+new file mode 100644
+index 0000000..a89f9c8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
+@@ -0,0 +1,42 @@
++Binding for Olimex Ltd. LCD-OLinuXino bridge panel.
++
++This device can be used as bridge between a host controller and LCD panels.
++Currently supported LCDs are:
++  - LCD-OLinuXino-4.3TS
++  - LCD-OLinuXino-5
++  - LCD-OLinuXino-7
++  - LCD-OLinuXino-10
++
++The panel itself contains:
++  - AT24C16C EEPROM holding panel identification and timing requirements
++  - AR1021 resistive touch screen controller (optional)
++  - FT5x6 capacitive touch screnn controller (optional)
++  - GT911/GT928 capacitive touch screen controller (optional)
++
++The above chips share same I2C bus. The EEPROM is factory preprogrammed with
++device information (id, serial, etc.) and timing requirements.
++
++Touchscreen bingings can be found in these files:
++  - input/touchscreen/goodix.txt
++  - input/touchscreen/edt-ft5x06.txt
++  - input/touchscreen/ar1021.txt
++
++Required properties:
++  - compatible: should be "olimex,lcd-olinuxino"
++  - reg: address of the configuration EEPROM, should be <0x50>
++  - power-supply: phandle of the regulator that provides the supply voltage
++
++Optional properties:
++  - enable-gpios: GPIO pin to enable or disable the panel
++  - backlight: phandle of the backlight device attacked to the panel
++
++Example:
++&i2c2 {
++	panel@50 {
++		compatible = "olimex,lcd-olinuxino";
++		reg = <0x50>;
++		power-supply = <&reg_vcc5v0>;
++		enable-gpios = <&pio 7 8 GPIO_ACTIVE_HIGH>;
++		backlight = <&backlight>;
++	};
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 624c3fd..30343f1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4557,6 +4557,12 @@ S:	Supported
+ F:	drivers/gpu/drm/nouveau/
+ F:	include/uapi/drm/nouveau_drm.h
+ 
++DRM DRIVER FOR OLIMEX LCD-OLINUXINO PANELS
++M:	Stefan Mavrodiev <stefan@olimex.com>
++S:	Maintained
++F:	drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
++F:	Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
++
+ DRM DRIVER FOR PERVASIVE DISPLAYS REPAPER PANELS
+ M:	Noralf Trønnes <noralf@tronnes.org>
+ S:	Maintained
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 25682ff..0292994 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -81,6 +81,16 @@ config DRM_PANEL_LG_LG4573
+ 	  Say Y here if you want to enable support for LG4573 RGB panel.
+ 	  To compile this driver as a module, choose M here.
+ 
++config DRM_PANEL_OLIMEX_LCD_OLINUXINO
++	tristate "Olimex LCD-OLinuXino panel"
++	depends on OF
++	depends on I2C
++	depends on BACKLIGHT_CLASS_DEVICE
++	help
++	  Say Y here if you want to enable support for Olimex Ltd.
++	  LCD-OLinuXino panel. The panel is used with different sizes LCDs,
++	  from 480x272 to 1280x800, and 24 bit per pixel.
++
+ config DRM_PANEL_ORISETECH_OTM8009A
+ 	tristate "Orise Technology otm8009a 480x800 dsi 2dl panel"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index f26efc1..185027f 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
+ obj-$(CONFIG_DRM_PANEL_INNOLUX_P079ZCA) += panel-innolux-p079zca.o
+ obj-$(CONFIG_DRM_PANEL_JDI_LT070ME05000) += panel-jdi-lt070me05000.o
+ obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
++obj-$(CONFIG_DRM_PANEL_OLIMEX_LCD_OLINUXINO) += panel-olimex-lcd-olinuxino.o
+ obj-$(CONFIG_DRM_PANEL_ORISETECH_OTM8009A) += panel-orisetech-otm8009a.o
+ obj-$(CONFIG_DRM_PANEL_PANASONIC_VVX10F034N00) += panel-panasonic-vvx10f034n00.o
+ obj-$(CONFIG_DRM_PANEL_RASPBERRYPI_TOUCHSCREEN) += panel-raspberrypi-touchscreen.o
+diff --git a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
+new file mode 100644
+index 0000000..0bc04ff
+--- /dev/null
++++ b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
+@@ -0,0 +1,360 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * LCD-OLinuXino support for panel driver
++ *
++ * Copyright (C) 2018 Olimex Ltd.
++ *   Author: Stefan Mavrodiev <stefan@olimex.com>
++ */
++
++#include <linux/backlight.h>
++#include <linux/crc32.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/regulator/consumer.h>
++
++#include <drm/drm_modes.h>
++#include <drm/drm_panel.h>
++#include <drm/drmP.h>
++
++#include <video/videomode.h>
++#include <video/display_timing.h>
++
++
++#define LCD_OLINUXINO_HEADER_MAGIC	0x4F4CB727
++#define LCD_OLINUXINO_DATA_LEN		256
++
++struct lcd_olinuxino_mode {
++	u32 pixelclock;
++	u32 hactive;
++	u32 hfp;
++	u32 hbp;
++	u32 hpw;
++	u32 vactive;
++	u32 vfp;
++	u32 vbp;
++	u32 vpw;
++	u32 refresh;
++	u32 flags;
++};
++
++struct lcd_olinuxino_info {
++	char name[32];
++	u32 width_mm;
++	u32 height_mm;
++	u32 bpc;
++	u32 bus_format;
++	u32 bus_flag;
++} __attribute__((__packed__));
++
++struct lcd_olinuxino_eeprom {
++	u32 header;
++	u32 id;
++	char revision[4];
++	u32 serial;
++	struct lcd_olinuxino_info info;
++	u32 num_modes;
++	u8 reserved[180];
++	u32 checksum;
++} __attribute__((__packed__));
++
++struct lcd_olinuxino {
++	struct device *dev;
++	struct i2c_client *client;
++	struct mutex mutex;
++
++	struct drm_panel panel;
++	bool prepared;
++	bool enabled;
++
++	struct backlight_device *backlight;
++	struct regulator *supply;
++	struct gpio_desc *enable_gpio;
++
++	struct lcd_olinuxino_eeprom eeprom;
++};
++
++static inline struct lcd_olinuxino *to_lcd_olinuxino(struct drm_panel *panel)
++{
++	return container_of(panel, struct lcd_olinuxino, panel);
++}
++
++static int lcd_olinuxino_disable(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++
++	if (!lcd->enabled)
++		return 0;
++
++	if (lcd->backlight) {
++		lcd->backlight->props.power = FB_BLANK_POWERDOWN;
++		lcd->backlight->props.state |= BL_CORE_FBBLANK;
++		backlight_update_status(lcd->backlight);
++	}
++
++	lcd->enabled = false;
++
++	return 0;
++}
++
++static int lcd_olinuxino_unprepare(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++
++	if (!lcd->prepared)
++		return 0;
++
++	gpiod_set_value_cansleep(lcd->enable_gpio, 0);
++	regulator_disable(lcd->supply);
++
++	lcd->prepared = false;
++
++	return 0;
++}
++
++static int lcd_olinuxino_prepare(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++	int ret;
++
++	if (lcd->prepared)
++		return 0;
++
++	ret = regulator_enable(lcd->supply);
++	if (ret < 0)
++		return ret;
++
++	gpiod_set_value_cansleep(lcd->enable_gpio, 1);
++	lcd->prepared = true;
++
++	return 0;
++}
++
++static int lcd_olinuxino_enable(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++
++	if (lcd->enabled)
++		return 0;
++
++	if (lcd->backlight) {
++		lcd->backlight->props.state &= ~BL_CORE_FBBLANK;
++		lcd->backlight->props.power = FB_BLANK_UNBLANK;
++		backlight_update_status(lcd->backlight);
++	}
++
++	lcd->enabled = true;
++
++	return 0;
++}
++
++static int lcd_olinuxino_get_modes(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++	struct drm_connector *connector = lcd->panel.connector;
++	struct lcd_olinuxino_info *lcd_info = &lcd->eeprom.info;
++	struct drm_device *drm = lcd->panel.drm;
++	struct lcd_olinuxino_mode *lcd_mode;
++	struct drm_display_mode *mode;
++	int i, num = 0;
++
++	/* Read up to 4 modes */
++	for (i = 0; i < lcd->eeprom.num_modes && i < 4; i++) {
++		lcd_mode = (struct lcd_olinuxino_mode *)
++			   &lcd->eeprom.reserved[i * sizeof(*lcd_mode)];
++
++		mode = drm_mode_create(drm);
++		if (!mode) {
++			dev_err(drm->dev, "failed to add mode %ux%u@%u\n",
++				lcd_mode->hactive,
++				lcd_mode->vactive,
++				lcd_mode->refresh);
++				continue;
++		}
++
++		mode->clock = lcd_mode->pixelclock;
++		mode->hdisplay = lcd_mode->hactive;
++		mode->hsync_start = lcd_mode->hactive + lcd_mode->hfp;
++		mode->hsync_end = lcd_mode->hactive + lcd_mode->hfp +
++				  lcd_mode->hpw;
++		mode->htotal = lcd_mode->hactive + lcd_mode->hfp +
++			       lcd_mode->hpw + lcd_mode->hbp;
++		mode->vdisplay = lcd_mode->vactive;
++		mode->vsync_start = lcd_mode->vactive + lcd_mode->vfp;
++		mode->vsync_end = lcd_mode->vactive + lcd_mode->vfp +
++				  lcd_mode->vpw;
++		mode->vtotal = lcd_mode->vactive + lcd_mode->vfp +
++			       lcd_mode->vpw + lcd_mode->vbp;
++		mode->vrefresh = lcd_mode->refresh;
++
++		if (lcd->eeprom.num_modes == 1)
++			mode->type |= DRM_MODE_TYPE_PREFERRED;
++		mode->type |= DRM_MODE_TYPE_DRIVER;
++
++		drm_mode_set_name(mode);
++		drm_mode_probed_add(connector, mode);
++
++		num++;
++	}
++
++	memcpy(connector->display_info.name, lcd_info->name, 32);
++	connector->display_info.width_mm = lcd_info->width_mm;
++	connector->display_info.height_mm = lcd_info->height_mm;
++	connector->display_info.bpc = lcd_info->bpc;
++
++	if (lcd_info->bus_format)
++		drm_display_info_set_bus_formats(&connector->display_info,
++						 &lcd_info->bus_format, 1);
++	connector->display_info.bus_flags = lcd_info->bus_flag;
++
++	return num;
++}
++
++struct drm_panel_funcs lcd_olinuxino_funcs = {
++	.disable = lcd_olinuxino_disable,
++	.unprepare = lcd_olinuxino_unprepare,
++	.prepare = lcd_olinuxino_prepare,
++	.enable = lcd_olinuxino_enable,
++	.get_modes = lcd_olinuxino_get_modes,
++};
++
++static int lcd_olinuxino_probe(struct i2c_client *client,
++			       const struct i2c_device_id *id)
++{
++	struct device *dev = &client->dev;
++	struct device_node *backlight;
++	struct lcd_olinuxino *lcd;
++	u32 checksum;
++	int i, ret = 0;
++
++	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
++				     I2C_FUNC_SMBUS_READ_I2C_BLOCK))
++		return -ENODEV;
++
++	lcd = devm_kzalloc(dev, sizeof(*lcd), GFP_KERNEL);
++	if (!lcd)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, lcd);
++	lcd->dev = dev;
++	lcd->client = client;
++
++	mutex_init(&lcd->mutex);
++
++	/* Copy data into buffer */
++	for (i = 0; i < LCD_OLINUXINO_DATA_LEN; i += I2C_SMBUS_BLOCK_MAX) {
++		mutex_lock(&lcd->mutex);
++		ret = i2c_smbus_read_i2c_block_data(client,
++						    i,
++						    I2C_SMBUS_BLOCK_MAX,
++						    (u8 *)&lcd->eeprom + i);
++		mutex_unlock(&lcd->mutex);
++		if (ret < 0) {
++			dev_err(dev, "error reading from device at %02x\n", i);
++			return ret;
++		}
++	}
++
++	/* Check configuration checksum */
++	checksum = ~crc32(~0, (u8 *)&lcd->eeprom, 252);
++	if (checksum != lcd->eeprom.checksum) {
++		dev_err(dev, "configuration checksum does not match!\n");
++		return -EINVAL;
++	}
++
++	/* Check magic header */
++	if (lcd->eeprom.header != LCD_OLINUXINO_HEADER_MAGIC) {
++		dev_err(dev, "magic header does not match\n");
++		return -EINVAL;
++	}
++
++	dev_info(dev, "Detected %s, Rev. %s, Serial: %08x\n",
++		 lcd->eeprom.info.name,
++		 lcd->eeprom.revision,
++		 lcd->eeprom.serial);
++
++	lcd->enabled = false;
++	lcd->prepared = false;
++
++	lcd->supply = devm_regulator_get(dev, "power");
++	if (IS_ERR(lcd->supply))
++		return PTR_ERR(lcd->supply);
++
++	lcd->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
++	if (IS_ERR(lcd->enable_gpio))
++		return PTR_ERR(lcd->enable_gpio);
++
++	backlight = of_parse_phandle(dev->of_node, "backlight", 0);
++	if (backlight) {
++		lcd->backlight = of_find_backlight_by_node(backlight);
++		of_node_put(backlight);
++
++		if (!lcd->backlight)
++			return -EPROBE_DEFER;
++	}
++
++	drm_panel_init(&lcd->panel);
++	lcd->panel.dev = dev;
++	lcd->panel.funcs = &lcd_olinuxino_funcs;
++
++	ret = drm_panel_add(&lcd->panel);
++	if (ret < 0)
++		goto free_backlight;
++
++	return 0;
++
++free_backlight:
++	if (lcd->backlight)
++		put_device(&lcd->backlight->dev);
++
++	return ret;
++}
++
++static int lcd_olinuxino_remove(struct i2c_client *client)
++{
++	struct lcd_olinuxino *panel = i2c_get_clientdata(client);
++
++	drm_panel_detach(&panel->panel);
++	drm_panel_remove(&panel->panel);
++
++	lcd_olinuxino_disable(&panel->panel);
++	lcd_olinuxino_unprepare(&panel->panel);
++
++	if (panel->backlight)
++		put_device(&panel->backlight->dev);
++
++	return 0;
++}
++
++static const struct of_device_id lcd_olinuxino_of_ids[] = {
++	{ .compatible = "olimex,lcd-olinuxino" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, lcd_olinuxino_of_ids);
++
++static struct i2c_driver lcd_olinuxino_driver = {
++	.driver = {
++		.name = "lcd_olinuxino",
++		.of_match_table = lcd_olinuxino_of_ids,
++	},
++	.probe = lcd_olinuxino_probe,
++	.remove = lcd_olinuxino_remove,
++};
++
++static int __init lcd_olinuxino_init(void)
++{
++	return i2c_add_driver(&lcd_olinuxino_driver);
++}
++module_init(lcd_olinuxino_init);
++
++static void __exit lcd_olinuxino_exit(void)
++{
++	i2c_del_driver(&lcd_olinuxino_driver);
++}
++module_exit(lcd_olinuxino_exit);
++
++MODULE_AUTHOR("Stefan Mavrodiev <stefan@olimex.com>");
++MODULE_DESCRIPTION("LCD-OLinuXino driver");
++MODULE_LICENSE("GPL v2");
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.7.4
+
