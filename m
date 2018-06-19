@@ -1,114 +1,73 @@
 Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68C6C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6CCC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 868A820836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:08:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="K0YWEry7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 868A820836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9DBEA205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:08:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DBEA205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030391AbeFSSIe (ORCPT
+        id S1030363AbeFSSIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 14:08:34 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52932 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030310AbeFSSIb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 14:08:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42246 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030309AbeFSSIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Jun 2018 14:08:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8zA3R9bNbJ2JPrGJ1gp9JYXeNHw35yhT2jAf+2YyT/k=; b=K0YWEry7tfxqKB8BZx1KpnEi2
-        0pQUZhoIplatQVj70vEsIs3szI5fYNoDPqWV5NNLvrQAsIuY5jJl+ebFoBmm5af3tKdlYmuiU88hN
-        0ROxbO92y2Z6E/zI+rs5nAK2GN9UW9lUQObvi1ET7NIh3ytnS0920CgS1jKoIhs9LF25I=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:38803)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fVL3G-0002Mg-MV; Tue, 19 Jun 2018 19:08:22 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fVL3D-0004Uw-TO; Tue, 19 Jun 2018 19:08:20 +0100
-Date:   Tue, 19 Jun 2018 19:08:18 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] ARM: Use logical or instead of addition for badr
- address calculation
-Message-ID: <20180619180817.GK17671@n2100.armlinux.org.uk>
-References: <1529384828-2452-1-git-send-email-linux@roeck-us.net>
- <CAKv+Gu8Byj7G3Awnq4Y90Wot=GJTx0gO5A7-960au9ZkBBL2=A@mail.gmail.com>
- <b8bff03d-91a7-0e53-a44e-d1924beb382d@roeck-us.net>
- <CAKv+Gu-T8Fx3Nry7pUdOoOeRU-Ns89w3oo4itmu1q4FzYF5Rag@mail.gmail.com>
- <20180619151235.GH17671@n2100.armlinux.org.uk>
- <20180619171424.GA16846@roeck-us.net>
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id EF7ACAEAC;
+        Tue, 19 Jun 2018 18:08:29 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 4F0A9DA82B; Tue, 19 Jun 2018 20:05:40 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 20:05:39 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     syzbot <syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com>
+Cc:     clm@fb.com, dsterba@suse.com, jbacik@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: general protection fault in open_fs_devices
+Message-ID: <20180619180539.GV24375@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        syzbot <syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com>,
+        clm@fb.com, dsterba@suse.com, jbacik@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000832e70056df8fb38@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619171424.GA16846@roeck-us.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <000000000000832e70056df8fb38@google.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 10:14:24AM -0700, Guenter Roeck wrote:
-> On Tue, Jun 19, 2018 at 04:12:35PM +0100, Russell King - ARM Linux wrote:
-> > 
-> > So, I'm going to continue sitting on the fence on this, and basically
-> > take the attitude that it's better that people don't use the new
-> > binutils until binutils people can provide us with an officially
-> > sanctioned solution that's going to work for both older and future
-> > assemblers.
-> > 
-> I would so much love if people were working together instead of against
-> each other :-(. Never mind, I'll try a toolchain with binutils 2.28.1.
-> At least that is still supported with buildroot.
+On Wed, Jun 06, 2018 at 06:17:02AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    af6c5d5e01ad Merge branch 'for-4.18' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1732a6f7800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=12ff770540994680
+> dashboard link: https://syzkaller.appspot.com/bug?extid=909a5177749d7990ffa4
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16ba31f7800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d4ac8f800000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+909a5177749d7990ffa4@syzkaller.appspotmail.com
 
-You could say that about the toolchain people who decided to change
-the behaviour in this area that has existed before July 2009, and
-broke multiple software packages in the process.
-
-What I don't want to do is to change it in some way that breaks
-existing setups, or that ends up breaking again in the future.  This
-is why I want input _from the toolchain people_ before we try to fix
-the problem.
-
-That isn't "against each other" - it's a request _for_ toolchain
-people to be involved in this.
-
-The fact that this thread doesn't involve any toolchain people says
-a lot about the "working together" aspect.  So, please don't try and
-lump this on me being "un-cooperative".
-
-What I'm saying is talk to the toolchain people and find a solution
-in conjunction _with_ them that we can be sure will work, rather
-than guessing at some obscure undocumented method that could end up
-breaking again.
-
-Remember, _you_ have the problem, _I_ don't.  It's not for me to go
-off and talk to the toolchain people on your behalf.
-
-Thanks.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git test-syzbot-fs-devices
