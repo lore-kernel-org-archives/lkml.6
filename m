@@ -2,166 +2,108 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9CCC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB2EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00332075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:23:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00332075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id BB96120652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:24:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="WJz+D6Pl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB96120652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030272AbeFSRXW (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:23:22 -0400
-Received: from smtprelay0079.hostedemail.com ([216.40.44.79]:44948 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S966551AbeFSRXS (ORCPT
+        id S967116AbeFSRY0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:24:26 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:53130 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966703AbeFSRYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:23:18 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id E93E0182CED34;
-        Tue, 19 Jun 2018 17:23:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: help55_90d044ab8042a
-X-Filterd-Recvd-Size: 5561
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 19 Jun 2018 17:23:15 +0000 (UTC)
-Message-ID: <ad7a9addf043ee7fda8907eff9f83c9709b575dc.camel@perches.com>
-Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in
- update_permission_bitmask()
-From:   Joe Perches <joe@perches.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>, pbonzini@redhat.com
-Cc:     Matthias Kaehlcke <mka@chromium.org>, rkrcmar@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Tue, 19 Jun 2018 10:23:13 -0700
-In-Reply-To: <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
-References: <20180615174731.47588-1-mka@chromium.org>
-         <CAKwvOd=n3CdFhL-cFueOEO7ahOoTY6zfvJApXimQ1tBF6XzSOA@mail.gmail.com>
-         <d4f32707a89030733217b23b557b38504f0d83ca.camel@perches.com>
-         <20180615182945.GN88063@google.com>
-         <c852072704e82ac5342f344c5862d20ce5559c21.camel@perches.com>
-         <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
-         <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
-         <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 19 Jun 2018 13:24:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=aoyI3jFh5slogyV6H2FDKWOjfjA6ATksx29dzZNhIf0=; b=WJz+D6PlUq0DQgXNsqqPyCPeyY
+        HrQj+A50oKDBowqebc1QIebd0jteFMILz+x9iRF2H4Z/epX34Y89+5Yfsvz2I35TFYQZ7gLDpB/nn
+        ZyzynMHvROqbnnd5oWkVn0vFu7OAk48B5omtzL3N4H/kKaCqn/4sGsnQWR6M751JPCD8+KfN27c8s
+        D5Znngq+d4LHvC4APGxxK731OMhWjAqmcm2oGf/rxKtGV9KCyBWsugaarqz8vbQl96hAgecYVVUWV
+        OJVShiIGAl/zyU61dvIpiuy4UrUYA+oEC77AJlLZJzUnncI12ETAcQKQ4Uf1Xsya0FlU92zX5QAAV
+        pQ/4pjxg==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:45280 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fVKMh-0057JI-9J; Tue, 19 Jun 2018 17:24:23 +0000
+Date:   Tue, 19 Jun 2018 10:24:22 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] ARM: Use logical or instead of addition for badr
+ address calculation
+Message-ID: <20180619172422.GB16846@roeck-us.net>
+References: <1529384828-2452-1-git-send-email-linux@roeck-us.net>
+ <CAKv+Gu8Byj7G3Awnq4Y90Wot=GJTx0gO5A7-960au9ZkBBL2=A@mail.gmail.com>
+ <b8bff03d-91a7-0e53-a44e-d1924beb382d@roeck-us.net>
+ <CAKv+Gu-T8Fx3Nry7pUdOoOeRU-Ns89w3oo4itmu1q4FzYF5Rag@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-T8Fx3Nry7pUdOoOeRU-Ns89w3oo4itmu1q4FzYF5Rag@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-19 at 10:08 -0700, Nick Desaulniers wrote:
-> On Tue, Jun 19, 2018 at 8:19 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
-> > 
-> > On 15/06/2018 20:45, Nick Desaulniers wrote:
-> > > > 
-> > > > > In any case I think it it preferable to fix the code over disabling
-> > > > > the warning, unless the warning is bogus or there are just too many
-> > > > > occurrences.
-> > > > 
-> > > > Maybe.
-> > > 
-> > > Spurious warning today, actual bug tomorrow?  I prefer to not to
-> > > disable warnings wholesale.  They don't need to find actual bugs to be
-> > > useful.  Flagging code that can be further specified does not hurt.
-> > > Part of the effort to compile the kernel with different compilers is
-> > > to add warning coverage, not remove it.  That said, there may be
-> > > warnings that are never useful (or at least due to some invariant that
-> > > only affects the kernel).  I cant think of any off the top of my head,
-> > > but I'm also not sure this is one.
-> > 
-> > This one really makes the code uglier though, so I'm not really inclined
-> > to applying the patch.
+On Tue, Jun 19, 2018 at 03:35:07PM +0200, Ard Biesheuvel wrote:
+> >>
+> >> +       /* this needs to be a separate macro or \@ does not work correctly
+> >> */
+> >> +       .macro  __badr, c, rd, sym
+> >> +       .eqv    .Lsym\@, \sym
+> >> +       adr\c   \rd, .Lsym\@ + 1
+> >
+> >
+> > Wild shot, but the following works for me.
+> >
+> >         .eqv    .Lsym\@, \sym + 1
+> >         adr\c   \rd, .Lsym\@
+> >
+> > Does it make sense ?
+> >
 > 
-> Note that of the three variables (w, u, x), only u is used later on.
-> What about declaring them as negated with the cast, that way there's
-> no cast in a ternary?
+> Interesting. Do you mean this works with your 2.30 binutils that
+> triggers the original issue?
+> 
 
-It'd be simpler to cast in the BYTE_MASK macro itself
+Yes, it does. It is also the solution used for some graphics libraries,
+though of course now I don't find the link anymore.
 
-Ex:
-> 
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index d594690d8b95..53673ad4b295 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -4261,8 +4261,9 @@ static void update_permission_bitmask(struct
-> kvm_vcpu *vcpu,
->  {
->         unsigned byte;
-> 
-> -       const u8 x = BYTE_MASK(ACC_EXEC_MASK);
-> -       const u8 w = BYTE_MASK(ACC_WRITE_MASK);
-> +       const u8 x_not = (u8)~BYTE_MASK(ACC_EXEC_MASK);
-> +       const u8 w_not = (u8)~BYTE_MASK(ACC_WRITE_MASK);
-> +       const u8 u_not = (u8)~BYTE_MASK(ACC_USER_MASK);
->         const u8 u = BYTE_MASK(ACC_USER_MASK);
-> 
-> 
->         bool cr4_smep = kvm_read_cr4_bits(vcpu, X86_CR4_SMEP) != 0;
-> @@ -4278,11 +4279,11 @@ static void update_permission_bitmask(struct
-> kvm_vcpu *vcpu,
->                  */
-> 
->                 /* Faults from writes to non-writable pages */
-> -               u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-> +               u8 wf = (pfec & PFERR_WRITE_MASK) ? w_not : 0;
->                 /* Faults from user mode accesses to supervisor pages */
-> -               u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
-> +               u8 uf = (pfec & PFERR_USER_MASK) ? u_not : 0;
->                 /* Faults from fetches of non-executable pages*/
-> -               u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
-> +               u8 ff = (pfec & PFERR_FETCH_MASK) ? x_not : 0;
->                 /* Faults from kernel mode fetches of user pages */
->                 u8 smepf = 0;
->                 /* Faults from kernel mode accesses of user pages */
-> 
-> 
-> Maybe you have a better naming scheme than *_not ? What do you think?
+Guess this is going nowhere given Russell's response, so I'll just
+live with it, like obviously everyone else does already. I built
+a toolchain using gcc 7.3.0 and binutils 2.28.1 which "solves"
+the problem for me.
 
-It'd be nicer to cast in the BYTE_MASK macro
-and using "unsigned byte;" is misleading at best.
-
----
- arch/x86/kvm/mmu.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index d594690d8b95..201711aa99b9 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4246,15 +4246,14 @@ reset_ept_shadow_zero_bits_mask(struct kvm_vcpu *vcpu,
- 				    boot_cpu_data.x86_phys_bits, execonly);
- }
- 
--#define BYTE_MASK(access) \
--	((1 & (access) ? 2 : 0) | \
--	 (2 & (access) ? 4 : 0) | \
--	 (3 & (access) ? 8 : 0) | \
--	 (4 & (access) ? 16 : 0) | \
--	 (5 & (access) ? 32 : 0) | \
--	 (6 & (access) ? 64 : 0) | \
--	 (7 & (access) ? 128 : 0))
--
-+#define BYTE_MASK(access)				\
-+	((u8)(((access) & 1 ?   2 : 0) |		\
-+	      ((access) & 2 ?   4 : 0) |		\
-+	      ((access) & 3 ?   8 : 0) |		\
-+	      ((access) & 4 ?  16 : 0) |		\
-+	      ((access) & 5 ?  32 : 0) |		\
-+	      ((access) & 6 ?  64 : 0) |		\
-+	      ((access) & 7 ? 128 : 0)))
- 
- static void update_permission_bitmask(struct kvm_vcpu *vcpu,
- 				      struct kvm_mmu *mmu, bool ept)
-
+Guenter
