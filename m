@@ -2,213 +2,217 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C269AC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DCCFC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E40D2083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:45:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c9lR80rE";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QeE4MZw4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E40D2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 1AA632083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:45:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA632083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966017AbeFSKpA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:45:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56380 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965682AbeFSKo6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:44:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2C62560B13; Tue, 19 Jun 2018 10:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529405098;
-        bh=ltLiBfvDKqgAdaSq1G5nCZyyO5SFmsoKqva76M8/720=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=c9lR80rEC1HmKDy6GaHcDXN1UbnT96lGnZclKcTV2yThOzhrxE6FfTMwUlVTVXGJx
-         rcNs329d4aZzVWE42ZJNsTYhMBP2aB/z09zYGg2pXvJvRlvn6P3Tg6csYeishT+XVz
-         884STnGeA2WxDxKDE97E6LOj634qqTgDyq3+ubGo=
-Received: from [10.4.34.47] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E7E29604D4;
-        Tue, 19 Jun 2018 10:44:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529405097;
-        bh=ltLiBfvDKqgAdaSq1G5nCZyyO5SFmsoKqva76M8/720=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QeE4MZw4f8hTVX8Kwi+RQSfG8hvmuFoVqYbKX2CERBqFwjNVb/0bYq8hl5T6wfi1t
-         vNPnNFYS55sioJugeKagsXDWEnsN/j+nIApKT7FMqnqBI/EPlN77mVZId7RZlnfAyZ
-         1J5Sh5b6ZygliHw220CipItsxwFQ7kWoTO+lf16I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7E29604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW
- bindings
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Amit Kucheria <amit.kucheria@verdurent.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Saravana Kannan <skannan@codeaurora.org>
-References: <1528801355-18719-1-git-send-email-tdas@codeaurora.org>
- <1528801355-18719-2-git-send-email-tdas@codeaurora.org>
- <0f3f0223-3539-dc66-5300-8f30d827445d@arm.com>
- <7abb2da6-c130-117a-5404-d07bb132d915@codeaurora.org>
- <f57f2708-28bb-dcdd-8b93-d41ade10fa18@arm.com>
- <bc6dc152-7def-fc1d-4535-11a44fd64310@codeaurora.org>
- <CAHLCerMCM1qf1MJ3bz+ZwBQMjshKSCWKXjHCiuqxJTDBdauamQ@mail.gmail.com>
- <32e8f874-a58b-8ba3-7a53-dc89cb34f7d9@codeaurora.org>
- <fad24065-bb2d-33f9-e877-425db3391e8f@arm.com>
- <514eea88-1f98-7959-2341-3d57cff6f66b@codeaurora.org>
- <f26813f1-f8da-ef92-fd86-6e648fbbf3e9@arm.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <2d37f581-38af-872a-36df-0250b0f7e411@codeaurora.org>
-Date:   Tue, 19 Jun 2018 16:14:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S966122AbeFSKpK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 06:45:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47356 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965682AbeFSKpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:45:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2AF691435;
+        Tue, 19 Jun 2018 03:45:08 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDF7F3F25D;
+        Tue, 19 Jun 2018 03:45:06 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 11:45:04 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, robin.murphy@arm.com, julien.thierry@arm.com
+Subject: Re: [PATCH v3 1/7] arm_pmu: Clean up maximum period handling
+Message-ID: <20180619104504.wpsimuuesbxwvvdr@lakrids.cambridge.arm.com>
+References: <1529403342-17899-1-git-send-email-suzuki.poulose@arm.com>
+ <1529403342-17899-2-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <f26813f1-f8da-ef92-fd86-6e648fbbf3e9@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529403342-17899-2-git-send-email-suzuki.poulose@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 19, 2018 at 11:15:36AM +0100, Suzuki K Poulose wrote:
+> Each PMU defines their max_period of the counter as the maximum
+> value that can be counted. Since all the PMU backends support
+> 32bit counters by default, let us remove the redundant field.
+> 
+> No functional changes.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-On 6/19/2018 3:04 PM, Sudeep Holla wrote:
-> 
-> 
-> On 19/06/18 08:53, Taniya Das wrote:
->>
->>
->> On 6/18/2018 2:51 PM, Sudeep Holla wrote:
->>>
->>>
->>> On 15/06/18 18:40, Taniya Das wrote:
->>>>
->>>>
->>>> On 6/15/2018 5:29 PM, Amit Kucheria wrote:
->>>
->>> [...]
->>>
->>>>> A future version of the HW engine, or more likely, a firmware
->>>>> revision, will make more functionality available. Say, this needs
->>>>> access to another register or two. This will require changing the DT
->>>>> bindings. Instead, if you map the entire address space, you can just
->>>>> add offsets to the new registers.
->>>>>
->>>>> So in this case, I think you should define the following addresses
->>>>> (size 0x1400) for the two frequency domains
->>>>>
->>>>> 0x17d43000, 0x1400 (power cluster)
->>>>> 0x17d45800, 0x1400 (perf cluster)
->>>>>
->>>>> And in the driver simply add offsets as follows:
->>>>>
->>>>> #define ENABLE_OFFSET               0x0
->>>>> #define LUT_OFFSET                      0x110
->>>>> #define PERF_DESIRED_OFFSET 0x920
->>>>>
->>>>
->>>> The offsets could vary across versions of this IP and that is the reason
->>>> to provide them through the DT and not define any such offsets.
->>>>
->>>
->>> Just get compatibles to identify the version of the hardware if it can't
->>> be probed and detected. Please don't use DT to get the addresses of each
->>> register you use in the driver. That's neither scalable nor nice
->>> solution to the problem.
->>> Hello Sudeep and Amit,
->>
->> Thanks for the comments, I am consolidating the understanding from the
->> other emails in a single one.
->>
->> I understand that you are looking for this IP to map the full region and
->> define offsets according to access them.
->>
->> But I still not sure how do you want this common driver to scale in the
->> cases where the offsets could vary across version change.
->>
-> 
-> There are plenty of drivers that you can look at as example. TBH most of
-> the drivers implementing support for multiple versions of IP do
-> something on the similar lines.
-> 
->>   DT
->> ====
->>    freq-node {
->>      reg = < X x_size>;   Where X is the start of the IP address.
->>    }
->>
->> Driver code (The below representation is just for example).
->> =============
->>
->> V1
->> #define ENABLE    0x0
->> #define LUT_V1    0x110
->> #define PERF_V1    0x920
->>
->> V2
->> #define LUT_V2    0x150
->> #define PERF_V2    0x980
->>
->> V3
->> #define LUT_V3    0x120
->> ....
->>
->> Do you want me to use "compatible" flag to
->>
->> if (compatible == v1)
->>   enable =  readl_relaxed(X + LUT_V1);
->> else if (compatible == v2)
->>   enable = readl_relaxed(X + LUT_V2);
->> else if (compatible == v3)
->>   enable = readl_relaxed(X + LUT_V2);
->>
-> 
-> These are implementation details. But you should try to use compatibles
-> only in probe and just record the version in some variable or update the
-> offsets in some device specific structure so that you can use that
-> unconditionally for any access you make on that device.
-> 
->> With the current design I do not need such compatible checks and unmap
->> the ones which are not required after probe.
-> 
-> I am not sure what you mean by unmap after probe.
-> 
->> Please let me know your comments.
->>
-> 
-> Please look at some drivers in the Linux tree for examples. Infact there
-> may be few drivers on QCOM SoC itself. What I am suggesting is the normal
-> practice in the drivers and you should see plenty of examples. Since I
-> was looking at some serial port patch, I can say you can have a look at
-> drivers/tty/serial/amba-pl011.c which supports multiple versions from
-> different vendors. I am sure there are many simpler examples but AMBA PL011
-> just stood out.
-> 
+Mark.
 
-Thanks Sudeep, let me take a look at the driver to see how I can 
-associate data (offsets) based on compatible.
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+> ---
+> No changes since v2
+> ---
+>  arch/arm/kernel/perf_event_v6.c     |  2 --
+>  arch/arm/kernel/perf_event_v7.c     |  1 -
+>  arch/arm/kernel/perf_event_xscale.c |  2 --
+>  arch/arm64/kernel/perf_event.c      |  1 -
+>  drivers/perf/arm_pmu.c              | 16 ++++++++++++----
+>  include/linux/perf/arm_pmu.h        |  1 -
+>  6 files changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/perf_event_v6.c b/arch/arm/kernel/perf_event_v6.c
+> index be42c4f..f64a6bf 100644
+> --- a/arch/arm/kernel/perf_event_v6.c
+> +++ b/arch/arm/kernel/perf_event_v6.c
+> @@ -495,7 +495,6 @@ static void armv6pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->stop		= armv6pmu_stop;
+>  	cpu_pmu->map_event	= armv6_map_event;
+>  	cpu_pmu->num_events	= 3;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+>  }
+>  
+>  static int armv6_1136_pmu_init(struct arm_pmu *cpu_pmu)
+> @@ -546,7 +545,6 @@ static int armv6mpcore_pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->stop		= armv6pmu_stop;
+>  	cpu_pmu->map_event	= armv6mpcore_map_event;
+>  	cpu_pmu->num_events	= 3;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+>  
+>  	return 0;
+>  }
+> diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
+> index 57f01e0..ecca4cd 100644
+> --- a/arch/arm/kernel/perf_event_v7.c
+> +++ b/arch/arm/kernel/perf_event_v7.c
+> @@ -1170,7 +1170,6 @@ static void armv7pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->start		= armv7pmu_start;
+>  	cpu_pmu->stop		= armv7pmu_stop;
+>  	cpu_pmu->reset		= armv7pmu_reset;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+>  };
+>  
+>  static void armv7_read_num_pmnc_events(void *info)
+> diff --git a/arch/arm/kernel/perf_event_xscale.c b/arch/arm/kernel/perf_event_xscale.c
+> index 88d1a76..c4f0294 100644
+> --- a/arch/arm/kernel/perf_event_xscale.c
+> +++ b/arch/arm/kernel/perf_event_xscale.c
+> @@ -374,7 +374,6 @@ static int xscale1pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->stop		= xscale1pmu_stop;
+>  	cpu_pmu->map_event	= xscale_map_event;
+>  	cpu_pmu->num_events	= 3;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+>  
+>  	return 0;
+>  }
+> @@ -743,7 +742,6 @@ static int xscale2pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->stop		= xscale2pmu_stop;
+>  	cpu_pmu->map_event	= xscale_map_event;
+>  	cpu_pmu->num_events	= 5;
+> -	cpu_pmu->max_period	= (1LLU << 32) - 1;
+>  
+>  	return 0;
+>  }
+> diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+> index 33147aa..678ecff 100644
+> --- a/arch/arm64/kernel/perf_event.c
+> +++ b/arch/arm64/kernel/perf_event.c
+> @@ -960,7 +960,6 @@ static int armv8_pmu_init(struct arm_pmu *cpu_pmu)
+>  	cpu_pmu->start			= armv8pmu_start,
+>  	cpu_pmu->stop			= armv8pmu_stop,
+>  	cpu_pmu->reset			= armv8pmu_reset,
+> -	cpu_pmu->max_period		= (1LLU << 32) - 1,
+>  	cpu_pmu->set_event_filter	= armv8pmu_set_event_filter;
+>  
+>  	return 0;
+> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> index a6347d4..6ddc00d 100644
+> --- a/drivers/perf/arm_pmu.c
+> +++ b/drivers/perf/arm_pmu.c
+> @@ -28,6 +28,11 @@
+>  static DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
+>  static DEFINE_PER_CPU(int, cpu_irq);
+>  
+> +static inline u64 arm_pmu_max_period(void)
+> +{
+> +	return (1ULL << 32) - 1;
+> +}
+> +
+>  static int
+>  armpmu_map_cache_event(const unsigned (*cache_map)
+>  				      [PERF_COUNT_HW_CACHE_MAX]
+> @@ -114,8 +119,10 @@ int armpmu_event_set_period(struct perf_event *event)
+>  	struct hw_perf_event *hwc = &event->hw;
+>  	s64 left = local64_read(&hwc->period_left);
+>  	s64 period = hwc->sample_period;
+> +	u64 max_period;
+>  	int ret = 0;
+>  
+> +	max_period = arm_pmu_max_period();
+>  	if (unlikely(left <= -period)) {
+>  		left = period;
+>  		local64_set(&hwc->period_left, left);
+> @@ -136,8 +143,8 @@ int armpmu_event_set_period(struct perf_event *event)
+>  	 * effect we are reducing max_period to account for
+>  	 * interrupt latency (and we are being very conservative).
+>  	 */
+> -	if (left > (armpmu->max_period >> 1))
+> -		left = armpmu->max_period >> 1;
+> +	if (left > (max_period >> 1))
+> +		left = (max_period >> 1);
+>  
+>  	local64_set(&hwc->prev_count, (u64)-left);
+>  
+> @@ -153,6 +160,7 @@ u64 armpmu_event_update(struct perf_event *event)
+>  	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
+>  	struct hw_perf_event *hwc = &event->hw;
+>  	u64 delta, prev_raw_count, new_raw_count;
+> +	u64 max_period = arm_pmu_max_period();
+>  
+>  again:
+>  	prev_raw_count = local64_read(&hwc->prev_count);
+> @@ -162,7 +170,7 @@ u64 armpmu_event_update(struct perf_event *event)
+>  			     new_raw_count) != prev_raw_count)
+>  		goto again;
+>  
+> -	delta = (new_raw_count - prev_raw_count) & armpmu->max_period;
+> +	delta = (new_raw_count - prev_raw_count) & max_period;
+>  
+>  	local64_add(delta, &event->count);
+>  	local64_sub(delta, &hwc->period_left);
+> @@ -402,7 +410,7 @@ __hw_perf_event_init(struct perf_event *event)
+>  		 * is far less likely to overtake the previous one unless
+>  		 * you have some serious IRQ latency issues.
+>  		 */
+> -		hwc->sample_period  = armpmu->max_period >> 1;
+> +		hwc->sample_period  = arm_pmu_max_period() >> 1;
+>  		hwc->last_period    = hwc->sample_period;
+>  		local64_set(&hwc->period_left, hwc->sample_period);
+>  	}
+> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+> index ad54444..12c30a2 100644
+> --- a/include/linux/perf/arm_pmu.h
+> +++ b/include/linux/perf/arm_pmu.h
+> @@ -94,7 +94,6 @@ struct arm_pmu {
+>  	void		(*reset)(void *);
+>  	int		(*map_event)(struct perf_event *event);
+>  	int		num_events;
+> -	u64		max_period;
+>  	bool		secure_access; /* 32-bit ARM only */
+>  #define ARMV8_PMUV3_MAX_COMMON_EVENTS 0x40
+>  	DECLARE_BITMAP(pmceid_bitmap, ARMV8_PMUV3_MAX_COMMON_EVENTS);
+> -- 
+> 2.7.4
+> 
