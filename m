@@ -5,137 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D7BC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60104C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E92E5204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:00:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E92E5204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 089F4204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:02:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 089F4204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966551AbeFSPAM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:00:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51950 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965698AbeFSPAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:00:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 678E480D;
-        Tue, 19 Jun 2018 08:00:10 -0700 (PDT)
-Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73B723F557;
-        Tue, 19 Jun 2018 08:00:07 -0700 (PDT)
-Subject: Re: [PATCH v2 1/4] arm64: export memblock_reserve()d regions via
- /proc/iomem
-To:     Dave Kleikamp <dave.kleikamp@oracle.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org, ard.biesheuvel@linaro.org
-Cc:     mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        graeme.gregory@linaro.org, al.stone@linaro.org,
-        bhsharma@redhat.com, tbaicar@codeaurora.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hanjun.guo@linaro.org, sudeep.holla@arm.com, dyoung@redhat.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
- <20180619064424.6642-2-takahiro.akashi@linaro.org>
- <72307608-90e0-4842-edc1-d3b284782940@oracle.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <ca9e5d9d-e090-f9e0-bc10-3297c9e3b7e1@arm.com>
-Date:   Tue, 19 Jun 2018 16:00:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <72307608-90e0-4842-edc1-d3b284782940@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S966534AbeFSPCm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:02:42 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:57355 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965681AbeFSPCl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:02:41 -0400
+Received: from [148.252.241.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fVI9Q-0003SP-TD; Tue, 19 Jun 2018 16:02:33 +0100
+Message-ID: <1529420551.19394.2.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 10/24] x86/fpu: Hard-disable lazy FPU mode
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>,
+        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, 'Andy Lutomirski' <luto@kernel.org>,
+        'Rik van Riel' <riel@redhat.com>,
+        'Borislav Petkov' <bp@alien8.de>,
+        'Brian Gerst' <brgerst@gmail.com>,
+        'Dave Hansen' <dave.hansen@linux.intel.com>,
+        'Denys Vlasenko' <dvlasenk@redhat.com>,
+        'Fenghua Yu' <fenghua.yu@intel.com>,
+        "'H. Peter Anvin'" <hpa@zytor.com>,
+        'Josh Poimboeuf' <jpoimboe@redhat.com>,
+        'Linus Torvalds' <torvalds@linux-foundation.org>,
+        'Oleg Nesterov' <oleg@redhat.com>,
+        'Peter Zijlstra' <peterz@infradead.org>,
+        'Quentin Casasnovas' <quentin.casasnovas@oracle.com>,
+        'Thomas Gleixner' <tglx@linutronix.de>, pbonzini@redhat.com,
+        'Ingo Molnar' <mingo@kernel.org>
+Date:   Tue, 19 Jun 2018 16:02:31 +0100
+In-Reply-To: <000c01d40460$bfc97710$3f5c6530$@toshiba.co.jp>
+References: <20180614132724.483802160@linuxfoundation.org>
+         <20180614132724.905032027@linuxfoundation.org>
+         <000c01d40460$bfc97710$3f5c6530$@toshiba.co.jp>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
-
-On 19/06/18 14:37, Dave Kleikamp wrote:
-> On 06/19/2018 01:44 AM, AKASHI Takahiro wrote:
->> +static int __init reserve_memblock_reserved_regions(void)
->> +{
->> +	phys_addr_t start, end, roundup_end = 0;
->> +	struct resource *mem, *res;
->> +	u64 i;
->> +
->> +	for_each_reserved_mem_region(i, &start, &end) {
->> +		if (end <= roundup_end)
->> +			continue; /* done already */
->> +
->> +		start = __pfn_to_phys(PFN_DOWN(start));
->> +		end = __pfn_to_phys(PFN_UP(end)) - 1;
->> +		roundup_end = end;
->> +
->> +		res = kzalloc(sizeof(*res), GFP_ATOMIC);
->> +		if (WARN_ON(!res))
->> +			return -ENOMEM;
->> +		res->start = start;
->> +		res->end = end;
->> +		res->name  = "reserved";
->> +		res->flags = IORESOURCE_MEM;
->> +
->> +		mem = request_resource_conflict(&iomem_resource, res);
->> +		/*
->> +		 * We expected memblock_reserve() regions to conflict with
->> +		 * memory created by request_standard_resources().
->> +		 */
->> +		if (WARN_ON_ONCE(!mem))
->> +			continue;
->> +		kfree(res);
+On Fri, 2018-06-15 at 13:24 +0900, Daniel Sangorrin wrote:
+> Hi Greg,
 > 
-> Why is kfree() after the conditional continue? This is a memory leak.
+> >  /* Intel-defined CPU features, CPUID level 0x00000001 (ecx), word 4 */
+> > --- a/arch/x86/include/asm/fpu/internal.h
+> > +++ b/arch/x86/include/asm/fpu/internal.h
+> > @@ -58,7 +58,7 @@ extern u64 fpu__get_supported_xfeatures_
+> >   */
+> >  static __always_inline __pure bool use_eager_fpu(void)
+> >  {
+> > -	return static_cpu_has_safe(X86_FEATURE_EAGER_FPU);
+> > +	return true;
+> >  }
+> 
+> Since this function returns always true then we can remove the code depending on lazy FPU mode.
+> Actually this has already been done in "x86/fpu: Remove use_eager_fpu()"
+> Ref: https://patchwork.kernel.org/patch/9365883/
+>
+> >  static void __init fpu__init_parse_early_param(void)
+> >  {
+> > -	if (cmdline_find_option_bool(boot_command_line, "eagerfpu=off")) {
+> > -		eagerfpu = DISABLE;
+> > -		fpu__clear_eager_fpu_features();
+> > -	}
+> 
+> Since this patch removes the kernel boot parameter "eagerfpu", maybe we should remove it from the Documentation.
+> This has also been done by commit "x86/fpu: Finish excising 'eagerfpu'"
+> Ref: https://patchwork.kernel.org/patch/9380673/
+> 
+> I will try backporting those patches unless anyone has any objections.
 
-request_resource_conflict() inserts res into the iomem_resource tree, or returns
-the conflict if there is already something at this address.
+This does seem like a good idea—there is quite a bit of dead code left
+and it may be hard to backport any further bug fixes in this area
+without that removal.
 
-We expect something at this address: a 'System RAM' section added by
-request_resource(). This code wants the conflicting 'System RAM' entry so that
-reserve_region_with_split() can fill in the gaps below it with 'reserved'. See
-the commit-message for an example.
+Ben.
 
-If there was no conflict, it means the memory map doesn't look like we expect,
-we can't pass NULL to reserve_region_with_split(), and we just inserted the
-'reserved' at the top level. Freeing res at this point would be a use-after-free
-hanging from /proc/iomem.
-This code generates a WARN_ON_ONCE() and leaves the 'reserved' description where
-it is.
-
-Trying to cleanup here is pointless, we can remove the resource entry and free
-it ... but we still want to report it as reserved, which is what just happened,
-just not quite how we we wanted it.
-
-If you ever see this warning, it means some RAM stopped being nomap between
-request_resources() and reserve_memblock_reserved_regions(). I can't find any
-case where that ever happens.
-
-
-If all that makes sense: how can I improve the comment above the WARN_ON_ONCE()
-to make it clearer?
-
-
-Thanks,
-
-James
-
-
->> +
->> +		reserve_region_with_split(mem, start, end, "reserved");
->> +	}
->> +
->> +	return 0;
->> +}
->> +arch_initcall(reserve_memblock_reserved_regions);
->> +
->>  u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
->>  
->>  void __init setup_arch(char **cmdline_p)
->>
-
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
