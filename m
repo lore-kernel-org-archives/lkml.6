@@ -2,122 +2,145 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04814C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F69C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B24952083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:25:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B24952083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F72A2083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:27:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ckm08ug6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F72A2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030462AbeFSTZZ (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 15:25:25 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:39794 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966793AbeFSTZX (ORCPT
+        id S967212AbeFST1M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 15:27:12 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55335 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966747AbeFST1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 15:25:23 -0400
-Received: by mail-pg0-f65.google.com with SMTP id w12-v6so311885pgc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 12:25:23 -0700 (PDT)
+        Tue, 19 Jun 2018 15:27:10 -0400
+Received: by mail-wm0-f68.google.com with SMTP id v16-v6so2152635wmh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 12:27:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=pqTnXjQ23IYoNc2E7D3+pC0kfdS7LQYkhjJL6uAC46o=;
+        b=ckm08ug6MWS92WEJVXGujJkaNTmecSOPwDnwCm5ZRenaavn/tF3U+6XquMqV5IMgSI
+         z7IjoEU7rVaR0If+VjLIMXCV1IRA50rI0qB460uIFrtMEpwCCgS+MYJA1PPPvgxA0Uzv
+         NLl+syEvMn0iSrrRyKogm7/vWgLvMhNqRVxlc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FCS2sIzrpsDNNSxRcrVascnvFJLXigE83OhC1SIq34o=;
-        b=SyWtz7gMJdAyRyec9FXBwZvdUdcbbP1vLYjSVCKd8XMoUfEs5koImravSc7KJlrD9j
-         9fO8aaw2sOKgvTvljMvH9Y4fG94egThUDwiYlpJzMFM5E+1YYUslJ01SWGPS/1I4JQJE
-         aC2l6TjmGRUu6N3qXwdpqclZZ//l5xj4Ii7uSxvclhrgbBHRMMLXzJWZ6IZ9jig4feMA
-         DBQAmvoRzhEqprSyeOj58eZSaFSBwgOq9MRvDpTv8S+7NdDpJqeq1CBKigRbUUAuu2M8
-         5hXJw7mCBy6jNojy7CwVn9rEfPTB/IiE1Pq5yBmtF/apJ/HiqMoJkn79qV1fHKmJ66T9
-         FWYA==
-X-Gm-Message-State: APt69E0fyb/0MsxURVqM1OtBWzU4kdMCLiMbXmjblMia9KpNvhzLucJi
-        vLarR0CKVR9D0kBeaC0iaI3vsA==
-X-Google-Smtp-Source: ADUXVKK8DzcznDpHqhxCzUSeKQ/7Re0FtkVAa3cQATq5FTdUtyVmrCqnA1VEOpzwPio7/9hZ1vy7qA==
-X-Received: by 2002:a62:f615:: with SMTP id x21-v6mr19372474pfh.43.1529436322810;
-        Tue, 19 Jun 2018 12:25:22 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id h124-v6sm540205pfc.100.2018.06.19.12.25.21
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=pqTnXjQ23IYoNc2E7D3+pC0kfdS7LQYkhjJL6uAC46o=;
+        b=kLSbiF/PPhmXJ/a50NveepNmNksi/1lie7imzySEtMaBZlokLiT66A8NJxNhDaOTXZ
+         qAypTr04Cj8Orh/n2aX79hIVomdAx7HqUiMM33/IbUbeNcCseZSYIg5FyrVso48JbSIT
+         +FNGv65tePWgC0uNlaJmzeHs9dFx3peUlloqEKoNROhLvdjwMlFeGvrQZHFYxs1pxBs9
+         yysQ0zPS4dP6PPVwIO0p2FRjmOA9cGhcLw9Wf+PkBGoo37c6ty/cXPxL1GYS45mrHstg
+         D6dPhITS3EsG78F5lkKIL426lzSeXxheKE0oy4eYPb6oeBbenqr0e0sIPxe0fCrsDAwJ
+         zKVA==
+X-Gm-Message-State: APt69E1wvE42JuY3NUgk15mWF9lZBFgz0sH5AAxan4NEtVusXTrsfd3w
+        zbYRWshGrrptXUr7SQQ1JNdPuFtTngM=
+X-Google-Smtp-Source: ADUXVKKnhKOfCRYmaA4odqirubLli09B53vXQXlaQCnjou7egpqjxeP0w0m5WECF+yoqUT6OOw8b5w==
+X-Received: by 2002:a50:cc4a:: with SMTP id n10-v6mr15703820edi.171.1529436428983;
+        Tue, 19 Jun 2018 12:27:08 -0700 (PDT)
+Received: from [192.168.178.129] (f140230.upc-f.chello.nl. [80.56.140.230])
+        by smtp.gmail.com with ESMTPSA id h4-v6sm281124edn.38.2018.06.19.12.27.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 12:25:21 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Joe Perches <joe@perches.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2] kvm: x86: mmu: Add cast to negated bitmasks in update_permission_bitmask()
-Date:   Tue, 19 Jun 2018 12:25:04 -0700
-Message-Id: <20180619192504.180479-1-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
+        Tue, 19 Jun 2018 12:27:07 -0700 (PDT)
+Subject: Re: [PATCH V2] brcmfmac: stop watchdog before detach and free
+ everything
+To:     Kalle Valo <kvalo@codeaurora.org>
+References: <1527493857-2220-1-git-send-email-michael@amarulasolutions.com>
+ <5B0D1C9E.4000800@broadcom.com> <20180530090633.GA15390@panicking>
+ <5B294920.5050909@broadcom.com> <87fu1izjcs.fsf@kamboji.qca.qualcomm.com>
+Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Ian Molton <ian@mnementh.co.uk>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5B29590C.3040800@broadcom.com>
+Date:   Tue, 19 Jun 2018 21:27:08 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
+MIME-Version: 1.0
+In-Reply-To: <87fu1izjcs.fsf@kamboji.qca.qualcomm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-update_permission_bitmask() negates u8 bitmask values and assigns them
-to variables of type u8. Since the MSB is set in the bitmask values the
-compiler expands the negated values to int, which then is assigned to
-an u8 variable. Cast the negated value back to u8.
+On 6/19/2018 9:06 PM, Kalle Valo wrote:
+> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
+>
+>> On 5/30/2018 11:06 AM, Michael Trimarchi wrote:
+>>> Using built-in in kernel image without a firmware in filesystem
+>>> or in the kernel image can lead to a kernel NULL pointer deference.
+>>> Watchdog need to be stopped in brcmf_sdio_remove
+>>>
+>>> The system is going down NOW!
+>>> [ 1348.110759] Unable to handle kernel NULL pointer dereference at
+>>> virtual address 000002f8
+>>> Sent SIGTERM to all processes
+>>> [ 1348.121412] Mem abort info:
+>>> [ 1348.126962]   ESR = 0x96000004
+>>> [ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
+>>> [ 1348.135948]   SET = 0, FnV = 0
+>>> [ 1348.138997]   EA = 0, S1PTW = 0
+>>> [ 1348.142154] Data abort info:
+>>> [ 1348.145045]   ISV = 0, ISS = 0x00000004
+>>> [ 1348.148884]   CM = 0, WnR = 0
+>>> [ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
+>>> [ 1348.158475] [00000000000002f8] pgd=0000000000000000
+>>> [ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+>>> [ 1348.168927] Modules linked in: ipv6
+>>> [ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted
+>>> 4.17.0-rc5-next-20180517 #18
+>>> [ 1348.180757] Hardware name: Amarula A64-Relic (DT)
+>>> [ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
+>>> [ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
+>>> [ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
+>>> [ 1348.200253] sp : ffff00000b85be30
+>>> [ 1348.203561] x29: ffff00000b85be30 x28: 0000000000000000
+>>> [ 1348.208868] x27: ffff00000b6cb918 x26: ffff80003b990638
+>>> [ 1348.214176] x25: ffff0000087b1a20 x24: ffff80003b94f800
+>>> [ 1348.219483] x23: ffff000008e620c8 x22: ffff000008f0b660
+>>> [ 1348.224790] x21: ffff000008c6a858 x20: 00000000fffffe00
+>>> [ 1348.230097] x19: ffff80003b94f800 x18: 0000000000000001
+>>> [ 1348.235404] x17: 0000ffffab2e8a74 x16: ffff0000080d7de8
+>>> [ 1348.240711] x15: 0000000000000000 x14: 0000000000000400
+>>> [ 1348.246018] x13: 0000000000000400 x12: 0000000000000001
+>>> [ 1348.251324] x11: 00000000000002c4 x10: 0000000000000a10
+>>> [ 1348.256631] x9 : ffff00000b85bc40 x8 : ffff80003be11870
+>>> [ 1348.261937] x7 : ffff80003dfc7308 x6 : 000000078ff08b55
+>>> [ 1348.267243] x5 : 00000139e1058400 x4 : 0000000000000000
+>>> [ 1348.272550] x3 : dead000000000100 x2 : 958f2788d6618100
+>>> [ 1348.277856] x1 : 00000000fffffe00 x0 : 0000000000000000
+>>
+>> Forgot about this one.
+>>
+>> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+>
+> Should this go to 4.18?
 
-This fixes several warnings like this when building with clang:
+It is a bit of a corner case, but yeah let's do that.
 
-arch/x86/kvm/mmu.c:4266:39: error: implicit conversion from 'int' to 'u8'
-  (aka 'unsigned char') changes value from -205 to 51 [-Werror,
-  -Wconstant-conversion]
-    u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-       ~~                               ^~
-
-(gcc also raises a warning (see https://godbolt.org/g/6JWfWk), however it
-doesn't seem to be universally enabled)
-
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Changes in v2:
-- negate the bitmask at initialization and rename variables to not_X
-
- arch/x86/kvm/mmu.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index d634f0332c0f..ad0a8c35f27b 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4258,8 +4258,9 @@ static void update_permission_bitmask(struct kvm_vcpu *vcpu,
- {
- 	unsigned byte;
- 
--	const u8 x = BYTE_MASK(ACC_EXEC_MASK);
--	const u8 w = BYTE_MASK(ACC_WRITE_MASK);
-+	const u8 not_x = (u8)~BYTE_MASK(ACC_EXEC_MASK);
-+	const u8 not_w = (u8)~BYTE_MASK(ACC_WRITE_MASK);
-+	const u8 not_u = (u8)~BYTE_MASK(ACC_USER_MASK);
- 	const u8 u = BYTE_MASK(ACC_USER_MASK);
- 
- 	bool cr4_smep = kvm_read_cr4_bits(vcpu, X86_CR4_SMEP) != 0;
-@@ -4275,11 +4276,11 @@ static void update_permission_bitmask(struct kvm_vcpu *vcpu,
- 		 */
- 
- 		/* Faults from writes to non-writable pages */
--		u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-+		u8 wf = (pfec & PFERR_WRITE_MASK) ? not_w : 0;
- 		/* Faults from user mode accesses to supervisor pages */
--		u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
-+		u8 uf = (pfec & PFERR_USER_MASK) ? not_u : 0;
- 		/* Faults from fetches of non-executable pages*/
--		u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
-+		u8 ff = (pfec & PFERR_FETCH_MASK) ? not_x : 0;
- 		/* Faults from kernel mode fetches of user pages */
- 		u8 smepf = 0;
- 		/* Faults from kernel mode accesses of user pages */
--- 
-2.18.0.rc2.346.g013aa6912e-goog
+Regards,
+Arend
 
