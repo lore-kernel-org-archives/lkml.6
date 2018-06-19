@@ -2,115 +2,270 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F132C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4B4C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA2C92075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:52:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2C92075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6439D2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:52:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="li3yLdcj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6439D2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kapsi.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937813AbeFSMwU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:52:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:49250 "EHLO foss.arm.com"
+        id S937843AbeFSMwb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:52:31 -0400
+Received: from mail.kapsi.fi ([91.232.154.25]:46491 "EHLO mail.kapsi.fi"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937580AbeFSMwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:52:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A60E80D;
-        Tue, 19 Jun 2018 05:52:18 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E6CF3F557;
-        Tue, 19 Jun 2018 05:52:17 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Michal Hocko <mhocko@kernel.org>, Xie XiuQi <xiexiuqi@huawei.com>
-Cc:     Hanjun Guo <guohanjun@huawei.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        <tnowicki@caviumnetworks.com>, <linux-pci@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        <linux-mm@kvack.org>, <wanghuiqiang@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zhongjiang <zhongjiang@huawei.com>,
-        linux-arm <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
-References: <5ed798a0-6c9c-086e-e5e8-906f593ca33e@huawei.com>
-        <20180607122152.GP32433@dhcp22.suse.cz>
-        <a880df29-b656-d98d-3037-b04761c7ed78@huawei.com>
-        <20180611085237.GI13364@dhcp22.suse.cz>
-        <16c4db2f-bc70-d0f2-fb38-341d9117ff66@huawei.com>
-        <20180611134303.GC75679@bhelgaas-glaptop.roam.corp.google.com>
-        <20180611145330.GO13364@dhcp22.suse.cz>
-        <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
-        <87bmce60y3.fsf@e105922-lin.cambridge.arm.com>
-        <8b715082-14d4-f10b-d2d6-b23be7e4bf7e@huawei.com>
-        <20180619120714.GE13685@dhcp22.suse.cz>
-Date:   Tue, 19 Jun 2018 13:52:16 +0100
-In-Reply-To: <20180619120714.GE13685@dhcp22.suse.cz> (Michal Hocko's message
-        of "Tue, 19 Jun 2018 14:07:14 +0200")
-Message-ID: <874lhz3pmn.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S937814AbeFSMw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:52:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi; s=20161220;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=TrbIG8UEZnaXzIaYcW4xh/bqldMu6mg2Q81NlRiJAY4=;
+        b=li3yLdcjM5uzqJPisaPoz9a9/y3X2yg4Y2EZTJ6qUt7lYwCNEaQLQm2D++DLIJnjVMpF+ZyMfvlhWQdwQzI/0Qee2aXwrEem5NMkZE0NnfDi3SoomGpatocSQdDDkuQVCKDe/QY+dfaqitiAUNbhtjhRAKefRzo9Lk0yVjHvvDoRvLL52mppyyRY8nsOv/FQujlN0ExWBEyp1Onr5TDJuGNXE6llEjGdicKiPHgwNOW2SgNMe9ZVv1ZeyTJNBiZM6Hc3fLxWoTMU0R2rGj1HvkbG1dGWa9kUQRkfsDCB7hU2umf05ZgvSvDsumcCVwCJ2SaK4WAWlr0j/i4sjRLYYw==;
+Received: from [193.209.96.43] (helo=[10.21.26.144])
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <cyndis@kapsi.fi>)
+        id 1fVG7T-0000I0-OK; Tue, 19 Jun 2018 15:52:23 +0300
+Subject: Re: [PATCH 4/8] mailbox: tegra-hsp: Refactor in preparation of
+ mailboxes
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, jassisinghbrar@gmail.com,
+        gregkh@linuxfoundation.org, thierry.reding@gmail.com
+Cc:     araza@nvidia.com, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180508114403.14499-1-mperttunen@nvidia.com>
+ <20180508114403.14499-5-mperttunen@nvidia.com>
+ <8306b033-e7f5-748c-6e6a-131dfd6a26b8@nvidia.com>
+From:   Mikko Perttunen <cyndis@kapsi.fi>
+Message-ID: <11fd8a32-87f1-6e90-fa1e-9399d5222611@kapsi.fi>
+Date:   Tue, 19 Jun 2018 15:52:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <8306b033-e7f5-748c-6e6a-131dfd6a26b8@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 193.209.96.43
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> writes:
+On 22.05.2018 18:36, Jon Hunter wrote:
+> 
+> On 08/05/18 12:43, Mikko Perttunen wrote:
+>> The HSP driver is currently in many places written with the assumption
+>> of only supporting doorbells. Prepare for the addition of shared
+>> mailbox support by removing these assumptions and cleaning up the code.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+>> ---
+>>   drivers/mailbox/tegra-hsp.c | 124 
+>> +++++++++++++++++++++++++++++---------------
+>>   1 file changed, 82 insertions(+), 42 deletions(-)
+>>
+>> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+>> index 0cde356c11ab..16eb970f2c9f 100644
+>> --- a/drivers/mailbox/tegra-hsp.c
+>> +++ b/drivers/mailbox/tegra-hsp.c
+>> @@ -1,5 +1,5 @@
+>>   /*
+>> - * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
+>> + * Copyright (c) 2016-2018, NVIDIA CORPORATION.  All rights reserved.
+>>    *
+>>    * This program is free software; you can redistribute it and/or 
+>> modify it
+>>    * under the terms and conditions of the GNU General Public License,
+>> @@ -42,6 +42,7 @@ struct tegra_hsp_channel;
+>>   struct tegra_hsp;
+>>   struct tegra_hsp_channel {
+>> +    unsigned int type;
+>>       struct tegra_hsp *hsp;
+>>       struct mbox_chan *chan;
+>>       void __iomem *regs;
+>> @@ -55,6 +56,12 @@ struct tegra_hsp_doorbell {
+>>       unsigned int index;
+>>   };
+>> +static inline struct tegra_hsp_doorbell *
+>> +channel_to_doorbell(struct tegra_hsp_channel *channel)
+>> +{
+>> +    return container_of(channel, struct tegra_hsp_doorbell, channel);
+>> +}
+>> +
+>>   struct tegra_hsp_db_map {
+>>       const char *name;
+>>       unsigned int master;
+>> @@ -69,7 +76,7 @@ struct tegra_hsp {
+>>       const struct tegra_hsp_soc *soc;
+>>       struct mbox_controller mbox;
+>>       void __iomem *regs;
+>> -    unsigned int irq;
+>> +    unsigned int doorbell_irq;
+>>       unsigned int num_sm;
+>>       unsigned int num_as;
+>>       unsigned int num_ss;
+>> @@ -194,7 +201,7 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, 
+>> const char *name,
+>>       if (!db)
+>>           return ERR_PTR(-ENOMEM);
+>> -    offset = (1 + (hsp->num_sm / 2) + hsp->num_ss + hsp->num_as) << 16;
+>> +    offset = (1 + (hsp->num_sm / 2) + hsp->num_ss + hsp->num_as) * 
+>> SZ_64K;
+>>       offset += index * 0x100;
+>>       db->channel.regs = hsp->regs + offset;
+>> @@ -218,18 +225,8 @@ static void __tegra_hsp_doorbell_destroy(struct 
+>> tegra_hsp_doorbell *db)
+>>       kfree(db);
+>>   }
+>> -static int tegra_hsp_doorbell_send_data(struct mbox_chan *chan, void 
+>> *data)
+>> -{
+>> -    struct tegra_hsp_doorbell *db = chan->con_priv;
+>> -
+>> -    tegra_hsp_channel_writel(&db->channel, 1, HSP_DB_TRIGGER);
+>> -
+>> -    return 0;
+>> -}
+>> -
+>> -static int tegra_hsp_doorbell_startup(struct mbox_chan *chan)
+>> +static int tegra_hsp_doorbell_startup(struct tegra_hsp_doorbell *db)
+>>   {
+>> -    struct tegra_hsp_doorbell *db = chan->con_priv;
+>>       struct tegra_hsp *hsp = db->channel.hsp;
+>>       struct tegra_hsp_doorbell *ccplex;
+>>       unsigned long flags;
+>> @@ -260,9 +257,8 @@ static int tegra_hsp_doorbell_startup(struct 
+>> mbox_chan *chan)
+>>       return 0;
+>>   }
+>> -static void tegra_hsp_doorbell_shutdown(struct mbox_chan *chan)
+>> +static void tegra_hsp_doorbell_shutdown(struct tegra_hsp_doorbell *db)
+>>   {
+>> -    struct tegra_hsp_doorbell *db = chan->con_priv;
+>>       struct tegra_hsp *hsp = db->channel.hsp;
+>>       struct tegra_hsp_doorbell *ccplex;
+>>       unsigned long flags;
+>> @@ -281,35 +277,61 @@ static void tegra_hsp_doorbell_shutdown(struct 
+>> mbox_chan *chan)
+>>       spin_unlock_irqrestore(&hsp->lock, flags);
+>>   }
+>> -static const struct mbox_chan_ops tegra_hsp_doorbell_ops = {
+>> -    .send_data = tegra_hsp_doorbell_send_data,
+>> -    .startup = tegra_hsp_doorbell_startup,
+>> -    .shutdown = tegra_hsp_doorbell_shutdown,
+>> +static int tegra_hsp_send_data(struct mbox_chan *chan, void *data)
+>> +{
+>> +    struct tegra_hsp_channel *channel = chan->con_priv;
+>> +    struct tegra_hsp_doorbell *db;
+>> +
+>> +    switch (channel->type) {
+>> +    case TEGRA_HSP_MBOX_TYPE_DB:
+>> +        db = channel_to_doorbell(channel);
+>> +        tegra_hsp_channel_writel(&db->channel, 1, HSP_DB_TRIGGER);
+> 
+> The above appears to be redundant. We go from channel to db and then end 
+> up passing channels. Do we really need the 'db' struct above?
 
-> On Tue 19-06-18 20:03:07, Xie XiuQi wrote:
-> [...]
->> I tested on a arm board with 128 cores 4 numa nodes, but I set CONFIG_NR_CPUS=72.
->> Then node 3 is not be created, because node 3 has no memory, and no cpu.
->> But some pci device may related to node 3, which be set in ACPI table.
->
-> Could you double check that zonelists for node 3 are generated
-> correctly?
+Fixed.
 
-The cpus in node 3 aren't onlined and there's no memory attached - I
-suspect that no zonelists are built for this node.
+> 
+>> +    }
+>> +
+>> +    return -EINVAL;
+> 
+> Does this function always return -EINVAL?
 
-We skip creating a node, if the number of SRAT entries parsed exceeds
-NR_CPUS[0]. This in turn prevents onlining the numa node and so no
-zonelists will be created for it.
+Fixed.
 
-I think the problem will go away if the cpus are restricted via the
-kernel command line by setting nr_cpus.
+> 
+>> +}
+>> +
+>> +static int tegra_hsp_startup(struct mbox_chan *chan)
+>> +{
+>> +    struct tegra_hsp_channel *channel = chan->con_priv;
+>> +
+>> +    switch (channel->type) {
+>> +    case TEGRA_HSP_MBOX_TYPE_DB:
+>> +        return tegra_hsp_doorbell_startup(channel_to_doorbell(channel));
+>> +    }
+>> +
+>> +    return -EINVAL;
+>> +}
+>> +
+>> +static void tegra_hsp_shutdown(struct mbox_chan *chan)
+>> +{
+>> +    struct tegra_hsp_channel *channel = chan->con_priv;
+>> +
+>> +    switch (channel->type) {
+>> +    case TEGRA_HSP_MBOX_TYPE_DB:
+>> +        tegra_hsp_doorbell_shutdown(channel_to_doorbell(channel));
+>> +        break;
+>> +    }
+>> +}
+>> +
+>> +static const struct mbox_chan_ops tegra_hsp_ops = {
+>> +    .send_data = tegra_hsp_send_data,
+>> +    .startup = tegra_hsp_startup,
+>> +    .shutdown = tegra_hsp_shutdown,
+>>   };
+>> -static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller 
+>> *mbox,
+>> -                        const struct of_phandle_args *args)
+>> +static struct mbox_chan *tegra_hsp_doorbell_xlate(struct tegra_hsp *hsp,
+>> +                          unsigned int master)
+>>   {
+>>       struct tegra_hsp_channel *channel = ERR_PTR(-ENODEV);
+>> -    struct tegra_hsp *hsp = to_tegra_hsp(mbox);
+>> -    unsigned int type = args->args[0];
+>> -    unsigned int master = args->args[1];
+>>       struct tegra_hsp_doorbell *db;
+>>       struct mbox_chan *chan;
+>>       unsigned long flags;
+>>       unsigned int i;
+>> -    switch (type) {
+>> -    case TEGRA_HSP_MBOX_TYPE_DB:
+>> -        db = tegra_hsp_doorbell_get(hsp, master);
+>> -        if (db)
+>> -            channel = &db->channel;
+>> -
+>> -        break;
+>> -
+>> -    default:
+>> -        break;
+>> -    }
+>> +    db = tegra_hsp_doorbell_get(hsp, master);
+>> +    if (db)
+>> +        channel = &db->channel;
+>>       if (IS_ERR(channel))
+>>           return ERR_CAST(channel);
+>> @@ -321,6 +343,7 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct 
+>> mbox_controller *mbox,
+>>           if (!chan->con_priv) {
+>>               chan->con_priv = channel;
+>>               channel->chan = chan;
+>> +            channel->type = TEGRA_HSP_MBOX_TYPE_DB;
+>>               break;
+> 
+> I see that you are making the above only used for doorbells, but don't 
+> we still need to set the chan->con_priv for shared mailboxes as well?
 
-Xie, can you try the below patch on top of the one enabling memoryless
-nodes? I'm not sure this is the right solution but at least it'll
-confirm the problem.
+That's done elsewhere in the next patch that actually adds the shared 
+mailbox support.
+
+> 
+> Cheers
+> Jon
+> 
 
 Thanks,
-Punit
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/kernel/acpi_numa.c?h=v4.18-rc1#n73
-
--- >8 --
-diff --git a/arch/arm64/kernel/acpi_numa.c b/arch/arm64/kernel/acpi_numa.c
-index d190a7b231bf..fea0f7164f1a 100644
---- a/arch/arm64/kernel/acpi_numa.c
-+++ b/arch/arm64/kernel/acpi_numa.c
-@@ -70,11 +70,9 @@ void __init acpi_numa_gicc_affinity_init(struct acpi_srat_gicc_affinity *pa)
-        if (!(pa->flags & ACPI_SRAT_GICC_ENABLED))
-                return;
-
--   if (cpus_in_srat >= NR_CPUS) {
-+ if (cpus_in_srat >= NR_CPUS)
-                pr_warn_once("SRAT: cpu_to_node_map[%d] is too small, may not be able to use all cpus\n",
-                             NR_CPUS);
--           return;
--   }
-
-        pxm = pa->proximity_domain;
-        node = acpi_map_pxm_to_node(pxm);
+Mikko
