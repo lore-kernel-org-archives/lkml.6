@@ -3,108 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637C4C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6C3C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26EA52083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:03:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26EA52083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id BC2A82083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:04:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2A82083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756359AbeFSIDK (ORCPT
+        id S1756426AbeFSIER (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:03:10 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43791 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756296AbeFSIDH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:03:07 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5J82wuq3015211
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 01:02:58 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5J82vGJ3015208;
-        Tue, 19 Jun 2018 01:02:57 -0700
-Date:   Tue, 19 Jun 2018 01:02:57 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Kosina <tipbot@zytor.com>
-Message-ID: <tip-66aa6b5cbc359331fc054e96bb49e9502bc0b1d9@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        mingo@kernel.org, jgross@suse.com, mlatimer@suse.com, bp@suse.de,
-        jkosina@suse.cz
-Reply-To: jkosina@suse.cz, mlatimer@suse.com, bp@suse.de,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, jgross@suse.com, hpa@zytor.com
-In-Reply-To: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/pti: Don't report XenPV as vulnerable
-Git-Commit-ID: 66aa6b5cbc359331fc054e96bb49e9502bc0b1d9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 19 Jun 2018 04:04:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34174 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756384AbeFSIEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 04:04:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0DD49AF81;
+        Tue, 19 Jun 2018 08:04:13 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 10:04:12 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: possible deadlock in console_unlock
+Message-ID: <20180619080412.zkdanx6bmq5qm3dz@pathway.suse.cz>
+References: <00000000000087008b056df8fbb3@google.com>
+ <20180607051019.GA10406@jagdpanzerIV>
+ <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
+ <20180607140100.GA398@tigerII.localdomain>
+ <20180608081855.ctqakvwmg27aydby@pathway.suse.cz>
+ <20180615083804.GB8964@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180615083804.GB8964@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  66aa6b5cbc359331fc054e96bb49e9502bc0b1d9
-Gitweb:     https://git.kernel.org/tip/66aa6b5cbc359331fc054e96bb49e9502bc0b1d9
-Author:     Jiri Kosina <jkosina@suse.cz>
-AuthorDate: Mon, 18 Jun 2018 09:59:54 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 19 Jun 2018 09:58:22 +0200
+On Fri 2018-06-15 17:38:04, Sergey Senozhatsky wrote:
+> On (06/08/18 10:18), Petr Mladek wrote:
+> [..]
+> > > Could be.
+> > > The good thing about printk_safe is that printk_safe sections can nest.
+> > > I suspect there might be locks/printk_safe sections nesting at some
+> > > point. In any case, switching to a new flavor of printk_safe will be
+> > > pretty easy - just replace printk_safe_enter() with printk_foo_enter()
+> > > and the same for printk_save_exit().
+> > 
+> > We could allow nesting. It is just a matter of how many bits we
+> > reserve for it in printk_context variable.
+> [..]
+> > In each case, I would like to keep the printk_safe context usage
+> > at minimum. It has its own problems caused by limited per-cpu buffers
+> > and the need to flush them.
+> 
+> May be. Every new printk_safe flavour comes with increasing memory
+> usage.
 
-x86/pti: Don't report XenPV as vulnerable
+This must be a misunderstanding. My intention was to introduce
+printk_deferred() context. Where any printk() called in this
+context would behave like printk_deferred(). It does not need
+any extra buffers.
 
-Xen PV domain kernel is not by design affected by meltdown as it's
-enforcing split CR3 itself. Let's not report such systems as "Vulnerable"
-in sysfs (we're also already forcing PTI to off in X86_HYPER_XEN_PV cases);
-the security of the system ultimately depends on presence of mitigation in
-the Hypervisor, which can't be easily detected from DomU; let's report
-that.
+IMHO, this problem is similar to the problems that we solve
+in scheduler and timer code. The cure might be the same.
+I just suggest to introduce a context to make our life easier.
 
-Reported-and-tested-by: Mike Latimer <mlatimer@suse.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Juergen Gross <jgross@suse.com>
-Cc: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm
 
----
- arch/x86/kernel/cpu/bugs.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> > It is basically needed only to prevent deadlocks related to logbuf_lock.
+> 
+> I wouldn't say that we need printk_safe for logbuf_lock only.
+> printk_safe helps us to avoid deadlocks on:
+> 
+> - logbuf_lock spin_lock
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index cd0fda1fff6d..57638396a254 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -27,6 +27,7 @@
- #include <asm/pgtable.h>
- #include <asm/set_memory.h>
- #include <asm/intel-family.h>
-+#include <asm/hypervisor.h>
- 
- static void __init spectre_v2_select_mitigation(void);
- static void __init ssb_select_mitigation(void);
-@@ -664,6 +665,10 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		if (boot_cpu_has(X86_FEATURE_PTI))
- 			return sprintf(buf, "Mitigation: PTI\n");
- 
-+		if (hypervisor_is_type(X86_HYPER_XEN_PV))
-+			return sprintf(buf, "Unknown (XEN PV detected, hypervisor "
-+					    "mitigation required)\n");
-+
- 		break;
- 
- 	case X86_BUG_SPECTRE_V1:
+logbuf_lock is already guarded by printk_safe context everywhere.
+
+
+> - console_sem ->lock spin_lock
+> - console_owner spin_lock
+> - scheduler ->pi_lock spin_lock
+> - and probably something else.
+
+printk_deferred should be enough for others. Or do I miss anything?
+
+Best Regards,
+Petr
