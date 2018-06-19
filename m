@@ -2,131 +2,94 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F09C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 773ABC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFED920661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3153420661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:02:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KkON4Epb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H5MrMZPE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFED920661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XJPrtJvk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3153420661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755803AbeFSHBR (ORCPT
+        id S1756001AbeFSHCN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 03:01:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46802 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751337AbeFSHBO (ORCPT
+        Tue, 19 Jun 2018 03:02:13 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50206 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750736AbeFSHCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:01:14 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6D4AC60B16; Tue, 19 Jun 2018 07:01:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529391674;
-        bh=gih+LvUCybb976nuhnQeu7Shw9g6udKDNJaZkf4EUGA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KkON4Epb23+R0VlOByiykPZe6DVq+8ati0duWBjay9bGfc0xUiIQOX1dRMkxSWrRg
-         19wPFPrVI0PeyK7N3P1OC9Go7W/t8+YDXKT6e5xHvBvEBfEi6HpajOACnklaZLTS4a
-         ClJu4xDRxv1wbDvUb4yTGMfWDcyUDQ8R96sWLOAM=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pkondeti@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E7851607EB;
-        Tue, 19 Jun 2018 07:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529391673;
-        bh=gih+LvUCybb976nuhnQeu7Shw9g6udKDNJaZkf4EUGA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H5MrMZPEsr8sxJ+9cTWHCl0pBdai/xUxuQb43G0O6GGz0yl5FeZg8roAi+m3qN7rZ
-         EWBKULif7YQtvXSGKiahOGFif4S8ddfrj21Vqi7wHzqrLx4/AdtRRu/UDi6Kp/Kww3
-         fWAd7ZLak+f9/ycxyjR8BcSIcagtVXE/F15bw400=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E7851607EB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
-Date:   Tue, 19 Jun 2018 12:31:03 +0530
-From:   Pavan Kondeti <pkondeti@codeaurora.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joelaf@google.com, smuckle@google.com,
-        adharmap@quicinc.com, skannan@quicinc.com, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 06/10] sched: Add over-utilization/tipping point
- indicator
-Message-ID: <20180619070103.GB9208@codeaurora.org>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-7-quentin.perret@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180521142505.6522-7-quentin.perret@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 19 Jun 2018 03:02:11 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5J6x4Vi188878;
+        Tue, 19 Jun 2018 07:02:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2017-10-26;
+ bh=tAJbmg5iQtpFOXg4vuQz3a7Z0BLe1ZO/r9cj4495nm0=;
+ b=XJPrtJvkonhcvw34qzghtzVMDIuI/AwAhFThOeEOknKlc3GSZS4dogea4BXWUTpAk2ik
+ J5VwoKxdbWrM4J434A0gz9epPdON6GyPi6FzPDcozNAHcyFC8pm1J+Yxes5HBuFfeTX6
+ y0Q/UHKZBOZcKo7zEe90DcAJYUrvNPVkFYtzYfpsaLs3s87SQ7noCvSNFW6MYMD3snHc
+ mfPMSTwFGlwf4DIwbb5cXIaf+2hCRyHz5NhAQkmVqAofvpe6MLWK9KNrCEM6wOjX2x0c
+ V2amz5VYxWhODPkFO4Q/HM6R5feap8TS+S3cF0cWs5n2ueWWZ2oC3CuziRYKt0zzMBPx MQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2jmt01eu9s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 07:02:10 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5J7292S030405
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 07:02:09 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5J728IT003338;
+        Tue, 19 Jun 2018 07:02:09 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Jun 2018 00:02:08 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RESENT] blk-mq: use blk_rq_timeout to limit the max timeout
+Date:   Tue, 19 Jun 2018 15:03:16 +0800
+Message-Id: <1529391796-1819-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=875
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806190081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 21, 2018 at 03:25:01PM +0100, Quentin Perret wrote:
+blk_rq_timeout is needed to limit the max timeout value, otherwise,
+a idle hctx cannot be deactivated timely in shared-tag case.
 
-<snip>
+Fixes: 12f5b931 (blk-mq: Remove generation seqeunce)
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ block/blk-mq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  	util_est_enqueue(&rq->cfs, p);
->  	hrtick_update(rq);
-> @@ -8121,11 +8144,12 @@ static bool update_nohz_stats(struct rq *rq, bool force)
->   * @local_group: Does group contain this_cpu.
->   * @sgs: variable to hold the statistics for this group.
->   * @overload: Indicate more than one runnable task for any CPU.
-> + * @overutilized: Indicate overutilization for any CPU.
->   */
->  static inline void update_sg_lb_stats(struct lb_env *env,
->  			struct sched_group *group, int load_idx,
->  			int local_group, struct sg_lb_stats *sgs,
-> -			bool *overload)
-> +			bool *overload, int *overutilized)
->  {
->  	unsigned long load;
->  	int i, nr_running;
-> @@ -8152,6 +8176,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->  		if (nr_running > 1)
->  			*overload = true;
->  
-> +		if (cpu_overutilized(i))
-> +			*overutilized = 1;
-> +
-
-There is no need to check if every CPU is overutilized or not once
-*overutilized is marked as true, right? 
-
-<snip>
-
->  
-> @@ -8586,6 +8621,10 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
->  	 * this level.
->  	 */
->  	update_sd_lb_stats(env, &sds);
-> +
-> +	if (sched_energy_enabled() && !READ_ONCE(env->dst_rq->rd->overutilized))
-> +		goto out_balanced;
-> +
-
-Is there any reason for sending no-hz idle kicks but bailing out here when
-system is not overutilized?
-
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 70c65bb..ccebe7b 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -868,7 +868,7 @@ static void blk_mq_timeout_work(struct work_struct *work)
+ 	blk_mq_queue_tag_busy_iter(q, blk_mq_check_expired, &next);
+ 
+ 	if (next != 0) {
+-		mod_timer(&q->timeout, next);
++		mod_timer(&q->timeout, blk_rq_timeout(round_jiffies_up(next)));
+ 	} else {
+ 		/*
+ 		 * Request timeouts are handled as a forward rolling timer. If
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.7.4
 
