@@ -2,115 +2,238 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C5AC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE9DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6997A20875
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27A262075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:13:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/dFVLEs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6997A20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2HXlZ2GI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A262075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967187AbeFSQNP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S967198AbeFSQNV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:13:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46294 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967182AbeFSQNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Jun 2018 12:13:15 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37661 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966739AbeFSQNH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:13:07 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r125-v6so1503369wmg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=NI9pUEdzdqLxZ4OT/Rck3Rw0VtUJokueNnd9m0UfHEY=;
-        b=f/dFVLEsbhdm8knanGbavPe9NXrHPuPfn84Gxvvly/JdjWIggqqhR7iyipcwUZ+DHJ
-         SPMzjJTGop8j5BhEmwB3p5vbKQvNOI9k5h3du9FkR8k2oG0Oz791CASLTP9xRHrM2aW1
-         c8NX31kZDUzjfgDmUokSJmCOQeeHgEZ93Qh8A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NI9pUEdzdqLxZ4OT/Rck3Rw0VtUJokueNnd9m0UfHEY=;
-        b=GxMIUW9edVO+3WfQg6s5E2loHYrNUu+IaUR4ef7wBao2c9KJgsn+Z7eQCTvfGNCc0o
-         3ZbFLVZn1278dCSZXRcAnRXuFGe2X1aezDtVE60AadcL2BpCEXH5JouUeOIO3Hl5Xbj6
-         +/B3984iF3g5uQH0r9bWQTsbzgTcP3U8pt1DpVtIPokOhHLnGMUoiUhh1zxGoGUrSzbY
-         xHQqjJ2/j0vMGa1IphYMVHCAy5zGgwlgYnrqm1AFegBFHg7pKd4utbN/MlY7f3mdBM8R
-         47Jl2YjbHVfbz0dxIzqYERsqpw8BTr64xqXdhXk1GHev1jf5AWjL2S1LdWvHpjyxJ/J/
-         qf5Q==
-X-Gm-Message-State: APt69E3g+m5eeOL3nOLvQDDJtEqCOx5pRdLHM1gmZ3AClj23O9M1NRgp
-        7CRaigY5HnK3zttCYzBsUvUyuA==
-X-Google-Smtp-Source: ADUXVKKfOuUryrNIfftKnaFeKvZd0n16AgAFiY3TyEzyfJxO13+3bKjbDpPtoeIIFv1CHjnrdoeQ7w==
-X-Received: by 2002:a1c:ea4a:: with SMTP id i71-v6mr11396567wmh.158.1529424786403;
-        Tue, 19 Jun 2018 09:13:06 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id r5-v6sm47248wrp.59.2018.06.19.09.13.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 19 Jun 2018 09:13:05 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     robh+dt@kernel.org, kramasub@codeaurora.org, sdharia@quicinc.com,
-        linux-kernel@vger.kernel.org, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 0/5] slimbus: Add QCOM SLIMBus NGD driver
-Date:   Tue, 19 Jun 2018 17:12:56 +0100
-Message-Id: <20180619161301.4556-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E36720874;
+        Tue, 19 Jun 2018 16:13:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529424795;
+        bh=FnAqwDcpCUAd2FDcFypDu5PmX5v2tfhEayhDMiZn9dw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2HXlZ2GI71ZomFhPs8UiiP9WiStw6rjXCU0nhouSGTaDv2LtfWzkV9j7Zjf05ojPW
+         4hyu2kpbwqRHS+XW3etwCCgoK283joZUn4uEMyhX5/7EbfG8itETYLUICO0MxHS/El
+         Vwk7Ad/FY4xtq1YX8Sl+lfhlbwz/3wq1BedzcE1Q=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-arch@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH -tip v6 18/27] powerpc/kprobes: Don't call the ->break_handler() in powerpc kprobes code
+Date:   Wed, 20 Jun 2018 01:12:51 +0900
+Message-Id: <152942477127.15209.8982613703787878618.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152942424698.15209.15245996287444292393.stgit@devbox>
+References: <152942424698.15209.15245996287444292393.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds support to basic version of Qualcomm NGD SLIMBus
-controller driver found SoCs from B family.
+Don't call the ->break_handler() from the powerpc kprobes code,
+because it was only used by jprobes which got removed.
 
-This controller is light-weight SLIMBus controller driver responsible for
-communicating with slave HW directly over the bus using messaging
-interface, and communicating with master component residing on ADSP
-for bandwidth and data-channel management.
+This also removes skip_singlestep() and embeds it in the
+caller, kprobe_ftrace_handler(), which simplifies regs->nip
+operation around there.
 
-Some parts fot the work is derived from Qualcomm downstream kernels
-and intial work from
-Karthikeyan Ramasubramanian <kramasub@codeaurora.org> and
-Sagar Dharia <sdharia@codeaurora.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org
+---
+ Changes in v6
+   - Fix patch description
+   - Move post handler emulation into kprobe_ftrace_handler().
+---
+ arch/powerpc/include/asm/kprobes.h   |   10 -------
+ arch/powerpc/kernel/kprobes-ftrace.c |   46 +++++++++-------------------------
+ arch/powerpc/kernel/kprobes.c        |   31 ++++++++---------------
+ 3 files changed, 23 insertions(+), 64 deletions(-)
 
-Tested this patchset with v4.18-rc1 on DB820c with WCD9335 codec for playback
-and Craig tested on msm8974 with wcd9320 codec for register read/writes.
-
-I have pushed my working branch to [1] incase someone want to try.
-
-[1]:https://git.linaro.org/people/srinivas.kandagatla/linux.git/log/?h=slimbus-ngd
-
-Changes since v4:
-- Moved all dependency patches to this patchset.
-- replaced slim_prepare_txn with slim_alloc/free_txn_tid()
-- fixed runtime pm issue for ngd device.
-
-Srinivas Kandagatla (5):
-  slimbus: core: add of_slim_device_get() helper
-  slimbus: core: rearrange slim_eaddr structure
-  slimbus: messaging: add slim_alloc/free_txn_tid()
-  slimbus: ngd: dt-bindings: Add slim ngd dt bindings
-  slimbus: ngd: Add qcom SLIMBus NGD driver
-
- .../bindings/slimbus/slim-ngd-qcom-ctrl.txt        |   84 ++
- drivers/slimbus/Kconfig                            |   11 +
- drivers/slimbus/Makefile                           |    3 +
- drivers/slimbus/core.c                             |   39 +
- drivers/slimbus/messaging.c                        |   74 +-
- drivers/slimbus/qcom-ngd-ctrl.c                    | 1381 ++++++++++++++++++++
- drivers/slimbus/slimbus.h                          |   10 +
- include/linux/slimbus.h                            |   14 +-
- 8 files changed, 1588 insertions(+), 28 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/slimbus/slim-ngd-qcom-ctrl.txt
- create mode 100644 drivers/slimbus/qcom-ngd-ctrl.c
-
--- 
-2.16.2
+diff --git a/arch/powerpc/include/asm/kprobes.h b/arch/powerpc/include/asm/kprobes.h
+index 674036db558b..785c464b6588 100644
+--- a/arch/powerpc/include/asm/kprobes.h
++++ b/arch/powerpc/include/asm/kprobes.h
+@@ -102,16 +102,6 @@ extern int kprobe_exceptions_notify(struct notifier_block *self,
+ extern int kprobe_fault_handler(struct pt_regs *regs, int trapnr);
+ extern int kprobe_handler(struct pt_regs *regs);
+ extern int kprobe_post_handler(struct pt_regs *regs);
+-#ifdef CONFIG_KPROBES_ON_FTRACE
+-extern int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-			   struct kprobe_ctlblk *kcb);
+-#else
+-static inline int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-				  struct kprobe_ctlblk *kcb)
+-{
+-	return 0;
+-}
+-#endif
+ #else
+ static inline int kprobe_handler(struct pt_regs *regs) { return 0; }
+ static inline int kprobe_post_handler(struct pt_regs *regs) { return 0; }
+diff --git a/arch/powerpc/kernel/kprobes-ftrace.c b/arch/powerpc/kernel/kprobes-ftrace.c
+index 1b316331c2d9..070d1d862444 100644
+--- a/arch/powerpc/kernel/kprobes-ftrace.c
++++ b/arch/powerpc/kernel/kprobes-ftrace.c
+@@ -25,35 +25,6 @@
+ #include <linux/preempt.h>
+ #include <linux/ftrace.h>
+ 
+-static nokprobe_inline
+-int __skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-		      struct kprobe_ctlblk *kcb, unsigned long orig_nip)
+-{
+-	/*
+-	 * Emulate singlestep (and also recover regs->nip)
+-	 * as if there is a nop
+-	 */
+-	regs->nip = (unsigned long)p->addr + MCOUNT_INSN_SIZE;
+-	if (unlikely(p->post_handler)) {
+-		kcb->kprobe_status = KPROBE_HIT_SSDONE;
+-		p->post_handler(p, regs, 0);
+-	}
+-	__this_cpu_write(current_kprobe, NULL);
+-	if (orig_nip)
+-		regs->nip = orig_nip;
+-	return 1;
+-}
+-
+-int skip_singlestep(struct kprobe *p, struct pt_regs *regs,
+-		    struct kprobe_ctlblk *kcb)
+-{
+-	if (kprobe_ftrace(p))
+-		return __skip_singlestep(p, regs, kcb, 0);
+-	else
+-		return 0;
+-}
+-NOKPROBE_SYMBOL(skip_singlestep);
+-
+ /* Ftrace callback handler for kprobes */
+ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
+ 			   struct ftrace_ops *ops, struct pt_regs *regs)
+@@ -71,8 +42,6 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
+ 	if (kprobe_running()) {
+ 		kprobes_inc_nmissed_count(p);
+ 	} else {
+-		unsigned long orig_nip = regs->nip;
+-
+ 		/*
+ 		 * On powerpc, NIP is *before* this instruction for the
+ 		 * pre handler
+@@ -81,9 +50,18 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
+ 
+ 		__this_cpu_write(current_kprobe, p);
+ 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
+-		if (!p->pre_handler || !p->pre_handler(p, regs))
+-			__skip_singlestep(p, regs, kcb, orig_nip);
+-		else {
++		if (!p->pre_handler || !p->pre_handler(p, regs)) {
++			/*
++			 * Emulate singlestep (and also recover regs->nip)
++			 * as if there is a nop
++			 */
++			regs->nip += MCOUNT_INSN_SIZE;
++			if (unlikely(p->post_handler)) {
++				kcb->kprobe_status = KPROBE_HIT_SSDONE;
++				p->post_handler(p, regs, 0);
++			}
++			__this_cpu_write(current_kprobe, NULL);
++		} else {
+ 			/*
+ 			 * If pre_handler returns !0, it sets regs->nip and
+ 			 * resets current kprobe. In this case, we should not
+diff --git a/arch/powerpc/kernel/kprobes.c b/arch/powerpc/kernel/kprobes.c
+index 600678fce0a8..f06747e2e70d 100644
+--- a/arch/powerpc/kernel/kprobes.c
++++ b/arch/powerpc/kernel/kprobes.c
+@@ -317,25 +317,17 @@ int kprobe_handler(struct pt_regs *regs)
+ 			}
+ 			prepare_singlestep(p, regs);
+ 			return 1;
+-		} else {
+-			if (*addr != BREAKPOINT_INSTRUCTION) {
+-				/* If trap variant, then it belongs not to us */
+-				kprobe_opcode_t cur_insn = *addr;
+-				if (is_trap(cur_insn))
+-		       			goto no_kprobe;
+-				/* The breakpoint instruction was removed by
+-				 * another cpu right after we hit, no further
+-				 * handling of this interrupt is appropriate
+-				 */
+-				ret = 1;
++		} else if (*addr != BREAKPOINT_INSTRUCTION) {
++			/* If trap variant, then it belongs not to us */
++			kprobe_opcode_t cur_insn = *addr;
++
++			if (is_trap(cur_insn))
+ 				goto no_kprobe;
+-			}
+-			p = __this_cpu_read(current_kprobe);
+-			if (p->break_handler && p->break_handler(p, regs)) {
+-				if (!skip_singlestep(p, regs, kcb))
+-					goto ss_probe;
+-				ret = 1;
+-			}
++			/* The breakpoint instruction was removed by
++			 * another cpu right after we hit, no further
++			 * handling of this interrupt is appropriate
++			 */
++			ret = 1;
+ 		}
+ 		goto no_kprobe;
+ 	}
+@@ -350,7 +342,7 @@ int kprobe_handler(struct pt_regs *regs)
+ 			 */
+ 			kprobe_opcode_t cur_insn = *addr;
+ 			if (is_trap(cur_insn))
+-		       		goto no_kprobe;
++				goto no_kprobe;
+ 			/*
+ 			 * The breakpoint instruction was removed right
+ 			 * after we hit it.  Another cpu has removed
+@@ -370,7 +362,6 @@ int kprobe_handler(struct pt_regs *regs)
+ 		/* handler has already set things up, so skip ss setup */
+ 		return 1;
+ 
+-ss_probe:
+ 	if (p->ainsn.boostable >= 0) {
+ 		ret = try_to_emulate(p, regs);
+ 
 
