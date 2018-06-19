@@ -2,146 +2,139 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E24B6C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBD1C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4BE02083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:29:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4BE02083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 44E182083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:30:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IxPn2CVg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E182083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965551AbeFSI3y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:29:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37026 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965409AbeFSI3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:29:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 98F91AED2;
-        Tue, 19 Jun 2018 08:29:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id AC6871E0AAF; Tue, 19 Jun 2018 10:29:49 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 10:29:49 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180619082949.wzoe42wpxsahuitu@quack2.suse.cz>
-References: <CAPcyv4i=eky-QrPcLUEqjsASuRUrFEWqf79hWe0mU8xtz6Jk-w@mail.gmail.com>
- <20180617200432.krw36wrcwidb25cj@ziepe.ca>
- <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
- <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com>
- <20180618081258.GB16991@lst.de>
- <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
- <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
- <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
- <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
- <0e6053b3-b78c-c8be-4fab-e8555810c732@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e6053b3-b78c-c8be-4fab-e8555810c732@nvidia.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S965652AbeFSIaV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:30:21 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50562 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965372AbeFSIaT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 04:30:19 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5J8TLWD076218;
+        Tue, 19 Jun 2018 08:29:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2017-10-26;
+ bh=Hd9ymd0pt2iC3PPOK6Mp1W5se13spbA5pVkIEI/cYSY=;
+ b=IxPn2CVgOGQCel6vfCBch+rhrhASqF2l+W0JWQL9mLvPqRcfWYTGBl6DW0zntdgr1vU/
+ y1AOueR8LR/pc+3mQ0HnebL8IaoUJ2gWvwIgphmPsmPVvbvQuO3VOWbkhW9mNN1nG80b
+ PljlXfSLk+8SB05es4u13EOrAWez+d1IGl/BuYE/spbA+MSwT9XzPbniNJ99upuDKQnJ
+ EPy8/dw9m8pwdHH+mR0v+EWIJWvdw8DptfYOW0b6IJnwx6H4y8oaImsqVrau+lHIjKXc
+ CVzhT5todXEoRc4BYMTWEis4FdzUrQsS3+1yXxr+AWEyFjuz5/6OW5Xgrx6V5rqf7Sjs pw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2jmu6xq18u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 08:29:46 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5J8TjeT007271
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 08:29:45 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5J8ThiB027698;
+        Tue, 19 Jun 2018 08:29:44 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Jun 2018 01:29:43 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] nvme-pci: not invoke nvme_remove_dead_ctrl when change state fails
+Date:   Tue, 19 Jun 2018 16:30:50 +0800
+Message-Id: <1529397050-7524-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=890
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806190098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 18-06-18 14:36:44, John Hubbard wrote:
-> On 06/18/2018 12:21 PM, Dan Williams wrote:
-> > On Mon, Jun 18, 2018 at 11:14 AM, John Hubbard <jhubbard@nvidia.com> wrote:
-> >> On 06/18/2018 10:56 AM, Dan Williams wrote:
-> >>> On Mon, Jun 18, 2018 at 10:50 AM, John Hubbard <jhubbard@nvidia.com> wrote:
-> >>>> On 06/18/2018 01:12 AM, Christoph Hellwig wrote:
-> >>>>> On Sun, Jun 17, 2018 at 01:28:18PM -0700, John Hubbard wrote:
-> >>>>>> Yes. However, my thinking was: get_user_pages() can become a way to indicate that
-> >>>>>> these pages are going to be treated specially. In particular, the caller
-> >>>>>> does not really want or need to support certain file operations, while the
-> >>>>>> page is flagged this way.
-> >>>>>>
-> >>>>>> If necessary, we could add a new API call.
-> >>>>>
-> >>>>> That API call is called get_user_pages_longterm.
-> >>>>
-> >>>> OK...I had the impression that this was just semi-temporary API for dax, but
-> >>>> given that it's an exported symbol, I guess it really is here to stay.
-> >>>
-> >>> The plan is to go back and provide api changes that bypass
-> >>> get_user_page_longterm() for RDMA. However, for VFIO and others, it's
-> >>> not clear what we could do. In the VFIO case the guest would need to
-> >>> be prepared handle the revocation.
-> >>
-> >> OK, let's see if I understand that plan correctly:
-> >>
-> >> 1. Change RDMA users (this could be done entirely in the various device drivers'
-> >> code, unless I'm overlooking something) to use mmu notifiers, and to do their
-> >> DMA to/from non-pinned pages.
-> > 
-> > The problem with this approach is surprising the RDMA drivers with
-> > notifications of teardowns. It's the RDMA userspace applications that
-> > need the notification, and it likely needs to be explicit opt-in, at
-> > least for the non-ODP drivers.
-> > 
-> >> 2. Return early from get_user_pages_longterm, if the memory is...marked for
-> >> RDMA? (How? Same sort of page flag that I'm floating here, or something else?)
-> >> That would avoid the problem with pinned pages getting their buffer heads
-> >> removed--by disallowing the pinning. Makes sense.
-> > 
-> > Well, right now the RDMA workaround is DAX specific and it seems we
-> > need to generalize it for the page-cache case. One thought is to have
-> > try_to_unmap() take it's own reference and wait for the page reference
-> > count to drop to one so that the truncate path knows the page is
-> > dma-idle and disconnected from the page cache, but I have not looked
-> > at the details.
-> > 
-> >> Also, is there anything I can help with here, so that things can happen sooner?
-> > 
-> > I do think we should explore a page flag for pages that are "long
-> > term" pinned. Michal asked for something along these lines at LSF / MM
-> > so that the core-mm can give up on pages that the kernel has lost
-> > lifetime control. Michal, did I capture your ask correctly?
-> 
-> 
-> OK, that "refcount == 1" approach sounds promising:
-> 
->    -- still use a page flag, but narrow the scope to get_user_pages_longterm() pages
->    -- just wait in try_to_unmap, instead of giving up
+There is race between nvme_remove and nvme_reset_work that can
+lead to io hang.
 
-But this would fix only the RDMA use case, isn't it? Direct IO (and other
-get_user_pages_fast() users) would be still problematic.
+nvme_remove                    nvme_reset_work
+-> change state to DELETING
+                               -> fail to change state to LIVE
+                               -> nvme_remove_dead_ctrl
+                                 -> nvme_dev_disable
+                                   -> quiesce request_queue
+                                 -> queue remove_work
+-> cancel_work_sync reset_work
+-> nvme_remove_namespaces
+  -> splice ctrl->namespaces
+                               nvme_remove_dead_ctrl_work
+                               -> nvme_kill_queues
+  -> nvme_ns_remove               do nothing
+    -> blk_cleanup_queue
+      -> blk_freeze_queue
+Finally, the request_queue is quiesced state when wait freeze,
+we will get io hang here.
 
-And for record, the problem with page cache pages is not only that
-try_to_unmap() may unmap them. It is also that page_mkclean() can
-write-protect them. And once PTEs are write-protected filesystems may end
-up doing bad things if DMA then modifies the page contents (DIF/DIX
-failures, data corruption, oopses). As such I don't think that solutions
-based on page reference count have a big chance of dealing with the
-problem.
+In fact, when fails to change state in nvme_reset_work, the only
+reason is someone has changed state to DELETING. So it is not
+necessary to invoke nvme_remove_dead_ctrl in that case.
 
-And your page flag approach would also need to take page_mkclean() into
-account. And there the issue is that until the flag is cleared (i.e., we
-are sure there are no writers using references from GUP) you cannot
-writeback the page safely which does not work well with your idea of
-clearing the flag only once the page is evicted from page cache (hint, page
-cache page cannot get evicted until it is written back).
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ drivers/nvme/host/pci.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-So as sad as it is, I don't see an easy solution here.
-
-								Honza
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index fc33804..fc56e63 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2318,7 +2318,7 @@ static void nvme_reset_work(struct work_struct *work)
+ 	if (!nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_CONNECTING)) {
+ 		dev_warn(dev->ctrl.device,
+ 			"failed to mark controller CONNECTING\n");
+-		goto out;
++		goto fail_state;
+ 	}
+ 
+ 	result = nvme_pci_enable(dev);
+@@ -2390,13 +2390,22 @@ static void nvme_reset_work(struct work_struct *work)
+ 	if (!nvme_change_ctrl_state(&dev->ctrl, new_state)) {
+ 		dev_warn(dev->ctrl.device,
+ 			"failed to mark controller state %d\n", new_state);
+-		goto out;
++		goto fail_state;
+ 	}
+ 
+ 	nvme_start_ctrl(&dev->ctrl);
+ 	return;
+ 
+- out:
++fail_state:
++	/*
++	 * The only possible state here is DELETING, there must be someone
++	 * removing the ctrl right now, so needn't invoke nvme_remove_dead_ctrl.
++	 * The queues may have been quiesced, start them to avoid io hang.
++	 */
++	WARN_ON(dev->ctrl.state != NVME_CTRL_DELETING);
++	nvme_start_queues(&dev->ctrl);
++	return;
++out:
+ 	nvme_remove_dead_ctrl(dev, result);
+ }
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.7.4
+
