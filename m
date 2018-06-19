@@ -6,176 +6,143 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C444C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 469DBC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 467352083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:42:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 467352083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 04C1C205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:44:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C1C205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966849AbeFSPmF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:42:05 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59208 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S966078AbeFSPlm (ORCPT
+        id S966646AbeFSPoP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:44:15 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:33157 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966193AbeFSPoN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:41:42 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5JFeRNn019149
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 11:41:41 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jq4p4r1yu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 11:41:41 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alifm@linux.ibm.com>;
-        Tue, 19 Jun 2018 11:41:40 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Jun 2018 11:41:36 -0400
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5JFfa2o9437648
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Jun 2018 15:41:36 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 985E1AE062;
-        Tue, 19 Jun 2018 11:41:36 -0400 (EDT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F1FFAE05F;
-        Tue, 19 Jun 2018 11:41:36 -0400 (EDT)
-Received: from alifm-ThinkPad-T470p.pok.ibm.com (unknown [9.56.58.93])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Tue, 19 Jun 2018 11:41:36 -0400 (EDT)
-From:   Farhan Ali <alifm@linux.ibm.com>
-To:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     qemu-devel@nongnu.org, herbert@gondor.apana.org.au,
-        borntraeger@de.ibm.com, arei.gonglei@huawei.com,
-        longpeng2@huawei.com, pasic@linux.ibm.com, frankja@linux.ibm.com,
-        jasowang@redhat.com, mst@redhat.com
-Subject: [PATCH v3 1/2] crypto/virtio-crypto: Read crypto services and algorithm masks
-Date:   Tue, 19 Jun 2018 11:41:33 -0400
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1529422492.git.alifm@linux.ibm.com>
-References: <cover.1529422492.git.alifm@linux.ibm.com>
-In-Reply-To: <cover.1529422492.git.alifm@linux.ibm.com>
-References: <cover.1529422492.git.alifm@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18061915-0060-0000-0000-0000027F9B6A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009220; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01049295; UDB=6.00537643; IPR=6.00828268;
- MB=3.00021740; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-19 15:41:39
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061915-0061-0000-0000-000045817E11
-Message-Id: <7f5841568b1fabb60d9c11a8bbbc041d34c1c86f.1529422492.git.alifm@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-19_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806190174
+        Tue, 19 Jun 2018 11:44:13 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0LupZV-1gDC9l053J-0101XE; Tue, 19 Jun 2018 17:33:24 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Steve French <sfrench@samba.org>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        David Howells <dhowells@redhat.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] cifs: use 64-bit timestamps for fscache
+Date:   Tue, 19 Jun 2018 17:27:59 +0200
+Message-Id: <20180619153255.3634720-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180619153255.3634720-1-arnd@arndb.de>
+References: <20180619153255.3634720-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:qxAaGmQKval2Htg1xz1M+yzaV/JcTkAAro5o3OtZaOkFa9rVvNb
+ +PTxu8UJ+QoH0GqoexiI0jlErOtDObWfcT6/H1wZ0BGFzc+KBtYD5Df1O3jEXSXmiKp0XUC
+ q3aibvGsB1Zzfl11PeZAYSFunABRG0fxjioa1tHeE5QA3HOJCPr4rtsm59NXEgZhnZEuOkO
+ tpnihWMty46CxQwu392dQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:rXqREHusXe8=:nb4ADdMgSlQsqiCmz772fN
+ DcczVHf7Jwd0mW6wwXXdsVL4sOvmuoUX8Tr36CHIw9sTkvmLTcqy7vW/BfWAIUgLNwyzgUBnG
+ 45A4IUPT57koqr60qkOItURcTm+NNnCZGWQbKDoe75bfjMlRlEeYLHonMYrV293VdnMsEOQPs
+ HX8Uow4VjVqHVbfu9xS8HCdsN//yKVxEwkWoBlxhFP7WiDMCjUx/6T4l3EYCMM2IXrPnv1/E8
+ 6whhyklCxUxoJ9p/MS694Ec2Hhlq6MCTvYC6M3ewIeSgd5GA1L1hvoj6wUNX7f1ktLWeQvk8F
+ OJjL2AmtWgJrur8ruumHKi35oQWrR3xeIIfUUwcYYzZzRrM0wkz8fFx+wKrm9r3Syk3uA/aB0
+ 18xQQF5rK7bxNoNL4/snSijvajX+hMN0SUFmny2BXlOfTlfdVQHU92IlTP52eDXZAbQ5eklTR
+ VzF23pcNfTF80M64S1aDaX6n+ShuskzD1UlK3wr9WZxKAEYbk9Saw+6MPbI+jA2yUquVTxBGf
+ LPzhF+ZbOGyKBGFzaMqCilfUmuu5nbArNtyckqufUnaDvprqMsmWkqPEB88O8bsIMnaufes9s
+ 1xYuyEQSvFcwVQosUDZu6RMicbN2aYqO0hzwm3Gm6HBIBtWqt7FbkMsDTe3f9N+yLNGJF8dFE
+ Dbodd2DkyRjqsVA342+0FSGoKyTyeAE0+v/mPWkr2pA0obkL1KBuGdvfAferYGns8qX0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read the crypto services and algorithm masks which provides
-information about the services and algorithms supported by
-virtio-crypto backend.
+In the fscache, we just need the timestamps as cookies to check for
+changes, so we don't really care about the overflow, but it's better
+to stop using the deprecated timespec so we don't have to go through
+explicit conversion functions.
 
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-Acked-by: Gonglei <arei.gonglei@huawei.com>
-Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+To avoid comparing uninitialized padding values that are copied
+while assigning the timespec values, this rearranges the members of
+cifs_fscache_inode_auxdata to avoid padding, and assigns them
+individually.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/crypto/virtio/virtio_crypto_common.h | 14 ++++++++++++++
- drivers/crypto/virtio/virtio_crypto_core.c   | 29 ++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
+ fs/cifs/cache.c   |  6 ++++--
+ fs/cifs/fscache.c | 12 ++++++++----
+ fs/cifs/fscache.h |  8 +++++---
+ 3 files changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/crypto/virtio/virtio_crypto_common.h b/drivers/crypto/virtio/virtio_crypto_common.h
-index 66501a5..931a3bd 100644
---- a/drivers/crypto/virtio/virtio_crypto_common.h
-+++ b/drivers/crypto/virtio/virtio_crypto_common.h
-@@ -55,6 +55,20 @@ struct virtio_crypto {
- 	/* Number of queue currently used by the driver */
- 	u32 curr_queue;
+diff --git a/fs/cifs/cache.c b/fs/cifs/cache.c
+index e1553d1e0e50..b7420e605b28 100644
+--- a/fs/cifs/cache.c
++++ b/fs/cifs/cache.c
+@@ -128,8 +128,10 @@ fscache_checkaux cifs_fscache_inode_check_aux(void *cookie_netfs_data,
  
-+	/*
-+	 * Specifies the services mask which the device support,
-+	 * see VIRTIO_CRYPTO_SERVICE_*
-+	 */
-+	u32 crypto_services;
-+
-+	/* Detailed algorithms mask */
-+	u32 cipher_algo_l;
-+	u32 cipher_algo_h;
-+	u32 hash_algo;
-+	u32 mac_algo_l;
-+	u32 mac_algo_h;
-+	u32 aead_algo;
-+
- 	/* Maximum length of cipher key */
- 	u32 max_cipher_key_len;
- 	/* Maximum length of authenticated key */
-diff --git a/drivers/crypto/virtio/virtio_crypto_core.c b/drivers/crypto/virtio/virtio_crypto_core.c
-index 8332698..8f745f2 100644
---- a/drivers/crypto/virtio/virtio_crypto_core.c
-+++ b/drivers/crypto/virtio/virtio_crypto_core.c
-@@ -303,6 +303,13 @@ static int virtcrypto_probe(struct virtio_device *vdev)
- 	u32 max_data_queues = 0, max_cipher_key_len = 0;
- 	u32 max_auth_key_len = 0;
- 	u64 max_size = 0;
-+	u32 cipher_algo_l = 0;
-+	u32 cipher_algo_h = 0;
-+	u32 hash_algo = 0;
-+	u32 mac_algo_l = 0;
-+	u32 mac_algo_h = 0;
-+	u32 aead_algo = 0;
-+	u32 crypto_services = 0;
+ 	memset(&auxdata, 0, sizeof(auxdata));
+ 	auxdata.eof = cifsi->server_eof;
+-	auxdata.last_write_time = timespec64_to_timespec(cifsi->vfs_inode.i_mtime);
+-	auxdata.last_change_time = timespec64_to_timespec(cifsi->vfs_inode.i_ctime);
++	auxdata.last_write_time_sec = cifsi->vfs_inode.i_mtime.tv_sec;
++	auxdata.last_change_time_sec = cifsi->vfs_inode.i_ctime.tv_sec;
++	auxdata.last_write_time_nsec = cifsi->vfs_inode.i_mtime.tv_nsec;
++	auxdata.last_change_time_nsec = cifsi->vfs_inode.i_ctime.tv_nsec;
  
- 	if (!virtio_has_feature(vdev, VIRTIO_F_VERSION_1))
- 		return -ENODEV;
-@@ -339,6 +346,20 @@ static int virtcrypto_probe(struct virtio_device *vdev)
- 		max_auth_key_len, &max_auth_key_len);
- 	virtio_cread(vdev, struct virtio_crypto_config,
- 		max_size, &max_size);
-+	virtio_cread(vdev, struct virtio_crypto_config,
-+		crypto_services, &crypto_services);
-+	virtio_cread(vdev, struct virtio_crypto_config,
-+		cipher_algo_l, &cipher_algo_l);
-+	virtio_cread(vdev, struct virtio_crypto_config,
-+		cipher_algo_h, &cipher_algo_h);
-+	virtio_cread(vdev, struct virtio_crypto_config,
-+		hash_algo, &hash_algo);
-+	virtio_cread(vdev, struct virtio_crypto_config,
-+		mac_algo_l, &mac_algo_l);
-+	virtio_cread(vdev, struct virtio_crypto_config,
-+		mac_algo_h, &mac_algo_h);
-+	virtio_cread(vdev, struct virtio_crypto_config,
-+		aead_algo, &aead_algo);
+ 	if (memcmp(data, &auxdata, datalen) != 0)
+ 		return FSCACHE_CHECKAUX_OBSOLETE;
+diff --git a/fs/cifs/fscache.c b/fs/cifs/fscache.c
+index 85145a763021..ea6ace9c2417 100644
+--- a/fs/cifs/fscache.c
++++ b/fs/cifs/fscache.c
+@@ -129,8 +129,10 @@ static void cifs_fscache_acquire_inode_cookie(struct cifsInodeInfo *cifsi,
  
- 	/* Add virtio crypto device to global table */
- 	err = virtcrypto_devmgr_add_dev(vcrypto);
-@@ -358,6 +379,14 @@ static int virtcrypto_probe(struct virtio_device *vdev)
- 	vcrypto->max_cipher_key_len = max_cipher_key_len;
- 	vcrypto->max_auth_key_len = max_auth_key_len;
- 	vcrypto->max_size = max_size;
-+	vcrypto->crypto_services = crypto_services;
-+	vcrypto->cipher_algo_l = cipher_algo_l;
-+	vcrypto->cipher_algo_h = cipher_algo_h;
-+	vcrypto->mac_algo_l = mac_algo_l;
-+	vcrypto->mac_algo_h = mac_algo_h;
-+	vcrypto->hash_algo = hash_algo;
-+	vcrypto->aead_algo = aead_algo;
-+
+ 	memset(&auxdata, 0, sizeof(auxdata));
+ 	auxdata.eof = cifsi->server_eof;
+-	auxdata.last_write_time = timespec64_to_timespec(cifsi->vfs_inode.i_mtime);
+-	auxdata.last_change_time = timespec64_to_timespec(cifsi->vfs_inode.i_ctime);
++	auxdata.last_write_time_sec = cifsi->vfs_inode.i_mtime.tv_sec;
++	auxdata.last_change_time_sec = cifsi->vfs_inode.i_ctime.tv_sec;
++	auxdata.last_write_time_nsec = cifsi->vfs_inode.i_mtime.tv_nsec;
++	auxdata.last_change_time_nsec = cifsi->vfs_inode.i_ctime.tv_nsec;
  
- 	dev_info(&vdev->dev,
- 		"max_queues: %u, max_cipher_key_len: %u, max_auth_key_len: %u, max_size 0x%llx\n",
+ 	cifsi->fscache =
+ 		fscache_acquire_cookie(tcon->fscache,
+@@ -166,8 +168,10 @@ void cifs_fscache_release_inode_cookie(struct inode *inode)
+ 	if (cifsi->fscache) {
+ 		memset(&auxdata, 0, sizeof(auxdata));
+ 		auxdata.eof = cifsi->server_eof;
+-		auxdata.last_write_time = timespec64_to_timespec(cifsi->vfs_inode.i_mtime);
+-		auxdata.last_change_time = timespec64_to_timespec(cifsi->vfs_inode.i_ctime);
++		auxdata.last_write_time_sec = cifsi->vfs_inode.i_mtime.tv_sec;
++		auxdata.last_change_time_sec = cifsi->vfs_inode.i_ctime.tv_sec;
++		auxdata.last_write_time_nsec = cifsi->vfs_inode.i_mtime.tv_nsec;
++		auxdata.last_change_time_nsec = cifsi->vfs_inode.i_ctime.tv_nsec;
+ 
+ 		cifs_dbg(FYI, "%s: (0x%p)\n", __func__, cifsi->fscache);
+ 		fscache_relinquish_cookie(cifsi->fscache, &auxdata, false);
+diff --git a/fs/cifs/fscache.h b/fs/cifs/fscache.h
+index c7e3ac251e16..8c0862e41306 100644
+--- a/fs/cifs/fscache.h
++++ b/fs/cifs/fscache.h
+@@ -31,9 +31,11 @@
+  * Auxiliary data attached to CIFS inode within the cache
+  */
+ struct cifs_fscache_inode_auxdata {
+-	struct timespec	last_write_time;
+-	struct timespec	last_change_time;
+-	u64		eof;
++	u64 last_write_time_sec;
++	u64 last_change_time_sec;
++	u32 last_write_time_nsec;
++	u32 last_change_time_nsec;
++	u64 eof;
+ };
+ 
+ /*
 -- 
-2.7.4
+2.9.0
 
