@@ -2,155 +2,118 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B637EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95693C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5928820874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FBA02083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:39:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r6YkbgiS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5928820874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HO7dFisb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GImTlZuU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FBA02083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965078AbeFSFjM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:39:12 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:44036 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755840AbeFSFjK (ORCPT
+        id S965185AbeFSFjp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 01:39:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57948 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964895AbeFSFjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:39:10 -0400
-Received: by mail-yw0-f194.google.com with SMTP id k18-v6so5919861ywm.11;
-        Mon, 18 Jun 2018 22:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=jRmR9Ir7Hxv5BEAB9O55qM501tg9AC56/e8gCFTlL5Q=;
-        b=r6YkbgiSr4Y4r+cexYf0i3G61id72X8ZJAoHbS9YFPg6jfWKLeSXg+35yFhZHKvysE
-         rge/w7hEPJUClhwY3cECuugEFz4/6J/lvDJj4oLSFXUX50jQjFOiNcGkTjvaeZiSYjI3
-         2TA3rROxABmPZE+qaILiUJceJbg1EZn7BdMpCtT0x3laSypWtadnK4Rvnz4AtfMjjgMy
-         oXNFpdcB897XkwSLoOkevJT4aEoJPPObnB9st+dCDnouoPB/4pFtApcs1ccfYqp6MBgY
-         7qxiOIVdxD2QazZWDZq+hoT7yoS/j7bWpVOO52SDjMesK7/7vdDahNP0xaKbD9at/3IS
-         qQ0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=jRmR9Ir7Hxv5BEAB9O55qM501tg9AC56/e8gCFTlL5Q=;
-        b=Hy3plJJxuUrmCBqhH04vIK3DqrQk9iTUfE01j+glsAP/riZhOaVFQffQ8eH5aoTpZ2
-         pgBkEXvHq5ks7KW0brcgEWfjtKhfILnXkJYxCT61+/o8TI/nbvi90FKPfevXapsycmt/
-         i0rVmr8yc5MXFyFa82aFf5UNFMiVzs8Ylijzqr+U9SHCdOoYxOP1XyvISoPvWIR+BiXk
-         dWgDskHMZoM8YQ/mIQggGLjazjnEa8P5OPLXtLu2Lak1/wROwiSlSSA3cYEXafDDnO5Z
-         FAvPd2C3nkAGCbgFXVl1T4BqUATTSMlLmbiOwbuIrY6YrSry/1+3b9iodPciN2vF0F1b
-         HWTg==
-X-Gm-Message-State: APt69E31ZHSbvgfJKhza9QyQvmtnrbedc8/4qYRcVxXA9Y47jvB8+j8P
-        9w1hw9dR4vynNH5o/9vFwKidRGTHBy5OuFzuxZE=
-X-Google-Smtp-Source: ADUXVKINlblthn20A38UfvkX9aamIqfqfwN7Tu4XkLkWOltOpsbh61F0gpb995G9X6ELGdzQqIKigCphjGQEomMKq6Q=
-X-Received: by 2002:a81:3050:: with SMTP id w77-v6mr7146341yww.88.1529386749151;
- Mon, 18 Jun 2018 22:39:09 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a81:79cf:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 22:39:08
- -0700 (PDT)
-In-Reply-To: <87in6fagxw.fsf@xmission.com>
-References: <20180618192726.67981-1-salyzyn@android.com> <87in6fagxw.fsf@xmission.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 19 Jun 2018 08:39:08 +0300
-Message-ID: <CAOQ4uxjepYO+UqED2is-Qcxs=nYypOtY6LhvRxrJeKiLxduU0g@mail.gmail.com>
-Subject: Re: [PATCH v2] overlayfs: caller_credentials option bypass creator_cred
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Mark Salyzyn <salyzyn@android.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 19 Jun 2018 01:39:42 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 11E9A60B1A; Tue, 19 Jun 2018 05:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529386782;
+        bh=OgY6vU1PLd02JA03RxHUuIPl099mDbw+QmDm/+cyvzc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HO7dFisblBBfyocpN8Q0H0UG+4y3zUQsR+OZAGCk6z+blcnSaSxMyjPDdnb/I877H
+         95XtVd6nbf3BkkHOMBdVB0prKgvM7N2eblbLwj7jD8hcpBuWIKEHtz/FImlVTe0dyj
+         ylu0UdjYcCv8+pf/4jEi3+xFZ0aa+4eXHF3EIchA=
+Received: from hydcbspbld03.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vviswana@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B18F7604A6;
+        Tue, 19 Jun 2018 05:39:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529386781;
+        bh=OgY6vU1PLd02JA03RxHUuIPl099mDbw+QmDm/+cyvzc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GImTlZuUE/JDz8SVai+v0+wxQN9Iq38h5hz7pmGLjdS13mBpVD6e4Ds1jB9fCE9Q/
+         lzMjD47qDlL6QcqMfGBIGQyjS11ww4Dembpy5wbbNDKDGadOnVE8f+JATToeFm+r1U
+         QTWTVHvXZ+BM8FSmzc4gATvf7AraZ7nzASK5h97c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B18F7604A6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
+From:   Vijay Viswanath <vviswana@codeaurora.org>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, jeremymc@redhat.com,
+        vviswana@codeaurora.org, bjorn.andersson@linaro.org,
+        riteshh@codeaurora.org, vbadigan@codeaurora.org,
+        dianders@google.com, sayalil@codeaurora.org
+Subject: [PATCH V3 0/4] Changes for SDCC5 version
+Date:   Tue, 19 Jun 2018 11:09:17 +0530
+Message-Id: <1529386761-4923-1-git-send-email-vviswana@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 1:05 AM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> Mark Salyzyn <salyzyn@android.com> writes:
->
->> All accesses to the lower filesystems reference the creator (mount)
->> context.  This is a security issue as the user context does not
->> overlay the creator context.
->
-> Sigh.  You gave Vivek a reasonable description of what is going on
-> and then you did not repeat it here.  Your patch description
-> very much needs to be fixed.
->
-> As I read your patch there you are removing an override in credentials.
-> Presumably that override is needed for the fileystem to function.
->
-> If that override is needed to function your patch is incorrect
-> because it breaks things for no reason.
->
-> If that override is not needed it should be safe to explain why
-> and simply remove it from overlayfs.
->
+With SDCC5, the MCI register space got removed and the offset/order of
+several registers have changed. Based on SDCC version used and the register,
+we need to pick the base address and offset.
 
-Eric is correct about override being needed for filesystem to function
-because overlayfs calls mknod and sets trusted xattr.
+Depends on patch series: "[PATCH V5 0/2] mmc: sdhci-msm: Configuring IO_PAD support for sdhci-msm"
 
-Alas, overlayfs makes an assumption that if mounter has credentials
-to mount, it also has credentials for those other things, which so far,
-nobody complained about AFAIK.
+Changes since RFC:
+	Dropped voltage regulator changes in sdhci-msm
+	Split the "Register changes for sdcc V5" patch
+	Instead of checking mci removal for deciding which base addr to use,
+	new function pointers are defined for the 2 variants of sdcc: 
+		1) MCI present
+		2) V5 (mci removed)
+	Instead of string comparing with the compatible string from DT file,
+	the sdhci_msm_probe will now pick the data associated with the
+	compatible entry and use it to load variant specific address offsets
+	and msm variant specific read/write ops.
 
-There was one complain though about abusing SYS_CAP_RESOURCE
-of mounter to exceed underlying ext4 quotas, so that capability has been
-recently revoked unconditionally from the override creds - that makes a user
-with SYS_CAP_RESOURCE also incapable of exceeding underlying ext4
-quotas (a good thing IMO, but that is arguable).
+Changes since V1:
+	Removed unused msm_reab & msm_writeb APIs
+	Changed certain register addresses from uppercase to lowercase hex
+	letters
+	Removed extra lines and spaces
+	Split "[PATCH V1 0/3] Changes for SDCC5 version" patch into two,
+	one for Documentation and other for the driver changes.
 
-Ideally, the correct solution would be to "merge" the mounter creds and
-caller creds and use different combinations of the two in different cases,
-but that would complicate the code and the test matrix considerably.
+Changes since V2:
+	Used lower case for macro function defenitions
+	Removed unused function pointers for msm_readb & msm_writeb
 
-> I don't see any real explanations in this change description.
-> So this appears to be an incompletely thought out change.
->
->
-> Mostly this looks like someone tried to use the principle of least
-> privilege in your Android implementation and got it wrong.  Having given
-> the mounter of overlayfs too few privileges this appears to be an
-> attempt to get overlayfs to pay the cost of an implementation mistake in
-> the Android security model.
->
-> That seems like a very unreasonable thing to do.
->
 
-To the best of my knowledge, the Android sepolicy rules for init have been
-like that for a very long time. I am not sure why Eric claims the unreasonable
-claim. Not sure who the users of overlayfs are going to be though and if
-it is possible to guaranty that they have capabilities to mknod and set trusted
-xattr (needed for removing dirs among other things).
+Sayali Lokhande (3):
+  mmc: sdhci-msm: Define new Register address map
+  Documentation: sdhci-msm: Add new compatible string for SDCC v5
+  mmc: host: Register changes for sdcc V5
 
-As it is, the patch is simple enough and only makes an existing functionality
-optional, so if it *really* solves the Android use case, and there is
-*really* no
-other "reasonable" way to configure Android sepolicy, I rather have this patch
-than the more "correct" implementation.
+Vijay Viswanath (1):
+  mmc: sdhci-msm: Add msm version specific ops and data structures
 
-Two comments about the patch in case we are going forward with it:
+ .../devicetree/bindings/mmc/sdhci-msm.txt          |   7 +-
+ drivers/mmc/host/sdhci-msm.c                       | 511 ++++++++++++++++-----
+ 2 files changed, 391 insertions(+), 127 deletions(-)
 
-1. I would use the same convention for Kconfig/module param/mount option
-as used for other overlayfs defaults, i.e. override_creds=on/off and Kconfig
-default which defaults to the legacy behavior.
+-- 
+ Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-2. with override_creds=off, all the checks being done during mount become
-irrelevant (e.g. mounter can set trusted xattr), so either skip them and issue
-a warning saying that we really hope mounter knows what it is doing, or
-I don't know what.
-
-Thanks,
-Amir.
