@@ -3,92 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27226C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A633AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D202E205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:25:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D202E205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 62A7D20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:30:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62A7D20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757331AbeFSUZx (ORCPT
+        id S1757006AbeFSUaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 16:25:53 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:46259 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967197AbeFSUZg (ORCPT
+        Tue, 19 Jun 2018 16:30:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44838 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755265AbeFSUaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 16:25:36 -0400
-Received: by mail-lf0-f65.google.com with SMTP id u5-v6so1427646lff.13;
-        Tue, 19 Jun 2018 13:25:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7qXKyOGCSgz6ZKMJkgjTNbc5pHK2sr6gkv6DvO7yY6Q=;
-        b=kfeurjPtv1eG+f4/5GWeAJKWbNnUP7AWQpOEb09z9IkMgqnbEgadsWyaOpi/RDhuPe
-         UM2SHgBbQ0bi3RFQr3RZWOk8/a7MBd0x20tZHgIyMNL3AtF1noyVF4iU7Kf/AY+rABOz
-         aTrztcRxDXOAcPv+sPCFaD7opyXr6fX6Oj4jhVzEDAdTDyWKU68wIxS0IGnmf9h8Kmrd
-         CX623l9tzeb7MsFvoCQysvGQrlSQmRwtM0IhFuRPBmEfINFUGCTXvB4lBua9zKKIwTwQ
-         sccJGresdiXxim3IqDLemUOtRQ8Oly7GzyLpDdrHb9vb7t9hmpBzFOOwFQS27gRThhUf
-         YV/g==
-X-Gm-Message-State: APt69E3Q9u/7mDlxftHeabIB2qJP+j2JlNZt2tWX/85saqoVyF/V8+bu
-        PW7EnkAHZzs8y2jZFZNLLbU=
-X-Google-Smtp-Source: ADUXVKLnm+HRLnrOK+YZqjSsbBwoXSKro22gPLBPz8RV2+6BFBuk+lidUovfQRKzDGlUPWQS5WOWbw==
-X-Received: by 2002:a19:2a5b:: with SMTP id f88-v6mr2150437lfl.63.1529439934950;
-        Tue, 19 Jun 2018 13:25:34 -0700 (PDT)
-Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
-        by smtp.googlemail.com with ESMTPSA id 4-v6sm87451ljc.1.2018.06.19.13.25.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 13:25:34 -0700 (PDT)
-From:   efremov@linux.com
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Eric Biggers <ebiggers3@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org, Denis Efremov <efremov@linux.com>
-Subject: [PATCH v2] crypto: skcipher: remove the exporting of skcipher_walk_next
-Date:   Tue, 19 Jun 2018 23:23:57 +0300
-Message-Id: <20180619202357.10805-1-efremov@linux.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180617174959.29864-1-efremov@linux.com>
-References: <20180617174959.29864-1-efremov@linux.com>
+        Tue, 19 Jun 2018 16:30:02 -0400
+Received: from localhost (unknown [61.115.201.97])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F2AD3EB6;
+        Tue, 19 Jun 2018 20:30:00 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 05:29:59 +0900
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Javier Martinez Canillas <javierm@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [RFC PATCH v2] driver core: add a debugfs entry to show deferred
+ devices
+Message-ID: <20180619202959.GA19129@kroah.com>
+References: <20180619183356.32106-1-javierm@redhat.com>
+ <CAHp75Vcn39N9rZ0UO3szGrODVLxek4X746uWs+RPXwy4i0s1Ug@mail.gmail.com>
+ <CAHp75VdpHdanWJmcwLBRTSDoDkbpPxuAGwwVO0hosXSRn4PUoA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VdpHdanWJmcwLBRTSDoDkbpPxuAGwwVO0hosXSRn4PUoA@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function skcipher_walk_next declared as static and marked as
-EXPORT_SYMBOL_GPL. It's a bit confusing for internal function to be
-exported. The area of visibility for such function is its .c file
-and all other modules. Other *.c files of the same module can't use it,
-despite all other modules can. Relying on the fact that this is the
-internal function and it's not a crucial part of the API, the patch
-just removes the EXPORT_SYMBOL_GPL marking of skcipher_walk_next.
+On Tue, Jun 19, 2018 at 10:55:20PM +0300, Andy Shevchenko wrote:
+> On Tue, Jun 19, 2018 at 10:53 PM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Tue, Jun 19, 2018 at 9:33 PM, Javier Martinez Canillas
+> > <javierm@redhat.com> wrote:
+> >> For debugging purposes it may be useful to know what are the devices whose
+> >> probe function was deferred. Add a debugfs entry showing that information.
+> 
+> >> +static int deferred_devs_open(struct inode *inode, struct file *file)
+> >> +{
+> >> +       return single_open(file, deferred_devs_show, inode->i_private);
+> >> +}
+> >> +
+> >> +static const struct file_operations deferred_devs_fops = {
+> >> +       .owner = THIS_MODULE,
+> >> +       .open = deferred_devs_open,
+> >> +       .read = seq_read,
+> >> +       .llseek = seq_lseek,
+> >> +       .release = single_release,
+> >> +};
+> >
+> > Isn't this DEFINE_SHOW_ATTRIBUTE() ?
+> 
+> Besides that, you are summoning Greg's dark side :-)
+> See below.
+> 
+> >> +       if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+> >> +               deferred_devices = debugfs_create_file("deferred_devices",
+> >> +                                                      0444, NULL, NULL,
+> >> +                                                      &deferred_devs_fops);
+> 
+> >> +               if (!deferred_devices)
+> >> +                       return -ENOMEM;
+> 
+> This must not prevent the execution. So, the check introduces actually
+> a regression.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Awe, you beat me to it :)
 
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- crypto/skcipher.c | 1 -
- 1 file changed, 1 deletion(-)
+Also, I don't usually comment on RFC patches, as that shows the author
+really doesn't think that the code is ready to be reviewed/merged...
 
-diff --git a/crypto/skcipher.c b/crypto/skcipher.c
-index 0fe2a2923ad0..7d6a49fe3047 100644
---- a/crypto/skcipher.c
-+++ b/crypto/skcipher.c
-@@ -387,7 +387,6 @@ static int skcipher_walk_next(struct skcipher_walk *walk)
- 	}
- 	return err;
- }
--EXPORT_SYMBOL_GPL(skcipher_walk_next);
- 
- static int skcipher_copy_iv(struct skcipher_walk *walk)
- {
--- 
-2.17.1
+thanks,
 
+greg k-h
