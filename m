@@ -3,78 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E54C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6715AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B8B20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:58:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B8B20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B26A20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:59:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B26A20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755890AbeFSF6s (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:58:48 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57736 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755852AbeFSF6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:58:47 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9E08C20834; Tue, 19 Jun 2018 07:58:45 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 58BB020A2B;
-        Tue, 19 Jun 2018 07:58:35 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 07:58:35 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [RFC PATCH v2 1/6] mtd: rawnand: marvell: Handle on-die ECC
-Message-ID: <20180619075835.10ded314@bbrezillon>
-In-Reply-To: <20180619053125.16792-2-chris.packham@alliedtelesis.co.nz>
-References: <20180619053125.16792-1-chris.packham@alliedtelesis.co.nz>
-        <20180619053125.16792-2-chris.packham@alliedtelesis.co.nz>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S937301AbeFSF7e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 01:59:34 -0400
+Received: from www381.your-server.de ([78.46.137.84]:46415 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755830AbeFSF7c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 01:59:32 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <lars@metafoo.de>)
+        id 1fV9fr-0002sa-6D; Tue, 19 Jun 2018 07:59:27 +0200
+Received: from [188.174.124.246] (helo=[192.168.178.37])
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <lars@metafoo.de>)
+        id 1fV9fq-0009yq-VA; Tue, 19 Jun 2018 07:59:27 +0200
+Subject: Re: [PATCH] staging:iio:adc:ad7816: Backward resources cleanups in
+ probe
+To:     Karim Eshapa <karim.eshapa@gmail.com>
+Cc:     Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+References: <20180618233851.7992-1-karim.eshapa@gmail.com>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <0e5bb02e-a19a-3b6a-f1a6-98bb89a6d9b8@metafoo.de>
+Date:   Tue, 19 Jun 2018 07:59:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180618233851.7992-1-karim.eshapa@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.99.3/24676/Tue Jun 19 06:38:11 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018 17:31:20 +1200
-Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+On 06/19/2018 01:38 AM, Karim Eshapa wrote:
+> Backward cleanups for all resources allocated in probing
+> in case of failure at any regestering or allocation step.
 
-> From the controllers point of view this is the same as no or
-> software only ECC.
+Hi,
+
+Thanks for the patch.
+
+Resources that are allocated with devm_ are freed automatically in case of
+an error, so this patch should not be necessary.
+
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
+> Signed-off-by: Karim Eshapa <karim.eshapa@gmail.com>
 > ---
-> Changes in v2:
-> - New
+>  drivers/staging/iio/adc/ad7816.c | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
 > 
->  drivers/mtd/nand/raw/marvell_nand.c | 1 +
->  1 file changed, 1 insertion(+)
+> diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
+> index bf76a8620bdb..5ff14c830451 100644
+> --- a/drivers/staging/iio/adc/ad7816.c
+> +++ b/drivers/staging/iio/adc/ad7816.c
+> @@ -373,7 +373,7 @@ static int ad7816_probe(struct spi_device *spi_dev)
+>  	if (ret) {
+>  		dev_err(&spi_dev->dev, "Fail to request rdwr gpio PIN %d.\n",
+>  			chip->rdwr_pin);
+> -		return ret;
+> +		goto device_free;
+>  	}
+>  	gpio_direction_input(chip->rdwr_pin);
+>  	ret = devm_gpio_request(&spi_dev->dev, chip->convert_pin,
+> @@ -381,7 +381,7 @@ static int ad7816_probe(struct spi_device *spi_dev)
+>  	if (ret) {
+>  		dev_err(&spi_dev->dev, "Fail to request convert gpio PIN %d.\n",
+>  			chip->convert_pin);
+> -		return ret;
+> +		goto free_rdwr_pin;
+>  	}
+>  	gpio_direction_input(chip->convert_pin);
+>  	ret = devm_gpio_request(&spi_dev->dev, chip->busy_pin,
+> @@ -389,7 +389,7 @@ static int ad7816_probe(struct spi_device *spi_dev)
+>  	if (ret) {
+>  		dev_err(&spi_dev->dev, "Fail to request busy gpio PIN %d.\n",
+>  			chip->busy_pin);
+> -		return ret;
+> +		goto free_convert_pin;
+>  	}
+>  	gpio_direction_input(chip->busy_pin);
+>  
+> @@ -407,17 +407,29 @@ static int ad7816_probe(struct spi_device *spi_dev)
+>  						indio_dev->name,
+>  						indio_dev);
+>  		if (ret)
+> -			return ret;
+> +			goto free_busy_pin;
+>  	}
+>  
+>  	ret = devm_iio_device_register(&spi_dev->dev, indio_dev);
+>  	if (ret)
+> -		return ret;
+> +		goto free_dev_irq;
+>  
+>  	dev_info(&spi_dev->dev, "%s temperature sensor and ADC registered.\n",
+>  		 indio_dev->name);
+>  
+>  	return 0;
+> +free_dev_irq:
+> +	devm_free_irq(&spi_dev->dev, spi_dev->irq, indio_dev);
+> +free_busy_pin:
+> +	devm_gpio_free(&spi_dev->dev, chip->busy_pin);
+> +free_convert_pin:
+> +	devm_gpio_free(&spi_dev->dev, chip->convert_pin);
+> +free_rdwr_pin:
+> +	devm_gpio_free(&spi_dev->dev, chip->rdwr_pin);
+> +device_free:
+> +	devm_iio_device_free(&spi_dev->dev, indio_dev);
+> +
+> +	return ret;
+>  }
+>  
+>  static const struct spi_device_id ad7816_id[] = {
 > 
-> diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
-> index ebb1d141b900..ba6889bbe802 100644
-> --- a/drivers/mtd/nand/raw/marvell_nand.c
-> +++ b/drivers/mtd/nand/raw/marvell_nand.c
-> @@ -2157,6 +2157,7 @@ static int marvell_nand_ecc_init(struct mtd_info *mtd,
->  		break;
->  	case NAND_ECC_NONE:
->  	case NAND_ECC_SOFT:
-> +	case NAND_ECC_ON_DIE:
->  		if (!nfc->caps->is_nfcv2 && mtd->writesize != SZ_512 &&
->  		    mtd->writesize != SZ_2K) {
->  			dev_err(nfc->dev, "NFCv1 cannot write %d bytes pages\n",
 
