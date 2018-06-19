@@ -2,223 +2,132 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB17C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F634C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 533EF205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:22:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUKovN1J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533EF205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 091D920652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:22:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091D920652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966577AbeFSPWN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:22:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58686 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965599AbeFSPWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:22:11 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E08B20652;
-        Tue, 19 Jun 2018 15:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529421730;
-        bh=wMQvAe8Ij7yhokdzTYXW+fqFg9dG8f6lAX4/2p1o69s=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=sUKovN1JAmRSB6gVG/QrfJ/iVRj1YXRPDdct/hO7wiR6tifQfBPe8NmuKqrWsxMUn
-         E11ROdAo/Qm0fBS5zkNJUK4UcVbUeScQQe4J0dOiLpctXxBIGv5SnNzdr9FxM70CgP
-         YK1iTIQz1d8VbOCal+xXtwY2L/w3l3PeITHAXtG0=
-Content-Type: text/plain; charset="utf-8"
+        id S966617AbeFSPWV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:22:21 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:42681 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965599AbeFSPWT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:22:19 -0400
+Received: by mail-vk0-f67.google.com with SMTP id s187-v6so36449vke.9;
+        Tue, 19 Jun 2018 08:22:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ttpLxZC1KiR+QgbX3cdSBKAtZ5vW9fxtGC6X+qHpRGA=;
+        b=cilqzxNMygWN0g5WtUtlcyjiosSCIw7NbRHCAOkfuESKARB8ufhDUqHJggEV+Ypf5L
+         D6kHmhUeTW9zg5wtmMkEUr4J0rpoxPHKZ8Xoren7OJi7kEQlX6o4VQZ2htEbLE5V09Gw
+         OpJYyyF/hpUYoWnBKnsZvhw+FFDFKK2bcz4yL+vyf0kj4cHJ2pQy7PtxGseBkez9LVEn
+         r98QacGm6ZPc2RlGrFHXVqbg9vBULChdOpnW1TOOh5eXv1VoEXGkAm+6KqanLMETtne0
+         ANRSjbxx5/QVQwQnYXBdyUCD2O3uQy4vjXEfrOHIMT6hFpzS9tVPryC4spZpRaLgpg89
+         r1Bw==
+X-Gm-Message-State: APt69E3UmmEYrE1M1RCNd+vLXD5ST8XBfFXydJZtWzWPbLULwmeu1nEC
+        pTsWfGIz/B2JwBwFHaKkpeM789yKBqROAqGrrQg=
+X-Google-Smtp-Source: ADUXVKLhHUazeadbvhUKS0pske0Xy9L/WCW5A7dP0+eSNVYAbk4NoIKXkbInbsOLRpo1sqwUiITFDKrk95fZkchN5l8=
+X-Received: by 2002:a1f:8307:: with SMTP id f7-v6mr9837428vkd.3.1529421737795;
+ Tue, 19 Jun 2018 08:22:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, robh@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <a397c3f9-1e4e-b6db-299b-0ecfd1726226@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1528098985-3676-1-git-send-email-tdas@codeaurora.org>
- <1528098985-3676-3-git-send-email-tdas@codeaurora.org>
- <152879014163.16708.9093599796057889104@swboyd.mtv.corp.google.com>
- <a397c3f9-1e4e-b6db-299b-0ecfd1726226@codeaurora.org>
-Message-ID: <152942172986.16708.14472226838173862978@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: qcom: Add display clock controller driver for SDM845
-Date:   Tue, 19 Jun 2018 08:22:09 -0700
+References: <20180619135518.8990-1-geert+renesas@glider.be>
+ <20180619135518.8990-2-geert+renesas@glider.be> <CAJZ5v0gGuTDCf8Bsefyj5R6mF=SXZDrt7JacNU5vBZOf84QsvA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gGuTDCf8Bsefyj5R6mF=SXZDrt7JacNU5vBZOf84QsvA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 19 Jun 2018 17:22:06 +0200
+Message-ID: <CAMuHMdWgdsSS7qcfPmHnvL-XmXzyoS=bMGgc6q0urcvO5upWvQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] PM / wakeup: Add callback for wake-up change notification
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-06-13 02:18:59)
-> Hello Stephen,
-> =
+Hi Rafael,
 
-> Thanks for review.
-> =
+On Tue, Jun 19, 2018 at 4:48 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Tue, Jun 19, 2018 at 3:55 PM, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > Add a callback to inform a device that its wake-up setting has been
+> > changed.  This allows a device to synchronize device configuration with
+> > an external user action.
+> >
+> > E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
+> > switch, the system suspend/resume procedure is:
+> >   1. Configure PMIC for DDR backup mode (by software), which changes the
+> >      role of the accessory power switch from a power to a wake-up
+> >      switch,
+> >   2. Switch accessory power switch off (manually), to prepare for system
+> >      suspend,
+> >   3. Suspend system (by software),
+> >   4. Switch accessory power switch on (manually), to wake up the system.
+> >
+> > As step 2 involves a manual operation, step 1 cannot be combined
+> > with step 3 and performed in the PMIC's suspend callback (unlike on
+> > systems with a momentary power switch).
+> >
+> > Adding the new callback allows to move step 1 to the new callback, to be
+> > performed in response to the user writing "enabled" to the PMIC's
+> > "wakeup" virtual file in sysfs.
+>
+> I still don't quite understand this TBH.
+>
+> In particular, why do you want a write to "wakeup" trigger this
+> instead of having a special sysfs attr for that exposed by your PMIC
+> driver?
 
-> On 6/12/2018 1:25 PM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-06-04 00:56:25)
-> >> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispc=
-c-sdm845.c
-> >> new file mode 100644
-> >> index 0000000..317ab33
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/dispcc-sdm845.c
-> =
+In v1 (https://patchwork.kernel.org/patch/9996567/), I had a
+driver-specific "backup_mode" sysfs file.
+In v2 and later of the driver series (https://lkml.org/lkml/2018/4/18/345),
+I changed that to use the standard "wakeup" file in sysfs, in response to
+a comment from Mark Brown.
 
-> >> +#include "common.h"
-> >> +#include "gdsc.h"
-> >> +#include "reset.h"
-> >> +
-> >> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-> > =
+> Writing "enabled" to "wakeup" for the PMIC should enable the PMIC
+> itself to wake up the system, which isn't quite the case, or is it?
 
-> > We really need to move this into the header file.
-> > =
+Actually the PMIC cannot wake up the system if backup mode is not enabled.
+When suspending the system (PSCI suspend) without enabling backup mode
+first, the system will just crash (which cannot be distinguished from being
+suspended, as PSCI doesn't support any other wake-up sources anyway[*] ;-)
+So in that sense writing "enabled" to the "wakeup" file does enable the
+PMIC to wake up the system.
 
-> > $ git grep '#define F(' -- drivers/clk/qcom/ | wc -l
-> > 13
-> > =
-
-> Sure, will move this in a header and submit the patch.
-
+Do you still prefer a driver-specific sysfs file?
 Thanks!
 
-> >> +
-> >> +static struct clk_alpha_pll disp_cc_pll0 =3D {
-> >> +       .offset =3D 0x0,
-> >> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-> >> +       .clkr =3D {
-> >> +               .hw.init =3D &(struct clk_init_data){
-> >> +                       .name =3D "disp_cc_pll0",
-> >> +                       .parent_names =3D (const char *[]){ "bi_tcxo" =
-},
-> >> +                       .num_parents =3D 1,
-> >> +                       .ops =3D &clk_alpha_pll_fabia_ops,
-> >> +               },
-> >> +       },
-> >> +};
-> > [...]
-> >> +
-> >> +static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src =3D {
-> >> +       .cmd_rcgr =3D 0x2058,
-> >> +       .mnd_width =3D 8,
-> >> +       .hid_width =3D 5,
-> >> +       .parent_map =3D disp_cc_parent_map_4,
-> >> +       .clkr.hw.init =3D &(struct clk_init_data){
-> >> +               .name =3D "disp_cc_mdss_pclk0_clk_src",
-> >> +               .parent_names =3D disp_cc_parent_names_4,
-> >> +               .num_parents =3D 4,
-> >> +               .flags =3D CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-> > =
+[*] Perhaps you remember my ill-received attempt to prevent the system from
+    using PSCI system suspend when any other wake-up sources were enabled?
+    ("[PATCH/RFC 0/6] PSCI: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts
+     power", https://lkml.org/lkml/2017/2/20/566).
 
-> > Why is the nocache flag needed? Applies to all clks in this file.
-> > =
+Gr{oetje,eeting}s,
 
-> =
+                        Geert
 
-> This flag is required for all RCGs whose PLLs are controlled outside the =
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> clock controller. The display code would require the recalculated rate =
-
-> always.
-
-That doesn't really answer the question. It seems to describe some sort
-of problem with the PLL being controlled outside the clk controller/clk
-framework. Please add more details and comments into the code here.
-
-> =
-
-> >> +               .ops =3D &clk_pixel_ops,
-> >> +       },
-> >> +};
-> >> +
-> >> +static struct clk_rcg2 disp_cc_mdss_pclk1_clk_src =3D {
-> >> +       .cmd_rcgr =3D 0x2070,
-> >> +       .mnd_width =3D 8,
-> >> +       .hid_width =3D 5,
-> >> +       .parent_map =3D disp_cc_parent_map_4,
-> >> +       .clkr.hw.init =3D &(struct clk_init_data){
-> > [...]
-> >> +
-> >> +static const struct regmap_config disp_cc_sdm845_regmap_config =3D {
-> >> +       .reg_bits       =3D 32,
-> >> +       .reg_stride     =3D 4,
-> >> +       .val_bits       =3D 32,
-> >> +       .max_register   =3D 0x10000,
-> > =
-
-> > This seems arbitrarily large. List the actual end?
-> > =
-
-> The actual end is larger than this :( , I have listed the range till the =
-
-> register offset are used here.
-
-Ok.
-
-> =
-
-> >> +       .fast_io        =3D true,
-> >> +};
-> >> +
-> >> +static const struct qcom_cc_desc disp_cc_sdm845_desc =3D {
-> >> +       .config =3D &disp_cc_sdm845_regmap_config,
-> >> +       .clks =3D disp_cc_sdm845_clocks,
-> >> +       .num_clks =3D ARRAY_SIZE(disp_cc_sdm845_clocks),
-> >> +       .resets =3D disp_cc_sdm845_resets,
-> >> +       .num_resets =3D ARRAY_SIZE(disp_cc_sdm845_resets),
-> >> +       .gdscs =3D disp_cc_sdm845_gdscs,
-> >> +       .num_gdscs =3D ARRAY_SIZE(disp_cc_sdm845_gdscs),
-> >> +};
-> >> +
-> >> +static const struct of_device_id disp_cc_sdm845_match_table[] =3D {
-> >> +       { .compatible =3D "qcom,sdm845-dispcc" },
-> >> +       { }
-> >> +};
-> >> +MODULE_DEVICE_TABLE(of, disp_cc_sdm845_match_table);
-> >> +
-> >> +static int disp_cc_sdm845_probe(struct platform_device *pdev)
-> >> +{
-> >> +       struct regmap *regmap;
-> >> +
-> >> +       regmap =3D qcom_cc_map(pdev, &disp_cc_sdm845_desc);
-> >> +       if (IS_ERR(regmap))
-> >> +               return PTR_ERR(regmap);
-> >> +
-> >> +       clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_c=
-onfig);
-> >> +
-> >> +       /* Enable clock gating for DSI and MDP clocks */
-> > =
-
-> > Hardware clock gating? What does this mean.
-> > =
-
-> These are used for deciding whether to enable HW based Clock gating or =
-
-> not. Setting these bit will enable HW based Clock gating.
-
-Please state it's hardware clock gating then in the comment.
-
-> =
-
-> >> +       regmap_update_bits(regmap, 0x8000, 0x7f0, 0x7f0);
-> >> +
-> >> +       return qcom_cc_really_probe(pdev, &disp_cc_sdm845_desc, regmap=
-);
-> >> +}
->=20
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
