@@ -2,119 +2,92 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F593C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFA9C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 307A920836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:57:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307A920836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C51002075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:00:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51002075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937696AbeFSL5a (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 07:57:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40222 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757217AbeFSL53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 07:57:29 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 647927DAC4;
-        Tue, 19 Jun 2018 11:57:28 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-75.ams2.redhat.com [10.36.116.75])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 86FF02026D68;
-        Tue, 19 Jun 2018 11:57:27 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] printk: Make CONSOLE_LOGLEVEL_QUIET configurable
-Date:   Tue, 19 Jun 2018 13:57:26 +0200
-Message-Id: <20180619115726.3098-1-hdegoede@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 19 Jun 2018 11:57:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 19 Jun 2018 11:57:28 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
+        id S937728AbeFSMAJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:00:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33338 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937609AbeFSMAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:00:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4EE79AE96;
+        Tue, 19 Jun 2018 12:00:07 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 14:00:06 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] HID fixes
+Message-ID: <nycvar.YFH.7.76.1806191356280.6203@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The goal of passing the "quiet" option to the kernel is for the kernel
-to be quiet unless something really is wrong.
+Linus,
 
-Sofar passing quiet has been (mostly) equivalent to passing
-loglevel=4 on the kernel commandline. Which means to show any messages
-with a level of KERN_ERR or higher severity on the console.
+please pull from
 
-In practice this often does not result in a quiet boot though, since
-there are many false-positive or otherwise harmless error messages printed,
-defeating the purpose of the quiet option. Esp. the ACPICA code is really
-bad wrt this, but there are plenty of others too.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git for-linus
 
-This commit makes CONSOLE_LOGLEVEL_QUIET configurable.
+to receive -rc HID fixes:
 
-This for example will allow distros which want quiet to really mean quiet
-to set CONSOLE_LOGLEVEL_QUIET so that only messages with a higher severity
-then KERN_ERR (CRIT, ALERT, EMERG) get printed, avoiding an endless game
-of whack-a-mole silencing harmless error messages.
+=====
+- Wacom 2nd-gen Intuos Pro large Y axis handling fix from Jason Gerecke
+- Fix for hibernation in Intel ISH driver, from Even Xu
+- Crash fix for hid-steam driver, from Rodrigo Rivas Costa
+- i2c-hid fix for devices (such as SIPODEV SP1064) that fail to provide
+  their report descriptor, from Julian Sax
+- new device ID addition to google-hammer driver
+=====
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- include/linux/printk.h |  6 +++---
- lib/Kconfig.debug      | 11 +++++++++++
- 2 files changed, 14 insertions(+), 3 deletions(-)
+Thanks.
 
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 6d7e800affd8..18602bb3eca8 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -50,15 +50,15 @@ static inline const char *printk_skip_headers(const char *buffer)
- /* We show everything that is MORE important than this.. */
- #define CONSOLE_LOGLEVEL_SILENT  0 /* Mum's the word */
- #define CONSOLE_LOGLEVEL_MIN	 1 /* Minimum loglevel we let people use */
--#define CONSOLE_LOGLEVEL_QUIET	 4 /* Shhh ..., when booted with "quiet" */
- #define CONSOLE_LOGLEVEL_DEBUG	10 /* issue debug messages */
- #define CONSOLE_LOGLEVEL_MOTORMOUTH 15	/* You can't shut this one up */
- 
- /*
-- * Default used to be hard-coded at 7, we're now allowing it to be set from
-- * kernel config.
-+ * Default used to be hard-coded at 7, quiet used to be hardcoded at 4,
-+ * we're now allowing both to be set from kernel config.
-  */
- #define CONSOLE_LOGLEVEL_DEFAULT CONFIG_CONSOLE_LOGLEVEL_DEFAULT
-+#define CONSOLE_LOGLEVEL_QUIET	 CONFIG_CONSOLE_LOGLEVEL_QUIET
- 
- extern int console_printk[];
- 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 8838d1158d19..0d1c48dd22a9 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -30,6 +30,17 @@ config CONSOLE_LOGLEVEL_DEFAULT
- 	  usage in the kernel. That is controlled by the MESSAGE_LOGLEVEL_DEFAULT
- 	  option.
- 
-+config CONSOLE_LOGLEVEL_QUIET
-+	int "quiet console loglevel (1-15)"
-+	range 1 15
-+	default "4"
-+	help
-+	  loglevel to use when "quiet" is passed on the kernel commandline.
-+
-+	  When "quiet" is passed on the kernel commandline this loglevel
-+	  will be used as the loglevel. IOW passing "quiet" will be the
-+	  equivalent of passing "loglevel=<CONSOLE_LOGLEVEL_QUIET>"
-+
- config MESSAGE_LOGLEVEL_DEFAULT
- 	int "Default message log level (1-7)"
- 	range 1 7
+----------------------------------------------------------------
+Even Xu (1):
+      HID: intel_ish-hid: ipc: register more pm callbacks to support hibernation
+
+Jason Gerecke (1):
+      HID: wacom: Correct logical maximum Y for 2nd-gen Intuos Pro large
+
+Julian Sax (1):
+      HID: i2c-hid: override HID descriptors for certain devices
+
+Nicolas Boichat (1):
+      HID: google: Add support for whiskers
+
+Rodrigo Rivas Costa (1):
+      HID: steam: use hid_device.driver_data instead of hid_set_drvdata()
+
+ drivers/hid/hid-google-hammer.c                   |   2 +
+ drivers/hid/hid-ids.h                             |   1 +
+ drivers/hid/hid-steam.c                           |  10 +-
+ drivers/hid/i2c-hid/Makefile                      |   3 +
+ drivers/hid/i2c-hid/{i2c-hid.c => i2c-hid-core.c} |  58 ++++++---
+ drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c          | 149 ++++++++++++++++++++++
+ drivers/hid/i2c-hid/i2c-hid.h                     |  17 +++
+ drivers/hid/intel-ish-hid/ipc/pci-ish.c           |  22 +---
+ drivers/hid/wacom_sys.c                           |   8 ++
+ 9 files changed, 230 insertions(+), 40 deletions(-)
+ rename drivers/hid/i2c-hid/{i2c-hid.c => i2c-hid-core.c} (96%)
+ create mode 100644 drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
+ create mode 100644 drivers/hid/i2c-hid/i2c-hid.h
+
 -- 
-2.17.1
+Jiri Kosina
+SUSE Labs
 
