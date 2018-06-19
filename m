@@ -2,185 +2,136 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906BBC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F80C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 469922075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:10:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F09E20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="naD2F7GH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469922075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="bBpTNjNM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F09E20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967093AbeFSQKx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:10:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966263AbeFSQKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:10:50 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE80920652;
-        Tue, 19 Jun 2018 16:10:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529424650;
-        bh=rSImzsEXiGU7KH1KGI4sJvTMOqbs5BjJq5rhvOHwLGQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=naD2F7GHh6D9lVTszzLhl98/FwOuEyXo4XDHjjJPEZAsFpmwes2ZQvU4j2H9PnFCY
-         jN96Xio/awLCNSfWGunYRuMCScXjFZOigUet4AdGP4w4P280xzk5mJghKg+LVGNFJP
-         LJzQMLZv2g4YzcHGRvqP5OM12nJ8VBYRR3m1aaUw=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-arch@vger.kernel.org
-Subject: [PATCH -tip v6 13/27] kprobes: Don't check the ->break_handler() in generic kprobes code
-Date:   Wed, 20 Jun 2018 01:10:27 +0900
-Message-Id: <152942462686.15209.6324404940493598980.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152942424698.15209.15245996287444292393.stgit@devbox>
-References: <152942424698.15209.15245996287444292393.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S967122AbeFSQLM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:11:12 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42458 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967032AbeFSQKA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:10:00 -0400
+Received: by mail-wr0-f196.google.com with SMTP id w10-v6so224839wrk.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:10:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ADA5Q+NCfXV/mZjpNHccIMsB+3ZlXTeJHda7DVng7Y8=;
+        b=bBpTNjNMWGfBcInQXTydKWpkkzcjkPqmELo2IC3aJzFG5vhhO68Kl96rVhzwWD1lef
+         j8cQ0jxsj22Ss3QHCRSC+GhP3MS/5v5XGYgz5neFqGnCIXtslLfJlF3XIr8X3xS/S68C
+         JvpsMO1HZjwTdBmbFzyehVZBc2J6s6kEK2+NUivE+WXhDCEM21uNdaqEEMW8XTR4MZx1
+         5Fm8dpGDSFkNYlZJLR7W7U7pjEhJhw+GytVpU9eirODwjqU16uxel0nkHnYZ+bzAlKKN
+         9LJju5NCLurKsHI9elnm35xyE/EHyMAM6ZMkmOcM0kmDP56stxfuYo0hd53yRDfXfVGo
+         1rxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ADA5Q+NCfXV/mZjpNHccIMsB+3ZlXTeJHda7DVng7Y8=;
+        b=MXfmbRjhtnae8dJAqlTccwNmtjEsyUczlVoPkJFGQxkWrXMltf+FmZ+GyP3Ex5UFgG
+         h+8iIAcCPGKGp4kpQ9QjFmoQzYhJcP+fUd/AmP7vPSIh4katAUdpd9fYk9DtKdbYa954
+         AvODcYGQKdGEdT6ixMrwvNNtpLcZhE0a4e3yQ1uFlMsqP5xWrfSr7sysQC0EqGxmHSZb
+         AOVJsfbeZIu16XWZeldHVbbw2rvuXAzCOysROQH4CEpptZKx59pP5ThTLEjGBuXw1dU6
+         90GpJ+VJ7pycd/WbrWH5oJ0PwsDkpL/q/Wkl9GaABPpCxTI7nZYP8ubzo/8Xn3FNTL47
+         YSUA==
+X-Gm-Message-State: APt69E3hc12RJRf0mp1t2Z2Z9/yibdy4y30N6GFi8DWgYuaisx/Z4eq+
+        FCtOdk//yExXfKwvQGXlDBuWew==
+X-Google-Smtp-Source: ADUXVKIjwij/lqALI0QK9YRl+rz93jyfhcl1g3LG1YppsoNM97E1BP/TFx/dIhp5JSeAX6U1YLHj9g==
+X-Received: by 2002:adf:9d02:: with SMTP id k2-v6mr14388213wre.213.1529424599631;
+        Tue, 19 Jun 2018 09:09:59 -0700 (PDT)
+Received: from brgl-bgdev.lan (LFbn-1-7080-22.w90-116.abo.wanadoo.fr. [90.116.249.22])
+        by smtp.gmail.com with ESMTPSA id 74-v6sm619327wmt.31.2018.06.19.09.09.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 09:09:58 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Rob Herring <robh@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable@vger.kernel.org
+Subject: [PATCH 1/3] net: ethernet: fix suspend/resume in davinci_emac
+Date:   Tue, 19 Jun 2018 18:09:48 +0200
+Message-Id: <20180619160950.6283-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180619160950.6283-1-brgl@bgdev.pl>
+References: <20180619160950.6283-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't check the ->break_handler() from the core kprobes code,
-because it was only used by jprobes which got removed.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-( In followup patches we'll remove the remaining calls in low level
-  arch handlers as well and remove the callback altogether. )
+This patch reverts commit 3243ff2a05ec ("net: ethernet: davinci_emac:
+Deduplicate bus_find_device() by name matching") and adds a comment
+which should stop anyone from reintroducing the same "fix" in the future.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+We can't use bus_find_device_by_name() here because the device name is
+not guaranteed to be 'davinci_mdio'. On some systems it can be
+'davinci_mdio.0' so we need to use strncmp() against the first part of
+the string to correctly match it.
+
+Fixes: 3243ff2a05ec ("net: ethernet: davinci_emac: Deduplicate bus_find_device() by name matching")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- Documentation/kprobes.txt |    2 +-
- kernel/kprobes.c          |   39 +++++----------------------------------
- 2 files changed, 6 insertions(+), 35 deletions(-)
+ drivers/net/ethernet/ti/davinci_emac.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
-index 5ae80baf3921..907a3017c0f2 100644
---- a/Documentation/kprobes.txt
-+++ b/Documentation/kprobes.txt
-@@ -262,7 +262,7 @@ is optimized, that modification is ignored.  Thus, if you want to
- tweak the kernel's execution path, you need to suppress optimization,
- using one of the following techniques:
- 
--- Specify an empty function for the kprobe's post_handler or break_handler.
-+- Specify an empty function for the kprobe's post_handler.
- 
- or
- 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 69de130595f7..536ab451e96d 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -627,8 +627,8 @@ static void optimize_kprobe(struct kprobe *p)
- 	    (kprobe_disabled(p) || kprobes_all_disarmed))
- 		return;
- 
--	/* Both of break_handler and post_handler are not supported. */
--	if (p->break_handler || p->post_handler)
-+	/* kprobes with post_handler can not be optimized */
-+	if (p->post_handler)
- 		return;
- 
- 	op = container_of(p, struct optimized_kprobe, kp);
-@@ -1116,20 +1116,6 @@ static int aggr_fault_handler(struct kprobe *p, struct pt_regs *regs,
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index 06d7c9e4dcda..a1a6445b5a7e 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -1385,6 +1385,11 @@ static int emac_devioctl(struct net_device *ndev, struct ifreq *ifrq, int cmd)
+ 		return -EOPNOTSUPP;
  }
- NOKPROBE_SYMBOL(aggr_fault_handler);
  
--static int aggr_break_handler(struct kprobe *p, struct pt_regs *regs)
--{
--	struct kprobe *cur = __this_cpu_read(kprobe_instance);
--	int ret = 0;
--
--	if (cur && cur->break_handler) {
--		if (cur->break_handler(cur, regs))
--			ret = 1;
--	}
--	reset_kprobe_instance();
--	return ret;
--}
--NOKPROBE_SYMBOL(aggr_break_handler);
--
- /* Walks the list and increments nmissed count for multiprobe case */
- void kprobes_inc_nmissed_count(struct kprobe *p)
- {
-@@ -1270,24 +1256,15 @@ static void cleanup_rp_inst(struct kretprobe *rp)
- }
- NOKPROBE_SYMBOL(cleanup_rp_inst);
++static int match_first_device(struct device *dev, void *data)
++{
++	return !strncmp(dev_name(dev), "davinci_mdio", 12);
++}
++
+ /**
+  * emac_dev_open - EMAC device open
+  * @ndev: The DaVinci EMAC network adapter
+@@ -1484,8 +1489,14 @@ static int emac_dev_open(struct net_device *ndev)
  
--/*
--* Add the new probe to ap->list. Fail if this is the
--* second break_handler at the address
--*/
-+/* Add the new probe to ap->list */
- static int add_new_kprobe(struct kprobe *ap, struct kprobe *p)
- {
- 	BUG_ON(kprobe_gone(ap) || kprobe_gone(p));
- 
--	if (p->break_handler || p->post_handler)
-+	if (p->post_handler)
- 		unoptimize_kprobe(ap, true);	/* Fall back to normal kprobe */
- 
--	if (p->break_handler) {
--		if (ap->break_handler)
--			return -EEXIST;
--		list_add_tail_rcu(&p->list, &ap->list);
--		ap->break_handler = aggr_break_handler;
--	} else
--		list_add_rcu(&p->list, &ap->list);
-+	list_add_rcu(&p->list, &ap->list);
- 	if (p->post_handler && !ap->post_handler)
- 		ap->post_handler = aggr_post_handler;
- 
-@@ -1310,8 +1287,6 @@ static void init_aggr_kprobe(struct kprobe *ap, struct kprobe *p)
- 	/* We don't care the kprobe which has gone. */
- 	if (p->post_handler && !kprobe_gone(p))
- 		ap->post_handler = aggr_post_handler;
--	if (p->break_handler && !kprobe_gone(p))
--		ap->break_handler = aggr_break_handler;
- 
- 	INIT_LIST_HEAD(&ap->list);
- 	INIT_HLIST_NODE(&ap->hlist);
-@@ -1706,8 +1681,6 @@ static int __unregister_kprobe_top(struct kprobe *p)
- 		goto disarmed;
- 	else {
- 		/* If disabling probe has special handlers, update aggrprobe */
--		if (p->break_handler && !kprobe_gone(p))
--			ap->break_handler = NULL;
- 		if (p->post_handler && !kprobe_gone(p)) {
- 			list_for_each_entry_rcu(list_p, &ap->list, list) {
- 				if ((list_p != p) && (list_p->post_handler))
-@@ -1911,7 +1884,6 @@ int register_kretprobe(struct kretprobe *rp)
- 	rp->kp.pre_handler = pre_handler_kretprobe;
- 	rp->kp.post_handler = NULL;
- 	rp->kp.fault_handler = NULL;
--	rp->kp.break_handler = NULL;
- 
- 	/* Pre-allocate memory for max kretprobe instances */
- 	if (rp->maxactive <= 0) {
-@@ -2034,7 +2006,6 @@ static void kill_kprobe(struct kprobe *p)
- 		list_for_each_entry_rcu(kp, &p->list, list)
- 			kp->flags |= KPROBE_FLAG_GONE;
- 		p->post_handler = NULL;
--		p->break_handler = NULL;
- 		kill_optimized_kprobe(p);
- 	}
- 	/*
+ 	/* use the first phy on the bus if pdata did not give us a phy id */
+ 	if (!phydev && !priv->phy_id) {
+-		phy = bus_find_device_by_name(&mdio_bus_type, NULL,
+-					      "davinci_mdio");
++		/* NOTE: we can't use bus_find_device_by_name() here because
++		 * the device name is not guaranteed to be 'davinci_mdio'. On
++		 * some systems it can be 'davinci_mdio.0' so we need to use
++		 * strncmp() against the first part of the string to correctly
++		 * match it.
++		 */
++		phy = bus_find_device(&mdio_bus_type, NULL, NULL,
++				      match_first_device);
+ 		if (phy) {
+ 			priv->phy_id = dev_name(phy);
+ 			if (!priv->phy_id || !*priv->phy_id)
+-- 
+2.17.1
 
