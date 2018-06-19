@@ -2,139 +2,144 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1F2C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D3EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99792083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:04:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99792083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D3B952083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:09:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="DvZkai51"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B952083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755844AbeFSHE3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 03:04:29 -0400
-Received: from mga18.intel.com ([134.134.136.126]:59193 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750861AbeFSHE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:04:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 00:04:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
-   d="scan'208";a="60355971"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
-  by orsmga003.jf.intel.com with ESMTP; 19 Jun 2018 00:04:24 -0700
-Subject: Re: [PATCH 1/1] mmc: sdhci-pci: fix eMMC controller issue on Intel
- Baytrail SoCs
-To:     Kurt Kanzenbach <kurt@linutronix.de>
-Cc:     ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-References: <20180619063119.3955-1-kurt@linutronix.de>
- <20180619063119.3955-2-kurt@linutronix.de>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <293c2771-ea9b-4f0c-bd31-f8844de12dc4@intel.com>
-Date:   Tue, 19 Jun 2018 10:03:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S965060AbeFSHJO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 03:09:14 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51978 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755616AbeFSHJM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 03:09:12 -0400
+Received: by mail-wm0-f65.google.com with SMTP id r15-v6so18005203wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 00:09:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=APt0PvZu7ZmlxqqAw9tyeWK+TuDbQ94fn8j2wR4tetE=;
+        b=DvZkai51m26blz4NBrllOiBNfSpxM0hcvlkOJO+Y8ShjciGfTLLmeZGjm3t7i9uJVv
+         ch0RHdYE4wSvbQKQ9KdcmzQurk4AQ9Ybcd/wdQjj1RFPGtJ8QQdwUmQtsNjNuz/pLLsb
+         HIo+T07v2j5rFj0E112zA/+8hInN3J5t3oNEnPZmKfe6MsTtBdw7k+eZPTNbQ/HOIoYI
+         g3rb7F/oOHtVnj2Cxs3t/zmlXGviEN2wE52bxOV6XdHDq2gxfAIphEZa8ilpJdKvol1C
+         223wqVJHl3AszzNbLFevj10CXMyzXM2CUzchUASZJYu463sHw42Zkz3k+AtRvhQDonLQ
+         PPPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=APt0PvZu7ZmlxqqAw9tyeWK+TuDbQ94fn8j2wR4tetE=;
+        b=Je48YMBHWr5z/f5F41vUgVnZoZsx4NXzZLrqeq3yUidDmWNPaYyKi4aj0SEpF+wAXZ
+         AbQumfHtSXaUsxQkT0OE5clO2ihpZPfS73R81IuHWWmfeKVR+nnFIdfWFhDbi5s8aJ0N
+         CTEAVc+2eljc8Fch06b0PLrOWxkyCBwc1UCvUv4ikO6zFyfeyJWEGdaNwJJa0TuyE1tY
+         bxcVSTJoGbFBTtFI9E7QKi4rvoUgROep1SuVyJGD1LrI+zcK+yHY5wKbtRI1pXaoO+sP
+         AufkZY+Qp94NOdNlOPm0uYx5Ugtksl3CPCyejEesXP73/aubVHUm7uQT0T/UnCj7ZyT2
+         9AwQ==
+X-Gm-Message-State: APt69E01z0b+yOe9XqzOE6j0FZ4AOfW+4p1mdcP4OHnInMoR8v7Aectk
+        bT/8yImD4NAardgSA4DeVltDoeOiJamyrTZD+jyRoA==
+X-Google-Smtp-Source: ADUXVKIoDd20u8a3zNqhjO8zENZYpeUxTPG7OGo1G51vTV+uFJ/lgvUyBJ2x5U4osHKOJ5Davf1rDnJjs4XISjibrOo=
+X-Received: by 2002:a50:c8cd:: with SMTP id k13-v6mr13539372edh.47.1529392151301;
+ Tue, 19 Jun 2018 00:09:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180619063119.3955-2-kurt@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a50:90d3:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 00:09:10
+ -0700 (PDT)
+In-Reply-To: <CAB4CAwdKJiuEiV1CtoyYTZTatRt73BQbRX5kyEtpqNj8STj5-w@mail.gmail.com>
+References: <20180611071838.47945-1-chiu@endlessm.com> <CAHp75VdfUO9rS-=nn+Ffe8bMEbCO-0xe8QBVqsJAZVFTMYkNxg@mail.gmail.com>
+ <CAB4CAwdKJiuEiV1CtoyYTZTatRt73BQbRX5kyEtpqNj8STj5-w@mail.gmail.com>
+From:   Chris Chiu <chiu@endlessm.com>
+Date:   Tue, 19 Jun 2018 15:09:10 +0800
+Message-ID: <CAB4CAweu0z5XjH0hTB9t=RA37KSRLsLGSAAeJLupLNcyV6LVBg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] platform/x86: asus-wmi: Call led hw_changed API on
+ kbd brightness change
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/06/18 09:31, Kurt Kanzenbach wrote:
-> Sometimes the eMMC controller doesn't respond anymore on Intel Baytrail
-> SoCs. The resulting error looks like:
-> 
-> |mmc1: Reset 0x1 never completed.
-> |sdhci: =========== REGISTER DUMP (mmc1)===========
-> |sdhci: Sys addr: 0xffffffff | Version:  0x0000ffff
-> |sdhci: Blk size: 0x0000ffff | Blk cnt:  0x0000ffff
-> |sdhci: Argument: 0xffffffff | Trn mode: 0x0000ffff
-> |sdhci: Present:  0xffffffff | Host ctl: 0x000000ff
-> |sdhci: Power:    0x000000ff | Blk gap:  0x000000ff
-> |sdhci: Wake-up:  0x000000ff | Clock:    0x0000ffff
-> |sdhci: Timeout:  0x000000ff | Int stat: 0xffffffff
-> |sdhci: Int enab: 0xffffffff | Sig enab: 0xffffffff
-> |sdhci: AC12 err: 0x0000ffff | Slot int: 0x0000ffff
-> |sdhci: Caps:     0xffffffff | Caps_1:   0xffffffff
-> |sdhci: Cmd:      0x0000ffff | Max curr: 0xffffffff
-> |sdhci: Host ctl2: 0x0000ffff
-> |sdhci: ADMA Err: 0xffffffff | ADMA Ptr: 0xffffffff
-> 
-> The behavior was observed on an Intel Atom E3825 performing lots of reboots. The
+On Thu, Jun 14, 2018 at 2:58 PM, Chris Chiu <chiu@endlessm.com> wrote:
+> On Wed, Jun 13, 2018 at 8:49 PM, Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>> On Mon, Jun 11, 2018 at 10:18 AM, Chris Chiu <chiu@endlessm.com> wrote:
+>>> Make asus-wmi notify on hotkey kbd brightness changes, listen for
+>>> brightness events and update the brightness directly in the driver.
+>>
+>>> For this purpose, bound check on brightness in kbd_led_set must be
+>>> based on the same data type to prevent illegal value been set.
+>>
+>>> @@ -497,9 +498,9 @@ static void kbd_led_set(struct led_classdev *led_cdev,
+>>>
+>>>         asus = container_of(led_cdev, struct asus_wmi, kbd_led);
+>>>
+>>> -       if (value > asus->kbd_led.max_brightness)
+>>> +       if ((int)value > (int)asus->kbd_led.max_brightness)
+>>>                 value = asus->kbd_led.max_brightness;
+>>> -       else if (value < 0)
+>>> +       else if ((int)value < 0)
+>>>                 value = 0;
+>>
+>> I didn't quite understand this part of the problem.
+>> Does it exist in the current code? Can it be split to a separate change?
+>>
+>> Can we avoid those ugly castings?
+>>
+>
+> I'd like to remove the ugly castings but there's a concern I may need some
+> advices. I don't know whether if the bound check logic ever verified before.
+> Maybe the value passed via sysfs is already correctly bounded?
+>
+> When the kbd_led_wk comes to -1, `if (value > asus->kbd_led.max_brightness)`
+> returns true and `if (value < 0)` return false which confused me. It
+> should relate
+> to the 2nd argument type is enum led_brightness which I consider it as integer.
+> The unexpected return value cause the KBD_BRTDWN cyclic, 3->2->0->-1
+> (3 again in kbd_led_set)->2->1. After applying the casting on both operands
+> `if ((int)value > (int)asus->kbd_led.max_brightness)`, the other
+> unexpected false
+> returned by `if (value < 0)` makes each KBD_BRTDOWN to be 3 -> 2 -> 1 -> 0 ->
+> -1 -> -2 -> -3 ->..... That's what the ugly casting for. I used to
+> tend to do boundary
+> limit before calling kbd_led_set as follows
+>
+> kbd_led_set(&asus->kbd_led, MIN(asus->kbd_led_wk + 1,
+> asus->kbd_led.max_brightness);
+> and
+> kbd_led_set(&asus->kbd_led, MAX(asus->kbd_led_wk - 1, 0));
+>
+> If so, the boundary limit logic would be totally redundant but I think
+> it may be still
+> useful to check the value passed from sysfs? Any suggestion which one would
+> be better?
+>
+> Chris
+>
+>> --
+>> With Best Regards,
+>> Andy Shevchenko
 
-So you are saying this only happens at boot time?  And only when re-booting?
-Can you send all the kernel messages?  Can you send an acpidump?
+Gentle ping.
 
-> issue seems to occur if runtime power management is used. Found by utilizing
-> ftrace.
-> 
-> The erratum VLI10 for the Intel E3825 states, that the eMMC controller
-> incorrectly announces that it supports suspend/resume. However, that shouldn't
-> be used, as the controller may incorrectly transfer data between memory and the
-> SD device.
+Cheers.
 
-That erratum is not related to this problem.  The suspend/resume that is
-documented is an internal SDHCI feature, not the kernel's suspend/resume.
-The SDHCI Suspend/Resume Mechanism is not supported in the driver, so it is
-not being used anyway.
-
-> 
-> Therefore, disallowing runtime pm resolves the issue. Tested on the E3825.
-> 
-> Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
-> ---
->  drivers/mmc/host/sdhci-pci-core.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-> index 77dd3521daae..df89381944cd 100644
-> --- a/drivers/mmc/host/sdhci-pci-core.c
-> +++ b/drivers/mmc/host/sdhci-pci-core.c
-> @@ -870,6 +870,21 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
->  	.priv_size	= sizeof(struct intel_host),
->  };
->  
-> +/*
-> + * See Erratum VLI10 from Errata List for Intel Atom E3825, Link:
-> + * https://www.intel.ca/content/dam/www/public/us/en/documents/specification-updates/atom-e3800-family-spec-update.pdf
-> + */
-> +static const struct sdhci_pci_fixes sdhci_intel_byt_emmc_no_runtime_pm = {
-> +	.allow_runtime_pm = false,
-> +	.probe_slot	= byt_emmc_probe_slot,
-> +	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
-> +	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> +			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
-> +			  SDHCI_QUIRK2_STOP_WITH_TC,
-> +	.ops		= &sdhci_intel_byt_ops,
-> +	.priv_size	= sizeof(struct intel_host),
-> +};
-> +
->  static const struct sdhci_pci_fixes sdhci_intel_glk_emmc = {
->  	.allow_runtime_pm	= true,
->  	.probe_slot		= glk_emmc_probe_slot,
-> @@ -1470,7 +1485,7 @@ static const struct pci_device_id pci_ids[] = {
->  	SDHCI_PCI_SUBDEVICE(INTEL, BYT_SDIO, NI, 7884, ni_byt_sdio),
->  	SDHCI_PCI_DEVICE(INTEL, BYT_SDIO,  intel_byt_sdio),
->  	SDHCI_PCI_DEVICE(INTEL, BYT_SD,    intel_byt_sd),
-> -	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc),
-> +	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc_no_runtime_pm),
->  	SDHCI_PCI_DEVICE(INTEL, BSW_EMMC,  intel_byt_emmc),
->  	SDHCI_PCI_DEVICE(INTEL, BSW_SDIO,  intel_byt_sdio),
->  	SDHCI_PCI_DEVICE(INTEL, BSW_SD,    intel_byt_sd),
-> 
-
+Chris
