@@ -2,119 +2,124 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B415C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 793E9C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BCD520836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:02:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F42B20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:02:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CHkA1qSs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BCD520836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWqoXo22"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F42B20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937661AbeFSLCg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 07:02:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38722 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937591AbeFSLCe (ORCPT
+        id S937683AbeFSLC4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 07:02:56 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36376 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937591AbeFSLCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 07:02:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=t6lg73DyadxcLf5Sae6k0+ma+WH8+i6QvtVXh6xrJHY=; b=CHkA1qSsYvEQxcOjvebUsL1nn
-        B8j0MsYy5W9hX25hsiT39OlYH2LILR5FEgRsSJTm6lNpIzgNYTZwgCuXgcDZeAPwCovZsvKf0xAL9
-        zeGXPQ0dSRg+939lXLryc0QsHc/Q7waex7DDhka5ynvXcKrW42Vo/DcQWiuWEm1gQa+sYI1UmkMVo
-        7qVvSljz+WWCWkxLMbQptOFWdTxgnLk7Ifzb/YdP/BR/KruBDpi+zRAIuhz7MVG4Yd/mNpeXxA6Fb
-        AzwWx0UbfYW7P1s1gRcyZ1twUBsWx88CfyJZtcphhV/IoKVg4MaKgGyDaZ3uPO8jgKq6wZGUvhNMY
-        /AVwce6cw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVEOm-0007nY-Mn; Tue, 19 Jun 2018 11:02:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9071020298BAC; Tue, 19 Jun 2018 13:02:05 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 13:02:05 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 1/3] locking: WW mutex cleanup
-Message-ID: <20180619110205.GE2476@hirez.programming.kicks-ass.net>
-References: <20180619082445.11062-1-thellstrom@vmware.com>
- <20180619082445.11062-2-thellstrom@vmware.com>
- <20180619094409.GK2458@hirez.programming.kicks-ass.net>
- <8ea67e74-5ed4-2157-8e51-43f15047b3e4@vmware.com>
+        Tue, 19 Jun 2018 07:02:54 -0400
+Received: by mail-lf0-f66.google.com with SMTP id n24-v6so13709430lfh.3;
+        Tue, 19 Jun 2018 04:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k2AjFWH5VJWYmqWsfsTFaDjaSvUX9Qc+cO59Tjwor+k=;
+        b=jWqoXo22WnqKGYu7L7WFTcyHhiYILtGGCG1EAcjqePwE2QDfxyCI8EKiCvXAhLzOx7
+         cgYDmMSGzVuEpaZctj8RvzneAPtAxv2vIxWMRMTGysGWesUk2C69ERa4Ji1FPzCCMdnf
+         Iu2Dsirta4sHsj8nrORptOtolbM89xGD3M8R+uV7exWMIAKKsqQt2aiHX09mIGeqMbUC
+         HKK1c86i1KvZw+9x5h0qbyDh/O3I4xEYuzsCsGpflhihxolTxewqHxe+7UcXH3uwsk1f
+         iicr7A2OYI+LrfATowYx9YJNrrUa8h55198ugovvFKSsKxHxLiz47irxBTSkZzH6OJ5L
+         GFMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k2AjFWH5VJWYmqWsfsTFaDjaSvUX9Qc+cO59Tjwor+k=;
+        b=qfQ+plFCDiLFns6OPywwr+gJiEV0J38jJbDiWzbUi09C61g1PyxOC0Y+BXbbI/OxEP
+         /UXMbaj5Rtf66SZ7PUzomZlYD/pqENpqTwd12AMat7z3v9rhceHOGfPdBTP8m28XLySi
+         J20+BvpO/ulOoFgQkPjHhvjW/LDKSMsxN1RrzPQ2drrzBUt6/jFmVzxV/YmaJ4BTs4y8
+         LrsXeNNgbx58t0ncrO8xy0wtFe7dxMxbyRB8mH6Petumi88ak4njTAvi6944vD/c0FaX
+         aADBkwyVDjkOgLc2Ny04CJl7UnmtInjwqATAFZox5PWQRUhUT3vW8iIMn9/wV8dohE6i
+         2rXQ==
+X-Gm-Message-State: APt69E3S98gRnMtSMyxwA0Tb3gteMzFfIvr25KT5w6rhbzlFewiTAOd+
+        Jr88VQXDOcwkJCkZI0SKLXY=
+X-Google-Smtp-Source: ADUXVKId+slNCLbFFJqYRoxV18tWK0q+QAA97p1Y6in4sWZp/Fx0JgjZ0IIHMNbLKkC43gPHkqGywA==
+X-Received: by 2002:a2e:8549:: with SMTP id u9-v6mr10535125ljj.10.1529406172538;
+        Tue, 19 Jun 2018 04:02:52 -0700 (PDT)
+Received: from localhost.localdomain (109-252-91-84.nat.spd-mgts.ru. [109.252.91.84])
+        by smtp.gmail.com with ESMTPSA id m84-v6sm3118543lje.91.2018.06.19.04.02.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 04:02:51 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peter Geis <pgwipeout@gmail.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2 0/5] Initial support of Trusted Foundations on Tegra30
+Date:   Tue, 19 Jun 2018 14:00:22 +0300
+Message-Id: <20180619110027.16935-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ea67e74-5ed4-2157-8e51-43f15047b3e4@vmware.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 12:44:52PM +0200, Thomas Hellstrom wrote:
-> On 06/19/2018 11:44 AM, Peter Zijlstra wrote:
-> > On Tue, Jun 19, 2018 at 10:24:43AM +0200, Thomas Hellstrom wrote:
-> > > From: Peter Ziljstra <peterz@infradead.org>
-> > > 
-> > > Make the WW mutex code more readable by adding comments, splitting up
-> > > functions and pointing out that we're actually using the Wait-Die
-> > > algorithm.
-> > > 
-> > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > Cc: Gustavo Padovan <gustavo@padovan.org>
-> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > > Cc: Sean Paul <seanpaul@chromium.org>
-> > > Cc: David Airlie <airlied@linux.ie>
-> > > Cc: Davidlohr Bueso <dave@stgolabs.net>
-> > > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> > > Cc: Josh Triplett <josh@joshtriplett.org>
-> > > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > > Cc: Kate Stewart <kstewart@linuxfoundation.org>
-> > > Cc: Philippe Ombredanne <pombredanne@nexb.com>
-> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Cc: linux-doc@vger.kernel.org
-> > > Cc: linux-media@vger.kernel.org
-> > > Cc: linaro-mm-sig@lists.linaro.org
-> > > Co-authored-by: Thomas Hellstrom <thellstrom@vmware.com>
-> > > Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-> > > ---
-> > >   Documentation/locking/ww-mutex-design.txt |  12 +-
-> > >   include/linux/ww_mutex.h                  |  28 ++---
-> > >   kernel/locking/mutex.c                    | 202 ++++++++++++++++++------------
-> > >   3 files changed, 145 insertions(+), 97 deletions(-)
-> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> Hi Peter,
-> 
-> Do you want to add a SOB, since you're the main author?
+Hello,
 
-Sure, here goes:
+This series of patches brings initial support of Trusted Foundations to
+Tegra30, that is to the consumer-grade Tegra30 devices which do not allow
+to easily replace the proprietary bootloader. Support is initial because
+this series implements only a proper CPU boot-up (main + secondary cores)
+and a basic L2 cache maintenance that is done using the TF firmware.
+Suspend-resume support is missing yet as I couldn't get it to work
+(CPU hangs on resume from suspend after awhile and seems that is related
+to inappropriately done cache maintenance during of suspend-resume using
+the firmware), it is work-in-progress for now.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+This patchset is partially based on the work done by Michał Mirosław [0].
+
+[0] https://www.spinics.net/lists/linux-tegra/msg30368.html
+
+Changelog:
+
+v2:
+	- The "Don't apply CPU erratas in insecure mode" patch got some
+	  cleanup, in particular resolved the messiness in
+	  __tegra_cpu_reset_handler_data.
+
+	- Added a comment to tf_cache_write_sec(), justifying the warning
+	  message.
+
+Dmitry Osipenko (5):
+  ARM: trusted_foundations: Implement L2 cache initialization callback
+  ARM: trusted_foundations: Provide information about whether firmware
+    is registered
+  ARM: tegra: Setup L2 cache using Trusted Foundations firmware
+  ARM: tegra: Don't apply CPU erratas in insecure mode
+  ARM: tegra: Always boot CPU in ARM-mode
+
+ arch/arm/firmware/trusted_foundations.c    | 32 ++++++++++++++++++++++
+ arch/arm/include/asm/trusted_foundations.h |  7 +++++
+ arch/arm/mach-tegra/reset-handler.S        | 25 +++++++++--------
+ arch/arm/mach-tegra/reset.c                |  5 +++-
+ arch/arm/mach-tegra/reset.h                |  9 ++++--
+ arch/arm/mach-tegra/sleep-tegra20.S        |  4 +++
+ arch/arm/mach-tegra/tegra.c                | 15 ++++++++++
+ 7 files changed, 82 insertions(+), 15 deletions(-)
+
+-- 
+2.17.1
+
