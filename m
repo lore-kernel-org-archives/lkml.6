@@ -7,60 +7,61 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49889C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E5BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F9720652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3320420652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:56:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bosd8eNa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F9720652
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBIxc2Qp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3320420652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967008AbeFSQzq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:55:46 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:33069 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966514AbeFSQzn (ORCPT
+        id S967078AbeFSQ4H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:56:07 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39907 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966514AbeFSQ4E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:55:43 -0400
-Received: by mail-qt0-f193.google.com with SMTP id l10-v6so385867qtj.0;
-        Tue, 19 Jun 2018 09:55:42 -0700 (PDT)
+        Tue, 19 Jun 2018 12:56:04 -0400
+Received: by mail-qk0-f193.google.com with SMTP id g14-v6so227096qkm.6;
+        Tue, 19 Jun 2018 09:56:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=91iEo171XzEqqH8ZKwcBt6mRRYlqisWn8b2PWI9r+Yg=;
-        b=bosd8eNaM0Rv3nEil+iSdJfjQaKclN24Dp7A2pTPHWIJJHe38/5oZlnyGOtlQpZTdq
-         olEOu/wOJ3lYijMu1tv0MbtaGgrs4ouq0W5Dxuk0VCeRC7TDKjSRRsLYOUqQmmxAOIEC
-         gyTuWqGR9CqFUxZOHovDDkLDhwkX3xI3uT0wXpQ/NSfZhokJnlbld1I6VVjxUXCujV5M
-         G+teq9gNyiS5MVGfnLB437eM0oQEySUsiPHOLA7ifyYjhhyvZCzQWHBz7VZ+aB0QSInC
-         zD/kcPFMzn0xTAwaMT7EcvkWc347scE8hYDkjQCVOJ05kpKBuY5eUBR0i/ZnAM8fCqQe
-         T0ig==
+        bh=ScGZWq3Wt//1hadcjvU8YSyaJ9OXn7XqXRVbpLH6nmo=;
+        b=hBIxc2Qpkrq4SZs28uup8XdkTbzk4L5wakSpyagMvULsNMEFMAEfSiRHz9aoNaiExZ
+         tj6CRZEkZ2QIdwfwvVjLL6gvSgDwDnUqb2zIZODXDzY+g7vI2sZAmLuOtycEerGpv0TQ
+         rX8/Yaw0LpckpXYyCtA6pKD4y4g97Gr6CV6Y6LA9hVGyv+cXOjHtXCh62U5xy72RtEPS
+         oGPNOXoeEGGC9wTrUjYA7oDXGVQXPr8ed/uvUX9EUtmLBEwDzEw2Vga+pSHEvJ57FmB5
+         jSqjvcrpWM0CCMYY9p7lZTgxCYYzWj/pyhuceso3MKbJmTem8pWNSctxm9Gg50JgzIJd
+         mCdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=91iEo171XzEqqH8ZKwcBt6mRRYlqisWn8b2PWI9r+Yg=;
-        b=cotaSyqkj739f+igrUlvcM44nsk94PNesN0RNAFZi8iKmlR5ny/CQRNOPdkxoLLqMl
-         +31C+8wOiJ64k6a0IRIVqjz49fAa2WQSVncXIWGU5910U28V8a7Fnd4WcEubb/RarZAg
-         P7ICeNZv/p0XdR8iL03LxIxCEXFLAcJD2eScUehHofJ2YxD4zIfx0T26oaQi96mQlPBT
-         zLZ3lFiaKeQ3Axifi831Ya0cFOJ8+j2wLQzRvdx9Jn/rs6qZ7wlIj1KwlChafh/wyFJj
-         6n0Yb20q1bPVYXz/OtF8HQ4h5hZfLFGXJJt71EpjaQxCIjjdH+SJ/ZZicz6yit8Ava5/
-         cGvw==
-X-Gm-Message-State: APt69E0sGhVtNSmSXROMWjBPZmfXfDq4PILB6wKthWsMJtuKupMQmww/
-        8CZoKtykcuQicwfFuBb7+MOosP8H
-X-Google-Smtp-Source: ADUXVKKsF4huckFuEGwoNVfcj0wQF2wn2ob5AdJe6/ufCJysPmax9vl7BmchTAEZdcx46eKCmHvnOg==
-X-Received: by 2002:a0c:becb:: with SMTP id f11-v6mr15141892qvj.18.1529427341663;
-        Tue, 19 Jun 2018 09:55:41 -0700 (PDT)
+        bh=ScGZWq3Wt//1hadcjvU8YSyaJ9OXn7XqXRVbpLH6nmo=;
+        b=WwIfkz0Sfph6E0E2rKRuMUhuudAtr49cipBhaeT3SZW9cWkwxwwkq2j2Oxu68dZ6ll
+         qVQFeXCvutjAwM+BcenX1Ws8jjVTqDQKkW7I9NGMqhBBVS5+pxRwgUnilawv8N4ZLaqd
+         Wcv0x9zMxGsSNqglV1oWZZSqJr23IA/9/YEgYSInGvrrWqA7HdhacIZEJn8aiVlmWuSr
+         88EUHyc0gNnSYYd9wLg5ZG+85V3S4eWKgKDak1ZvoZemzKc7YVDSdY8yIouiCreVJir+
+         ex6F5d8TiQKDvEDDFxHape2ixAvSxBieMqyZuiLsmhgE9mHqnhU7dO23k+bRNGVGMlFe
+         Taeg==
+X-Gm-Message-State: APt69E0Q89e+oi8X8Jkl8uBfZD1gb1zUxvCH2CdmSLeakIYgp/vqQKU3
+        bWkGc5sxc/oV7FxqE8SdVHY=
+X-Google-Smtp-Source: ADUXVKIF2K6nwSzjYUIq7+Km1vtRL9nEtYMAne9xv3flsTA0emhcceQeYFxTDzc9hiyiHDU9YpZJkw==
+X-Received: by 2002:a37:6403:: with SMTP id y3-v6mr14395092qkb.279.1529427363186;
+        Tue, 19 Jun 2018 09:56:03 -0700 (PDT)
 Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id j13-v6sm164160qtj.23.2018.06.19.09.55.38
+        by smtp.googlemail.com with ESMTPSA id 31-v6sm131189qtq.80.2018.06.19.09.55.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 09:55:40 -0700 (PDT)
-Subject: Re: [PATCH 1/3] net: ethernet: fix suspend/resume in davinci_emac
+        Tue, 19 Jun 2018 09:56:02 -0700 (PDT)
+Subject: Re: [PATCH 2/3] net: phy: set the of_node in the mdiodev's struct
+ device
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         "David S . Miller" <davem@davemloft.net>,
@@ -72,10 +73,9 @@ To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Sekhar Nori <nsekhar@ti.com>, Andrew Lunn <andrew@lunn.ch>
 Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable@vger.kernel.org
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 References: <20180619160950.6283-1-brgl@bgdev.pl>
- <20180619160950.6283-2-brgl@bgdev.pl>
+ <20180619160950.6283-3-brgl@bgdev.pl>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -111,15 +111,15 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <db1183b9-6ed0-ed74-c461-cdac5bfc7a60@gmail.com>
-Date:   Tue, 19 Jun 2018 09:55:31 -0700
+Message-ID: <284f2e59-da97-e907-690e-f75de376ff62@gmail.com>
+Date:   Tue, 19 Jun 2018 09:55:54 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180619160950.6283-2-brgl@bgdev.pl>
+In-Reply-To: <20180619160950.6283-3-brgl@bgdev.pl>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -128,39 +128,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 06/19/2018 09:09 AM, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> This patch reverts commit 3243ff2a05ec ("net: ethernet: davinci_emac:
-> Deduplicate bus_find_device() by name matching") and adds a comment
-> which should stop anyone from reintroducing the same "fix" in the future.
+> Copy the of_node over from mii_bus's struct device. This is needed
+> for device-tree systems to be able to check the mdio device's
+> compatible string.
 > 
-> We can't use bus_find_device_by_name() here because the device name is
-> not guaranteed to be 'davinci_mdio'. On some systems it can be
-> 'davinci_mdio.0' so we need to use strncmp() against the first part of
-> the string to correctly match it.
-> 
-> Fixes: 3243ff2a05ec ("net: ethernet: davinci_emac: Deduplicate bus_find_device() by name matching")
-> Cc: stable@vger.kernel.org
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > ---
->  drivers/net/ethernet/ti/davinci_emac.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
+>  drivers/net/phy/phy_device.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-> index 06d7c9e4dcda..a1a6445b5a7e 100644
-> --- a/drivers/net/ethernet/ti/davinci_emac.c
-> +++ b/drivers/net/ethernet/ti/davinci_emac.c
-> @@ -1385,6 +1385,11 @@ static int emac_devioctl(struct net_device *ndev, struct ifreq *ifrq, int cmd)
->  		return -EOPNOTSUPP;
->  }
->  
-> +static int match_first_device(struct device *dev, void *data)
-> +{
-> +	return !strncmp(dev_name(dev), "davinci_mdio", 12);
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index bd0f339f69fd..a92d5ee61813 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -411,6 +411,7 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
+>  	mdiodev->dev.parent = &bus->dev;
+>  	mdiodev->dev.bus = &mdio_bus_type;
+>  	mdiodev->dev.type = &mdio_bus_phy_type;
+> +	mdiodev->dev.of_node = bus->dev.of_node;
 
-	const char *bus_name = "davinci_mdio";
+That does not quite make sense to me, the mdio device's parent already
+points to &bus->dev, which would get you the correct of_node. You are
+breaking the parent/child relationship here. From patch 3, see my
+comments there, it does not look like you are matching on the right
+device level.
 
-	return !strncmp(dev_name(dev), bus_name, strlen(bus_name));
+>  	mdiodev->bus = bus;
+>  	mdiodev->bus_match = phy_bus_match;
+>  	mdiodev->addr = addr;
+> 
 
-Or even better yet, if you want to make sure this really is a PHY device
-that you are trying to match, you could try to use sscanf() with PHY_ID_FMT.
+
 -- 
 Florian
