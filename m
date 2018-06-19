@@ -2,109 +2,164 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA00C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1ECC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51BB020020
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:13:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51BB020020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B8BE20020
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:14:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q9QcSpLe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8BE20020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967133AbeFSRNy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:13:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33232 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966368AbeFSRNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:13:52 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E09F7DAC4;
-        Tue, 19 Jun 2018 17:13:52 +0000 (UTC)
-Received: from [10.36.117.92] (ovpn-117-92.ams2.redhat.com [10.36.117.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 99EA67C28;
-        Tue, 19 Jun 2018 17:13:44 +0000 (UTC)
-Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in
- update_permission_bitmask()
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     joe@perches.com, Matthias Kaehlcke <mka@chromium.org>,
-        rkrcmar@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180615174731.47588-1-mka@chromium.org>
- <CAKwvOd=n3CdFhL-cFueOEO7ahOoTY6zfvJApXimQ1tBF6XzSOA@mail.gmail.com>
- <d4f32707a89030733217b23b557b38504f0d83ca.camel@perches.com>
- <20180615182945.GN88063@google.com>
- <c852072704e82ac5342f344c5862d20ce5559c21.camel@perches.com>
- <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
- <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
- <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
+        id S967164AbeFSRON (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:14:13 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53279 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966368AbeFSROK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 13:14:10 -0400
+Received: by mail-wm0-f67.google.com with SMTP id x6-v6so1602397wmc.3;
+        Tue, 19 Jun 2018 10:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=R4v+YPgoxTw5q8m6mMK1nARIOLdwA5htKqfnLaKCIJQ=;
+        b=q9QcSpLeoqttuIFON0DscBrac+w/83wNyQS98/PrjIprtSWTYcxbpARhNaotd4PvXn
+         Sa9Ub4hxsKEN7Mu6+N9jmf9kjB/hNut/leqyQQxfy/Fnolum/IKzS0hdRypcmy5c8Rvm
+         B88LQw/FLPeqZ3q5YNsMolYj8bienxcf64TyQNRAOAI8MGOFZnJJZpAiXtu+jkDnKidp
+         QyuBkTuh69ec5YY7ccaOMjOQ7aQ/jbIDtkeet7UX/xp8HGsyuHmKGoDfYfJDHzuPDD1A
+         CUnLuRlpP+O3LRzBnk3A+1JYPFYLd9NxAkdUfXNk+4j0uiy/1/+ISW0e1HKhf9jjpq1b
+         RgzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=R4v+YPgoxTw5q8m6mMK1nARIOLdwA5htKqfnLaKCIJQ=;
+        b=DLa3m9qHULpK4V5fexULESFwIGOn+8/iv478eGl3K2TvHA9OQnrZZBDVl53FkDyOzF
+         yGGA5aNcch4eRnGqg5B7lKIgMkdHR/afiGzRBc5r/Mfh5jEcYGPCVmBGhDCFP/+/9I2a
+         7LAL67QQvDfcx55iDpfR1ZXGgvCjU3uXWzQuDCTuy/l4LJ5Vw7CK1F0Q0CSWxgKEAlGT
+         ljdFvr5pTi/PkM0/t72I/W5KWKJlQ8sbfFOFkYh3/q5sURgeKXzw3qantIaoVOWFtHG6
+         JytNoffoWaM93vCfc8pFAIjFYLdWcgNYc71PdV2LDJVbmyzK/nPuRZKWeSdyr3nM/1Ss
+         ReOg==
+X-Gm-Message-State: APt69E09V9UfjCspdZHxKLPJwSdwXkrv0QKPTnQbmAiFfXpph7qQEJrK
+        BmDWcHqTx95XXPNRsK9MQIzw+Htn
+X-Google-Smtp-Source: ADUXVKIaNrh7/M2z6EmuU+e2xbLGLw9OfT5ZR4GOU393HFyLAa3kISfU9sGmNchKeYSMaydUpjIyFQ==
+X-Received: by 2002:a50:b3e4:: with SMTP id t33-v6mr15532199edd.14.1529428448985;
+        Tue, 19 Jun 2018 10:14:08 -0700 (PDT)
+Received: from [10.69.41.93] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id e46-v6sm336632edd.80.2018.06.19.10.14.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 10:14:08 -0700 (PDT)
+Subject: Re: [PATCH] net: nixge: Add __packed attribute to DMA descriptor
+ struct
+To:     Moritz Fischer <mdf@kernel.org>, davem@davemloft.net
+Cc:     keescook@chromium.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180619165453.31894-1-mdf@kernel.org>
+From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a1c2d331-ea79-b2de-af32-1f914bea2fda@redhat.com>
-Date:   Tue, 19 Jun 2018 19:13:41 +0200
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <832bebb8-300d-e911-2946-5edfe82dc30a@gmail.com>
+Date:   Tue, 19 Jun 2018 10:13:55 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
+In-Reply-To: <20180619165453.31894-1-mdf@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 19 Jun 2018 17:13:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 19 Jun 2018 17:13:52 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/06/2018 19:08, Nick Desaulniers wrote:
->> This one really makes the code uglier though, so I'm not really inclined
->> to applying the patch.
-> Note that of the three variables (w, u, x), only u is used later on.
-> What about declaring them as negated with the cast, that way there's
-> no cast in a ternary?
+On 06/19/2018 09:54 AM, Moritz Fischer wrote:
+> Add __packed attribute to DMA descriptor structure  in order to
+> make sure that the DMA engine's alignemnt requirements are met.
+> 
+> Fixes commit 492caffa8a1a ("net: ethernet: nixge: Add support for
+> National Instruments XGE netdev")
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> ---
+> 
+> Hi David,
+> 
+> this addresses an issue where padding occured breaking the alignment
+> in the array the descriptors are allocated in coherent memory.
+> This was discovered when we tried to bring up the driver via a PCIe
+> bridge on x86.
 
-I still find it inferior, but I guess it's at least acceptable.  I
-prefer not_{x,w,u} though. :)
+How could padding be inserted given than all of the structure members
+are naturally aligned (all u32 type). Compiler bug?
 
-Paolo
+Also
+
+> 
+> Thanks,
+> 
+> Moritz
+> 
+> ---
+>  drivers/net/ethernet/ni/nixge.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
+> index 09f674ec0f9e..fea0e994324b 100644
+> --- a/drivers/net/ethernet/ni/nixge.c
+> +++ b/drivers/net/ethernet/ni/nixge.c
+> @@ -122,7 +122,7 @@ struct nixge_hw_dma_bd {
+>  	u32 sw_id_offset;
+>  	u32 reserved5;
+>  	u32 reserved6;
+> -};
+> +} __packed;
+>  
+>  struct nixge_tx_skb {
+>  	struct sk_buff *skb;
+> 
+
+
+-- 
+Florian
