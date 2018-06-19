@@ -6,91 +6,114 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDEFC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 555E2C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 929FA20874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:34:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 929FA20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ladisch.de
+	by mail.kernel.org (Postfix) with ESMTP id 10E912083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:35:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E912083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756186AbeFSGen (ORCPT
+        id S1756254AbeFSGfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:34:43 -0400
-Received: from webclient5.webclient5.de ([136.243.32.184]:44195 "EHLO
-        webclient5.webclient5.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751166AbeFSGem (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:34:42 -0400
-X-Greylist: delayed 485 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Jun 2018 02:34:42 EDT
-Received: from [10.1.2.4] (unknown [94.101.37.79])
-        by webclient5.webclient5.de (Postfix) with ESMTPSA id F22755582405;
-        Tue, 19 Jun 2018 08:26:34 +0200 (CEST)
-Subject: Re: [PATCH] firewire: ohci: stop using get_seconds() for BUS_TIME
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        linux1394-devel@lists.sourceforge.net, y2038@lists.linaro.org,
-        Hector Martin <marcan@marcan.st>, linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>
-References: <20180618141933.3404739-1-arnd@arndb.de>
-From:   Clemens Ladisch <clemens@ladisch.de>
-Message-ID: <355fd76d-0196-55b8-20f5-9b3136507690@ladisch.de>
-Date:   Tue, 19 Jun 2018 08:26:43 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 02:35:13 -0400
+Received: from ozlabs.org ([203.11.71.1]:54021 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755524AbeFSGfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:35:11 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 418yrC6sdVz9s19;
+        Tue, 19 Jun 2018 16:35:07 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Linux MIPS Mailing List <linux-mips@linux-mips.org>,
+        linux-ia64@vger.kernel.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: Build regressions/improvements in v4.18-rc1
+In-Reply-To: <CAMuHMdULmiArTvYsEqnyg5SB6PqjZnNANLAyYcqqYeYmHKJ5Dw@mail.gmail.com>
+References: <20180618091729.11091-1-geert@linux-m68k.org> <CAMuHMdULmiArTvYsEqnyg5SB6PqjZnNANLAyYcqqYeYmHKJ5Dw@mail.gmail.com>
+Date:   Tue, 19 Jun 2018 16:35:07 +1000
+Message-ID: <87vaafxp0k.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20180618141933.3404739-1-arnd@arndb.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.99.4 at webclient5
-X-Virus-Status: Clean
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann wrote:
-> The ohci driver uses the get_seconds() function to implement the 32-bit
-> CSR_BUS_TIME register. This was added in 2010 commit a48777e03ad5
-> ("firewire: add CSR BUS_TIME support").
+Geert Uytterhoeven <geert@linux-m68k.org> writes:
+> On Mon, Jun 18, 2018 at 11:18 AM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> Below is the list of build error/warning regressions/improvements in
+>> v4.18-rc1[1] compared to v4.17[2].
+>>
+>> Summarized:
+>>   - build errors: +11/-1
 >
-> As get_seconds() returns a 32-bit value (on 32-bit architectures), it
-> seems like a good fit for that register, but it is also deprecated because
-> of the y2038/y2106 overflow problem, and should be replaced throughout
-> the kernel with either ktime_get_real_seconds() or ktime_get_seconds().
+>> [1] http://kisskb.ellerman.id.au/kisskb/head/ce397d215ccd07b8ae3f71db689aedb85d56ab40/ (233 out of 244 configs)
+>> [2] http://kisskb.ellerman.id.au/kisskb/head/29dcea88779c856c7dc92040a0c01233263101d4/ (all 244 configs)
 >
-> I'm using the latter here, which uses monotonic time. This has the
-> advantage of behaving better during concurrent settimeofday() updates
-> or leap second adjustments and won't overflow a 32-bit integer, but
-> the downside of using CLOCK_MONOTONIC instead of CLOCK_REALTIME is
-> that the observed values are not related to external clocks.
+>> 11 error regressions:
+>>   + /kisskb/src/drivers/ata/pata_ali.c: error: implicit declaration of function 'pci_domain_nr' [-Werror=implicit-function-declaration]:  => 469:38
 >
-> If we instead need UTC but can live with clock jumps or overflows,
-> then we should use ktime_get_real_seconds() instead, retaining the
-> existing behavior.
+> sparc64/sparc-allmodconfig
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>   + /kisskb/src/mm/memblock.c: error: redefinition of 'memblock_virt_alloc_try_nid':  => 1413:15
+>>   + /kisskb/src/mm/memblock.c: error: redefinition of 'memblock_virt_alloc_try_nid_nopanic':  => 1377:15
+>>   + /kisskb/src/mm/memblock.c: error: redefinition of 'memblock_virt_alloc_try_nid_raw':  => 1340:15
+>
+> ia64/ia64-defconfig
+> mips/bigsur_defconfig
+> mips/cavium_octeon_defconfig
+> mips/ip22_defconfig
+> mips/ip27_defconfig
+> mips/ip32_defconfig
+> mips/malta_defconfig
+> mips/mips-allmodconfig
+> mips/mips-allnoconfig
+> mips/mips-defconfig
+> mipsel/mips-allmodconfig
+> mipsel/mips-allnoconfig
+> mipsel/mips-defconfig
 
-Reviewed-By: Clemens Ladisch <clemens@ladisch.de>
+These are now fixed in Linus' tree by:
 
-> ---
->  drivers/firewire/ohci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+  6cc22dc08a24 ("revert "mm/memblock: add missing include <linux/bootmem.h>"")
+
+
+>>   + error: ".radix__flush_pwc_lpid" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
+>>   + error: ".radix__flush_tlb_lpid_page" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
+>>   + error: ".radix__local_flush_tlb_lpid_guest" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
+>>   + error: "radix__flush_pwc_lpid" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
+>>   + error: "radix__flush_tlb_lpid_page" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
+>>   + error: "radix__local_flush_tlb_lpid_guest" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
 >
-> diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-> index 45c048751f3b..5125841ea338 100644
-> --- a/drivers/firewire/ohci.c
-> +++ b/drivers/firewire/ohci.c
-> @@ -1765,7 +1765,7 @@ static u32 update_bus_time(struct fw_ohci *ohci)
+> powerpc/ppc64_defconfig+NO_RADIX
+> ppc64le/powernv_defconfig+NO_RADIX (what's in a name ;-)
+
+Can you tell we don't test that combination very often :/
+
+
+>>   + {standard input}: Error: offset to unaligned destination:  => 2268, 2316, 1691, 1362, 1455, 1598, 2502, 1645, 1988, 1927, 1409, 2615, 1548, 2409, 1268, 2363, 1314, 1208, 1785, 2034, 2222, 2661, 1880, 2552, 1161, 2082, 1833, 2455, 2176, 2129, 1501, 1738
 >
->  	if (unlikely(!ohci->bus_time_running)) {
->  		reg_write(ohci, OHCI1394_IntMaskSet, OHCI1394_cycle64Seconds);
-> -		ohci->bus_time = (lower_32_bits(get_seconds()) & ~0x7f) |
-> +		ohci->bus_time = (lower_32_bits(ktime_get_seconds()) & ~0x7f) |
->  		                 (cycle_time_seconds & 0x40);
->  		ohci->bus_time_running = true;
->  	}
+> sh4/sh-randconfig (doesn't seem to be a new issue, seen before on v4.12-rc3)
+
+I think I'll disable that one, it's been broken more often that not and
+I doubt anyone is that motivated to fix sh4 randconfig breakages?
+
+  http://kisskb.ellerman.id.au/kisskb/target/1826/
+
+
+Relatedly I might move all the randconfig targets from Linus' tree into
+a separate "linus-rand" tree, so that they don't pollute the results, as
+I've done for linux-next.
+
+cheers
