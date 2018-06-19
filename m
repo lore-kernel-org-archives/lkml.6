@@ -2,187 +2,204 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1C6C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E60BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53F4F2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D07E82075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:11:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pYrRHoc2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53F4F2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0+O60GR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D07E82075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966582AbeFSPLO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:11:14 -0400
-Received: from mail-lf0-f54.google.com ([209.85.215.54]:41150 "EHLO
-        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966525AbeFSPLI (ORCPT
+        id S966606AbeFSPLZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:11:25 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36370 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966525AbeFSPLW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:11:08 -0400
-Received: by mail-lf0-f54.google.com with SMTP id d24-v6so25844lfa.8
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:11:07 -0700 (PDT)
+        Tue, 19 Jun 2018 11:11:22 -0400
+Received: by mail-pg0-f66.google.com with SMTP id m5-v6so8707pgd.3;
+        Tue, 19 Jun 2018 08:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7it/1vgt7FFsKAfDeansaV7+RE9G1bF51+ZRYeZlSuU=;
-        b=pYrRHoc2TC2pgUGTKI7dRyTsWXc1s7LrmtV9gKqPXQSBP+Mphe2x9w+x9ZsoTqWJek
-         JPkXRt6y10ETqZ4+BdQwdM84JxX6+T1qFfB1RzMY70vjoFV/HSOYw3s2RnnPPEnLTcUF
-         NF0xgnKLomYtvosE8BSkkLErtTcjx/co/POTZlb5TL2IhcRMheTgu2eH6L00S7l2mndD
-         deiZwUr3v1yyTvLIGi7A94Yk8OO29vtvRu3adwGPZKjMw5bZFozMOsSpTC0oeptLM3CX
-         rYIM+XC8P/0vGRfKOiIalx/gFmf7LgJ8bibmaFTjJaB7s1cINFd7c5Rj8geuAKsCwghN
-         DSYg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oaY2Ks01ZL29mhNUkiUh/ykrjN613PqIXyVV+cYk2wU=;
+        b=X0+O60GRl0ynJ/tif3Y8DJDkjMkNmvtkzU9C3aMseGtGYJmHufH2JSltOCjeqDUMe6
+         1jHk8kKoz08rpqTREHQfcar1RYAasNw1tZkwXNfborUOBIBB9b4fDgACYCg7uFuXpeZH
+         3VdQ9rozFnD0K80SzNdpG23TgTPOHt1MEvOy2hb/FLa1MlyV6XDxJ70ItecUXD/8bgaU
+         nCe/78Wkw9adZet0JqHY3SJjcykpC3cUQkjm89gX0Y4U6W29KDf5fQLoVTIjQWz/Pt+t
+         jdCSmIdffPl9T2WVdevCU0JutvSf/PhxeMrZ0SXqy6/KRDFU1uTd3O1kaIUdua8OPSUG
+         l0FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7it/1vgt7FFsKAfDeansaV7+RE9G1bF51+ZRYeZlSuU=;
-        b=Al0PK8mBMFozBpPmxfVRVYJXE4j3qkKFxzd4EuWrxFak+8C/Z1/KGJUugC8RcW+1/7
-         1VU7wesQKt8SAzXuzc28aeDk9jQTmruIJ0Bv9f+sDmM75Rcj082z5kQytx/V7aFhRVtk
-         mW0zuRJlBTPo+Ul9kX/NvK3q6+r1Vrsu233gET2rB8N+4bszqDbqmww6G+4MW2Hl843t
-         xzdelCoCuic87MXfFffLDatt79uUjb8Lo32OZfrpLJ9tdRnnJsH9iEj6dYQxPl+U934w
-         hzoCH6l3/PlkE37iJpkgkyD0JRqsVeFGqK6q9jNYJ+Bu0FOsU+ix8CSg2oT/Gv1u7rWD
-         2NrQ==
-X-Gm-Message-State: APt69E2kQOwllID50aM/5bno7VndCtc37/IITw5+r9bi/vlqj2JgcQcN
-        570f4GDIMbNKKrkpP8fAHrW7aArqE1j2dxAMring
-X-Google-Smtp-Source: ADUXVKLuHijgKrm79pC7fiR0speWkRs2MHsT2zXzk6o6tHZZ/DCBSRL01ls2qErdkGX97sbnvfzWtioDrhpxZ2ZrHFg=
-X-Received: by 2002:a2e:c52:: with SMTP id o18-v6mr11460605ljd.72.1529421066526;
- Tue, 19 Jun 2018 08:11:06 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oaY2Ks01ZL29mhNUkiUh/ykrjN613PqIXyVV+cYk2wU=;
+        b=nYDBzO/RR8CYwhP8jWS6e+KCOuv3N9WmBmgqrw61GykHBYmkfP+i7rZOiwa+ndjOZf
+         zF2P5ereaAWheOotH21EskbTq8QWFt1FhcMuLxyrKVLe3RrwOMw7g5wcalEpj0Ckaowu
+         J4VfizKn1lF2mVXHESnQAacZXf/tnNkLsHSokMgGOisi7jaDd7+l7krq9XSK4Nxl266T
+         H86rBA1SCiYov9oOzG9bpsyUez6ntii9tN2t/UmMLIJPRVGoGIswEyZokj5ROaECReXc
+         5X3sNyxMOc2kmy/jKKhwXFcYa0TF0NSzhaC+Vo3NZk3ACjmEUginvV1L2HRVWJK/NUfH
+         xxAw==
+X-Gm-Message-State: APt69E1fV0dzSkXhQp+47dMw/68JAus2f9K+4OsFVWMyF1WF0fowpoaW
+        fI0SmXz2L24Rl7c/JBbc1WE=
+X-Google-Smtp-Source: ADUXVKL/XzwGW108H0Wwl9+Lxhm1LH3yHWV8rhwwXsxJHKpV8Jncmdtt7zWR7r2acWF44si4vJ3C8w==
+X-Received: by 2002:a63:5f0b:: with SMTP id t11-v6mr15124161pgb.79.1529421082067;
+        Tue, 19 Jun 2018 08:11:22 -0700 (PDT)
+Received: from [192.168.43.210] (mobile-166-137-178-150.mycingular.net. [166.137.178.150])
+        by smtp.gmail.com with ESMTPSA id z12-v6sm10715837pgu.57.2018.06.19.08.11.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 08:11:21 -0700 (PDT)
+Subject: Re: [PATCH] of/platform: add initcall_debug logs for device creates
+To:     Todd Poynor <toddpoynor@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Todd Poynor <toddpoynor@google.com>
+References: <20180619014608.92061-1-toddpoynor@gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <43fca3e7-4ba5-661f-0871-fedd9ff67673@gmail.com>
+Date:   Tue, 19 Jun 2018 08:11:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <490a00a7902582823fe8c532f5dd995a1da61fb1.1528214962.git.rgb@redhat.com>
-In-Reply-To: <490a00a7902582823fe8c532f5dd995a1da61fb1.1528214962.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 19 Jun 2018 11:10:55 -0400
-Message-ID: <CAHC9VhQRv6CzChWvayOK7Zm+pciFh80_u2Whx9-XpdFjNwO_PQ@mail.gmail.com>
-Subject: Re: [RFC PATCH ghak86 V1] audit: eliminate audit_enabled magic number comparison
-To:     rgb@redhat.com
-Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Eric Paris <eparis@redhat.com>, sgrubb@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180619014608.92061-1-toddpoynor@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 5, 2018 at 7:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> Remove comparison of audit_enabled to magic numbers outside of audit.
->
-> Related: https://github.com/linux-audit/audit-kernel/issues/86
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Hi Todd,
+
+On 06/18/18 18:46, Todd Poynor wrote:
+> From: Todd Poynor <toddpoynor@google.com>
+> 
+> Add initcall_debug logs for the amount of time taken by each OF platform
+> bus device create call.  For example:
+> 
+>    of platform device create /reserved-memory/ramoops@a3800000 took
+>    3255 usecs
+> 
+> initcall_debug already reports the total of all such device creates
+> as a single entry for function of_platform_default_populate_init (or
+> similar, depending on the board).  The new logs help identify which of
+> the potentially hundreds of device inits take significant amounts of
+> time.
+> 
+> Signed-off-by: Todd Poynor <toddpoynor@google.com>
 > ---
->  drivers/tty/tty_audit.c      | 2 +-
->  include/linux/audit.h        | 5 ++++-
->  include/net/xfrm.h           | 2 +-
->  kernel/audit.c               | 3 ---
->  net/netfilter/xt_AUDIT.c     | 2 +-
->  net/netlabel/netlabel_user.c | 2 +-
->  6 files changed, 8 insertions(+), 8 deletions(-)
+>  drivers/of/platform.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> Note it's likely only a few devices take significant lengths of time to
+> init, whereas there may be hundreds of uninteresting cases also logged.
+> Adding a threshold for reporting might be desirable, although for boot
+> time sleuthing it's probably fine to generate a ton of output and narrow
+> down the points of interest with tools.
+> 
+> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> index 6925d993e1f0..eeb4c595f43c 100644
+> --- a/drivers/of/platform.c
+> +++ b/drivers/of/platform.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/amba/bus.h>
+>  #include <linux/device.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/init.h>
+>  #include <linux/slab.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+> @@ -159,6 +160,19 @@ struct platform_device *of_device_alloc(struct device_node *np,
+>  }
+>  EXPORT_SYMBOL(of_device_alloc);
+>  
+> +static void of_platform_log_inittime(struct device_node *node,
+> +				     ktime_t starttime)
 
-Merged, thanks.
+Please call it pr_delta_time() instead.
 
-> diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
-> index e30aa6b..50f567b 100644
-> --- a/drivers/tty/tty_audit.c
-> +++ b/drivers/tty/tty_audit.c
-> @@ -92,7 +92,7 @@ static void tty_audit_buf_push(struct tty_audit_buf *buf)
+
+> +{
+> +	ktime_t delta, endtime;
+> +	unsigned long long duration;
+> +
+> +	endtime = ktime_get();
+> +	delta = ktime_sub(endtime, starttime);
+> +	duration = (unsigned long long) ktime_to_ns(delta) >> 10;
+> +	pr_debug("of platform device create %s took %lld usecs\n",
+> +		 node->full_name, duration);
+
+The device node full_name field no longer contains the full path of
+the node name.  To deal with this, use %pOF on node instead of
+%s on node->full_name  (core-api/printk-formats.rst).
+
+
+> +}
+> +
+>  /**
+>   * of_platform_device_create_pdata - Alloc, initialize and register an of_device
+>   * @np: pointer to node to create device for
+> @@ -176,6 +190,8 @@ static struct platform_device *of_platform_device_create_pdata(
+>  					struct device *parent)
 >  {
->         if (buf->valid == 0)
->                 return;
-> -       if (audit_enabled == 0) {
-> +       if (audit_enabled == AUDIT_OFF) {
->                 buf->valid = 0;
->                 return;
->         }
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 69c7847..9334fbe 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -117,6 +117,9 @@ struct audit_field {
->
->  extern void audit_log_session_info(struct audit_buffer *ab);
->
-> +#define AUDIT_OFF      0
-> +#define AUDIT_ON       1
-> +#define AUDIT_LOCKED   2
->  #ifdef CONFIG_AUDIT
->  /* These are defined in audit.c */
->                                 /* Public API */
-> @@ -202,7 +205,7 @@ static inline int audit_log_task_context(struct audit_buffer *ab)
->  static inline void audit_log_task_info(struct audit_buffer *ab,
->                                        struct task_struct *tsk)
->  { }
-> -#define audit_enabled 0
-> +#define audit_enabled AUDIT_OFF
->  #endif /* CONFIG_AUDIT */
->
->  #ifdef CONFIG_AUDIT_COMPAT_GENERIC
-> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-> index 7f2e31a..ce995a1 100644
-> --- a/include/net/xfrm.h
-> +++ b/include/net/xfrm.h
-> @@ -734,7 +734,7 @@ static inline struct audit_buffer *xfrm_audit_start(const char *op)
->  {
->         struct audit_buffer *audit_buf = NULL;
->
-> -       if (audit_enabled == 0)
-> +       if (audit_enabled == AUDIT_OFF)
->                 return NULL;
->         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC,
->                                     AUDIT_MAC_IPSEC_EVENT);
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index e7478cb..8442c65 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -83,9 +83,6 @@
->  #define AUDIT_INITIALIZED      1
->  static int     audit_initialized;
->
-> -#define AUDIT_OFF      0
-> -#define AUDIT_ON       1
-> -#define AUDIT_LOCKED   2
->  u32            audit_enabled = AUDIT_OFF;
->  bool           audit_ever_enabled = !!AUDIT_OFF;
->
-> diff --git a/net/netfilter/xt_AUDIT.c b/net/netfilter/xt_AUDIT.c
-> index f368ee6..af883f1 100644
-> --- a/net/netfilter/xt_AUDIT.c
-> +++ b/net/netfilter/xt_AUDIT.c
-> @@ -72,7 +72,7 @@ static bool audit_ip6(struct audit_buffer *ab, struct sk_buff *skb)
->         struct audit_buffer *ab;
->         int fam = -1;
->
-> -       if (audit_enabled == 0)
-> +       if (audit_enabled == AUDIT_OFF)
->                 goto errout;
->         ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
->         if (ab == NULL)
-> diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
-> index 2f328af..4676f5b 100644
-> --- a/net/netlabel/netlabel_user.c
-> +++ b/net/netlabel/netlabel_user.c
-> @@ -101,7 +101,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
->         char *secctx;
->         u32 secctx_len;
->
-> -       if (audit_enabled == 0)
-> +       if (audit_enabled == AUDIT_OFF)
->                 return NULL;
->
->         audit_buf = audit_log_start(audit_context(), GFP_ATOMIC, type);
-> --
-> 1.8.3.1
->
+>  	struct platform_device *dev;
+> +	ktime_t starttime = 0;
+
+I assume the initialization to zero is to silence a compiler warning.  Is my
+assumption correct?
 
 
--- 
-paul moore
-www.paul-moore.com
+> +	int ret;
+>  
+>  	if (!of_device_is_available(np) ||
+>  	    of_node_test_and_set_flag(np, OF_POPULATED))
+> @@ -187,9 +203,14 @@ static struct platform_device *of_platform_device_create_pdata(
+>  
+>  	dev->dev.bus = &platform_bus_type;
+>  	dev->dev.platform_data = platform_data;
+> +	if (initcall_debug)
+> +		starttime = ktime_get();
+>  	of_msi_configure(&dev->dev, dev->dev.of_node);
+> +	ret = of_device_add(dev);
+> +	if (initcall_debug)
+> +		of_platform_log_inittime(np, starttime);
+>  
+> -	if (of_device_add(dev) != 0) {
+> +	if (ret != 0) {
+>  		platform_device_put(dev);
+>  		goto err_clear_flag;
+>  	}
+> @@ -352,6 +373,7 @@ static int of_platform_bus_create(struct device_node *bus,
+>  	struct platform_device *dev;
+>  	const char *bus_id = NULL;
+>  	void *platform_data = NULL;
+> +	ktime_t starttime = 0;
+>  	int rc = 0;
+>  
+>  	/* Make sure it has a compatible property */
+> @@ -384,7 +406,11 @@ static int of_platform_bus_create(struct device_node *bus,
+>  		 * Don't return an error here to keep compatibility with older
+>  		 * device tree files.
+>  		 */
+> +		if (initcall_debug)
+> +			starttime = ktime_get();
+>  		of_amba_device_create(bus, bus_id, platform_data, parent);
+> +		if (initcall_debug)
+> +			of_platform_log_inittime(bus, starttime);
+>  		return 0;
+>  	}
+>  
+> 
+
