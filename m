@@ -2,173 +2,102 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E6CC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934BCC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E44A2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:04:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EA6720020
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:04:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="K/l/QbIP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E44A2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vx4DXdQD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA6720020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967116AbeFSREG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:04:06 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33638 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966695AbeFSREC (ORCPT
+        id S1030283AbeFSREx (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:04:53 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:39931 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966468AbeFSREv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:04:02 -0400
-Received: by mail-pf0-f196.google.com with SMTP id b17-v6so175825pfi.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:04:02 -0700 (PDT)
+        Tue, 19 Jun 2018 13:04:51 -0400
+Received: by mail-vk0-f67.google.com with SMTP id r83-v6so252711vkf.6;
+        Tue, 19 Jun 2018 10:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=AgMpSZNQFROjN7nLuFbFWsI7QnfBHozTZoIIdjqW78Y=;
-        b=K/l/QbIPax4SQnwOpSU93mivcacPSnicyoHUdlv5LHFz7/f6qX6u+rGJwppUYkvEwk
-         WGuls7JNLSQwgPHuvlXFlJ3X26cAq0M98lgUw0O47L/S3SDrLESJWVf8ec7oHZ2II7Jn
-         ieRGjLcag80nJhDW+PvWYbqEmQq8bsjNVZnv2a6YQ+iqtRiFEnqpGKUpc2RH5BKdi83p
-         gXIA7HbmuyMEaRq5LkbPVzW4hLNqMaOiBR6/jSxvl5KHo8/bJO4jLZRkSGUAqT7mj4NX
-         6qQND+NcJuJkxck8E5Xor96hWBcTXOQIGir3q6ISdLW7e6hYxcJwLP+maPH7k2JViAE9
-         QwGA==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hzNP1mW585OOmkjQkl9sPQcA+IcHWK6JlAFG25jXmhA=;
+        b=Vx4DXdQDi7ljeRpuHsYP8BaH7Kai8p5f/gsQLnHt62jguGGHejE4okTU6PzuvKrbRu
+         zAK3NJVMsAEJx7eBq8918tN0lnSR5tPW+aM9i2p9IHg7jY51MpE0JxApGwob1JIOw6+E
+         gLHxZrm0jJ73Nj0ViAXf8JXUiy1+H2EupVuevSF/fSYR7V+CMm6IgwzTDP9n2XjMye9o
+         Z+EroMAxwA/x3BWpsIayWzPfiMto7H5p7GJeQIp1vZPJYoRYEgYOZq9EN3d2EuJbbVFR
+         I9B6eJB0e/1RaBgqKS61Vq10kLOO/zeQdxpg3j6Wf3JBMDNpKZkwkDUaZg50GpySJwO1
+         o2Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=AgMpSZNQFROjN7nLuFbFWsI7QnfBHozTZoIIdjqW78Y=;
-        b=YTbj+QQDK2GfwIRx+lTMbVGS7qZ6k5wkXwd1ZBuH/U73fJfgFH+QA5PgW3DLq3rZib
-         znV3oYGx2F5+h5zxDzuUduVRQDSgvFLco+Ils6rS/16e113fpmjKI08a4Sm5eVosK8ZV
-         eDW0npy/d4o6XHguf1t3sJ0fZuqTsKkc5IxcecCAil3CXYJxdnhCyGMIWbxN7WPauTlz
-         TYBtjK0tx2akCSA2BOE7r4gx1Ph3Yyba81x3Kv2wiki9Jawa/EZiz1dmIf3+Rw6aSVat
-         FaEUY2nkThakqrc1sMebWoAFaQvhLubZV6itXaBiu9BnjCHM78k8lSA2PnCX4Z6Lbdwd
-         em/g==
-X-Gm-Message-State: APt69E2bRt5y2+rwxdZ0TqCaLWU/ycV95+aKQsHWrsyQdFFD9TaFSCXx
-        89axpQJgXB97LOwI3eA7NlMo/g==
-X-Google-Smtp-Source: ADUXVKK946HjrpkL3ZwUHVxWZr+oF7MB2K8UbPi5sv86Ks7Yd6WGpcQuxLDZkeUuQboNP/sOIp3Txw==
-X-Received: by 2002:a62:d345:: with SMTP id q66-v6mr18945239pfg.158.1529427841736;
-        Tue, 19 Jun 2018 10:04:01 -0700 (PDT)
-Received: from localhost ([2605:e000:151d:96f:170:3319:9294:4203])
-        by smtp.gmail.com with ESMTPSA id r3-v6sm240992pfl.162.2018.06.19.10.04.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 10:04:01 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hzNP1mW585OOmkjQkl9sPQcA+IcHWK6JlAFG25jXmhA=;
+        b=sOEQrI/S8cRyDgp4dyien1jTxgSfYgLsj1t+cFLMiSzV5EGqsVQvxwQGE0hggPSsNk
+         XMFW9p2lztFTB86hB177XHw6hyZse/GHC74UDiz7izA/jcz20MZFlWEn/0p0vbTBLhUy
+         f3ridq0agilRXBVK5Soyuks1SEyEhc020VfvUcuK2ZFarZx/rv3BLnThfeO0GfbnJNmb
+         P0uaBZ7J/tEuqRPWC0lzexnTBEhcIhFX7ip052JFb/eeYdHMDiPbAxoPe16fGm2Tesfx
+         OpzFV8qYw0eDXLK51CG7QXSUeRNWaR4yCm4/08Wte1H5A7fcTK+R70Vz/etoE7rwxgSH
+         Bdiw==
+X-Gm-Message-State: APt69E1Zjkv+Vlv4taBVxH24cd2M9ft6DDWns81A7WmxPum53+mgugNS
+        tGTWBHaf33NUZBDxV2Prqu+Hb7Mgyly+hR/nbz1cZQ==
+X-Google-Smtp-Source: ADUXVKJmzVuLOSLuLy7AoHqsrJe36Jf0q30Uffng8k2fmRs28Tk9mehqhZyRGJJjeVcKW3AFwZKrH71Zi+fI6rLWlV8=
+X-Received: by 2002:a1f:7283:: with SMTP id n125-v6mr10063534vkc.26.1529427890357;
+ Tue, 19 Jun 2018 10:04:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-From:   Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20180619134051.16726-3-jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        David Brown <david.brown@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-References: <20180619134051.16726-1-jbrunet@baylibre.com>
- <20180619134051.16726-3-jbrunet@baylibre.com>
-Message-ID: <20180619170358.33232.26576@harbor.lan>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: fix CLK_SET_RATE_GATE with clock rate protection
-Date:   Tue, 19 Jun 2018 10:03:58 -0700
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 10:04:49
+ -0700 (PDT)
+In-Reply-To: <CAD8Lp4596OLxc9sw=DwAZ_nHLEOt686xxatqCmSpV0eEWwigjQ@mail.gmail.com>
+References: <20180611071838.47945-1-chiu@endlessm.com> <CAHp75VdfUO9rS-=nn+Ffe8bMEbCO-0xe8QBVqsJAZVFTMYkNxg@mail.gmail.com>
+ <CAB4CAwdKJiuEiV1CtoyYTZTatRt73BQbRX5kyEtpqNj8STj5-w@mail.gmail.com> <CAD8Lp4596OLxc9sw=DwAZ_nHLEOt686xxatqCmSpV0eEWwigjQ@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 19 Jun 2018 20:04:49 +0300
+Message-ID: <CAHp75VfLMwTEOSKd3cy8j1RuQMwTDFnp_aMzQvod-DJG5e0KVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] platform/x86: asus-wmi: Call led hw_changed API on
+ kbd brightness change
+To:     Daniel Drake <drake@endlessm.com>
+Cc:     Chris Chiu <chiu@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jerome Brunet (2018-06-19 06:40:51)
-> CLK_SET_RATE_GATE should prevent any operation which may result in a rate
-> change or glitch while the clock is prepared/enabled.
-> =
+On Tue, Jun 19, 2018 at 7:46 PM, Daniel Drake <drake@endlessm.com> wrote:
 
-> IOW, the following sequence is not allowed anymore with CLK_SET_RATE_GATE:
-> * clk_get()
-> * clk_prepare_enable()
-> * clk_get_rate()
-> * clk_set_rate()
-> =
+>> > Can we avoid those ugly castings?
 
-> At the moment this is enforced on the leaf clock of the operation, not
-> along the tree. This problematic because, if a PLL has the CLK_RATE_GATE,
-> it won't be enforced if the clk_set_rate() is called on its child clocks.
-> =
 
-> Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along t=
-he
-> clock tree
-> =
+> Now kbd_led_set can continue being a correctly typed function pointer
+> for led_classdev.brightness_set. And from the code you are adding here
+> you can call __kbd_led_set directly with signed integer values, and
+> rely on correct bounds correction without ugly casts.
+>
+> Andy, what do you think?
 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-> Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Thanks, Daniel for investigation.
 
-Applied to clk-core-set-rate-gate.
+I'm fine with solution(s) that has no ugly casting and no regression
+on the hardware we support.
 
-Thanks,
-Mike
-
-> ---
->  drivers/clk/clk.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> =
-
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 9760b526ca31..97c09243fb21 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -691,6 +691,9 @@ static void clk_core_unprepare(struct clk_core *core)
->             "Unpreparing critical %s\n", core->name))
->                 return;
->  =
-
-> +       if (core->flags & CLK_SET_RATE_GATE)
-> +               clk_core_rate_unprotect(core);
-> +
->         if (--core->prepare_count > 0)
->                 return;
->  =
-
-> @@ -765,6 +768,16 @@ static int clk_core_prepare(struct clk_core *core)
->  =
-
->         core->prepare_count++;
->  =
-
-> +       /*
-> +        * CLK_SET_RATE_GATE is a special case of clock protection
-> +        * Instead of a consumer claiming exclusive rate control, it is
-> +        * actually the provider which prevents any consumer from making =
-any
-> +        * operation which could result in a rate change or rate glitch w=
-hile
-> +        * the clock is prepared.
-> +        */
-> +       if (core->flags & CLK_SET_RATE_GATE)
-> +               clk_core_rate_protect(core);
-> +
->         return 0;
->  unprepare:
->         clk_core_unprepare(core->parent);
-> @@ -1888,9 +1901,6 @@ static int clk_core_set_rate_nolock(struct clk_core=
- *core,
->         if (clk_core_rate_is_protected(core))
->                 return -EBUSY;
->  =
-
-> -       if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
-> -               return -EBUSY;
-> -
->         /* calculate new rates and get the topmost changed clock */
->         top =3D clk_calc_new_rates(core, req_rate);
->         if (!top)
-> -- =
-
-> 2.14.3
->=20
+-- 
+With Best Regards,
+Andy Shevchenko
