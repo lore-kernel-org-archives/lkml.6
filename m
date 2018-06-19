@@ -2,118 +2,164 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 555E2C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E569EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10E912083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:35:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E912083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 9995D2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:36:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WgwUo3Sd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9995D2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756254AbeFSGfN (ORCPT
+        id S1755883AbeFSGgh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:35:13 -0400
-Received: from ozlabs.org ([203.11.71.1]:54021 "EHLO ozlabs.org"
+        Tue, 19 Jun 2018 02:36:37 -0400
+Received: from ozlabs.org ([203.11.71.1]:47647 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755524AbeFSGfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:35:11 -0400
+        id S1750736AbeFSGgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:36:35 -0400
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 418yrC6sdVz9s19;
-        Tue, 19 Jun 2018 16:35:07 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        linux-ia64@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: Build regressions/improvements in v4.18-rc1
-In-Reply-To: <CAMuHMdULmiArTvYsEqnyg5SB6PqjZnNANLAyYcqqYeYmHKJ5Dw@mail.gmail.com>
-References: <20180618091729.11091-1-geert@linux-m68k.org> <CAMuHMdULmiArTvYsEqnyg5SB6PqjZnNANLAyYcqqYeYmHKJ5Dw@mail.gmail.com>
-Date:   Tue, 19 Jun 2018 16:35:07 +1000
-Message-ID: <87vaafxp0k.fsf@concordia.ellerman.id.au>
+        by ozlabs.org (Postfix) with ESMTPSA id 418yss2rNPz9s1R;
+        Tue, 19 Jun 2018 16:36:33 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1529390193;
+        bh=UFb05F0vMAh9S4LDF8KXiIuar7iKlishUhBYJTxy5Js=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WgwUo3SdEQ9Tlp4OBH7gnJdHtC3NpDETzAKbh0RqJXOPQbmOnKywa0ahqbJOweWvj
+         CHw59Ag0z1r/4QxZr6DRgEoP156m+miJmjD1Uqg48tk4Ir5zn1SsyXAKDfaR879aHp
+         VZkhgxevseiBJG3XOwpU85P9YmpPy6vrzqBkiQZSNENWOuNf3gYcQTmqHc9nstKymt
+         RP34G1cy4W3cVhvJN/91mdUKQYeeiPcRUPBgRBwmn44fPayQkWDTPDlwnkV/qyEVpD
+         tn02xp27FK8trsHDfSNYQtMMgM7ZCTUgeruTssxCXkQ18VZT8YSqwwZIJagTOn9QRZ
+         9MyrevYqmZBbQ==
+Date:   Tue, 19 Jun 2018 16:36:32 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Roman Gushchin <guro@fb.com>
+Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
+Message-ID: <20180619163632.42ac1ae5@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/K=qe0EjkZgqvclx5/Tu7eMK"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Geert Uytterhoeven <geert@linux-m68k.org> writes:
-> On Mon, Jun 18, 2018 at 11:18 AM Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> Below is the list of build error/warning regressions/improvements in
->> v4.18-rc1[1] compared to v4.17[2].
->>
->> Summarized:
->>   - build errors: +11/-1
->
->> [1] http://kisskb.ellerman.id.au/kisskb/head/ce397d215ccd07b8ae3f71db689aedb85d56ab40/ (233 out of 244 configs)
->> [2] http://kisskb.ellerman.id.au/kisskb/head/29dcea88779c856c7dc92040a0c01233263101d4/ (all 244 configs)
->
->> 11 error regressions:
->>   + /kisskb/src/drivers/ata/pata_ali.c: error: implicit declaration of function 'pci_domain_nr' [-Werror=implicit-function-declaration]:  => 469:38
->
-> sparc64/sparc-allmodconfig
->
->>   + /kisskb/src/mm/memblock.c: error: redefinition of 'memblock_virt_alloc_try_nid':  => 1413:15
->>   + /kisskb/src/mm/memblock.c: error: redefinition of 'memblock_virt_alloc_try_nid_nopanic':  => 1377:15
->>   + /kisskb/src/mm/memblock.c: error: redefinition of 'memblock_virt_alloc_try_nid_raw':  => 1340:15
->
-> ia64/ia64-defconfig
-> mips/bigsur_defconfig
-> mips/cavium_octeon_defconfig
-> mips/ip22_defconfig
-> mips/ip27_defconfig
-> mips/ip32_defconfig
-> mips/malta_defconfig
-> mips/mips-allmodconfig
-> mips/mips-allnoconfig
-> mips/mips-defconfig
-> mipsel/mips-allmodconfig
-> mipsel/mips-allnoconfig
-> mipsel/mips-defconfig
+--Sig_/K=qe0EjkZgqvclx5/Tu7eMK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-These are now fixed in Linus' tree by:
+Hi all,
 
-  6cc22dc08a24 ("revert "mm/memblock: add missing include <linux/bootmem.h>"")
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
+  kernel/cgroup/cgroup.c
 
->>   + error: ".radix__flush_pwc_lpid" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
->>   + error: ".radix__flush_tlb_lpid_page" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
->>   + error: ".radix__local_flush_tlb_lpid_guest" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
->>   + error: "radix__flush_pwc_lpid" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
->>   + error: "radix__flush_tlb_lpid_page" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
->>   + error: "radix__local_flush_tlb_lpid_guest" [arch/powerpc/kvm/kvm-hv.ko] undefined!:  => N/A
->
-> powerpc/ppc64_defconfig+NO_RADIX
-> ppc64le/powernv_defconfig+NO_RADIX (what's in a name ;-)
+between commit:
 
-Can you tell we don't test that combination very often :/
+  58e4e43911f8 ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
 
+from the vfs tree and commit:
 
->>   + {standard input}: Error: offset to unaligned destination:  => 2268, 2316, 1691, 1362, 1455, 1598, 2502, 1645, 1988, 1927, 1409, 2615, 1548, 2409, 1268, 2363, 1314, 1208, 1785, 2034, 2222, 2661, 1880, 2552, 1161, 2082, 1833, 2455, 2176, 2129, 1501, 1738
->
-> sh4/sh-randconfig (doesn't seem to be a new issue, seen before on v4.12-rc3)
+  dbe8cec5a8a3 ("mm, oom: add cgroup v2 mount option for cgroup-aware OOM k=
+iller")
 
-I think I'll disable that one, it's been broken more often that not and
-I doubt anyone is that motivated to fix sh4 randconfig breakages?
+from the akpm-current tree.
 
-  http://kisskb.ellerman.id.au/kisskb/target/1826/
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
+--=20
+Cheers,
+Stephen Rothwell
 
-Relatedly I might move all the randconfig targets from Linus' tree into
-a separate "linus-rand" tree, so that they don't pollute the results, as
-I've done for linux-next.
+diff --cc kernel/cgroup/cgroup.c
+index 33a11d941d11,de25822590d0..000000000000
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@@ -1734,23 -1734,28 +1734,30 @@@ int cgroup_show_path(struct seq_file *s
+  	return len;
+  }
+ =20
+ -static int parse_cgroup_root_flags(char *data, unsigned int *root_flags)
+ +static int cgroup2_parse_option(struct fs_context *fc, char *token)
+  {
+ -	char *token;
+ +	struct cgroup_fs_context *ctx =3D cgroup_fc2context(fc);
+ =20
+ -	*root_flags =3D 0;
+ -
+ -	if (!data)
+ +	if (!strcmp(token, "nsdelegate")) {
+ +		ctx->flags |=3D CGRP_ROOT_NS_DELEGATE;
+ +		return 0;
+ +	}
+++	if (!strcmp(token, "groupoom")) {
+++		ctx->flags |=3D CGRP_GROUP_OOM;
++ 		return 0;
+++	}
+ =20
+ -	while ((token =3D strsep(&data, ",")) !=3D NULL) {
+ -		if (!strcmp(token, "nsdelegate")) {
+ -			*root_flags |=3D CGRP_ROOT_NS_DELEGATE;
+ -			continue;
+ -		} else if (!strcmp(token, "groupoom")) {
+ -			*root_flags |=3D CGRP_GROUP_OOM;
+ -			continue;
+ -		}
+ +	return -EINVAL;
+ +}
+ =20
+ -		pr_err("cgroup2: unknown option \"%s\"\n", token);
+ -		return -EINVAL;
+ +static int cgroup_show_options(struct seq_file *seq, struct kernfs_root *=
+kf_root)
+ +{
+- 	if (current->nsproxy->cgroup_ns =3D=3D &init_cgroup_ns &&
+- 	    cgrp_dfl_root.flags & CGRP_ROOT_NS_DELEGATE)
+- 		seq_puts(seq, ",nsdelegate");
+++	if (current->nsproxy->cgroup_ns =3D=3D &init_cgroup_ns) {
+++		if (cgrp_dfl_root.flags & CGRP_ROOT_NS_DELEGATE)
+++			seq_puts(seq, ",nsdelegate");
+++		if (cgrp_dfl_root.flags & CGRP_GROUP_OOM)
+++			seq_puts(seq, ",groupoom");
++ 	}
+ -
+  	return 0;
+  }
+ =20
 
-cheers
+--Sig_/K=qe0EjkZgqvclx5/Tu7eMK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsopHAACgkQAVBC80lX
+0GxoxQf8CGNCAoRCwOUnaH803iUFa0VRIzffQeqLCBplgkoGAKlGy9qxt6uZkcUK
+fRac+A0if+dxpLoFvQMYpcXZAjXhvrIqhGXPiT7yesig+iKJBrgcbcwaLD+kw2kC
+Iil6p7NqrUJWVLDBqH/476Jk+kmAQVtu2mjYUQuejIzTS35lOdrxb9tx6sb5HRgZ
+mY071Vd+XpKgOyGdjNCXiJky/THTgeUfAPWXIaQqwupjjCEX81U6Hcnttbo5Ls5O
+INUrItJ5DS2MrSDAYeotZ+q23v2fE+sa6LSKqBglWmpCaUq11zZNOsN7d2amOtEp
+XrpdLgWvMDsjdGsCri3XitYi+2ERXQ==
+=XHK3
+-----END PGP SIGNATURE-----
+
+--Sig_/K=qe0EjkZgqvclx5/Tu7eMK--
