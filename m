@@ -2,155 +2,203 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A75C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A86C5AE5E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB09920652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:10:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jYZ7CuAc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB09920652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 504EB20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:10:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504EB20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755616AbeFSVK0 (ORCPT
+        id S1755447AbeFSVKd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:10:26 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36591 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755295AbeFSVKV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:10:21 -0400
-Received: by mail-pg0-f67.google.com with SMTP id m5-v6so430998pgd.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 14:10:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vOYa5OpgbJlcJWnIOeuyZvyutSknJw7DZ/BkQNkD//4=;
-        b=jYZ7CuAcc41u8I5+Yy360rjcdl+f+eHaLw492EUi3Z27RpqDHveH7A/1+DWVek5Iuv
-         pkbJxEIzSvbdcjfGnNQGdT6aleb1npaalT4oJKf/IrpU9dXljLJ6WNMA38rIcYauH3BV
-         JpK8//PE2O47vUdGV2SfVPNA7NrFjg0JQouUI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vOYa5OpgbJlcJWnIOeuyZvyutSknJw7DZ/BkQNkD//4=;
-        b=aCaibtL0U+1KQr3a1arKD71S0akyhhk1bYE0l1FVhMQvcnGJNhNBBE8X+ykFawruMU
-         /S1eBDojIIVG829sVVjoXDNY0huYvOysWsjS/sTYhopvYN76oJw3rVyttO/jHXTAodzi
-         bDDPuMRSXN2qlzXeyh9xotMRFZ1btCpIYt1EG1CHuHgjO8Vpq5MgOtv2DAn8Ox5QESZ5
-         r9J2dU4IcRiZurusAepOe5CX0DUkVfVM2VkfCm9kHdU8PVAUxj++ZQVYfZMpWXUxdB6G
-         Zx+EsSJfsAcJy3jhDCt69FpvKOgbJi7cxubxuKCZxgjOusrRtOqi0HIH1YINefAJUlQF
-         nWfQ==
-X-Gm-Message-State: APt69E3UgrQUFqiTFceHrX1pQRHLG4MBTO7aYivN9awRLEMSbsV5hKVZ
-        yCgStspdKMvpLtcK1LI1gt8paw==
-X-Google-Smtp-Source: ADUXVKKCwjz8LW1NmLKzbhzqkcmIIRzggPpfOeIYJUrSQ4q9+xeL/AlPkKpbEXpO76/ipTtX+Qamwg==
-X-Received: by 2002:a63:5f12:: with SMTP id t18-v6mr15866958pgb.81.1529442621110;
-        Tue, 19 Jun 2018 14:10:21 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id v26-v6sm681265pfe.13.2018.06.19.14.10.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 14:10:20 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 14:10:19 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>, rkrcmar@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in
- update_permission_bitmask()
-Message-ID: <20180619211019.GE169030@google.com>
-References: <20180615182945.GN88063@google.com>
- <c852072704e82ac5342f344c5862d20ce5559c21.camel@perches.com>
- <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
- <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
- <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
- <ad7a9addf043ee7fda8907eff9f83c9709b575dc.camel@perches.com>
- <d6a99e26-b100-715b-2615-b77259ec8397@redhat.com>
- <66b5e5c3ed82a5e1559419deb841c57bf0751fd3.camel@perches.com>
- <20180619183622.GB169030@google.com>
- <7547dfd4045a5acf23505887065bc228e65f2ff9.camel@perches.com>
+        Tue, 19 Jun 2018 17:10:33 -0400
+Received: from mga03.intel.com ([134.134.136.65]:61639 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755540AbeFSVKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 17:10:25 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 14:10:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,244,1526367600"; 
+   d="scan'208";a="50641549"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by orsmga008.jf.intel.com with ESMTP; 19 Jun 2018 14:10:23 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fVNtO-000J0N-TX; Wed, 20 Jun 2018 05:10:22 +0800
+Date:   Wed, 20 Jun 2018 05:09:26 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     kbuild-all@01.org, David Woodhouse <dwmw2@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] jffs2: use unsigned 32-bit timstamps consistently
+Message-ID: <201806200530.EiSnqUgV%fengguang.wu@intel.com>
+References: <20180619155925.4107498-2-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7547dfd4045a5acf23505887065bc228e65f2ff9.camel@perches.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180619155925.4107498-2-arnd@arndb.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 12:11:27PM -0700, Joe Perches wrote:
-> On Tue, 2018-06-19 at 11:36 -0700, Matthias Kaehlcke wrote:
-> > On Tue, Jun 19, 2018 at 11:07:47AM -0700, Joe Perches wrote:
-> > > On Tue, 2018-06-19 at 19:35 +0200, Paolo Bonzini wrote:
-> > > > On 19/06/2018 19:23, Joe Perches wrote:
-> > > > > On Tue, 2018-06-19 at 10:08 -0700, Nick Desaulniers wrote:
-> > > > > > On Tue, Jun 19, 2018 at 8:19 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
-> > > > > > > 
-> > > > > > > On 15/06/2018 20:45, Nick Desaulniers wrote:
-> > > > > > > > > 
-> > > > > > > > > > In any case I think it it preferable to fix the code over disabling
-> > > > > > > > > > the warning, unless the warning is bogus or there are just too many
-> > > > > > > > > > occurrences.
-> > > > > > > > > 
-> > > > > > > > > Maybe.
-> > > > > > > > 
-> > > > > > > > Spurious warning today, actual bug tomorrow?  I prefer to not to
-> > > > > > > > disable warnings wholesale.  They don't need to find actual bugs to be
-> > > > > > > > useful.  Flagging code that can be further specified does not hurt.
-> > > > > > > > Part of the effort to compile the kernel with different compilers is
-> > > > > > > > to add warning coverage, not remove it.  That said, there may be
-> > > > > > > > warnings that are never useful (or at least due to some invariant that
-> > > > > > > > only affects the kernel).  I cant think of any off the top of my head,
-> > > > > > > > but I'm also not sure this is one.
-> > > > > > > 
-> > > > > > > This one really makes the code uglier though, so I'm not really inclined
-> > > > > > > to applying the patch.
-> > > > > > 
-> > > > > > Note that of the three variables (w, u, x), only u is used later on.
-> > > > > > What about declaring them as negated with the cast, that way there's
-> > > > > > no cast in a ternary?
-> > > > > 
-> > > > > It'd be simpler to cast in the BYTE_MASK macro itself
-> > > > 
-> > > > I don't think that would work, as the ~ would be done on a zero-extended
-> > > > signed int.
-> > > 
-> > > True, but the whole concept is dubious.
-> > > The implicit casts are all over the place,
-> > > not just in the file.
-> > 
-> > Would that have been any different with the solution you proposed (if
-> > it worked)?
-> > 
-> > Apparently both gcc and clang limit the warning to the potentially
-> > more problematic case where a value with sign bit is promoted.
-> 
-> I think the warning is exactly equivalent to -Wsign-conversion
-> and we don't normally compile the kernel with that either.
+Hi Arnd,
 
-I disagree with "exactly equivalent". With -Wsign-conversion a warning
-is generated whenever a signed type is assigned to an unsigned
-variable or viceversa.
+I love your patch! Perhaps something to improve:
 
--Wconstant-conversion is only issued when a *constant value* is assigned to
-an incompatible type.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.18-rc1 next-20180619]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> Trying to allow a "make W=3" to be compiler warning message free
-> is also silly.
-> 
-> I think it's better to make the warning emitted only at a W=3
-> level instead.
+url:    https://github.com/0day-ci/linux/commits/Arnd-Bergmann/jffs2-use-64-bit-intermediate-timestamps/20180620-015800
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-Another difference with -Wsign-conversion is that enabling it would
-probably result in thousands of warnings. Do you have evidence that
-there is a significant number of spurious -Wconstant-conversion
-warnings?
+
+sparse warnings: (new ones prefixed by >>)
+
+>> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
+>> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
+>> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
+>> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
+>> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
+>> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
+>> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
+   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
+--
+>> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
+>> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
+>> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
+>> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
+>> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
+>> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
+>> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
+   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
+   include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
+   include/linux/slab.h:631:13: sparse: call with no type!
+
+vim +263 fs/jffs2/dir.c
+
+^1da177e Linus Torvalds      2005-04-16  241  
+^1da177e Linus Torvalds      2005-04-16  242  
+^1da177e Linus Torvalds      2005-04-16  243  static int jffs2_link (struct dentry *old_dentry, struct inode *dir_i, struct dentry *dentry)
+^1da177e Linus Torvalds      2005-04-16  244  {
+fc64005c Al Viro             2016-04-10  245  	struct jffs2_sb_info *c = JFFS2_SB_INFO(old_dentry->d_sb);
+2b0143b5 David Howells       2015-03-17  246  	struct jffs2_inode_info *f = JFFS2_INODE_INFO(d_inode(old_dentry));
+^1da177e Linus Torvalds      2005-04-16  247  	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
+^1da177e Linus Torvalds      2005-04-16  248  	int ret;
+^1da177e Linus Torvalds      2005-04-16  249  	uint8_t type;
+3a69e0cd Artem B. Bityutskiy 2005-08-17  250  	uint32_t now;
+^1da177e Linus Torvalds      2005-04-16  251  
+^1da177e Linus Torvalds      2005-04-16  252  	/* Don't let people make hard links to bad inodes. */
+^1da177e Linus Torvalds      2005-04-16  253  	if (!f->inocache)
+^1da177e Linus Torvalds      2005-04-16  254  		return -EIO;
+^1da177e Linus Torvalds      2005-04-16  255  
+e36cb0b8 David Howells       2015-01-29  256  	if (d_is_dir(old_dentry))
+^1da177e Linus Torvalds      2005-04-16  257  		return -EPERM;
+^1da177e Linus Torvalds      2005-04-16  258  
+^1da177e Linus Torvalds      2005-04-16  259  	/* XXX: This is ugly */
+2b0143b5 David Howells       2015-03-17  260  	type = (d_inode(old_dentry)->i_mode & S_IFMT) >> 12;
+^1da177e Linus Torvalds      2005-04-16  261  	if (!type) type = DT_REG;
+^1da177e Linus Torvalds      2005-04-16  262  
+a7cab044 Arnd Bergmann       2018-06-19 @263  	now = JFFS2_NOW();
+3a69e0cd Artem B. Bityutskiy 2005-08-17  264  	ret = jffs2_do_link(c, dir_f, f->inocache->ino, type, dentry->d_name.name, dentry->d_name.len, now);
+^1da177e Linus Torvalds      2005-04-16  265  
+^1da177e Linus Torvalds      2005-04-16  266  	if (!ret) {
+ced22070 David Woodhouse     2008-04-22  267  		mutex_lock(&f->sem);
+2b0143b5 David Howells       2015-03-17  268  		set_nlink(d_inode(old_dentry), ++f->inocache->pino_nlink);
+ced22070 David Woodhouse     2008-04-22  269  		mutex_unlock(&f->sem);
+2b0143b5 David Howells       2015-03-17  270  		d_instantiate(dentry, d_inode(old_dentry));
+a7cab044 Arnd Bergmann       2018-06-19  271  		dir_i->i_mtime = dir_i->i_ctime = ITIME(now);
+2b0143b5 David Howells       2015-03-17  272  		ihold(d_inode(old_dentry));
+^1da177e Linus Torvalds      2005-04-16  273  	}
+^1da177e Linus Torvalds      2005-04-16  274  	return ret;
+^1da177e Linus Torvalds      2005-04-16  275  }
+^1da177e Linus Torvalds      2005-04-16  276  
+
+:::::: The code at line 263 was first introduced by commit
+:::::: a7cab044350466ac53107fa859f1f2cbc4d5112b jffs2: use 64-bit intermediate timestamps
+
+:::::: TO: Arnd Bergmann <arnd@arndb.de>
+:::::: CC: 0day robot <lkp@intel.com>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
