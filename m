@@ -2,159 +2,157 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8570C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C58DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45A220693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45A220693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B782420852
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:44:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="TCV+G2yT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B782420852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937024AbeFSBjI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 21:39:08 -0400
-Received: from mga06.intel.com ([134.134.136.31]:6000 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934880AbeFSBjG (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 21:39:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 18:39:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,241,1526367600"; 
-   d="scan'208";a="58771875"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.161.30]) ([10.239.161.30])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Jun 2018 18:39:03 -0700
-Subject: Re: [PATCH v1 1/2] perf/core: Use sysctl to turn on/off dropping
- leaked kernel samples
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, acme@kernel.org,
-        jolsa@kernel.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, me@kylehuey.com,
-        Linux-kernel@vger.kernel.org, vincent.weaver@maine.edu,
-        will.deacon@arm.com, eranian@google.com, namhyung@kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
- <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
- <20180615113608.6m74sm7gpl5p6oqe@lakrids.cambridge.arm.com>
- <52c75f12-1f91-405d-0b05-0aa6a9c09306@linux.intel.com>
- <20180618104522.GI2458@hirez.programming.kicks-ass.net>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <f66f6738-c612-1535-3661-dcc654750fa8@linux.intel.com>
-Date:   Tue, 19 Jun 2018 09:39:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180618104522.GI2458@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S937030AbeFSBod (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 21:44:33 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:45051 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934880AbeFSBoc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 21:44:32 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9BF1F8364F
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 13:44:29 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1529372669;
+        bh=WG2d4uQx7I2SiKwm7sSjopnTjmt4OUY1JfAljKbVMD0=;
+        h=From:To:CC:Subject:Date:References;
+        b=TCV+G2yTZWNpnAWwwHFctW33OYJby+aKWqHNeeaVHdUXEzKDuqyLRAqJB6mE8Co/5
+         F6GZ23NzrP7bqKnh8MCIEjujBtMtoZ40uzxMMEPiL5RkWLlviNanRjK6QUJtnjgUSE
+         EEhdmU52b5SheyODBKsz9gCc2lC6TZfidyh0SxBk=
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5b285ffe0000>; Tue, 19 Jun 2018 13:44:30 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1156.6; Tue, 19 Jun 2018 13:44:24 +1200
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Tue, 19 Jun 2018 13:44:24 +1200
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Thread-Topic: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Thread-Index: AQHUBsA+zZ/Rrpto/keRRl4OvggntA==
+Date:   Tue, 19 Jun 2018 01:44:24 +0000
+Message-ID: <0caaea1b4f5a4b45b436833424c4c8c8@svr-chch-ex1.atlnz.lc>
+References: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
+ <20180618151450.3e740270@xps13>
+ <f16525ea6b534123bda64b09e818ce6d@svr-chch-ex1.atlnz.lc>
+Accept-Language: en-NZ, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 6/18/2018 6:45 PM, Peter Zijlstra wrote:
-> On Mon, Jun 18, 2018 at 02:55:32PM +0800, Jin, Yao wrote:
->> Thanks for providing the patch. I understand this approach.
->>
->> In my opinion, the skid window is from counter overflow to interrupt
->> delivered. While if the skid window is too *big* (e.g. user -> kernel), it
->> should be not very useful. So personally, I'd prefer to drop the samples.
-> 
-> I really don't get your insitence on dropping the sample. Dropping
-> samples is bad. Furthermore, doing what Mark suggests actually improves
-> the result by reducing the skid, if the event happened before we entered
-> (as it damn well should) then the user regs, which point at the entry
-> site, are a better approximation than our in-kernel set.
-> 
-> So not only do you not loose the sample, you actually get a better
-> sample.
-> 
-
-OK, that's fine, thanks!
-
-I guess Mark will post this patch, right?
-
-Anyway looks we don't need following patch (0-stuffing sample->ip to 
-indicate perf tool that it is a leak sample), right?
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 80cca2b..628b515 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6361,6 +6361,21 @@ perf_callchain(struct perf_event *event, struct 
-pt_regs *regs)
-         return callchain ?: &__empty_callchain;
-  }
-
-+static bool sample_is_leaked(struct perf_event *event, struct pt_regs 
-*regs)
-+{
-+       /*
-+        * Due to interrupt latency (AKA "skid"), we may enter the
-+        * kernel before taking an overflow, even if the PMU is only
-+        * counting user events.
-+        * To avoid leaking information to userspace, we must always
-+        * reject kernel samples when exclude_kernel is set.
-+       */
-+       if (event->attr.exclude_kernel && !user_mode(regs))
-+               return true;
-+
-+       return false;
-+}
-+
-  void perf_prepare_sample(struct perf_event_header *header,
-                          struct perf_sample_data *data,
-                          struct perf_event *event,
-@@ -6480,6 +6495,9 @@ void perf_prepare_sample(struct perf_event_header 
-*header,
-
-         if (sample_type & PERF_SAMPLE_PHYS_ADDR)
-                 data->phys_addr = perf_virt_to_phys(data->addr);
-+
-+       if (sample_is_leaked(event, regs))
-+               data->ip = 0;
-  }
-
-  static void __always_inline
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index bfa60bc..1bfb697 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -404,6 +404,7 @@ struct events_stats {
-         u64 total_aux_lost;
-         u64 total_aux_partial;
-         u64 total_invalid_chains;
-+       u64 total_dropped_samples;
-         u32 nr_events[PERF_RECORD_HEADER_MAX];
-         u32 nr_non_filtered_samples;
-         u32 nr_lost_warned;
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 8b93693..ec923f1 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1269,6 +1269,12 @@ static int machines__deliver_event(struct 
-machines *machines,
-                         ++evlist->stats.nr_unprocessable_samples;
-                         return 0;
-                 }
-+
-+               if (sample->ip == 0) {
-+                       /* Drop the leaked kernel samples */
-+                       ++evlist->stats.total_dropped_samples;
-+                       return 0;
-+               }
-                 return perf_evlist__deliver_sample(evlist, tool, event, 
-sample, evsel, machine);
-         case PERF_RECORD_MMAP:
-                 return tool->mmap(tool, event, sample, machine);
-
-Thanks
-Jin Yao
+On 19/06/18 12:35, Chris Packham wrote:=0A=
+> On 19/06/18 01:15, Miquel Raynal wrote:=0A=
+>> Hi Chris,=0A=
+>>=0A=
+>> On Mon, 18 Jun 2018 16:52:53 +1200, Chris Packham=0A=
+>> <chris.packham@alliedtelesis.co.nz> wrote:=0A=
+>>=0A=
+>>> Hi,=0A=
+>>>=0A=
+>>> I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chi=
+p=0A=
+>>> to one of our boards which uses the Marvell NFCv2 controller.=0A=
+>>>=0A=
+>>> This particular chip is a bit odd in that the datasheet states support=
+=0A=
+>>> for ONFI 1.0 but the revision number field is 00 00. It also is marked=
+=0A=
+>>> ABAFA but reports internally as ABAGA. Finally it has internal 8-bit EC=
+C=0A=
+>>> which cannot be disabled.=0A=
+>>=0A=
+>> Boris and I agree that in this case, the chip should not be probed if=0A=
+>> ecc->type !=3D ON_DIE (and eventually NONE).=0A=
+>>=0A=
+>> This should be handled in the Micron driver.=0A=
+>>=0A=
+>> Also, what is the returned value of micron_supports_on_die_ecc() (with=
+=0A=
+>> patch 1/2)?=0A=
+> =0A=
+> micron_supports_on_die_ecc() returns MICRON_ON_DIE_UNSUPPORTED.=0A=
+> Technically this chip should be MICRON_ON_DIE_MANDATORY since it can't=0A=
+> be disabled but that wouldn't be much help since that would still result=
+=0A=
+> in -EINVAL. I'll dig into micron_supports_on_die_ecc() and see if I can=
+=0A=
+> find something in the datasheet to use.=0A=
+> =0A=
+=0A=
+Some further debugging. Nothing (in 4.17) calls =0A=
+set_bit(ONFI_FEATURE_ON_DIE_ECC) so I don't think =0A=
+micron_supports_on_die_ecc() can return anything other than =0A=
+MICRON_ON_DIE_UNSUPPORTED, unless I'm missing something for how the =0A=
+{get,set}_feature_list is populated.=0A=
+=0A=
+With the onfi.version fix and the following=0A=
+=0A=
+--- a/drivers/mtd/nand/raw/nand_micron.c=0A=
++++ b/drivers/mtd/nand/raw/nand_micron.c=0A=
+@@ -66,7 +66,9 @@ static int micron_nand_onfi_init(struct nand_chip *chip)=
+=0A=
+=0A=
+         if (p->supports_set_get_features) {=0A=
+                 set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->set_feature_list)=
+;=0A=
++               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->set_feature_list);=0A=
+                 set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->get_feature_list)=
+;=0A=
++               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->get_feature_list);=0A=
+         }=0A=
+@@ -240,7 +246,7 @@ static int micron_supports_on_die_ecc(struct =0A=
+nand_chip *chip)=0A=
+          * Some Micron NANDs have an on-die ECC of 4/512, some other=0A=
+-         * 8/512. We only support the former.=0A=
++         * 8/512.=0A=
+          */=0A=
+-       if (chip->ecc_strength_ds !=3D 4)=0A=
++       if (chip->ecc_strength_ds !=3D 4 && chip->ecc_strength_ds !=3D 8)=
+=0A=
+                 return MICRON_ON_DIE_UNSUPPORTED;=0A=
+=0A=
+I can get micron_supports_on_die_ecc() to return MICRON_ON_DIE_SUPPORTED.=
+=0A=
+=0A=
+Then I run into a problem with the marvell_nand.c which currently =0A=
+doesn't handle NAND_ECC_ON_DIE which is easily fixed.=0A=
+=0A=
+But then I have the issue that I need to handle systems with either type =
+=0A=
+of ECC scheme ("on-die" or "hw") which I'm not sure is even possible =0A=
+within the dts.=0A=
+=0A=
+I'll re-base against 4.18-rc1 and send what I have so-far.=0A=
