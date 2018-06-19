@@ -5,78 +5,94 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBC0C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E19C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE852075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:47:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE852075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 7B3172075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3172075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757091AbeFSJrG (ORCPT
+        id S1757134AbeFSJrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:47:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45592 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756535AbeFSJrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:47:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 99AFDAEE6;
-        Tue, 19 Jun 2018 09:47:03 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 11:46:58 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
-        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, felix@feldspaten.org
-Subject: Re: [PATCH] Use 'imply' with SEV Kconfig CRYPTO dependencies
-Message-ID: <20180619094658.GB31750@zn.tnic>
-References: <1526915573-22917-1-git-send-email-Janakarajan.Natarajan@amd.com>
- <20180523144621.GB25143@pd.tnic>
- <CAFLxGvyxHU_Xahwdf=0TYx8Nems78TLioLZGGLTkxNGCgxT4Dg@mail.gmail.com>
- <4f565a11-9e99-b861-06d2-b42922e44c7a@amd.com>
+        Tue, 19 Jun 2018 05:47:23 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:41390 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757105AbeFSJrT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 05:47:19 -0400
+Received: by mail-wr0-f196.google.com with SMTP id h10-v6so19827791wrq.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 02:47:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jOqdzx8JvKt04nMMfEEg7WjmjaALe+bxCwuJYwj1Mko=;
+        b=Ug2bnlYsvKgThDbYls7JiIaObSPhE3OFQJHlxX4EHChAQOG1vCAzcCsQtutVhshktl
+         VBI+BYUrzGw5cMTqCSOl+CplWWYQ5ZJ7tvAeiYhjDSReWoIp/Ety9b6QZ4Yx8sDyDR+U
+         WezJg0BhZpPEwVZzgDA0r1npjYO7jsZZ5MlvZ9AT9UGpi05jaGPRo+gfjfL3c0tikWur
+         auWgd69vkRjxzDioWUPkXpiYg10R/UQdRqXhyh/IHLWB+Eu89Yld53cQmH/3zQgMiAl4
+         RIWBzqOTO1yc7ofs0RqwrMM05KyvNB87u06qPVBaBpYh7FqAf72XdrbeFruXIJU4YXjs
+         chrQ==
+X-Gm-Message-State: APt69E3EAhRJ9gAutbJYGijsMC7Y5qhBarjJmoJEK3vpXfTakCQfhwvi
+        b7v2o/wZLUFsbqQp3MgRo80AEA==
+X-Google-Smtp-Source: ADUXVKKpul+832MaW3YzMT7OhjZpyLx4XmESj1HCm6xN/VWQdZ3QnZaAm4+MyAuD4QlKHgsGG7Sgxw==
+X-Received: by 2002:adf:9dc9:: with SMTP id q9-v6mr13944993wre.12.1529401637946;
+        Tue, 19 Jun 2018 02:47:17 -0700 (PDT)
+Received: from localhost.localdomain ([151.15.207.242])
+        by smtp.gmail.com with ESMTPSA id n17-v6sm16650203wrs.96.2018.06.19.02.47.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 02:47:17 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 11:47:14 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Pavan Kondeti <pkondeti@codeaurora.org>, peterz@infradead.org,
+        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 10/10] arch_topology: Start Energy Aware Scheduling
+Message-ID: <20180619094714.GA13617@localhost.localdomain>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-11-quentin.perret@arm.com>
+ <20180619091841.GD9208@codeaurora.org>
+ <20180619094002.GR17720@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4f565a11-9e99-b861-06d2-b42922e44c7a@amd.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180619094002.GR17720@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 07:08:26AM -0500, Brijesh Singh wrote:
-> I think depends should look like this:
+On 19/06/18 10:40, Quentin Perret wrote:
+> Hi Pavan,
 > 
-> config KVM_AMD_SEV
->     def_bool y
->     bool "AMD Secure Encrypted Virtualization (SEV) support"
->     depends KVM_AMD && X86_64
->     depends CRYPTO_DEV_SP_PSP && !(KVM_AMD=y && CRYPTO_DEV_CCP_DD=m)
+> On Tuesday 19 Jun 2018 at 14:48:41 (+0530), Pavan Kondeti wrote:
 
-CRYPTO_DEV_CCP_DD - this still doesn't belong here. KVM_AMD_SEV doesn't
-care about what kind of functionality the PSP needs to function and
-select it - it should only depend on a single symbol.
+[...]
 
-Now, you can add a separate CRYPTO .config item which collects all
-required functionality for SEV guests and have KVM_AMD_SEV depend
-on that. Or a similar solution. But not have KVM_AMD_SEV poke into
-CRYPTO...PSP dependencies because it doesn't need to know about it.
+> > There seems to be a sysfs interface exposed by this driver to change cpu_scale.
+> > Should we worry about it? I don't know what is the usecase for changing the
+> > cpu_scale from user space.
+> 
+> This is something I've been wondering as well. TBH, I'm not sure what to
+> do in this case. And I'm not sure to know what is the use-case either.
+> Debugging purpose I assume ?
+> 
+> Juri, did you have a specific use-case for this feature when the
+> arch_topology driver was first introduced ? Or was it just to align
+> with the existing arm/arm64 code ?
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+It was requested (IIRC) because DT might have bogus values and not be
+easily modifiable. So, this is another way to get things right for your
+platform at runtime.
