@@ -6,124 +6,157 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C172C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE87C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 307532083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:46:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307532083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 7D82A2083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:47:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D82A2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966208AbeFSKqQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:46:16 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:38096 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965360AbeFSKqO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:46:14 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id F17F460A356A;
-        Tue, 19 Jun 2018 12:46:11 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id T_exIFqvl_YR; Tue, 19 Jun 2018 12:46:11 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 81BAF60A356B;
-        Tue, 19 Jun 2018 12:46:11 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id c1ZF_ZBwvMS3; Tue, 19 Jun 2018 12:46:11 +0200 (CEST)
-Received: from blindfold.localnet (unknown [82.150.214.1])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 5F33B60A356A;
-        Tue, 19 Jun 2018 12:46:11 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        "linux-stable #4 . 14+" <stable@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v3 1/3] mtd: rawnand: denali_dt: add more clocks based on IP datasheet
-Date:   Tue, 19 Jun 2018 12:46:04 +0200
-Message-ID: <2133216.znqypcnggC@blindfold>
-In-Reply-To: <CAK7LNASCKhxtoOc3QdECF6p8BaBjab7Ed2y9Og+8LhvX4O83-Q@mail.gmail.com>
-References: <1529025532-22087-1-git-send-email-yamada.masahiro@socionext.com> <20180618094636.0e40c518@bbrezillon> <CAK7LNASCKhxtoOc3QdECF6p8BaBjab7Ed2y9Og+8LhvX4O83-Q@mail.gmail.com>
+        id S937579AbeFSKrb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 06:47:31 -0400
+Received: from mga09.intel.com ([134.134.136.24]:18888 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937215AbeFSKr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:47:29 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 03:47:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
+   d="scan'208";a="60405200"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.212])
+  by orsmga003.jf.intel.com with ESMTP; 19 Jun 2018 03:47:26 -0700
+Received: from ash by um with local (Exim 4.91)
+        (envelope-from <alexander.shishkin@linux.intel.com>)
+        id 1fVEAX-0002rz-SI; Tue, 19 Jun 2018 13:47:25 +0300
+Date:   Tue, 19 Jun 2018 13:47:25 +0300
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com
+Subject: Re: [PATCH v1 4/6] perf: Allow using AUX data in perf samples
+Message-ID: <20180619104725.bqvs7uwzhb4ihyxy@um.fi.intel.com>
+References: <20180612075117.65420-1-alexander.shishkin@linux.intel.com>
+ <20180612075117.65420-5-alexander.shishkin@linux.intel.com>
+ <20180614202022.GC12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614202022.GC12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 19. Juni 2018, 10:07:26 CEST schrieb Masahiro Yamada:
-> Hi Boris,
+On Thu, Jun 14, 2018 at 10:20:22PM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 12, 2018 at 10:51:15AM +0300, Alexander Shishkin wrote:
+> > +static unsigned long perf_aux_sample_size(struct perf_event *event,
+> > +					  struct perf_sample_data *data,
+> > +					  size_t size)
+> > +{
+> > +	struct perf_event *sampler = event->sample_event;
+> > +	struct ring_buffer *rb;
+> > +	int *disable_count;
+> > +
+> > +	data->aux.size = 0;
+> > +
+> > +	if (!sampler || READ_ONCE(sampler->state) != PERF_EVENT_STATE_ACTIVE)
+> > +		goto out;
+> > +
+> > +	if (READ_ONCE(sampler->oncpu) != smp_processor_id())
+> > +		goto out;
 > 
+> Should those not be WARNs ? If we allow a configuration where that is
+> possible, we're doing it wrong I think.
+
+Indeed, this shouldn't happen.
+
+> > +	/*
+> > +	 * Non-zero disable count here means that we, being the NMI
+> > +	 * context, are racing with pmu::add, pmu::del or address filter
+> > +	 * adjustment, which we want to avoid.
+> > +	 */
+> > +	disable_count = this_cpu_ptr(sampler->pmu->pmu_disable_count);
+> > +	if (*disable_count)
+> > +		goto out;
+> > +
+> > +	/* Re-enabled in perf_aux_sample_output() */
+> > +	perf_pmu_disable(sampler->pmu);
 > 
-> 2018-06-18 16:46 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
-> > On Mon, 18 Jun 2018 09:09:02 +0200
-> > Richard Weinberger <richard@nod.at> wrote:
-> >
-> >> Am Freitag, 15. Juni 2018, 03:18:50 CEST schrieb Masahiro Yamada:
-> >> > According to the Denali User's Guide, this IP needs three clocks:
-> >> >
-> >> >  - clk: controller core clock
-> >> >
-> >> >  - clk_x: bus interface clock
-> >> >
-> >> >  - ecc_clk: clock at which ECC circuitry is run
-> >> >
-> >> > Currently, denali_dt.c requires a single anonymous clock and its
-> >> > frequency.  However, the driver needs to get the frequency of "clk_x"
-> >> > not "clk".  This is confusing because people tend to assume the
-> >> > anonymous clock means the core clock.  In fact, I got a report of
-> >> > SOCFPGA breakage because the timing parameters are calculated based
-> >> > on a wrong frequency.
-> >> >
-> >> > Instead of the cheesy implementation, the clocks in the real hardware
-> >> > should be represented in the driver and the DT-binding.
-> >> >
-> >> > However, adding new clocks would break the existing platforms.  For the
-> >> > backward compatibility, the driver still accepts a single clock just as
-> >> > before.  If clk_x is missing, clk_x_rate is set to a hardcoded value.
-> >> > This is fine for existing DT of Socionext UniPhier, and also fixes the
-> >> > issue of Altera (Intel) SOCFPGA because both platforms use 200 MHz for
-> >> > the bus interface clock.
-> >> >
-> >> > Fixes: 1bb88666775e ("mtd: nand: denali: handle timing parameters by setup_data_interface()")
-> >> > Cc: linux-stable <stable@vger.kernel.org> #4.14+
-> >> > Reported-by: Richard Weinberger <richard@nod.at>
-> >> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >>
-> >> Reviewed-by: Richard Weinberger <richard@nod.at>
-> >
-> > Maybe a
-> >
-> > Tested-by: Richard Weinberger <richard@nod.at>
-> >
-> > ?
-> >
-> >> Reported-by: Philipp Rosenberger <p.rosenberger@linutronix.de>
-> >
-> > Should I replace your Reported-by by this one or simply add it?
-
-Philipp deserves the Reported-by. :)
-
+> This is disguisting..  and also broken I think. Imagine what happens
+> when the NMI hits in middle of perf_pmu_enable(), right where count
+> dropped to 0, but we've not yet done pmu->pmu_enable() yet.
 > 
-> I think it is good to have Reported-by
-> both from Philipp and Richard.
+> Then we end up with a double disable and double enable.
 
-Patch 1/3 unbreaks v4.14.x on my board.
+True, we kind of tiptoe around that by not having ->pmu_enable() and
+->pmu_disable() for PT.
 
-Tested-by: Richard Weinberger <richard@nod.at>
+> > +
+> > +	rb = ring_buffer_get(sampler);
+> > +	if (!rb) {
+> > +		perf_pmu_enable(sampler->pmu);
+> > +		goto out;
+> > +	}
+> > +
+> > +	/* Restarted in perf_aux_sample_output() */
+> > +	sampler->pmu->stop(sampler, PERF_EF_UPDATE);
+> 
+> More yuck...
+> 
+> You rreally should not be calling these pmu::methods, they're meant to
+> be used from _interrupt_ not NMI context. Using them like this is asking
+> for tons of trouble.
 
-Thanks,
-//richard
+Right, the SW stuff may then race with event_function_call() stuff. Hmm.
+For the HW stuff, I'm hoping that some kind of a sleight of hand may
+suffice. Let me think some more.
+
+> Why can't you just snapshot the current location and let the thing
+> 'run' ?
+
+Because the buffer will overwrite itself and the location will be useless.
+We don't write the AUX data out in this 'mode' at all, only the samples,
+which allows for much less data in the resulting perf.data, less work for
+the consumer, less IO bandwidth etc, and as a bonus, no AUX-related
+interrupts.
+
+But actually, even to snapshot the location we need to stop the event.
+
+> > +	data->aux.to = rb->aux_head;
+> > +
+> > +	size = min(size, perf_aux_size(rb));
+> > +
+> > +	if (data->aux.to < size)
+> > +		data->aux.from = rb->aux_nr_pages * PAGE_SIZE + data->aux.to -
+> > +			size;
+> > +	else
+> > +		data->aux.from = data->aux.to - size;
+> > +	data->aux.size = ALIGN(size, sizeof(u64));
+> > +	ring_buffer_put(rb);
+> > +
+> > +out:
+> > +	return data->aux.size;
+> > +}
+> > +
+> > +static void perf_aux_sample_output(struct perf_event *event,
+> > +				   struct perf_output_handle *handle,
+> > +				   struct perf_sample_data *data)
+> > +{
+> 
+> > +	ring_buffer_put(rb);
+> > +	sampler->pmu->start(sampler, 0);
+> > +
+> > +out_enable:
+> > +	perf_pmu_enable(sampler->pmu);
+> 
+> More of that... really yuck stuff.
+> 
+> > +}
