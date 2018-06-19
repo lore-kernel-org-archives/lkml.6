@@ -2,314 +2,181 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4FAC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 00:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED86C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 00:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48FCF20864
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 00:12:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y2vrKh7t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48FCF20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 9977A2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 00:27:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9977A2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937099AbeFSAMV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 20:12:21 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:41372 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936996AbeFSAMS (ORCPT
+        id S937113AbeFSA1g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 20:27:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40924 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937066AbeFSA1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 20:12:18 -0400
-Received: by mail-yb0-f194.google.com with SMTP id f14-v6so184724ybg.8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 17:12:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AsNZBT64jfg2NrK7dSzVH8olUEndB/ZuURkU7lNk7rg=;
-        b=Y2vrKh7tlDsCySliRFFUY1qSlhJBbqPM69j2pfp7D4skQCbtA908DwDYiBMyrnYeP7
-         D8QwtynqoikpyaRjyd4D3CT8MrVfvxoTdV2/QJRVMeNUdBA0CaaILhnR6dKMr7b++iWa
-         arZzjUVL55fTItQgP1Wb+BmkpZgilvwdAVS0NCcyCkUyR9mooT21IE46SAnlFy136sAW
-         mvdjY9AGfjoq4JSaCxVzInSvDjziv/syGZx7OxdZIgZ2OgnE1FABeAb9c7tE3OFshnUz
-         kqiirB4mX4rtS4M9HCm2sExPCMRRUYzxxop14ys16ewuuc6v1O8kV/eHOzg2JEaBg7Lm
-         rVpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AsNZBT64jfg2NrK7dSzVH8olUEndB/ZuURkU7lNk7rg=;
-        b=I65B7JBNp9RBbtNNWSsP6arzbuX1ubBS609jTyQnUvjWma6t+hGfcUR0LDEOFKguBW
-         btLzeCIExp1/fIy+ZAfq9JI64fmynj42vqC74m7LvvG1UTysH0laxGlOczIdS0CPzvH8
-         CVdoa0zW+YbD8e74lxbdspVJOOcACP3FuQSAv71/h86SvfOypVql+Cu+SgbuqGAYTqg0
-         3L8JyhzHsx77lfMnCzm0VosUMcugPUqelqOtjiq+yB4foP8vnXfl2VZ9O1MicJgdmgI4
-         9GfY40pLHAGuk1884B1ztFJfa4/d6q+Lw0Xdwn3lnmWwmIPks+Wdx/tIckcnjUeMRByY
-         v9SA==
-X-Gm-Message-State: APt69E1Pbh1Vo40UohnlQvlZmixzQB3oQNs3o6wC3ShldO28jIU4A1Kw
-        PNE13ZPWeYPW2iGOEElvi+aKriNYELp0+62sT56vVQ==
-X-Google-Smtp-Source: ADUXVKIpaQoZj7ytDJOnaHA9BEfvxUmoJVgGDjyfHC90XF8xjRhIjy47NCY2ctIZj+qyMM/UuB2mymKtSyQA6uG6u0k=
-X-Received: by 2002:a25:7a01:: with SMTP id v1-v6mr6199659ybc.87.1529367137525;
- Mon, 18 Jun 2018 17:12:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180522222805.80314-1-rajatja@google.com> <20180523175808.28030-1-rajatja@google.com>
- <20180523175808.28030-6-rajatja@google.com> <c27290dd401bb2954db4959559c39a00@codeaurora.org>
-In-Reply-To: <c27290dd401bb2954db4959559c39a00@codeaurora.org>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Mon, 18 Jun 2018 17:11:41 -0700
-Message-ID: <CACK8Z6EHDv0d5zwgKj2N+DyxKEj9dVkSoN2Y_HTOKv8L9p-OAg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] Documentation/ABI: Add details of PCI AER statistics
-To:     Oza Pawandeep <poza@codeaurora.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Thomas Tai <thomas.tai@oracle.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-pci <linux-pci@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jes Sorensen <jsorensen@fb.com>, Kyle McMartin <jkkm@fb.com>,
-        Rajat Jain <rajatxjain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 18 Jun 2018 20:27:35 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 491A2CDE;
+        Tue, 19 Jun 2018 00:27:34 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 17:27:33 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: fix unnecessary killing of additional
+ processes
+Message-Id: <20180618172733.39322643725b196ff4e64703@linux-foundation.org>
+In-Reply-To: <alpine.DEB.2.21.1806141339580.4543@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
+        <alpine.DEB.2.21.1806141339580.4543@chino.kir.corp.google.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, 14 Jun 2018 13:42:59 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
 
-On Sat, Jun 16, 2018 at 10:24 PM <poza@codeaurora.org> wrote:
+> The oom reaper ensures forward progress by setting MMF_OOM_SKIP itself if
+> it cannot reap an mm.  This can happen for a variety of reasons,
+> including:
+> 
+>  - the inability to grab mm->mmap_sem in a sufficient amount of time,
+> 
+>  - when the mm has blockable mmu notifiers that could cause the oom reaper
+>    to stall indefinitely,
+
+Maybe we should have more than one oom reaper thread?  I assume the
+probability of the oom reaper thread blocking on an mmu notifier is
+small, so perhaps just dive in and hope for the best.  If the oom
+reaper gets stuck then there's another thread ready to take over.  And
+revisit the decision to use a kernel thread instead of workqueues.
+
+> but we can also add a third when the oom reaper can "reap" an mm but doing
+> so is unlikely to free any amount of memory:
+> 
+>  - when the mm's memory is fully mlocked.
+> 
+> When all memory is mlocked, the oom reaper will not be able to free any
+> substantial amount of memory.  It sets MMF_OOM_SKIP before the victim can
+> unmap and free its memory in exit_mmap() and subsequent oom victims are
+> chosen unnecessarily.  This is trivial to reproduce if all eligible
+> processes on the system have mlocked their memory: the oom killer calls
+> panic() even though forward progress can be made.
+> 
+> This is the same issue where the exit path sets MMF_OOM_SKIP before
+> unmapping memory and additional processes can be chosen unnecessarily
+> because the oom killer is racing with exit_mmap().
+
+So what's actually happening here.  A process has a large amount of
+mlocked memory, it has been oom-killed and it is in the process of
+releasing its memory and exiting, yes?
+
+If so, why does this task set MMF_OOM_SKIP on itself?  Why aren't we
+just patiently waiting for its attempt to release meory?
+
+> We can't simply defer setting MMF_OOM_SKIP, however, because if there is
+> a true oom livelock in progress, it never gets set and no additional
+> killing is possible.
+
+I guess that's my answer.  What causes this livelock?  Process looping
+in alloc_pages while holding a lock the oom victim wants?
+
+> To fix this, this patch introduces a per-mm reaping timeout, initially set
+> at 10s.  It requires that the oom reaper's list becomes a properly linked
+> list so that other mm's may be reaped while waiting for an mm's timeout to
+> expire.
+> 
+> This replaces the current timeouts in the oom reaper: (1) when trying to
+> grab mm->mmap_sem 10 times in a row with HZ/10 sleeps in between and (2)
+> a HZ sleep if there are blockable mmu notifiers.  It extends it with
+> timeout to allow an oom victim to reach exit_mmap() before choosing
+> additional processes unnecessarily.
+> 
+> The exit path will now set MMF_OOM_SKIP only after all memory has been
+> freed, so additional oom killing is justified,
+
+That seems sensible, but why set MMF_OOM_SKIP at all?
+
+> and rely on MMF_UNSTABLE to
+> determine when it can race with the oom reaper.
+> 
+> The oom reaper will now set MMF_OOM_SKIP only after the reap timeout has
+> lapsed because it can no longer guarantee forward progress.
+> 
+> The reaping timeout is intentionally set for a substantial amount of time
+> since oom livelock is a very rare occurrence and it's better to optimize
+> for preventing additional (unnecessary) oom killing than a scenario that
+> is much more unlikely.
+
+What happened to the old idea of permitting the task which is blocking
+the oom victim to access additional reserves?
+
+Come to that, what happened to the really really old Andreaidea of not
+looping in the page allocator anyway?  Return NULL instead...
+
+I dunno, I'm thrashing around here.  We seem to be piling mess on top
+of mess and then being surprised that the result is a mess.
+
+> +#ifdef CONFIG_MMU
+> +	/* When to give up on oom reaping this mm */
+> +	unsigned long reap_timeout;
+
+"timeout" implies "interval".  To me, anyway.  This is an absolute
+time, so something like reap_time would be clearer.  Along with a
+comment explaining that the units are in jiffies.
+
+> +#endif
+>  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
+>  	pgtable_t pmd_huge_pte; /* protected by page_table_lock */
+>  #endif
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1163,7 +1163,7 @@ struct task_struct {
+>  #endif
+>  	int				pagefault_disabled;
+>  #ifdef CONFIG_MMU
+> -	struct task_struct		*oom_reaper_list;
+> +	struct list_head		oom_reap_list;
+
+Can we have a comment explaining its locking.
+
+>  #endif
+>  #ifdef CONFIG_VMAP_STACK
+>  	struct vm_struct		*stack_vm_area;
 >
-> On 2018-05-23 23:28, Rajat Jain wrote:
-> > Add the PCI AER statistics details to
-> > Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> > and provide a pointer to it in
-> > Documentation/PCI/pcieaer-howto.txt
-> >
-> > Signed-off-by: Rajat Jain <rajatja@google.com>
-> > ---
-> > v2: Move the documentation to Documentation/ABI/
-> >
-> >  .../testing/sysfs-bus-pci-devices-aer_stats   | 103 ++++++++++++++++++
-> >  Documentation/PCI/pcieaer-howto.txt           |   5 +
-> >  2 files changed, 108 insertions(+)
-> >  create mode 100644
-> > Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> > b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> > new file mode 100644
-> > index 000000000000..f55c389290ac
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> > @@ -0,0 +1,103 @@
-> > +==========================
-> > +PCIe Device AER statistics
-> > +==========================
-> > +These attributes show up under all the devices that are AER capable.
-> > These
-> > +statistical counters indicate the errors "as seen/reported by the
-> > device".
-> > +Note that this may mean that if an end point is causing problems, the
-> > AER
-> > +counters may increment at its link partner (e.g. root port) because
-> > the
-> > +errors will be "seen" / reported by the link partner and not the the
-> > +problematic end point itself (which may report all counters as 0 as it
-> > never
-> > +saw any problems).
-> > +
-> > +Where:               /sys/bus/pci/devices/<dev>/aer_stats/dev_total_cor_errs
-> > +Date:                May 2018
-> > +Kernel Version: 4.17.0
-> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> > +Description: Total number of correctable errors seen and reported by
-> > this
-> > +             PCI device using ERR_COR.
-> > +
-> > +Where:               /sys/bus/pci/devices/<dev>/aer_stats/dev_total_fatal_errs
-> > +Date:                May 2018
-> > +Kernel Version: 4.17.0
-> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> > +Description: Total number of uncorrectable fatal errors seen and
-> > reported
-> > +             by this PCI device using ERR_FATAL.
-> > +
-> > +Where:               /sys/bus/pci/devices/<dev>/aer_stats/dev_total_nonfatal_errs
-> > +Date:                May 2018
-> > +Kernel Version: 4.17.0
-> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> > +Description: Total number of uncorrectable non-fatal errors seen and
-> > reported
-> > +             by this PCI device using ERR_NONFATAL.
-> > +
-> > +Where:               /sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_correctable
-> > +Date:                May 2018
-> > +Kernel Version: 4.17.0
-> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> > +Description: Breakdown of of correctable errors seen and reported by
-> > this
-> > +             PCI device using ERR_COR. A sample result looks like this:
-> > +-----------------------------------------
-> > +Receiver Error = 0x174
-> > +Bad TLP = 0x19
-> > +Bad DLLP = 0x3
-> > +RELAY_NUM Rollover = 0x0
-> > +Replay Timer Timeout = 0x1
-> > +Advisory Non-Fatal = 0x0
-> > +Corrected Internal Error = 0x0
-> > +Header Log Overflow = 0x0
-> > +-----------------------------------------
-> why hex display ? decimal is easy to read as these are counters.
-
-Have no particular preference. Since these can be potentially large
-numbers, just had a random thought that hex might make it more
-concise. I can change to decimal if that is preferable.
-
-> > +
-> > +Where:               /sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_uncorrectable
-> > +Date:                May 2018
-> > +Kernel Version: 4.17.0
-> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> > +Description: Breakdown of of correctable errors seen and reported by
-> > this
-> > +             PCI device using ERR_FATAL or ERR_NONFATAL. A sample result
-> > +             looks like this:
-> > +-----------------------------------------
-> > +Undefined = 0x0
-> > +Data Link Protocol = 0x0
-> > +Surprise Down Error = 0x0
-> > +Poisoned TLP = 0x0
-> > +Flow Control Protocol = 0x0
-> > +Completion Timeout = 0x0
-> > +Completer Abort = 0x0
-> > +Unexpected Completion = 0x0
-> > +Receiver Overflow = 0x0
-> > +Malformed TLP = 0x0
-> > +ECRC = 0x0
-> > +Unsupported Request = 0x0
-> > +ACS Violation = 0x0
-> > +Uncorrectable Internal Error = 0x0
-> > +MC Blocked TLP = 0x0
-> > +AtomicOp Egress Blocked = 0x0
-> > +TLP Prefix Blocked Error = 0x0
-> > +-----------------------------------------
-> > +
-> > +============================
-> > +PCIe Rootport AER statistics
-> > +============================
-> > +These attributes showup under only the rootports that are AER capable.
-> > These
-> > +indicate the number of error messages as "reported to" the rootport.
-> > Please note
-> > +that the rootports also transmit (internally) the ERR_* messages for
-> > errors seen
-> > +by the internal rootport PCI device, so these counters includes them
-> > and are
-> > +thus cumulative of all the error messages on the PCI hierarchy
-> > originating
-> > +at that root port.
+> ...
 >
-> what about switches and bridges ?
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -3059,11 +3059,10 @@ void exit_mmap(struct mm_struct *mm)
+>  	if (unlikely(mm_is_oom_victim(mm))) {
+>  		/*
+>  		 * Manually reap the mm to free as much memory as possible.
+> -		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
+> -		 * this mm from further consideration.  Taking mm->mmap_sem for
+> -		 * write after setting MMF_OOM_SKIP will guarantee that the oom
+> -		 * reaper will not run on this mm again after mmap_sem is
+> -		 * dropped.
+> +		 * Then, set MMF_UNSTABLE to avoid racing with the oom reaper.
+> +		 * Taking mm->mmap_sem for write after setting MMF_UNSTABLE will
+> +		 * guarantee that the oom reaper will not run on this mm again
+> +		 * after mmap_sem is dropped.
 
-What about them? AIUI, the switches forward the ERR_ messages from
-downstream devices to the rootport, like they do with standard
-messages. They can potentially generate their own ERR_ message and
-that would be reported no different than other end point devices.
-
-> Also Can you give some idea as e.g what is the difference between
-> dev_total_fatal_errs and rootport_total_fatal_errs  (assuming that both
-> are same pci_dev.
-
-For a pci_dev representing the rootport:
-
-dev_total_fatal_errors = how many times this PCI device *experienced*
-a fatal problem on its own (i.e. either link issues while talking to
-its link partner, or some internal errors).
-
-rootport_total_fatal_errors = how many times this rootport was
-*informed* about a problem (via ERR_* messages) in the PCI hierarchy
-that originates at it (can be any link further downstream). This
-includes the dev_total_fatal_errors also, because any errors detected
-by the rootport are also "informed" to itself via ERR_* messages. In
-reality, this is just the total number of ERR_FATAL messages received
-at the rootport. This sysfs attribute will only exist for root ports.
+Comment should explain *why* we don't want the reaper to run on this mm
+again.
 
 >
-> rootport_total_fatal_errs gives me an idea that how many times things
-> have been failed under this pci_dev ?
-
-Yes, as above.
-
-> which means num of downstream link problems. but I am still trying to
-> make sense as how it could be used,
-> since we dont have BDF information associated with the number of errors
-> anywhere (except these AER print messages)
+> ...
 >
-
-Agree. That is a limitation. The challenges being more record keeping,
-more complicated sysfs representation, and given that PCI devices may
-come and go, how do we know it is the same device before we collate
-their stats etc.
-
->
-> and dev_total_fatal_errs as you mentioned above that problematic EP,
-> then say root-port will report it and increment
-> dev_total_fatal_errs ++
-> does it also increment root-port_total_fatal_errs ++ in above scenario ?
-
-Yes, as above, it will also root-port_total_fatal_errs++ for the root
-port of that hierarchy.
-
-Thanks,
-
-Rajat
-
->
-> > +
-> > +Where:               /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_cor_errs
-> > +Date:                May 2018
-> > +Kernel Version: 4.17.0
-> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> > +Description: Total number of ERR_COR messages reported to rootport.
-> > +
-> > +Where:               /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_fatal_errs
-> > +Date:                May 2018
-> > +Kernel Version: 4.17.0
-> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> > +Description: Total number of ERR_FATAL messages reported to rootport.
-> > +
-> > +Where:
-> > /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_nonfatal_errs
-> > +Date:                May 2018
-> > +Kernel Version: 4.17.0
-> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
-> > +Description: Total number of ERR_NONFATAL messages reported to
-> > rootport.
-> > diff --git a/Documentation/PCI/pcieaer-howto.txt
-> > b/Documentation/PCI/pcieaer-howto.txt
-> > index acd0dddd6bb8..91b6e677cb8c 100644
-> > --- a/Documentation/PCI/pcieaer-howto.txt
-> > +++ b/Documentation/PCI/pcieaer-howto.txt
-> > @@ -73,6 +73,11 @@ In the example, 'Requester ID' means the ID of the
-> > device who sends
-> >  the error message to root port. Pls. refer to pci express specs for
-> >  other fields.
-> >
-> > +2.4 AER Statistics / Counters
-> > +
-> > +When PCIe AER errors are captured, the counters / statistics are also
-> > exposed
-> > +in form of sysfs attributes which are documented at
-> > +Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >
-> >  3. Developer Guide
