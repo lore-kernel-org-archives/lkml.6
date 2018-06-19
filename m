@@ -2,178 +2,138 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809B9C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE992C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BDC1208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:49:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="heDdPktu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BDC1208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6EF002083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:51:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF002083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965430AbeFSItN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:49:13 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34485 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756459AbeFSItK (ORCPT
+        id S937390AbeFSIvw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:51:52 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:36336 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S937236AbeFSIvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:49:10 -0400
-Received: by mail-pg0-f66.google.com with SMTP id q4-v6so8857776pgr.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 01:49:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y6B6ehP4WMNrEB1YI+wWEPK7JftTyPfiBMW+2r0RQMc=;
-        b=heDdPktulGJZn0wmGgClraZg/zWIjDYvIJLkJ7aSMa8NsSfKeYoO1LidIaJRfC/WOg
-         kdiQXfZ946Xok5Hz6Z6/3KSWn602IBWGGc5KFlLIIAX3+RbH4PHv0Y4mS06Zcmk063jb
-         qaPSXb+XmaXeTMC18CPedR27Yk1k+JG/gfRqQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y6B6ehP4WMNrEB1YI+wWEPK7JftTyPfiBMW+2r0RQMc=;
-        b=pdTKaFh/i8D03VCm080HHcenYp43UW4T7o31XmQbZv8QWbkHccjs0Yov1x57v3cgm6
-         7BhF07DldyHrkJqnkspuI4FFfa3V0hBBTI2D2L1ydWycdtpfD2kOY8AI9TqM22BlNPld
-         z4u7wu5nAst6FddCWJ7ic4KhOBfBMolEsw971n2wjLve4lS4yFm+DFrS7xxNTYMXVF/x
-         hAG8/uUTFCN7q7i+/8syJwdvRu0BKqMLRnmamMvz0Xwlf3MqF1a3+MWeWWa7vdTUSRWs
-         14rU1mJB9WG3+lWU+4nrfXErlEntAHLC2uY8+rCSB0BkJRC0qglHRIrge/SIKNMBxpUE
-         WaHA==
-X-Gm-Message-State: APt69E1Xo7QjKLKOdJs/DjMZi0XqJ3waPAAO2CRbbRGwJRKoYyFhJGAK
-        QEgQ62BnC+Vtzl1/RNlfoc398g==
-X-Google-Smtp-Source: ADUXVKKy1GmP+/kWaPVlxbj08HPQFPn7mAl3GHlLIUYa9/AwQck0EFcQYGk8iAlhU2Y3RP/Ze9mLeA==
-X-Received: by 2002:a63:79c5:: with SMTP id u188-v6mr13955826pgc.111.1529398149864;
-        Tue, 19 Jun 2018 01:49:09 -0700 (PDT)
-Received: from localhost ([122.171.103.96])
-        by smtp.gmail.com with ESMTPSA id p22-v6sm38374769pfj.166.2018.06.19.01.49.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 01:49:09 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 14:19:07 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v8] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180619084907.3ccawclk4dqzixrl@vireshk-i7>
-References: <1529387906-3838-1-git-send-email-daniel.lezcano@linaro.org>
- <20180619062227.uyan2t63fqwxj3eb@vireshk-i7>
- <bbc73374-194d-2c3f-fce7-e4b6de0a12bb@linaro.org>
+        Tue, 19 Jun 2018 04:51:42 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5J8nwsp021706;
+        Tue, 19 Jun 2018 03:51:34 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2jmxynmtt7-1;
+        Tue, 19 Jun 2018 03:51:34 -0500
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 669E8611C8B1;
+        Tue, 19 Jun 2018 03:52:20 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.301.0; Tue, 19 Jun 2018
+ 09:51:34 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w5J8pXqw013883; Tue,
+ 19 Jun 2018 09:51:33 +0100
+Date:   Tue, 19 Jun 2018 09:51:33 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Matthias Reichl <hias@horus.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <patches@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: Regression in 4.18-rc1 caused by regulator: arizona-ldo1: Look
+ up a descriptor and pass to the core
+Message-ID: <20180619085133.GF18740@imbe.wolfsonmicro.main>
+References: <20180618171410.z3bshzmwu7x5yylj@camel2.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <bbc73374-194d-2c3f-fce7-e4b6de0a12bb@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180618171410.z3bshzmwu7x5yylj@camel2.lan>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=943 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
+ definitions=main-1806190102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-06-18, 10:00, Daniel Lezcano wrote:
-> On 19/06/2018 08:22, Viresh Kumar wrote:
-> > On 19-06-18, 07:58, Daniel Lezcano wrote:
-> >> +++ b/drivers/powercap/idle_injection.c
-> >> @@ -0,0 +1,375 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Copyright 2018 Linaro Limited
-> >> + *
-> >> + * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >> + *
-> >> + * The idle injection framework proposes a way to force a cpu to enter
-> >> + * an idle state during a specified amount of time for a specified
-> >> + * period.
-> >> + *
-> >> + * It relies on the smpboot kthreads which handles, via its main loop,
-> >> + * the common code for hotplugging and [un]parking.
-> >> + *
-> >> + * At init time, all the kthreads are created.
-> >> + *
-> >> + * A cpumask is specified as parameter for the idle injection
-> >> + * registering function. The kthreads will be synchronized regarding
-> >> + * this cpumask.
-> >> + *
-> >> + * The idle + run duration is specified via the helpers and then the
-> >> + * idle injection can be started at this point.
-> >> + *
-> >> + * A kthread will call play_idle() with the specified idle duration
-> >> + * from above.
-> >> + *
-> >> + * A timer is set after waking up all the tasks, to the next idle
-> >> + * injection cycle.
-> >> + *
-> >> + * The task handling the timer interrupt will wakeup all the kthreads
-> >> + * belonging to the cpumask.
-> >> + *
-> >> + * Stopping the idle injection is synchonuous, when the function
-> > 
-> >                                      synchronous
-> > 
-> >> + * returns, there is the guarantee there is no more idle injection
-> >> + * kthread in activity.
-> >> + *
-> >> + * It is up to the user of this framework to provide a lock at an
-> >> + * upper level to prevent stupid things to happen, like starting while
-> >> + * we are unregistering.
-> >> + */
-> > 
-> >> +static void idle_injection_wakeup(struct idle_injection_device *ii_dev)
-> >> +{
-> >> +	struct idle_injection_thread *iit;
-> >> +	unsigned int cpu;
-> >> +
-> >> +	for_each_cpu_and(cpu, to_cpumask(ii_dev->cpumask), cpu_online_mask) {
-> >> +		iit = per_cpu_ptr(&idle_injection_thread, cpu);
-> >> +		iit->should_run = 1;
-> >> +		wake_up_process(iit->tsk);
-> >> +	}
-> >> +}
-> > 
-> > Thread A                                        Thread B
-> > 
-> >                                                 CPU3 hotplug out
-> >                                                 -> idle_injection_park()
-> >                                                   iit(of-CPU3)->should_run = 0;
-> > 
-> > idle_injection_wakeup()
-> >  for_each_cpu_and(online)..
-> >    CPU3-selected
-> >                                                 clear CPU3 from cpu-online mask.
-> > 
-> > 
-> >    iit(of-CPU3)->should_run = 1;
-> >    wake_up_process()
-> > 
-> > With the above sequence of events, is it possible that the iit->should_run
-> > variable is set to 1 while the CPU is offlined ? And so the crash we discussed
-> > in the previous version may still exist ? Sorry I am not able to take my mind
-> > away from thinking about these stupid races :(
+On Mon, Jun 18, 2018 at 07:14:10PM +0200, Matthias Reichl wrote:
+> Commit e1739e86f0cb9c48e8745a610e6981a4e24cadad breaks reading
+> the wlf,ldoena property from device tree. This causes ldo1 to
+> stay off and thus arizona device detection to fail:
 > 
-> If I refer to previous Peter's comment about a similar race, I think it
-> is possible.
+> [    4.495958] of_get_named_gpiod_flags: parsed 'wlf,reset' property of node '/s
+> oc/spi@7e204000/wm5102@1[0]' - status (0)
+> [    4.509756] arizona-ldo1 arizona-ldo1: GPIO lookup for consumer wlf,ldoena
+> [    4.511339] arizona-ldo1 arizona-ldo1: using lookup tables for GPIO lookup
+> [    4.511351] arizona-ldo1 arizona-ldo1: No GPIO consumer wlf,ldoena found
+> [    4.511413] LDO1: supplied by RPi-Cirrus 1v8
+> [    4.549164] arizona spi0.1: Unknown device ID: 0
 > 
-> I guess setting the should_run flag to zero in the unpark() must fix the
-> issue also.
+> With this commit reverted the ldoena GPIO is properly found and
+> asserted high and the arizona device type is read successfully:
+> 
+> [    4.630445] of_get_named_gpiod_flags: parsed 'wlf,reset' property of node '/s
+> oc/spi@7e204000/wm5102@1[0]' - status (0)
+> [    4.647622] of_get_named_gpiod_flags: parsed 'wlf,ldoena' property of node '/soc/spi@7e204000/wm5102@1[0]' - status (0)
+> [    4.666100] arizona spi0.1: WM5102 revision C
+> 
+> I've tested this on a Raspberry Pi 3 with upstream 4.18-rc1,
+> the Cirrus Logic Audio Card from Element 14 (using a WM5102
+> connected via SPI) and the downstream card driver added as
+> a module.
+> 
+> Both wlf,reset and wlf,ldoena properties are defined in
+> the wm5102 devicetree node:
+> 
+> wm5102@1{
+> 	compatible = "wlf,wm5102";
+> 	reg = <1>;
+> 	...
+> 	wlf,reset = <&gpio 17 0>;
+> 	wlf,ldoena = <&gpio 22 0>;
+> 	...
+> };
+> 
+> If I understand the code correctly the cuplrit seems to be that
+> with this patch the gpio is looked up from the arizona-ldo1 dev,
+> which has a NULL of_node:
+> 
+> config.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "wlf,ldoena", ...
+> 
+> The old version did an of lookup in the parent (arizona) dev, which
+> contains the of_node with wlf,ldoena:
+> 
+> arizona_ldo1_common_init:
+> 	struct device *parent_dev = pdev->dev.parent;
+> 	struct regulator_config config = { };
+> 	...
+> 	config.dev = parent_dev;
+> 	...
+> 	arizona_ldo1_of_get_pdata(pdata, config, ...
+> 
+> arizona_ldo1_of_get_pdata:
+> 	struct device_node *np = config->dev->of_node;
+> 	...
+> 	pdata->ldoena = of_get_named_gpio(np, "wlf,ldoena", 0);
+> 
 
-Right. But since you are already taking the hotplug lock in stop-idle-injection,
-you can iterate over all CPUs of a mask instead of the online ones. That would
-be one callback less to run at every unpark (though there wouldn't be so many of
-them I believe).
+Urgh.. sorry about that. I did test that patch but it seems I
+messed it up. On our boards the LDOENA defaults to on so I missed
+that it wasn't getting configured anymore.
 
--- 
-viresh
+I think we just need to not use the devm version of the
+get_optional and pass the correct device. I will get a patch
+ready this morning and ping it through for testing.
+
+Thanks,
+Charles
