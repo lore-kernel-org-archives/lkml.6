@@ -2,110 +2,83 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AA7C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36755C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B73320874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E36722083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:08:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5Lheezb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B73320874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O/6BrMj9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E36722083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756405AbeFSIIV (ORCPT
+        id S1756498AbeFSIIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:08:21 -0400
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:45783 "EHLO
-        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756342AbeFSIIR (ORCPT
+        Tue, 19 Jun 2018 04:08:46 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59902 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756448AbeFSIIn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:08:17 -0400
-Received: by mail-pf0-f180.google.com with SMTP id a22-v6so9527256pfo.12;
-        Tue, 19 Jun 2018 01:08:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i0bIMyqo9J/Ty9YANdAtmQsM5kC0e+H571I4dWZ6GYA=;
-        b=M5LheezbnEDPQFGrQLv8IRhIMJHiGU/kZHmU3pqUuOO4gFGONWmtubwcbvOFijWC/9
-         d7qcUSucZedN/gAUpNQztMdHllAL4G9cxGYH8YgsWznEtHzcOyLeBB8tP9v8J+OKmU9Z
-         oMQgnZcpxbey+OZGEVZE8yV+VjqJo46WEsbq5Ji///oie+ywDwbBqp26qVVKWOg4srsl
-         b0/CTtMS1LIntUiMNb9iOf9skB0I7zmd+ixnBPFgH+O4A0J3xpALrHuBmRxmGma6KRs1
-         +wucstc2iYl4FmOBoTItSFRbjDrkQ/B2L/ek8j8aGWg3huw8KauOYmxwxgvJyYGJg8nN
-         WBLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i0bIMyqo9J/Ty9YANdAtmQsM5kC0e+H571I4dWZ6GYA=;
-        b=I+zD/wbcldd3XCeD3qWBZZnfVnzT6i8Ths8GYnYBdE1RdgJmvc8qbMWu2OS80FH4iW
-         zaT8C4NkFxn9pbNGrbcJRosmDH1UkvVHh2J5z9T0ofHdnoMFbh2jV4vaZw+0KiGYKRlA
-         scmSlG/+UAy4G4PhKBulBU8ZUl7dXA5X2art1AznJb5NbJjd4Os2EitNGn2IWbsLppyv
-         PL/YClV5nucbaWst+Jcqrb2Knf+lA4OR+Up7nP7Xc8xCE+HCpmnEInNL1B4u9OEPy9LS
-         IFhbPb2w1/uW1jwnS7s9z1XnYwgpdZtpcLeK0ciydpk99B/glvKfr786utm6HL4mSFVU
-         rNIQ==
-X-Gm-Message-State: APt69E04j13YQORjxhoGb4udeYnIJCFKZBY5p2wpnJiy2PzQMg8exVKc
-        PlCEDUsyijtUzrseuxe3kyY=
-X-Google-Smtp-Source: ADUXVKJf4cAk2fkMZXd9U0X1o4Vpz4TxmJnN4OOyINPZSwXTzAD+1chXnyL9J8Zik8e7y/x01BMuSw==
-X-Received: by 2002:a62:9513:: with SMTP id p19-v6mr16998117pfd.239.1529395696495;
-        Tue, 19 Jun 2018 01:08:16 -0700 (PDT)
-Received: from localhost ([175.223.26.106])
-        by smtp.gmail.com with ESMTPSA id j3-v6sm20890357pgp.47.2018.06.19.01.08.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 01:08:15 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 17:08:12 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
+        Tue, 19 Jun 2018 04:08:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yzuCCPw5tAkt3dW+ZM3YxgiO0gREicFwTILWVl3cMtg=; b=O/6BrMj9C15aeI0XeFD4LAe65
+        qkoYb1MN2OPtNVc6xSFA7EcVH3tLIWf9u4dvQdVMD/f/JHaC3G6zVBFgn8WMQoE2GqoZaqB/UfBrt
+        F1DUGGksABWRIT4uhsb5a3Tv+mxdhQttUx39ea4ONUUpCte+7hVDl2O5k6BTqOEKR5yr8RrfrGFF/
+        v/tVVuBXIv2PoDHPZqunGv0aJmYL3CGYx/3bYeFS8rxCvlS/CDtASoBORQCVkPnEzHPS4E/EVI1+W
+        K9UMAW9X+HeoZdsR6aJpL3w0JZDgtKygFsQaQp1NywspmLaCz1EfFGvKwwB6J5Jkw40M2WsQDSvkg
+        k7ESfZmZg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVBgl-0005aT-LF; Tue, 19 Jun 2018 08:08:31 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 15D8D2029FA0B; Tue, 19 Jun 2018 10:08:30 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 10:08:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: possible deadlock in console_unlock
-Message-ID: <20180619080812.GC405@jagdpanzerIV>
-References: <00000000000087008b056df8fbb3@google.com>
- <20180607051019.GA10406@jagdpanzerIV>
- <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
- <20180607140100.GA398@tigerII.localdomain>
- <20180608081855.ctqakvwmg27aydby@pathway.suse.cz>
- <20180615083804.GB8964@jagdpanzerIV>
- <20180619080412.zkdanx6bmq5qm3dz@pathway.suse.cz>
+        Jiri Slaby <jslaby@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
+ locks
+Message-ID: <20180619080830.GD2476@hirez.programming.kicks-ass.net>
+References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
+ <20180618143818.50b2f2f9@alans-desktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619080412.zkdanx6bmq5qm3dz@pathway.suse.cz>
+In-Reply-To: <20180618143818.50b2f2f9@alans-desktop>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/19/18 10:04), Petr Mladek wrote:
-> > > 
-> > > We could allow nesting. It is just a matter of how many bits we
-> > > reserve for it in printk_context variable.
-> > [..]
-> > > In each case, I would like to keep the printk_safe context usage
-> > > at minimum. It has its own problems caused by limited per-cpu buffers
-> > > and the need to flush them.
-> > 
-> > May be. Every new printk_safe flavour comes with increasing memory
-> > usage.
-> 
-> This must be a misunderstanding. My intention was to introduce
-> printk_deferred() context. Where any printk() called in this
-> context would behave like printk_deferred(). It does not need
-> any extra buffers.
+On Mon, Jun 18, 2018 at 02:38:18PM +0100, Alan Cox wrote:
+> Given printk nowdays is already somewhat unreliable with all the perf
+> related changes,
 
-Ah, got it. Yes, this can work.
+printk is a steaming pile of @#$#@, unreliable doesn't even begin to
+cover it.
 
-	-ss
+> and we have other good debug tools
+
+What other good debug tools do you have? The only thing I have that
+actually works is earlyser/8250_early -- and I route everything printk
+into that.
