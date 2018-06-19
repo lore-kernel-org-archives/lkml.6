@@ -2,118 +2,150 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B649C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB967C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAFB320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:27:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gpiccoli-net.20150623.gappssmtp.com header.i=@gpiccoli-net.20150623.gappssmtp.com header.b="rM6/4SJC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAFB320693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gpiccoli.net
+	by mail.kernel.org (Postfix) with ESMTP id A4F9120020
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:31:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F9120020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966938AbeFSQ1M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:27:12 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35368 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966480AbeFSQ1K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:27:10 -0400
-Received: by mail-io0-f196.google.com with SMTP id u4-v6so773396iof.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gpiccoli-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=msU6brCp7EO9A40jdb+amT8U0bdsUZ4XNYEn+4YdzYE=;
-        b=rM6/4SJC+A92oqDE/bQQedUz/AhROF0pgWTVRzrhqdWaiX5Tl9B5H/sfbyqQy/JLbt
-         d21HyKHQBFSsXZEl/yv8btkknwUDaEmXG9DOEzCB84R0tbbcOoFwymrzhxq+6fwNY/Ml
-         PRxxgUl2o4IKhqiE6mGXgkiGWXss4Rbyq3UgAz6+iBSWV7mzk69FvbP9JRhjufzvVi9+
-         KZ+1c36uNW08+j/imJn9/KOJpmszoxBqchA89Q471ugNYca6C8yDwRTfe1IHuU1ROCHo
-         Jp1dp6VoDCuFdA9JcS84e2IBcKFxPR9RQSJJ1FNyAT3xvrH+t5x3wxKzhiokDpp3RL0G
-         /Pwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=msU6brCp7EO9A40jdb+amT8U0bdsUZ4XNYEn+4YdzYE=;
-        b=sBCaC/ekATvHGXv9lSiQe/HBzg3hFfboyrL3GFHZ9cbgip94Pz34IJyvxRNqoXDH+D
-         ExLofHx6JO76s5hncfgIECNUJ2zILypv9VjNz4udKuD55/f+VwRevUwEn9Jta/J0k2ly
-         IkWGVBhyW7gt+E1AXeoKj+yeDh8IHqaSAsJk64YvhL2xRf6Z7RjK/wo12cFYY25yoCdp
-         HTxteKMGmcoBkal2TA92NV9L8myKBf8GCN+qr5OJhQgSRZgGNHPYdF9kcoruR+NtMwNr
-         xsXOJG+3DLyhpi21O16kXNyLGhz+1y16aB24Dy2nzUCqnVlwDSRUx+pYjTB+A2qHp4KP
-         kcag==
-X-Gm-Message-State: APt69E1I+ph9TTdyXJT9ublkiw7Eoex4zUh2PixOHluoqpsImCmN/4oL
-        wydk9WJW+B96hsODGP0drEk5MhVEXkhjDtlQBOI0Mw==
-X-Google-Smtp-Source: ADUXVKIjarAGFnd5rT6f2rliCCTSQ9UCRBwa97sW+sP6G1sfAEQ8NAPE0GM4ktFMQfxHyAuIHRw9Su5NKPBfXfibehU=
-X-Received: by 2002:a6b:6806:: with SMTP id d6-v6mr13798592ioc.293.1529425630340;
- Tue, 19 Jun 2018 09:27:10 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac0:9909:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 09:26:29
- -0700 (PDT)
-X-Originating-IP: [189.0.91.59]
-In-Reply-To: <c56f43f5-7902-f7c8-20e1-955ad064c4d0@cisco.com>
-References: <20180618165706.42679-1-danielwa@cisco.com> <CALJn8nPbTy3Ne2a7L71c2YZ06Ccr2j0zs6TdptfRc7O-N9u=Yg@mail.gmail.com>
- <c56f43f5-7902-f7c8-20e1-955ad064c4d0@cisco.com>
-From:   "Guilherme G. Piccoli" <guilherme@gpiccoli.net>
-Date:   Tue, 19 Jun 2018 13:26:29 -0300
-Message-ID: <CALJn8nM+S7STs+_MTje1qVCpa6MvnROS2+b5_GDz2wYs8etapA@mail.gmail.com>
-Subject: Re: [PATCH] arch: powerpc: pci-common: fix wrong return value check
- on phd_id
-To:     Daniel Walker <danielwa@cisco.com>, mpe@ellerman.id.au,
-        benh@kernel.crashing.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        xe-kernel@external.cisco.com, linux-kernel@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Mauro Rodrigues <maurosr@linux.vnet.ibm.com>,
-        linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S966865AbeFSQbL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:31:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34080 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965953AbeFSQbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:31:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B5F61AF69;
+        Tue, 19 Jun 2018 16:31:09 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 5245BA1081; Tue, 19 Jun 2018 18:31:09 +0200 (CEST)
+In-Reply-To: <20180619162411.B2B7AA1081@unicorn.suse.cz>
+References: <20180619162411.B2B7AA1081@unicorn.suse.cz>
+From:   Michal Kubecek <mkubecek@suse.cz>
+Date:   Tue, 19 Jun 2018 18:28:40 +0200
+Subject: [PATCH v2] proc: add missing '\0' back to /proc/$pid/cmdline
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Message-Id: <20180619163109.5245BA1081@unicorn.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> [...]
-> What your doing is changing the phb_id to some transformation of "reg" for
-> all platforms except which have "ibm,opal-phbid". This is what we observe.
-> This is a radical altering of the prior phb_id selection before your patch.
->
-> The question is, was that your intent ? We are expecting these numbers
-> aren't getting altered in this way, this is why we have the patch. Your
-> patch description appears to suggest you want this type of selection for
-> "... pSeries and PowerNV cases)." , so I am assuming you did this by
-> mistake. Also I don't see a reason to make this change for all platforms.
+Recent rewrite introduced a regression, /proc/$pid/cmdline is missing the
+trailing null character:
 
-It was the intent - whenever we have device-tree information, the idea is to
-use it to have more consistent numbering across reboots and PCI hotplugs.
-The reason to change that originally is hotplugging a PCI device added
-the device with a different PHB/Domain value, and network predictable naming
-messed-up interfaces' names, leading to a machine without networking.
+mike@lion:/tmp> cat /proc/self/cmdline | od -t c
+0000000   c   a   t  \0   /   p   r   o   c   /   s   e   l   f   /   c
+0000020   m   d   l   i   n   e
+0000026
 
+This is because strnlen() is used to search for the null character but it
+returns the length without it so that we need to copy one byte more (but
+only if we actually found a null character). And once we pass the null
+character to userspace we need to make sure next read returns 0 (EOF).
 
-> [...]
->
-> We have already done this, that is how we determined your patch was changing
-> the domain values. There isn't much to tell w.r.t this issue on our side, we
-> are expecting the domain numbers are set a specific way and they aren't
-> getting set that way. The drivers which are looking for PCI devices are not
-> in kernel space, and the PCI domain values are getting taken from userspace.
->
+This is another problem, even if rather theoretical one: if userspace seeks
+to arg_end or past it, we only start checking for null character from that
+position so that we may return random segment of environment rather then
+EOF.
 
-Oh okay, I imagined it was some crazy userspace-based PCI domain scheme
-that led you to report the issue - confirmed heheh
-So, you expect the old behavior right? Incremental PHB numbering.
-I think we could have a kernel config option to allow that, this way
-you could rebuild your kernel with that option and keep the old behavior.
+Resolve both by always starting no later than at arg_end-1 (so that we
+always catch the right null character) but don't copy data until we reach
+the requested start position.
 
-This idea needs to be validated by the maintainers, or perhaps they could
-propose another way to keep the old behavior to interested parties.
+Fixes: 5ab827189965 ("fs/proc: simplify and clarify get_mm_cmdline() function")
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ fs/proc/base.c | 35 ++++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
-[Looping linux-pci too - original thread at:
-https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-June/174760.html]
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b6572944efc3..dc4d7d6818f9 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -209,7 +209,8 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 			      size_t count, loff_t *ppos)
+ {
+ 	unsigned long arg_start, arg_end, env_start, env_end;
+-	unsigned long pos, len;
++	unsigned long req_pos, pos, len;
++	bool end_found = false;
+ 	char *page;
+ 
+ 	/* Check if process spawned far enough to have cmdline. */
+@@ -236,25 +237,27 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 		env_start = env_end = arg_end;
+ 
+ 	/* We're not going to care if "*ppos" has high bits set */
+-	pos = arg_start + *ppos;
++	req_pos = arg_start + *ppos;
+ 
+ 	/* .. but we do check the result is in the proper range */
+-	if (pos < arg_start || pos >= env_end)
++	if (req_pos < arg_start || req_pos >= env_end)
+ 		return 0;
+ 
+ 	/* .. and we never go past env_end */
+-	if (env_end - pos < count)
+-		count = env_end - pos;
++	if (env_end - req_pos < count)
++		count = env_end - req_pos;
+ 
++	pos = min_t(unsigned long, req_pos, arg_end - 1);
+ 	page = (char *)__get_free_page(GFP_KERNEL);
+ 	if (!page)
+ 		return -ENOMEM;
+ 
+ 	len = 0;
+-	while (count) {
++	while (count && !end_found) {
+ 		int got;
+-		size_t size = min_t(size_t, PAGE_SIZE, count);
++		size_t size = count + (pos < req_pos ? req_pos - pos : 0);
+ 
++		size = min_t(size_t, PAGE_SIZE, size);
+ 		got = access_remote_vm(mm, pos, page, size, FOLL_ANON);
+ 		if (got <= 0)
+ 			break;
+@@ -276,12 +279,26 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 				n = arg_end - pos - 1;
+ 
+ 			/* Cut off at first NUL after 'n' */
+-			got = n + strnlen(page+n, got-n);
++			n += strnlen(page + n, got - n);
++			got = min_t(int, got, n + 1);
++			end_found = !page[n];
+ 			if (!got)
+ 				break;
+ 		}
+ 
+-		got -= copy_to_user(buf, page, got);
++		if (pos + got <= req_pos) {
++			/* got > 0 here so that pos always advances */
++			pos += got;
++			continue;
++		}
++
++		if (pos < req_pos) {
++			got -= (req_pos - pos);
++			got -= copy_to_user(buf, page + req_pos - pos, got);
++			pos = req_pos;
++		} else {
++			got -= copy_to_user(buf, page, got);
++		}
+ 		if (unlikely(!got)) {
+ 			if (!len)
+ 				len = -EFAULT;
+-- 
+2.17.1
+
