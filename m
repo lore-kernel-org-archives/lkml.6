@@ -2,115 +2,96 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F5AC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE13C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487B920652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:05:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3ABuSaJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487B920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 96ABA20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:07:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96ABA20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757164AbeFSOFl (ORCPT
+        id S1756648AbeFSOHn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:05:41 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36043 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756005AbeFSOFk (ORCPT
+        Tue, 19 Jun 2018 10:07:43 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:40140 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750816AbeFSOHm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:05:40 -0400
-Received: by mail-lf0-f68.google.com with SMTP id n24-v6so14602070lfh.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 07:05:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=nfUSw2T0Q/YREyM/7BjrN1y+5vA0/7W/ug0PXW/o9nw=;
-        b=M3ABuSaJE8mAL3KSkS3FTP24A+b5KX5A84teaCzpCP4nmCCC59iBFDPzet2edZHtGR
-         JeoAngGMsIUSpy1tzstAn+PVagBvdX3s9cB2xzE10b7DrVvzesfJl3HxuuxBvPBMHEQe
-         rHDayq3PdiMI6HfAaM8yGT+JFJ9u7W+BXVh3ilI4NC3lMuV8QW6bdxmF88UQmvt9zPqs
-         g+QO93Zd9iXLIgryLVzlwUCXnAmGDJOcv+dPo+BhQBZbs6Hatn3OLVfCKmK5SJwpDUhY
-         9z+3smv8XeaZlqtOKSCMtf8LmJtKyRk+fu8DjEoh+pYfHJ8w8uNvG7CA7/gMxQF2oz87
-         nDSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=nfUSw2T0Q/YREyM/7BjrN1y+5vA0/7W/ug0PXW/o9nw=;
-        b=HVKD2xtNbRXGSeol1vopQMF0d4eULYgzziVVSY8E49JMzC1iwYf/8ikYXWylCUIAbH
-         nkpwZ4J+I3GFx2gMCnK2fyi9oi/O6YBk8F2IpvjLUgMCT0AwELALqwEsVsZRoBdphLGz
-         qFkY4LvoQ3bwXAGrD/FuwvbDKqbd5J/H+fPz93kypMla1+JhPy1031ihG9SoHhj8Y58h
-         8B8C4ubYjdqvKBPGALYhyFmjaQLptEEesuVx3hHu/WGRWZeVOem7HPWCehB5+dVRsNIZ
-         XmUkx19f7V9w5PRl0hz/JiKFDzgx21A1n7zc/az6BGCPw4A0ziqsvtfjZBmWKOd5fDjZ
-         XmHQ==
-X-Gm-Message-State: APt69E0+3Ww8C6xMJGVZwTL/eK/bQrJdv5omTuxPlwD5B5bsjDEyV4am
-        Uk3ccC9Sc3Ag7NgmkkMd7p5zL/vTpT3a4zwwem4=
-X-Google-Smtp-Source: ADUXVKJp3fSqYy/zGs4ruslz265WOc9K4rkqnXNdVZN0WiK6H9hEJI+0x6PQ3DX4LHYO0cWdmpTdUfW1m41Xl8YqiBo=
-X-Received: by 2002:a2e:9ac4:: with SMTP id p4-v6mr11251179ljj.60.1529417138830;
- Tue, 19 Jun 2018 07:05:38 -0700 (PDT)
+        Tue, 19 Jun 2018 10:07:42 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5JE3glm003384;
+        Tue, 19 Jun 2018 09:07:33 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2jmyy2d4c7-1;
+        Tue, 19 Jun 2018 09:07:33 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id AA134611C8AA;
+        Tue, 19 Jun 2018 09:07:32 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.301.0; Tue, 19 Jun 2018
+ 15:07:32 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w5JE7UtB004250; Tue,
+ 19 Jun 2018 15:07:31 +0100
+Date:   Tue, 19 Jun 2018 15:07:30 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Matthias Reichl <hias@horus.com>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <linus.walleij@linaro.org>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] regulator: arizona-ldo1: Use correct device to get
+ enable GPIO
+Message-ID: <20180619140730.GG18740@imbe.wolfsonmicro.main>
+References: <20180619093245.1261-1-ckeepax@opensource.cirrus.com>
+ <20180619122432.6rgh4zjqrfk45ofs@camel2.lan>
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 07:05:38
- -0700 (PDT)
-In-Reply-To: <20180619133741.GA9537@jax.urgonet>
-References: <20180618142511.3598193-1-arnd@arndb.de> <20180619133741.GA9537@jax.urgonet>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 19 Jun 2018 16:05:38 +0200
-X-Google-Sender-Auth: MvAODwR8sGZw9UzBZYQkrKdx1iU
-Message-ID: <CAK8P3a2Hydhi1Hu3_Dm-arMGOT-Xz1yShwwcRKav44WjGmG4wQ@mail.gmail.com>
-Subject: Re: [PATCH] tee: replace getnstimeofday64() with ktime_get_real_ts64()
-To:     Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Jerome Forissier <jerome.forissier@linaro.org>,
-        Etienne Carriere <etienne.carriere@linaro.org>,
-        Joakim Bech <joakim.bech@linaro.org>,
-        Volodymyr Babchuk <vlad.babchuk@gmail.com>,
-        tiger-yu99 <tigeryu99@hotmail.com>,
-        David Wang <david.wang@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180619122432.6rgh4zjqrfk45ofs@camel2.lan>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
+ definitions=main-1806190159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 3:37 PM, Jens Wiklander
-<jens.wiklander@linaro.org> wrote:
-> On Mon, Jun 18, 2018 at 04:24:56PM +0200, Arnd Bergmann wrote:
->> The two do the same thing, but we want to have a consistent
->> naming in the kernel.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>  drivers/tee/optee/rpc.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
->> index 41aea12e2bcc..b45c73dd37a5 100644
->> --- a/drivers/tee/optee/rpc.c
->> +++ b/drivers/tee/optee/rpc.c
->> @@ -48,7 +48,7 @@ static void handle_rpc_func_cmd_get_time(struct optee_msg_arg *arg)
->>                       OPTEE_MSG_ATTR_TYPE_VALUE_OUTPUT)
->>               goto bad;
->>
->> -     getnstimeofday64(&ts);
->> +     ktime_get_real_ts64(&ts);
->>       arg->params[0].u.value.a = ts.tv_sec;
->>       arg->params[0].u.value.b = ts.tv_nsec;
->>
->> --
->> 2.9.0
->>
->
-> Looks good.
->
-> Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
+On Tue, Jun 19, 2018 at 02:24:33PM +0200, Matthias Reichl wrote:
+> On Tue, Jun 19, 2018 at 10:32:45AM +0100, Charles Keepax wrote:
+> > +	config.ena_gpiod = gpiod_get_optional(parent_dev, "wlf,ldoena",
+> > +					      GPIOD_OUT_HIGH);
+> 
+> The WM5102 datasheet lists LDOENA as an active-high input,
+> so GPIOD_OUT_HIGH causes arizona-ldo1 to start up enabled.
+> Not sure about the other devices from the Arizona family.
+> 
 
-Thanks for the review. Can you pick it up in your tree?
+Yeah all active high.
 
-      Arnd
+> I did some tests monitoring ldoena and reset gpios with my scope:
+> 
+> With commit e1739e86f0cb reverted ldoena changes from low to high
+> about 1.6ms before reset changes from low to high.
+> 
+> With your patch ldoena goes high about 11.5ms before reset goes high.
+> 
+> With your patch and GPIOD_OUT_HIGH changed to GPIOD_OUT_LOW
+> the delay is again about 1.6ms.
+> 
+> So I guess it'd be better to adjust the comment and change
+> to gpiod flag to GPIOD_OUT_LOW.
+
+Yeah I am inclined to agree would be better to keep the behaviour
+the same as it has always been given these parts are fairly
+mature I will respin the patch to add that change too.
+
+Thanks,
+Charles
