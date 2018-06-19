@@ -3,86 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E71C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80198C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 266E520874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:02:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 266E520874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 33CBF20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:07:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33CBF20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757194AbeFSKCe (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:02:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:46338 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757174AbeFSKCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:02:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E5DB15AB;
-        Tue, 19 Jun 2018 03:02:30 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A20F3F25D;
-        Tue, 19 Jun 2018 03:02:26 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 11:02:24 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     Pavan Kondeti <pkondeti@codeaurora.org>, peterz@infradead.org,
-        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 10/10] arch_topology: Start Energy Aware Scheduling
-Message-ID: <20180619100224.GT17720@e108498-lin.cambridge.arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-11-quentin.perret@arm.com>
- <20180619091841.GD9208@codeaurora.org>
- <20180619094002.GR17720@e108498-lin.cambridge.arm.com>
- <20180619094714.GA13617@localhost.localdomain>
+        id S965681AbeFSKH0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 06:07:26 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1812 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755946AbeFSKHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:07:25 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b28d5de0000>; Tue, 19 Jun 2018 03:07:27 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 19 Jun 2018 03:07:24 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 19 Jun 2018 03:07:24 -0700
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 19 Jun
+ 2018 10:07:21 +0000
+Subject: Re: [PATCH] usb: xhci: tegra: fix runtime PM error handling
+To:     Stefan Agner <stefan@agner.ch>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Mathias Nyman <mathias.nyman@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180617111258.13447-1-stefan@agner.ch>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <738c34e8-e6cc-9947-8d4f-3867b57a0e12@nvidia.com>
+Date:   Tue, 19 Jun 2018 11:07:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619094714.GA13617@localhost.localdomain>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180617111258.13447-1-stefan@agner.ch>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 19 Jun 2018 at 11:47:14 (+0200), Juri Lelli wrote:
-> On 19/06/18 10:40, Quentin Perret wrote:
-> > Hi Pavan,
-> > 
-> > On Tuesday 19 Jun 2018 at 14:48:41 (+0530), Pavan Kondeti wrote:
-> 
-> [...]
-> 
-> > > There seems to be a sysfs interface exposed by this driver to change cpu_scale.
-> > > Should we worry about it? I don't know what is the usecase for changing the
-> > > cpu_scale from user space.
-> > 
-> > This is something I've been wondering as well. TBH, I'm not sure what to
-> > do in this case. And I'm not sure to know what is the use-case either.
-> > Debugging purpose I assume ?
-> > 
-> > Juri, did you have a specific use-case for this feature when the
-> > arch_topology driver was first introduced ? Or was it just to align
-> > with the existing arm/arm64 code ?
-> 
-> It was requested (IIRC) because DT might have bogus values and not be
-> easily modifiable. So, this is another way to get things right for your
-> platform at runtime.
 
-Right, but that also allows you to set different capacities to CPUs
-inside the same freq domain, which isn't supported by the EM framework,
-at least for now. So I would prefer to assume that your values in DT must
-to be correct to use EAS, and leave the code as-is for now.
+On 17/06/18 12:12, Stefan Agner wrote:
+> The address-of operator will always evaluate to true. However,
+> power should be explicitly disabled if no power domain is used.
+> 
+> Remove the address-of operator.
+> 
+> Fixes: 58c38116c6cc ("usb: xhci: tegra: Add support for managing powergates")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/usb/host/xhci-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> index a8c1d073cba0..33daac4136e8 100644
+> --- a/drivers/usb/host/xhci-tegra.c
+> +++ b/drivers/usb/host/xhci-tegra.c
+> @@ -1223,10 +1223,10 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>  	pm_runtime_disable(&pdev->dev);
+>  	usb_put_hcd(tegra->hcd);
+>  disable_xusbc:
+> -	if (!&pdev->dev.pm_domain)
+> +	if (!pdev->dev.pm_domain)
+>  		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+>  disable_xusba:
+> -	if (!&pdev->dev.pm_domain)
+> +	if (!pdev->dev.pm_domain)
+>  		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+>  put_padctl:
+>  	tegra_xusb_padctl_put(tegra->padctl);
+> 
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks for fixing!
+Jon
+
+-- 
+nvpublic
