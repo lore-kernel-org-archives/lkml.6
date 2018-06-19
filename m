@@ -2,212 +2,243 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAA3C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B107AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D4C20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FB9F2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:50:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n2QCwGW4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D4C20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EbWHnDJS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FB9F2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030378AbeFSRtt (ORCPT
+        id S1030406AbeFSRuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:49:49 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41144 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966706AbeFSRtr (ORCPT
+        Tue, 19 Jun 2018 13:50:35 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36465 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966706AbeFSRud (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:49:47 -0400
-Received: by mail-pg0-f67.google.com with SMTP id l65-v6so199816pgl.8
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:49:47 -0700 (PDT)
+        Tue, 19 Jun 2018 13:50:33 -0400
+Received: by mail-pg0-f66.google.com with SMTP id m5-v6so209622pgd.3;
+        Tue, 19 Jun 2018 10:50:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=cNZhovn4LHmrOHz7BZE1vj01ZM4bN3C2mny8LpDzaOs=;
-        b=n2QCwGW40hfZ+aaKJSNQMh1+zOAWJDEgWVbY1moEb5qvzDcB5TVzGEKFwz1lWkY9uw
-         icAwyggfIIl3A/qme58cljJ0HgBtX+eURwVY2mXJpqS9qxleC7m/W+MZW9YMCaWvW9u5
-         +KEx1ulbT7ND+e9ZKg1oK+o2yjcdhV7mKxUzDjA7ic4cr6lkoC4wC18RRqUWSrkeJbXx
-         hPGckno6WGosWCTEcjme47P7yBGucKLi34jgwnmt3YgAFJBiodIYHeqjLVTUjppDI5Td
-         5ozfNzXpDkKclYU+RvNCIwEpTs3igaf2cffScds8PFRh2EV7tjdFvW9Y4nYOORMAms0n
-         3GEQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OD7U1q+3RSQ4vSuEQndgynz1Jr6R5Zs9e+0GU4A3gbk=;
+        b=EbWHnDJSIAKFsEoUUlfVb1KIcUmFpiAsVSLpsfdiUg0mMQL6W9lKVezoC3ORKRbIsK
+         rlxe3vUlvKwOZ+J/YFjSarK3n+6CofnPRgwn5ZQzT7XZipyZm8XNWVSzaONGgJT+WXH6
+         OC0YdoAcWF6pjC0XzitE5GFcFYA9ciay7ymsWUWpMPSxu0aNBbEse7OV/xznBknYjnhE
+         fJ4qC/MxIhv2A2KaSfkDnw6mcBkiWb5fmUEMUQg4luhmAxT78cUTxzhIXV70pryOoPGd
+         DUhmk8Hxlz39cMwrg99s6UrcuRlpFyzQVGI/5kXtaTjLC1XfHLV4J4PXUDrlOYEevg84
+         WlJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=cNZhovn4LHmrOHz7BZE1vj01ZM4bN3C2mny8LpDzaOs=;
-        b=OlWy2CYUkohbnxQh0dyjWROBI+zaSdpvJs3jQsckJ5GAWKgvbSH0hIFz4igX2FdDuY
-         zT3HdwgB3tpThOzP1zfBDfnJOaho7qKbLy+I7E1Vb80gGdy6XTNwat8DL9JRlCgBGTkO
-         qaAu4BmBQ5TVKyGBy/RQnOjkfKFVxvOV9FNbXMUNrqNRUXayyjjqvjARo+9s0BoktLo9
-         nNTmIqA4CyClVKQI/ZEg995nk6nbt/oBdn8dGG8XqnrYXkwpqvuP3naMkxsi3fNweole
-         AgEuw1Wz4XWr0F23gVwa2jpMokVBwM7BaVx7nUurRE40h1lZ+J4s0JinTuE5J69lJxov
-         RtpA==
-X-Gm-Message-State: APt69E3+x5D/B1CG+O2t1ni2IYWjHTbLhKQHehXNX4a1DgSNMYzzXDgW
-        b43QjDPT5G/KsbfUThkJoytG9NLfan4=
-X-Google-Smtp-Source: ADUXVKK1cVPdIjiUS2mjbm5u7oUSywxsLrlraMvBUWDZRJ3TpN9COnqolmXmHgW+CkPxQvGf+s/8BA==
-X-Received: by 2002:a65:4ecd:: with SMTP id w13-v6mr15874633pgq.214.1529430586252;
-        Tue, 19 Jun 2018 10:49:46 -0700 (PDT)
-Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cb:201:549c:c572:5008:d36f])
-        by smtp.gmail.com with ESMTPSA id v13-v6sm411311pfa.131.2018.06.19.10.49.44
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OD7U1q+3RSQ4vSuEQndgynz1Jr6R5Zs9e+0GU4A3gbk=;
+        b=tvSvka92Y59Uk2ipjjUixwMKr4DwoQ2h1OpwqBZFEFriggFG86/RobvHIcFwmfEb1L
+         AgEXF72tS5Cq93zN1keIh3ika7/fU1KJAnZ61/fa7nLK/9nSrrXMCF7PP1DdgVLofd9f
+         D+yC+22zoERLV3YbrapGWPIZ1mQ6TGAr8EIFBbhKfzS5iDNXMXIr07kg1KXt0y/mo2Uu
+         dqu2c1I/BfbUsPajl+cCdgN5fk9KPO4kyFWV3iaHggmQM7sAAfUvJvp4ilvcYYWiZrCE
+         8yyhigMY/bgrsMVhE6U4J1524Tc2QmAMP7mC9CTx+bD+kg6eKxtsRotYKHv2q5jb0kdF
+         fyRw==
+X-Gm-Message-State: APt69E05wPWQeYIk/rea5mw1NKzX/Hjoxjt7Pzw59W+zqJKMeJci6Wgp
+        mwSi/rkVVyWcpCGW5X8Swuc=
+X-Google-Smtp-Source: ADUXVKIIEJ+HfDb/iym8HE4VGkPGeYU/ND3iijuk0AyNw7Z1FM50kt9hxuyvVpFX62F5M1DnycEWrA==
+X-Received: by 2002:a63:444:: with SMTP id 65-v6mr16256203pge.101.1529430632482;
+        Tue, 19 Jun 2018 10:50:32 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id t3-v6sm240171pgs.91.2018.06.19.10.50.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 10:49:44 -0700 (PDT)
-From:   bsegall@google.com
-To:     Xunlei Pang <xlpang@linux.alibaba.com>
-Cc:     bsegall@google.com, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] sched/fair: Advance global expiration when period timer is restarted
-References: <20180618091657.21939-1-xlpang@linux.alibaba.com>
-        <xm26o9g7q5ux.fsf@bsegall-linux.svl.corp.google.com>
-        <5f5243c0-ff8c-fc11-9320-61313fd40214@linux.alibaba.com>
-Date:   Tue, 19 Jun 2018 10:49:43 -0700
-In-Reply-To: <5f5243c0-ff8c-fc11-9320-61313fd40214@linux.alibaba.com> (Xunlei
-        Pang's message of "Tue, 19 Jun 2018 11:14:32 +0800")
-Message-ID: <xm26k1qupsy0.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 19 Jun 2018 10:50:31 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 10:50:28 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
+        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
+        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
+        heiko@sntech.de, gregkh@linuxfoundation.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 4/4] input/power: Add driver for BD71837/BD71847 PMIC
+ power button
+Message-ID: <20180619175028.GA71788@dtor-ws>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+ <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Xunlei Pang <xlpang@linux.alibaba.com> writes:
+Hi Matti,
 
-> On 6/19/18 2:58 AM, bsegall@google.com wrote:
->> Xunlei Pang <xlpang@linux.alibaba.com> writes:
->> 
->>> I noticed the group frequently got throttled even it consumed
->>> low cpu usage, this caused some jitters on the response time
->>> to some of our business containers enabling cpu quota.
->>>
->>> It's very easy to reproduce:
->>> mkdir /sys/fs/cgroup/cpu/test
->>> cd /sys/fs/cgroup/cpu/test
->>> echo 100000 > cpu.cfs_quota_us
->>> echo $$ > tasks
->>> then repeat:
->>> cat cpu.stat |grep nr_throttled  // nr_throttled will increase
->>>
->>> After some analysis, we found that cfs_rq::runtime_remaining will
->>> be cleared by expire_cfs_rq_runtime() due to two equal but stale
->>> "cfs_{b|q}->runtime_expires" after period timer is re-armed.
->> 
->> If this is after the first patch, then this is no longer what should
->> happen, and instead it would incorrectly /keep/ old local cfs_rq
->> runtime, and not __refill global runtime until the period.
->
-> Exactly, I can improve the changelog.
->
->> 
->> 
->>>
->>> The global expiration should be advanced accordingly when the
->>> bandwidth period timer is restarted.
->>>
->>> Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
->>> ---
->>>  kernel/sched/fair.c | 15 ++++++++++-----
->>>  1 file changed, 10 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index 9f384264e832..bb006e671609 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>> @@ -5204,13 +5204,18 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->>>  
->>>  void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
->>>  {
->>> +	u64 overrun;
->>> +
->>>  	lockdep_assert_held(&cfs_b->lock);
->>>  
->>> -	if (!cfs_b->period_active) {
->>> -		cfs_b->period_active = 1;
->>> -		hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
->>> -		hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
->>> -	}
->>> +	if (cfs_b->period_active)
+On Tue, Jun 19, 2018 at 01:57:09PM +0300, Matti Vaittinen wrote:
+> ROHM BD71837 PMIC power button driver providing power-key press
+> information to user-space.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/input/misc/Kconfig          | 10 +++++
+>  drivers/input/misc/Makefile         |  1 +
+>  drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 101 insertions(+)
+>  create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
+> 
+> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+> index 572b15fa18c2..694c05d3f9fb 100644
+> --- a/drivers/input/misc/Kconfig
+> +++ b/drivers/input/misc/Kconfig
+> @@ -96,6 +96,16 @@ config INPUT_ATMEL_CAPTOUCH
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called atmel_captouch.
+>  
+> +config INPUT_BD718XX_PWRKEY
+> +	tristate "ROHM BD71837/BD71847 power key support"
+> +	depends on MFD_BD71837
+> +	help
+> +	  Say Y here if you want support for the power key usually found
+> +	  on boards using a ROHM BD71837/BD71847 compatible PMIC.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called bd718xx-pwrkey.
+> +
+>  config INPUT_BMA150
+>  	tristate "BMA150/SMB380 acceleration sensor support"
+>  	depends on I2C
+> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+> index 72cde28649e2..ea5b81cbf2bf 100644
+> --- a/drivers/input/misc/Makefile
+> +++ b/drivers/input/misc/Makefile
+> @@ -20,6 +20,7 @@ obj-$(CONFIG_INPUT_ATI_REMOTE2)		+= ati_remote2.o
+>  obj-$(CONFIG_INPUT_ATLAS_BTNS)		+= atlas_btns.o
+>  obj-$(CONFIG_INPUT_ATMEL_CAPTOUCH)	+= atmel_captouch.o
+>  obj-$(CONFIG_INPUT_BMA150)		+= bma150.o
+> +obj-$(CONFIG_INPUT_BD718XX_PWRKEY)	+= bd718xx-pwrkey.o
+>  obj-$(CONFIG_INPUT_CM109)		+= cm109.o
+>  obj-$(CONFIG_INPUT_CMA3000)		+= cma3000_d0x.o
+>  obj-$(CONFIG_INPUT_CMA3000_I2C)		+= cma3000_d0x_i2c.o
+> diff --git a/drivers/input/misc/bd718xx-pwrkey.c b/drivers/input/misc/bd718xx-pwrkey.c
+> new file mode 100644
+> index 000000000000..e8ac9475c3cf
+> --- /dev/null
+> +++ b/drivers/input/misc/bd718xx-pwrkey.c
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 ROHM Semiconductors
+> +// bd718xx-pwrkey.c -- ROHM BD71837MWV and BD71847 power button driver
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/errno.h>
+> +#include <linux/input.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +#include <linux/mfd/bd71837.h>
+> +
+> +struct bd718xx_pwrkey {
+> +	struct input_dev *idev;
+> +	struct bd71837 *mfd;
+> +	int irq;
+> +};
+> +
+> +static irqreturn_t button_irq(int irq, void *_priv)
+> +{
+> +	struct input_dev *idev = (struct input_dev *)_priv;
+> +
+> +	input_report_key(idev, KEY_POWER, 1);
+> +	input_sync(idev);
+> +	input_report_key(idev, KEY_POWER, 0);
+> +	input_sync(idev);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int bd718xx_pwr_btn_probe(struct platform_device *pdev)
+> +{
+> +	int err = -ENOMEM;
+> +	struct bd718xx_pwrkey *pk;
+> +
+> +	pk = devm_kzalloc(&pdev->dev, sizeof(*pk), GFP_KERNEL);
+> +	if (!pk)
+> +		goto err_out;
+> +
+> +	pk->mfd = dev_get_drvdata(pdev->dev.parent);
+> +
+> +	pk->idev = devm_input_allocate_device(&pdev->dev);
+> +	if (!pk->idev)
+> +		goto err_out;
+> +
+> +	pk->idev->name = "bd718xx-pwrkey";
+> +	pk->idev->phys = "bd718xx-pwrkey/input0";
+> +	pk->idev->dev.parent = &pdev->dev;
+> +
+> +	input_set_capability(pk->idev, EV_KEY, KEY_POWER);
+> +
+> +	err = platform_get_irq_byname(pdev, "pwr-btn-s");
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "could not get power key interrupt\n");
+> +		goto err_out;
+> +	}
+> +
+> +	pk->irq = err;
+> +	err = devm_request_threaded_irq(&pdev->dev, pk->irq, NULL, &button_irq,
+> +					0, "bd718xx-pwrkey", pk);
+> +	if (err)
+> +		goto err_out;
+> +
+> +	platform_set_drvdata(pdev, pk);
+> +	err = regmap_update_bits(pk->mfd->regmap,
+> +				 BD71837_REG_PWRONCONFIG0,
+> +				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
+> +				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
 
->>> +		return;
->>> +
->>> +	cfs_b->period_active = 1;
->>> +	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
->>> +	cfs_b->runtime_expires += (overrun + 1) * ktime_to_ns(cfs_b->period);
->> 
->> I think we actually want if (overrun) __refill_cfs_bandwidth_runtime(),
->> much like tg_set_cfs_bandwidth
->
-> It's a little different, e.g. periods like below:
->
->            Pm
->            |
->            v
->   |-----|-----|
-> Pn-1   Pn    Pn+1
->
-> Assuming we start_cfs_bandwidth() at some moment Pm between "Pn" and
-> "Pn+1", cfs_b->runtime_expires we want here should be "Pn+1", while
-> __refill_cfs_bandwidth_runtime() forces it to be "Pm+period"(hrtimer
-> expires at "Pn+1").
->
-> Regards,
-> Xunlei
->
+This seems to be the only custom bit of set up in the driver, the rest I
+think can easily be handled by gpio-keys.c in interrupt-only mode. Maybe
+we could move this into MFD piece and drop this driver?
 
-Hmm, yeah, it would wind up out of sync with the hrtimer unless we
-restarted the period boundaries.
+> +	if (err)
+> +		goto err_out;
+> +
+> +	err = input_register_device(pk->idev);
+> +
+> +err_out:
+> +
+> +	return err;
+> +}
+> +
+> +static struct platform_driver bd718xx_pwr_btn_driver = {
+> +	.probe	= bd718xx_pwr_btn_probe,
+> +	.driver = {
+> +		.name	= "bd718xx-pwrkey",
+> +	},
+> +};
+> +module_platform_driver(bd718xx_pwr_btn_driver);
+> +MODULE_DESCRIPTION("Power button driver for buttons connected to ROHM bd71837/bd71847 PMIC");
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> +
+> -- 
+> 2.14.3
+> 
 
-Now that I look at it even more closely, I don't see how you're getting
-problems like that, besides wasting tiny amounts of cpu time in expire:
-we only disable the period timer when there has been a full period with
-no activity, so we should have a full cfs_b->runtime, and a
-runtime_expires from the period that was spent entirely idle (so it
-should always be in the past). But with a working extend-local-deadline
-check like after patch 1 it shouldn't /matter/ what the actual value of
-runtime_expires is, we'll just waste tiny amounts of cpu time
-incrementing runtime_expires every account_cfs_rq_runtime call rather
-than aborting early.
+Thanks.
 
-Actually, I think arguably the real issue may be in patch 1:
-
->> @@ -4637,8 +4640,10 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->>  	 * spread between our sched_clock and the one on which runtime was
->>  	 * issued.
->>  	 */
->> -	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
->> +	if ((s64)(expires - cfs_rq->runtime_expires) > 0) {
->>  		cfs_rq->runtime_expires = expires;
->> +		cfs_rq->expires_seq = expires_seq;
->> +	}
->>  
->>  	return cfs_rq->runtime_remaining > 0;
->>  }
-
-
-We don't want to clobber a tick-extended runtime_expires with the
-original one, but we /do/ want update if expires_seq changes, no matter
-what (rather than skipping updating both if we've tick-extended past the
-/next/ period's runtime_expires).
-
-I think this should actually be
-
-if (cfs_rq->expires_seq != expires_seq) {
-	cfs_rq->runtime_expires = expires;
-	cfs_rq->expires_seq = expires_seq;
-}
-
-Can you easily check and see if this fixes the issue without this second
-patch? That would clear up how the actual problem is happening, and I
-think it's a change we'd want anyways.
-
-That said, we should also just update runtime_expires like this patch
-does regardless, and as mentioned we should have a full cfs_b->runtime
-so we don't need a __refill like I was originally thinking.
+-- 
+Dmitry
