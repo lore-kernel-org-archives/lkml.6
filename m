@@ -3,75 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE45CC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2801C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 896EF208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:20:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896EF208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 906D7205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:21:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 906D7205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751767AbeFSXU2 (ORCPT
+        id S1752798AbeFSXVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 19:20:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58558 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeFSXUV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 19:20:21 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        Tue, 19 Jun 2018 19:21:51 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:51682 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750973AbeFSXVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 19:21:47 -0400
+Received: from ip5f5a8448.dynamic.kabel-deutschland.de ([95.90.132.72] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.1:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fVPuu-00054j-2O; Wed, 20 Jun 2018 01:20:04 +0200
-Date:   Wed, 20 Jun 2018 01:20:03 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
-        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: Re: [PATCH v10 7/7] x86/tsc: use tsc early
-In-Reply-To: <20180615174204.30581-8-pasha.tatashin@oracle.com>
-Message-ID: <alpine.DEB.2.21.1806200116360.10546@nanos.tec.linutronix.de>
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com> <20180615174204.30581-8-pasha.tatashin@oracle.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        (envelope-from <heiko@sntech.de>)
+        id 1fVPwK-00069o-My; Wed, 20 Jun 2018 01:21:32 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Vagrant Cascadian <vagrant@debian.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Pierre-Hugues Husson <phh@phh.me>,
+        Jianqun Xu <jay.xu@rock-chips.com>,
+        Kever Yang <kever.yang@rock-chips.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] arm64: dts: rockchip: correct voltage selector Firefly-RK3399
+Date:   Wed, 20 Jun 2018 01:21:31 +0200
+Message-ID: <10782218.jfpm9omiT7@phil>
+In-Reply-To: <19360053.2ABrQ075F2@phil>
+References: <20180604171523.28454-1-xypron.glpk@gmx.de> <19360053.2ABrQ075F2@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Jun 2018, Pavel Tatashin wrote:
->  	cpu_khz = x86_platform.calibrate_cpu();
-> @@ -1380,7 +1466,7 @@ void __init tsc_init(void)
->  	if (!tsc_khz) {
->  		mark_tsc_unstable("could not calculate TSC khz");
->  		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
-> -		return;
-> +		goto final_sched_clock;
->  	}
->  
->  	pr_info("Detected %lu.%03lu MHz processor\n",
-> @@ -1428,6 +1514,14 @@ void __init tsc_init(void)
->  
->  	clocksource_register_khz(&clocksource_tsc_early, tsc_khz);
->  	detect_art();
+Hi Heinrich,
 
-I'm pretty sure you missed at least one instance of 'return'. That's just
-error prone and any new exit path of tsc_init() adds another chance to miss
-it.
+Am Donnerstag, 14. Juni 2018, 14:55:27 CEST schrieb Heiko Stuebner:
+> Am Montag, 4. Juni 2018, 19:15:23 CEST schrieb Heinrich Schuchardt:
+> > Without this patch the Firefly-RK3399 board boot process hangs after these
+> > lines:
+> > 
+> >    fan53555-regulator 0-0040: FAN53555 Option[8] Rev[1] Detected!
+> >    fan53555-reg: supplied by vcc_sys
+> >    vcc1v8_s3: supplied by vcc_1v8
+> > 
+> > Blacklisting driver fan53555 allows booting.
+> > 
+> > The device tree uses a value of fcs,suspend-voltage-selector different to
+> > any other board.
+> > 
+> > Changing this setting to the usual value is sufficient to enable booting.
+> > 
+> > Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+> 
+> applied for 4.19.
 
-Thanks,
+and dropped again.
 
-	tglx
+Sadly it looks like the patch causes conflicts with at least one firefly
+board in a kernelci lab. My own is currently not ready to use, so I cannot
+look myself right now.
+
+The issue kernelci people described sounded quite a lot like the one
+in your commit message, so my current theory is that the
+suspend-voltage-selector must in some form corespond to the
+cpu_b_sleep_h gpio setting we're currently not handling at all, which
+would therefore depend on how the bootloader sets this up.
+
+
+Heiko
+
+
