@@ -2,58 +2,58 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22C1C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C25C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D56820875
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67B0F20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XmDJlI5c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D56820875
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bsGImkMY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B0F20874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755989AbeFSGqK (ORCPT
+        id S1756229AbeFSGq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:46:10 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45943 "EHLO
+        Tue, 19 Jun 2018 02:46:27 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40831 "EHLO
         mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755207AbeFSGoH (ORCPT
+        with ESMTP id S1755536AbeFSGoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:44:07 -0400
-Received: by mail-pl0-f67.google.com with SMTP id c23-v6so10390266plz.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 23:44:07 -0700 (PDT)
+        Tue, 19 Jun 2018 02:44:12 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t12-v6so10397328plo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 23:44:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Pz/8CC8YBSFoejKCIh8QPg8R9nqbiIkn1Y//vL6VGqY=;
-        b=XmDJlI5cpt8Jvehh2vBfePFAiOA2rGtp7BY6xp3/cmIcbjfogDbdmJvQ2favs88yeC
-         RG+/WubooC+BoY0l966+1IOBdZryN8GKoW5a9OHStmsivB/EFiCRz9kdTzFGxvgwvta8
-         tC3V5Xp4QMGNWNYPLsJdnsCvTwQIcYgDpF+1M=
+        bh=oQBxjbhd3sorzsMaJwszGFfBNGkMSm+1QnH1URdsLGE=;
+        b=bsGImkMY0YQk+qC/DMf4ZWW82ZNqGj0m/RmAzznQP/SqxLo85JmXW+bGukd2Py81mJ
+         NJq3/y/OrRE5BiufK0c/G2RWf8xbPV9V6YA0PhvhThoHNkqfu8T/kcMV7haRHqLOpUqT
+         Myn7Mo6OWE/tHptsgB9uMtXPrFh6U2gPNvu2o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Pz/8CC8YBSFoejKCIh8QPg8R9nqbiIkn1Y//vL6VGqY=;
-        b=d+sH6uwSt90LGS8xmnkQA6ZZrB6WkPi7R8JOgnv4rG76R+zC516nnMEO8J/l9ri0JH
-         TSGyCHHnQHVcsffMW2ZoDq1jQDKiLT4u1KVe4QEPH9ub5J2t3ZDecBh9xBUoV0lSfhtN
-         qkKiXOgitbLWClWprOpAmTQRUqGG5UFXtQaXvghpcBFeZGHV1XqIuIv4TV+FvizD4FBm
-         lxk/P3Gg8ldJ1WT/YfT0OxhuElhEqsJmXO8zSwEnVXrFIhQLdT1/ow+5oQbmD6Aavymj
-         U32PRZn7BeKdHydo2BdnnMu6OlrclguhWJL3Y5+DRAsN3Pn+ESD5LzJbY8/RUeMryn/B
-         GM5A==
-X-Gm-Message-State: APt69E3Xs6DBT/5MAhJbQBfmmbNxx8LFT07n0CX01MxAJDrb9P1eumsj
-        l1uUXpCkKsTDsUof26yPrw6R1A==
-X-Google-Smtp-Source: ADUXVKL8m21FzarNC2QeNDz6f4i3C1E8rKFjb0i2s/8k8M1nMv3mNqHBcvnyIjfifymyLzoZ/n9EzA==
-X-Received: by 2002:a17:902:bb81:: with SMTP id m1-v6mr17437964pls.117.1529390647314;
-        Mon, 18 Jun 2018 23:44:07 -0700 (PDT)
+        bh=oQBxjbhd3sorzsMaJwszGFfBNGkMSm+1QnH1URdsLGE=;
+        b=UFjzp/1ykkhFlNu+8YuKTsz870Cuau+jaqaGSPFy+vp+wYN+dArtM+aEJkROQd2MEL
+         12PI1cJ5JRSyjQh+NAJnk+l/uThhPoe5hpms4OzZLvN2YizoxugiNDVDPTB3XqiuZsRN
+         nmR2GdKZXands9CvV0zX1pEFYiRJBQZybYbaEh9JbGZ39JnDR3KQ3uLl1p1QuvBPapV9
+         YkbDavN+Knkytcxx5NYItQKyUwLdNZ7eryfekkVe8kZZvfocEIMst8rEGXbh+b9uTyc2
+         0aoV1So5piR7jf4Tdla77B0v0aF7cCjSG0EtvUnHrdnewQEI3CqmggOQgLmgFPoehhtf
+         gaMQ==
+X-Gm-Message-State: APt69E0lRIPWh8I1bznAQDByRBv2KKLoSfFBrOrusnWBlqZLlyjbfESN
+        1KsNK4vYNgL91dJ7sA7arhCiNQ==
+X-Google-Smtp-Source: ADUXVKLynddqdeTat6wj960ZnMvhIjLrGp4GTefuqwtw2o86/2WlLDJGYHNca/7+mjGwrfTZC8+PKQ==
+X-Received: by 2002:a17:902:1e4:: with SMTP id b91-v6mr17386973plb.155.1529390651996;
+        Mon, 18 Jun 2018 23:44:11 -0700 (PDT)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id 10-v6sm38423943pfs.111.2018.06.18.23.44.06
+        by smtp.googlemail.com with ESMTPSA id e68-v6sm32031601pfl.65.2018.06.18.23.44.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 23:44:06 -0700 (PDT)
+        Mon, 18 Jun 2018 23:44:11 -0700 (PDT)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com,
         akpm@linux-foundation.org, ard.biesheuvel@linaro.org
@@ -62,10 +62,11 @@ Cc:     tbaicar@codeaurora.org, bhsharma@redhat.com, dyoung@redhat.com,
         graeme.gregory@linaro.org, hanjun.guo@linaro.org,
         lorenzo.pieralisi@arm.com, sudeep.holla@arm.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org
-Subject: [PATCH v2 1/4] arm64: export memblock_reserve()d regions via /proc/iomem
-Date:   Tue, 19 Jun 2018 15:44:21 +0900
-Message-Id: <20180619064424.6642-2-takahiro.akashi@linaro.org>
+        kexec@lists.infradead.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v2 2/4] efi/arm: map UEFI memory map even w/o runtime services enabled
+Date:   Tue, 19 Jun 2018 15:44:22 +0900
+Message-Id: <20180619064424.6642-3-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180619064424.6642-1-takahiro.akashi@linaro.org>
 References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
@@ -74,101 +75,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+Under the current implementation, UEFI memory map will be mapped and made
+available in virtual mappings only if runtime services are enabled.
+But in a later patch, we want to use UEFI memory map in acpi_os_ioremap()
+to create mappings of ACPI tables using memory attributes described in
+UEFI memory map.
 
-There has been some confusion around what is necessary to prevent kexec
-overwriting important memory regions. memblock: reserve, or nomap?
-Only memblock nomap regions are reported via /proc/iomem, kexec's
-user-space doesn't know about memblock_reserve()d regions.
+So, as a first step, arm_enter_runtime_services() will be modified
+so that UEFI memory map will be always accessible.
 
-Until commit f56ab9a5b73ca ("efi/arm: Don't mark ACPI reclaim memory
-as MEMBLOCK_NOMAP") the ACPI tables were nomap, now they are reserved
-and thus possible for kexec to overwrite with the new kernel or initrd.
-But this was always broken, as the UEFI memory map is also reserved
-and not marked as nomap.
+See a relevant commit:
+    arm64: acpi: fix alignment fault in accessing ACPI tables
 
-Exporting both nomap and reserved memblock types is a nuisance as
-they live in different memblock structures which we can't walk at
-the same time.
-
-Take a second walk over memblock.reserved and add new 'reserved'
-subnodes for the memblock_reserved() regions that aren't already
-described by the existing code. (e.g. Kernel Code)
-
-We use reserve_region_with_split() to find the gaps in existing named
-regions. This handles the gap between 'kernel code' and 'kernel data'
-which is memblock_reserve()d, but already partially described by
-request_standard_resources(). e.g.:
-| 80000000-dfffffff : System RAM
-|   80080000-80ffffff : Kernel code
-|   81000000-8158ffff : reserved
-|   81590000-8237efff : Kernel data
-|   a0000000-dfffffff : Crash kernel
-| e00f0000-f949ffff : System RAM
-
-reserve_region_with_split needs kzalloc() which isn't available when
-request_standard_resources() is called, use an initcall.
-
-Reported-by: Bhupesh Sharma <bhsharma@redhat.com>
-Reported-by: Tyler Baicar <tbaicar@codeaurora.org>
-Suggested-by: Akashi Takahiro <takahiro.akashi@linaro.org>
-Signed-off-by: James Morse <james.morse@arm.com>
-Fixes: d28f6df1305a ("arm64/kexec: Add core kexec support")
-CC: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/arm64/kernel/setup.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/firmware/efi/arm-runtime.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-index 30ad2f085d1f..5b4fac434c84 100644
---- a/arch/arm64/kernel/setup.c
-+++ b/arch/arm64/kernel/setup.c
-@@ -241,6 +241,44 @@ static void __init request_standard_resources(void)
+diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+index 5889cbea60b8..30ac5c82051e 100644
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -115,6 +115,13 @@ static int __init arm_enable_runtime_services(void)
+ 		return 0;
  	}
- }
  
-+static int __init reserve_memblock_reserved_regions(void)
-+{
-+	phys_addr_t start, end, roundup_end = 0;
-+	struct resource *mem, *res;
-+	u64 i;
++	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
 +
-+	for_each_reserved_mem_region(i, &start, &end) {
-+		if (end <= roundup_end)
-+			continue; /* done already */
-+
-+		start = __pfn_to_phys(PFN_DOWN(start));
-+		end = __pfn_to_phys(PFN_UP(end)) - 1;
-+		roundup_end = end;
-+
-+		res = kzalloc(sizeof(*res), GFP_ATOMIC);
-+		if (WARN_ON(!res))
-+			return -ENOMEM;
-+		res->start = start;
-+		res->end = end;
-+		res->name  = "reserved";
-+		res->flags = IORESOURCE_MEM;
-+
-+		mem = request_resource_conflict(&iomem_resource, res);
-+		/*
-+		 * We expected memblock_reserve() regions to conflict with
-+		 * memory created by request_standard_resources().
-+		 */
-+		if (WARN_ON_ONCE(!mem))
-+			continue;
-+		kfree(res);
-+
-+		reserve_region_with_split(mem, start, end, "reserved");
++	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
++		pr_err("Failed to remap EFI memory map\n");
++		return 0;
 +	}
 +
-+	return 0;
-+}
-+arch_initcall(reserve_memblock_reserved_regions);
-+
- u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
+ 	if (efi_runtime_disabled()) {
+ 		pr_info("EFI runtime services will be disabled.\n");
+ 		return 0;
+@@ -127,13 +134,6 @@ static int __init arm_enable_runtime_services(void)
  
- void __init setup_arch(char **cmdline_p)
+ 	pr_info("Remapping and enabling EFI services.\n");
+ 
+-	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
+-
+-	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
+-		pr_err("Failed to remap EFI memory map\n");
+-		return -ENOMEM;
+-	}
+-
+ 	if (!efi_virtmap_init()) {
+ 		pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
+ 		return -ENOMEM;
 -- 
 2.17.0
 
