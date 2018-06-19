@@ -2,349 +2,198 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCCEC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCD2C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 196E8205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:33:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 196E8205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 05DED20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:34:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KjT0DtmP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05DED20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966646AbeFSPdU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:33:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:42829 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966087AbeFSPdS (ORCPT
+        id S966655AbeFSPej (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:34:39 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:40468 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966078AbeFSPeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:33:18 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MLkJD-1fVZbv2LmV-000wSI; Tue, 19 Jun 2018 17:33:04 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Steve French <sfrench@samba.org>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Paulo Alcantara <paulo@paulo.ac>,
-        Long Li <longli@microsoft.com>,
-        Kees Cook <keescook@chromium.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] cifs: use timespec64 internally
-Date:   Tue, 19 Jun 2018 17:27:58 +0200
-Message-Id: <20180619153255.3634720-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:ICrn6RpbWCsm/muOcp9VnI7RIa/vJQTSvKVn6nsZmDP04/b1HKz
- +btqTQssHIr9+zJ2m7JXJKRDayXR2tspBH85SobueJ2pCUd7zQRtg0K5axq0txRwlBKNVnk
- 3xijLXLNc28yNHnUG3CPDmx7cF9x5wpt2T8XR/OMMN1gsSp9lrCmMF4csRYEIbvgGbBdfXW
- 64/3gumQVeU7Do/+QCXYg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:QY2XLSfNyxc=:bCXtXXT3gPExU2ylml5UqW
- 7lfcN7Hcx8ArowhB97OooGL7QzZc6DzgwoueRecehTE3izIdrupheMojRu5/ghVqceh5cPYdq
- jE0DZEXGl0raUQC5t9LY8F+tWDv/rMTHJfdRM/i91u5SrD5CbA82KSjhVyPSxLm2j3RzcHpC4
- bFZtt2KBcbcwfHw21gZjYDybvrVwEevW1pT9UvyecO8LnVlYH8IX60aTFa+RkT6uV5CiZAKoB
- yRGN+kJcfS/TY70FGYswIdmtWRucYvJLiuoTJDdKogt5VMP7aVMyONuWz8vCYDNEPNVs/ZdYC
- 7pCtDhfzY848EYU9T8t7gZNr47IqCUzQMLuef8o7OMism+Z7qfUq/30yhE2sLbJofsdNbYnfJ
- yJN2WZiFBP+8cw/gRsvUxwxZQEFbcPOCS+yn/8IauiWyjLv026IIFyr67CmVI41w7yHRXXUcK
- eY11KviBqwxjapxP6HmAcS50L6PjAGMBwNa2a/u2mBKdVYSqfEUyRlX3X6ymE/xDwtll0vOJW
- BZIAdojZMTqDFtyHqGoK/Ge8VoHJtG4i+TzppoZiUHY2rniGL1k4Mhlgm6S0ZpVel9zddEV5G
- hc34JduZ+MFJSRMCaDFZ/0LYrGzs4NTHrTsZB9RYw8GTLbNjRtZb8OBhiTp+eb+SvY1bjkyu1
- eA3R718F09fMI+9pvDVpOTaRuR+YaAtCd99jaFOhEHR8sHbsvvI0CTJbsV08pneCYPKA=
+        Tue, 19 Jun 2018 11:34:36 -0400
+Received: by mail-qk0-f196.google.com with SMTP id r66-v6so64938qkr.7
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=OcYE8modkORbxN9aUplwftmCXbn8u5A1sykZQ63PoKQ=;
+        b=KjT0DtmPL2gXg9H9AR6yJqK8rOcyd264rEzETnBOxBD3Ru5cAQeTj2oGW5EVrMSkyZ
+         4hYNKuplxTtNa+QDwQzbuMmhrbxsBGjDsOCRCaKTOkS1V/qMUN5xKOz7UHrwZxcl9cMm
+         pfa53yc/FhhGhRoXClhk1XeXHW2vPdoeyWQgE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=OcYE8modkORbxN9aUplwftmCXbn8u5A1sykZQ63PoKQ=;
+        b=K3XK27RjZQ63dCz31GSjaAFjn2x1M9NTWidqTdfbqksW5P7x4atlFkZc3szyFwMlv0
+         CUW+rK54i/Is6o+E/HrTFhmP4np3crvl0DYFoJxGO9LXvZyS0iS0nqKk9q3w37EvSO+0
+         2kwaVBomLsc2i0RKD/9feHP3kodxkUZM7hqkDDR5/p5q3/e+iRrw2R2U97G8ltsbDrof
+         iQ9q/eBIJp42ibcNV4G40FOXG2mTD6g2AdICyUk/t0Fj13+qCfN7EXtvY7JPZpkkJq7J
+         xLmDzy4Nh4geC+yLz4PhrlCP1J8d/l+8uR3sjWtebbW7aDmfX7aO3kvVWVaRyY+c+vd5
+         dZcA==
+X-Gm-Message-State: APt69E2U+eqMMha+G1D7cFRL1n79ebIx64FVH3rIFNzFrrh/6xcGIIoJ
+        m2pU4SQ3WXPcAWNzF70vSILa/g==
+X-Google-Smtp-Source: ADUXVKLLCkWiN2LycQs9G04gQUKMcA8TSfEAWdQbEne+Rwn8HPrmXymqwEyPTwZYm2Eyk/qfKFNpKw==
+X-Received: by 2002:a37:9984:: with SMTP id b126-v6mr13808758qke.307.1529422475952;
+        Tue, 19 Jun 2018 08:34:35 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id f99-v6sm14943340qkh.85.2018.06.19.08.34.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 08:34:35 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 11:34:34 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Adam Borowski <kilobyte@angband.pl>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dave Mielke <Dave@mielke.cc>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] have the vt console preserve unicode characters
+In-Reply-To: <20180619130953.bxil552igfkckjmr@angband.pl>
+Message-ID: <nycvar.YSQ.7.76.1806191047070.16670@knanqh.ubzr>
+References: <20180617190706.14614-1-nicolas.pitre@linaro.org> <20180619130953.bxil552igfkckjmr@angband.pl>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In cifs, the timestamps are stored in memory in the cifs_fattr structure,
-which uses the deprecated 'timespec' structure. Now that the VFS code
-has moved on to 'timespec64', the next step is to change over the fattr
-as well.
+On Tue, 19 Jun 2018, Adam Borowski wrote:
 
-This also makes 32-bit and 64-bit systems behave the same way, and
-no longer overflow the 32-bit time_t in year 2038.
+> On Sun, Jun 17, 2018 at 03:07:02PM -0400, Nicolas Pitre wrote:
+> > The vt code translates UTF-8 strings into glyph index values and stores
+> > those glyph values directly in the screen buffer. Because there can only
+> > be at most 512 glyphs, it is impossible to represent most unicode
+> > characters, in which case a default glyph (often '?') is displayed
+> > instead. The original unicode value is then lost.
+> > 
+> > The 512-glyph limitation is inherent to VGA displays, but users of
+> > /dev/vcs* shouldn't have to be restricted to a narrow unicode space from
+> > lossy screen content because of that. This is especially true for
+> > accessibility applications such as BRLTTY that rely on /dev/vcs to rander
+> > screen content onto braille terminals.
+> 
+> You're thinking small.  That 256 possible values for Braille are easily
+> encodable within the 512-glyph space (256 char + stolen fg brightness bit,
+> another CGA peculiarity). 
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/cifs/cifsencrypt.c |  4 ++--
- fs/cifs/cifsglob.h    |  6 +++---
- fs/cifs/cifsproto.h   |  6 +++---
- fs/cifs/cifssmb.c     | 12 ++++++------
- fs/cifs/inode.c       | 34 ++++++++++++++++------------------
- fs/cifs/netmisc.c     | 19 ++++++++++---------
- 6 files changed, 40 insertions(+), 41 deletions(-)
+Braille is not just about 256 possible patterns. It is often the case 
+that a single print character is transcoded into a sequence of braille 
+characters given that there is more than 256 possible print characters. 
+And there are different transcoding rules for different languages, and 
+even different rules across different countries with the same language. 
+This may get complicated very quickly and you really don't want that 
+processing to live in the kernel.
 
-diff --git a/fs/cifs/cifsencrypt.c b/fs/cifs/cifsencrypt.c
-index ee2a8ec70056..b4672eafc5bf 100644
---- a/fs/cifs/cifsencrypt.c
-+++ b/fs/cifs/cifsencrypt.c
-@@ -452,7 +452,7 @@ find_timestamp(struct cifs_ses *ses)
- 	unsigned char *blobptr;
- 	unsigned char *blobend;
- 	struct ntlmssp2_name *attrptr;
--	struct timespec ts;
-+	struct timespec64 ts;
- 
- 	if (!ses->auth_key.len || !ses->auth_key.response)
- 		return 0;
-@@ -477,7 +477,7 @@ find_timestamp(struct cifs_ses *ses)
- 		blobptr += attrsize; /* advance attr value */
- 	}
- 
--	ktime_get_real_ts(&ts);
-+	ktime_get_real_ts64(&ts);
- 	return cpu_to_le64(cifs_UnixTimeToNT(ts));
- }
- 
-diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
-index bd78da59a4fd..0543187fe707 100644
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -1543,9 +1543,9 @@ struct cifs_fattr {
- 	dev_t		cf_rdev;
- 	unsigned int	cf_nlink;
- 	unsigned int	cf_dtype;
--	struct timespec	cf_atime;
--	struct timespec	cf_mtime;
--	struct timespec	cf_ctime;
-+	struct timespec64 cf_atime;
-+	struct timespec64 cf_mtime;
-+	struct timespec64 cf_ctime;
- };
- 
- static inline void free_dfs_info_param(struct dfs_info3_param *param)
-diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
-index 03018be17283..e23eec5372df 100644
---- a/fs/cifs/cifsproto.h
-+++ b/fs/cifs/cifsproto.h
-@@ -142,9 +142,9 @@ extern enum securityEnum select_sectype(struct TCP_Server_Info *server,
- 				enum securityEnum requested);
- extern int CIFS_SessSetup(const unsigned int xid, struct cifs_ses *ses,
- 			  const struct nls_table *nls_cp);
--extern struct timespec cifs_NTtimeToUnix(__le64 utc_nanoseconds_since_1601);
--extern u64 cifs_UnixTimeToNT(struct timespec);
--extern struct timespec cnvrtDosUnixTm(__le16 le_date, __le16 le_time,
-+extern struct timespec64 cifs_NTtimeToUnix(__le64 utc_nanoseconds_since_1601);
-+extern u64 cifs_UnixTimeToNT(struct timespec64);
-+extern struct timespec64 cnvrtDosUnixTm(__le16 le_date, __le16 le_time,
- 				      int offset);
- extern void cifs_set_oplock_level(struct cifsInodeInfo *cinode, __u32 oplock);
- extern int cifs_get_writer(struct cifsInodeInfo *cinode);
-diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-index d352da325de3..82bf41265eca 100644
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -502,13 +502,13 @@ decode_lanman_negprot_rsp(struct TCP_Server_Info *server, NEGOTIATE_RSP *pSMBr)
- 		 * this requirement.
- 		 */
- 		int val, seconds, remain, result;
--		struct timespec ts;
--		unsigned long utc = ktime_get_real_seconds();
-+		struct timespec64 ts;
-+		time64_t utc = ktime_get_real_seconds();
- 		ts = cnvrtDosUnixTm(rsp->SrvTime.Date,
- 				    rsp->SrvTime.Time, 0);
--		cifs_dbg(FYI, "SrvTime %d sec since 1970 (utc: %d) diff: %d\n",
--			 (int)ts.tv_sec, (int)utc,
--			 (int)(utc - ts.tv_sec));
-+		cifs_dbg(FYI, "SrvTime %lld sec since 1970 (utc: %lld) diff: %lld\n",
-+			 ts.tv_sec, utc,
-+			 utc - ts.tv_sec);
- 		val = (int)(utc - ts.tv_sec);
- 		seconds = abs(val);
- 		result = (seconds / MIN_TZ_ADJ) * MIN_TZ_ADJ;
-@@ -4076,7 +4076,7 @@ SMBQueryInformation(const unsigned int xid, struct cifs_tcon *tcon,
- 	if (rc) {
- 		cifs_dbg(FYI, "Send error in QueryInfo = %d\n", rc);
- 	} else if (data) {
--		struct timespec ts;
-+		struct timespec64 ts;
- 		__u32 time = le32_to_cpu(pSMBr->last_write_time);
- 
- 		/* decode response */
-diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-index a2cfb33e85c1..f6abf18ca492 100644
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -95,7 +95,6 @@ static void
- cifs_revalidate_cache(struct inode *inode, struct cifs_fattr *fattr)
- {
- 	struct cifsInodeInfo *cifs_i = CIFS_I(inode);
--	struct timespec ts;
- 
- 	cifs_dbg(FYI, "%s: revalidating inode %llu\n",
- 		 __func__, cifs_i->uniqueid);
-@@ -114,8 +113,7 @@ cifs_revalidate_cache(struct inode *inode, struct cifs_fattr *fattr)
- 	}
- 
- 	 /* revalidate if mtime or size have changed */
--	ts = timespec64_to_timespec(inode->i_mtime);
--	if (timespec_equal(&ts, &fattr->cf_mtime) &&
-+	if (timespec64_equal(&inode->i_mtime, &fattr->cf_mtime) &&
- 	    cifs_i->server_eof == fattr->cf_eof) {
- 		cifs_dbg(FYI, "%s: inode %llu is unchanged\n",
- 			 __func__, cifs_i->uniqueid);
-@@ -164,9 +162,9 @@ cifs_fattr_to_inode(struct inode *inode, struct cifs_fattr *fattr)
- 	cifs_revalidate_cache(inode, fattr);
- 
- 	spin_lock(&inode->i_lock);
--	inode->i_atime = timespec_to_timespec64(fattr->cf_atime);
--	inode->i_mtime = timespec_to_timespec64(fattr->cf_mtime);
--	inode->i_ctime = timespec_to_timespec64(fattr->cf_ctime);
-+	inode->i_atime = fattr->cf_atime;
-+	inode->i_mtime = fattr->cf_mtime;
-+	inode->i_ctime = fattr->cf_ctime;
- 	inode->i_rdev = fattr->cf_rdev;
- 	cifs_nlink_fattr_to_inode(inode, fattr);
- 	inode->i_uid = fattr->cf_uid;
-@@ -327,8 +325,8 @@ cifs_create_dfs_fattr(struct cifs_fattr *fattr, struct super_block *sb)
- 	fattr->cf_mode = S_IFDIR | S_IXUGO | S_IRWXU;
- 	fattr->cf_uid = cifs_sb->mnt_uid;
- 	fattr->cf_gid = cifs_sb->mnt_gid;
--	ktime_get_real_ts(&fattr->cf_mtime);
--	fattr->cf_mtime = timespec_trunc(fattr->cf_mtime, sb->s_time_gran);
-+	ktime_get_real_ts64(&fattr->cf_mtime);
-+	fattr->cf_mtime = timespec64_trunc(fattr->cf_mtime, sb->s_time_gran);
- 	fattr->cf_atime = fattr->cf_ctime = fattr->cf_mtime;
- 	fattr->cf_nlink = 2;
- 	fattr->cf_flags |= CIFS_FATTR_DFS_REFERRAL;
-@@ -604,8 +602,8 @@ cifs_all_info_to_fattr(struct cifs_fattr *fattr, FILE_ALL_INFO *info,
- 	if (info->LastAccessTime)
- 		fattr->cf_atime = cifs_NTtimeToUnix(info->LastAccessTime);
- 	else {
--		ktime_get_real_ts(&fattr->cf_atime);
--		fattr->cf_atime = timespec_trunc(fattr->cf_atime, sb->s_time_gran);
-+		ktime_get_real_ts64(&fattr->cf_atime);
-+		fattr->cf_atime = timespec64_trunc(fattr->cf_atime, sb->s_time_gran);
- 	}
- 
- 	fattr->cf_ctime = cifs_NTtimeToUnix(info->ChangeTime);
-@@ -1125,14 +1123,14 @@ cifs_set_file_info(struct inode *inode, struct iattr *attrs, unsigned int xid,
- 	if (attrs->ia_valid & ATTR_ATIME) {
- 		set_time = true;
- 		info_buf.LastAccessTime =
--			cpu_to_le64(cifs_UnixTimeToNT(timespec64_to_timespec(attrs->ia_atime)));
-+			cpu_to_le64(cifs_UnixTimeToNT(attrs->ia_atime));
- 	} else
- 		info_buf.LastAccessTime = 0;
- 
- 	if (attrs->ia_valid & ATTR_MTIME) {
- 		set_time = true;
- 		info_buf.LastWriteTime =
--		    cpu_to_le64(cifs_UnixTimeToNT(timespec64_to_timespec(attrs->ia_mtime)));
-+		    cpu_to_le64(cifs_UnixTimeToNT(attrs->ia_mtime));
- 	} else
- 		info_buf.LastWriteTime = 0;
- 
-@@ -1145,7 +1143,7 @@ cifs_set_file_info(struct inode *inode, struct iattr *attrs, unsigned int xid,
- 	if (set_time && (attrs->ia_valid & ATTR_CTIME)) {
- 		cifs_dbg(FYI, "CIFS - CTIME changed\n");
- 		info_buf.ChangeTime =
--		    cpu_to_le64(cifs_UnixTimeToNT(timespec64_to_timespec(attrs->ia_ctime)));
-+		    cpu_to_le64(cifs_UnixTimeToNT(attrs->ia_ctime));
- 	} else
- 		info_buf.ChangeTime = 0;
- 
-@@ -2071,8 +2069,8 @@ int cifs_getattr(const struct path *path, struct kstat *stat,
- 	/* old CIFS Unix Extensions doesn't return create time */
- 	if (CIFS_I(inode)->createtime) {
- 		stat->result_mask |= STATX_BTIME;
--		stat->btime = timespec_to_timespec64(
--		      cifs_NTtimeToUnix(cpu_to_le64(CIFS_I(inode)->createtime)));
-+		stat->btime =
-+		      cifs_NTtimeToUnix(cpu_to_le64(CIFS_I(inode)->createtime));
- 	}
- 
- 	stat->attributes_mask |= (STATX_ATTR_COMPRESSED | STATX_ATTR_ENCRYPTED);
-@@ -2278,17 +2276,17 @@ cifs_setattr_unix(struct dentry *direntry, struct iattr *attrs)
- 		args->gid = INVALID_GID; /* no change */
- 
- 	if (attrs->ia_valid & ATTR_ATIME)
--		args->atime = cifs_UnixTimeToNT(timespec64_to_timespec(attrs->ia_atime));
-+		args->atime = cifs_UnixTimeToNT(attrs->ia_atime);
- 	else
- 		args->atime = NO_CHANGE_64;
- 
- 	if (attrs->ia_valid & ATTR_MTIME)
--		args->mtime = cifs_UnixTimeToNT(timespec64_to_timespec(attrs->ia_mtime));
-+		args->mtime = cifs_UnixTimeToNT(attrs->ia_mtime);
- 	else
- 		args->mtime = NO_CHANGE_64;
- 
- 	if (attrs->ia_valid & ATTR_CTIME)
--		args->ctime = cifs_UnixTimeToNT(timespec64_to_timespec(attrs->ia_ctime));
-+		args->ctime = cifs_UnixTimeToNT(attrs->ia_ctime);
- 	else
- 		args->ctime = NO_CHANGE_64;
- 
-diff --git a/fs/cifs/netmisc.c b/fs/cifs/netmisc.c
-index d7ad0dfe4e68..fdd908e4a26b 100644
---- a/fs/cifs/netmisc.c
-+++ b/fs/cifs/netmisc.c
-@@ -918,10 +918,10 @@ smbCalcSize(void *buf, struct TCP_Server_Info *server)
-  * Convert the NT UTC (based 1601-01-01, in hundred nanosecond units)
-  * into Unix UTC (based 1970-01-01, in seconds).
-  */
--struct timespec
-+struct timespec64
- cifs_NTtimeToUnix(__le64 ntutc)
- {
--	struct timespec ts;
-+	struct timespec64 ts;
- 	/* BB what about the timezone? BB */
- 
- 	/* Subtract the NTFS time offset, then convert to 1s intervals. */
-@@ -935,12 +935,12 @@ cifs_NTtimeToUnix(__le64 ntutc)
- 	 */
- 	if (t < 0) {
- 		abs_t = -t;
--		ts.tv_nsec = (long)(do_div(abs_t, 10000000) * 100);
-+		ts.tv_nsec = (time64_t)(do_div(abs_t, 10000000) * 100);
- 		ts.tv_nsec = -ts.tv_nsec;
- 		ts.tv_sec = -abs_t;
- 	} else {
- 		abs_t = t;
--		ts.tv_nsec = (long)do_div(abs_t, 10000000) * 100;
-+		ts.tv_nsec = (time64_t)do_div(abs_t, 10000000) * 100;
- 		ts.tv_sec = abs_t;
- 	}
- 
-@@ -949,7 +949,7 @@ cifs_NTtimeToUnix(__le64 ntutc)
- 
- /* Convert the Unix UTC into NT UTC. */
- u64
--cifs_UnixTimeToNT(struct timespec t)
-+cifs_UnixTimeToNT(struct timespec64 t)
- {
- 	/* Convert to 100ns intervals and then add the NTFS time offset. */
- 	return (u64) t.tv_sec * 10000000 + t.tv_nsec/100 + NTFS_TIME_OFFSET;
-@@ -959,10 +959,11 @@ static const int total_days_of_prev_months[] = {
- 	0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334
- };
- 
--struct timespec cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
-+struct timespec64 cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
- {
--	struct timespec ts;
--	int sec, min, days, month, year;
-+	struct timespec64 ts;
-+	time64_t sec;
-+	int min, days, month, year;
- 	u16 date = le16_to_cpu(le_date);
- 	u16 time = le16_to_cpu(le_time);
- 	SMB_TIME *st = (SMB_TIME *)&time;
-@@ -973,7 +974,7 @@ struct timespec cnvrtDosUnixTm(__le16 le_date, __le16 le_time, int offset)
- 	sec = 2 * st->TwoSeconds;
- 	min = st->Minutes;
- 	if ((sec > 59) || (min > 59))
--		cifs_dbg(VFS, "illegal time min %d sec %d\n", min, sec);
-+		cifs_dbg(VFS, "illegal time min %d sec %lld\n", min, sec);
- 	sec += (min * 60);
- 	sec += 60 * 60 * st->Hours;
- 	if (st->Hours > 24)
--- 
-2.9.0
+The point is not to have a font that displays braille but to let user 
+space access the actual unicode character that corresponds to a given 
+screen position.
 
+> Your patchset, though, can be used for proper
+> Unicode support for the rest of us.
+
+Absolutely. I think it is generic enough so that display drivers that 
+would benefit from it may do so already. My patchset introduces one 
+user: vc_screen. The selection code could be yet another easy convert. 
+Beyond that it is a matter of extending the kernel interface for larger 
+font definitions, etc. But being sight impaired myself I won't play with 
+actual display driver code.
+
+> The 256/512 value limitation applies only to CGA-compatible hardware; these
+> days this means vgacon.  But most people use other drivers.  Nouveau forces
+> graphical console, on arm* there's no such thing as VGA[1], etc.
+
+I do agree with you.
+
+> Thus, it'd be nice to use the structure you add to implement full Unicode
+> range for the vast majority of people.  This includes even U+2800..FF.  :)
+
+Be my guest if you want to use this structure. As for U+2800..FF, like I 
+said earlier, this is not what most people use when communicating, so it 
+is of little interest even to blind users except for displaying native 
+braille documents, or showing off. ;-)
+
+> > This patch series introduces unicode support to /dev/vcs* devices,
+> > allowing full unicode access from userspace to the vt console which
+> > can, amongst other purposes, appropriately translate actual unicode
+> > screen content into braille. Memory is allocated, and possible CPU
+> > overhead introduced, only if /dev/vcsu is read at least once.
+> 
+> What about doing so if any updated console driver is loaded?  Possibly, once
+> the vt in question has been switched to (>99% people never see anything but
+> tty1 during boot-up, all others showing nothing but getty).  Or perhaps the
+> moment any non-ASCII character is output to the given vt.
+
+Right now it is activated only when an actual user manifests itself. I 
+think this is the right thing to do. If an updated console driver is 
+loaded then it will activate unicode handling right away as you say.
+
+> If memory usage is a concern, it's possible to drop the old structure and
+> convert back only in the rare case the driver is unloaded; reads of old-
+> style /dev/vc{s,sa}\d* are not speed-critical thus can use conversion on the
+> fuly.  Unicode takes only 21 bits out of 32 you allocate, that's plenty of
+> space for attributes: they currently take 8 bits; naive way gives us free 3
+> bits that could be used for additional attributes.
+
+If the core console code makes the switch to full unicode then yes, that 
+would be the way to go to maintain backward compatibility. However 
+vgacon users would see a performance drop when switching between VT's 
+and we used to brag about how fast the Linux console used to be 20 years 
+ago. Does it still matter today?
+
+> > I'm a prime user of this feature, as well as the BRLTTY maintainer Dave Mielke
+> > who implemented support for this in BRLTTY. There is therefore a vested
+> > interest in maintaining this feature as necessary. And this received
+> > extensive testing as well at this point.
+> 
+> So, you care only about people with faulty wetware.  Thus, it sounds like
+> work that benefits sighted people would need to be done by people other than
+> you. 
+
+Hard for me to contribute more if I can't enjoy the result.
+
+> So I'm only mentioning possible changes; they could possibly go after
+> your patchset goes in:
+> 
+> A) if memory is considered to be at premium, what about storing only one
+>    32-bit value, masked 21 bits char 11 bits attr?  On non-vgacon, there's
+>    no reason to keep the old structures.
+
+Absolutely. As soon as vgacon is officially relegated to second class 
+citizen i.e. perform the glyph translation each time it requires 
+a refresh instead of dictating how the core console code works then the 
+central glyph buffer can go.
+
+> B) if being this frugal wrt memory is ridiculous today, what about instead
+>    going for 32 bits char (wasteful) 32 bits attr?  This would be much nicer
+>    15 bit fg color + 15 bit bg color + underline + CJK or something.
+> You already triple memory use; variant A) above would reduce that to 2x,
+> variant B) to 4x.
+> 
+> Considering that modern machines can draw complex scenes of several
+> megapixels 60 times a second, it could be reasonable to drop the complexity
+> of two structures even on vgacon: converting characters on the fly during vt
+> switch is beyond notice on any hardware Linux can run.
+
+You certainly won't find any objections from me.
+
+In the mean time, both systems may work in parallel for a smooth 
+transition.
+
+
+Nicolas
