@@ -2,131 +2,122 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D7FC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6A8C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E310D2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F3D42083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:28:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TQg92Pv5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E310D2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i2aMX8N5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F3D42083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937209AbeFSBVp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 21:21:45 -0400
-Received: from ozlabs.org ([203.11.71.1]:47691 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937146AbeFSBVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 21:21:43 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 418qtY48NCz9s2R;
-        Tue, 19 Jun 2018 11:21:41 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529371301;
-        bh=LMq/LoR+rIwcV2lMRPYT3rDT7W9tMtSInkWHPRdrv/Q=;
-        h=Date:From:To:Cc:Subject:From;
-        b=TQg92Pv5VxCK175WuhwtyMEh5CABVXtFK/N0kM+9G1MwaRCDK+xKhi4RO4ahp+HIW
-         pquXon2dTNvq2EMYYiehmkQHAYSAD2S2eIS9P+bu0AMT3tbqw3QWL2p4aZnd9g3Ant
-         tmVd+cqQiFe4hx7SgUWT+OQUROpL9QzfeeNm3/u0Y5MJ7WDES+/cfFTN8u4L8ljBO3
-         Y3wA2CddbXz1Zjpwc9jXBn87/6Ip40K1UGwl0yPIfL5GmWKQrAn5iNektPthLEheIR
-         ysQOZA3SV2X3qKPel/Xe5Kyp0093RYS949woUEoKkSEm9XIMgJ4+H0GYVtC1YDjAJH
-         tN++W6qsUHhyw==
-Date:   Tue, 19 Jun 2018 11:21:40 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: manual merge of the vfs tree with the overlayfs tree
-Message-ID: <20180619112140.58be35dd@canb.auug.org.au>
+        id S1755481AbeFSB20 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 21:28:26 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41023 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755375AbeFSB2Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 21:28:24 -0400
+Received: by mail-pl0-f66.google.com with SMTP id w8-v6so8495813ply.8
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 18:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ch8Waowzx1UdmTfHet4nTFEbozPKSbml3tzNtcN0Mdc=;
+        b=i2aMX8N5XPc4AWuot973Jii36o6J1Z7ePXzU2BeOXMP7NpIh3G81Kc3Jk6N2mvr7aY
+         BVjjU3yP77S8bXO0sOTNSoc9pb46YkFJ8BVrLj51JiiJWb8ObNXbYChVD/vzhyze8SMD
+         iJtt+K0kTTFlAF1ReN5FcLQVe/JshDYyp3XvxJs74mFsfaJy4zlIbTrJQrbYFEb9cXJp
+         I600Lm+Q7G7s67j1CoTX6dEbTxES+t1dY8V3W9s3GC0FptXqmOm/TpbagCIEUqXF9a2b
+         nahngmKYpF7PzybU6fMDxDsBKRb9ApcqLo+MtcQYg8xA/PYbvA+6IEI+9taN4VgG3Ecg
+         WwLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ch8Waowzx1UdmTfHet4nTFEbozPKSbml3tzNtcN0Mdc=;
+        b=Ewy2rASkOIshMJoIFCLqC0ghUWBFTdL/KHuuMszQvJZmB5XLGkisT331fQLipLim9j
+         8jyV251unpHpC+E94cQE+NjV84IMKztlOxpeMYh0+vyucMaUV2rv3vGfmaHp3thGYcz6
+         Ql2B3kkVl2Kh7xZF7XZ43jqAKFsiUES+n7hk5b/iQwYXKLix6JWL1lANDCJWwte8a43T
+         oCI+71NFLecQjZiEX+9dNJmdQ2R9ehlRJYnF+mZYn3wGn30MFVBrUrE/f8xTKmaL1T3a
+         FJXlYMkX4NlAQgHIcfScMcbIKxVO191lgc3T7pZxJNiiqwXHPghcJ50va83WtlVUrD7B
+         s7Vg==
+X-Gm-Message-State: APt69E1piiHb10y1yXHkG7hOiwJCRFfYqbrfH9mOPkIUEBw/LHFxjacy
+        5ZfeHn0wTrpStboFKXXpUBY=
+X-Google-Smtp-Source: ADUXVKJ8VfgyIxJxE3EMau2kp41tUWZ+j8ISGkuCPkscfChO0fWn6lchB/9C51agLhhyDGC5LZhFHQ==
+X-Received: by 2002:a17:902:650a:: with SMTP id b10-v6mr16668371plk.45.1529371704324;
+        Mon, 18 Jun 2018 18:28:24 -0700 (PDT)
+Received: from [192.168.43.97] ([1.1.125.112])
+        by smtp.gmail.com with ESMTPSA id t192-v6sm22542025pgc.74.2018.06.18.18.28.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 18:28:23 -0700 (PDT)
+Subject: Re: [PATCH v2] mtd: atmel-quadspi: add suspend/resume hooks
+To:     Claudiu Beznea <Claudiu.Beznea@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     dwmw2@infradead.org, computersforpeace@gmail.com, richard@nod.at,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1528101993-4772-1-git-send-email-claudiu.beznea@microchip.com>
+ <20180618114920.654647c0@bbrezillon>
+ <8474a744-5552-932f-7ba8-85b7d95368ea@gmail.com>
+ <0be344a2-9878-2b92-9436-bc2f4d4fd6e0@microchip.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <5b66cafe-782e-43a9-c221-cf0a1528f382@gmail.com>
+Date:   Tue, 19 Jun 2018 03:28:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fM04mZG8oQ6OrLSZGB6.rfU"; protocol="application/pgp-signature"
+In-Reply-To: <0be344a2-9878-2b92-9436-bc2f4d4fd6e0@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fM04mZG8oQ6OrLSZGB6.rfU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 06/18/2018 02:00 PM, Claudiu Beznea wrote:
+> 
+> 
+> On 18.06.2018 12:53, Marek Vasut wrote:
+>> On 06/18/2018 11:49 AM, Boris Brezillon wrote:
+>>> Hi Claudiu,
+>>>
+>>> The subject prefix should be "mtd: spi-nor: atmel-quadspi: ". No need
+>>> to send a new version just for that, I'll fix it when applying the
+>>> patch.
+>>>
+> Hi Boris,
+> 
+> Thank you!
+> 
+>>> Looks good otherwise. Marek, any objection? If not, can you add your
+>>> Acked-by?
+>>
+>> Will this work if you have ie. ubifs mounted on that QSPI NOR and you
+>> suspect and resume during IO ? I think it would, but just curious if
+>> there could be some problem.
+> 
+> Hi Marek,
+> 
+> I tested only with read/writes while suspending, simple scripts, but not
+> having ubifs mounted on QSPI NOR. I will double check also with ubifs
+> mounted on QSPI NOR and come back with the results.
 
-Hi Al,
+Thanks. I think it's gonna be OK, but let's just be sure.
+Make sure to disable 4K sector support when fiddling with UBI/UBIFS on
+QSPI NOR.
 
-Today's linux-next merge of the vfs tree got a conflict in:
-
-  include/uapi/linux/fs.h
-
-between commit:
-
-  1d91ca426d8d ("Partially revert "locks: fix file locking on overlayfs"")
-
-from the overlayfs tree and commit:
-
-  28514d1edad4 ("vfs: Suppress MS_* flag defs within the kernel unless expl=
-icitly enabled")
-
-from the vfs tree.
-
-I fixed it up (I used the vfs tree version of the file and added the
-following merge fix patch) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 19 Jun 2018 11:16:12 +1000
-Subject: [PATCH] overlayfs: fix up for MS_ constants moving
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/uapi/linux/mount.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 3634e065836c..fb104836a51f 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -37,7 +37,6 @@
-=20
- /* These sb flags are internal to the kernel */
- #define MS_SUBMOUNT     (1<<26)
--#define MS_NOREMOTELOCK	(1<<27)
- #define MS_NOSEC	(1<<28)
- #define MS_BORN		(1<<29)
- #define MS_ACTIVE	(1<<30)
---=20
-2.17.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/fM04mZG8oQ6OrLSZGB6.rfU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsoWqQACgkQAVBC80lX
-0GysdAgAo1s7cqVK1K67FxOnlVHga7mJD77YJCLhzSujfwH07/mwJgBKI61aIe+X
-0H8/s6trv5LxIMYu8s1y/RwxLU3WjCexG4r+lJMvoxOQ/U2CFHZmQ3okZVC2XVJK
-J+n+gm9vZHFKWkfmerQpoZvLYtMKw6krcq7Ov5mYQ63TmcKlhdXscbbIf67w5Fov
-K8iQH8ORUpJw9q0Onkun7xREu9JrCm6lkGiCpbiL1i79XJkbVJplq/a7JZWwqYXd
-q/tnwQ3Wwa8tsQMXrBzjVAr2L1/J9GNX9PcXZckSrD26Kfi2Q/m4ELki0KjPgcjd
-r1yU/2udnG3j/j5mA/B5Op/JRLCYzQ==
-=8ziM
------END PGP SIGNATURE-----
-
---Sig_/fM04mZG8oQ6OrLSZGB6.rfU--
+-- 
+Best regards,
+Marek Vasut
