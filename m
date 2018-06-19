@@ -3,81 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66011C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B57C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 226F52083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226F52083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 7310C2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:39:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7310C2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753741AbeFSWhn (ORCPT
+        id S1753917AbeFSWjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 18:37:43 -0400
-Received: from smtprelay0130.hostedemail.com ([216.40.44.130]:50854 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750949AbeFSWhk (ORCPT
+        Tue, 19 Jun 2018 18:39:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34966 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750973AbeFSWjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 18:37:40 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id D46BA181D3419;
-        Tue, 19 Jun 2018 22:37:39 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: hall50_7cd9f9c20dd23
-X-Filterd-Recvd-Size: 2121
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 19 Jun 2018 22:37:37 +0000 (UTC)
-Message-ID: <3013aae1803c096645887864d1b161efbfba7c77.camel@perches.com>
-Subject: Re: [PATCH 1/5] net: emaclite: Use __func__ instead of hardcoded
- name
-From:   Joe Perches <joe@perches.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Michal Simek <michal.simek@xilinx.com>,
-        netdev <netdev@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 19 Jun 2018 15:37:36 -0700
-In-Reply-To: <CAHp75VcKuqnUgynqXvACS7zY5=6aRxqymGE1w3Yh8sshehSm2g@mail.gmail.com>
-References: <1529320103-7711-1-git-send-email-radhey.shyam.pandey@xilinx.com>
-         <1529320103-7711-2-git-send-email-radhey.shyam.pandey@xilinx.com>
-         <CAHp75VcKuqnUgynqXvACS7zY5=6aRxqymGE1w3Yh8sshehSm2g@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
+        Tue, 19 Jun 2018 18:39:13 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04735CBA;
+        Tue, 19 Jun 2018 22:39:12 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 15:39:11 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Christian Hansen <chansen3@cisco.com>
+Cc:     xe-linux-external@cisco.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: adding support for idle page tracking to tool
+Message-Id: <20180619153911.bd835e2a7f0a4d2d3cddf348@linux-foundation.org>
+In-Reply-To: <20180612153223.13174-1-chansen3@cisco.com>
+References: <20180612153223.13174-1-chansen3@cisco.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-20 at 00:36 +0300, Andy Shevchenko wrote:
-> On Mon, Jun 18, 2018 at 2:08 PM, Radhey Shyam Pandey
-> <radhey.shyam.pandey@xilinx.com> wrote:
-> > Switch hardcoded function name with a reference to __func__ making
-> > the code more maintainable. Address below checkpatch warning:
-> > 
-> > WARNING: Prefer using '"%s...", __func__' to using 'xemaclite_mdio_read',
-> > this function's name, in a string
-> > +               "xemaclite_mdio_read(phy_id=%i, reg=%x) == %x\n",
-> > 
-> > WARNING: Prefer using '"%s...", __func__' to using 'xemaclite_mdio_write',
-> > this function's name, in a string
-> > +               "xemaclite_mdio_write(phy_id=%i, reg=%x, val=%x)\n",
-> > 
-> 
-> For dev_dbg() the __func__ should be completely dropped away.
+On Tue, 12 Jun 2018 11:32:23 -0400 Christian Hansen <chansen3@cisco.com> wrote:
 
-Not really the same.
+> Adding a flag which will use the kernels's idle
+> page tracking to mark pages idle.  As the tool already
+> prints the idle flag if set, subsequent runs will show
+> which pages have been accessed since last run.
 
-dev_dbg without CONFIG_DYNAMIC_DEBUG does not have
-the ability to prefix __func__.
+That sounds useful.
 
+This patch seems to have been prepared against the mainline kernel, so
+it conflicts with your "tools: modifying page-types to include shared
+map counts" patch.  Awkward, but I seem to have got it fixed up.
+
+> ...
+>
+> @@ -566,6 +570,30 @@ static int unpoison_page(unsigned long offset)
+>  	return 0;
+>  }
+>  
+> +static int mark_page_idle(unsigned long offset)
+> +{
+> +	static unsigned long off;
+> +	static uint64_t buf;
+> +	int len;
+> +
+> +	if ((offset / 64 == off / 64) || buf == 0) {
+> +		buf |= 1UL << (offset % 64);
+> +		off = offset;
+> +		return 0;
+> +	}
+> +
+> +	len = pwrite(page_idle_fd, &buf, 8, 8 * (off / 64));
+> +	if (len < 0) {
+> +		perror("mark page idle");
+> +		return len;
+> +	}
+> +
+> +	buf = 1UL << (offset % 64);
+> +	off = offset;
+> +
+> +	return 0;
+> +}
+
+This is a bit cumbersome.  Why not this way:
+
+static int mark_page_idle(unsigned long offset)
+{
+	static unsigned long off;
+	static uint64_t buf;
+	int len;
+
+	if ((offset / 64 != off / 64) && buf != 0) {
+		len = pwrite(page_idle_fd, &buf, 8, 8 * (off / 64));
+		if (len < 0) {
+			perror("mark page idle");
+			return len;
+		}
+	}
+	buf = 1UL << (offset % 64);
+	off = offset;
+	return 0;
+}
+
+Also, it's not very clear what's going on here - the handling of
+offset, off and buf.  Some well-crafted comments would help.
+
+>
+> ...
+>
