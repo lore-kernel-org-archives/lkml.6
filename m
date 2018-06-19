@@ -2,157 +2,178 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C58DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C43DC5AE59
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B782420852
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 383E320693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="TCV+G2yT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B782420852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiddD2ma"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383E320693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937030AbeFSBod (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 21:44:33 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:45051 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934880AbeFSBoc (ORCPT
+        id S937069AbeFSBq1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 21:46:27 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38068 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934880AbeFSBqZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 21:44:32 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9BF1F8364F
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 13:44:29 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1529372669;
-        bh=WG2d4uQx7I2SiKwm7sSjopnTjmt4OUY1JfAljKbVMD0=;
-        h=From:To:CC:Subject:Date:References;
-        b=TCV+G2yTZWNpnAWwwHFctW33OYJby+aKWqHNeeaVHdUXEzKDuqyLRAqJB6mE8Co/5
-         F6GZ23NzrP7bqKnh8MCIEjujBtMtoZ40uzxMMEPiL5RkWLlviNanRjK6QUJtnjgUSE
-         EEhdmU52b5SheyODBKsz9gCc2lC6TZfidyh0SxBk=
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b285ffe0000>; Tue, 19 Jun 2018 13:44:30 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Tue, 19 Jun 2018 13:44:24 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Tue, 19 Jun 2018 13:44:24 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-CC:     "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
-Thread-Topic: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
-Thread-Index: AQHUBsA+zZ/Rrpto/keRRl4OvggntA==
-Date:   Tue, 19 Jun 2018 01:44:24 +0000
-Message-ID: <0caaea1b4f5a4b45b436833424c4c8c8@svr-chch-ex1.atlnz.lc>
-References: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
- <20180618151450.3e740270@xps13>
- <f16525ea6b534123bda64b09e818ce6d@svr-chch-ex1.atlnz.lc>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Mon, 18 Jun 2018 21:46:25 -0400
+Received: by mail-pg0-f67.google.com with SMTP id c9-v6so8380058pgf.5;
+        Mon, 18 Jun 2018 18:46:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=geNfsEUGDsaxdlwGM4b1h31JAgA/mrXS/EMPQ8aEkRw=;
+        b=fiddD2maIZND01ynZEyBjuph40rEMUp8idv5in/3bsXuPHBWn7saSxb10ynxIhEYBv
+         ZsZwoNA45oF7aqAqS1HpsewNncNAfphmkiS26BMs5afe0D5qPG+OAnueQ78EHLp0I3oD
+         zG3Xpa3AlqPosWrHD9rrM7+GjZFw4CxufpmSDV/KMs5XewaH6OVi4hJgU5DBE61wVqXu
+         XHT6Jgin7oz10BBtc2mVuswtA1ELi1z6Gp4zod+2OrfIdrftWAHjzMF/c5IwqLpOM8aD
+         TbrAg0mzIHt57bbpInXLAGVf/F4eRMcRb5BGhrLCHKuuRxx3n1quik2Cu8xqs2h4xep3
+         RKJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=geNfsEUGDsaxdlwGM4b1h31JAgA/mrXS/EMPQ8aEkRw=;
+        b=tbpKK6whkoahNfbeAnLLpPz6nwKiiyWOccGDi7qwcBM7DjwavrfCcI/044Hhs4EaIU
+         XbbnbRJFD8Fr7Q/cAQotjk0ctIXaC5QSqDS30pbXup1iHsic4m37Wv/nPd0BehOLjVHy
+         6xQrmMZ/MSfEYRgyFg+AHE7a/VSwoADHYcxgrTgCD5xR7bnKUJmBoidFkUsL38hoIFJh
+         9ZoF1YJszoml8CMmHYafExLYUZWWMCL8wVyj7t416BjgshNzamH00lVzlGr6IlbA1Hv1
+         0PI3gUkTiHO2BRb5hnYkk8qkX0qE7gIGxzcUcGXE92OJOpm5n42aq544B12GpXxlLdqz
+         tLZQ==
+X-Gm-Message-State: APt69E0G0hggPJPJtNt8KRzgarzKxPV7hUfvPhVZLbU2Qo1Ai96YJjO9
+        9EbFsiTijM1guAm5VIRiDHo=
+X-Google-Smtp-Source: ADUXVKJiiFH0Ephk8H8YCkxbkhfeP7SoRFo4bGXvHThcaDvsxdAwRH45hBcqU4egexa+HbN9VT6UFQ==
+X-Received: by 2002:a62:6b06:: with SMTP id g6-v6mr15718144pfc.96.1529372784499;
+        Mon, 18 Jun 2018 18:46:24 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:1600:17a6:2407:f707:f7f9])
+        by smtp.gmail.com with ESMTPSA id s27-v6sm33966155pfk.184.2018.06.18.18.46.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 18:46:23 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH] of/platform: add initcall_debug logs for device creates
+Date:   Mon, 18 Jun 2018 18:46:08 -0700
+Message-Id: <20180619014608.92061-1-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/06/18 12:35, Chris Packham wrote:=0A=
-> On 19/06/18 01:15, Miquel Raynal wrote:=0A=
->> Hi Chris,=0A=
->>=0A=
->> On Mon, 18 Jun 2018 16:52:53 +1200, Chris Packham=0A=
->> <chris.packham@alliedtelesis.co.nz> wrote:=0A=
->>=0A=
->>> Hi,=0A=
->>>=0A=
->>> I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chi=
-p=0A=
->>> to one of our boards which uses the Marvell NFCv2 controller.=0A=
->>>=0A=
->>> This particular chip is a bit odd in that the datasheet states support=
-=0A=
->>> for ONFI 1.0 but the revision number field is 00 00. It also is marked=
-=0A=
->>> ABAFA but reports internally as ABAGA. Finally it has internal 8-bit EC=
-C=0A=
->>> which cannot be disabled.=0A=
->>=0A=
->> Boris and I agree that in this case, the chip should not be probed if=0A=
->> ecc->type !=3D ON_DIE (and eventually NONE).=0A=
->>=0A=
->> This should be handled in the Micron driver.=0A=
->>=0A=
->> Also, what is the returned value of micron_supports_on_die_ecc() (with=
-=0A=
->> patch 1/2)?=0A=
-> =0A=
-> micron_supports_on_die_ecc() returns MICRON_ON_DIE_UNSUPPORTED.=0A=
-> Technically this chip should be MICRON_ON_DIE_MANDATORY since it can't=0A=
-> be disabled but that wouldn't be much help since that would still result=
-=0A=
-> in -EINVAL. I'll dig into micron_supports_on_die_ecc() and see if I can=
-=0A=
-> find something in the datasheet to use.=0A=
-> =0A=
-=0A=
-Some further debugging. Nothing (in 4.17) calls =0A=
-set_bit(ONFI_FEATURE_ON_DIE_ECC) so I don't think =0A=
-micron_supports_on_die_ecc() can return anything other than =0A=
-MICRON_ON_DIE_UNSUPPORTED, unless I'm missing something for how the =0A=
-{get,set}_feature_list is populated.=0A=
-=0A=
-With the onfi.version fix and the following=0A=
-=0A=
---- a/drivers/mtd/nand/raw/nand_micron.c=0A=
-+++ b/drivers/mtd/nand/raw/nand_micron.c=0A=
-@@ -66,7 +66,9 @@ static int micron_nand_onfi_init(struct nand_chip *chip)=
-=0A=
-=0A=
-         if (p->supports_set_get_features) {=0A=
-                 set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->set_feature_list)=
-;=0A=
-+               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->set_feature_list);=0A=
-                 set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->get_feature_list)=
-;=0A=
-+               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->get_feature_list);=0A=
-         }=0A=
-@@ -240,7 +246,7 @@ static int micron_supports_on_die_ecc(struct =0A=
-nand_chip *chip)=0A=
-          * Some Micron NANDs have an on-die ECC of 4/512, some other=0A=
--         * 8/512. We only support the former.=0A=
-+         * 8/512.=0A=
-          */=0A=
--       if (chip->ecc_strength_ds !=3D 4)=0A=
-+       if (chip->ecc_strength_ds !=3D 4 && chip->ecc_strength_ds !=3D 8)=
-=0A=
-                 return MICRON_ON_DIE_UNSUPPORTED;=0A=
-=0A=
-I can get micron_supports_on_die_ecc() to return MICRON_ON_DIE_SUPPORTED.=
-=0A=
-=0A=
-Then I run into a problem with the marvell_nand.c which currently =0A=
-doesn't handle NAND_ECC_ON_DIE which is easily fixed.=0A=
-=0A=
-But then I have the issue that I need to handle systems with either type =
-=0A=
-of ECC scheme ("on-die" or "hw") which I'm not sure is even possible =0A=
-within the dts.=0A=
-=0A=
-I'll re-base against 4.18-rc1 and send what I have so-far.=0A=
+From: Todd Poynor <toddpoynor@google.com>
+
+Add initcall_debug logs for the amount of time taken by each OF platform
+bus device create call.  For example:
+
+   of platform device create /reserved-memory/ramoops@a3800000 took
+   3255 usecs
+
+initcall_debug already reports the total of all such device creates
+as a single entry for function of_platform_default_populate_init (or
+similar, depending on the board).  The new logs help identify which of
+the potentially hundreds of device inits take significant amounts of
+time.
+
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
+---
+ drivers/of/platform.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
+
+Note it's likely only a few devices take significant lengths of time to
+init, whereas there may be hundreds of uninteresting cases also logged.
+Adding a threshold for reporting might be desirable, although for boot
+time sleuthing it's probably fine to generate a ton of output and narrow
+down the points of interest with tools.
+
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 6925d993e1f0..eeb4c595f43c 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -14,6 +14,7 @@
+ #include <linux/amba/bus.h>
+ #include <linux/device.h>
+ #include <linux/dma-mapping.h>
++#include <linux/init.h>
+ #include <linux/slab.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+@@ -159,6 +160,19 @@ struct platform_device *of_device_alloc(struct device_node *np,
+ }
+ EXPORT_SYMBOL(of_device_alloc);
+ 
++static void of_platform_log_inittime(struct device_node *node,
++				     ktime_t starttime)
++{
++	ktime_t delta, endtime;
++	unsigned long long duration;
++
++	endtime = ktime_get();
++	delta = ktime_sub(endtime, starttime);
++	duration = (unsigned long long) ktime_to_ns(delta) >> 10;
++	pr_debug("of platform device create %s took %lld usecs\n",
++		 node->full_name, duration);
++}
++
+ /**
+  * of_platform_device_create_pdata - Alloc, initialize and register an of_device
+  * @np: pointer to node to create device for
+@@ -176,6 +190,8 @@ static struct platform_device *of_platform_device_create_pdata(
+ 					struct device *parent)
+ {
+ 	struct platform_device *dev;
++	ktime_t starttime = 0;
++	int ret;
+ 
+ 	if (!of_device_is_available(np) ||
+ 	    of_node_test_and_set_flag(np, OF_POPULATED))
+@@ -187,9 +203,14 @@ static struct platform_device *of_platform_device_create_pdata(
+ 
+ 	dev->dev.bus = &platform_bus_type;
+ 	dev->dev.platform_data = platform_data;
++	if (initcall_debug)
++		starttime = ktime_get();
+ 	of_msi_configure(&dev->dev, dev->dev.of_node);
++	ret = of_device_add(dev);
++	if (initcall_debug)
++		of_platform_log_inittime(np, starttime);
+ 
+-	if (of_device_add(dev) != 0) {
++	if (ret != 0) {
+ 		platform_device_put(dev);
+ 		goto err_clear_flag;
+ 	}
+@@ -352,6 +373,7 @@ static int of_platform_bus_create(struct device_node *bus,
+ 	struct platform_device *dev;
+ 	const char *bus_id = NULL;
+ 	void *platform_data = NULL;
++	ktime_t starttime = 0;
+ 	int rc = 0;
+ 
+ 	/* Make sure it has a compatible property */
+@@ -384,7 +406,11 @@ static int of_platform_bus_create(struct device_node *bus,
+ 		 * Don't return an error here to keep compatibility with older
+ 		 * device tree files.
+ 		 */
++		if (initcall_debug)
++			starttime = ktime_get();
+ 		of_amba_device_create(bus, bus_id, platform_data, parent);
++		if (initcall_debug)
++			of_platform_log_inittime(bus, starttime);
+ 		return 0;
+ 	}
+ 
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
+
