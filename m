@@ -2,156 +2,103 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB025C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B26A0C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B6BF2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:56:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6BF2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 61D662083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:56:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EIvXLHFR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D662083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937321AbeFSE4A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 00:56:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56466 "EHLO mail.bootlin.com"
+        id S937335AbeFSE4M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 00:56:12 -0400
+Received: from ozlabs.org ([203.11.71.1]:35581 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937085AbeFSEz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 00:55:58 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B14D5207D4; Tue, 19 Jun 2018 06:55:56 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7AA1A2079D;
-        Tue, 19 Jun 2018 06:55:56 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 06:55:55 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
-Message-ID: <20180619065555.1900487c@bbrezillon>
-In-Reply-To: <0caaea1b4f5a4b45b436833424c4c8c8@svr-chch-ex1.atlnz.lc>
-References: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
-        <20180618151450.3e740270@xps13>
-        <f16525ea6b534123bda64b09e818ce6d@svr-chch-ex1.atlnz.lc>
-        <0caaea1b4f5a4b45b436833424c4c8c8@svr-chch-ex1.atlnz.lc>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S937085AbeFSE4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 00:56:09 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 418wdy1fP8z9s3C;
+        Tue, 19 Jun 2018 14:56:05 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1529384167;
+        bh=Krek/O2KW3WHiU0KvWK40uE2H+KntHz0Bozl059YFhs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=EIvXLHFR6SCFs7dzWzVKBFXRtV/QPrbAlg+QuQsBVUc5REBlFGY5PQiYJwSi2SrGk
+         e05MyChmjDeUQuS6x641OEnzKA+VR57tobfr9rmnAn1xEj5F8Gc0OgvXOHTCI0hegl
+         P6dfPjAS83cN5VEiuxJ6OfOAXLhk3wqBKjY9kVhEGbtkVTdNXflTPSvMLvZq7mV4a9
+         GTy6IWP3Z+1zEPpKs/VugEaGWCTWf009/+3nW0wXPyo6XMMcPpGMLVYuTxCoQZID+9
+         0Dty0ESbmRQEa5jOwZdy4qgChDbnDt0PBblxl9eneiNc1QeGid8MRtb1gfR6mYIx+W
+         jcE1tDVgVhluw==
+Date:   Tue, 19 Jun 2018 14:56:05 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: linux-next: manual merge of the userns tree with the vfs tree
+Message-ID: <20180619145605.1eb8e86f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/59UMffTH7U2/QUbpeeP3iOj"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chris,
+--Sig_/59UMffTH7U2/QUbpeeP3iOj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 19 Jun 2018 01:44:24 +0000
-Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
+Hi all,
 
-> On 19/06/18 12:35, Chris Packham wrote:
-> > On 19/06/18 01:15, Miquel Raynal wrote:  
-> >> Hi Chris,
-> >>
-> >> On Mon, 18 Jun 2018 16:52:53 +1200, Chris Packham
-> >> <chris.packham@alliedtelesis.co.nz> wrote:
-> >>  
-> >>> Hi,
-> >>>
-> >>> I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chip
-> >>> to one of our boards which uses the Marvell NFCv2 controller.
-> >>>
-> >>> This particular chip is a bit odd in that the datasheet states support
-> >>> for ONFI 1.0 but the revision number field is 00 00. It also is marked
-> >>> ABAFA but reports internally as ABAGA. Finally it has internal 8-bit ECC
-> >>> which cannot be disabled.  
-> >>
-> >> Boris and I agree that in this case, the chip should not be probed if
-> >> ecc->type != ON_DIE (and eventually NONE).
-> >>
-> >> This should be handled in the Micron driver.
-> >>
-> >> Also, what is the returned value of micron_supports_on_die_ecc() (with
-> >> patch 1/2)?  
-> > 
-> > micron_supports_on_die_ecc() returns MICRON_ON_DIE_UNSUPPORTED.
-> > Technically this chip should be MICRON_ON_DIE_MANDATORY since it can't
-> > be disabled but that wouldn't be much help since that would still result
-> > in -EINVAL. I'll dig into micron_supports_on_die_ecc() and see if I can
-> > find something in the datasheet to use.
-> >   
-> 
-> Some further debugging. Nothing (in 4.17) calls 
-> set_bit(ONFI_FEATURE_ON_DIE_ECC) so I don't think 
-> micron_supports_on_die_ecc() can return anything other than 
-> MICRON_ON_DIE_UNSUPPORTED, unless I'm missing something for how the 
-> {get,set}_feature_list is populated.
+Today's linux-next merge of the userns tree got conflicts in:
 
-Nope you're not. Looks like we broke Micron on-die ECC in 4.17.
+  fs/proc/inode.c
+  fs/proc/root.c
 
-> 
-> With the onfi.version fix and the following
-> 
-> --- a/drivers/mtd/nand/raw/nand_micron.c
-> +++ b/drivers/mtd/nand/raw/nand_micron.c
-> @@ -66,7 +66,9 @@ static int micron_nand_onfi_init(struct nand_chip *chip)
-> 
->          if (p->supports_set_get_features) {
->                  set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->set_feature_list);
-> +               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->set_feature_list);
->                  set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->get_feature_list);
-> +               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->get_feature_list);
->          }
+between commits:
 
-Can you send a patch containing only the above changes with the
-Cc-stable and Fixes tags?
+  0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
+  83cd45075c36 ("proc: Add fs_context support to procfs")
 
-> @@ -240,7 +246,7 @@ static int micron_supports_on_die_ecc(struct 
-> nand_chip *chip)
->           * Some Micron NANDs have an on-die ECC of 4/512, some other
-> -         * 8/512. We only support the former.
-> +         * 8/512.
->           */
-> -       if (chip->ecc_strength_ds != 4)
-> +       if (chip->ecc_strength_ds != 4 && chip->ecc_strength_ds != 8)
->                  return MICRON_ON_DIE_UNSUPPORTED;
->
+from the vfs tree and commit:
 
-This should be done in a separate patch.
- 
-> I can get micron_supports_on_die_ecc() to return MICRON_ON_DIE_SUPPORTED.
-> 
+  cc8cda3af2ba ("proc: Simplify and fix proc by removing the kernel mount")
 
-That's weird. You should have MICRON_ON_DIE_MANDATORY here. Could it be
-that the ONFI_FEATURE_ON_DIE_ECC_EN bit does not really reflect the ECC
-engine state? If that's the case, we'll have to change the way we
-detect if on-die ECC is supported/mandatory/not-supported (based on the
-model name stored in the ONFI param page?).
+from the userns tree.
 
-> Then I run into a problem with the marvell_nand.c which currently 
-> doesn't handle NAND_ECC_ON_DIE which is easily fixed.
+I don't know how to fix this up, so I just dropped the userns tree for
+today (since it only contained that one commit).
 
-Yep, adding that to the new driver should be pretty easy.
+--=20
+Cheers,
+Stephen Rothwell
 
-> 
-> But then I have the issue that I need to handle systems with either type 
-> of ECC scheme ("on-die" or "hw") which I'm not sure is even possible 
-> within the dts.
+--Sig_/59UMffTH7U2/QUbpeeP3iOj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-You mean having the same dts for both setup. Indeed, that's not
-supported right now.
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> I'll re-base against 4.18-rc1 and send what I have so-far.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsojOUACgkQAVBC80lX
+0Gzugwf+OutsKhrbGfS+oySE/YiolPEO81HpD+GYWQtKZGeaJHQKMAlXfhu4QURE
+DnjuN0p6dImod/bJLR+DAJUr3SghNpyu2LLKKqtY5l/8qLdh7Q8bi1IwNNWZx5Ft
+KEi16mgHyQBHW9sGW7AzLUtzFsSxCji4Z9LrwtIoSrYUWXCZqsHgVpdnpfWvnTF2
+It93bz0ysbY/WfCRHYxSlWstZXDG2wFNeHRyr5jxwIQbHbnRkbK7zuCtQkHbQT9E
+hdkARVwrCFhCfqml+e96Ig5JTRCb+hVbjcwc4MEIJvzlzmIg40LS84HNnAAvCZPI
+Vx+eFEqEJDLvC0S3U5ubq4QJLf/3Tw==
+=Eh/Y
+-----END PGP SIGNATURE-----
 
-Cool. I'm particularly interested by the SET/GET_FEATURE(ECC) fix.
-
-Thanks,
-
-Boris
+--Sig_/59UMffTH7U2/QUbpeeP3iOj--
