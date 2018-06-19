@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D42BAC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A90C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8705F204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF2E8204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0x2ouUm/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8705F204EC
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ta1KOp7A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2E8204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937788AbeFSORQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:17:16 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49840 "EHLO
+        id S937663AbeFSOVc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 10:21:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49886 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937635AbeFSORO (ORCPT
+        with ESMTP id S937493AbeFSOVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:17:14 -0400
+        Tue, 19 Jun 2018 10:21:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tCMkny1l1fXJhviFc1MWVkyLSSh8CIavvuVt+oyQAp0=; b=0x2ouUm/IoA+U/IeXzdQqGaZh
-        1O4pAMTrBTxwYb8hDOnIhHT6FlRmXRviSm0Ps9Ds6WTc96YXkdW3/uQFWetgoVMKlZ+mxIfokXOxl
-        Wl1mWrZ0cWwEPsftQ03MeroxDVM7tvG/SpAKoBYIs4vFh4Q7F9ksqoMcKh5/uhIlT1en5GtF31k1h
-        KVd6Btg50owftUFy1d7KLb9cCJzrlap/jAG/r/I3yGV25ovgpyDikUsLFGqZcndeblFjkGPKU1NQk
-        4tDez3sGL1SVVKGkYYpQFtvLYvd69jnOb2VRFK2uE9sVM+8d6tJURdiZBadU2CXzSncqvsbX4qxTC
-        hW/0nj9BQ==;
+         bh=lYagv6Rr6geuVnsNy+UJSzOD9e1YuHy4XR+UA4XaTbU=; b=Ta1KOp7AvcLQBEWk3k065GSZx
+        7KZDmpMRaFt0tSMvJRXKQe9igoF7xjX4o08G1f238mQEpmyJieLtKrHrqUIvtXfPZlLaaTFUBGdhb
+        omX6Y04VTowwGZCBpPTaaFFIUFl+lVTFVR7VqFOeSLs4IZpFryBui7VnF42cyCEgcECsI7vHOVvjR
+        1x7auNeaYlU0OGwbwwMlCjfCdaYDul7TPI7q2RcI5gSI8Cf6UvBh3pxeqEgKvaboMRBT5/SntFmm+
+        aqbE7RPkSPeQJJ3EPFm/VbbZ225ka4l4j8ENvLBzDD3RZSBTOA+gGnFybZYKqmcHY3UEcJw78nANi
+        ZS3sagaTA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVHR5-0003WQ-Sz; Tue, 19 Jun 2018 14:16:44 +0000
+        id 1fVHVW-0003ZO-9z; Tue, 19 Jun 2018 14:21:18 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A798220267E79; Tue, 19 Jun 2018 16:16:42 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 16:16:42 +0200
+        id F1B3020267E79; Tue, 19 Jun 2018 16:21:16 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 16:21:16 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Quentin Perret <quentin.perret@arm.com>
 Cc:     rjw@rjwysocki.net, gregkh@linuxfoundation.org,
@@ -57,27 +57,31 @@ Cc:     rjw@rjwysocki.net, gregkh@linuxfoundation.org,
         currojerez@riseup.net, javi.merino@kernel.org
 Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
  framework
-Message-ID: <20180619141642.GE2494@hirez.programming.kicks-ass.net>
+Message-ID: <20180619142116.GA2512@hirez.programming.kicks-ass.net>
 References: <20180521142505.6522-1-quentin.perret@arm.com>
  <20180521142505.6522-4-quentin.perret@arm.com>
  <20180619113408.GQ2458@hirez.programming.kicks-ass.net>
  <20180619125857.GY17720@e108498-lin.cambridge.arm.com>
  <20180619132338.GF2476@hirez.programming.kicks-ass.net>
  <20180619133844.GB17720@e108498-lin.cambridge.arm.com>
+ <20180619141642.GE2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619133844.GB17720@e108498-lin.cambridge.arm.com>
+In-Reply-To: <20180619141642.GE2494@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 02:38:45PM +0100, Quentin Perret wrote:
-> But maybe I could use something simpler than a lock in this case ?
-> Would WRITE_ONCE/READ_ONCE be enough to ensure that atomicity for
-> example ?
+On Tue, Jun 19, 2018 at 04:16:42PM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 19, 2018 at 02:38:45PM +0100, Quentin Perret wrote:
+> > But maybe I could use something simpler than a lock in this case ?
+> > Would WRITE_ONCE/READ_ONCE be enough to ensure that atomicity for
+> > example ?
+> 
+> Yes, since its a single pointer, smp_store_release() + READ_ONCE()
+> should be sufficient (these are the foundations of RCU).
 
-Yes, since its a single pointer, smp_store_release() + READ_ONCE()
-should be sufficient (these are the foundations of RCU).
+Note that per_cpu()/this_cpu_read() and friends should imply READ_ONCE().
