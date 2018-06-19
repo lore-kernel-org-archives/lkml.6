@@ -2,303 +2,269 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D32BC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA09EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 067D320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:05:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 067D320693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 8312420874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:06:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UiNQjKiQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k87YYvVt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8312420874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755463AbeFSEFd (ORCPT
+        id S1755543AbeFSEGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 00:05:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36765 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752018AbeFSEFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 00:05:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 5CD6FAC44;
-        Tue, 19 Jun 2018 04:05:30 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Date:   Tue, 19 Jun 2018 14:05:23 +1000
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [RFC PATCH 0/5] kbuild: build modules from code in multiple directories.
-In-Reply-To: <20180618082017.GA4752@infradead.org>
-References: <152929708853.17463.17302660556961083137.stgit@noble> <20180618082017.GA4752@infradead.org>
-Message-ID: <87po0ne7zw.fsf@notabene.neil.brown.name>
+        Tue, 19 Jun 2018 00:06:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46856 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750771AbeFSEGH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 00:06:07 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 027AD604D4; Tue, 19 Jun 2018 04:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529381167;
+        bh=j+nra3pmqHRgGAV322JdwczYHaPgPEw0i+eP7g0WO5g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UiNQjKiQyfaUEJ85K55qxWgYHtO0ETdQzj58lceTEPTQ+rn5ajgBcPajZPz3fntZ4
+         wZdPPwIgWcgkHX0yAf/IRzUXDWiSx+O9tIXJ4xRxrd9jPaHrshDqlwMW8GSyPeS7k0
+         SA5JvlksyxFKie/qne7hgkL0FohFhXfJz9H21R1A=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id DEBE2604D4;
+        Tue, 19 Jun 2018 04:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529381165;
+        bh=j+nra3pmqHRgGAV322JdwczYHaPgPEw0i+eP7g0WO5g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=k87YYvVtdgFrEceovOEU23WuxUnk05KsRk+ZKRI1QFJy/7YRRdgUDSWKAzyE5H5D5
+         R+3eGVxAlIb9El87RhKvP7eRDeOARnheH4wYCERwCq6C0Ol+5tDqvJvHPizQRt/6Yh
+         s0xaZ3dLrcpD3WMTVTNyBoPmmRJ8CmEt+Sv8QqiE=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 19 Jun 2018 09:36:05 +0530
+From:   Govind Singh <govinds@codeaurora.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        david.brown@linaro.org, linux-wireless@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/6]  *** Add support for wifi QMI client driver ***
+In-Reply-To: <20180619021742.GA17220@rodete-desktop-imager.corp.google.com>
+References: <20180605123304.31969-1-govinds@codeaurora.org>
+ <20180619021742.GA17220@rodete-desktop-imager.corp.google.com>
+Message-ID: <974e34efd334d921e49d08df879c1b97@codeaurora.org>
+X-Sender: govinds@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Brian,
 
-On Mon, Jun 18 2018, Christoph Hellwig wrote:
+On 2018-06-19 07:47, Brian Norris wrote:
+> Hi Govind,
+> 
+> One more side note: this series is called v2, but I see an older v3.
+> What's up with that?
+> 
 
-> On Mon, Jun 18, 2018 at 02:55:20PM +1000, NeilBrown wrote:
->> This set of patches makes it possible to build a module from
->> code in multiple directories without needing to list files from one
->> directory in the Makefile of another directory.
->>=20
->> The code was developed for lustre (which is now out-of-tree :-( ) but
->> can be useful elsewhere, such as for xfs and btrfs and others.
->>=20
->> In fs/xfs/Makefile the section:
->>=20
->> xfs-y				+=3D $(addprefix libxfs/, \
->> 				   xfs_ag.o \
->> 				   xfs_alloc.o \
->> 				.....
->>=20
->> could become
->>=20
->> xfs-y +=3D libxfs/
->>=20
->> and then in fs/xfs/libxfs/Makefile we would have
->>=20
->> modobj-$(CONFIG_XFS_FS) +=3D xfs_ag.o \
->> 			   xfs_alloc.o \
->> 			   .....
->>=20
->> A similar process could move filenames for scrub/* from the
->> fs/xfs/Makefile to fs/xfs/scrub/Makefile
->
-> How about you actually convert it as an example?
+Earlier was typo(v3), it was first version.
+Pls ignore the same.
 
-Sure ... found a bug while testing it.  Thanks :-)
+> On Tue, Jun 05, 2018 at 06:03:04PM +0530, Govind Singh wrote:
+>> Add QMI client driver for Q6 integrated WLAN connectivity subsystem.
+>> This module is responsible for communicating WLAN control messages to 
+>> FW
+>> over QMI interface.
+>> 
+>> QUALCOMM MSM Interface(QMI) provides the control interface between
+>> components running b/w remote processors with underlying transport 
+>> layer
+>> based on integrated chipset(shared memory) or discrete 
+>> chipset(PCI/USB/SDIO/UART).
+> 
+> So this seems to imply QMI would work with transports that are not
+> integrated. Except, your code is directly calling SNOC (one of your
+> integrated chipset interfaces) code from the QMI driver. Correct? I
+> suppose that's OK for now, but it's a little misleading. If you 
+> actually
+> intend this to support multiple transports, then you might instead want
+> a callback interface for this.
+> 
 
-From=20ac7953b4ba6d9a2a69dab84dd772aafca38d8377 Mon Sep 17 00:00:00 2001
-From: NeilBrown <neilb@suse.com>
-Date: Tue, 19 Jun 2018 13:59:16 +1000
-Subject: [PATCH] kbuild/xfs: example modobj-m conversion
+Agree, As of now there is no road-map to support qmi on discrete 
+chip-set on ath10k tree.
+Probably if required in future, we can use some generic callback and 
+opaque structures to
+make it independent to integrated/discrete chip set.
 
-This is a demonstration patch to show how
-xfs can be changed to make use of the proposed modobj-m=3D
-functionality, should the xfs developers want that.
+>> QMI client driver implementation is based on qmi frmework 
+>> https://lwn.net/Articles/729924/.
+>> 
+>> Below is the sequence of qmi handshake.
+>> 
+>>        QMI CLIENT(APPS)                                         QMI 
+>> SERVER(FW in Q6)
+>> 
+>>                          <------wlan service discoverd----
+>> 
+>>                        -----connect to wlam qmi service----->
+>> 
+>>                        ------------wlan info request----->
+>> 
+>>                        <------------wlan info resp------------
+>> 
+>>                        ------------msa info req-------->
+>> 
+>>                      <------------msa info resp------------
+>> 
+>>                      ------------msa ready req-------->
+>> 
+>>                      <------------msa ready resp------------
+>> 
+>>                      <------------msa ready indication-------
+>> 
+>>                      ------------capability req------->
+>> 
+>>                     <------------capability resp------------
+>> 
+>>                     ------------qmi bdf req--------->
+>> 
+>>                      <------------qmi bdf resp------------
+>> 
+>>                       ------------qmi cal trigger------->
+>> 
+>>                   <------------ QMI FW ready indication-------
+> 
+> Let's see if I'm interpreting this right:
+> 
+>  * The above process is just initiating a handshake with the QMI
+>    service and doesn't actually do any loading of firmware on its own;
+>    it just hands things off to the SNOC client driver (and ath10k core)
+>    once the firmware is magically ready (??)
 
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- fs/xfs/Makefile        | 78 ++--------------------------------------------=
-----
- fs/xfs/libxfs/Makefile | 43 ++++++++++++++++++++++++++++
- fs/xfs/scrub/Makefile  | 29 +++++++++++++++++++
- 3 files changed, 74 insertions(+), 76 deletions(-)
- create mode 100644 fs/xfs/libxfs/Makefile
- create mode 100644 fs/xfs/scrub/Makefile
+Yes, it is initiating the handshakes once qmi service is up on the 
+target Q6.
 
-diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
-index 2f3f75a7f180..0ba854045fe9 100644
-=2D-- a/fs/xfs/Makefile
-+++ b/fs/xfs/Makefile
-@@ -15,47 +15,7 @@ obj-$(CONFIG_XFS_FS)		+=3D xfs.o
- xfs-y				+=3D xfs_trace.o
-=20
- # build the libxfs code first
-=2Dxfs-y				+=3D $(addprefix libxfs/, \
-=2D				   xfs_ag.o \
-=2D				   xfs_alloc.o \
-=2D				   xfs_alloc_btree.o \
-=2D				   xfs_attr.o \
-=2D				   xfs_attr_leaf.o \
-=2D				   xfs_attr_remote.o \
-=2D				   xfs_bit.o \
-=2D				   xfs_bmap.o \
-=2D				   xfs_bmap_btree.o \
-=2D				   xfs_btree.o \
-=2D				   xfs_da_btree.o \
-=2D				   xfs_da_format.o \
-=2D				   xfs_defer.o \
-=2D				   xfs_dir2.o \
-=2D				   xfs_dir2_block.o \
-=2D				   xfs_dir2_data.o \
-=2D				   xfs_dir2_leaf.o \
-=2D				   xfs_dir2_node.o \
-=2D				   xfs_dir2_sf.o \
-=2D				   xfs_dquot_buf.o \
-=2D				   xfs_ialloc.o \
-=2D				   xfs_ialloc_btree.o \
-=2D				   xfs_iext_tree.o \
-=2D				   xfs_inode_fork.o \
-=2D				   xfs_inode_buf.o \
-=2D				   xfs_log_rlimit.o \
-=2D				   xfs_ag_resv.o \
-=2D				   xfs_rmap.o \
-=2D				   xfs_rmap_btree.o \
-=2D				   xfs_refcount.o \
-=2D				   xfs_refcount_btree.o \
-=2D				   xfs_sb.o \
-=2D				   xfs_symlink_remote.o \
-=2D				   xfs_trans_resv.o \
-=2D				   xfs_types.o \
-=2D				   )
-=2D# xfs_rtbitmap is shared with libxfs
-=2Dxfs-$(CONFIG_XFS_RT)		+=3D $(addprefix libxfs/, \
-=2D				   xfs_rtbitmap.o \
-=2D				   )
-+xfs-y				+=3D libxfs/
-=20
- # highlevel code
- xfs-y				+=3D xfs_aops.o \
-@@ -127,38 +87,4 @@ xfs-$(CONFIG_SYSCTL)		+=3D xfs_sysctl.o
- xfs-$(CONFIG_COMPAT)		+=3D xfs_ioctl32.o
- xfs-$(CONFIG_EXPORTFS_BLOCK_OPS)	+=3D xfs_pnfs.o
-=20
-=2D# online scrub/repair
-=2Difeq ($(CONFIG_XFS_ONLINE_SCRUB),y)
-=2D
-=2D# Tracepoints like to blow up, so build that before everything else
-=2D
-=2Dxfs-y				+=3D $(addprefix scrub/, \
-=2D				   trace.o \
-=2D				   agheader.o \
-=2D				   alloc.o \
-=2D				   attr.o \
-=2D				   bmap.o \
-=2D				   btree.o \
-=2D				   common.o \
-=2D				   dabtree.o \
-=2D				   dir.o \
-=2D				   ialloc.o \
-=2D				   inode.o \
-=2D				   parent.o \
-=2D				   refcount.o \
-=2D				   rmap.o \
-=2D				   scrub.o \
-=2D				   symlink.o \
-=2D				   )
-=2D
-=2Dxfs-$(CONFIG_XFS_RT)		+=3D scrub/rtbitmap.o
-=2Dxfs-$(CONFIG_XFS_QUOTA)		+=3D scrub/quota.o
-=2D
-=2D# online repair
-=2Difeq ($(CONFIG_XFS_ONLINE_REPAIR),y)
-=2Dxfs-y				+=3D $(addprefix scrub/, \
-=2D				   agheader_repair.o \
-=2D				   repair.o \
-=2D				   )
-=2Dendif
-=2Dendif
-+xfs-$(CONFIG_XFS_ONLINE_SCRUB)	+=3D scrub/
-diff --git a/fs/xfs/libxfs/Makefile b/fs/xfs/libxfs/Makefile
-new file mode 100644
-index 000000000000..9b90c289bdda
-=2D-- /dev/null
-+++ b/fs/xfs/libxfs/Makefile
-@@ -0,0 +1,43 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+ccflags-y +=3D -I$(src)/..
-+
-+# xfs_rtbitmap is shared with libxfs
-+xobj-$(CONFIG_XFS_RT)		+=3D xfs_rtbitmap.o
-+
-+modobj-$(CONFIG_XFS_FS) +=3D	   xfs_ag.o \
-+				   xfs_alloc.o \
-+				   xfs_alloc_btree.o \
-+				   xfs_attr.o \
-+				   xfs_attr_leaf.o \
-+				   xfs_attr_remote.o \
-+				   xfs_bit.o \
-+				   xfs_bmap.o \
-+				   xfs_bmap_btree.o \
-+				   xfs_btree.o \
-+				   xfs_da_btree.o \
-+				   xfs_da_format.o \
-+				   xfs_defer.o \
-+				   xfs_dir2.o \
-+				   xfs_dir2_block.o \
-+				   xfs_dir2_data.o \
-+				   xfs_dir2_leaf.o \
-+				   xfs_dir2_node.o \
-+				   xfs_dir2_sf.o \
-+				   xfs_dquot_buf.o \
-+				   xfs_ialloc.o \
-+				   xfs_ialloc_btree.o \
-+				   xfs_iext_tree.o \
-+				   xfs_inode_fork.o \
-+				   xfs_inode_buf.o \
-+				   xfs_log_rlimit.o \
-+				   xfs_ag_resv.o \
-+				   xfs_rmap.o \
-+				   xfs_rmap_btree.o \
-+				   xfs_refcount.o \
-+				   xfs_refcount_btree.o \
-+				   xfs_sb.o \
-+				   xfs_symlink_remote.o \
-+				   xfs_trans_resv.o \
-+				   xfs_types.o \
-+				   $(xobj-y)
-diff --git a/fs/xfs/scrub/Makefile b/fs/xfs/scrub/Makefile
-new file mode 100644
-index 000000000000..f91818a0e6ee
-=2D-- /dev/null
-+++ b/fs/xfs/scrub/Makefile
-@@ -0,0 +1,29 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+# Tracepoints like to blow up, so build that before everything else
-+
-+ccflags-y +=3D -I$(src)/..
-+ccflags-y +=3D -I$(src)/../libxfs
-+
-+xobj-$(CONFIG_XFS_RT)		+=3D rtbitmap.o
-+xobj-$(CONFIG_XFS_QUOTA)	+=3D quota.o
-+xobj-$(CONFIG_XFS_ONLINE_REPAIR)+=3D agheader_repair.o \
-+				   repair.o
-+
-+modobj-$(CONFIG_XFS_FS) +=3D	   trace.o \
-+				   agheader.o \
-+				   alloc.o \
-+				   attr.o \
-+				   bmap.o \
-+				   btree.o \
-+				   common.o \
-+				   dabtree.o \
-+				   dir.o \
-+				   ialloc.o \
-+				   inode.o \
-+				   parent.o \
-+				   refcount.o \
-+				   rmap.o \
-+				   scrub.o \
-+				   symlink.o \
-+				   $(xobj-y)
-=2D-=20
-2.14.0.rc0.dirty
+>  * The ATH10K_FW_FEATURE_NON_BMI flag you added previously basically
+>    provides a way for a driver (and now we see which driver; it's this
+>    QMI / SNOC driver) to completely sidestep the typicaly in-kernel
+>    firmware load implementation; in fact, the kernel only reads the
+>    WLAN firmware just to parse some feature flags, not to actually
+>    program it to the device
+>  * Some yet-unmentioned proprietary app is involved to handle
+>    sideloading the actual firmware from user space
+> 
 
+WLAN fw is running in modem Q6 as user PD(protection domain).
+Sequence of user PD loading is given below as per current design of 
+Modem Q6 fw.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+1) Remote proc PIL driver loads the modem fw/ROOT PD.
+2) As part of ROOT pd boot-up it queries to a daemon(pd_mapper) running 
+in apps processor to determine how many
+user pd's are getting supported in the remote processor(Q6).
+3) once supported pd info in known to Q6, tftp client in Q6 establishes 
+the connection with
+tftp server in Q6 for user pd loading.
 
------BEGIN PGP SIGNATURE-----
+> Is this correct? If not, please correct me. But if it is:
+> 
+>  * When does the user space app actually load the WLAN firmware? I'm 
+> not
+>    sure I can place it in the above diagram.
+>  * Is there any open source implementation of this? How am I supposed 
+> to
+>    actually use this driver, if it relies on proprietary components 
+> that
+>    I can't review and aren't really even mentioned?
+> 
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsogQMACgkQOeye3VZi
-gblolxAApgmgcWZP7IJUrVc13ywt1AtxzavWKvjGnj5ghn/tj4iIrxjvk9XBR/+B
-m0gK1X1rJL0eNLU2biuYg6SD2uOhJIWXZcgPgujUoSblow/80ifF0qQ3MGZUc97I
-ql+n1g8p7q7em6mbf7qfEYrHRbwyTURuj8dCNZKO7gyD7LwWa791xgfIWEtFHEKV
-cL3OjEY5f6pOE8qMQ9GJx0lyR4gfUzzWNr21P33+Fak/Zne4wTHNyRWwTfaZeIXq
-H6d3rAaD/FUsPFWJ83vF3dq4RftLneCP6+eFGnwQ/X/A/4KxjT4VWeg4gOpI4U6r
-JvfWpjyylj/V99G7oYNRJWZxLyKDSwDIQEoZOIp0sL184ZgCs9wWJIVm7QpWaq5E
-cR926qDtn45xbAfPJJCej8INNFr2d8neV/bDuubgFxQN0vSnhDPuFPIORklvTa6z
-XQJlXy2cs8QGzqwElgkee/IhCBwm2NKrN695Lp28/0lgVhTnCmOWVIXMp8kAb+6Z
-PbjuPdWbzQMDRLCguhEO59cP5P+qOvXRX5tTSSx2SpXGAw//1h7d+sZASfDy8pNa
-/0GdLAjjnQMF5nyOR0kQchXUKQ1EPgCamVBJnPm5baohCQo9PPK2kzqewicD1pqe
-hKVQvwEKbPkFeJDebHP/W8hBsZTrYcsPafalZaWZxZXqMSTAFcc=
-=wfOQ
------END PGP SIGNATURE-----
---=-=-=--
+As described above.
+There are no open source implementation available for tftp server as of 
+now and this is
+work in progress.
+
+> I hope I'm sorely wrong on this. But if I'm not, I don't see why this
+> driver should be merged at all. Linux drivers should be self-sufficient
+> wherever possible, and I don't see a good reason why this driver can't
+> manage actually loading the WLAN firmware on its own, similar to how 
+> the
+> BMI component of the ath10k driver loads firmware for other ath10k
+> transports. But even more importantly: I believe this driver is hiding
+> the fact that it relies on undocumented proprietary components to run 
+> on
+> the CPU [1] just to make use of it at all.
+> 
+> Brian
+> 
+
+I understand your concern, currently Q6 ROOT PD infrastructure does not 
+support the same.
+This can be documented once opensource implementation of tftp server 
+daemon is available.
+
+> [1] It's an unfortunate fact of life that Wifi (and in this case,
+> modem+Wifi) processors will run proprietary firmware, but it's not
+> accepted that Linux relies on proprietary user space.
+> 
+>> Changes in V2:
+>> 	Removed qmi client driver and integrated qmi client handshakes in 
+>> snoc platform driver.
+>> 	Addressed comments v1 version.
+>> 	Switched to ath10k bdf download infra(board-2.bin)
+>> 	Added MSA fixed region support to support unload use-case.
+>> 	Unified logging.
+>> 
+>> Testing:
+>> 	Tested all qmi handshakes, driver load/unload and STA/SAP sanity 
+>> testing.
+>> 	Tested HW: SDM845(WCN3990)
+>> 	Tested FW: WLAN.HL.2.0-01192-QCAHLSWMTPLZ-1
+>> 
+>> 
+>> 
+>> Govind Singh (5):
+>>   ath10k: Add qmi service helpers for wcn3990 qmi client
+>>   dt: bindings: add bindings for msa memory region
+>>   ath10k: Add debug mask for QMI layer
+>>   firmware: qcom: scm: Add WLAN VMID for Qualcomm SCM interface
+>>   ath10k: Add QMI message handshake for wcn3990 client
+>> 
+>> Rakesh Pillai (1):
+>>   ath10k: Add support to create boardname for non-bmi target
+>> 
+>>  .../bindings/net/wireless/qcom,ath10k.txt     |    4 +
+>>  drivers/net/wireless/ath/ath10k/Kconfig       |   13 +-
+>>  drivers/net/wireless/ath/ath10k/Makefile      |    4 +-
+>>  drivers/net/wireless/ath/ath10k/core.c        |   20 +-
+>>  drivers/net/wireless/ath/ath10k/core.h        |    4 +
+>>  drivers/net/wireless/ath/ath10k/debug.h       |    1 +
+>>  drivers/net/wireless/ath/ath10k/qmi.c         | 1030 ++++++++
+>>  drivers/net/wireless/ath/ath10k/qmi.h         |  136 ++
+>>  .../net/wireless/ath/ath10k/qmi_wlfw_v01.c    | 2072 
+>> +++++++++++++++++
+>>  .../net/wireless/ath/ath10k/qmi_wlfw_v01.h    |  677 ++++++
+>>  drivers/net/wireless/ath/ath10k/snoc.c        |  209 +-
+>>  drivers/net/wireless/ath/ath10k/snoc.h        |    3 +
+>>  include/linux/qcom_scm.h                      |    4 +-
+>>  13 files changed, 4160 insertions(+), 17 deletions(-)
+>>  create mode 100644 drivers/net/wireless/ath/ath10k/qmi.c
+>>  create mode 100644 drivers/net/wireless/ath/ath10k/qmi.h
+>>  create mode 100644 drivers/net/wireless/ath/ath10k/qmi_wlfw_v01.c
+>>  create mode 100644 drivers/net/wireless/ath/ath10k/qmi_wlfw_v01.h
+>> 
+>> --
+>> 2.17.0
+>> 
+
+BR,
+Govind
