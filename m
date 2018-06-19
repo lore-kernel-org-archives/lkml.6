@@ -3,83 +3,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D54C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9A4C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5F22083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:07:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5F22083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DB1A2083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:08:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB1A2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966388AbeFSNHZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:07:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40191 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755616AbeFSNHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:07:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A3FCBACD3;
-        Tue, 19 Jun 2018 13:07:22 +0000 (UTC)
-Subject: Re: [PATCH] btrfs: stop using get_seconds()
-To:     Allen Pais <allen.lkml@gmail.com>, linux-btrfs@vger.kernel.org
-Cc:     clm@fb.com, jbackik@fb.com, dsterba@suse.com,
-        linux-kernel@vger.kernel.org
-References: <1528804105-24100-1-git-send-email-allen.lkml@gmail.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b40f794f-16b6-0369-cb0d-bbb5b12aa46a@suse.com>
-Date:   Tue, 19 Jun 2018 16:07:21 +0300
+        id S966451AbeFSNH6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:07:58 -0400
+Received: from icp-osb-irony-out4.external.iinet.net.au ([203.59.1.220]:25274
+        "EHLO icp-osb-irony-out4.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S966111AbeFSNHz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:07:55 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2DpAAAZ/yhb/0CaqnwNTxsBAQEBAwEBA?=
+ =?us-ascii?q?QkBAQGFUoN5lR0BAQEGgQYplHsUgWSEdwKDCjUXAQIBAQEBAQEChj4BAQEDIwQ?=
+ =?us-ascii?q?RQRALDQsCAiYCAlcGAQwGAgEBgyGBc6oebYFpMxqDYQFfg2uBaIELiFWBB4EPJ?=
+ =?us-ascii?q?IJohC4vAYMYglUCh1ORTAgBjwmIHoUlK5JrA4IFMxoIKAiCfoIhF41hAUddkT8?=
+ =?us-ascii?q?BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2DpAAAZ/yhb/0CaqnwNTxsBAQEBAwEBAQkBAQGFUoN5lR0?=
+ =?us-ascii?q?BAQEGgQYplHsUgWSEdwKDCjUXAQIBAQEBAQEChj4BAQEDIwQRQRALDQsCAiYCA?=
+ =?us-ascii?q?lcGAQwGAgEBgyGBc6oebYFpMxqDYQFfg2uBaIELiFWBB4EPJIJohC4vAYMYglU?=
+ =?us-ascii?q?Ch1ORTAgBjwmIHoUlK5JrA4IFMxoIKAiCfoIhF41hAUddkT8BAQ?=
+X-IronPort-AV: E=Sophos;i="5.51,243,1526313600"; 
+   d="scan'208";a="82220914"
+Received: from unknown (HELO [192.168.0.106]) ([124.170.154.64])
+  by icp-osb-irony-out4.iinet.net.au with ESMTP; 19 Jun 2018 21:07:51 +0800
+Subject: Re: [PATCH 3/3] m68k: remove unused set_clock_mmss() helpers
+To:     Arnd Bergmann <arnd@arndb.de>, Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
+        Meelis Roos <mroos@linux.ee>
+References: <20180618140518.2920804-1-arnd@arndb.de>
+ <20180618140518.2920804-3-arnd@arndb.de>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <38e7b63a-6eda-6f07-128a-eec16026f9b2@linux-m68k.org>
+Date:   Tue, 19 Jun 2018 23:07:51 +1000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1528804105-24100-1-git-send-email-allen.lkml@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180618140518.2920804-3-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -87,126 +63,435 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Arnd,
 
-
-On 12.06.2018 14:48, Allen Pais wrote:
-> The get_seconds() function is deprecated as it truncates
-> the timestamp to 32 bits. Change to either ktime_get_seconds()
-> or ktime_get_real_seconds()
-
-nit: In your patch you are only changing them to get-real-seconds. So
-the "ktime_get_seconds() or" part of the changelog is unnecessary.
+On 19/06/18 00:05, Arnd Bergmann wrote:
+> Commit 397ac99c6cef ("m68k: remove dead timer code") removed set_rtc_mmss()
+> because it was unused in 2012. However, this was itself the only user of the
+> mach_set_clock_mmss() callback and the many implementations of that callback,
+> which are equally unused.
 > 
-> Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+> This removes all of those as well.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+This looks good to me:
+
+Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+
+Regards
+Greg
+
+
 > ---
->  fs/btrfs/ctree.h       | 4 ++--
->  fs/btrfs/dev-replace.c | 8 ++++----
->  fs/btrfs/disk-io.c     | 4 ++--
->  fs/btrfs/transaction.c | 2 +-
->  fs/btrfs/transaction.h | 2 +-
->  5 files changed, 10 insertions(+), 10 deletions(-)
+>   arch/m68k/apollo/config.c       |  8 ------
+>   arch/m68k/atari/config.c        |  5 ----
+>   arch/m68k/atari/time.c          | 63 -----------------------------------------
+>   arch/m68k/bvme6000/config.c     | 45 -----------------------------
+>   arch/m68k/include/asm/machdep.h |  1 -
+>   arch/m68k/kernel/setup_mm.c     |  1 -
+>   arch/m68k/kernel/setup_no.c     |  1 -
+>   arch/m68k/mac/config.c          |  2 --
+>   arch/m68k/mac/misc.c            | 16 -----------
+>   arch/m68k/mvme147/config.c      |  7 -----
+>   arch/m68k/mvme16x/config.c      |  8 ------
+>   arch/m68k/q40/config.c          | 30 --------------------
+>   12 files changed, 187 deletions(-)
 > 
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index 118346a..e671a1f 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -342,8 +342,8 @@ struct btrfs_path {
->  					sizeof(struct btrfs_item))
->  struct btrfs_dev_replace {
->  	u64 replace_state;	/* see #define above */
-> -	u64 time_started;	/* seconds since 1-Jan-1970 */
-> -	u64 time_stopped;	/* seconds since 1-Jan-1970 */
-> +	time64_t time_started;	/* seconds since 1-Jan-1970 */
-> +	time64_t time_stopped;	/* seconds since 1-Jan-1970 */
->  	atomic64_t num_write_errors;
->  	atomic64_t num_uncorrectable_read_errors;
->  
-> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-> index e2ba041..1b30c38 100644
-> --- a/fs/btrfs/dev-replace.c
-> +++ b/fs/btrfs/dev-replace.c
-> @@ -465,7 +465,7 @@ int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
->  	 * go to the tgtdev as well (refer to btrfs_map_block()).
->  	 */
->  	dev_replace->replace_state = BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED;
-> -	dev_replace->time_started = get_seconds();
-> +	dev_replace->time_started = ktime_get_real_seconds();
->  	dev_replace->cursor_left = 0;
->  	dev_replace->committed_cursor_left = 0;
->  	dev_replace->cursor_left_last_write_of_item = 0;
-> @@ -618,7 +618,7 @@ static int btrfs_dev_replace_finishing(struct btrfs_fs_info *fs_info,
->  			  : BTRFS_IOCTL_DEV_REPLACE_STATE_FINISHED;
->  	dev_replace->tgtdev = NULL;
->  	dev_replace->srcdev = NULL;
-> -	dev_replace->time_stopped = get_seconds();
-> +	dev_replace->time_stopped = ktime_get_real_seconds();
->  	dev_replace->item_needs_writeback = 1;
->  
->  	/* replace old device with new one in mapping tree */
-> @@ -807,7 +807,7 @@ int btrfs_dev_replace_cancel(struct btrfs_fs_info *fs_info)
->  		break;
->  	}
->  	dev_replace->replace_state = BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED;
-> -	dev_replace->time_stopped = get_seconds();
-> +	dev_replace->time_stopped = ktime_get_real_seconds();
->  	dev_replace->item_needs_writeback = 1;
->  	btrfs_dev_replace_write_unlock(dev_replace);
->  	btrfs_scrub_cancel(fs_info);
-> @@ -848,7 +848,7 @@ void btrfs_dev_replace_suspend_for_unmount(struct btrfs_fs_info *fs_info)
->  	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
->  		dev_replace->replace_state =
->  			BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED;
-> -		dev_replace->time_stopped = get_seconds();
-> +		dev_replace->time_stopped = ktime_get_real_seconds();
->  		dev_replace->item_needs_writeback = 1;
->  		btrfs_info(fs_info, "suspending dev_replace for unmount");
->  		break;
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 205092d..f3224e2 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -1803,7 +1803,7 @@ static int transaction_kthread(void *arg)
->  	struct btrfs_trans_handle *trans;
->  	struct btrfs_transaction *cur;
->  	u64 transid;
-> -	unsigned long now;
-> +	time64_t now;
->  	unsigned long delay;
->  	bool cannot_commit;
->  
-> @@ -1819,7 +1819,7 @@ static int transaction_kthread(void *arg)
->  			goto sleep;
->  		}
->  
-> -		now = get_seconds();
-> +		now = ktime_get_real_seconds();
->  		if (cur->state < TRANS_STATE_BLOCKED &&
->  		    !test_bit(BTRFS_FS_NEED_ASYNC_COMMIT, &fs_info->flags) &&
->  		    (now < cur->start_time ||
-> diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
-> index ff5f6c7..56c8bab 100644
-> --- a/fs/btrfs/transaction.c
-> +++ b/fs/btrfs/transaction.c
-> @@ -241,7 +241,7 @@ static noinline int join_transaction(struct btrfs_fs_info *fs_info,
->  	refcount_set(&cur_trans->use_count, 2);
->  	atomic_set(&cur_trans->pending_ordered, 0);
->  	cur_trans->flags = 0;
-> -	cur_trans->start_time = get_seconds();
-> +	cur_trans->start_time = ktime_get_real_seconds();
->  
->  	memset(&cur_trans->delayed_refs, 0, sizeof(cur_trans->delayed_refs));
->  
-> diff --git a/fs/btrfs/transaction.h b/fs/btrfs/transaction.h
-> index 9443948..4cbb1b5 100644
-> --- a/fs/btrfs/transaction.h
-> +++ b/fs/btrfs/transaction.h
-> @@ -48,7 +48,7 @@ struct btrfs_transaction {
->  	int aborted;
->  	struct list_head list;
->  	struct extent_io_tree dirty_pages;
-> -	unsigned long start_time;
-> +	time64_t start_time;
->  	wait_queue_head_t writer_wait;
->  	wait_queue_head_t commit_wait;
->  	wait_queue_head_t pending_wait;
+> diff --git a/arch/m68k/apollo/config.c b/arch/m68k/apollo/config.c
+> index b2a6bc63f8cd..aef8d42e078d 100644
+> --- a/arch/m68k/apollo/config.c
+> +++ b/arch/m68k/apollo/config.c
+> @@ -31,7 +31,6 @@ extern void dn_sched_init(irq_handler_t handler);
+>   extern void dn_init_IRQ(void);
+>   extern u32 dn_gettimeoffset(void);
+>   extern int dn_dummy_hwclk(int, struct rtc_time *);
+> -extern int dn_dummy_set_clock_mmss(unsigned long);
+>   extern void dn_dummy_reset(void);
+>   #ifdef CONFIG_HEARTBEAT
+>   static void dn_heartbeat(int on);
+> @@ -156,7 +155,6 @@ void __init config_apollo(void)
+>   	arch_gettimeoffset   = dn_gettimeoffset;
+>   	mach_max_dma_address = 0xffffffff;
+>   	mach_hwclk           = dn_dummy_hwclk; /* */
+> -	mach_set_clock_mmss  = dn_dummy_set_clock_mmss; /* */
+>   	mach_reset	     = dn_dummy_reset;  /* */
+>   #ifdef CONFIG_HEARTBEAT
+>   	mach_heartbeat = dn_heartbeat;
+> @@ -240,12 +238,6 @@ int dn_dummy_hwclk(int op, struct rtc_time *t) {
+>   
+>   }
+>   
+> -int dn_dummy_set_clock_mmss(unsigned long nowtime)
+> -{
+> -	pr_info("set_clock_mmss\n");
+> -	return 0;
+> -}
+> -
+>   void dn_dummy_reset(void) {
+>   
+>     dn_serial_print("The end !\n");
+> diff --git a/arch/m68k/atari/config.c b/arch/m68k/atari/config.c
+> index 565c6f06ab0b..bd96702a1ad0 100644
+> --- a/arch/m68k/atari/config.c
+> +++ b/arch/m68k/atari/config.c
+> @@ -81,9 +81,6 @@ extern void atari_sched_init(irq_handler_t);
+>   extern u32 atari_gettimeoffset(void);
+>   extern int atari_mste_hwclk (int, struct rtc_time *);
+>   extern int atari_tt_hwclk (int, struct rtc_time *);
+> -extern int atari_mste_set_clock_mmss (unsigned long);
+> -extern int atari_tt_set_clock_mmss (unsigned long);
+> -
+>   
+>   /* ++roman: This is a more elaborate test for an SCC chip, since the plain
+>    * Medusa board generates DTACK at the SCC's standard addresses, but a SCC
+> @@ -362,13 +359,11 @@ void __init config_atari(void)
+>   		ATARIHW_SET(TT_CLK);
+>   		pr_cont(" TT_CLK");
+>   		mach_hwclk = atari_tt_hwclk;
+> -		mach_set_clock_mmss = atari_tt_set_clock_mmss;
+>   	}
+>   	if (hwreg_present(&mste_rtc.sec_ones)) {
+>   		ATARIHW_SET(MSTE_CLK);
+>   		pr_cont(" MSTE_CLK");
+>   		mach_hwclk = atari_mste_hwclk;
+> -		mach_set_clock_mmss = atari_mste_set_clock_mmss;
+>   	}
+>   	if (!MACH_IS_MEDUSA && hwreg_present(&dma_wd.fdc_speed) &&
+>   	    hwreg_write(&dma_wd.fdc_speed, 0)) {
+> diff --git a/arch/m68k/atari/time.c b/arch/m68k/atari/time.c
+> index c549b48174ec..9cca64286464 100644
+> --- a/arch/m68k/atari/time.c
+> +++ b/arch/m68k/atari/time.c
+> @@ -285,69 +285,6 @@ int atari_tt_hwclk( int op, struct rtc_time *t )
+>       return( 0 );
+>   }
+>   
+> -
+> -int atari_mste_set_clock_mmss (unsigned long nowtime)
+> -{
+> -    short real_seconds = nowtime % 60, real_minutes = (nowtime / 60) % 60;
+> -    struct MSTE_RTC val;
+> -    unsigned char rtc_minutes;
+> -
+> -    mste_read(&val);
+> -    rtc_minutes= val.min_ones + val.min_tens * 10;
+> -    if ((rtc_minutes < real_minutes
+> -         ? real_minutes - rtc_minutes
+> -         : rtc_minutes - real_minutes) < 30)
+> -    {
+> -        val.sec_ones = real_seconds % 10;
+> -        val.sec_tens = real_seconds / 10;
+> -        val.min_ones = real_minutes % 10;
+> -        val.min_tens = real_minutes / 10;
+> -        mste_write(&val);
+> -    }
+> -    else
+> -        return -1;
+> -    return 0;
+> -}
+> -
+> -int atari_tt_set_clock_mmss (unsigned long nowtime)
+> -{
+> -    int retval = 0;
+> -    short real_seconds = nowtime % 60, real_minutes = (nowtime / 60) % 60;
+> -    unsigned char save_control, save_freq_select, rtc_minutes;
+> -
+> -    save_control = RTC_READ (RTC_CONTROL); /* tell the clock it's being set */
+> -    RTC_WRITE (RTC_CONTROL, save_control | RTC_SET);
+> -
+> -    save_freq_select = RTC_READ (RTC_FREQ_SELECT); /* stop and reset prescaler */
+> -    RTC_WRITE (RTC_FREQ_SELECT, save_freq_select | RTC_DIV_RESET2);
+> -
+> -    rtc_minutes = RTC_READ (RTC_MINUTES);
+> -    if (!(save_control & RTC_DM_BINARY))
+> -	rtc_minutes = bcd2bin(rtc_minutes);
+> -
+> -    /* Since we're only adjusting minutes and seconds, don't interfere
+> -       with hour overflow.  This avoids messing with unknown time zones
+> -       but requires your RTC not to be off by more than 30 minutes.  */
+> -    if ((rtc_minutes < real_minutes
+> -         ? real_minutes - rtc_minutes
+> -         : rtc_minutes - real_minutes) < 30)
+> -        {
+> -            if (!(save_control & RTC_DM_BINARY))
+> -                {
+> -		    real_seconds = bin2bcd(real_seconds);
+> -		    real_minutes = bin2bcd(real_minutes);
+> -                }
+> -            RTC_WRITE (RTC_SECONDS, real_seconds);
+> -            RTC_WRITE (RTC_MINUTES, real_minutes);
+> -        }
+> -    else
+> -        retval = -1;
+> -
+> -    RTC_WRITE (RTC_FREQ_SELECT, save_freq_select);
+> -    RTC_WRITE (RTC_CONTROL, save_control);
+> -    return retval;
+> -}
+> -
+>   /*
+>    * Local variables:
+>    *  c-indent-level: 4
+> diff --git a/arch/m68k/bvme6000/config.c b/arch/m68k/bvme6000/config.c
+> index 2cfff4765040..143ee9fa3893 100644
+> --- a/arch/m68k/bvme6000/config.c
+> +++ b/arch/m68k/bvme6000/config.c
+> @@ -41,7 +41,6 @@ static void bvme6000_get_model(char *model);
+>   extern void bvme6000_sched_init(irq_handler_t handler);
+>   extern u32 bvme6000_gettimeoffset(void);
+>   extern int bvme6000_hwclk (int, struct rtc_time *);
+> -extern int bvme6000_set_clock_mmss (unsigned long);
+>   extern void bvme6000_reset (void);
+>   void bvme6000_set_vectors (void);
+>   
+> @@ -113,7 +112,6 @@ void __init config_bvme6000(void)
+>       mach_init_IRQ        = bvme6000_init_IRQ;
+>       arch_gettimeoffset   = bvme6000_gettimeoffset;
+>       mach_hwclk           = bvme6000_hwclk;
+> -    mach_set_clock_mmss	 = bvme6000_set_clock_mmss;
+>       mach_reset		 = bvme6000_reset;
+>       mach_get_model       = bvme6000_get_model;
+>   
+> @@ -305,46 +303,3 @@ int bvme6000_hwclk(int op, struct rtc_time *t)
+>   
+>   	return 0;
+>   }
+> -
+> -/*
+> - * Set the minutes and seconds from seconds value 'nowtime'.  Fail if
+> - * clock is out by > 30 minutes.  Logic lifted from atari code.
+> - * Algorithm is to wait for the 10ms register to change, and then to
+> - * wait a short while, and then set it.
+> - */
+> -
+> -int bvme6000_set_clock_mmss (unsigned long nowtime)
+> -{
+> -	int retval = 0;
+> -	short real_seconds = nowtime % 60, real_minutes = (nowtime / 60) % 60;
+> -	unsigned char rtc_minutes, rtc_tenms;
+> -	volatile RtcPtr_t rtc = (RtcPtr_t)BVME_RTC_BASE;
+> -	unsigned char msr = rtc->msr & 0xc0;
+> -	unsigned long flags;
+> -	volatile int i;
+> -
+> -	rtc->msr = 0;		/* Ensure clock accessible */
+> -	rtc_minutes = bcd2bin (rtc->bcd_min);
+> -
+> -	if ((rtc_minutes < real_minutes
+> -		? real_minutes - rtc_minutes
+> -			: rtc_minutes - real_minutes) < 30)
+> -	{
+> -		local_irq_save(flags);
+> -		rtc_tenms = rtc->bcd_tenms;
+> -		while (rtc_tenms == rtc->bcd_tenms)
+> -			;
+> -		for (i = 0; i < 1000; i++)
+> -			;
+> -		rtc->bcd_min = bin2bcd(real_minutes);
+> -		rtc->bcd_sec = bin2bcd(real_seconds);
+> -		local_irq_restore(flags);
+> -	}
+> -	else
+> -		retval = -1;
+> -
+> -	rtc->msr = msr;
+> -
+> -	return retval;
+> -}
+> -
+> diff --git a/arch/m68k/include/asm/machdep.h b/arch/m68k/include/asm/machdep.h
+> index 1605da48ebf2..49bd3266b4b1 100644
+> --- a/arch/m68k/include/asm/machdep.h
+> +++ b/arch/m68k/include/asm/machdep.h
+> @@ -22,7 +22,6 @@ extern int (*mach_hwclk)(int, struct rtc_time*);
+>   extern unsigned int (*mach_get_ss)(void);
+>   extern int (*mach_get_rtc_pll)(struct rtc_pll_info *);
+>   extern int (*mach_set_rtc_pll)(struct rtc_pll_info *);
+> -extern int (*mach_set_clock_mmss)(unsigned long);
+>   extern void (*mach_reset)( void );
+>   extern void (*mach_halt)( void );
+>   extern void (*mach_power_off)( void );
+> diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
+> index f35e3ebd6331..07244732eb41 100644
+> --- a/arch/m68k/kernel/setup_mm.c
+> +++ b/arch/m68k/kernel/setup_mm.c
+> @@ -88,7 +88,6 @@ void (*mach_get_hardware_list) (struct seq_file *m);
+>   /* machine dependent timer functions */
+>   int (*mach_hwclk) (int, struct rtc_time*);
+>   EXPORT_SYMBOL(mach_hwclk);
+> -int (*mach_set_clock_mmss) (unsigned long);
+>   unsigned int (*mach_get_ss)(void);
+>   int (*mach_get_rtc_pll)(struct rtc_pll_info *);
+>   int (*mach_set_rtc_pll)(struct rtc_pll_info *);
+> diff --git a/arch/m68k/kernel/setup_no.c b/arch/m68k/kernel/setup_no.c
+> index a98af1018201..3c53e4c366ac 100644
+> --- a/arch/m68k/kernel/setup_no.c
+> +++ b/arch/m68k/kernel/setup_no.c
+> @@ -51,7 +51,6 @@ char __initdata command_line[COMMAND_LINE_SIZE];
+>   
+>   /* machine dependent timer functions */
+>   void (*mach_sched_init)(irq_handler_t handler) __initdata = NULL;
+> -int (*mach_set_clock_mmss)(unsigned long);
+>   int (*mach_hwclk) (int, struct rtc_time*);
+>   
+>   /* machine dependent reboot functions */
+> diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
+> index e522307db47c..da1aeb966474 100644
+> --- a/arch/m68k/mac/config.c
+> +++ b/arch/m68k/mac/config.c
+> @@ -57,7 +57,6 @@ static unsigned long mac_orig_videoaddr;
+>   /* Mac specific timer functions */
+>   extern u32 mac_gettimeoffset(void);
+>   extern int mac_hwclk(int, struct rtc_time *);
+> -extern int mac_set_clock_mmss(unsigned long);
+>   extern void iop_preinit(void);
+>   extern void iop_init(void);
+>   extern void via_init(void);
+> @@ -158,7 +157,6 @@ void __init config_mac(void)
+>   	mach_get_model = mac_get_model;
+>   	arch_gettimeoffset = mac_gettimeoffset;
+>   	mach_hwclk = mac_hwclk;
+> -	mach_set_clock_mmss = mac_set_clock_mmss;
+>   	mach_reset = mac_reset;
+>   	mach_halt = mac_poweroff;
+>   	mach_power_off = mac_poweroff;
+> diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+> index b399a0809e18..b0dda5cb9e48 100644
+> --- a/arch/m68k/mac/misc.c
+> +++ b/arch/m68k/mac/misc.c
+> @@ -735,19 +735,3 @@ int mac_hwclk(int op, struct rtc_time *t)
+>   	}
+>   	return 0;
+>   }
+> -
+> -/*
+> - * Set minutes/seconds in the hardware clock
+> - */
+> -
+> -int mac_set_clock_mmss (unsigned long nowtime)
+> -{
+> -	struct rtc_time now;
+> -
+> -	mac_hwclk(0, &now);
+> -	now.tm_sec = nowtime % 60;
+> -	now.tm_min = (nowtime / 60) % 60;
+> -	mac_hwclk(1, &now);
+> -
+> -	return 0;
+> -}
+> diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
+> index f8a710fd84cd..adea549d240e 100644
+> --- a/arch/m68k/mvme147/config.c
+> +++ b/arch/m68k/mvme147/config.c
+> @@ -40,7 +40,6 @@ static void mvme147_get_model(char *model);
+>   extern void mvme147_sched_init(irq_handler_t handler);
+>   extern u32 mvme147_gettimeoffset(void);
+>   extern int mvme147_hwclk (int, struct rtc_time *);
+> -extern int mvme147_set_clock_mmss (unsigned long);
+>   extern void mvme147_reset (void);
+>   
+>   
+> @@ -92,7 +91,6 @@ void __init config_mvme147(void)
+>   	mach_init_IRQ		= mvme147_init_IRQ;
+>   	arch_gettimeoffset	= mvme147_gettimeoffset;
+>   	mach_hwclk		= mvme147_hwclk;
+> -	mach_set_clock_mmss	= mvme147_set_clock_mmss;
+>   	mach_reset		= mvme147_reset;
+>   	mach_get_model		= mvme147_get_model;
+>   
+> @@ -164,8 +162,3 @@ int mvme147_hwclk(int op, struct rtc_time *t)
+>   	}
+>   	return 0;
+>   }
+> -
+> -int mvme147_set_clock_mmss (unsigned long nowtime)
+> -{
+> -	return 0;
+> -}
+> diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
+> index 4ffd9ef98de4..6ee36a5b528d 100644
+> --- a/arch/m68k/mvme16x/config.c
+> +++ b/arch/m68k/mvme16x/config.c
+> @@ -46,7 +46,6 @@ static void mvme16x_get_model(char *model);
+>   extern void mvme16x_sched_init(irq_handler_t handler);
+>   extern u32 mvme16x_gettimeoffset(void);
+>   extern int mvme16x_hwclk (int, struct rtc_time *);
+> -extern int mvme16x_set_clock_mmss (unsigned long);
+>   extern void mvme16x_reset (void);
+>   
+>   int bcd2int (unsigned char b);
+> @@ -280,7 +279,6 @@ void __init config_mvme16x(void)
+>       mach_init_IRQ        = mvme16x_init_IRQ;
+>       arch_gettimeoffset   = mvme16x_gettimeoffset;
+>       mach_hwclk           = mvme16x_hwclk;
+> -    mach_set_clock_mmss	 = mvme16x_set_clock_mmss;
+>       mach_reset		 = mvme16x_reset;
+>       mach_get_model       = mvme16x_get_model;
+>       mach_get_hardware_list = mvme16x_get_hardware_list;
+> @@ -411,9 +409,3 @@ int mvme16x_hwclk(int op, struct rtc_time *t)
+>   	}
+>   	return 0;
+>   }
+> -
+> -int mvme16x_set_clock_mmss (unsigned long nowtime)
+> -{
+> -	return 0;
+> -}
+> -
+> diff --git a/arch/m68k/q40/config.c b/arch/m68k/q40/config.c
+> index 71c0867ecf20..96810d91da2b 100644
+> --- a/arch/m68k/q40/config.c
+> +++ b/arch/m68k/q40/config.c
+> @@ -43,7 +43,6 @@ extern void q40_sched_init(irq_handler_t handler);
+>   static u32 q40_gettimeoffset(void);
+>   static int q40_hwclk(int, struct rtc_time *);
+>   static unsigned int q40_get_ss(void);
+> -static int q40_set_clock_mmss(unsigned long);
+>   static int q40_get_rtc_pll(struct rtc_pll_info *pll);
+>   static int q40_set_rtc_pll(struct rtc_pll_info *pll);
+>   
+> @@ -175,7 +174,6 @@ void __init config_q40(void)
+>   	mach_get_ss = q40_get_ss;
+>   	mach_get_rtc_pll = q40_get_rtc_pll;
+>   	mach_set_rtc_pll = q40_set_rtc_pll;
+> -	mach_set_clock_mmss = q40_set_clock_mmss;
+>   
+>   	mach_reset = q40_reset;
+>   	mach_get_model = q40_get_model;
+> @@ -267,34 +265,6 @@ static unsigned int q40_get_ss(void)
+>   	return bcd2bin(Q40_RTC_SECS);
+>   }
+>   
+> -/*
+> - * Set the minutes and seconds from seconds value 'nowtime'.  Fail if
+> - * clock is out by > 30 minutes.  Logic lifted from atari code.
+> - */
+> -
+> -static int q40_set_clock_mmss(unsigned long nowtime)
+> -{
+> -	int retval = 0;
+> -	short real_seconds = nowtime % 60, real_minutes = (nowtime / 60) % 60;
+> -
+> -	int rtc_minutes;
+> -
+> -	rtc_minutes = bcd2bin(Q40_RTC_MINS);
+> -
+> -	if ((rtc_minutes < real_minutes ?
+> -	     real_minutes - rtc_minutes :
+> -	     rtc_minutes - real_minutes) < 30) {
+> -		Q40_RTC_CTRL |= Q40_RTC_WRITE;
+> -		Q40_RTC_MINS = bin2bcd(real_minutes);
+> -		Q40_RTC_SECS = bin2bcd(real_seconds);
+> -		Q40_RTC_CTRL &= ~(Q40_RTC_WRITE);
+> -	} else
+> -		retval = -1;
+> -
+> -	return retval;
+> -}
+> -
+> -
+>   /* get and set PLL calibration of RTC clock */
+>   #define Q40_RTC_PLL_MASK ((1<<5)-1)
+>   #define Q40_RTC_PLL_SIGN (1<<5)
 > 
