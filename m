@@ -6,49 +6,123 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D0CC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F12C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709E7204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:41:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709E7204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 44F79204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:42:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44F79204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753995AbeFSWlK (ORCPT
+        id S1754136AbeFSWmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 18:41:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35004 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeFSWlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 18:41:02 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC94DFE6;
-        Tue, 19 Jun 2018 22:41:01 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 15:41:00 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Christian Hansen <chansen3@cisco.com>
-Cc:     xe-linux-external@cisco.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: adding support for idle page tracking to tool
-Message-Id: <20180619154100.3f30e1bb4f110b65dacbd956@linux-foundation.org>
-In-Reply-To: <20180612153223.13174-1-chansen3@cisco.com>
-References: <20180612153223.13174-1-chansen3@cisco.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 19 Jun 2018 18:42:21 -0400
+Received: from mga09.intel.com ([134.134.136.24]:54658 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754101AbeFSWmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 18:42:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 15:42:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,244,1526367600"; 
+   d="scan'208";a="59141569"
+Received: from 2b52.sc.intel.com ([143.183.136.147])
+  by fmsmga002.fm.intel.com with ESMTP; 19 Jun 2018 15:42:16 -0700
+Message-ID: <1529447937.27370.33.camel@intel.com>
+Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com, Florian Weimer <fweimer@redhat.com>
+Date:   Tue, 19 Jun 2018 15:38:57 -0700
+In-Reply-To: <446EB18D-EF06-4A04-AF62-E72C68D96A84@amacapital.net>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+         <20180607143807.3611-7-yu-cheng.yu@intel.com>
+         <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
+         <1528403417.5265.35.camel@2b52.sc.intel.com>
+         <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
+         <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
+         <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de>
+         <CAMe9rOoCiXQ4iVD3j_AHGrvEXtoaVVZVs7H7fCuqNEuuR5j+2Q@mail.gmail.com>
+         <CALCETrXO8R+RQPhJFk4oiA4PF77OgSS2Yro_POXQj1zvdLo61A@mail.gmail.com>
+         <CAMe9rOpLxPussn7gKvn0GgbOB4f5W+DKOGipe_8NMam+Afd+RA@mail.gmail.com>
+         <CALCETrWmGRkQvsUgRaj+j0CP4beKys+TT5aDR5+18nuphwr+Cw@mail.gmail.com>
+         <CAMe9rOpzcCdje=bUVs+C1WrY6GuwA-8AUFVLOG325LGz7KHJxw@mail.gmail.com>
+         <alpine.DEB.2.21.1806122046520.1592@nanos.tec.linutronix.de>
+         <CAMe9rOrGjJf0aMnUjAP38MqvOiW3=iXGQjcUT3O=f9pE85hXaw@mail.gmail.com>
+         <CALCETrVsh5t-V1Sm88LsZE_+DS0GE_bMWbcoX3SjD6GnrB08Pw@mail.gmail.com>
+         <CAGXu5jK0gospOXRpN6zYiQPXOZeE=YpVAz2qu4Zc3-32v85+EQ@mail.gmail.com>
+         <569B4719-6283-4575-A16E-D0A78D280F4E@amacapital.net>
+         <CAGXu5jJNgu4bW_Zthqjfpe9gLxK0zxG8QFEqqK+pJNebz6tUaw@mail.gmail.com>
+         <1529427588.23068.7.camel@intel.com>
+         <CAGXu5jJ4ivrvi-kG0iY=4C0mQQXBDXwPdfY36Dk+JqOpX19n0w@mail.gmail.com>
+         <0AF8B71E-B6CC-42DE-B95C-93896196C3D7@amacapital.net>
+         <CAGXu5jLEMy_T_5OtXLT+pUCt=Nk53nBbuRvrUgJBhq-4RZ=yCA@mail.gmail.com>
+         <446EB18D-EF06-4A04-AF62-E72C68D96A84@amacapital.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 11:32:23 -0400 Christian Hansen <chansen3@cisco.com> wrote:
+On Tue, 2018-06-19 at 13:47 -0700, Andy Lutomirski wrote:
+> > 
+> > On Jun 19, 2018, at 1:12 PM, Kees Cook <keescook@chromium.org>
+> > wrote:
+> > 
+> > > 
+> > > On Tue, Jun 19, 2018 at 10:20 AM, Andy Lutomirski <luto@amacapita
+> > > l.net> wrote:
+> > > 
+> > > > 
+> > > > On Jun 19, 2018, at 10:07 AM, Kees Cook <keescook@chromium.org>
+> > > > wrote:
+> > > > 
+> > > > Does it provide anything beyond what PR_DUMPABLE does?
+> > > What do you mean?
+> > I was just going by the name of it. I wasn't sure what "ptrace CET
+> > lock" meant, so I was trying to understand if it was another "you
+> > can't ptrace me" toggle, and if so, wouldn't it be redundant with
+> > PR_SET_DUMPABLE = 0, etc.
+> > 
+> No, other way around. The valid CET states are on/unlocked,
+> off/unlocked, on/locked, off/locked. arch_prctl can freely the state
+> unless locked. ptrace can change it no matter what.  The lock is to
+> prevent the existence of a gadget to disable CET (unless the gadget
+> involves ptrace, but I don’t think that’s a real concern).
 
-> Adding a flag which will use the kernels's idle
-> page tracking to mark pages idle.  As the tool already
-> prints the idle flag if set, subsequent runs will show
-> which pages have been accessed since last run.
+We have the arch_prctl now and only need to add ptrace lock/unlock.
 
-Also, it would be appropriate to document this new feature in
-Documentation/admin-guide/mm/idle_page_tracking.rst.
+Back to the dlopen() "relaxed" mode. Would the following work?
+
+If the lib being loaded does not use setjmp/getcontext families (the
+loader knows?), then the loader leaves shstk on.  Otherwise, if the
+system-wide setting is "relaxed", the loader turns off shstk and issues
+a warning.  In addition, if (dlopen == relaxed), then cet is not locked
+in any time.
+
+The system-wide setting (somewhere in /etc?) can be:
+
+	dlopen=force|relaxed /* controls dlopen of non-cet libs */
+	exec=force|relaxed /* controls exec of non-cet apps */
+
+--
+Yu-cheng
