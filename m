@@ -2,119 +2,101 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D51C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEA2C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD38A2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:30:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD38A2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 25BD62083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:31:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t2xcfarI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25BD62083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937285AbeFSHaI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 03:30:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56830 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755614AbeFSHaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:30:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E9878AF73;
-        Tue, 19 Jun 2018 07:30:04 +0000 (UTC)
-Subject: Re: [PATCH v2 6/7] mm, proc: add KReclaimable to /proc/meminfo
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-api@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20180618091808.4419-1-vbabka@suse.cz>
- <20180618091808.4419-7-vbabka@suse.cz>
- <20180618143317.eb8f5d7b6c667784343ef902@linux-foundation.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <650c3fab-3137-4fe6-272a-f4ec104855a7@suse.cz>
-Date:   Tue, 19 Jun 2018 09:30:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1756158AbeFSHbT (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 03:31:19 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39114 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755614AbeFSHbR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 03:31:17 -0400
+Received: by mail-pl0-f66.google.com with SMTP id f1-v6so10467689plt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 00:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=i3nA5XfMpvLeaTLcn03ISzJGduCGaoI+gJkp3sLaeBw=;
+        b=t2xcfarIbMls2ey7GpnVEBGGXytIDSX2bEXxApv657LUNm2oYpZL0dqWjdijLP7YcQ
+         4j5845/M+c3UxTdlgXlU6R5vBdovvP8E2RfCE1BxGOKZHiU0nYxh+Er6qEaQghC9WCus
+         guPZVffC9QEeXG0gvwoWJrfBtMlzDYXh81wmDlR1FdzhQPqM7c2xhyOYRw+/cnQ5BZ6/
+         8Fz6IfkrcKyjsQluI50q49YIsN16/CpW2ZtOO6269EpHO+hN5Jsb88eIsr2rg6ZZxVVQ
+         gZGwliqJa7mktYRvqYyjBJV3ktZWAQcPPDBqf+hxo99/m0bf7MAb2LFHH7QyqUZza62K
+         oBRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=i3nA5XfMpvLeaTLcn03ISzJGduCGaoI+gJkp3sLaeBw=;
+        b=FmJyhRzpxIDE31ljN4nBUvdNd9JurWw56H31Usti6Lj30zXsHyCkcl90E2hI0/ysfN
+         S/kg12hfRwM9tL4Kao8oAAqVL5lpfDvxuxMfcCv2wXjWQQtnyhWilk5Vz4NaT9WqriWA
+         1kAhK05SoeoaWOherHIaR/nawEpfix3PzOriFrrG6xGYe7xSdCz3h6zXlJf4Q8RMrVum
+         Hmp9M/2pu2TQHWbtSBEqBEGOYajZKlprnEORAbbmSmBwkWEHDtV8sO+iLF6LNmT4ioRe
+         3FBrqLUQukCxPL+68N1Nb2J8BeaSoSD/pJKwJ/fMaAKgF1/kZHtobALtW2c14wNuEdRm
+         H6eA==
+X-Gm-Message-State: APt69E1OlrrIEWYHbXQ6C+X1lknwTh5+o/gfC7dpJtIjm11jFUZFmDCU
+        yIGW9wO41yQNJm0HgXl5OdK15g==
+X-Google-Smtp-Source: ADUXVKJV/qYdAdxx8HWV9Nv6SKrUOcY/ra4YjmLg3ZtyY9wSI676+6U0kqgOoCFYLkISVzK/ZJR0fw==
+X-Received: by 2002:a17:902:7e42:: with SMTP id a2-v6mr17472806pln.151.1529393476983;
+        Tue, 19 Jun 2018 00:31:16 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id w7-v6sm19612565pgs.68.2018.06.19.00.31.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 00:31:15 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 00:31:15 -0700
+From:   Joel Fernandes <joelaf@google.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Byungchul Park <byungchul.park@lge.com>
+Subject: Re: [PATCH 2/2] rcutorture: Fix rcu_barrier successes counter
+Message-ID: <20180619073115.GA241700@joelaf.mtv.corp.google.com>
+References: <20180619062215.221564-1-joel@joelfernandes.org>
+ <20180619062215.221564-2-joel@joelfernandes.org>
 MIME-Version: 1.0
-In-Reply-To: <20180618143317.eb8f5d7b6c667784343ef902@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619062215.221564-2-joel@joelfernandes.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18/2018 11:33 PM, Andrew Morton wrote:
-> On Mon, 18 Jun 2018 11:18:07 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
+On Mon, Jun 18, 2018 at 11:22:15PM -0700, Joel Fernandes wrote:
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 > 
->> The vmstat NR_KERNEL_MISC_RECLAIMABLE counter is for kernel non-slab
->> allocations that can be reclaimed via shrinker. In /proc/meminfo, we can show
->> the sum of all reclaimable kernel allocations (including slab) as
->> "KReclaimable". Add the same counter also to per-node meminfo under /sys
+> rcutorture currently increments both successes and error counters for
+> the rcu_barrier test incase of errors. It should only increment the
+> error counter incase of errors so make it do so.
 > 
-> Why do you consider this useful enough to justify adding it to
-> /pro/meminfo?  How will people use it, what benefit will they see, etc?
+> Test: Introduced rcu_barrier errors by returning from the barrier
+> callback without incrementing the callback counter.
 
-Let's add this:
-
-With this counter, users will have more complete information about
-kernel memory usage. Non-slab reclaimable pages (currently just the ION
-allocator) will not be missing from /proc/meminfo, making users wonder
-where part of their memory went. More precisely, they already appear in
-MemAvailable, but without the new counter, it's not obvious why the
-value in MemAvailable doesn't fully correspond with the sum of other
-counters participating in it.
-
-> Maybe you've undersold this whole patchset, but I'm struggling a bit to
-> see what the end-user benefits are.  What would be wrong with just
-> sticking with what we have now?
-
-Fair enough, I will add more info in reply to the cover letter.
+Hi Paul,
+Think some more about this counter, I think you mean 'successes' as in
+'successful attempts' than 'successful test' ? If so, then perhaps you can
+drop this patch. It wasn't clear to me what the 'successes' meant so I may
+have been a bit misled into changing its meaning. If on the other hand, it
+means 'successful test', then yes this patch would be Ok then. thanks! -Joel
+ 
