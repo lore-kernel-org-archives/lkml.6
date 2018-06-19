@@ -2,139 +2,119 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D239C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316E0C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530F620661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:29:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530F620661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 63D1120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:31:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="G6wxSZ+i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63D1120874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756194AbeFSF3O (ORCPT
+        id S1755972AbeFSFbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:29:14 -0400
-Received: from mga18.intel.com ([134.134.136.126]:14970 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752468AbeFSF1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:27:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 22:27:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
-   d="scan'208";a="50424302"
-Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by orsmga008.jf.intel.com with ESMTP; 18 Jun 2018 22:27:16 -0700
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
-        yi.y.sun@intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v3 2/9] iommu/vt-d: Avoid using idr_for_each_entry()
-Date:   Tue, 19 Jun 2018 13:17:22 +0800
-Message-Id: <1529385449-25649-3-git-send-email-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529385449-25649-1-git-send-email-baolu.lu@linux.intel.com>
-References: <1529385449-25649-1-git-send-email-baolu.lu@linux.intel.com>
+        Tue, 19 Jun 2018 01:31:44 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46047 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751602AbeFSFbk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 01:31:40 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 420AE800E6;
+        Tue, 19 Jun 2018 17:31:36 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1529386296;
+        bh=gtOFZrCEbPq2FHKvbmVhauPPiPV97AvOKRG434gLOaw=;
+        h=From:To:Cc:Subject:Date;
+        b=G6wxSZ+i1EXrlyYQKPQwbcZkGpqqL1X+c2kBGgCRcbotIxP3JIF1gQCGJsV43JcJb
+         kpY7uXvwgebPvf9nsVWm0klTJBKvWLOF2VVPZeHBcwX9G2nn9SmyqDsGh1lnwDtGAE
+         m61b4n9piDRkDGKiUcBwCLUMykmXMmewxa0rj32g=
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5b2895380000>; Tue, 19 Jun 2018 17:31:36 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id D078713EEAD;
+        Tue, 19 Jun 2018 17:31:38 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id B1F371E2626; Tue, 19 Jun 2018 17:31:35 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [RFC PATCH v2 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Date:   Tue, 19 Jun 2018 17:31:19 +1200
+Message-Id: <20180619053125.16792-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-idr_for_each_entry() is used to iteratte over idr elements
-of a given type. It isn't suitable for the globle pasid idr
-since the pasid idr consumer could specify different types
-of pointers to bind with a pasid.
+Hi,
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-Reviewed-by: Liu Yi L <yi.l.liu@intel.com>
----
- drivers/iommu/intel-svm.c   | 14 ++++++++++----
- include/linux/intel-iommu.h |  1 +
- 2 files changed, 11 insertions(+), 4 deletions(-)
+I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chip
+to one of our boards which uses the Marvell NFCv2 controller.
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index 2cc0aac..36cc1d1 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -298,6 +298,7 @@ static const struct mmu_notifier_ops intel_mmuops = {
- };
- 
- static DEFINE_MUTEX(pasid_mutex);
-+static LIST_HEAD(global_svm_list);
- 
- int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops *ops)
- {
-@@ -329,13 +330,13 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 
- 	mutex_lock(&pasid_mutex);
- 	if (pasid && !(flags & SVM_FLAG_PRIVATE_PASID)) {
--		int i;
-+		struct intel_svm *t;
- 
--		idr_for_each_entry(&iommu->pasid_idr, svm, i) {
--			if (svm->mm != mm ||
--			    (svm->flags & SVM_FLAG_PRIVATE_PASID))
-+		list_for_each_entry(t, &global_svm_list, list) {
-+			if (t->mm != mm || (t->flags & SVM_FLAG_PRIVATE_PASID))
- 				continue;
- 
-+			svm = t;
- 			if (svm->pasid >= pasid_max) {
- 				dev_warn(dev,
- 					 "Limited PASID width. Cannot use existing PASID %d\n",
-@@ -404,6 +405,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		svm->mm = mm;
- 		svm->flags = flags;
- 		INIT_LIST_HEAD_RCU(&svm->devs);
-+		INIT_LIST_HEAD(&svm->list);
- 		ret = -ENOMEM;
- 		if (mm) {
- 			ret = mmu_notifier_register(&svm->notifier, mm);
-@@ -430,6 +432,8 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		 */
- 		if (cap_caching_mode(iommu->cap))
- 			intel_flush_pasid_dev(svm, sdev, svm->pasid);
-+
-+		list_add_tail(&svm->list, &global_svm_list);
- 	}
- 	list_add_rcu(&sdev->list, &svm->devs);
- 
-@@ -485,6 +489,8 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 					if (svm->mm)
- 						mmu_notifier_unregister(&svm->notifier, svm->mm);
- 
-+					list_del(&svm->list);
-+
- 					/* We mandate that no page faults may be outstanding
- 					 * for the PASID when intel_svm_unbind_mm() is called.
- 					 * If that is not obeyed, subtle errors will happen.
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 1df9401..06f04e2 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -485,6 +485,7 @@ struct intel_svm {
- 	int flags;
- 	int pasid;
- 	struct list_head devs;
-+	struct list_head list;
- };
- 
- extern int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sdev);
+This particular chip is a bit odd in that the datasheet states support
+for ONFI 1.0 but the revision number field is 00 00. It also is marked
+ABAFA but reports internally as ABAGA. Finally it has internal 8-bit ECC
+which cannot be disabled.
+
+The existing test in micron_supports_on_die_ecc() determines that on-die
+ECC is supported but not mandatory but I know for this chip it is
+mandatory despite what set_features returns.
+
+In order for this to work I need to set nand-ecc-mode = "on-die" in my
+dts. Ideally I'd like it to be automatic based on what the hardware can
+support but that may be asking too much at the moment.
+
+I think I need to do some re-testing on other Micron parts so this
+series is still RFC. Although the first 3 patches are probably good to
+go.
+
+Here's a dump of the parameter page from the chip I have
+
+00000000: 4f 4e 46 49 00 00 18 00 3f 00 00 00 00 00 00 00 ONFI....?.......
+00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00000020: 4d 49 43 52 4f 4e 20 20 20 20 20 20 4d 54 32 39  MICRON MT29
+00000030: 46 31 47 30 38 41 42 41 47 41 57 50 20 20 20 20  F1G08ABAGAWP    
+00000040: 2c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ,...............
+00000050: 00 08 00 00 80 00 00 02 00 00 20 00 40 00 00 00  ..........  .@...
+00000060: 00 04 00 00 01 22 01 14 00 01 05 08 00 00 04 00 ....."..........
+00000070: 08 01 0e 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00000080: 08 3f 00 3f 00 58 02 10 27 46 00 64 00 00 00 00 .?.?.X..'F.d....
+00000090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000a0: 00 00 00 00 01 00 00 00 00 02 04 80 01 81 04 03 ................
+000000b0: 02 01 1e 90 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 85 a6 ................
+
+Chris Packham (6):
+  mtd: rawnand: marvell: Handle on-die ECC
+  mtd: rawnand: add manufacturer fixup for ONFI parameter page
+  mtd: rawnand: micron: add fixup for ONFI revision
+  mtd: rawnand: marvell: Support page size of 2048 with 8-bit ECC
+  mtd: rawnand: micron: add ONFI_FEATURE_ON_DIE_ECC to supported
+    features
+  mtd: rawnand: micron: support 8/512 on-die ECC
+
+ drivers/mtd/nand/raw/marvell_nand.c |  2 ++
+ drivers/mtd/nand/raw/nand_base.c    |  4 ++++
+ drivers/mtd/nand/raw/nand_micron.c  | 18 ++++++++++++++----
+ include/linux/mtd/rawnand.h         |  1 +
+ 4 files changed, 21 insertions(+), 4 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
