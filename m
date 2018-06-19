@@ -6,32 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028DCC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2719CC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD13E20883
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:03:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD13E20883
+	by mail.kernel.org (Postfix) with ESMTP id DF6D820874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:04:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF6D820874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966478AbeFSNDa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:03:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39792 "EHLO mx2.suse.de"
+        id S966491AbeFSNEH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:04:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39884 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966110AbeFSND1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:03:27 -0400
+        id S965727AbeFSNEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:04:05 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id C20FDADD3;
-        Tue, 19 Jun 2018 13:03:25 +0000 (UTC)
-Subject: Re: [PATCH v3] xen: share start flags between PV and PVH
-To:     Roger Pau Monne <roger.pau@citrix.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-References: <20180608084038.19344-1-roger.pau@citrix.com>
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 1FBABADD3;
+        Tue, 19 Jun 2018 13:04:04 +0000 (UTC)
+Subject: Re: [PATCH v2 1/9] xen/grant-table: Export gnttab_{alloc|free}_pages
+ as GPL
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180601114132.22596-1-andr2000@gmail.com>
+ <20180601114132.22596-2-andr2000@gmail.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -65,28 +69,30 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <9a24ea8f-c46c-0b2d-0a91-10b5cc4b47bc@suse.com>
-Date:   Tue, 19 Jun 2018 15:03:24 +0200
+Message-ID: <f52a1275-dd3f-89dc-83f4-a9738119d058@suse.com>
+Date:   Tue, 19 Jun 2018 15:04:03 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180608084038.19344-1-roger.pau@citrix.com>
+In-Reply-To: <20180601114132.22596-2-andr2000@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/18 10:40, Roger Pau Monne wrote:
-> Use a global variable to store the start flags for both PV and PVH.
-> This allows the xen_initial_domain macro to work properly on PVH.
+On 01/06/18 13:41, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 > 
-> Note that ARM is also switched to use the new variable.
+> Only gnttab_{alloc|free}_pages are exported as EXPORT_SYMBOL
+> while all the rest are exported as EXPORT_SYMBOL_GPL, thus
+> effectively making it not possible for non-GPL driver modules
+> to use grant table module. Export gnttab_{alloc|free}_pages as
+> EXPORT_SYMBOL_GPL so all the exports are aligned.
 > 
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
 Pushed to xen/tip.git for-linus-4.18
 
