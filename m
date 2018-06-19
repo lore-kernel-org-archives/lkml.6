@@ -3,99 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88EBC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C35C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60BD72075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:26:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BD72075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D5482075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:30:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5482075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757164AbeFSK0o (ORCPT
+        id S1757138AbeFSKaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:26:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47080 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755596AbeFSK0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:26:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9301B1435;
-        Tue, 19 Jun 2018 03:26:42 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A12F43F25D;
-        Tue, 19 Jun 2018 03:26:37 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 06/10] sched: Add over-utilization/tipping point
- indicator
-To:     Pavan Kondeti <pkondeti@codeaurora.org>,
-        Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-7-quentin.perret@arm.com>
- <20180619070103.GB9208@codeaurora.org>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <bdfd313d-1b31-0672-0a23-285087206b06@arm.com>
-Date:   Tue, 19 Jun 2018 12:26:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 06:30:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53231 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756569AbeFSKaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:30:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C8CDBAC03;
+        Tue, 19 Jun 2018 10:30:21 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 12:30:17 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3 V2] x86/mce: Fix incorrect "Machine check from
+ unknown source" message
+Message-ID: <20180619103016.GC31750@zn.tnic>
+References: <cover.1527283897.git.tony.luck@intel.com>
+ <52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com>
+ <20180528204923.GB30792@zn.tnic>
+ <20180529161549.GB935@agluck-desk>
+ <20180529174105.GF19870@zn.tnic>
+ <3908561D78D1C84285E8C5FCA982C28F7D31E24F@ORSMSX110.amr.corp.intel.com>
+ <20180529175313.GG19870@zn.tnic>
+ <20180529185425.GA4174@agluck-desk>
+ <20180530092631.GA2599@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20180619070103.GB9208@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180530092631.GA2599@zn.tnic>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/19/2018 09:01 AM, Pavan Kondeti wrote:
-> On Mon, May 21, 2018 at 03:25:01PM +0100, Quentin Perret wrote:
-
-[...]
-
->> @@ -8152,6 +8176,9 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->>   		if (nr_running > 1)
->>   			*overload = true;
->>   
->> +		if (cpu_overutilized(i))
->> +			*overutilized = 1;
->> +
+On Wed, May 30, 2018 at 11:26:32AM +0200, Borislav Petkov wrote:
+> > In "x86/mce: Exit properly when no banks to poll" you
+> > leap right to the end.  I'm wondering whether this can
+> > ever happen? I mean, if there are no machine check banks,
+> > then how did we get a machine check?
 > 
-> There is no need to check if every CPU is overutilized or not once
-> *overutilized is marked as true, right?
-
-True, so you want to check *overutilized before calling 
-cpu_overutilized() to save a little bit on compute?
-
-[...]
-
->> @@ -8586,6 +8621,10 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
->>   	 * this level.
->>   	 */
->>   	update_sd_lb_stats(env, &sds);
->> +
->> +	if (sched_energy_enabled() && !READ_ONCE(env->dst_rq->rd->overutilized))
->> +		goto out_balanced;
->> +
+> Right, so this looks like some remnant from old times, lemme do some
+> archeology...
 > 
-> Is there any reason for sending no-hz idle kicks but bailing out here when
-> system is not overutilized?
+> /me goes and dusts off the full history linux repo...
+> 
+> I found this:
+> 
+> commit 7dd1e1d805d15ca63d05badf40026629ba75cbc8
+> Author: Andi Kleen <ak@suse.de>
+> Date:   Tue Feb 24 17:58:41 2004 -0800
+> 
+>     [PATCH] New machine check handler for x86-64
+> 
+> and there's no mention why the !banks check is there.
+> 
+> I'm wondering if we should simply remove it. I mean, as you say, if
+> there are no MCA banks, we won't be running in here in the first
+> place...
+> 
+> > Both the original, and your new code, skip the:
+> > 
+> > 	mce_wrmsrl(MSR_IA32_MCG_STATUS, 0);
+> > 
+> > which seems bad. That leaves MCG_STATUS.MCIP set ... so a second
+> > machine check would just reset the machine.
+> 
+> That's a good point. It goes away as an issue if we simply drop the
+> check.
 
-Even if a system is not-overutilized, we want to update stale cpu 
-blocked load and utilization so NOHZ_STATS_KICK have to get through.
+...and gone it is.
 
-So calling find_busiest_group() -> update_sd_lb_stats() -> 
-update_sg_lb_stats() to possibly execute update_nohz_stats() is IMHO the 
-right thing to do.
+---
+From: Borislav Petkov <bp@suse.de>
+Date: Tue, 19 Jun 2018 12:27:02 +0200
+Subject: [PATCH] x86/mce: Remove !banks check
+
+If we don't have MCA banks, we won't see machine checks anyway. Drop the
+check.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/cpu/mcheck/mce.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index ea1521ec7e5b..05d2d15a95bd 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1185,9 +1185,6 @@ void do_machine_check(struct pt_regs *regs, long error_code)
+ 
+ 	this_cpu_inc(mce_exception_count);
+ 
+-	if (!cfg->banks)
+-		goto out;
+-
+ 	mce_gather_info(&m, regs);
+ 	m.tsc = rdtsc();
+ 
+@@ -1327,7 +1324,7 @@ void do_machine_check(struct pt_regs *regs, long error_code)
+ 	if (worst > 0)
+ 		mce_report_event(regs);
+ 	mce_wrmsrl(MSR_IA32_MCG_STATUS, 0);
+-out:
++
+ 	sync_core();
+ 
+ 	if (worst != MCE_AR_SEVERITY && !kill_it)
+-- 
+2.17.0.582.gccdcbd54c
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
