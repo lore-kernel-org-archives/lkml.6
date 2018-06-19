@@ -2,134 +2,156 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B0BC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB025C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ADC820883
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:55:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L9/jl8D1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ADC820883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B6BF2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:56:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6BF2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937308AbeFSEzx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 00:55:53 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39394 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937085AbeFSEzv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 00:55:51 -0400
-Received: by mail-pl0-f67.google.com with SMTP id f1-v6so10249473plt.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=R7irBImTqCkOBrsyGMtxzy2Tzmvcav7HcMiUyGpgiVI=;
-        b=L9/jl8D1DSkWGpeLiqDsYk0xxq98Ig9S0PZgYYnsmA/RxkzM68DC8SvcPIgNeyWVHm
-         bE7p93DNWk/t2FrcwrlPmCWpxhuLyIK+0D6X2j9WWMJhp0L1vMhM409Sn7K7UuNKsKbf
-         ZA5c8CbNa/tb2oSJK36AKP3pLPlQLl87LaNLq4C80113V0OoMEb41JGPMtfbBYr04Bjd
-         XarLS+XYhjwgSm1q6IchR1RdCvKgcr5LvN5Ry2fMfI25M+HoCLKb7iRKX/nGNoNWK7Aj
-         f15wQaMFRbullseZyeA60SWjU9VLaKTidYeQZ88i3MrnoeAXAN9LX4fFKAy1Noa+HhwW
-         VebQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=R7irBImTqCkOBrsyGMtxzy2Tzmvcav7HcMiUyGpgiVI=;
-        b=PBKt+4PM4xYRwawWuFuKGjJD8PfZWDgXmpXzJMHm+LDv3rvLcfGk38y8VmlqP8ec/l
-         zR3g+EvXNmcantGctWC2H1eQO1spk6PIAhyjF68x9ssBl6NRFW0gy4ZUwJO4fUcI9mHe
-         ueUY8RAW+O2Wb5gk1dqh2QfI2iyS58wx1yPwox14vybduzHfVD/uEufTn4IDol+wvyAW
-         IuDmH5E46FcugEIlOxtBccc6tltiX8hE2WQbvrfu4XFWw0QssN1e+mWyOwOn5yJ+NWNb
-         flMI7NS4coFLP8D0jQUd1rNwM30Vh7Ps+dCR5u8By80JYkTJwQYq7VLxY4MQKorlK2Tf
-         cxUg==
-X-Gm-Message-State: APt69E2EuoRLU9vb6hgOJnWUKA02pNuTRHnO+Zn4T0Pw9JewAna99fhi
-        xAlzCpvsx6uHRrF/gk9sXfiYNmSCjvUqAmblsmMHtA==
-X-Google-Smtp-Source: ADUXVKLRudR4rKFN6A5fVDizPDukihkbdaM+zlCuU071eKgB0r8M2iloMyeuwFWvKx+ARnCEeLQlVyptY0uVClarJmU=
-X-Received: by 2002:a17:902:bb81:: with SMTP id m1-v6mr17092545pls.117.1529384150844;
- Mon, 18 Jun 2018 21:55:50 -0700 (PDT)
+        id S937321AbeFSE4A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 00:56:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56466 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937085AbeFSEz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 00:55:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B14D5207D4; Tue, 19 Jun 2018 06:55:56 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7AA1A2079D;
+        Tue, 19 Jun 2018 06:55:56 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 06:55:55 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Message-ID: <20180619065555.1900487c@bbrezillon>
+In-Reply-To: <0caaea1b4f5a4b45b436833424c4c8c8@svr-chch-ex1.atlnz.lc>
+References: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
+        <20180618151450.3e740270@xps13>
+        <f16525ea6b534123bda64b09e818ce6d@svr-chch-ex1.atlnz.lc>
+        <0caaea1b4f5a4b45b436833424c4c8c8@svr-chch-ex1.atlnz.lc>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Mon, 18 Jun 2018 21:55:30
- -0700 (PDT)
-In-Reply-To: <CAHmME9qvRDQOJYdSPaAf-hg5raacu4TBgStLy7NzFL+j+dXheQ@mail.gmail.com>
-References: <CAHmME9rtoPwxUSnktxzKso14iuVCWT7BE_-_8PAC=pGw1iJnQg@mail.gmail.com>
- <CALvZod6Dxx79ztxzHsDVe6pj7Fa7ydJAjMf_EHV9H15+AsVwdA@mail.gmail.com> <CAHmME9qvRDQOJYdSPaAf-hg5raacu4TBgStLy7NzFL+j+dXheQ@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 19 Jun 2018 06:55:30 +0200
-Message-ID: <CACT4Y+YLySJMfG4kCJ2FiPpPtN6sgU6k2FoZUYMFrJGLj+vDjw@mail.gmail.com>
-Subject: Re: Possible regression in "slab, slub: skip unnecessary kasan_cache_shutdown()"
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Shakeel Butt <shakeelb@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 6:08 AM, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> On Tue, Jun 19, 2018 at 5:59 AM Shakeel Butt <shakeelb@google.com> wrote:
->> Hi Jason, yes please do send me the test suite with the kernel config.
->
-> $ git clone https://git.zx2c4.com/WireGuard
-> $ cd WireGuard/src
-> $ [[ $(gcc -v 2>&1) =~ gcc\ version\ 8\.1\.0 ]] || echo crash needs 8.1
-> $ export DEBUG_KERNEL=yes
-> $ export KERNEL_VERSION=4.18-rc1
-> $ make test-qemu -j$(nproc)
->
-> This will build a kernel and a minimal userland and load it in qemu,
-> which must be installed.
->
-> This code is what causes the crash:
-> The self test that's executed:
-> https://git.zx2c4.com/WireGuard/tree/src/selftest/ratelimiter.h
-> Which exercises this code:
-> https://git.zx2c4.com/WireGuard/tree/src/ratelimiter.c
->
-> The problem occurs after gc_entries(NULL) frees things (line 124 in
-> ratelimiter.h above), and then line 133 reallocates those objects.
-> Sometime after that happens, elsewhere in the kernel invokes this
-> kasan issue in the kasan cache cleanup.
->
-> I realize it's disappointing that the test case here is in WireGuard,
-> which isn't (yet!) upstream. That's why in my original message I
-> wrote:
->
->> Rather, it looks like this
->> commit introduces a performance optimization, rather than a
->> correctness fix, so it seems that whatever test case is failing is
->> likely an incorrect failure. Does that seem like an accurate
->> possibility to you?
->
-> I was hoping to only point you toward my own code after establishing
-> the possibility that the bug is not my own. If you still think there's
-> a chance this is due to my own correctness issue, and your commit has
-> simply unearthed it, let me know and I'll happily keep debugging on my
-> own before pinging you further.
+Hi Chris,
 
+On Tue, 19 Jun 2018 01:44:24 +0000
+Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:
 
-Hi Jason,
+> On 19/06/18 12:35, Chris Packham wrote:
+> > On 19/06/18 01:15, Miquel Raynal wrote:  
+> >> Hi Chris,
+> >>
+> >> On Mon, 18 Jun 2018 16:52:53 +1200, Chris Packham
+> >> <chris.packham@alliedtelesis.co.nz> wrote:
+> >>  
+> >>> Hi,
+> >>>
+> >>> I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chip
+> >>> to one of our boards which uses the Marvell NFCv2 controller.
+> >>>
+> >>> This particular chip is a bit odd in that the datasheet states support
+> >>> for ONFI 1.0 but the revision number field is 00 00. It also is marked
+> >>> ABAFA but reports internally as ABAGA. Finally it has internal 8-bit ECC
+> >>> which cannot be disabled.  
+> >>
+> >> Boris and I agree that in this case, the chip should not be probed if
+> >> ecc->type != ON_DIE (and eventually NONE).
+> >>
+> >> This should be handled in the Micron driver.
+> >>
+> >> Also, what is the returned value of micron_supports_on_die_ecc() (with
+> >> patch 1/2)?  
+> > 
+> > micron_supports_on_die_ecc() returns MICRON_ON_DIE_UNSUPPORTED.
+> > Technically this chip should be MICRON_ON_DIE_MANDATORY since it can't
+> > be disabled but that wouldn't be much help since that would still result
+> > in -EINVAL. I'll dig into micron_supports_on_die_ecc() and see if I can
+> > find something in the datasheet to use.
+> >   
+> 
+> Some further debugging. Nothing (in 4.17) calls 
+> set_bit(ONFI_FEATURE_ON_DIE_ECC) so I don't think 
+> micron_supports_on_die_ecc() can return anything other than 
+> MICRON_ON_DIE_UNSUPPORTED, unless I'm missing something for how the 
+> {get,set}_feature_list is populated.
 
-Your code frees all entries before freeing the cache, right? If you
-add total_entries check before freeing the cache, it does not fire,
-right?
-Are you using SLAB or SLUB? We stress kernel pretty heavily, but with
-SLAB, and I suspect Shakeel may also be using SLAB. So if you are
-using SLUB, there is significant chance that it's a bug in the SLUB
-part of the change.
+Nope you're not. Looks like we broke Micron on-die ECC in 4.17.
+
+> 
+> With the onfi.version fix and the following
+> 
+> --- a/drivers/mtd/nand/raw/nand_micron.c
+> +++ b/drivers/mtd/nand/raw/nand_micron.c
+> @@ -66,7 +66,9 @@ static int micron_nand_onfi_init(struct nand_chip *chip)
+> 
+>          if (p->supports_set_get_features) {
+>                  set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->set_feature_list);
+> +               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->set_feature_list);
+>                  set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->get_feature_list);
+> +               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->get_feature_list);
+>          }
+
+Can you send a patch containing only the above changes with the
+Cc-stable and Fixes tags?
+
+> @@ -240,7 +246,7 @@ static int micron_supports_on_die_ecc(struct 
+> nand_chip *chip)
+>           * Some Micron NANDs have an on-die ECC of 4/512, some other
+> -         * 8/512. We only support the former.
+> +         * 8/512.
+>           */
+> -       if (chip->ecc_strength_ds != 4)
+> +       if (chip->ecc_strength_ds != 4 && chip->ecc_strength_ds != 8)
+>                  return MICRON_ON_DIE_UNSUPPORTED;
+>
+
+This should be done in a separate patch.
+ 
+> I can get micron_supports_on_die_ecc() to return MICRON_ON_DIE_SUPPORTED.
+> 
+
+That's weird. You should have MICRON_ON_DIE_MANDATORY here. Could it be
+that the ONFI_FEATURE_ON_DIE_ECC_EN bit does not really reflect the ECC
+engine state? If that's the case, we'll have to change the way we
+detect if on-die ECC is supported/mandatory/not-supported (based on the
+model name stored in the ONFI param page?).
+
+> Then I run into a problem with the marvell_nand.c which currently 
+> doesn't handle NAND_ECC_ON_DIE which is easily fixed.
+
+Yep, adding that to the new driver should be pretty easy.
+
+> 
+> But then I have the issue that I need to handle systems with either type 
+> of ECC scheme ("on-die" or "hw") which I'm not sure is even possible 
+> within the dts.
+
+You mean having the same dts for both setup. Indeed, that's not
+supported right now.
+
+> 
+> I'll re-base against 4.18-rc1 and send what I have so-far.
+
+Cool. I'm particularly interested by the SET/GET_FEATURE(ECC) fix.
+
+Thanks,
+
+Boris
