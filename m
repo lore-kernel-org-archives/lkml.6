@@ -2,111 +2,132 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A44C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3292FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 475C6204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFCB9204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:37:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVdGqto6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 475C6204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sazBSsG6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFCB9204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937538AbeFSNhr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:37:47 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41855 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750816AbeFSNhq (ORCPT
+        id S937597AbeFSNh5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:37:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59906 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937544AbeFSNh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:37:46 -0400
-Received: by mail-lf0-f68.google.com with SMTP id d24-v6so30199075lfa.8
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 06:37:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z8e4Xf7dbXfKNgfDJQMHp3aGI8jABKz+EJzEG6uXDOM=;
-        b=jVdGqto6k2zvako83tfDfStmC1BmSjqh+oCvTAmfOrjtUtHaNXU39gPW8PbB6q6eD1
-         DFoUzpPBWaqX6e90rothtWpqIH+GNBDglVCNPtuDRHgC8GuwiQ66SDuhFC3k4HixcGhN
-         qt0b22rBUoBJce7ujpsBBo8/zLm+VJf4oKdko=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z8e4Xf7dbXfKNgfDJQMHp3aGI8jABKz+EJzEG6uXDOM=;
-        b=YVL+OpjDmu0p5d+HIu3XBhVxOvFkPxJtsDNhYU2liiZpsemmmbbOcHf8kaSwv1D0j9
-         FwP/p7fKXgvv6bY4Wd8HWamfxflUd73elE8YLb1K1DJFm3X41fgsKSxXka2XociGOxAV
-         vHAqpPi3608hi5ca+hG9yhH/VDtrrUkUIwAU/x2q772ICfHiRY89WSXBUz+Y5cs0ykbC
-         rcUo5uKY21Xk06sikZMtVO4+yqpjWhjEHN3PxUFP+RdgGI73N/gd6fLIe3XW3mnCbcak
-         0xP7+6m6lZtMJbRw5VDHA4feq+T9SZBv+TK5njHiIxCY8a6YOOtc5WfNoAUbg8z1t9ZF
-         rJtA==
-X-Gm-Message-State: APt69E04wnbLX25fuW7y3Kjz05duc5NbzfnAxSKA4FH+BFo5YqBUjRhU
-        WEleWrmnSmZc4024e/f9VTOEKw==
-X-Google-Smtp-Source: ADUXVKKUHNhHJrJ5kaPsIuR8Cgh7fAeu7UMvZfsNX0eyb2xXZvlgE7P48JivdrI6NGm/zh+Oz9Gi8Q==
-X-Received: by 2002:a2e:9b52:: with SMTP id o18-v6mr7932925ljj.49.1529415464963;
-        Tue, 19 Jun 2018 06:37:44 -0700 (PDT)
-Received: from jax.urgonet (h-84-45.A175.priv.bahnhof.se. [79.136.84.45])
-        by smtp.gmail.com with ESMTPSA id p85-v6sm3177902lje.29.2018.06.19.06.37.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 06:37:44 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 15:37:42 +0200
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038@lists.linaro.org,
-        Jerome Forissier <jerome.forissier@linaro.org>,
-        Etienne Carriere <etienne.carriere@linaro.org>,
-        Joakim Bech <joakim.bech@linaro.org>,
-        Volodymyr Babchuk <vlad.babchuk@gmail.com>,
-        tiger-yu99 <tigeryu99@hotmail.com>,
-        David Wang <david.wang@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tee: replace getnstimeofday64() with
- ktime_get_real_ts64()
-Message-ID: <20180619133741.GA9537@jax.urgonet>
-References: <20180618142511.3598193-1-arnd@arndb.de>
+        Tue, 19 Jun 2018 09:37:56 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5JDYh8K075669;
+        Tue, 19 Jun 2018 13:37:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=OW5q91VJ425gZWCcsS07bpUuLmOpjQZcmBDT5XmjLM8=;
+ b=sazBSsG6nCZ1MESeNq4o7ag4LNuzaqJpl6OWUdhzF945eci2BWL+l56SF0W1nl8FpmyG
+ rVhJt8A7Tzb2WFed3fx+NIr9zKObORxTnAUf2ggxpURuv5SlU7GkYjnAGTwxH8of3SRk
+ 2ydI07X7KChxP8PVimW+bSw6Hp/W9cCKf/c/m2b4v1Rd80CncIQJ+y+JZ3w4KDlofjRT
+ teioQpQlRdbTp/oRtgRAft7sEaAGGVZ7g/TbLgfdNNYW/4H3WY92VVAedygfTH2Shfx4
+ PFhffOlHuEvXruKwmnCpegolMIviyJABZsrZ1CWVNcBckVBOCm/JbC3hA3EGHjbDMezE jA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2jmt01g7ns-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 13:37:21 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5JDbJPr031892
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 13:37:20 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5JDbISf019467;
+        Tue, 19 Jun 2018 13:37:19 GMT
+Received: from [192.168.1.93] (/99.156.91.244)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Jun 2018 06:37:18 -0700
+Subject: Re: [PATCH v2 1/4] arm64: export memblock_reserve()d regions via
+ /proc/iomem
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        akpm@linux-foundation.org, ard.biesheuvel@linaro.org
+Cc:     mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        graeme.gregory@linaro.org, al.stone@linaro.org,
+        bhsharma@redhat.com, tbaicar@codeaurora.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        james.morse@arm.com, hanjun.guo@linaro.org, sudeep.holla@arm.com,
+        dyoung@redhat.com, linux-arm-kernel@lists.infradead.org
+References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
+ <20180619064424.6642-2-takahiro.akashi@linaro.org>
+From:   Dave Kleikamp <dave.kleikamp@oracle.com>
+Openpgp: preference=signencrypt
+Message-ID: <72307608-90e0-4842-edc1-d3b284782940@oracle.com>
+Date:   Tue, 19 Jun 2018 08:37:17 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180619064424.6642-2-takahiro.akashi@linaro.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180618142511.3598193-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=492
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806190154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 04:24:56PM +0200, Arnd Bergmann wrote:
-> The two do the same thing, but we want to have a consistent
-> naming in the kernel.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/tee/optee/rpc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
-> index 41aea12e2bcc..b45c73dd37a5 100644
-> --- a/drivers/tee/optee/rpc.c
-> +++ b/drivers/tee/optee/rpc.c
-> @@ -48,7 +48,7 @@ static void handle_rpc_func_cmd_get_time(struct optee_msg_arg *arg)
->  			OPTEE_MSG_ATTR_TYPE_VALUE_OUTPUT)
->  		goto bad;
+On 06/19/2018 01:44 AM, AKASHI Takahiro wrote:
+
+> +static int __init reserve_memblock_reserved_regions(void)
+> +{
+> +	phys_addr_t start, end, roundup_end = 0;
+> +	struct resource *mem, *res;
+> +	u64 i;
+> +
+> +	for_each_reserved_mem_region(i, &start, &end) {
+> +		if (end <= roundup_end)
+> +			continue; /* done already */
+> +
+> +		start = __pfn_to_phys(PFN_DOWN(start));
+> +		end = __pfn_to_phys(PFN_UP(end)) - 1;
+> +		roundup_end = end;
+> +
+> +		res = kzalloc(sizeof(*res), GFP_ATOMIC);
+> +		if (WARN_ON(!res))
+> +			return -ENOMEM;
+> +		res->start = start;
+> +		res->end = end;
+> +		res->name  = "reserved";
+> +		res->flags = IORESOURCE_MEM;
+> +
+> +		mem = request_resource_conflict(&iomem_resource, res);
+> +		/*
+> +		 * We expected memblock_reserve() regions to conflict with
+> +		 * memory created by request_standard_resources().
+> +		 */
+> +		if (WARN_ON_ONCE(!mem))
+> +			continue;
+> +		kfree(res);
+
+Why is kfree() after the conditional continue? This is a memory leak.
+
+> +
+> +		reserve_region_with_split(mem, start, end, "reserved");
+> +	}
+> +
+> +	return 0;
+> +}
+> +arch_initcall(reserve_memblock_reserved_regions);
+> +
+>  u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
 >  
-> -	getnstimeofday64(&ts);
-> +	ktime_get_real_ts64(&ts);
->  	arg->params[0].u.value.a = ts.tv_sec;
->  	arg->params[0].u.value.b = ts.tv_nsec;
->  
-> -- 
-> 2.9.0
+>  void __init setup_arch(char **cmdline_p)
 > 
-
-Looks good.
-
-Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
-
-Thanks,
-Jens
