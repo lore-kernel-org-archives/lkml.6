@@ -6,54 +6,55 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 553A6C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F96C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0788220874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:22:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E94F02075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:22:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j20WwDoO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0788220874
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s2dy79bD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E94F02075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965311AbeFSIWC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:22:02 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44916 "EHLO
+        id S1756302AbeFSIWF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:22:05 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44923 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756302AbeFSIUC (ORCPT
+        with ESMTP id S1756310AbeFSIUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:20:02 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180619082000euoutp02494cc0fe59e3a3c8a5a19df40590ece1~5gexE8iss1395713957euoutp02S;
-        Tue, 19 Jun 2018 08:20:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180619082000euoutp02494cc0fe59e3a3c8a5a19df40590ece1~5gexE8iss1395713957euoutp02S
+        Tue, 19 Jun 2018 04:20:03 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180619082001euoutp02c75b27a64f20d2c267248ae9d68dde20~5gexz7asy1480614806euoutp02d;
+        Tue, 19 Jun 2018 08:20:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180619082001euoutp02c75b27a64f20d2c267248ae9d68dde20~5gexz7asy1480614806euoutp02d
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1529396400;
-        bh=apXlQ4KvBL8qm2fwxPcCszmmnldlFRci8SdE3pkcSE4=;
+        s=mail20170921; t=1529396401;
+        bh=g1pzJh3WA3mUqKmeX9FEzvLX8jXy2N5Lqa+rp0K1ySc=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=j20WwDoOFs2XMpDtmofxu0FORX1Bv9PJV7pKusPrHW9EPaiqw0yIguoTIXWqqAigf
-         rSP1pg/nqzt6Da0Cu87Nu1ecEng+e7l34YqRQiroqt8AL7sIxPKf4+id5gilSxkG3s
-         j49tFp0hNGeHi9/YAwnC/RdwwqgGIicvgo/B68mA=
+        b=s2dy79bDC+Hr66drf8tG4X7wWHqKXS8HMbf2CdGLBnRNHsha6NjlSAJB6KUmn782R
+         2SFgGyB8Ylf6kvXUKRbNMHl9KFfodX2Zi8m1tNMeXjHXsn0p+4RWrcxIXx313qKzAF
+         tSnkgLJguM9/iOsCnbB4HQP104KPIZro2fsfFCMs=
 Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180619081959eucas1p13fe0f80fe799f7325ff4b86c8ff1d617~5gewOHd-f0549605496eucas1p1V;
-        Tue, 19 Jun 2018 08:19:59 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180619082000eucas1p2258c5a62acddd065b561f27e3455f23b~5gew7KWLR0178901789eucas1p2_;
+        Tue, 19 Jun 2018 08:20:00 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id EA.AA.05700.EACB82B5; Tue, 19
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id ED.AA.05700.FACB82B5; Tue, 19
         Jun 2018 09:19:59 +0100 (BST)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180619081958eucas1p16911ee9962441735d929dc588e70ce70~5gevdvrDa0549605496eucas1p1U;
-        Tue, 19 Jun 2018 08:19:58 +0000 (GMT)
-X-AuditID: cbfec7f2-1dbff70000011644-1e-5b28bcae6975
+        20180619081959eucas1p14aee2dfc0231d2f645e3c9071b92341e~5gewNjq1I3063530635eucas1p1Z;
+        Tue, 19 Jun 2018 08:19:59 +0000 (GMT)
+X-AuditID: cbfec7f2-1c1ff70000011644-23-5b28bcafc308
 Received: from eusync4.samsung.com ( [203.254.199.214]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 5A.56.04178.EACB82B5; Tue, 19
-        Jun 2018 09:19:58 +0100 (BST)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6C.56.04178.FACB82B5; Tue, 19
+        Jun 2018 09:19:59 +0100 (BST)
 Received: from AMDC2075.DIGITAL.local ([106.120.51.25]) by
         eusync4.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
         (built May  5 2014)) with ESMTPA id <0PAK00EJ59T2RV00@eusync4.samsung.com>;
-        Tue, 19 Jun 2018 09:19:58 +0100 (BST)
+        Tue, 19 Jun 2018 09:19:59 +0100 (BST)
 From:   Maciej Purski <m.purski@samsung.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
@@ -73,136 +74,118 @@ Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Maciej Purski <m.purski@samsung.com>
-Subject: [PATCH v3 2/9] drm/exynos: move connector creation to attach
- callback
-Date:   Tue, 19 Jun 2018 10:19:23 +0200
-Message-id: <1529396370-18761-3-git-send-email-m.purski@samsung.com>
+Subject: [PATCH v3 3/9] drm/exynos: enable out_bridge in exynos_dsi_enable()
+Date:   Tue, 19 Jun 2018 10:19:24 +0200
+Message-id: <1529396370-18761-4-git-send-email-m.purski@samsung.com>
 X-Mailer: git-send-email 2.7.4
 In-reply-to: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTYRjG/c7d0eIwLb9MDEbiEDQF0Y+MNCg6EaRE9YdGtvLgdV521DIp
-        h1Zu5i0lmpa6aFpOTZ1mpRV5qS1MpyldJDOwIq+BZqFppjv43+95n+d9Hz74GFyWS7oysYmp
-        vDpRmSCnJETbq0Wbd+NTRYTvQBYaedBPooL+1xjK1s6QqFnfSKKqnrXZ8MJPCpWMFRPox+dB
-        AhWNT+HIZmuiUV/2NI101400Mo+/I9FQ+20K6W3PMWSYGCFQQ88ojarfD2LoyrMeGulLJyi0
-        2F5JhGzh6ivrATdUWIBxT8pHae6WtozkzCYdxT36/YXkxq5ZMK7FmMUVtpoAN292D5OES/ZE
-        8Qmx6bx6197Tkpj5WR2e3APPa6rLKQ2odc4Djgxk/eELTRGRBySMjL0PoHU6FxfFPIDGhjJy
-        IzXXtoCJRg2A3R1LtChWAVxtr1tzGIZivWB9buT63Jk1AdjyYQasC5y9QcKBqin7KSc2DH6z
-        fbUzwXrAJWOVnaXsfqizWAmxzh1+7Nfh6+zIHoDlFX/s1ZAtpWFfUzu13gbXFi4X+ol5Jzhp
-        aaVFdoM6bScmciasnbhHiLsaAH+NDuGiEQS7LYP2YpzdDEvabuLiTSnUXpWJEQ52WFco8ZV6
-        ACf/5lPFYJsBOJiAC58mqKJ5wS+RP+cjKFVCWmK0z9kklRmsfY/ef5a5x2Dh7ZkuwDJAvkmq
-        afaMkJHKdCFD1QUgg8udpQ+rFREyaZQy4wKvTopUpyXwQhfYzhByF+kpxaVwGRutTOXjeT6Z
-        V2+4GOPoqgEHg6nA8eoFA7mslFa6dNS9PAzd4j4V9UPhGPP96Fa//OKQipoVH1pjwD07l1dy
-        VKHDcZkjK8FTAbM1dySdb/KWUoJS0kyBvQZLueJkq3dl5phHpHafr5PjMr/TYWzibqgpwN9N
-        DfW5A6HHvY7slhh3YIcuRnHRVv/4EwrnHDkhxCj9vHC1oPwPAj6ueRoDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t/xa7rr9mhEG3R+kLC4te4cq0XvuZNM
-        Fk0db1ktNs5Yz2ox/whQ7MrX92wWk+5PYLF4ce8ii0X/49fMFufPb2C3ONv0ht2ic+ISdotN
-        j6+xWlzeNYfNYsb5fUwWC17eYrFYe+Quu8XS6xeZLFr3HmG3mDH5JZvFz13zWBxEPdbMW8Po
-        cbmvl8lj56y77B6zO2ayemxa1cnmsf3bA1aP+93HmTw2L6n36NuyitHj8ya5AK4oLpuU1JzM
-        stQifbsErozP7zqZC45IVDQsncXWwLhSpIuRk0NCwETi07avTF2MXBxCAksYJZ4+380I4TQy
-        SSyYMZ29i5GDg01AS2JNezxIXERgFaPE1L932EEcZoHZrBKvHk1gBBklLOAnsfviTlYQm0VA
-        VeLXkvlgNq+Ai0Tn8RMsEOvkJG6e62QGsTkFXCVmzf3OBGILAdW8WH2FaQIjzwJGhlWMIqml
-        xbnpucWGesWJucWleel6yfm5mxiBob/t2M/NOxgvbQw+xCjAwajEw9uwUT1aiDWxrLgy9xCj
-        BAezkgjv1qUa0UK8KYmVValF+fFFpTmpxYcYpTlYlMR5zxtURgkJpCeWpGanphakFsFkmTg4
-        pRoY9TgTeZq0om5cefnL3WP/O83kp1uzd6/mMTgs8r4rV2yGukOWke9psRVcXdeC0hpZrj0X
-        Kpd61lse38X+NvJUWtU0rtdLf6z7fnGiVEtJ7JaNL2d8L546bbpkhnqy1oPLGVMFd8ov0p3R
-        5LFxo/mFH3q+SyOCuebsP5vKkFWlt+Xq4kX9Usl2SizFGYmGWsxFxYkAIolz83kCAAA=
-X-CMS-MailID: 20180619081958eucas1p16911ee9962441735d929dc588e70ce70
+X-Brightmail-Tracker: H4sIAAAAAAAAAzVSayyVcRjvf96rM8feHeRPMjutMS3S+vBvtdZKej+w6UtE0ok3zLXzomTT
+        SYlD5FKRTthciikcoiRGFlYcJ6XYDkk4bnNXPnRxvHz7/Z7f5dmzPTQmVRE2dGhkDKeIlIfL
+        SDHe8H5du7+62dHvQGOLCxp60UugjN5uEUpKnSNQbX41gYo6NmafV+dJlDOShSPDsA5H98Zm
+        MKTV1lCoJ2mWQqrsUgppxgYI1N+kJlG+tkWEiqeGcPS8Q0+hsq86EUp+20Gh/NwpEq03FeLH
+        LdmqwirA9mdmiNjXBXqKfZz6iGA1lSqSbVz7TrAj6Z0itq70BptZXwnYZY2dl9hXfDSICw+N
+        4xQuxy6KQ1r7PpLRS8y1rrUGUgkyzdKACQ2ZQ3C6S42nATEtZZ4BODxuoASyDGByXhu+7Uop
+        bBcJQjmAWfOLW65/AKpKjBGaJhknWJUSYJxbMJUA1n2bA0aCMQ8I2Fc0QxirzBkP+OPm4mYt
+        zuyFy6oayogljBus0GQTwjo7ONirwozYhDkFC5782lwNmVwK6rsekoLJDS7Pj24FzOF0Zz0l
+        YFuoSm0TCTgBVkw9xYWwEsAVfT8mCEfgu07dZhhjzGBOQx5mPAEyEph6RypYWKjsvguEM/MB
+        rMmYB1nAuhjsqARWXCwfEczxrpHcVWdeHsHHRgY7B0ZFaMDGg3z427n0Cqx+utQOGBrITCXK
+        Wgc/KSGP4+Mj2gGkMZmF5GWZo59UEiSPv84pogIUseEc3w520bjMSnLBMdFXygTLY7gwjovm
+        FNuqiDaxUQLvRl63x7bPxH8Sb9HfP2kupk9MFI8Z7ANNfey143B2+suC2lPn46pKH20579Hj
+        tXPBQS2ld9ed7jJM3HYIS0x3NJTH+hIJnvvkJQR3a7LJReKuH6zOPpPQ5hE62yoDdr/L94Sc
+        XTjn3jziXzfQgS1kH/x55bCl2ttm5c3lP9YynA+RuzphCl7+H3u5aWQcAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsVy+t/xa7rr92hEG5x9z2txa905VovecyeZ
+        LJo63rJabJyxntVi/hGg2JWv79ksJt2fwGLx4t5FFov+x6+ZLc6f38BucbbpDbtF58Ql7Bab
+        Hl9jtbi8aw6bxYzz+5gsFry8xWKx9shddoul1y8yWbTuPcJuMWPySzaLn7vmsTiIeqyZt4bR
+        43JfL5PHzll32T1md8xk9di0qpPNY/u3B6we97uPM3lsXlLv0bdlFaPH501yAVxRXDYpqTmZ
+        ZalF+nYJXBn7L5xhK/gkUHHi2za2BsY+vi5GTg4JAROJ9nmHmLoYuTiEBJYwSjTsuMcGkhAS
+        aGSSmHVdoIuRg4NNQEtiTXs8SI2IwCpGial/77CDOMwCs1klXj2awAjSICzgI/Go8SMLiM0i
+        oCrxuXMDO4jNK+AisXLTRFaIbXISN891MoPYnAKuErPmfmeCWOYi8WL1FaYJjDwLGBlWMYqk
+        lhbnpucWG+oVJ+YWl+al6yXn525iBAb+tmM/N+9gvLQx+BCjAAejEg9vw0b1aCHWxLLiytxD
+        jBIczEoivFuXakQL8aYkVlalFuXHF5XmpBYfYpTmYFES5z1vUBklJJCeWJKanZpakFoEk2Xi
+        4JRqYCyeqXa39+fbhtXm6k3McuI+R/n5FYX5bn837WdaMf+k/csd2eqnOEu5SpV4NNWy424I
+        7Z8Y2BG3I7Fxptr5zrmvly0NeFWRtz3Sdt0XJp0HL+SibryY+qLY9Rvr/e/HPM7JpH79+Lz+
+        iPDZIJu4uiJ9w3UOqznuTRH4e5B18fHlBS67/R3TvZVYijMSDbWYi4oTAY/Tvw14AgAA
+X-CMS-MailID: 20180619081959eucas1p14aee2dfc0231d2f645e3c9071b92341e
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20180619081958eucas1p16911ee9962441735d929dc588e70ce70
+X-CMS-RootMailID: 20180619081959eucas1p14aee2dfc0231d2f645e3c9071b92341e
 References: <1529396370-18761-1-git-send-email-m.purski@samsung.com>
-        <CGME20180619081958eucas1p16911ee9962441735d929dc588e70ce70@eucas1p1.samsung.com>
+        <CGME20180619081959eucas1p14aee2dfc0231d2f645e3c9071b92341e@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current implementation assumes that the only possible peripheral
-device for DSIM is a panel. Using an output bridge child device
-should also be possible.
-
-If an output bridge is available, don't create a new connector.
-Instead, call drm_bridge_attach() and set encoder's bridge to NULL
-in order to avoid an out bridge from being visible by the framework, as
-the DSI bus needs control on enabling its child output bridge.
-
-Such sequence is required by Toshiba TC358764 bridge, which is a DSI
-peripheral bridge device.
+As the out bridge will not be enabled directly by the framework,
+it should be enabled by DSI. Exynos_dsi_enable() should handle a case,
+when there is an out_bridge connected as a DSI peripheral.
 
 Signed-off-by: Maciej Purski <m.purski@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 38 ++++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 34 +++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 9599e6b..c0408c0 100644
+index c0408c0..8aa7ace 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -255,6 +255,7 @@ struct exynos_dsi {
- 	struct mipi_dsi_host dsi_host;
- 	struct drm_connector connector;
- 	struct drm_panel *panel;
-+	struct drm_bridge *out_bridge;
- 	struct device *dev;
+@@ -1386,25 +1386,33 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
  
- 	void __iomem *reg_base;
-@@ -1499,7 +1500,30 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 				  struct mipi_dsi_device *device)
- {
- 	struct exynos_dsi *dsi = host_to_dsi(host);
--	struct drm_device *drm = dsi->connector.dev;
-+	struct drm_encoder *encoder = &dsi->encoder;
-+	struct drm_device *drm = encoder->dev;
-+	struct drm_bridge *out_bridge;
-+
-+	out_bridge  = of_drm_find_bridge(device->dev.of_node);
-+	if (out_bridge) {
-+		drm_bridge_attach(encoder, out_bridge, NULL);
-+		dsi->out_bridge = out_bridge;
-+		encoder->bridge = NULL;
-+	} else {
-+		int ret = exynos_dsi_create_connector(encoder);
-+
-+		if (ret) {
-+			DRM_ERROR("failed to create connector ret = %d\n", ret);
-+			drm_encoder_cleanup(encoder);
-+			return ret;
+ 	dsi->state |= DSIM_STATE_ENABLED;
+ 
+-	ret = drm_panel_prepare(dsi->panel);
+-	if (ret < 0) {
+-		dsi->state &= ~DSIM_STATE_ENABLED;
+-		pm_runtime_put_sync(dsi->dev);
+-		return;
++	if (dsi->panel) {
++		ret = drm_panel_prepare(dsi->panel);
++		if (ret < 0) {
++			dsi->state &= ~DSIM_STATE_ENABLED;
++			return;
 +		}
+ 	}
+ 
++	if (dsi->out_bridge)
++		drm_bridge_pre_enable(dsi->out_bridge);
 +
-+		dsi->panel = of_drm_find_panel(device->dev.of_node);
-+		if (dsi->panel) {
-+			drm_panel_attach(dsi->panel, &dsi->connector);
-+			dsi->connector.status = connector_status_connected;
+ 	exynos_dsi_set_display_mode(dsi);
+ 	exynos_dsi_set_display_enable(dsi, true);
+ 
+-	ret = drm_panel_enable(dsi->panel);
+-	if (ret < 0) {
+-		dsi->state &= ~DSIM_STATE_ENABLED;
+-		exynos_dsi_set_display_enable(dsi, false);
+-		drm_panel_unprepare(dsi->panel);
+-		pm_runtime_put_sync(dsi->dev);
+-		return;
++	if (dsi->panel) {
++		ret = drm_panel_enable(dsi->panel);
++		if (ret < 0) {
++			dsi->state &= ~DSIM_STATE_ENABLED;
++			exynos_dsi_set_display_enable(dsi, false);
++			drm_panel_unprepare(dsi->panel);
++			return;
 +		}
-+	}
+ 	}
  
- 	/*
- 	 * This is a temporary solution and should be made by more generic way.
-@@ -1518,11 +1542,6 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 	dsi->lanes = device->lanes;
- 	dsi->format = device->format;
- 	dsi->mode_flags = device->mode_flags;
--	dsi->panel = of_drm_find_panel(device->dev.of_node);
--	if (dsi->panel) {
--		drm_panel_attach(dsi->panel, &dsi->connector);
--		dsi->connector.status = connector_status_connected;
--	}
- 	exynos_drm_crtc_get_by_type(drm, EXYNOS_DISPLAY_TYPE_LCD)->i80_mode =
- 			!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO);
++	if (dsi->out_bridge)
++		drm_bridge_enable(dsi->out_bridge);
++
+ 	dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
+ }
  
-@@ -1654,13 +1673,6 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
- 	if (ret < 0)
- 		return ret;
+@@ -1418,8 +1426,10 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
+ 	dsi->state &= ~DSIM_STATE_VIDOUT_AVAILABLE;
  
--	ret = exynos_dsi_create_connector(encoder);
--	if (ret) {
--		DRM_ERROR("failed to create connector ret = %d\n", ret);
--		drm_encoder_cleanup(encoder);
--		return ret;
--	}
--
- 	if (dsi->mic_bridge_node) {
- 		mic_bridge = of_drm_find_bridge(dsi->mic_bridge_node);
- 		if (mic_bridge)
+ 	drm_panel_disable(dsi->panel);
++	drm_bridge_disable(dsi->out_bridge);
+ 	exynos_dsi_set_display_enable(dsi, false);
+ 	drm_panel_unprepare(dsi->panel);
++	drm_bridge_post_disable(dsi->out_bridge);
+ 
+ 	dsi->state &= ~DSIM_STATE_ENABLED;
+ 
 -- 
 2.7.4
 
