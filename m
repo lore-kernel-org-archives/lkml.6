@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE34C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32761C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2123520652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:04:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2123520652
+	by mail.kernel.org (Postfix) with ESMTP id CA3A220652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:04:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3A220652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756005AbeFSOEP (ORCPT
+        id S1756905AbeFSOEi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:04:15 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:39583 "EHLO
+        Tue, 19 Jun 2018 10:04:38 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:36443 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965688AbeFSOEK (ORCPT
+        with ESMTP id S966044AbeFSOEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:04:10 -0400
+        Tue, 19 Jun 2018 10:04:11 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
  (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MVV8g-1fi2Hw1jig-00Yged; Tue, 19 Jun 2018 16:02:54 +0200
+ 0LaOJ5-1fv0jI1M9n-00mNrC; Tue, 19 Jun 2018 16:02:55 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
@@ -39,137 +39,454 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         Meelis Roos <mroos@linux.ee>,
         Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 1/3] [v2] powerpc: mac: fix rtc read/write functions
-Date:   Tue, 19 Jun 2018 16:02:27 +0200
-Message-Id: <20180619140229.3615110-1-arnd@arndb.de>
+Subject: [PATCH 3/3] [v2] m68k: remove unused set_clock_mmss() helpers
+Date:   Tue, 19 Jun 2018 16:02:29 +0200
+Message-Id: <20180619140229.3615110-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:iis7jj1S1jizfZfiIt7caPncO9M3AZTOsho/OZGf++hvGlEvt6m
- VM0K+Zdu6snHQVjFJPFFk6dmazQ6SaO5tz4z2WWxHi/80DmDJNT/+I5D4ZI69FkdMyvCUoK
- g4cBAEFB18yG93BiaEOIeN0aWeTeFHlPI1zwJ8KZwr/hG0a9Mg9onSx4mwkSBuaSbDP3Drz
- 7UfKE16FLEZkYj/vNDUGQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:9atu+VflZP8=:bb/gnLFmPYwVnB2YW4Navx
- 7S5W9W7o2YcW308+QtTg7c+gUv5dw6VZaiGQwnvMLerYB4FIvndA8kYQ3sbYXPcfYaE2Zh2tJ
- RSRSXSx5TqqLv5QHYmZQxqVtgLdCKK4ypli/HWLtNu9JY0holl6eiWzcL2O/j3SweD7CdRJFc
- OtvbeBtkfAekwsjNJmy3+BhWvuFHpmHcPvCJvibDQdavXaKSPERCg9k6R+wRCABXZqzpwCnIc
- oj78m4PC67RhMeMC9jTAqLVcW/BB4fS8sWM4PlvYzK6mDBde8EN/13Ntn0eIAxeWVibbcYMZV
- GA32ecoM/WDbQjpoTuHPitXb6olHCPMpfn65d0g+7jyvlYnv/ARttuiOkTVMqTsVDZKitF5oi
- W05K2pqMPRp3zLnrqMANIb0xxFL7iaqxInyICnJLvnK5bukByQvrWA5wM5cT1/+C3D1d/OM8E
- 4w//1e9wKtoC/jANniFLPf8D0sQDaYi29fjE1LH+7oVNIi4ABPr5LQfDYsVDd3wxLRrxIkHUO
- moIo9GsF3wZw+WaoHAjUa1e6UeQSMJA6/KhSNFA5FYjHN/j7dEx0A1sRaKV7ZJM7AZgKWlUYj
- Fdf7GSS9eOwCXlLzAShEPf9JYzCi7BEwKI8Dd4rsmW4YUvhoh1QnZMyQGqlQrUfDFcYTWieq6
- N5Jm9C2yv3tOShsbud6VXLnQfOYk1SWRMpfNp+DI0yQ2oTCWM6UCRn3mi9/YSw1INrgM=
+In-Reply-To: <20180619140229.3615110-1-arnd@arndb.de>
+References: <20180619140229.3615110-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:wJsUWwh6n33yEdmQVue12NpQBwuUugDEbajBk7+ATaOJuhiDMFB
+ eLAdNiReVI7aRzWLtu7ks5d0W0HERICHItR0KUc1aXLH/YJ3vjvMzvKr4MxuNZFLcVDdp2R
+ L4btZCUZF2ifHampHXBOPZuckgz5eHKHFsfEC9WxG2y2bYmUqB7srJaNk+Y+7Ff4rphl2KB
+ ITgrCMKvjipFzSNOW1GqA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:E1TNYNOpmaw=:/arcP1D2r9yXNdt9PUvNCO
+ NJVg5DIMWRC/+Vg6wcKJZVpfzId6xWj2LTkRZdO/aQFon0K7nWqlXzESJ+Yf0pKdYbFGg8b1o
+ +wvBThSaOEikQYgDKa1Keth7gfYU+ybC0bSzw4wDvxTyxiS/cXgKbsilhccBsxJfDhAdCGOfR
+ 9vT4hDKkqTvrMIXdhEu86193jalmpxx/OtA5A0jl+IEXBKAUx6zxgy2lYEZMpxh/FC0z6MV1v
+ I145ZuynLt7pu2PAEaaO90BBCii7QAzrmmrz1AppMzlJxb8Cfs4jAZpTD2xVLtzj5Lq2coe+M
+ XJxxxOL8TsEm/k/uUpZzEahGciXrEmvX+cAD6dH3p7ungc9/qbWnICdpn2vC8JiZ9jkt1mL6J
+ YNEhvv7biKK2+4bbB7paymwaAPG2djINYhsd+YU9RIA/5bg3RM8500qjLXl/GGqNwrSmOWlBd
+ nklxKAWtDMUyMqMWqiRGCVM077BIVWNKHeJXU626cS75UITt6a54Z0FdrW0m8HFFZ2g8G2/mh
+ z6z2kNzuJTz6tQQRMdkw18Md34pu79hI5K9nlgadqauaBthfR9JnX8XumY9egT+CvUFqCrfIB
+ 3Di+1qatGRbcrrUeornSsyZrh1h9c0vfNZz3ddxre4ApeS0jxu/E8jC/+jwDOph4SvwCvhDTc
+ UB/SthGv7wGluZ9hzykntuNQFWYrzaAXcWWVOyGSWu0r+HtsRwmO+A38nuimf2+0nt/A=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Mathieu pointed out, my conversion to time64_t was incorrect and resulted
-in negative times to be read from the RTC. The problem is that during the
-conversion from a byte array to a time64_t, the 'unsigned char' variable
-holding the top byte gets turned into a negative signed 32-bit integer
-before being assigned to the 64-bit variable for any times after 1972.
+Commit 397ac99c6cef ("m68k: remove dead timer code") removed set_rtc_mmss()
+because it was unused in 2012. However, this was itself the only user of the
+mach_set_clock_mmss() callback and the many implementations of that callback,
+which are equally unused.
 
-This changes the logic to cast to an unsigned 32-bit number first for
-the Macintosh time and then convert that to the Unix time, which then gives
-us a time in the documented 1904..2040 year range. I decided not to use
-the longer 1970..2106 range that other drivers use, for consistency with
-the literal interpretation of the register, but that could be easily
-changed if we decide we want to support any Mac after 2040.
+This removes all of those as well.
 
-Just to be on the safe side, I'm also adding a WARN_ON that will trigger
-if either the year 2040 has come and is observed by this driver, or we
-run into an RTC that got set back to a pre-1970 date for some reason
-(the two are indistinguishable).
-
-For the RTC write functions, Andreas found another problem: both
-pmu_request() and cuda_request() are varargs functions, so changing
-the type of the arguments passed into them from 32 bit to 64 bit
-breaks the API for the set_rtc_time functions. This changes it
-back to 32 bits.
-
-The same code exists in arch/m68k/ and is patched in an identical way now
-in a separate patch.
-
-Fixes: 5bfd643583b2 ("powerpc: use time64_t in read_persistent_clock")
-Reported-by: Mathieu Malaterre <malat@debian.org>
-Reported-by: Andreas Schwab <schwab@linux-m68k.org>
+Acked-by: Greg Ungerer <gerg@linux-m68k.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/powerpc/platforms/powermac/time.c | 29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
+v2: no changes
+---
+ arch/m68k/apollo/config.c       |  8 ------
+ arch/m68k/atari/config.c        |  5 ----
+ arch/m68k/atari/time.c          | 63 -----------------------------------------
+ arch/m68k/bvme6000/config.c     | 45 -----------------------------
+ arch/m68k/include/asm/machdep.h |  1 -
+ arch/m68k/kernel/setup_mm.c     |  1 -
+ arch/m68k/kernel/setup_no.c     |  1 -
+ arch/m68k/mac/config.c          |  2 --
+ arch/m68k/mac/misc.c            | 16 -----------
+ arch/m68k/mvme147/config.c      |  7 -----
+ arch/m68k/mvme16x/config.c      |  8 ------
+ arch/m68k/q40/config.c          | 30 --------------------
+ 12 files changed, 187 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index 7c968e46736f..12e6e4d30602 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -42,7 +42,11 @@
- #define DBG(x...)
- #endif
+diff --git a/arch/m68k/apollo/config.c b/arch/m68k/apollo/config.c
+index b2a6bc63f8cd..aef8d42e078d 100644
+--- a/arch/m68k/apollo/config.c
++++ b/arch/m68k/apollo/config.c
+@@ -31,7 +31,6 @@ extern void dn_sched_init(irq_handler_t handler);
+ extern void dn_init_IRQ(void);
+ extern u32 dn_gettimeoffset(void);
+ extern int dn_dummy_hwclk(int, struct rtc_time *);
+-extern int dn_dummy_set_clock_mmss(unsigned long);
+ extern void dn_dummy_reset(void);
+ #ifdef CONFIG_HEARTBEAT
+ static void dn_heartbeat(int on);
+@@ -156,7 +155,6 @@ void __init config_apollo(void)
+ 	arch_gettimeoffset   = dn_gettimeoffset;
+ 	mach_max_dma_address = 0xffffffff;
+ 	mach_hwclk           = dn_dummy_hwclk; /* */
+-	mach_set_clock_mmss  = dn_dummy_set_clock_mmss; /* */
+ 	mach_reset	     = dn_dummy_reset;  /* */
+ #ifdef CONFIG_HEARTBEAT
+ 	mach_heartbeat = dn_heartbeat;
+@@ -240,12 +238,6 @@ int dn_dummy_hwclk(int op, struct rtc_time *t) {
  
--/* Apparently the RTC stores seconds since 1 Jan 1904 */
-+/*
-+ * Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
-+ * times wrap in 2040. If we need to handle later times, the read_time functions
-+ * need to be changed to interpret wrapped times as post-2040.
-+ */
- #define RTC_OFFSET	2082844800
+ }
  
+-int dn_dummy_set_clock_mmss(unsigned long nowtime)
+-{
+-	pr_info("set_clock_mmss\n");
+-	return 0;
+-}
+-
+ void dn_dummy_reset(void) {
+ 
+   dn_serial_print("The end !\n");
+diff --git a/arch/m68k/atari/config.c b/arch/m68k/atari/config.c
+index 565c6f06ab0b..bd96702a1ad0 100644
+--- a/arch/m68k/atari/config.c
++++ b/arch/m68k/atari/config.c
+@@ -81,9 +81,6 @@ extern void atari_sched_init(irq_handler_t);
+ extern u32 atari_gettimeoffset(void);
+ extern int atari_mste_hwclk (int, struct rtc_time *);
+ extern int atari_tt_hwclk (int, struct rtc_time *);
+-extern int atari_mste_set_clock_mmss (unsigned long);
+-extern int atari_tt_set_clock_mmss (unsigned long);
+-
+ 
+ /* ++roman: This is a more elaborate test for an SCC chip, since the plain
+  * Medusa board generates DTACK at the SCC's standard addresses, but a SCC
+@@ -362,13 +359,11 @@ void __init config_atari(void)
+ 		ATARIHW_SET(TT_CLK);
+ 		pr_cont(" TT_CLK");
+ 		mach_hwclk = atari_tt_hwclk;
+-		mach_set_clock_mmss = atari_tt_set_clock_mmss;
+ 	}
+ 	if (hwreg_present(&mste_rtc.sec_ones)) {
+ 		ATARIHW_SET(MSTE_CLK);
+ 		pr_cont(" MSTE_CLK");
+ 		mach_hwclk = atari_mste_hwclk;
+-		mach_set_clock_mmss = atari_mste_set_clock_mmss;
+ 	}
+ 	if (!MACH_IS_MEDUSA && hwreg_present(&dma_wd.fdc_speed) &&
+ 	    hwreg_write(&dma_wd.fdc_speed, 0)) {
+diff --git a/arch/m68k/atari/time.c b/arch/m68k/atari/time.c
+index c549b48174ec..9cca64286464 100644
+--- a/arch/m68k/atari/time.c
++++ b/arch/m68k/atari/time.c
+@@ -285,69 +285,6 @@ int atari_tt_hwclk( int op, struct rtc_time *t )
+     return( 0 );
+ }
+ 
+-
+-int atari_mste_set_clock_mmss (unsigned long nowtime)
+-{
+-    short real_seconds = nowtime % 60, real_minutes = (nowtime / 60) % 60;
+-    struct MSTE_RTC val;
+-    unsigned char rtc_minutes;
+-
+-    mste_read(&val);
+-    rtc_minutes= val.min_ones + val.min_tens * 10;
+-    if ((rtc_minutes < real_minutes
+-         ? real_minutes - rtc_minutes
+-         : rtc_minutes - real_minutes) < 30)
+-    {
+-        val.sec_ones = real_seconds % 10;
+-        val.sec_tens = real_seconds / 10;
+-        val.min_ones = real_minutes % 10;
+-        val.min_tens = real_minutes / 10;
+-        mste_write(&val);
+-    }
+-    else
+-        return -1;
+-    return 0;
+-}
+-
+-int atari_tt_set_clock_mmss (unsigned long nowtime)
+-{
+-    int retval = 0;
+-    short real_seconds = nowtime % 60, real_minutes = (nowtime / 60) % 60;
+-    unsigned char save_control, save_freq_select, rtc_minutes;
+-
+-    save_control = RTC_READ (RTC_CONTROL); /* tell the clock it's being set */
+-    RTC_WRITE (RTC_CONTROL, save_control | RTC_SET);
+-
+-    save_freq_select = RTC_READ (RTC_FREQ_SELECT); /* stop and reset prescaler */
+-    RTC_WRITE (RTC_FREQ_SELECT, save_freq_select | RTC_DIV_RESET2);
+-
+-    rtc_minutes = RTC_READ (RTC_MINUTES);
+-    if (!(save_control & RTC_DM_BINARY))
+-	rtc_minutes = bcd2bin(rtc_minutes);
+-
+-    /* Since we're only adjusting minutes and seconds, don't interfere
+-       with hour overflow.  This avoids messing with unknown time zones
+-       but requires your RTC not to be off by more than 30 minutes.  */
+-    if ((rtc_minutes < real_minutes
+-         ? real_minutes - rtc_minutes
+-         : rtc_minutes - real_minutes) < 30)
+-        {
+-            if (!(save_control & RTC_DM_BINARY))
+-                {
+-		    real_seconds = bin2bcd(real_seconds);
+-		    real_minutes = bin2bcd(real_minutes);
+-                }
+-            RTC_WRITE (RTC_SECONDS, real_seconds);
+-            RTC_WRITE (RTC_MINUTES, real_minutes);
+-        }
+-    else
+-        retval = -1;
+-
+-    RTC_WRITE (RTC_FREQ_SELECT, save_freq_select);
+-    RTC_WRITE (RTC_CONTROL, save_control);
+-    return retval;
+-}
+-
  /*
-@@ -97,8 +101,11 @@ static time64_t cuda_get_time(void)
- 	if (req.reply_len != 7)
- 		printk(KERN_ERR "cuda_get_time: got %d byte reply\n",
- 		       req.reply_len);
--	now = (req.reply[3] << 24) + (req.reply[4] << 16)
--		+ (req.reply[5] << 8) + req.reply[6];
-+	now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
-+		    (req.reply[5] << 8) + req.reply[6]);
-+	/* it's either after year 2040, or the RTC has gone backwards */
-+	WARN_ON(now < RTC_OFFSET);
-+
- 	return now - RTC_OFFSET;
+  * Local variables:
+  *  c-indent-level: 4
+diff --git a/arch/m68k/bvme6000/config.c b/arch/m68k/bvme6000/config.c
+index 2cfff4765040..143ee9fa3893 100644
+--- a/arch/m68k/bvme6000/config.c
++++ b/arch/m68k/bvme6000/config.c
+@@ -41,7 +41,6 @@ static void bvme6000_get_model(char *model);
+ extern void bvme6000_sched_init(irq_handler_t handler);
+ extern u32 bvme6000_gettimeoffset(void);
+ extern int bvme6000_hwclk (int, struct rtc_time *);
+-extern int bvme6000_set_clock_mmss (unsigned long);
+ extern void bvme6000_reset (void);
+ void bvme6000_set_vectors (void);
+ 
+@@ -113,7 +112,6 @@ void __init config_bvme6000(void)
+     mach_init_IRQ        = bvme6000_init_IRQ;
+     arch_gettimeoffset   = bvme6000_gettimeoffset;
+     mach_hwclk           = bvme6000_hwclk;
+-    mach_set_clock_mmss	 = bvme6000_set_clock_mmss;
+     mach_reset		 = bvme6000_reset;
+     mach_get_model       = bvme6000_get_model;
+ 
+@@ -305,46 +303,3 @@ int bvme6000_hwclk(int op, struct rtc_time *t)
+ 
+ 	return 0;
+ }
+-
+-/*
+- * Set the minutes and seconds from seconds value 'nowtime'.  Fail if
+- * clock is out by > 30 minutes.  Logic lifted from atari code.
+- * Algorithm is to wait for the 10ms register to change, and then to
+- * wait a short while, and then set it.
+- */
+-
+-int bvme6000_set_clock_mmss (unsigned long nowtime)
+-{
+-	int retval = 0;
+-	short real_seconds = nowtime % 60, real_minutes = (nowtime / 60) % 60;
+-	unsigned char rtc_minutes, rtc_tenms;
+-	volatile RtcPtr_t rtc = (RtcPtr_t)BVME_RTC_BASE;
+-	unsigned char msr = rtc->msr & 0xc0;
+-	unsigned long flags;
+-	volatile int i;
+-
+-	rtc->msr = 0;		/* Ensure clock accessible */
+-	rtc_minutes = bcd2bin (rtc->bcd_min);
+-
+-	if ((rtc_minutes < real_minutes
+-		? real_minutes - rtc_minutes
+-			: rtc_minutes - real_minutes) < 30)
+-	{
+-		local_irq_save(flags);
+-		rtc_tenms = rtc->bcd_tenms;
+-		while (rtc_tenms == rtc->bcd_tenms)
+-			;
+-		for (i = 0; i < 1000; i++)
+-			;
+-		rtc->bcd_min = bin2bcd(real_minutes);
+-		rtc->bcd_sec = bin2bcd(real_seconds);
+-		local_irq_restore(flags);
+-	}
+-	else
+-		retval = -1;
+-
+-	rtc->msr = msr;
+-
+-	return retval;
+-}
+-
+diff --git a/arch/m68k/include/asm/machdep.h b/arch/m68k/include/asm/machdep.h
+index 1605da48ebf2..49bd3266b4b1 100644
+--- a/arch/m68k/include/asm/machdep.h
++++ b/arch/m68k/include/asm/machdep.h
+@@ -22,7 +22,6 @@ extern int (*mach_hwclk)(int, struct rtc_time*);
+ extern unsigned int (*mach_get_ss)(void);
+ extern int (*mach_get_rtc_pll)(struct rtc_pll_info *);
+ extern int (*mach_set_rtc_pll)(struct rtc_pll_info *);
+-extern int (*mach_set_clock_mmss)(unsigned long);
+ extern void (*mach_reset)( void );
+ extern void (*mach_halt)( void );
+ extern void (*mach_power_off)( void );
+diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
+index f35e3ebd6331..07244732eb41 100644
+--- a/arch/m68k/kernel/setup_mm.c
++++ b/arch/m68k/kernel/setup_mm.c
+@@ -88,7 +88,6 @@ void (*mach_get_hardware_list) (struct seq_file *m);
+ /* machine dependent timer functions */
+ int (*mach_hwclk) (int, struct rtc_time*);
+ EXPORT_SYMBOL(mach_hwclk);
+-int (*mach_set_clock_mmss) (unsigned long);
+ unsigned int (*mach_get_ss)(void);
+ int (*mach_get_rtc_pll)(struct rtc_pll_info *);
+ int (*mach_set_rtc_pll)(struct rtc_pll_info *);
+diff --git a/arch/m68k/kernel/setup_no.c b/arch/m68k/kernel/setup_no.c
+index a98af1018201..3c53e4c366ac 100644
+--- a/arch/m68k/kernel/setup_no.c
++++ b/arch/m68k/kernel/setup_no.c
+@@ -51,7 +51,6 @@ char __initdata command_line[COMMAND_LINE_SIZE];
+ 
+ /* machine dependent timer functions */
+ void (*mach_sched_init)(irq_handler_t handler) __initdata = NULL;
+-int (*mach_set_clock_mmss)(unsigned long);
+ int (*mach_hwclk) (int, struct rtc_time*);
+ 
+ /* machine dependent reboot functions */
+diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
+index e522307db47c..da1aeb966474 100644
+--- a/arch/m68k/mac/config.c
++++ b/arch/m68k/mac/config.c
+@@ -57,7 +57,6 @@ static unsigned long mac_orig_videoaddr;
+ /* Mac specific timer functions */
+ extern u32 mac_gettimeoffset(void);
+ extern int mac_hwclk(int, struct rtc_time *);
+-extern int mac_set_clock_mmss(unsigned long);
+ extern void iop_preinit(void);
+ extern void iop_init(void);
+ extern void via_init(void);
+@@ -158,7 +157,6 @@ void __init config_mac(void)
+ 	mach_get_model = mac_get_model;
+ 	arch_gettimeoffset = mac_gettimeoffset;
+ 	mach_hwclk = mac_hwclk;
+-	mach_set_clock_mmss = mac_set_clock_mmss;
+ 	mach_reset = mac_reset;
+ 	mach_halt = mac_poweroff;
+ 	mach_power_off = mac_poweroff;
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index 0a2572a6bfe5..bf8df47a6d09 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -735,19 +735,3 @@ int mac_hwclk(int op, struct rtc_time *t)
+ 	}
+ 	return 0;
+ }
+-
+-/*
+- * Set minutes/seconds in the hardware clock
+- */
+-
+-int mac_set_clock_mmss (unsigned long nowtime)
+-{
+-	struct rtc_time now;
+-
+-	mac_hwclk(0, &now);
+-	now.tm_sec = nowtime % 60;
+-	now.tm_min = (nowtime / 60) % 60;
+-	mac_hwclk(1, &now);
+-
+-	return 0;
+-}
+diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
+index f8a710fd84cd..adea549d240e 100644
+--- a/arch/m68k/mvme147/config.c
++++ b/arch/m68k/mvme147/config.c
+@@ -40,7 +40,6 @@ static void mvme147_get_model(char *model);
+ extern void mvme147_sched_init(irq_handler_t handler);
+ extern u32 mvme147_gettimeoffset(void);
+ extern int mvme147_hwclk (int, struct rtc_time *);
+-extern int mvme147_set_clock_mmss (unsigned long);
+ extern void mvme147_reset (void);
+ 
+ 
+@@ -92,7 +91,6 @@ void __init config_mvme147(void)
+ 	mach_init_IRQ		= mvme147_init_IRQ;
+ 	arch_gettimeoffset	= mvme147_gettimeoffset;
+ 	mach_hwclk		= mvme147_hwclk;
+-	mach_set_clock_mmss	= mvme147_set_clock_mmss;
+ 	mach_reset		= mvme147_reset;
+ 	mach_get_model		= mvme147_get_model;
+ 
+@@ -164,8 +162,3 @@ int mvme147_hwclk(int op, struct rtc_time *t)
+ 	}
+ 	return 0;
+ }
+-
+-int mvme147_set_clock_mmss (unsigned long nowtime)
+-{
+-	return 0;
+-}
+diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
+index 4ffd9ef98de4..6ee36a5b528d 100644
+--- a/arch/m68k/mvme16x/config.c
++++ b/arch/m68k/mvme16x/config.c
+@@ -46,7 +46,6 @@ static void mvme16x_get_model(char *model);
+ extern void mvme16x_sched_init(irq_handler_t handler);
+ extern u32 mvme16x_gettimeoffset(void);
+ extern int mvme16x_hwclk (int, struct rtc_time *);
+-extern int mvme16x_set_clock_mmss (unsigned long);
+ extern void mvme16x_reset (void);
+ 
+ int bcd2int (unsigned char b);
+@@ -280,7 +279,6 @@ void __init config_mvme16x(void)
+     mach_init_IRQ        = mvme16x_init_IRQ;
+     arch_gettimeoffset   = mvme16x_gettimeoffset;
+     mach_hwclk           = mvme16x_hwclk;
+-    mach_set_clock_mmss	 = mvme16x_set_clock_mmss;
+     mach_reset		 = mvme16x_reset;
+     mach_get_model       = mvme16x_get_model;
+     mach_get_hardware_list = mvme16x_get_hardware_list;
+@@ -411,9 +409,3 @@ int mvme16x_hwclk(int op, struct rtc_time *t)
+ 	}
+ 	return 0;
+ }
+-
+-int mvme16x_set_clock_mmss (unsigned long nowtime)
+-{
+-	return 0;
+-}
+-
+diff --git a/arch/m68k/q40/config.c b/arch/m68k/q40/config.c
+index 71c0867ecf20..96810d91da2b 100644
+--- a/arch/m68k/q40/config.c
++++ b/arch/m68k/q40/config.c
+@@ -43,7 +43,6 @@ extern void q40_sched_init(irq_handler_t handler);
+ static u32 q40_gettimeoffset(void);
+ static int q40_hwclk(int, struct rtc_time *);
+ static unsigned int q40_get_ss(void);
+-static int q40_set_clock_mmss(unsigned long);
+ static int q40_get_rtc_pll(struct rtc_pll_info *pll);
+ static int q40_set_rtc_pll(struct rtc_pll_info *pll);
+ 
+@@ -175,7 +174,6 @@ void __init config_q40(void)
+ 	mach_get_ss = q40_get_ss;
+ 	mach_get_rtc_pll = q40_get_rtc_pll;
+ 	mach_set_rtc_pll = q40_set_rtc_pll;
+-	mach_set_clock_mmss = q40_set_clock_mmss;
+ 
+ 	mach_reset = q40_reset;
+ 	mach_get_model = q40_get_model;
+@@ -267,34 +265,6 @@ static unsigned int q40_get_ss(void)
+ 	return bcd2bin(Q40_RTC_SECS);
  }
  
-@@ -106,10 +113,10 @@ static time64_t cuda_get_time(void)
- 
- static int cuda_set_rtc_time(struct rtc_time *tm)
- {
--	time64_t nowtime;
-+	u32 nowtime;
- 	struct adb_request req;
- 
--	nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
-+	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
- 	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
- 			 nowtime >> 24, nowtime >> 16, nowtime >> 8,
- 			 nowtime) < 0)
-@@ -140,8 +147,12 @@ static time64_t pmu_get_time(void)
- 	if (req.reply_len != 4)
- 		printk(KERN_ERR "pmu_get_time: got %d byte reply from PMU\n",
- 		       req.reply_len);
--	now = (req.reply[0] << 24) + (req.reply[1] << 16)
--		+ (req.reply[2] << 8) + req.reply[3];
-+	now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16)	+
-+		    (req.reply[2] << 8) + req.reply[3]);
-+
-+	/* it's either after year 2040, or the RTC has gone backwards */
-+	WARN_ON(now < RTC_OFFSET);
-+
- 	return now - RTC_OFFSET;
- }
- 
-@@ -149,10 +160,10 @@ static time64_t pmu_get_time(void)
- 
- static int pmu_set_rtc_time(struct rtc_time *tm)
- {
--	time64_t nowtime;
-+	u32 nowtime;
- 	struct adb_request req;
- 
--	nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
-+	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
- 	if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
- 			nowtime >> 16, nowtime >> 8, nowtime) < 0)
- 		return -ENXIO;
+-/*
+- * Set the minutes and seconds from seconds value 'nowtime'.  Fail if
+- * clock is out by > 30 minutes.  Logic lifted from atari code.
+- */
+-
+-static int q40_set_clock_mmss(unsigned long nowtime)
+-{
+-	int retval = 0;
+-	short real_seconds = nowtime % 60, real_minutes = (nowtime / 60) % 60;
+-
+-	int rtc_minutes;
+-
+-	rtc_minutes = bcd2bin(Q40_RTC_MINS);
+-
+-	if ((rtc_minutes < real_minutes ?
+-	     real_minutes - rtc_minutes :
+-	     rtc_minutes - real_minutes) < 30) {
+-		Q40_RTC_CTRL |= Q40_RTC_WRITE;
+-		Q40_RTC_MINS = bin2bcd(real_minutes);
+-		Q40_RTC_SECS = bin2bcd(real_seconds);
+-		Q40_RTC_CTRL &= ~(Q40_RTC_WRITE);
+-	} else
+-		retval = -1;
+-
+-	return retval;
+-}
+-
+-
+ /* get and set PLL calibration of RTC clock */
+ #define Q40_RTC_PLL_MASK ((1<<5)-1)
+ #define Q40_RTC_PLL_SIGN (1<<5)
 -- 
 2.9.0
 
