@@ -2,141 +2,231 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A3AC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 592DDC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20E620020
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:09:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E18FF2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:13:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L+yziCH1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E20E620020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blofghbJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E18FF2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966895AbeFSRJL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:09:11 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42409 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966468AbeFSRJI (ORCPT
+        id S966768AbeFSRNF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:13:05 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:37152 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966368AbeFSRND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:09:08 -0400
-Received: by mail-pl0-f68.google.com with SMTP id w17-v6so177308pll.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:09:08 -0700 (PDT)
+        Tue, 19 Jun 2018 13:13:03 -0400
+Received: by mail-ua0-f195.google.com with SMTP id l14-v6so298057uao.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=bxeF8FT51s8VsfayKODgispQy/SzF3AFKefvkclxn7M=;
-        b=L+yziCH1pGc9srMiiv8qvCW/GHxKUcruYWfwwXhE7wCfjfq1WpyNjEABHnv4VL/KYi
-         iN9KVdC3CM2epGyB9CJmE7Ikrb+GsJdiGfGFFagj7k4y42mdiJe4zcLlYMfOVPc6pNf2
-         rb8lj6C0Z5pfnTgP+/ZRGxttNewyO40/GZ5+AynJtDQood58umBQfmNvh4XIObmtnqAh
-         R/lO1h296NtmhpVbsy5k5qLGBWPp516kznwC8Mz2257DuTKeFEp+kUpDLovhNlp3wkgg
-         Xm5t6I4n+pkduzP3n4G6VKbvtuFit3Js0Utfft5W9mwh5Mo0MW0oj6peCScJksBFGved
-         UpnA==
+        bh=9OlL7JKXRSUcC2lFlmHbe582krE2dkF6hNzttiyipyA=;
+        b=blofghbJqf9dBPlVmFLliLnFQh+Hblwaz86NPqNObUOXT9ODgsdvmB5w66NmfIN/KW
+         lI+aaGZBdNOy8IdJUoj1f1PA3JlrnXYSXIc0TVopXCNZz++fhFoguS617YWT/Ef1s7IP
+         25HRMGhWpKqgnLhdFdCF8Hw8LpqG2FJQQcgvtk4D6W6ncTYjbPq/Bc7qaSTkd3Ig67La
+         VkWT2US7d49xWiBgPEQ8assftukOHxsxVnllzWjIlAzYLNu415trJ79vONBsaXKPnenp
+         Ikr1uqt+yWocHYz1EJQjXly2eFPSOOIPgtGUYpejYtWqMuRQ3KxSIVxRyYnbX6wMJQx9
+         KcUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=bxeF8FT51s8VsfayKODgispQy/SzF3AFKefvkclxn7M=;
-        b=AfmeMe/BHYzlY6TfBAy3ooXIU4R3vJ8CQ9acLFcWzqHiqnIohQ8gMkHkJXidMqFHzE
-         Nw33GEjT3O9aSAH09UO0NbLwYfYmTzs1otU19VQY/eq5ax5XNJCHAKeQLccj7KcRBjNj
-         LUItqwj+ao1gIr0lg8pLoZW5x3przgyDiQG8vg0lyCQGWvqwlL326Ba5Q+zweSrAo45j
-         3CnyWIjniyFbJHn26Jr/BXXtgLQ2SIiXGe4U6DkbZa8rypDzUug3cAiUDYOFsixa+fHE
-         +91cXxO9rraCMBCNFqG1P8s8TAlw9PKNDz51z/59dM1ktpszWpVBYFZB8K9CiBAsCbTs
-         GA9A==
-X-Gm-Message-State: APt69E1ekW0wnhqLJHsyE15VoF/XyUVQi6rmcFaxKNipfCDgHpWMgx3B
-        ocYEJkklywx3liaye2FrpfoUdkTljCSalisf65FpFA==
-X-Google-Smtp-Source: ADUXVKLxWbC12An6igp3YyeGwcBf3epj/mnnDAAzSJCjgHNvSczXe6pQURjXp+/P7I37j1pp/hkYF18abdguMlGMrIg=
-X-Received: by 2002:a17:902:8d8b:: with SMTP id v11-v6mr20057422plo.20.1529428148096;
- Tue, 19 Jun 2018 10:09:08 -0700 (PDT)
+        bh=9OlL7JKXRSUcC2lFlmHbe582krE2dkF6hNzttiyipyA=;
+        b=h8022akBqxfIVCf0EdzDwIGas4RWbxt4SxnvNdt2f6IxHTk5wnOUNyRh6ojgLhoBdA
+         pr9jQVEWSbl3Ykjk1st5UafORBGaltk6KSncoDbbjRM9qLi1UwDcAWw+YmG1FMtoXeU6
+         CpnR7Yd6DboLkYyp2T17xYm09lh501oJom50SatQotJi4jVG0eMpmStVAMeDTV4hq1YF
+         WU8BfI9RT28rxnAmz9RNS9w891ga9IL/N/Y1kSUklCgKf+d5TtEGaMcLg69l+hBA/+Im
+         KVo07cOAziScEw2nuXcMc6MvovHmhtz9mbgMarLvDCvIwcEBlseinfL4OM4H9NVSu0jL
+         hfow==
+X-Gm-Message-State: APt69E3DVVr3ELeBal5oj18ZJjflBaPe6PA/GoxRTaOx/lzPo3POXf/k
+        vMWevzyIT5mIHa6c6DgSbaV6V6B+bRq7Dbxllhhg4w==
+X-Google-Smtp-Source: ADUXVKKc7NN0yi2i92qQ+exIeWQYIFh6XZkm7WsfeKLzmQslG4jjk/H3hEarb52ruz23wig+dKkTYRYvtigfpjBCQwQ=
+X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr10966199uai.47.1529428382961;
+ Tue, 19 Jun 2018 10:13:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180615174731.47588-1-mka@chromium.org> <CAKwvOd=n3CdFhL-cFueOEO7ahOoTY6zfvJApXimQ1tBF6XzSOA@mail.gmail.com>
- <d4f32707a89030733217b23b557b38504f0d83ca.camel@perches.com>
- <20180615182945.GN88063@google.com> <c852072704e82ac5342f344c5862d20ce5559c21.camel@perches.com>
- <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com> <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
-In-Reply-To: <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 19 Jun 2018 10:08:55 -0700
-Message-ID: <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
-Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in update_permission_bitmask()
-To:     pbonzini@redhat.com
-Cc:     joe@perches.com, Matthias Kaehlcke <mka@chromium.org>,
-        rkrcmar@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 10:13:02
+ -0700 (PDT)
+In-Reply-To: <20180619152524.6080-1-vasilyev@ispras.ru>
+References: <20180619074248.ssu5kza6wdwhzdqi@mwanda> <20180619152524.6080-1-vasilyev@ispras.ru>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 19 Jun 2018 20:13:02 +0300
+Message-ID: <CAHp75VfktnjL+G0vjHNHr=8mbDXu+4BDogsnxrp_2Bo4em=r2Q@mail.gmail.com>
+Subject: Re: [PATCH v4] staging: rts5208: add error handling into rtsx_probe
+To:     Anton Vasilyev <vasilyev@ispras.ru>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Gaurav Pathak <gauravpathak129@gmail.com>,
+        Hannes Reinecke <hare@suse.de>, devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ldv-project@linuxtesting.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 8:19 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+On Tue, Jun 19, 2018 at 6:25 PM, Anton Vasilyev <vasilyev@ispras.ru> wrote:
+> If rtsx_probe() fails to allocate dev->chip, then release_everything()
+> will crash on uninitialized dev->cmnd_ready complete
+
+Period is missed at the end.
+
 >
-> On 15/06/2018 20:45, Nick Desaulniers wrote:
-> >>
-> >>> In any case I think it it preferable to fix the code over disabling
-> >>> the warning, unless the warning is bogus or there are just too many
-> >>> occurrences.
-> >> Maybe.
-> > Spurious warning today, actual bug tomorrow?  I prefer to not to
-> > disable warnings wholesale.  They don't need to find actual bugs to be
-> > useful.  Flagging code that can be further specified does not hurt.
-> > Part of the effort to compile the kernel with different compilers is
-> > to add warning coverage, not remove it.  That said, there may be
-> > warnings that are never useful (or at least due to some invariant that
-> > only affects the kernel).  I cant think of any off the top of my head,
-> > but I'm also not sure this is one.
+> Patch adds error handling into rtsx_probe.
+
+an error
+
 >
-> This one really makes the code uglier though, so I'm not really inclined
-> to applying the patch.
+> Found by Linux Driver Verification project (linuxtesting.org).
+>
 
-Note that of the three variables (w, u, x), only u is used later on.
-What about declaring them as negated with the cast, that way there's
-no cast in a ternary?
+Reviewed-by: Andy Shevchenko <andy.shevhchenko@gmail.com>
 
-Ex:
+Couple of comments below though.
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index d594690d8b95..53673ad4b295 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4261,8 +4261,9 @@ static void update_permission_bitmask(struct
-kvm_vcpu *vcpu,
- {
-        unsigned byte;
+> Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+> ---
+> v4: rename labels baced on Dan Carpenter's recommendation
+> v3: fix subject and commit message
+> v2: Add error handling into rtsx_probe based on Dan Carpenter's comment.
+> I do not have corresponding hardware, so patch was tested by compilation only.
+>
+> I faced with inaccuracy at rtsx_remove() and original rtsx_probe():
+> there is quiesce_and_remove_host() call with scsi_remove_host() inside,
+> whereas release_everything() calls scsi_host_put() after this
+> scsi_remove_host() call. This is strange for me.
+> Also I do not know is it require to check result value of
+> rtsx_init_chip() call on rtsx_probe().
+> ---
+>  drivers/staging/rts5208/rtsx.c | 34 ++++++++++++++++++++++++----------
+>  1 file changed, 24 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
+> index 70e0b8623110..233026ee5dd4 100644
+> --- a/drivers/staging/rts5208/rtsx.c
+> +++ b/drivers/staging/rts5208/rtsx.c
+> @@ -879,7 +879,7 @@ static int rtsx_probe(struct pci_dev *pci,
+>         if (!dev->remap_addr) {
+>                 dev_err(&pci->dev, "ioremap error\n");
+>                 err = -ENXIO;
+> -               goto errout;
+> +               goto err_chip_free;
+>         }
+>
+>         /*
+> @@ -894,7 +894,7 @@ static int rtsx_probe(struct pci_dev *pci,
+>         if (!dev->rtsx_resv_buf) {
+>                 dev_err(&pci->dev, "alloc dma buffer fail\n");
+>                 err = -ENXIO;
+> -               goto errout;
+> +               goto err_addr_unmap;
+>         }
+>         dev->chip->host_cmds_ptr = dev->rtsx_resv_buf;
+>         dev->chip->host_cmds_addr = dev->rtsx_resv_buf_addr;
+> @@ -915,7 +915,7 @@ static int rtsx_probe(struct pci_dev *pci,
+>
+>         if (rtsx_acquire_irq(dev) < 0) {
+>                 err = -EBUSY;
+> -               goto errout;
+> +               goto err_disable_msi;
+>         }
+>
+>         pci_set_master(pci);
+> @@ -935,14 +935,14 @@ static int rtsx_probe(struct pci_dev *pci,
+>         if (IS_ERR(th)) {
+>                 dev_err(&pci->dev, "Unable to start control thread\n");
+>                 err = PTR_ERR(th);
+> -               goto errout;
+> +               goto err_rtsx_release;
+>         }
+>         dev->ctl_thread = th;
+>
+>         err = scsi_add_host(host, &pci->dev);
+>         if (err) {
+>                 dev_err(&pci->dev, "Unable to add the scsi host\n");
+> -               goto errout;
+> +               goto err_complete_control_thread;
+>         }
+>
+>         /* Start up the thread for delayed SCSI-device scanning */
+> @@ -950,18 +950,16 @@ static int rtsx_probe(struct pci_dev *pci,
+>         if (IS_ERR(th)) {
+>                 dev_err(&pci->dev, "Unable to start the device-scanning thread\n");
+>                 complete(&dev->scanning_done);
+> -               quiesce_and_remove_host(dev);
+>                 err = PTR_ERR(th);
+> -               goto errout;
+> +               goto err_stop_host;
+>         }
+>
+>         /* Start up the thread for polling thread */
+>         th = kthread_run(rtsx_polling_thread, dev, "rtsx-polling");
+>         if (IS_ERR(th)) {
+>                 dev_err(&pci->dev, "Unable to start the device-polling thread\n");
+> -               quiesce_and_remove_host(dev);
+>                 err = PTR_ERR(th);
+> -               goto errout;
+> +               goto err_stop_host;
+>         }
+>         dev->polling_thread = th;
+>
+> @@ -970,9 +968,25 @@ static int rtsx_probe(struct pci_dev *pci,
+>         return 0;
+>
+>         /* We come here if there are any problems */
+> +err_stop_host:
+> +       quiesce_and_remove_host(dev);
+> +err_complete_control_thread:
+> +       complete(&dev->cmnd_ready);
+> +       wait_for_completion(&dev->control_exit);
+> +err_rtsx_release:
+> +       free_irq(dev->irq, (void *)dev);
+> +       rtsx_release_chip(dev->chip);
+> +err_disable_msi:
 
--       const u8 x = BYTE_MASK(ACC_EXEC_MASK);
--       const u8 w = BYTE_MASK(ACC_WRITE_MASK);
-+       const u8 x_not = (u8)~BYTE_MASK(ACC_EXEC_MASK);
-+       const u8 w_not = (u8)~BYTE_MASK(ACC_WRITE_MASK);
-+       const u8 u_not = (u8)~BYTE_MASK(ACC_USER_MASK);
-        const u8 u = BYTE_MASK(ACC_USER_MASK);
+> +       dev->chip->host_cmds_ptr = NULL;
+> +       dev->chip->host_sg_tbl_ptr = NULL;
 
-        bool cr4_smep = kvm_read_cr4_bits(vcpu, X86_CR4_SMEP) != 0;
-@@ -4278,11 +4279,11 @@ static void update_permission_bitmask(struct
-kvm_vcpu *vcpu,
-                 */
+This seems superfluous, you are freeing entire struct few calls after.
 
-                /* Faults from writes to non-writable pages */
--               u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-+               u8 wf = (pfec & PFERR_WRITE_MASK) ? w_not : 0;
-                /* Faults from user mode accesses to supervisor pages */
--               u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
-+               u8 uf = (pfec & PFERR_USER_MASK) ? u_not : 0;
-                /* Faults from fetches of non-executable pages*/
--               u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
-+               u8 ff = (pfec & PFERR_FETCH_MASK) ? x_not : 0;
-                /* Faults from kernel mode fetches of user pages */
-                u8 smepf = 0;
-                /* Faults from kernel mode accesses of user pages */
+> +       if (dev->chip->msi_en)
+> +               pci_disable_msi(dev->pci);
+
+This might be material for another improvement, PCI core tracks
+MSI/MSI-X enable state.
+So, the conditional with the local variable looks superfluous as well
+(in some, rare, cases we indeed need something like this to basically
+distinguish MSI from MSI-X, though I don't think it's a case here)
+
+> +err_addr_unmap:
+> +       iounmap(dev->remap_addr);
+> +err_chip_free:
+> +       kfree(dev->chip);
+>  errout:
+>         dev_err(&pci->dev, "%s failed\n", __func__);
+> -       release_everything(dev);
+>
+>         return err;
+>  }
+> --
+> 2.17.1
+>
 
 
-Maybe you have a better naming scheme than *_not ? What do you think?
+
 -- 
-Thanks,
-~Nick Desaulniers
+With Best Regards,
+Andy Shevchenko
