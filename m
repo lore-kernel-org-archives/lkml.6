@@ -2,131 +2,117 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE42C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0E0C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3322C2083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:29:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvls6NGV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3322C2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0BCC620661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BCC620661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754018AbeFSW31 (ORCPT
+        id S1753931AbeFSWbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 18:29:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43596 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753622AbeFSW3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 18:29:23 -0400
-Received: from localhost (unknown [146.7.4.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2BD020661;
-        Tue, 19 Jun 2018 22:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529447363;
-        bh=IWEjH3mLpik6iZt/Cn3+qAeFrcx5VD6bbaCL65P28Vk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nvls6NGVl1lG/VCoMnG3Tlg1jhlvX/6Y8GrQKF7RnwUJmZpXlLs975vbbwtiAINJX
-         yK2OkoE6iIlGKI9ADICOnxZC1JdQSoHQQrm826aVTJHzpgEtj4/seZUpeW3IdzlQhF
-         kIT0g8meYZJGOcVgmk+1IInTJhmdK60/k0IANfgQ=
-Date:   Tue, 19 Jun 2018 17:29:22 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     linux-fbdev@vger.kernel.org, timur@codeaurora.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-arm-msm@vger.kernel.org,
+        Tue, 19 Jun 2018 18:31:42 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:54262 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751032AbeFSWbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 18:31:39 -0400
+Received: from relay11.mail.gandi.net (unknown [217.70.178.231])
+        by slow1-d.mail.gandi.net (Postfix) with ESMTP id 4BC1A3A4F73;
+        Tue, 19 Jun 2018 23:49:06 +0200 (CEST)
+Received: from localhost (jfdmzpr03-ext.jf.intel.com [134.134.139.72])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 335AA10000F;
+        Tue, 19 Jun 2018 21:48:44 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 14:48:33 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, Alexei Starovoitov <ast@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" 
+        <kvm@vger.kernel.org>, Len Brown <len.brown@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>,
-        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
-        Peter Jones <pjones@redhat.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V2 2/2] efi/fb: Convert PCI bus address to resource if
- translated by the bridge
-Message-ID: <20180619222921.GA90490@bhelgaas-glaptop.roam.corp.google.com>
-References: <1526653072-7153-1-git-send-email-okaya@codeaurora.org>
- <1526653072-7153-2-git-send-email-okaya@codeaurora.org>
+        "open list:SPARSE CHECKER" <linux-sparse@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Subject: Re: [PATCH v11 00/13] Intel SGX1 support
+Message-ID: <20180619214833.GA5873@localhost>
+References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
+ <20180612105011.GA26931@amd>
+ <20180619145943.GC8034@linux.intel.com>
+ <20180619200414.GA3143@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526653072-7153-2-git-send-email-okaya@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180619200414.GA3143@amd>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minor subject nit: From the caller's point of view, we must convert a bus
-address to a resource *always* (the caller has no knowledge of "whether it
-is translated by the host bridge").
+On Tue, Jun 19, 2018 at 10:04:15PM +0200, Pavel Machek wrote:
+> On Tue 2018-06-19 17:59:43, Jarkko Sakkinen wrote:
+> > On Tue, Jun 12, 2018 at 12:50:12PM +0200, Pavel Machek wrote:
+> > > On Fri 2018-06-08 19:09:35, Jarkko Sakkinen wrote:
+> > > > Intel(R) SGX is a set of CPU instructions that can be used by applications
+> > > > to set aside private regions of code and data. The code outside the enclave
+> > > > is disallowed to access the memory inside the enclave by the CPU access
+> > > > control.  In a way you can think that SGX provides inverted sandbox. It
+> > > > protects the application from a malicious host.
+> > > 
+> > > Do you intend to allow non-root applications to use SGX?
+> > > 
+> > > What are non-evil uses for SGX?
+> > > 
+> > > ...because it is quite useful for some kinds of evil:
+> > 
+> > The default permissions for the device are 600.
+> 
+> Good. This does not belong to non-root.
 
-On Fri, May 18, 2018 at 10:17:51AM -0400, Sinan Kaya wrote:
-> A host bridge is allowed to remap BAR addresses using _TRA attribute in
-> _CRS windows.
+There are entirely legitimate use cases for using this as an
+unprivileged user. However, that'll be up to system and distribution
+policy, which can evolve over time, and it makes sense for the *initial*
+kernel permission to start out root-only and then adjust permissions via
+udev.
 
-Also, _TRA/_CRS are ACPI-specific terms and non-ACPI host bridges can
-also do the same sort of translation.  Another trivial nit.
+> What are some non-evil uses for SGX?
 
-> pci_bus 0000:00: root bus resource [mem 0x80100100000-0x8011fffffff window] (bus address [0x00100000-0x1fffffff])
-> pci 0000:02:00.0: reg 0x10: [mem 0x8011e000000-0x8011effffff]
-> 
-> When a VGA device is behind such a host bridge and the resource is
-> translated efifb driver is trying to do ioremap against bus address
-> rather than the resource address and is failing to probe.
-> 
-> efifb: probing for efifb
-> efifb: cannot reserve video memory at 0x1e000000
-> efifb: framebuffer at 0x1e000000, using 1920k, total 1875k
-> efifb: mode is 800x600x32, linelength=3200, pages=1
-> efifb: scrolling: redraw
-> efifb: Truecolor: size=8:8:8:8, shift=24:16:8:0
-> 
-> Use the host bridge offset information to convert bus address to
-> resource address in the fixup.
-> 
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+Building a software certificate store. Hardening key-agent software like
+ssh-agent or gpg-agent. Building a challenge-response authentication
+system. Providing more assurance that your server infrastructure is
+uncompromised. Offloading computation to a system without having to
+fully trust that system.
 
-Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
-
-Thanks a lot for fixing this!
-
-> ---
->  drivers/video/fbdev/efifb.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
-> index 6daac8d..429cc85 100644
-> --- a/drivers/video/fbdev/efifb.c
-> +++ b/drivers/video/fbdev/efifb.c
-> @@ -431,6 +431,7 @@ static void efifb_fixup_resources(struct pci_dev *dev)
->  		.end = screen_info.lfb_base + screen_info.lfb_size - 1,
->  		.flags = IORESOURCE_MEM,
->  	};
-> +	struct pci_bus_region region;
->  	int i;
->  
->  	if (efifb_pci_dev || screen_info.orig_video_isVGA != VIDEO_TYPE_EFI)
-> @@ -442,6 +443,10 @@ static void efifb_fixup_resources(struct pci_dev *dev)
->  	if (!screen_res.start)
->  		return;
->  
-> +	region.start = screen_res.start;
-> +	region.end = screen_res.end;
-> +	pcibios_bus_to_resource(dev->bus, &screen_res, &region);
-> +
->  	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
->  		struct resource *res = &dev->resource[i];
->  
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+As one of many possibilities, imagine a distcc that didn't have to trust
+the compile nodes. The compile nodes could fail to return results at
+all, but they couldn't alter the results.
