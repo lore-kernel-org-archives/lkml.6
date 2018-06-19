@@ -2,135 +2,311 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A42C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D73C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A663A2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D44220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:03:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="raZQD2S5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A663A2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WkJLNuHa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D44220874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965060AbeFSFAY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:00:24 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38920 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750973AbeFSFAW (ORCPT
+        id S1755571AbeFSFDu (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 01:03:50 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:38222 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751602AbeFSFDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:00:22 -0400
-Received: by mail-pf0-f195.google.com with SMTP id r11-v6so9298286pfl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 22:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=fK0wX7gcZStOa7aE87WekXA2BXt0rPP7nOuRIWA5Lj8=;
-        b=raZQD2S5xUtPTHygMRwv72YjYxnr0bqGpFIPxDPzh6LMyNKBp8cA+ry/xI2GdtzezX
-         N8JIzf6p26/OxJajVBMiMk8kWB9t440OPDwYTZfwgqTDcg358Q0FDvoOuKCUJO/TWGfK
-         yf4mqECW1qUABWrpZjid4GO0qgcViMLdIa0ptOP4zKQeI2vSJa4L03hu5cbAgue+Bbvw
-         CfUccvDwqxqTBOv07FzrArCc34lNr1tK5CNYGYe6xbpIWrPAt1lW7bEH1CnWdrevqNwQ
-         Di+iLbOYSEyvOJqKQaIYPAsciAAB9KemzFoHltWNh1QTSmgtTWql0+lCeL/agB4XnGjq
-         cs+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=fK0wX7gcZStOa7aE87WekXA2BXt0rPP7nOuRIWA5Lj8=;
-        b=oIxQguSnLrfJ1y6Z4jPEQplokpuas6x5ub3bfe6kMaO3UjU2E/kOnTc9TNhm++bglb
-         T501MZOi6Sy3SaTIHoegrb2eRHnamDLCJLldzkCjADFvjRPzQ7Ste6xwLzAyCrpEmm8g
-         XyRit19RGk3HUPM6qRmISyFYnTpl4UYwk4rc7hdGg5Q6hzpDXd1YlU0MSJ0UgAiKu1sW
-         MU9Gq2U2JcCTO1ekrlGSDy7JPihDwFFqxJkFBa56fbI6mXM7bqmfUKfIn+fnS+gJBT3+
-         ucwWR2CSFQDH90iPX7HTH+VhIYafify0Kvs0YQjEFJggt+KwgXIT3GIQ0gIZVI1BN5d7
-         GoYA==
-X-Gm-Message-State: APt69E0qFt6+KHuMu7ZUb6FdNThf3uJFU6abYWhtTo40fblvS7JaPxWq
-        M/2MXkn7gIO0cIjwnnLO0mFFhrC2
-X-Google-Smtp-Source: ADUXVKJOniQYLnrKeS3JdhWOY5Q3YLJCMQjr8NFcComNXG+H8gKsCrxRzt2U7lnigRWpLiTZHdssWw==
-X-Received: by 2002:a63:b34e:: with SMTP id x14-v6mr13470786pgt.243.1529384422338;
-        Mon, 18 Jun 2018 22:00:22 -0700 (PDT)
-Received: from [192.168.1.20] (c-73-158-113-96.hsd1.ca.comcast.net. [73.158.113.96])
-        by smtp.gmail.com with ESMTPSA id g78-v6sm28919472pfe.39.2018.06.18.22.00.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 22:00:21 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] MAINTAINERS: Add me as an x86 entry code maintainer
-From:   Tony Luck <tony.luck@gmail.com>
-X-Mailer: iPhone Mail (15E302)
-In-Reply-To: <c2394b008adfb6e7480f3b1193386537e96a6a69.1529358034.git.luto@kernel.org>
-Date:   Mon, 18 Jun 2018 22:00:19 -0700
-Cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <90B4C317-80C6-4B27-8984-58BAFCAB6E14@gmail.com>
-References: <c2394b008adfb6e7480f3b1193386537e96a6a69.1529358034.git.luto@kernel.org>
-To:     Andy Lutomirski <luto@kernel.org>
+        Tue, 19 Jun 2018 01:03:48 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5J4wxVJ048807;
+        Tue, 19 Jun 2018 05:03:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=BALhbizktdhbQ+K419PFqf3hDzlLi0QJqDjXg/MlOrg=;
+ b=WkJLNuHa9lU/ZZDjLwG2FuhbZeI4Of8LRKRvC4D7LA8VXU5sZl5bWsxyGAlIOxunc7AK
+ FDpZhh5aQLVfhUTVex+w1Y9l/m63lBv17Z2J4dUFGoiWhV5CZBO36jMUbZumW34xPgw3
+ Jme6LHCYP3q9O/XsLdaOtpfQcUMWgHSvuhATZygSxhG/6fiVm0bjQGxpC00kk2yJiDcs
+ hcS4gBueh0KZuZSGh1BjTNz+3sKleHJ76+fwlPir4nF9yqsFwA3sipZ+5EIL5ej+IhyH
+ iYtXA0nETTDYW29rKGVkAI5slIxvND7eqF/6RyGdiF2PVkGMuuO8WkmO+bFpr1UBSRFK 7w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2jmr2menae-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 05:03:22 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5J53LtE008520
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 19 Jun 2018 05:03:21 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5J53LHv004879;
+        Tue, 19 Jun 2018 05:03:21 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Jun 2018 22:03:20 -0700
+Date:   Mon, 18 Jun 2018 22:03:13 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     NeilBrown <neilb@suse.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [RFC PATCH 0/5] kbuild: build modules from code in multiple
+ directories.
+Message-ID: <20180619050313.GK8128@magnolia>
+References: <152929708853.17463.17302660556961083137.stgit@noble>
+ <20180618082017.GA4752@infradead.org>
+ <87po0ne7zw.fsf@notabene.neil.brown.name>
+ <20180619044748.GA18671@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619044748.GA18671@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806190057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So the TIP tree was named for =E2=80=9CThomas, Ingo, Peter=E2=80=9D. Need to=
- add an =E2=80=9CA=E2=80=9D for Andy. Maybe it should be the PITA tree :-)
+On Mon, Jun 18, 2018 at 09:47:48PM -0700, Christoph Hellwig wrote:
+> On Tue, Jun 19, 2018 at 02:05:23PM +1000, NeilBrown wrote:
+> > From: NeilBrown <neilb@suse.com>
+> > Date: Tue, 19 Jun 2018 13:59:16 +1000
+> > Subject: [PATCH] kbuild/xfs: example modobj-m conversion
+> > 
+> > This is a demonstration patch to show how
+> > xfs can be changed to make use of the proposed modobj-m=
+> > functionality, should the xfs developers want that.
+> 
+> Well, IFF we go with this new functionality I think everyone should
+> be using it instead of the current hacks.
+> 
+> So text like the above should be in the series cover letter, and this
+> patch should have an actual description..
+> 
+> I see no argument against these changes, but I've also added the XFS
+> list.
 
--Tony
+Yes, please send the entire series to the xfs list in the future.
 
-> On Jun 18, 2018, at 14:41, Andy Lutomirski <luto@kernel.org> wrote:
->=20
-> And update my email address.
->=20
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Andy Lutomirski <luto@kernel.org>
-> ---
->=20
-> Linus has been saying that I might as well maintain this stuff for years.
-> What do you all think?
->=20
-> MAINTAINERS | 9 ++++++++-
-> 1 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9d5eeff51b5f..624c3fd11d04 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15575,6 +15575,13 @@ S:    Maintained
-> F:    Documentation/x86/
-> F:    arch/x86/
->=20
-> +X86 ENTRY CODE
-> +M:    Andy Lutomirski <luto@kernel.org>
-> +L:    linux-kernel@vger.kernel.org
-> +T:    git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/a=
-sm
-> +S:    Maintained
-> +F:    arch/x86/entry/
-> +
-> X86 MCE INFRASTRUCTURE
-> M:    Tony Luck <tony.luck@intel.com>
-> M:    Borislav Petkov <bp@alien8.de>
-> @@ -15597,7 +15604,7 @@ F:    drivers/platform/x86/
-> F:    drivers/platform/olpc/
->=20
-> X86 VDSO
-> -M:    Andy Lutomirski <luto@amacapital.net>
-> +M:    Andy Lutomirski <luto@kernel.org>
-> L:    linux-kernel@vger.kernel.org
-> T:    git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vd=
-so
-> S:    Maintained
-> --=20
-> 2.17.1
->=20
+It looks like a reasonable reorganization of makefile goop. :)
+
+(Will dig for the rest of the series on lkml tomorrow I guess.)
+
+> > 
+> > Signed-off-by: NeilBrown <neilb@suse.com>
+> > ---
+> >  fs/xfs/Makefile        | 78 ++------------------------------------------------
+> >  fs/xfs/libxfs/Makefile | 43 ++++++++++++++++++++++++++++
+> >  fs/xfs/scrub/Makefile  | 29 +++++++++++++++++++
+> >  3 files changed, 74 insertions(+), 76 deletions(-)
+> >  create mode 100644 fs/xfs/libxfs/Makefile
+> >  create mode 100644 fs/xfs/scrub/Makefile
+> > 
+> > diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+> > index 2f3f75a7f180..0ba854045fe9 100644
+> > --- a/fs/xfs/Makefile
+> > +++ b/fs/xfs/Makefile
+> > @@ -15,47 +15,7 @@ obj-$(CONFIG_XFS_FS)		+= xfs.o
+> >  xfs-y				+= xfs_trace.o
+> >  
+> >  # build the libxfs code first
+> > -xfs-y				+= $(addprefix libxfs/, \
+> > -				   xfs_ag.o \
+> > -				   xfs_alloc.o \
+> > -				   xfs_alloc_btree.o \
+> > -				   xfs_attr.o \
+> > -				   xfs_attr_leaf.o \
+> > -				   xfs_attr_remote.o \
+> > -				   xfs_bit.o \
+> > -				   xfs_bmap.o \
+> > -				   xfs_bmap_btree.o \
+> > -				   xfs_btree.o \
+> > -				   xfs_da_btree.o \
+> > -				   xfs_da_format.o \
+> > -				   xfs_defer.o \
+> > -				   xfs_dir2.o \
+> > -				   xfs_dir2_block.o \
+> > -				   xfs_dir2_data.o \
+> > -				   xfs_dir2_leaf.o \
+> > -				   xfs_dir2_node.o \
+> > -				   xfs_dir2_sf.o \
+> > -				   xfs_dquot_buf.o \
+> > -				   xfs_ialloc.o \
+> > -				   xfs_ialloc_btree.o \
+> > -				   xfs_iext_tree.o \
+> > -				   xfs_inode_fork.o \
+> > -				   xfs_inode_buf.o \
+> > -				   xfs_log_rlimit.o \
+> > -				   xfs_ag_resv.o \
+> > -				   xfs_rmap.o \
+> > -				   xfs_rmap_btree.o \
+> > -				   xfs_refcount.o \
+> > -				   xfs_refcount_btree.o \
+> > -				   xfs_sb.o \
+> > -				   xfs_symlink_remote.o \
+> > -				   xfs_trans_resv.o \
+> > -				   xfs_types.o \
+> > -				   )
+> > -# xfs_rtbitmap is shared with libxfs
+> > -xfs-$(CONFIG_XFS_RT)		+= $(addprefix libxfs/, \
+> > -				   xfs_rtbitmap.o \
+> > -				   )
+> > +xfs-y				+= libxfs/
+> >  
+> >  # highlevel code
+> >  xfs-y				+= xfs_aops.o \
+> > @@ -127,38 +87,4 @@ xfs-$(CONFIG_SYSCTL)		+= xfs_sysctl.o
+> >  xfs-$(CONFIG_COMPAT)		+= xfs_ioctl32.o
+> >  xfs-$(CONFIG_EXPORTFS_BLOCK_OPS)	+= xfs_pnfs.o
+> >  
+> > -# online scrub/repair
+> > -ifeq ($(CONFIG_XFS_ONLINE_SCRUB),y)
+> > -
+> > -# Tracepoints like to blow up, so build that before everything else
+> > -
+> > -xfs-y				+= $(addprefix scrub/, \
+> > -				   trace.o \
+> > -				   agheader.o \
+> > -				   alloc.o \
+> > -				   attr.o \
+> > -				   bmap.o \
+> > -				   btree.o \
+> > -				   common.o \
+> > -				   dabtree.o \
+> > -				   dir.o \
+> > -				   ialloc.o \
+> > -				   inode.o \
+> > -				   parent.o \
+> > -				   refcount.o \
+> > -				   rmap.o \
+> > -				   scrub.o \
+> > -				   symlink.o \
+> > -				   )
+> > -
+> > -xfs-$(CONFIG_XFS_RT)		+= scrub/rtbitmap.o
+> > -xfs-$(CONFIG_XFS_QUOTA)		+= scrub/quota.o
+> > -
+> > -# online repair
+> > -ifeq ($(CONFIG_XFS_ONLINE_REPAIR),y)
+> > -xfs-y				+= $(addprefix scrub/, \
+> > -				   agheader_repair.o \
+> > -				   repair.o \
+> > -				   )
+> > -endif
+> > -endif
+> > +xfs-$(CONFIG_XFS_ONLINE_SCRUB)	+= scrub/
+> > diff --git a/fs/xfs/libxfs/Makefile b/fs/xfs/libxfs/Makefile
+> > new file mode 100644
+> > index 000000000000..9b90c289bdda
+> > --- /dev/null
+> > +++ b/fs/xfs/libxfs/Makefile
+> > @@ -0,0 +1,43 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +ccflags-y += -I$(src)/..
+> > +
+> > +# xfs_rtbitmap is shared with libxfs
+> > +xobj-$(CONFIG_XFS_RT)		+= xfs_rtbitmap.o
+> > +
+> > +modobj-$(CONFIG_XFS_FS) +=	   xfs_ag.o \
+> > +				   xfs_alloc.o \
+> > +				   xfs_alloc_btree.o \
+> > +				   xfs_attr.o \
+> > +				   xfs_attr_leaf.o \
+> > +				   xfs_attr_remote.o \
+> > +				   xfs_bit.o \
+> > +				   xfs_bmap.o \
+> > +				   xfs_bmap_btree.o \
+> > +				   xfs_btree.o \
+> > +				   xfs_da_btree.o \
+> > +				   xfs_da_format.o \
+> > +				   xfs_defer.o \
+> > +				   xfs_dir2.o \
+> > +				   xfs_dir2_block.o \
+> > +				   xfs_dir2_data.o \
+> > +				   xfs_dir2_leaf.o \
+> > +				   xfs_dir2_node.o \
+> > +				   xfs_dir2_sf.o \
+> > +				   xfs_dquot_buf.o \
+> > +				   xfs_ialloc.o \
+> > +				   xfs_ialloc_btree.o \
+> > +				   xfs_iext_tree.o \
+> > +				   xfs_inode_fork.o \
+> > +				   xfs_inode_buf.o \
+> > +				   xfs_log_rlimit.o \
+> > +				   xfs_ag_resv.o \
+> > +				   xfs_rmap.o \
+> > +				   xfs_rmap_btree.o \
+> > +				   xfs_refcount.o \
+> > +				   xfs_refcount_btree.o \
+> > +				   xfs_sb.o \
+> > +				   xfs_symlink_remote.o \
+> > +				   xfs_trans_resv.o \
+> > +				   xfs_types.o \
+> > +				   $(xobj-y)
+> > diff --git a/fs/xfs/scrub/Makefile b/fs/xfs/scrub/Makefile
+> > new file mode 100644
+> > index 000000000000..f91818a0e6ee
+> > --- /dev/null
+> > +++ b/fs/xfs/scrub/Makefile
+> > @@ -0,0 +1,29 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +# Tracepoints like to blow up, so build that before everything else
+
+This comment ought to stay with trace.o below because that's what it
+applies to.
+
+--D
+
+> > +
+> > +ccflags-y += -I$(src)/..
+> > +ccflags-y += -I$(src)/../libxfs
+> > +
+> > +xobj-$(CONFIG_XFS_RT)		+= rtbitmap.o
+> > +xobj-$(CONFIG_XFS_QUOTA)	+= quota.o
+> > +xobj-$(CONFIG_XFS_ONLINE_REPAIR)+= agheader_repair.o \
+> > +				   repair.o
+> > +
+> > +modobj-$(CONFIG_XFS_FS) +=	   trace.o \
+> > +				   agheader.o \
+> > +				   alloc.o \
+> > +				   attr.o \
+> > +				   bmap.o \
+> > +				   btree.o \
+> > +				   common.o \
+> > +				   dabtree.o \
+> > +				   dir.o \
+> > +				   ialloc.o \
+> > +				   inode.o \
+> > +				   parent.o \
+> > +				   refcount.o \
+> > +				   rmap.o \
+> > +				   scrub.o \
+> > +				   symlink.o \
+> > +				   $(xobj-y)
+> > -- 
+> > 2.14.0.rc0.dirty
+> > 
+> 
+> 
+> ---end quoted text---
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
