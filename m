@@ -2,94 +2,139 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 773ABC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1F2C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3153420661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:02:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XJPrtJvk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3153420661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id C99792083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:04:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99792083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756001AbeFSHCN (ORCPT
+        id S1755844AbeFSHE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 03:02:13 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:50206 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750736AbeFSHCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:02:11 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5J6x4Vi188878;
-        Tue, 19 Jun 2018 07:02:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2017-10-26;
- bh=tAJbmg5iQtpFOXg4vuQz3a7Z0BLe1ZO/r9cj4495nm0=;
- b=XJPrtJvkonhcvw34qzghtzVMDIuI/AwAhFThOeEOknKlc3GSZS4dogea4BXWUTpAk2ik
- J5VwoKxdbWrM4J434A0gz9epPdON6GyPi6FzPDcozNAHcyFC8pm1J+Yxes5HBuFfeTX6
- y0Q/UHKZBOZcKo7zEe90DcAJYUrvNPVkFYtzYfpsaLs3s87SQ7noCvSNFW6MYMD3snHc
- mfPMSTwFGlwf4DIwbb5cXIaf+2hCRyHz5NhAQkmVqAofvpe6MLWK9KNrCEM6wOjX2x0c
- V2amz5VYxWhODPkFO4Q/HM6R5feap8TS+S3cF0cWs5n2ueWWZ2oC3CuziRYKt0zzMBPx MQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jmt01eu9s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 07:02:10 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5J7292S030405
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 07:02:09 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5J728IT003338;
-        Tue, 19 Jun 2018 07:02:09 GMT
-Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Jun 2018 00:02:08 -0700
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RESENT] blk-mq: use blk_rq_timeout to limit the max timeout
-Date:   Tue, 19 Jun 2018 15:03:16 +0800
-Message-Id: <1529391796-1819-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=875
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806190081
+        Tue, 19 Jun 2018 03:04:29 -0400
+Received: from mga18.intel.com ([134.134.136.126]:59193 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750861AbeFSHE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 03:04:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 00:04:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
+   d="scan'208";a="60355971"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga003.jf.intel.com with ESMTP; 19 Jun 2018 00:04:24 -0700
+Subject: Re: [PATCH 1/1] mmc: sdhci-pci: fix eMMC controller issue on Intel
+ Baytrail SoCs
+To:     Kurt Kanzenbach <kurt@linutronix.de>
+Cc:     ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+References: <20180619063119.3955-1-kurt@linutronix.de>
+ <20180619063119.3955-2-kurt@linutronix.de>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <293c2771-ea9b-4f0c-bd31-f8844de12dc4@intel.com>
+Date:   Tue, 19 Jun 2018 10:03:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180619063119.3955-2-kurt@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-blk_rq_timeout is needed to limit the max timeout value, otherwise,
-a idle hctx cannot be deactivated timely in shared-tag case.
+On 19/06/18 09:31, Kurt Kanzenbach wrote:
+> Sometimes the eMMC controller doesn't respond anymore on Intel Baytrail
+> SoCs. The resulting error looks like:
+> 
+> |mmc1: Reset 0x1 never completed.
+> |sdhci: =========== REGISTER DUMP (mmc1)===========
+> |sdhci: Sys addr: 0xffffffff | Version:  0x0000ffff
+> |sdhci: Blk size: 0x0000ffff | Blk cnt:  0x0000ffff
+> |sdhci: Argument: 0xffffffff | Trn mode: 0x0000ffff
+> |sdhci: Present:  0xffffffff | Host ctl: 0x000000ff
+> |sdhci: Power:    0x000000ff | Blk gap:  0x000000ff
+> |sdhci: Wake-up:  0x000000ff | Clock:    0x0000ffff
+> |sdhci: Timeout:  0x000000ff | Int stat: 0xffffffff
+> |sdhci: Int enab: 0xffffffff | Sig enab: 0xffffffff
+> |sdhci: AC12 err: 0x0000ffff | Slot int: 0x0000ffff
+> |sdhci: Caps:     0xffffffff | Caps_1:   0xffffffff
+> |sdhci: Cmd:      0x0000ffff | Max curr: 0xffffffff
+> |sdhci: Host ctl2: 0x0000ffff
+> |sdhci: ADMA Err: 0xffffffff | ADMA Ptr: 0xffffffff
+> 
+> The behavior was observed on an Intel Atom E3825 performing lots of reboots. The
 
-Fixes: 12f5b931 (blk-mq: Remove generation seqeunce)
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- block/blk-mq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So you are saying this only happens at boot time?  And only when re-booting?
+Can you send all the kernel messages?  Can you send an acpidump?
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 70c65bb..ccebe7b 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -868,7 +868,7 @@ static void blk_mq_timeout_work(struct work_struct *work)
- 	blk_mq_queue_tag_busy_iter(q, blk_mq_check_expired, &next);
- 
- 	if (next != 0) {
--		mod_timer(&q->timeout, next);
-+		mod_timer(&q->timeout, blk_rq_timeout(round_jiffies_up(next)));
- 	} else {
- 		/*
- 		 * Request timeouts are handled as a forward rolling timer. If
--- 
-2.7.4
+> issue seems to occur if runtime power management is used. Found by utilizing
+> ftrace.
+> 
+> The erratum VLI10 for the Intel E3825 states, that the eMMC controller
+> incorrectly announces that it supports suspend/resume. However, that shouldn't
+> be used, as the controller may incorrectly transfer data between memory and the
+> SD device.
+
+That erratum is not related to this problem.  The suspend/resume that is
+documented is an internal SDHCI feature, not the kernel's suspend/resume.
+The SDHCI Suspend/Resume Mechanism is not supported in the driver, so it is
+not being used anyway.
+
+> 
+> Therefore, disallowing runtime pm resolves the issue. Tested on the E3825.
+> 
+> Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+> ---
+>  drivers/mmc/host/sdhci-pci-core.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> index 77dd3521daae..df89381944cd 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -870,6 +870,21 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
+>  	.priv_size	= sizeof(struct intel_host),
+>  };
+>  
+> +/*
+> + * See Erratum VLI10 from Errata List for Intel Atom E3825, Link:
+> + * https://www.intel.ca/content/dam/www/public/us/en/documents/specification-updates/atom-e3800-family-spec-update.pdf
+> + */
+> +static const struct sdhci_pci_fixes sdhci_intel_byt_emmc_no_runtime_pm = {
+> +	.allow_runtime_pm = false,
+> +	.probe_slot	= byt_emmc_probe_slot,
+> +	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+> +	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+> +			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
+> +			  SDHCI_QUIRK2_STOP_WITH_TC,
+> +	.ops		= &sdhci_intel_byt_ops,
+> +	.priv_size	= sizeof(struct intel_host),
+> +};
+> +
+>  static const struct sdhci_pci_fixes sdhci_intel_glk_emmc = {
+>  	.allow_runtime_pm	= true,
+>  	.probe_slot		= glk_emmc_probe_slot,
+> @@ -1470,7 +1485,7 @@ static const struct pci_device_id pci_ids[] = {
+>  	SDHCI_PCI_SUBDEVICE(INTEL, BYT_SDIO, NI, 7884, ni_byt_sdio),
+>  	SDHCI_PCI_DEVICE(INTEL, BYT_SDIO,  intel_byt_sdio),
+>  	SDHCI_PCI_DEVICE(INTEL, BYT_SD,    intel_byt_sd),
+> -	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc),
+> +	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc_no_runtime_pm),
+>  	SDHCI_PCI_DEVICE(INTEL, BSW_EMMC,  intel_byt_emmc),
+>  	SDHCI_PCI_DEVICE(INTEL, BSW_SDIO,  intel_byt_sdio),
+>  	SDHCI_PCI_DEVICE(INTEL, BSW_SD,    intel_byt_sd),
+> 
 
