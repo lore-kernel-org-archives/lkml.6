@@ -2,97 +2,158 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4666FC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543C4C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F273C205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:48:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="RgsfLXKU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F273C205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 174A7205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:48:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174A7205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966878AbeFSPsF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:48:05 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33041 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966650AbeFSPr7 (ORCPT
+        id S966894AbeFSPsM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:48:12 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:53079 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966449AbeFSPsE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:47:59 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z6-v6so19389388wma.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=jswF46JTCFQSzTI90C09z/gakpKpYDa0XxcKekREGYc=;
-        b=RgsfLXKUpWw+end/iC8pQIcTnBLKg3XVAuSLT9LqT7/jHgyosbIoGsl6bH7yLyticj
-         xPzSKtyND0eBPGOJ+L9nK9dkbYxBVyP/i2o/lTSF2ymDbuLoyaaz6lhiU65Wa5D5ZYcO
-         lV2WiE0RCILw8GNjeuTZte72NlYRksVBIN5Zp0Am1cGq/d8QQgCAVBMbAXvdkR1KnhY1
-         G/B0OIVkfYyYrYE6gNWI5Ed45TpebNEGH1ltWSoka0WgzJRZvR/4OiycMFw5XmiTd+M7
-         TVc1nOLpCe4prIwYA7G0si6PKqX25gMJx+VDZiaARLDkjr8Dkb1R1f1vcJQ/I+7v3R+Z
-         lB4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jswF46JTCFQSzTI90C09z/gakpKpYDa0XxcKekREGYc=;
-        b=Ie7d/RCEucz1CteSw4rroWHojo9ry5Xp7r/Gx+qbKhOVV3WdiL+6kEny0xlMQ28l3V
-         NN0jf9PTBnpIG11LQRMlAEu/YeEcFa/LHdtf6CZQ9tbLfn6hN4l0pWy3XTjvtSla7LpH
-         E3P15m5Lb5AVKXt/EfTzr7Umc8hDDcps0Jcz7sAOlDuEi2ZftsPiBDwi0fs81QzRLym1
-         l0/FJqzH6FQSIGIqOY8SZnGA5cG4meFMlOJQmwcWK5/3eMvJxs8PmrSAQLepib2ODUvj
-         z9VNVxLcoXBaujEsb2X2bzRh0lZmw2kNL4VRCt3x5rqph6m+zKLCVUfkLXZjlGBWAM22
-         NZfA==
-X-Gm-Message-State: APt69E3BSK5OQTZHzEPI7txeIBAWkn6vbbCHGrYF1BqPZ6WLAULZ1U77
-        tdg3FtotOXPY9IqwSud2ey0dgg==
-X-Google-Smtp-Source: ADUXVKJ5OuwN8mG2xT29diEgTZnxfTr2lhRj4YXAuCS9i8QOjdpsNc2Z/2s5ftrSpJj7ajaJz/QcJQ==
-X-Received: by 2002:a1c:1286:: with SMTP id 128-v6mr13042754wms.9.1529423278200;
-        Tue, 19 Jun 2018 08:47:58 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id u70-v6sm608234wmd.3.2018.06.19.08.47.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 08:47:57 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        Tue, 19 Jun 2018 11:48:04 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0MRkrZ-1fbfaS2sq9-00SzlG; Tue, 19 Jun 2018 17:47:53 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Evgeniy Dushistov <dushistov@mail.ru>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Howells <dhowells@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: meson: audio-divider is one based
-Date:   Tue, 19 Jun 2018 17:47:53 +0200
-Message-Id: <20180619154753.12788-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
+Subject: [PATCH] ufs: use ktime_get_real_seconds for sb and cg timestamps
+Date:   Tue, 19 Jun 2018 17:47:21 +0200
+Message-Id: <20180619154752.3768171-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:RcM+QfwdBeq949+6u50fOIxb1aBtCUmanrohmosvY4+ZIkJjVq4
+ NwmgKhhRY16g1lQVigDgR7HB6y2tYbsvLde7xEJDYqCn0zhgOlkb6r/7N0GhynnTBRdGqum
+ 7KMZ3Fpe2dSuVlckmO7KC3OkIcJREd91j6VGQfje1W4fwmQGoo3bf3jkqSVrP2DigSEh3uD
+ B39gx9td03LryO8OKaV6A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:uySgg7QRfg4=:1bFj5yiByloBpajtkH0JIC
+ U84ajq8SSCac2i49Y4dA6KXFIhCBIo5WA6+Lq9URh+P3Ai6pPiI0XH4G0QXoOHMQBGBuCGe6i
+ cuIq7aBiNjGu+Xk5nzAG8CelGB2JLwLQGLM2pHovrpM1ILxnA0nVuE77nsVmAmu1AhajTNAFn
+ kCx2GI+UDIISmDy7gMl71uDG8ZGz8vKr2GAop5S2wDUp7QqsNyqpm8+BU0X2hjTOgO8boXByZ
+ fWEG42CXC668wq0yjl7ESuByYXWugcgcJB4Eih+eOiAPrZNONxbgnS80+Q5b8heBKnAmy/9bm
+ vPO1FzQqAue6Nyc97HJfk4Q5fa6T8CUhweIlyGmZwAi8gHPdwYAuFczRye1hZuEkWBimgnduU
+ IYSjm+ZraJgSJzI82ybLqKJx1EuBeVeNalrUALy5B3EwYn0zwL0lD1OQHLmS6JOk9a9Bw3xxe
+ aeOaij/yE3sw/aejuq+SS5SrHLuSEgoRKrQ0YE5IGuxbFFIzxNUYaiTysnn6JFCq9rDZ/qktm
+ +6Lki5S9S7c4XyIQEfZcre06mT0OmSFtu/RhOlKb3QZU2Jn+pimJefEXBZRcfWcLBcvQ8Lv9W
+ R1YkrMzeDrL7irfjWeADsyz9jJoeFvklf1k9HrNGb19zEL7r3BBFtHr6lxwcVjCvwFPpwQ/ex
+ LOmFkH5bIHbao1Liqy/PeuQHXNobZY4F7EL4oWogPTEQDDZMQA0cTN/p3bUZ9J/re/Cc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The audio divider is one based. This offset was mistakenly dropped from
-recalc_rate() when migrating to clk_regmap.
+get_seconds() is deprecated because of the 32-bit overflow and will
+be removed. All callers in ufs also truncate to a 32-bit number, so
+nothing changes during the conversion, but this should be harmless as the
+superblock and cylinder group timestamps are not visible to user space,
+except for checking the fs-dirty state, wich works fine across the
+overflow.
 
-Fixes: 88a4e1283681 ("clk: meson: migrate the audio divider clock to clk_regmap")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+This moves the call to get_seconds() into a new inline function, with
+a comment explaining the constraints, while converting it to
+ktime_get_real_seconds().
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/meson/clk-audio-divider.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ufs/balloc.c |  4 ++--
+ fs/ufs/ialloc.c |  2 +-
+ fs/ufs/super.c  |  4 ++--
+ fs/ufs/util.h   | 14 ++++++++++++++
+ 4 files changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-index 58f546e04807..e4cf96ba704e 100644
---- a/drivers/clk/meson/clk-audio-divider.c
-+++ b/drivers/clk/meson/clk-audio-divider.c
-@@ -51,7 +51,7 @@ static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
- 	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
- 	unsigned long divider;
+diff --git a/fs/ufs/balloc.c b/fs/ufs/balloc.c
+index e727ee07dbe4..075d3d9114c8 100644
+--- a/fs/ufs/balloc.c
++++ b/fs/ufs/balloc.c
+@@ -547,7 +547,7 @@ static u64 ufs_add_fragments(struct inode *inode, u64 fragment,
+ 	/*
+ 	 * Block can be extended
+ 	 */
+-	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
++	ucg->cg_time = ufs_get_seconds(sb);
+ 	for (i = newcount; i < (uspi->s_fpb - fragoff); i++)
+ 		if (ubh_isclr (UCPI_UBH(ucpi), ucpi->c_freeoff, fragno + i))
+ 			break;
+@@ -639,7 +639,7 @@ static u64 ufs_alloc_fragments(struct inode *inode, unsigned cgno,
+ 	if (!ufs_cg_chkmagic(sb, ucg)) 
+ 		ufs_panic (sb, "ufs_alloc_fragments",
+ 			"internal error, bad magic number on cg %u", cgno);
+-	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
++	ucg->cg_time = ufs_get_seconds(sb);
  
--	divider = meson_parm_read(clk->map, &adiv->div);
-+	divider = meson_parm_read(clk->map, &adiv->div) + 1;
+ 	if (count == uspi->s_fpb) {
+ 		result = ufs_alloccg_block (inode, ucpi, goal, err);
+diff --git a/fs/ufs/ialloc.c b/fs/ufs/ialloc.c
+index e1ef0f0a1353..c678fff2a04d 100644
+--- a/fs/ufs/ialloc.c
++++ b/fs/ufs/ialloc.c
+@@ -89,7 +89,7 @@ void ufs_free_inode (struct inode * inode)
+ 	if (!ufs_cg_chkmagic(sb, ucg))
+ 		ufs_panic (sb, "ufs_free_fragments", "internal error, bad cg magic number");
  
- 	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
+-	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
++	ucg->cg_time = ufs_get_seconds(sb);
+ 
+ 	is_directory = S_ISDIR(inode->i_mode);
+ 
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index 488088141451..a4e07e910f1b 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -698,7 +698,7 @@ static int ufs_sync_fs(struct super_block *sb, int wait)
+ 	usb1 = ubh_get_usb_first(uspi);
+ 	usb3 = ubh_get_usb_third(uspi);
+ 
+-	usb1->fs_time = cpu_to_fs32(sb, get_seconds());
++	usb1->fs_time = ufs_get_seconds(sb);
+ 	if ((flags & UFS_ST_MASK) == UFS_ST_SUN  ||
+ 	    (flags & UFS_ST_MASK) == UFS_ST_SUNOS ||
+ 	    (flags & UFS_ST_MASK) == UFS_ST_SUNx86)
+@@ -1342,7 +1342,7 @@ static int ufs_remount (struct super_block *sb, int *mount_flags, char *data)
+ 	 */
+ 	if (*mount_flags & SB_RDONLY) {
+ 		ufs_put_super_internal(sb);
+-		usb1->fs_time = cpu_to_fs32(sb, get_seconds());
++		usb1->fs_time = ufs_get_seconds(sb);
+ 		if ((flags & UFS_ST_MASK) == UFS_ST_SUN
+ 		  || (flags & UFS_ST_MASK) == UFS_ST_SUNOS
+ 		  || (flags & UFS_ST_MASK) == UFS_ST_SUNx86) 
+diff --git a/fs/ufs/util.h b/fs/ufs/util.h
+index 1907be6d5808..1fd3011ea623 100644
+--- a/fs/ufs/util.h
++++ b/fs/ufs/util.h
+@@ -590,3 +590,17 @@ static inline int ufs_is_data_ptr_zero(struct ufs_sb_private_info *uspi,
+ 	else
+ 		return *(__fs32 *)p == 0;
  }
++
++static inline __fs32 ufs_get_seconds(struct super_block *sbp)
++{
++	time64_t now = ktime_get_real_seconds();
++
++	/* Signed 32-bit interpretation wraps around in 2038, which
++	 * happens in ufs1 inode stamps but not ufs2 using 64-bits
++	 * stamps. For superblock and blockgroup, let's assume
++	 * unsigned 32-bit stamps, which are good until y2106.
++	 * Wrap around rather than clamp here to make the dirty
++	 * file system detection work in the superblock stamp.
++	 */
++	return cpu_to_fs32(sbp, lower_32_bits(now));
++}
 -- 
-2.14.3
+2.9.0
 
