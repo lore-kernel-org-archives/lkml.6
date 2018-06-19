@@ -2,136 +2,168 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBE4C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D67C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0012083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:38:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CFA32083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:39:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ntoh8smW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0012083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="tOpTCz8F";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kcnWj7vr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFA32083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937644AbeFSViZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:38:25 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34331 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937365AbeFSViW (ORCPT
+        id S1030476AbeFSVjF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 17:39:05 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:37028 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937661AbeFSVjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:38:22 -0400
-Received: by mail-wr0-f195.google.com with SMTP id a12-v6so1130982wro.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 14:38:21 -0700 (PDT)
+        Tue, 19 Jun 2018 17:39:00 -0400
+Received: by mail-vk0-f65.google.com with SMTP id w8-v6so734351vkh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 14:38:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2F0jI+CA6cfoLi4EbDtVyIGjIAX/atVlgLdOJ64bNUI=;
-        b=ntoh8smWqSHmEJvId/rii4PgTkSd0p+m5yQlFVC1Yox3WSVt+lU9Kiv5M8Rd2KIomJ
-         jynJrNfNaDJ/P3nROCxPSGJYXgdGaCsy9daCA6gOTxSYNVqkmDTuvk1I2xR0ScgGqPjD
-         Sfy4Matw/vvcSOU3N1Aks2yjRniTuDIabU+GT2tphv7ZicupGzdXcQkJ2VbN9VQPF38t
-         sKfo2XFaSuc+bgGqgHTGTLhkFSFbdfrs08I/YRvVOMKSuCgX/7U6T4x4mNgRMaQ9KAZ2
-         FahdOHR1k3Oeh/KSRtLlYQAVZDS3TMFxaNbgQOb9sMlB8bWtu6CGwAKOsj+ZARlNiX6B
-         QJ9g==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=CCHNX741+saiQLsyIU9KzmY+5ev+1EhGixPLm6eQfL8=;
+        b=tOpTCz8FHkOMkm68P7m2bp/UU8CN8z5o/dMGUcsbgy5MAIlueYgtHc3n4TxuIpJjit
+         XTeleDnQLBmNMYcQiED1Fv8ncHM0vmH/hBXXiBA5nbK2DTOCSCG0mD7/uMWICxInqZuS
+         XY6Ab/4sR3H0bAcoaOMFyrYoQ0RQsOy322XT7Vx4uQkaWbQLsj5oaSR5xQv7xLnFw1XT
+         ETQ/cKIIVLvauvI7FL2HGVViII8Oi4FldiZruuR3cafDZ1/oWcsETUmM8ZqhObuESoTe
+         kiuVByFayF00tUSRLPBLYtoMX/7lf0UfDznP/ltiXqsIPygeiFa5sFscEajZrzTGyv8L
+         TQVw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=CCHNX741+saiQLsyIU9KzmY+5ev+1EhGixPLm6eQfL8=;
+        b=kcnWj7vr76aaapdqgeS8DX9UsNsMmLsI4YMywVKDpOD8MHws9goE9l79ldMFVhkFa6
+         19CTxWHlMDEAVm6eHm/BG3D3bwizP5PhqGNuFc0DKwnFt9huBqhrqq8QUpOXptJEdwQR
+         UZRacwWnpjRfWXaLCwjALHDOkFLYjtKjW7IIc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2F0jI+CA6cfoLi4EbDtVyIGjIAX/atVlgLdOJ64bNUI=;
-        b=sYYVjQRz8HF/JKjAaRI+WZWphkgKgKxRTNtN/UTdE4iJ19XLg34IGUv3bvOAi83bzH
-         VRHrGereoFiMroNuWu1ECz/pyWkE57jPumu6wvoTZYkluJWQs1RXgiUVVpiPVrZB2EpA
-         8QMX9fEmzeH9CbXbxqk+gj+McUid14zhnmFcineA/XL9BAUP6vrV+yA2YSGeu97/BGaD
-         oOQnE1EuBazznxpBMGxFdxk7akBkNX1t8usvhbCFrfwp5LghhEeLtZ0/x4jqDQ8jmxGY
-         mKuCCqBR0dLL2+lv7prAqIT3dQy/tlfGwlpQgW5+j9Noq27z6DFzOkqG3GaAlqOlBeUb
-         WnGw==
-X-Gm-Message-State: APt69E25vvlFvPEQnXqb6/KxeNWSY4P/N/cSNia15ubhwXecQdSwFz78
-        EC1gQ0le+2DXQe2r6iyGmBlREUdAlT7zpaoL42cBPw==
-X-Google-Smtp-Source: ADUXVKK2gYFTH7LD9g2BXySSmYpS5DObwTYJyQSwS1heUvnMBLB1OTqfGS1oRURkyD+OQ1zwdJy8xgV0ioXiIcqV5u8=
-X-Received: by 2002:adf:dd03:: with SMTP id a3-v6mr16378212wrm.2.1529444300536;
- Tue, 19 Jun 2018 14:38:20 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=CCHNX741+saiQLsyIU9KzmY+5ev+1EhGixPLm6eQfL8=;
+        b=DMcIc98C/UK2aHR6Ca6ZfQcBMUo4gamVzNIsjFBWnQ4DqlyT6XzaLdq4NEkBi7avy4
+         c1x83fGGNJCO89qEuTpkN8qMdsTS9TJSR4mG8YLAljqtR9ro8tQ0+risuyuXhuzPxoh7
+         bpkjk3TAFW7vR1Sk6otiu7d1FoTGkSTqeDh19qQAsj2eRVu1mhyn0HH5Q9E3IRwuF7F6
+         vP8toVtq9Bhnjv7W1zQFysxOuBpJERL1yLuH0fsF50FEGUovoVRRwhQ13Jy2XZDQSWCO
+         uajH58t8/uiux3b/eHOSfCkcSWbK512bJwCwGG5iFg5D5JbdG/34MXtV5HNTLyaZv3Eb
+         ogOg==
+X-Gm-Message-State: APt69E0oRvJsxM7W4I2j3Mkn76cUxvqTHL3DvmuzvaqWPmhl1XALoNFA
+        JXqli6tGp8TTOw9zxLXuCxPferbZbBZDa7ZO8zkvzxmahEM=
+X-Google-Smtp-Source: ADUXVKLP7pShquZlOHOtQ5FY7K3Vd2pBqqGxSRkHpf3+onOdRhdaZjUifwOJGIOkJ4EEjaiHAgCaVQmc5NyHGN0jvA0=
+X-Received: by 2002:a1f:cd03:: with SMTP id d3-v6mr10761224vkg.101.1529444338224;
+ Tue, 19 Jun 2018 14:38:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180619213352.71740-1-shakeelb@google.com>
-In-Reply-To: <20180619213352.71740-1-shakeelb@google.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Tue, 19 Jun 2018 14:38:08 -0700
-Message-ID: <CALvZod7UVenX76Lo611U-yaXv_nkc0oTFrBapMS-T0rw8Rh4hg@mail.gmail.com>
-Subject: Re: [PATCH] slub: fix __kmem_cache_empty for !CONFIG_SLUB_DEBUG
-To:     Jason@zx2c4.com, Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 14:38:57
+ -0700 (PDT)
+In-Reply-To: <152944311714.16708.13638961630238512631@swboyd.mtv.corp.google.com>
+References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-3-swboyd@chromium.org>
+ <CAD=FV=VpFR4hpREnWpvG2MQAONheKtNfLkyNM8-AFXMcGD7OPQ@mail.gmail.com> <152944311714.16708.13638961630238512631@swboyd.mtv.corp.google.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 19 Jun 2018 14:38:57 -0700
+X-Google-Sender-Auth: D74xia_HXVnF5KPMftfS5Xs5hWE
+Message-ID: <CAD=FV=VjqvPQA5jTUyiMzmetk2br-4fiPQdM4cVzb6ivWcta9A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 2:33 PM Shakeel Butt <shakeelb@google.com> wrote:
->
-> For !CONFIG_SLUB_DEBUG, SLUB does not maintain the number of slabs
-> allocated per node for a kmem_cache. Thus, slabs_node() in
-> __kmem_cache_empty() will always return 0. So, in such situation, it is
-> required to check per-cpu slabs to make sure if a kmem_cache is empty or
-> not.
->
-> Please note that __kmem_cache_shutdown() and __kmem_cache_shrink() are
-> not affected by !CONFIG_SLUB_DEBUG as they call flush_all() to clear
-> per-cpu slabs.
->
-> Fixes: f9e13c0a5a33 ("slab, slub: skip unnecessary kasan_cache_shutdown()")
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> Reported-by: Jason A . Donenfeld <Jason@zx2c4.com>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: <stable@vger.kernel.org>
+Hi,
 
-Forgot to Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+On Tue, Jun 19, 2018 at 2:18 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> Quoting Doug Anderson (2018-06-18 16:54:49)
+>> Hi,
+>>
+>> On Mon, Jun 18, 2018 at 1:52 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+>> > We rely on devices to use pinmuxing configurations in DT to select the
+>> > GPIO function (function 0) if they're going to use the gpio in GPIO
+>> > mode. Let's simplify things for driver authors by implementing
+>> > gpio_request_enable() for this pinctrl driver to mux out the GPIO
+>> > function when the gpio is use from gpiolib.
+>> >
+>> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> > Cc: Doug Anderson <dianders@chromium.org>
+>> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>> > ---
+>> >  drivers/pinctrl/qcom/pinctrl-msm.c | 16 ++++++++++++++++
+>> >  1 file changed, 16 insertions(+)
+>> >
+>> > diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+>> > index 3563c4394837..eacfc5b85f7f 100644
+>> > --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+>> > +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+>> > @@ -176,11 +176,27 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
+>> >         return 0;
+>> >  }
+>> >
+>> > +static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
+>> > +                                  struct pinctrl_gpio_range *range,
+>> > +                                  unsigned offset)
+>> > +{
+>> > +       struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+>> > +       const struct msm_pingroup *g = &pctrl->soc->groups[offset];
+>> > +
+>> > +       /* No funcs? Probably ACPI so can't do anything here */
+>> > +       if (!g->nfuncs)
+>> > +               return 0;
+>>
+>> Is there a reason why you'd want to return 0 instead of some sort of
+>> error code?  Wouldn't you want to know that this pin can't be a GPIO?
+>
+> On ACPI there aren't any functions and thus all pins are GPIO mode and
+> only GPIO mode if they're used as GPIOs. At least that's my
+> understanding of how the ACPI version of this driver works.
 
-> ---
->  mm/slub.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
+OK.  I have no understanding of how the ACPI version of this driver
+works, so your understanding is much more likely to be right than
+mine.  I guess this is just "pinctrl-qdf2xxx.c"?
+
+
+>> Another non-ACPI example is sdc2 on sdm845 and it seems like you'd
+>> want to know if someone tried to set one of those as a GPIO.
+>>
+>> ...oh, but I guess ufs_reset also has no funcs but it still probably
+>> wants to use the GPIO framework to write something.  Hrmmm...  Maybe
+>> check if either in_bit or out_bit is not -1?
 >
-> diff --git a/mm/slub.c b/mm/slub.c
-> index a3b8467c14af..731c02b371ae 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -3673,9 +3673,23 @@ static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n)
->
->  bool __kmem_cache_empty(struct kmem_cache *s)
->  {
-> -       int node;
-> +       int cpu, node;
->         struct kmem_cache_node *n;
->
-> +       /*
-> +        * slabs_node will always be 0 for !CONFIG_SLUB_DEBUG. So, manually
-> +        * check slabs for all cpus.
-> +        */
-> +       if (!IS_ENABLED(CONFIG_SLUB_DEBUG)) {
-> +               for_each_online_cpu(cpu) {
-> +                       struct kmem_cache_cpu *c;
-> +
-> +                       c = per_cpu_ptr(s->cpu_slab, cpu);
-> +                       if (c->page || slub_percpu_partial(c))
-> +                               return false;
-> +               }
-> +       }
-> +
->         for_each_kmem_cache_node(s, node, n)
->                 if (n->nr_partial || slabs_node(s, node))
->                         return false;
-> --
-> 2.18.0.rc1.244.gcf134e6275-goog
->
+> ufs_reset and sdc2 aren't in the GPIO chip's numberspace so I don't
+> think we need to care? At least I can't convince myself that those pins
+> would eventually call into the this function. We could check if offset
+> is greater than ngpios for the chip but that seems useless if higher
+> layers are handling this already.
+
+Ah, I see what you mean.  These pins do have numbers in the code:
+
+PINCTRL_PIN(150, "SDC2_CLK"),
+PINCTRL_PIN(151, "SDC2_CMD"),
+PINCTRL_PIN(152, "SDC2_DATA"),
+PINCTRL_PIN(153, "UFS_RESET"),
+
+...but those are effectively made up numbers and they are all past the
+"ngpios" (150).  ...and the higher level code seems to be already
+checking that.
+
+
+OK, thought I've already proven my cluelessness about this driver,
+FWIW this patch makes sense to me now so FWIW:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+-Doug
