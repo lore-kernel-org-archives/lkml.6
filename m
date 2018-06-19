@@ -2,112 +2,158 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A1DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA86C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B54A62083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:43:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB31720875
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:44:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jvdQLijh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54A62083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FD+uJBk4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB31720875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937335AbeFSHn3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 03:43:29 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34116 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937104AbeFSHn2 (ORCPT
+        id S937372AbeFSHoE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 03:44:04 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41996 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937310AbeFSHoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:43:28 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5J7ctVf080492;
-        Tue, 19 Jun 2018 07:43:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=0cFCnK7qB3cUIFEY95glyAX4VU2EWD49odjxtIJ3NDs=;
- b=jvdQLijhjEA+OYKnubmW5b04R97zMr90ojA/nM7gG56xCoGKkKQYrrNuC/M3anjSHzxr
- G5e1gP5TU79OIeDdKNDO8FZ7dprJPa+NjG+qgQQrhFW8JRFM/bLGUpRtivs52yoreRXa
- Enwjo4h8NKAADPBPpwudwqsYv1vveofSiByVVSi8Mo8FVK2salV1oiUaN28crSn6TWbG
- DT+Bqxy+MD7BpyvSh/HR3+7PN0cdcbrfy7qgwzsPaSvRsCxEj3fwuG0yvChFPtghSP60
- lFrrd2tXMLUotkLM1MX/949xERoqp1FaEOkhTiIjOivBDrSIqTHijFSf09THvTcnrely Ng== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwpwhr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 07:43:10 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5J7h8eE028352
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 07:43:08 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5J7h6Da029189;
-        Tue, 19 Jun 2018 07:43:06 GMT
-Received: from mwanda (/197.157.34.185)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Jun 2018 00:43:06 -0700
-Date:   Tue, 19 Jun 2018 10:42:48 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Anton Vasilyev <vasilyev@ispras.ru>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        devel@driverdev.osuosl.org, ldv-project@linuxtesting.org,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-kernel@vger.kernel.org, Sinan Kaya <okaya@codeaurora.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Gaurav Pathak <gauravpathak129@gmail.com>
-Subject: Re: your mail
-Message-ID: <20180619074248.ssu5kza6wdwhzdqi@mwanda>
-References: <CAHp75VetOuS+H4GU9UW-Ekczs22-Ju++jXWdvkMJGktbumDzwQ@mail.gmail.com>
- <20180613173128.32384-1-vasilyev@ispras.ru>
+        Tue, 19 Jun 2018 03:44:02 -0400
+Received: by mail-lf0-f65.google.com with SMTP id z207-v6so7227567lff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 00:44:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SL9kqE4gC9WEiP8ZVS00isWRMb/KcvkqdW7V3H/mMw8=;
+        b=FD+uJBk4VKt6Ib7+pPYBpFn/aQ6bYzqXsvRYkkJ3HZ21Y2i7m9DQChGaTQeOADJWz+
+         7QtDxzNxbckzKvHN3isjVoUxImJwKmGS4yMWrS21Hyzrd6j6q4rmNxKVRQS1OUUITReK
+         xQe6X6TvISFwqXJpK1v4E3JGOq1k+o4EVdc+4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SL9kqE4gC9WEiP8ZVS00isWRMb/KcvkqdW7V3H/mMw8=;
+        b=AOEQxgK4KxpDiKNI55ipLGjrMu5VwS3czJyQpCmBVRdwyTMD+WKGDM5qrm+00+hadI
+         bEWZQ1pAH5yvQglOCU4XLziJYi+7KKIY2kXvhDQ6+d7rxw1uV2Yf5yNyQjUVYTar4IT1
+         AWaeUJ47iVsW0ztRDRuaST017i19iE3b9obKSU8EIuoB7IAKPsGho1q1ng2mj3+4xiDk
+         JMfFFlrUpn6nChUbi9np2YtERPm0cXq9THstr+kafq0UVZKYsVzfwLhqtMTNqdhLNUNU
+         aEJk4NGfKOXpVxeHjNjnj0k9glf0Qqn+g9YFoM5GhWX7dcWL1B5wd5qNfsXyyQ+CbipW
+         SrMQ==
+X-Gm-Message-State: APt69E0tqK9HZXH3HWZz3Pc8Y+hlLnyrma8CXpwFo8a8L4tWk/V2ePAF
+        tEayd2BNQAVnRHL/o527yWWmyOVhHhi6ZWIWq56vHg==
+X-Google-Smtp-Source: ADUXVKJ1IMeE3cXBrqTONRxWHb0Us8C703HKQUHJacQY5OHZWIYhS7m0BbvhSqF2CmDEiW1RxhF9G0USecheradRLD0=
+X-Received: by 2002:a2e:2408:: with SMTP id k8-v6mr3050289ljk.95.1529394241460;
+ Tue, 19 Jun 2018 00:44:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613173128.32384-1-vasilyev@ispras.ru>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=48 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=426
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806190089
+Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 00:44:00
+ -0700 (PDT)
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 19 Jun 2018 13:14:00 +0530
+Message-ID: <CA+G9fYuDOb6hdSRW6KUE9S6FHB9-dFCzwX09Tb_DsSFPf8EjDw@mail.gmail.com>
+Subject: Re: [PATCH 4.16 000/279] 4.16.17-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for this.  This is a lot of work.
+On 18 June 2018 at 13:39, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
+rote:
+> This is the start of the stable review cycle for the 4.16.17 release.
+> There are 279 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Jun 20 08:05:28 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.16.17-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On Wed, Jun 13, 2018 at 08:31:28PM +0300, Anton Vasilyev wrote:
-> diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
-> index 70e0b8623110..69e6abe14abf 100644
-> --- a/drivers/staging/rts5208/rtsx.c
-> +++ b/drivers/staging/rts5208/rtsx.c
-> @@ -857,7 +857,7 @@ static int rtsx_probe(struct pci_dev *pci,
->  	dev->chip = kzalloc(sizeof(*dev->chip), GFP_KERNEL);
->  	if (!dev->chip) {
->  		err = -ENOMEM;
-> -		goto errout;
-> +		goto chip_alloc_fail;
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-The most recent successful allocation is scsi_host_alloc().  I was
-really hoping this would say something like "goto err_free_host;" or
-something.  The naming style here is a "come from" label which doesn't
-say if it's going to free the scsi host or not...  It turns out we don't
-free the the host, but we should:
+Summary
+------------------------------------------------------------------------
 
-err_put_host:
-	scsi_host_put(host);
+kernel: 4.16.17-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.16.y
+git commit: 957de898f0f3aac469028d303d1384bc0a975e93
+git describe: v4.16.16-279-g957de898f0f3
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe/bu=
+ild/v4.16.16-279-g957de898f0f3
 
-The kzalloc() has it's own error message built in, and all the other
-error paths as well so the dev_err() is not super important to me...
+No regressions (compared to build v4.16.16-280-g893364ab48d9)
 
-Killing the threads seems actually really complicated so maybe we should
-just have a separate error paths for that.  I'm not sure...
+Ran 11514 total tests in the following environments and test suites.
 
-regards,
-dan carpenter
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
 
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-filecaps-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
