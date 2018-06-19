@@ -2,96 +2,127 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16002C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAC6C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE1A020652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:02:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE1A020652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F30120652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F30120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030246AbeFSRCu (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:02:50 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34805 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966800AbeFSRCg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:02:36 -0400
-Received: by mail-pl0-f67.google.com with SMTP id g20-v6so182072plq.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:02:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=m0/g9RHLZXNS8aWMcbA9cJ/cwoo4enqkKSdVjDpDIHs=;
-        b=b0GMVx1pwwtlCszt6mT+dVdBiBuSBS8Valgsj5FAcCIx8p9JXcLF3u9CisTrzZb2To
-         nMyRHfxHj3f/suvWvsSWpsFw71RMgJGtL3Qy0DLisjJVJA37lrkdbFIPZpUrnZtKlEGp
-         eBOfsPpLQU9mJ86Pv/kuGiep0etcYNj5C7jNyZosWNMRKqyTEoLKjnu5BSnXbvKphb9A
-         Q+DA/82X811H/X3bVKTiX0Q/gi7L5R1AxaPuisHAgwda8ZrBhH6CNsQ1uN/k6jQSscAz
-         etP0Ak0ugr7/BqpVw2LFXFM2iOqg9i6uSUDjOo4PIrHrOuTmeK+b3DECWDe76k5V4VaF
-         f6Ww==
-X-Gm-Message-State: APt69E3lI/PTUnBlX0gsr8MT1kK127gHwbu9tAG8Vo8Q8DRCJHwwznRA
-        D3mFsKiHma0TRNd8hhIT9F+ELQ==
-X-Google-Smtp-Source: ADUXVKJEz2LvOaDeA+KoPGWMrpMcDzv7hiCbe//Oso0vyKcizw+W7vJVX0yZGMBiodqUNrAhi+z6cw==
-X-Received: by 2002:a17:902:654c:: with SMTP id d12-v6mr19615561pln.8.1529427756269;
-        Tue, 19 Jun 2018 10:02:36 -0700 (PDT)
-Received: from localhost ([207.114.172.147])
-        by smtp.gmail.com with ESMTPSA id z28-v6sm235209pfl.169.2018.06.19.10.02.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 10:02:35 -0700 (PDT)
-From:   Moritz Fischer <mdf@kernel.org>
-To:     davem@davemloft.net
-Cc:     keescook@chromium.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH] net: nixge: Add __packed attribute to DMA descriptor struct
-Date:   Tue, 19 Jun 2018 09:54:53 -0700
-Message-Id: <20180619165453.31894-1-mdf@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S967044AbeFSRDK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 13:03:10 -0400
+Received: from mga12.intel.com ([192.55.52.136]:22922 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966775AbeFSRDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 13:03:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 10:03:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,243,1526367600"; 
+   d="scan'208";a="48294842"
+Received: from 2b52.sc.intel.com ([143.183.136.147])
+  by fmsmga007.fm.intel.com with ESMTP; 19 Jun 2018 10:03:07 -0700
+Message-ID: <1529427588.23068.7.camel@intel.com>
+Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com, Florian Weimer <fweimer@redhat.com>
+Date:   Tue, 19 Jun 2018 09:59:48 -0700
+In-Reply-To: <CAGXu5jJNgu4bW_Zthqjfpe9gLxK0zxG8QFEqqK+pJNebz6tUaw@mail.gmail.com>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
+         <20180607143807.3611-7-yu-cheng.yu@intel.com>
+         <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
+         <1528403417.5265.35.camel@2b52.sc.intel.com>
+         <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
+         <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
+         <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de>
+         <CAMe9rOoCiXQ4iVD3j_AHGrvEXtoaVVZVs7H7fCuqNEuuR5j+2Q@mail.gmail.com>
+         <CALCETrXO8R+RQPhJFk4oiA4PF77OgSS2Yro_POXQj1zvdLo61A@mail.gmail.com>
+         <CAMe9rOpLxPussn7gKvn0GgbOB4f5W+DKOGipe_8NMam+Afd+RA@mail.gmail.com>
+         <CALCETrWmGRkQvsUgRaj+j0CP4beKys+TT5aDR5+18nuphwr+Cw@mail.gmail.com>
+         <CAMe9rOpzcCdje=bUVs+C1WrY6GuwA-8AUFVLOG325LGz7KHJxw@mail.gmail.com>
+         <alpine.DEB.2.21.1806122046520.1592@nanos.tec.linutronix.de>
+         <CAMe9rOrGjJf0aMnUjAP38MqvOiW3=iXGQjcUT3O=f9pE85hXaw@mail.gmail.com>
+         <CALCETrVsh5t-V1Sm88LsZE_+DS0GE_bMWbcoX3SjD6GnrB08Pw@mail.gmail.com>
+         <CAGXu5jK0gospOXRpN6zYiQPXOZeE=YpVAz2qu4Zc3-32v85+EQ@mail.gmail.com>
+         <569B4719-6283-4575-A16E-D0A78D280F4E@amacapital.net>
+         <CAGXu5jJNgu4bW_Zthqjfpe9gLxK0zxG8QFEqqK+pJNebz6tUaw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add __packed attribute to DMA descriptor structure  in order to
-make sure that the DMA engine's alignemnt requirements are met.
+On Tue, 2018-06-19 at 09:44 -0700, Kees Cook wrote:
+> On Tue, Jun 19, 2018 at 7:50 AM, Andy Lutomirski <luto@amacapital.net
+> > wrote:
+> > 
+> > > 
+> > > On Jun 18, 2018, at 5:52 PM, Kees Cook <keescook@chromium.org>
+> > > wrote:
+> > > Following Linus's request for "slow introduction" of new security
+> > > features, likely the best approach is to default to "relaxed"
+> > > (with a
+> > > warning about down-grades), and allow distros/end-users to pick
+> > > "forced" if they know their libraries are all CET-enabled.
+> > I still don’t get what “relaxed” is for.  I think the right design
+> > is:
+> > 
+> > Processes start with CET on or off depending on the ELF note, but
+> > they start with CET unlocked no matter what. They can freely switch
+> > CET on and off (subject to being clever enough not to crash if they
+> > turn it on and then return right off the end of the shadow stack)
+> > until they call ARCH_CET_LOCK.
+> I'm fine with this. I'd expect modern loaders to just turn on CET and
+> ARCH_CET_LOCK immediately and be done with it. :P
 
-Fixes commit 492caffa8a1a ("net: ethernet: nixge: Add support for
-National Instruments XGE netdev")
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
+This is the current implementation.  If the loader has CET in its ELF
+header, it is executed with CET on.  The loader will turn off CET if
+the application being loaded does not support it (in the ELF header).
+ The loader calls ARCH_CET_LOCK before passing to the application.  But
+how do we handle dlopen?
 
-Hi David,
+> > 
+> > Ptrace gets new APIs to turn CET on and off and to lock and unlock
+> > it.  If an attacker finds a “ptrace me and turn off CET” gadget,
+> > then they might as well just do “ptrace me and write shell code”
+> > instead. It’s basically the same gadget. Keep in mind that the
+> > actual sequence of syscalls to do this is incredibly complicated.
+> Right -- if an attacker can control ptrace of the target, we're way
+> past CET. The only concern I have, though, is taking advantage of
+> expected ptracing. For example: browsers tend to have crash handlers
+> that launch a ptracer. If ptracing disabled CET for all threads, this
+> won't by safe: an attacker just gains control in two threads, crashes
+> one to get the ptracer to attach, which disables CET in the other
+> thread and the attacker continues ROP as normal. As long as the
+> ptrace
+> disabling is thread-specific, I think this will be okay.
 
-this addresses an issue where padding occured breaking the alignment
-in the array the descriptors are allocated in coherent memory.
-This was discovered when we tried to bring up the driver via a PCIe
-bridge on x86.
+If ptrace can turn CET on/off and it is thread-specific, do we still
+need ptrace lock/unlock?
 
-Thanks,
-
-Moritz
-
----
- drivers/net/ethernet/ni/nixge.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
-index 09f674ec0f9e..fea0e994324b 100644
---- a/drivers/net/ethernet/ni/nixge.c
-+++ b/drivers/net/ethernet/ni/nixge.c
-@@ -122,7 +122,7 @@ struct nixge_hw_dma_bd {
- 	u32 sw_id_offset;
- 	u32 reserved5;
- 	u32 reserved6;
--};
-+} __packed;
- 
- struct nixge_tx_skb {
- 	struct sk_buff *skb;
--- 
-2.17.1
-
+Yu-cheng
