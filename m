@@ -5,86 +5,161 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EB2C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4568EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB9172083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:59:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB9172083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F19BB20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:59:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19BB20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966821AbeFSP71 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:59:27 -0400
-Received: from mga11.intel.com ([192.55.52.93]:35525 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966563AbeFSP70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:59:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 08:59:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,243,1526367600"; 
-   d="scan'208";a="238787359"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.135])
-  by fmsmga006.fm.intel.com with ESMTP; 19 Jun 2018 08:59:25 -0700
-Date:   Tue, 19 Jun 2018 08:59:25 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
-Subject: Re: [PATCH v11 09/13] x86, sgx: basic routines for enclave page cache
-Message-ID: <20180619155924.GA13375@linux.intel.com>
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
- <20180608171216.26521-10-jarkko.sakkinen@linux.intel.com>
- <3c1b04d6-6e93-efaa-1890-101b7fd9784c@intel.com>
- <20180619145753.GB8034@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619145753.GB8034@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S966878AbeFSP7f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:59:35 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:36113 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966823AbeFSP7d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:59:33 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MYHJs-1fiYa5275k-00UncD; Tue, 19 Jun 2018 17:58:29 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Gang He <ghe@suse.com>, Alex Chen <alex.chen@huawei.com>,
+        piaojun <piaojun@huawei.com>, Eric Ren <zren@suse.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Larry Chen <lchen@suse.com>, ocfs2-devel@oss.oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ocfs2: dlmglue: clean up timestamp handling
+Date:   Tue, 19 Jun 2018 17:58:07 +0200
+Message-Id: <20180619155826.4106487-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:YL6FV2+7bJSirRzfNYFrms3DDgm0QuOHraNIKTwM7HMd+NM5tiF
+ c4elAoqV/CVGw9wmGn9ukWT7czTRn1jKLbYdwuNOyUm/vv3odV10sEvUBhiEJO84qUNh4t+
+ bd3pSiYWWvCTdbsF0JCNZ+WxRJyPBQ6csv6W4Al+0LGM/zNEwF7+xByB0cY+FNlQGlxh/F2
+ gQ8z4WkCJfJl80neBAEVg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:79ql++emtRY=:3owj7DTM2xXRxcTD25GD1l
+ GaKhcWDoZXw8w4pUqMGGLswRROwwqwltyfwtKOVLYD1Qa5dFSbD4VdPOqasveL+gvNzZyh9x5
+ d5fSb/iTn6d3iHVj/iQ88gtCc9lL41b7ATnkoj3di12J4KZMPoULIcWSQ7NxR39aKdrffpEzI
+ ZXpM3YSR+R6pVRgxu3WxKIy8NbU/hPH0zuQOYveHZxpos7RjCAPqaOrk28CADP6ufq/TOSqbE
+ osWdH2gdxrksbMv0myPRVxIyJqe2tiDWcwQaU7k5U25WSS+0dZHOeAy7AD73EwS4pMKN3mpu4
+ s07tis92H9wPAYLOFbd2zgnrTKZ/Jk4GbDoWdGhVRRLM1PvH8d9gs7wc8h2Na93nAM2TVJQOg
+ 8szvleGKMRwcOdUlSx9LytwWXmS8qO/Q1d9E6BrNWLNejKsJO1dOSvPtbKel0G+UybRsAKxdW
+ pIsB9pnh3YECdeSQSTBqGEloI4JDD205rosgBHO3jijWYN+QF4xM6PY/E5dFkEG3Micy9v6f5
+ CopEnjjRQ3ZBNThuI7OScJEnET7UErHWJBZfJ93K+/rAfKt4Y6MEdyru0vAOaVkLTSaCoaxKJ
+ b71NqK9CSnmMeRfL//OmgFRjITLT+wPnEZrNWO+qxT8A0X9F9B8W6hvd6jiu0nEvb8kCPxa1A
+ HvTQ7aoPypzYBgUM1JxlfIyfZJoHC0DsAjgCcI0GPUdJG3V+lDoWdlTJPuEEuOK92zuA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 05:57:53PM +0300, Jarkko Sakkinen wrote:
-> On Fri, Jun 08, 2018 at 11:24:12AM -0700, Dave Hansen wrote:
-> > On 06/08/2018 10:09 AM, Jarkko Sakkinen wrote:
-> > > +static __init bool sgx_is_enabled(bool *lc_enabled)
-> > >  {
-> > >  	unsigned long fc;
-> > >  
-> > > @@ -41,12 +466,26 @@ static __init bool sgx_is_enabled(void)
-> > >  	if (!(fc & FEATURE_CONTROL_SGX_ENABLE))
-> > >  		return false;
-> > >  
-> > > +	*lc_enabled = !!(fc & FEATURE_CONTROL_SGX_LE_WR);
-> > > +
-> > >  	return true;
-> > >  }
-> > 
-> > I'm baffled why lc_enabled is connected to the enclave page cache.
-> 
-> KVM works only with writable MSRs. Driver works both with writable
-> and read-only MSRs.
+The handling of timestamps outside of the 1970..2038 range in the dlm
+glue is rather inconsistent: on 32-bit architectures, this has always
+wrapped around to negative timestamps in the 1902..1969 range, while on
+64-bit kernels all timestamps are interpreted as positive 34 bit numbers
+in the 1970..2514 year range.
 
-That's not true, KVM can/will support SGX regardless of whether or not
-Launch Control (LC) is available and/or enabled.  KVM does need to
-know whether or not LC is enabled.
+Now that the VFS code handles 64-bit timestamps on all architectures,
+we can make the behavior more consistent here, and return the same result
+that we had on 64-bit already, making the file system y2038 safe in the
+process. Outside of dlmglue, it already uses 64-bit on-disk timestamps
+anway, so that part is fine.
 
-Back to Dave's question, LC isn't connected to the EPC management,
-the LC code should be split into a separate patch.
+For consistency, I'm changing ocfs2_pack_timespec() to clamp
+anything outside of the supported range to the minimum and maximum
+values. This avoids a possible ambiguity of values before 1970
+in particular, which used to be interpreted as times at the end of the
+2514 range previously.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/ocfs2/dlmglue.c | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
+
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index 0ff424c6d17c..50610a9ed9f4 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2121,10 +2121,10 @@ static void ocfs2_downconvert_on_unlock(struct ocfs2_super *osb,
  
-> Thanks, I'll try my best to deal with all this :-)
-> 
-> /Jarkko
+ /* LVB only has room for 64 bits of time here so we pack it for
+  * now. */
+-static u64 ocfs2_pack_timespec(struct timespec *spec)
++static u64 ocfs2_pack_timespec(struct timespec64 *spec)
+ {
+ 	u64 res;
+-	u64 sec = spec->tv_sec;
++	u64 sec = clamp_t(time64_t, spec->tv_sec, 0, 0x3ffffffffull);
+ 	u32 nsec = spec->tv_nsec;
+ 
+ 	res = (sec << OCFS2_SEC_SHIFT) | (nsec & OCFS2_NSEC_MASK);
+@@ -2140,7 +2140,6 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
+ 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+ 	struct ocfs2_lock_res *lockres = &oi->ip_inode_lockres;
+ 	struct ocfs2_meta_lvb *lvb;
+-	struct timespec ts;
+ 
+ 	lvb = ocfs2_dlm_lvb(&lockres->l_lksb);
+ 
+@@ -2161,15 +2160,12 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
+ 	lvb->lvb_igid      = cpu_to_be32(i_gid_read(inode));
+ 	lvb->lvb_imode     = cpu_to_be16(inode->i_mode);
+ 	lvb->lvb_inlink    = cpu_to_be16(inode->i_nlink);
+-	ts = timespec64_to_timespec(inode->i_atime);
+ 	lvb->lvb_iatime_packed  =
+-		cpu_to_be64(ocfs2_pack_timespec(&ts));
+-	ts = timespec64_to_timespec(inode->i_ctime);
++		cpu_to_be64(ocfs2_pack_timespec(&inode->i_atime));
+ 	lvb->lvb_ictime_packed =
+-		cpu_to_be64(ocfs2_pack_timespec(&ts));
+-	ts = timespec64_to_timespec(inode->i_mtime);
++		cpu_to_be64(ocfs2_pack_timespec(&inode->i_ctime));
+ 	lvb->lvb_imtime_packed =
+-		cpu_to_be64(ocfs2_pack_timespec(&ts));
++		cpu_to_be64(ocfs2_pack_timespec(&inode->i_mtime));
+ 	lvb->lvb_iattr    = cpu_to_be32(oi->ip_attr);
+ 	lvb->lvb_idynfeatures = cpu_to_be16(oi->ip_dyn_features);
+ 	lvb->lvb_igeneration = cpu_to_be32(inode->i_generation);
+@@ -2178,7 +2174,7 @@ static void __ocfs2_stuff_meta_lvb(struct inode *inode)
+ 	mlog_meta_lvb(0, lockres);
+ }
+ 
+-static void ocfs2_unpack_timespec(struct timespec *spec,
++static void ocfs2_unpack_timespec(struct timespec64 *spec,
+ 				  u64 packed_time)
+ {
+ 	spec->tv_sec = packed_time >> OCFS2_SEC_SHIFT;
+@@ -2187,7 +2183,6 @@ static void ocfs2_unpack_timespec(struct timespec *spec,
+ 
+ static void ocfs2_refresh_inode_from_lvb(struct inode *inode)
+ {
+-	struct timespec ts;
+ 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+ 	struct ocfs2_lock_res *lockres = &oi->ip_inode_lockres;
+ 	struct ocfs2_meta_lvb *lvb;
+@@ -2215,15 +2210,12 @@ static void ocfs2_refresh_inode_from_lvb(struct inode *inode)
+ 	i_gid_write(inode, be32_to_cpu(lvb->lvb_igid));
+ 	inode->i_mode    = be16_to_cpu(lvb->lvb_imode);
+ 	set_nlink(inode, be16_to_cpu(lvb->lvb_inlink));
+-	ocfs2_unpack_timespec(&ts,
++	ocfs2_unpack_timespec(&inode->i_atime,
+ 			      be64_to_cpu(lvb->lvb_iatime_packed));
+-	inode->i_atime = timespec_to_timespec64(ts);
+-	ocfs2_unpack_timespec(&ts,
++	ocfs2_unpack_timespec(&inode->i_mtime,
+ 			      be64_to_cpu(lvb->lvb_imtime_packed));
+-	inode->i_mtime = timespec_to_timespec64(ts);
+-	ocfs2_unpack_timespec(&ts,
++	ocfs2_unpack_timespec(&inode->i_ctime,
+ 			      be64_to_cpu(lvb->lvb_ictime_packed));
+-	inode->i_ctime = timespec_to_timespec64(ts);
+ 	spin_unlock(&oi->ip_lock);
+ }
+ 
+-- 
+2.9.0
+
