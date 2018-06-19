@@ -3,202 +3,158 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A86C5AE5E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA05C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504EB20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:10:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504EB20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 06D5420652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:13:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06D5420652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755447AbeFSVKd (ORCPT
+        id S1757188AbeFSVNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:10:33 -0400
-Received: from mga03.intel.com ([134.134.136.65]:61639 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755540AbeFSVKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:10:25 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 14:10:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,244,1526367600"; 
-   d="scan'208";a="50641549"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga008.jf.intel.com with ESMTP; 19 Jun 2018 14:10:23 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fVNtO-000J0N-TX; Wed, 20 Jun 2018 05:10:22 +0800
-Date:   Wed, 20 Jun 2018 05:09:26 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     kbuild-all@01.org, David Woodhouse <dwmw2@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-mtd@lists.infradead.org,
+        Tue, 19 Jun 2018 17:13:30 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:39681 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755280AbeFSVN3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 17:13:29 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0T3.ut0h_1529442786;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T3.ut0h_1529442786)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 20 Jun 2018 05:13:10 +0800
+Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] jffs2: use unsigned 32-bit timstamps consistently
-Message-ID: <201806200530.EiSnqUgV%fengguang.wu@intel.com>
-References: <20180619155925.4107498-2-arnd@arndb.de>
+References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
+ <20180619100218.GN2458@hirez.programming.kicks-ass.net>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <f78924fc-ea81-9ddd-ebb2-28241d5721c8@linux.alibaba.com>
+Date:   Tue, 19 Jun 2018 14:13:05 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619155925.4107498-2-arnd@arndb.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180619100218.GN2458@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
-
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.18-rc1 next-20180619]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Arnd-Bergmann/jffs2-use-64-bit-intermediate-timestamps/20180620-015800
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-sparse warnings: (new ones prefixed by >>)
+On 6/19/18 3:02 AM, Peter Zijlstra wrote:
+> On Tue, Jun 19, 2018 at 07:34:16AM +0800, Yang Shi wrote:
+>
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index fc41c05..e84f80c 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -2686,6 +2686,141 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+>>   	return __split_vma(mm, vma, addr, new_below);
+>>   }
+>>   
+>> +/* Consider PUD size or 1GB mapping as large mapping */
+>> +#ifdef HPAGE_PUD_SIZE
+>> +#define LARGE_MAP_THRESH	HPAGE_PUD_SIZE
+>> +#else
+>> +#define LARGE_MAP_THRESH	(1 * 1024 * 1024 * 1024)
+>> +#endif
+>> +
+>> +/* Unmap large mapping early with acquiring read mmap_sem */
+>> +static int do_munmap_zap_early(struct mm_struct *mm, unsigned long start,
+>> +			       size_t len, struct list_head *uf)
+>> +{
+>> +	unsigned long end = 0;
+>> +	struct vm_area_struct *vma = NULL, *prev, *last, *tmp;
+>> +	bool success = false;
+>> +	int ret = 0;
+>> +
+>> +	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE - start)
+>> +		return -EINVAL;
+>> +
+>> +	len = (PAGE_ALIGN(len));
+>> +	if (len == 0)
+>> +		return -EINVAL;
+>> +
+>> +	/* Just deal with uf in regular path */
+>> +	if (unlikely(uf))
+>> +		goto regular_path;
+>> +
+>> +	if (len >= LARGE_MAP_THRESH) {
+>> +		down_read(&mm->mmap_sem);
+>> +		vma = find_vma(mm, start);
+>> +		if (!vma) {
+>> +			up_read(&mm->mmap_sem);
+>> +			return 0;
+>> +		}
+>> +
+>> +		prev = vma->vm_prev;
+>> +
+>> +		end = start + len;
+>> +		if (vma->vm_start > end) {
+>> +			up_read(&mm->mmap_sem);
+>> +			return 0;
+>> +		}
+>> +
+>> +		if (start > vma->vm_start) {
+>> +			int error;
+>> +
+>> +			if (end < vma->vm_end &&
+>> +			    mm->map_count > sysctl_max_map_count) {
+>> +				up_read(&mm->mmap_sem);
+>> +				return -ENOMEM;
+>> +			}
+>> +
+>> +			error = __split_vma(mm, vma, start, 0);
+>> +			if (error) {
+>> +				up_read(&mm->mmap_sem);
+>> +				return error;
+>> +			}
+>> +			prev = vma;
+>> +		}
+>> +
+>> +		last = find_vma(mm, end);
+>> +		if (last && end > last->vm_start) {
+>> +			int error = __split_vma(mm, last, end, 1);
+>> +
+>> +			if (error) {
+>> +				up_read(&mm->mmap_sem);
+>> +				return error;
+>> +			}
+>> +		}
+>> +		vma = prev ? prev->vm_next : mm->mmap;
+> Hold up, two things: you having to copy most of do_munmap() didn't seem
+> to suggest a helper function? And second, since when are we allowed to
 
->> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
->> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
->> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
->> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
->> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
->> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
->> fs/jffs2/dir.c:263:15: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:230:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:403:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:546:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:591:24: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:715:22: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
-   fs/jffs2/dir.c:800:15: sparse: expression using sizeof(void)
---
->> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
->> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
->> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
->> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
->> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
->> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
->> fs/jffs2/fs.c:115:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:116:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:117:21: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
-   fs/jffs2/fs.c:476:45: sparse: expression using sizeof(void)
-   include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
-   include/linux/slab.h:631:13: sparse: call with no type!
+Yes, they will be extracted into a helper function in the next version.
 
-vim +263 fs/jffs2/dir.c
+May bad, I don't think it is allowed. We could reform this to:
 
-^1da177e Linus Torvalds      2005-04-16  241  
-^1da177e Linus Torvalds      2005-04-16  242  
-^1da177e Linus Torvalds      2005-04-16  243  static int jffs2_link (struct dentry *old_dentry, struct inode *dir_i, struct dentry *dentry)
-^1da177e Linus Torvalds      2005-04-16  244  {
-fc64005c Al Viro             2016-04-10  245  	struct jffs2_sb_info *c = JFFS2_SB_INFO(old_dentry->d_sb);
-2b0143b5 David Howells       2015-03-17  246  	struct jffs2_inode_info *f = JFFS2_INODE_INFO(d_inode(old_dentry));
-^1da177e Linus Torvalds      2005-04-16  247  	struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
-^1da177e Linus Torvalds      2005-04-16  248  	int ret;
-^1da177e Linus Torvalds      2005-04-16  249  	uint8_t type;
-3a69e0cd Artem B. Bityutskiy 2005-08-17  250  	uint32_t now;
-^1da177e Linus Torvalds      2005-04-16  251  
-^1da177e Linus Torvalds      2005-04-16  252  	/* Don't let people make hard links to bad inodes. */
-^1da177e Linus Torvalds      2005-04-16  253  	if (!f->inocache)
-^1da177e Linus Torvalds      2005-04-16  254  		return -EIO;
-^1da177e Linus Torvalds      2005-04-16  255  
-e36cb0b8 David Howells       2015-01-29  256  	if (d_is_dir(old_dentry))
-^1da177e Linus Torvalds      2005-04-16  257  		return -EPERM;
-^1da177e Linus Torvalds      2005-04-16  258  
-^1da177e Linus Torvalds      2005-04-16  259  	/* XXX: This is ugly */
-2b0143b5 David Howells       2015-03-17  260  	type = (d_inode(old_dentry)->i_mode & S_IFMT) >> 12;
-^1da177e Linus Torvalds      2005-04-16  261  	if (!type) type = DT_REG;
-^1da177e Linus Torvalds      2005-04-16  262  
-a7cab044 Arnd Bergmann       2018-06-19 @263  	now = JFFS2_NOW();
-3a69e0cd Artem B. Bityutskiy 2005-08-17  264  	ret = jffs2_do_link(c, dir_f, f->inocache->ino, type, dentry->d_name.name, dentry->d_name.len, now);
-^1da177e Linus Torvalds      2005-04-16  265  
-^1da177e Linus Torvalds      2005-04-16  266  	if (!ret) {
-ced22070 David Woodhouse     2008-04-22  267  		mutex_lock(&f->sem);
-2b0143b5 David Howells       2015-03-17  268  		set_nlink(d_inode(old_dentry), ++f->inocache->pino_nlink);
-ced22070 David Woodhouse     2008-04-22  269  		mutex_unlock(&f->sem);
-2b0143b5 David Howells       2015-03-17  270  		d_instantiate(dentry, d_inode(old_dentry));
-a7cab044 Arnd Bergmann       2018-06-19  271  		dir_i->i_mtime = dir_i->i_ctime = ITIME(now);
-2b0143b5 David Howells       2015-03-17  272  		ihold(d_inode(old_dentry));
-^1da177e Linus Torvalds      2005-04-16  273  	}
-^1da177e Linus Torvalds      2005-04-16  274  	return ret;
-^1da177e Linus Torvalds      2005-04-16  275  }
-^1da177e Linus Torvalds      2005-04-16  276  
+acquire write mmap_sem
+vma lookup (split vmas)
+release write mmap_sem
 
-:::::: The code at line 263 was first introduced by commit
-:::::: a7cab044350466ac53107fa859f1f2cbc4d5112b jffs2: use 64-bit intermediate timestamps
+acquire read mmap_sem
+zap pages
+release read mmap_sem
 
-:::::: TO: Arnd Bergmann <arnd@arndb.de>
-:::::: CC: 0day robot <lkp@intel.com>
+I'm supposed this is safe as what Michal said before.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Thanks,
+Yang
+
+> split VMAs under a read lock?
+
