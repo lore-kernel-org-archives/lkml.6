@@ -3,134 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A78BC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CD2C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7A720020
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7A720020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D9EE20020
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:49:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D9EE20020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966938AbeFSPt3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:49:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:52914 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966597AbeFSPt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:49:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AE111596;
-        Tue, 19 Jun 2018 08:49:26 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D08A93F557;
-        Tue, 19 Jun 2018 08:49:25 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 80E481AE3797; Tue, 19 Jun 2018 16:50:01 +0100 (BST)
-Date:   Tue, 19 Jun 2018 16:50:01 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     YaoJun <yaojun8558363@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm64: mm: mark tramp_pg_dir read-only
-Message-ID: <20180619155001.GP13984@arm.com>
-References: <20180530044806.18449-1-yaojun8558363@gmail.com>
- <20180530091457.GB2452@arm.com>
- <CAKv+Gu8Zc7eQbG-Ww51GXUCEmhe2J03vbq5vVdyaKra-s13KrA@mail.gmail.com>
- <20180619152035.GM13984@arm.com>
- <CAKv+Gu-Mad64U63jjuKGjhg=h2wdoEKm2vywzATBYr-t_UY_bQ@mail.gmail.com>
- <20180619152805.GN13984@arm.com>
- <CAKv+Gu81zgvcLd-N_MMENykxcm6ENvvfCuWOoMGsrfUf9Usy5g@mail.gmail.com>
- <20180619153754.GO13984@arm.com>
- <CAKv+Gu-x-e+M7_28m=zMeZ2=1p6DXWvu2L4K988jpfYjK+=JaA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-x-e+M7_28m=zMeZ2=1p6DXWvu2L4K988jpfYjK+=JaA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S966953AbeFSPti (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:49:38 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:57773 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966516AbeFSPth (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:49:37 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MOXED-1faXXN1Yu5-005r4S; Tue, 19 Jun 2018 17:49:16 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] sysvfs: use ktime_get_real_seconds() for superblock stamp
+Date:   Tue, 19 Jun 2018 17:48:58 +0200
+Message-Id: <20180619154914.3859394-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:Sg7eTiDAzpyigzeqGUXSU8OqqUr67b/yzO/ewNI1FiF3wvSNyas
+ yZz2KvobGZd9Tw1fAE3/KiA2yxo6GAgVIcAEAIPh949VSvcdmsKwJRxABsbMQ0nAPkvc34g
+ +RiTYATRvEdyXp8Ac1YOfn4dgreXYGbJu6LorJ/YXoV1Vlng2zQaaOFDDLnrd0GzO2GsBEf
+ A+1bvJvEPFBBF43NWs8BQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:y7GeZa4+4zA=:71Azyz0qU4AOIrdWH/olHV
+ K7t7EcqNdM7AjJ76s1xlzuHRDmTvGRLxW3nWTXlJsGWeacVygI1gW9Kzf2Nfi6fps2yzhNXHn
+ Hkyg3qdMQzzr+oFB03lov+Jg/9fMYouj/156XUt+eQEipMtXHUzLiTWzStsVayTZfqCdoVJD7
+ +5BqASpBQhOAb7EJq0zdc/zfkyWyQY3/xYntO1WgX3FOKLw7bIxjrOZbNJCtshBQ5VlsPSseO
+ c682LpAfniqMplAczB68R6S0SIFf9aTVwqkSTwz73qaqQ5E7RDKL/7RX3AbhhyDv4ozCxfOnd
+ /ZHz7MMzXcWVoy2r1TRdUf1zqStoOpsYi9Qs+LrDH5K5nn5E9Fwu5oByrG/61J9JaisPPFBb+
+ 0i909GP8Pw0cozR6aagBa6TSLupgTHJERwta4C8zRPxMR0x4NpintzfkMFaO6e29/PdbDtxiF
+ WzdpSGbzhxtLAQc/vjr0J1pl20U1b0ji+tCyVmlqJId+F3mtuW+CudA5BoUNy1YT4C6kzNM98
+ tg+viRv2o4KYl7C5Z79OEVTmtyGT88YtzOGGVKMNXkl5IJW4J3vPQQCrInvAK0+hGbFF4L9mk
+ ocO5Mv/GukSbMf7gJXLBGVN9CrhF8cq9AiNRMCDVN8fxMm+xmYTdTewdbKGcSfXOJOASMQH5s
+ Vn63j41iuSt55tJ6MSwpZz80ulOFXgBdBqUJC6K04EMmN6yh/Gztyo+TF1F4KO6HqQLI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 05:40:26PM +0200, Ard Biesheuvel wrote:
-> On 19 June 2018 at 17:37, Will Deacon <will.deacon@arm.com> wrote:
-> > On Tue, Jun 19, 2018 at 05:29:03PM +0200, Ard Biesheuvel wrote:
-> >> On 19 June 2018 at 17:28, Will Deacon <will.deacon@arm.com> wrote:
-> >> > On Tue, Jun 19, 2018 at 05:23:41PM +0200, Ard Biesheuvel wrote:
-> >> >> On 19 June 2018 at 17:20, Will Deacon <will.deacon@arm.com> wrote:
-> >> >> > Hi Ard,
-> >> >> >
-> >> >> > Sorry, I forgot to reply to this.
-> >> >> >
-> >> >> > On Wed, May 30, 2018 at 11:53:20AM +0200, Ard Biesheuvel wrote:
-> >> >> >> On 30 May 2018 at 11:14, Will Deacon <will.deacon@arm.com> wrote:
-> >> >> >> > On Wed, May 30, 2018 at 12:48:06PM +0800, YaoJun wrote:
-> >> >> >> >> To protect against KSMA(Kernel Space Mirroring Attack), make
-> >> >> >> >> tramp_pg_dir read-only. The principle of KSMA is to insert a
-> >> >> >> >> carefully constructed PGD entry into the translation table.
-> >> >> >> >> The type of this entry is block, which maps the kernel text
-> >> >> >> >> and its access permissions bits are 01. The user process can
-> >> >> >> >> then modify kernel text directly through this mapping. In this
-> >> >> >> >> way, an arbitrary write can be converted to multiple arbitrary
-> >> >> >> >> writes.
-> >> >> >> >>
-> >> >> >> >> Signed-off-by: YaoJun <yaojun8558363@gmail.com>
-> >> >> >> >> ---
-> >> >> >> >>  arch/arm64/mm/mmu.c | 4 ++++
-> >> >> >> >>  1 file changed, 4 insertions(+)
-> >> >> >> >>
-> >> >> >> >> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> >> >> >> >> index 2dbb2c9f1ec1..ac4b22c7e435 100644
-> >> >> >> >> --- a/arch/arm64/mm/mmu.c
-> >> >> >> >> +++ b/arch/arm64/mm/mmu.c
-> >> >> >> >> @@ -551,6 +551,10 @@ static int __init map_entry_trampoline(void)
-> >> >> >> >>       __create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
-> >> >> >> >>                            prot, pgd_pgtable_alloc, 0);
-> >> >> >> >>
-> >> >> >> >> +     update_mapping_prot(__pa_symbol(tramp_pg_dir),
-> >> >> >> >> +                             (unsigned long)tramp_pg_dir,
-> >> >> >> >> +                             PGD_SIZE, PAGE_KERNEL_RO);
-> >> >> >> >
-> >> >> >> > Hmm, I like the idea but is there a risk that the page table has been mapped
-> >> >> >> > as part of a block entry, which we can't safely split at this point (i.e.
-> >> >> >> > we'll run into one of the BUG_ONs in the mapping code)?
-> >> >> >> >
-> >> >> >>
-> >> >> >> We'd need to create a separate segment for it initially so the mapping
-> >> >> >> is already at the right granularity.
-> >> >> >
-> >> >> > Why do you think that's the case? I can't see anything that guarantees this
-> >> >> > for the page table itself.
-> >> >> >
-> >> >>
-> >> >> We'd need to pass NO_BLOCK_MAPPINGS to map_kernel_segment(),
-> >> >> obviously, but that shouldn't hurt since that segment is relatively
-> >> >> tiny anyway.
-> >> >
-> >> > Ah right, with NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS, I agree that we're good.
-> >> > Ideally, we'd move {idmap,swapper,tramp}_pg_dir into .rodata...
-> >> >
-> >>
-> >> idmap and tramp yes, but swapper needs to be modifiable at runtime, no?
-> >
-> > Right, but couldn't we swizzle the permissions in e.g. set_pmd? We could
-> > even predicate that on a sanity check of the prot.
-> >
-> 
-> Swizzle the permissions of the entire .rodata segment? That sounds
-> doable, but there is a whole class of data that belongs in this
-> category, and I think PaX/grsecurity had an API for that (but I don't
-> think anyone is upstreaming that yet). So let's not reinvent that
-> wheel for swapper_pg_dir only.
+get_seconds() is deprecated in favor of ktime_get_real_seconds(),
+which returns a 64-bit timestamp.
 
-I wasn't thinking of the whole .rodata segment -- just the page containing
-the entry being modified, but ok. I was hoping to avoid getting involved
-with the PaX/grsec stuff as it seems rather toxic from what I've seen.
+In the SYSV file system, the superblock timestamp is only 32 bits
+wide, and it is used to check whether a file system is clean, so
+the best solution seems to be to force a wraparound and explicitly
+convert it to an unsigned 32-bit value.
 
-Will
+This is independent of the inode timestamps that are also 32-bit
+wide on disk and that come from current_time().
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/sysv/inode.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
+index bec9f79adb25..499a20a5a010 100644
+--- a/fs/sysv/inode.c
++++ b/fs/sysv/inode.c
+@@ -35,7 +35,7 @@
+ static int sysv_sync_fs(struct super_block *sb, int wait)
+ {
+ 	struct sysv_sb_info *sbi = SYSV_SB(sb);
+-	unsigned long time = get_seconds(), old_time;
++	u32 time = (u32)ktime_get_real_seconds(), old_time;
+ 
+ 	mutex_lock(&sbi->s_lock);
+ 
+@@ -46,8 +46,8 @@ static int sysv_sync_fs(struct super_block *sb, int wait)
+ 	 */
+ 	old_time = fs32_to_cpu(sbi, *sbi->s_sb_time);
+ 	if (sbi->s_type == FSTYPE_SYSV4) {
+-		if (*sbi->s_sb_state == cpu_to_fs32(sbi, 0x7c269d38 - old_time))
+-			*sbi->s_sb_state = cpu_to_fs32(sbi, 0x7c269d38 - time);
++		if (*sbi->s_sb_state == cpu_to_fs32(sbi, 0x7c269d38u - old_time))
++			*sbi->s_sb_state = cpu_to_fs32(sbi, 0x7c269d38u - time);
+ 		*sbi->s_sb_time = cpu_to_fs32(sbi, time);
+ 		mark_buffer_dirty(sbi->s_bh2);
+ 	}
+-- 
+2.9.0
+
