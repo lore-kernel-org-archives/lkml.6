@@ -6,91 +6,89 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA6EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4D9C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C262075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:53:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C262075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A46E20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:54:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A46E20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937959AbeFSMxk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:53:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38798 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937805AbeFSMxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:53:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 176A1ADD3;
-        Tue, 19 Jun 2018 12:53:37 +0000 (UTC)
-Subject: Re: [PATCH v5] scsi: xen-scsifront: add error handling for
- xenbus_printf
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1528774962-39173-1-git-send-email-jiazhouyang09@gmail.com>
- <1529082301-59038-1-git-send-email-jiazhouyang09@gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
- CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
- zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
- kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
- czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
- d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
- 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
- B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
- cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
- w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
- pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
- 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
- KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
- Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
- AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
- UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
- wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
- CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
- HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
- V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
- RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
- W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
- pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
- jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
- hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <b47a3387-bc82-4030-a707-b6bb3a2ddf88@suse.com>
-Date:   Tue, 19 Jun 2018 14:53:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1529082301-59038-1-git-send-email-jiazhouyang09@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        id S937875AbeFSMwm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:52:42 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49280 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937814AbeFSMwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:52:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10D3080D;
+        Tue, 19 Jun 2018 05:52:40 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D6F093F557;
+        Tue, 19 Jun 2018 05:52:39 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 7BB071AE35A5; Tue, 19 Jun 2018 13:53:15 +0100 (BST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        yamada.masahiro@socionext.com, Will Deacon <will.deacon@arm.com>
+Subject: [RESEND PATCH v2 0/9] Rewrite asm-generic/bitops/{atomic,lock}.h and use on arm64
+Date:   Tue, 19 Jun 2018 13:53:05 +0100
+Message-Id: <1529412794-17720-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/06/18 19:05, Zhouyang Jia wrote:
-> When xenbus_printf fails, the lack of error-handling code may
-> cause unexpected results.
-> 
-> This patch adds error-handling code after calling xenbus_printf.
-> 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Hi all,
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+This is a resend of the patches I previously sent here:
 
+  RFCv1: https://www.spinics.net/lists/arm-kernel/msg634719.html
+  RFCv2: https://www.spinics.net/lists/arm-kernel/msg636875.html
+     v1: https://www.spinics.net/lists/arm-kernel/msg655262.html
+     v2: https://lkml.org/lkml/2018/6/1/619
 
-Juergen
+The only change is that I have rebased onto v4.18-rc1.
+
+Ingo -- please can you queue this via -tip when you start picking up
+patches for 4.19? It doesn't conflict with Mark's atomic API rework.
+
+Thanks,
+
+Will
+
+--->8
+
+Will Deacon (9):
+  h8300: Don't include linux/kernel.h in asm/atomic.h
+  m68k: Don't use asm-generic/bitops/lock.h
+  asm-generic: Move some macros from linux/bitops.h to a new bits.h file
+  openrisc: Don't pull in all of linux/bitops.h in asm/cmpxchg.h
+  sh: Don't pull in all of linux/bitops.h in asm/cmpxchg-xchg.h
+  asm-generic/bitops/atomic.h: Rewrite using atomic_*
+  asm-generic/bitops/lock.h: Rewrite using atomic_fetch_*
+  arm64: Replace our atomic/lock bitop implementations with asm-generic
+  arm64: bitops: Include <asm-generic/bitops/ext2-atomic-setbit.h>
+
+ arch/arm64/include/asm/bitops.h     |  21 +---
+ arch/arm64/lib/Makefile             |   2 +-
+ arch/arm64/lib/bitops.S             |  76 ---------------
+ arch/h8300/include/asm/atomic.h     |   4 +-
+ arch/m68k/include/asm/bitops.h      |   6 +-
+ arch/openrisc/include/asm/cmpxchg.h |   3 +-
+ arch/sh/include/asm/cmpxchg-xchg.h  |   3 +-
+ include/asm-generic/bitops/atomic.h | 188 +++++++-----------------------------
+ include/asm-generic/bitops/lock.h   |  68 ++++++++++---
+ include/linux/bitops.h              |  22 +----
+ include/linux/bits.h                |  26 +++++
+ 11 files changed, 131 insertions(+), 288 deletions(-)
+ delete mode 100644 arch/arm64/lib/bitops.S
+ create mode 100644 include/linux/bits.h
+
+-- 
+2.1.4
+
