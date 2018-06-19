@@ -2,132 +2,203 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3BFC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFC3C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E6220693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:14:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EfgaflS4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E6220693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 17DA920652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:15:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17DA920652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757273AbeFSVOn (ORCPT
+        id S1757351AbeFSVPD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:14:43 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46260 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755424AbeFSVOj (ORCPT
+        Tue, 19 Jun 2018 17:15:03 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58312 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755424AbeFSVPB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:14:39 -0400
-Received: by mail-pg0-f65.google.com with SMTP id d2-v6so422024pga.13
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 14:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=UfVpYLMkiEezXrSyrE8F4Q2ue2/44iKrXd204CM5HGA=;
-        b=EfgaflS49yEhbl8/2W76wxAQZryonrrLuHbK6hBl5n1vQ4Nb6hAjDwI5SUkX87uWaQ
-         t3Yh6sPtu5Hp0giySfhsTkJMohI/p+MIQGYARAMzI6+kiQN8XBXpfdjNnjI5xv3OaIXB
-         uvsqudrPA8/iKPYJpT9EWXHMGa3z+KNo8eJYo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=UfVpYLMkiEezXrSyrE8F4Q2ue2/44iKrXd204CM5HGA=;
-        b=oDPj859G/+PPQRMIs/sFhXYPlUGR+VHnSM7ZHle3Vne0eSIn4q8emHazMvMDL3xUaZ
-         Gl+JDYYCaig9Mv2xC5s2G/HEy5BeuZDsNm0DuzBmgcDzSrWTNnMPZ5w1hfeGNH1Qp6od
-         yPaxcjtJOeIrYRRCTvzNAlEN4cV6c0wfmuqAORzGkIdW1xuPYewL+O6ppnCvzzGlx9Qh
-         mjTVXI1wpyDpiDz8yphTHuud9ZnYmYdoRFtD1YTHuxAhRhc74ebnY/y+OhmB49HTENcJ
-         KX5Zi5lzcQJnw4Sy2n3PZ3fu5vnm9GeIBACGPlxfTKHFORLmKHbseOr7GoHltDamoIZn
-         zEJw==
-X-Gm-Message-State: APt69E1/Apo99JbokUkQYObnkzO63zkqhyWJBygg6eUSXc4lkEQfQT8C
-        Lo65phq0jMvzIvKQ94dr+DKXcA==
-X-Google-Smtp-Source: ADUXVKJfv+KwByCMO9+sSx9EAs76kT1N5jrZ10m3xgaRXZQkggeCrcAqJedpRF+2JKKvQo9IxFyNjQ==
-X-Received: by 2002:a62:ccdc:: with SMTP id j89-v6mr19666557pfk.232.1529442879315;
-        Tue, 19 Jun 2018 14:14:39 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm755613pfd.112.2018.06.19.14.14.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 14:14:38 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 19 Jun 2018 17:15:01 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fVNxj-0003va-6z; Tue, 19 Jun 2018 23:14:51 +0200
+Date:   Tue, 19 Jun 2018 23:14:50 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
+        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
+Subject: Re: [PATCH v10 2/7] time: sync read_boot_clock64() with persistent
+ clock
+In-Reply-To: <20180615174204.30581-3-pasha.tatashin@oracle.com>
+Message-ID: <alpine.DEB.2.21.1806192129460.10546@nanos.tec.linutronix.de>
+References: <20180615174204.30581-1-pasha.tatashin@oracle.com> <20180615174204.30581-3-pasha.tatashin@oracle.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Doug Anderson <dianders@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <CAD=FV=UhfffG__41+5yeiDEdN1DYeTkXEoqasc23fb1YKg9F9Q@mail.gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <20180618205255.246104-1-swboyd@chromium.org>
- <20180618205255.246104-2-swboyd@chromium.org>
- <CAD=FV=WvsY_=Ko2QXvzmHOuy4O5Rh6+sRWZZOuSXyGC829ANag@mail.gmail.com>
- <152936452512.16708.5405608343995548468@swboyd.mtv.corp.google.com>
- <CAD=FV=UhfffG__41+5yeiDEdN1DYeTkXEoqasc23fb1YKg9F9Q@mail.gmail.com>
-Message-ID: <152944287756.16708.13539547406156946230@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 1/3] pinctrl: msm: Really mask level interrupts to prevent
- latching
-Date:   Tue, 19 Jun 2018 14:14:37 -0700
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Doug Anderson (2018-06-18 16:38:27)
-> Hi,
-> =
+On Fri, 15 Jun 2018, Pavel Tatashin wrote:
 
-> On Mon, Jun 18, 2018 at 4:28 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> > Quoting Doug Anderson (2018-06-18 15:43:06)
-> >>
-> >> On Mon, Jun 18, 2018 at 1:52 PM, Stephen Boyd <swboyd@chromium.org> wr=
-ote:
-> >>
-> >> > +        */
-> >> > +       if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
-> >> > +               val &=3D ~BIT(g->intr_raw_status_bit);
-> >> > +               writel(val, pctrl->regs + g->intr_cfg_reg);
-> >>
-> >> Do you know if it's important to do a 2nd write here, or could this be
-> >> combined with the next writel()?
-> >
-> > I haven't tried combining the writes. It felt safer to keep them split
-> > up so that both bits don't toggle at the same time, but I don't know if
-> > it actually matters.
-> =
+> read_boot_clock64() returns a boot start timestamp from epoch. Some arches
+> may need to access the persistent clock interface in order to calculate the
+> epoch offset. The resolution of the persistent clock, however, might be
+> low.  Therefore, in order to avoid time discrepancies a new argument 'now'
+> is added to read_boot_clock64() parameters. Arch may decide to use it
+> instead of accessing persistent clock again.
 
-> Maybe I'm a glutton for punishment, but I'd say go for it, unless
-> someone from Qualcomm says "no way".
-> =
+I kinda know what you are trying to say, but it's all but obvious.
 
-> In the very least in the "unmask" case it seems pretty safe.  IMHO if
-> re-enabling the "raw" status caused a glitch we'd already be hitting
-> problems.  Specifically the glitch would end up getting latched
-> (whee!) and then we'd unmask and see the glitch anyway.
-> =
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index 4786df904c22..fb6898fab374 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -1502,9 +1502,13 @@ void __weak read_persistent_clock64(struct timespec64 *ts64)
+>   * Function to read the exact time the system has been started.
+>   * Returns a timespec64 with tv_sec=0 and tv_nsec=0 if unsupported.
+>   *
+> + * Argument 'now' contains time from persistent clock to calculate offset from
+> + * epoch. May contain zeros if persist ant clock is not available.
 
-> ...and actually for the "mask" case it seems like you've written it
-> the less-safe way anyway.  We know that masking can't cause some sort
-> of glitch (since that's the old code), but I guess we don't know
-> whether disabling the "raw" status could cause a glitch.  To be the
-> absolutely safest you'd do the new disable of the "raw" status _after_
-> the old masking.  ...but as per above I'd just go whole hog and
-> combine them.  :-P
-> =
+What's a 'persist ant' ? 
 
-> As with everything I write, feel free to tell me I'm being stupid and
-> I'll try to shut up.  ;-)
-> =
+> + *
+>   *  XXX - Do be sure to remove it once all arches implement it.
+>   */
+> -void __weak read_boot_clock64(struct timespec64 *ts)
+> +void __weak __init read_boot_clock64(struct timespec64 *now,
+> +				     struct timespec64 *ts)
+>  {
+>  	ts->tv_sec = 0;
+>  	ts->tv_nsec = 0;
+> @@ -1535,7 +1539,7 @@ void __init timekeeping_init(void)
+>  	} else if (now.tv_sec || now.tv_nsec)
+>  		persistent_clock_exists = true;
+>  
+> -	read_boot_clock64(&boot);
+> +	read_boot_clock64(&now, &boot);
+
+This interface was already bolted on and this extension just makes it
+worse. If 'now' is invalid then you need the same checks as after
+read_persistent_clock() replicated along with conditionals of some sort.
+
+'boot' time is used to adjust the wall to monotonic offset. So looking at
+the math behind all of that:
+
+   read_persistent_clock(&now);
+   read_boot_clock(&boot);
+
+   tk_set_xtime(tk, now)
+     tk->xtime_sec = now.sec;
+     tk->xtime_nsec = now.nsec;
+
+  tk_set_wall_to_mono(tk, -boot);
+     tk->wall_to_mono = boot;
+     tk->offs_real = -boot;
+
+  timekeeping_update(tk)
+     tk->tkr_mono = tk->xtime + tk->wall_to_mono;
+
+tkr_mono.base is guaranteed to be >= 0. So you need to make sure that
+
+     tk->xtime + tk->wall_to_mono >= 0
+
+Yet another check which you need to do in that magic function. That's just
+wrong. If this grows more users then they all have to copy the same sanity
+checks over and over and half of them will be wrong.
+
+Fortunately there is only a single real user of read_boot_clock() in the
+tree: S390. By virtue of being S390 there is no worry about any sanity
+checks. It just works.
+
+ARM has the function, but there is no single subarch which actually
+implements the thing, so this is easy to fix by removing it.
+
+So the right thing to do is the following:
+
+Provide a new function:
+
+void __weak read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
+					         ktime_t *boot_offset)
+{
+	read_persistent_clock(wall_time);
+}
+
+Then add the new function to S390:
+
+void read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
+     					  ktime_t *boot_offset)
+{
+        unsigned char clk[STORE_CLOCK_EXT_SIZE];
+	struct timespec64 boot_time;
+        __u64 delta;
+
+	read_persistent_clock(wall_time);
+
+        delta = initial_leap_seconds + TOD_UNIX_EPOCH;
+	memcpy(clk, tod_clock_base, 16);
+        *(__u64 *) &clk[1] -= delta;
+        if (*(__u64 *) &clk[1] > delta)
+                clk[0]--;
+        ext_to_timespec64(clk, boot_time);
+	*boot_offset = timespec64_to_ns(timespec64_sub(wall_time, boot_time));
+}
+
+Then rework timekeeping_init():
+
+timekeeping_init()
+   struct timespec64 wall_time, wall_to_mono, offs;
+   ktime_t boot_offset = 0;
+   
+   read_persistent_wall_and_boot_offset(&walltime, &boot_offset);
+
+   if (!valid(walltime))
+        boottime = wall_time.tv_sec = wall_time.tv_nsec = 0;
+   else
+   	persistent_clock = true;
+
+   if (boot_offset > timespec64_to_nsec(wall_time))
+       offs.tv_sec = offs.tv_nsec = 0;
+   else
+       offs = ns_to_timespec64(boot_offset);
+  
+   wall_to_mono = timespec64_sub(offs, wall_time);
+   tk_set_wall_to_mono(tk, wall_time);
 
 
-I've tested it and it seems to work by combining the writes in mask and
-unmask. I will resend it with the combination tomorrow or the next day
-in case anyone else has comments on this series.
+After that remove the read_boot_time() leftovers all over the place. And
+then the x86 implementation boils down to:
 
+void read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
+     					  ktime_t *boot_offset)
+{
+	 x86_platform.get_wallclock(ts);
+	 *boot_offset = sched_clock();
+}
+
+And doing it this way - by adding the extra math to the only architecture
+on the planet which has sane timers - is the right thing to do because all
+other architectures will have to fall back to tricks similar to x86 by
+doing clocksource/schedclock based guestimation of the time where the
+machine actually reached the kernel.
+
+Hmm?
+
+Thanks,
+
+	tglx
