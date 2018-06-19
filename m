@@ -6,80 +6,78 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED53C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08243C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B5420661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B5420661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id ACFB120661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:36:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFB120661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966935AbeFSQg3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:36:29 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53662 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966582AbeFSQg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:36:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE22D1596;
-        Tue, 19 Jun 2018 09:36:28 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7963C3F246;
-        Tue, 19 Jun 2018 09:36:27 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 17:36:25 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: An example of a much more impactful way of doing file
- system-specific fuzzing
-Message-ID: <20180619163624.4sol67vmh7wrfgyo@lakrids.cambridge.arm.com>
-References: <20180618051522.GC28120@thunk.org>
- <CACT4Y+aq6vXoQpFgg6-_rEttnM4i3j7ng5LkP9gbqX98im=afw@mail.gmail.com>
+        id S1030221AbeFSQgp (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:36:45 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36110 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966956AbeFSQgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:36:44 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 09:36:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,243,1526367600"; 
+   d="scan'208";a="64539481"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
+  by fmsmga004.fm.intel.com with ESMTP; 19 Jun 2018 09:36:42 -0700
+Date:   Tue, 19 Jun 2018 10:39:52 -0600
+From:   Keith Busch <keith.busch@linux.intel.com>
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH] nvme-pci: not invoke nvme_remove_dead_ctrl when change
+ state fails
+Message-ID: <20180619163952.GE19922@localhost.localdomain>
+References: <1529397050-7524-1-git-send-email-jianchao.w.wang@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+aq6vXoQpFgg6-_rEttnM4i3j7ng5LkP9gbqX98im=afw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1529397050-7524-1-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+On Tue, Jun 19, 2018 at 04:30:50PM +0800, Jianchao Wang wrote:
+> There is race between nvme_remove and nvme_reset_work that can
+> lead to io hang.
+> 
+> nvme_remove                    nvme_reset_work
+> -> change state to DELETING
+>                                -> fail to change state to LIVE
+>                                -> nvme_remove_dead_ctrl
+>                                  -> nvme_dev_disable
+>                                    -> quiesce request_queue
+>                                  -> queue remove_work
+> -> cancel_work_sync reset_work
+> -> nvme_remove_namespaces
+>   -> splice ctrl->namespaces
+>                                nvme_remove_dead_ctrl_work
+>                                -> nvme_kill_queues
+>   -> nvme_ns_remove               do nothing
+>     -> blk_cleanup_queue
+>       -> blk_freeze_queue
+> Finally, the request_queue is quiesced state when wait freeze,
+> we will get io hang here.
+> 
+> In fact, when fails to change state in nvme_reset_work, the only
+> reason is someone has changed state to DELETING. So it is not
+> necessary to invoke nvme_remove_dead_ctrl in that case.
+> 
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-I hope the below doesn't sound like a criticism; I am a *huge* fan of
-syzkaller.
-
-On Tue, Jun 19, 2018 at 06:18:07PM +0200, 'Dmitry Vyukov' via syzkaller wrote:
-> On Mon, Jun 18, 2018 at 7:15 AM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> 3. You say "not actionable reports without reproducers", but you can
-> find hundreds of fixed bugs without reproducers at [1] and [2]. Fix
-> ratio for bugs without reproducers is 66% which is not significantly
-> lower than 76% for bugs with reproducers. A person without expertise
-> in a particular subsystem (me) can't know if a bug is actionable by an
-> expert in the subsystem (you) without first reporting this bug.
-
-I think it might be possible to make this a bit easier, without any
-manual effort per-bug.
-
-For comparison, when the LKP kernel test robot reports a bug, it
-provides a script to reproduce the issue in a VM, such that the
-developer need only provide a kernel. The script launches the VM with
-the right options, providing a filesystem if necessary, etc.
-
-This is a little more actionale, since the developer need not expend any
-effort trying to reproduce the correct envinronment, which can be
-especially tricky for bugs that don't have a C reproducer.
-
-Would it be possible for syzbot to do something similar?
-
-Thanks,
-Mark.
- 
-> [1] https://syzkaller.appspot.com/?fixed=upstream
-> [2] https://github.com/google/syzkaller/blob/master/docs/linux/found_bugs.md
+Good catch. I think the fix should either have the nvme_dev_disable set
+shutdown to true to indicate the controller isn't coming back online, or
+move the nvme_kill_queues inside nvme_remove_dead_ctrl.
