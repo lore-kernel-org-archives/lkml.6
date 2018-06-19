@@ -6,92 +6,83 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59988C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E350FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 041CA20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:52:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 041CA20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id A2BB7208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:53:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2BB7208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937301AbeFSGwY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:52:24 -0400
-Received: from muru.com ([72.249.23.125]:48058 "EHLO muru.com"
+        id S1755788AbeFSGw6 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 02:52:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59341 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965149AbeFSGuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:50:25 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id D49F78128;
-        Tue, 19 Jun 2018 06:53:02 +0000 (UTC)
-Date:   Mon, 18 Jun 2018 23:50:18 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-omap@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] ARM: OMAP1: ams-delta: drop GPIO lookup table for
- serio device
-Message-ID: <20180619065018.GX112168@atomide.com>
-References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
- <20180612222356.GD38773@dtor-ws>
- <69494657.T0PeNZxiFJ@z50>
- <20180613044152.GB112168@atomide.com>
+        id S1755559AbeFSGw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:52:57 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EA14920850; Tue, 19 Jun 2018 08:52:55 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A4956207D4;
+        Tue, 19 Jun 2018 08:52:45 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 08:52:44 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [RFC PATCH v2 5/6] mtd: rawnand: micron: add
+ ONFI_FEATURE_ON_DIE_ECC to supported features
+Message-ID: <20180619085244.77790406@xps13>
+In-Reply-To: <20180619074056.420d5560@bbrezillon>
+References: <20180619053125.16792-1-chris.packham@alliedtelesis.co.nz>
+        <20180619053125.16792-6-chris.packham@alliedtelesis.co.nz>
+        <20180619074056.420d5560@bbrezillon>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613044152.GB112168@atomide.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [180613 04:44]:
-> * Janusz Krzysztofik <jmkrzyszt@gmail.com> [180613 01:18]:
-> > On Wednesday, June 13, 2018 12:23:56 AM CEST Dmitry Torokhov wrote:
-> > > Hi Janusz,
-> > > 
-> > > On Sat, Jun 09, 2018 at 04:02:15PM +0200, Janusz Krzysztofik wrote:
-> > > > GPIO lookup table for ams-delta-serio device was introduced by commit
-> > > > 0486738928bf ("ARM: OMAP1: ams-delta: add GPIO lookup tables").
-> > > > Unfortunately, a follow up patch "Input: ams_delta_serio: use GPIO
-> > > > lookup table" was not accepted by subystem maintainer who requested
-> > > > conversion of the driver to a platform driver, replacepemnt of IRQ GPIO
-> > > > pin with IRQ resource, replacement of GPIO pin providing keyboard power
-> > > > with a regulator and removal of remaining GPIO pins from the driver as
-> > > > not handled by it.
-> > > > 
-> > > > Let's start with removal of no the longer needed GPIO lookup table from
-> > > > the board init file.
-> > > > 
-> > > > Series created and tested on top of next-20180608 tag from linux-next
-> > > > tree.
-> > > 
-> > > This all is really nice (modulo a couple of questions), thank you for
-> > > implementing this. How do you want to merge this? Through OMAP tree or
-> > > input?
-> > 
-> > Hi Dmitry,
-> > 
-> > If Tony doesn't mind, I would prefer it merged through OMAP tree as I still 
-> > have a few board patches built on top of it in my queue.
+Hi Boris, Chris,
+
+On Tue, 19 Jun 2018 07:40:56 +0200, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+
+> On Tue, 19 Jun 2018 17:31:24 +1200
+> Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 > 
-> Works for me once Dmitry is happy with the patches.
+> > Add ONFI_FEATURE_ON_DIE_ECC to the set/get features list for Micron
+> > NAND flash.
+> >  
+> 
+> Fixes: 789157e41a06 ("mtd: rawnand: allow vendors to declare (un)supported features")
 
-And please repost the whole series with acks collected so
-I know what I need to apply :)
+Sorry for breaking it in my previous series.
 
-Regards,
+> Cc: <stable@vger.kernel.org>
+> 
+> No need to send a new version, I'll add that when queuing the patch.
+> 
+> Miquel, if you're okay, I'm gonna take this patch in the mtd/fixes branch
+> and let you deal with other patches in this series.
 
-Tony
+Yes please, take this one.
 
+* Chris, I'll take patches 1, 2, 3 with Boris comments.
+* Patch 4 I think I'll just drop it as nobody can test it (and it's a
+  oneliner). I prefer people requesting a feature than complaining
+  about a bug :)
+* Boris will take patch 5 in the mtd/fixes branch.
+* I'll let you write a v3 for patch 6 only.
+
+Thanks,
+Miquèl
