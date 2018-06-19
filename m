@@ -3,170 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3186C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF318C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7819920874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:57:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7819920874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9301E20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9301E20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937731AbeFSK5g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:57:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:47596 "EHLO foss.arm.com"
+        id S937645AbeFSLAu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 07:00:50 -0400
+Received: from mga01.intel.com ([192.55.52.88]:34279 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937606AbeFSK5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:57:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89AAF1435;
-        Tue, 19 Jun 2018 03:57:34 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F8463F25D;
-        Tue, 19 Jun 2018 03:57:33 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 11:57:30 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, robin.murphy@arm.com, julien.thierry@arm.com
-Subject: Re: [PATCH v3 3/7] arm_pmu: Add support for 64bit event counters
-Message-ID: <20180619105730.wvp2t3krqbvyeayu@lakrids.cambridge.arm.com>
-References: <1529403342-17899-1-git-send-email-suzuki.poulose@arm.com>
- <1529403342-17899-4-git-send-email-suzuki.poulose@arm.com>
+        id S937542AbeFSLAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 07:00:49 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 04:00:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
+   d="scan'208";a="65365341"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.212])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Jun 2018 04:00:47 -0700
+Received: from ash by um with local (Exim 4.91)
+        (envelope-from <alexander.shishkin@linux.intel.com>)
+        id 1fVENR-0004TQ-F0; Tue, 19 Jun 2018 14:00:45 +0300
+Date:   Tue, 19 Jun 2018 14:00:44 +0300
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com
+Subject: Re: [PATCH v1 4/6] perf: Allow using AUX data in perf samples
+Message-ID: <20180619110044.qid7jdgmgicvhn4u@um.fi.intel.com>
+References: <20180612075117.65420-1-alexander.shishkin@linux.intel.com>
+ <20180612075117.65420-5-alexander.shishkin@linux.intel.com>
+ <20180614194720.GA12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529403342-17899-4-git-send-email-suzuki.poulose@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180614194720.GA12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 11:15:38AM +0100, Suzuki K Poulose wrote:
-> Each PMU has a set of 32bit event counters. But in some
-> special cases, the events could be counted using counters
-> which are effectively 64bit wide.
+On Thu, Jun 14, 2018 at 09:47:20PM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 12, 2018 at 10:51:15AM +0300, Alexander Shishkin wrote:
+> > @@ -6112,6 +6219,32 @@ void perf_prepare_sample(struct perf_event_header *header,
+> >  
+> >  	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
+> >  		data->phys_addr = perf_virt_to_phys(data->addr);
+> > +
+> > +	if (sample_type & PERF_SAMPLE_AUX) {
+> > +		u64 size;
+> > +
+> > +		header->size += sizeof(u64); /* size */
+> > +
+> > +		/*
+> > +		 * Given the 16bit nature of header::size, an AUX sample can
+> > +		 * easily overflow it, what with all the preceding sample bits.
+> > +		 * Make sure this doesn't happen by using up to U16_MAX bytes
+> > +		 * per sample in total (rounded down to 8 byte boundary).
+> > +		 */
+> > +		size = min_t(size_t, U16_MAX - header->size,
+> > +			     event->attr.aux_sample_size);
+> > +		size = rounddown(size, 8);
+> > +		size = perf_aux_sample_size(event, data, size);
+> > +
+> > +		WARN_ON_ONCE(size + header->size > U16_MAX);
+> > +		header->size += size;
+> > +	}
+> > +	/*
+> > +	 * If you're adding more sample types here, you likely need to do
+> > +	 * something about the overflowing header::size, like repurpose the
+> > +	 * lowest 3 bits of size, which should be always zero at the moment.
+> > +	 */
 > 
-> e.g, Arm V8 PMUv3 has a 64 bit cycle counter which can count
-> only the CPU cycles. Also, the PMU can chain the event counters
-> to effectively count as a 64bit counter.
+> Bugger yes.. I fairly quickly (but still too late) realized we should've
+> used that u16 in u64 increments to allow up to 512K instead of 64K
+> events.
+>
+> Still, even 64K samples are pretty terrifyingly huge. They'll be
+> _sloowww_.
 > 
-> Add support for tracking the events that uses 64bit counters.
-> This only affects the periods set for each counter in the core
-> driver.
-> 
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Changes since v2:
->  - None
-> ---
->  drivers/perf/arm_pmu.c       | 15 +++++++++------
->  include/linux/perf/arm_pmu.h |  6 ++++++
->  2 files changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index 6ddc00d..e3766a8 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -28,9 +28,11 @@
->  static DEFINE_PER_CPU(struct arm_pmu *, cpu_armpmu);
->  static DEFINE_PER_CPU(int, cpu_irq);
->  
-> -static inline u64 arm_pmu_max_period(void)
-> +static inline u64 arm_pmu_event_max_period(struct perf_event *event)
->  {
-> -	return (1ULL << 32) - 1;
-> +	return (event->hw.flags & ARMPMU_EVT_64BIT) ?
-> +		GENMASK_ULL(63, 0) :
-> +		GENMASK_ULL(31, 0);
+> In any case, I suppose we can grab one of the attribute bits to rev. the
+> output format -- a la sample_id_all. Do we really want to do that? 512K
+> samples.... *shudder*.
 
-Please make this:
+Well, as far as PT goes, even a 4K sample carries a thousands of branches,
+I can't imagine ever needing more than 64K, but I didn't really want to make
+the call. Same goes for the width of aux_sample_size, which should match what
+we can theoretically output.
 
-	if (event->hw.flags & ARMPMU_EVT_64BIT)
-		return GENMASK_ULL(63, 0);
-	else
-		return GENMASK_ULL(31, 0);
+Also as a thought, we could use the perf_adjust_period() to also reduce the
+sample size dynamically if it takes too long to copy.
 
-... which I think is more legible than a ternary spread across multiple
-lines.
-
-The rest looks fine, so with that:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Mark.
-
->  }
->  
->  static int
-> @@ -122,7 +124,7 @@ int armpmu_event_set_period(struct perf_event *event)
->  	u64 max_period;
->  	int ret = 0;
->  
-> -	max_period = arm_pmu_max_period();
-> +	max_period = arm_pmu_event_max_period(event);
->  	if (unlikely(left <= -period)) {
->  		left = period;
->  		local64_set(&hwc->period_left, left);
-> @@ -148,7 +150,7 @@ int armpmu_event_set_period(struct perf_event *event)
->  
->  	local64_set(&hwc->prev_count, (u64)-left);
->  
-> -	armpmu->write_counter(event, (u64)(-left) & 0xffffffff);
-> +	armpmu->write_counter(event, (u64)(-left) & max_period);
->  
->  	perf_event_update_userpage(event);
->  
-> @@ -160,7 +162,7 @@ u64 armpmu_event_update(struct perf_event *event)
->  	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
->  	struct hw_perf_event *hwc = &event->hw;
->  	u64 delta, prev_raw_count, new_raw_count;
-> -	u64 max_period = arm_pmu_max_period();
-> +	u64 max_period = arm_pmu_event_max_period(event);
->  
->  again:
->  	prev_raw_count = local64_read(&hwc->prev_count);
-> @@ -368,6 +370,7 @@ __hw_perf_event_init(struct perf_event *event)
->  	struct hw_perf_event *hwc = &event->hw;
->  	int mapping;
->  
-> +	hwc->flags = 0;
->  	mapping = armpmu->map_event(event);
->  
->  	if (mapping < 0) {
-> @@ -410,7 +413,7 @@ __hw_perf_event_init(struct perf_event *event)
->  		 * is far less likely to overtake the previous one unless
->  		 * you have some serious IRQ latency issues.
->  		 */
-> -		hwc->sample_period  = arm_pmu_max_period() >> 1;
-> +		hwc->sample_period  = arm_pmu_event_max_period(event) >> 1;
->  		hwc->last_period    = hwc->sample_period;
->  		local64_set(&hwc->period_left, hwc->sample_period);
->  	}
-> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-> index f7126a2..10f92e1 100644
-> --- a/include/linux/perf/arm_pmu.h
-> +++ b/include/linux/perf/arm_pmu.h
-> @@ -25,6 +25,12 @@
->   */
->  #define ARMPMU_MAX_HWEVENTS		32
->  
-> +/*
-> + * ARM PMU hw_event flags
-> + */
-> +/* Event uses a 64bit counter */
-> +#define ARMPMU_EVT_64BIT		1
-> +
->  #define HW_OP_UNSUPPORTED		0xFFFF
->  #define C(_x)				PERF_COUNT_HW_CACHE_##_x
->  #define CACHE_OP_UNSUPPORTED		0xFFFF
-> -- 
-> 2.7.4
-> 
+Regards,
+--
+Alex
