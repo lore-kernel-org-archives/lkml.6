@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3850C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE02C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E25320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:28:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E25320693
+	by mail.kernel.org (Postfix) with ESMTP id E487D208A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:28:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E487D208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757465AbeFSV2Z (ORCPT
+        id S1757475AbeFSV2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:28:25 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:50674 "EHLO mail.bugwerft.de"
+        Tue, 19 Jun 2018 17:28:43 -0400
+Received: from mail.bugwerft.de ([46.23.86.59]:50648 "EHLO mail.bugwerft.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966934AbeFSV15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:27:57 -0400
+        id S1757353AbeFSV1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 17:27:55 -0400
 Received: from localhost.localdomain (pD95EF733.dip0.t-ipconnect.de [217.94.247.51])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 2BFF628A295;
-        Tue, 19 Jun 2018 21:24:51 +0000 (UTC)
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 4B67028A28F;
+        Tue, 19 Jun 2018 21:24:48 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     zbr@ioremap.net, robh+dt@kernel.org, mark.rutland@arm.com,
         szabolcs.gyurko@tlt.hu
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Daniel Mack <daniel@zonque.org>
-Subject: [PATCH RFC 4/4] w1: ds2760: add devicetree matching glue
-Date:   Tue, 19 Jun 2018 23:27:44 +0200
-Message-Id: <20180619212744.794-5-daniel@zonque.org>
+Subject: [PATCH RFC 2/4] w1: core: match sub-nodes of bus masters in devicetree
+Date:   Tue, 19 Jun 2018 23:27:42 +0200
+Message-Id: <20180619212744.794-3-daniel@zonque.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180619212744.794-1-daniel@zonque.org>
 References: <20180619212744.794-1-daniel@zonque.org>
@@ -41,66 +41,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an id table for ds2760 so it can be matched by the core.
+Once a new slave device is detected, match it against all sub-nodes of the
+master bus controller. If a match is found, set the slave device's of_node
+pointer.
 
-Also, refrain from allocating the platform device for the supply driver at
-runtime when the device was matched via DT, because in this case, supply
-devices are also probed with device tree nodes, so they will always be
-present.
+This alone can already be used by slave device implementations to obtain
+more properties from devicetree.
+
+Another use-case is introduced in the next patch.
 
 Signed-off-by: Daniel Mack <daniel@zonque.org>
 ---
- drivers/w1/slaves/w1_ds2760.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/w1/w1.c    | 3 +++
+ include/linux/w1.h | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/w1/slaves/w1_ds2760.c b/drivers/w1/slaves/w1_ds2760.c
-index 26168abfb8b8..a737a96204ed 100644
---- a/drivers/w1/slaves/w1_ds2760.c
-+++ b/drivers/w1/slaves/w1_ds2760.c
-@@ -17,6 +17,7 @@
- #include <linux/mutex.h>
- #include <linux/idr.h>
- #include <linux/gfp.h>
+diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+index 80a778b02f28..dc73d8c08438 100644
+--- a/drivers/w1/w1.c
++++ b/drivers/w1/w1.c
+@@ -26,6 +26,7 @@
+ #include <linux/kthread.h>
+ #include <linux/freezer.h>
+ #include <linux/hwmon.h>
 +#include <linux/of.h>
  
- #include <linux/w1.h>
+ #include <linux/atomic.h>
  
-@@ -131,6 +132,9 @@ static int w1_ds2760_add_slave(struct w1_slave *sl)
- 	int ret;
- 	struct platform_device *pdev;
+@@ -686,6 +687,8 @@ static int __w1_attach_slave_device(struct w1_slave *sl)
+ 	sl->dev.bus = &w1_bus_type;
+ 	sl->dev.release = &w1_slave_release;
+ 	sl->dev.groups = w1_slave_groups;
++	sl->dev.of_node = of_find_matching_node(sl->master->dev.of_node,
++						sl->family->of_match_table);
  
-+	if (sl->dev.of_node)
-+		return 0;
+ 	dev_set_name(&sl->dev, "%02x-%012llx",
+ 		 (unsigned int) sl->reg_num.family,
+diff --git a/include/linux/w1.h b/include/linux/w1.h
+index 694101f744c7..3111585c371f 100644
+--- a/include/linux/w1.h
++++ b/include/linux/w1.h
+@@ -274,6 +274,8 @@ struct w1_family {
+ 
+ 	struct w1_family_ops	*fops;
+ 
++	const struct of_device_id *of_match_table;
 +
- 	pdev = platform_device_alloc("ds2760-battery", PLATFORM_DEVID_AUTO);
- 	if (!pdev)
- 		return -ENOMEM;
-@@ -154,9 +158,17 @@ static void w1_ds2760_remove_slave(struct w1_slave *sl)
- {
- 	struct platform_device *pdev = dev_get_drvdata(&sl->dev);
- 
--	platform_device_unregister(pdev);
-+	if (!sl->dev.of_node)
-+		platform_device_unregister(pdev);
- }
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id w1_ds2760_of_ids[] = {
-+	{ .compatible = "maxim,w1-ds2760" },
-+	{}
-+};
-+#endif
-+
- static struct w1_family_ops w1_ds2760_fops = {
- 	.add_slave    = w1_ds2760_add_slave,
- 	.remove_slave = w1_ds2760_remove_slave,
-@@ -166,6 +178,7 @@ static struct w1_family_ops w1_ds2760_fops = {
- static struct w1_family w1_ds2760_family = {
- 	.fid = W1_FAMILY_DS2760,
- 	.fops = &w1_ds2760_fops,
-+	.of_match_table = of_match_ptr(w1_ds2760_of_ids),
+ 	atomic_t		refcnt;
  };
- module_w1_family(w1_ds2760_family);
  
 -- 
 2.17.1
