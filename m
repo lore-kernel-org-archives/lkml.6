@@ -2,140 +2,154 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FA8C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCABC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E9842075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:17:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmHPA4Tw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E9842075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5F25C20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:18:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F25C20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937696AbeFSPRL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:17:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937547AbeFSPRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:17:09 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB1F720652;
-        Tue, 19 Jun 2018 15:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529421428;
-        bh=5NjKi9jObOdD0d12IuDQ6OCZQOqMt261Tlk6hFuFS80=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TmHPA4TwOczxAIgPaaZ9dsYPO/hKcKTRkqDnBQhcJthH4DCy/zF8/Xc1XBO8Vdys9
-         jyjY5Qtohx2jC/SHtFxMzHhsi9UJ0rAMnLy7aXAAddVcRJqa7dOnmoNwxor5bnrT7x
-         +bK9DrosSTF9PAHWFKp8wSOlexjpz7FG9+8LO3nA=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 933831401E5; Tue, 19 Jun 2018 12:17:06 -0300 (-03)
-Date:   Tue, 19 Jun 2018 12:17:06 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH 3/3] perf stat: Remove duplicate event counting
-Message-ID: <20180619151706.GJ20477@kernel.org>
-References: <20180614114845.41221-1-tmricht@linux.ibm.com>
- <20180614114845.41221-3-tmricht@linux.ibm.com>
- <20180615082124.GG5082@krava>
+        id S937821AbeFSPSH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:18:07 -0400
+Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:55527 "EHLO
+        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S937750AbeFSPSG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:18:06 -0400
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id BA898989D5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 15:18:04 +0000 (UTC)
+Received: (qmail 25700 invoked from network); 19 Jun 2018 15:18:04 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.171])
+  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 19 Jun 2018 15:18:04 -0000
+Date:   Tue, 19 Jun 2018 16:18:03 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Jirka Hladky <jhladky@redhat.com>
+Cc:     Jakub Racek <jracek@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        "kkolakow@redhat.com" <kkolakow@redhat.com>
+Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
+ Stream, Linpack and NAS parallel benchmarks
+Message-ID: <20180619151803.bu6pehdu6wbd6l5x@techsingularity.net>
+References: <CAE4VaGBRFBM-uZEE=DdUzQkcNmpnUHdjK-7hgEeywmG8bvOOgw@mail.gmail.com>
+ <20180611141113.pfuttg7npch3jtg6@techsingularity.net>
+ <CAE4VaGCMS2pXfPVSnMbudexv_m5wRCTuBKA5ijh2x==11uQg9g@mail.gmail.com>
+ <20180614083640.dekqhsopoefnfhb4@techsingularity.net>
+ <CAE4VaGCzB99es_TpAaYvtjX8fqzFA=7HX-ezqgO6FaEB5if4zg@mail.gmail.com>
+ <20180615112522.3wujbq7bajof57qx@techsingularity.net>
+ <CAE4VaGBtasbDBoZ-c5R-AY++Y1BXgjrE7DwN0zOt113xmV95xw@mail.gmail.com>
+ <20180615135212.wq45co7ootvdeo2f@techsingularity.net>
+ <CAE4VaGAdXNYXMUn4eQgMqQtLKfp6-YHMa1NUSpL-L078oX7C-w@mail.gmail.com>
+ <CAE4VaGBeTpxd1phR4rVAjqOXuLgLWPtVMPoRSOcG3HXfWDF=8w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20180615082124.GG5082@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAE4VaGBeTpxd1phR4rVAjqOXuLgLWPtVMPoRSOcG3HXfWDF=8w@mail.gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Jun 15, 2018 at 10:21:24AM +0200, Jiri Olsa escreveu:
-> On Thu, Jun 14, 2018 at 01:48:45PM +0200, Thomas Richter wrote:
+On Tue, Jun 19, 2018 at 03:36:53PM +0200, Jirka Hladky wrote:
+> Hi Mel,
 > 
-> SNIP
+> we have tested following variants:
 > 
-> > +static void perf_pmu_assign_str(char *name, const char *field, char **old_str,
-> > +				char **new_str)
-> > +{
-> > +	if (!*old_str)
-> > +		goto set_new;
-> > +
-> > +	if (*new_str) {	/* Have new string, check with old */
-> > +		if (strcasecmp(*old_str, *new_str))
-> > +			pr_debug("alias %s differs in field '%s'\n",
-> > +				 name, field);
-> > +		zfree(old_str);
-> > +	} else		/* Nothing new --> keep old string */
-> > +		return;
-> > +set_new:
-> > +	*old_str = *new_str;
-> > +	*new_str = NULL;
-> > +}
-> > +
-> > +static void perf_pmu_update_alias(struct perf_pmu_alias *old,
-> > +				  struct perf_pmu_alias *newalias)
-> > +{
-> > +	perf_pmu_assign_str(old->name, "desc", &old->desc, &newalias->desc);
-> > +	perf_pmu_assign_str(old->name, "long_desc", &old->long_desc,
-> > +			    &newalias->long_desc);
-> > +	perf_pmu_assign_str(old->name, "topic", &old->topic, &newalias->topic);
-> > +	perf_pmu_assign_str(old->name, "metric_expr", &old->metric_expr,
-> > +			    &newalias->metric_expr);
-> > +	perf_pmu_assign_str(old->name, "metric_name", &old->metric_name,
-> > +			    &newalias->metric_name);
-> > +	perf_pmu_assign_str(old->name, "value", &old->str, &newalias->str);
-> > +	old->scale = newalias->scale;
-> > +	old->per_pkg = newalias->per_pkg;
-> > +	old->snapshot = newalias->snapshot;
-> > +	memcpy(old->unit, newalias->unit, sizeof(old->unit));
-> > +}
-> > +
-> > +/* Delete an alias entry. */
-> > +static void perf_pmu_free_alias(struct perf_pmu_alias *newalias)
-> > +{
-> > +	zfree(&newalias->name);
-> > +	zfree(&newalias->desc);
-> > +	zfree(&newalias->long_desc);
-> > +	zfree(&newalias->topic);
-> > +	zfree(&newalias->str);
-> > +	zfree(&newalias->metric_expr);
-> > +	zfree(&newalias->metric_name);
-> > +	parse_events_terms__purge(&newalias->terms);
-> > +	free(newalias);
-> > +}
-> > +
-> > +/* Merge an alias, search in alias list. If this name is already
-> > + * present merge both of them to combine all information.
-> > + */
-> > +static bool perf_pmu_merge_alias(struct perf_pmu_alias *newalias,
-> > +				 struct list_head *alist)
-> > +{
-> > +	struct perf_pmu_alias *a;
-> > +
-> > +	list_for_each_entry(a, alist, list) {
-> > +		if (!strcasecmp(newalias->name, a->name)) {
-> > +			perf_pmu_update_alias(a, newalias);
-> > +			perf_pmu_free_alias(newalias);
-> > +			return true;
-> > +		}
-> > +	}
-> > +	return false;
-> > +}
+> var1: 4.16 + 2c83362734dad8e48ccc0710b5cd2436a0323893
+> fix1: var1+ ratelimit_pages __read_mostly increased by factor 4x
+> -static unsigned int ratelimit_pages __read_mostly = 128 << (20 - PAGE_SHIFT);
+> +static unsigned int ratelimit_pages __read_mostly = 512 << (20 - PAGE_SHIFT);
+> fix2: var1+ ratelimit_pages __read_mostly increased by factor 8x
+> -static unsigned int ratelimit_pages __read_mostly = 512 << (20 - PAGE_SHIFT);
+> +static unsigned int ratelimit_pages __read_mostly = 1024 << (20 - PAGE_SHIFT);
+> fix3: var1+ ratelimit_pages __read_mostly increased by factor 16x
+> -static unsigned int ratelimit_pages __read_mostly = 1024 << (20 - PAGE_SHIFT);
+> +static unsigned int ratelimit_pages __read_mostly = 2048 << (20 - PAGE_SHIFT);
 > 
-> ok, I like your change better.. we can rebuilt it to use
-> rb tree later when we have this fixed
+> Results for the stream benchmark (standalone processes) have gradually
+> improved. For fix3, stream benchmark with runtime 60 seconds does not show
+> performance drop compared to 4.16 kernel anymore.
+> 
 
-Ok, can I take this as an Acked-by or Reviewed-by?
+Ok, so at least one option is to remove the rate limiting.  It'll be ok as
+long as cross-node migrations are not both a) a regular event and b) each
+migrate remains on the new socket long enough for migrations to occur and c)
+the bandwidth used for cross-node migration does not interfere badly with
+tasks accessing local memory. It'll vary depending on workload and machine
+unfortuantely but the rate limiting never accounted for the real capabilities
+of hardware and cannot detect bandwidth used for regular accesses.
 
-- Arnaldo
+> For the OpenMP NAS, results are still worse than with vanilla 4.16 kernel.
+> Increasing the ratelimit has helped, but even the best results of {fix1,
+> fix2, fix3} are still some 5-10% slower than with vanilla 4.16 kernel.  If
+> I should pick the best value for ratelimit_pages __read_mostly it would be
+> fix2:
+> +static unsigned int ratelimit_pages __read_mostly = 1024 << (20 -
+> PAGE_SHIFT);
+> 
+> I have also used the Intel LINPACK (OpenMP) benchmark on 4 NUMA server - it
+> gives the similar results as NAS test.
+> 
+> I think that patch 2c83362734dad8e48ccc0710b5cd2436a0323893 needs a review
+> for the OpenMP and standalone processes workflow.
+> 
+
+I did get some results although testing of the different potential patches
+(revert, numabalance series, faster scanning in isolation etc) are still
+in progress. However, I did find that rate limiting was not a factor for
+NAS at least (STREAM was too short lived in the configuration I used) on
+the machine I used. That does not prevent the ratelimiting being removed
+but it highlights that the impact is workload and machine specific.
+
+Second, I did manage to see the regression and the fix from the revert *but*
+it required both one third of CPUs to be used and the openMP parallelisation
+method. Using all CPUs shows no regression and using a third of the CPUs
+with MPI shows no regression. In other words, the impact is specific to
+the workload, the configuration and the machine.
+
+I don't have a LINPACK configuration but you say that the behaviour is
+similar so I'll stick with NAS.
+
+On the topic of STREAM, it's meant to be a memory bandwidth benchmark and
+there is no knowledge within the scheduler for automatically moving tasks
+to a memory controller. It really should be tuned to run as one instance
+bound to one controller for the figures to make sense. For automatic NUMA
+balancing to fix it up, it needs to run long enough and it's not guaranteed
+to be optimally located. I think it's less relevant as a workload in this
+instance and it'll never be optimal as even spreading early does not mean
+it'll spread to each memory controller.
+
+Given the specific requirement of CPUs used and parallelisation method, I
+think a plain revert is not the answer because it'll fix one particular
+workload and reintroduce regressions on others (as laid out in the
+original changelog). There are other observations we can make about the
+NAS-OpenMP workload though
+
+1. The locality sucks
+Parallelising with MPI indicates that locality as measured by the NUMA
+hinting achieves 94% local hits and minimal migration. With OpenMP,
+locality is 66% with large amounts of migration. Many of the updates are
+huge PMDs so this may be an instance of false sharing or it might be the
+timing of when migrations start.
+
+2. Migrations with the revert are lower
+There are fewer migrations when the patch is reverted and this may be an
+indication that it simply benefits by spreading early before any memory
+is allocated so that migrations are avoided. Unfortunately, this is not
+a universal win for every workload.
+
+I'll experiement a bit with faster migrations on cross-node accesses
+but I think no matter which way we jump on this one it'll be a case of
+"it helps one workload and hurts another".
+
+-- 
+Mel Gorman
+SUSE Labs
