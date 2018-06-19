@@ -6,120 +6,75 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E68AC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC40FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52F6220875
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:55:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52F6220875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id A106020652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:56:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A106020652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966451AbeFSNzY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:55:24 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:58250 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965681AbeFSNzW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:55:22 -0400
-Received: from ayla.of.borg ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id 0dvL1y00V3XaVaC01dvL9n; Tue, 19 Jun 2018 15:55:21 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fVH6O-0000Yu-CW; Tue, 19 Jun 2018 15:55:20 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fVH6O-0002Lp-BR; Tue, 19 Jun 2018 15:55:20 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] regulator: bd9571mwv: Add support for toggle power switches
-Date:   Tue, 19 Jun 2018 15:55:18 +0200
-Message-Id: <20180619135518.8990-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180619135518.8990-1-geert+renesas@glider.be>
-References: <20180619135518.8990-1-geert+renesas@glider.be>
+        id S966545AbeFSN4m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:56:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:50926 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965952AbeFSN4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:56:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 94AAE80D;
+        Tue, 19 Jun 2018 06:56:39 -0700 (PDT)
+Received: from [10.1.210.28] (unknown [10.1.210.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F02D3F246;
+        Tue, 19 Jun 2018 06:56:33 -0700 (PDT)
+Cc:     robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@codeaurora.org,
+        linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux@arm.linux.org.uk,
+        thierry.escande@linaro.org, ctatlor97@gmail.com,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v10 13/14] cpufreq: Add module to register cpufreq on
+ Krait CPUs
+To:     Sricharan R <sricharan@codeaurora.org>
+References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
+ <1529415925-28915-14-git-send-email-sricharan@codeaurora.org>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <f195e30e-bef3-9352-9584-fec35631ec5e@arm.com>
+Date:   Tue, 19 Jun 2018 14:56:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1529415925-28915-14-git-send-email-sricharan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend the existing support for backup mode to toggle power switches.
-With a toggle power switch (or level signal), the following steps must
-be followed exactly:
-   1. Configure PMIC for backup mode,
-   2. Switch accessory power switch off, to prepare for system suspend,
-      which is a manual step not controlled by software,
-   3. Suspend system,
-   4. Switch accessory power switch on to wake up system.
 
-Hence the PMIC is configured for backup mode when "enabled" is written
-to the PMIC's "wakeup" virtual file in sysfs, using the newly introduced
-callback for wake-up change notification.  Conversely, writing
-"disabled" reverts the role of the accessory switch to a power switch.
 
-Unlike with momentary switches, backup mode is not enabled by default,
-as enabling it prevents the board from being powered off using the power
-switch, which may confuse the user.
+On 19/06/18 14:45, Sricharan R wrote:
+> From: Stephen Boyd <sboyd@codeaurora.org>
+> 
+> Register a cpufreq-generic device whenever we detect that a
+> "qcom,krait" compatible CPU is present in DT.
+> 
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Improve patch description,
-  - Drop "return;" at end of function.
----
- drivers/regulator/bd9571mwv-regulator.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Just curious to know how different is this from qcom kryo driver
+that was added recently. IIRC even that gets the speedbin from nvmem.
+Can they be merged ? I don't see need to have different driver for Krait
+and Kryo CPUs when the code is not even remotely related to CPU type.
 
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index be574eb444ebda97..403bc3fa1f2513de 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -171,6 +171,24 @@ static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
- 	return 0;
- }
- 
-+static void bd9571mwv_wakeup_change_notify(struct device *dev, bool enable)
-+{
-+	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-+
-+	unsigned int mode;
-+	int ret;
-+
-+	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
-+	if (ret)
-+		return;
-+
-+	mode &= ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
-+	if (enable)
-+		mode |= bdreg->bkup_mode_cnt_keepon;
-+
-+	bd9571mwv_bkup_mode_write(bdreg->bd, mode);
-+}
-+
- static int bd9571mwv_suspend(struct device *dev)
- {
- 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
-@@ -277,6 +295,11 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 		 * explicit user setup in level mode.
- 		 */
- 		device_set_wakeup_enable(&pdev->dev, bdreg->rstbmode_pulse);
-+#ifdef CONFIG_PM_SLEEP
-+		if (bdreg->rstbmode_level)
-+			pdev->dev.power.wakeup_change_notify =
-+				bd9571mwv_wakeup_change_notify;
-+#endif /* CONFIG_PM_SLEEP */
- 	}
- 
- 	return 0;
+Sorry if I have missed anything from previous versions, I just happen
+to open and looked at this series first time today.
+
 -- 
-2.17.1
-
+Regards,
+Sudeep
