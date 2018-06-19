@@ -2,116 +2,93 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFA5C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60F8C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0391820836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:42:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0391820836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owl.eu.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C7CB20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:43:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="CpnN0wRF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C7CB20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965898AbeFSNm0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:42:26 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:34647 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937490AbeFSNmZ (ORCPT
+        id S966163AbeFSNns (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:43:48 -0400
+Received: from one.firstfloor.org ([193.170.194.197]:49022 "EHLO
+        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965592AbeFSNnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:42:25 -0400
-X-Originating-IP: 208.88.110.46
-Received: from localhost (mtl.savoirfairelinux.net [208.88.110.46])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id C00BF6000B;
-        Tue, 19 Jun 2018 13:42:22 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 09:42:20 -0400
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Marcus Wolf <linux@wolf-entwicklungen.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: pi433: fix race condition in pi433_open
-Message-ID: <20180619134220.GA2396@hle-laptop.local>
-References: <20180618022400.GA1893@hle-laptop.local>
- <20180618101838.gzbrxabilnqyilsi@mwanda>
- <20180619030850.GA1876@hle-laptop.local>
- <20180619104248.z5nbbakwhjgscufb@mwanda>
+        Tue, 19 Jun 2018 09:43:47 -0400
+Received: by one.firstfloor.org (Postfix, from userid 503)
+        id A4F1D86A14; Tue, 19 Jun 2018 15:43:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
+        s=mail; t=1529415825;
+        bh=nuQDLgGjxKu45EcS7NtZh99w1D4uHyFdhzZDlIw9GsQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CpnN0wRFV/Xk8a+a1COkGtX+Q2oi9BpN6AW9/XTcKZmmnfz00k7COjOlsHKzajG2G
+         R6PQClk30cuFTaS65dnAJjHxnjPShAWztqzNW6UP/cy1mHnKpnS0pzds1wq7+YP2sH
+         qOVM29BnqNdfrg3aRHUlfPd5ga4zd3vl1EMotoLY=
+Date:   Tue, 19 Jun 2018 06:43:45 -0700
+From:   Andi Kleen <andi@firstfloor.org>
+To:     Keno Fischer <keno@juliacomputing.com>
+Cc:     Andi Kleen <andi@firstfloor.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Kyle Huey <khuey@kylehuey.com>,
+        Robert O'Callahan <robert@ocallahan.org>
+Subject: Re: [RFC PATCH] x86/arch_prctl: Add ARCH_SET_XCR0 to mask XCR0
+ per-thread
+Message-ID: <20180619134345.azpifnsmgd5dprhu@two.firstfloor.org>
+References: <1529195582-64207-1-git-send-email-keno@alumni.harvard.edu>
+ <20180617163530.rvwf7fcukmoletgo@two.firstfloor.org>
+ <CABV8kRyf2R=a2zezgovByK9Lc8HhDXyfZ4OPE_DHfKKg34bNfw@mail.gmail.com>
+ <20180618165840.gikljqhaxtiiw27x@two.firstfloor.org>
+ <CABV8kRxqAjCDsQL7M2OLm8Tircsx7Xb2bdgDJ5XPJ3Ff=EjzUQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619104248.z5nbbakwhjgscufb@mwanda>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CABV8kRxqAjCDsQL7M2OLm8Tircsx7Xb2bdgDJ5XPJ3Ff=EjzUQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> In particular 1) means that any extra instructions executed/not executed
+> will cause a replay divergence (in practice rr uses retired conditional
+> branches rather than instructions, because the instruction counter is
+> not accurate, while the branch one is). This alone causes a problem
+> for the present case, because glibc branches on the xcr0 value before
+> it branches on the cpuid value for AVX512. Glibc does check for the
+> correct cpuid before calling xgetbv, so one possible thing to do is to
+> completely disable xsave during recording by disabling it in CPUID, but
+> that would make rr quite a bit less useful, since it wouldn't be able to
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah I see it now. This problem was introduced with the changes
+for glibc to save AVX registers using XSAVE instead of manually.
 
-> > It would be great to get rid of this counter, indeed. But how to do it
-> > properly without breaking things ? It seems to be useful to me...
->=20
-> These things are refcounted so you can't unload the module while a file
-> is open.  When we do an open it does a cdev_get().  When we call the
-> delete_module syscall, it checks the refcount in try_stop_module() ->
-> try_release_module_ref().  It will still let us force a release but
-> at that point you're expecting use after frees.
+It still seems this has a straight forward fix in glibc though.
 
-Then I'd like to understand why this counter was introduced if remove
-always gets executed after the last release call returned. This was
-probably unclear to the original developer.
+It could always allocate the worst case buffer, and also
+verify XGETBV against CPUID first. I'm sure this can be
+done in a way that executed branches don't differ.
 
-This TODO seems to be related to this misunderstanding too:
+AFAIK manual use of XSAVE is not that common, so hopefully
+these problems are not wide spread in other programs.
 
- 890         /* TODO? guard against device removal before, or while,
- 891          * we issue this ioctl. --> device_get()
- 892          */
+Of course longer term you'll just need to have matching
+ISAs in record and replay. Trying to patch around this
+is likely always difficult.
 
-Device removal can't happen before or during the ioctl execution.
+-Andi
 
-> > Really ? device->spi is NULL-ed in remove() so that operations on
-> > remaining fds can detect remove() was already called and free remaining
-> > resources:
-> > =20
-> > 1296         /* make sure ops on existing fds can abort cleanly */
-> > 1297         device->spi =3D NULL;
->=20
-> That's when we're unloading the module so there aren't any users left.
-
-I'll submit an updated version of my patch getting rid of the counter
-and addressing the remaining race conditions.
-
-Thanks !
-
-Regards,
- Hugo
-
---=20
-             Hugo Lefeuvre (hle)    |    www.owl.eu.com
-4096/ 9C4F C8BF A4B0 8FC5 48EB 56B8 1962 765B B9A8 BACA
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEE5LpPtQuYJzvmooL3LVy48vb3khkFAlspCDMACgkQLVy48vb3
-khkX6Qf/fTcrcDu8WHvH/VRnCHOKrR9dGSEBruJScyIOKTsHRabTXhZ7FWh1l7VE
-Sh4BvAGmMC9RvsoliF26D/C/TSSYmfCN0xJvx+ypTReanv9gub12MsaKc/3aq8Qt
-7BIvNvUv0S8bDoCaZ4dhvTCswRpndWp6AX53vNHxy1ip1SsV8KFjeyuwtQUmyZ6o
-Zv3NbldwLthW3p3wSWsXafaGpebi+rZpA9XY9QTWBHyl2TvNl5LgMxrDsjPWrkl5
-OD2oZv4JGnDFswvHlx2lOo/7kTODQfNQbrZ9JvTtM4HEfZZcOW8Xw9+4F25+tNU1
-p9obTNl2UYcU276eDGcfZXZGtgUQBQ==
-=UjJb
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
