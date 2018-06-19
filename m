@@ -2,90 +2,87 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86722C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60ECC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B52C20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:12:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B52C20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F8452075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:12:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RKscPO6+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F8452075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966625AbeFSPL7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:11:59 -0400
-Received: from mga14.intel.com ([192.55.52.115]:21841 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966193AbeFSPL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:11:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 08:11:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,243,1526367600"; 
-   d="scan'208";a="233823556"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga005.jf.intel.com with ESMTP; 19 Jun 2018 08:11:57 -0700
-Date:   Tue, 19 Jun 2018 08:11:32 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@redhat.com>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 5/8] x86/umwait.c: Add sysfs interface to show tsc_khz
-Message-ID: <20180619151131.GA112652@romley-ivt3.sc.intel.com>
-References: <1529118375-90191-1-git-send-email-fenghua.yu@intel.com>
- <1529118375-90191-6-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1806191104070.1692@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806191104070.1692@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S966649AbeFSPMS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:12:18 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:39470 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966469AbeFSPMQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:12:16 -0400
+Received: by mail-wr0-f195.google.com with SMTP id w7-v6so34894wrn.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=lTBkWHTS6vALX+fw08C0UwyCjXznkRYAqMEwBTFo6Nc=;
+        b=RKscPO6+/E6taW/9zKqB+/4D3Q8YI2tWiWEAcZW5M0rD0zxzawOh5mPrlmcuJ/WZ9s
+         HJavFPm0ys2I+v0rkSrKC73ETJIbVgGnWSrsr4Ze6JqwPfQMBEVRLyUdgX0PYGXqHSl1
+         yWZc358lL5WOtpga1N/9ol8ryGnK/gxpcdLXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lTBkWHTS6vALX+fw08C0UwyCjXznkRYAqMEwBTFo6Nc=;
+        b=jifuXXpgCRGMvSRI0UJ/lhycSbKSsPZMVN4ajAR/y8XhGcqgrQhx3I6Fv2AYhZyzZW
+         kIzcTzkzkUUC5nIFPFHUzYfRtWlDusuG2a5ZEXb2QpQtXiTBB0TxsLtgYIiDGyjKCPiY
+         KdX2QVYaawgBX62XZMjFHXjEmg1Kigb7c+E6hdClCwigIYTfI+iXrwBjLjTkXGr3ZzIA
+         E4e44erbTps4mcxNJN0KyOfFNDHpUt7SxPb6N+SQNL5QBonmJ0yqhom+zzQZtGwXCWlP
+         Z08aySEkKrf1PFRdaQ5rGLpXHsGUjlPqV1MCnZzGjacjGpOZrHHBOth/tXVBc4VC+yCy
+         38bA==
+X-Gm-Message-State: APt69E3kjnw6VskpgmAmvi0yxeI6Q4y9Ns4XsEKaPXgW8hp1XkuHb37p
+        U1eRrzJZE1l6a41fLdpIbs/1Qg==
+X-Google-Smtp-Source: ADUXVKIuQSZ1+AAMNBv5nhnZ/bDCS/BTSe9tM6Rzbd4OEfHCDn6Tr9RS8g3Ab9lZKtXaBOlo8AMNFw==
+X-Received: by 2002:adf:a801:: with SMTP id l1-v6mr13762116wrc.201.1529421135515;
+        Tue, 19 Jun 2018 08:12:15 -0700 (PDT)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id f81-v6sm473599wmh.32.2018.06.19.08.12.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 19 Jun 2018 08:12:14 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/4] slimbus: fixes for v4.18
+Date:   Tue, 19 Jun 2018 16:12:01 +0100
+Message-Id: <20180619151205.11300-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 11:08:46AM +0200, Thomas Gleixner wrote:
-> On Fri, 15 Jun 2018, Fenghua Yu wrote:
->  
-> > +static ssize_t tsc_khz_show(struct device *dev, struct device_attribute *attr,
-> > +			    char *buf)
-> > +{
-> > +	return sprintf(buf, "%d\n", tsc_khz);
-> > +}
-> > +
-> >  static DEVICE_ATTR_RW(umwait_disable_c0_2);
-> > +static DEVICE_ATTR_RO(tsc_khz);
-> 
-> The right place to expose that information is the VDSO and a helper
-> function which allows to convert from nsec to TSC.
+Hi Greg,
 
-Sure. I will do that.
+Here are few trivial slimbus fixes, 
+Could you please take them for next possible rc.
 
-> 
-> >  static struct attribute *umwait_attrs[] = {
-> >  	&dev_attr_umwait_disable_c0_2.attr,
-> > @@ -92,6 +100,15 @@ static int __init umwait_init(void)
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > +	/* Only add the tsc_khz interface when the value is known. */
-> 
-> Why so? The only reason why you don't want to expose TSC frequency is when
-> it's not constant frequency.
+Thanks,
+srini
 
-> > +	if (boot_cpu_has(X86_FEATURE_TSC_KNOWN_FREQ)) {
-> 
+Srinivas Kandagatla (4):
+  slimbus: messaging: pass correct wbuf
+  slimbus: messaging: remove multiple calls to pm_runtime_mark_last_busy
+  slimbus: messaging: initialize completion correctly
+  slimbus: qcom: remove redundant depends in Kconfig
 
-Thanks.
+ drivers/slimbus/Kconfig     | 1 -
+ drivers/slimbus/messaging.c | 5 +++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
--Fenghua
+-- 
+2.16.2
+
