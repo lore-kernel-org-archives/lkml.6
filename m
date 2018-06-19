@@ -6,194 +6,74 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A36C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00560C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B73E320836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:17:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B73E320836
+	by mail.kernel.org (Postfix) with ESMTP id AFDF120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:18:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFDF120874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757205AbeFSKRY (ORCPT
+        id S1757223AbeFSKSH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:17:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:46624 "EHLO foss.arm.com"
+        Tue, 19 Jun 2018 06:18:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:46752 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936774AbeFSKQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:16:09 -0400
+        id S1757102AbeFSKSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:18:06 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D0D115AD;
-        Tue, 19 Jun 2018 03:16:09 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 395553F25D;
-        Tue, 19 Jun 2018 03:16:08 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, robin.murphy@arm.com, julien.thierry@arm.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v3 2/7] arm_pmu: Change API to support 64bit counter values
-Date:   Tue, 19 Jun 2018 11:15:37 +0100
-Message-Id: <1529403342-17899-3-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529403342-17899-1-git-send-email-suzuki.poulose@arm.com>
-References: <1529403342-17899-1-git-send-email-suzuki.poulose@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 523021435;
+        Tue, 19 Jun 2018 03:18:06 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84B0D3F25D;
+        Tue, 19 Jun 2018 03:18:03 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 11:18:01 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Will Deacon <will.deacon@arm.com>, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
+        mingo@kernel.org, albert@sifive.com, arnd@arndb.de,
+        benh@kernel.crashing.org, geert@linux-m68k.org,
+        ink@jurassic.park.msu.ru, linux@armlinux.org.uk,
+        mattst88@gmail.com, mpe@ellerman.id.au, palmer@sifive.com,
+        paulus@samba.org, rth@twiddle.net, vgupta@synopsys.com
+Subject: Re: [PATCHv3 00/18] atomics: API cleanups
+Message-ID: <20180619101800.kyue73me67pqktme@lakrids.cambridge.arm.com>
+References: <20180618101919.51973-1-mark.rutland@arm.com>
+ <20180618163805.GE11612@arm.com>
+ <20180618192126.l7qyuthsc6eqkigb@salmiak>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180618192126.l7qyuthsc6eqkigb@salmiak>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the {read/write}_counter APIs to handle 64bit values
-to enable supporting chained event counters.
+On Mon, Jun 18, 2018 at 08:21:27PM +0100, Mark Rutland wrote:
+> On Mon, Jun 18, 2018 at 05:38:06PM +0100, Will Deacon wrote:
+> > On Mon, Jun 18, 2018 at 11:19:01AM +0100, Mark Rutland wrote:
+> > > This series contains a few cleanups of the atomic API, fixing
+> > > inconsistencies between atomic_* and atomic64_*, and minimizing
+> > > repetition in arch code. This is nicer for arch code, and the improved
+> > > regularity will help when generating the atomic headers in future.
+> > 
+> > Apart from the Alpha patch:
+> > 
+> > Reviewed-by: Will Deacon <will.deacon@arm.com>
+> 
+> Cheers! I assume that also holds with patch 7 fixes up to use s64.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- - No changes since v2
----
- arch/arm/kernel/perf_event_v6.c     | 4 ++--
- arch/arm/kernel/perf_event_v7.c     | 4 ++--
- arch/arm/kernel/perf_event_xscale.c | 8 ++++----
- arch/arm64/kernel/perf_event.c      | 9 ++++-----
- include/linux/perf/arm_pmu.h        | 4 ++--
- 5 files changed, 14 insertions(+), 15 deletions(-)
+I've pushed out the series with those fixes and your Reviewed-by tags.
 
-diff --git a/arch/arm/kernel/perf_event_v6.c b/arch/arm/kernel/perf_event_v6.c
-index f64a6bf..0729f98 100644
---- a/arch/arm/kernel/perf_event_v6.c
-+++ b/arch/arm/kernel/perf_event_v6.c
-@@ -233,7 +233,7 @@ armv6_pmcr_counter_has_overflowed(unsigned long pmcr,
- 	return ret;
- }
- 
--static inline u32 armv6pmu_read_counter(struct perf_event *event)
-+static inline u64 armv6pmu_read_counter(struct perf_event *event)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-@@ -251,7 +251,7 @@ static inline u32 armv6pmu_read_counter(struct perf_event *event)
- 	return value;
- }
- 
--static inline void armv6pmu_write_counter(struct perf_event *event, u32 value)
-+static inline void armv6pmu_write_counter(struct perf_event *event, u64 value)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
-index ecca4cd..fd7ce01 100644
---- a/arch/arm/kernel/perf_event_v7.c
-+++ b/arch/arm/kernel/perf_event_v7.c
-@@ -743,7 +743,7 @@ static inline void armv7_pmnc_select_counter(int idx)
- 	isb();
- }
- 
--static inline u32 armv7pmu_read_counter(struct perf_event *event)
-+static inline u64 armv7pmu_read_counter(struct perf_event *event)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
-@@ -763,7 +763,7 @@ static inline u32 armv7pmu_read_counter(struct perf_event *event)
- 	return value;
- }
- 
--static inline void armv7pmu_write_counter(struct perf_event *event, u32 value)
-+static inline void armv7pmu_write_counter(struct perf_event *event, u64 value)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
-diff --git a/arch/arm/kernel/perf_event_xscale.c b/arch/arm/kernel/perf_event_xscale.c
-index c4f0294..942230f 100644
---- a/arch/arm/kernel/perf_event_xscale.c
-+++ b/arch/arm/kernel/perf_event_xscale.c
-@@ -316,7 +316,7 @@ static void xscale1pmu_stop(struct arm_pmu *cpu_pmu)
- 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
- }
- 
--static inline u32 xscale1pmu_read_counter(struct perf_event *event)
-+static inline u64 xscale1pmu_read_counter(struct perf_event *event)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-@@ -337,7 +337,7 @@ static inline u32 xscale1pmu_read_counter(struct perf_event *event)
- 	return val;
- }
- 
--static inline void xscale1pmu_write_counter(struct perf_event *event, u32 val)
-+static inline void xscale1pmu_write_counter(struct perf_event *event, u64 val)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-@@ -678,7 +678,7 @@ static void xscale2pmu_stop(struct arm_pmu *cpu_pmu)
- 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
- }
- 
--static inline u32 xscale2pmu_read_counter(struct perf_event *event)
-+static inline u64 xscale2pmu_read_counter(struct perf_event *event)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-@@ -705,7 +705,7 @@ static inline u32 xscale2pmu_read_counter(struct perf_event *event)
- 	return val;
- }
- 
--static inline void xscale2pmu_write_counter(struct perf_event *event, u32 val)
-+static inline void xscale2pmu_write_counter(struct perf_event *event, u64 val)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index 678ecff..66a2ffd 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -512,7 +512,7 @@ static inline int armv8pmu_select_counter(int idx)
- 	return idx;
- }
- 
--static inline u32 armv8pmu_read_counter(struct perf_event *event)
-+static inline u64 armv8pmu_read_counter(struct perf_event *event)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
-@@ -530,7 +530,7 @@ static inline u32 armv8pmu_read_counter(struct perf_event *event)
- 	return value;
- }
- 
--static inline void armv8pmu_write_counter(struct perf_event *event, u32 value)
-+static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
-@@ -545,9 +545,8 @@ static inline void armv8pmu_write_counter(struct perf_event *event, u32 value)
- 		 * count using the lower 32bits and we want an interrupt when
- 		 * it overflows.
- 		 */
--		u64 value64 = 0xffffffff00000000ULL | value;
--
--		write_sysreg(value64, pmccntr_el0);
-+		value |= 0xffffffff00000000ULL;
-+		write_sysreg(value, pmccntr_el0);
- 	} else if (armv8pmu_select_counter(idx) == idx)
- 		write_sysreg(value, pmxevcntr_el0);
- }
-diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-index 12c30a2..f7126a2 100644
---- a/include/linux/perf/arm_pmu.h
-+++ b/include/linux/perf/arm_pmu.h
-@@ -87,8 +87,8 @@ struct arm_pmu {
- 					 struct perf_event *event);
- 	int		(*set_event_filter)(struct hw_perf_event *evt,
- 					    struct perf_event_attr *attr);
--	u32		(*read_counter)(struct perf_event *event);
--	void		(*write_counter)(struct perf_event *event, u32 val);
-+	u64		(*read_counter)(struct perf_event *event);
-+	void		(*write_counter)(struct perf_event *event, u64 val);
- 	void		(*start)(struct arm_pmu *);
- 	void		(*stop)(struct arm_pmu *);
- 	void		(*reset)(void *);
--- 
-2.7.4
+Given the whole series has your Reviewed-By and Peter's Acked-by, I
+assume that you're both happy for this to be queued?
 
+What's your prefered way for that to happen? Should I send a v4 with
+those fixes, a pull request, or are you happy to fetch that in a little
+while regardless?
+
+Thanks,
+Mark.
