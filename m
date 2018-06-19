@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1849CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC28C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46BA20661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:47:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46BA20661
+	by mail.kernel.org (Postfix) with ESMTP id 5251A20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:48:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5251A20661
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030462AbeFSSrx (ORCPT
+        id S1030519AbeFSSsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 14:47:53 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:39574 "EHLO vps-vb.mhejs.net"
+        Tue, 19 Jun 2018 14:48:00 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:39782 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1030320AbeFSSrv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 14:47:51 -0400
+        id S1030463AbeFSSrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 14:47:55 -0400
 Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <mail@maciej.szmigiero.name>)
-        id 1fVLfI-0003W1-Rh; Tue, 19 Jun 2018 20:47:40 +0200
+        id 1fVLfI-0003Vy-Km; Tue, 19 Jun 2018 20:47:40 +0200
 From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 5/9] x86/microcode/AMD: Split status from data to skip in verify_and_add_patch()
-Date:   Tue, 19 Jun 2018 20:47:35 +0200
-Message-Id: <84b3976f5879d7a58c3774d1f86e493b34c9759c.1529424596.git.mail@maciej.szmigiero.name>
+Subject: [PATCH v7 4/9] x86/microcode/AMD: Check microcode container data in the early loader
+Date:   Tue, 19 Jun 2018 20:47:34 +0200
+Message-Id: <391e063da8244b2cabd04104410f9863ed24a6e3.1529424596.git.mail@maciej.szmigiero.name>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1529424596.git.mail@maciej.szmigiero.name>
 References: <cover.1529424596.git.mail@maciej.szmigiero.name>
@@ -43,114 +43,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-verify_and_add_patch() returned a single "int" value which encoded both
-this function error status and also a length of microcode container data to
-skip.
+Convert the early loader in the AMD microcode update driver to use the
+container data checking functions introduced by previous commits.
 
-Unfortunately, ranges of these two values collide: the length of data to
-skip can be any value between 1 and UINT_MAX, so, for example, error status
-of -EINVAL maps to a valid return value of 4294967274 bytes.
-That's why these two values need to be split.
-
-Let's keep the common convention that a function zero return value means
-success while a negative value means an error while moving the returned
-length of microcode container data to skip to a separate output parameter.
+We have to be careful to call these functions with 'early' parameter set,
+so they won't try to print errors as the early loader runs too early for
+printk()-style functions to work.
 
 Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 ---
- arch/x86/kernel/cpu/microcode/amd.c | 35 +++++++++++++++--------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 70 ++++++++++++++++-------------
+ 1 file changed, 40 insertions(+), 30 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index c05531540b57..9e29374ce4d0 100644
+index 67147e784c0e..c05531540b57 100644
 --- a/arch/x86/kernel/cpu/microcode/amd.c
 +++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -754,45 +754,46 @@ static void cleanup(void)
- }
- 
- /*
-- * We return the current size even if some of the checks failed so that
-- * we can skip over the next patch. If we return a negative value, we
-- * signal a grave error like a memory allocation has failed and the
-- * driver cannot continue functioning normally. In such cases, we tear
-- * down everything we've used up so far and exit.
-+ * We return zero (success) and the current patch data size in @crnt_size
-+ * even if some of the checks failed so that we can skip over the next patch.
-+ * If we return a negative value, we signal a grave error like a memory
-+ * allocation has failed and the driver cannot continue functioning normally.
-+ * In such cases, we tear down everything we've used up so far and exit.
+@@ -284,29 +284,35 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
+  * Returns the amount of bytes consumed while scanning. @desc contains all the
+  * data we're going to use in later stages of the application.
   */
--static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
-+static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover,
-+				unsigned int *crnt_size)
+-static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
++static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
  {
- 	struct microcode_header_amd *mc_hdr;
- 	struct ucode_patch *patch;
--	unsigned int patch_size, crnt_size;
-+	unsigned int patch_size;
- 	u32 proc_fam;
- 	u16 proc_id;
+ 	struct equiv_cpu_entry *eq;
+-	ssize_t orig_size = size;
++	size_t orig_size = size;
+ 	u32 *hdr = (u32 *)ucode;
++	u32 equiv_tbl_len;
+ 	u16 eq_id;
+ 	u8 *buf;
  
- 	patch_size  = *(u32 *)(fw + 4);
--	crnt_size   = patch_size + SECTION_HDR_SIZE;
-+	*crnt_size  = patch_size + SECTION_HDR_SIZE;
- 	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
- 	proc_id	    = mc_hdr->processor_rev_id;
+-	/* Am I looking at an equivalence table header? */
+-	if (hdr[0] != UCODE_MAGIC ||
+-	    hdr[1] != UCODE_EQUIV_CPU_TABLE_TYPE ||
+-	    hdr[2] == 0)
+-		return CONTAINER_HDR_SZ;
++	/*
++	 * Skip one byte when a container cannot be parsed successfully
++	 * so the parser will correctly skip unknown data of any size until
++	 * it hopefully arrives at something that it is able to recognize.
++	 */
++	if (!verify_equivalence_table(ucode, size, true))
++		return 1;
  
- 	proc_fam = find_cpu_family_by_equiv_cpu(proc_id);
- 	if (!proc_fam) {
- 		pr_err("No patch family for equiv ID: 0x%04x\n", proc_id);
--		return crnt_size;
-+		return 0;
+ 	buf = ucode;
+ 
++	equiv_tbl_len = hdr[2];
+ 	eq = (struct equiv_cpu_entry *)(buf + CONTAINER_HDR_SZ);
+ 
+ 	/* Find the equivalence ID of our CPU in this table: */
+ 	eq_id = find_equiv_id(eq, desc->cpuid_1_eax);
+ 
+-	buf  += hdr[2] + CONTAINER_HDR_SZ;
+-	size -= hdr[2] + CONTAINER_HDR_SZ;
++	buf  += CONTAINER_HDR_SZ;
++	buf  += equiv_tbl_len;
++	size -= CONTAINER_HDR_SZ;
++	size -= equiv_tbl_len;
+ 
+ 	/*
+ 	 * Scan through the rest of the container to find where it ends. We do
+@@ -314,30 +320,36 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
+ 	 */
+ 	while (size > 0) {
+ 		struct microcode_amd *mc;
++		unsigned int crnt_size;
+ 		u32 patch_size;
+ 
+-		hdr = (u32 *)buf;
+-
+-		if (hdr[0] != UCODE_UCODE_TYPE)
++		/*
++		 * If this patch section hasn't got a plausible header we
++		 * probably have arrived at the beginning of a next container.
++		 * Bail out from patch processing here so this new container
++		 * can be scanned.
++		 */
++		if (!verify_patch_section(buf, size, true))
+ 			break;
+ 
+-		/* Sanity-check patch size. */
++		if (!verify_patch(x86_family(desc->cpuid_1_eax),
++				  buf, size, &crnt_size, true))
++			goto next_patch;
++
++		hdr = (u32 *)buf;
+ 		patch_size = hdr[1];
+-		if (patch_size > PATCH_MAX_SIZE)
+-			break;
+ 
+-		/* Skip patch section header: */
+-		buf  += SECTION_HDR_SIZE;
+-		size -= SECTION_HDR_SIZE;
++		mc = (struct microcode_amd *)(buf + SECTION_HDR_SIZE);
++		if (eq_id != mc->hdr.processor_rev_id)
++			goto next_patch;
+ 
+-		mc = (struct microcode_amd *)buf;
+-		if (eq_id == mc->hdr.processor_rev_id) {
+-			desc->psize = patch_size;
+-			desc->mc = mc;
+-		}
++		/* We have found a matching patch! */
++		desc->psize = patch_size;
++		desc->mc = mc;
+ 
+-		buf  += patch_size;
+-		size -= patch_size;
++next_patch:
++		buf  += crnt_size;
++		size -= crnt_size;
  	}
  
- 	/* check if patch is for the current family */
- 	proc_fam = ((proc_fam >> 8) & 0xf) + ((proc_fam >> 20) & 0xff);
- 	if (proc_fam != family)
--		return crnt_size;
-+		return 0;
+ 	/*
+@@ -363,15 +375,13 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
+  */
+ static void scan_containers(u8 *ucode, size_t size, struct cont_desc *desc)
+ {
+-	ssize_t rem = size;
+-
+-	while (rem >= 0) {
+-		ssize_t s = parse_container(ucode, rem, desc);
++	while (size > 0) {
++		size_t s = parse_container(ucode, size, desc);
+ 		if (!s)
+ 			return;
  
- 	if (mc_hdr->nb_dev_id || mc_hdr->sb_dev_id) {
- 		pr_err("Patch-ID 0x%08x: chipset-specific code unsupported.\n",
- 			mc_hdr->patch_id);
--		return crnt_size;
-+		return 0;
+ 		ucode += s;
+-		rem   -= s;
++		size  -= s;
  	}
- 
--	if (!verify_patch(family, fw, leftover, &crnt_size, false)) {
-+	if (!verify_patch(family, fw, leftover, crnt_size, false)) {
- 		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
--		return crnt_size;
-+		return 0;
- 	}
- 
- 	patch = kzalloc(sizeof(*patch), GFP_KERNEL);
-@@ -818,7 +819,7 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
- 	/* ... and add to cache. */
- 	update_cache(patch);
- 
--	return crnt_size;
-+	return 0;
  }
  
- static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
-@@ -827,7 +828,6 @@ static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
- 	enum ucode_state ret = UCODE_ERROR;
- 	unsigned int leftover;
- 	u8 *fw = (u8 *)data;
--	int crnt_size = 0;
- 	int offset;
- 
- 	offset = install_equiv_cpu_table(data);
-@@ -845,8 +845,9 @@ static enum ucode_state __load_microcode_amd(u8 family, const u8 *data,
- 	}
- 
- 	while (leftover) {
--		crnt_size = verify_and_add_patch(family, fw, leftover);
--		if (crnt_size < 0)
-+		unsigned int crnt_size;
-+
-+		if (verify_and_add_patch(family, fw, leftover, &crnt_size) < 0)
- 			return ret;
- 
- 		fw	 += crnt_size;
