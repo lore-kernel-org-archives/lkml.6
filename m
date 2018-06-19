@@ -2,165 +2,105 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1328DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00909C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C15C120661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AADA120874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:29:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B8aNAoRV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C15C120661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4gJuJ3G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AADA120874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965217AbeFSE3B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 00:29:01 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:47792 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965144AbeFSE27 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 00:28:59 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5J4StAi025195;
-        Mon, 18 Jun 2018 23:28:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529382535;
-        bh=YGqfpRXZn1kRDOYYntcb61nshGZO6hNVOnVnYhfS5S8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=B8aNAoRV1mpNNnLAxcysw3aQYuEbhQHjCGLSt2aW4Bkk3kw4kT6dyN11mfcW1XhWw
-         bc5etknzPFio15CG5OF/L2sBIBqH9hJHSFnFZoOpYjV53z0+PHy8fRZeUIjQfsyAWT
-         3MMrRAMYZtru9/qQZmoRDNUdLG39iPq/ONMRl1c8=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5J4StfN001143;
-        Mon, 18 Jun 2018 23:28:55 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 18
- Jun 2018 23:28:55 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 18 Jun 2018 23:28:55 -0500
-Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5J4SeQu004959;
-        Mon, 18 Jun 2018 23:28:53 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>,
-        <d-gerlach@ti.com>, <j-keerthy@ti.com>
-Subject: [PATCH 4/4] soc: ti: pm33xx: Save/restore clk context based on enable_off_mode setting
-Date:   Tue, 19 Jun 2018 09:58:25 +0530
-Message-ID: <1529382505-3069-5-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
-References: <1529382505-3069-1-git-send-email-j-keerthy@ti.com>
+        id S965348AbeFSE3T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 00:29:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750816AbeFSE3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 00:29:17 -0400
+Received: from localhost (unknown [106.200.222.147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F337620661;
+        Tue, 19 Jun 2018 04:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529382556;
+        bh=dFalYT9mILSAljBoFp6rIikURZldsFLL31jACZnhyjE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n4gJuJ3GgdsncMQzNz1j6MkMHtBeme4w6jqcusulKAtn4kObNRB7F3DYXfi8zZbKc
+         u1qDBet+8a527bDs8AFmRx7JliChQgFZ6hB0ssS0AfnOVXEqjtzhreEhLUiMbpit29
+         OxWbBZt5U7n9/pQzxxH8vz+jikHlzd8WU70IXFTA=
+Date:   Tue, 19 Jun 2018 09:59:08 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] dmaengine: ti: omap-dma: Fix OMAP1510 incorrect
+ residue_granularity
+Message-ID: <20180619042908.GM25852@vkoul-mobl>
+References: <20180605165957.29616-1-jmkrzyszt@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605165957.29616-1-jmkrzyszt@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Save/restore clk context based on enable_off_mode setting.
-The context needs to be saved at the very end of suspend path
-and restored at the beginning of resume path.
+On 05-06-18, 18:59, Janusz Krzysztofik wrote:
+> Commit 0198d7bb8a0c ("ASoC: omap-mcbsp: Convert to use the sdma-pcm
+> instead of omap-pcm") resulted in broken audio playback on OMAP1510
+> (discovered on Amstrad Delta).
+> 
+> When running on OMAP1510, omap-pcm used to obtain DMA offset from
+> snd_dmaengine_pcm_pointer_no_residue() based on DMA interrupt triggered
+> software calculations instead of snd_dmaengine_pcm_pointer() which
+> depended on residue value calculated from omap_dma_get_src_pos().
+> Similar code path is still available in now used
+> sound/soc/soc-generic-dmaengine-pcm.c but it is not triggered.
+> 
+> It was verified already before that omap_get_dma_src_pos() from
+> arch/arm/plat-omap/dma.c didn't work correctly for OMAP1510 - see
+> commit 1bdd7419910c ("ASoC: OMAP: fix OMAP1510 broken PCM pointer
+> callback") for details.  Apparently the same applies to its successor,
+> omap_dma_get_src_pos() from drivers/dma/ti/omap-dma.c.
+> 
+> On the other hand, snd_dmaengine_pcm_pointer_no_residue() is described
+> as depreciated and discouraged for use in new drivers because of its
+> unreliable accuracy.  However, it seems the only working option for
+> OPAM1510 now, as long as a software calculated residue is not
+> implemented as OMAP1510 fallback in omap-dma.
+> 
+> Using snd_dmaengine_pcm_pointer_no_residue() code path instead of
+> snd_dmaengine_pcm_pointer() in sound/soc/soc-generic-dmaengine-pcm.c
+> can be triggered in two ways:
+> - by passing pcm->flags |= SND_DMAENGINE_PCM_FLAG_NO_RESIDUE from
+>   sound/soc/omap/sdma-pcm.c,
+> - by passing dma_caps.residue_granularity =
+>   DMA_RESIDUE_GRANULARITY_DESCRIPTOR from DMA engine.
+> 
+> Let's do the latter.
+> 
+> Created and tested against next-20180531 tag from linux-next tree.
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
- arch/arm/mach-omap2/pm33xx-core.c    | 15 +++++++++++++++
- drivers/soc/ti/pm33xx.c              | 13 +++++++++++++
- include/linux/platform_data/pm33xx.h |  1 +
- 3 files changed, 29 insertions(+)
+This is not useful for log.
 
-diff --git a/arch/arm/mach-omap2/pm33xx-core.c b/arch/arm/mach-omap2/pm33xx-core.c
-index 9b3755a..29f848f 100644
---- a/arch/arm/mach-omap2/pm33xx-core.c
-+++ b/arch/arm/mach-omap2/pm33xx-core.c
-@@ -37,6 +37,20 @@ static int __init am43xx_map_scu(void)
- 	return 0;
- }
- 
-+static int am43xx_check_off_mode_enable(void)
-+{
-+	/*
-+	 * Check for am437x-sk-evm which due to HW design cannot support
-+	 * this mode reliably.
-+	 */
-+	if (of_machine_is_compatible("ti,am437x-sk-evm") && enable_off_mode) {
-+		pr_warn("WARNING: This platform does not support off-mode, entering DeepSleep suspend.\n");
-+		return 0;
-+	}
-+
-+	return enable_off_mode;
-+}
-+
- static int amx3_common_init(void)
- {
- 	gfx_pwrdm = pwrdm_lookup("gfx_pwrdm");
-@@ -161,6 +175,7 @@ static struct am33xx_pm_sram_addr *amx3_get_sram_addrs(void)
- 	.init = am43xx_suspend_init,
- 	.soc_suspend = am43xx_suspend,
- 	.get_sram_addrs = amx3_get_sram_addrs,
-+	.check_off_mode_enable = am43xx_check_off_mode_enable,
- };
- 
- static struct am33xx_pm_platform_data *am33xx_pm_get_pdata(void)
-diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
-index 652739c..e749b8d 100644
---- a/drivers/soc/ti/pm33xx.c
-+++ b/drivers/soc/ti/pm33xx.c
-@@ -6,6 +6,7 @@
-  *	Vaibhav Bedia, Dave Gerlach
-  */
- 
-+#include <linux/clk.h>
- #include <linux/cpu.h>
- #include <linux/err.h>
- #include <linux/genalloc.h>
-@@ -52,6 +53,14 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
- {
- 	int i, ret = 0;
- 
-+	/*
-+	 * For RTC only mode with DDR in selfresh we need to save
-+	 * clocks context at the very end
-+	 */
-+	if (suspend_state == PM_SUSPEND_MEM &&
-+	    pm_ops->check_off_mode_enable())
-+		clk_save_context();
-+
- 	ret = pm_ops->soc_suspend((unsigned long)suspend_state,
- 				  am33xx_do_wfi_sram);
- 
-@@ -77,6 +86,10 @@ static int am33xx_pm_suspend(suspend_state_t suspend_state)
- 		}
- 	}
- 
-+	if (suspend_state == PM_SUSPEND_MEM &&
-+	    pm_ops->check_off_mode_enable())
-+		clk_restore_context();
-+
- 	return ret;
- }
- 
-diff --git a/include/linux/platform_data/pm33xx.h b/include/linux/platform_data/pm33xx.h
-index f9bed2a..36f7007 100644
---- a/include/linux/platform_data/pm33xx.h
-+++ b/include/linux/platform_data/pm33xx.h
-@@ -25,6 +25,7 @@ struct am33xx_pm_platform_data {
- 	int	(*init)(void);
- 	int	(*soc_suspend)(unsigned int state, int (*fn)(unsigned long));
- 	struct  am33xx_pm_sram_addr *(*get_sram_addrs)(void);
-+	int (*check_off_mode_enable)(void);
- };
- 
- struct am33xx_pm_sram_data {
+I have stripped this and applied
+
 -- 
-1.9.1
-
+~Vinod
