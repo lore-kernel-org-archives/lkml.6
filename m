@@ -2,311 +2,100 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D73C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B24BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D44220874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:03:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WkJLNuHa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D44220874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 4ED0F2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:04:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED0F2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755571AbeFSFDu (ORCPT
+        id S1755638AbeFSFEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:03:50 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:38222 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbeFSFDs (ORCPT
+        Tue, 19 Jun 2018 01:04:51 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39624 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755575AbeFSFEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:03:48 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5J4wxVJ048807;
-        Tue, 19 Jun 2018 05:03:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=BALhbizktdhbQ+K419PFqf3hDzlLi0QJqDjXg/MlOrg=;
- b=WkJLNuHa9lU/ZZDjLwG2FuhbZeI4Of8LRKRvC4D7LA8VXU5sZl5bWsxyGAlIOxunc7AK
- FDpZhh5aQLVfhUTVex+w1Y9l/m63lBv17Z2J4dUFGoiWhV5CZBO36jMUbZumW34xPgw3
- Jme6LHCYP3q9O/XsLdaOtpfQcUMWgHSvuhATZygSxhG/6fiVm0bjQGxpC00kk2yJiDcs
- hcS4gBueh0KZuZSGh1BjTNz+3sKleHJ76+fwlPir4nF9yqsFwA3sipZ+5EIL5ej+IhyH
- iYtXA0nETTDYW29rKGVkAI5slIxvND7eqF/6RyGdiF2PVkGMuuO8WkmO+bFpr1UBSRFK 7w== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jmr2menae-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 05:03:22 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5J53LtE008520
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 05:03:21 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5J53LHv004879;
-        Tue, 19 Jun 2018 05:03:21 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Jun 2018 22:03:20 -0700
-Date:   Mon, 18 Jun 2018 22:03:13 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     NeilBrown <neilb@suse.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [RFC PATCH 0/5] kbuild: build modules from code in multiple
- directories.
-Message-ID: <20180619050313.GK8128@magnolia>
-References: <152929708853.17463.17302660556961083137.stgit@noble>
- <20180618082017.GA4752@infradead.org>
- <87po0ne7zw.fsf@notabene.neil.brown.name>
- <20180619044748.GA18671@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619044748.GA18671@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806190057
+        Tue, 19 Jun 2018 01:04:50 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5J5420x106150
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 01:04:49 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jpre7dsaj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 01:04:49 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akshay.adiga@linux.vnet.ibm.com>;
+        Tue, 19 Jun 2018 06:04:47 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Jun 2018 06:04:45 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5J54ipF34734116
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Jun 2018 05:04:44 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 668384C04E;
+        Tue, 19 Jun 2018 05:55:45 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4282C4C044;
+        Tue, 19 Jun 2018 05:55:42 +0100 (BST)
+Received: from aksadiga.ibm (unknown [9.195.32.219])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Jun 2018 05:55:42 +0100 (BST)
+From:   Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org
+Cc:     rjw@rjwysocki.net, svaidy@linux.vnet.ibm.com,
+        ego@linux.vnet.ibm.com, npiggin@gmail.com, mpe@ellerman.id.au,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Subject: [PATCH 0/3] powernv/cpuidle Device-tree parsing cleanup 
+Date:   Tue, 19 Jun 2018 10:34:25 +0530
+X-Mailer: git-send-email 2.5.5
+X-TM-AS-GCONF: 00
+x-cbid: 18061905-0016-0000-0000-000001DD82B7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061905-0017-0000-0000-000032318B3D
+Message-Id: <1529384668-27548-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-19_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=701 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806190058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 09:47:48PM -0700, Christoph Hellwig wrote:
-> On Tue, Jun 19, 2018 at 02:05:23PM +1000, NeilBrown wrote:
-> > From: NeilBrown <neilb@suse.com>
-> > Date: Tue, 19 Jun 2018 13:59:16 +1000
-> > Subject: [PATCH] kbuild/xfs: example modobj-m conversion
-> > 
-> > This is a demonstration patch to show how
-> > xfs can be changed to make use of the proposed modobj-m=
-> > functionality, should the xfs developers want that.
-> 
-> Well, IFF we go with this new functionality I think everyone should
-> be using it instead of the current hacks.
-> 
-> So text like the above should be in the series cover letter, and this
-> patch should have an actual description..
-> 
-> I see no argument against these changes, but I've also added the XFS
-> list.
+Device-tree parsed multiple time in powernv cpuidle and powernv
+hotplug code. 
 
-Yes, please send the entire series to the xfs list in the future.
+First to identify supported flags, secondly, to identify deepest_state
+and first deep state, Thirdly , during cpudidle init to find the available
+idle states. Any change in device-tree format will lead to make changes in
+these 3 places.
 
-It looks like a reasonable reorganization of makefile goop. :)
+This series adds code to parse device tree once and save in global structure.
 
-(Will dig for the rest of the series on lkml tomorrow I guess.)
+Akshay Adiga (3):
+  powernv/cpuidle: Parse dt idle properties into global structure
+  cpuidle/powernv: Change platform init to avoid reparsing dt
+  powernv/cpuidle: Use parsed device tree values for cpuidle_init
 
-> > 
-> > Signed-off-by: NeilBrown <neilb@suse.com>
-> > ---
-> >  fs/xfs/Makefile        | 78 ++------------------------------------------------
-> >  fs/xfs/libxfs/Makefile | 43 ++++++++++++++++++++++++++++
-> >  fs/xfs/scrub/Makefile  | 29 +++++++++++++++++++
-> >  3 files changed, 74 insertions(+), 76 deletions(-)
-> >  create mode 100644 fs/xfs/libxfs/Makefile
-> >  create mode 100644 fs/xfs/scrub/Makefile
-> > 
-> > diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
-> > index 2f3f75a7f180..0ba854045fe9 100644
-> > --- a/fs/xfs/Makefile
-> > +++ b/fs/xfs/Makefile
-> > @@ -15,47 +15,7 @@ obj-$(CONFIG_XFS_FS)		+= xfs.o
-> >  xfs-y				+= xfs_trace.o
-> >  
-> >  # build the libxfs code first
-> > -xfs-y				+= $(addprefix libxfs/, \
-> > -				   xfs_ag.o \
-> > -				   xfs_alloc.o \
-> > -				   xfs_alloc_btree.o \
-> > -				   xfs_attr.o \
-> > -				   xfs_attr_leaf.o \
-> > -				   xfs_attr_remote.o \
-> > -				   xfs_bit.o \
-> > -				   xfs_bmap.o \
-> > -				   xfs_bmap_btree.o \
-> > -				   xfs_btree.o \
-> > -				   xfs_da_btree.o \
-> > -				   xfs_da_format.o \
-> > -				   xfs_defer.o \
-> > -				   xfs_dir2.o \
-> > -				   xfs_dir2_block.o \
-> > -				   xfs_dir2_data.o \
-> > -				   xfs_dir2_leaf.o \
-> > -				   xfs_dir2_node.o \
-> > -				   xfs_dir2_sf.o \
-> > -				   xfs_dquot_buf.o \
-> > -				   xfs_ialloc.o \
-> > -				   xfs_ialloc_btree.o \
-> > -				   xfs_iext_tree.o \
-> > -				   xfs_inode_fork.o \
-> > -				   xfs_inode_buf.o \
-> > -				   xfs_log_rlimit.o \
-> > -				   xfs_ag_resv.o \
-> > -				   xfs_rmap.o \
-> > -				   xfs_rmap_btree.o \
-> > -				   xfs_refcount.o \
-> > -				   xfs_refcount_btree.o \
-> > -				   xfs_sb.o \
-> > -				   xfs_symlink_remote.o \
-> > -				   xfs_trans_resv.o \
-> > -				   xfs_types.o \
-> > -				   )
-> > -# xfs_rtbitmap is shared with libxfs
-> > -xfs-$(CONFIG_XFS_RT)		+= $(addprefix libxfs/, \
-> > -				   xfs_rtbitmap.o \
-> > -				   )
-> > +xfs-y				+= libxfs/
-> >  
-> >  # highlevel code
-> >  xfs-y				+= xfs_aops.o \
-> > @@ -127,38 +87,4 @@ xfs-$(CONFIG_SYSCTL)		+= xfs_sysctl.o
-> >  xfs-$(CONFIG_COMPAT)		+= xfs_ioctl32.o
-> >  xfs-$(CONFIG_EXPORTFS_BLOCK_OPS)	+= xfs_pnfs.o
-> >  
-> > -# online scrub/repair
-> > -ifeq ($(CONFIG_XFS_ONLINE_SCRUB),y)
-> > -
-> > -# Tracepoints like to blow up, so build that before everything else
-> > -
-> > -xfs-y				+= $(addprefix scrub/, \
-> > -				   trace.o \
-> > -				   agheader.o \
-> > -				   alloc.o \
-> > -				   attr.o \
-> > -				   bmap.o \
-> > -				   btree.o \
-> > -				   common.o \
-> > -				   dabtree.o \
-> > -				   dir.o \
-> > -				   ialloc.o \
-> > -				   inode.o \
-> > -				   parent.o \
-> > -				   refcount.o \
-> > -				   rmap.o \
-> > -				   scrub.o \
-> > -				   symlink.o \
-> > -				   )
-> > -
-> > -xfs-$(CONFIG_XFS_RT)		+= scrub/rtbitmap.o
-> > -xfs-$(CONFIG_XFS_QUOTA)		+= scrub/quota.o
-> > -
-> > -# online repair
-> > -ifeq ($(CONFIG_XFS_ONLINE_REPAIR),y)
-> > -xfs-y				+= $(addprefix scrub/, \
-> > -				   agheader_repair.o \
-> > -				   repair.o \
-> > -				   )
-> > -endif
-> > -endif
-> > +xfs-$(CONFIG_XFS_ONLINE_SCRUB)	+= scrub/
-> > diff --git a/fs/xfs/libxfs/Makefile b/fs/xfs/libxfs/Makefile
-> > new file mode 100644
-> > index 000000000000..9b90c289bdda
-> > --- /dev/null
-> > +++ b/fs/xfs/libxfs/Makefile
-> > @@ -0,0 +1,43 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +ccflags-y += -I$(src)/..
-> > +
-> > +# xfs_rtbitmap is shared with libxfs
-> > +xobj-$(CONFIG_XFS_RT)		+= xfs_rtbitmap.o
-> > +
-> > +modobj-$(CONFIG_XFS_FS) +=	   xfs_ag.o \
-> > +				   xfs_alloc.o \
-> > +				   xfs_alloc_btree.o \
-> > +				   xfs_attr.o \
-> > +				   xfs_attr_leaf.o \
-> > +				   xfs_attr_remote.o \
-> > +				   xfs_bit.o \
-> > +				   xfs_bmap.o \
-> > +				   xfs_bmap_btree.o \
-> > +				   xfs_btree.o \
-> > +				   xfs_da_btree.o \
-> > +				   xfs_da_format.o \
-> > +				   xfs_defer.o \
-> > +				   xfs_dir2.o \
-> > +				   xfs_dir2_block.o \
-> > +				   xfs_dir2_data.o \
-> > +				   xfs_dir2_leaf.o \
-> > +				   xfs_dir2_node.o \
-> > +				   xfs_dir2_sf.o \
-> > +				   xfs_dquot_buf.o \
-> > +				   xfs_ialloc.o \
-> > +				   xfs_ialloc_btree.o \
-> > +				   xfs_iext_tree.o \
-> > +				   xfs_inode_fork.o \
-> > +				   xfs_inode_buf.o \
-> > +				   xfs_log_rlimit.o \
-> > +				   xfs_ag_resv.o \
-> > +				   xfs_rmap.o \
-> > +				   xfs_rmap_btree.o \
-> > +				   xfs_refcount.o \
-> > +				   xfs_refcount_btree.o \
-> > +				   xfs_sb.o \
-> > +				   xfs_symlink_remote.o \
-> > +				   xfs_trans_resv.o \
-> > +				   xfs_types.o \
-> > +				   $(xobj-y)
-> > diff --git a/fs/xfs/scrub/Makefile b/fs/xfs/scrub/Makefile
-> > new file mode 100644
-> > index 000000000000..f91818a0e6ee
-> > --- /dev/null
-> > +++ b/fs/xfs/scrub/Makefile
-> > @@ -0,0 +1,29 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +# Tracepoints like to blow up, so build that before everything else
+ arch/powerpc/include/asm/cpuidle.h    |  16 +++
+ arch/powerpc/platforms/powernv/idle.c | 214 +++++++++++++++++++++-------------
+ drivers/cpuidle/cpuidle-powernv.c     |  49 +++++---
+ 3 files changed, 182 insertions(+), 97 deletions(-)
 
-This comment ought to stay with trace.o below because that's what it
-applies to.
+-- 
+2.5.5
 
---D
-
-> > +
-> > +ccflags-y += -I$(src)/..
-> > +ccflags-y += -I$(src)/../libxfs
-> > +
-> > +xobj-$(CONFIG_XFS_RT)		+= rtbitmap.o
-> > +xobj-$(CONFIG_XFS_QUOTA)	+= quota.o
-> > +xobj-$(CONFIG_XFS_ONLINE_REPAIR)+= agheader_repair.o \
-> > +				   repair.o
-> > +
-> > +modobj-$(CONFIG_XFS_FS) +=	   trace.o \
-> > +				   agheader.o \
-> > +				   alloc.o \
-> > +				   attr.o \
-> > +				   bmap.o \
-> > +				   btree.o \
-> > +				   common.o \
-> > +				   dabtree.o \
-> > +				   dir.o \
-> > +				   ialloc.o \
-> > +				   inode.o \
-> > +				   parent.o \
-> > +				   refcount.o \
-> > +				   rmap.o \
-> > +				   scrub.o \
-> > +				   symlink.o \
-> > +				   $(xobj-y)
-> > -- 
-> > 2.14.0.rc0.dirty
-> > 
-> 
-> 
-> ---end quoted text---
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
