@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95736C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8D2C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F62A20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A2DF2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMQC78p0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F62A20652
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYDML+Ry"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A2DF2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967153AbeFSQMU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:12:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45600 "EHLO mail.kernel.org"
+        id S967154AbeFSQMs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:12:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966661AbeFSQMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:12:17 -0400
+        id S966879AbeFSQMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:12:46 -0400
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43D9D20661;
-        Tue, 19 Jun 2018 16:12:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5335920661;
+        Tue, 19 Jun 2018 16:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529424737;
-        bh=tiIwAuGIS5wWobRDA1udon1kPHWVmxikknYqeb7Y9vQ=;
+        s=default; t=1529424766;
+        bh=Qpl6EHWZ7cA1Fbqgdfw/Ll+jcdb8sds5r74Fiz8iGKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SMQC78p0QuMUsSoZIJuPMD/kn/lQxGhGAdPsS8h6RZSoMfnNytgP9EGzenHJNGLI1
-         PAGnG5ejbv56cijE4lpr3ICA2sRjDRJ4JqCNVCsn4UXUQZ7NwMbMD4QZA0dk8z46yZ
-         tTEgnNgKY5L2Qf13HxNc58bgDaiaeYelQU24TO38=
+        b=HYDML+Rynyz0PzE1/F1l8dBYqWadVZ0GsdWa/NUtlOXnRxeln6ml6OQbL9o3JxihT
+         5V73yOKxUW6PMYbrtb83dFZRB2ExxpWszDLWLPuOgfzmq1i3+DtCJxFBaR2KwFs2xR
+         QrmJNXerVNE1uY2LycLRrVOAWmOYOCP32WKYcHKk=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>
@@ -44,11 +44,12 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
         Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Steven Rostedt <rostedt@goodmis.org>,
-        linux-arch@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-arch@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH -tip v6 16/27] ARM: kprobes: Don't call the ->break_handler() in arm kprobes code
-Date:   Wed, 20 Jun 2018 01:11:53 +0900
-Message-Id: <152942471328.15209.10625693210204476080.stgit@devbox>
+Subject: [PATCH -tip v6 17/27] arm64: kprobes: Don't call the ->break_handler() in arm64 kprobes code
+Date:   Wed, 20 Jun 2018 01:12:22 +0900
+Message-Id: <152942474231.15209.17684808374429473004.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152942424698.15209.15245996287444292393.stgit@devbox>
 References: <152942424698.15209.15245996287444292393.stgit@devbox>
@@ -61,36 +62,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't call the ->break_handler() from the arm kprobes code,
+Don't call the ->break_handler() from the arm64 kprobes code,
 because it was only used by jprobes which got removed.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
 ---
- arch/arm/probes/kprobes/core.c |   11 -----------
- 1 file changed, 11 deletions(-)
+ arch/arm64/kernel/probes/kprobes.c |    8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/arm/probes/kprobes/core.c b/arch/arm/probes/kprobes/core.c
-index 23562111c511..3192350f389d 100644
---- a/arch/arm/probes/kprobes/core.c
-+++ b/arch/arm/probes/kprobes/core.c
-@@ -315,17 +315,6 @@ void __kprobes kprobe_handler(struct pt_regs *regs)
- 				reset_current_kprobe();
+diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+index 3ca2351109a6..076c3c0775a6 100644
+--- a/arch/arm64/kernel/probes/kprobes.c
++++ b/arch/arm64/kernel/probes/kprobes.c
+@@ -408,14 +408,6 @@ static void __kprobes kprobe_handler(struct pt_regs *regs)
+ 				return;
  			}
  		}
--	} else if (cur) {
+-	} else if ((le32_to_cpu(*(kprobe_opcode_t *) addr) ==
+-	    BRK64_OPCODE_KPROBES) && cur_kprobe) {
 -		/* We probably hit a jprobe.  Call its break handler. */
--		if (cur->break_handler && cur->break_handler(cur, regs)) {
--			kcb->kprobe_status = KPROBE_HIT_SS;
--			singlestep(cur, regs, kcb);
--			if (cur->post_handler) {
--				kcb->kprobe_status = KPROBE_HIT_SSDONE;
--				cur->post_handler(cur, regs, 0);
--			}
+-		if (cur_kprobe->break_handler  &&
+-		     cur_kprobe->break_handler(cur_kprobe, regs)) {
+-			setup_singlestep(cur_kprobe, regs, kcb, 0);
+-			return;
 -		}
--		reset_current_kprobe();
- 	} else {
- 		/*
- 		 * The probe was removed and a race is in progress.
+ 	}
+ 	/*
+ 	 * The breakpoint instruction was removed right
 
