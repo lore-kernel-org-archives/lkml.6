@@ -1,164 +1,89 @@
 Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D51C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF02C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC5802075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:17:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC5802075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id AE788208A1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:17:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE788208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966302AbeFSLRS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S966326AbeFSLRV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 07:17:21 -0400
+Received: from mga12.intel.com ([192.55.52.136]:6274 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965152AbeFSLRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Jun 2018 07:17:18 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:38610 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965152AbeFSLRQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 07:17:16 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 4067E60A04A1;
-        Tue, 19 Jun 2018 13:17:15 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id hchpT9gtaHO5; Tue, 19 Jun 2018 13:17:14 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id DEDD260A04C6;
-        Tue, 19 Jun 2018 13:17:14 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id WPBg853E0kxj; Tue, 19 Jun 2018 13:17:14 +0200 (CEST)
-Received: from blindfold.localnet (unknown [82.150.214.1])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 9062260A04A1;
-        Tue, 19 Jun 2018 13:17:14 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kbuild@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v3 2/3] mtd: rawnand: denali_dt: use dev as a shorthand of &pdev->dev
-Date:   Tue, 19 Jun 2018 13:17:14 +0200
-Message-ID: <4803088.H75MTUDLH6@blindfold>
-In-Reply-To: <1529025532-22087-3-git-send-email-yamada.masahiro@socionext.com>
-References: <1529025532-22087-1-git-send-email-yamada.masahiro@socionext.com> <1529025532-22087-3-git-send-email-yamada.masahiro@socionext.com>
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 04:17:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
+   d="scan'208";a="233759945"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by orsmga005.jf.intel.com with ESMTP; 19 Jun 2018 04:17:15 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fVEdO-0007jX-Pt; Tue, 19 Jun 2018 19:17:14 +0800
+Date:   Tue, 19 Jun 2018 19:16:27 +0800
+From:   kbuild test robot <fengguang.wu@intel.com>
+To:     Stefan Mavrodiev <stefan@olimex.com>
+Cc:     kbuild-all@01.org, Stefan Mavrodiev <stefan@olimex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] drm/panel: lcd_olinuxino_funcs can be static
+Message-ID: <20180619111627.GA67130@cairo>
+References: <1529397260-16340-1-git-send-email-stefan@olimex.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529397260-16340-1-git-send-email-stefan@olimex.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 15. Juni 2018, 03:18:51 CEST schrieb Masahiro Yamada:
-> The probe function references &pdev->dev many times.  Add 'dev' as
-> a shorthand.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> Changes in v3: None
-> Changes in v2: None
-> 
->  drivers/mtd/nand/raw/denali_dt.c | 25 +++++++++++++------------
->  1 file changed, 13 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
-> index ce6239d..afaae37 100644
-> --- a/drivers/mtd/nand/raw/denali_dt.c
-> +++ b/drivers/mtd/nand/raw/denali_dt.c
-> @@ -81,38 +81,39 @@ MODULE_DEVICE_TABLE(of, denali_nand_dt_ids);
->  
->  static int denali_dt_probe(struct platform_device *pdev)
->  {
-> +	struct device *dev = &pdev->dev;
->  	struct resource *res;
->  	struct denali_dt *dt;
->  	const struct denali_dt_data *data;
->  	struct denali_nand_info *denali;
->  	int ret;
->  
-> -	dt = devm_kzalloc(&pdev->dev, sizeof(*dt), GFP_KERNEL);
-> +	dt = devm_kzalloc(dev, sizeof(*dt), GFP_KERNEL);
->  	if (!dt)
->  		return -ENOMEM;
->  	denali = &dt->denali;
->  
-> -	data = of_device_get_match_data(&pdev->dev);
-> +	data = of_device_get_match_data(dev);
->  	if (data) {
->  		denali->revision = data->revision;
->  		denali->caps = data->caps;
->  		denali->ecc_caps = data->ecc_caps;
->  	}
->  
-> -	denali->dev = &pdev->dev;
-> +	denali->dev = dev;
->  	denali->irq = platform_get_irq(pdev, 0);
->  	if (denali->irq < 0) {
-> -		dev_err(&pdev->dev, "no irq defined\n");
-> +		dev_err(dev, "no irq defined\n");
->  		return denali->irq;
->  	}
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "denali_reg");
-> -	denali->reg = devm_ioremap_resource(&pdev->dev, res);
-> +	denali->reg = devm_ioremap_resource(dev, res);
->  	if (IS_ERR(denali->reg))
->  		return PTR_ERR(denali->reg);
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "nand_data");
-> -	denali->host = devm_ioremap_resource(&pdev->dev, res);
-> +	denali->host = devm_ioremap_resource(dev, res);
->  	if (IS_ERR(denali->host))
->  		return PTR_ERR(denali->host);
->  
-> @@ -120,19 +121,19 @@ static int denali_dt_probe(struct platform_device *pdev)
->  	 * A single anonymous clock is supported for the backward compatibility.
->  	 * New platforms should support all the named clocks.
->  	 */
-> -	dt->clk = devm_clk_get(&pdev->dev, "nand");
-> +	dt->clk = devm_clk_get(dev, "nand");
->  	if (IS_ERR(dt->clk))
-> -		dt->clk = devm_clk_get(&pdev->dev, NULL);
-> +		dt->clk = devm_clk_get(dev, NULL);
->  	if (IS_ERR(dt->clk)) {
-> -		dev_err(&pdev->dev, "no clk available\n");
-> +		dev_err(dev, "no clk available\n");
->  		return PTR_ERR(dt->clk);
->  	}
->  
-> -	dt->clk_x = devm_clk_get(&pdev->dev, "nand_x");
-> +	dt->clk_x = devm_clk_get(dev, "nand_x");
->  	if (IS_ERR(dt->clk_x))
->  		dt->clk_x = NULL;
->  
-> -	dt->clk_ecc = devm_clk_get(&pdev->dev, "ecc");
-> +	dt->clk_ecc = devm_clk_get(dev, "ecc");
->  	if (IS_ERR(dt->clk_ecc))
->  		dt->clk_ecc = NULL;
->  
-> @@ -155,7 +156,7 @@ static int denali_dt_probe(struct platform_device *pdev)
->  		 * Hardcode the clock rates for the backward compatibility.
->  		 * This works for both SOCFPGA and UniPhier.
->  		 */
-> -		dev_notice(&pdev->dev,
-> +		dev_notice(dev,
->  			   "necessary clock is missing. default clock rates are used.\n");
->  		denali->clk_x_rate = 200000000;
->  	}
-> 
 
-Tested-by: Richard Weinberger <richard@nod.at>
+Fixes: 17a867cdd048 ("drm/panel: Add support for Olimex LCD-OLinuXino panel")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+---
+ panel-olimex-lcd-olinuxino.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-//richard
+diff --git a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
+index 0bc04ff..daa9ef5 100644
+--- a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
++++ b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
+@@ -212,7 +212,7 @@ static int lcd_olinuxino_get_modes(struct drm_panel *panel)
+ 	return num;
+ }
+ 
+-struct drm_panel_funcs lcd_olinuxino_funcs = {
++static struct drm_panel_funcs lcd_olinuxino_funcs = {
+ 	.disable = lcd_olinuxino_disable,
+ 	.unprepare = lcd_olinuxino_unprepare,
+ 	.prepare = lcd_olinuxino_prepare,
