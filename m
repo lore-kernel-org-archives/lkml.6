@@ -2,132 +2,109 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C26BAC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDFAC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 832532083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:40:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 832532083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6996A20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:44:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uOggwq1Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6996A20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937530AbeFSJkK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:40:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45868 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937452AbeFSJkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:40:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A04E31435;
-        Tue, 19 Jun 2018 02:40:08 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC4FD3F25D;
-        Tue, 19 Jun 2018 02:40:04 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 10:40:03 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Pavan Kondeti <pkondeti@codeaurora.org>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joelaf@google.com, smuckle@google.com,
-        adharmap@quicinc.com, skannan@quicinc.com, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 10/10] arch_topology: Start Energy Aware Scheduling
-Message-ID: <20180619094002.GR17720@e108498-lin.cambridge.arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-11-quentin.perret@arm.com>
- <20180619091841.GD9208@codeaurora.org>
+        id S1756877AbeFSJow (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 05:44:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56026 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755270AbeFSJou (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 05:44:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZnYOCbje+sb3JV62wl4oKJPwf2rfgXuLiPbr8Ir4ucI=; b=uOggwq1QLbIYfYuvuJUg8WorP
+        VQqhqRplVg730FZkjNykO+/AKG9Z71mzfT3t1tngszW4p0onwCgMWrdUen4hWouVotqG/wkzkuGZa
+        yDlyh0slbYQsNRal9yd/nOxwuEZQ/giRebtN9ZsFYAmEM9uQL+xzHhkpb3zeBBkW8qRFMiOIj+F4a
+        rhiizRFU/EJXbT1ld9CpKsFpJQi2Xb+Lhxvp/Z6sf3RsmW6MxuOUdK4CLQHEFpBYFk4qPUHsCTenp
+        PmotjmlDgIsDCjVXe9kiARH0ZMTqhgvcsuyfe02kcNL2eMO/hGqhkLah0JePIhtf7IzMhJyXm+GAc
+        msqtw5INg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVDBL-0001hc-Fm; Tue, 19 Jun 2018 09:44:11 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 80CA620268507; Tue, 19 Jun 2018 11:44:09 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 11:44:09 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Hellstrom <thellstrom@vmware.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 1/3] locking: WW mutex cleanup
+Message-ID: <20180619094409.GK2458@hirez.programming.kicks-ass.net>
+References: <20180619082445.11062-1-thellstrom@vmware.com>
+ <20180619082445.11062-2-thellstrom@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619091841.GD9208@codeaurora.org>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180619082445.11062-2-thellstrom@vmware.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavan,
-
-On Tuesday 19 Jun 2018 at 14:48:41 (+0530), Pavan Kondeti wrote:
-> On Mon, May 21, 2018 at 03:25:05PM +0100, Quentin Perret wrote:
+On Tue, Jun 19, 2018 at 10:24:43AM +0200, Thomas Hellstrom wrote:
+> From: Peter Ziljstra <peterz@infradead.org>
 > 
-> <snip>
+> Make the WW mutex code more readable by adding comments, splitting up
+> functions and pointing out that we're actually using the Wait-Die
+> algorithm.
 > 
-> > +static void start_eas_workfn(struct work_struct *work);
-> > +static DECLARE_WORK(start_eas_work, start_eas_workfn);
-> > +
-> >  static int
-> >  init_cpu_capacity_callback(struct notifier_block *nb,
-> >  			   unsigned long val,
-> > @@ -204,6 +209,7 @@ init_cpu_capacity_callback(struct notifier_block *nb,
-> >  		free_raw_capacity();
-> >  		pr_debug("cpu_capacity: parsing done\n");
-> >  		schedule_work(&parsing_done_work);
-> > +		schedule_work(&start_eas_work);
-> >  	}
-> >  
-> >  	return 0;
-> > @@ -249,6 +255,19 @@ static void parsing_done_workfn(struct work_struct *work)
-> >  	free_cpumask_var(cpus_to_visit);
-> >  }
-> >  
-> > +static void start_eas_workfn(struct work_struct *work)
-> > +{
-> > +	/* Make sure the EM knows about the updated CPU capacities. */
-> > +	rcu_read_lock();
-> > +	em_rescale_cpu_capacity();
-> > +	rcu_read_unlock();
-> > +
-> > +	/* Inform the scheduler about the EM availability. */
-> > +	cpus_read_lock();
-> > +	rebuild_sched_domains();
-> > +	cpus_read_unlock();
-> > +}
-> 
-> Rebuilding the sched domains is unnecessary for the platform that don't have
-> energy-model. In fact, we can completely avoid scheduling this work.
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Gustavo Padovan <gustavo@padovan.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Sean Paul <seanpaul@chromium.org>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Josh Triplett <josh@joshtriplett.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> Cc: Philippe Ombredanne <pombredanne@nexb.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: linaro-mm-sig@lists.linaro.org
+> Co-authored-by: Thomas Hellstrom <thellstrom@vmware.com>
+> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+> ---
+>  Documentation/locking/ww-mutex-design.txt |  12 +-
+>  include/linux/ww_mutex.h                  |  28 ++---
+>  kernel/locking/mutex.c                    | 202 ++++++++++++++++++------------
+>  3 files changed, 145 insertions(+), 97 deletions(-)
 
-Good point, we might be able to save a little bit of work there.
-Now, you will reach this point only if dmips-capacity-mhz values are
-specified in DT for you platform, which is usually done only for
-big.LITTLE-like Arm platforms. And there are good chances that you want
-to have an Energy Model as well for these platforms, so in practice that
-won't make a massive difference I suppose ...
-
-> There seems to be a sysfs interface exposed by this driver to change cpu_scale.
-> Should we worry about it? I don't know what is the usecase for changing the
-> cpu_scale from user space.
-
-This is something I've been wondering as well. TBH, I'm not sure what to
-do in this case. And I'm not sure to know what is the use-case either.
-Debugging purpose I assume ?
-
-Juri, did you have a specific use-case for this feature when the
-arch_topology driver was first introduced ? Or was it just to align
-with the existing arm/arm64 code ?
-
-The reason I didn't call the em_rescale_cpu_capacity() function when CPU
-capacities are written from sysfs is because that interface allows to have
-CPUs with different capacities in the same freq_domain, which is against
-the assumptions we have in the EM framework.
-
-> 
-> Are we expecting that the energy-model is populated by this time? If it is
-> not, should not we build the sched domains again after the energy-model is
-> populated?
-
-Yes, the assumption is that drivers have provided the EM by this time.
-I'll send a v4 of this patch set very soon with an example of cpufreq
-driver modification.
-
-Thanks,
-Quentin
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
