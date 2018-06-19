@@ -2,109 +2,133 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C95D9C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA52DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B89520652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:20:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B89520652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 80FFE20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:21:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iTdfSijg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80FFE20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937865AbeFSNUF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:20:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59506 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S937616AbeFSNUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:20:04 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 856E240201BE;
-        Tue, 19 Jun 2018 13:20:03 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2B5082026D68;
-        Tue, 19 Jun 2018 13:20:02 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Stephen Hemminger <sthemmin@microsoft.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, devel@linuxdriverproject.org
-Subject: Re: [PATCH] x86/hyper-v: use cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST, SPACE} hypercalls when possible
-References: <20180615163010.20381-1-vkuznets@redhat.com>
-        <alpine.DEB.2.21.1806191403510.1684@nanos.tec.linutronix.de>
-        <87wouvkk5x.fsf@vitty.brq.redhat.com>
-        <alpine.DEB.2.21.1806191503560.10546@nanos.tec.linutronix.de>
-Date:   Tue, 19 Jun 2018 15:20:01 +0200
-In-Reply-To: <alpine.DEB.2.21.1806191503560.10546@nanos.tec.linutronix.de>
-        (Thomas Gleixner's message of "Tue, 19 Jun 2018 15:04:26 +0200
-        (CEST)")
-Message-ID: <87o9g6lxq6.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 19 Jun 2018 13:20:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 19 Jun 2018 13:20:03 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        id S937892AbeFSNVS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:21:18 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60006 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937559AbeFSNVP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:21:15 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180619132113euoutp0237e9b6c25296e922eea69e1794ebe8a8~5klxJ3sDw0347503475euoutp02W
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 13:21:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180619132113euoutp0237e9b6c25296e922eea69e1794ebe8a8~5klxJ3sDw0347503475euoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1529414473;
+        bh=AopyXzZZStgO21ZL2cwN9AcAK+ju6vQDkv2PMdfvhEs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=iTdfSijg6n9DKrU7fE0JowzgeLLqxFt/tVlpEMmer5DOZVrihcs3vA/+2F+r/UjcM
+         Qz5Y+rNr1Ro6X8O5MzOcEzZFkSSP6JG91ekfp0h1+KX/DkQjHkkzLC92+YvatLifZl
+         KDyGwmn7fmX8RJAofh8UJjgSpVpX56KwCpspdbT4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180619132110eucas1p2ad2ad43c718d4506bc855b3a438d41fd~5kluZo09m1347613476eucas1p2W;
+        Tue, 19 Jun 2018 13:21:10 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 1C.46.10409.343092B5; Tue, 19
+        Jun 2018 14:21:07 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4~5klprrrtK1347113471eucas1p2M;
+        Tue, 19 Jun 2018 13:21:05 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180619132103eusmtrp165b5876e521693d0e4df4c3abe7798c0~5kln5e0rW0837908379eusmtrp1b;
+        Tue, 19 Jun 2018 13:21:03 +0000 (GMT)
+X-AuditID: cbfec7f5-b5fff700000028a9-7d-5b290343898e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 16.20.04183.F33092B5; Tue, 19
+        Jun 2018 14:21:03 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.116.147.25]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180619132103eusmtip2d3cdce470e6e9eeafbdfc6532d1e2c22~5klndjFX_2740627406eusmtip2I;
+        Tue, 19 Jun 2018 13:21:03 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Vinod Koul <vinod.koul@intel.com>
+Subject: [PATCH] dmaengine: pl330: report BURST residue granularity
+Date:   Tue, 19 Jun 2018 15:20:50 +0200
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEIsWRmVeSWpSXmKPExsWy7djP87rOzJrRBns3ylhsnLGe1WL11L+s
+        FufPb2C32PT4GqvF5V1z2CxmnN/HZLH2yF12i5d9+1kcODwW73nJ5LFpVSebx+Yl9R59W1Yx
+        enzeJBfAGsVlk5Kak1mWWqRvl8CV8WPzP+aCJ+wVe7adY2lgvMbWxcjJISFgInH7/zTGLkYu
+        DiGBFYwS+x9ch3K+MErc+XuDFcL5zCjx68pRVpiWyS+eQiWWM0qc29TFAuF8ZZQ4/ngWO0gV
+        m4ChRNfbLjaQhIhAG6PE7PaTzCAOs8BmRollXy+xgFQJCzhLbHxwC8jm4GARUJVoXckHsUJe
+        YvWGA8wQ9n02ie1rhUBsXoEyiXWT7zJCxF0k7vzYB3WSsMSr41vYIWwZidOTe8AukhBoZpRo
+        nwFyEYjTwyixdc4OqL+tJQ4fv8gKsphZQFNi/S59iLCjxNOmU4wgYQkBPokbbwVBwsxA5qRt
+        05khwrwSHW1CENVqErOOr4Nbe/DCJagSD4mJf+xBTCGBWImL03UmMMrNQti0gJFxFaN4amlx
+        bnpqsXFearlecWJucWleul5yfu4mRmBKOP3v+NcdjPv+JB1iFOBgVOLh1VivHi3EmlhWXJl7
+        iFGCg1lJhJfhlEa0EG9KYmVValF+fFFpTmrxIUZpDhYlcd44jbooIYH0xJLU7NTUgtQimCwT
+        B6dUA+NGw5cb1TYISD85U8sdx9SZWl1Ve+QG3zG/tfutXb/aWknULp6yOmDfa+9WMYNev3vO
+        i9ZW1q4VKjWw9T62LbyR55z9oqz+4vufZfYZLI0V25+csc+0vOgCX2py2QPPqNLJ+V/6PkRe
+        iHVoCL+TqzuPR+Zqzzy14r8mPX1rP//imTqFe2niaiWW4oxEQy3mouJEAOxR+l4FAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t/xe7r2zJrRBg9XK1psnLGe1WL11L+s
+        FufPb2C32PT4GqvF5V1z2CxmnN/HZLH2yF12i5d9+1kcODwW73nJ5LFpVSebx+Yl9R59W1Yx
+        enzeJBfAGqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRv
+        l6CX8WPzP+aCJ+wVe7adY2lgvMbWxcjJISFgIjH5xVPWLkYuDiGBpYwSExuWMEIkZCROTmtg
+        hbCFJf5c62KDKPrMKPH09XKwBJuAoUTXW4iEiEAXo8TCXccYQRxmga2MEn9ufgKrEhZwltj4
+        4BZLFyMHB4uAqkTrSj6QMK+AjcT+jzuZITbIS6zecIB5AiPPAkaGVYwiqaXFuem5xUZ6xYm5
+        xaV56XrJ+bmbGIHhuO3Yzy07GLveBR9iFOBgVOLhbdioHi3EmlhWXJl7iFGCg1lJhJfhlEa0
+        EG9KYmVValF+fFFpTmrxIUZToN0TmaVEk/OBsZJXEm9oamhuYWlobmxubGahJM573qAySkgg
+        PbEkNTs1tSC1CKaPiYNTqoFx6Z541X3nH4RIfmB5dm/xxvsKS69sd7DO3jgjV+DlnrdbqtRf
+        Out57M58EvA7OWVqVJC3hmy3u6t9E/e6Q9brJ0wt1dxnF/dCqNQgeJtSZfz66836AcvLJmZU
+        rme+tWKbkUd4MX/d4gZRSebcJ4ob2zzXMB1Q4Sky/mZ0K6LgboL+NKeimiAlluKMREMt5qLi
+        RACo3+J6XQIAAA==
+Message-Id: <20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4~5klprrrtK1347113471eucas1p2M@eucas1p2.samsung.com>
+X-CMS-MailID: 20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4
+References: <CGME20180619132105eucas1p2d65cbd799e60a8ab1849c4ae716275c4@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
+The reported residue is already calculated in BURST unit granularity, so
+advertise this capability properly to other devices in the system.
 
-> On Tue, 19 Jun 2018, Vitaly Kuznetsov wrote:
->> Thomas Gleixner <tglx@linutronix.de> writes:
->> 
->> > On Fri, 15 Jun 2018, Vitaly Kuznetsov wrote:
->> >>   * Fills in gva_list starting from offset. Returns the number of items added.
->> >> @@ -93,10 +95,19 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
->> >>  	if (cpumask_equal(cpus, cpu_present_mask)) {
->> >>  		flush->flags |= HV_FLUSH_ALL_PROCESSORS;
->> >>  	} else {
->> >> +		/*
->> >> +		 * It is highly likely that VP ids are in ascending order
->> >> +		 * matching Linux CPU ids; Check VP index for the highest CPU
->> >> +		 * in the supplied set to see if EX hypercall is required.
->> >> +		 * This is just a best guess but should work most of the time.
->> >
->> > TLB flushing based on 'best guess' and 'should work most of the time' is
->> > not a brilliant approach.
->> >
->> 
->> Oh no no no, that's not what I meant :-)
->> 
->> We have the following problem: from the supplied CPU set we need to
->> figure out if we can get away with HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,
->> SPACE} hypercalls which are cheaper or if we need to use more expensing
->> HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST, SPACE}_EX ones. The dividing line is
->> the highest VP_INDEX of the supplied CPU set: in case it is < 64 cheaper
->> hypercalls are OK. Now how do we check that? In the patch I have the
->> following approach:
->> 1) Check VP number for the highest CPU in the supplied set. In case it
->> is > 64 we for sure need more expensive hypercalls. This is the "guess"
->> which works most of the time because Linux CPU ids usually match
->> VP_INDEXes.
->> 
->> 2) In case the answer to the previous question was negative we start
->> preparing input for the cheaper hypercall. However, if while walking the
->> CPU set we meet a CPU with VP_INDEX higher than 64 we'll discard the
->> prepared input and switch to the more expensive hypercall.
->> 
->> Said that the 'guess' here is just an optimization to avoid walking the
->> whole CPU set when we find the required answer quickly by looking at the
->> highest bit. This will help big systems with hundreds of CPUs.
->
-> Care to fix the comment to avoid the offending words?
->
+Fixes: aee4d1fac887 ("dmaengine: pl330: improve pl330_tx_status() function")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/dma/pl330.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sure, will re-word in v2.
-
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index defcdde4d358..de0957fe9668 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -3033,7 +3033,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	pd->src_addr_widths = PL330_DMA_BUSWIDTHS;
+ 	pd->dst_addr_widths = PL330_DMA_BUSWIDTHS;
+ 	pd->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+-	pd->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
++	pd->residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+ 	pd->max_burst = ((pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP) ?
+ 			 1 : PL330_MAX_BURST);
+ 
 -- 
-  Vitaly
+2.17.1
+
