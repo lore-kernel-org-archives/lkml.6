@@ -2,204 +2,220 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F10C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 00:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A89C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 00:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0F8A20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 00:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 960BB208A5
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 00:53:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="AbfwXImO";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mZk7F++Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0F8A20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ke6aiY/C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960BB208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937159AbeFSAwg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 20:52:36 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:36164 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937115AbeFSAwb (ORCPT
+        id S937175AbeFSAxR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 20:53:17 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36889 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937115AbeFSAxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 20:52:31 -0400
-Received: by mail-yb0-f194.google.com with SMTP id x128-v6so6671596ybg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 17:52:31 -0700 (PDT)
+        Mon, 18 Jun 2018 20:53:13 -0400
+Received: by mail-pf0-f194.google.com with SMTP id y5-v6so9030539pfn.4;
+        Mon, 18 Jun 2018 17:53:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=H/DiTEMRqdssEpzUJiBr2tdwek6sh/YMggOPpeO9quQ=;
-        b=AbfwXImOalCbEkZeRgEoEbzggiSQv5iPwZN1hIRqGfd93s/jLgVkXz3V/fIq91QUFR
-         t8TOffKl/Iglde9H5kTQ6Rbe3IkBLpRDw30KNtFVYVkfc29eD0gMOeTqCkzKf3XiY3dY
-         UBeqsWIuNJtNg48sMjDkV3EnN+hsie5o2z4lPrRBfwZ56SOytk22qg98XT07NDXDfr3u
-         vkwgeW91X+Y4JwmhDYkuL+m6ZkMW1WWBSiTuLNl+Aegv9ta+y1nJRnbgFuG9GiwWEDBr
-         JSsin/VWmcgAq2z4rBt+//4v79hMuAMjZhvgRsuDrFmVESeKw8DGUEf4B0q+RaCTzoX1
-         QP6w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=H/DiTEMRqdssEpzUJiBr2tdwek6sh/YMggOPpeO9quQ=;
-        b=mZk7F++ZgH3eK0HuVqXwHbBiprN6ofWPLknwlqifYEgsC4aUC2jl9Xe6y//qp1b+Ot
-         Up2R2J0YVWNsyAeZQwpfomsVkXa5oyZ+Tk+DganTxcgEkrgiEsm9/Cy9bEdLezQK0j3i
-         GflP+cqDjc9YVWlf5mX8hRxFEO0aojDMjxZWI=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VsoFhXMw09AO7XYWBrCsA6oMZaJw/cdYYkFkjNp7uaw=;
+        b=ke6aiY/C+cU5c1H+HQVoRIYu6bK/jFOsZknWU1gHd1ZtdNg/zbsxktJhJoGSDV2vIU
+         7xaVD9qOc/UF6iNJDgJsG38QFZRxVBCsfEejufoPdKRP8tBuZ/dU3dEQyOWeMxQ0u+BC
+         E/H5DyCPSBgmNrGemBywFzSMsgbKzASDWyJDUVdmjyc4fEyk0QPwtZbG2JWk9wcKrxeb
+         ltmER4qgmnNrwf9kRDJNh3YLW+7Ow8/6Icnm/1zrBj1uOLYK8EzPt6OCX2fNJCH1e9L1
+         9lKodu/IAXCH+jknKFBVhjbzQQHhoRAe9zyp0zmJYJa0/j6M7XqsQkHsIHbwBk94L4lO
+         H6pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=H/DiTEMRqdssEpzUJiBr2tdwek6sh/YMggOPpeO9quQ=;
-        b=uVsWcpxgc2nwSVt5k58pRVGUzA/d7AUYpWU2QkQdYTqSBtylwwKIBfzfjHFb6Xq6zn
-         RyDwLiUpgMW5PMIAQb0xXpDDjKMISZiMXaQ01L4XliazchPU5KkudiEn/YTki6MBj3kn
-         /iyhScDqAVtwAN/st9TXa5dfw209Y77wDHElVYTEPs9PxfcPztgvOUJzyGv1y5I9e0Pd
-         /rj1SVBrwTEDUYtqE9KZuGJMPeuJovxVgcE5DY5QgT5gA4M4EolL2VHURX9zCzwHH7gn
-         q5xh7lHcSz4JfCesXyN6R739GOaa6XqIOREw+9rRcINcxLC9WIix+A8F4+DVe97YijI/
-         Webg==
-X-Gm-Message-State: APt69E1f06B6AbBE7AP5eIJB2gZD/SM0N7V81FmQh/9KcysLB1mZfLGP
-        LnNqDrUw64WDnYnGoz8IhrxoNJnb9Iqu4tJ4AhTX00Sg
-X-Google-Smtp-Source: ADUXVKLM9alKiGq19CM8SBRivA7UsHjqbzHydD3AewZ3Y98zMM6DVJMRdDeTxkLHrlpGsIGquE8CohxKqnye3UPvdrY=
-X-Received: by 2002:a25:be41:: with SMTP id d1-v6mr7383677ybm.309.1529369550987;
- Mon, 18 Jun 2018 17:52:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VsoFhXMw09AO7XYWBrCsA6oMZaJw/cdYYkFkjNp7uaw=;
+        b=o4cTfe6UMpgTyhtSVfN3WOfycKiKrwmn4pPxwzCtd4cvyKyJ38ru8cAWKqTS2sSbyK
+         FY0BttmRKDgrSzTeLrPofuPRQ8Q3q1ZJ9Kc6CHBgnTiljSwBU3Eh3GouVVi3nvgRlbHb
+         dsL+OMazDYJukOKRTE7fETsT+Mu+6dXHuYoRuji96ou5twYzw8brpmdMsfrFyWzH4MjY
+         KMapFFgGrXYENdrgTGf5m4H+FsEvNtBIlo1wvhVFLnWGDnuALn08lq23qDtgKcf8XosB
+         ZLa+HNM73Lb5thH5ZsRq4eQR2FL8H4bd6zQT977Zo4ITynoDA3vkDY3/E838rg67TvBE
+         JaqA==
+X-Gm-Message-State: APt69E16ekCNSKC7oPRfoiZRi8J9mbQ1PGrsU55tOguk6uI6akIftRH6
+        D5CdPP2e5MFzN3l50qH/deE=
+X-Google-Smtp-Source: ADUXVKLqyoYpvfRPFOG1tY0Jyvh61ht8FY61a9Erj0NI3M4QWmCgPYS2v2KJOMmQ4Y2PKi3AKpEOHA==
+X-Received: by 2002:a63:7f15:: with SMTP id a21-v6mr12861107pgd.21.1529369592917;
+        Mon, 18 Jun 2018 17:53:12 -0700 (PDT)
+Received: from localhost ([175.223.26.106])
+        by smtp.gmail.com with ESMTPSA id p22-v6sm34961337pfj.166.2018.06.18.17.53.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Jun 2018 17:53:11 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 09:53:08 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
+ locks
+Message-ID: <20180619005308.GA405@jagdpanzerIV>
+References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
+ <20180618143818.50b2f2f9@alans-desktop>
 MIME-Version: 1.0
-Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 17:52:29
- -0700 (PDT)
-In-Reply-To: <CALCETrVsh5t-V1Sm88LsZE_+DS0GE_bMWbcoX3SjD6GnrB08Pw@mail.gmail.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
- <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
- <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
- <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
- <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de>
- <CAMe9rOoCiXQ4iVD3j_AHGrvEXtoaVVZVs7H7fCuqNEuuR5j+2Q@mail.gmail.com>
- <CALCETrXO8R+RQPhJFk4oiA4PF77OgSS2Yro_POXQj1zvdLo61A@mail.gmail.com>
- <CAMe9rOpLxPussn7gKvn0GgbOB4f5W+DKOGipe_8NMam+Afd+RA@mail.gmail.com>
- <CALCETrWmGRkQvsUgRaj+j0CP4beKys+TT5aDR5+18nuphwr+Cw@mail.gmail.com>
- <CAMe9rOpzcCdje=bUVs+C1WrY6GuwA-8AUFVLOG325LGz7KHJxw@mail.gmail.com>
- <alpine.DEB.2.21.1806122046520.1592@nanos.tec.linutronix.de>
- <CAMe9rOrGjJf0aMnUjAP38MqvOiW3=iXGQjcUT3O=f9pE85hXaw@mail.gmail.com> <CALCETrVsh5t-V1Sm88LsZE_+DS0GE_bMWbcoX3SjD6GnrB08Pw@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 18 Jun 2018 17:52:29 -0700
-X-Google-Sender-Auth: W3E9QM-W4iYEUT9vp0oMZ-XjsmE
-Message-ID: <CAGXu5jK0gospOXRpN6zYiQPXOZeE=YpVAz2qu4Zc3-32v85+EQ@mail.gmail.com>
-Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "H. J. Lu" <hjl.tools@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com, Florian Weimer <fweimer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180618143818.50b2f2f9@alans-desktop>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 3:03 PM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Tue, Jun 12, 2018 at 12:34 PM H.J. Lu <hjl.tools@gmail.com> wrote:
->>
->> On Tue, Jun 12, 2018 at 11:59 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->> > On Tue, 12 Jun 2018, H.J. Lu wrote:
->> >> On Tue, Jun 12, 2018 at 9:34 AM, Andy Lutomirski <luto@kernel.org> wrote:
->> >> > On Tue, Jun 12, 2018 at 9:05 AM H.J. Lu <hjl.tools@gmail.com> wrote:
->> >> >> On Tue, Jun 12, 2018 at 9:01 AM, Andy Lutomirski <luto@kernel.org> wrote:
->> >> >> > On Tue, Jun 12, 2018 at 4:43 AM H.J. Lu <hjl.tools@gmail.com> wrote:
->> >> >> >> On Tue, Jun 12, 2018 at 3:03 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->> >> >> >> > That works for stuff which loads all libraries at start time, but what
->> >> >> >> > happens if the program uses dlopen() later on? If CET is force locked and
->> >> >> >> > the library is not CET enabled, it will fail.
->> >> >> >>
->> >> >> >> That is to prevent disabling CET by dlopening a legacy shared library.
->> >> >> >>
->> >> >> >> > I don't see the point of trying to support CET by magic. It adds complexity
->> >> >> >> > and you'll never be able to handle all corner cases correctly. dlopen() is
->> >> >> >> > not even a corner case.
->> >> >> >>
->> >> >> >> That is a price we pay for security.  To enable CET, especially shadow
->> >> >> >> shack, the program and all of shared libraries it uses should be CET
->> >> >> >> enabled.  Most of programs can be enabled with CET by compiling them
->> >> >> >> with -fcf-protection.
->> >> >> >
->> >> >> > If you charge too high a price for security, people may turn it off.
->> >> >> > I think we're going to need a mode where a program says "I want to use
->> >> >> > the CET, but turn it off if I dlopen an unsupported library".  There
->> >> >> > are programs that load binary-only plugins.
->> >> >>
->> >> >> You can do
->> >> >>
->> >> >> # export GLIBC_TUNABLES=glibc.tune.hwcaps=-SHSTK
->> >> >>
->> >> >> which turns off shadow stack.
->> >> >>
->> >> >
->> >> > Which exactly illustrates my point.  By making your security story too
->> >> > absolute, you'll force people to turn it off when they don't need to.
->> >> > If I'm using a fully CET-ified distro and I'm using a CET-aware
->> >> > program that loads binary plugins, and I may or may not have an old
->> >> > (binary-only, perhaps) plugin that doesn't support CET, then the
->> >> > behavior I want is for CET to be on until I dlopen() a program that
->> >> > doesn't support it.  Unless there's some ABI reason why that can't be
->> >> > done, but I don't think there is.
->> >>
->> >> We can make it opt-in via GLIBC_TUNABLES.  But by default, the legacy
->> >> shared object is disallowed when CET is enabled.
->> >
->> > That's a bad idea. Stuff has launchers which people might not be able to
->> > change. So they will simply turn of CET completely or it makes them hack
->> > horrible crap into init, e.g. the above export.
->> >
->> > Give them sane kernel options:
->> >
->> >      cet = off, relaxed, forced
->> >
->> > where relaxed allows to run binary plugins. Then let dlopen() call into the
->> > kernel with the filepath of the library to check for CET and that will tell
->> > you whether its ok or or not and do the necessary magic in the kernel when
->> > CET has to be disabled due to a !CET library/application.
->> >
->> > That's also making the whole thing independent of magic glibc environment
->> > options and allows it to be used all over the place in the same way.
->>
->> This is very similar to our ARCH_CET_EXEC proposal which controls how
->> CET should be enforced.   But Andy thinks it is a bad idea.
->
-> I do think it's a bad idea to have a new piece of state that survives
-> across exec().  It's going to have nasty usability problems and nasty
-> security problems.
->
-> We may need a mode by which glibc can turn CET *back off* even after a
-> program had it on if it dlopens() an old binary.  Or maybe there won't
-> be demand.  I can certainly understand why the CET_LOCK feature is
-> there, although I think we need a way to override it using something
-> like ptrace().  I'm not convinced that CET_LOCK is really needed, but
-> someone who understand the thread model should chime in.
->
-> Kees, do you know anyone who has a good enough understanding of
-> usermode exploits and how they'll interact with CET?
+Thanks for taking a look!
 
-Adding Florian to CC, but if something gets CET enabled, it really
-shouldn't have a way to turn it off. If there's a way to turn it off,
-all the ROP research will suddenly turn to exactly one gadget before
-doing the rest of the ROP: turning off CET. Right now ROP is: use
-stack-pivot gadget, do everything else. Allowed CET to turn off will
-just add one step: use CET-off gadget, use stack-pivot gadget, do
-everything else. :P
+On (06/18/18 14:38), Alan Cox wrote:
+> > It doesn't come as a surprise that recursive printk() calls are not the
+> > only way for us to deadlock in printk() and we still have a whole bunch
+> > of other printk() deadlock scenarios. For instance, those that involve
+> > TTY port->lock spin_lock and UART port->lock spin_lock.
+> 
+> The tty layer code there is not re-entrant. Nor is it supposed to be
 
-Following Linus's request for "slow introduction" of new security
-features, likely the best approach is to default to "relaxed" (with a
-warning about down-grades), and allow distros/end-users to pick
-"forced" if they know their libraries are all CET-enabled.
+Could be.
 
--Kees
+But at least we have circular locking dependency in tty,
+see [1] for more details:
 
--- 
-Kees Cook
-Pixel Security
+  tty_port->lock  => uart_port->lock
+
+   CPU0
+   tty
+    spin_lock(&tty_port->lock)
+     printk()
+      call_console_drivers()
+       foo_console_write()
+        spin_lock(&uart_port->lock)
+
+Whereas we normally have
+
+  uart_port->lock => tty_port->lock
+
+   CPU1
+   IRQ
+    foo_console_handle_IRQ()
+     spin_lock(&uart_port->lock)
+      tty
+       spin_lock(&tty_port->lock)
+
+
+If we switch to printk_safe when we take tty_port->lock then we
+remove the printk->uart_port chain from the picture.
+
+> > So the idea of this patch set is to take tty_port->lock and
+> > uart_port->lock from printk_safe context and to eliminate some
+> > of non-recursive printk() deadlocks - the ones that don't start
+> > in printk(), but involve console related locks and thus eventually
+> > deadlock us in printk(). For this purpose the patch set introduces
+> > several helper macros:
+> 
+> I don't see how this helps - if you recurse into the uart code you are
+> still hitting the paths that are unsafe when re-entered. All you've done
+> is messed up a pile of locking code on critical performance paths.
+> 
+> As it stands I think it's a bad idea.
+
+The only new thing is that we inc/dec per-CPU printk context
+variable when we lock/unlock tty/uart port lock:
+
+	printk_safe_enter() -> this_cpu_inc(printk_context);
+	printk_safe_exit() -> this_cpu_dec(printk_context);
+
+How does this help? Suppose we have the following
+
+       IRQ
+       foo_console_handle_IRQ()
+        spin_lock(&uart_port->lock)
+         uart_write_wakeup()
+          tty_port_tty_wakeup()
+           tty_port_default_wakeup()
+            printk()
+             call_console_drivers()
+              foo_console_write()
+               spin_lock(&uart_port->lock)  << deadlock
+
+If we take uart_port lock from printk_safe context, we remove the
+   printk->call_console_drivers->foo_console_write->spin_lock
+chain. Because printk() output will endup in a per-CPU buffer,
+which will be flushed later from irq_work. So the whole thing
+becomes:
+
+       IRQ
+       foo_console_handle_IRQ()
+        printk_safe_enter()
+        spin_lock(&uart_port->lock)
+         uart_write_wakeup()
+          tty_port_tty_wakeup()
+           tty_port_default_wakeup()
+            printk()                           << we don't re-enter foo_console_driver
+                                               << from printk() anymore
+             printk_safe_log_store()
+              irq_work_queue
+        spin_unlock(&uart_port->lock)
+        printk_safe_exit()
+       iret
+
+       #flush per-CPU buffer
+       IRQ
+        printk_safe_flush_buffer()
+         vprintk_deferred()
+
+> > Of course, TTY and UART port spin_locks are not the only locks that
+> > we can deadlock on. So this patch set does not address all deadlock
+> > scenarios, it just makes a small step forward.
+> > 
+> > Any opinions?
+> 
+> The cure is worse than the disease.
+
+Because of this_cpu_inc(printk_context) / this_cpu_dec(printk_context)?
+May be. That's why I put RFC :)
+
+> The only case that's worth looking at is the direct polled console code
+> paths. The moment you touch the other layers you add essentially never
+> needed code to hot paths.
+> 
+> Given printk nowdays is already somewhat unreliable with all the perf
+> related changes, and we have other good debug tools I think it would be
+> far cleaner to have some kind of
+> 
+> 
+> 	if (spin_trylock(...)) {
+> 		console_defer(buffer);
+> 		return;
+> 	}
+> 
+> helper layer in the printk/console logic, at least for the non panic/oops
+> cases.
+
+spin_trylock() in every ->foo_console_write() callback?
+This still will not address the reported deadlock [1].
+
+[1] lkml.kernel.org/r/000000000000d557e7056e1c7a01@google.com
+
+	-ss
