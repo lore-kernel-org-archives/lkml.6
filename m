@@ -2,129 +2,87 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0086C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFE4C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69CAD20661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:00:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69CAD20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 975772083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:01:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F3MUvgXB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975772083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030386AbeFSSAX (ORCPT
+        id S1030455AbeFSSBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 14:00:23 -0400
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:46841 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966706AbeFSSAW (ORCPT
+        Tue, 19 Jun 2018 14:01:49 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41037 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030437AbeFSSBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 14:00:22 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 143BE300002A0;
-        Tue, 19 Jun 2018 20:00:20 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id C8E4571D0E; Tue, 19 Jun 2018 20:00:19 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 20:00:19 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andrew Lunn <andrew@lunn.ch>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/3] net: ethernet: fix suspend/resume in davinci_emac
-Message-ID: <20180619180019.GA25396@wunner.de>
-References: <20180619160950.6283-1-brgl@bgdev.pl>
- <20180619160950.6283-2-brgl@bgdev.pl>
+        Tue, 19 Jun 2018 14:01:41 -0400
+Received: by mail-pg0-f67.google.com with SMTP id l65-v6so214173pgl.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 11:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sS5qOlhMoy0XHSM5M3fpB4OpvhHpm+y23kadqfUiZfQ=;
+        b=F3MUvgXBcTnfvN08VK1kk628tG0L08CSBupnXV2fsqxDqKzk0qYVeoEuDOq0j3fyar
+         FKZHtS3GNqJXY6xhwUxcSyFALCBKov1VvR0fHe3NrLkxPoWP7zMhZT8tsh5OoLz3k1Nj
+         dI/F2/g15xb5EFac50pHMDYhVSk6JkQs+oACA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sS5qOlhMoy0XHSM5M3fpB4OpvhHpm+y23kadqfUiZfQ=;
+        b=GTO2al2XksX5LYaKPCA8PKtzWZdSALSCR5UFXYYMP5p7Zncd8omN8X/FDLP4xLeGiC
+         4DWFHVkfL6uXIHgWdD72LlcuA/gHw/P7k7QP1Kjzkm9iBCqdxXmlZKyt5ecOzbMYvfyW
+         dBV7OjwDH/AsHSjt0ZMsiZZOrBfq6o7fPWLWfWvNZaFie+2I+swDWPbP43yI08Wc298b
+         Pu0DRu/W1bM0AgUcdehmjC1j3XhtkV8i8wPHqrFo08gE9gS3xH2O253yEj2fJEwckaj9
+         59pTIn5q49BDRTlzEywx0AigBWDaKWtW8LilTzwUz5NNO21u5tu8pgZAfUOYP3NKEYFG
+         XlWA==
+X-Gm-Message-State: APt69E0nU6lwsOwAQnywS4Kbd4F9sTFNhh6w1yDx9LGfm2tOmQoM3UWC
+        s1o5rrtPlbk84ugpVYNIMbYCPWQemRo=
+X-Google-Smtp-Source: ADUXVKLRB8VzOJGAd6Z2CTdwr8ou6hE3Ch8DiG3/pNqrdFftyUWIVvazVicVPPZdUNDRP1RtG0bIWQ==
+X-Received: by 2002:a62:8552:: with SMTP id u79-v6mr19336003pfd.201.1529431301320;
+        Tue, 19 Jun 2018 11:01:41 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm778106pfa.34.2018.06.19.11.01.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 11:01:40 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 11:01:40 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] objtool: Add machine_real_restart() to the noreturn list
+Message-ID: <20180619180140.GA169030@google.com>
+References: <791712792aa4431bdd55bf1beb33a169ddf3b4a2.1529423255.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180619160950.6283-2-brgl@bgdev.pl>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <791712792aa4431bdd55bf1beb33a169ddf3b4a2.1529423255.git.jpoimboe@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 06:09:48PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Jun 19, 2018 at 10:47:50AM -0500, Josh Poimboeuf wrote:
+> machine_real_restart() is annotated as '__noreturn", so add it to the
+> objtool noreturn list.  This fixes the following warning with clang and
+> CONFIG_CC_OPTIMIZE_FOR_SIZE=y:
 > 
-> This patch reverts commit 3243ff2a05ec ("net: ethernet: davinci_emac:
-> Deduplicate bus_find_device() by name matching") and adds a comment
-> which should stop anyone from reintroducing the same "fix" in the future.
+>   arch/x86/kernel/reboot.o: warning: objtool: native_machine_emergency_restart() falls through to next function machine_power_off()
 > 
-> We can't use bus_find_device_by_name() here because the device name is
-> not guaranteed to be 'davinci_mdio'. On some systems it can be
-> 'davinci_mdio.0' so we need to use strncmp() against the first part of
-> the string to correctly match it.
-> 
-> Fixes: 3243ff2a05ec ("net: ethernet: davinci_emac: Deduplicate bus_find_device() by name matching")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reported-by: Matthias Kaehlcke <mka@chromium.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-This is still
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 
-Acked-by: Lukas Wunner <lukas@wunner.de>
-
-given that my patch which is reverted here seems to have been incorrect.
-Feel free to keep the ack if you respin in response to Florian Fainelli's
-comments.
-
-Thanks,
-
-Lukas
-
-> ---
->  drivers/net/ethernet/ti/davinci_emac.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-> index 06d7c9e4dcda..a1a6445b5a7e 100644
-> --- a/drivers/net/ethernet/ti/davinci_emac.c
-> +++ b/drivers/net/ethernet/ti/davinci_emac.c
-> @@ -1385,6 +1385,11 @@ static int emac_devioctl(struct net_device *ndev, struct ifreq *ifrq, int cmd)
->  		return -EOPNOTSUPP;
->  }
->  
-> +static int match_first_device(struct device *dev, void *data)
-> +{
-> +	return !strncmp(dev_name(dev), "davinci_mdio", 12);
-> +}
-> +
->  /**
->   * emac_dev_open - EMAC device open
->   * @ndev: The DaVinci EMAC network adapter
-> @@ -1484,8 +1489,14 @@ static int emac_dev_open(struct net_device *ndev)
->  
->  	/* use the first phy on the bus if pdata did not give us a phy id */
->  	if (!phydev && !priv->phy_id) {
-> -		phy = bus_find_device_by_name(&mdio_bus_type, NULL,
-> -					      "davinci_mdio");
-> +		/* NOTE: we can't use bus_find_device_by_name() here because
-> +		 * the device name is not guaranteed to be 'davinci_mdio'. On
-> +		 * some systems it can be 'davinci_mdio.0' so we need to use
-> +		 * strncmp() against the first part of the string to correctly
-> +		 * match it.
-> +		 */
-> +		phy = bus_find_device(&mdio_bus_type, NULL, NULL,
-> +				      match_first_device);
->  		if (phy) {
->  			priv->phy_id = dev_name(phy);
->  			if (!priv->phy_id || !*priv->phy_id)
-> -- 
-> 2.17.1
-> 
+Thanks!
