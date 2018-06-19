@@ -6,113 +6,86 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4DDC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA966C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2977205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:48:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2977205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D92A205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D92A205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757316AbeFSOsE (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:48:04 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54808 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756829AbeFSOsC (ORCPT
+        id S966326AbeFSOtW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 10:49:22 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:46968 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S965688AbeFSOtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:48:02 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5JEdphS060325
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:48:02 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jq3g0h8av-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:48:01 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 19 Jun 2018 10:48:01 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 19 Jun 2018 10:47:57 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5JEluPc16777492
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Jun 2018 14:47:56 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC06AB205F;
-        Tue, 19 Jun 2018 10:47:45 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD69AB2068;
-        Tue, 19 Jun 2018 10:47:45 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 19 Jun 2018 10:47:45 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id B79BD16C2DE8; Tue, 19 Jun 2018 07:49:56 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 07:49:56 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        bigeasy@linutronix.de, oleg@redhat.com, pbonzini@redhat.com
-Subject: Re: [PATCH 0/3] sched/swait: Convert to full exclusive mode
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180612083449.100099222@infradead.org>
- <20180614012742.GP3593@linux.vnet.ibm.com>
+        Tue, 19 Jun 2018 10:49:20 -0400
+Received: (qmail 2212 invoked by uid 2102); 19 Jun 2018 10:49:19 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 19 Jun 2018 10:49:19 -0400
+Date:   Tue, 19 Jun 2018 10:49:19 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Avi Fishman <avifishman70@gmail.com>
+cc:     gregkh@linuxfoundation.org, <tmaimon77@gmail.com>,
+        <venture@google.com>, <yuenn@google.com>,
+        <brendanhiggins@google.com>, <mathias.nyman@linux.intel.com>,
+        <bjorn.andersson@linaro.org>, <jhogan@kernel.org>, <albeu@free.fr>,
+        <chunfeng.yun@mediatek.com>, <tony@atomide.com>,
+        <baolu.lu@linux.intel.com>, <elder@linaro.org>, <digetx@gmail.com>,
+        <kstewart@linuxfoundation.org>, <hdegoede@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v6 1/3] USB host: Add USB ehci support for nuvoton npcm7xx
+ platform
+In-Reply-To: <20180619142246.104469-2-avifishman70@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1806191044530.1473-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614012742.GP3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18061914-0060-0000-0000-0000027F95BA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009220; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01049278; UDB=6.00537632; IPR=6.00828250;
- MB=3.00021739; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-19 14:47:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061914-0061-0000-0000-000045815F41
-Message-Id: <20180619144956.GA23737@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-19_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806190165
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 06:27:42PM -0700, Paul E. McKenney wrote:
-> On Tue, Jun 12, 2018 at 10:34:49AM +0200, Peter Zijlstra wrote:
-> > As mentioned by Linus, swait is exclusive mode and had better behave like it
-> > and be named like it.
-> > 
-> > Make it so.
-> 
-> Cool!
-> 
-> When I tried testing it on x86 against recent mainline, I got:
-> 
-> "WARNING: WARNING: Bad or missing .orc_unwind table.  Disabling unwinder."
-> 
-> But when I tested on recent mainline without your patches:
-> 
-> 	4597fcff0704 "Merge tag 'for-4.18/dm-changes-v2' of
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm"
-> 
-> I get the same warning.  Trying again on today's mainline, but in the
-> meantime, is anyone else seeing this?
+On Tue, 19 Jun 2018 avifishman70@gmail.com wrote:
 
-And this patch fixes this issue, FWIW:
+> From: Avi Fishman <AviFishman70@gmail.com>
+> 
+> This patch adds support for ehci controller for the Nuvoton
+> npcm7xx platform.
+> Most of the code was taken from ehci-spear.c + specific initialization
+> code
+> 
+> Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
+> ---
+>  drivers/usb/host/Kconfig        |   8 ++
+>  drivers/usb/host/Makefile       |   1 +
+>  drivers/usb/host/ehci-npcm7xx.c | 212 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 221 insertions(+)
+>  create mode 100644 drivers/usb/host/ehci-npcm7xx.c
+> 
+> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+> index 9f0aeb068acb..e3100b249f0f 100644
+> --- a/drivers/usb/host/Kconfig
+> +++ b/drivers/usb/host/Kconfig
+> @@ -185,6 +185,14 @@ config USB_EHCI_MXC
+>  	---help---
+>  	  Variation of ARC USB block used in some Freescale chips.
+>  
+> +config USB_EHCI_HCD_NPCM7XX
+> +	tristate "Support for Nuvoton NPCM7XX on-chip EHCI USB controller"
+> +	depends on (USB_EHCI_HCD && ARCH_NPCM7XX) || COMPILE_TEST
+> +	default y
 
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1713797.html
+Are you sure this is what you want?  The value defaults to Y whenever 
+COMPILE_TEST is enabled?  Will that annoy people doing compile tests?
 
-							Thanx, Paul
+Aside from that one issue,
+
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+
+Alan Stern
 
