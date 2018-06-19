@@ -2,136 +2,95 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C03CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5942C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D6020693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:04:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D6020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 59C7E208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:05:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMKx5lI8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C7E208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750807AbeFSEEx (ORCPT
+        id S1751166AbeFSEFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 00:04:53 -0400
-Received: from mga03.intel.com ([134.134.136.65]:36973 "EHLO mga03.intel.com"
+        Tue, 19 Jun 2018 00:05:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750718AbeFSEEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 00:04:52 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 21:04:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,241,1526367600"; 
-   d="scan'208";a="48777636"
-Received: from aosowska-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.34.137])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Jun 2018 21:04:33 -0700
-Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
-        id A964B21E18; Tue, 19 Jun 2018 07:04:32 +0300 (EEST)
-Date:   Tue, 19 Jun 2018 07:04:32 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Todor Tomov <todor.tomov@linaro.org>
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] media: ov5645: Report number of skip frames
-Message-ID: <20180619040432.xbcrkgof6rycg3db@kekkonen.localdomain>
-References: <1529309219-27404-1-git-send-email-todor.tomov@linaro.org>
- <1529309219-27404-2-git-send-email-todor.tomov@linaro.org>
+        id S1750718AbeFSEFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 00:05:07 -0400
+Received: from localhost (unknown [106.200.222.147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EF6520693;
+        Tue, 19 Jun 2018 04:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529381107;
+        bh=Lj7aslPniQYElmUxY3/+WNfyrb9H/HdXpL6hQTHSY3Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aMKx5lI8JKx3pr20Z5ulDgHQU9jlSQhpTegTLQ4AUkHckRzZeoyaOINCkosuBaw8G
+         Xdi24krq7DZp0O5bwdrfaXACN2FqoZnxnsiu7fXzqvwbLrKLRRJZPZV4UAV/8QU3bJ
+         ZIypE52YTZpNkaYxQn8qC7vMkE6dKSSbGnQhBDcc=
+Date:   Tue, 19 Jun 2018 09:34:58 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
+Message-ID: <20180619040458.GJ25852@vkoul-mobl>
+References: <20180618141259.23141-1-vkoul@kernel.org>
+ <20180618141259.23141-4-vkoul@kernel.org>
+ <20180618182123.GT14924@minitux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529309219-27404-2-git-send-email-todor.tomov@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180618182123.GT14924@minitux>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Todor,
-
-On Mon, Jun 18, 2018 at 11:06:59AM +0300, Todor Tomov wrote:
-> The OV5645 supports automatic exposure (AE) and automatic white
-> balance (AWB). When streaming is started it takes up to 5 frames
-> until the AE and AWB converge and output a frame with good quality.
-
-The frames aren't bad as such; it's just that the AE hasn't converged yet.
-I presume the number of the frames needed depends on the lighting
-conditions.
-
-The g_skip_frames is intended to tell the frames really are bad, i.e.
-distorted or broken somehow.
-
-I wouldn't discard them on the grounds of unconverged exposure. If we did,
-then on which other grounds should the frames be discarded as well? Does
-the white balance and focus need to be converged as well before considering
-the frames good, for instance?
-
-If you need this, I'd use a control instead to tell AE has converged.
-
-I wonder what others think.
-
+On 18-06-18, 11:21, Bjorn Andersson wrote:
+> On Mon 18 Jun 07:12 PDT 2018, Vinod Koul wrote:
 > 
-> Implement g_skip_frames to report number of frames to be skipped
-> when streaming is started.
+> > Qcom 8996 and later chips support prng v2 where we need to only
+> > implement .read callback for hwrng.
+> > 
 > 
-> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-> ---
->  drivers/media/i2c/ov5645.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+> The hardware still needs initialization, so I think you should expand
+> this to mention that the initialization is moved to secure world and
+> that's the reason why we only implement read.
 > 
-> diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-> index 1722cda..00bc3c0 100644
-> --- a/drivers/media/i2c/ov5645.c
-> +++ b/drivers/media/i2c/ov5645.c
-> @@ -70,6 +70,9 @@
->  #define OV5645_SDE_SAT_U		0x5583
->  #define OV5645_SDE_SAT_V		0x5584
->  
-> +/* Number of frames needed for AE and AWB to converge */
-> +#define OV5645_NUM_OF_SKIP_FRAMES 5
-> +
->  struct reg_value {
->  	u16 reg;
->  	u8 val;
-> @@ -1071,6 +1074,13 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
->  	return 0;
->  }
->  
-> +static int ov5645_get_skip_frames(struct v4l2_subdev *sd, u32 *frames)
-> +{
-> +	*frames = OV5645_NUM_OF_SKIP_FRAMES;
-> +
-> +	return 0;
-> +}
-> +
->  static const struct v4l2_subdev_core_ops ov5645_core_ops = {
->  	.s_power = ov5645_s_power,
->  };
-> @@ -1088,10 +1098,15 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
->  	.get_selection = ov5645_get_selection,
->  };
->  
-> +static const struct v4l2_subdev_sensor_ops ov5645_sensor_ops = {
-> +	.g_skip_frames = ov5645_get_skip_frames,
-> +};
-> +
->  static const struct v4l2_subdev_ops ov5645_subdev_ops = {
->  	.core = &ov5645_core_ops,
->  	.video = &ov5645_video_ops,
->  	.pad = &ov5645_subdev_pad_ops,
-> +	.sensor = &ov5645_sensor_ops,
->  };
->  
->  static int ov5645_probe(struct i2c_client *client,
-> -- 
-> 2.7.4
+> The question is what happens in projects with other security models.
+
+I did think about that, in those case a DT change would do the trick by
+pointing to the TZ EE and loading v1 driver but then is DT board sepcific
+or SoC specific, I think latter :(
+
+Can we detect the model..?
+
+> >  	rng = devm_kzalloc(&pdev->dev, sizeof(*rng), GFP_KERNEL);
+> > @@ -154,6 +161,9 @@ static int msm_rng_probe(struct platform_device *pdev)
+> >  		return PTR_ERR(rng->clk);
+> >  
+> >  	rng->hwrng = &msm_rng;
+> > +	version = (unsigned long)of_device_get_match_data(&pdev->dev);
 > 
+> If this is "version" then please make it 1 or 2, if you agree with
+> Stephen's suggestion of omitting the initialization of init I think this
+> would be better as 0/1 and the variable named "skip_init".
+
+ok will do
 
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+~Vinod
