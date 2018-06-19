@@ -2,213 +2,149 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA79C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AE2C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC5E2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:23:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tGckq8z9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC5E2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
+	by mail.kernel.org (Postfix) with ESMTP id AEC8F2083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:24:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC8F2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967034AbeFSQX1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:23:27 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:46593 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966208AbeFSQX0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:23:26 -0400
-Received: by mail-oi0-f67.google.com with SMTP id h79-v6so233801oig.13;
-        Tue, 19 Jun 2018 09:23:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=mBQgnr5Ju45ExTKxcUtUZKOeUjsgmNuxMa7SithEQ7s=;
-        b=tGckq8z9hhV2+vYODWqsvjcZVVyLAaa9/1gx3weCtA+JiXTGaF6DT/SJ4+hdJumxCz
-         d7LrMSwCp5J2RYIajHa8snQIGd6KlHU8hM6ptkGyIeIIU8QvGNs1j6gXZeDlialYgXbB
-         BwSr2xOTl1MdsGO6ExF+r9sNwRK/T7+KzqCO/A/O/HIpxxXbjVX0l8oOehRZP3ruFIAr
-         ZycYGDHgoPsUTjEjlrGbgk5+ggSlJeRyslgsQhPyUxvuT9d/VsFSpn+d3J50UBXkPzWs
-         Cnn3nzco7fKikulsBh/B14/kxKRPzkgjMpOit9NSpDrebdTn/7TcOXICboWcli7JuiyI
-         ujWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=mBQgnr5Ju45ExTKxcUtUZKOeUjsgmNuxMa7SithEQ7s=;
-        b=chhFguk/RHpSXH3L0kgq1yUN+1oZKkhzANNGLiFtbrxGj51n0XMlheGSFfQBxh99jE
-         6AH0JnKdrxdcnkOkYgZjEkTNWqOa8lwZcqscXftE/cQYYkjGVRS1Faz3h7ks02bIFftl
-         P6WLajjzekJVhd4NXANLnqgihNyYov76RwZW9MxaGEXHzZdab0/ZmwXE8xAtw4rift6r
-         Cok6JFH3c8TY9anySUAXxvbML0tld5K+8IcNb7WL5x/0QF9ixgivjKxXrbgry04e0inV
-         fGClMkeT2q7teMgBk1BQcWpZVtHzh82YdS08Dwp/HRg2X2eXxwFjKjw3G3GzYNvOWMWJ
-         opTw==
-X-Gm-Message-State: APt69E07OHo2B/Q33q8cfH41cYp0zDwl1xP9W9D3pykPzo4aOl+ufaeN
-        jEQEfw4jQFJWqWnh2tmle3aKnhIbUE8jB5bTHGA=
-X-Google-Smtp-Source: ADUXVKKh+liVW5HNG+XSA+a/a9DlaNj/3SV5Mh48nkpB1tMVEBrTkjK1zmELUdVeTLMOMwW+MTppXW/6UYG4a4BsE+g=
-X-Received: by 2002:aca:de07:: with SMTP id v7-v6mr10013432oig.161.1529425405142;
- Tue, 19 Jun 2018 09:23:25 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:743:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 09:23:04 -0700 (PDT)
-In-Reply-To: <20180618145854.2092c6e0@gandalf.local.home>
-References: <20180617143625.32133-1-matwey@sai.msu.ru> <20180618145854.2092c6e0@gandalf.local.home>
-From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Date:   Tue, 19 Jun 2018 19:23:04 +0300
-X-Google-Sender-Auth: TMDM7LRezqB4Ahj9OeIRYec95CY
-Message-ID: <CAJs94EZAAuUS4rznPDmD=1aD8B72P0mLft+YDoNs+74pRXr+KA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Add TRACE_EVENTs in pwc_isoc_handler()
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        linux-media@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S966984AbeFSQYO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:24:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33381 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966208AbeFSQYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:24:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 20575AEA1;
+        Tue, 19 Jun 2018 16:24:12 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id B2B7AA1081; Tue, 19 Jun 2018 18:24:11 +0200 (CEST)
+In-Reply-To: <20180619092254.kmww3fpqjqcsjrna@unicorn.suse.cz>
+References: <20180619092254.kmww3fpqjqcsjrna@unicorn.suse.cz>
+From:   Michal Kubecek <mkubecek@suse.cz>
+Date:   Tue, 19 Jun 2018 18:17:47 +0200
+Subject: [PATCH] proc: add missing '\0' back to /proc/$pid/cmdline
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Message-Id: <20180619162411.B2B7AA1081@unicorn.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
+Recent rewrite introduced a regression, /proc/$pid/cmdline is missing the
+trailing null character:
 
-Thank you for valuable comments.
+mike@lion:/tmp> cat /proc/self/cmdline | od -t c
+0000000   c   a   t  \0   /   p   r   o   c   /   s   e   l   f   /   c
+0000020   m   d   l   i   n   e
+0000026
 
-This is for measuring performance of URB completion callback inside PWC driver.
-What do you think about moving events to __usb_hcd_giveback_urb() in
-order to make this more generic? Like the following:
+This is because strnlen() is used to search for the null character but it
+returns the length without it so that we need to copy one byte more (but
+only if we actually found a null character). And once we pass the null
+character to userspace we need to make sure next read returns 0 (EOF).
 
-        local_irq_save(flags);
-// trace urb complete enter
-        urb->complete(urb);
-// trace urb complete exit
-        local_irq_restore(flags);
+This is another problem, even if rather theoretical one: if userspace seeks
+to arg_end or past it, we only start checking for null character from that
+position so that we may return random segment of environment rather then
+EOF.
 
+Resolve both by always starting no later than at arg_end-1 (so that we
+always catch the right null character) but don't copy data until we reach
+the requested start position.
 
-2018-06-18 21:58 GMT+03:00 Steven Rostedt <rostedt@goodmis.org>:
-> On Sun, 17 Jun 2018 17:36:24 +0300
-> "Matwey V. Kornilov" <matwey@sai.msu.ru> wrote:
->
-> I would prefer a change log here that would explain why these
-> tracepoints are being added.
->
->
->> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
->> ---
->>  drivers/media/usb/pwc/pwc-if.c |  7 +++++++
->>  include/trace/events/pwc.h     | 45 ++++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 52 insertions(+)
->>  create mode 100644 include/trace/events/pwc.h
->>
->> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
->> index 54b036d39c5b..5775d1f60668 100644
->> --- a/drivers/media/usb/pwc/pwc-if.c
->> +++ b/drivers/media/usb/pwc/pwc-if.c
->> @@ -57,6 +57,9 @@
->>     - Pham Thanh Nam: webcam snapshot button as an event input device
->>  */
->>
->> +#define CREATE_TRACE_POINTS
->> +#include <trace/events/pwc.h>
->> +
->>  #include <linux/errno.h>
->>  #include <linux/init.h>
->>  #include <linux/mm.h>
->> @@ -260,6 +263,8 @@ static void pwc_isoc_handler(struct urb *urb)
->>       int i, fst, flen;
->>       unsigned char *iso_buf = NULL;
->>
->> +     trace_pwc_handler_enter(urb);
->> +
->>       if (urb->status == -ENOENT || urb->status == -ECONNRESET ||
->>           urb->status == -ESHUTDOWN) {
->>               PWC_DEBUG_OPEN("URB (%p) unlinked %ssynchronously.\n",
->
-> Looks like if this is hit, we will return from the function without
-> calling trace_pwc_handler_exit().
->
->> @@ -347,6 +352,8 @@ static void pwc_isoc_handler(struct urb *urb)
->>               pdev->vlast_packet_size = flen;
->>       }
->>
->> +     trace_pwc_handler_exit(urb);
->> +
->>  handler_end:
->
-> Why not add the tracepoint after handler_end. In fact, why not add some
-> exit status to the trace event? I would think that would be useful as
-> well.
->
->
->>       i = usb_submit_urb(urb, GFP_ATOMIC);
->>       if (i != 0)
->> diff --git a/include/trace/events/pwc.h b/include/trace/events/pwc.h
->> new file mode 100644
->> index 000000000000..b13d2118bb7a
->> --- /dev/null
->> +++ b/include/trace/events/pwc.h
->> @@ -0,0 +1,45 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#if !defined(_TRACE_PWC_H) || defined(TRACE_HEADER_MULTI_READ)
->> +#define _TRACE_PWC_H
->> +
->> +#include <linux/usb.h>
->> +#include <linux/tracepoint.h>
->> +
->> +#undef TRACE_SYSTEM
->> +#define TRACE_SYSTEM pwc
->> +
->> +TRACE_EVENT(pwc_handler_enter,
->> +     TP_PROTO(struct urb *urb),
->> +     TP_ARGS(urb),
->> +     TP_STRUCT__entry(
->> +             __field(struct urb*, urb)
->> +             __field(int, urb__status)
->> +             __field(u32, urb__actual_length)
->> +     ),
->> +     TP_fast_assign(
->> +             __entry->urb = urb;
->> +             __entry->urb__status = urb->status;
->> +             __entry->urb__actual_length = urb->actual_length;
->
-> Is there any other data that may be interesting to record here?
->
-> -- Steve
->
->> +     ),
->> +     TP_printk("urb=%p (status=%d actual_length=%u)",
->> +             __entry->urb,
->> +             __entry->urb__status,
->> +             __entry->urb__actual_length)
->> +);
->> +
->> +TRACE_EVENT(pwc_handler_exit,
->> +     TP_PROTO(struct urb *urb),
->> +     TP_ARGS(urb),
->> +     TP_STRUCT__entry(
->> +             __field(struct urb*, urb)
->> +     ),
->> +     TP_fast_assign(
->> +             __entry->urb = urb;
->> +     ),
->> +     TP_printk("urb=%p", __entry->urb)
->> +);
->> +
->> +#endif /* _TRACE_PWC_H */
->> +
->> +/* This part must be outside protection */
->> +#include <trace/define_trace.h>
->
+Fixes: 5ab827189965 ("fs/proc: simplify and clarify get_mm_cmdline() function")
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ fs/proc/base.c | 33 +++++++++++++++++++++++++--------
+ 1 file changed, 25 insertions(+), 8 deletions(-)
 
-
-
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b6572944efc3..8faafc70ee83 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -209,7 +209,8 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 			      size_t count, loff_t *ppos)
+ {
+ 	unsigned long arg_start, arg_end, env_start, env_end;
+-	unsigned long pos, len;
++	unsigned long req_pos, pos, len;
++	bool end_found = false;
+ 	char *page;
+ 
+ 	/* Check if process spawned far enough to have cmdline. */
+@@ -236,25 +237,27 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 		env_start = env_end = arg_end;
+ 
+ 	/* We're not going to care if "*ppos" has high bits set */
+-	pos = arg_start + *ppos;
++	req_pos = arg_start + *ppos;
+ 
+ 	/* .. but we do check the result is in the proper range */
+-	if (pos < arg_start || pos >= env_end)
++	if (req_pos < arg_start || req_pos >= env_end)
+ 		return 0;
+ 
+ 	/* .. and we never go past env_end */
+-	if (env_end - pos < count)
++	if (env_end - req_pos < count)
+ 		count = env_end - pos;
+ 
++	pos = min_t(unsigned long, req_pos, arg_end - 1);
+ 	page = (char *)__get_free_page(GFP_KERNEL);
+ 	if (!page)
+ 		return -ENOMEM;
+ 
+ 	len = 0;
+-	while (count) {
++	while (count && !end_found) {
+ 		int got;
+-		size_t size = min_t(size_t, PAGE_SIZE, count);
++		size_t size = count + (pos < req_pos ? req_pos - pos : 0);
+ 
++		size = min_t(size_t, PAGE_SIZE, size);
+ 		got = access_remote_vm(mm, pos, page, size, FOLL_ANON);
+ 		if (got <= 0)
+ 			break;
+@@ -276,12 +279,26 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+ 				n = arg_end - pos - 1;
+ 
+ 			/* Cut off at first NUL after 'n' */
+-			got = n + strnlen(page+n, got-n);
++			n += strnlen(page + n, got - n);
++			got = min_t(int, got, n + 1);
++			end_found = !page[n];
+ 			if (!got)
+ 				break;
+ 		}
+ 
+-		got -= copy_to_user(buf, page, got);
++		if (pos + got <= req_pos) {
++			/* got > 0 here so that pos always advances */
++			pos += got;
++			continue;
++		}
++
++		if (pos < req_pos) {
++			got -= (req_pos - pos);
++			got -= copy_to_user(buf, page + req_pos - pos, got);
++			pos = req_pos;
++		} else {
++			got -= copy_to_user(buf, page, got);
++		}
+ 		if (unlikely(!got)) {
+ 			if (!len)
+ 				len = -EFAULT;
 -- 
-With best regards,
-Matwey V. Kornilov.
-Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
-119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
+2.17.1
+
