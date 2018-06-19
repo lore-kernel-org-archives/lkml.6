@@ -3,58 +3,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55192C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB592C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D0C204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74339204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:41:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pIl/770u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D0C204EC
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="rTXOBJcC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74339204EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937691AbeFSNlE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:41:04 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35003 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937635AbeFSNlB (ORCPT
+        id S937743AbeFSNlL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:41:11 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35020 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937695AbeFSNlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:41:01 -0400
-Received: by mail-wm0-f66.google.com with SMTP id j15-v6so565595wme.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 06:41:01 -0700 (PDT)
+        Tue, 19 Jun 2018 09:41:07 -0400
+Received: by mail-wm0-f68.google.com with SMTP id j15-v6so566225wme.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 06:41:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=BbgokXtJGDozTTd+Fk8mX44LvySHxUpDGzkdC0ZqN90=;
-        b=pIl/770uM+0iLWbzWd9GIY9rV+c5mMp3vXOS5DCy7OOm/I+/cNlM8aDXH3ahsZDbhU
-         /7EHAFgiCmud7GG73Ga58AFkhfyqLb3pruYBqzHmdL5o5eYjusM9V+PFNuXi9RRAsK2b
-         Rt3oJtdOj8/1GWdJcRLpPxQ3zi958YfVHuqbbM6J+kG5I49VdwvxwOlu79OBuYFWRxPu
-         KhlAbaeg/lTeJgANTrhxFZq7kwZ3xdmlK02UMnz80ivCNd6OP4j/d6+8DkZPl8x6sYLS
-         wA7nIKMhU3ZBaAnXAdfdReKmtN6LfpZ89mP5G3YS4zuMqO6eGBHb8BxX/mj2e1wgPbfe
-         gcvg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=O9CgGsxjPmXSJzKHBcIzvkjp9vRQY5ar1a5/jpyGPWw=;
+        b=rTXOBJcCwtd7UV0iGy1AhM0DKWC1S733yQT8EFg3NbCXowIDQ8d3pR6vB8XkYmOz8e
+         Jo9n5WnYwSQ9p9zSuKRGDP5v4FHLzYncskdRvkK8uA8wTVxUPWvph+vI9vuZwTTpjPDG
+         6XSSjW1g+cEAErn3J9Lihbq7k/+RUIHVaGEX1TSf0P1AQV+TWFC3PVQr/rPkGHud3Z3X
+         yHqAn+mqEHgapkekpKH+t8dRobSpswHJHazWP96IVQNHO68URpVMENopk0v4/yQSzoUb
+         uUYiVSvxZB5Jhb6uQJCcvFKsjV2ts2s+rlL1TQm9Osm2L3kgsZDaIXfb5W6uibKwrRXd
+         qPug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BbgokXtJGDozTTd+Fk8mX44LvySHxUpDGzkdC0ZqN90=;
-        b=OVYbgsJeAkqT5nuGLnKMvq74gFdPw9+YvxmxcTqPOphNh4+gCtdZNB0YTT3HNxZUnL
-         cv5Xl2puDs1nGkfQC9+PNxyNMEjXG/Wio3WGyNgkf/bqSh57bnt5PHNyDlpenFa8otl7
-         8jj5wWJtrAVQBx7tUGROPRvmImGwy1VBYdroAxJYdfP35XdMwzPeb/YyRDrAGDWZY4zS
-         I+rohT6+PAKskrwhxRuJFkoOpi7m6E4KQEfITZVallYsC51NJRM2vq91lq31Cg3kSfGd
-         JVJSPqmGp8bLG5ilF//bS3Q6n9LIfxLElK83UkZrXsEvcKqSG6bzy9zEOwVAWpPN+izo
-         +mdQ==
-X-Gm-Message-State: APt69E2ehKSLnoIiWgphWkA5uATeFVCg5fQdqlQs3VByZvi1L5iBxTNK
-        9SiiZ6bbr3xHurUGZnrKEeslBDG2
-X-Google-Smtp-Source: ADUXVKJ0IVeK8ZrgBCbT9gqRsCoSu7tfk3rUbE5KFxKLlDW5l2qKzM1+TKP3HEUOuKYhCrLHhkMPIw==
-X-Received: by 2002:a1c:4a06:: with SMTP id x6-v6mr7665924wma.89.1529415660432;
-        Tue, 19 Jun 2018 06:41:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=O9CgGsxjPmXSJzKHBcIzvkjp9vRQY5ar1a5/jpyGPWw=;
+        b=sItRIUyIvxqokV4OUZZ0arMNYKqVh6ANkMvFykBwhs0kIo7RehQoEe4IsQkQjD9Fni
+         MUJIXVVob6beW/0Pj1BHEQ1sI1niqY4mmsjqlvU95GUH8e+CBVGmQWIeDetLLx4YUgkz
+         zMUPIs/cXMOirUOQEJfOhVE/VkBYElBYX3Ub5Ss57ToyioYaEwtLDxMubsBceu6NPokv
+         XZW8iK6gTeVokFWs4ExllcVAy8ewORfeFXUfzdp3jQaT4kzBi3sIEfCGgRlxAkK1OLgj
+         Z5NZ+ySQ+TEtoXzdot1Z21+EsT8uh/+OJOMZs093iNk/zLlcooqDCGqzVp9ruBGtmDIL
+         ndxA==
+X-Gm-Message-State: APt69E0YBcf+hR2NxGG4ZuAwWDexd/XzXt+YcM/7zDxKlNbnkCwUZeW4
+        lwP1i+ESLXC7vRipnOPcCJt0WRoh
+X-Google-Smtp-Source: ADUXVKLHjePjXdNrnjjYHL7uKRjr0rOJ2r7VnYuNndCSTMwbHLVC1RkEujVoPCmU34G9dkPbTb+/sg==
+X-Received: by 2002:a1c:470b:: with SMTP id u11-v6mr11499989wma.49.1529415665755;
+        Tue, 19 Jun 2018 06:41:05 -0700 (PDT)
 Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id t10-v6sm17196154wrq.74.2018.06.19.06.40.59
+        by smtp.googlemail.com with ESMTPSA id t10-v6sm17196154wrq.74.2018.06.19.06.41.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 06:40:59 -0700 (PDT)
+        Tue, 19 Jun 2018 06:41:05 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -65,68 +66,82 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Quentin Schulz <quentin.schulz@free-electrons.com>,
         Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: [PATCH 0/2] clk: enforce CLK_SET_RATE_GATE along the tree
-Date:   Tue, 19 Jun 2018 15:40:49 +0200
-Message-Id: <20180619134051.16726-1-jbrunet@baylibre.com>
+Subject: [PATCH 2/2] clk: fix CLK_SET_RATE_GATE with clock rate protection
+Date:   Tue, 19 Jun 2018 15:40:51 +0200
+Message-Id: <20180619134051.16726-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180619134051.16726-1-jbrunet@baylibre.com>
+References: <20180619134051.16726-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a resend of the last unmerged patch of the clock protect v5 [0]
-patchset. It makes use of the clock protection mechanism to fix and
-enforce CLK_SET_RATE_GATE flag.
+CLK_SET_RATE_GATE should prevent any operation which may result in a rate
+change or glitch while the clock is prepared/enabled.
 
-With this flag set, any operation resulting in a rate change or glitch
-should be prevented. This might be useful when, for example, a PLL can't
-safely relock while in use.
+IOW, the following sequence is not allowed anymore with CLK_SET_RATE_GATE:
+* clk_get()
+* clk_prepare_enable()
+* clk_get_rate()
+* clk_set_rate()
 
-ATM, this is enforced only on the leaf clock of the operation (the clock
-on which clk_set_rate() is called). It is ignored otherwise. It means
-that, if:
- * clock A has CLK_SET_RATE_PARENT and is a child on clock B
- * clock B has CLK_SET_RATE_GATE set
-it is possible to:
- * call clk_prepare_enable on clock A (clock B also gets enabled)
- * call clk_set_rate() on clock A,
-  => with rate propagation clock B (or its parents) might change while
-     enabled
+At the moment this is enforced on the leaf clock of the operation, not
+along the tree. This problematic because, if a PLL has the CLK_RATE_GATE,
+it won't be enforced if the clk_set_rate() is called on its child clocks.
 
-Patch 2 of this series fixes this problem.
+Using clock rate protection, we can now enforce CLK_SET_RATE_GATE along the
+clock tree
 
-Some platform may have been relying on the broken implementation of
-CLK_SET_RATE_GATE but, since the platform actually bypassed
-CLK_SET_RATE_GATE, we can drop the flag without changing anything.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Tested-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-This is the case for qcom SDC clock and mmci driver, which does the
-following sequence:
- * clk_get()
- * clk_prepare_enable()
- * clk_get_rate()
- * clk_set_rate()
-This is obviously not possible when CLK_SET_RATE_GATE is set.
-Patch 1 drops the CLK_SET_RATE_GATE from qcom sdc clocks. Other qcom's
-clocks are using the same scheme, so maybe there something worth
-checking here.
-
-This case was detected using kernelCI but some other platforms might be
-doing the same. Maintainers of the platforms using this flag have been
-warned ... but please test!
-
-[0]: https://lkml.kernel.org/r/20171201215200.23523-1-jbrunet@baylibre.com
-
-Jerome Brunet (2):
-  clk: qcom: drop CLK_SET_RATE_GATE from sdc clocks
-  clk: fix CLK_SET_RATE_GATE with clock rate protection
-
- drivers/clk/clk.c              | 16 +++++++++++++---
- drivers/clk/qcom/gcc-ipq806x.c |  3 ---
- drivers/clk/qcom/gcc-mdm9615.c |  2 --
- drivers/clk/qcom/gcc-msm8660.c |  5 -----
- drivers/clk/qcom/gcc-msm8960.c |  5 -----
- 5 files changed, 13 insertions(+), 18 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9760b526ca31..97c09243fb21 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -691,6 +691,9 @@ static void clk_core_unprepare(struct clk_core *core)
+ 	    "Unpreparing critical %s\n", core->name))
+ 		return;
+ 
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_unprotect(core);
++
+ 	if (--core->prepare_count > 0)
+ 		return;
+ 
+@@ -765,6 +768,16 @@ static int clk_core_prepare(struct clk_core *core)
+ 
+ 	core->prepare_count++;
+ 
++	/*
++	 * CLK_SET_RATE_GATE is a special case of clock protection
++	 * Instead of a consumer claiming exclusive rate control, it is
++	 * actually the provider which prevents any consumer from making any
++	 * operation which could result in a rate change or rate glitch while
++	 * the clock is prepared.
++	 */
++	if (core->flags & CLK_SET_RATE_GATE)
++		clk_core_rate_protect(core);
++
+ 	return 0;
+ unprepare:
+ 	clk_core_unprepare(core->parent);
+@@ -1888,9 +1901,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (clk_core_rate_is_protected(core))
+ 		return -EBUSY;
+ 
+-	if ((core->flags & CLK_SET_RATE_GATE) && core->prepare_count)
+-		return -EBUSY;
+-
+ 	/* calculate new rates and get the topmost changed clock */
+ 	top = clk_calc_new_rates(core, req_rate);
+ 	if (!top)
 -- 
 2.14.3
 
