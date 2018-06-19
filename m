@@ -3,189 +3,323 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BE6C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D64EAC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C503208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:50:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C503208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 849E020661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849E020661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753762AbeFSXuB convert rfc822-to-8bit (ORCPT
+        id S1752806AbeFSXw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 19:50:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:58040 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751092AbeFSXt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 19:49:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3729215AB;
-        Tue, 19 Jun 2018 16:49:58 -0700 (PDT)
-Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 953CB3F589;
-        Tue, 19 Jun 2018 16:49:57 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 18:49:52 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        =?ISO-8859-1?Q? "Hendrik_Br=FCckner" ?= 
-        <brueckner@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>
-Subject: [PATCH 2/2] perf test shell: make perf inet_pton test more portable
-Message-Id: <20180619184952.dac6a3a1e39d3b1d255e7119@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        Tue, 19 Jun 2018 19:52:28 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58597 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751003AbeFSXw0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 19:52:26 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fVQPy-0005Lz-P7; Wed, 20 Jun 2018 01:52:11 +0200
+Date:   Wed, 20 Jun 2018 01:52:10 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
+        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
+Subject: Re: [PATCH v10 7/7] x86/tsc: use tsc early
+In-Reply-To: <20180615174204.30581-8-pasha.tatashin@oracle.com>
+Message-ID: <alpine.DEB.2.21.1806192335390.10546@nanos.tec.linutronix.de>
+References: <20180615174204.30581-1-pasha.tatashin@oracle.com> <20180615174204.30581-8-pasha.tatashin@oracle.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Debian based systems such as Ubuntu have dash as their default shell.
-Even if the normal or root user's shell is bash, certain scripts still
-call /bin/sh, which points to dash, so we fix this perf test by
-rewriting it in a more portable way.
+On Fri, 15 Jun 2018, Pavel Tatashin wrote:
 
-BEFORE:
+> tsc_early_init():
+> Determines offset, shift and multiplier for the early clock based on the
+> TSC frequency.
+> 
+> tsc_early_fini()
+> Implement the finish part of early tsc feature, prints message about the
+> offset, which can be useful to find out how much time was spent in post and
+> boot manager (if TSC starts from 0 during boot)
+>
+> sched_clock_early():
+> TSC based implementation of early clock and is called from sched_clock().
+> 
+> start_early_clock():
+> Calls tsc_early_init(), and makes sched_clock() to use early boot clock
+> 
+> set_final_clock():
+> Sets the final clock which is either platform specific or
+> native_sched_clock(). Also calls tsc_early_fini() if early clock was
+> previously initialized.
+> 
+> Call start_early_clock() to start using early boot time stamps
+> functionality on the supported x86 platforms, and call set_final_clock() to
+> finish this feature and switch back to the default clock. The supported x86
+> systems are those where TSC frequency is determined early in boot.
 
-$ sudo ./perf test -v 64
-64: probe libc's inet_pton & backtrace it with ping       :
---- start ---
-test child forked, pid 31942
-./tests/shell/record+probe_libc_inet_pton.sh: 18: ./tests/shell/record+probe_libc_inet_pton.sh: expected[0]=ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\): not found
-./tests/shell/record+probe_libc_inet_pton.sh: 19: ./tests/shell/record+probe_libc_inet_pton.sh: expected[1]=.*inet_pton\+0x[[:xdigit:]]+[[:space:]]\(/lib/x86_64-linux-gnu/libc-2.27.so|inlined\)$: not found
-./tests/shell/record+probe_libc_inet_pton.sh: 29: ./tests/shell/record+probe_libc_inet_pton.sh: expected[2]=getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\(/lib/x86_64-linux-gnu/libc-2.27.so\)$: not found
-./tests/shell/record+probe_libc_inet_pton.sh: 30: ./tests/shell/record+probe_libc_inet_pton.sh: expected[3]=.*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$: not found
-ping 31963 [004] 83577.670613: probe_libc:inet_pton: (7fe15f87f4b0)
-./tests/shell/record+probe_libc_inet_pton.sh: 39: ./tests/shell/record+probe_libc_inet_pton.sh: Bad substitution
-./tests/shell/record+probe_libc_inet_pton.sh: 41: ./tests/shell/record+probe_libc_inet_pton.sh: Bad substitution
-test child finished with -2
----- end ----
-probe libc's inet_pton & backtrace it with ping: Skip
+Lots of functions for dubious value.
+  
+> +static struct cyc2ns_data  cyc2ns_early;
+> +
+> +static u64 sched_clock_early(void)
+> +{
+> +	u64 ns = mul_u64_u32_shr(rdtsc(), cyc2ns_early.cyc2ns_mul,
+> +				 cyc2ns_early.cyc2ns_shift);
+> +	return ns + cyc2ns_early.cyc2ns_offset;
+> +}
+> +
+> +/*
+> + * Initialize clock for early time stamps
+> + */
+> +static void __init tsc_early_init(unsigned int khz)
+> +{
+> +	clocks_calc_mult_shift(&cyc2ns_early.cyc2ns_mul,
+> +			       &cyc2ns_early.cyc2ns_shift,
+> +			       khz, NSEC_PER_MSEC, 0);
+> +	cyc2ns_early.cyc2ns_offset = -sched_clock_early();
+> +}
+> +
+> +/*
+> + * Finish clock for early time stamps, and hand over to permanent clock by
+> + * setting __sched_clock_offset appropriately for continued time keeping.
+> + */
+> +static void __init tsc_early_fini(void)
+> +{
+> +	unsigned long long t;
+> +	unsigned long r;
+> +
+> +	t = -cyc2ns_early.cyc2ns_offset;
+> +	r = do_div(t, NSEC_PER_SEC);
+> +
+> +	__sched_clock_offset = sched_clock_early() - sched_clock();
+> +	pr_info("early sched clock is finished, offset [%lld.%09lds]\n", t, r);
+> +}
+> +
+> +#ifdef CONFIG_PARAVIRT
+> +static inline void __init start_early_clock(void)
+> +{
+> +	tsc_early_init(tsc_khz);
+> +	pv_time_ops.active_sched_clock = sched_clock_early;
+> +}
+> +
+> +static inline void __init set_final_clock(void)
+> +{
+> +	pv_time_ops.active_sched_clock = pv_time_ops.sched_clock;
+> +
+> +	/* We did not have early sched clock if multiplier is 0 */
+> +	if (cyc2ns_early.cyc2ns_mul)
+> +		tsc_early_fini();
+> +}
+> +#else /* CONFIG_PARAVIRT */
+> +/*
+> + * For native clock we use two switches static and dynamic, the static switch is
+> + * initially true, so we check the dynamic switch, which is initially false.
+> + * Later  when early clock is disabled, we can alter the static switch in order
+> + * to avoid branch check on every sched_clock() call.
+> + */
+> +static bool __tsc_early;
+> +static DEFINE_STATIC_KEY_TRUE(__tsc_early_static);
+> +
+> +static inline void __init start_early_clock(void)
+> +{
+> +	tsc_early_init(tsc_khz);
+> +	__tsc_early = true;
+> +}
+> +
+> +static inline void __init set_final_clock(void)
+> +{
+> +	__tsc_early = false;
+> +	static_branch_disable(&__tsc_early_static);
+> +
+> +	/* We did not have early sched clock if multiplier is 0 */
+> +	if (cyc2ns_early.cyc2ns_mul)
+> +		tsc_early_fini();
+> +}
+> +#endif /* CONFIG_PARAVIRT */
+> +
+>  /*
+>   * Scheduler clock - returns current time in nanosec units.
+>   */
+> @@ -194,6 +272,13 @@ u64 native_sched_clock(void)
+>  		return cycles_2_ns(tsc_now);
+>  	}
+>  
+> +#ifndef CONFIG_PARAVIRT
+> +	if (static_branch_unlikely(&__tsc_early_static)) {
+> +		if (__tsc_early)
+> +			return sched_clock_early();
+> +	}
+> +#endif /* !CONFIG_PARAVIRT */
+> +
 
-AFTER:
+This whole function maze plus the ifdeffery which comes with it is really
+horrible and not required. What's wrong with reusing the existing
+functionality?
 
-64: probe libc's inet_pton & backtrace it with ping       :
---- start ---
-test child forked, pid 32277
-ping 32295 [001] 83679.690020: probe_libc:inet_pton: (7ff244f504b0)
-7ff244f504b0 __GI___inet_pton+0x0 (/lib/x86_64-linux-gnu/libc-2.27.so)
-7ff244f14ce4 getaddrinfo+0x124 (/lib/x86_64-linux-gnu/libc-2.27.so)
-556ac036b57d _init+0xb75 (/bin/ping)
-test child finished with 0
----- end ----
-probe libc's inet_pton & backtrace it with ping: Ok
+The patch below (uncompiled and untested) should achieve the same thing
+without all the paravirt muck (which can be easily added w/o all the
+ifdeffery if really required) by just reusing the existing conversion and
+initialization functions.
 
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: "Hendrik Brückner" <brueckner@linux.vnet.ibm.com>
-Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
----
-Fixed using fake array technique described here:
+If I'm not completely mistaken then the second invocation of
+set_cyc2ns_scale() from tsc_init() will also take care of the smooth
+sched_clock() transition from early to final w/o touching the core
+__sched_clock_offset at all. Though my tired brain might trick me.
 
-https://www.linuxquestions.org/questions/programming-9/basic-bash-how-to-use-eval-to-evaluate-variable-names-made-of-arbitrary-strings-775622/
+It might not work as is, but it should not be rocket science to make it do
+so.
 
-Note that bashisms can also be found with 'checkbashisms':
+Thanks,
 
-$ checkbashisms record+probe_libc_inet_pton.sh
-script record+probe_libc_inet_pton.sh does not appear to have a #! interpreter line;
-you may get strange results
-possible bashism in record+probe_libc_inet_pton.sh line 18 (bash arrays, H[0]):
-	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
-possible bashism in record+probe_libc_inet_pton.sh line 19 (bash arrays, H[0]):
-	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-possible bashism in record+probe_libc_inet_pton.sh line 23 (bash arrays, H[0]):
-		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-possible bashism in record+probe_libc_inet_pton.sh line 24 (bash arrays, H[0]):
-		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-possible bashism in record+probe_libc_inet_pton.sh line 25 (bash arrays, H[0]):
-		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-possible bashism in record+probe_libc_inet_pton.sh line 29 (bash arrays, H[0]):
-		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
-possible bashism in record+probe_libc_inet_pton.sh line 30 (bash arrays, H[0]):
-		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-possible bashism in record+probe_libc_inet_pton.sh line 39 (bash arrays, ${name[0|*|@]}):
-		echo "$line" | egrep -q "${expected[$idx]}"
-possible bashism in record+probe_libc_inet_pton.sh line 41 (bash arrays, ${name[0|*|@]}):
-			printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${expected[$idx]}" "$line"
-possible bashism in record+probe_libc_inet_pton.sh line 44 (let ...):
-		let idx+=1
-possible bashism in record+probe_libc_inet_pton.sh line 45 (bash arrays, ${name[0|*|@]}):
-		[ -z "${expected[$idx]}" ] && break
+	tglx
 
- .../shell/record+probe_libc_inet_pton.sh      | 23 ++++++++++---------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+8<----------------------
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 263057039693..41124fa12913 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -15,19 +15,20 @@ nm -Dg $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+tsc.c |   59 ++++++++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 15 deletions(-)
+
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -39,6 +39,9 @@ EXPORT_SYMBOL(tsc_khz);
+ static int __read_mostly tsc_unstable;
  
- trace_libc_inet_pton_backtrace() {
- 	idx=0
--	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
--	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-+	expected='expected'
-+	eval ${expected}0="'ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)'"
-+	eval ${expected}1="'.*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$'"
- 	case "$(uname -m)" in
- 	s390x)
- 		eventattr='call-graph=dwarf,max-stack=4'
--		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
--		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
--		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-+		eval ${expected}2="'gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$'"
-+		eval ${expected}3="'(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$'"
-+		eval ${expected}4="'main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$'"
- 		;;
- 	*)
- 		eventattr='max-stack=3'
--		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
--		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-+		eval ${expected}2="'getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$'"
-+		eval ${expected}3="'.*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$'"
- 		;;
- 	esac
+ static DEFINE_STATIC_KEY_FALSE(__use_tsc);
++static DEFINE_STATIC_KEY_TRUE(tsc_early_enabled);
++
++static bool tsc_early_sched_clock;
  
-@@ -36,13 +37,13 @@ trace_libc_inet_pton_backtrace() {
- 	perf record -e probe_libc:inet_pton/$eventattr/ -o $file ping -6 -c 1 ::1 > /dev/null 2>&1
- 	perf script -i $file | while read line ; do
- 		echo $line
--		echo "$line" | egrep -q "${expected[$idx]}"
-+		echo "$line" | egrep -q "$(echo $(eval echo \$$expected${idx}))"
- 		if [ $? -ne 0 ] ; then
--			printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${expected[$idx]}" "$line"
-+			printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "$(echo $(eval echo \$$expected${idx}))" "$line"
- 			exit 1
- 		fi
--		let idx+=1
--		[ -z "${expected[$idx]}" ] && break
-+		idx=$((idx+1))
-+		[ -z "$(echo $(eval echo \$$expected${idx}))" ] && break
- 	done
+ int tsc_clocksource_reliable;
  
- 	# If any statements are executed from this point onwards,
--- 
-2.17.1
+@@ -133,18 +136,12 @@ static inline unsigned long long cycles_
+ 	return ns;
+ }
+ 
+-static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
++static void __set_cyc2ns_scale(unsigned long khz, int cpu,
++			       unsigned long long tsc_now)
+ {
+ 	unsigned long long ns_now;
+ 	struct cyc2ns_data data;
+ 	struct cyc2ns *c2n;
+-	unsigned long flags;
+-
+-	local_irq_save(flags);
+-	sched_clock_idle_sleep_event();
+-
+-	if (!khz)
+-		goto done;
+ 
+ 	ns_now = cycles_2_ns(tsc_now);
+ 
+@@ -176,22 +173,46 @@ static void set_cyc2ns_scale(unsigned lo
+ 	c2n->data[0] = data;
+ 	raw_write_seqcount_latch(&c2n->seq);
+ 	c2n->data[1] = data;
++}
++
++static void set_cyc2ns_scale(unsigned long khz, int cpu,
++			     unsigned long long tsc_now)
++{
++	unsigned long flags;
++
++	local_irq_save(flags);
++	sched_clock_idle_sleep_event();
++
++	if (khz)
++		__set_cyc2ns_scale(khz, cpu, tsc_now);
+ 
+-done:
+ 	sched_clock_idle_wakeup_event();
+ 	local_irq_restore(flags);
+ }
+ 
++static void __init sched_clock_early_init(unsigned int khz)
++{
++	cyc2ns_init(smp_processor_id());
++	__set_cyc2ns_scale(khz, smp_processor_id(), rdtsc());
++	tsc_early_sched_clock = true;
++}
++
++static void __init sched_clock_early_exit(void)
++{
++	static_branch_disable(&tsc_early_enabled);
++}
++
+ /*
+  * Scheduler clock - returns current time in nanosec units.
+  */
+ u64 native_sched_clock(void)
+ {
+-	if (static_branch_likely(&__use_tsc)) {
+-		u64 tsc_now = rdtsc();
++	if (static_branch_likely(&__use_tsc))
++		return cycles_2_ns(rdtsc());
+ 
+-		/* return the value in ns */
+-		return cycles_2_ns(tsc_now);
++	if (static_branch_unlikely(&tsc_early_enabled)) {
++		if (tsc_early_sched_clock)
++			return cycles_2_ns(rdtsc());
+ 	}
+ 
+ 	/*
+@@ -1332,9 +1353,10 @@ void __init tsc_early_delay_calibrate(vo
+ 	lpj = tsc_khz * 1000;
+ 	do_div(lpj, HZ);
+ 	loops_per_jiffy = lpj;
++	sched_clock_early_init(tsc_khz);
+ }
+ 
+-void __init tsc_init(void)
++static void __init __tsc_init(void)
+ {
+ 	u64 lpj, cyc;
+ 	int cpu;
+@@ -1384,7 +1406,8 @@ void __init tsc_init(void)
+ 	 */
+ 	cyc = rdtsc();
+ 	for_each_possible_cpu(cpu) {
+-		cyc2ns_init(cpu);
++		if (!tsc_early_sched_clock || cpu != smp_processor_id())
++			cyc2ns_init(cpu);
+ 		set_cyc2ns_scale(tsc_khz, cpu, cyc);
+ 	}
+ 
+@@ -1411,6 +1434,12 @@ void __init tsc_init(void)
+ 	detect_art();
+ }
+ 
++void __init tsc_init(void)
++{
++	__tsc_init();
++	sched_clock_early_exit();
++}
++
+ #ifdef CONFIG_SMP
+ /*
+  * If we have a constant TSC and are using the TSC for the delay loop,
+
+
 
