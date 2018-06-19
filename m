@@ -2,95 +2,201 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0C7C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4735FC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D4AD2083D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:04:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V/n4e+yY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V/n4e+yY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D4AD2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id F397D20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F397D20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754529AbeFTDEq (ORCPT
+        id S1754552AbeFTDFG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 23:04:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60224 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753862AbeFTDEl (ORCPT
+        Tue, 19 Jun 2018 23:05:06 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:58289 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754240AbeFTDDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 23:04:41 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B58EC60AD8; Wed, 20 Jun 2018 03:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529463880;
-        bh=OlvWZhG8jq3tmce/eiioOt6XaXNYnDscrnLU7aB/Y2I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=V/n4e+yY/5cXEF2gDUa37uv/MCGAi0Q1PJKDgWwBG/KkSzoIJE9/iO1PGFyqK4I/T
-         N+L1NaZpPk2fujb2jqYgPqBAhu17185vJCpEw2IrtyLJmn/5wWOH4VRvQ+mV0DUmUE
-         aPlLrDZPH5mF+rZUynRa7NnOyLG1qFRr42k0aSow=
-Received: from [192.168.0.106] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3AD2B60558;
-        Wed, 20 Jun 2018 03:04:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529463880;
-        bh=OlvWZhG8jq3tmce/eiioOt6XaXNYnDscrnLU7aB/Y2I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=V/n4e+yY/5cXEF2gDUa37uv/MCGAi0Q1PJKDgWwBG/KkSzoIJE9/iO1PGFyqK4I/T
-         N+L1NaZpPk2fujb2jqYgPqBAhu17185vJCpEw2IrtyLJmn/5wWOH4VRvQ+mV0DUmUE
-         aPlLrDZPH5mF+rZUynRa7NnOyLG1qFRr42k0aSow=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3AD2B60558
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V2] PCI: Enable PASID when End-to-End TLP is supported by
- all bridges
-To:     Timur Tabi <timur@codeaurora.org>, linux-pci@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1529460886-23722-1-git-send-email-okaya@codeaurora.org>
- <dafc272d-0748-90ee-5d34-be5b2a2e5725@codeaurora.org>
-From:   Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <843fd601-0b81-d29f-0aa8-13a261a0b931@codeaurora.org>
-Date:   Tue, 19 Jun 2018 23:04:38 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 23:03:43 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 19 Jun 2018 20:03:06 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 43DEB40DF4;
+        Tue, 19 Jun 2018 20:03:40 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC:     Nadav Amit <namit@vmware.com>, Alok Kataria <akataria@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        <virtualization@lists.linux-foundation.org>
+Subject: [PATCH v5 6/9] x86: prevent inline distortion by paravirt ops
+Date:   Tue, 19 Jun 2018 12:48:51 -0700
+Message-ID: <20180619194854.69486-7-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180619194854.69486-1-namit@vmware.com>
+References: <20180619194854.69486-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <dafc272d-0748-90ee-5d34-be5b2a2e5725@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/19/2018 11:02 PM, Timur Tabi wrote:
-> On 6/19/18 9:14 PM, Sinan Kaya wrote:
->> +    if (!(cap & PCI_EXP_DEVCAP2_E2ETLP))
->> +        return;
->> +
->> +    dev->eetlp_prefix = 1;
-> 
-> How about:
-> 
->     if (cap & PCI_EXP_DEVCAP2_E2ETLP)
->         dev->eetlp_prefix = 1;
-> 
+GCC considers the number of statements in inlined assembly blocks,
+according to new-lines and semicolons, as an indication to the cost of
+the block in time and space. This data is distorted by the kernel code,
+which puts information in alternative sections. As a result, the
+compiler may perform incorrect inlining and branch optimizations.
 
-Both works. I'll wait until I get more feedback.
+The solution is to set an assembly macro and call it from the inlined
+assembly block. As a result GCC considers the inline assembly block as
+a single instruction.
 
+The effect of the patch is a more aggressive inlining, which also
+causes a size increase of kernel.
+
+   text	   data	    bss	    dec	    hex	filename
+18147336 10226688 2957312 31331336 1de1408 ./vmlinux before
+18162555 10226288 2957312 31346155 1de4deb ./vmlinux after (+14819)
+
+Static text symbols:
+Before:	40053
+After:	39942	(-111)
+
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: virtualization@lists.linux-foundation.org
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/paravirt_types.h | 56 +++++++++++++--------------
+ arch/x86/kernel/macros.S              |  1 +
+ 2 files changed, 28 insertions(+), 29 deletions(-)
+
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..a3d886238b58 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -343,23 +343,11 @@ extern struct pv_lock_ops pv_lock_ops;
+ #define paravirt_clobber(clobber)		\
+ 	[paravirt_clobber] "i" (clobber)
+ 
+-/*
+- * Generate some code, and mark it as patchable by the
+- * apply_paravirt() alternate instruction patcher.
+- */
+-#define _paravirt_alt(insn_string, type, clobber)	\
+-	"771:\n\t" insn_string "\n" "772:\n"		\
+-	".pushsection .parainstructions,\"a\"\n"	\
+-	_ASM_ALIGN "\n"					\
+-	_ASM_PTR " 771b\n"				\
+-	"  .byte " type "\n"				\
+-	"  .byte 772b-771b\n"				\
+-	"  .short " clobber "\n"			\
+-	".popsection\n"
+-
+ /* Generate patchable code, with the default asm parameters. */
+-#define paravirt_alt(insn_string)					\
+-	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
++#define paravirt_alt							\
++	"PARAVIRT_CALL type=\"%c[paravirt_typenum]\""			\
++	" clobber=\"%c[paravirt_clobber]\""				\
++	" pv_opptr=\"%c[paravirt_opptr]\""
+ 
+ /* Simple instruction patching code. */
+ #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
+@@ -387,16 +375,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
+ 
+ int paravirt_disable_iospace(void);
+ 
+-/*
+- * This generates an indirect call based on the operation type number.
+- * The type number, computed in PARAVIRT_PATCH, is derived from the
+- * offset into the paravirt_patch_template structure, and can therefore be
+- * freely converted back into a structure offset.
+- */
+-#define PARAVIRT_CALL					\
+-	ANNOTATE_RETPOLINE_SAFE				\
+-	"call *%c[paravirt_opptr];"
+-
+ /*
+  * These macros are intended to wrap calls through one of the paravirt
+  * ops structs, so that they can be later identified and patched at
+@@ -534,7 +512,7 @@ int paravirt_disable_iospace(void);
+ 		/* since this condition will never hold */		\
+ 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -544,7 +522,7 @@ int paravirt_disable_iospace(void);
+ 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
+ 		} else {						\
+ 			asm volatile(pre				\
+-				     paravirt_alt(PARAVIRT_CALL)	\
++				     paravirt_alt			\
+ 				     post				\
+ 				     : call_clbr, ASM_CALL_CONSTRAINT	\
+ 				     : paravirt_type(op),		\
+@@ -571,7 +549,7 @@ int paravirt_disable_iospace(void);
+ 		PVOP_VCALL_ARGS;					\
+ 		PVOP_TEST_NULL(op);					\
+ 		asm volatile(pre					\
+-			     paravirt_alt(PARAVIRT_CALL)		\
++			     paravirt_alt				\
+ 			     post					\
+ 			     : call_clbr, ASM_CALL_CONSTRAINT		\
+ 			     : paravirt_type(op),			\
+@@ -691,6 +669,26 @@ struct paravirt_patch_site {
+ extern struct paravirt_patch_site __parainstructions[],
+ 	__parainstructions_end[];
+ 
++#else	/* __ASSEMBLY__ */
++
++/*
++ * This generates an indirect call based on the operation type number.
++ * The type number, computed in PARAVIRT_PATCH, is derived from the
++ * offset into the paravirt_patch_template structure, and can therefore be
++ * freely converted back into a structure offset.
++ */
++.macro PARAVIRT_CALL type:req clobber:req pv_opptr:req
++771:	ANNOTATE_RETPOLINE_SAFE
++	call *\pv_opptr
++772:	.pushsection .parainstructions,"a"
++	_ASM_ALIGN
++	_ASM_PTR 771b
++	.byte \type
++	.byte 772b-771b
++	.short \clobber
++	.popsection
++.endm
++
+ #endif	/* __ASSEMBLY__ */
+ 
+ #endif	/* _ASM_X86_PARAVIRT_TYPES_H */
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index 66ccb8e823b1..71d8b716b111 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -10,3 +10,4 @@
+ #include <asm/refcount.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/bug.h>
++#include <asm/paravirt.h>
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.0
+
