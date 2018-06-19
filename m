@@ -2,92 +2,173 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD43C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39828C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDF420875
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:14:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXUw6677"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BDF420875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F6BD2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:16:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F6BD2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937279AbeFSEOY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 00:14:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750771AbeFSEOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 00:14:21 -0400
-Received: from localhost (unknown [106.200.222.147])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFCD92083A;
-        Tue, 19 Jun 2018 04:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529381660;
-        bh=OTefSrWlIqVgHHAr0ZCyPfpHPjQYUDCQRbu+J13FEjY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UXUw6677ztfElZacK7UlWIiEuZhyn837Xx6qPZEslWGIS0yh96fkoYNQQZQuIHdNd
-         RvfqNLhx6GAPiy7FN+xuZFV7pg3zYip738S24R8CwqBdguPcdjNv5bxKwm+EhTyaKP
-         ohTmf6RBvohJln1VFy1VZTVi02Gaevx/gYOoZXAw=
-Date:   Tue, 19 Jun 2018 09:44:12 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Harry Wei <harryxiyou@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-kernel@zh-kernel.org, dmaengine@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, sparclinux@vger.kernel.org,
-        devel@lists.orangefs.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 26/26] fix a series of Documentation/ broken file name
- references
-Message-ID: <20180619041412.GL25852@vkoul-mobl>
-References: <cover.1529079119.git.mchehab+samsung@kernel.org>
- <041e7a803fc0e5c5dfc1fb8b2f761074ca0baa2c.1529079120.git.mchehab+samsung@kernel.org>
+        id S937282AbeFSEQn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 00:16:43 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:57573 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeFSEQm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 00:16:42 -0400
+Received: from w540 (unknown [104.132.146.102])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id B93C4240005;
+        Tue, 19 Jun 2018 04:16:32 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 06:16:22 +0200
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: Re: [PATCH 4/5] pinctrl: rza1: Fix selector use for groups and
+ functions
+Message-ID: <20180619041622.GA4956@w540>
+References: <20180615111141.37184-1-tony@atomide.com>
+ <20180615111141.37184-5-tony@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
 Content-Disposition: inline
-In-Reply-To: <041e7a803fc0e5c5dfc1fb8b2f761074ca0baa2c.1529079120.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180615111141.37184-5-tony@atomide.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15-06-18, 13:30, Mauro Carvalho Chehab wrote:
 
->  If you have any comment or update to the content, please contact the
->  original document maintainer directly.  However, if you have a problem
-> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-> index b451354735d3..08ba8473a284 100644
-> --- a/drivers/dma/dmaengine.c
-> +++ b/drivers/dma/dmaengine.c
-> @@ -38,7 +38,7 @@
->   * Each device has a channels list, which runs unlocked but is never modified
->   * once the device is registered, it's just setup by the driver.
->   *
-> - * See Documentation/dmaengine.txt for more details
-> + * See Documentation/driver-api/dmaengine for more details
+--LQksG6bCIzRHxTLp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-DMAengine part:
+Hi Tony,
+   thanks for doing this!
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
+I cannot find the original bug report in linux-gpio, so I'll comment
+on this single patch only.
 
--- 
-~Vinod
+On Fri, Jun 15, 2018 at 04:11:40AM -0700, Tony Lindgren wrote:
+> We must use a mutex around the generic_add functions and save the
+> function and group selector in case we need to remove them. Otherwise
+> the selector use will be racy for deferred probe at least.
+>
+> Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+> Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Cc: Paul Cercueil <paul@crapouillou.net>
+> Cc: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  drivers/pinctrl/pinctrl-rza1.c | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+> --- a/drivers/pinctrl/pinctrl-rza1.c
+> +++ b/drivers/pinctrl/pinctrl-rza1.c
+> @@ -1005,7 +1005,7 @@ static int rza1_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  	struct device_node *child;
+>  	const char *grpname;
+>  	const char **fngrps;
+> -	int ret, npins;
+> +	int ret, npins, gsel, fsel;
+
+Nit: can you move this 3 lines up to keep the variable declarations in reverse
+xmas tree order? or if you prefer declare one variable per line...
+
+With this minor comment fixed:
+Acked-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Thanks
+   j
+
+>
+>  	npins = rza1_dt_node_pin_count(np);
+>  	if (npins < 0) {
+> @@ -1055,18 +1055,19 @@ static int rza1_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  	fngrps[0] = grpname;
+>
+>  	mutex_lock(&rza1_pctl->mutex);
+> -	ret = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
+> -					NULL);
+> -	if (ret) {
+> +	gsel = pinctrl_generic_add_group(pctldev, grpname, grpins, npins,
+> +					 NULL);
+> +	if (gsel < 0) {
+>  		mutex_unlock(&rza1_pctl->mutex);
+> -		return ret;
+> +		return gsel;
+>  	}
+>
+> -	ret = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
+> -					  mux_confs);
+> -	if (ret)
+> +	fsel = pinmux_generic_add_function(pctldev, grpname, fngrps, 1,
+> +					   mux_confs);
+> +	if (fsel < 0) {
+> +		ret = fsel;
+>  		goto remove_group;
+> -	mutex_unlock(&rza1_pctl->mutex);
+> +	}
+>
+>  	dev_info(rza1_pctl->dev, "Parsed function and group %s with %d pins\n",
+>  				 grpname, npins);
+> @@ -1083,15 +1084,15 @@ static int rza1_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  	(*map)->data.mux.group = np->name;
+>  	(*map)->data.mux.function = np->name;
+>  	*num_maps = 1;
+> +	mutex_unlock(&rza1_pctl->mutex);
+>
+>  	return 0;
+>
+>  remove_function:
+> -	mutex_lock(&rza1_pctl->mutex);
+> -	pinmux_generic_remove_last_function(pctldev);
+> +	pinmux_generic_remove_function(pctldev, fsel);
+>
+>  remove_group:
+> -	pinctrl_generic_remove_last_group(pctldev);
+> +	pinctrl_generic_remove_group(pctldev, gsel);
+>  	mutex_unlock(&rza1_pctl->mutex);
+>
+>  	dev_info(rza1_pctl->dev, "Unable to parse function and group %s\n",
+> --
+> 2.17.1
+
+--LQksG6bCIzRHxTLp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJbKIOWAAoJEHI0Bo8WoVY8BpcP/ifscM5Rik08hO75WLT63ydI
+ANtohMzW0ZO26UDxoP8bVzbQGnnbE8sa4mMsChrvWnlmsKoMnnFRvrSFOxIgxni3
+ngroB7VXCusuJF2yb7QphbBg9U90wz7RHfB3MCI9pLc20lZmibsTB6M8Nfo0V3js
+GWFMwGM8byfi01HfwLlbERcEHP7MIqi06SMcVl2RKQqkPoFL4WW0ALJKJQfSzg39
+18fjOpIDvSGn/pSwuvK9EFw3suwBvWcU0Zswk9wvBwmcoG6tOUmgjW5ChcYgMCr2
+uuFCbSYj5gt14ClJ6ZNTYKqIDQAcelOa5rItT+QHcotpsaf3q1rvWCwy7VhweCR4
+I8auul9lY3Lw1bbBBlMzVXALNiSr1Mms4DooodiP2gYN7iKI5NKjHYOySIVoP6Tb
+Wrw3nlOd2CoR1OMkSpb4M/KEPA8kN0efayM4bKCXI/RJwFP15V6AfV4w962Xha4S
+4gzSypHERfrmLg7u8G/AtclE5a5PxNUnVl+WoGw3WJTEEAeo83sAZg2dG2ChkDSC
+nnp/5WiG+FZPqHIdFC5t/LXE9RHC8z9ywyvKk8CzsiLeTHKGFz85eAyeqfCLiEj4
+N7yXmkqi15GnXdYN6/hVFpDPl7DGPUaiVQoomkTfQnfWr4q0p6QjqCEQBSlhxKDH
+sNPG6xkWz/zKvk3Pm4KW
+=2S2G
+-----END PGP SIGNATURE-----
+
+--LQksG6bCIzRHxTLp--
