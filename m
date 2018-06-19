@@ -2,130 +2,113 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C781C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E86C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4176420836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C17DA20836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:46:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SD9NgX1S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4176420836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="WCONs+Ri"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C17DA20836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753202AbeFSXpu (ORCPT
+        id S1753880AbeFSXqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 19:45:50 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46194 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752892AbeFSXpo (ORCPT
+        Tue, 19 Jun 2018 19:46:32 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:45229 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751777AbeFSXq2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 19:45:44 -0400
-Received: by mail-pg0-f65.google.com with SMTP id d2-v6so570056pga.13
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 16:45:44 -0700 (PDT)
+        Tue, 19 Jun 2018 19:46:28 -0400
+Received: by mail-ot0-f196.google.com with SMTP id a5-v6so1666158otf.12
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 16:46:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KcG7aJuqNQM5D1p3BinIK6J88eMi6xxp2lYIz0s1sk4=;
-        b=SD9NgX1Ss/ccio+/XstN9i76cWo9UUVBdoOG7VnfLR/amPmaUTiiGohZrBeUcypD+W
-         EunuqZNH0eylzYRSK9pEcXtTnIWaQ5V03w/B5iRgy5480U0qJ6AFQbdYoFqOGYkelJXY
-         q6dXnNUkld19/VnVOz4vQOShz4N0akc3DaPrc=
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=guCzthlM3/wATgiTR4AuOzKn7ML7POF7PwQv3lDNXWA=;
+        b=WCONs+RiVg5T276Ux5OlwC3uvkEWJcWMxKV73rE8cKVPLgmGee552kj2xy90FJlKx9
+         IeKqkRyCEJmeDyrUlwwuSg0w9pvIeMxJ7uAj9qIffDF0pWwvOGDDXbvK4/O7/adKzijL
+         /6V/kbNnYfb+K8Urb2APDXOoabBP/pnhu1d3EuRej2EKgnK3Fa/53sOx8FPNWRMFySbr
+         VQDUU5QqPH/0j5RRK8DC8/u/OvJ+LBwjb1ZQiMjU4cclKbwYVxfa6d/UW1+c3EA6F86P
+         NBYNc1GVnLT4+tMUgfmoGssbwuSZLqUj0u4kckn9ldzCJSTtw9O+19yLomUBtqYYdyqo
+         giOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KcG7aJuqNQM5D1p3BinIK6J88eMi6xxp2lYIz0s1sk4=;
-        b=Zxb4gTYDD/83Jb7d71sKasUs/5xhorCJpalxFwdge5f8lPx1wGkqOFdVvgEizfEOtv
-         5bZYCHz8auPUlGN9dAuOUf7AX8nD8bW79ohePjFBkQcOxwKj+3N608YGakZ/KZtNSeZQ
-         kqsshg9YxVvJo3Ia4h1x+2GK8i6Nzji3+aL4GYO3C+AeaOEVqRfZH+ZPKbIFxZI27EdR
-         QppUqx/p7DQ6tHSanQQmJRElEhjrq9o2VPEnLITldVONO4TVV89iLEuZYSbLDo+F4iCL
-         TOeUWWc7puLD2K8MK/zY6zRVk34Nomq2VGvTsY1pvtBT5W0FwmUwQY9F0mDmjGZN4dOS
-         qVtA==
-X-Gm-Message-State: APt69E0jDE5xK8SB8TFhrv8l+kOf2pnFA1zNTYCTV/zUSZSBYUTzAqSO
-        uSYJOqEbwYvU1Q9MwfHWHmA0Oo7nDmY=
-X-Google-Smtp-Source: ADUXVKILZMaLLWjKe8Nd6agI90o68QgkSlJXPsCG70QbVrMO3bXYZRfogNPJfB9DguT5lpMIImK6Og==
-X-Received: by 2002:a63:6fce:: with SMTP id k197-v6mr16729962pgc.307.1529451944461;
-        Tue, 19 Jun 2018 16:45:44 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id y81-v6sm972459pfd.178.2018.06.19.16.45.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 16:45:43 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 16:45:43 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>, rkrcmar@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in
- update_permission_bitmask()
-Message-ID: <20180619234543.GG169030@google.com>
-References: <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
- <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
- <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
- <ad7a9addf043ee7fda8907eff9f83c9709b575dc.camel@perches.com>
- <d6a99e26-b100-715b-2615-b77259ec8397@redhat.com>
- <66b5e5c3ed82a5e1559419deb841c57bf0751fd3.camel@perches.com>
- <20180619183622.GB169030@google.com>
- <7547dfd4045a5acf23505887065bc228e65f2ff9.camel@perches.com>
- <20180619211019.GE169030@google.com>
- <951ccf2a257fb8f8827f88e1c17ce64d23173e94.camel@perches.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=guCzthlM3/wATgiTR4AuOzKn7ML7POF7PwQv3lDNXWA=;
+        b=fXleNV6XVBauCU5VjswuPFatAX3IgtvreNMqNR4RJUV6DH+eHyE73eHbw9SFoO29aN
+         TlQtMXYBDOyT/jKGbDyYog1vA016fcDPcZeyquLl2YxoAtiwO2YgpvQ4Tucws+lm+8ld
+         adcH/GYJJHsg2ctSK8xqxCi8M8im7gkjAYiIVR/vbhIw8vxpdxDujE/iKuhfaeLEVjMA
+         kY3TNKGKOV53aH+la+4tL/Ofg0QDJ4DWMJot8Ul2JkSHXuksHYnbTqOg5wu4D9XfoZKx
+         b+tkss11AYw/JRlPVo5pQwVpfvS+TJXaNYAU9/tCbk5gcthcQLq6UrTOoP1zorDEo0Jo
+         YBXA==
+X-Gm-Message-State: APt69E0LzHflV/lreVOXfyG1cJ+oJxbtkhI/hnEWZKo1yTIqu3TQtD1T
+        BCOKWtjpaqtVp50l4GrlMCqlFaKLPbCmbL/6EHnAlg==
+X-Google-Smtp-Source: ADUXVKKvhpN4C1QpkQ2IvXLrS6XYxcHAHiQq/1XGAeXKmRi1yROfgrQzvMjrYUm92VkhlqgYotdCV+mtKFKznAnEvD8=
+X-Received: by 2002:a9d:32ca:: with SMTP id u68-v6mr12317783otb.117.1529451987591;
+ Tue, 19 Jun 2018 16:46:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <951ccf2a257fb8f8827f88e1c17ce64d23173e94.camel@perches.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 16:46:27
+ -0700 (PDT)
+In-Reply-To: <AT5PR8401MB1169CBD96EE6C152A24D9FD3AB700@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+References: <1461620099-11933-1-git-send-email-toshi.kani@hpe.com>
+ <1461620099-11933-2-git-send-email-toshi.kani@hpe.com> <CAA9_cmenbY9GStibRjO0BfTq0kzzzqThiLeOygJsT9L03BFsBQ@mail.gmail.com>
+ <1529350667.14039.119.camel@hpe.com> <CAPcyv4jbctFgCob58sjQZ8msGOT7GBe=+Z_2P6YvNrrK-ztMag@mail.gmail.com>
+ <AT5PR8401MB1169FA8B55B36BAE8DF0F6EBAB710@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+ <CAPcyv4goV+VR15qpio-wqDpDS3nXsfYEbTSk1Ws6DPp6ECKcRQ@mail.gmail.com>
+ <AT5PR8401MB1169ECE7D26644D39DB735D5AB700@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+ <CAPcyv4joz7OemcKvJMJVhqKEVgSMpfLbm2DRP9B=S3vRPUAGkQ@mail.gmail.com> <AT5PR8401MB1169CBD96EE6C152A24D9FD3AB700@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 19 Jun 2018 16:46:27 -0700
+Message-ID: <CAPcyv4iqb52RiCnCntaSFr1vVOa9A7PZ7=Ob2StYMq-OSmo7DQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with ACPI 6.1
+To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+Cc:     "Kani, Toshi" <toshi.kani@hpe.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "Moore, Robert" <robert.moore@intel.com>,
+        "Li, Juston" <juston.li@intel.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 02:55:05PM -0700, Joe Perches wrote:
-> On Tue, 2018-06-19 at 14:10 -0700, Matthias Kaehlcke wrote:
-> > On Tue, Jun 19, 2018 at 12:11:27PM -0700, Joe Perches wrote:
-> > > -Wconstant-conversion is only issued when a *constant value* is assigned to
-> > an incompatible type.
-> > 
-> > > Trying to allow a "make W=3" to be compiler warning message free
-> > > is also silly.
-> > > 
-> > > I think it's better to make the warning emitted only at a W=3
-> > > level instead.
-> > 
-> > Another difference with -Wsign-conversion is that enabling it would
-> > probably result in thousands of warnings. Do you have evidence that
-> > there is a significant number of spurious -Wconstant-conversion
-> > warnings?
-> 
-> Not my issue really.
+On Tue, Jun 19, 2018 at 12:53 PM, Elliott, Robert (Persistent Memory)
+<elliott@hpe.com> wrote:
+>
+>
+>> -----Original Message-----
+>> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
+>> owner@vger.kernel.org] On Behalf Of Dan Williams
+>> Sent: Tuesday, June 19, 2018 10:29 AM
+>> Subject: Re: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with
+>> ACPI 6.1
+> ...
+>> >
+>> > Here are some examples (kernel 4.17):
+>
+> Note that these values were as reported on a little-endian system.
+>
+>> Ok, so the lowest significant byte of the Micron id is supposed to be
+>> 0x2c and this text representation matches that. So the bytes are being
+>> endian swapped when written to the SPD?
+>
+> SPD byte 320 is 0x80. That's the bank number byte (with odd parity).
+> SPD byte 321 is 0x2c. That's the manufacturer code byte (with odd parity).
+>
+> If treated as a single 2-byte value, that is:
+> * 0x802c (32812 in decimal) if interpreted as big-endian
+> * 0x2c80 (11392 in decimal) if interpreted as little-endian
 
-Well, you advocate to disable a possibly useful warning globally ...
-
-> You're advocating for making the code more complex/ugly for a
-> condition where the result is identical.
-
-My goal is no to make the code (slightly) more complex/ugly but have
-the rest of the kernel benefit from a possibly useful warning.
-
-> Do you have evidence this is the only location in
-> an allyesconfig compilation?
-
-I never claimed that this is the only location, but that it is not an
-extremely noisy warning that can not be fixed without a major effort.
-
-Since you asked:
-
-v4.16 with an x86 allyesconfig and a few drivers disabled since they
-don't build with clang (yet):
-
-16 occurrences of -Wconstant-conversion, including the ones fixed by
-this patch. Certainly no need for an endless churn of patches, and
-given the limited number it also doesn't seem likely that new
-instances will be added on a regular base.
+Ok, JEDEC defines byte 320 as the LSB, so the fact that Linux is
+showing 0x2c as the LSB is wrong. Linux needs to be fixed.
