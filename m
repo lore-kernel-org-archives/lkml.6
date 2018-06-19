@@ -6,62 +6,111 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBACC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9B5C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E897320874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:01:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E897320874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 199212083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:01:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199212083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937451AbeFSIBF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:01:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S937437AbeFSIBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:01:03 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BA88887A7C;
-        Tue, 19 Jun 2018 08:01:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-111.rdu2.redhat.com [10.10.121.111])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CE8F32026D68;
-        Tue, 19 Jun 2018 08:01:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180618174210.b8348d35bce35b2277cab660@linux-foundation.org>
-References: <20180618174210.b8348d35bce35b2277cab660@linux-foundation.org> <152891539958.23512.10618044594537218194.stgit@warthog.procyon.org.uk>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: [PATCH] proc: Make inline name size calculation automatic
+        id S937464AbeFSIBM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:01:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56179 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937392AbeFSIBJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 04:01:09 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5J80oAV3015007
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 19 Jun 2018 01:00:50 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5J80oIF3015004;
+        Tue, 19 Jun 2018 01:00:50 -0700
+Date:   Tue, 19 Jun 2018 01:00:50 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnd Bergmann <tipbot@zytor.com>
+Message-ID: <tip-f5a89295e2f566d8e9f1d4f3d524d8d3c966958c@git.kernel.org>
+Cc:     arnd@arndb.de, sboyd@kernel.org, deepa.kernel@gmail.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com,
+        john.stultz@linaro.org, tglx@linutronix.de, mingo@kernel.org,
+        viro@zeniv.linux.org.uk
+Reply-To: viro@zeniv.linux.org.uk, mingo@kernel.org, tglx@linutronix.de,
+          john.stultz@linaro.org, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, deepa.kernel@gmail.com, sboyd@kernel.org,
+          arnd@arndb.de
+In-Reply-To: <20180618140811.2998503-2-arnd@arndb.de>
+References: <20180618140811.2998503-2-arnd@arndb.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] time: Use ktime_get_real_seconds() in time
+ syscall
+Git-Commit-ID: f5a89295e2f566d8e9f1d4f3d524d8d3c966958c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <20013.1529395261.1@warthog.procyon.org.uk>
-Date:   Tue, 19 Jun 2018 09:01:01 +0100
-Message-ID: <20014.1529395261@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 19 Jun 2018 08:01:02 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 19 Jun 2018 08:01:02 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew Morton <akpm@linux-foundation.org> wrote:
+Commit-ID:  f5a89295e2f566d8e9f1d4f3d524d8d3c966958c
+Gitweb:     https://git.kernel.org/tip/f5a89295e2f566d8e9f1d4f3d524d8d3c966958c
+Author:     Arnd Bergmann <arnd@arndb.de>
+AuthorDate: Mon, 18 Jun 2018 16:08:00 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 19 Jun 2018 09:56:26 +0200
 
-> Please cc Alexey on /proc patches.
+time: Use ktime_get_real_seconds() in time syscall
 
-If Alexey is responsible for procfs he should declare this in MAINTAINERS.
+Both get_seconds() and do_gettimeofday() are deprecated. Change the time()
+implementation to use the replacement function instead.
 
-> What are the user-visible runtime effects of this change?
+Obviously the system call will still overflow in 2038, but this gets us
+closer to removing the old helper functions.
 
-Memory usage only.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: y2038@lists.linaro.org
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Link: https://lkml.kernel.org/r/20180618140811.2998503-2-arnd@arndb.de
 
-David
+---
+ kernel/time/time.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 6fa99213fc72..b1225db61eb2 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -63,7 +63,7 @@ EXPORT_SYMBOL(sys_tz);
+  */
+ SYSCALL_DEFINE1(time, time_t __user *, tloc)
+ {
+-	time_t i = get_seconds();
++	time_t i = (time_t)ktime_get_real_seconds();
+ 
+ 	if (tloc) {
+ 		if (put_user(i,tloc))
+@@ -106,11 +106,9 @@ SYSCALL_DEFINE1(stime, time_t __user *, tptr)
+ /* compat_time_t is a 32 bit "long" and needs to get converted. */
+ COMPAT_SYSCALL_DEFINE1(time, compat_time_t __user *, tloc)
+ {
+-	struct timeval tv;
+ 	compat_time_t i;
+ 
+-	do_gettimeofday(&tv);
+-	i = tv.tv_sec;
++	i = (compat_time_t)ktime_get_real_seconds();
+ 
+ 	if (tloc) {
+ 		if (put_user(i,tloc))
