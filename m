@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45382C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6DBC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F41802083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43731204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:33:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pGWM3fzi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F41802083D
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LDTex1d8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43731204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966193AbeFSNdd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:33:33 -0400
-Received: from mail.efficios.com ([167.114.142.138]:36450 "EHLO
+        id S966044AbeFSNdc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:33:32 -0400
+Received: from mail.efficios.com ([167.114.142.138]:36486 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756005AbeFSNdE (ORCPT
+        with ESMTP id S1756608AbeFSNdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Jun 2018 09:33:04 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 803A722BED4;
+        by mail.efficios.com (Postfix) with ESMTP id CB3CE22BEDC;
         Tue, 19 Jun 2018 09:33:03 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id BQgOQrYZBMqn; Tue, 19 Jun 2018 09:33:03 -0400 (EDT)
+        with ESMTP id rsB9Ul4eDlC9; Tue, 19 Jun 2018 09:33:03 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id ED79E22BEC1;
-        Tue, 19 Jun 2018 09:33:02 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com ED79E22BEC1
+        by mail.efficios.com (Postfix) with ESMTP id 53FC622BECF;
+        Tue, 19 Jun 2018 09:33:03 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 53FC622BECF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
         s=default; t=1529415183;
-        bh=0OJoINPUcxvGyfxN4txUzwJs07J4h7qCo1KNrEDIRYk=;
+        bh=YMwjhGfL5TbbSDYTVCSkBW8k9LlUjO4Q638FR6qXUIs=;
         h=From:To:Date:Message-Id;
-        b=pGWM3fziwFgkGft7C+N0rRto0ErByNASVhrJedqo0VFGciGvnkcVD8jdCZ6lk08V9
-         tybOnybWNVDcrPal6G4e8Bee8c2xuJXLU9vsbZesqAZxAY87yFfD2E1rClMlxKRzcU
-         ogwrrXfS56aWPpRH9dbfBkpLeapjNwr5EKQsWmNfUqPsVKs6581zXjNUjufjLBmbry
-         Y4oMhcCO7FW3Rh5LJ+OkmNWKWmE1yBHXiRSh31VyGiX1dRlWlY3TOQIHpHQfp8iK5g
-         K4ewTm10TpAttYOeAkX3Zgb1w2r9M91vuZ1+tXeR+OHupslRBMdF5XygTFgxWvjvIr
-         kxlp565KxVtrA==
+        b=LDTex1d8LHM3KhWmB5SBPSeIOjXQxydYtoxhIsR6DFXQZhKqv8IoavZseAU6sMZb7
+         hAzT25L9z8kAbTBlq0z+zAfZJRxXTBpwFctaGbQg0HPjukIYQJ/ZazKlTPw5/DrhVC
+         GFwpdYXutGuy/c5Q0iLgx+8ylSMsysDIZNt/yyJlIffNzloU+PWl6we0KVe2N7p/pt
+         wx869/F6NKamDQDovOije1FODt7C7IZdf+p7rpAh5rBHbnn/kmn3SW/QNmyQPodZD8
+         7exhz20NYg0SgJEVw5QVQ/E8zp60hZ5gS9AEAo1bmBh3jPv4m0LvjSNorFs8QdT7XE
+         NMmd4JDNxltSg==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 5M0A-GGTdTuY; Tue, 19 Jun 2018 09:33:02 -0400 (EDT)
+        with ESMTP id sdMX0omlecnk; Tue, 19 Jun 2018 09:33:03 -0400 (EDT)
 Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 8808B22BEAD;
+        by mail.efficios.com (Postfix) with ESMTPSA id E93E922BEBC;
         Tue, 19 Jun 2018 09:33:02 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
@@ -74,10 +74,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Shuah Khan <shuahkh@osg.samsung.com>,
-        linux-kselftest@vger.kernel.org, Andrew Hunter <ahh@google.com>
-Subject: [PATCH for 4.18 2/3] rseq/selftests: arm: align struct rseq_cs on 32 bytes
-Date:   Tue, 19 Jun 2018 09:32:29 -0400
-Message-Id: <20180619133230.4087-3-mathieu.desnoyers@efficios.com>
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH for 4.18 3/3] rseq: cleanup: no need to abort rseq c.s. in child on fork
+Date:   Tue, 19 Jun 2018 09:32:30 -0400
+Message-Id: <20180619133230.4087-4-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180619133230.4087-1-mathieu.desnoyers@efficios.com>
 References: <20180619133230.4087-1-mathieu.desnoyers@efficios.com>
@@ -86,9 +86,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-uapi/linux/rseq.h aligns struct rseq_cs on 32 bytes. Satisfy this
-alignment requirement in its definition within the rseq-arm.h
-inline assembly.
+Considering that we explicitly forbid system calls in rseq critical
+sections, it is not valid to issue a fork or clone system call within a
+rseq critical section, so rseq_fork() is not required to restart an
+active rseq c.s. in the child process.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -103,7 +104,6 @@ Cc: linux-kselftest@vger.kernel.org
 Cc: "H . Peter Anvin" <hpa@zytor.com>
 Cc: Chris Lameter <cl@linux.com>
 Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Andrew Hunter <ahh@google.com>
 Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
 Cc: Paul Turner <pjt@google.com>
@@ -116,21 +116,32 @@ Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- tools/testing/selftests/rseq/rseq-arm.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/sched.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/rseq/rseq-arm.h b/tools/testing/selftests/rseq/rseq-arm.h
-index 3b055f9aeaab..3cea19877227 100644
---- a/tools/testing/selftests/rseq/rseq-arm.h
-+++ b/tools/testing/selftests/rseq/rseq-arm.h
-@@ -57,6 +57,7 @@ do {									\
- #define __RSEQ_ASM_DEFINE_ABORT(table_label, label, teardown,		\
- 				abort_label, version, flags,		\
- 				start_ip, post_commit_offset, abort_ip)	\
-+		".balign 32\n\t"					\
- 		__rseq_str(table_label) ":\n\t"				\
- 		".word " __rseq_str(version) ", " __rseq_str(flags) "\n\t" \
- 		".word " __rseq_str(start_ip) ", 0x0, " __rseq_str(post_commit_offset) ", 0x0, " __rseq_str(abort_ip) ", 0x0\n\t" \
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 87bf02d93a27..c1882643d455 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1831,9 +1831,7 @@ static inline void rseq_migrate(struct task_struct *t)
+ 
+ /*
+  * If parent process has a registered restartable sequences area, the
+- * child inherits. Only applies when forking a process, not a thread. In
+- * case a parent fork() in the middle of a restartable sequence, set the
+- * resume notifier to force the child to retry.
++ * child inherits. Only applies when forking a process, not a thread.
+  */
+ static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags)
+ {
+@@ -1847,7 +1845,6 @@ static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags)
+ 		t->rseq_len = current->rseq_len;
+ 		t->rseq_sig = current->rseq_sig;
+ 		t->rseq_event_mask = current->rseq_event_mask;
+-		rseq_preempt(t);
+ 	}
+ }
+ 
 -- 
 2.11.0
 
