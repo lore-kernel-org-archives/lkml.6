@@ -2,97 +2,122 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF527C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A8EC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE2020652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:52:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE2020652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 9FE1D20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:54:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="vfG6zq4M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE1D20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757331AbeFSVwU (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:52:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56489 "EHLO mx2.suse.de"
+        id S967270AbeFSVyN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 17:54:13 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:34287 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755466AbeFSVwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:52:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 71988AED2;
-        Tue, 19 Jun 2018 21:52:16 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 16:52:02 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Eric Ren <zren@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        ocfs2-devel@oss.oracle.com
-Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: dlmglue: clean up timestamp handling
-Message-ID: <20180619215202.zniqq3py3hqjeudv@merlin>
-References: <20180619155826.4106487-1-arnd@arndb.de>
- <20180619171407.yoncg72ed2vncf62@merlin>
- <CAK8P3a0Mcm+AxBPxouMZJKXfbEyX-UD3=_speEj7bsW9nmnjzA@mail.gmail.com>
+        id S935912AbeFSVyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 17:54:10 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 645aac03;
+        Tue, 19 Jun 2018 21:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=eBHSgleS+pHQhgu3S2eYih1yzfo=; b=vfG6zq
+        4Mmyi0Sco7Lbn09eE8ksF2IplierVCReEF3VRad53LkRTxRgg5tdWzhLE94ncF7t
+        PjiCWTp81ej70LKadRuH8Jdt/I2//7wQSDM/fULFWgp4IRArAmaj10cG0Dfe0vai
+        ZoTlObLVwBE6XnrY9wUW86y1AKtPGWAi3aExQrXFq3nY3KQ4JyKBxsUeLPLM7/LH
+        M4Q5ZV4TIfkWYIZwsmKDwGAn9Rn1sVILH/1EuXe9DeV8UQF0wXzElO2kDsb+nCGz
+        t2h/As23P9sk/prm9sVxjOex+K1eKY8+ai6eS96W75sMuHJiZUNauNhpNz1q6dtX
+        MUKu20W4omllxihQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 75854957 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Tue, 19 Jun 2018 21:48:14 +0000 (UTC)
+Received: by mail-oi0-f41.google.com with SMTP id e8-v6so1185210oii.2;
+        Tue, 19 Jun 2018 14:54:09 -0700 (PDT)
+X-Gm-Message-State: APt69E1Z27uv3u328XrBCmUMT/N++qIelXMakEw0MOo15PBPua19+eXc
+        8GD6+iv1Fx5EZxghMstkGy1ab6clMVcQMlvGnP8=
+X-Google-Smtp-Source: ADUXVKKWnOBxWMT7BPeZpe5j9uOh3HazFFSP8HaCOoCNvc30Zr9pzOugQpSyOCeOGtON+/PERZYQDCdJAe2F+DgcDWU=
+X-Received: by 2002:aca:3048:: with SMTP id w69-v6mr9634688oiw.29.1529445248526;
+ Tue, 19 Jun 2018 14:54:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0Mcm+AxBPxouMZJKXfbEyX-UD3=_speEj7bsW9nmnjzA@mail.gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+References: <20180619213352.71740-1-shakeelb@google.com>
+In-Reply-To: <20180619213352.71740-1-shakeelb@google.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Tue, 19 Jun 2018 23:53:57 +0200
+X-Gmail-Original-Message-ID: <CAHmME9pUoXod3pC4g+HLYUbCafj=1_53qHqu9ScB+NtJ2zpwqA@mail.gmail.com>
+Message-ID: <CAHmME9pUoXod3pC4g+HLYUbCafj=1_53qHqu9ScB+NtJ2zpwqA@mail.gmail.com>
+Subject: Re: [PATCH] slub: fix __kmem_cache_empty for !CONFIG_SLUB_DEBUG
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06-19 21:11, Arnd Bergmann wrote:
-> On Tue, Jun 19, 2018 at 7:14 PM, Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
-> >
-> >
-> > On 06-19 17:58, Arnd Bergmann wrote:
-> >> The handling of timestamps outside of the 1970..2038 range in the dlm
-> >> glue is rather inconsistent: on 32-bit architectures, this has always
-> >> wrapped around to negative timestamps in the 1902..1969 range, while on
-> >> 64-bit kernels all timestamps are interpreted as positive 34 bit numbers
-> >> in the 1970..2514 year range.
-> ...
-> >
-> > Will all values written to LVB be the same with or without the patch?
-> > I am considering the situation where in a cluster some machines have this
-> > patch and some don't. Depending on that, this may require a version
-> > change.
-> 
-> There is one part that may change:
-> 
-> >> -static u64 ocfs2_pack_timespec(struct timespec *spec)
-> >> +static u64 ocfs2_pack_timespec(struct timespec64 *spec)
-> >>  {
-> >>       u64 res;
-> >> -     u64 sec = spec->tv_sec;
-> >> +     u64 sec = clamp_t(time64_t, spec->tv_sec, 0, 0x3ffffffffull);
-> >>       u32 nsec = spec->tv_nsec;
-> >>
-> >>       res = (sec << OCFS2_SEC_SHIFT) | (nsec & OCFS2_NSEC_MASK);
-> 
-> Here, setting a timestamp before 1970 or after 2514 will get wrapped
-> around in unpatched kernels, but will be clamped to the minimum
-> and maximum times after the patch.
-> 
-> It is extremely rare for correct code to need timestamps outside of that
-> range, but it is also trivial to trigger that with a manual 'touch' command
-> from user space.
-> 
-> If the change is a problem, I can resend the patch without that one
-> line change.
-> 
+On Tue, Jun 19, 2018 at 11:34 PM Shakeel Butt <shakeelb@google.com> wrote:
+>
+> For !CONFIG_SLUB_DEBUG, SLUB does not maintain the number of slabs
+> allocated per node for a kmem_cache. Thus, slabs_node() in
+> __kmem_cache_empty() will always return 0. So, in such situation, it is
+> required to check per-cpu slabs to make sure if a kmem_cache is empty or
+> not.
+>
+> Please note that __kmem_cache_shutdown() and __kmem_cache_shrink() are
+> not affected by !CONFIG_SLUB_DEBUG as they call flush_all() to clear
+> per-cpu slabs.
+>
+> Fixes: f9e13c0a5a33 ("slab, slub: skip unnecessary kasan_cache_shutdown()")
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> Reported-by: Jason A . Donenfeld <Jason@zx2c4.com>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: <stable@vger.kernel.org>
+> ---
+>  mm/slub.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index a3b8467c14af..731c02b371ae 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -3673,9 +3673,23 @@ static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n)
+>
+>  bool __kmem_cache_empty(struct kmem_cache *s)
+>  {
+> -       int node;
+> +       int cpu, node;
+>         struct kmem_cache_node *n;
+>
+> +       /*
+> +        * slabs_node will always be 0 for !CONFIG_SLUB_DEBUG. So, manually
+> +        * check slabs for all cpus.
+> +        */
+> +       if (!IS_ENABLED(CONFIG_SLUB_DEBUG)) {
+> +               for_each_online_cpu(cpu) {
+> +                       struct kmem_cache_cpu *c;
+> +
+> +                       c = per_cpu_ptr(s->cpu_slab, cpu);
+> +                       if (c->page || slub_percpu_partial(c))
+> +                               return false;
+> +               }
+> +       }
+> +
+>         for_each_kmem_cache_node(s, node, n)
+>                 if (n->nr_partial || slabs_node(s, node))
+>                         return false;
+> --
+> 2.18.0.rc1.244.gcf134e6275-goog
+>
 
-I think you should keep the change, but incrment OCFS2_LVB_VERSION.
-
-
--- 
-Goldwyn
+I can confirm that this fixes the test case on build.wireguard.com.
