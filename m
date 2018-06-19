@@ -2,93 +2,259 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3D3C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7732C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA71C2083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:02:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJUQpTiY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA71C2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9DE1420652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:04:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE1420652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966550AbeFSOCr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:02:47 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53587 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966111AbeFSOCq (ORCPT
+        id S1756613AbeFSOEQ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 10:04:16 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:41145 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965978AbeFSOEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:02:46 -0400
-Received: by mail-wm0-f65.google.com with SMTP id x6-v6so583394wmc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 07:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ctd76Nwcdm/gu8YSl6riGcz8gnZ0lC31LC7xeRPsRHo=;
-        b=HJUQpTiYGMPhgpNXV6da7Wyz6FS0Dwwq+EgMbTspnuP5QddMjUCTDSF3pst2usKUXb
-         qD5ftzXlBkJssZMGKxYymZxqLk9jFhYYO9ml6Hf8+Nuqa43K+bbKCUkIH4NROkKferCI
-         ntJ96b+eeCSR25mugoLlL0peKULO+qpcsDe1Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ctd76Nwcdm/gu8YSl6riGcz8gnZ0lC31LC7xeRPsRHo=;
-        b=FWfOiEZee8WeLziOjPZ1tkBWSLFxTSTh/YWc1KTdYKQeXgLPtfEtWEHnul17BGBLrL
-         XPDvwkhuL1qgg2JXZUTBKO/h6HEt+iOKSDxFHw/xrcP6dpH2guCvxkergF3tMlXXr7h+
-         d2RdNPBK/1D/vP6+POoVfMT8C3nuC/Hq9tfSUxOf8nUa7nJHleVvIEV0clYUCoLycwuE
-         rcmn4jqDlxkHc66vHwhvcxR2GcOJX+Hd9+72EuZK2sAeDHOvgnwwUjjQ67HbI+UBhXj6
-         tnAs/OPiIvmHAx/taP05ZoqzjQOBF13t44vOgPSgE91af4JD/PToRxVFaA4WHTRUdBXu
-         wXlw==
-X-Gm-Message-State: APt69E3LIK3zM5ep5h7jcaV/9y0yYYUZiRyJqDYSrnZcXiEJkxN4ZOqH
-        w/NuBOGbjQmu+7ZIBrWeJPPx9Q==
-X-Google-Smtp-Source: ADUXVKLJ2Aqd2EVZRUaOAeMDrd5vOUWoj2QY1x62wj41FCt3YKxR0vy2TQFIy8pc26YG4bEV3WwgyQ==
-X-Received: by 2002:a1c:96d3:: with SMTP id y202-v6mr11674786wmd.76.1529416965190;
-        Tue, 19 Jun 2018 07:02:45 -0700 (PDT)
-Received: from mai.localdomain (135-224-190-109.dsl.ovh.fr. [109.190.224.135])
-        by smtp.gmail.com with ESMTPSA id o16-v6sm18375298wrp.8.2018.06.19.07.02.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 19 Jun 2018 07:02:44 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] sched/core: Remove useless hrtimer_active check
-Date:   Tue, 19 Jun 2018 16:02:43 +0200
-Message-Id: <1529416963-20271-1-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 19 Jun 2018 10:04:10 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MZ5db-1fisAf3cKR-00VfJS; Tue, 19 Jun 2018 16:02:54 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
+        Meelis Roos <mroos@linux.ee>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 2/3] [v2] m68k: mac: use time64_t in RTC handling
+Date:   Tue, 19 Jun 2018 16:02:28 +0200
+Message-Id: <20180619140229.3615110-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180619140229.3615110-1-arnd@arndb.de>
+References: <20180619140229.3615110-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:VHjC0uYkHauenmwHCCfCUzcKGf8oIogO8BdSZoKS4lDiBvwPOUq
+ DmVMz9G2Yf0RmtYl2sLcdE5ZMPaYWwqFi2cKKORMeC9piq9q6ekiU01dcHTW/HbjA6hpsXf
+ hJHKxMkQ1rw3nG7+AEOmgN33+8ab/X93cKd5VoqyhQ9/6D0ej2kcf0EQv1RRfI19wp+bYhC
+ 5gfyqbUDpjt9yR1jCLocw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zhO/DQIPP9c=:6BnvwIt5v+9XMcfO9Hqog3
+ QQHgp7fw2+eiVKHcxlxy1wVlsJILKIFu37yFtV3ukqKSDkH7FIBp3n27P5HkPUEf4iHdZ4u84
+ hgaPL7/Qas3uG6dBUTs/hyEEaaQIz5wGooRd3KtOyrSbzqFB+6R8miboHLWdNnJjUgTHJjARw
+ Drp3Mz0IIes6DPoZhVIaIqj+rlXOu2aitKIN8kT1zMQU9uqVcb/ZCvi2WyytPTdHELQ0I/3xx
+ b3O7CXeR7fF0Z0tBlWuwDhyrO1UoN1ZNln2wMGYoTJfFaHNNMp3zQbvtjjdNSp+swBC8N9/oo
+ gShgNI20WpI9oqPEkfcKSvAPTP5SPjj0PZQlVBIFyuh8uhRI2vX2bF2nosDm4rdiq5JOo1Rpi
+ wS3BnucaJOmPLboDRIbqjPePbAGbGjqhnCBbZcOhJP6crlwW34aROmtq3p8NN8xHFvxGVtpaC
+ Vx6ZkqaRpXar6rjjDTWHrJgpARjx1V3YeNpRiaHIzowp3ZUynYRtEvswRnh5Q/ylFCYuEQV9q
+ 0vjI6zMwF6xNmiaF63PKBob/jn9dRBH6AWVmuinuNNvW9+i1PP3zBMMqGGPIcvQjzhYUnQkK5
+ uDg4ASxF9kpnEH827vtAGNnZtOadiQLX6ivNBquC0aY+wtWaWIAwxCmqHmkp2f2bkc4ANxDs3
+ BJ1UqiPAFfFslarNjoJFeIOhLwSSTpNf5KAHMcDlAcjMo8M385eoQFuKJCdeCnb3DYNM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function tick_clear() checks if the timer is active and in this case
-cancels the timer. However, hrtimer_cancel does the same check.
+The real-time clock on m68k (and powerpc) mac systems uses an unsigned
+32-bit value starting in 1904, which overflows in 2040, about two years
+later than everyone else, but this gets wrapped around in the Linux
+code in 2038 already because of the deprecated usage of time_t and/or
+long in the conversion.
 
-Perhaps, this test is made on purpose to skip some function calls for
-efficiency reasons but if it is not the case we can safely remove it.
+Getting rid of the deprecated interfaces makes it work until 2040 as
+documented, and it could be easily extended by reinterpreting
+the resulting time64_t as a positive number. For the moment, I'm
+adding a WARN_ON() that triggers if we encounter a time before 1970
+or after 2040 (the two are indistinguishable).
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+This brings it in line with the corresponding code that we have on
+powerpc macintosh.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/sched/core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+v2: Fix varargs passing bug pointed out by Andreas Schwab
+    Fix a typo that caused a build regression
+---
+ arch/m68k/mac/misc.c | 62 +++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 39 insertions(+), 23 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d155518..aa46aa6 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -218,8 +218,7 @@ void update_rq_clock(struct rq *rq)
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index c68054361615..0a2572a6bfe5 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -26,33 +26,39 @@
  
- static void hrtick_clear(struct rq *rq)
+ #include <asm/machdep.h>
+ 
+-/* Offset between Unix time (1970-based) and Mac time (1904-based) */
++/* Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
++ * times wrap in 2040. If we need to handle later times, the read_time functions
++ * need to be changed to interpret wrapped times as post-2040. */
+ 
+ #define RTC_OFFSET 2082844800
+ 
+ static void (*rom_reset)(void);
+ 
+ #ifdef CONFIG_ADB_CUDA
+-static long cuda_read_time(void)
++static time64_t cuda_read_time(void)
  {
--	if (hrtimer_active(&rq->hrtick_timer))
--		hrtimer_cancel(&rq->hrtick_timer);
-+	hrtimer_cancel(&rq->hrtick_timer);
+ 	struct adb_request req;
+-	long time;
++	time64_t time;
+ 
+ 	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
+ 		return 0;
+ 	while (!req.complete)
+ 		cuda_poll();
+ 
+-	time = (req.reply[3] << 24) | (req.reply[4] << 16) |
+-	       (req.reply[5] << 8) | req.reply[6];
++	time = (u32)((req.reply[3] << 24) | (req.reply[4] << 16) |
++		     (req.reply[5] << 8) | req.reply[6]);
++
++	/* it's either after year 2040, or the RTC has gone backwards */
++	WARN_ON(time < RTC_OFFSET);
++
+ 	return time - RTC_OFFSET;
  }
  
- /*
+-static void cuda_write_time(long data)
++static void cuda_write_time(time64_t time)
+ {
+ 	struct adb_request req;
++	u32 data = lower_32_bits(time + RTC_OFFSET);
+ 
+-	data += RTC_OFFSET;
+ 	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
+ 			 (data >> 24) & 0xFF, (data >> 16) & 0xFF,
+ 			 (data >> 8) & 0xFF, data & 0xFF) < 0)
+@@ -86,26 +92,30 @@ static void cuda_write_pram(int offset, __u8 data)
+ #endif /* CONFIG_ADB_CUDA */
+ 
+ #ifdef CONFIG_ADB_PMU68K
+-static long pmu_read_time(void)
++static time64_t pmu_read_time(void)
+ {
+ 	struct adb_request req;
+-	long time;
++	time64_t time;
+ 
+ 	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
+ 		return 0;
+ 	while (!req.complete)
+ 		pmu_poll();
+ 
+-	time = (req.reply[1] << 24) | (req.reply[2] << 16) |
+-	       (req.reply[3] << 8) | req.reply[4];
++	time = (u32)((req.reply[1] << 24) | (req.reply[2] << 16) |
++		     (req.reply[3] << 8) | req.reply[4]);
++
++	/* it's either after year 2040, or the RTC has gone backwards */
++	WARN_ON(time < RTC_OFFSET);
++
+ 	return time - RTC_OFFSET;
+ }
+ 
+-static void pmu_write_time(long data)
++static void pmu_write_time(time64_t time)
+ {
+ 	struct adb_request req;
++	u32 data = lower_32_bits(time + RTC_OFFSET);
+ 
+-	data += RTC_OFFSET;
+ 	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
+ 			(data >> 24) & 0xFF, (data >> 16) & 0xFF,
+ 			(data >> 8) & 0xFF, data & 0xFF) < 0)
+@@ -269,8 +279,12 @@ static long via_read_time(void)
+ 		via_pram_command(0x89, &result.cdata[1]);
+ 		via_pram_command(0x8D, &result.cdata[0]);
+ 
+-		if (result.idata == last_result.idata)
++		if (result.idata == last_result.idata) {
++			if (result.idata < RTC_OFFSET)
++				result.idata += 0x100000000ull;
++
+ 			return result.idata - RTC_OFFSET;
++		}
+ 
+ 		if (++count > 10)
+ 			break;
+@@ -291,11 +305,11 @@ static long via_read_time(void)
+  * is basically any machine with Mac II-style ADB.
+  */
+ 
+-static void via_write_time(long time)
++static void via_write_time(time64_t time)
+ {
+ 	union {
+ 		__u8 cdata[4];
+-		long idata;
++		__u32 idata;
+ 	} data;
+ 	__u8 temp;
+ 
+@@ -585,12 +599,15 @@ void mac_reset(void)
+  * This function translates seconds since 1970 into a proper date.
+  *
+  * Algorithm cribbed from glibc2.1, __offtime().
++ *
++ * This is roughly same as rtc_time64_to_tm(), which we should probably
++ * use here, but it's only available when CONFIG_RTC_LIB is enabled.
+  */
+ #define SECS_PER_MINUTE (60)
+ #define SECS_PER_HOUR  (SECS_PER_MINUTE * 60)
+ #define SECS_PER_DAY   (SECS_PER_HOUR * 24)
+ 
+-static void unmktime(unsigned long time, long offset,
++static void unmktime(time64_t time, long offset,
+ 		     int *yearp, int *monp, int *dayp,
+ 		     int *hourp, int *minp, int *secp)
+ {
+@@ -602,11 +619,10 @@ static void unmktime(unsigned long time, long offset,
+ 		/* Leap years.  */
+ 		{ 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 }
+ 	};
+-	long int days, rem, y, wday, yday;
++	int days, rem, y, wday, yday;
+ 	const unsigned short int *ip;
+ 
+-	days = time / SECS_PER_DAY;
+-	rem = time % SECS_PER_DAY;
++	days = div_u64_rem(time, SECS_PER_DAY, &rem);
+ 	rem += offset;
+ 	while (rem < 0) {
+ 		rem += SECS_PER_DAY;
+@@ -657,7 +673,7 @@ static void unmktime(unsigned long time, long offset,
+ 
+ int mac_hwclk(int op, struct rtc_time *t)
+ {
+-	unsigned long now;
++	time64_t now;
+ 
+ 	if (!op) { /* read */
+ 		switch (macintosh_config->adb_type) {
+@@ -693,8 +709,8 @@ int mac_hwclk(int op, struct rtc_time *t)
+ 		         __func__, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+ 		         t->tm_hour, t->tm_min, t->tm_sec);
+ 
+-		now = mktime(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+-			     t->tm_hour, t->tm_min, t->tm_sec);
++		now = mktime64(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
++			       t->tm_hour, t->tm_min, t->tm_sec);
+ 
+ 		switch (macintosh_config->adb_type) {
+ 		case MAC_ADB_IOP:
 -- 
-2.7.4
+2.9.0
 
