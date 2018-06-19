@@ -2,153 +2,183 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A79E8C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2790DC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58C45205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD639205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:17:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kCEV9rSF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C45205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YrbAQWiA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD639205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967094AbeFSSRN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 14:17:13 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39609 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966078AbeFSSRM (ORCPT
+        id S967153AbeFSSRW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 14:17:22 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55678 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966078AbeFSSRT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 14:17:12 -0400
-Received: by mail-it0-f65.google.com with SMTP id p185-v6so1753161itp.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 11:17:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=g/pfRCYasrsCwiSKtQ0NDcmNjEABD04kZ9h5VC5JQ+o=;
-        b=kCEV9rSFH+8QTiY4ByQR/udgBb1PgFxFDH84BVD6gzGceAydxsneq27TVRiCJN7Gzd
-         /YXCfasFbo5xrhFuebstAcp+ug9UuhkO88AaZnSiskSwsqaGKX57xnO7uQZtOmA8oSGK
-         6tZc0yTUr1W5cnklpIfYKaARGOnJRL9YLkq5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=g/pfRCYasrsCwiSKtQ0NDcmNjEABD04kZ9h5VC5JQ+o=;
-        b=S9X82nIX6GO5ca2maauvWYM9s8wOvIpWwSnSXLDCr8PcFNb672bRFSNMbQoq3d578l
-         DTudwdqaGsHYHSTZjkn+VAZQWn9G9HsJ50l51p4pWiMBFR9l8AbaQtKyKJGY5oAYq6jf
-         leNfroc4/JNUG++DGqB+g2MNw7R1pJJFUvgpp6GufSjBT5XM+5iv1p389+SJWbBJxoN0
-         29qgyxS+64zyX2j2LCt3avmqAg/8wz4KcD2B1otj3e/uwhFdXyqomIAWihECTh7oImb3
-         QrEe3wZC4J72wLwqtA2i697kobFIpV05uFPkKA7JdTq4hPYpzBWNlgxJqjJu+qc12aOX
-         9ayQ==
-X-Gm-Message-State: APt69E1uOs7Bq4eTJ4TEH19tHCa3fbfdyxkikg4jsQt2BAh6Ifak74bj
-        9QRp10A8Xs+ghtAw/VliqmbXeiaRHapXLGma2KfF2Q==
-X-Google-Smtp-Source: ADUXVKJHSOKJ3b/IomiqSbBecFzIhLElAnCtD34hv8LK/kyF0dRo5gelj5rYxFicfjRX/Ywt8QEk5OLcBnaumS0lTd8=
-X-Received: by 2002:a24:1d0e:: with SMTP id 14-v6mr13697204itj.50.1529432231668;
- Tue, 19 Jun 2018 11:17:11 -0700 (PDT)
+        Tue, 19 Jun 2018 14:17:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=xlog6HnpcH68/dKXzvjM659CErpZPHjyr3/cT8T7oFw=; b=YrbAQWiA6pFYySqBtodnJxTS2U
+        37L0unVQODVVbSWmdMi0QTvha24/2ftuVY92TEZDqqXyHZPGE6mnjnsOI6j+aX1W5hQJjFXIuHoDk
+        3DHDewxOBEzW4CZmsA/9q3WmT3ZToVYYnlQWD0+FDLsUAvFLWIHmWxMPhKhdceiOR6u3tnPkYDV+o
+        /fq3hmSy/Mg5bkIMAvR7zzXTwkkXhcV3xotq4eqb8k6VrEjOPotOyxVd7v1RqHsyP4/Zfq+M8/Qal
+        XilmHLkSrtgh2kd1lq/CdNELUMk5ySxur1oyhSlYVHE8R3x9ShgpDCd3CgF51tubgf/UxeimVdGiB
+        +oxJlyrQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVLBr-0006qu-L6; Tue, 19 Jun 2018 18:17:15 +0000
+Subject: Re: uapi headers userspace build results
+To:     Jayant Chowdhary <jchowdhary@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kernel-team@android.com
+References: <8b90457a-5b1d-818c-d2d6-ba3d16ad3eaf@infradead.org>
+ <1ef3a7b9-5172-9f7a-01fa-4866e765fbbe@google.com>
+ <b5a73c3f-b70d-110f-896d-82fd81982cf8@infradead.org>
+ <8a36d3ba-977b-49ca-c431-90ef53071f88@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9b76d1b6-08a4-36cf-4fc8-661b216ca433@infradead.org>
+Date:   Tue, 19 Jun 2018 11:17:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 11:17:11
- -0700 (PDT)
-In-Reply-To: <20180619172422.GB16846@roeck-us.net>
-References: <1529384828-2452-1-git-send-email-linux@roeck-us.net>
- <CAKv+Gu8Byj7G3Awnq4Y90Wot=GJTx0gO5A7-960au9ZkBBL2=A@mail.gmail.com>
- <b8bff03d-91a7-0e53-a44e-d1924beb382d@roeck-us.net> <CAKv+Gu-T8Fx3Nry7pUdOoOeRU-Ns89w3oo4itmu1q4FzYF5Rag@mail.gmail.com>
- <20180619172422.GB16846@roeck-us.net>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 19 Jun 2018 20:17:11 +0200
-Message-ID: <CAKv+Gu9JTsKEwwKN4OjmNHLf_86s753f2yEdo=7esERdUCaWiQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] ARM: Use logical or instead of addition for badr
- address calculation
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8a36d3ba-977b-49ca-c431-90ef53071f88@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 June 2018 at 19:24, Guenter Roeck <linux@roeck-us.net> wrote:
-> On Tue, Jun 19, 2018 at 03:35:07PM +0200, Ard Biesheuvel wrote:
->> >>
->> >> +       /* this needs to be a separate macro or \@ does not work correctly
->> >> */
->> >> +       .macro  __badr, c, rd, sym
->> >> +       .eqv    .Lsym\@, \sym
->> >> +       adr\c   \rd, .Lsym\@ + 1
->> >
->> >
->> > Wild shot, but the following works for me.
->> >
->> >         .eqv    .Lsym\@, \sym + 1
->> >         adr\c   \rd, .Lsym\@
->> >
->> > Does it make sense ?
->> >
+On 06/18/2018 06:47 PM, Jayant Chowdhary wrote:
+> Hi Randy,
+> 
+> On 06/12/2018 05:07 PM, Randy Dunlap wrote:
+>> On 06/12/2018 01:39 PM, Jayant Chowdhary wrote:
+>>> Hi Randy,
+>>>
+>>> On 06/11/2018 10:49 PM, Randy Dunlap wrote:
+>>>> Hi,
+>>>>
+>>>> Here is what I have so far.  It begins with a makefile and some
+>>>> template files that are added to.  There's a good bit of Perl also.
+>>>>
+>>>> I put all of these files in tools/uapi/ and run them from there.
+>>>>
+>>>> There is one .c file generated for each .h file in builddir/usr/include
+>>>> (O=builddir).
+>>>>
+>>>
+>>> Thanks for this! I wrote a small Makefile (uapi-compile.mk) which I'd put in
+>>> tools/build (I can change this to tools/uapi, if that is more apt).
 >>
->> Interesting. Do you mean this works with your 2.30 binutils that
->> triggers the original issue?
+>> Your makefile foo is much better than mine is.
+>> Yes, I think that it deserves to be in its own sub-directory.
 >>
->
-> Yes, it does. It is also the solution used for some graphics libraries,
-> though of course now I don't find the link anymore.
->
-> Guess this is going nowhere given Russell's response, so I'll just
-> live with it, like obviously everyone else does already. I built
-> a toolchain using gcc 7.3.0 and binutils 2.28.1 which "solves"
-> the problem for me.
->
+>>> uapi-compile.mk straight-away compiles the uapi headers, without pulling them
+>>> into any generated c source files. It may also be invoked with an environment
+>>
+>> Hm, I didn't even know that is possible.
+>>
+>>> variable 'UAPI_DIR' specifying the directory, for which the user would like to
+>>> compile headers. This way we can test a directory at a time as well. In your
+>>
+>> Yes, good, I was planning to make a way to restrict the build to certain sub-dirs.
+>>
+>>> opinion, would this be simpler to have rather than having to auto-generate c
+>>> source files including each uapi header and also autog-enerating the make
+>>> targets? I feel like this approach would make maintaining these makefiles/
+>>> scripts easier as well.
+>>
+>> Sure, this is much better than my scripts.
+>>
+>>>> Out of 889 header files, I see 45 errors.  That is better than I expected.
+>>>>
+>>>> The makefiles and scripts are attached (tar), as well as the output (I used
+>>>> 'make -ik' so that make would keep going after errors and attempt to build
+>>>> all target files).
+>>>>
+>>>> have fun!
+>>>>
+>>>
+>>> I did a 'make ARCH=arm64 headers_install' from the kernel source's root, and
+>>> then a 'make -kf uapi-compile.mk all > build.log 2>&1' to compile all the
+>>> headers. Out of 864 headers, I see 20 compilation failures.
+>>>
+>>> I'm attaching uapi-compile.mk and the build.log file along.
+>>
+>> I have some usage comments.
+>>
+>> Since I ran 'make ARCH=x86_64 O=xx64 headers_install', I had to modify
+>> uapi-compile.mk to use that SRC_DIR:
+>>
+>> SRC_DIR :=../../xx64
+>>
+>> Also, I first tried to make BDIR as a sub-directory of tools/uapi/ and
+>> uapi-compile.mk did not work (when using BDIR=BDIR).
+>> Then I did 'mkdir ../../xx64/BDIR' and specified BDIR=../../xx64/BDIR and
+>> that worked.  But:  that sub-dir is not used:
+>>
+>> gcc -I../../xx64/usr/include/ --include=../../xx64/usr/include/linux/posix_types.h --include=../../xx64/usr/include/asm-generic/ipcbuf.h --include=stdarg.h --include=stdint.h --include=stddef.h -c ../../xx64/usr/include//linux/caif/caif_socket.h -o ../../xx64/BDIR/../../xx64/usr/include//linux/caif/caif_socket.o
+>> [see the next comment]
+>>
+>> Oh, this makefile builds the .o files in the same sub-dirs as their
+>> respective .h files.  I don't especially like that, but as long as
+>> make clean works, it will do.  [and make clean does work]
+>>
+> 
+> Thanks for these comments. I'll take care of them in my patch-set. I've got a
+> couple of questions for you. Since most of the errors were found in the
+> include/uapi/linux directory, I tried investigating why.
 
-If we can live with using a wide encoding unconditionally, we could
-consider something like below. That forces the symbol references to be
-resolved at link time, which means we completely sidestep the new GAS
-code.
+Please also repost your latest patch-set.
 
------------8<----------------
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Tue, 16 Jan 2018 12:12:45 +0000
-Subject: [PATCH] ARM: assembler: prevent ADR from setting the Thumb bit twice
+> 1) I found that multiple headers depend on the definition of types such as
+> pid_t, which have no definition in the set of uapi headers. There is a
+> definition (of pid_t) in include/linux/types.h, and I thought we could try
+> exposing that in the set of uapi headers. One problem I can see with that is
+> that the header has some definitions which depend on kernel configs: eg:
+> CONFIG_ARCH_DMA_ADDR_T_64BIT. Since user-land programs shouldn't really assume
+> kernel configs, I was thinking we should re-factor this header so that
+> appropriate parts can be exposed to user-land.
 
-To work around recent issues where ADR references to Thumb function
-symbols may or may not have the Thumb bit set already when they are
-resolved by GAS, reference the symbol indirectly via a global symbol
-typed as 'function', and emit a relocation that lets the linker fix
-up the reference.
+Sure, that's worth a try.  Mostly on a case-by-case basis.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+I see that (at least in the distro that I am using)
+/usr/include/asm-generic/posix_types.h has a typedef for __kernel_pid_t.
+I wonder if that could be co-opted, but I expect that this would have
+type/size issues.
 
-diff --git a/arch/arm/include/asm/assembler.h b/arch/arm/include/asm/assembler.h
-index 6ae42ad29518..1a55ce4b245c 100644
---- a/arch/arm/include/asm/assembler.h
-+++ b/arch/arm/include/asm/assembler.h
-@@ -195,13 +195,22 @@
-        .irp    c,,eq,ne,cs,cc,mi,pl,vs,vc,hi,ls,ge,lt,gt,le,hs,lo
-        .macro  badr\c, rd, sym
- #ifdef CONFIG_THUMB2_KERNEL
--       adr\c   \rd, \sym + 1
-+       __badr  \c, \rd, \sym
- #else
-        adr\c   \rd, \sym
- #endif
-        .endm
-        .endr
+OTOH, 'man getpid' uses pid_t and refers to <sys/types.h> and <unistd.h>,
+so there should already be a pid_t for userspace.  Just #include more
+headers files.  :)
 
-+       /* this needs to be a separate macro or \@ does not work correctly */
-+       .macro          __badr, c, rd, sym
-+       .globl          .Lsym_\sym\()_\@
-+       .type           .Lsym_\sym\()_\@, %function
-+       .set            .Lsym_\sym\()_\@, \sym
-+       .reloc          ., R_ARM_THM_ALU_PREL_11_0, .Lsym_\sym\()_\@
-+       adr\c\().w      \rd, .
-+       .endm
-+
- /*
-  * Get current thread_info.
-  */
+> 2) Some headers try to expose information which should probably not be exposed
+> to user-land. eg: wait_queue_head in linux/coda_psdev.h (this header should
+> probably be removed altogether ?)
+
+I suppose that header file describes a kernel-to-userspace ("Venus") interface,
+so maybe not removed altogether.  But the wait_queue_head_t part of it should
+just be some padding/reserved field (of what size/type?).
+
+
+> Do you have better ideas ?
+
+slow and steady.
+
+-- 
+~Randy
