@@ -2,155 +2,116 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53F6C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B681C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59B7420874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CF582083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:15:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gXd5Dw11"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B7420874
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MTAYRlF6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF582083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937789AbeFSMLk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:11:40 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52861 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937592AbeFSMLi (ORCPT
+        id S937744AbeFSMPB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:15:01 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:35525 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937392AbeFSMO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:11:38 -0400
-Received: by mail-wm0-f66.google.com with SMTP id p126-v6so19554683wmb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 05:11:38 -0700 (PDT)
+        Tue, 19 Jun 2018 08:14:59 -0400
+Received: by mail-qt0-f193.google.com with SMTP id s9-v6so18073700qtg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 05:14:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aqaf8otg4vLRgN5BG+gsOgs6gpaZrrOA4CX+O+8j0mU=;
-        b=gXd5Dw115k4yuO7MOdaiYoTIur2FB06MuORvys8M/vopJdBCgDaWZuf8YhPjMBaBHh
-         5557qjP16NYMQOw5FQArG3R4S8/25F4rIPtP+Q9OXYgc7eDqRrtsxn3/XrHub1eay95l
-         92YkGeIPuw2jT2ub9CoC3uY9KcnL270hTvVvA=
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=HCQo8UQgwxQb5+Rc67Gmp6LwPx2iN+7wDXtGQs182S0=;
+        b=MTAYRlF62GtIBeT3h6WRLsI6vPbryGQPNHI6OQn920+WqZG8efV58KlLsiY83xNqMt
+         viORoL4u5FiLX2AHb1YJl3eSfGTwM/jwvHhCa2+08MoTv9WmAKtvxYvDLICxU2kPW6rr
+         dSum8akhgd0N2uwdtZj2I53LpTXukybOFCgS8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aqaf8otg4vLRgN5BG+gsOgs6gpaZrrOA4CX+O+8j0mU=;
-        b=VLPekAy/8nPu2BtHXh+El36hFquK5rB1wRwvxT7BJpo1HFwY5B8amqDxYPNW1T3/VL
-         nPDGZ5xMnGpCLYaWZaZV5VsuVSFexN/D9dO2ygf/kO162XzskpDF2al/s6coHMyUoxmt
-         zTwZNQ/WthcuzcTxiBOQYSsQSYE3x900K30QytO/9W9HgVYETQ4Y4mUKSyWP1dz227fI
-         Iz7yG7qSXkyL3nKQc28fgKKZVJPJYNwsiPvj63EDkb+2P9AY0VQFGTVYZfcRWaYjslJp
-         Cnobuu8i8SZzCYtDJINn8pTjE2lSy06eMX0qY/W1IYPDBLAT/zqqA+xDOR0by7+VTJKo
-         4/pA==
-X-Gm-Message-State: APt69E0KiuoWP70Ag5p8lCPeyoTGaWxeBIzppdM+PE7L2s9L1a357cZw
-        /ipDArK2Z7+nCgHi9h+YwoJY0Q==
-X-Google-Smtp-Source: ADUXVKKtJeJ6T8YdQkFUGQPjd9FVB3UydwmqlsNo43/XlZEUBZFLfNUK7hHYMYlFADrm5zX1+2cwkA==
-X-Received: by 2002:a1c:8b52:: with SMTP id n79-v6mr11425526wmd.148.1529410297328;
-        Tue, 19 Jun 2018 05:11:37 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id t14-v6sm21091187wrm.79.2018.06.19.05.11.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 05:11:36 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] hwrng: msm - Add support for prng v2
-To:     Vinod Koul <vinod.koul@linaro.org>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=HCQo8UQgwxQb5+Rc67Gmp6LwPx2iN+7wDXtGQs182S0=;
+        b=IGQfEXj9L3mOo5TUdFlGHMmuprs/fWWxQZQA2X4qxTFRsTXdhJsKuwuKcPvssDbDxZ
+         SKzVA+eLGu177sC9r/hybHf1XwEt/f6QDLyb6Cu3OGMeTShzCySmvJYDk73Ovbw3e/f3
+         5OPGaAczMmuLEk6yWF7/8wvRUL3YzaUL5whQUYT+kozYz74YK6leWp3PlvAVnm4s5uR9
+         Iu2pOXqqbnZCrQjafcdmB6kwrrfUQGEj4dFJl2NeC4oO8IPwRt7hH2SSbXHtBlZ4uaRb
+         fllXx9RJQYJibPOHc6wE3sMh1NTAUBl0MvorR9yV8xKNTFR783oXdpIYQpQhUnoO7oT4
+         r8oA==
+X-Gm-Message-State: APt69E0eB6wx7gh3CS7HYYkkn7rPcnX04qImaz9+eoxpDHiHmOinTTCq
+        7T4n8MNZc4NXN4CxEyX0EHssEQ==
+X-Google-Smtp-Source: ADUXVKKJfvjDy22BTKLM/H0rOMmgKeeibo88F9jMv1RKcVDkjun+c75/UwKuklJf+hPUwjNeLvCbrg==
+X-Received: by 2002:ac8:26c3:: with SMTP id 3-v6mr14791346qtp.151.1529410499093;
+        Tue, 19 Jun 2018 05:14:59 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id a18-v6sm12925533qkj.60.2018.06.19.05.14.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 05:14:58 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 08:14:57 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Joe Perches <joe@perches.com>
+cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>
-References: <20180619095430.26358-1-vkoul@kernel.org>
- <20180619095430.26358-3-vkoul@kernel.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <b7543a73-e35a-c015-3bba-1e3ab3a389d5@linaro.org>
-Date:   Tue, 19 Jun 2018 15:11:33 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Dave Mielke <Dave@mielke.cc>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] vt: coherence validation code for the unicode
+ screen buffer
+In-Reply-To: <800831730e3aeaf4da23f7f97cfa80103236c3cb.camel@perches.com>
+Message-ID: <nycvar.YSQ.7.76.1806190812550.16670@knanqh.ubzr>
+References: <20180617190706.14614-1-nicolas.pitre@linaro.org> <20180617190706.14614-5-nicolas.pitre@linaro.org> <CAHp75VfG_4zw+NPuHTUyH-gzdktiCKVcnWcwo0D_fAgfPbdk+A@mail.gmail.com> <nycvar.YSQ.7.76.1806182110450.16670@knanqh.ubzr>
+ <800831730e3aeaf4da23f7f97cfa80103236c3cb.camel@perches.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180619095430.26358-3-vkoul@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+On Mon, 18 Jun 2018, Joe Perches wrote:
 
-On 06/19/2018 12:54 PM, Vinod Koul wrote:
-> Qcom 8996 and later chips support prng v2 which requires to
-> implement only .read callback for hwrng.
+> On Mon, 2018-06-18 at 21:50 -0400, Nicolas Pitre wrote:
+> > On Tue, 19 Jun 2018, Andy Shevchenko wrote:
+> []
+> > > > +       /*
+> > > > +        * Make sure our unicode screen translates into the same glyphs
+> > > > +        * as the actual screen. This is brutal indeed.
+> > > > +        */
+> > > > +       p = (unsigned short *)vc->vc_origin;
+> > > > +       mask = vc->vc_hi_font_mask | 0xff;
+> > > > +       for (y = 0; y < vc->vc_rows; y++) {
+> > > > +               char32_t *line = uniscr->lines[y];
+> > > > +               for (x = 0; x < vc->vc_cols; x++) {
+> > > > +                       u16 glyph = scr_readw(p++) & mask;
+> > > > +                       char32_t uc = line[x];
+> > > > +                       int tc = conv_uni_to_pc(vc, uc);
+> > > > +                       if (tc == -4)
+> > > > +                               tc = conv_uni_to_pc(vc, 0xfffd);
+> > > > +                       if (tc == -4)
+> > > > +                               tc = conv_uni_to_pc(vc, '?');
+> > > > +                       if (tc != glyph)
+> > > > +                               pr_notice("%s: mismatch at %d,%d: "
+> > > > +                                         "glyph=%#x tc=%#x\n", __func__,
+> > > > +                                         x, y, glyph, tc);
+> > > 
+> > > Don't split format string in printk(). checkpatch will not warn on longer lines.
+> > 
+> > I didn't do it like that for checkpatch but to keep the code readable.
+> > I don't particularly care either ways though.
 > 
-> This version of chip has multiple Execution Environments (EE) and
-> secure world is typically responsible for configuring the prng.
-> 
-> Add driver data for qcom,prng as 0 and qcom,prng-v2 as 1 and use
-> that to skip initialization and cleanup routines.
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  drivers/char/hw_random/msm-rng.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/char/hw_random/msm-rng.c b/drivers/char/hw_random/msm-rng.c
-> index 841fee845ec9..4676520e1f16 100644
-> --- a/drivers/char/hw_random/msm-rng.c
-> +++ b/drivers/char/hw_random/msm-rng.c
-> @@ -17,6 +17,7 @@
->  #include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  
->  /* Device specific register offsets */
-> @@ -131,6 +132,7 @@ static int msm_rng_probe(struct platform_device *pdev)
->  {
->  	struct resource *res;
->  	struct msm_rng *rng;
-> +	unsigned int skip_init;
->  	int ret;
->  
->  	rng = devm_kzalloc(&pdev->dev, sizeof(*rng), GFP_KERNEL);
-> @@ -149,9 +151,12 @@ static int msm_rng_probe(struct platform_device *pdev)
->  		return PTR_ERR(rng->clk);
->  
->  	rng->hwrng.name = KBUILD_MODNAME,
-> -	rng->hwrng.init = msm_rng_init,
-> -	rng->hwrng.cleanup = msm_rng_cleanup,
-> -	rng->hwrng.read = msm_rng_read,
-> +	rng->hwrng.read = msm_rng_read;
-> +	skip_init = (unsigned long)of_device_get_match_data(&pdev->dev);
+> If one glyph is off, then perhaps others are off too.
+> Perhaps this message should be ratelimited.
 
-skip_init is unsigned int, despite I think you don't need to cast it.
-
-> +	if (!skip_init) {
-> +		rng->hwrng.init = msm_rng_init;
-> +		rng->hwrng.cleanup = msm_rng_cleanup;
-> +	}
->  
->  	ret = devm_hwrng_register(&pdev->dev, &rng->hwrng);
->  	if (ret) {
-> @@ -163,7 +168,8 @@ static int msm_rng_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id msm_rng_of_match[] = {
-> -	{ .compatible = "qcom,prng", },
-> +	{ .compatible = "qcom,prng", .data = (void *)0},
-> +	{ .compatible = "qcom,prng-v2", .data = (void *)1},
-
-No need to cast. IMO it'd be better to create defines for these numbers:
-
-#define PRNG_V1	0
-#define PRNG_V2	1
+Remember that this is costly debugging code that is off by default. 
+No production kernel should have it enabled.
 
 
--- 
-regards,
-Stan
+Nicolas
