@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07B1C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637C4C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F6E2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:02:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F6E2083A
+	by mail.kernel.org (Postfix) with ESMTP id 26EA52083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:03:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26EA52083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756270AbeFSICr (ORCPT
+        id S1756359AbeFSIDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:02:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38463 "EHLO
+        Tue, 19 Jun 2018 04:03:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43791 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755536AbeFSICm (ORCPT
+        with ESMTP id S1756296AbeFSIDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:02:42 -0400
+        Tue, 19 Jun 2018 04:03:07 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5J82OcT3015180
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5J82wuq3015211
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 01:02:24 -0700
+        Tue, 19 Jun 2018 01:02:58 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5J82O0w3015177;
-        Tue, 19 Jun 2018 01:02:24 -0700
-Date:   Tue, 19 Jun 2018 01:02:24 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5J82vGJ3015208;
+        Tue, 19 Jun 2018 01:02:57 -0700
+Date:   Tue, 19 Jun 2018 01:02:57 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-dc1b7b6ca9d5fa905c164a667086d8a3d8605875@git.kernel.org>
-Cc:     tglx@linutronix.de, gorcunov@openvz.org, mingo@kernel.org,
-        gorcunov@gmail.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        akpm@linux-foundation.org, linux@dominikbrodowski.net,
-        arnd@arndb.de
-Reply-To: tglx@linutronix.de, gorcunov@gmail.com, mingo@kernel.org,
-          gorcunov@openvz.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          arnd@arndb.de, linux@dominikbrodowski.net,
-          akpm@linux-foundation.org
-In-Reply-To: <20180618150114.849216-1-arnd@arndb.de>
-References: <20180618150114.849216-1-arnd@arndb.de>
+From:   tip-bot for Jiri Kosina <tipbot@zytor.com>
+Message-ID: <tip-66aa6b5cbc359331fc054e96bb49e9502bc0b1d9@git.kernel.org>
+Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, jgross@suse.com, mlatimer@suse.com, bp@suse.de,
+        jkosina@suse.cz
+Reply-To: jkosina@suse.cz, mlatimer@suse.com, bp@suse.de,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, jgross@suse.com, hpa@zytor.com
+In-Reply-To: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] sysinfo: Remove get_monotonic_boottime()
-Git-Commit-ID: dc1b7b6ca9d5fa905c164a667086d8a3d8605875
+Subject: [tip:x86/pti] x86/pti: Don't report XenPV as vulnerable
+Git-Commit-ID: 66aa6b5cbc359331fc054e96bb49e9502bc0b1d9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,47 +58,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dc1b7b6ca9d5fa905c164a667086d8a3d8605875
-Gitweb:     https://git.kernel.org/tip/dc1b7b6ca9d5fa905c164a667086d8a3d8605875
-Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Mon, 18 Jun 2018 17:00:38 +0200
+Commit-ID:  66aa6b5cbc359331fc054e96bb49e9502bc0b1d9
+Gitweb:     https://git.kernel.org/tip/66aa6b5cbc359331fc054e96bb49e9502bc0b1d9
+Author:     Jiri Kosina <jkosina@suse.cz>
+AuthorDate: Mon, 18 Jun 2018 09:59:54 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 19 Jun 2018 09:56:27 +0200
+CommitDate: Tue, 19 Jun 2018 09:58:22 +0200
 
-sysinfo: Remove get_monotonic_boottime()
+x86/pti: Don't report XenPV as vulnerable
 
-get_monotonic_boottime() is deprecated because it uses the old 'timespec'
-structure. This replaces one of the last callers with a call to
-ktime_get_boottime.
+Xen PV domain kernel is not by design affected by meltdown as it's
+enforcing split CR3 itself. Let's not report such systems as "Vulnerable"
+in sysfs (we're also already forcing PTI to off in X86_HYPER_XEN_PV cases);
+the security of the system ultimately depends on presence of mitigation in
+the Hypervisor, which can't be easily detected from DomU; let's report
+that.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reported-and-tested-by: Mike Latimer <mlatimer@suse.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: y2038@lists.linaro.org
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Cyrill Gorcunov <gorcunov@openvz.org>
-Link: https://lkml.kernel.org/r/20180618150114.849216-1-arnd@arndb.de
+Acked-by: Juergen Gross <jgross@suse.com>
+Cc: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm
 
 ---
- kernel/sys.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 38509dc1f77b..e27b51d3facd 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2512,11 +2512,11 @@ static int do_sysinfo(struct sysinfo *info)
- {
- 	unsigned long mem_total, sav_total;
- 	unsigned int mem_unit, bitcount;
--	struct timespec tp;
-+	struct timespec64 tp;
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index cd0fda1fff6d..57638396a254 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -27,6 +27,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/set_memory.h>
+ #include <asm/intel-family.h>
++#include <asm/hypervisor.h>
  
- 	memset(info, 0, sizeof(struct sysinfo));
+ static void __init spectre_v2_select_mitigation(void);
+ static void __init ssb_select_mitigation(void);
+@@ -664,6 +665,10 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
+ 		if (boot_cpu_has(X86_FEATURE_PTI))
+ 			return sprintf(buf, "Mitigation: PTI\n");
  
--	get_monotonic_boottime(&tp);
-+	ktime_get_boottime_ts64(&tp);
- 	info->uptime = tp.tv_sec + (tp.tv_nsec ? 1 : 0);
++		if (hypervisor_is_type(X86_HYPER_XEN_PV))
++			return sprintf(buf, "Unknown (XEN PV detected, hypervisor "
++					    "mitigation required)\n");
++
+ 		break;
  
- 	get_avenrun(info->loads, 0, SI_LOAD_SHIFT - FSHIFT);
+ 	case X86_BUG_SPECTRE_V1:
