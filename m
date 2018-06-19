@@ -2,173 +2,185 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABC2C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B12FC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 982DB2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:42:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G+OoRuIn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l+mYHUmL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982DB2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D0892083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:42:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D0892083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937440AbeFSImM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:42:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57564 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937388AbeFSImJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:42:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 79EDF60B22; Tue, 19 Jun 2018 08:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529397728;
-        bh=4Ba4/fiIAe8okicJw+AvqtN/NuFAKYXniN1wWK3qRFE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G+OoRuInx/KhZNRRiHRS48iIef41OoFaOrls0Osp/PpgMHr1ktExm+ydeKoM457i7
-         CzZUVadtcwNnXslwA1fraCGbk98lMgqB7cgHqwzDESnwnM+82YkxU6P/NcPyUJE5vZ
-         m85Po0JbqP7bCyQhc4kBxt5jOvxrpYbE7W2sESpo=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pkondeti@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3214F60B7A;
-        Tue, 19 Jun 2018 08:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529397726;
-        bh=4Ba4/fiIAe8okicJw+AvqtN/NuFAKYXniN1wWK3qRFE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l+mYHUmLf4fteU6ZkKBnbLrfg9XMPVwK6MyNPyuyvVDRve+ZbQUiElLttAx+qAkEH
-         VBJZUYoMoc0EtZErFU4b9cgrf/t1U3VVuVcnWwLu/Z45gySR9vQRU4Mb0AUxAFTSgE
-         l/s0v7yIGmJqj5LtZNzWZe28aQm2dRlPPnZ4jMj8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3214F60B7A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
-Date:   Tue, 19 Jun 2018 14:11:56 +0530
-From:   Pavan Kondeti <pkondeti@codeaurora.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joelaf@google.com, smuckle@google.com,
-        adharmap@quicinc.com, skannan@quicinc.com, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 09/10] sched/fair: Select an energy-efficient CPU
- on task wake-up
-Message-ID: <20180619084156.GC9208@codeaurora.org>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-10-quentin.perret@arm.com>
- <20180619050601.GA9208@codeaurora.org>
- <20180619075723.GQ17720@e108498-lin.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619075723.GQ17720@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S965878AbeFSImU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:42:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38388 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937388AbeFSImO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 04:42:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0A495ABEC;
+        Tue, 19 Jun 2018 08:42:13 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 10:42:12 +0200
+Message-ID: <s5ho9g7dv6j.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc:     Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+In-Reply-To: <20180619083712.dwb4d357sfxcgrre@pali>
+References: <20180608111057.4wxpg7m7nm7suf6n@pali>
+        <s5hk1r01acc.wl-tiwai@suse.de>
+        <20180615190959.pqipwnm6a3tf3lxc@pali>
+        <s5hmuvvtdmi.wl-tiwai@suse.de>
+        <20180616154309.ualrx2py6ndr5xgz@pali>
+        <s5hh8m2u3cp.wl-tiwai@suse.de>
+        <20180618102806.vwm4rhvxhn6hi43z@pali>
+        <s5ha7rsz8i8.wl-tiwai@suse.de>
+        <20180618112121.cl76a3oozsbbbqnb@pali>
+        <20180619083712.dwb4d357sfxcgrre@pali>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 08:57:23AM +0100, Quentin Perret wrote:
-> Hi Pavan,
+On Tue, 19 Jun 2018 10:37:12 +0200,
+Pali Rohár wrote:
 > 
-> On Tuesday 19 Jun 2018 at 10:36:01 (+0530), Pavan Kondeti wrote:
-> > On Mon, May 21, 2018 at 03:25:04PM +0100, Quentin Perret wrote:
+> On Monday 18 June 2018 13:21:21 Pali Rohár wrote:
+> > On Monday 18 June 2018 12:36:31 Takashi Iwai wrote:
+> > > On Mon, 18 Jun 2018 12:28:06 +0200,
+> > > Pali Rohár wrote:
+> > > > 
+> > > > On Saturday 16 June 2018 18:02:14 Takashi Iwai wrote:
+> > > > > On Sat, 16 Jun 2018 17:43:09 +0200,
+> > > > > Pali Rohár wrote:
+> > > > > > 
+> > > > > > On Saturday 16 June 2018 09:05:41 Takashi Iwai wrote:
+> > > > > > > On Fri, 15 Jun 2018 21:09:59 +0200,
+> > > > > > > Pali Rohár wrote:
+> > > > > > > > 
+> > > > > > > > On Friday 15 June 2018 14:51:47 Takashi Iwai wrote:
+> > > > > > > > > On Fri, 08 Jun 2018 13:10:57 +0200,
+> > > > > > > > > Pali Rohár wrote:
+> > > > > > > > > > 
+> > > > > > > > > > Hi! With up-to-date thinkpad_acpi.ko driver on ThinkPad T480s I'm seeing
+> > > > > > > > > > a strange behavior of LEDs which are integrated into mic mute (Fn+F4)
+> > > > > > > > > > and mute (Fn+F1) keys.
+> > > > > > > > > > 
+> > > > > > > > > > When thinkpad_acpi.ko is not loaded, then mute key is working fine. When
+> > > > > > > > > > pressed, it correctly generates KEY_MUTE on AT Translated Set 2 keyboard
+> > > > > > > > > > input device and also turn on/of mute led. But when micmute key is
+> > > > > > > > > > pressed then, nothing happen. No key event is reported and also led is
+> > > > > > > > > > not turned on/off.
+> > > > > > > > > > 
+> > > > > > > > > > On the other hand, when thinkpad_acpi.ko is loaded, then both buttons
+> > > > > > > > > > mute and micmute correctly generates input events; mute via AT keyboard
+> > > > > > > > > > and micmute via ThinkPad Extra Buttons. But led is not changed. When
+> > > > > > > > > > thinkpad_acpi.ko is loaded it turn off both leds (mute and micmute) and
+> > > > > > > > > > leds after pressing any of those buttons, leds are not turned on again.
+> > > > > > > > > > 
+> > > > > > > > > > When thinkpad_acpi.ko is unloaded, then pressing mute button again start
+> > > > > > > > > > switching led on/off.
+> > > > > > > > > > 
+> > > > > > > > > > So it seems that some init sequence of thinkpad_acpi.ko breaks mute led.
+> > > > > > > > > > And fini sequence of thinkpad_acpi.ko makes mute led working again.
+> > > > > > > > > 
+> > > > > > > > > Usually the mute LED on Thinkpad is triggered from HD-audio driver
+> > > > > > > > > (sound/pci/hda/thinkpad_helper.c), and it's a soft-bound via
+> > > > > > > > > symbol_request(tpacpi_led_set).  I thought thinkpad_acpi is
+> > > > > > > > > auto-loaded when the module gets bound.
+> > > > > > > > > 
+> > > > > > > > > A possible explanation would be that TPT480s has neither IBM0068,
+> > > > > > > > > LEN0068 nor LEN0268 ACPI HIDs, hence the driver is not auto-loaded.
+> > > > > > > > 
+> > > > > > > > I have Debian Stretch kernel (4.9) which does not have LEN0268 alias for
+> > > > > > > > thinkpad_acpi.ko. So thinkpad_acpi.ko is not loaded automatically. But I
+> > > > > > > > have put thinkpad_acpi into /etc/modules and it is now automatically
+> > > > > > > > loaded at boot.
+> > > > > > > 
+> > > > > > > That's odd.  It's exposed via
+> > > > > > >   MODULE_DEVICE_TABLE(acpi, ibm_htk_device_ids);
+> > > > > > > 
+> > > > > > > It's been already in 4.9.  At this point, something is fishy.
+> > > > > > 
+> > > > > > $ /sbin/modinfo thinkpad_acpi | grep alias
+> > > > > > alias:          dmi:bvnIBM:bvrI[MU]ET??WW*
+> > > > > > alias:          tpacpi
+> > > > > > alias:          acpi*:LEN0068:*
+> > > > > > alias:          acpi*:IBM0068:*
+> > > > > > 
+> > > > > > No there is no LEN0268 on 4.9.
+> > > > > 
+> > > > > OK, that's the cause.  It's really old.
+> > > > > 
+> > > > > The commit a3c42a467a25 ("platform/x86: thinkpad_acpi: Adding new
+> > > > > hotkey ID for Lenovo thinkpad") has to be backported.
+> > > > 
+> > > > This commit just autoloads thinkpad_acpi driver, right? So manual
+> > > > modprobe (for now) is OK too?
+> > > 
+> > > Well, the manual modprobe is superfluous if it's properly bound with
+> > > HD-audio driver.  The HD-audio driver calls symbol_request(), so it
+> > > should do modprobe by itself.
+> > > 
+> > > > > Also, in the HD-audio side, the commit 2ecb704a1290 ("ALSA: hda - add
+> > > > > a new condition to check if it is thinkpad") is needed, too.
+> > > > 
+> > > > This commit was introduced in 4.9 and Debian kernel has it. I looked
+> > > > into Debian source code and there is check for LEN0268 in file
+> > > > sound/pci/hda/thinkpad_helper.c
+> > > 
+> > > Then check whether the function gets really called.
 > > 
-> > <snip>
+> > Checked, no it is not called.
 > > 
-> > > +	if (cpumask_test_cpu(prev_cpu, &p->cpus_allowed))
-> > > +		prev_energy = best_energy = compute_energy(p, prev_cpu);
-> > > +	else
-> > > +		prev_energy = best_energy = ULONG_MAX;
-> > > +
-> > > +	for_each_freq_domain(sfd) {
-> > > +		unsigned long spare_cap, max_spare_cap = 0;
-> > > +		int max_spare_cap_cpu = -1;
-> > > +		unsigned long util;
-> > > +
-> > > +		/* Find the CPU with the max spare cap in the freq. dom. */
-> > > +		for_each_cpu_and(cpu, freq_domain_span(sfd), sched_domain_span(sd)) {
-> > > +			if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
-> > > +				continue;
-> > > +
-> > > +			if (cpu == prev_cpu)
-> > > +				continue;
-> > > +
-> > > +			/* Skip CPUs that will be overutilized */
-> > > +			util = cpu_util_wake(cpu, p) + task_util;
-> > > +			cpu_cap = capacity_of(cpu);
-> > > +			if (cpu_cap * 1024 < util * capacity_margin)
-> > > +				continue;
-> > > +
-> > > +			spare_cap = cpu_cap - util;
-> > > +			if (spare_cap > max_spare_cap) {
-> > > +				max_spare_cap = spare_cap;
-> > > +				max_spare_cap_cpu = cpu;
-> > > +			}
-> > > +		}
-> > > +
-> > > +		/* Evaluate the energy impact of using this CPU. */
-> > > +		if (max_spare_cap_cpu >= 0) {
-> > > +			cur_energy = compute_energy(p, max_spare_cap_cpu);
-> > > +			if (cur_energy < best_energy) {
-> > > +				best_energy = cur_energy;
-> > > +				best_energy_cpu = max_spare_cap_cpu;
-> > > +			}
-> > > +		}
-> > > +	}
-> > > +
-> > > +	/*
-> > > +	 * We pick the best CPU only if it saves at least 1.5% of the
-> > > +	 * energy used by prev_cpu.
-> > > +	 */
-> > > +	if ((prev_energy - best_energy) > (prev_energy >> 6))
-> > > +		return best_energy_cpu;
-> > > +
-> > > +	return prev_cpu;
-> > > +}
-> > 
-> > We are comparing the best_energy_cpu against prev_cpu even when prev_cpu
-> > can't accommodate the waking task. Is this intentional? Should not we
-> > discard the prev_cpu if it can't accommodate the task.
-> > 
-> > This can potentially make a BIG task run on a lower capacity CPU until
-> > load balancer kicks in and corrects the situation.
+> > Now I see that snd_hda_codec_generic is visible in lsmod and thinkpad
+> > helper is compiled only into snd-hda-codec-realtek and
+> > snd-hda-codec-conexant... Therefore nobody is even trying to use that
+> > function.
 > 
-> We shouldn't enter find_energy_efficient_cpu() in the first place if the
-> system is overutilized, so that shouldn't too much of an issue in
-> general.
+> Interesting is this part:
 > 
-
-With UTIL_EST enabled, the overutilization condtion may get turned off when
-that 1 BIG task goes to sleep. When it wakes up again, we may place it on
-the previous CPU due to the above mentioned issue.
-
-It is not just an existing overutilization condition. By placing this task
-on the prev_cpu, we may enter overutilization state.
-
-> But yeah, there is one small corner case where prev_cpu is overutilized
-> and the system has not been flagged as such yet (when the tasks wakes-up
-> shortly before the tick for ex). I think it's possible to cover this case
-> by extending the "if (cpumask_test_cpu(prev_cpu, &p->cpus_allowed))"
-> condition at the top of the function with a check on capacity_margin.
+> $ head /proc/asound/card0/codec#0
+> Codec: Realtek ALC257
+> Address: 0
+> AFG Function Id: 0x1 (unsol 1)
+> Vendor Id: 0x10ec0257
+> Subsystem Id: 0x17aa2258
+> Revision Id: 0x100001
+> No Modem Function Group found
+> Default PCM:
+>     rates [0x560]: 44100 48000 96000 192000
+>         bits [0xe]: 16 20 24
 > 
+> It uses vendor id 0x10ec0257 and support for it was added into
+> snd-hda-codec-realtek in commit f429e7e494 which was introduced in
+> version v4.15.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f429e7e494afaded76e62c6f98211a635aa03098
+> 
+> I applied this patch to Debian's 4.9 kernel and mute & mic mute leds
+> started working. This one patch was enough.
+> 
+> Takashi, it is possible to backport this patch into -stable trees?
 
-LGTM.
+It has already a Cc-to-stable, so it should have been backported.
+Maybe it wasn't applicable at that time due to lack of other dependent
+patches...
 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+In anyway, feel free to ping Greg for including it to 4.9.x if it
+works for you now.
 
+
+Takashi
