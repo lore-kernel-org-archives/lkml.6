@@ -2,35 +2,42 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFA9C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5934C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C51002075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:00:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51002075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 62DBC20836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:00:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62DBC20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937728AbeFSMAJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:00:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33338 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937609AbeFSMAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:00:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4EE79AE96;
-        Tue, 19 Jun 2018 12:00:07 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 14:00:06 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] HID fixes
-Message-ID: <nycvar.YFH.7.76.1806191356280.6203@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S937753AbeFSMAb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:00:31 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56939 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937609AbeFSMAa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:00:30 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fVFJC-0004Yz-2L; Tue, 19 Jun 2018 14:00:26 +0200
+Date:   Tue, 19 Jun 2018 14:00:23 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+cc:     Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Yang Yingliang <yangyingliang@huawei.com>
+Subject: Re: [PATCH 2/6] irqchip/ls-scfg-msi: Fix MSI affinity handling
+In-Reply-To: <20180619115546.12196-3-marc.zyngier@arm.com>
+Message-ID: <alpine.DEB.2.21.1806191357350.1684@nanos.tec.linutronix.de>
+References: <20180619115546.12196-1-marc.zyngier@arm.com> <20180619115546.12196-3-marc.zyngier@arm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
@@ -38,56 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Tue, 19 Jun 2018, Marc Zyngier wrote:
 
-please pull from
+> The ls-scfs-msi driver is not dealing with the effective affinity
+> as it should. Let's fix that, and make it clear that the effective
+> affinity is restricted to a single CPU.
+> 
+> Reported-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  drivers/irqchip/irq-ls-scfg-msi.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
+> index 1ec3bfe56693..2811cc53e425 100644
+> --- a/drivers/irqchip/irq-ls-scfg-msi.c
+> +++ b/drivers/irqchip/irq-ls-scfg-msi.c
+> @@ -121,7 +121,8 @@ static int ls_scfg_msi_set_affinity(struct irq_data *irq_data,
+>  		return -EINVAL;
+>  	}
+>  
+> -	cpumask_copy(irq_data->common->affinity, mask);
+> +	cpumask_copy(irq_data->common->affinity, cpumask_of(cpu));
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git for-linus
+That's wrong. The driver should not fiddle with the affinity mask at all
+and just store the effective mask.
 
-to receive -rc HID fixes:
+> +	irq_data_update_effective_affinity(irq_data, cpumask_of(cpu));
+>  
+>  	return IRQ_SET_MASK_OK;
 
-=====
-- Wacom 2nd-gen Intuos Pro large Y axis handling fix from Jason Gerecke
-- Fix for hibernation in Intel ISH driver, from Even Xu
-- Crash fix for hid-steam driver, from Rodrigo Rivas Costa
-- i2c-hid fix for devices (such as SIPODEV SP1064) that fail to provide
-  their report descriptor, from Julian Sax
-- new device ID addition to google-hammer driver
-=====
+If yuo look at the call site, then you'll notice that it will do:
 
-Thanks.
+        case IRQ_SET_MASK_OK:
+        case IRQ_SET_MASK_OK_DONE:
+                cpumask_copy(desc->irq_common_data.affinity, mask);
 
-----------------------------------------------------------------
-Even Xu (1):
-      HID: intel_ish-hid: ipc: register more pm callbacks to support hibernation
+So the cpumask_copy() can just go away.
 
-Jason Gerecke (1):
-      HID: wacom: Correct logical maximum Y for 2nd-gen Intuos Pro large
+Thanks,
 
-Julian Sax (1):
-      HID: i2c-hid: override HID descriptors for certain devices
-
-Nicolas Boichat (1):
-      HID: google: Add support for whiskers
-
-Rodrigo Rivas Costa (1):
-      HID: steam: use hid_device.driver_data instead of hid_set_drvdata()
-
- drivers/hid/hid-google-hammer.c                   |   2 +
- drivers/hid/hid-ids.h                             |   1 +
- drivers/hid/hid-steam.c                           |  10 +-
- drivers/hid/i2c-hid/Makefile                      |   3 +
- drivers/hid/i2c-hid/{i2c-hid.c => i2c-hid-core.c} |  58 ++++++---
- drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c          | 149 ++++++++++++++++++++++
- drivers/hid/i2c-hid/i2c-hid.h                     |  17 +++
- drivers/hid/intel-ish-hid/ipc/pci-ish.c           |  22 +---
- drivers/hid/wacom_sys.c                           |   8 ++
- 9 files changed, 230 insertions(+), 40 deletions(-)
- rename drivers/hid/i2c-hid/{i2c-hid.c => i2c-hid-core.c} (96%)
- create mode 100644 drivers/hid/i2c-hid/i2c-hid-dmi-quirks.c
- create mode 100644 drivers/hid/i2c-hid/i2c-hid.h
-
--- 
-Jiri Kosina
-SUSE Labs
-
+	tglx
