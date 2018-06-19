@@ -3,131 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E88C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0B5C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F313F20836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:24:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F313F20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=smarthome-wolf.de
+	by mail.kernel.org (Postfix) with ESMTP id B23B220836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:25:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23B220836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757067AbeFSKYt (ORCPT
+        id S1757201AbeFSKZL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:24:49 -0400
-Received: from dd39320.kasserver.com ([85.13.155.146]:55542 "EHLO
-        dd39320.kasserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756382AbeFSKYm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:24:42 -0400
-X-Greylist: delayed 324 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Jun 2018 06:24:42 EDT
-Received: from [192.168.0.65] (x4db530c9.dyn.telefonica.de [77.181.48.201])
-        by dd39320.kasserver.com (Postfix) with ESMTPSA id 9BB022CE015E;
-        Tue, 19 Jun 2018 12:19:16 +0200 (CEST)
-Subject: Re: rf69_set_deviation in rf69.c (pi433 driver)
-To:     Hugo Lefeuvre <hle@owl.eu.com>
-Cc:     Valentin Vidic <Valentin.Vidic@CARNet.hr>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20180605031120.GB1981@hle-laptop.local>
-From:   Marcus Wolf <marcus.wolf@smarthome-wolf.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marcus.wolf@smarthome-wolf.de; prefer-encrypt=mutual; keydata=
- xsBNBFn0gUABCADPoYmxJeUTvkgBA/fTa2vTIzv4pQy0gfdS23EounKFNBTUu8RurWN1/Z/r
- C6aF6867U3F6rppc8bvRSO4lkYgwWkEwPWswCTEPlVOzy1tVZSoD6fk6dcJ73ZOdN3lasYq0
- zWa70mofIH/rzBJ5ppO2aQdPgUInJuClushR/zCgZOz6ta93A8pLApcFwLA6cikY4FvyiCtX
- D+Zkv5/kn5z+wIQmQ5UI3EkTzqE/H7N59duSIXeELZjZVV2uuwZQLU+xxouqZG/flVoEDqVe
- wvXcHQ5NPofdlI0NcIIoQasleVuWiYXN/sC90vcOPHyWfmrsOUJNKZSEhgIp5shTWE+tABEB
- AAHNK01hcmN1cyBXb2xmIDxtYXJjdXMud29sZkBzbWFydGhvbWUtd29sZi5kZT7CwH8EEwEI
- ACkFAln0gUACGwMFCQPCSPAHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCxe3Gartc2
- v7/rCACfWZzsPuEY7szndbaNRmh0OvS380xYWYDAkklKTL2Re7Fose9TwjkdjYdN3V5DeqBH
- 8uej0h8qL4iHNt7vjFFjD+oxRQ5ugRItEJeDnp3AQf4pQa7DshGGTz7XUJ9lwBioyv7L04YD
- PMAXl3HhzuMAC36Gd6TJvXkS2uQXvZPuE/wCjOUq86sGe8ek+5k+WrqPIyoRYJIM1N2mT5E5
- J6LIrOjbLVtWhga3xUEghcCk+7zjTMaRUQY7OGPEhp0vamfq9T4s3v67GKN+EXEXoOm7KhVH
- oDHhbcsnlNNJEYmgpe0/KqNoDB8sI3mGAyIqcIztiVy1w8wIEvQKVnVfCfUKzsBNBFn0gUAB
- CACmLkuEMDK2kolURQp9AKGvpX52ZDavYkxsYXNZptWUyOJbjJmZStXzNTlT5LSx6QrXr8Ja
- mtDcrkFWGYVmfjgDyltV+vEWmx+qNv/R3lvXyTncXWyJ63RRDQcjx212nvhud0A+WjpL7HFn
- Oka1RBSrMpdqzPw3GC5yXl+khG0C3gVkakW2E7eAQimuPXtXCg2IUx2jeyiB5lLq7V5cqzIf
- 5fcxtxIuFz1AG4gTnIysYvTmJZzoKHWBpJ8SKp42w9Ir/L8iiB9ae/G+UubDMacjDagzwTds
- w+1vR7t9T39uV/+KOpZfqbwZx7Wc2trr2k7L+puBJght8xUTBlafa/EzABEBAAHCwGUEGAEI
- AA8FAln0gUACGwwFCQPCSPAACgkQsXtxmq7XNr+IIQf/Q6H5zTJNrq12vPMRZbXWS+1gytGM
- jDgD7AbJy2tr5C0X/kpcxHrohwLvL8I2xCt3rXB28nQMwT1FJJ8zCoHTVDMX921KKVaqGN1D
- SxP3yQULbrcUYXlp2+iBAVzFQETjWaLbS0zYif7UMIZ54x0pGw/0pspEYLhjnykgnjFjPoMr
- 79JhTMgKFwzOuINRGSHtHw8KIrfPymr2DrpGAXuIAXdjrel7nTVC6D+hVf7/qvFSgNS1sHky
- RNbd3S3GhFBT1zypnMRro+o4Qke5huxQ4mTLbFveo3f3T+u602PYbv4pz9tLwTPBKaKtJBNX
- kqgUYrGFKWlJJbaXegzkY9WmWg==
-Message-ID: <50c4e6ee-e5fb-1d27-4e73-1e82080036b3@smarthome-wolf.de>
-Date:   Tue, 19 Jun 2018 12:19:14 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 06:25:11 -0400
+Received: from foss.arm.com ([217.140.101.70]:47056 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757124AbeFSKZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:25:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1C861435;
+        Tue, 19 Jun 2018 03:25:08 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCF913F25D;
+        Tue, 19 Jun 2018 03:25:04 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 11:25:03 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     Pavan Kondeti <pkondeti@codeaurora.org>, peterz@infradead.org,
+        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 10/10] arch_topology: Start Energy Aware Scheduling
+Message-ID: <20180619102502.GU17720@e108498-lin.cambridge.arm.com>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-11-quentin.perret@arm.com>
+ <20180619091841.GD9208@codeaurora.org>
+ <20180619094002.GR17720@e108498-lin.cambridge.arm.com>
+ <20180619094714.GA13617@localhost.localdomain>
+ <20180619100224.GT17720@e108498-lin.cambridge.arm.com>
+ <20180619101901.GC13617@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180605031120.GB1981@hle-laptop.local>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619101901.GC13617@localhost.localdomain>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hugo,
-
-sorry for the late response and thank you for all that deep
-investigation in the pi433 driver!
-
-> According to the datasheet[0], the deviation should always be smaller
-> than 300kHz, and the following equation should be respected:
+On Tuesday 19 Jun 2018 at 12:19:01 (+0200), Juri Lelli wrote:
+> On 19/06/18 11:02, Quentin Perret wrote:
+> > On Tuesday 19 Jun 2018 at 11:47:14 (+0200), Juri Lelli wrote:
+> > > On 19/06/18 10:40, Quentin Perret wrote:
+> > > > Hi Pavan,
+> > > > 
+> > > > On Tuesday 19 Jun 2018 at 14:48:41 (+0530), Pavan Kondeti wrote:
+> > > 
+> > > [...]
+> > > 
+> > > > > There seems to be a sysfs interface exposed by this driver to change cpu_scale.
+> > > > > Should we worry about it? I don't know what is the usecase for changing the
+> > > > > cpu_scale from user space.
+> > > > 
+> > > > This is something I've been wondering as well. TBH, I'm not sure what to
+> > > > do in this case. And I'm not sure to know what is the use-case either.
+> > > > Debugging purpose I assume ?
+> > > > 
+> > > > Juri, did you have a specific use-case for this feature when the
+> > > > arch_topology driver was first introduced ? Or was it just to align
+> > > > with the existing arm/arm64 code ?
+> > > 
+> > > It was requested (IIRC) because DT might have bogus values and not be
+> > > easily modifiable. So, this is another way to get things right for your
+> > > platform at runtime.
+> > 
+> > Right, but that also allows you to set different capacities to CPUs
+> > inside the same freq domain, which isn't supported by the EM framework,
+> > at least for now. So I would prefer to assume that your values in DT must
+> > to be correct to use EAS, and leave the code as-is for now.
 > 
->   (1) FDA + BRF/2 =< 500 kHz
+> It's actually built on the (current) assumption that siblings share
+> capacity [1], so it seems to align with what EM requires.
 > 
-> Why did you choose 500kHz as max for FDA, instead of 300kHz ? It looks like
-> a bug to me.
+> [1] https://elixir.bootlin.com/linux/latest/source/drivers/base/arch_topology.c#L71
 
-My focus was always on OOK and ASK. PSK was only used for a few
-measurements in the laboratory, I engaged to check CE compliance.
-Most probably 500kHz was a value, that's common for PSK and I didn't pay
-any attention to the datasheet. So I think, you are right: This is a bug
-and could be revised.
-Never the less: While using it in the lab, the transmission was fine and
-the signals over air have been clean and fitted to the recommondations
-of the CE.
+But there is not hard guarantee that the core_sibling mask and the
+frequency domains are aligned :-(
 
-> 
-> Concerning the TODO, I can see two solutions currently:
-> 
-> 1. Introduce a new rf69_get_bit_rate function which reads REG_BITRATE_MSB
->    and REG_BITRATE_LSB and returns reconstructed BRF.
->    We could use this function in rf69_set_deviation to retrieve the BRF.
-> 
-> + clean
-> + intuitive
-> - heavy / slow
-
-Why not: I like clean and intuitive implementations. Since it's used
-during configuration, we shouldn't be that squeezed in time, that we
-need to hurry.
-> 
-> 2. Store BRF somewhere in rf69.c, initialize it with the default value
->    (4.8 kb/s) and update it when rf69_set_bit_rate is called.
-> 
-> + easy
-> - dirty, doesn't fit well with the design of rf69.c (do not store
->   anything, simply expose API)
-
-Up to my experience, storing reg values is always a bit problematic,
-since the value may be outdated. And if you update the value every time
-you want to use it to be sure, it's correct, there is no win in having
-the copy of the reg value.
-So this wouldn't be my favourite.
-> 
-> I'd really prefer going for the first one, but I wanted to have your opinion
-> on this.
-
-Agree.
-
-> Thanks for your work !
-
-Your welcome :-)
-
-Marcus
+Hikey 620 is an example where they might be misaligned (I think)
