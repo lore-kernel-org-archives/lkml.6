@@ -3,127 +3,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D28C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F3AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F4A205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:54:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F4A205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C340C205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:55:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C340C205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937703AbeFSOya (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:54:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51768 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756852AbeFSOy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:54:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D8B780D;
-        Tue, 19 Jun 2018 07:54:28 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C304F3F557;
-        Tue, 19 Jun 2018 07:54:27 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, Xie XiuQi <xiexiuqi@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        <tnowicki@caviumnetworks.com>, <linux-pci@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        <linux-mm@kvack.org>, <wanghuiqiang@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zhongjiang <zhongjiang@huawei.com>,
-        linux-arm <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
-References: <a880df29-b656-d98d-3037-b04761c7ed78@huawei.com>
-        <20180611085237.GI13364@dhcp22.suse.cz>
-        <16c4db2f-bc70-d0f2-fb38-341d9117ff66@huawei.com>
-        <20180611134303.GC75679@bhelgaas-glaptop.roam.corp.google.com>
-        <20180611145330.GO13364@dhcp22.suse.cz>
-        <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
-        <87bmce60y3.fsf@e105922-lin.cambridge.arm.com>
-        <8b715082-14d4-f10b-d2d6-b23be7e4bf7e@huawei.com>
-        <20180619120714.GE13685@dhcp22.suse.cz>
-        <874lhz3pmn.fsf@e105922-lin.cambridge.arm.com>
-        <20180619140818.GA16927@e107981-ln.cambridge.arm.com>
-Date:   Tue, 19 Jun 2018 15:54:26 +0100
-In-Reply-To: <20180619140818.GA16927@e107981-ln.cambridge.arm.com> (Lorenzo
-        Pieralisi's message of "Tue, 19 Jun 2018 15:08:26 +0100")
-Message-ID: <87wouu3jz1.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S966353AbeFSOzA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 10:55:00 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53028 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937707AbeFSOy7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 10:54:59 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fVI1z-0000JF-D2; Tue, 19 Jun 2018 14:54:51 +0000
+Date:   Tue, 19 Jun 2018 15:54:51 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/39] vfs: export vfs_ioctl() to modules
+Message-ID: <20180619145451.GQ30522@ZenIV.linux.org.uk>
+References: <20180529144339.16538-1-mszeredi@redhat.com>
+ <20180529144339.16538-8-mszeredi@redhat.com>
+ <20180604084904.GF11333@infradead.org>
+ <20180610045657.GM30522@ZenIV.linux.org.uk>
+ <CAJfpegtGtAR25qWgpNisvL8F51h3K6s44zkWBSVVbqecut6tBQ@mail.gmail.com>
+ <20180611162412.GA7574@infradead.org>
+ <CAJfpegvxHs+MvC3N2Cbocp0UNrM47_GEUSV+mAx=8VVNDz7r_g@mail.gmail.com>
+ <20180619142421.GA16151@infradead.org>
+ <CAJfpegt7QYa1SD=uJ84RE9qLbJLMCW+viV=FN_TJJjCK4BERLQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegt7QYa1SD=uJ84RE9qLbJLMCW+viV=FN_TJJjCK4BERLQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> writes:
+On Tue, Jun 19, 2018 at 04:34:33PM +0200, Miklos Szeredi wrote:
+> On Tue, Jun 19, 2018 at 4:24 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> > On Tue, Jun 19, 2018 at 04:04:41PM +0200, Miklos Szeredi wrote:
+> >> FS_IOC*
+> >>
+> >> Haven't looked deeply.  For now overlayfs just implements
+> >> FS_IOC_{GET|SET}FLAGS because some of these flags are quite generic
+> >> and implementing them on the overlay is easy.
+> >>
+> >> Yes, turning into a method makes sense.
+> >
+> > Do you want to do this or should I send a patch?
+> 
+> Do it.  You are much more familiar with regular fs that implement
+> these ioctls.  Untangling overlap between FS_IOC_...FLAGS and
+> FS_IOC_...XATTR looks "interesting".
 
-> On Tue, Jun 19, 2018 at 01:52:16PM +0100, Punit Agrawal wrote:
->> Michal Hocko <mhocko@kernel.org> writes:
->> 
->> > On Tue 19-06-18 20:03:07, Xie XiuQi wrote:
->> > [...]
->> >> I tested on a arm board with 128 cores 4 numa nodes, but I set CONFIG_NR_CPUS=72.
->> >> Then node 3 is not be created, because node 3 has no memory, and no cpu.
->> >> But some pci device may related to node 3, which be set in ACPI table.
->> >
->> > Could you double check that zonelists for node 3 are generated
->> > correctly?
->> 
->> The cpus in node 3 aren't onlined and there's no memory attached - I
->> suspect that no zonelists are built for this node.
->> 
->> We skip creating a node, if the number of SRAT entries parsed exceeds
->> NR_CPUS[0]. This in turn prevents onlining the numa node and so no
->> zonelists will be created for it.
->> 
->> I think the problem will go away if the cpus are restricted via the
->> kernel command line by setting nr_cpus.
->> 
->> Xie, can you try the below patch on top of the one enabling memoryless
->> nodes? I'm not sure this is the right solution but at least it'll
->> confirm the problem.
->
-> This issue looks familiar (or at least related):
->
-> git log d3bd058826aa
-
-Indeed. Thanks for digging into this.
-
->
-> The reason why the NR_CPUS guard is there is to avoid overflowing
-> the early_node_cpu_hwid array.
-
-Ah right... I missed that. The below patch is definitely not what we
-want.
-
-> IA64 does something different in
-> that respect compared to x86, we have to have a look into this.
->
-> Regardless, AFAICS the proximity domains to nodes mappings should not
-> depend on CONFIG_NR_CPUS, it seems that there is something wrong in that
-> in ARM64 ACPI SRAT parsing.
-
-Not only SRAT parsing but it looks like there is a similar restriction
-while parsing the ACPI MADT in acpi_map_gic_cpu_interface().
-
-The incomplete parsing introduces a dependency on the ordering of
-entries being aligned between SRAT and MADT when NR_CPUS is
-restricted. We want to parse the entire table in both cases so that the
-code is robust to reordering of entries.
-
-In terms of $SUBJECT, I wonder if it's worth taking the original patch
-as a temporary fix (it'll also be easier to backport) while we work on
-fixing these other issues and enabling memoryless nodes.
+Suggestion: have that go through ->setattr(); that's what
+ATTR_ATTR_FLAG was supposed to be for, IIRC.
