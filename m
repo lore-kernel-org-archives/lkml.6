@@ -2,81 +2,110 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D043DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13887C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:24:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7995B20836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:23:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7995B20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id BC9CC20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:24:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QMRMagH3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9CC20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937832AbeFSNXI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:23:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755203AbeFSNXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:23:07 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F1E620652;
-        Tue, 19 Jun 2018 13:23:05 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 09:23:04 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-kernel@vger.kernel.org, "4 . 13+" <stable@vger.kernel.org>
-Subject: Re: [PATCH] printk/nmi: Prevent deadlock when serializing NMI
- backtraces
-Message-ID: <20180619092304.6b6ba390@gandalf.local.home>
-In-Reply-To: <20180619082716.GD405@jagdpanzerIV>
-References: <20180517143903.19339-1-pmladek@suse.com>
-        <20180605124729.3vix5nlkjpjzdljx@pathway.suse.cz>
-        <20180606051029.GA19211@tigerII.localdomain>
-        <20180606103356.GB19211@tigerII.localdomain>
-        <20180608104825.e7xoxteelaxnwx66@pathway.suse.cz>
-        <20180618063738.GC27996@jagdpanzerIV>
-        <20180618093917.qeaatnlqh5if6t3r@pathway.suse.cz>
-        <20180618100718.GA555@jagdpanzerIV>
-        <20180619075219.iq7ztwu43bn4uua7@pathway.suse.cz>
-        <20180619082716.GD405@jagdpanzerIV>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S937793AbeFSNYR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:24:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46074 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937149AbeFSNYP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:24:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=U57xOQyJi2xZKWb1RAkS8/IyrISuzfq2d4ES0Bn+lN8=; b=QMRMagH37aZQpQnPWZe+2Gfn1
+        53S+1TJtIacIqaxM/iKfHL1hYkIWddHBli4wisUbYwMKQo4OeQdBzirtF7Ayk9/AAjrIGTvDyQ8VA
+        I65J0sm1r4QOji+tctOTYMSMCB2ijZTKHcM0fyRjaZhz8uNQxuWNEhY6CHSgAjR1ROO07wOJ3xxtD
+        cvLrcGIMzNRXPb7za5v52SbESzCrQS04wmkcDF0YxCPUk1GQRbhWv//k4+v0vDz64Lzd+RDFnwBrw
+        spFYoocL9mXtwfAy2bXxWWvAjlmeSoCVZqpPrXRK/C0+6PADR/xDk5heeOMaKQzngAZy4dtSUkxcO
+        LDGATOgPg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVGbk-0002Bb-Kh; Tue, 19 Jun 2018 13:23:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 010AF202A607E; Tue, 19 Jun 2018 15:23:38 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 15:23:38 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180619132338.GF2476@hirez.programming.kicks-ass.net>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <20180619113408.GQ2458@hirez.programming.kicks-ass.net>
+ <20180619125857.GY17720@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619125857.GY17720@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018 17:27:16 +0900
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
-
-> On (06/19/18 09:52), Petr Mladek wrote:
-> > On Mon 2018-06-18 19:07:18, Sergey Senozhatsky wrote:  
-> > > On (06/18/18 11:39), Petr Mladek wrote:
-> > > [..]
-> > > 
-> > > Hmm. Can't answer right now :)  
+On Tue, Jun 19, 2018 at 01:58:58PM +0100, Quentin Perret wrote:
+> On Tuesday 19 Jun 2018 at 13:34:08 (+0200), Peter Zijlstra wrote:
+> > On Mon, May 21, 2018 at 03:24:58PM +0100, Quentin Perret wrote:
+> > > +struct em_freq_domain *em_cpu_get(int cpu)
+> > > +{
+> > > +	struct em_freq_domain *fd;
+> > > +	unsigned long flags;
+> > > +
+> > > +	read_lock_irqsave(&em_data_lock, flags);
+> > > +	fd = per_cpu(em_data, cpu);
+> > > +	read_unlock_irqrestore(&em_data_lock, flags);
 > > 
-> > Please, let me know what name you would like ;-)  
+> > Why can't this use RCU? This is the exact thing read_locks are terrible
+> > at and RCU excells at.
 > 
-> :) Wow, it's hard. Maybe we can derive some bits from the ftrace_dump()
-> function name? Dunno... Does printk_dump_nmi_enter() sound terrible?
+> So the idea was that clients (the scheduler for ex) can get a reference
+> to a frequency domain object once, and they're guaranteed it always
+> exists without asking for it again.
 > 
-> Maybe Steven has some opinions on this?
+> For example, my proposal was to have the scheduler (patch 05) build its
+> own private list of frequency domains on which it can iterate efficiently
+> in the wake-up path. If we protect this per_cpu variable with RCU, then
+> this isn't possible any-more. The scheduler will have to re-ask
+> em_cpu_get() at every wake-up, and that makes iterating over frequency
+> domains a whole lot more complex.
 > 
+> Does that make any sense ?
 
-What exactly is the question?
+None what so ever... The lock doesn't guarantee stability any more than
+RCU does.
 
-Also, from a previous email in this thread, if you have to risk
-interleaved output to solve a deadlock, then just do that.
+If you hand out the pointer and then drop the read-lock, the write-lock
+can proceed and change the pointer right after you.
 
--- Steve
+The very easiest solution is to never change the data, as I think was
+suggested elsewhere in the thread. Construct the thing once and then
+never mutate.
