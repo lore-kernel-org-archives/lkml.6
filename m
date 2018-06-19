@@ -6,108 +6,272 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCB5C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BFEC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B19220693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:44:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D5BE20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:48:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gsnfj8m2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B19220693
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DtD7qmKq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5BE20693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755544AbeFSEoI (ORCPT
+        id S1755559AbeFSEr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 00:44:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40284 "EHLO
+        Tue, 19 Jun 2018 00:47:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40416 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeFSEoG (ORCPT
+        with ESMTP id S1750961AbeFSEr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 00:44:06 -0400
+        Tue, 19 Jun 2018 00:47:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lpiOEoN0tnNeupWMcASW5+UoQgmZUij+2yCaDmaxPRo=; b=gsnfj8m2hjlvGcr7XgEEIptWKw
-        v/k1PftP2iuv5IPXVVvajtmsALJ1I69spvsJ4Wh1OzvcIVhSAWVqNK9ztp8kipy2gKDC0Dga9Zv8j
-        56shE9An7l5nVAHUIXwT8lCGbQrfP1VBOEiSPMFbONy5JTTL9deyrghZTzHbn0oFjInTe3d/KymBd
-        07Ey2NvcxkzEnVCbV0e3jCtEXpZcG/oP/xYBdVOZiV+b49SrtMprJsYq+MrYCEgm8ZsZR3vPHsQKG
-        C/wvZfzV7XFh9Syqs3+fwp8X1hxS6dCEkd6lWdFZQg08wxBjVQccHt+ri7fc2RxCWLmn4bZD1yrRC
-        tFqNubew==;
-Received: from 089144192009.atnat0001.highway.a1.net ([89.144.192.9] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fV8Us-0004r5-1W; Tue, 19 Jun 2018 04:44:02 +0000
-Date:   Tue, 19 Jun 2018 06:43:58 +0200
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6ayh7YIB9WJl1IF9jrY0N6lmM2htfsp1Vf5wRWtiWw4=; b=DtD7qmKqjq3abNWp9vwpA7RW0
+        /eDBvSLJiaYiYb5cUbzG44GgSP+nsbTqnq8683aPy6pxt9gCMVSRziW13wxR+FF5WxdQCFR1Sjn42
+        n9kkB1J+mg/ZCGX0fDJOPqAqouxLgw7ilMR2e3FkWx6EE0cwuKcTXnGFM0W06+7lHiZIy4a72KZaa
+        +3eePCRMQ/0gb4reIKIZ6+D4LyjiR9zs1iBiekDF7k51Yr5umB1dfVdbVK3C4h1VPnE1k9KboxXto
+        5hfq/5rgrtVgH9QAmQQGK+/zGGLIUfsuywqS3S1dkbeDvMs3jDYoaYZgKK7+fQkETz0nMVjfpJGOF
+        r0BYJ1dYw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fV8YX-0006tX-3R; Tue, 19 Jun 2018 04:47:49 +0000
+Date:   Mon, 18 Jun 2018 21:47:48 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] dma-mapping file renames for Linux 4.18
-Message-ID: <20180619044358.snyej666melspv46@infradead.org>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [RFC PATCH 0/5] kbuild: build modules from code in multiple
+ directories.
+Message-ID: <20180619044748.GA18671@infradead.org>
+References: <152929708853.17463.17302660556961083137.stgit@noble>
+ <20180618082017.GA4752@infradead.org>
+ <87po0ne7zw.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <87po0ne7zw.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Jun 19, 2018 at 02:05:23PM +1000, NeilBrown wrote:
+> From: NeilBrown <neilb@suse.com>
+> Date: Tue, 19 Jun 2018 13:59:16 +1000
+> Subject: [PATCH] kbuild/xfs: example modobj-m conversion
+> 
+> This is a demonstration patch to show how
+> xfs can be changed to make use of the proposed modobj-m=
+> functionality, should the xfs developers want that.
 
-below is a rename of the assorted dma-mapping files to that they live
-under kernel/dma and lose their dma-* prefixes.  If there is any time
-to do this it is right after -rc1, so let me know if this is something
-you'd take.
+Well, IFF we go with this new functionality I think everyone should
+be using it instead of the current hacks.
+
+So text like the above should be in the series cover letter, and this
+patch should have an actual description..
+
+I see no argument against these changes, but I've also added the XFS
+list.
+
+> 
+> Signed-off-by: NeilBrown <neilb@suse.com>
+> ---
+>  fs/xfs/Makefile        | 78 ++------------------------------------------------
+>  fs/xfs/libxfs/Makefile | 43 ++++++++++++++++++++++++++++
+>  fs/xfs/scrub/Makefile  | 29 +++++++++++++++++++
+>  3 files changed, 74 insertions(+), 76 deletions(-)
+>  create mode 100644 fs/xfs/libxfs/Makefile
+>  create mode 100644 fs/xfs/scrub/Makefile
+> 
+> diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+> index 2f3f75a7f180..0ba854045fe9 100644
+> --- a/fs/xfs/Makefile
+> +++ b/fs/xfs/Makefile
+> @@ -15,47 +15,7 @@ obj-$(CONFIG_XFS_FS)		+= xfs.o
+>  xfs-y				+= xfs_trace.o
+>  
+>  # build the libxfs code first
+> -xfs-y				+= $(addprefix libxfs/, \
+> -				   xfs_ag.o \
+> -				   xfs_alloc.o \
+> -				   xfs_alloc_btree.o \
+> -				   xfs_attr.o \
+> -				   xfs_attr_leaf.o \
+> -				   xfs_attr_remote.o \
+> -				   xfs_bit.o \
+> -				   xfs_bmap.o \
+> -				   xfs_bmap_btree.o \
+> -				   xfs_btree.o \
+> -				   xfs_da_btree.o \
+> -				   xfs_da_format.o \
+> -				   xfs_defer.o \
+> -				   xfs_dir2.o \
+> -				   xfs_dir2_block.o \
+> -				   xfs_dir2_data.o \
+> -				   xfs_dir2_leaf.o \
+> -				   xfs_dir2_node.o \
+> -				   xfs_dir2_sf.o \
+> -				   xfs_dquot_buf.o \
+> -				   xfs_ialloc.o \
+> -				   xfs_ialloc_btree.o \
+> -				   xfs_iext_tree.o \
+> -				   xfs_inode_fork.o \
+> -				   xfs_inode_buf.o \
+> -				   xfs_log_rlimit.o \
+> -				   xfs_ag_resv.o \
+> -				   xfs_rmap.o \
+> -				   xfs_rmap_btree.o \
+> -				   xfs_refcount.o \
+> -				   xfs_refcount_btree.o \
+> -				   xfs_sb.o \
+> -				   xfs_symlink_remote.o \
+> -				   xfs_trans_resv.o \
+> -				   xfs_types.o \
+> -				   )
+> -# xfs_rtbitmap is shared with libxfs
+> -xfs-$(CONFIG_XFS_RT)		+= $(addprefix libxfs/, \
+> -				   xfs_rtbitmap.o \
+> -				   )
+> +xfs-y				+= libxfs/
+>  
+>  # highlevel code
+>  xfs-y				+= xfs_aops.o \
+> @@ -127,38 +87,4 @@ xfs-$(CONFIG_SYSCTL)		+= xfs_sysctl.o
+>  xfs-$(CONFIG_COMPAT)		+= xfs_ioctl32.o
+>  xfs-$(CONFIG_EXPORTFS_BLOCK_OPS)	+= xfs_pnfs.o
+>  
+> -# online scrub/repair
+> -ifeq ($(CONFIG_XFS_ONLINE_SCRUB),y)
+> -
+> -# Tracepoints like to blow up, so build that before everything else
+> -
+> -xfs-y				+= $(addprefix scrub/, \
+> -				   trace.o \
+> -				   agheader.o \
+> -				   alloc.o \
+> -				   attr.o \
+> -				   bmap.o \
+> -				   btree.o \
+> -				   common.o \
+> -				   dabtree.o \
+> -				   dir.o \
+> -				   ialloc.o \
+> -				   inode.o \
+> -				   parent.o \
+> -				   refcount.o \
+> -				   rmap.o \
+> -				   scrub.o \
+> -				   symlink.o \
+> -				   )
+> -
+> -xfs-$(CONFIG_XFS_RT)		+= scrub/rtbitmap.o
+> -xfs-$(CONFIG_XFS_QUOTA)		+= scrub/quota.o
+> -
+> -# online repair
+> -ifeq ($(CONFIG_XFS_ONLINE_REPAIR),y)
+> -xfs-y				+= $(addprefix scrub/, \
+> -				   agheader_repair.o \
+> -				   repair.o \
+> -				   )
+> -endif
+> -endif
+> +xfs-$(CONFIG_XFS_ONLINE_SCRUB)	+= scrub/
+> diff --git a/fs/xfs/libxfs/Makefile b/fs/xfs/libxfs/Makefile
+> new file mode 100644
+> index 000000000000..9b90c289bdda
+> --- /dev/null
+> +++ b/fs/xfs/libxfs/Makefile
+> @@ -0,0 +1,43 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +ccflags-y += -I$(src)/..
+> +
+> +# xfs_rtbitmap is shared with libxfs
+> +xobj-$(CONFIG_XFS_RT)		+= xfs_rtbitmap.o
+> +
+> +modobj-$(CONFIG_XFS_FS) +=	   xfs_ag.o \
+> +				   xfs_alloc.o \
+> +				   xfs_alloc_btree.o \
+> +				   xfs_attr.o \
+> +				   xfs_attr_leaf.o \
+> +				   xfs_attr_remote.o \
+> +				   xfs_bit.o \
+> +				   xfs_bmap.o \
+> +				   xfs_bmap_btree.o \
+> +				   xfs_btree.o \
+> +				   xfs_da_btree.o \
+> +				   xfs_da_format.o \
+> +				   xfs_defer.o \
+> +				   xfs_dir2.o \
+> +				   xfs_dir2_block.o \
+> +				   xfs_dir2_data.o \
+> +				   xfs_dir2_leaf.o \
+> +				   xfs_dir2_node.o \
+> +				   xfs_dir2_sf.o \
+> +				   xfs_dquot_buf.o \
+> +				   xfs_ialloc.o \
+> +				   xfs_ialloc_btree.o \
+> +				   xfs_iext_tree.o \
+> +				   xfs_inode_fork.o \
+> +				   xfs_inode_buf.o \
+> +				   xfs_log_rlimit.o \
+> +				   xfs_ag_resv.o \
+> +				   xfs_rmap.o \
+> +				   xfs_rmap_btree.o \
+> +				   xfs_refcount.o \
+> +				   xfs_refcount_btree.o \
+> +				   xfs_sb.o \
+> +				   xfs_symlink_remote.o \
+> +				   xfs_trans_resv.o \
+> +				   xfs_types.o \
+> +				   $(xobj-y)
+> diff --git a/fs/xfs/scrub/Makefile b/fs/xfs/scrub/Makefile
+> new file mode 100644
+> index 000000000000..f91818a0e6ee
+> --- /dev/null
+> +++ b/fs/xfs/scrub/Makefile
+> @@ -0,0 +1,29 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +# Tracepoints like to blow up, so build that before everything else
+> +
+> +ccflags-y += -I$(src)/..
+> +ccflags-y += -I$(src)/../libxfs
+> +
+> +xobj-$(CONFIG_XFS_RT)		+= rtbitmap.o
+> +xobj-$(CONFIG_XFS_QUOTA)	+= quota.o
+> +xobj-$(CONFIG_XFS_ONLINE_REPAIR)+= agheader_repair.o \
+> +				   repair.o
+> +
+> +modobj-$(CONFIG_XFS_FS) +=	   trace.o \
+> +				   agheader.o \
+> +				   alloc.o \
+> +				   attr.o \
+> +				   bmap.o \
+> +				   btree.o \
+> +				   common.o \
+> +				   dabtree.o \
+> +				   dir.o \
+> +				   ialloc.o \
+> +				   inode.o \
+> +				   parent.o \
+> +				   refcount.o \
+> +				   rmap.o \
+> +				   scrub.o \
+> +				   symlink.o \
+> +				   $(xobj-y)
+> -- 
+> 2.14.0.rc0.dirty
+> 
 
 
-The following changes since commit be779f03d563981c65cc7417cc5e0dbbc5b89d30:
-
-  Merge tag 'kbuild-v4.18-2' of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild (2018-06-13 08:40:34 -0700)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/hch/dma-mapping.git for-linus
-
-for you to fetch changes up to cf65a0f6f6ff7631ba0ac0513a14ca5b65320d80:
-
-  dma-mapping: move all DMA mapping code to kernel/dma (2018-06-14 08:50:37 +0200)
-
-----------------------------------------------------------------
-Christoph Hellwig (2):
-      dma-mapping: use obj-y instead of lib-y for generic dma ops
-      dma-mapping: move all DMA mapping code to kernel/dma
-
- Documentation/driver-api/infrastructure.rst        |  4 +-
- MAINTAINERS                                        |  9 +---
- drivers/base/Makefile                              |  3 --
- include/linux/dma-contiguous.h                     |  2 +-
- init/Kconfig                                       |  4 --
- kernel/Makefile                                    |  1 +
- kernel/dma/Kconfig                                 | 50 ++++++++++++++++++++++
- kernel/dma/Makefile                                | 11 +++++
- .../base/dma-coherent.c => kernel/dma/coherent.c   |  0
- .../dma-contiguous.c => kernel/dma/contiguous.c    |  0
- lib/dma-debug.c => kernel/dma/debug.c              |  0
- lib/dma-direct.c => kernel/dma/direct.c            |  0
- drivers/base/dma-mapping.c => kernel/dma/mapping.c |  2 +-
- lib/dma-noncoherent.c => kernel/dma/noncoherent.c  |  0
- {lib => kernel/dma}/swiotlb.c                      |  0
- lib/dma-virt.c => kernel/dma/virt.c                |  2 -
- lib/Kconfig                                        | 47 +-------------------
- lib/Makefile                                       |  6 ---
- 18 files changed, 69 insertions(+), 72 deletions(-)
- create mode 100644 kernel/dma/Kconfig
- create mode 100644 kernel/dma/Makefile
- rename drivers/base/dma-coherent.c => kernel/dma/coherent.c (100%)
- rename drivers/base/dma-contiguous.c => kernel/dma/contiguous.c (100%)
- rename lib/dma-debug.c => kernel/dma/debug.c (100%)
- rename lib/dma-direct.c => kernel/dma/direct.c (100%)
- rename drivers/base/dma-mapping.c => kernel/dma/mapping.c (99%)
- rename lib/dma-noncoherent.c => kernel/dma/noncoherent.c (100%)
- rename {lib => kernel/dma}/swiotlb.c (100%)
- rename lib/dma-virt.c => kernel/dma/virt.c (98%)
+---end quoted text---
