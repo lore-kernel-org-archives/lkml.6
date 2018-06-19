@@ -5,35 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C64CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FACC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C368920874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:02:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C368920874
+	by mail.kernel.org (Postfix) with ESMTP id 7A89120883
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:03:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A89120883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966406AbeFSNC6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:02:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39692 "EHLO mx2.suse.de"
+        id S966436AbeFSNDC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:03:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39738 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966110AbeFSNC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:02:28 -0400
+        id S966110AbeFSNC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:02:59 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A86D2ADD3;
-        Tue, 19 Jun 2018 13:02:27 +0000 (UTC)
-Subject: Re: [PATCH v5] scsi: xen-scsifront: add error handling for
- xenbus_printf
+        by mx2.suse.de (Postfix) with ESMTP id AF481ADD3;
+        Tue, 19 Jun 2018 13:02:58 +0000 (UTC)
+Subject: Re: [PATCH v2] xen: add error handling for xenbus_printf
 To:     Zhouyang Jia <jiazhouyang09@gmail.com>
 Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1528774962-39173-1-git-send-email-jiazhouyang09@gmail.com>
- <1529082301-59038-1-git-send-email-jiazhouyang09@gmail.com>
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <1528775073-39322-1-git-send-email-jiazhouyang09@gmail.com>
+ <1529019293-55493-1-git-send-email-jiazhouyang09@gmail.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -67,12 +63,12 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <eb687243-28c7-e6cd-bcf1-c1351e7f4aa4@suse.com>
-Date:   Tue, 19 Jun 2018 15:02:27 +0200
+Message-ID: <4fb2ab48-f6a7-d379-063b-10bd2c91e390@suse.com>
+Date:   Tue, 19 Jun 2018 15:02:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1529082301-59038-1-git-send-email-jiazhouyang09@gmail.com>
+In-Reply-To: <1529019293-55493-1-git-send-email-jiazhouyang09@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
@@ -81,7 +77,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/06/18 19:05, Zhouyang Jia wrote:
+On 15/06/18 01:34, Zhouyang Jia wrote:
 > When xenbus_printf fails, the lack of error-handling code may
 > cause unexpected results.
 > 
