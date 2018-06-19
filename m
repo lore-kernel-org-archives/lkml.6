@@ -3,143 +3,279 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D3EC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB37C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3B952083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDD272083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:10:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="DvZkai51"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B952083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KPsRcFPo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD272083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965060AbeFSHJO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 03:09:14 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51978 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755616AbeFSHJM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:09:12 -0400
-Received: by mail-wm0-f65.google.com with SMTP id r15-v6so18005203wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 00:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=APt0PvZu7ZmlxqqAw9tyeWK+TuDbQ94fn8j2wR4tetE=;
-        b=DvZkai51m26blz4NBrllOiBNfSpxM0hcvlkOJO+Y8ShjciGfTLLmeZGjm3t7i9uJVv
-         ch0RHdYE4wSvbQKQ9KdcmzQurk4AQ9Ybcd/wdQjj1RFPGtJ8QQdwUmQtsNjNuz/pLLsb
-         HIo+T07v2j5rFj0E112zA/+8hInN3J5t3oNEnPZmKfe6MsTtBdw7k+eZPTNbQ/HOIoYI
-         g3rb7F/oOHtVnj2Cxs3t/zmlXGviEN2wE52bxOV6XdHDq2gxfAIphEZa8ilpJdKvol1C
-         223wqVJHl3AszzNbLFevj10CXMyzXM2CUzchUASZJYu463sHw42Zkz3k+AtRvhQDonLQ
-         PPPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=APt0PvZu7ZmlxqqAw9tyeWK+TuDbQ94fn8j2wR4tetE=;
-        b=Je48YMBHWr5z/f5F41vUgVnZoZsx4NXzZLrqeq3yUidDmWNPaYyKi4aj0SEpF+wAXZ
-         AbQumfHtSXaUsxQkT0OE5clO2ihpZPfS73R81IuHWWmfeKVR+nnFIdfWFhDbi5s8aJ0N
-         CTEAVc+2eljc8Fch06b0PLrOWxkyCBwc1UCvUv4ikO6zFyfeyJWEGdaNwJJa0TuyE1tY
-         bxcVSTJoGbFBTtFI9E7QKi4rvoUgROep1SuVyJGD1LrI+zcK+yHY5wKbtRI1pXaoO+sP
-         AufkZY+Qp94NOdNlOPm0uYx5Ugtksl3CPCyejEesXP73/aubVHUm7uQT0T/UnCj7ZyT2
-         9AwQ==
-X-Gm-Message-State: APt69E01z0b+yOe9XqzOE6j0FZ4AOfW+4p1mdcP4OHnInMoR8v7Aectk
-        bT/8yImD4NAardgSA4DeVltDoeOiJamyrTZD+jyRoA==
-X-Google-Smtp-Source: ADUXVKIoDd20u8a3zNqhjO8zENZYpeUxTPG7OGo1G51vTV+uFJ/lgvUyBJ2x5U4osHKOJ5Davf1rDnJjs4XISjibrOo=
-X-Received: by 2002:a50:c8cd:: with SMTP id k13-v6mr13539372edh.47.1529392151301;
- Tue, 19 Jun 2018 00:09:11 -0700 (PDT)
+        id S1755844AbeFSHKn (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 03:10:43 -0400
+Received: from mail-ve1eur01on0060.outbound.protection.outlook.com ([104.47.1.60]:1056
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750961AbeFSHKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 03:10:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DR9FK6clt3/GgRQo+ZyvCwYIWsWNiw9x+KoUbHFCUP0=;
+ b=KPsRcFPoLbchXmORBnng/Cdela/o7d5nSLY036Pq4FJTl+V9HwYYOVkR9avokPyzHGC8erfSbEM7c8snykF8rZAF1DAvd7aFp0veXDzxDTwQ8dQSSCT+Y3W7RjplLaMzPdebbARGWNJdI8u/swWHqZ3ziQgOs48KpSgWg7aVXpI=
+Received: from VI1PR0402MB2845.eurprd04.prod.outlook.com (10.175.23.138) by
+ VI1PR0402MB3869.eurprd04.prod.outlook.com (52.134.16.155) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.16; Tue, 19 Jun 2018 07:10:37 +0000
+Received: from VI1PR0402MB2845.eurprd04.prod.outlook.com
+ ([fe80::ec9c:93f4:5969:7adb]) by VI1PR0402MB2845.eurprd04.prod.outlook.com
+ ([fe80::ec9c:93f4:5969:7adb%4]) with mapi id 15.20.0863.016; Tue, 19 Jun 2018
+ 07:10:37 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Fabio Estevam <fabio.estevam@nxp.com>,
+        David Wolfe <david.wolfe@nxp.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "richard@nod.at" <richard@nod.at>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        Han Xu <han.xu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        Frieder Schrempf <frieder.schrempf@exceet.de>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>
+Subject: RE: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Topic: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Index: AQHT+BiB2hXNm2lXyUydyOG4FdlBjqRWHnBAgABANgCABEvZ8IAAFd0AgAAehWCAAAtnAIAAAPSwgAFUQ+CAAAoIAIAAGBOggAT9CYCAAATqYIAADVmAgASumwCAAGHGAIAAwy3A
+Date:   Tue, 19 Jun 2018 07:10:37 +0000
+Message-ID: <VI1PR0402MB2845767966A437E0D376219799700@VI1PR0402MB2845.eurprd04.prod.outlook.com>
+References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
+        <DB6PR0402MB283845A1A98672FE63C89550997B0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180608145130.09f979f9@bbrezillon>
+        <DB6PR0402MB2838D514CF38AC5E6C004E8499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180611094616.5c8f82cf@bbrezillon>
+        <DB6PR0402MB283825171DF93AD3C8590DD799780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180611121618.40f4b609@bbrezillon>
+        <DB6PR0402MB28388D9DEB86629BB58DD5E499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <DB6PR0402MB2838563F1BA71A9A21ABBE01997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180612091328.67734adb@bbrezillon>
+        <DB6PR0402MB28387FE79F2742C9BEBD4037997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180615145019.734f23a9@bbrezillon>
+        <DB6PR0402MB28382767652782E0CC6C14A0997C0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180615155541.4f43e9bb@bbrezillon>
+        <DB6PR0402MB2838C4F67D17337ADBC5D5F899710@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+ <20180618211536.0bf44f55@bbrezillon>
+In-Reply-To: <20180618211536.0bf44f55@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3869;7:1TKtUK6JGTHByga6TDodUVy5aQylMPXzMRTvDa5sB8R8dNPoskduPXja5fi6qG1CvtuDYMlPa/+m0ohJAJvp6x0fan1kYUHiRM9DjE1HEetXCMWZ2/IRx1O5nSwWqblRF7SuN6hy1ZlJPx1/0TOZLDUbpgLnWCtIUDINZeqBhyAw/t/Wpi5QdR2rtCOH3BWkGk3HQiWEf8aTUXsyaGowyptBO5py7kHfBtpJ16CoZmXLYWt66KKNi1cja5um0AVG
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: ba306319-60da-47fe-810e-08d5d5b3c203
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3869;
+x-ms-traffictypediagnostic: VI1PR0402MB3869:
+x-microsoft-antispam-prvs: <VI1PR0402MB38698BFF80239090751754B599700@VI1PR0402MB3869.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(258649278758335)(264314650089876);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:VI1PR0402MB3869;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3869;
+x-forefront-prvs: 07083FF734
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39380400002)(39860400002)(396003)(376002)(13464003)(189003)(199004)(316002)(33656002)(551984002)(105586002)(106356001)(3280700002)(7736002)(6436002)(74316002)(6116002)(3846002)(305945005)(81166006)(8676002)(54906003)(486006)(446003)(476003)(11346002)(186003)(8936002)(229853002)(81156014)(3660700001)(99286004)(93886005)(2906002)(4326008)(7696005)(59450400001)(6506007)(53546011)(55236004)(26005)(97736004)(102836004)(76176011)(14454004)(55016002)(25786009)(39060400002)(53936002)(9686003)(6246003)(478600001)(6306002)(5660300001)(966005)(7416002)(6916009)(5250100002)(68736007)(86362001)(66066001)(2900100001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3869;H:VI1PR0402MB2845.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: WVwNEDXJoareSHqg6qWIHVxQYFldsTp5NrnA3soK7RfAmyFBTx6YJYKcTwWqwLWdMfSfpKGf0+0oNbgRlF5rdzIJkrSvwbph4IYh5/POk7S3FlZ41y+NR41kYld9BWFd8vp+8HY1ntNvFUuXwN5v3KwHaAqdD9mH2Rh63tbd21Y/1jhJeG8ryXjqy8kDlZEpGSYBCWLZ5zEa2YoNsYNZD9bvH8uC3Crf7js90l13cJw6/VsBU+L9KDR8QkOXLyI+U48ehd7I7ucPLZcAMvbmu2Kek1zzLEjzHdLT8noM3Ilw/B53AdK73SoglfMdsZPRHDdGoxKFm5GxcLTBmdIOgw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a50:90d3:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 00:09:10
- -0700 (PDT)
-In-Reply-To: <CAB4CAwdKJiuEiV1CtoyYTZTatRt73BQbRX5kyEtpqNj8STj5-w@mail.gmail.com>
-References: <20180611071838.47945-1-chiu@endlessm.com> <CAHp75VdfUO9rS-=nn+Ffe8bMEbCO-0xe8QBVqsJAZVFTMYkNxg@mail.gmail.com>
- <CAB4CAwdKJiuEiV1CtoyYTZTatRt73BQbRX5kyEtpqNj8STj5-w@mail.gmail.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Tue, 19 Jun 2018 15:09:10 +0800
-Message-ID: <CAB4CAweu0z5XjH0hTB9t=RA37KSRLsLGSAAeJLupLNcyV6LVBg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] platform/x86: asus-wmi: Call led hw_changed API on
- kbd brightness change
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba306319-60da-47fe-810e-08d5d5b3c203
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2018 07:10:37.1633
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3869
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 2:58 PM, Chris Chiu <chiu@endlessm.com> wrote:
-> On Wed, Jun 13, 2018 at 8:49 PM, Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Mon, Jun 11, 2018 at 10:18 AM, Chris Chiu <chiu@endlessm.com> wrote:
->>> Make asus-wmi notify on hotkey kbd brightness changes, listen for
->>> brightness events and update the brightness directly in the driver.
->>
->>> For this purpose, bound check on brightness in kbd_led_set must be
->>> based on the same data type to prevent illegal value been set.
->>
->>> @@ -497,9 +498,9 @@ static void kbd_led_set(struct led_classdev *led_cdev,
->>>
->>>         asus = container_of(led_cdev, struct asus_wmi, kbd_led);
->>>
->>> -       if (value > asus->kbd_led.max_brightness)
->>> +       if ((int)value > (int)asus->kbd_led.max_brightness)
->>>                 value = asus->kbd_led.max_brightness;
->>> -       else if (value < 0)
->>> +       else if ((int)value < 0)
->>>                 value = 0;
->>
->> I didn't quite understand this part of the problem.
->> Does it exist in the current code? Can it be split to a separate change?
->>
->> Can we avoid those ugly castings?
->>
->
-> I'd like to remove the ugly castings but there's a concern I may need some
-> advices. I don't know whether if the bound check logic ever verified before.
-> Maybe the value passed via sysfs is already correctly bounded?
->
-> When the kbd_led_wk comes to -1, `if (value > asus->kbd_led.max_brightness)`
-> returns true and `if (value < 0)` return false which confused me. It
-> should relate
-> to the 2nd argument type is enum led_brightness which I consider it as integer.
-> The unexpected return value cause the KBD_BRTDWN cyclic, 3->2->0->-1
-> (3 again in kbd_led_set)->2->1. After applying the casting on both operands
-> `if ((int)value > (int)asus->kbd_led.max_brightness)`, the other
-> unexpected false
-> returned by `if (value < 0)` makes each KBD_BRTDOWN to be 3 -> 2 -> 1 -> 0 ->
-> -1 -> -2 -> -3 ->..... That's what the ugly casting for. I used to
-> tend to do boundary
-> limit before calling kbd_led_set as follows
->
-> kbd_led_set(&asus->kbd_led, MIN(asus->kbd_led_wk + 1,
-> asus->kbd_led.max_brightness);
-> and
-> kbd_led_set(&asus->kbd_led, MAX(asus->kbd_led_wk - 1, 0));
->
-> If so, the boundary limit logic would be totally redundant but I think
-> it may be still
-> useful to check the value passed from sysfs? Any suggestion which one would
-> be better?
->
-> Chris
->
->> --
->> With Best Regards,
->> Andy Shevchenko
+Hi Boris,
 
-Gentle ping.
+-----Original Message-----
+From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]=20
+Sent: Tuesday, June 19, 2018 12:46 AM
+To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>; David Wolfe <david.wolfe@nxp.com=
+>; dwmw2@infradead.org; richard@nod.at; Prabhakar Kushwaha <prabhakar.kushw=
+aha@nxp.com>; Han Xu <han.xu@nxp.com>; linux-kernel@vger.kernel.org; linux-=
+spi@vger.kernel.org; marek.vasut@gmail.com; Frieder Schrempf <frieder.schre=
+mpf@exceet.de>; broonie@kernel.org; linux-mtd@lists.infradead.org; miquel.r=
+aynal@bootlin.com; computersforpeace@gmail.com
+Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI =
+controller
 
-Cheers.
+Hi Yogesh,
 
-Chris
+On Mon, 18 Jun 2018 13:32:27 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+
+> -----Original Message-----
+> From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> Sent: Friday, June 15, 2018 7:26 PM
+> To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; Fabio Estevam=20
+> <fabio.estevam@nxp.com>; David Wolfe <david.wolfe@nxp.com>;=20
+> dwmw2@infradead.org
+> Cc: richard@nod.at; Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>;=20
+> Han Xu <han.xu@nxp.com>; linux-kernel@vger.kernel.org;=20
+> linux-spi@vger.kernel.org; marek.vasut@gmail.com; Frieder Schrempf=20
+> <frieder.schrempf@exceet.de>; broonie@kernel.org;=20
+> linux-mtd@lists.infradead.org; miquel.raynal@bootlin.com;=20
+> computersforpeace@gmail.com
+> Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP=20
+> QuadSPI controller
+>=20
+> On Fri, 15 Jun 2018 13:42:12 +0000
+> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+>=20
+> > Hi Boris,
+> >=20
+> > I am still debugging the issue.
+> > With some analysis, able to check that proper values are not being writ=
+ten for QUADSPI_SFA2AD/ QUADSPI_SFB1AD/ QUADSPI_SFB2AD register.
+> >=20
+> > In current code, value of map_addr are being assigned to these register=
+.
+> >              map_addr =3D q->memmap_phy +
+> >                         2 * q->devtype_data->ahb_buf_size;
+> >=20
+> >      qspi_writel(q, map_addr, q->iobase + QUADSPI_SFA1AD + (i * 4));
+> >=20
+> > But instead of "q->devtype_data->ahb_buf_size" it should be flash size.=
+ =20
+>=20
+> No, because we're only using 2 * ->ahb_buf_size in the direct mapping for=
+ each device, and we're modifying the mapping dynamically based on the sele=
+cted device. Maybe we got the logic wrong though.
+>=20
+> Yes, for register QUADSPI_SFA2AD/ QUADSPI_SFB1AD/ QUADSPI_SFB2AD, we need=
+ to save starting actual address from where this flash is getting started.
+> Thus, if my first flash size is 64MB, then register QUADSPI_SFA2AD=20
+> would have value of q->memmap_phy + 0x4000000 i.e. (QUADSPI_SFA1AD + size=
+of First Flash) If second flash is of size 32MB, then register QUADSPI_SFB1=
+AD would have value of value of QUADSPI_SFA2AD + sizeof second flash.
+
+Again, no, that's not what I'm trying to do, and the fact that it worked fi=
+ne with CS0 makes me think you don't need to map the whole device to get it=
+ to work, just 2 * ->ahb_buf_size per device.
+
+>=20
+> > For my case flash size is 0x4000000 and with this hard coded value I am=
+ able to perform Write and Erase operation.
+> > One more change, I have to do is adding the flash_size when writing the=
+ base_address in SFAR register for case when "mem->spi->chip_select =3D=3D =
+1"
+> > 	qspi_writel(q, q->memmap_phy + 0x4000000, base + QUADSPI_SFAR);
+>=20
+> I don't want to expose the full device in the direct mapping yet (that's =
+part of the direct-mapping API I posted here [1]). What this version of the=
+ driver does is, map only 2 time the ahb_size so that we can bypass the int=
+ernal cache of the QSPI engine.
+>=20
+> To perform any operation on second flash, we need to provide it's base ad=
+dress should be saved in SFAR register for this particular operation.
+
+That's what we tried to do, we tried to make all CS start at 0 when they ar=
+e used and declare unused CS at having a size of 0.
+
+So, say you're trying to access CS1, you should have the following
+ranges:
+
+CS0: 0 -> 0 (size =3D 0)
+CS1: 0 -> 2 * ->ahb_buf_size (size =3D 2 * ->ahb_buf_size)
+CS2: 2 * ->ahb_buf_size -> 2 * ->ahb_buf_size (size =3D 0)
+CS3: 2 * ->ahb_buf_size -> 2 * ->ahb_buf_size (size =3D 0)
+
+now, if you're trying to access CS3:
+
+CS0: 0 -> 0 (size =3D 0)
+CS1: 0 -> 0 (size =3D 0)
+CS2: 0 -> 0 (size =3D 0)
+CS3: 0 -> 2 * ->ahb_buf_size (size =3D 2 * ->ahb_buf_size)
+
+maybe this approach does not work, but that's not clearly stated as 'not su=
+pported' in the datasheet.
+
+> Exposing only 2 time of ahb_size is design decision but value in SFAR reg=
+ister should be correct.
+>=20
+> >=20
+> > Thus, there should be mechanism or the entry in structure where we can =
+have the information of the size of the connected slave device. =20
+>=20
+> Because that's exactly the kind of thing I'd like to avoid. What if the d=
+evice is bigger than the reserved memory region? What if the sum of all dev=
+ices does not fit in there? Here I tried to support all cases by just mappi=
+ng the portion of memory we need.
+>=20
+> So IMO, there should be mechanism to have value of start address of each =
+slave device. This might can be done from DTS entry of each slave device co=
+nnected to the controller.
+
+Let's not put that in the DT. If we really can't re-use 0 as the start addr=
+ess and make some ranges 0 in size, then let's reserve 2 *
+->ahb_buf_size per chip, and be done with it.
+
+This should leave us enough space in the AHB mem range to then support temp=
+orary direct mappings through the direct mapping API.
+
+Let us take below layout of memory address space map.
+QuadSPI Controller can access range from 0x2000_0000 - 0x2FFF_FFFF i.e. 256=
+ MB address space reserved and it is having 4 slave devices connected.
+These slave devices[of size 64MB, 64MB, 32MB and 64MB ] are connected at be=
+low address
+0x2000_0000, 0x2400_0000, 0x2A00_0000, 0x2C00_0000
+i.e. there is gap of 32MB from 0x2800_0000 to 0x29FF_FFFF.
+
+As per my understanding of the controller, flash XX top address, register s=
+hould have below values:
+  QUADSPI_SFA1AD - 0x0
+  QUADSPI_SFA2AD - 0x400_0000
+  QUADSPI_SFB1AD - 0xA00_0000
+  QUADSPI_SFB2AD - 0xC00_0000
+And Register QUADSPI_SFAR should point to the range for the flash in which =
+operation is happening.
+
+Please check Table10-32, page 1657, in [1] for more details on flash addres=
+s assignment.
+
+But say if I assign address to register QUADSPI_SFA2AD as "0 + 2 * ->ahb_bu=
+f_size" then this address value is not correct as per the value range expla=
+ined in above mentioned table.
+
+Regards
+Yogesh Gaur.
+
+Regards,
+
+Boris
+
+[1] https://www.nxp.com/docs/en/reference-manual/VFXXXRM.pdf
+
