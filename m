@@ -3,178 +3,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A64C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAF5C5AE59
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1AF2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:06:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1AF2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BC3F82075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 01:06:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC3F82075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937165AbeFSBGN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 21:06:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55194 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S937125AbeFSBGL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 21:06:11 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5J14n2k071759
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:06:11 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jpng8vu9d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:06:10 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 18 Jun 2018 21:06:10 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 18 Jun 2018 21:06:05 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5J164EJ19267860
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 19 Jun 2018 01:06:04 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73312B2065;
-        Mon, 18 Jun 2018 21:05:54 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D423B2066;
-        Mon, 18 Jun 2018 21:05:54 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.187.236])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 18 Jun 2018 21:05:54 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E5FF516C6B5C; Mon, 18 Jun 2018 18:08:03 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 18:08:03 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     kernel test robot <xiaolong.ye@intel.com>,
-        linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        mingo@redhat.com, Steven Rostedt <rostedt@goodmis.org>,
-        tglx@linutronix.de, lkp@01.org
-Subject: Re: [lkp-robot] [rcutorture]  46e26223e3:
- WARNING:at_kernel/rcu/rcutorture.c:#rcu_torture_stats_print
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180610234544.150933-2-joel@joelfernandes.org>
- <20180613065711.GZ16472@yexl-desktop>
- <20180613072948.GA142000@joelaf.mtv.corp.google.com>
- <20180618165646.GA3593@linux.vnet.ibm.com>
- <20180618222647.GA156172@joelaf.mtv.corp.google.com>
+        id S937190AbeFSBGx convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 21:06:53 -0400
+Received: from mga06.intel.com ([134.134.136.31]:4843 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937125AbeFSBGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 21:06:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 18:06:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,241,1526367600"; 
+   d="scan'208";a="58338136"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Jun 2018 18:06:51 -0700
+Received: from fmsmsx151.amr.corp.intel.com (10.18.125.4) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 18 Jun 2018 18:06:51 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ FMSMSX151.amr.corp.intel.com (10.18.125.4) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Mon, 18 Jun 2018 18:06:50 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.223]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.70]) with mapi id 14.03.0319.002;
+ Tue, 19 Jun 2018 09:06:49 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     "'Michael S. Tsirkin'" <mst@redhat.com>
+CC:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "peterx@redhat.com" <peterx@redhat.com>
+Subject: RE: [virtio-dev] Re: [PATCH v33 2/4] virtio-balloon:
+ VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Topic: [virtio-dev] Re: [PATCH v33 2/4] virtio-balloon:
+ VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Index: AQHUBGb1uIuE7GdLXUGMzLE4+zixk6RgrO+AgACbr0D//5LxAIAAh+EwgANlzICAAQ0KgA==
+Date:   Tue, 19 Jun 2018 01:06:48 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7396AA10C@shsmsx102.ccr.corp.intel.com>
+References: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com>
+ <1529037793-35521-3-git-send-email-wei.w.wang@intel.com>
+ <20180615144000-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7396A3D04@shsmsx102.ccr.corp.intel.com>
+ <20180615171635-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7396A5CB0@shsmsx102.ccr.corp.intel.com>
+ <20180618051637-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180618051637-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOWY2NzA0NDItOTM4YS00ZDg0LTg2YzUtZWFlMzY1ZGM5ZjhiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNFFRUnQyc045MnpxdlNiajVVZFpsb3lYdEQ4ak9wR1hrdFFSWUQwMjdGZDdtQ1Q4WlwvQk53eFVVYituRzRUT1MifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618222647.GA156172@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18061901-0068-0000-0000-0000030AF065
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009217; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01049004; UDB=6.00537468; IPR=6.00827977;
- MB=3.00021729; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-19 01:06:08
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061901-0069-0000-0000-000044BB7C82
-Message-Id: <20180619010803.GC3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-18_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806190011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 03:26:47PM -0700, Joel Fernandes wrote:
-> On Mon, Jun 18, 2018 at 09:56:46AM -0700, Paul E. McKenney wrote:
-> > > The reason for the rcutorture test failure could be that the default
-> > > kthread_prio for the system's RCU threads is set to 1 (unless overridden by
-> > > rcutree.kthread_prio) which is also equal to the priority of the rcutorture's
-> > > boost threads. Due to this the rcutorture test could starve the RCU threads
-> > > as well and defeat the boosting mechanism. I was able to solve a similar
-> > > issue by just passing rcutree.kthread_prio of 50 on the kernel command line.
-> > > 
-> > > Paul, would it be ok if we changed the default kthread_prio to something > 1
-> > > so that rcutorture can test properly without needing to pass any extra
-> > > rcutree.* parameters?
-> > > 
-> > > so something like this in kernel/rcu/tree.c ?
-> > > 
-> > > static int kthread_prio = IS_ENABLED(CONFIG_RCU_BOOST) ? 2 : 0;
-> > 
-> > Would it be possible to also condition this on rcutorture being built
-> > in?  Or are they doing modprobes for rcutorture?
+On Monday, June 18, 2018 10:29 AM, Michael S. Tsirkin wrote:
+> On Sat, Jun 16, 2018 at 01:09:44AM +0000, Wang, Wei W wrote:
+> > Not necessarily, I think. We have min(4m_page_blocks / 512, 1024) above,
+> so the maximum memory that can be reported is 2TB. For larger guests, e.g.
+> 4TB, the optimization can still offer 2TB free memory (better than no
+> optimization).
 > 
-> They seem to be doing built-in rcutorture tests. But I believe the same
-> problem would occur even if you used modules? I believe the fact that
-> rcutorture is a module or built-in wouldn't matter to the underlying issue
-> which is the RCU subsystems's threads are at too low of a priority
-> (rcutree.kthread_prio = 1).
+> Maybe it's better, maybe it isn't. It certainly muddies the waters even more.
+> I'd rather we had a better plan. From that POV I like what Matthew Wilcox
+> suggested for this which is to steal the necessary # of entries off the list.
 
-Understood...
+Actually what Matthew suggested doesn't make a difference here. That method always steal the first free page blocks, and sure can be changed to take more. But all these can be achieved via kmalloc by the caller which is more prudent and makes the code more straightforward. I think we don't need to take that risk unless the MM folks strongly endorse that approach.
 
-> If you agree with changing the default priority, I have included a patch
-> below for rcu/dev.
+The max size of the kmalloc-ed memory is 4MB, which gives us the limitation that the max free memory to report is 2TB. Back to the motivation of this work, the cloud guys want to use this optimization to accelerate their guest live migration. 2TB guests are not common in today's clouds. When huge guests become common in the future, we can easily tweak this API to fill hints into scattered buffer (e.g. several 4MB arrays passed to this API) instead of one as in this version.
 
-The problem is that without rcutorture, rcutree.kthread_prio=1 is a
-legitimate choice, and changing the default globally could be breaking
-someone.  So it would be far better to up the priority only during known
-rcutorture testing.
+This limitation doesn't cause any issue from functionality perspective. For the extreme case like a 100TB guest live migration which is theoretically possible today, this optimization helps skip 2TB of its free memory. This result is that it may reduce only 2% live migration time, but still better than not skipping the 2TB (if not using the feature).
 
-							Thanx, Paul
+So, for the first release of this feature, I think it is better to have the simpler and more straightforward solution as we have now, and clearly document why it can report up to 2TB free memory.
 
-> thanks,
-> 
->  - Joel
-> 
-> ---8<-----------------------
-> 
-> >From b0f4111ef1abd1c481c269fadb3535c83ab43c93 Mon Sep 17 00:00:00 2001
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> Date: Mon, 18 Jun 2018 15:13:10 -0700
-> Subject: [PATCH] rcu: Change default RCU kthread priority to 2
-> 
-> The current RT priority of 1 for RCU kthreads makes rcutorture's boost test
-> fail on systems where rcutree.kthread_prio isn't passed.
-> 
-> The rcutorture boost kthreads have the same priority as well (RT priority of
-> 1). Due to this, the rcutorture kthreads starve the RCU subsystem's kthreads
-> and causes rcutorture failures. This patch changes the priority of the RCU
-> subsystem's threads to a default RT priority of 2 so that rcutorture's
-> threads get preempted by them. Verified that the boost tests will pass with
-> this change.
-> 
-> Reported-by: Xiaolong Ye (via lkp-robot) <xiaolong.ye@intel.com>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  kernel/rcu/tree.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index deb2508be923..920c39e3f871 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -171,7 +171,7 @@ static void rcu_report_exp_rdp(struct rcu_state *rsp,
->  static void sync_sched_exp_online_cleanup(int cpu);
-> 
->  /* rcuc/rcub kthread realtime priority */
-> -static int kthread_prio = IS_ENABLED(CONFIG_RCU_BOOST) ? 1 : 0;
-> +static int kthread_prio = IS_ENABLED(CONFIG_RCU_BOOST) ? 2 : 0;
->  module_param(kthread_prio, int, 0644);
-> 
->  /* Delay in jiffies for grace-period initialization delays, debug only. */
-> -- 
-> 2.18.0.rc1.244.gcf134e6275-goog
-> 
 
+ 
+> If that doesn't fly, we can allocate out of the loop and just retry with more
+> pages.
+> 
+> > On the other hand, large guests being large mostly because the guests need
+> to use large memory. In that case, they usually won't have that much free
+> memory to report.
+> 
+> And following this logic small guests don't have a lot of memory to report at
+> all.
+> Could you remind me why are we considering this optimization then?
+
+If there is a 3TB guest, it is 3TB not 2TB mostly because it would need to use e.g. 2.5TB memory from time to time. In the worst case, it only has 0.5TB free memory to report, but reporting 0.5TB with this optimization is better than no optimization. (and the current 2TB limitation isn't a limitation for the 3TB guest in this case)
+
+Best,
+Wei
