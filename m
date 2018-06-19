@@ -3,202 +3,198 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFC3C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEA2C28CF3
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17DA920652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:15:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17DA920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8BB6920652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:16:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BB6920652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757351AbeFSVPD (ORCPT
+        id S1756803AbeFSVQ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:15:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58312 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755424AbeFSVPB (ORCPT
+        Tue, 19 Jun 2018 17:16:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755415AbeFSVQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:15:01 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fVNxj-0003va-6z; Tue, 19 Jun 2018 23:14:51 +0200
-Date:   Tue, 19 Jun 2018 23:14:50 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
-        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: Re: [PATCH v10 2/7] time: sync read_boot_clock64() with persistent
- clock
-In-Reply-To: <20180615174204.30581-3-pasha.tatashin@oracle.com>
-Message-ID: <alpine.DEB.2.21.1806192129460.10546@nanos.tec.linutronix.de>
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com> <20180615174204.30581-3-pasha.tatashin@oracle.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 19 Jun 2018 17:16:51 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5JLEce7038107
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 17:16:51 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jq882ucdb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 17:16:51 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 19 Jun 2018 17:16:50 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 19 Jun 2018 17:16:46 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5JLGj8O11207086
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 19 Jun 2018 21:16:46 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 31C44B205F;
+        Tue, 19 Jun 2018 17:16:35 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0189EB2064;
+        Tue, 19 Jun 2018 17:16:35 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 19 Jun 2018 17:16:34 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id B3D4116C3BD3; Tue, 19 Jun 2018 14:18:46 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 14:18:46 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Jason Wessel <jason.wessel@windriver.com>
+Cc:     linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+        Dipankar Sarma <dipankar@in.ibm.com>,
+        Ingo Molnar <mingo@elte.hu>
+Subject: Re: [RFC PATCH 2/2] rcu,debug_core: allow the kernel debugger to
+ reset the rcu stall timer
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1281330732-17164-1-git-send-email-jason.wessel@windriver.com>
+ <1281330732-17164-2-git-send-email-jason.wessel@windriver.com>
+ <1281330732-17164-3-git-send-email-jason.wessel@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1281330732-17164-3-git-send-email-jason.wessel@windriver.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18061921-0068-0000-0000-0000030B5935
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009222; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01049407; UDB=6.00537710; IPR=6.00828380;
+ MB=3.00021747; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-19 21:16:48
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061921-0069-0000-0000-000044BDE2F8
+Message-Id: <20180619211846.GO3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-19_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806190228
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Jun 2018, Pavel Tatashin wrote:
+On Mon, Aug 09, 2010 at 12:12:12AM -0500, Jason Wessel wrote:
+> When returning from the kernel debugger allow a reset of the rcu
+> jiffies_stall value to prevent the rcu stall detector from sending NMI
+> events which stack dumps on all the cpus in the system.
 
-> read_boot_clock64() returns a boot start timestamp from epoch. Some arches
-> may need to access the persistent clock interface in order to calculate the
-> epoch offset. The resolution of the persistent clock, however, might be
-> low.  Therefore, in order to avoid time discrepancies a new argument 'now'
-> is added to read_boot_clock64() parameters. Arch may decide to use it
-> instead of accessing persistent clock again.
+Not sure where the 2010 date came from, but it almost fooled me into
+deleting your emails unread.  ;-)
 
-I kinda know what you are trying to say, but it's all but obvious.
-
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index 4786df904c22..fb6898fab374 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -1502,9 +1502,13 @@ void __weak read_persistent_clock64(struct timespec64 *ts64)
->   * Function to read the exact time the system has been started.
->   * Returns a timespec64 with tv_sec=0 and tv_nsec=0 if unsupported.
->   *
-> + * Argument 'now' contains time from persistent clock to calculate offset from
-> + * epoch. May contain zeros if persist ant clock is not available.
-
-What's a 'persist ant' ? 
-
-> + *
->   *  XXX - Do be sure to remove it once all arches implement it.
->   */
-> -void __weak read_boot_clock64(struct timespec64 *ts)
-> +void __weak __init read_boot_clock64(struct timespec64 *now,
-> +				     struct timespec64 *ts)
+> Signed-off-by: Jason Wessel <jason.wessel@windriver.com>
+> CC: Dipankar Sarma <dipankar@in.ibm.com>
+> CC: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> CC: Ingo Molnar <mingo@elte.hu>
+> ---
+>  include/linux/rcupdate.h  |    8 ++++++++
+>  kernel/debug/debug_core.c |    2 ++
+>  kernel/rcutree.c          |    9 +++++++++
+>  3 files changed, 19 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 9fbc54a..abd3ab6 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -599,4 +599,12 @@ static inline void debug_rcu_head_unqueue(struct rcu_head *head)
+>  #define rcu_dereference_index_check(p, c) \
+>  	__rcu_dereference_index_check((p), (c))
+> 
+> +#ifdef CONFIG_RCU_CPU_STALL_DETECTOR
+> +extern void rcu_cpu_stall_reset(void);
+> +#else /* #ifdef CONFIG_RCU_CPU_STALL_DETECTOR */
+> +static inline void rcu_cpu_stall_reset(void)
+> +{
+> +}
+> +#endif /* #ifdef CONFIG_RCU_CPU_STALL_DETECTOR */
+> +
+>  #endif /* __LINUX_RCUPDATE_H */
+> diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+> index e4d6819..1600e90 100644
+> --- a/kernel/debug/debug_core.c
+> +++ b/kernel/debug/debug_core.c
+> @@ -47,6 +47,7 @@
+>  #include <linux/pid.h>
+>  #include <linux/smp.h>
+>  #include <linux/mm.h>
+> +#include <linux/rcupdate.h>
+> 
+>  #include <asm/cacheflush.h>
+>  #include <asm/byteorder.h>
+> @@ -474,6 +475,7 @@ static void dbg_touch_watchdogs(void)
 >  {
->  	ts->tv_sec = 0;
->  	ts->tv_nsec = 0;
-> @@ -1535,7 +1539,7 @@ void __init timekeeping_init(void)
->  	} else if (now.tv_sec || now.tv_nsec)
->  		persistent_clock_exists = true;
->  
-> -	read_boot_clock64(&boot);
-> +	read_boot_clock64(&now, &boot);
+>  	touch_softlockup_watchdog_sync();
+>  	clocksource_touch_watchdog();
+> +	rcu_cpu_stall_reset();
+>  }
+> 
+>  static int kgdb_cpu_enter(struct kgdb_state *ks, struct pt_regs *regs)
+> diff --git a/kernel/rcutree.c b/kernel/rcutree.c
+> index d5bc439..209b755 100644
+> --- a/kernel/rcutree.c
+> +++ b/kernel/rcutree.c
+> @@ -532,6 +532,9 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
+> 
+>  	if (rcu_cpu_stall_panicking)
+>  		return;
+> +	/* Gracefully handle a watch dog reset when jiffies_stall == 0 */
+> +	if (!rsp->jiffies_stall)
+> +		return;
 
-This interface was already bolted on and this extension just makes it
-worse. If 'now' is invalid then you need the same checks as after
-read_persistent_clock() replicated along with conditionals of some sort.
+Why not just use the existing rcu_cpu_stall_reset()?  It sets the next
+stall a long way into the future, like 2 billion jiffies on 32-bit
+systems.
 
-'boot' time is used to adjust the wall to monotonic offset. So looking at
-the math behind all of that:
+>  	delta = jiffies - rsp->jiffies_stall;
+>  	rnp = rdp->mynode;
+>  	if ((rnp->qsmask & rdp->grpmask) && delta >= 0) {
+> @@ -561,6 +564,12 @@ static void __init check_cpu_stall_init(void)
+>  	atomic_notifier_chain_register(&panic_notifier_list, &rcu_panic_block);
+>  }
+> 
+> +void rcu_cpu_stall_reset(void)
+> +{
+> +	rcu_sched_state.jiffies_stall = 0;
+> +	rcu_bh_state.jiffies_stall = 0;
 
-   read_persistent_clock(&now);
-   read_boot_clock(&boot);
+This should get you a compiler warning given the existing
+rcu_cpu_stall_reset().  It also fails to do anything about
+rcu_preempt_state on PREEMPT=y kernels.
 
-   tk_set_xtime(tk, now)
-     tk->xtime_sec = now.sec;
-     tk->xtime_nsec = now.nsec;
+What happens if you just remove the rcutree.c changes from your
+series and test with the result?
 
-  tk_set_wall_to_mono(tk, -boot);
-     tk->wall_to_mono = boot;
-     tk->offs_real = -boot;
+							Thanx, Paul
 
-  timekeeping_update(tk)
-     tk->tkr_mono = tk->xtime + tk->wall_to_mono;
+> +}
+> +
+>  #else /* #ifdef CONFIG_RCU_CPU_STALL_DETECTOR */
+> 
+>  static void record_gp_stall_check_time(struct rcu_state *rsp)
+> -- 
+> 1.6.3.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
 
-tkr_mono.base is guaranteed to be >= 0. So you need to make sure that
-
-     tk->xtime + tk->wall_to_mono >= 0
-
-Yet another check which you need to do in that magic function. That's just
-wrong. If this grows more users then they all have to copy the same sanity
-checks over and over and half of them will be wrong.
-
-Fortunately there is only a single real user of read_boot_clock() in the
-tree: S390. By virtue of being S390 there is no worry about any sanity
-checks. It just works.
-
-ARM has the function, but there is no single subarch which actually
-implements the thing, so this is easy to fix by removing it.
-
-So the right thing to do is the following:
-
-Provide a new function:
-
-void __weak read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
-					         ktime_t *boot_offset)
-{
-	read_persistent_clock(wall_time);
-}
-
-Then add the new function to S390:
-
-void read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
-     					  ktime_t *boot_offset)
-{
-        unsigned char clk[STORE_CLOCK_EXT_SIZE];
-	struct timespec64 boot_time;
-        __u64 delta;
-
-	read_persistent_clock(wall_time);
-
-        delta = initial_leap_seconds + TOD_UNIX_EPOCH;
-	memcpy(clk, tod_clock_base, 16);
-        *(__u64 *) &clk[1] -= delta;
-        if (*(__u64 *) &clk[1] > delta)
-                clk[0]--;
-        ext_to_timespec64(clk, boot_time);
-	*boot_offset = timespec64_to_ns(timespec64_sub(wall_time, boot_time));
-}
-
-Then rework timekeeping_init():
-
-timekeeping_init()
-   struct timespec64 wall_time, wall_to_mono, offs;
-   ktime_t boot_offset = 0;
-   
-   read_persistent_wall_and_boot_offset(&walltime, &boot_offset);
-
-   if (!valid(walltime))
-        boottime = wall_time.tv_sec = wall_time.tv_nsec = 0;
-   else
-   	persistent_clock = true;
-
-   if (boot_offset > timespec64_to_nsec(wall_time))
-       offs.tv_sec = offs.tv_nsec = 0;
-   else
-       offs = ns_to_timespec64(boot_offset);
-  
-   wall_to_mono = timespec64_sub(offs, wall_time);
-   tk_set_wall_to_mono(tk, wall_time);
-
-
-After that remove the read_boot_time() leftovers all over the place. And
-then the x86 implementation boils down to:
-
-void read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
-     					  ktime_t *boot_offset)
-{
-	 x86_platform.get_wallclock(ts);
-	 *boot_offset = sched_clock();
-}
-
-And doing it this way - by adding the extra math to the only architecture
-on the planet which has sane timers - is the right thing to do because all
-other architectures will have to fall back to tricks similar to x86 by
-doing clocksource/schedclock based guestimation of the time where the
-machine actually reached the kernel.
-
-Hmm?
-
-Thanks,
-
-	tglx
