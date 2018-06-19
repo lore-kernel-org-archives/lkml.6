@@ -6,77 +6,113 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9785C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB084C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B3D2208B3
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:23:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3D2208B3
+	by mail.kernel.org (Postfix) with ESMTP id 64A672083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64A672083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965437AbeFSGXq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:23:46 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56326 "EHLO
+        id S937295AbeFSG2T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 02:28:19 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56342 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965152AbeFSGXp (ORCPT
+        with ESMTP id S1755560AbeFSG2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:23:45 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        Tue, 19 Jun 2018 02:28:18 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=kurt.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
         (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fVA3L-0000Zv-NE; Tue, 19 Jun 2018 08:23:43 +0200
-Date:   Tue, 19 Jun 2018 08:23:40 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Siarhei.Liakh@concurrent-rt.com,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bpetkov@suse.de>
-Subject: Re: [PATCH] x86: Call fixup_exception() before notify_die() in
- math_error()
-In-Reply-To: <CALCETrXUdLZTnf0EF2LVM4ru2G6nkFX--gQ=6JpBRNZ7Gm+MsQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1806190820210.1692@nanos.tec.linutronix.de>
-References: <DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com> <CALCETrXUdLZTnf0EF2LVM4ru2G6nkFX--gQ=6JpBRNZ7Gm+MsQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        (envelope-from <kurt@linutronix.de>)
+        id 1fVA7h-0000c1-CH; Tue, 19 Jun 2018 08:28:13 +0200
+From:   Kurt Kanzenbach <kurt@linutronix.de>
+To:     adrian.hunter@intel.com
+Cc:     ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        kurt@linutronix.de
+Subject: [PATCH 1/1] mmc: sdhci-pci: fix eMMC controller issue on Intel Baytrail SoCs
+Date:   Tue, 19 Jun 2018 08:31:19 +0200
+Message-Id: <20180619063119.3955-2-kurt@linutronix.de>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180619063119.3955-1-kurt@linutronix.de>
+References: <20180619063119.3955-1-kurt@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Jun 2018, Andy Lutomirski wrote:
+Sometimes the eMMC controller doesn't respond anymore on Intel Baytrail
+SoCs. The resulting error looks like:
 
-> On Thu, Jun 14, 2018 at 10:10 PM Siarhei Liakh
-> <Siarhei.Liakh@concurrent-rt.com> wrote:
-> >
-> > fpu__drop() has an explicit fwait which under some conditions can trigger
-> > a fixable FPU exception while in kernel. Thus, we should attempt to fixup
-> > the exception first, and only call notify_die() if the fixup failed just
-> > like in do_general_protection(). The original call sequence incorrectly
-> > triggers KDB entry on debug kernels under particular FPU-intensive
-> > workloads. This issue had been privately observed, fixed, and tested
-> > on 4.9.98, while this patch brings the fix to the upstream.
-> 
-> Reviewed-by: Andy Lutomirski <luto@kernel.org>
-> 
-> With the caveat that you are perpetuating what is arguably a bug in
-> some of the other entries: math_error() can now be called with IRQs
-> off and return with IRQs on.  If we actually start asserting good
-> behavior in the entry code, we'll need to fix this.
+|mmc1: Reset 0x1 never completed.
+|sdhci: =========== REGISTER DUMP (mmc1)===========
+|sdhci: Sys addr: 0xffffffff | Version:  0x0000ffff
+|sdhci: Blk size: 0x0000ffff | Blk cnt:  0x0000ffff
+|sdhci: Argument: 0xffffffff | Trn mode: 0x0000ffff
+|sdhci: Present:  0xffffffff | Host ctl: 0x000000ff
+|sdhci: Power:    0x000000ff | Blk gap:  0x000000ff
+|sdhci: Wake-up:  0x000000ff | Clock:    0x0000ffff
+|sdhci: Timeout:  0x000000ff | Int stat: 0xffffffff
+|sdhci: Int enab: 0xffffffff | Sig enab: 0xffffffff
+|sdhci: AC12 err: 0x0000ffff | Slot int: 0x0000ffff
+|sdhci: Caps:     0xffffffff | Caps_1:   0xffffffff
+|sdhci: Cmd:      0x0000ffff | Max curr: 0xffffffff
+|sdhci: Host ctl2: 0x0000ffff
+|sdhci: ADMA Err: 0xffffffff | ADMA Ptr: 0xffffffff
 
-Confused. math_error() is still invoked with interrupts off. What's
-different now is that notify_die() is called with interrupts conditionally
-enabled while upstream it's always called with interrupts disabled.
+The behavior was observed on an Intel Atom E3825 performing lots of reboots. The
+issue seems to occur if runtime power management is used. Found by utilizing
+ftrace.
 
-Thanks,
+The erratum VLI10 for the Intel E3825 states, that the eMMC controller
+incorrectly announces that it supports suspend/resume. However, that shouldn't
+be used, as the controller may incorrectly transfer data between memory and the
+SD device.
 
-	tglx
+Therefore, disallowing runtime pm resolves the issue. Tested on the E3825.
 
+Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+---
+ drivers/mmc/host/sdhci-pci-core.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 77dd3521daae..df89381944cd 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -870,6 +870,21 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
+ 	.priv_size	= sizeof(struct intel_host),
+ };
+ 
++/*
++ * See Erratum VLI10 from Errata List for Intel Atom E3825, Link:
++ * https://www.intel.ca/content/dam/www/public/us/en/documents/specification-updates/atom-e3800-family-spec-update.pdf
++ */
++static const struct sdhci_pci_fixes sdhci_intel_byt_emmc_no_runtime_pm = {
++	.allow_runtime_pm = false,
++	.probe_slot	= byt_emmc_probe_slot,
++	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
++	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
++			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
++			  SDHCI_QUIRK2_STOP_WITH_TC,
++	.ops		= &sdhci_intel_byt_ops,
++	.priv_size	= sizeof(struct intel_host),
++};
++
+ static const struct sdhci_pci_fixes sdhci_intel_glk_emmc = {
+ 	.allow_runtime_pm	= true,
+ 	.probe_slot		= glk_emmc_probe_slot,
+@@ -1470,7 +1485,7 @@ static const struct pci_device_id pci_ids[] = {
+ 	SDHCI_PCI_SUBDEVICE(INTEL, BYT_SDIO, NI, 7884, ni_byt_sdio),
+ 	SDHCI_PCI_DEVICE(INTEL, BYT_SDIO,  intel_byt_sdio),
+ 	SDHCI_PCI_DEVICE(INTEL, BYT_SD,    intel_byt_sd),
+-	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc),
++	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc_no_runtime_pm),
+ 	SDHCI_PCI_DEVICE(INTEL, BSW_EMMC,  intel_byt_emmc),
+ 	SDHCI_PCI_DEVICE(INTEL, BSW_SDIO,  intel_byt_sdio),
+ 	SDHCI_PCI_DEVICE(INTEL, BSW_SD,    intel_byt_sd),
+-- 
+2.11.0
 
