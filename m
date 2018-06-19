@@ -2,124 +2,107 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 184BEC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B486C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C382A20883
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:15:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C382A20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 00AA720874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:15:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHmNs6t0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AA720874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965390AbeFSGPJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:15:09 -0400
-Received: from mga12.intel.com ([192.55.52.136]:58845 "EHLO mga12.intel.com"
+        id S965681AbeFSGPz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 02:15:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965149AbeFSGPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:15:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 23:15:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
-   d="scan'208";a="50078936"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga007.jf.intel.com with ESMTP; 18 Jun 2018 23:14:56 -0700
-Subject: [PATCH v3 4/8] mm,
- devm_memremap_pages: Add MEMORY_DEVICE_PRIVATE support
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Christoph Hellwig <hch@lst.de>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Logan Gunthorpe <logang@deltatee.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 18 Jun 2018 23:04:59 -0700
-Message-ID: <152938829976.17797.11139256105673921009.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152938827880.17797.439879736804291936.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152938827880.17797.439879736804291936.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S965628AbeFSGPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:15:51 -0400
+Received: from localhost (unknown [5.29.173.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D04A20661;
+        Tue, 19 Jun 2018 06:15:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529388951;
+        bh=2rXwaeCoJtxv0wC5UH1amBJANT5ZUv5FmaKRz9zKIRc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mHmNs6t06ztD7Q/rTyZ9fLtsvTNOO8JOIQZN60pW2w5tavxp2fpCbYFHRiQmX9sbj
+         w9Udr2DS8TU8I43HeySNVqOsLb36cnXdcpGj875W/yb1Io6r32d9fOLWhxD+ugYTYn
+         Ayz1XM+CqBPJu3z/N8PJp4edPe5OY/a893MNFVq8=
+Date:   Tue, 19 Jun 2018 09:15:48 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, john.hubbard@gmail.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180619061548.GC7557@mtr-leonro.mtl.com>
+References: <20180617012510.20139-1-jhubbard@nvidia.com>
+ <20180617012510.20139-3-jhubbard@nvidia.com>
+ <CAPcyv4i=eky-QrPcLUEqjsASuRUrFEWqf79hWe0mU8xtz6Jk-w@mail.gmail.com>
+ <20180617200432.krw36wrcwidb25cj@ziepe.ca>
+ <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
+ <20180618081113.GA16991@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
+Content-Disposition: inline
+In-Reply-To: <20180618081113.GA16991@lst.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for consolidating all ZONE_DEVICE enabling via
-devm_memremap_pages(), teach it how to handle the constraints of
-MEMORY_DEVICE_PRIVATE ranges.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Reported-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- kernel/memremap.c |   38 ++++++++++++++++++++++++++++++++------
- 1 file changed, 32 insertions(+), 6 deletions(-)
+--7iMSBzlTiPOCCT2k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/kernel/memremap.c b/kernel/memremap.c
-index 92b8d7057321..16141b608b63 100644
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -131,8 +131,13 @@ static void devm_memremap_pages_release(void *data)
- 		- align_start;
- 
- 	mem_hotplug_begin();
--	arch_remove_memory(align_start, align_size, pgmap->altmap_valid ?
--			&pgmap->altmap : NULL);
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
-+		pfn = align_start >> PAGE_SHIFT;
-+		__remove_pages(page_zone(pfn_to_page(pfn)), pfn,
-+				align_size >> PAGE_SHIFT, NULL);
-+	} else
-+		arch_remove_memory(align_start, align_size,
-+				pgmap->altmap_valid ? &pgmap->altmap : NULL);
- 	mem_hotplug_done();
- 
- 	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
-@@ -216,11 +221,32 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap,
- 		goto err_pfn_remap;
- 
- 	mem_hotplug_begin();
--	error = arch_add_memory(nid, align_start, align_size, altmap, false);
--	if (!error)
--		move_pfn_range_to_zone(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
--					align_start >> PAGE_SHIFT,
-+
-+	/*
-+	 * For device private memory we call add_pages() as we only need to
-+	 * allocate and initialize struct page for the device memory. More-
-+	 * over the device memory is un-accessible thus we do not want to
-+	 * create a linear mapping for the memory like arch_add_memory()
-+	 * would do.
-+	 *
-+	 * For all other device memory types, which are accessible by
-+	 * the CPU, we do want the linear mapping and thus use
-+	 * arch_add_memory().
-+	 */
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
-+		error = add_pages(nid, align_start >> PAGE_SHIFT,
-+				align_size >> PAGE_SHIFT, NULL, false);
-+	} else {
-+		struct zone *zone;
-+
-+		error = arch_add_memory(nid, align_start, align_size, altmap,
-+				false);
-+		zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
-+		if (!error)
-+			move_pfn_range_to_zone(zone, align_start >> PAGE_SHIFT,
- 					align_size >> PAGE_SHIFT, altmap);
-+	}
-+
- 	mem_hotplug_done();
- 	if (error)
- 		goto err_add_memory;
+On Mon, Jun 18, 2018 at 10:11:13AM +0200, Christoph Hellwig wrote:
+> On Sun, Jun 17, 2018 at 01:10:04PM -0700, Dan Williams wrote:
+> > I believe kernel behavior regression is a primary concern as now
+> > fallocate() and truncate() can randomly fail where they didn't before.
+>
+> Fail or block forever due to actions of other unprivileged users.
+>
+> That is a complete no-go.
 
+They will fail "properly" with some error, which is better than current
+situation where those unprivileged users can trigger oops.
+
+Thanks
+
+--7iMSBzlTiPOCCT2k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbKJ+UAAoJEORje4g2clin69QP/jWFR8E7MKYfBqiosGF6OPVf
+qxjEVTcaIMnnC6GrMykfAnOg7ApYKitetux5SV3+h+EChVTck2nQacbNKGC+kRJ1
+bPKSM2qVPUSgcsfj5kDPXHslVZdhnuYp066rnGkc7CJEfnrMTpcexgOkCQW7iQb/
+B+dpa2VaC5G14XoxVBpONweQ+NedTSX8lLemYazAsY6nm8uwVDAQqdk8bu2F0ayp
+zoarTVCwYV7ENdv0rTkhLyPtB207GHoeCweSU/kj7mdj8Pbaf1CDzxIlOvY4djSC
+Ia5fscHImRT29r8oIIlTI7JfLwsQaPye03o0AZ++qPhwmlGfspJy1dwYea0eMChl
+CvgSigrS22txh367GZ70hn9lpHIAeuUP85RVVODN3tXokJS5cJNHT4n5lwdItcii
+GDaXUzVx+a1Qio3J/mb/4MvLstCbE1Y4r2nYj2ag5gL1XuLPdqp8icYM6OEPQ2lf
+B6z8OF6uQu0bzXj/m//Rep1bhwRnVjgrTVDzc67+hscq/BswhhAx04+COquTEXxv
+TpHOraax/ZLN31lLQ/3QUIMKUZNvuhWVl2ARQJXtb8hmbPo+zQYkuP+ip8DmD5ny
+wvtHqR04dCCwDEp1VmoPFe3PJy+zQvBHe18OyjyuarokNQNZCVAO0pNfivzibwFm
+m1W/BwqX6Z3QRrQrQtYA
+=LD7E
+-----END PGP SIGNATURE-----
+
+--7iMSBzlTiPOCCT2k--
