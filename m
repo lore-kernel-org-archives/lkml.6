@@ -6,66 +6,66 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF19C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6935EC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 047652083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047652083D
+	by mail.kernel.org (Postfix) with ESMTP id 1F5212083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:31:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F5212083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757273AbeFSO3M (ORCPT
+        id S1757225AbeFSOa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:29:12 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:34854 "EHLO
+        Tue, 19 Jun 2018 10:30:58 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:34872 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757224AbeFSO3L (ORCPT
+        with ESMTP id S1756675AbeFSOaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:29:11 -0400
+        Tue, 19 Jun 2018 10:30:55 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fVHcv-0005nG-OZ; Tue, 19 Jun 2018 22:28:57 +0800
+        id 1fVHeV-0005p1-Ek; Tue, 19 Jun 2018 22:30:35 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fVHcr-0007E7-U1; Tue, 19 Jun 2018 22:28:53 +0800
-Date:   Tue, 19 Jun 2018 22:28:53 +0800
+        id 1fVHeS-0007GH-9Q; Tue, 19 Jun 2018 22:30:32 +0800
+Date:   Tue, 19 Jun 2018 22:30:32 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
 To:     Vinod Koul <vinod.koul@linaro.org>
 Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
-Message-ID: <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
-References: <20180618141259.23141-1-vkoul@kernel.org>
- <20180618141259.23141-4-vkoul@kernel.org>
+        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v2 2/2] hwrng: msm - Add support for prng v2
+Message-ID: <20180619143032.4qov5jrbhbsbp6dv@gondor.apana.org.au>
+References: <20180619095430.26358-1-vkoul@kernel.org>
+ <20180619095430.26358-3-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180618141259.23141-4-vkoul@kernel.org>
+In-Reply-To: <20180619095430.26358-3-vkoul@kernel.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 07:42:59PM +0530, Vinod Koul wrote:
-> Qcom 8996 and later chips support prng v2 where we need to only
-> implement .read callback for hwrng.
+On Tue, Jun 19, 2018 at 03:24:30PM +0530, Vinod Koul wrote:
+> Qcom 8996 and later chips support prng v2 which requires to
+> implement only .read callback for hwrng.
 > 
-> Add a new table for v2 which supports this and get version required for
-> driver data.
+> This version of chip has multiple Execution Environments (EE) and
+> secure world is typically responsible for configuring the prng.
+> 
+> Add driver data for qcom,prng as 0 and qcom,prng-v2 as 1 and use
+> that to skip initialization and cleanup routines.
 > 
 > Signed-off-by: Vinod Koul <vkoul@kernel.org>
 
-Is this really a pseudo-RNG? If so it needs to be moved over to
-the algif_rng interface.
+Is this a pseudo RNG?
 
-hwrng is for true hardware RNGs only, because it may be directly
-fed into /dev/random.
-
-Thanks,
+Cheers,
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
