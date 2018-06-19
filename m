@@ -6,180 +6,185 @@ X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11102C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FDFC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C124820874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:03:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C124820874
+	by mail.kernel.org (Postfix) with ESMTP id 89C9720874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:03:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C9720874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754277AbeFTDDo (ORCPT
+        id S1754320AbeFTDDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 23:03:44 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:36637 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753862AbeFTDDk (ORCPT
+        Tue, 19 Jun 2018 23:03:47 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:58289 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754012AbeFTDDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Jun 2018 23:03:40 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 19 Jun 2018 20:03:36 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 19 Jun 2018 20:03:06 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id F09A240DE7;
-        Tue, 19 Jun 2018 20:03:39 -0700 (PDT)
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 03CB840DF2;
+        Tue, 19 Jun 2018 20:03:40 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC:     Nadav Amit <namit@vmware.com>,
+CC:     Nadav Amit <namit@vmware.com>, Sam Ravnborg <sam@ravnborg.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        <linux-sparse@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        Michal Marek <michal.lkml@markovi.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        <virtualization@lists.linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v5 0/9] x86: macrofying inline asm for better compilation
-Date:   Tue, 19 Jun 2018 12:48:45 -0700
-Message-ID: <20180619194854.69486-1-namit@vmware.com>
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, <linux-kbuild@vger.kernel.org>
+Subject: [PATCH v5 1/9] Makefile: Prepare for using macros for inline asm
+Date:   Tue, 19 Jun 2018 12:48:46 -0700
+Message-ID: <20180619194854.69486-2-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180619194854.69486-1-namit@vmware.com>
+References: <20180619194854.69486-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch-set deals with an interesting yet stupid problem: kernel code
-that does not get inlined despite its simplicity. There are several
-causes for this behavior: "cold" attribute on __init, different function
-optimization levels; conditional constant computations based on
-__builtin_constant_p(); and finally large inline assembly blocks.
+Using macros for inline assembly improves both readability and
+compilation decisions that are distorted by big assembly blocks that use
+alternative sections. Compile macros.S and use it to assemble all C
+files. Currently, only x86 will use it.
 
-This patch-set deals with the inline assembly problem. I separated these
-patches from the others (that were sent in the RFC) for easier
-inclusion. I also separated the removal of unnecessary new-lines which
-would be sent separately.
-
-The problem with inline assembly is that inline assembly is often used
-by the kernel for things that are other than code - for example,
-assembly directives and data. GCC however is oblivious to the content of
-the blocks and assumes their cost in space and time is proportional to
-the number of the perceived assembly "instruction", according to the
-number of newlines and semicolons. Alternatives, paravirt and other
-mechanisms are affected, causing code not to be inlined, and degrading
-compilation quality in general.
-
-The solution that this patch-set carries for this problem is to create
-an assembly macro, and then call it from the inline assembly block.  As
-a result, the compiler sees a single "instruction" and assigns the more
-appropriate cost to the code.
-
-To avoid uglification of the code, as many noted, the macros are first
-precompiled into an assembly file, which is later assembled together
-with the C files. This also enables to avoid duplicate implementation
-that was set before for the asm and C code. This can be seen in the
-exception table changes.
-
-Overall this patch-set slightly increases the kernel size (my build was
-done using my Ubuntu 18.04 config + localyesconfig for the record):
-
-   text	   data	    bss	    dec	    hex	filename
-18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
-18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+0.1%)
-
-The number of static functions in the image is reduced by 379, but
-actually inlining is even better, which does not always shows in these
-numbers: a function may be inlined causing the calling function not to
-be inlined.
-
-I ran some benchmarks, and in general the performance impact is not very
-notable. You can still see 10 cycles shaved off some syscalls that
-manipulate page-tables (e.g., mprotect()), in which paravirt caused many
-functions not to be inlined. In addition this patch-set can prevent
-issues such as [1], and arguably improves code readability and
-maintainability.
-
-[1] https://patchwork.kernel.org/patch/10450037/
-
-v4->v5:	* Makefile fixes (Masahiro, Sam)
-
-v3->v4: * Changed naming of macros in 2 patches (PeterZ)
-	* Minor cleanup of the paravirt patch
-
-v2->v3: * Several build issues resolved (0-day)
-	* Wrong comments fix (Josh)
-	* Change asm vs C order in refcount (Kees)
-
-v1->v2:	* Compiling the macros into a separate .s file, improving
-	  readability (Linus)
-	* Improving assembly formatting, applying most of the comments
-	  according to my judgment (Jan)
-	* Adding exception-table, cpufeature and jump-labels
-	* Removing new-line cleanup; to be submitted separately
-
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: Christopher Li <sparse@chrisli.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jan Beulich <JBeulich@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: linux-sparse@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: virtualization@lists.linux-foundation.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
+Cc: linux-kbuild@vger.kernel.org
 
-
-Nadav Amit (9):
-  Makefile: Prepare for using macros for inline asm
-  x86: objtool: use asm macro for better compiler decisions
-  x86: refcount: prevent gcc distortions
-  x86: alternatives: macrofy locks for better inlining
-  x86: bug: prevent gcc distortions
-  x86: prevent inline distortion by paravirt ops
-  x86: extable: use macros instead of inline assembly
-  x86: cpufeature: use macros instead of inline assembly
-  x86: jump-labels: use macros instead of inline assembly
-
- Makefile                               |  9 ++-
- arch/x86/Makefile                      | 11 ++-
- arch/x86/include/asm/alternative-asm.h | 20 ++++--
- arch/x86/include/asm/alternative.h     | 11 +--
- arch/x86/include/asm/asm.h             | 61 +++++++---------
- arch/x86/include/asm/bug.h             | 98 +++++++++++++++-----------
- arch/x86/include/asm/cpufeature.h      | 82 ++++++++++++---------
- arch/x86/include/asm/jump_label.h      | 65 ++++++++++-------
- arch/x86/include/asm/paravirt_types.h  | 56 +++++++--------
- arch/x86/include/asm/refcount.h        | 74 +++++++++++--------
- arch/x86/kernel/macros.S               | 16 +++++
- include/asm-generic/bug.h              |  8 +--
- include/linux/compiler.h               | 56 +++++++++++----
- scripts/Kbuild.include                 |  4 +-
- scripts/mod/Makefile                   |  2 +
- 15 files changed, 340 insertions(+), 233 deletions(-)
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ Makefile                 |  9 +++++++--
+ arch/x86/Makefile        | 11 +++++++++--
+ arch/x86/kernel/macros.S |  7 +++++++
+ scripts/Kbuild.include   |  4 +++-
+ scripts/mod/Makefile     |  2 ++
+ 5 files changed, 28 insertions(+), 5 deletions(-)
  create mode 100644 arch/x86/kernel/macros.S
 
+diff --git a/Makefile b/Makefile
+index ca2af1ab91eb..66c1da72c156 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1056,7 +1056,7 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
+ # version.h and scripts_basic is processed / created.
+ 
+ # Listed in dependency order
+-PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
++PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
+ 
+ # prepare3 is used to check if we are building in a separate output directory,
+ # and if so do:
+@@ -1080,7 +1080,9 @@ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+                    include/config/auto.conf
+ 	$(cmd_crmodverdir)
+ 
+-archprepare: archheaders archscripts prepare1 scripts_basic
++macroprepare: prepare1 archmacros
++
++archprepare: archheaders archscripts macroprepare scripts_basic
+ 
+ prepare0: archprepare gcc-plugins
+ 	$(Q)$(MAKE) $(build)=.
+@@ -1148,6 +1150,9 @@ archheaders:
+ PHONY += archscripts
+ archscripts:
+ 
++PHONY += archmacros
++archmacros:
++
+ PHONY += __headers
+ __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
+ 	$(Q)$(MAKE) $(build)=scripts build_unifdef
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index f0a6ea22429d..363c3d8ed964 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -235,8 +235,8 @@ ifdef CONFIG_X86_64
+ LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
+ endif
+ 
+-# Speed up the build
+-KBUILD_CFLAGS += -pipe
++# We cannot use -pipe flag since we give an additional .s file to the compiler
++#KBUILD_CFLAGS += -pipe
+ # Workaround for a gcc prelease that unfortunately was shipped in a suse release
+ KBUILD_CFLAGS += -Wno-sign-compare
+ #
+@@ -258,11 +258,18 @@ archscripts: scripts_basic
+ archheaders:
+ 	$(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+ 
++archmacros:
++	$(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
++
+ archprepare:
+ ifeq ($(CONFIG_KEXEC_FILE),y)
+ 	$(Q)$(MAKE) $(build)=arch/x86/purgatory arch/x86/purgatory/kexec-purgatory.c
+ endif
+ 
++ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
++export ASM_MACRO_FLAGS
++KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
++
+ ###
+ # Kernel objects
+ 
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+new file mode 100644
+index 000000000000..cfc1c7d1a6eb
+--- /dev/null
++++ b/arch/x86/kernel/macros.S
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * This file includes headers whose assembly part includes macros which are
++ * commonly used. The macros are precompiled into assmebly file which is later
++ * assembled together with each compiled file.
++ */
+diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+index c8156d61678c..8eeb5636a2a7 100644
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -115,7 +115,9 @@ __cc-option = $(call try-run,\
+ 
+ # Do not attempt to build with gcc plugins during cc-option tests.
+ # (And this uses delayed resolution so the flags will be up to date.)
+-CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
++# In addition, do not include the asm macros which are built later.
++CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
++CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
+ 
+ # cc-option
+ # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
+diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
+index 42c5d50f2bcc..a5b4af47987a 100644
+--- a/scripts/mod/Makefile
++++ b/scripts/mod/Makefile
+@@ -4,6 +4,8 @@ OBJECT_FILES_NON_STANDARD := y
+ hostprogs-y	:= modpost mk_elfconfig
+ always		:= $(hostprogs-y) empty.o
+ 
++CFLAGS_REMOVE_empty.o := $(ASM_MACRO_FLAGS)
++
+ modpost-objs	:= modpost.o file2alias.o sumversion.o
+ 
+ devicetable-offsets-file := devicetable-offsets.h
 -- 
 2.17.0
 
