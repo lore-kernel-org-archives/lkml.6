@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29D1C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F75C5AE5A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACED620836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDCEE2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:58:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4aBUvF4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACED620836
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jr4eZIhF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDCEE2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030797AbeFST5I (ORCPT
+        id S1030656AbeFST6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 15:57:08 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54715 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030597AbeFST5E (ORCPT
+        Tue, 19 Jun 2018 15:58:07 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:39643 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030727AbeFST5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 15:57:04 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o13-v6so2263470wmf.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 12:57:03 -0700 (PDT)
+        Tue, 19 Jun 2018 15:57:07 -0400
+Received: by mail-wr0-f193.google.com with SMTP id w7-v6so867209wrn.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 12:57:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AwB+MbS77Gi2Om2Yc2yEFaTsQNEUkfbGwmbW/D2rlNU=;
-        b=B4aBUvF4P85cNGWNAuw4D9mLxKkNTEHtdGEh4218/VeOczZ5lENzSysJwYAN9NVlte
-         iFYgeQ+GqxJbXOQ3jHjhxthKaIb3Kv2jmxVBR87vWtSG3GqyqiuJzi0RJJs0Fl6Ijn08
-         oG8mFcvQ/Cw7nTnVllJokhf+w16V/ojuNtujnnhBYggxbHJM83uBxyXaHnAps3zgH9my
-         IgwPKfZBb8faeCVElNDvjh5vAj4MmGdt4C6jzSZzZ1+6v+fVS6JaexqPkin0Fad0dlk7
-         mU5slDMRr6uMOEXdWqveMJK++jbMJOGi0qWW3vYEDFSDEaD3hU5mlzfDTMdg0RnlSTjj
-         pEzg==
+        bh=E/GiH1wUgNmLPacPEXSO+qpw70VdcJtrrUjSuxzyVso=;
+        b=jr4eZIhFkeK4IyXQwmjBStkuDtam0+jN9orgeBM4R2Bg8zYv1N/TyaopiJkcZyY0dc
+         Ce9yDptn2DD3xgYKreD4Q+p5thAFFDtedM8RaOMAnZif4tlDggZj3t8hTn2C1gXKlHjt
+         hmTU6fHkQbeN/RMlz0vw0QubqnDOGlPsTygKdq15QsYiw2I6jrLnA2V1ZPJEI2cJX5YP
+         TDGPTzOrqatuRdHCokoqPJyjIIkRs08am+jYqI5BuDiIuIB3fFeUF5HE/vTgGW1cbJb5
+         5N5tBpVxp/9YxH0d66tSbSkx3TII7FDt9Sl2isfmCb/A1did72zeC6K0vFCRzKbBdavA
+         dmFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AwB+MbS77Gi2Om2Yc2yEFaTsQNEUkfbGwmbW/D2rlNU=;
-        b=bqim8QQaBmYgSt/V05QaHKHBFH20qYCj9Ohi0IJuhVsz4lbQV3WvnrLTKC8DesanZ9
-         hLDu4xrT/wA5FJoph3AkT5sP5xq0eESESqC6rZFpqm09rexSPHw428h6qyCjE7mWSBgp
-         Qo19INdByb79jetLlE7xXirHmF5xkZesLhuGMVVits6AQi8zXs8MbQMY6Swgr5mbpRe+
-         Uze+fZpMXF/vhpVHFMbgR41F1Pf4IRNxz/hE6DxEIp93LsM+O83KGJmb2PMXNtV1cEtd
-         5HaFjt8xyB3um19iz6F1SEeJvOl2cQPEIKcGrD4UH7OB8RILHk5h9Ct5JWBcoFQeo1bB
-         SBqw==
-X-Gm-Message-State: APt69E1lOvAQbsKJ39oF73AtAwHeaSOCUADCbrSR3ivr7KqlJJV3c1ox
-        iFcxDKN5mkkzm3i5y+ACmS8=
-X-Google-Smtp-Source: ADUXVKJ5tzDgZhNRNXDxipjRfLGVJSduay6/oPADmJyqqkBtG69U8HVmoFCOlw+oyOS1cY1BctEZ3Q==
-X-Received: by 2002:a1c:1808:: with SMTP id 8-v6mr14231074wmy.113.1529438222923;
-        Tue, 19 Jun 2018 12:57:02 -0700 (PDT)
+        bh=E/GiH1wUgNmLPacPEXSO+qpw70VdcJtrrUjSuxzyVso=;
+        b=I0OcPz9RvjORLowRdcAHX8yAqvahW2EgGTVqkrfjRCOtQ2bjcawxXMtkwyZNb7EO5Y
+         adhtZ5OPyFrHIEGxV2IBb86c7Cx95oEPmbw43/6btW1AniOhvkuw0S3ELim9f6KB3vV2
+         W4fnGfOjTfium/W2iN91LKM56kxKkYNbi7zXDFoiN90MJuxf8ahGDsaCJk6De33p92Qr
+         n6XyINPg4391CiHV+ur1kY/YmnMLsjWXnlkXx5QY6//0WhkiBqVkOvsdEdlb6lbHo2cZ
+         2iWFDGVQD3KoSnZE8IC2EPKb/iad/un61nse3CuwBA1TNGYRwR91lfJfPOC3rN11MGIZ
+         zMFQ==
+X-Gm-Message-State: APt69E2LHRd5aHVVKsfoh7b3LrKWo7CwyCxOPIGt2lW5lNxjHA2GiiFn
+        JLd/WCuheecJn5ZKmcNG8JE=
+X-Google-Smtp-Source: ADUXVKLNVX6T6czR0ZVTCM7O3t+HNOt4W/CJQcknPIPimr4WJ85OzUycChAWBayklvChAngwTAXlXw==
+X-Received: by 2002:adf:858f:: with SMTP id 15-v6mr16350323wrt.31.1529438226008;
+        Tue, 19 Jun 2018 12:57:06 -0700 (PDT)
 Received: from localhost.localdomain (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
-        by smtp.gmail.com with ESMTPSA id c53-v6sm1105983wrg.12.2018.06.19.12.57.01
+        by smtp.gmail.com with ESMTPSA id c53-v6sm1105983wrg.12.2018.06.19.12.57.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 12:57:02 -0700 (PDT)
+        Tue, 19 Jun 2018 12:57:05 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 5/9] staging: rtl8192u: Use %s and __func__ instead of hardcoded string - Style
-Date:   Tue, 19 Jun 2018 20:56:01 +0100
-Message-Id: <20180619195605.31321-6-johnfwhitmore@gmail.com>
+Subject: [PATCH 7/9] staging: rtl8192u: Correciton of block comments - Coding Style
+Date:   Tue, 19 Jun 2018 20:56:03 +0100
+Message-Id: <20180619195605.31321-8-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180619195605.31321-1-johnfwhitmore@gmail.com>
 References: <20180619195605.31321-1-johnfwhitmore@gmail.com>
@@ -73,71 +73,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changed a number of hard coded function names to use %s and __func__
+Correcton of a few block comments to comply with Coding Style.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ .../staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index e5ca4f3bfc7e..732d03e8474e 100644
+index c942d886429e..98688f9fdee6 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -539,7 +539,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 	//u8 bIsDeclareMCS13;
- 
- 	if (!posHTCap || !pHT) {
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, "posHTCap or pHTInfo can't be null in HTConstructCapabilityElement()\n");
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, "posHTCap or pHTInfo can't be null in %s\n", __func__);
- 		return;
- 	}
- 	memset(posHTCap, 0, *len);
-@@ -652,7 +652,7 @@ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *le
- 	PHT_INFORMATION_ELE		pHTInfoEle = (PHT_INFORMATION_ELE)posHTInfo;
- 
- 	if (!posHTInfo || !pHTInfoEle) {
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, "posHTInfo or pHTInfoEle can't be null in HTConstructInfoElement()\n");
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, "posHTInfo or pHTInfoEle can't be null in %s\n", __func__);
- 		return;
- 	}
- 
-@@ -716,7 +716,7 @@ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *le
- void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg, u8 *len)
+@@ -643,7 +643,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+  *  output:  none
+  *  return:  none
+  *  notice:  posHTCap can't be null and be initialized before.
+-             Only AP and IBSS sta should do this
++ *           Only AP and IBSS sta should do this
+  */
+ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *len, u8 IsEncrypt)
  {
- 	if (!posRT2RTAgg) {
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, "posRT2RTAgg can't be null in HTConstructRT2RTAggElement()\n");
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, "posRT2RTAgg can't be null in %s\n", __func__);
- 		return;
- 	}
- 	memset(posRT2RTAgg, 0, *len);
-@@ -766,7 +766,7 @@ static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
- 	u8					i;
+@@ -724,7 +724,7 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+ 	*posRT2RTAgg++ = 0x4c;
+ 	*posRT2RTAgg++ = 0x02;
+ 	*posRT2RTAgg++ = 0x01;
+-	*posRT2RTAgg = 0x10;//*posRT2RTAgg = 0x02;
++	*posRT2RTAgg = 0x10;   // *posRT2RTAgg = 0x02;
  
- 	if (!pOperateMCS) {
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, "pOperateMCS can't be null in HT_PickMCSRate()\n");
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, "pOperateMCS can't be null in %s\n", __func__);
- 		return false;
- 	}
- 
-@@ -829,7 +829,7 @@ u8 HTGetHighestMCSRate(struct ieee80211_device *ieee, u8 *pMCSRateSet, u8 *pMCSF
- 	u8		availableMcsRate[16];
- 
- 	if (!pMCSRateSet || !pMCSFilter) {
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, "pMCSRateSet or pMCSFilter can't be null in HTGetHighestMCSRate()\n");
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, "pMCSRateSet or pMCSFilter can't be null in %s\n", __func__);
- 		return false;
- 	}
- 	for (i = 0; i < 16; i++)
-@@ -914,7 +914,7 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 	static u8				EWC11NHTInfo[] = {0x00, 0x90, 0x4c, 0x34};	// For 11n EWC definition, 2007.07.17, by Emily
- 
- 	if (!pHTInfo->bCurrentHTSupport) {
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, "<=== HTOnAssocRsp(): HT_DISABLE\n");
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, "<=== %s: HT_DISABLE\n", __func__);
- 		return;
- 	}
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "===> HTOnAssocRsp_wq(): HT_ENABLE\n");
+ 	if (ieee->bSupportRemoteWakeUp)
+ 		*posRT2RTAgg |= 0x08;//RT_HT_CAP_USE_WOW;
+@@ -734,16 +734,15 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+ #ifdef TODO
+ #if (HAL_CODE_BASE == RTL8192 && DEV_BUS_TYPE == USB_INTERFACE)
+ 	/*
+-	//Emily. If it is required to Ask Realtek AP to send AMPDU during AES mode, enable this
+-	   section of code.
++	 * Emily. If it is required to Ask Realtek AP to send AMPDU during AES
++	 * mode, enable this section of code.
++	 */
++#if 0
+ 	if(IS_UNDER_11N_AES_MODE(Adapter))
+-	{
+ 		posRT2RTAgg->Octet[5] |=RT_HT_CAP_USE_AMPDU;
+-	}else
+-	{
++	else
+ 		posRT2RTAgg->Octet[5] &= 0xfb;
+-	}
+-	*/
++#endif
+ #else
+ 	// Do Nothing
+ #endif
 -- 
 2.17.1
 
