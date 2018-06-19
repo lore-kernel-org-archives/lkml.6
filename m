@@ -2,75 +2,61 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392BFC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F360C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8E412083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:00:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBSBAHM4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8E412083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E48782075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:00:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48782075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936109AbeFSWAG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 18:00:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755392AbeFSV75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:59:57 -0400
-Received: from localhost (unknown [146.7.4.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F392F20652;
-        Tue, 19 Jun 2018 21:59:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529445597;
-        bh=1+bolKhm1p/CW1/gpoEfu4nfWe7o51U0FQ/PqcXvuoc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZBSBAHM413pIznAMsJACi9mmfHHxyGIJnxiZGQsVedFOjmEDq1WJB0tjOcAhYza9W
-         oMQevf1gzgs9QrZCkIiPlUTGv7TA1eDF/Jdwtr4EwtXSHoGMzV7IOgbBVIml7s7DK+
-         j+SGjNgh1riAC0PfH84pEv5zF9LFDo1sVlgAhSLo=
-Date:   Tue, 19 Jun 2018 16:59:55 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Sinan Kaya <okaya@codeaurora.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>, linux-pci@vger.kernel.org,
-        timur@codeaurora.org, ard.biesheuvel@linaro.org,
-        "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-arm-msm@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
-        Peter Jones <pjones@redhat.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] efi/fb: Convert PCI bus address to resource if
- translated by the bridge
-Message-ID: <20180619215955.GF33049@bhelgaas-glaptop.roam.corp.google.com>
-References: <1526563343-28721-1-git-send-email-okaya@codeaurora.org>
- <36cf3f12-bfe8-1c38-4d2c-b785fc64a3f6@arm.com>
- <733101d0-9051-a5a6-ef64-162d8d1e10a1@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <733101d0-9051-a5a6-ef64-162d8d1e10a1@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S964931AbeFSWAS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 18:00:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58768 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755490AbeFSV77 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 17:59:59 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF509CC7;
+        Tue, 19 Jun 2018 21:59:58 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 14:59:57 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: [PATCH] proc: Make inline name size calculation automatic
+Message-Id: <20180619145957.187edcdb0b75901a790774b4@linux-foundation.org>
+In-Reply-To: <20014.1529395261@warthog.procyon.org.uk>
+References: <20180618174210.b8348d35bce35b2277cab660@linux-foundation.org>
+        <152891539958.23512.10618044594537218194.stgit@warthog.procyon.org.uk>
+        <20014.1529395261@warthog.procyon.org.uk>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 18, 2018 at 10:20:29AM -0400, Sinan Kaya wrote:
-> On 5/18/2018 6:42 AM, Robin Murphy wrote:
-> > 
-> > FWIW, now that I've actually gone and looked, it appears you could simplify the whole function quite a bit by getting rid of these and just using the new local resource directly, especially since the only actual use of size is an open-coded resource_contains().
-> 
-> Posted V2 a minute ago. I did the simplification on a prior patch in order not to
-> mix the issues.
+On Tue, 19 Jun 2018 09:01:01 +0100 David Howells <dhowells@redhat.com> wrote:
 
-I don't see the V2 on linux-pci, but it sounds like Ard would merge this
-anyway.  So I'll drop this and you can let me know if there's anything you
-need from me.
+> Andrew Morton <akpm@linux-foundation.org> wrote:
+> 
+> > Please cc Alexey on /proc patches.
+> 
+> If Alexey is responsible for procfs he should declare this in MAINTAINERS.
+
+oop.  I thought we did that but it isn't there.
+
+> > What are the user-visible runtime effects of this change?
+> 
+> Memory usage only.
+
+Please always include such info in changelogs.
