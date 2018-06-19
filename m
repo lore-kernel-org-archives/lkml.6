@@ -2,324 +2,198 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D64EAC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 988CEC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 849E020661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:52:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849E020661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CBC4F20833
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:57:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="mgRqzD69"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBC4F20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752806AbeFSXw2 (ORCPT
+        id S1752871AbeFSX5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 19:52:28 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58597 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751003AbeFSXw0 (ORCPT
+        Tue, 19 Jun 2018 19:57:03 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:47558 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751327AbeFSX5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 19:52:26 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fVQPy-0005Lz-P7; Wed, 20 Jun 2018 01:52:11 +0200
-Date:   Wed, 20 Jun 2018 01:52:10 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
-        pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: Re: [PATCH v10 7/7] x86/tsc: use tsc early
-In-Reply-To: <20180615174204.30581-8-pasha.tatashin@oracle.com>
-Message-ID: <alpine.DEB.2.21.1806192335390.10546@nanos.tec.linutronix.de>
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com> <20180615174204.30581-8-pasha.tatashin@oracle.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 19 Jun 2018 19:57:00 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id DDDFE800E6
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 11:56:57 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1529452617;
+        bh=Sb3HAbWnbRhPu1Xi819Jz0Sjeyt87Tlr8VTUQ6uHJ08=;
+        h=From:To:CC:Subject:Date:References;
+        b=mgRqzD69YCcOWmnIYwoW37+txIibmPIgP2lbZxBnnnLqA6qWjhB1eomrzs0TRqiR0
+         inzwIxuWzeuccqzk2kxeOTQgaPQopZ5RzmM3G1tCZNeu1HLPiB22OFhQ0AArQuiC3r
+         XsXm7S7kZs8t9UHluztvKLGoog++n84z1Bjr1Lkk=
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5b29984a0001>; Wed, 20 Jun 2018 11:56:58 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1156.6; Wed, 20 Jun 2018 11:56:56 +1200
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Wed, 20 Jun 2018 11:56:56 +1200
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        "beanhuo@micron.com" <beanhuo@micron.com>
+Subject: Re: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Thread-Topic: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Thread-Index: AQHUBsA+zZ/Rrpto/keRRl4OvggntA==
+Date:   Tue, 19 Jun 2018 23:56:56 +0000
+Message-ID: <66701c795bdc492aa3e3ffce6a0181d9@svr-chch-ex1.atlnz.lc>
+References: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
+ <20180618151450.3e740270@xps13>
+ <f16525ea6b534123bda64b09e818ce6d@svr-chch-ex1.atlnz.lc>
+ <0caaea1b4f5a4b45b436833424c4c8c8@svr-chch-ex1.atlnz.lc>
+ <20180619065555.1900487c@bbrezillon>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Jun 2018, Pavel Tatashin wrote:
-
-> tsc_early_init():
-> Determines offset, shift and multiplier for the early clock based on the
-> TSC frequency.
-> 
-> tsc_early_fini()
-> Implement the finish part of early tsc feature, prints message about the
-> offset, which can be useful to find out how much time was spent in post and
-> boot manager (if TSC starts from 0 during boot)
->
-> sched_clock_early():
-> TSC based implementation of early clock and is called from sched_clock().
-> 
-> start_early_clock():
-> Calls tsc_early_init(), and makes sched_clock() to use early boot clock
-> 
-> set_final_clock():
-> Sets the final clock which is either platform specific or
-> native_sched_clock(). Also calls tsc_early_fini() if early clock was
-> previously initialized.
-> 
-> Call start_early_clock() to start using early boot time stamps
-> functionality on the supported x86 platforms, and call set_final_clock() to
-> finish this feature and switch back to the default clock. The supported x86
-> systems are those where TSC frequency is determined early in boot.
-
-Lots of functions for dubious value.
-  
-> +static struct cyc2ns_data  cyc2ns_early;
-> +
-> +static u64 sched_clock_early(void)
-> +{
-> +	u64 ns = mul_u64_u32_shr(rdtsc(), cyc2ns_early.cyc2ns_mul,
-> +				 cyc2ns_early.cyc2ns_shift);
-> +	return ns + cyc2ns_early.cyc2ns_offset;
-> +}
-> +
-> +/*
-> + * Initialize clock for early time stamps
-> + */
-> +static void __init tsc_early_init(unsigned int khz)
-> +{
-> +	clocks_calc_mult_shift(&cyc2ns_early.cyc2ns_mul,
-> +			       &cyc2ns_early.cyc2ns_shift,
-> +			       khz, NSEC_PER_MSEC, 0);
-> +	cyc2ns_early.cyc2ns_offset = -sched_clock_early();
-> +}
-> +
-> +/*
-> + * Finish clock for early time stamps, and hand over to permanent clock by
-> + * setting __sched_clock_offset appropriately for continued time keeping.
-> + */
-> +static void __init tsc_early_fini(void)
-> +{
-> +	unsigned long long t;
-> +	unsigned long r;
-> +
-> +	t = -cyc2ns_early.cyc2ns_offset;
-> +	r = do_div(t, NSEC_PER_SEC);
-> +
-> +	__sched_clock_offset = sched_clock_early() - sched_clock();
-> +	pr_info("early sched clock is finished, offset [%lld.%09lds]\n", t, r);
-> +}
-> +
-> +#ifdef CONFIG_PARAVIRT
-> +static inline void __init start_early_clock(void)
-> +{
-> +	tsc_early_init(tsc_khz);
-> +	pv_time_ops.active_sched_clock = sched_clock_early;
-> +}
-> +
-> +static inline void __init set_final_clock(void)
-> +{
-> +	pv_time_ops.active_sched_clock = pv_time_ops.sched_clock;
-> +
-> +	/* We did not have early sched clock if multiplier is 0 */
-> +	if (cyc2ns_early.cyc2ns_mul)
-> +		tsc_early_fini();
-> +}
-> +#else /* CONFIG_PARAVIRT */
-> +/*
-> + * For native clock we use two switches static and dynamic, the static switch is
-> + * initially true, so we check the dynamic switch, which is initially false.
-> + * Later  when early clock is disabled, we can alter the static switch in order
-> + * to avoid branch check on every sched_clock() call.
-> + */
-> +static bool __tsc_early;
-> +static DEFINE_STATIC_KEY_TRUE(__tsc_early_static);
-> +
-> +static inline void __init start_early_clock(void)
-> +{
-> +	tsc_early_init(tsc_khz);
-> +	__tsc_early = true;
-> +}
-> +
-> +static inline void __init set_final_clock(void)
-> +{
-> +	__tsc_early = false;
-> +	static_branch_disable(&__tsc_early_static);
-> +
-> +	/* We did not have early sched clock if multiplier is 0 */
-> +	if (cyc2ns_early.cyc2ns_mul)
-> +		tsc_early_fini();
-> +}
-> +#endif /* CONFIG_PARAVIRT */
-> +
->  /*
->   * Scheduler clock - returns current time in nanosec units.
->   */
-> @@ -194,6 +272,13 @@ u64 native_sched_clock(void)
->  		return cycles_2_ns(tsc_now);
->  	}
->  
-> +#ifndef CONFIG_PARAVIRT
-> +	if (static_branch_unlikely(&__tsc_early_static)) {
-> +		if (__tsc_early)
-> +			return sched_clock_early();
-> +	}
-> +#endif /* !CONFIG_PARAVIRT */
-> +
-
-This whole function maze plus the ifdeffery which comes with it is really
-horrible and not required. What's wrong with reusing the existing
-functionality?
-
-The patch below (uncompiled and untested) should achieve the same thing
-without all the paravirt muck (which can be easily added w/o all the
-ifdeffery if really required) by just reusing the existing conversion and
-initialization functions.
-
-If I'm not completely mistaken then the second invocation of
-set_cyc2ns_scale() from tsc_init() will also take care of the smooth
-sched_clock() transition from early to final w/o touching the core
-__sched_clock_offset at all. Though my tired brain might trick me.
-
-It might not work as is, but it should not be rocket science to make it do
-so.
-
-Thanks,
-
-	tglx
-
-8<----------------------
-
-tsc.c |   59 ++++++++++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 44 insertions(+), 15 deletions(-)
-
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -39,6 +39,9 @@ EXPORT_SYMBOL(tsc_khz);
- static int __read_mostly tsc_unstable;
- 
- static DEFINE_STATIC_KEY_FALSE(__use_tsc);
-+static DEFINE_STATIC_KEY_TRUE(tsc_early_enabled);
-+
-+static bool tsc_early_sched_clock;
- 
- int tsc_clocksource_reliable;
- 
-@@ -133,18 +136,12 @@ static inline unsigned long long cycles_
- 	return ns;
- }
- 
--static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
-+static void __set_cyc2ns_scale(unsigned long khz, int cpu,
-+			       unsigned long long tsc_now)
- {
- 	unsigned long long ns_now;
- 	struct cyc2ns_data data;
- 	struct cyc2ns *c2n;
--	unsigned long flags;
--
--	local_irq_save(flags);
--	sched_clock_idle_sleep_event();
--
--	if (!khz)
--		goto done;
- 
- 	ns_now = cycles_2_ns(tsc_now);
- 
-@@ -176,22 +173,46 @@ static void set_cyc2ns_scale(unsigned lo
- 	c2n->data[0] = data;
- 	raw_write_seqcount_latch(&c2n->seq);
- 	c2n->data[1] = data;
-+}
-+
-+static void set_cyc2ns_scale(unsigned long khz, int cpu,
-+			     unsigned long long tsc_now)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	sched_clock_idle_sleep_event();
-+
-+	if (khz)
-+		__set_cyc2ns_scale(khz, cpu, tsc_now);
- 
--done:
- 	sched_clock_idle_wakeup_event();
- 	local_irq_restore(flags);
- }
- 
-+static void __init sched_clock_early_init(unsigned int khz)
-+{
-+	cyc2ns_init(smp_processor_id());
-+	__set_cyc2ns_scale(khz, smp_processor_id(), rdtsc());
-+	tsc_early_sched_clock = true;
-+}
-+
-+static void __init sched_clock_early_exit(void)
-+{
-+	static_branch_disable(&tsc_early_enabled);
-+}
-+
- /*
-  * Scheduler clock - returns current time in nanosec units.
-  */
- u64 native_sched_clock(void)
- {
--	if (static_branch_likely(&__use_tsc)) {
--		u64 tsc_now = rdtsc();
-+	if (static_branch_likely(&__use_tsc))
-+		return cycles_2_ns(rdtsc());
- 
--		/* return the value in ns */
--		return cycles_2_ns(tsc_now);
-+	if (static_branch_unlikely(&tsc_early_enabled)) {
-+		if (tsc_early_sched_clock)
-+			return cycles_2_ns(rdtsc());
- 	}
- 
- 	/*
-@@ -1332,9 +1353,10 @@ void __init tsc_early_delay_calibrate(vo
- 	lpj = tsc_khz * 1000;
- 	do_div(lpj, HZ);
- 	loops_per_jiffy = lpj;
-+	sched_clock_early_init(tsc_khz);
- }
- 
--void __init tsc_init(void)
-+static void __init __tsc_init(void)
- {
- 	u64 lpj, cyc;
- 	int cpu;
-@@ -1384,7 +1406,8 @@ void __init tsc_init(void)
- 	 */
- 	cyc = rdtsc();
- 	for_each_possible_cpu(cpu) {
--		cyc2ns_init(cpu);
-+		if (!tsc_early_sched_clock || cpu != smp_processor_id())
-+			cyc2ns_init(cpu);
- 		set_cyc2ns_scale(tsc_khz, cpu, cyc);
- 	}
- 
-@@ -1411,6 +1434,12 @@ void __init tsc_init(void)
- 	detect_art();
- }
- 
-+void __init tsc_init(void)
-+{
-+	__tsc_init();
-+	sched_clock_early_exit();
-+}
-+
- #ifdef CONFIG_SMP
- /*
-  * If we have a constant TSC and are using the TSC for the delay loop,
-
-
-
+Adding participants from =0A=
+http://lists.infradead.org/pipermail/linux-mtd/2017-March/072974.html=0A=
+=0A=
+On 19/06/18 16:56, Boris Brezillon wrote:=0A=
+=0A=
+> Hi Chris, >=0A=
+> On Tue, 19 Jun 2018 01:44:24 +0000=0A=
+> Chris Packham <Chris.Packham@alliedtelesis.co.nz> wrote:=0A=
+> =0A=
+>> On 19/06/18 12:35, Chris Packham wrote:=0A=
+>>> On 19/06/18 01:15, Miquel Raynal wrote:=0A=
+>>>> Hi Chris,=0A=
+>>>>=0A=
+>>>> On Mon, 18 Jun 2018 16:52:53 +1200, Chris Packham=0A=
+>>>> <chris.packham@alliedtelesis.co.nz> wrote:=0A=
+>>>>   =0A=
+>>>>> Hi,=0A=
+>>>>>=0A=
+>>>>> I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F c=
+hip=0A=
+>>>>> to one of our boards which uses the Marvell NFCv2 controller.=0A=
+>>>>>=0A=
+>>>>> This particular chip is a bit odd in that the datasheet states suppor=
+t=0A=
+>>>>> for ONFI 1.0 but the revision number field is 00 00. It also is marke=
+d=0A=
+>>>>> ABAFA but reports internally as ABAGA. Finally it has internal 8-bit =
+ECC=0A=
+>>>>> which cannot be disabled.=0A=
+>>>>=0A=
+>>>> Boris and I agree that in this case, the chip should not be probed if=
+=0A=
+>>>> ecc->type !=3D ON_DIE (and eventually NONE).=0A=
+>>>>=0A=
+>>>> This should be handled in the Micron driver.=0A=
+>>>>=0A=
+>>>> Also, what is the returned value of micron_supports_on_die_ecc() (with=
+=0A=
+>>>> patch 1/2)?=0A=
+>>>=0A=
+>>> micron_supports_on_die_ecc() returns MICRON_ON_DIE_UNSUPPORTED.=0A=
+>>> Technically this chip should be MICRON_ON_DIE_MANDATORY since it can't=
+=0A=
+>>> be disabled but that wouldn't be much help since that would still resul=
+t=0A=
+>>> in -EINVAL. I'll dig into micron_supports_on_die_ecc() and see if I can=
+=0A=
+>>> find something in the datasheet to use.=0A=
+>>>    =0A=
+>>=0A=
+>> Some further debugging. Nothing (in 4.17) calls=0A=
+>> set_bit(ONFI_FEATURE_ON_DIE_ECC) so I don't think=0A=
+>> micron_supports_on_die_ecc() can return anything other than=0A=
+>> MICRON_ON_DIE_UNSUPPORTED, unless I'm missing something for how the=0A=
+>> {get,set}_feature_list is populated.=0A=
+> =0A=
+> Nope you're not. Looks like we broke Micron on-die ECC in 4.17.=0A=
+> =0A=
+>>=0A=
+>> With the onfi.version fix and the following=0A=
+>>=0A=
+>> --- a/drivers/mtd/nand/raw/nand_micron.c=0A=
+>> +++ b/drivers/mtd/nand/raw/nand_micron.c=0A=
+>> @@ -66,7 +66,9 @@ static int micron_nand_onfi_init(struct nand_chip *chi=
+p)=0A=
+>>=0A=
+>>           if (p->supports_set_get_features) {=0A=
+>>                   set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->set_feature_l=
+ist);=0A=
+>> +               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->set_feature_list);=
+=0A=
+>>                   set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->get_feature_l=
+ist);=0A=
+>> +               set_bit(ONFI_FEATURE_ON_DIE_ECC, p->get_feature_list);=
+=0A=
+>>           }=0A=
+> =0A=
+> Can you send a patch containing only the above changes with the=0A=
+> Cc-stable and Fixes tags?=0A=
+> =0A=
+>> @@ -240,7 +246,7 @@ static int micron_supports_on_die_ecc(struct=0A=
+>> nand_chip *chip)=0A=
+>>            * Some Micron NANDs have an on-die ECC of 4/512, some other=
+=0A=
+>> -         * 8/512. We only support the former.=0A=
+>> +         * 8/512.=0A=
+>>            */=0A=
+>> -       if (chip->ecc_strength_ds !=3D 4)=0A=
+>> +       if (chip->ecc_strength_ds !=3D 4 && chip->ecc_strength_ds !=3D 8=
+)=0A=
+>>                   return MICRON_ON_DIE_UNSUPPORTED;=0A=
+>>=0A=
+> =0A=
+> This should be done in a separate patch.=0A=
+>   =0A=
+>> I can get micron_supports_on_die_ecc() to return MICRON_ON_DIE_SUPPORTED=
+.=0A=
+>>=0A=
+> =0A=
+> That's weird. You should have MICRON_ON_DIE_MANDATORY here. Could it be=
+=0A=
+> that the ONFI_FEATURE_ON_DIE_ECC_EN bit does not really reflect the ECC=
+=0A=
+> engine state? If that's the case, we'll have to change the way we=0A=
+> detect if on-die ECC is supported/mandatory/not-supported (based on the=
+=0A=
+> model name stored in the ONFI param page?).=0A=
+> =0A=
+=0A=
+Even though though MT29F1G08ABAFAWP-ITE:F says on-die ECC is enabled and =
+=0A=
+cannot be disabled it still seems to respond to =0A=
+micron_nand_on_die_ecc_setup(chip, false); by clearing the feature bit =0A=
+retrieved by nand_get_features(chip, ONFI_FEATURE_ON_DIE_ECC, feature).=0A=
+=0A=
+I see in the original thread that the detection of the 70s parts can be =0A=
+done by the "Number of bits ECC correctability". Can we assume that all =0A=
+70s has MICRON_ON_DIE_MANDATORY or do I need to make it based on =0A=
+specific IDs?=0A=
