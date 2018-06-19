@@ -2,169 +2,105 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6B1C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE30C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9766720661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:10:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YXugDi2E";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zjc6ccHn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9766720661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 51C4E20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 06:10:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51C4E20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756117AbeFSGKR (ORCPT
+        id S1756168AbeFSGKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 02:10:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48262 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755611AbeFSGKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 02:10:15 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 61B7E60376; Tue, 19 Jun 2018 06:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529388615;
-        bh=WWQKkjoNwSk17qZqZ78FLMKwyBSASPpHJMus57KH0dw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YXugDi2Es34bhyKvZNUNknRU6yeCrwbGspRZuIF2UApkfoJtZEehU8GgmBPKXFzS+
-         MKs0Vjxrg2D1gYxdgmTbCt3BDHazi1XChJpmoc5Ur1Wvy1V1o5VMbfOCcEzLRu+RPl
-         poEx6871YSvLtyU1UzLLOdC85LqXb5DSTW/vU1O0=
-Received: from akhilpo-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: akhilpo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 44E88604D4;
-        Tue, 19 Jun 2018 06:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529388614;
-        bh=WWQKkjoNwSk17qZqZ78FLMKwyBSASPpHJMus57KH0dw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Zjc6ccHnt8DDEQ6zb0SiB41ZVFNKwEsnT19nYYTxNZAzgy0dnpt9pyuo1OdV6mkp8
-         91qJuSi5C5/ZcY/ofN0AREG//8IGBe5OYnrOLab/NxsAlxyxny2PtiFvwRHbv7bpgp
-         9ci+gKha91qGVsCo/KlB+oZ4A+vyAt2A8HRInXro=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 44E88604D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=akhilpo@codeaurora.org
-From:   Akhil P Oommen <akhilpo@codeaurora.org>
-To:     sumit.semwal@linaro.org, gustavo@padovan.org
-Cc:     linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, jcrouse@codeaurora.org,
-        smasetty@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH] dma-buf/fence: Take refcount on the module that owns the fence
-Date:   Tue, 19 Jun 2018 11:40:05 +0530
-Message-Id: <1529388605-10044-1-git-send-email-akhilpo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 19 Jun 2018 02:10:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58188 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755883AbeFSGKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 02:10:51 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B982420862; Tue, 19 Jun 2018 08:10:49 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2313520DC1;
+        Tue, 19 Jun 2018 08:09:59 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 08:09:59 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [RFC PATCH v2 6/6] mtd: rawnand: micron: support 8/512 on-die
+ ECC
+Message-ID: <20180619080959.3e0416f8@bbrezillon>
+In-Reply-To: <20180619053125.16792-7-chris.packham@alliedtelesis.co.nz>
+References: <20180619053125.16792-1-chris.packham@alliedtelesis.co.nz>
+        <20180619053125.16792-7-chris.packham@alliedtelesis.co.nz>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each fence object holds function pointers of the module that initialized
-it. Allowing the module to unload before this fence's release is
-catastrophic. So, keep a refcount on the module until the fence is
-released.
+On Tue, 19 Jun 2018 17:31:25 +1200
+Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-Signed-off-by: Akhil P Oommen <akhilpo@codeaurora.org>
----
- drivers/dma-buf/dma-fence.c | 15 ++++++++++++---
- include/linux/dma-fence.h   | 10 ++++++++--
- 2 files changed, 20 insertions(+), 5 deletions(-)
+> Micron MT29F1G08ABAFAWP-ITE:F supports an on-die ECC with 8 bits
+> per 512 bytes. Add support for this combination.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> This seems deceptively easy so I've probably missed something. I have
+> tested with running some of the ubifs stress tests from mtd-utils and
+> things seem OK.
+> 
+> Changes in v2:
+> - New
+> 
+>  drivers/mtd/nand/raw/nand_micron.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
+> index d1e8f57544a0..2164dd112f5c 100644
+> --- a/drivers/mtd/nand/raw/nand_micron.c
+> +++ b/drivers/mtd/nand/raw/nand_micron.c
+> @@ -240,9 +240,9 @@ static int micron_supports_on_die_ecc(struct nand_chip *chip)
+>  
+>  	/*
+>  	 * Some Micron NANDs have an on-die ECC of 4/512, some other
+> -	 * 8/512. We only support the former.
+> +	 * 8/512.
+>  	 */
+> -	if (chip->ecc_strength_ds != 4)
+> +	if (chip->ecc_strength_ds != 4 && chip->ecc_strength_ds != 8)
+>  		return MICRON_ON_DIE_UNSUPPORTED;
 
-diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
-index 4edb9fd..0be8053 100644
---- a/drivers/dma-buf/dma-fence.c
-+++ b/drivers/dma-buf/dma-fence.c
-@@ -18,6 +18,7 @@
-  * more details.
-  */
- 
-+#include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/export.h>
- #include <linux/atomic.h>
-@@ -168,6 +169,7 @@ void dma_fence_release(struct kref *kref)
- {
- 	struct dma_fence *fence =
- 		container_of(kref, struct dma_fence, refcount);
-+	struct module *module = fence->owner;
- 
- 	trace_dma_fence_destroy(fence);
- 
-@@ -178,6 +180,8 @@ void dma_fence_release(struct kref *kref)
- 		fence->ops->release(fence);
- 	else
- 		dma_fence_free(fence);
-+
-+	module_put(module);
- }
- EXPORT_SYMBOL(dma_fence_release);
- 
-@@ -556,8 +560,9 @@ struct default_wait_cb {
-  * to check which fence is later by simply using dma_fence_later.
-  */
- void
--dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
--	       spinlock_t *lock, u64 context, unsigned seqno)
-+_dma_fence_init(struct module *module, struct dma_fence *fence,
-+		const struct dma_fence_ops *ops, spinlock_t *lock,
-+		u64 context, unsigned seqno)
- {
- 	BUG_ON(!lock);
- 	BUG_ON(!ops || !ops->wait || !ops->enable_signaling ||
-@@ -571,7 +576,11 @@ struct default_wait_cb {
- 	fence->seqno = seqno;
- 	fence->flags = 0UL;
- 	fence->error = 0;
-+	fence->owner = module;
-+
-+	if (!try_module_get(module))
-+		fence->owner = NULL;
- 
- 	trace_dma_fence_init(fence);
- }
--EXPORT_SYMBOL(dma_fence_init);
-+EXPORT_SYMBOL(_dma_fence_init);
-diff --git a/include/linux/dma-fence.h b/include/linux/dma-fence.h
-index eb9b05a..8159125 100644
---- a/include/linux/dma-fence.h
-+++ b/include/linux/dma-fence.h
-@@ -36,6 +36,8 @@
- 
- /**
-  * struct dma_fence - software synchronization primitive
-+ * @owner: the module that contains fence_ops functions.
-+ *	   Usually THIS_MODULE.
-  * @refcount: refcount for this fence
-  * @ops: dma_fence_ops associated with this fence
-  * @rcu: used for releasing fence with kfree_rcu
-@@ -71,6 +73,7 @@
-  * been completed, or never called at all.
-  */
- struct dma_fence {
-+	struct module *owner;
- 	struct kref refcount;
- 	const struct dma_fence_ops *ops;
- 	struct rcu_head rcu;
-@@ -249,8 +252,11 @@ struct dma_fence_ops {
- 				   char *str, int size);
- };
- 
--void dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
--		    spinlock_t *lock, u64 context, unsigned seqno);
-+#define dma_fence_init(fence, ops, lock, context, seqno) _dma_fence_init( \
-+		THIS_MODULE, fence, ops, lock, context, seqno)
-+void _dma_fence_init(struct module *module, struct dma_fence *fence,
-+		const struct dma_fence_ops *ops, spinlock_t *lock, u64 context,
-+		unsigned seqno);
- 
- void dma_fence_release(struct kref *kref);
- void dma_fence_free(struct dma_fence *fence);
--- 
-1.9.1
+I remember that chips with 8bits/512bytes on-die ECC had an extra
+command to query a more precise number of bitflips (see this
+discussion [1]). It's probably worth implementing that, since those
+chips are more likely to have bitflips than the 4bit/512 versions, and
+you don't want to move the data around as soon as you have one bitflip. 
 
+>  
+>  	return MICRON_ON_DIE_SUPPORTED;
+> @@ -274,9 +274,9 @@ static int micron_nand_init(struct nand_chip *chip)
+>  			return -EINVAL;
+>  		}
+>  
+> -		chip->ecc.bytes = 8;
+> +		chip->ecc.bytes = chip->ecc_strength_ds * 2;
+>  		chip->ecc.size = 512;
+> -		chip->ecc.strength = 4;
+> +		chip->ecc.strength = chip->ecc_strength_ds;
+>  		chip->ecc.algo = NAND_ECC_BCH;
+>  		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+>  		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
+
+[1]http://lists.infradead.org/pipermail/linux-mtd/2017-March/072974.html
