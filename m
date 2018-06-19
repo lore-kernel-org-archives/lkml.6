@@ -6,138 +6,219 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA5DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F4CC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC638205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:25:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4FF8205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:26:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="g/bPQVLw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC638205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="AaDW45vX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4FF8205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966725AbeFSPZK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:25:10 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:42636 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966517AbeFSPZH (ORCPT
+        id S966654AbeFSP0Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:26:25 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:40195 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966193AbeFSP0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:25:07 -0400
-Received: by mail-pg0-f66.google.com with SMTP id c10-v6so18806pgu.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:25:06 -0700 (PDT)
+        Tue, 19 Jun 2018 11:26:21 -0400
+Received: by mail-io0-f194.google.com with SMTP id g22-v6so569377iob.7
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:26:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Yl0qE9+L94OuSbBDwqhpGvnxHHq6odiKBko7yvqJ4wA=;
-        b=g/bPQVLw3utAay7KLaau4znOAy8y4KcLcLf1ZGagF5A2F8XU339TqUyXKkM3xcQ2Rq
-         0uhX1R1S0ipazsaJ/91ZUk8+zsRSwHUf8H4acs6Lb5qOg5zzNoPjdMzynhhNXJpGkBxz
-         SFdxFu9zq7Ub3V3GnZgfY5BHxwNWt39oXOMawJ+ykA1IneqS1xxlex+plzBUD5zRwg2u
-         2JhP00xkpJiUDr3Jc4EwrM/VEob/GClipPtWUoUQ0AvAPA3tWpzfQqWoL1yvj8axZ3dL
-         lSXysNRgnj/7j2cKg+8Ut1xkklaNx0BkLHtxxulcjLaMPSzoeIfvhAJATI7Q1ZhmuKEP
-         r6CA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=o+AN6OXTeeiWDsnSatDOdeTRQctw5c5oYbkYQIb93IU=;
+        b=AaDW45vXnMDACHyom8sTTd0jROPnAlqMl7b41+exjRjhKf5xE1s1D5IdhPXOmMmQW1
+         LR52kKQIiaYenP7i7CeKMcClZi+lI13pccmkN6pj5Sj2PCr1eSPZ9I5Jq2xom3b+hS56
+         VNvW6z0wEYx17Ndaa42jfsLZO1eA69RZmf3BZlN/vjMkOrpHdszRTeL75bKUiUI8lfgQ
+         UKKv+1ToaGCq6eIccMkVpKVIrI+9FcCvpW4C1LPnSq8aeHCNtHjAAJKPcDNvETQqduXT
+         nEhPG57fB58FTMs2E6PrnfPYdpKskUCQGr8pXUR4LdPeOIRB2f0CAdOkI9dCgOzinkfi
+         +aOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Yl0qE9+L94OuSbBDwqhpGvnxHHq6odiKBko7yvqJ4wA=;
-        b=csHTWgt2IihoxmnApscDie4CLLcpPpYbVHXcf0BXGMillcEcTHUVDnmW9BHSbYYpyd
-         Y0pDnZlkC12a8kiQcapgfZXY5uLk+i0IHP+Gmn8xXmvVYWDzz8vjoXYgHQYiU8RYTe+K
-         mP8GxOyhjhMUbEc4O3mxGdyE+f1uUFD+rbvPv4LZeBwCbVF3+k0k8oAyKKR5Fhom0AZz
-         uVh7KAHqqrkPT9rNqYjKGxHJ3q05gCdn/UJTcHbvxKxqgmFVBgzws/+OgKhuV4RW8ddj
-         eHc7H6J85IrVm2ZxWNW3JyjpxE3/0Yk8WLLf+sEsFX53xBM4GzH29ZF8UcR1jJaP7A/O
-         9W6w==
-X-Gm-Message-State: APt69E18wZAVvpzKNwH5pVrpxMyTnf9Bth8gm4uqpKjbwBlE4LeF4rdq
-        miFBuLnY5llbEJpt4Q0a7KdXgw==
-X-Google-Smtp-Source: ADUXVKLU5qG14zjt6nhgQ+K6yyGiVdUrJ2Gen0UK+KRYvze++nkZlOt82rQrkSBZSd5uee6msWEMvQ==
-X-Received: by 2002:a62:8b9b:: with SMTP id e27-v6mr18619460pfl.82.1529421906615;
-        Tue, 19 Jun 2018 08:25:06 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b023:c12a:9165:dc8d:85a7:914? ([2600:1010:b023:c12a:9165:dc8d:85a7:914])
-        by smtp.gmail.com with ESMTPSA id a8-v6sm32607070pfe.72.2018.06.19.08.25.05
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=o+AN6OXTeeiWDsnSatDOdeTRQctw5c5oYbkYQIb93IU=;
+        b=ojazRDpYGcl9bDWPWlLL0fZK1CODJHGiz9orD11JAe04GSrKp5xIwwlQ8ETcPf5zCC
+         8drhJbWkFBa3nwGsYgsDHWrH9QuoGp5lv4cxTDN/Tyk4C98lw0CTe2fItlwPLu2N4N2e
+         HV2YqSidthOf+50ak9HwvwISuVCVLcr6JpP9EwNsxED2jObHzxPVvAV3NxyMf2tmRzq/
+         RQwgJPCDoIsK2KQyn6DTs9VC0qa0pfeaKmjO/p3FVoIkzotkubmo+eaySOfQBKDL2z4R
+         dMXyxgbSzgOq4flQviD7W/T214W2tYgHrtfbEsDXB5AW1If6POM+sPKFZEnaq+7G1tOy
+         9UvA==
+X-Gm-Message-State: APt69E01VEmnloMBW1q+p8kILL1EUsDTzeUiscHj3XLiUas4zaSuQwf1
+        JyAbq3D1Lj2UNU+9pLm0K3uUUA==
+X-Google-Smtp-Source: ADUXVKK3p6vamkUX/r+OkZ9JXdpC+xnK3fskxE9X86QzyOS8vyAJKfIaq4wCLcz4wwAyuS3rx9QpXQ==
+X-Received: by 2002:a6b:f90b:: with SMTP id j11-v6mr14602494iog.238.1529421980480;
+        Tue, 19 Jun 2018 08:26:20 -0700 (PDT)
+Received: from [192.168.1.167] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id c102-v6sm5738675itd.3.2018.06.19.08.26.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 08:25:05 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] MAINTAINERS: Add me as an x86 entry code maintainer
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <90B4C317-80C6-4B27-8984-58BAFCAB6E14@gmail.com>
-Date:   Tue, 19 Jun 2018 08:25:04 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <94220ADB-BE17-43B8-8957-C62426618A52@amacapital.net>
-References: <c2394b008adfb6e7480f3b1193386537e96a6a69.1529358034.git.luto@kernel.org> <90B4C317-80C6-4B27-8984-58BAFCAB6E14@gmail.com>
-To:     Tony Luck <tony.luck@gmail.com>
+        Tue, 19 Jun 2018 08:26:18 -0700 (PDT)
+Subject: Re: Constant ata messages on console with commit 28361c403683
+ ("libata: add extra internal command") (was Re: [GIT PULL 2/2] libata changes
+ for v4.18-rc1)
+To:     Michael Ellerman <mpe@ellerman.id.au>, Tejun Heo <tj@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20180605190807.GE1351649@devbig577.frc2.facebook.com>
+ <20180605191525.GF1351649@devbig577.frc2.facebook.com>
+ <87bmc8a6qi.fsf@concordia.ellerman.id.au>
+ <ddef9feb-2764-6959-3a36-e97fbe377931@kernel.dk>
+ <87sh5jxmif.fsf@concordia.ellerman.id.au>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <21c94bb3-f2d6-535d-f9fe-399e7919c59c@kernel.dk>
+Date:   Tue, 19 Jun 2018 09:26:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <87sh5jxmif.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6/19/18 1:29 AM, Michael Ellerman wrote:
+> Jens Axboe <axboe@kernel.dk> writes:
+>> On 6/18/18 1:33 AM, Michael Ellerman wrote:
+>>> Tejun Heo <tj@kernel.org> writes:
+>>> ...
+>>>> Jens Axboe (10):
+>>>>       libata: introduce notion of separate hardware tags
+>>>>       libata: convert core and drivers to ->hw_tag usage
+>>>>       libata: bump ->qc_active to a 64-bit type
+>>>>       libata: use ata_tag_internal() consistently
+>>>>       libata: remove assumption that ATA_MAX_QUEUE - 1 is the max
+>>>>       sata_nv: set host can_queue count appropriately
+>>>>       libata: add extra internal command
+>>>
+>>> Replying here because I can't find the original mail.
+>>>
+>>> The above commit is causing one of my machines to constantly spew ata
+>>> messages on the console, according to bisect:
+>>>
+>>> # first bad commit: [28361c403683c2b00d4f5e76045f3ccd299bf99d] libata: add extra internal command
+>>>
+>>> To get it to boot I have to also apply:
+>>>
+>>>   88e10092f6a6 ("sata_fsl: use the right type for tag bitshift")
+>>>
+>>>
+>>> The system boots OK and seems fine, except that it's just printing
+>>> multiple of these per second:
+>>>
+>>>   ata2: Signature Update detected @ 0 msecs
+>>>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>>>   ata2.00: configured for UDMA/100
+>>>   ata2: Signature Update detected @ 0 msecs
+>>>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>>>   ata2.00: configured for UDMA/100
+>>>   ata2: Signature Update detected @ 0 msecs
+>>>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>>>   ata2.00: configured for UDMA/100
+>>>   ata2: Signature Update detected @ 0 msecs
+>>>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>>>   ata2.00: configured for UDMA/100
+>>>   ata2: Signature Update detected @ 0 msecs
+>>>
+>>> And it never seems to stop.
+>>>
+>>> The machine is a Freescale/NXP P5020ds, using the sata_fsl driver
+>>> presumably. Any ideas?
+>>
+>> Hmm that's odd. Can you include the boot log from a working boot as
+>> well? Would be nice to see what devices are on the sata adapter.
+>> The above just looks like a hardreset loop.
+> 
+> Ah yep. I stupidly assumed it was working, because the machine booted,
+> but that's because the root disk is on ata1.
+> 
+> Booting the good kernel:
+> 
+>   ba80c3a572f4 ("sata_nv: set host can_queue count appropriately")
+> 
+> I see:
+> 
+>   root@p5020ds:~# ls -l /sys/class/ata_port/
+>   total 0
+>   lrwxrwxrwx 1 root root 0 Jun 19 06:49 ata1 -> ../../devices/platform/ffe000000.soc/ffe220000.sata/ata1/ata_port/ata1
+>   lrwxrwxrwx 1 root root 0 Jun 19 17:06 ata2 -> ../../devices/platform/ffe000000.soc/ffe221000.sata/ata2/ata_port/ata2
+> 
+>   root@p5020ds:~# ls -l /sys/class/block/ | grep ata
+>   lrwxrwxrwx 1 root root 0 Jun 19 17:11 sda -> ../../devices/platform/ffe000000.soc/ffe220000.sata/ata1/host0/target0:0:0/0:0:0:0/block/sda
+>   lrwxrwxrwx 1 root root 0 Jun 19 17:11 sda1 -> ../../devices/platform/ffe000000.soc/ffe220000.sata/ata1/host0/target0:0:0/0:0:0:0/block/sda/sda1
+>   lrwxrwxrwx 1 root root 0 Jun 19 17:11 sda2 -> ../../devices/platform/ffe000000.soc/ffe220000.sata/ata1/host0/target0:0:0/0:0:0:0/block/sda/sda2
+>   lrwxrwxrwx 1 root root 0 Jun 19 17:11 sda5 -> ../../devices/platform/ffe000000.soc/ffe220000.sata/ata1/host0/target0:0:0/0:0:0:0/block/sda/sda5
+>   lrwxrwxrwx 1 root root 0 Jun 19 17:11 sr0 -> ../../devices/platform/ffe000000.soc/ffe221000.sata/ata2/host1/target1:0:0/1:0:0:0/block/sr0
+> 
+> So it's the DVD drive.
+> 
+>   root@p5020ds:/sys/devices/platform/ffe000000.soc/ffe221000.sata/ata2/host1/target1:0:0/1:0:0:0/scsi_device/1:0:0:0/device# cat vendor 
+>   Optiarc 
+>   root@p5020ds:/sys/devices/platform/ffe000000.soc/ffe221000.sata/ata2/host1/target1:0:0/1:0:0:0/scsi_device/1:0:0:0/device# cat model
+>   DVD RW AD-7260S 
+> 
+> 
+> Full boot log from a good boot attached if that's helpful.
+> 
+> All of the above looks the same when I boot with the broken setup, it
+> just spams dmesg constantly.
+> 
+> One thing that is different, on the good kernel I see:
+> 
+>   root@p5020ds:~# mount /dev/sr0 /mnt
+>   mount: no medium found on /dev/sr0
+> 
+> vs bad (88e10092f6a6):
+> 
+>   root@p5020ds:~# mount /dev/sr0 /mnt
+>   mount: /dev/sr0 is already mounted or /mnt busy
+
+Can you try the below patch, on both 4.17 and on current -git? Might
+help shed some light on this. The fsl driver does weird stuff with
+the internal tag, I'm guessing that's related.
 
 
-> On Jun 18, 2018, at 10:00 PM, Tony Luck <tony.luck@gmail.com> wrote:
->=20
-> So the TIP tree was named for =E2=80=9CThomas, Ingo, Peter=E2=80=9D. Need t=
-o add an =E2=80=9CA=E2=80=9D for Andy. Maybe it should be the PITA tree :-)
+diff --git a/drivers/ata/sata_fsl.c b/drivers/ata/sata_fsl.c
+index b8d9cfc60374..9bac5ba36dac 100644
+--- a/drivers/ata/sata_fsl.c
++++ b/drivers/ata/sata_fsl.c
+@@ -28,6 +28,9 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ 
++#undef DPRINTK
++#define DPRINTK printk
++
+ static unsigned int intr_coalescing_count;
+ module_param(intr_coalescing_count, int, S_IRUGO);
+ MODULE_PARM_DESC(intr_coalescing_count,
+@@ -318,7 +321,7 @@ static void fsl_sata_set_irq_coalescing(struct ata_host *host,
+ 
+ 	DPRINTK("interrupt coalescing, count = 0x%x, ticks = %x\n",
+ 			intr_coalescing_count, intr_coalescing_ticks);
+-	DPRINTK("ICC register status: (hcr base: 0x%x) = 0x%x\n",
++	DPRINTK("ICC register status: (hcr base: 0x%p) = 0x%x\n",
+ 			hcr_base, ioread32(hcr_base + ICC));
+ }
+ 
+@@ -1479,7 +1482,7 @@ static int sata_fsl_probe(struct platform_device *ofdev)
+ 	}
+ 
+ 	DPRINTK("@reset i/o = 0x%x\n", ioread32(csr_base + TRANSCFG));
+-	DPRINTK("sizeof(cmd_desc) = %d\n", sizeof(struct command_desc));
++	DPRINTK("sizeof(cmd_desc) = %d\n", (int) sizeof(struct command_desc));
+ 	DPRINTK("sizeof(#define cmd_desc) = %d\n", SATA_FSL_CMD_DESC_SIZE);
+ 
+ 	host_priv = kzalloc(sizeof(struct sata_fsl_host_priv), GFP_KERNEL);
 
-I have zero desire to start committing to the tree.  But if I do, I will do m=
-y best to put the A in PITA.
+-- 
+Jens Axboe
 
->=20
->> On Jun 18, 2018, at 14:41, Andy Lutomirski <luto@kernel.org> wrote:
->>=20
->> And update my email address.
->>=20
->> Cc: Ingo Molnar <mingo@kernel.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->> Signed-off-by: Andy Lutomirski <luto@kernel.org>
->> ---
->>=20
->> Linus has been saying that I might as well maintain this stuff for years.=
-
->> What do you all think?
->>=20
->> MAINTAINERS | 9 ++++++++-
->> 1 file changed, 8 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 9d5eeff51b5f..624c3fd11d04 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -15575,6 +15575,13 @@ S:    Maintained
->> F:    Documentation/x86/
->> F:    arch/x86/
->>=20
->> +X86 ENTRY CODE
->> +M:    Andy Lutomirski <luto@kernel.org>
->> +L:    linux-kernel@vger.kernel.org
->> +T:    git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/=
-asm
->> +S:    Maintained
->> +F:    arch/x86/entry/
->> +
->> X86 MCE INFRASTRUCTURE
->> M:    Tony Luck <tony.luck@intel.com>
->> M:    Borislav Petkov <bp@alien8.de>
->> @@ -15597,7 +15604,7 @@ F:    drivers/platform/x86/
->> F:    drivers/platform/olpc/
->>=20
->> X86 VDSO
->> -M:    Andy Lutomirski <luto@amacapital.net>
->> +M:    Andy Lutomirski <luto@kernel.org>
->> L:    linux-kernel@vger.kernel.org
->> T:    git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/v=
-dso
->> S:    Maintained
->> --=20
->> 2.17.1
->>=20
