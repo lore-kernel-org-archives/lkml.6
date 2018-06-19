@@ -6,131 +6,83 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF17C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CB9C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D79A420693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:36:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79A420693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 4EB2320836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:36:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB2320836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752133AbeFSXgA (ORCPT
+        id S1752838AbeFSXgx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 19:36:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:41699 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750805AbeFSXfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 19:35:54 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 419PV03X3Zz9s3C;
-        Wed, 20 Jun 2018 09:35:52 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: Constant ata messages on console with commit 28361c403683 ("libata: add extra internal command") (was Re: [GIT PULL 2/2] libata changes for v4.18-rc1)
-In-Reply-To: <f82edaa2-4b1a-c747-3d58-ec86ceb4ee7e@kernel.dk>
-References: <20180605190807.GE1351649@devbig577.frc2.facebook.com> <20180605191525.GF1351649@devbig577.frc2.facebook.com> <87bmc8a6qi.fsf@concordia.ellerman.id.au> <ddef9feb-2764-6959-3a36-e97fbe377931@kernel.dk> <87sh5jxmif.fsf@concordia.ellerman.id.au> <f82edaa2-4b1a-c747-3d58-ec86ceb4ee7e@kernel.dk>
-Date:   Wed, 20 Jun 2018 09:35:51 +1000
-Message-ID: <87r2l2wdrc.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 19 Jun 2018 19:36:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43274 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751955AbeFSXgt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 19:36:49 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3720106B;
+        Tue, 19 Jun 2018 23:36:48 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 16:36:47 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Michal Suchanek <msuchanek@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Aaron Wu <Aaron.Wu@analog.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Steven Rostedt," <rostedt@goodmis.org>,
+        Laura Abbott <lauraa@codeaurora.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Baoquan He <bhe@redhat.com>,
+        Ilya Matveychikov <matvejchikov@gmail.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 0/5] Kernel parameter parser cleanup/enhancement
+Message-Id: <20180619163647.23c8a5d7370258c9e43141c3@linux-foundation.org>
+In-Reply-To: <cover.1528215659.git.msuchanek@suse.de>
+References: <cover.1528215659.git.msuchanek@suse.de>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jens Axboe <axboe@kernel.dk> writes:
-> On 6/19/18 1:29 AM, Michael Ellerman wrote:
->> Jens Axboe <axboe@kernel.dk> writes:
->>> On 6/18/18 1:33 AM, Michael Ellerman wrote:
->>>> Tejun Heo <tj@kernel.org> writes:
->>>> ...
->>>>> Jens Axboe (10):
->>>>>       libata: introduce notion of separate hardware tags
->>>>>       libata: convert core and drivers to ->hw_tag usage
->>>>>       libata: bump ->qc_active to a 64-bit type
->>>>>       libata: use ata_tag_internal() consistently
->>>>>       libata: remove assumption that ATA_MAX_QUEUE - 1 is the max
->>>>>       sata_nv: set host can_queue count appropriately
->>>>>       libata: add extra internal command
->>>>
->>>> Replying here because I can't find the original mail.
->>>>
->>>> The above commit is causing one of my machines to constantly spew ata
->>>> messages on the console, according to bisect:
->>>>
->>>> # first bad commit: [28361c403683c2b00d4f5e76045f3ccd299bf99d] libata: add extra internal command
->>>>
->>>> To get it to boot I have to also apply:
->>>>
->>>>   88e10092f6a6 ("sata_fsl: use the right type for tag bitshift")
->>>>
->>>>
->>>> The system boots OK and seems fine, except that it's just printing
->>>> multiple of these per second:
->>>>
->>>>   ata2: Signature Update detected @ 0 msecs
->>>>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
->>>>   ata2.00: configured for UDMA/100
->>>>   ata2: Signature Update detected @ 0 msecs
->>>>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
->>>>   ata2.00: configured for UDMA/100
->>>>   ata2: Signature Update detected @ 0 msecs
->>>>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
->>>>   ata2.00: configured for UDMA/100
->>>>   ata2: Signature Update detected @ 0 msecs
->>>>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
->>>>   ata2.00: configured for UDMA/100
->>>>   ata2: Signature Update detected @ 0 msecs
-...
->
-> Actually, just try this one on top of current -git.
+On Tue,  5 Jun 2018 18:43:07 +0200 Michal Suchanek <msuchanek@suse.de> wrote:
 
-Yep that fixes it.
+> due to work on the fadump_extra_args I looked at the kernel parameter parser
+> and found its grammar rather curious.
+> 
+> It supports double quotes but not any other quoting characters so double quotes
+> cannot be quoted. What's more, the quotes can be anywhere in the parameter
+> name or value and are interpteted but are removed only from start and end of
+> the parameter value.
+> 
+> These are the patches not specific to fadump which somewhat straighten the
+> qouting grammar to make it on par with common shell interpreters.
+> 
+> Specifically double and single quotes can be used for quoting as well as
+> backslashes with the usual shell semantic. All quoting characters are removed
+> while the parameters are parsed.
 
-No more message spam, and when I try to mount sr0 it says "no medium".
+Well.  It's nice.  I guess.  Is there any demand for these
+capabilities?  I don't recall ever having seen a complaint - kernel
+parameters tend to be pretty simple things.
 
-I'll have to go into the office to actually put a disc in the drive
-to check it's really working, but it seems likely.
 
-Thanks for debugging it, here's a tested-by if you like:
+Also, the break_arg_end() and squash_char() macros make me want to cry.
+A macro which changes control flow hidden inside another macro!  Are
+they reeeealy necessary?  Can't be done with some C helpers?  Maybe put
+inquote, backslash, args, i into a new struct parser_state and pass a
+pointer to that around the place?  At the very least, those macros
+should be apologetically documented :(
 
-Tested-by: Michael Ellerman <mpe@ellerman.id.au>
 
-cheers
-
-> diff --git a/drivers/ata/sata_fsl.c b/drivers/ata/sata_fsl.c
-> index b8d9cfc60374..4007a9ae650d 100644
-> --- a/drivers/ata/sata_fsl.c
-> +++ b/drivers/ata/sata_fsl.c
-> @@ -395,12 +395,6 @@ static inline unsigned int sata_fsl_tag(unsigned int tag,
->  {
->  	/* We let libATA core do actual (queue) tag allocation */
->  
-> -	/* all non NCQ/queued commands should have tag#0 */
-> -	if (ata_tag_internal(tag)) {
-> -		DPRINTK("mapping internal cmds to tag#0\n");
-> -		return 0;
-> -	}
-> -
->  	if (unlikely(tag >= SATA_FSL_QUEUE_DEPTH)) {
->  		DPRINTK("tag %d invalid : out of range\n", tag);
->  		return 0;
-> @@ -1229,7 +1223,7 @@ static void sata_fsl_host_intr(struct ata_port *ap)
->  
->  	/* Workaround for data length mismatch errata */
->  	if (unlikely(hstatus & INT_ON_DATA_LENGTH_MISMATCH)) {
-> -		for (tag = 0; tag < ATA_MAX_QUEUE; tag++) {
-> +		for (tag = 0; tag <= ATA_MAX_QUEUE; tag++) {
->  			qc = ata_qc_from_tag(ap, tag);
->  			if (qc && ata_is_atapi(qc->tf.protocol)) {
->  				u32 hcontrol;
->
-> -- 
-> Jens Axboe
