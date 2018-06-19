@@ -2,87 +2,123 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F98C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51541C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9EC205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E9EC205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0472320652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:30:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gpiccoli-net.20150623.gappssmtp.com header.i=@gpiccoli-net.20150623.gappssmtp.com header.b="e+CRUy/E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0472320652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gpiccoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966797AbeFSPaQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:30:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55454 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966502AbeFSPaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:30:13 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AC12987A4B;
-        Tue, 19 Jun 2018 15:30:12 +0000 (UTC)
-Received: from redhat.com (ovpn-120-100.rdu2.redhat.com [10.10.120.100])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2FB512026D68;
-        Tue, 19 Jun 2018 15:30:11 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 18:30:10 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Farhan Ali <alifm@linux.ibm.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, arei.gonglei@huawei.com,
-        longpeng2@huawei.com, pasic@linux.ibm.com, frankja@linux.ibm.com,
-        Jason Wang <jasowang@redhat.com>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Detect & register virtio-crypto algos only if it
- can be supported by backend
-Message-ID: <20180619182948-mutt-send-email-mst@kernel.org>
-References: <cover.1528921468.git.alifm@linux.ibm.com>
- <44ccc5db-e1d4-27b7-8942-c77f467f422e@linux.ibm.com>
- <0c5d7e42-e6c5-6aa2-8c1b-487c8cc9eb21@de.ibm.com>
- <20180619143230.zjemmhhz7embs2li@gondor.apana.org.au>
- <4301ac2e-a8f5-7432-cdd9-f39d30a9fb5e@linux.ibm.com>
+        id S966814AbeFSPaZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:30:25 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:40571 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966591AbeFSPaW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:30:22 -0400
+Received: by mail-io0-f193.google.com with SMTP id g22-v6so581878iob.7
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gpiccoli-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=wFXP/+G/y0CiXxzR5wEgHYdiVhVRrbzlGGv4Iu5z9Qw=;
+        b=e+CRUy/EgWc5KLGZhrzUwQNLC2YRD+92oM5Zhqx91Edz5SvwJ5IWEp+h7tU87UU802
+         keZVwJJSwGDBZUFJZ0DlsP6D5BMMkZZORAXyYztkwXbQ8IrDIgDhANMr3Ly+0xU0txGr
+         VmGG8nCxC/Cxt/bJgcDwsyRxzqg08H3eG5YYvnN7CWldEimvum9qoeuda6U4PmOikjgG
+         Greg7eF3yfyFlkKRYTJ5sjZVyKlPIRyy8uVfi1aw0ZLBy+2GPMPDT6WPzgwbllzXQG+Q
+         cMDhe4tyfPJET748aIupEQoGMZXDexlO8krFsJ2dJRm0by7yt688UGpA93dvm/fCMHHA
+         kxxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=wFXP/+G/y0CiXxzR5wEgHYdiVhVRrbzlGGv4Iu5z9Qw=;
+        b=dldnTtCc9qoC/4cAY6dUvF6Sfa16AkcVpEGmJXiDMnzzUJ6+xU/CyeBkkB9KaweZeD
+         l3LQ8eV6UsBVp1rxSYMTN4hRk/00s9fnm9NFQuoDHx2qSQsABnC4fRn+jouIdKpVtmS2
+         45VHUuCH7XUNlIj6dz9x7txsj+K39K/LEMvd1ivWBPbcMiZ4gS9aMxwMTDnGqb/z7I7h
+         hs+CaPqG//qJzIhJDjUjS75PJ5RXJ/NoLvsMqyJOPHBADgRiEfYwWI+22JR04a2g0kLA
+         IplsmuDTgXv9bdqQ23UYqXOSpZLIF2FrbZdbF2R6FJKXzwiHwn/vSuKA7R5WDtfGu4qt
+         CB7g==
+X-Gm-Message-State: APt69E3SRru7YxvhxUM4cWcUAhkxHu2s9ajrjc0Em8fRDzHW6/e346vv
+        7Hl5ngScMJqzO8johvBqTBxVv6i/ZknihYlacKSwXw==
+X-Google-Smtp-Source: ADUXVKJjdm+ex/C+Acelkg6duBqpmkA46+X8P+WZ8bae3gcs+m7vKl7XqryiZU4RhhbHnFPiZ53+DUFX7zAbHergscc=
+X-Received: by 2002:a6b:f314:: with SMTP id m20-v6mr13790428ioh.253.1529422221730;
+ Tue, 19 Jun 2018 08:30:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4301ac2e-a8f5-7432-cdd9-f39d30a9fb5e@linux.ibm.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 19 Jun 2018 15:30:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 19 Jun 2018 15:30:12 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Received: by 2002:ac0:9909:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 08:29:41
+ -0700 (PDT)
+X-Originating-IP: [189.0.91.59]
+In-Reply-To: <20180618165706.42679-1-danielwa@cisco.com>
+References: <20180618165706.42679-1-danielwa@cisco.com>
+From:   Guilherme Piccoli <kernel@gpiccoli.net>
+Date:   Tue, 19 Jun 2018 12:29:41 -0300
+Message-ID: <CALJn8nPbTy3Ne2a7L71c2YZ06Ccr2j0zs6TdptfRc7O-N9u=Yg@mail.gmail.com>
+Subject: Re: [PATCH] arch: powerpc: pci-common: fix wrong return value check
+ on phd_id
+To:     Daniel Walker <danielwa@cisco.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        xe-kernel@external.cisco.com,
+        Gavin Shan <gwshan@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Ian Munsie <imunsie@au1.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Mauro Rodrigues <maurosr@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 10:57:54AM -0400, Farhan Ali wrote:
-> 
-> 
-> On 06/19/2018 10:32 AM, Herbert Xu wrote:
-> > On Tue, Jun 19, 2018 at 04:08:05PM +0200, Christian Borntraeger wrote:
-> > > On 06/19/2018 03:26 PM, Farhan Ali wrote:
-> > > > A polite ping :)
-> > > > 
-> > > > If no one has any more comments/feedback then I would like to how to merge these patches to the mainline kernel tree.
-> > > 
-> > > I think it should go via Michael Tsirkin or Jason Wang (Adding Jason).
-> > > Also adding Herbert Xu as FYI.
-> > > 
-> > > 
-> > > I have not looked into the details of the patch, but I like the idea.
-> > > Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> > 
-> > Please post crypto patches to linux-crypto.
-> > 
-> > Thanks,
-> > 
-> 
-> I have cc'ed linux-crypto folks. Sorry I missed them
-> 
-> Thanks
-> Farhan
+On Mon, Jun 18, 2018 at 1:57 PM, Daniel Walker <danielwa@cisco.com> wrote:
+> Cisco has a couple platforms which depend on the domain values getting
+> set a certain way. We discovered our machines not detecting the pci
+> devices, and traced it back to this commit,
+>
+> 63a7228 powerpc/pci: Assign fixed PHB number based on device-tree
+> properties
+>
+> It seems that the code is expecting the return value of of_property_read_u64()
+> to be the opposite of what it actually is.. It returns zero on success, and a
+> negative return value on error. So if you only check when it's non-zero your
+> going to set Opal for all platforms but Opal, which I assume is not what was
+> expected.
 
-Yes but not just the header. you want to repost the whole
-patchset.
+Hi Daniel, thanks for exposing a potential issue and trying to fix.
+(And thanks Mauro to point this message, since my email changed).
+
+I disagree with your patch Daniel, I think it's wrong.
+Since the logic of my original patch is kind of convoluted, for improve
+(even my own) understanding, I tried to over-comment the logic here:
+https://pastebin.ubuntu.com/p/4DNvd9b2bY
+
+Please, take a look and see if you agree with the logic now.
+
+
+Regarding your issue, I'm interested - I think perhaps you have some FW
+flaw that might be exposing duplicated "reg" or "ibm,opal-phbid" properties.
+Or maybe you somehow rely on the old incremental PHB setting and your
+software stack is not working properly with the DT-based PHB values.
+
+Please, elaborate the issue a bit more in order we can try to figure
+out. And also, you could try reverting the below two patches and boot
+the kernel to be sure it works:
+
+61e8a0d5a02 powerpc/pci: Fix endian bug in fixed PHB numbering
+63a72284b15 powerpc/pci: Assign fixed PHB number based on device-tree properties
+
+*Notice* the first is a fix to my patch, and both should be tested together.
+Be sure your current kernel has _both or neither_ these patches!
+
+Cheers,
+
+
+Guilherme
