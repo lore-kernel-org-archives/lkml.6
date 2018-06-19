@@ -2,150 +2,196 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA50AC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72165C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9749820836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:43:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D7D120693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k9zKrskf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9749820836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RMHpvysD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D7D120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030314AbeFSRnk (ORCPT
+        id S1030372AbeFSRn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:43:40 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41480 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966738AbeFSRni (ORCPT
+        Tue, 19 Jun 2018 13:43:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49282 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030330AbeFSRny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:43:38 -0400
-Received: by mail-pl0-f66.google.com with SMTP id w8-v6so224998ply.8
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:43:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qU7oJL2Zd1ozHsZ4fUHL8HQc1NAE7BidrXPvBhzNAUE=;
-        b=k9zKrskfSkrUyrRNMk0rt862hzYLR4q4oDSuYcsBixWpY1FcBIATAWlSgjnzKqbBvi
-         BTuNfncZozJCi8VzicVelnzDQ0t2TGJHlzSzlNmk3e8tI5F+WpgwCDvPXoJcEVViUEjq
-         cyBeihKQ01hMeVrzuqhcsrV/jCinPZyjvFJAU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qU7oJL2Zd1ozHsZ4fUHL8HQc1NAE7BidrXPvBhzNAUE=;
-        b=MPQp5M6+U8u97uFCbObPDWAsc5k9K8gd7P1MIckeuO6zfZkOtqU95cFz6RHJP8fZ9a
-         Ay5qHCT1XWSCnBmE+jvfI8WBDJYzJP4S4uKrysegG/VU7kZSFdiV73XSsJJ6EdLkRIq/
-         U4KghEwWGsf0TfywDHgDOANV27XsWly77mu7Ms63Jc6RikDj1iJi8rT2gGBRR8ErKEw6
-         IRrL3RxV0YyD/xKsW5RquP8VjwgpUQ7amHgyDaBhgdVhFOZHJoPv8v9JKWb0JKzljJs4
-         048GSdBsj1ZXdr4PGeGVlpkWLKJslPyg1vQ24q1ZSS28PZqxnbRcbp60yVA9SjVFYP9S
-         8e5Q==
-X-Gm-Message-State: APt69E2xG4gkt7hB4BdEDIFgLiXG0aE/XO8AtbWSEpIbc4XujOTCmkXu
-        +PdSRGjgnXWo4jKrWuADm87l5w==
-X-Google-Smtp-Source: ADUXVKKO9vow+VVxA1K7F/FjvRtokYp4A54zKlfFM60ziwabQZu0PmKBXcgKDGIrXp9oTfpknw3QgA==
-X-Received: by 2002:a17:902:52ee:: with SMTP id a101-v6mr19728742pli.131.1529430217647;
-        Tue, 19 Jun 2018 10:43:37 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id e16-v6sm282221pfn.46.2018.06.19.10.43.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 10:43:36 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 10:43:36 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v3 12/12] mfd: cros_ec: Add throttler sub-device
-Message-ID: <20180619174336.GY88063@google.com>
-References: <20180614194712.102134-1-mka@chromium.org>
- <20180614194712.102134-13-mka@chromium.org>
- <20180618232109.GB154056@rodete-desktop-imager.corp.google.com>
+        Tue, 19 Jun 2018 13:43:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NlJF3uWgWIYD55wUutUVRjnEPN8ufpH8hSRBrzKsFb8=; b=RMHpvysDLDON5aNRtfZrvdE2g
+        McNrmmD/HmMU09aTumxJx6GrJSgzniYjVlZ3G0valbfxdkwt37+kO0RGNSsHI9utN3PVlakDMD/3n
+        46DUDWzqP3Qo5N0NlCEN0NFnadXRfjyVMPJuJBHS9k8Hin7T/la868w3gacis/HfKsNEdaz4LDZNd
+        MBo1TtibZbEBY96rfemg6sAW2M3h1A4ITFxHt0smOYfiGA75pzQsWpU0Ce4Lrmx6d4oMHz/krXKAv
+        kcekZzlJHZ66bo8iUlUiueHr+ZC2OJ3eFuMw7DbvTeWMvxqKAJWgOK5Wka44z28nHR9jxkBFUZdB7
+        po2az4LBA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVKfS-000550-Lu; Tue, 19 Jun 2018 17:43:46 +0000
+Subject: Re: [RFC v7 1/1] mconf: global i-search in menu prompts
+To:     Dirk Gouders <dirk@gouders.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+References: <20180617121534.4809-1-dirk@gouders.net>
+ <20180617121534.4809-2-dirk@gouders.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <01450eac-3c65-efa1-8a9e-aaea98088bac@infradead.org>
+Date:   Tue, 19 Jun 2018 10:43:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180617121534.4809-2-dirk@gouders.net>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180618232109.GB154056@rodete-desktop-imager.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 04:21:10PM -0700, Brian Norris wrote:
-> Hi,
-> 
-> On Thu, Jun 14, 2018 at 12:47:12PM -0700, Matthias Kaehlcke wrote:
-> > Instantiate the CrOS EC throttler if it is enabled in the kernel
-> > configuration.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> > Changes in v3:
-> > - patch added to series
-> > 
-> >  drivers/mfd/cros_ec.c | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> > 
-> > diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> > index 36156a41499c..5f52b6e2c21a 100644
-> > --- a/drivers/mfd/cros_ec.c
-> > +++ b/drivers/mfd/cros_ec.c
-> > @@ -91,6 +91,10 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
-> >  	return cros_ec_cmd_xfer(ec_dev, &buf.msg);
-> >  }
-> >  
-> > +static const struct mfd_cell ec_throttler_cell = {
-> > +	.name = "cros-ec-throttler",
-> > +};
-> > +
-> >  int cros_ec_register(struct cros_ec_device *ec_dev)
-> >  {
-> >  	struct device *dev = ec_dev->dev;
-> > @@ -153,6 +157,18 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
-> >  		}
-> >  	}
-> >  
-> > +	if (IS_ENABLED(CONFIG_CROS_EC_THROTTLER)) {
-> > +		err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
-> > +				      &ec_throttler_cell, 1, NULL, ec_dev->irq,
-> > +				      NULL);
-> 
-> Most of this similar sub-device registration seems to have moved to
-> cros_ec_dev.c, in ec_device_probe(). Should this do the same?
+On 06/17/2018 05:15 AM, Dirk Gouders wrote:
 
-Not sure about this, the only device that is registered in
-ec_device_probe() are the sensors.
+> Signed-off-by: Dirk Gouders <dirk@gouders.net>
+> ---
+>  scripts/kconfig/lxdialog/checklist.c |   2 +-
+>  scripts/kconfig/lxdialog/dialog.h    |   3 +-
+>  scripts/kconfig/lxdialog/inputbox.c  |   2 +-
+>  scripts/kconfig/lxdialog/menubox.c   | 181 +++++++++++++++++++++---
+>  scripts/kconfig/lxdialog/util.c      |  45 +++++-
+>  scripts/kconfig/lxdialog/yesno.c     |   2 +-
+>  scripts/kconfig/mconf.c              | 202 +++++++++++++++++++++++++--
+>  7 files changed, 398 insertions(+), 39 deletions(-)
 
-I cc-ed Benson and Olof, the maintainers of CrOS platform stuff,
-maybe they can help to clarify what the preference is and why.
+Hi Dirk,
 
-> And on a similar note: is there a way to determine EC support for this
-> feature (e.g., EC_FEATURE_*)? Or do we just have to listen for
-> appropriate throttling events that may never come?
+A few typos below...
 
-To my knowledge there is no such way as of now. There is no
-EC_FEATURE_* for throttling support
-(https://chromium.googlesource.com/chromiumos/platform/ec/+/master/include/ec_commands.h#1174).
-though we could probably add one.
 
-> Also, is this very useful on non-DT systems? Does this fail gracefully?
+> diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
+> index 5294ed159b98..e2e6fc973f6f 100644
+> --- a/scripts/kconfig/mconf.c
+> +++ b/scripts/kconfig/mconf.c
+> @@ -21,6 +21,12 @@
+>  #include "lkc.h"
+>  #include "lxdialog/dialog.h"
+>  
+> +extern int focus_on_buttons;
+> +extern char isearch_str[];
+> +static struct menu **flat_menu; /* serialized menu tree */
+> +static int flat_menu_max = 10;
+> +static int in_isearch;	      /* Ensure at most one instance of i-search is active */
+> +
+>  static const char mconf_readme[] =
+>  "Overview\n"
+>  "--------\n"
+> @@ -36,20 +42,74 @@ static const char mconf_readme[] =
+>  "while *, M or whitespace inside braces means to build in, build as\n"
+>  "a module or to exclude the feature respectively.\n"
+>  "\n"
+> -"To change any of these features, highlight it with the cursor\n"
+> -"keys and press <Y> to build it in, <M> to make it a module or\n"
+> +"Operation modes\n"
+> +"---------------\n"
+> +"Menuconfig operates in two modes, depending on the focus that can be\n"
+> +"either on the menu or the buttons below it. The focus is on the\n"
+> +"buttons if one button (the selected one) is highlighted, otherwise it\n"
+> +"is on the menu.\n"
+> +"\n"
+> +"To change any of the above features, it has to be navigated to (see\n"
+> +"below) so that it is highlited, focus then has to be on the buttons\n"
 
-It is not useful on non-DT systems, however the throttler core has a
-dependency on CONFIG_OF, so the device wouldn't be added.
+                         highlighted,
+
+> +"before you press <Y> to build it in, <M> to make it a module or\n"
+>  "<N> to remove it.  You may also press the <Space Bar> to cycle\n"
+>  "through the available options (i.e. Y->N->M->Y).\n"
+>  "\n"
+> +"Navigation\n"
+> +"----------\n"
+> +"The following keys work independent of the current focus:\n"
+
+                            independently
+
+> +"\n"
+> +"o vertical arrow keys are used to navigate to menu items\n"
+> +"\n"
+> +"o horizontal arrow keys put the focus on the buttons and cycle\n"
+> +"  between the buttons.\n"
+> +"\n"
+> +"o <PAGE UP> and <PAGE DOWN> scroll invisible items into view.\n"
+> +"\n"
+> +"o <ENTER> visits a submenu\n"
+> +"  Submenus are designated by \"--->\", empty ones by \"----\".\n"
+> +"\n"
+> +"o <ESC><ESC> leaves a submenu or (in the main menu) exits menuconfig\n"
+> +"  and clears the current i-search string."
+> +"\n"
+> +"o <TAB> is reserved to toggle the focus between menu and buttons\n"
+> +"\n"
+> +"When menuconfig starts, the focus is on the menu and i-search mode\n"
+> +"is active.  I-search performs continuous cyclic searches for an entered\n"
+> +"string in the prompt texts of the whole menu tree.\n"
+> +"\n"
+> +"Subsequent characters can be entered to build a search-string the\n"
+> +"menu items are searched for and each time a character is added the\n"
+> +"current string is searched for starting from the current position in\n"
+> +"the menu tree.  If a match is found it is immediately navigated to.\n"
+> +"\n"
+> +"Keys with a special meaning are:\n"
+> +"\n"
+> +"o <BACKSPACE> removes the last character from the current search string\n"
+> +"\n"
+> +"o <DEL> clears the search string\n"
+> +"\n"
+> +"o <\\> (backslash) can be used to find further matches of a string\n"
+> +"\n"
+> +"When the focus is on the buttons the following keys can be used:\n"
+> +"\n"
+> +"o <x> can be used for exit identical to <ESC><ESC>\n"
+> +"\n"
+> +"o <y>, <n>, <m> or <SPACE> change the selected item\n"
+> +"\n"
+> +"o <+> and <-> keys navigate menu items identical to vertical arrow\n"
+> +"  keys\n"
+> +"\n"
+> +"o <h> or <?> display help messages\n"
+> +"\n"
+> +"o <z> toggles the display of hidden options\n"
+
+Ah, there it is!  Thanks.
+
+> +"\n"
+>  "Some additional keyboard hints:\n"
+>  "\n"
+>  "Menus\n"
+>  "----------\n"
+> -"o  Use the Up/Down arrow keys (cursor keys) to highlight the item you\n"
+> -"   wish to change or the submenu you wish to select and press <Enter>.\n"
+> -"   Submenus are designated by \"--->\", empty ones by \"----\".\n"
+> -"\n"
+> -"   Shortcut: Press the option's highlighted letter (hotkey).\n"
+> +"o  Hotkeys (available with focus on buttons): Press the target option's\n"
+> +"             highlighted letter (hotkey).\n"
+>  "             Pressing a hotkey more than once will sequence\n"
+>  "             through all visible items which use that hotkey.\n"
+>  "\n"
+
+
+thanks,
+-- 
+~Randy
