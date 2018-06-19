@@ -2,122 +2,88 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A8EC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB393C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE1D20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:54:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="vfG6zq4M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE1D20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F68020652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:55:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F68020652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967270AbeFSVyN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:54:13 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:34287 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935912AbeFSVyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:54:10 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 645aac03;
-        Tue, 19 Jun 2018 21:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=eBHSgleS+pHQhgu3S2eYih1yzfo=; b=vfG6zq
-        4Mmyi0Sco7Lbn09eE8ksF2IplierVCReEF3VRad53LkRTxRgg5tdWzhLE94ncF7t
-        PjiCWTp81ej70LKadRuH8Jdt/I2//7wQSDM/fULFWgp4IRArAmaj10cG0Dfe0vai
-        ZoTlObLVwBE6XnrY9wUW86y1AKtPGWAi3aExQrXFq3nY3KQ4JyKBxsUeLPLM7/LH
-        M4Q5ZV4TIfkWYIZwsmKDwGAn9Rn1sVILH/1EuXe9DeV8UQF0wXzElO2kDsb+nCGz
-        t2h/As23P9sk/prm9sVxjOex+K1eKY8+ai6eS96W75sMuHJiZUNauNhpNz1q6dtX
-        MUKu20W4omllxihQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 75854957 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
-        Tue, 19 Jun 2018 21:48:14 +0000 (UTC)
-Received: by mail-oi0-f41.google.com with SMTP id e8-v6so1185210oii.2;
-        Tue, 19 Jun 2018 14:54:09 -0700 (PDT)
-X-Gm-Message-State: APt69E1Z27uv3u328XrBCmUMT/N++qIelXMakEw0MOo15PBPua19+eXc
-        8GD6+iv1Fx5EZxghMstkGy1ab6clMVcQMlvGnP8=
-X-Google-Smtp-Source: ADUXVKKWnOBxWMT7BPeZpe5j9uOh3HazFFSP8HaCOoCNvc30Zr9pzOugQpSyOCeOGtON+/PERZYQDCdJAe2F+DgcDWU=
-X-Received: by 2002:aca:3048:: with SMTP id w69-v6mr9634688oiw.29.1529445248526;
- Tue, 19 Jun 2018 14:54:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180619213352.71740-1-shakeelb@google.com>
-In-Reply-To: <20180619213352.71740-1-shakeelb@google.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 19 Jun 2018 23:53:57 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pUoXod3pC4g+HLYUbCafj=1_53qHqu9ScB+NtJ2zpwqA@mail.gmail.com>
-Message-ID: <CAHmME9pUoXod3pC4g+HLYUbCafj=1_53qHqu9ScB+NtJ2zpwqA@mail.gmail.com>
-Subject: Re: [PATCH] slub: fix __kmem_cache_empty for !CONFIG_SLUB_DEBUG
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S967312AbeFSVzQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 17:55:16 -0400
+Received: from smtprelay0226.hostedemail.com ([216.40.44.226]:33145 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755466AbeFSVzJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 17:55:09 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 6C589837F24C;
+        Tue, 19 Jun 2018 21:55:08 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: quiet96_2c9ff3dede142
+X-Filterd-Recvd-Size: 2447
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 19 Jun 2018 21:55:06 +0000 (UTC)
+Message-ID: <951ccf2a257fb8f8827f88e1c17ce64d23173e94.camel@perches.com>
+Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in
+ update_permission_bitmask()
+From:   Joe Perches <joe@perches.com>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>, rkrcmar@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 19 Jun 2018 14:55:05 -0700
+In-Reply-To: <20180619211019.GE169030@google.com>
+References: <20180615182945.GN88063@google.com>
+         <c852072704e82ac5342f344c5862d20ce5559c21.camel@perches.com>
+         <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
+         <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
+         <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
+         <ad7a9addf043ee7fda8907eff9f83c9709b575dc.camel@perches.com>
+         <d6a99e26-b100-715b-2615-b77259ec8397@redhat.com>
+         <66b5e5c3ed82a5e1559419deb841c57bf0751fd3.camel@perches.com>
+         <20180619183622.GB169030@google.com>
+         <7547dfd4045a5acf23505887065bc228e65f2ff9.camel@perches.com>
+         <20180619211019.GE169030@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 11:34 PM Shakeel Butt <shakeelb@google.com> wrote:
->
-> For !CONFIG_SLUB_DEBUG, SLUB does not maintain the number of slabs
-> allocated per node for a kmem_cache. Thus, slabs_node() in
-> __kmem_cache_empty() will always return 0. So, in such situation, it is
-> required to check per-cpu slabs to make sure if a kmem_cache is empty or
-> not.
->
-> Please note that __kmem_cache_shutdown() and __kmem_cache_shrink() are
-> not affected by !CONFIG_SLUB_DEBUG as they call flush_all() to clear
-> per-cpu slabs.
->
-> Fixes: f9e13c0a5a33 ("slab, slub: skip unnecessary kasan_cache_shutdown()")
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> Reported-by: Jason A . Donenfeld <Jason@zx2c4.com>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: <stable@vger.kernel.org>
-> ---
->  mm/slub.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index a3b8467c14af..731c02b371ae 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -3673,9 +3673,23 @@ static void free_partial(struct kmem_cache *s, struct kmem_cache_node *n)
->
->  bool __kmem_cache_empty(struct kmem_cache *s)
->  {
-> -       int node;
-> +       int cpu, node;
->         struct kmem_cache_node *n;
->
-> +       /*
-> +        * slabs_node will always be 0 for !CONFIG_SLUB_DEBUG. So, manually
-> +        * check slabs for all cpus.
-> +        */
-> +       if (!IS_ENABLED(CONFIG_SLUB_DEBUG)) {
-> +               for_each_online_cpu(cpu) {
-> +                       struct kmem_cache_cpu *c;
-> +
-> +                       c = per_cpu_ptr(s->cpu_slab, cpu);
-> +                       if (c->page || slub_percpu_partial(c))
-> +                               return false;
-> +               }
-> +       }
-> +
->         for_each_kmem_cache_node(s, node, n)
->                 if (n->nr_partial || slabs_node(s, node))
->                         return false;
-> --
-> 2.18.0.rc1.244.gcf134e6275-goog
->
+On Tue, 2018-06-19 at 14:10 -0700, Matthias Kaehlcke wrote:
+> On Tue, Jun 19, 2018 at 12:11:27PM -0700, Joe Perches wrote:
+> > -Wconstant-conversion is only issued when a *constant value* is assigned to
+> an incompatible type.
+> 
+> > Trying to allow a "make W=3" to be compiler warning message free
+> > is also silly.
+> > 
+> > I think it's better to make the warning emitted only at a W=3
+> > level instead.
+> 
+> Another difference with -Wsign-conversion is that enabling it would
+> probably result in thousands of warnings. Do you have evidence that
+> there is a significant number of spurious -Wconstant-conversion
+> warnings?
 
-I can confirm that this fixes the test case on build.wireguard.com.
+Not my issue really.  You're advocating for
+making the code more complex/ugly for a condition
+where the result is identical.
+
+Do you have evidence this is the only location in
+an allyesconfig compilation?
+
