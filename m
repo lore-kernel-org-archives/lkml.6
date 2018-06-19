@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4B7C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A371BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6C942083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 584B620693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:13:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UQKgqUza"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C942083A
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RO8enGtI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 584B620693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937345AbeFSFNs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:13:48 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:47099 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937238AbeFSFNo (ORCPT
+        id S937364AbeFSFNz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 01:13:55 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33850 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937346AbeFSFNt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:13:44 -0400
-Received: by mail-pf0-f195.google.com with SMTP id q1-v6so9310135pff.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 22:13:44 -0700 (PDT)
+        Tue, 19 Jun 2018 01:13:49 -0400
+Received: by mail-pg0-f67.google.com with SMTP id q4-v6so8600393pgr.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 22:13:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MqmCD10RwYEL9UtGfpqsQpvbtnr+99X+2SVsogA+HbA=;
-        b=UQKgqUzav1CUNvMMvmaU3NyeD13FZKaVcoxdmKfZgZV4KVaxPcnD3E0svKMRxThx1P
-         rkATmYdPRDTipCukiN3Ma1jVohMWcsgJBi7Fra96GTPgYisP8dPWhjWxcB44VQiVXPkn
-         /1UCOVXAVtTnU3JKOavvZ2FwrMFR0Jc3T9KsOtsX7D75zqgOSsC1vR/q/HfzlZTPdiWH
-         QEcVG9660l/iuX7KmPEOLFhDfFRmmRyjknyNx5p7o6PqukAIebGZBw9DtMOGtUYUeYBm
-         9HdN3eqcfzvg2e3ihjxO/NzXYGy3msuK8Oqh44ZogfPDOwQXcYKaM7SFv3VF0x9rMWTB
-         U4/w==
+        bh=Xw+SjgYvIwITvP/432MUmWBrfLlGMOh9oKDuJ2FIurQ=;
+        b=RO8enGtIamWi5l9P1KAPe90ParEH71qWpJjU/zOTnjbiEbEozJ56Lv0W3qFAPyK2uN
+         M6UGpxDr+JrPp2uVjkoSlcmRfLBzozs9na2pP//S4dzNRDn2EGW3bLWM6r+7IrWjJDEr
+         QXgevl/IbhFJBMiBL8v7A2mUCSDKd1Q8HxzZmQfenC9ZKOzw10OGdFCo7Sz1fdM3ZcKo
+         TQoXea0zr6GxhquC9QSBPRodB+g/dPtLojCrW9sDJPKWQEwIXMGvoq5hMAIV6c4PUywe
+         4MwGMyt4Yu12SZtJ+J73TommRFBMN01PvlfiK8ZC3uZQWmFXYd2IVbBfU5DRBsOxtxLN
+         tEuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MqmCD10RwYEL9UtGfpqsQpvbtnr+99X+2SVsogA+HbA=;
-        b=LCRolZS/y2BpdfKvk6dRnmYpWjiQaF9c4ypbVEdWaOc8qTsLknGAlvloWb1itp4qyC
-         kLatwVJB6wzn0L1kD0ipjVHynh/pC9687Rh6BqdNnG7L1XFt8Wg4Vh5sMMrFBXaP1GiK
-         xZypt8KfLB3y5/+7JRaoaXbWoCgYcMKSdpSb26mdx3tI+DDZXhbz8UR0Ux4h49GaSpYo
-         gZU42QAU05VhK2BiHjoncITkafE8zg4O2DWbbSNr6UybqtBS1YPzd7a4MiUBaBpbJxig
-         q0VMqHLBuuaxsjPc8ASnhucvs2C72LtDftN5tTp7IhCkZTmBsn+JQz3PYaGYSSgQnKD4
-         bG2w==
-X-Gm-Message-State: APt69E2oA7KVlIT62mDihOAfJwq4UOSa4qJCJ1dw1Akziw7OST6E5V4/
-        RyY4Xxoo8gXXXgwfpMwd9XjyCQ==
-X-Google-Smtp-Source: ADUXVKJNv+l8nqxG3So+pCP7h0SGLU6MaeeFdgFGKnXn1Cf3Anqmv31Ma6gtTlCKplnfpHLDVayMmg==
-X-Received: by 2002:a65:55c6:: with SMTP id k6-v6mr13406087pgs.6.1529385223576;
-        Mon, 18 Jun 2018 22:13:43 -0700 (PDT)
+        bh=Xw+SjgYvIwITvP/432MUmWBrfLlGMOh9oKDuJ2FIurQ=;
+        b=h84d3QyD+mp1PL8oSGsjHwvJVjTw5TPxaTsC28n8gP9k1RtD6lMBqiE8kAbi9GyM5o
+         wSDtGMGhV8QJ5XvT9hBpMDrXQj63YyXt69e2YIGk1vdjWF3mLlTZL1kIGrnUGSOEJBlk
+         3scfPO+fFBay711xHspXBjluC/tR+73dqxFeRO+2XPcVWnQLuO/R1O0vziDNioBN7XiL
+         93nCIN4ub1yZdpwNPx0VhuTcPQYT9TGvCzwkijmNuI3NkwwGHfWgNU5N7E2r+26L3aPd
+         RcZQh6drqu6n6Z6FiatAsAe4zIRcr49xalu4AVSFj0JKboee3pnyTN9FM5+J2k03RGX5
+         p2xA==
+X-Gm-Message-State: APt69E2LmVEaiJQSTytxRxFmfEyn3VH99do/88gDdmO20rlaKSl61/wc
+        q1BAku9MQ/9ytHqZEQl5XSOKBA==
+X-Google-Smtp-Source: ADUXVKLngP++HS5H86cz4AtIu7lSldmnPBWkdUz5xyPrlsUJgAcLTgiBftq+QBz/HaMn95+kFGOcfg==
+X-Received: by 2002:a62:701:: with SMTP id b1-v6mr16574381pfd.252.1529385228852;
+        Mon, 18 Jun 2018 22:13:48 -0700 (PDT)
 Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
-        by smtp.gmail.com with ESMTPSA id a23-v6sm28390504pfj.117.2018.06.18.22.13.41
+        by smtp.gmail.com with ESMTPSA id a23-v6sm28390504pfj.117.2018.06.18.22.13.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 22:13:42 -0700 (PDT)
+        Mon, 18 Jun 2018 22:13:46 -0700 (PDT)
 From:   Shakeel Butt <shakeelb@google.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Michal Hocko <mhocko@kernel.org>,
@@ -66,16 +66,10 @@ Cc:     Michal Hocko <mhocko@kernel.org>,
         linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Shakeel Butt <shakeelb@google.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 1/3] mm: memcg: remote memcg charging for kmem allocations
-Date:   Mon, 18 Jun 2018 22:13:25 -0700
-Message-Id: <20180619051327.149716-2-shakeelb@google.com>
+Subject: [PATCH 3/3] fs, mm: account buffer_head to kmemcg
+Date:   Mon, 18 Jun 2018 22:13:27 -0700
+Message-Id: <20180619051327.149716-4-shakeelb@google.com>
 X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 In-Reply-To: <20180619051327.149716-1-shakeelb@google.com>
 References: <20180619051327.149716-1-shakeelb@google.com>
@@ -84,314 +78,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the memcg variant for kmalloc[_node] and
-kmem_cache_alloc[_node]. For kmem_cache_alloc, the kernel switches the
-root kmem cache with the memcg specific kmem cache for __GFP_ACCOUNT
-allocations to charge those allocations to the memcg. However, the memcg
-to charge is extracted from the current task_struct. This patch
-introduces the variant of kmem cache allocation functions where the memcg
-can be provided explicitly by the caller instead of deducing the memcg
-from the current task.
+The buffer_head can consume a significant amount of system memory and
+is directly related to the amount of page cache. In our production
+environment we have observed that a lot of machines are spending a
+significant amount of memory as buffer_head and can not be left as
+system memory overhead.
 
-The kmalloc allocations are underlying served using the kmem caches unless
-the size of the allocation request is larger than KMALLOC_MAX_CACHE_SIZE,
-in which case, the kmem caches are bypassed and the request is routed
-directly to page allocator. So, for __GFP_ACCOUNT kmalloc allocations,
-the memcg of current task is charged. This patch introduces memcg variant
-of kmalloc functions to allow callers to provide memcg for charging.
-
-These functions are useful for use-cases where the allocations should be
-charged to the memcg different from the memcg of the caller. One such
-concrete use-case is the allocations for fsnotify event objects where the
-objects should be charged to the listener instead of the producer.
-
-One requirement to call these functions is that the caller must have the
-reference to the memcg provided to these functions. If reference
-acquition on the given memcg is failed (it can fail if memcg is offline)
-then the current's memcg is tried. These functions implicitly assumes
-that the caller wants a __GFP_ACCOUNT allocation.
-
-This patch also introduces scope API for targeted memcg charging. All
-the __GFP_ACCOUNT allocations between memalloc_memcg_save(target_memcg)
-and memalloc_memcg_restore(old_memcg) will be charged to target_memcg.
-
-Traditionally kmem charging is skipped for allocations by kthreads and
-allocations during interrupts. The reason is that the current's memcg
-might not be the right owner for such allocations. However targeted
-memcg charging does not have such limitation and can work even for
-allocations by kthreads and for allocations during interrupts. For now
-due to lack of actual use-case, targeted memcg charging for such
-allocations is not added. Though this might change in future.
+Charging buffer_head is not as simple as adding __GFP_ACCOUNT to the
+allocation. The buffer_heads can be allocated in a memcg different from
+the memcg of the page for which buffer_heads are being allocated. One
+concrete example is memory reclaim. The reclaim can trigger I/O of pages
+of any memcg on the system. So, the right way to charge buffer_head is
+to extract the memcg from the page for which buffer_heads are being
+allocated and then use targeted memcg charging API.
 
 Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>
 Cc: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 Cc: Greg Thelen <gthelen@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
-Changelog sinve v5:
-- Added more explanation in commit message.
-- Added handling of NULL memcg for targeted memcg allocation functions.
+ fs/buffer.c                | 14 +++++++++++++-
+ include/linux/memcontrol.h |  7 +++++++
+ mm/memcontrol.c            | 21 +++++++++++++++++++++
+ 3 files changed, 41 insertions(+), 1 deletion(-)
 
-Changelog since v4:
-- Removed branch from hot path of memory charging.
-
-Changelog since v3:
-- Added node variant of directed kmem allocation functions.
-
-Changelog since v2:
-- Merge the kmalloc_memcg patch into this patch.
-- Instead of plumbing memcg throughout, use field in task_struct to pass
-  the target_memcg.
-
-Changelog since v1:
-- Fixed build for SLOB
-
- include/linux/sched.h    |  3 ++
- include/linux/sched/mm.h | 24 ++++++++++++
- include/linux/slab.h     | 83 ++++++++++++++++++++++++++++++++++++++++
- kernel/fork.c            |  3 ++
- mm/memcontrol.c          | 18 ++++++++-
- 5 files changed, 129 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 87bf02d93a27..cbd0def60fd4 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1149,6 +1149,9 @@ struct task_struct {
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 8194e3049fc5..26389b7a3cab 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -815,10 +815,17 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
+ 	struct buffer_head *bh, *head;
+ 	gfp_t gfp = GFP_NOFS;
+ 	long offset;
++	struct mem_cgroup *old_memcg;
++	struct mem_cgroup *memcg = get_mem_cgroup_from_page(page);
  
- 	/* Number of pages to reclaim on returning to userland: */
- 	unsigned int			memcg_nr_pages_over_high;
+ 	if (retry)
+ 		gfp |= __GFP_NOFAIL;
+ 
++	if (memcg) {
++		gfp |= __GFP_ACCOUNT;
++		old_memcg = memalloc_memcg_save(memcg);
++	}
 +
-+	/* Used by memcontrol for targeted memcg charge: */
-+	struct mem_cgroup		*target_memcg;
- #endif
+ 	head = NULL;
+ 	offset = PAGE_SIZE;
+ 	while ((offset -= size) >= 0) {
+@@ -835,6 +842,11 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
+ 		/* Link the buffer to its page */
+ 		set_bh_page(bh, page, offset);
+ 	}
++out:
++	if (memcg) {
++		memalloc_memcg_restore(old_memcg);
++#ifdef CONFIG_MEMCG
++		css_put(&memcg->css);
++#endif
++	}
+ 	return head;
+ /*
+  * In case anything failed, we just free everything we got.
+@@ -848,7 +860,7 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
+ 		} while (head);
+ 	}
  
- #ifdef CONFIG_UPROBES
-diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-index 44d356f5e47c..2ffb194f3f32 100644
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -248,6 +248,30 @@ static inline void memalloc_noreclaim_restore(unsigned int flags)
- 	current->flags = (current->flags & ~PF_MEMALLOC) | flags;
+-	return NULL;
++	goto out;
+ }
+ EXPORT_SYMBOL_GPL(alloc_page_buffers);
+ 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 6c857be8a9b7..d53609978eb7 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -380,6 +380,8 @@ struct mem_cgroup *mem_cgroup_from_task(struct task_struct *p);
+ 
+ struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm);
+ 
++struct mem_cgroup *get_mem_cgroup_from_page(struct page *page);
++
+ static inline
+ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css){
+ 	return css ? container_of(css, struct mem_cgroup, css) : NULL;
+@@ -864,6 +866,11 @@ static inline struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
+ 	return NULL;
  }
  
-+#ifdef CONFIG_MEMCG
-+static inline struct mem_cgroup *memalloc_memcg_save(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *old_memcg = current->target_memcg;
-+
-+	current->target_memcg = memcg;
-+	return old_memcg;
-+}
-+
-+static inline void memalloc_memcg_restore(struct mem_cgroup *memcg)
-+{
-+	current->target_memcg = memcg;
-+}
-+#else
-+static inline struct mem_cgroup *memalloc_memcg_save(struct mem_cgroup *memcg)
++static inline struct mem_cgroup *get_mem_cgroup_from_page(struct page *page)
 +{
 +	return NULL;
 +}
 +
-+static inline void memalloc_memcg_restore(struct mem_cgroup *memcg)
-+{
-+}
-+#endif /* CONFIG_MEMCG */
-+
- #ifdef CONFIG_MEMBARRIER
- enum {
- 	MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY		= (1U << 0),
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 14e3fe4bd6a1..2f6319fa0d3d 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -16,6 +16,7 @@
- #include <linux/overflow.h>
- #include <linux/types.h>
- #include <linux/workqueue.h>
-+#include <linux/sched/mm.h>
- 
- 
- /*
-@@ -375,6 +376,27 @@ static __always_inline void kfree_bulk(size_t size, void **p)
- 	kmem_cache_free_bulk(NULL, size, p);
+ static inline void mem_cgroup_put(struct mem_cgroup *memcg)
+ {
  }
- 
-+/*
-+ * Calling kmem_cache_alloc_memcg implicitly assumes that the caller wants
-+ * a __GFP_ACCOUNT allocation. However if memcg is NULL then
-+ * kmem_cache_alloc_memcg is same as kmem_cache_alloc.
-+ */
-+static __always_inline void *kmem_cache_alloc_memcg(struct kmem_cache *cachep,
-+						    gfp_t flags,
-+						    struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *old_memcg;
-+	void *ptr;
-+
-+	if (!memcg)
-+		return kmem_cache_alloc(cachep, flags);
-+
-+	old_memcg = memalloc_memcg_save(memcg);
-+	ptr = kmem_cache_alloc(cachep, flags | __GFP_ACCOUNT);
-+	memalloc_memcg_restore(old_memcg);
-+	return ptr;
-+}
-+
- #ifdef CONFIG_NUMA
- void *__kmalloc_node(size_t size, gfp_t flags, int node) __assume_kmalloc_alignment __malloc;
- void *kmem_cache_alloc_node(struct kmem_cache *, gfp_t flags, int node) __assume_slab_alignment __malloc;
-@@ -390,6 +412,27 @@ static __always_inline void *kmem_cache_alloc_node(struct kmem_cache *s, gfp_t f
- }
- #endif
- 
-+/*
-+ * Calling kmem_cache_alloc_node_memcg implicitly assumes that the caller
-+ * wants a __GFP_ACCOUNT allocation. However if memcg is NULL then
-+ * kmem_cache_alloc_node_memcg is same as kmem_cache_alloc_node.
-+ */
-+static __always_inline void *
-+kmem_cache_alloc_node_memcg(struct kmem_cache *cachep, gfp_t flags, int node,
-+			    struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *old_memcg;
-+	void *ptr;
-+
-+	if (!memcg)
-+		return kmem_cache_alloc_node(cachep, flags, node);
-+
-+	old_memcg = memalloc_memcg_save(memcg);
-+	ptr = kmem_cache_alloc_node(cachep, flags | __GFP_ACCOUNT, node);
-+	memalloc_memcg_restore(old_memcg);
-+	return ptr;
-+}
-+
- #ifdef CONFIG_TRACING
- extern void *kmem_cache_alloc_trace(struct kmem_cache *, gfp_t, size_t) __assume_slab_alignment __malloc;
- 
-@@ -518,6 +561,26 @@ static __always_inline void *kmalloc(size_t size, gfp_t flags)
- 	return __kmalloc(size, flags);
- }
- 
-+/*
-+ * Calling kmalloc_memcg implicitly assumes that the caller wants a
-+ * __GFP_ACCOUNT allocation. However if memcg is NULL then kmalloc_memcg
-+ * is same as kmalloc.
-+ */
-+static __always_inline void *kmalloc_memcg(size_t size, gfp_t flags,
-+					   struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *old_memcg;
-+	void *ptr;
-+
-+	if (!memcg)
-+		return kmalloc(size, flags);
-+
-+	old_memcg = memalloc_memcg_save(memcg);
-+	ptr = kmalloc(size, flags | __GFP_ACCOUNT);
-+	memalloc_memcg_restore(old_memcg);
-+	return ptr;
-+}
-+
- /*
-  * Determine size used for the nth kmalloc cache.
-  * return size or 0 if a kmalloc cache for that
-@@ -555,6 +618,26 @@ static __always_inline void *kmalloc_node(size_t size, gfp_t flags, int node)
- 	return __kmalloc_node(size, flags, node);
- }
- 
-+/*
-+ * Calling kmalloc_node_memcg implicitly assumes that the caller wants a
-+ * __GFP_ACCOUNT allocation. However if memcg is NULL then kmalloc_node_memcg
-+ * is same as kmalloc_node.
-+ */
-+static __always_inline void *
-+kmalloc_node_memcg(size_t size, gfp_t flags, int node, struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *old_memcg;
-+	void *ptr;
-+
-+	if (!memcg)
-+		return kmalloc_node(size, flags, node);
-+
-+	old_memcg = memalloc_memcg_save(memcg);
-+	ptr = kmalloc_node(size, flags | __GFP_ACCOUNT, node);
-+	memalloc_memcg_restore(old_memcg);
-+	return ptr;
-+}
-+
- struct memcg_cache_array {
- 	struct rcu_head rcu;
- 	struct kmem_cache *entries[0];
-diff --git a/kernel/fork.c b/kernel/fork.c
-index a64d0a19f174..5bf300015790 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -843,6 +843,9 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- 	tsk->fail_nth = 0;
- #endif
- 
-+#ifdef CONFIG_MEMCG
-+	tsk->target_memcg = NULL;
-+#endif
- 	return tsk;
- 
- free_stack:
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 02e77c88967a..08bfb8c2411b 100644
+index c481e661e051..f9a9a79117b9 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -701,6 +701,20 @@ static struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
+@@ -712,6 +712,27 @@ struct mem_cgroup *get_mem_cgroup_from_mm(struct mm_struct *mm)
  	return memcg;
  }
  
-+static __always_inline struct mem_cgroup *get_mem_cgroup(
-+				struct mem_cgroup *memcg, struct mm_struct *mm)
++/**
++ * get_mem_cgroup_from_page: Obtain a reference on given page's memcg.
++ * @page: page from which memcg should be extracted.
++ *
++ * Obtain a reference on page->memcg and returns it if successful. Otherwise
++ * NULL is returned.
++ */
++struct mem_cgroup *get_mem_cgroup_from_page(struct page *page)
 +{
-+	if (unlikely(memcg)) {
-+		rcu_read_lock();
-+		if (css_tryget_online(&memcg->css)) {
-+			rcu_read_unlock();
-+			return memcg;
-+		}
-+		rcu_read_unlock();
-+	}
-+	return get_mem_cgroup_from_mm(mm);
++	struct mem_cgroup *memcg = page->mem_cgroup;
++
++	if (mem_cgroup_disabled() || !memcg)
++		return NULL;
++
++	rcu_read_lock();
++	if (!css_tryget_online(&memcg->css))
++		memcg = NULL;
++	rcu_read_unlock();
++	return memcg;
 +}
 +
- /**
-  * mem_cgroup_iter - iterate over memory cgroup hierarchy
-  * @root: hierarchy root
-@@ -2260,7 +2274,7 @@ struct kmem_cache *memcg_kmem_get_cache(struct kmem_cache *cachep)
- 	if (current->memcg_kmem_skip_account)
- 		return cachep;
- 
--	memcg = get_mem_cgroup_from_mm(current->mm);
-+	memcg = get_mem_cgroup(current->target_memcg, current->mm);
- 	kmemcg_id = READ_ONCE(memcg->kmemcg_id);
- 	if (kmemcg_id < 0)
- 		goto out;
-@@ -2344,7 +2358,7 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
- 	if (memcg_kmem_bypass())
- 		return 0;
- 
--	memcg = get_mem_cgroup_from_mm(current->mm);
-+	memcg = get_mem_cgroup(current->target_memcg, current->mm);
- 	if (!mem_cgroup_is_root(memcg)) {
- 		ret = memcg_kmem_charge_memcg(page, gfp, order, memcg);
- 		if (!ret)
+ static __always_inline struct mem_cgroup *get_mem_cgroup(
+ 				struct mem_cgroup *memcg, struct mm_struct *mm)
+ {
 -- 
 2.18.0.rc1.244.gcf134e6275-goog
 
