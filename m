@@ -2,171 +2,167 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CB0C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11499C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21DA320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 978DD20836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:33:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7umGqmM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DA320693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmylMBrm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978DD20836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030314AbeFSS2L (ORCPT
+        id S1030343AbeFSSdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 14:28:11 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34016 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966078AbeFSS2K (ORCPT
+        Tue, 19 Jun 2018 14:33:23 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34016 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030239AbeFSSdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 14:28:10 -0400
-Received: by mail-io0-f193.google.com with SMTP id e15-v6so1123297iog.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 11:28:09 -0700 (PDT)
+        Tue, 19 Jun 2018 14:33:20 -0400
+Received: by mail-pf0-f193.google.com with SMTP id a63-v6so288976pfl.1;
+        Tue, 19 Jun 2018 11:33:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=tkUQF+1dbOt5HZqrFcyFPgDJatV3MUUizrVxv3T3L9g=;
-        b=i7umGqmMX8MHCK0KfAPliAIgWSzEXKx0wCQvJs2aN3txTT1ZpHmFIQByvc5rX5KLDN
-         0ppd8JOcy9zCZOWkggGyAE+zyom/xPF4UoLiSBnLe0mu3KlZX4wfxtz4sXFfmnWfajC6
-         TgzvF381HDInwL93GWS9lwrpEVJObTewugGu4=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YuZhsbmOaIeEDIFiTL+XLVbsx++X3DMkSo6Fcg2liHo=;
+        b=SmylMBrmN3t0Rl+/MGGEXXB8ehG54qVCTmcWH27oUphzFaFWHHLkPnBVW4lMCSWbmb
+         eWxr4V+aGvvCus8lvh8KnmHijnnTTMUngZrREKgB5+lHLOpqZPEoXDUo81kJJq54oME6
+         l7zL2nq7KAUqWSrmXoPE2aLliRf5maigxzy3/24t2Wq+ep5h25bRNccW1UmYQXZQ5pRl
+         ViU9y5AKBfCeii/YTYHyXU0S8dkboYIcow7cldMo9AN6e3MCLU9Ys96kupjxwCSbm0aW
+         wsfnen6sTJCTSjmmtnUn6YYLOO/VP2izAzm8zO93XRC6lkwJD2GJG+KvSoDFoxeYZ0UZ
+         vyZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=tkUQF+1dbOt5HZqrFcyFPgDJatV3MUUizrVxv3T3L9g=;
-        b=ffC93DwE0eG/zK4rhCRRslEMwNsml2XdaDdF9tCF3QKTmfDU+mjEQBt1Pvuw6R8lA4
-         rHJJTNkJNzwcS35s2urs9Bdo6ch5DLLvDasX3fJIp41y9WoyzLF1AV/V9H6yu0Ydw8mg
-         vFYvF/SWC05wP1peGPl/U7+gk3CQZLD0s6CzCCTjhVoHyv1vAhB1sHMtKrkHggFd8tmp
-         OXf/FWkselmS371F4JTQtxvDe7yY+YC2htpEgdVEIpsgbQdTzIJJiRIVRxxiGLFRrJ2s
-         GV8mpKLvnSf+zxXRN7uXSQapfCsKNXF/Katqv9axSdxlgb67GjSpd0rmvEYZzG3cng9B
-         7J7A==
-X-Gm-Message-State: APt69E3L6OTNkLmnUv3MEM8TIlwXISzSunvznaKEeP6G3NrXNx0yn6wR
-        iuRJu8+GQvNNSjOwUOcuFGIW8zOvz69kKeO+nidYm7WGATs=
-X-Google-Smtp-Source: ADUXVKKt/6m8Bzuzj+XljAtAudYGBSFCpKUlzBrXQBTvnGcZhaWbTmDmBdr4TY8rJel8XkhKPJqfltITGarO7IaOfE4=
-X-Received: by 2002:a6b:6709:: with SMTP id b9-v6mr14051782ioc.170.1529432889307;
- Tue, 19 Jun 2018 11:28:09 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YuZhsbmOaIeEDIFiTL+XLVbsx++X3DMkSo6Fcg2liHo=;
+        b=YYVH4Y5CGaGrjMlPufNMby5sNxWV5ziplzSN4rKtgjuBUvkZnPVgAaykEfUIWcIIhU
+         61MXvrRB9Ix7HEHUr2nA2qw/OkeR1ZI52TGmhOCb+aoDD7W3t3AKDBO8jNM5RjiHIq4u
+         2gKURZMlqDcLmBk73gt356x8pFc3rxyGdWH3R02VzcFWmCXPR9UUvNDP9JjlGSyJJClG
+         nQ5mY6NBmyGtUG12efOV+ZN+r+5bg8ckF41nM9jo5SdRr8uNEUnwADp0WwKJYKRMraas
+         weLU6r5qHjm+3md30kES54f7Xcf6P4sxjxMx/K2WMft2HHy9+neOml0b3ARAyyNbbRpe
+         1J8Q==
+X-Gm-Message-State: APt69E21NI9TG7URTU9DosVaMmvj98WLWuGQw0NOKHnfZHXVzTej2cwb
+        TkxIWJ2XBuW6XUWTY4bir1o=
+X-Google-Smtp-Source: ADUXVKKa/jeeGVEbpda/Br9jJ/Kkwjm8IMqKlD3OC8C/lGFTqYZMzxhu0+i/ft0nVKEHM+LgTX74EA==
+X-Received: by 2002:a65:4a42:: with SMTP id a2-v6mr16052634pgu.367.1529433200052;
+        Tue, 19 Jun 2018 11:33:20 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id q11-v6sm389103pgs.2.2018.06.19.11.33.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 11:33:18 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 11:33:16 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Yury Norov <ynorov@caviumnetworks.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
+        linux-input@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com
+Subject: Re: [PATCH v2 5/5] Input: evdev - Switch to bitmap_zalloc()
+Message-ID: <20180619183316.GI71788@dtor-ws>
+References: <20180615132017.23889-1-andriy.shevchenko@linux.intel.com>
+ <20180615132017.23889-6-andriy.shevchenko@linux.intel.com>
+ <20180615214231.GA371@yury-thinkpad>
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 11:28:08
- -0700 (PDT)
-In-Reply-To: <CAKv+Gu-SWaq0s46x_RCQ_TVN2vCBFp_NDmW3jUgUyMrbGoLcbA@mail.gmail.com>
-References: <1529384828-2452-1-git-send-email-linux@roeck-us.net>
- <CAKv+Gu8Byj7G3Awnq4Y90Wot=GJTx0gO5A7-960au9ZkBBL2=A@mail.gmail.com>
- <b8bff03d-91a7-0e53-a44e-d1924beb382d@roeck-us.net> <CAKv+Gu-T8Fx3Nry7pUdOoOeRU-Ns89w3oo4itmu1q4FzYF5Rag@mail.gmail.com>
- <20180619172422.GB16846@roeck-us.net> <CAKv+Gu9JTsKEwwKN4OjmNHLf_86s753f2yEdo=7esERdUCaWiQ@mail.gmail.com>
- <CAKv+Gu-SWaq0s46x_RCQ_TVN2vCBFp_NDmW3jUgUyMrbGoLcbA@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 19 Jun 2018 20:28:08 +0200
-Message-ID: <CAKv+Gu9juj+goUnUHowmKQ9mc7QWk1w1sEm58=F+ubmgks=RFw@mail.gmail.com>
-Subject: Re: [RFC PATCH] ARM: Use logical or instead of addition for badr
- address calculation
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180615214231.GA371@yury-thinkpad>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 June 2018 at 20:20, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On 19 June 2018 at 20:17, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->> On 19 June 2018 at 19:24, Guenter Roeck <linux@roeck-us.net> wrote:
->>> On Tue, Jun 19, 2018 at 03:35:07PM +0200, Ard Biesheuvel wrote:
->>>> >>
->>>> >> +       /* this needs to be a separate macro or \@ does not work correctly
->>>> >> */
->>>> >> +       .macro  __badr, c, rd, sym
->>>> >> +       .eqv    .Lsym\@, \sym
->>>> >> +       adr\c   \rd, .Lsym\@ + 1
->>>> >
->>>> >
->>>> > Wild shot, but the following works for me.
->>>> >
->>>> >         .eqv    .Lsym\@, \sym + 1
->>>> >         adr\c   \rd, .Lsym\@
->>>> >
->>>> > Does it make sense ?
->>>> >
->>>>
->>>> Interesting. Do you mean this works with your 2.30 binutils that
->>>> triggers the original issue?
->>>>
->>>
->>> Yes, it does. It is also the solution used for some graphics libraries,
->>> though of course now I don't find the link anymore.
->>>
->>> Guess this is going nowhere given Russell's response, so I'll just
->>> live with it, like obviously everyone else does already. I built
->>> a toolchain using gcc 7.3.0 and binutils 2.28.1 which "solves"
->>> the problem for me.
->>>
->>
->> If we can live with using a wide encoding unconditionally, we could
->> consider something like below. That forces the symbol references to be
->> resolved at link time, which means we completely sidestep the new GAS
->> code.
->>
->> -----------8<----------------
->> From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> Date: Tue, 16 Jan 2018 12:12:45 +0000
->> Subject: [PATCH] ARM: assembler: prevent ADR from setting the Thumb bit twice
->>
->> To work around recent issues where ADR references to Thumb function
->> symbols may or may not have the Thumb bit set already when they are
->> resolved by GAS, reference the symbol indirectly via a global symbol
->> typed as 'function', and emit a relocation that lets the linker fix
->> up the reference.
->>
->> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>
->> diff --git a/arch/arm/include/asm/assembler.h b/arch/arm/include/asm/assembler.h
->> index 6ae42ad29518..1a55ce4b245c 100644
->> --- a/arch/arm/include/asm/assembler.h
->> +++ b/arch/arm/include/asm/assembler.h
->> @@ -195,13 +195,22 @@
->>         .irp    c,,eq,ne,cs,cc,mi,pl,vs,vc,hi,ls,ge,lt,gt,le,hs,lo
->>         .macro  badr\c, rd, sym
->>  #ifdef CONFIG_THUMB2_KERNEL
->> -       adr\c   \rd, \sym + 1
->> +       __badr  \c, \rd, \sym
->>  #else
->>         adr\c   \rd, \sym
->>  #endif
->>         .endm
->>         .endr
->>
->> +       /* this needs to be a separate macro or \@ does not work correctly */
->> +       .macro          __badr, c, rd, sym
->> +       .globl          .Lsym_\sym\()_\@
->> +       .type           .Lsym_\sym\()_\@, %function
->> +       .set            .Lsym_\sym\()_\@, \sym
->> +       .reloc          ., R_ARM_THM_ALU_PREL_11_0, .Lsym_\sym\()_\@
->> +       adr\c\().w      \rd, .
->> +       .endm
->> +
->>  /*
->>   * Get current thread_info.
->>   */
->
-> It seems we can drop the .globl btw
+On Sat, Jun 16, 2018 at 12:42:31AM +0300, Yury Norov wrote:
+> Hi Andy,
+> 
+> On Fri, Jun 15, 2018 at 04:20:17PM +0300, Andy Shevchenko wrote:
+> > Switch to bitmap_zalloc() to show clearly what we are allocating.
+> > Besides that it returns pointer of bitmap type instead of opaque void *.
+> > 
+> > Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> >  drivers/input/evdev.c | 16 +++++++---------
+> >  1 file changed, 7 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+> > index c81c79d01d93..370206f987f9 100644
+> > --- a/drivers/input/evdev.c
+> > +++ b/drivers/input/evdev.c
+> > @@ -481,7 +481,7 @@ static int evdev_release(struct inode *inode, struct file *file)
+> >         evdev_detach_client(evdev, client);
+> > 
+> >         for (i = 0; i < EV_CNT; ++i)
+> > -               kfree(client->evmasks[i]);
+> > +               bitmap_free(client->evmasks[i]);
+> > 
+> >         kvfree(client);
+> > 
+> > @@ -925,17 +925,15 @@ static int evdev_handle_get_val(struct evdev_client *client,
+> >  {
+> >         int ret;
+> >         unsigned long *mem;
+> > -       size_t len;
+> > 
+> > -       len = BITS_TO_LONGS(maxbit) * sizeof(unsigned long);
+> > -       mem = kmalloc(len, GFP_KERNEL);
+> > +       mem = bitmap_alloc(maxbit, GFP_KERNEL);
+> >         if (!mem)
+> >                 return -ENOMEM;
+> 
+> But in commit message you say you switch to bitmap_zalloc(). IIUC
+> bitmap_alloc() is OK here. But could you please update comment to
+> avoid confusing.
+> 
+> > 
+> >         spin_lock_irq(&dev->event_lock);
+> >         spin_lock(&client->buffer_lock);
+> > 
+> > -       memcpy(mem, bits, len);
+> > +       bitmap_copy(mem, bits, maxbit);
+> > 
+> >         spin_unlock(&dev->event_lock);
+> > 
+> > @@ -947,7 +945,7 @@ static int evdev_handle_get_val(struct evdev_client *client,
+> >         if (ret < 0)
+> >                 evdev_queue_syn_dropped(client);
+> > 
+> > -       kfree(mem);
+> > +       bitmap_free(mem);
+> > 
+> >         return ret;
+> >  }
+> > @@ -1003,13 +1001,13 @@ static int evdev_set_mask(struct evdev_client *client,
+> >         if (!cnt)
+> >                 return 0;
+> > 
+> > -       mask = kcalloc(sizeof(unsigned long), BITS_TO_LONGS(cnt), GFP_KERNEL);
+> > +       mask = bitmap_zalloc(cnt, GFP_KERNEL);
+> >         if (!mask)
+> >                 return -ENOMEM;
+> > 
+> >         error = bits_from_user(mask, cnt - 1, codes_size, codes, compat);
+> 
+> If my understanding of bits_from_user() correct, here you can also use
+> bitmap_alloc(), true?
 
-Another note: this makes the badr unusable for switching from ARM to
-Thumb2 mode. I didn't spot this right away because i have this patch
+bits_from_user() copies as much as user supplied, we want to zero out
+the tail to make sure there is no garbage, so we want to use
+kcalloc/kzalloc/bitmap_zalloc here.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/commit/?h=arm-badr-cleanup&id=40ac917eef965aae3146e49f7948d1db9c01e968
+Thanks.
 
-in my working tree. I will send it out separately if we are ok with
-going ahead with this
-
-(That means we should retain the explicit .w suffix rather than using
-the W() in this macro since the new code sequence is fundamentally
-Thumb2 only)
+-- 
+Dmitry
