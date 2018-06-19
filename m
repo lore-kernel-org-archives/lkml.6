@@ -5,84 +5,96 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9A9C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21236C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:16:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E09E20836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:12:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E09E20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id BE97720836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:16:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE97720836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937535AbeFSKMS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:12:18 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:52893 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756569AbeFSKMQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:12:16 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fVDcU-0000GY-0d; Tue, 19 Jun 2018 04:12:14 -0600
-Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fVDcE-0004Y1-LC; Tue, 19 Jun 2018 04:12:13 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-References: <20180619145605.1eb8e86f@canb.auug.org.au>
-Date:   Tue, 19 Jun 2018 05:11:45 -0500
-In-Reply-To: <20180619145605.1eb8e86f@canb.auug.org.au> (Stephen Rothwell's
-        message of "Tue, 19 Jun 2018 14:56:05 +1000")
-Message-ID: <874lhz9jby.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fVDcE-0004Y1-LC;;;mid=<874lhz9jby.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX183fVYYfAKDl4/NtHg6snwxtdrbrrB6vHo=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: linux-next: manual merge of the userns tree with the vfs tree
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        id S1757057AbeFSKQI (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 06:16:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:46608 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756535AbeFSKQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 06:16:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6124A1435;
+        Tue, 19 Jun 2018 03:16:06 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0A4F73F25D;
+        Tue, 19 Jun 2018 03:16:04 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, robin.murphy@arm.com, julien.thierry@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v3 0/7] arm64: perf: Support for chained counters
+Date:   Tue, 19 Jun 2018 11:15:35 +0100
+Message-Id: <1529403342-17899-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+This series adds support for counting PMU events using 64bit counters
+for arm64 PMU.
 
-> Hi all,
->
-> Today's linux-next merge of the userns tree got conflicts in:
->
->   fs/proc/inode.c
->   fs/proc/root.c
->
-> between commits:
->
->   0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
->   83cd45075c36 ("proc: Add fs_context support to procfs")
->
-> from the vfs tree and commit:
->
->   cc8cda3af2ba ("proc: Simplify and fix proc by removing the kernel mount")
->
-> from the userns tree.
->
-> I don't know how to fix this up, so I just dropped the userns tree for
-> today (since it only contained that one commit).
+The Arm v8 PMUv3 supports combining two adjacent 32bit counters
+(low even and hig odd counters) to count a given "event" in 64bit mode.
+This series adds the support for 64bit events in the core arm_pmu driver
+infrastructure and adds the support for armv8 64bit kernel PMU to use
+chained counters to count in 64bit mode. For CPU cycles, we use the cycle
+counter in 64bit mode, only when requested. If the cycle counter is not
+available, we fall back to chaining the counters.
 
-The userns tree is a fix for a regression that I am sending to Linus
-ASAP.  I don't remember any fundamental conflicts.  After we get 4.17
-sorted out I will worry about this.
+Tested on Juno, Fast models. Applies on 4.18-rc1
 
-Eric
+Changes since v2:
+ - Clean up select counter routine. (Mark Rutland)
+ - Stop PMU while processing overflows (Mark Rutland)
+ - Drop special allocation algorithm for chain indices
+ - Since we access the counters when the PMU is stopped,
+   get rid of the unncessary barriers.
+ - Ensure a counter is allocated when checking for chained event
+
+Change since v1:
+ - Remove unnecessary isb()s in chain counter reads/writes
+ - Fix event programming order for counters
+ - Tighten chain counter event read sequence
+ - Set chain event to count in all ELs
+ - Cleanup helpers to be consistent
+ - Fix build break on xcale PMU (reported by kbuild-robot)
+ - Remove the explicit counter width field from pmu backends and default
+   to 32bit.
+ - Rename flag ARMPMU_EVT_LONG => ARMPMU_EVT_64BIT and
+   the format string "chain" => "bits64". (Unfortunately we can't use "64bit"
+   and I am open for suggestion on a better name)
+ - Rename armpmu_get_event_max_period() => armpmu_event_max_period()
+ - For 64bit CPU cycles events, allow chaining if cycle counter is
+   not available.
+
+Suzuki K Poulose (7):
+  arm_pmu: Clean up maximum period handling
+  arm_pmu: Change API to support 64bit counter values
+  arm_pmu: Add support for 64bit event counters
+  arm_pmu: Tidy up clear_event_idx call backs
+  arm64: perf: Clean up armv8pmu_select_counter
+  arm64: perf: Disable PMU while processing counter overflows
+  arm64: perf: Add support for chaining event counters
+
+ arch/arm/kernel/perf_event_v6.c     |   6 +-
+ arch/arm/kernel/perf_event_v7.c     |   7 +-
+ arch/arm/kernel/perf_event_xscale.c |  10 +-
+ arch/arm64/kernel/perf_event.c      | 249 +++++++++++++++++++++++++++++-------
+ drivers/perf/arm_pmu.c              |  51 +++++---
+ include/linux/perf/arm_pmu.h        |  11 +-
+ 6 files changed, 255 insertions(+), 79 deletions(-)
+
+-- 
+2.7.4
 
