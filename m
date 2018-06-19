@@ -2,123 +2,108 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E004C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C70F8C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0279520874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:31:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0279520874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6948A20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:34:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PLZGpnCO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6948A20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937544AbeFSKbO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:31:14 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37009 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757187AbeFSKbM (ORCPT
+        id S937571AbeFSKeH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 06:34:07 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37008 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937412AbeFSKeE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:31:12 -0400
-Received: by mail-wr0-f193.google.com with SMTP id d8-v6so19996382wro.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 03:31:11 -0700 (PDT)
+        Tue, 19 Jun 2018 06:34:04 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y5-v6so9718088pfn.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 03:34:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HQIW3eYKYiZ4Ir/3cW1wLzjfpb0v0fa0D6xMM+r4BHo=;
+        b=PLZGpnCO52DIeZPtC8pcsqWxiq6fSXUkg8UlA3ukXpJ50W4jkp3mLj7+KtJ7yCheJP
+         TT7QsUqhC51Bv3qgOlsdh4db7llvIbJzBoZzOhozlkqlEJGsmdj41Du1v6H8adez2mQT
+         C0rwlMEycsscTD+5HyvuMW7vlQ0CZImR45ecc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vvfqD06WnBfaT1SWOrgpphzJ8/RrMmgTL13+2TaiuDo=;
-        b=ALOrW/ndbUBsvDwDp1rPmHbrlqsiaHEhd7J3e+kD0Fj7VlU4zZ0MFmBaF5y5n3OUuE
-         oabneJePUyVNZdHyaJPdttDJDperkSqrVVC8bL3UZh5+ZLxUc5mJnCqInX7gPPBPI4V4
-         sBxXs77p+pWVrSJKJe4VtpsSjdYjoFZrEaIMnkDljQLw4gdip1ZH9/Dexqt7pMcOGZnr
-         2NCvyudteWXv43RPeWd2dr3QHFpsEELEl4ddF4LBJPLrzTFOTD97uA/88V63tzOUrKgy
-         kebKrNRh0Tub74sLSaiZPckaXvnL6jF51bBzkKHXCp4174xqnU1lrgbCxRwUstlovbvb
-         aqMA==
-X-Gm-Message-State: APt69E1ImomptbhvpPOetby/Je8cZDnM9MqNJXsD0XHKI54VZzJNFLS1
-        FB56atpl2rKl+/0gk0Eau+MBVA==
-X-Google-Smtp-Source: ADUXVKJzsuewlww2SSGtyTBLP9KSVJoEGpR7WJ4jcMo4jxcDTb17NL3/weSydbEDdKIwGmMOw0PnBA==
-X-Received: by 2002:adf:a18f:: with SMTP id u15-v6mr13291475wru.194.1529404271186;
-        Tue, 19 Jun 2018 03:31:11 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.207.242])
-        by smtp.gmail.com with ESMTPSA id f81-v6sm16936799wmh.32.2018.06.19.03.31.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 03:31:10 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 12:31:08 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Pavan Kondeti <pkondeti@codeaurora.org>, peterz@infradead.org,
-        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        bh=HQIW3eYKYiZ4Ir/3cW1wLzjfpb0v0fa0D6xMM+r4BHo=;
+        b=dSa7WaUX2rQTw3QcF2lngOrn/r5JMq86jq3H6zvzJXWFuG91Qpmps5hQ0s0nCLLFMH
+         ut/tCB5J3k4jntWZxkfkgMcFqyeSn7xDShAx8BYRZTyAeVcbzqTHrChYFhCHJGvc9J2p
+         LQrkuOnaW44fV4nqLkFQAFngLcWn9Ra2Yrle1jiTcl+v3hGe1a8bPOtR6a4uLFr1hQ+r
+         ytqsnzxuXcJgNtnq6ZFltuyQUBHx6N1SUqSUxdtMmWuipyAo5ARj4atT8/38zSPpNUaH
+         Jy6nnwhpcwFafWaa+WeaQboDC5qR9sMiAzJKryzVg2xs5h7JH48Z5gfAfb7ke01fGR9v
+         bOMw==
+X-Gm-Message-State: APt69E0rV5DauNk9sF1im0tPonDvI3d43rSbnvKsNuwVPQ7/8MQEnQll
+        b7RRvL/JrqbjnaRWQS6QCGUamg==
+X-Google-Smtp-Source: ADUXVKKNe0wzk6tOold+B80pZlmB3cQwtAdXcvK4GF39UZXy/l44/7Z8RjkAmr8WjHFOPIsM2ArY4A==
+X-Received: by 2002:a62:d653:: with SMTP id r80-v6mr17554077pfg.54.1529404444191;
+        Tue, 19 Jun 2018 03:34:04 -0700 (PDT)
+Received: from localhost ([122.171.103.96])
+        by smtp.gmail.com with ESMTPSA id h78-v6sm35476839pfh.141.2018.06.19.03.34.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 03:34:03 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 16:04:01 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 10/10] arch_topology: Start Energy Aware Scheduling
-Message-ID: <20180619103108.GD13617@localhost.localdomain>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-11-quentin.perret@arm.com>
- <20180619091841.GD9208@codeaurora.org>
- <20180619094002.GR17720@e108498-lin.cambridge.arm.com>
- <20180619094714.GA13617@localhost.localdomain>
- <20180619100224.GT17720@e108498-lin.cambridge.arm.com>
- <20180619101901.GC13617@localhost.localdomain>
- <20180619102502.GU17720@e108498-lin.cambridge.arm.com>
+        Stephen Boyd <sboyd@kernel.org>, robh@kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, skannan@codeaurora.org
+Subject: Re: [PATCH 2/2] cpufreq: qcom-fw: Add support for QCOM cpufreq FW
+ driver
+Message-ID: <20180619103401.s3grdcm2hq6kx2pm@vireshk-i7>
+References: <1528109194-16864-1-git-send-email-tdas@codeaurora.org>
+ <1528109194-16864-3-git-send-email-tdas@codeaurora.org>
+ <20180606060119.yzl24vhqff6btvrk@vireshk-i7>
+ <3cd5944b-d2ca-e7d7-f315-c3e5f230701b@codeaurora.org>
+ <20180619085407.nmos7tix77vnaqre@vireshk-i7>
+ <82d0646e-8dd7-43ba-6b5d-b772e57e865d@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619102502.GU17720@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <82d0646e-8dd7-43ba-6b5d-b772e57e865d@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/06/18 11:25, Quentin Perret wrote:
-> On Tuesday 19 Jun 2018 at 12:19:01 (+0200), Juri Lelli wrote:
-> > On 19/06/18 11:02, Quentin Perret wrote:
-> > > On Tuesday 19 Jun 2018 at 11:47:14 (+0200), Juri Lelli wrote:
-> > > > On 19/06/18 10:40, Quentin Perret wrote:
-> > > > > Hi Pavan,
-> > > > > 
-> > > > > On Tuesday 19 Jun 2018 at 14:48:41 (+0530), Pavan Kondeti wrote:
-> > > > 
-> > > > [...]
-> > > > 
-> > > > > > There seems to be a sysfs interface exposed by this driver to change cpu_scale.
-> > > > > > Should we worry about it? I don't know what is the usecase for changing the
-> > > > > > cpu_scale from user space.
-> > > > > 
-> > > > > This is something I've been wondering as well. TBH, I'm not sure what to
-> > > > > do in this case. And I'm not sure to know what is the use-case either.
-> > > > > Debugging purpose I assume ?
-> > > > > 
-> > > > > Juri, did you have a specific use-case for this feature when the
-> > > > > arch_topology driver was first introduced ? Or was it just to align
-> > > > > with the existing arm/arm64 code ?
-> > > > 
-> > > > It was requested (IIRC) because DT might have bogus values and not be
-> > > > easily modifiable. So, this is another way to get things right for your
-> > > > platform at runtime.
-> > > 
-> > > Right, but that also allows you to set different capacities to CPUs
-> > > inside the same freq domain, which isn't supported by the EM framework,
-> > > at least for now. So I would prefer to assume that your values in DT must
-> > > to be correct to use EAS, and leave the code as-is for now.
-> > 
-> > It's actually built on the (current) assumption that siblings share
-> > capacity [1], so it seems to align with what EM requires.
-> > 
-> > [1] https://elixir.bootlin.com/linux/latest/source/drivers/base/arch_topology.c#L71
+On 19-06-18, 15:55, Taniya Das wrote:
+> Yes, Viresh, earlier code was updating the table frequency as I was marking
+> the table frequency INVALID.
+> 	if (core_count != c->max_cores)	
+> 		c->table[i].frequency = CPUFREQ_ENTRY_INVALID;	
 > 
-> But there is not hard guarantee that the core_sibling mask and the
-> frequency domains are aligned :-(
+> And thus I had to update the table frequency.
 > 
-> Hikey 620 is an example where they might be misaligned (I think)
+> But now I have used the cur_freq instead and the table frequency is not
+> touched.
+> 	if (core_count != c->max_cores)
+> 		cur_freq = CPUFREQ_ENTRY_INVALID;
 
-Yep. In this case you'd need to write cpu_capacity twice (for each
-cluster). I think.
+Unless I am reading your versions incorrectly, they behave differently.
+
+Until V2, if core_count wasn't equal to max_cores then the frequency was getting
+marked as INVALID straight away in the table itself. Now if the next freq is
+also same then you abort and overwrite the previous one as valid, but otherwise
+it remains INVALID for ever. And this last thing doesn't happen anymore.
+
+So if in your table there are few frequency entries which aren't repeating, but
+the core_count != max_cores for some of them, they remain valid in the newer
+versions.
+
+-- 
+viresh
