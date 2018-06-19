@@ -6,82 +6,146 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64034C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DB1C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296E32083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:32:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296E32083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 815442083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:33:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815442083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757028AbeFSJcw (ORCPT
+        id S1757081AbeFSJdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:32:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43974 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756976AbeFSJct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:32:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 96FEAAE54;
-        Tue, 19 Jun 2018 09:32:48 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 11:32:44 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Maninder Singh <maninder1.s@samsung.com>,
-        sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
-        pankaj.m@samsung.com, v.narang@samsung.com
-Subject: Re: [PATCH v2] printk: make sure to print log on console.
-Message-ID: <20180619093244.ehj34uhpnpv6447f@pathway.suse.cz>
-References: <CGME20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26@epcas5p3.samsung.com>
- <20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26~z-a_jkmrI2993329933epcas5p3q@epcas5p3.samsung.com>
- <20180618061550.GA27996@jagdpanzerIV>
- <20180618062306.GA29683@jagdpanzerIV>
+        Tue, 19 Jun 2018 05:33:09 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:46926 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1757052AbeFSJdH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 05:33:07 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5J9UIMV016142;
+        Tue, 19 Jun 2018 04:32:47 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2jmyy2cr97-1;
+        Tue, 19 Jun 2018 04:32:47 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id C0892611C8A7;
+        Tue, 19 Jun 2018 04:32:46 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.301.0; Tue, 19 Jun 2018
+ 10:32:46 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w5J9Wjlr021206; Tue,
+ 19 Jun 2018 10:32:45 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <broonie@kernel.org>, <hias@horus.com>
+CC:     <lgirdwood@gmail.com>, <linus.walleij@linaro.org>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] regulator: arizona-ldo1: Use correct device to get enable GPIO
+Date:   Tue, 19 Jun 2018 10:32:45 +0100
+Message-ID: <20180619093245.1261-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618062306.GA29683@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=830 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
+ definitions=main-1806190109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-06-18 15:23:06, Sergey Senozhatsky wrote:
-> On (06/18/18 15:15), Sergey Senozhatsky wrote:
-> > 
-> > On (06/01/18 14:26), Maninder Singh wrote:
-> > >
-> > > Signed-off-by: Vaneet Narang <v.narang@samsung.com>
-> > > Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
-> > 
-> > Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> 
-> OK, we probably need v3 after all.
-> 
-> I think this
-> 
-> -               if (suppress_message_printing(msg->level)) {
-> +               if (msg->flags & LOG_NOCONS) {
-> 
-> must be changed to
-> 
-> -               if (suppress_message_printing(msg->level)) {
-> +               if (!ignore_loglevel && (msg->flags & LOG_NOCONS)) {
-> 
-> 
-> `ignore_loglevel' is a module param and can change any time via
-> 	/sys/module/printk/parameters/ignore_loglevel
-> we need to respect its value.
+Currently the enable GPIO is being looked up on the regulator
+device itself but that does not have its own DT node, this causes
+the lookup to fail and the regulator not to get its GPIO. The DT
+node is shared across the whole MFD and as such the lookup needs
+to happen on that parent device. Moving the lookup to the parent
+device also means devres can no longer be used as the life time
+would attach to the wrong device.
 
-I would prefer to keep the patch as is. I see it the following way.
+Fixes: e1739e86f0cb ("regulator: arizona-ldo1: Look up a descriptor and pass to the core")
+Reported-by: Matthias Reichl <hias@horus.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
 
-Also console_loglevel can be changed anytime by /proc/sys/kernel/printk.
-The patch basically moves the decision about the message visibility from
-console_unlock() to vprintk_emit(). The logic is easier when all
-aspects are handled in a single location and only once.
+Apologies for missing this again, we should have caught
+this in our testing and thanks for reporting it.
 
-Best Regards,
-Petr
+Thanks,
+Charles
+
+ drivers/regulator/arizona-ldo1.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+index f6d6a4ad9e8a..a981896c056a 100644
+--- a/drivers/regulator/arizona-ldo1.c
++++ b/drivers/regulator/arizona-ldo1.c
+@@ -36,6 +36,8 @@ struct arizona_ldo1 {
+ 
+ 	struct regulator_consumer_supply supply;
+ 	struct regulator_init_data init_data;
++
++	struct gpio_desc *ena_gpiod;
+ };
+ 
+ static int arizona_ldo1_hc_list_voltage(struct regulator_dev *rdev,
+@@ -253,12 +255,17 @@ static int arizona_ldo1_common_init(struct platform_device *pdev,
+ 		}
+ 	}
+ 
+-	/* We assume that high output = regulator off */
+-	config.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "wlf,ldoena",
+-						   GPIOD_OUT_HIGH);
++	/* We assume that high output = regulator off
++	 * Don't use devm, since we need to get against the parent device
++	 * so clean up would happen at the wrong time
++	 */
++	config.ena_gpiod = gpiod_get_optional(parent_dev, "wlf,ldoena",
++					      GPIOD_OUT_HIGH);
+ 	if (IS_ERR(config.ena_gpiod))
+ 		return PTR_ERR(config.ena_gpiod);
+ 
++	ldo1->ena_gpiod = config.ena_gpiod;
++
+ 	if (pdata->init_data)
+ 		config.init_data = pdata->init_data;
+ 	else
+@@ -276,6 +283,9 @@ static int arizona_ldo1_common_init(struct platform_device *pdev,
+ 	of_node_put(config.of_node);
+ 
+ 	if (IS_ERR(ldo1->regulator)) {
++		if (config.ena_gpiod)
++			gpiod_put(config.ena_gpiod);
++
+ 		ret = PTR_ERR(ldo1->regulator);
+ 		dev_err(&pdev->dev, "Failed to register LDO1 supply: %d\n",
+ 			ret);
+@@ -334,8 +344,19 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static int arizona_ldo1_remove(struct platform_device *pdev)
++{
++	struct arizona_ldo1 *ldo1 = platform_get_drvdata(pdev);
++
++	if (ldo1->ena_gpiod)
++		gpiod_put(ldo1->ena_gpiod);
++
++	return 0;
++}
++
+ static struct platform_driver arizona_ldo1_driver = {
+ 	.probe = arizona_ldo1_probe,
++	.remove = arizona_ldo1_remove,
+ 	.driver		= {
+ 		.name	= "arizona-ldo1",
+ 	},
+-- 
+2.11.0
+
