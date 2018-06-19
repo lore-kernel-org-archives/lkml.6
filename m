@@ -2,90 +2,77 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8505BC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CFEC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B93D205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:25:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B93D205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A19AE20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:27:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A19AE20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937575AbeFSOZO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:25:14 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:34009 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1757105AbeFSOYC (ORCPT
+        id S966078AbeFSO1Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 10:27:24 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:34832 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937572AbeFSO1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:24:02 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w5JEMmw2025147;
-        Tue, 19 Jun 2018 17:22:49 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
-        id C408562FF9; Tue, 19 Jun 2018 17:22:48 +0300 (IDT)
-From:   avifishman70@gmail.com
-To:     gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
-        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
-        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
-        digetx@gmail.com, kstewart@linuxfoundation.org,
-        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: [PATCH v6 0/3] USB host: Add USB ehci support for nuvoton npcm7xx
-Date:   Tue, 19 Jun 2018 17:22:43 +0300
-Message-Id: <20180619142246.104469-1-avifishman70@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Tue, 19 Jun 2018 10:27:22 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fVHbK-0005ib-5W; Tue, 19 Jun 2018 22:27:18 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fVHbF-0007CV-4k; Tue, 19 Jun 2018 22:27:13 +0800
+Date:   Tue, 19 Jun 2018 22:27:13 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, hadar.gat@arm.com,
+        Ofir Drang <ofir.drang@arm.com>, stable@vger.kernel.org,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: ccree: fix iv copying for small buffers
+Message-ID: <20180619142713.dzipyarpb23a7qne@gondor.apana.org.au>
+References: <1528361927-4172-1-git-send-email-gilad@benyossef.com>
+ <CAOtvUMcJfJDjnMoithRQ4ife09VC+G-w+__jV-JLwh7M=s7JNQ@mail.gmail.com>
+ <20180613063030.bsrq3xmufcw4zi52@gondor.apana.org.au>
+ <CAOtvUMdtafGwXJFD0Tm1tx1q+TxRsB4nwEKxumE7=--_PMCZrQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOtvUMdtafGwXJFD0Tm1tx1q+TxRsB4nwEKxumE7=--_PMCZrQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <avifishman70@gmail.com>
+On Sun, Jun 17, 2018 at 01:06:42PM +0300, Gilad Ben-Yossef wrote:
+>
+> It was ctr(aes). I wrongly assumed that we are supposed to unconditionally
+> copy
+> the cipher-text block post operation and let the caller do with it what it
+> wants and so the
+> code now does that for all cipher operations unconditionally.
 
-Changes since version 5:
-- dt-bindings add 'reg' description according to Sergei Shtylyov comment
+For CTR it doesn't matter whether the last block is less than a
+block, you should still increment the counter.
 
-Changes since version 4:
-- dt-bindings reviewed by Rob Herring
+> So what is a good description of what we are supposed to provide in that
+> field post operation?
+> The next IV? but as you stated, that is not necessarily useful for all
+> ciphers.
 
-Changes since version 3:
-- Follow Rob Herring comments to change dt-bindings commit subject
+When in doubt, please refer to the generic implementation.  If
+that is still unclear or if it seems wrong, please post to the
+list.
 
-Changes since version 2:
-- Follow Sergei Shtylyov comments to rename the node name in in device
-  tree documentation
-
-Changes since version 1:
-- Follow Rob Herring comments in device tree documentation
-- minor log error fix in ehci-npcm7xx.c
-   
-This patch adds support for ehci controller for the Nuvoton npcm7xx
-platform.
-Most of the code was taken from ehci-spear.c + specific initialization
-code.
-
-Avi Fishman (3):
-  USB host: Add USB ehci support for nuvoton npcm7xx platform
-  dt-bindings: usb: new ehci-npcm7xx dt
-  MAINTAINERS: add subfolders for nuvoton *npcm*
-
- .../devicetree/bindings/usb/npcm7xx-usb.txt        |  18 ++
- MAINTAINERS                                        |   3 +
- drivers/usb/host/Kconfig                           |   8 +
- drivers/usb/host/Makefile                          |   1 +
- drivers/usb/host/ehci-npcm7xx.c                    | 212 +++++++++++++++++++++
- 5 files changed, 242 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
- create mode 100644 drivers/usb/host/ehci-npcm7xx.c
-
+Cheers,
 -- 
-2.14.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
