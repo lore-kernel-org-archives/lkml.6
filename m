@@ -2,172 +2,96 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 844EDC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C88F2C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40DD520661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:36:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40DD520661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7F8A82075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 21:37:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCEVOW76"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F8A82075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967291AbeFSVgn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 17:36:43 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:43291 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967205AbeFSVgY (ORCPT
+        id S967326AbeFSVhC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 17:37:02 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35726 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967205AbeFSVgs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 17:36:24 -0400
-Received: by mail-yw0-f193.google.com with SMTP id r19-v6so432510ywc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 14:36:24 -0700 (PDT)
+        Tue, 19 Jun 2018 17:36:48 -0400
+Received: by mail-ua0-f194.google.com with SMTP id s13-v6so815347uad.2;
+        Tue, 19 Jun 2018 14:36:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2pKyFNI5tc+t4AJpPXJ7TuEAsEx6+dV8IG+Lv1NVv30=;
+        b=gCEVOW76Tp1Gq4L2pLkZd16lIs8asoKg4JlqL5Ub8DPZDDhWMSU3UBBueyyx3XsyBx
+         jtMGqiJoFBF40euUGR5PgxB463xZFG9fgmdPZ8Rp0cgz3M08KasWNvwymrGXyIF4xpQF
+         XxTSujm9cNbo3zmVkXGbmuvMShNtN7S7f8q2FvaDThsnbg+RxrmiLqinx6CY/AcqZBqp
+         jhaqOAPF/GPzuyteOM2dUr2LSakPyNmrcuWY0jZvT1QefhFTNtbN8zeE+E0DwOSIyZI3
+         kT+/p/dbESgrY7YXIxo5aZF1e5XXLekc0QVliviHFj7uM4bCdPIreL9eAwHizJUBxaXW
+         NHpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aPMtP57+31psf6v11jTqOaoOthX7tz/4iXgNxK0eo4o=;
-        b=GumEjh4LqlyEVtZxp7YkiqC/E5bgk7A9rlIe/bvi2mP2jmLvMHDl4i68Ov3ZXT8ZS2
-         ztWRXwBO+3Mknx1E7Ja++t281qfAuE+nVYUfq2kJT81G1qdaS+u0K9E97V8e6ozU5i9R
-         cxGBc1so90hfn0xu7LzhLib3B6bgCjIxvbf69LmWulHrqjN7cryllDLRCZqYjUwxLXDE
-         NRuJpWSm+rlEF82lQe5zXnCYx/JH+F/TQtGuX7EsIV1vjmAEaCAGH3StvMN2exNm6CSI
-         pMe4In1yIAHqy/1wCRKxBEGwiKS8Le2A1RFiYh2b0Yk0b9zofvZrvf6+0xhQjNXtGTsW
-         XpHw==
-X-Gm-Message-State: APt69E1WZwtA6OVATK9FZvR4+yLzq/ne85+h9mGiWpuAPUVt1b5DMU8g
-        jZZOTv6YmWfVmjbbcIJFmnBPPqo=
-X-Google-Smtp-Source: ADUXVKKb22+Y6//8i2pOOvGvtOj/gTgd4OqjlR02AEiBvl1FdgJ0VTMfbrYHpn5xFJLJXw+4+0uJ7g==
-X-Received: by 2002:a81:65d6:: with SMTP id z205-v6mr9217594ywb.155.1529444183670;
-        Tue, 19 Jun 2018 14:36:23 -0700 (PDT)
-Received: from localhost.localdomain (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.googlemail.com with ESMTPSA id i205-v6sm309535ywc.103.2018.06.19.14.36.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 14:36:22 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] microblaze: consolidate GPIO reset handling
-Date:   Tue, 19 Jun 2018 15:36:20 -0600
-Message-Id: <20180619213620.14146-2-robh@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180619213620.14146-1-robh@kernel.org>
-References: <20180619213620.14146-1-robh@kernel.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2pKyFNI5tc+t4AJpPXJ7TuEAsEx6+dV8IG+Lv1NVv30=;
+        b=lzM7vJN2KICEKrVmVVbRD8A3+kxc01L3ixahxJ0krP2y5R30mT5f8xuGJLYVkCkBnx
+         dHn6cfcHeYK3Qd80fhBBpDm2tNo7FiThlAB5sT+1IJ8jSaB3/c7a/kOEpJehbvkwvnLp
+         RkBi+g/ZJswqRxyNh5cpdIMj1zw5TXkEonXtODxczyjnYzG/4s7PnA+ckP2w+RVcqlzf
+         oXEKttF/4M0iqy4Qw5yaQd6Jp+Z8YtRKbyeCX2W5TPyw+x8wFcLGyKuBcUn0CPMRiby7
+         hxs+OaVV6oVFjboPJVBA6gnDPsz+I8DmiLIxdXN/igf2ZduVvDAMH9bfkzGFKliGnxIs
+         LMgA==
+X-Gm-Message-State: APt69E3fjmCmzFIpkaPtNFqd2l4wdJfraw74V9aU/lJk1BA3EZfEz2ai
+        UzFhs6GCb8Qljr1AWdhYG2wjmf6AlsJZ5QCkZEQ6TxRW
+X-Google-Smtp-Source: ADUXVKLlTIG7F9/crHPfJFK8jeD45pLk+MmCg2nYyfsJn9kHIPi3IUxBYoNpPsOnCUCQbZTQ2II5ER5ISlgS7aOsFsE=
+X-Received: by 2002:ab0:1b9b:: with SMTP id k27-v6mr11724476uai.122.1529444207174;
+ Tue, 19 Jun 2018 14:36:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 14:36:46
+ -0700 (PDT)
+In-Reply-To: <1529320103-7711-2-git-send-email-radhey.shyam.pandey@xilinx.com>
+References: <1529320103-7711-1-git-send-email-radhey.shyam.pandey@xilinx.com> <1529320103-7711-2-git-send-email-radhey.shyam.pandey@xilinx.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 20 Jun 2018 00:36:46 +0300
+Message-ID: <CAHp75VcKuqnUgynqXvACS7zY5=6aRxqymGE1w3Yh8sshehSm2g@mail.gmail.com>
+Subject: Re: [PATCH 1/5] net: emaclite: Use __func__ instead of hardcoded name
+To:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Michal Simek <michal.simek@xilinx.com>,
+        netdev <netdev@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that platform.c only has the GPIO reset handling left, move the
-initcall to reset.c and remove platform.c.
+On Mon, Jun 18, 2018 at 2:08 PM, Radhey Shyam Pandey
+<radhey.shyam.pandey@xilinx.com> wrote:
+> Switch hardcoded function name with a reference to __func__ making
+> the code more maintainable. Address below checkpatch warning:
+>
+> WARNING: Prefer using '"%s...", __func__' to using 'xemaclite_mdio_read',
+> this function's name, in a string
+> +               "xemaclite_mdio_read(phy_id=%i, reg=%x) == %x\n",
+>
+> WARNING: Prefer using '"%s...", __func__' to using 'xemaclite_mdio_write',
+> this function's name, in a string
+> +               "xemaclite_mdio_write(phy_id=%i, reg=%x, val=%x)\n",
+>
 
-Cc: Michal Simek <monstr@monstr.eu>
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- arch/microblaze/include/asm/setup.h |  2 --
- arch/microblaze/kernel/Makefile     |  2 +-
- arch/microblaze/kernel/platform.c   | 22 ----------------------
- arch/microblaze/kernel/reset.c      | 11 ++++++-----
- 4 files changed, 7 insertions(+), 30 deletions(-)
- delete mode 100644 arch/microblaze/kernel/platform.c
+For dev_dbg() the __func__ should be completely dropped away.
 
-diff --git a/arch/microblaze/include/asm/setup.h b/arch/microblaze/include/asm/setup.h
-index d5384f6f36f7..86d2663d3fd0 100644
---- a/arch/microblaze/include/asm/setup.h
-+++ b/arch/microblaze/include/asm/setup.h
-@@ -26,8 +26,6 @@ void microblaze_setup_heartbeat(void);
- extern void mmu_reset(void);
- #   endif /* CONFIG_MMU */
- 
--extern void of_platform_reset_gpio_probe(void);
--
- void time_init(void);
- void init_IRQ(void);
- void machine_early_init(const char *cmdline, unsigned int ram,
-diff --git a/arch/microblaze/kernel/Makefile b/arch/microblaze/kernel/Makefile
-index 7e99cf6984a1..6c4c54826aae 100644
---- a/arch/microblaze/kernel/Makefile
-+++ b/arch/microblaze/kernel/Makefile
-@@ -17,7 +17,7 @@ extra-y := head.o vmlinux.lds
- 
- obj-y += dma.o exceptions.o \
- 	hw_exception_handler.o irq.o \
--	platform.o process.o prom.o ptrace.o \
-+	process.o prom.o ptrace.o \
- 	reset.o setup.o signal.o sys_microblaze.o timer.o traps.o unwind.o
- 
- obj-y += cpu/
-diff --git a/arch/microblaze/kernel/platform.c b/arch/microblaze/kernel/platform.c
-deleted file mode 100644
-index b9a414552d9b..000000000000
---- a/arch/microblaze/kernel/platform.c
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/*
-- * Copyright 2008 Michal Simek <monstr@monstr.eu>
-- *
-- * based on virtex.c file
-- *
-- * Copyright 2007 Secret Lab Technologies Ltd.
-- *
-- * This file is licensed under the terms of the GNU General Public License
-- * version 2. This program is licensed "as is" without any warranty of any
-- * kind, whether express or implied.
-- */
--
--#include <linux/init.h>
--#include <linux/of_platform.h>
--#include <asm/setup.h>
--
--static int __init microblaze_device_probe(void)
--{
--	of_platform_reset_gpio_probe();
--	return 0;
--}
--device_initcall(microblaze_device_probe);
-diff --git a/arch/microblaze/kernel/reset.c b/arch/microblaze/kernel/reset.c
-index bab4c8330ef4..fcbe1daf6316 100644
---- a/arch/microblaze/kernel/reset.c
-+++ b/arch/microblaze/kernel/reset.c
-@@ -18,7 +18,7 @@
- static int handle; /* reset pin handle */
- static unsigned int reset_val;
- 
--void of_platform_reset_gpio_probe(void)
-+static int of_platform_reset_gpio_probe(void)
- {
- 	int ret;
- 	handle = of_get_named_gpio(of_find_node_by_path("/"),
-@@ -27,13 +27,13 @@ void of_platform_reset_gpio_probe(void)
- 	if (!gpio_is_valid(handle)) {
- 		pr_info("Skipping unavailable RESET gpio %d (%s)\n",
- 				handle, "reset");
--		return;
-+		return -ENODEV;
- 	}
- 
- 	ret = gpio_request(handle, "reset");
- 	if (ret < 0) {
- 		pr_info("GPIO pin is already allocated\n");
--		return;
-+		return ret;
- 	}
- 
- 	/* get current setup value */
-@@ -51,11 +51,12 @@ void of_platform_reset_gpio_probe(void)
- 
- 	pr_info("RESET: Registered gpio device: %d, current val: %d\n",
- 							handle, reset_val);
--	return;
-+	return 0;
- err:
- 	gpio_free(handle);
--	return;
-+	return ret;
- }
-+device_initcall(of_platform_reset_gpio_probe);
- 
- 
- static void gpio_system_reset(void)
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
