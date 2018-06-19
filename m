@@ -2,198 +2,76 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E664CC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67ED1C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 654D2204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:23:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=landisgyr.com header.i=@landisgyr.com header.b="kBVvxyG0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654D2204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=landisgyr.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D74C204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:24:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D74C204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757006AbeFSOXr (ORCPT
+        id S1757216AbeFSOYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:23:47 -0400
-Received: from mail-ve1eur01on0133.outbound.protection.outlook.com ([104.47.1.133]:54015
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756700AbeFSOXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:23:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landisgyr.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A718kYAfgTnDhZB2D7DIbQlzQZvMbhUvsEcVh8eM55o=;
- b=kBVvxyG0oJ6VGgJoK3BeBTWQqTHVhkXXeT3qbKWaAWI1VYfzPj3S6PnpIr4/SDy/8F8ZxI8WFtVfPGMCCAl/NbA8Rw2Gxe83bE8HJuBvEDgbIDOvdy9WyXWOQyv5rDvgEzjM8P7YcKFzs10DpEagk5BCLc8rHZdHiK3Ke23wzsg=
-Received: from AM6PR01MB4262.eurprd01.prod.exchangelabs.com (20.176.242.28) by
- AM6PR01MB4135.eurprd01.prod.exchangelabs.com (20.177.37.81) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.17; Tue, 19 Jun 2018 14:23:42 +0000
-Received: from AM6PR01MB4262.eurprd01.prod.exchangelabs.com
- ([fe80::5c35:24d9:caaf:d613]) by AM6PR01MB4262.eurprd01.prod.exchangelabs.com
- ([fe80::5c35:24d9:caaf:d613%3]) with mapi id 15.20.0863.016; Tue, 19 Jun 2018
- 14:23:42 +0000
-From:   "Onnasch, Alexander (EXT)" <Alexander.Onnasch@landisgyr.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     Florian Fainelli <f.fainelli@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] net/phy: Micrel KSZ8061 PHY link failure after cable
- connect
-Thread-Topic: [PATCH] net/phy: Micrel KSZ8061 PHY link failure after cable
- connect
-Thread-Index: AQHT/WzddNA8rOZVg02cuuZapzzJYaRTLA6AgBSJeGA=
-Date:   Tue, 19 Jun 2018 14:23:41 +0000
-Message-ID: <AM6PR01MB4262F8BB6004D246DFF5C3FEF0700@AM6PR01MB4262.eurprd01.prod.exchangelabs.com>
-References: <1528272198-10825-1-git-send-email-alexander.onnasch@landisgyr.com>
- <20180606123947.GB14898@lunn.ch>
-In-Reply-To: <20180606123947.GB14898@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Onnasch@landisgyr.com; 
-x-originating-ip: [80.239.165.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR01MB4135;7:GA6CtFLjTlu2SMPS+isqYZGgCYiiz2kxJwyyhksb3+yrJpDcAEVManKC2exLiRjAdkoAiah4FqiE1+LKIqKWo90d7CCTc49uL7y/Cco9Ni0sYyfpqU5t7uAygtsB3DBIrohFwevwHLQlhnUwW7YZQlPD05xuohELy8n7gBTV6oVMqSguwyLLRCmqIVgxSrsVQm6T1o8jD69CQYaMS5s4pews2c6Bt9WtQ9IpwUMgesl/1+tNl03USEZGa5YbLlqq
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: ba7b32d2-b1c0-4e96-d4d4-08d5d5f04216
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR01MB4135;
-x-ms-traffictypediagnostic: AM6PR01MB4135:
-x-microsoft-antispam-prvs: <AM6PR01MB41357463BF698D84328364D1F0700@AM6PR01MB4135.eurprd01.prod.exchangelabs.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(144836121648609)(21532816269658);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AM6PR01MB4135;BCL:0;PCL:0;RULEID:;SRVR:AM6PR01MB4135;
-x-forefront-prvs: 07083FF734
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(39380400002)(396003)(51914003)(199004)(13464003)(189003)(3280700002)(6246003)(99286004)(6436002)(86362001)(575784001)(316002)(97736004)(8936002)(53936002)(9686003)(229853002)(76176011)(3846002)(7696005)(6116002)(8676002)(81156014)(105586002)(5250100002)(2906002)(81166006)(74316002)(476003)(54906003)(3660700001)(11346002)(7736002)(55016002)(486006)(446003)(106356001)(305945005)(5660300001)(59450400001)(72206003)(53546011)(6506007)(6916009)(478600001)(4326008)(66066001)(33656002)(14454004)(25786009)(2900100001)(39060400002)(186003)(68736007)(102836004)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR01MB4135;H:AM6PR01MB4262.eurprd01.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: landisgyr.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: kK1UCOrut60oCmaOA6ZDg8wBhCL/ogoDgW4m7Z29WBcP7jb/0UD+GZGHIqFITbfI4X1n8vsY47cuwx5IjbwOKmIp7VlBzE7jZvXfppE1Q9KRiEVKFcDCtEYQ65uxhFgHyZkQGCbgZvytQaOXQmly5iFD5J0hARcOa0XNX0MPYQOY4iYJr+kaE2JIkBBQdNEgQHvJ4SpZRxZXc9QIbOcJOWcCx9OA2Wpwz/xO96ou55ZfVnn0CeZagekowp1JmSNegtEgsotaq77XpmdoWd9oqv6SZI9+aKs+VA7BwvSxIAwirrhys61F/a5wlJTvxICfcYM/caQB0yhfKWKBIpJ6jA==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 19 Jun 2018 10:24:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51394 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757102AbeFSOYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 10:24:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D75EA1596;
+        Tue, 19 Jun 2018 07:24:00 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E33803F557;
+        Tue, 19 Jun 2018 07:23:56 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 15:23:51 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180619142351.GA29374@e108498-lin.cambridge.arm.com>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <20180619113408.GQ2458@hirez.programming.kicks-ass.net>
+ <20180619125857.GY17720@e108498-lin.cambridge.arm.com>
+ <20180619132338.GF2476@hirez.programming.kicks-ass.net>
+ <20180619133844.GB17720@e108498-lin.cambridge.arm.com>
+ <20180619141642.GE2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-OriginatorOrg: landisgyr.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba7b32d2-b1c0-4e96-d4d4-08d5d5f04216
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2018 14:23:41.9002
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: ee2cd48b-958f-4be4-9852-b8f104c001b9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR01MB4135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619141642.GE2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQW5kcmV3DQp0aGFua3MgZm9yIHRoZSBoaW50LiBCdXQgYWN0dWFsbHkgSSBjYW5ub3QgY29u
-ZmlybSAtIG9yIEkgZG9uJ3Qgc2VlIGl0IHlldC4gDQoNCldpdGhvdXQgaGF2aW5nIHRlc3RlZCwg
-anVzdCBmcm9tIHRoZSBjb2RlLCB0aGUgc3RydWN0IHBoeV9kcml2ZXIgaW5zdGFuY2UgZm9yIFBI
-WV9JRF9LU1o4MDYxIGluIG1pY3JlbC5jIGRvZXMgbm90IGhhdmUgYSAud3JpdGVfbW1kIGZ1bmN0
-aW9uIGFzc2lnbmVkLCB0aHVzIHBoeV93cml0ZV9tbWQgc2hvdWxkIGV2YWx1YXRlIHRvIGl0cyBl
-bHNlLWNsYXVzZSAoc2VlIGJlbG93KSBhbmQgbm90IHRvIG1kaW9idXNfd3JpdGUgKGFzIGluIHBo
-eV93cml0ZSkuDQoNCkFsc28gdGhlIGtzejgwNjFfZXh0ZW5kZWRfd3JpdGUoKSBmdW5jdGlvbiB3
-aGljaCBJIGhhdmUgYWRkZWQgdXNlcyB0aGUgc2FtZSBwcmluY2lwbGUgYXMgYWxyZWFkeSBleGlz
-dGluZyBIVy1zcGVjaWZpYyBmdW5jdGlvbnMgaW4gbWljcmVsLmMgZm9yIHNpbXVsYXIgcmVhc29u
-cyAoa3N6cGh5X2V4dGVuZGVkX3dyaXRlIGFuZCBrc3o5MDMxX2V4dGVuZGVkX3dyaXRlKS4NClRo
-ZXkgdXNlIHBoeV93cml0ZSBhbGwgb3ZlciB0aGUgcGxhY2UgaW4gdGhhdCBmaWxlIGFuZCBuZXZl
-ciBwaHlfd3JpdGVfbW1kIC0gZm9yIHdoYXRldmVyIHJlYXNvbiB0aGV5IGhhZC4NClRodXMgSSB0
-aG91Z2h0IGl0IHdvdWxkIGJlIGEgZ29vZCBpZGVhIC4uLg0KDQpiZXN0IHJlZ2FyZHMsIEFsZXgN
-Cg0KDQpzdGF0aWMgaW5saW5lIGludCBwaHlfd3JpdGUoc3RydWN0IHBoeV9kZXZpY2UgKnBoeWRl
-diwgdTMyIHJlZ251bSwgdTE2IHZhbCkNCnsNCglyZXR1cm4gbWRpb2J1c193cml0ZShwaHlkZXYt
-Pm1kaW8uYnVzLCBwaHlkZXYtPm1kaW8uYWRkciwgcmVnbnVtLCB2YWwpOw0KfQ0KDQoNCg0KaW50
-IHBoeV93cml0ZV9tbWQoc3RydWN0IHBoeV9kZXZpY2UgKnBoeWRldiwgaW50IGRldmFkLCB1MzIg
-cmVnbnVtLCB1MTYgdmFsKQ0Kew0KCWludCByZXQ7DQoNCglpZiAocmVnbnVtID4gKHUxNil+MCB8
-fCBkZXZhZCA+IDMyKQ0KCQlyZXR1cm4gLUVJTlZBTDsNCg0KCWlmIChwaHlkZXYtPmRydi0+d3Jp
-dGVfbW1kKSB7DQoJCXJldCA9IHBoeWRldi0+ZHJ2LT53cml0ZV9tbWQocGh5ZGV2LCBkZXZhZCwg
-cmVnbnVtLCB2YWwpOw0KCX0gZWxzZSBpZiAocGh5ZGV2LT5pc19jNDUpIHsNCgkJdTMyIGFkZHIg
-PSBNSUlfQUREUl9DNDUgfCAoZGV2YWQgPDwgMTYpIHwgKHJlZ251bSAmIDB4ZmZmZik7DQoNCgkJ
-cmV0ID0gbWRpb2J1c193cml0ZShwaHlkZXYtPm1kaW8uYnVzLCBwaHlkZXYtPm1kaW8uYWRkciwN
-CgkJCQkgICAgYWRkciwgdmFsKTsNCgl9IGVsc2Ugew0KCQlzdHJ1Y3QgbWlpX2J1cyAqYnVzID0g
-cGh5ZGV2LT5tZGlvLmJ1czsNCgkJaW50IHBoeV9hZGRyID0gcGh5ZGV2LT5tZGlvLmFkZHI7DQoN
-CgkJbXV0ZXhfbG9jaygmYnVzLT5tZGlvX2xvY2spOw0KCQltbWRfcGh5X2luZGlyZWN0KGJ1cywg
-cGh5X2FkZHIsIGRldmFkLCByZWdudW0pOw0KDQoJCS8qIFdyaXRlIHRoZSBkYXRhIGludG8gTU1E
-J3Mgc2VsZWN0ZWQgcmVnaXN0ZXIgKi8NCgkJYnVzLT53cml0ZShidXMsIHBoeV9hZGRyLCBNSUlf
-TU1EX0RBVEEsIHZhbCk7DQoJCW11dGV4X3VubG9jaygmYnVzLT5tZGlvX2xvY2spOw0KDQoJCXJl
-dCA9IDA7DQoJfQ0KCXJldHVybiByZXQ7DQp9DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0t
-DQpGcm9tOiBBbmRyZXcgTHVubiA8YW5kcmV3QGx1bm4uY2g+IA0KU2VudDogTWl0dHdvY2gsIDYu
-IEp1bmkgMjAxOCAxNDo0MA0KVG86IE9ubmFzY2gsIEFsZXhhbmRlciAoRVhUKSA8QWxleGFuZGVy
-Lk9ubmFzY2hAbGFuZGlzZ3lyLmNvbT4NCkNjOiBGbG9yaWFuIEZhaW5lbGxpIDxmLmZhaW5lbGxp
-QGdtYWlsLmNvbT47IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmcNClN1YmplY3Q6IFJlOiBbUEFUQ0hdIG5ldC9waHk6IE1pY3JlbCBLU1o4MDYxIFBI
-WSBsaW5rIGZhaWx1cmUgYWZ0ZXIgY2FibGUgY29ubmVjdA0KDQpPbiBXZWQsIEp1biAwNiwgMjAx
-OCBhdCAxMDowMzoxOEFNICswMjAwLCBBbGV4YW5kZXIgT25uYXNjaCB3cm90ZToNCj4gV2l0aCBN
-aWNyZWwgS1NaODA2MSBQSFksIHRoZSBsaW5rIG1heSBvY2Nhc2lvbmFsbHkgbm90IGNvbWUgdXAg
-YWZ0ZXIgDQo+IEV0aGVybmV0IGNhYmxlIGNvbm5lY3QuIFRoZSB2ZW5kb3IncyAoTWljcm9jaGlw
-LCBmb3JtZXIgTWljcmVsKSBlcnJhdGEgDQo+IHNoZWV0IDgwMDAwNjg4QS5wZGYgZGVzY3JpYmVz
-IHRoZSBwcm9ibGVtIGFuZCBwb3NzaWJsZSB3b3JrYXJvdW5kcyBpbiANCj4gZGV0YWlsLCBzZWUg
-YmVsb3cuDQo+IFRoZSBwYXRjaCBpbXBsZW1lbnRzIHdvcmthcm91bmQgMSwgd2hpY2ggcGVybWFu
-ZW50bHkgZml4ZXMgdGhlIGlzc3VlLg0KPiANCj4gREVTQ1JJUFRJT04NCj4gTGluay11cCBtYXkg
-bm90IG9jY3VyIHByb3Blcmx5IHdoZW4gdGhlIEV0aGVybmV0IGNhYmxlIGlzIGluaXRpYWxseSAN
-Cj4gY29ubmVjdGVkLiBUaGlzIGlzc3VlIG9jY3VycyBtb3JlIGNvbW1vbmx5IHdoZW4gdGhlIGNh
-YmxlIGlzIGNvbm5lY3RlZCANCj4gc2xvd2x5LCBidXQgaXQgbWF5IG9jY3VyIGFueSB0aW1lIGEg
-Y2FibGUgaXMgY29ubmVjdGVkLiBUaGlzIGlzc3VlIA0KPiBvY2N1cnMgaW4gdGhlIGF1dG8tbmVn
-b3RpYXRpb24gY2lyY3VpdCwgYW5kIHdpbGwgbm90IG9jY3VyIGlmIA0KPiBhdXRvLW5lZ290aWF0
-aW9uIGlzIGRpc2FibGVkICh3aGljaCByZXF1aXJlcyB0aGF0IHRoZSB0d28gbGluayANCj4gcGFy
-dG5lcnMgYmUgc2V0IHRvIHRoZSBzYW1lIHNwZWVkIGFuZCBkdXBsZXgpLg0KPiANCj4gRU5EIFVT
-RVIgSU1QTElDQVRJT05TDQo+IFdoZW4gdGhpcyBpc3N1ZSBvY2N1cnMsIGxpbmsgaXMgbm90IGVz
-dGFibGlzaGVkLiBTdWJzZXF1ZW50IGNhYmxlIA0KPiBwbHVnL3VucGx1ZyBjeWNsZXMgd2lsbCBu
-b3QgY29ycmVjdCB0aGUgaXNzdWUuDQo+IA0KPiBXT1JLIEFST1VORA0KPiBUaGVyZSBhcmUgZm91
-ciBhcHByb2FjaGVzIHRvIHdvcmsgYXJvdW5kIHRoaXMgaXNzdWU6DQo+IDEuICBUaGlzIGlzc3Vl
-IGNhbiBiZSBwcmV2ZW50ZWQgYnkgc2V0dGluZyBiaXQgMTUgaW4gTU1EIGRldmljZSBhZGRyZXNz
-IDEsDQo+ICAgICByZWdpc3RlciAyLCBwcmlvciB0byBjb25uZWN0aW5nIHRoZSAgY2FibGUgb3Ig
-cHJpb3IgdG8gc2V0dGluZyB0aGUNCj4gICAgIFJlc3RhcnQgQXV0by1OZWdvdGlhdGlvbiBiaXQg
-aW4gcmVnaXN0ZXIgMGguVGhlIE1NRCByZWdpc3RlcnMgYXJlDQo+ICAgICBhY2Nlc3NlZCB2aWEg
-dGhlIGluZGlyZWN0IGFjY2VzcyByZWdpc3RlcnMgRGggYW5kIEVoLCBvciB2aWEgdGhlIE1pY3Jl
-bA0KPiAgICAgRXRoVXRpbCB1dGlsaXR5IGFzIHNob3duIGhlcmU6DQo+ICAgICDigKIgIElmIHVz
-aW5nIHRoZSBFdGhVdGlsIHV0aWxpdHkgKHVzdWFsbHkgd2l0aCBhIE1pY3JlbCBLU1o4MDYxDQo+
-ICAgICAgICBFdmFsdWF0aW9uIEJvYXJkKSwgdHlwZSB0aGUgZm9sbG93aW5nIGNvbW1hbmRzOg0K
-PiAgICAgICAgPiBhZGRyZXNzIDENCj4gICAgICAgID4gbW1kIDENCj4gICAgICAgID4gaXcgMiBi
-NjFhDQo+ICAgICDigKIgIEFsdGVybmF0aXZlbHksIHdyaXRlIHRoZSBmb2xsb3dpbmcgcmVnaXN0
-ZXJzIHRvIHdyaXRlIHRvIHRoZQ0KPiAgICAgICAgaW5kaXJlY3QgTU1EIHJlZ2lzdGVyOg0KPiAg
-ICAgICAgV3JpdGUgcmVnaXN0ZXIgRGgsIGRhdGEgMDAwMWgNCj4gICAgICAgIFdyaXRlIHJlZ2lz
-dGVyIEVoLCBkYXRhIDAwMDJoDQo+ICAgICAgICBXcml0ZSByZWdpc3RlciBEaCwgZGF0YSA0MDAx
-aA0KPiAgICAgICAgV3JpdGUgcmVnaXN0ZXIgRWgsIGRhdGEgQjYxQWgNCj4gMi4gIFRoZSBpc3N1
-ZSBjYW4gYmUgYXZvaWRlZCBieSBkaXNhYmxpbmcgYXV0by1uZWdvdGlhdGlvbiBpbiB0aGUgS1Na
-ODA2MSwNCj4gICAgIGVpdGhlciBieSB0aGUgc3RyYXBwaW5nIG9wdGlvbiwgb3IgYnkgY2xlYXJp
-bmcgYml0IDEyIGluIHJlZ2lzdGVyIDBoLg0KPiAgICAgQ2FyZSBtdXN0IGJlIHRha2VuIHRvIGVu
-c3VyZSB0aGF0IHRoZSBLU1o4MDYxIGFuZCB0aGUgbGluayBwYXJ0bmVyDQo+ICAgICB3aWxsIGxp
-bmsgd2l0aCB0aGUgc2FtZSBzcGVlZCBhbmQgZHVwbGV4LiBOb3RlIHRoYXQgdGhlIEtTWjgwNjEN
-Cj4gICAgIGRlZmF1bHRzIHRvIGZ1bGwtZHVwbGV4IHdoZW4gYXV0by1uZWdvdGlhdGlvbiBpcyBv
-ZmYsIGJ1dCBvdGhlcg0KPiAgICAgZGV2aWNlcyBtYXkgZGVmYXVsdCB0byBoYWxmLWR1cGxleCBp
-biB0aGUgZXZlbnQgb2YgZmFpbGVkDQo+ICAgICBhdXRvLW5lZ290aWF0aW9uLg0KPiAzLiAgVGhl
-IGlzc3VlIGNhbiBiZSBhdm9pZGVkIGJ5IGNvbm5lY3RpbmcgdGhlIGNhYmxlIHByaW9yIHRvIHBv
-d2VyaW5nLXVwDQo+ICAgICBvciByZXNldHRpbmcgdGhlIEtTWjgwNjEsIGFuZCBsZWF2aW5nIGl0
-IHBsdWdnZWQgaW4gdGhlcmVhZnRlci4NCj4gNC4gIElmIHRoZSBhYm92ZSBtZWFzdXJlcyBhcmUg
-bm90IHRha2VuIGFuZCB0aGUgcHJvYmxlbSBvY2N1cnMsIGxpbmsgY2FuDQo+ICAgICBiZSByZWNv
-dmVyZWQgYnkgc2V0dGluZyB0aGUgUmVzdGFydCBBdXRvLU5lZ290aWF0aW9uIGJpdCBpbg0KPiAg
-ICAgcmVnaXN0ZXIgMGgsIG9yIGJ5IHJlc2V0dGluZyBvciBwb3dlciBjeWNsaW5nIHRoZSBkZXZp
-Y2UuIFJlc2V0IG1heQ0KPiAgICAgYmUgZWl0aGVyIGhhcmR3YXJlIHJlc2V0IG9yIHNvZnR3YXJl
-IHJlc2V0IChyZWdpc3RlciAwaCwgYml0IDE1KS4NCj4gDQo+IFBMQU4NCj4gVGhpcyBlcnJhdGEg
-d2lsbCBub3QgYmUgY29ycmVjdGVkIGluIGEgZnV0dXJlIHJldmlzaW9uLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogQWxleGFuZGVyIE9ubmFzY2ggPGFsZXhhbmRlci5vbm5hc2NoQGxhbmRpc2d5ci5j
-b20+DQo+IC0tLQ0KPiAgZHJpdmVycy9uZXQvcGh5L21pY3JlbC5jIHwgMjQgKysrKysrKysrKysr
-KysrKysrKysrKystDQo+ICAxIGZpbGUgY2hhbmdlZCwgMjMgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
-dGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3BoeS9taWNyZWwuYyBiL2Ry
-aXZlcnMvbmV0L3BoeS9taWNyZWwuYyBpbmRleCANCj4gNmM0NWZmNi4uN2Q4MGEwMCAxMDA2NDQN
-Cj4gLS0tIGEvZHJpdmVycy9uZXQvcGh5L21pY3JlbC5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3Bo
-eS9taWNyZWwuYw0KPiBAQCAtMzM5LDYgKzMzOSwyOCBAQCBzdGF0aWMgaW50IGtzejgwNDFfY29u
-ZmlnX2FuZWcoc3RydWN0IHBoeV9kZXZpY2UgKnBoeWRldikNCj4gIAlyZXR1cm4gZ2VucGh5X2Nv
-bmZpZ19hbmVnKHBoeWRldik7DQo+ICB9DQo+ICANCj4gKyNkZWZpbmUgTUlJX0tTWjgwNjFSTl9N
-TURfQ1RSTF9SRUcJICAgIDB4MGQNCj4gKyNkZWZpbmUgTUlJX0tTWjgwNjFSTl9NTURfUkVHREFU
-QV9SRUcJMHgwZQ0KPiArDQo+ICtzdGF0aWMgaW50IGtzejgwNjFfZXh0ZW5kZWRfd3JpdGUoc3Ry
-dWN0IHBoeV9kZXZpY2UgKnBoeWRldiwNCj4gKwkJCQkgIHU4IG1vZGUsIHUzMiBkZXZfYWRkciwg
-dTMyIHJlZ251bSwgdTE2IHZhbCkgew0KPiArCXBoeV93cml0ZShwaHlkZXYsIE1JSV9LU1o4MDYx
-Uk5fTU1EX0NUUkxfUkVHLCBkZXZfYWRkcik7DQo+ICsJcGh5X3dyaXRlKHBoeWRldiwgTUlJX0tT
-WjgwNjFSTl9NTURfUkVHREFUQV9SRUcsIHJlZ251bSk7DQo+ICsJcGh5X3dyaXRlKHBoeWRldiwg
-TUlJX0tTWjgwNjFSTl9NTURfQ1RSTF9SRUcsIChtb2RlIDw8IDE0KSB8IGRldl9hZGRyKTsNCj4g
-KwlyZXR1cm4gcGh5X3dyaXRlKHBoeWRldiwgTUlJX0tTWjgwNjFSTl9NTURfUkVHREFUQV9SRUcs
-IHZhbCk7IH0NCg0KSGkgQWxleGFuZGVyDQoNClRoaXMgbG9va3MgYSBsb3QgbGlrZSBwaHlfd3Jp
-dGVfbW1kKCkuDQoNCiAgICAgQW5kcmV3DQo=
+On Tuesday 19 Jun 2018 at 16:16:42 (+0200), Peter Zijlstra wrote:
+> On Tue, Jun 19, 2018 at 02:38:45PM +0100, Quentin Perret wrote:
+> > But maybe I could use something simpler than a lock in this case ?
+> > Would WRITE_ONCE/READ_ONCE be enough to ensure that atomicity for
+> > example ?
+> 
+> Yes, since its a single pointer, smp_store_release() + READ_ONCE()
+> should be sufficient (these are the foundations of RCU).
+
+OK, good, I'll get rid of the spinlock in v4 (and read more about RCU
+foundations then :-))
+
+Thanks,
+Quentin
