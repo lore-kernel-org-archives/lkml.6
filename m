@@ -3,83 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17060C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00047C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EEA12083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:46:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EEA12083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id B76A620874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:47:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76A620874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755836AbeFSFqu (ORCPT
+        id S1756021AbeFSFr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:46:50 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:38147 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755376AbeFSFqt (ORCPT
+        Tue, 19 Jun 2018 01:47:57 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40158 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751602AbeFSFrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:46:49 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0T2zTT.K_1529387192;
-Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T2zTT.K_1529387192)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 19 Jun 2018 13:46:32 +0800
-Reply-To: xlpang@linux.alibaba.com
-Subject: Re: [PATCH 2/2] sched/fair: Advance global expiration when period
- timer is restarted
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ben Segall <bsegall@google.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180618091657.21939-1-xlpang@linux.alibaba.com>
- <CAM_iQpV-9_Q_xdNAobSq1bZXPm0kALAq1+Jc3BFpVAaQ2E_czQ@mail.gmail.com>
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-Message-ID: <fce1910a-ea42-7706-4b3f-56a1f972be9c@linux.alibaba.com>
-Date:   Tue, 19 Jun 2018 13:46:31 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        Tue, 19 Jun 2018 01:47:55 -0400
+Received: by mail-oi0-f65.google.com with SMTP id f79-v6so17065752oib.7
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 22:47:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MwREOWVRwksXPOSy9kCtD0deob5AunG4tI8IamtZGRo=;
+        b=NNmM7OmAKg3/4A057RDd1OY0DO6bRDGVkVkcl3VY+cWAQ7KNa6UysKPkLU3YC2+Pqf
+         CYqGx9lEGTfPbu3E9TiOKIZBgQmbOWllNI8JlvXf3JlI9QSDDrzMUthLzOy80BdSgA/i
+         CaUeEh1Zc/bhn1chXrYyf5B6ivc+rvf5Leq2vR6KhqQjLSfcbOweX9vwNQBvCqcDlh2f
+         ny72PQv0WNPkX6r3ExJRRGLkgPvSLrYnsEr7xAYcjahR17rEYgroUrrM3R9xvT31Jj8e
+         rWeINj4CPz75A9UY1gqmfkq36sJSyKju0M9tLgLsl1vOH7HeaC6JXeOiOgdea+Y+3z4x
+         Ajpw==
+X-Gm-Message-State: APt69E24NFpIGefBvvMBaQJacCqDzsJhYBgugQCdfErdp1ZBDpXUuFaf
+        4QYxRLAoCG+H9cC+NI2O53401IgwgPz8/DvYsTI=
+X-Google-Smtp-Source: ADUXVKIG6O1VWXRO0cjVJYrd8MLVWXJ5dWZLWTDZmyiF5SeTQt69Mq0owrpDKVdBxbevLtLo7ES2X4KX23NU3wJmdwg=
+X-Received: by 2002:aca:a686:: with SMTP id t6-v6mr8931628oij.48.1529387274582;
+ Mon, 18 Jun 2018 22:47:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAM_iQpV-9_Q_xdNAobSq1bZXPm0kALAq1+Jc3BFpVAaQ2E_czQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+References: <20180618140518.2920804-1-arnd@arndb.de> <CA+7wUswcgxLz_GAqkyVLpdAmTNEPUZ-cXJ8Ej7Xx9+OgjGUo=Q@mail.gmail.com>
+ <87efh3hndq.fsf@igel.home>
+In-Reply-To: <87efh3hndq.fsf@igel.home>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Tue, 19 Jun 2018 07:47:41 +0200
+Message-ID: <CA+7wUsx+M1PE_ZcyT0JokY3r8hFLZfufUyFGX7kYX-fAZ524Fw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] powerpc: mac: fix rtc read functions
+To:     schwab@linux-m68k.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, funaho@jurai.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        gerg@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>, y2038@lists.linaro.org,
+        Meelis Roos <mroos@linux.ee>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/19/18 12:36 PM, Cong Wang wrote:
-> On Mon, Jun 18, 2018 at 2:16 AM, Xunlei Pang <xlpang@linux.alibaba.com> wrote:
->> I noticed the group frequently got throttled even it consumed
->> low cpu usage, this caused some jitters on the response time
->> to some of our business containers enabling cpu quota.
->>
->> It's very easy to reproduce:
->> mkdir /sys/fs/cgroup/cpu/test
->> cd /sys/fs/cgroup/cpu/test
->> echo 100000 > cpu.cfs_quota_us
->> echo $$ > tasks
->> then repeat:
->> cat cpu.stat |grep nr_throttled  // nr_throttled will increase
->>
->> After some analysis, we found that cfs_rq::runtime_remaining will
->> be cleared by expire_cfs_rq_runtime() due to two equal but stale
->> "cfs_{b|q}->runtime_expires" after period timer is re-armed.
->>
->> The global expiration should be advanced accordingly when the
->> bandwidth period timer is restarted.
->>
-> 
-> I observed the same problem and already sent some patches:
-> 
-> https://lkml.org/lkml/2018/5/22/37
-> https://lkml.org/lkml/2018/5/22/38
-> https://lkml.org/lkml/2018/5/22/35
-> 
+On Mon, Jun 18, 2018 at 10:04 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
+>
+> On Jun 18 2018, Mathieu Malaterre <malat@debian.org> wrote:
+>
+> > Sadly, trying again today does not work anymore. Adding some printk
+> > just before WARN_ON:
+> >
+> > +printk(KERN_ERR " rtc DBG pmu_get_time1: %lld %d %lld \n", now,
+> > RTC_OFFSET, now - RTC_OFFSET );
+> > +printk(KERN_ERR " rtc DBG pmu_get_time2: %x %x %x %x %d \n",
+> > req.reply[0], req.reply[1], req.reply[2], req.reply[3] ,
+> > req.reply_len);
+> >
+> > leads to:
+> >
+> > [    0.000000]  rtc DBG pmu_get_time1: 14096662 2082844800 -2068748138
+> > [    0.000000]  rtc DBG pmu_get_time2: 0 d7 19 16 4
+>
+> A good value would have 0xd7 in the first byte.  The problem is that
+> pmu_set_rtc_time is also broken, and leads to an invalid time value
+> stored in the RTC.  Since pmu_request is a varargs function passing
+> values of type time64_t without casting won't work.
+>
+> You need to reset your RTC before you can continue.
 
-Looks they are related to large slice setting and unused slack
-under large number of cpus, the issue I described is a little
-different.
+Indeed that was silly, I was not paying attention. I'll try again tonight.
+
+> I think the right fix is to change nowtime in pmu_set_rtc_time and
+> cuda_set_rtc_time back to unsigned int (or to u32).
+>
+> Andreas.
+>
+> --
+> Andreas Schwab, schwab@linux-m68k.org
+> GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+> "And now for something completely different."
