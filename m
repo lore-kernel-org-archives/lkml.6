@@ -2,107 +2,108 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FECC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6172BC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8C9E2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:07:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8C9E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1AAFE20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:07:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="lfGy6vKS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AAFE20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756606AbeFSJHO (ORCPT
+        id S1756672AbeFSJHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:07:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45546 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756178AbeFSJHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:07:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 089661435;
-        Tue, 19 Jun 2018 02:07:11 -0700 (PDT)
-Received: from [10.1.78.251] (unknown [10.1.78.251])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 719A63F25D;
-        Tue, 19 Jun 2018 02:07:09 -0700 (PDT)
-Subject: Re: [PATCH] serial: mps2-uart: Initialize early console
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <1529384097-1631-1-git-send-email-linux@roeck-us.net>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <173551dd-3632-08a6-ec42-2ee416ccb9ad@arm.com>
-Date:   Tue, 19 Jun 2018 10:07:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1529384097-1631-1-git-send-email-linux@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Tue, 19 Jun 2018 05:07:41 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39832 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756608AbeFSJHi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 05:07:38 -0400
+Received: by mail-wm0-f68.google.com with SMTP id p11-v6so20541627wmc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 02:07:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=eSzDELogY49TVYILZ3s9BjeiVGknbjjA5dmkQ4yjYpg=;
+        b=lfGy6vKSJwNdi+2zpVZ1Afv68yF3xIK+PRjf3ZS5ggv4Xg0I7am3QfDY5CDkgEtAvw
+         eszDY6EBQOtosli6cUeN5koRIhNNIE0ZaSJFVLFSLKGQOpKym04ESHP09w9XZ36Fu5KW
+         Y90KXoNM+ZkbgJKGN6TQ0OvjuRyQd7y2zsVkQNwpwJukh69/wSwBOQeYWqn5c673dkwd
+         52egkOlvosEZQRB69CAwB8g7q7O+n3CG3m07iHamKQts+/M9GDdsEChoJ8I9lhBvT/Ef
+         T1RUjd/QngGyNjPPogq/UiyRbXThLyrzMRPvrp+KirKyEf+PQwYhjDJ5/hLIM/xVZX8c
+         q6wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eSzDELogY49TVYILZ3s9BjeiVGknbjjA5dmkQ4yjYpg=;
+        b=aWBGesh7xIpjP9qGEoy7b4XoU4Jg2vrQJcbbm2EImFJS3E8UEScuk0wM98siWTnJMP
+         n1lT4veOFni7h8NoC3W/IxaV12fsSBOAZnHQZeTGYizWZ5zszULeaQpIpTU12Y7lRWIx
+         CBdjPwrSpHXtpmr6wtlIWV8wHe2MHanR/6Bia4d+d5efLDdbdVb4RFWRuWMRgNpVUWqy
+         ywKblCAoj/fg+2AL0vQVy4KeU7fDE/5XdA3Mz7mjHR9gbI35NVjg9LjE+PZl5xaEhgIC
+         kOLmqTT3NRaVM2hPWCOFvUx+RU89S4MoXXsx1U6o+A2RIn/Tn/S7mLbCJ1LXyQFHUdfe
+         LB8g==
+X-Gm-Message-State: APt69E1N5eAvDtMnm+Hei4NILuGZtvH5qRZVa7BWnCt88HNd3WU8NYQU
+        XfFImrKrjrEzjfYbwMLBZ+mgqw==
+X-Google-Smtp-Source: ADUXVKIoWWpsGNKCQQ5GWzDOVWx0ayccMzI4w3lq/Ra+9+UYLQ25VTvNh2IG23Sv2QMmgS6qZXnUbQ==
+X-Received: by 2002:a50:abe5:: with SMTP id u92-v6mr14208861edc.43.1529399257622;
+        Tue, 19 Jun 2018 02:07:37 -0700 (PDT)
+Received: from titan.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id f25-v6sm7902102edd.87.2018.06.19.02.07.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 19 Jun 2018 02:07:37 -0700 (PDT)
+From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
+To:     Matias Bjorling <mb@lightnvm.io>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Javier Gonzales <javier@cnexlabs.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: [PATCH] lightnvm: pblk: assume that chunks are closed on 1.2 devices
+Date:   Tue, 19 Jun 2018 11:06:29 +0200
+Message-Id: <1529399189-3239-1-git-send-email-hans.ml.holmberg@owltronix.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-On 19/06/18 05:54, Guenter Roeck wrote:
-> The early console code for mps2-uart assumes that the serial hardware is
-> enabled for transmit when the system boots. However, this is not the case
-> after reset. This results in a hang in mps2_early_putchar() if the serial
-> transmitter is not enabled by a boot loader or ROM monitor.
+We can't know if a block is closed or not on 1.2 devices, so assume
+closed state to make sure that blocks are erased before writing.
 
-I was under impression that for earlycon there is an assumption/requirement
-that the serial port must already be setup and configured. For instance, I 
-see such requirement for pl011. So it looks like boot code's fault not to
-enable serial (for mps2 it needs to setup BAUDDIV as well).
+Fixes: 32ef9412c114 ("lightnvm: pblk: implement get log report chunk")
 
-I'm not against the patch per se, but I'd like to hear if my understanding of
-earlycon requirements is correct or not.
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+---
 
-Cheers
-Vladimir
+This patch applies on:
+ssh://github.com/OpenChannelSSD/linux branch for-4.19/core
 
-> 
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  drivers/tty/serial/mps2-uart.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/tty/serial/mps2-uart.c b/drivers/tty/serial/mps2-uart.c
-> index 9f8f63719126..0743a0551ce1 100644
-> --- a/drivers/tty/serial/mps2-uart.c
-> +++ b/drivers/tty/serial/mps2-uart.c
-> @@ -448,6 +448,14 @@ static struct console mps2_uart_console = {
->  
->  #define MPS2_SERIAL_CONSOLE (&mps2_uart_console)
->  
-> +static void mps2_early_init(struct uart_port *port)
-> +{
-> +	u8 control = readb(port->membase + UARTn_CTRL);
-> +
-> +	control |= UARTn_CTRL_TX_ENABLE;
-> +	writeb(control, port->membase + UARTn_CTRL);
-> +}
-> +
->  static void mps2_early_putchar(struct uart_port *port, int ch)
->  {
->  	while (readb(port->membase + UARTn_STATE) & UARTn_STATE_TX_FULL)
-> @@ -469,6 +477,7 @@ static int __init mps2_early_console_setup(struct earlycon_device *device,
->  	if (!device->port.membase)
->  		return -ENODEV;
->  
-> +	mps2_early_init(&device->port);
->  	device->con->write = mps2_early_write;
->  
->  	return 0;
-> 
+ drivers/lightnvm/pblk-init.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index aa24264..3b8aa4a 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -717,10 +717,11 @@ static int pblk_setup_line_meta_12(struct pblk *pblk, struct pblk_line *line,
+ 
+ 		/*
+ 		 * In 1.2 spec. chunk state is not persisted by the device. Thus
+-		 * some of the values are reset each time pblk is instantiated.
++		 * some of the values are reset each time pblk is instantiated,
++		 * so we have to assume that the block is closed.
+ 		 */
+ 		if (lun_bb_meta[line->id] == NVM_BLK_T_FREE)
+-			chunk->state =  NVM_CHK_ST_FREE;
++			chunk->state =  NVM_CHK_ST_CLOSED;
+ 		else
+ 			chunk->state = NVM_CHK_ST_OFFLINE;
+ 
+-- 
+2.7.4
 
