@@ -3,108 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE78C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A58EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DAC020836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5232A20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:46:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="jh8weIUC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAC020836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OZ9+SmRt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5232A20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030394AbeFSRoY (ORCPT
+        id S1030330AbeFSRqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:44:24 -0400
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:36884 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030323AbeFSRoW (ORCPT
+        Tue, 19 Jun 2018 13:46:15 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50944 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966706AbeFSRqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:44:22 -0400
-Received: by mail-lf0-f43.google.com with SMTP id g21-v6so785845lfb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:44:21 -0700 (PDT)
+        Tue, 19 Jun 2018 13:46:14 -0400
+Received: by mail-wm0-f66.google.com with SMTP id e16-v6so1769152wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:46:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=CVD3elAZ/NJLIqc1EwsGwLUXQ5h946VLlebpdv8Py0M=;
-        b=jh8weIUCM4ditSTJCvlRDPEoiWMJSFKm9m7/eYJUsJ2iDslN1nG2vTb5Ik+GyRf/yT
-         WRBpFip+EFy4+AOSRqdHd4RWNJ056TSF+Kzx0VqiuHLYAUYcrmLUzZ3zkGORjEP4qFUT
-         G5WYUMJLgfaZLJj/WuR6XOiHLkfck/wySaaS6LJ2le4HbcNi9i0dQzS5ZzR7TKEi51fj
-         dXo9QqSIxvA8/qNihERcr1Jp0kPHaVmQlKJowNhxD0X5du+NUtZBlnhQ7NWymnkx3EkB
-         rKGZijGujzkTCSkQiOhfpgu+ScVEG5dQDD0Mdu7JxcwTvULr6NIMJSv29C92t+9KG+NX
-         6BFg==
+        bh=mnDocBGrNeqamPyawGilKONTZ8iPB/knSpT49vpqSL8=;
+        b=OZ9+SmRtWSf4idihK1PMh3e0G2gt0kIkFmOF548gAWqqFIt00h3PLgKXxaQ7MbD9Fe
+         XCx03on/EcOSW3DZ2pyPi0wxmGHM+UZUlgUUHx0IVdjIUv6IUPhAZE38TOttLEy/igRi
+         Cn+Wg46QK1fpyHx5b/EUSJtis0uSnlQXzkeWE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=CVD3elAZ/NJLIqc1EwsGwLUXQ5h946VLlebpdv8Py0M=;
-        b=BOUd7iVkhw30G39ApJD7fw4OgAYmY0BrMGAMc+OfAJI6YtJn3owWavt5K11aHhSpmi
-         8uKUHSIsA3Bh71qi46cvbfeZgXX77lXS20TM5xrlRv1pb04Fc9xKGVoTBlvwJ4twEOh5
-         sU9x1ZH8WAAPSc2qpnzk8JAfD4spPWD0NLWt7eudbrxPvhowv7gMB504e7+5gTTL7fXm
-         KyJelTiqfg+gTyI/Zi/6Wk5e2ovyw2osZHwveuDM254K9Gk0oy/wGvA0AyCRWXWL3Arr
-         wefoUE2Ke2Nhq8nlCYJAc/NRI5ZacK2QguYQ2jo7SBNKHfLLeaLJiJBCzi/BSwT6x+3G
-         +R2Q==
-X-Gm-Message-State: APt69E0s1XMd0jsZpJdGZHzufZCCueycPsclJJnkRJ0nwn00Y4eT+9fe
-        RKfac9TxNlUIQ6FREIuO0E82EKZowfFIZZ+hJs/u
-X-Google-Smtp-Source: ADUXVKJYx8qhXU3g5jfFZZhRSlFbMQ4Tf2iuyh1TR5Wl48bntZInbMGcJGexSnjR2Q4f/ORZUm59YlCvo2aTkigUijo=
-X-Received: by 2002:a19:5c12:: with SMTP id q18-v6mr9107197lfb.145.1529430260907;
- Tue, 19 Jun 2018 10:44:20 -0700 (PDT)
+        bh=mnDocBGrNeqamPyawGilKONTZ8iPB/knSpT49vpqSL8=;
+        b=nSzgeoPtTSSeclcAuEGGeKNgLIkP1Il6EIT+0nUz/OXH6x2tziS+dNNp5hiM4iJ5e8
+         Ae4Q67YZBtJPFYLHxm1l/I903EgjRcps0OY3BIFWJ44PXP4Vmj7apT8gzNjsiWnbocJq
+         ooIyAMQIR+620L8Kx628sNzvLZ58ZupVXvr5UwADhLSMju3Dle4tblFUKyiObGDeMA9W
+         Zr7mo+HOpYGH2yWVx53MlqJQ1a2TUvl+8OLab2J/eke8GCOUMP3Qwiuj+ixavJ5y+Aa7
+         JPZ4Lu3wmmvbfR4Z7thuSB42xCL2ENywdLkfX5blYuHDpwkLc2J0aR9DndFmmAa2fSAa
+         /Yjg==
+X-Gm-Message-State: APt69E2ysFlGXLjxNuui3pRcHiUk2A8WnUWaogK/rTTtDGL34trUfsU7
+        0DuIN7RIfRaWLJEa9oKs0JDxSAuqN4jN8N+3VhNuzupZ
+X-Google-Smtp-Source: ADUXVKLAIYe2mgMW2p3YxINBluy27/lGcRITouQS4FrapzeZ7A92qGPU9BE820iY0VzOQXQdHQ2gQeBiUhBuHgoXiyc=
+X-Received: by 2002:a50:b376:: with SMTP id r51-v6mr15687199edd.145.1529430373413;
+ Tue, 19 Jun 2018 10:46:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180612080912.7827-1-peter.enderborg@sony.com> <20180612080912.7827-11-peter.enderborg@sony.com>
-In-Reply-To: <20180612080912.7827-11-peter.enderborg@sony.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 19 Jun 2018 13:44:10 -0400
-Message-ID: <CAHC9VhQXk4tMZ_fp=rbygEs2ZyT2O07PJB4jdKKY7+eO3wSC5g@mail.gmail.com>
-Subject: Re: [PATCH 10/13] selinux: Cleanup printk logging in netport
-To:     peter.enderborg@sony.com
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        James Morris <jmorris@namei.org>, danielj@mellanox.com,
-        dledford@redhat.com, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, serge@hallyn.com
+References: <1529298599-3876-1-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1529298599-3876-1-git-send-email-leo.yan@linaro.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 19 Jun 2018 11:46:02 -0600
+Message-ID: <CANLsYkyxuz+tPrC7wb1omsw+qj=7ZB5t6FRbqZz54994g62q6g@mail.gmail.com>
+Subject: Re: [PATCH v1 0/6] perf cs-etm: Fix tracing packet handling and minor refactoring
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Kim Phillips <kim.phillips@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
-<peter.enderborg@sony.com> wrote:
+On Sun, 17 Jun 2018 at 23:10, Leo Yan <leo.yan@linaro.org> wrote:
 >
-> Replace printk with pr_* to avoid checkpatch warnings.
+> Due the current code is missing to handle cs-etm start tracing packet
+> and CS_ETM_TRACE_ON packet, we fail to generate branch sample for them.
 >
-> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
-> ---
->  security/selinux/netport.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> This patch series is to fix cs-etm tracing packet handling:
+>
+> Patch 0001 is to add invalid address macro for readable coding;
+>
+> Patch 0002 is one minor fixing to return error code for instruction
+> sample failure;
+>
+> Patches 0003~0006 are fixing patches for start tracing packet
+> and CS_ETM_TRACE_ON packet.
+>
+> This patch series is applied on acme tree [1] on branch perf/core with
+> latest commit: e238cf2e3d2e ("perf intel-pt: Fix packet decoding of CYC
+> packets").  Also applied successfully this patch series on Linus tree
+> on 4.18-rc1.
+>
+> This patch series has been verified on Hikey620 platform with below two
+> commands:
+> perf script --itrace=i10000il128 -F cpu,event,ip,addr,sym -k ./vmlinux
+> perf script -F cpu,event,ip,addr,sym -k ./vmlinux
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
+>
+>
+> Leo Yan (6):
+>   perf cs-etm: Introduce invalid address macro
+>   perf cs-etm: Bail out immediately for instruction sample failure
+>   perf cs-etm: Fix start tracing packet handling
+>   perf cs-etm: Support dummy address value for CS_ETM_TRACE_ON packet
+>   perf cs-etm: Generate branch sample when receiving a CS_ETM_TRACE_ON
+>     packet
+>   perf cs-etm: Generate branch sample for CS_ETM_TRACE_ON packet
+>
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++--
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
+>  tools/perf/util/cs-etm.c                        | 71 +++++++++++++++++++++----
+>  3 files changed, 68 insertions(+), 14 deletions(-)
 
-Merged, thanks.
+Good day Arnaldo,
 
-> diff --git a/security/selinux/netport.c b/security/selinux/netport.c
-> index 9ed4c5064a5e..7a141cadbffc 100644
-> --- a/security/selinux/netport.c
-> +++ b/security/selinux/netport.c
-> @@ -173,9 +173,8 @@ static int sel_netport_sid_slow(u8 protocol, u16 pnum, u32 *sid)
->  out:
->         spin_unlock_bh(&sel_netport_lock);
->         if (unlikely(ret)) {
-> -               printk(KERN_WARNING
-> -                      "SELinux: failure in sel_netport_sid_slow(),"
-> -                      " unable to determine network port label\n");
-> +               pr_warn("SELinux: failure in %s(), unable to determine network port label\n",
-> +                       __func__);
->                 kfree(new);
->         }
->         return ret;
+I am good with this set:
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+Please consider for inclusion in your tree if you are satisfied with the work.
+
+Regards,
+Mathieu
+
+>
 > --
-> 2.15.1
-
--- 
-paul moore
-www.paul-moore.com
+> 2.7.4
+>
