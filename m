@@ -3,184 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EDFC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55708C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E49920652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F4BA205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:23:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kZj6BKMo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E49920652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AdTaeI+U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F4BA205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966661AbeFSPXZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:23:25 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40560 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966631AbeFSPXW (ORCPT
+        id S966683AbeFSPXo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:23:44 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:40562 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966225AbeFSPXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:23:22 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5JFJIS5021436;
-        Tue, 19 Jun 2018 15:22:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=FL/2cYmoHYihpPd88i9pbZKEkP80BND4eVPeIkvT1KA=;
- b=kZj6BKMoLsH7uwJuOk6A2JSenLpY8xMcXoCfffXAHnmrkO6h9clu+9K/MPJv0sdmi1rv
- 5EgFIQUIe1bbgClCd2WcjStZrc578H4euN7ZJIYMvbi1MlfNLHPzu4xFOh6X7JPiROcT
- u0Eiu+9Nl/TfGgeLnvGhRCudeKyx2xPHfbkBq6kd/9uLW/I/vq2O97wS1iukT69h8Bjh
- AC50jq3IrRSCLML/Hx6gmow7vRUkwAPRr+PxYkERHyJxyvgacD6DD0u/w0yq1udRY4qj
- fKkJMXX0BIsvSly36Au9wVgdWiDYNkEHZnB7GkRfxJeiEg9QHArNkhn5o2fGgMwTMdPj qw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwrns6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 15:22:50 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5JFMnij028708
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 19 Jun 2018 15:22:49 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5JFMmGJ031797;
-        Tue, 19 Jun 2018 15:22:48 GMT
-Received: from [192.168.1.93] (/99.156.91.244)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Jun 2018 08:22:47 -0700
-Subject: Re: [PATCH v2 1/4] arm64: export memblock_reserve()d regions via
- /proc/iomem
-To:     James Morse <james.morse@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org, ard.biesheuvel@linaro.org
-Cc:     mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        graeme.gregory@linaro.org, al.stone@linaro.org,
-        bhsharma@redhat.com, tbaicar@codeaurora.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hanjun.guo@linaro.org, sudeep.holla@arm.com, dyoung@redhat.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20180619064424.6642-1-takahiro.akashi@linaro.org>
- <20180619064424.6642-2-takahiro.akashi@linaro.org>
- <72307608-90e0-4842-edc1-d3b284782940@oracle.com>
- <ca9e5d9d-e090-f9e0-bc10-3297c9e3b7e1@arm.com>
-From:   Dave Kleikamp <dave.kleikamp@oracle.com>
-Openpgp: preference=signencrypt
-Message-ID: <891c3e5a-9760-1353-4a2c-0900082dd245@oracle.com>
-Date:   Tue, 19 Jun 2018 10:22:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 11:23:42 -0400
+Received: by mail-it0-f67.google.com with SMTP id 188-v6so913856ita.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uhMtuN2+IdTjVJ/WEtGx4/a2Fp88+Pc2FbTIkRnxWgA=;
+        b=AdTaeI+Uh4OyVCwFBkgrb9I4nyiFsr3hmmoapU4ulQ8yn4+pa3FcxQV1COJngTCTED
+         mL/j4Oema77hsilvbX/pinTpHUD2XgrSL92D02BcD4opBPZzD7QjfNPtf3ZDb06CEr+Q
+         fziD2dDQ60FAlWVKV7kucpOFUfYpxeoqf+ft8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uhMtuN2+IdTjVJ/WEtGx4/a2Fp88+Pc2FbTIkRnxWgA=;
+        b=ClWSBJWb54rktUpuQrhcK4TeqgRfnUebYxZSetmCTM1OwEV+ZaWrOnJ8rPjpq7chVW
+         9PUK0q418t7EI62KStCSHC7oDHwUv0lLT5gj1ZtpI4Gxc9av3qRNmh4YX75O7bL8EyVu
+         wRKtVN5v7f92GXm8/1pAvphiZcAojjT3t7H/sHTAJVRnshG0dW+DI0Iv5uZLEWTbhY52
+         5O10ULjG1XZigothyu0KPu3tIlZJBb2ZZk+mcFvJrQcpyXmgACfS2sjwx+AnSDZ4mE2B
+         8RZU5v0gXtoImRSRUWsg4zhRFbDW2Sk67t5e4iARp68FkeOxn7U5qr8AutYvw+zkRo5y
+         cIgA==
+X-Gm-Message-State: APt69E0tK+2a9JOfiKblf224oirJM6X7Z9MPog/3JZ9TPuHI3xLvHzGa
+        u7he0RMjmWbod/rYc2qCj9THPYnA0jFJ4tZlGHfLEQ==
+X-Google-Smtp-Source: ADUXVKJdrVuL3y4hElERAGGMwL/ZUSIz50PO1dtcRV5TAhT1FX1CPPsLLNRswXUHUcoERHPuBkXtrS/JGMzxrQf+j88=
+X-Received: by 2002:a24:e105:: with SMTP id n5-v6mr13482040ith.68.1529421822013;
+ Tue, 19 Jun 2018 08:23:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <ca9e5d9d-e090-f9e0-bc10-3297c9e3b7e1@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8928 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806190170
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 08:23:41
+ -0700 (PDT)
+In-Reply-To: <20180619152035.GM13984@arm.com>
+References: <20180530044806.18449-1-yaojun8558363@gmail.com>
+ <20180530091457.GB2452@arm.com> <CAKv+Gu8Zc7eQbG-Ww51GXUCEmhe2J03vbq5vVdyaKra-s13KrA@mail.gmail.com>
+ <20180619152035.GM13984@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 19 Jun 2018 17:23:41 +0200
+Message-ID: <CAKv+Gu-Mad64U63jjuKGjhg=h2wdoEKm2vywzATBYr-t_UY_bQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: mm: mark tramp_pg_dir read-only
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     YaoJun <yaojun8558363@gmail.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/19/2018 10:00 AM, James Morse wrote:
-> Hi Dave,
-> 
-> On 19/06/18 14:37, Dave Kleikamp wrote:
->> On 06/19/2018 01:44 AM, AKASHI Takahiro wrote:
->>> +static int __init reserve_memblock_reserved_regions(void)
->>> +{
->>> +	phys_addr_t start, end, roundup_end = 0;
->>> +	struct resource *mem, *res;
->>> +	u64 i;
->>> +
->>> +	for_each_reserved_mem_region(i, &start, &end) {
->>> +		if (end <= roundup_end)
->>> +			continue; /* done already */
->>> +
->>> +		start = __pfn_to_phys(PFN_DOWN(start));
->>> +		end = __pfn_to_phys(PFN_UP(end)) - 1;
->>> +		roundup_end = end;
->>> +
->>> +		res = kzalloc(sizeof(*res), GFP_ATOMIC);
->>> +		if (WARN_ON(!res))
->>> +			return -ENOMEM;
->>> +		res->start = start;
->>> +		res->end = end;
->>> +		res->name  = "reserved";
->>> +		res->flags = IORESOURCE_MEM;
->>> +
->>> +		mem = request_resource_conflict(&iomem_resource, res);
->>> +		/*
->>> +		 * We expected memblock_reserve() regions to conflict with
->>> +		 * memory created by request_standard_resources().
->>> +		 */
->>> +		if (WARN_ON_ONCE(!mem))
->>> +			continue;
->>> +		kfree(res);
+On 19 June 2018 at 17:20, Will Deacon <will.deacon@arm.com> wrote:
+> Hi Ard,
+>
+> Sorry, I forgot to reply to this.
+>
+> On Wed, May 30, 2018 at 11:53:20AM +0200, Ard Biesheuvel wrote:
+>> On 30 May 2018 at 11:14, Will Deacon <will.deacon@arm.com> wrote:
+>> > On Wed, May 30, 2018 at 12:48:06PM +0800, YaoJun wrote:
+>> >> To protect against KSMA(Kernel Space Mirroring Attack), make
+>> >> tramp_pg_dir read-only. The principle of KSMA is to insert a
+>> >> carefully constructed PGD entry into the translation table.
+>> >> The type of this entry is block, which maps the kernel text
+>> >> and its access permissions bits are 01. The user process can
+>> >> then modify kernel text directly through this mapping. In this
+>> >> way, an arbitrary write can be converted to multiple arbitrary
+>> >> writes.
+>> >>
+>> >> Signed-off-by: YaoJun <yaojun8558363@gmail.com>
+>> >> ---
+>> >>  arch/arm64/mm/mmu.c | 4 ++++
+>> >>  1 file changed, 4 insertions(+)
+>> >>
+>> >> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>> >> index 2dbb2c9f1ec1..ac4b22c7e435 100644
+>> >> --- a/arch/arm64/mm/mmu.c
+>> >> +++ b/arch/arm64/mm/mmu.c
+>> >> @@ -551,6 +551,10 @@ static int __init map_entry_trampoline(void)
+>> >>       __create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
+>> >>                            prot, pgd_pgtable_alloc, 0);
+>> >>
+>> >> +     update_mapping_prot(__pa_symbol(tramp_pg_dir),
+>> >> +                             (unsigned long)tramp_pg_dir,
+>> >> +                             PGD_SIZE, PAGE_KERNEL_RO);
+>> >
+>> > Hmm, I like the idea but is there a risk that the page table has been mapped
+>> > as part of a block entry, which we can't safely split at this point (i.e.
+>> > we'll run into one of the BUG_ONs in the mapping code)?
+>> >
 >>
->> Why is kfree() after the conditional continue? This is a memory leak.
-> 
-> request_resource_conflict() inserts res into the iomem_resource tree, or returns
-> the conflict if there is already something at this address.
-> 
-> We expect something at this address: a 'System RAM' section added by
-> request_resource(). This code wants the conflicting 'System RAM' entry so that
-> reserve_region_with_split() can fill in the gaps below it with 'reserved'. See
-> the commit-message for an example.
-> 
-> If there was no conflict, it means the memory map doesn't look like we expect,
-> we can't pass NULL to reserve_region_with_split(), and we just inserted the
-> 'reserved' at the top level. Freeing res at this point would be a use-after-free
-> hanging from /proc/iomem.
-> This code generates a WARN_ON_ONCE() and leaves the 'reserved' description where
-> it is.
+>> We'd need to create a separate segment for it initially so the mapping
+>> is already at the right granularity.
+>
+> Why do you think that's the case? I can't see anything that guarantees this
+> for the page table itself.
+>
 
-Okay. I get it.
-
-> Trying to cleanup here is pointless, we can remove the resource entry and free
-> it ... but we still want to report it as reserved, which is what just happened,
-> just not quite how we we wanted it.
-> 
-> If you ever see this warning, it means some RAM stopped being nomap between
-> request_resources() and reserve_memblock_reserved_regions(). I can't find any
-> case where that ever happens.
-> 
-> 
-> If all that makes sense: how can I improve the comment above the WARN_ON_ONCE()
-> to make it clearer?
-
-I guess something like you described above.
-
-/*
- * We expect a 'System RAM' section at this address. In the unexpected
- * case where one is not found, request_resource_conflict() will insert
- * res into the iomem_resource tree.
- */
-
-Do you think this is clearer?
-
-> 
-> 
-> Thanks,
-> 
-> James
-> 
-> 
->>> +
->>> +		reserve_region_with_split(mem, start, end, "reserved");
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +arch_initcall(reserve_memblock_reserved_regions);
->>> +
->>>  u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
->>>  
->>>  void __init setup_arch(char **cmdline_p)
->>>
-> 
+We'd need to pass NO_BLOCK_MAPPINGS to map_kernel_segment(),
+obviously, but that shouldn't hurt since that segment is relatively
+tiny anyway.
