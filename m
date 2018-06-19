@@ -6,70 +6,75 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F66C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F27C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10C0D20652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:27:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C0D20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 1405A20652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:28:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1405A20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756966AbeFSO1j (ORCPT
+        id S1757179AbeFSO2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:27:39 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:34840 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756539AbeFSO1h (ORCPT
+        Tue, 19 Jun 2018 10:28:45 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:56560 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756803AbeFSO2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:27:37 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fVHbW-0005kR-H7; Tue, 19 Jun 2018 22:27:30 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fVHbU-0007Cr-1G; Tue, 19 Jun 2018 22:27:28 +0800
-Date:   Tue, 19 Jun 2018 22:27:28 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     efremov@linux.com, "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: Re: [PATCH] crypto: skcipher: remove static declaration of export
- function
-Message-ID: <20180619142727.7kvtuimjufvdacqn@gondor.apana.org.au>
-References: <20180617174959.29864-1-efremov@linux.com>
- <20180618172803.GA8022@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618172803.GA8022@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 19 Jun 2018 10:28:43 -0400
+Received: from [148.252.241.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fVHcf-0002c4-DF; Tue, 19 Jun 2018 15:28:41 +0100
+Message-ID: <1529418520.2289.296.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 00/24] 4.4.138-stable review
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Date:   Tue, 19 Jun 2018 15:28:40 +0100
+In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
+References: <20180614132724.483802160@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 10:28:03AM -0700, Eric Biggers wrote:
-> On Sun, Jun 17, 2018 at 08:49:59PM +0300, efremov@linux.com wrote:
-> > The function skcipher_walk_next declared as static and marked as
-> > EXPORT_SYMBOL. It's a bit confusing since export symbol means that
-> > we want others to use this function. The area of visibility for such
-> > function is its .c file and all other modules. Other *.c files of the
-> > same module can't use it, despite all other modules can. Relying on
-> > that such behavior was not the original intention, the patch just
-> > removes the static keyword.
-> > 
-> > Found by Linux Driver Verification project (linuxtesting.org).
-> > 
-> > Signed-off-by: Denis Efremov <efremov@linux.com>
+On Thu, 2018-06-14 at 16:04 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.138 release.
+> There are 24 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Why not remove the EXPORT_SYMBOL instead?  It has no users outside the file.
+> Responses should be made by Sat Jun 16 13:27:15 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.138-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+[...]
 
-I agree.
+3.18 and 4.4 are still missing this important fix to early parameter
+parsing:
 
-Thanks,
+commit 02afeaae9843733a39cd9b11053748b2d1dc5ae7
+Author: Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Tue Dec 22 14:52:38 2015 -0800
+
+    x86/boot: Fix early command-line parsing when matching at end
+
+Ben.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
