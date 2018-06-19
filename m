@@ -3,144 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61CEBC5AE59
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 03:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4147DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 03:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CE8320850
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 03:13:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CE8320850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A7B220852
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 03:14:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A7B220852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937251AbeFSDNB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 23:13:01 -0400
-Received: from mga09.intel.com ([134.134.136.24]:39968 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755376AbeFSDM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 23:12:59 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 20:12:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,241,1526367600"; 
-   d="scan'208";a="48113641"
-Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
-  by fmsmga007.fm.intel.com with ESMTP; 18 Jun 2018 20:12:58 -0700
-Date:   Mon, 18 Jun 2018 21:12:57 -0600
-From:   Ross Zwisler <ross.zwisler@linux.intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
-Message-ID: <20180619031257.GA12527@linux.intel.com>
-Mail-Followup-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180617020052.4759-1-willy@infradead.org>
+        id S937247AbeFSDOo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 23:14:44 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:55749 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S937169AbeFSDOn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 23:14:43 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0T2z37lI_1529378072;
+Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T2z37lI_1529378072)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 19 Jun 2018 11:14:33 +0800
+Reply-To: xlpang@linux.alibaba.com
+Subject: Re: [PATCH 2/2] sched/fair: Advance global expiration when period
+ timer is restarted
+To:     bsegall@google.com
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+References: <20180618091657.21939-1-xlpang@linux.alibaba.com>
+ <xm26o9g7q5ux.fsf@bsegall-linux.svl.corp.google.com>
+From:   Xunlei Pang <xlpang@linux.alibaba.com>
+Message-ID: <5f5243c0-ff8c-fc11-9320-61313fd40214@linux.alibaba.com>
+Date:   Tue, 19 Jun 2018 11:14:32 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <xm26o9g7q5ux.fsf@bsegall-linux.svl.corp.google.com>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 06:59:38PM -0700, Matthew Wilcox wrote:
-> The XArray is a replacement for the radix tree.  For the moment it uses
-> the same data structures, enabling a gradual replacement.  This patch
-> set implements the XArray and converts the page cache to use it.
+On 6/19/18 2:58 AM, bsegall@google.com wrote:
+> Xunlei Pang <xlpang@linux.alibaba.com> writes:
 > 
-> A version of these patches has been running under xfstests for over
-> 48 hours, so I have some confidence in them.  The DAX changes have now
-> also had a reasonable test outing.  This is based on next-20180615 and
-> is available as a git tree at
-> git://git.infradead.org/users/willy/linux-dax.git xarray-20180615
+>> I noticed the group frequently got throttled even it consumed
+>> low cpu usage, this caused some jitters on the response time
+>> to some of our business containers enabling cpu quota.
+>>
+>> It's very easy to reproduce:
+>> mkdir /sys/fs/cgroup/cpu/test
+>> cd /sys/fs/cgroup/cpu/test
+>> echo 100000 > cpu.cfs_quota_us
+>> echo $$ > tasks
+>> then repeat:
+>> cat cpu.stat |grep nr_throttled  // nr_throttled will increase
+>>
+>> After some analysis, we found that cfs_rq::runtime_remaining will
+>> be cleared by expire_cfs_rq_runtime() due to two equal but stale
+>> "cfs_{b|q}->runtime_expires" after period timer is re-armed.
 > 
-> I shall create a git branch from -rc1 and ask for that to be included in
-> -next.  I'm a little concerned I still have no reviews on some of the
-> later patches.
+> If this is after the first patch, then this is no longer what should
+> happen, and instead it would incorrectly /keep/ old local cfs_rq
+> runtime, and not __refill global runtime until the period.
+
+Exactly, I can improve the changelog.
+
 > 
-> Changes since v13:
->  - Actually fixed bug in workingset conversion that led to exceptional
->    entries not being deleted from the XArray.  Not sure how I dropped
->    that patch for v13.  Thanks to David Sterba for noticing.
->  - Fixed bug in DAX writeback conversion that failed to wake up waiters.
->    Thanks to Ross for testing, and to Dan & Jeff for helping me get a
->    setup working to reproduce the problem.
->  - Converted the new dax_lock_page / dax_unlock_page functions.
->  - Moved XArray test suite entirely into the test_xarray kernel module
->    to match other test suites.  It can still be built in userspace as
->    part of the radix tree test suite.
->  - Changed email address.
->  - Moved a few functions into different patches to make the test-suite
->    additions more logical.
->  - Fixed a bug in XA_BUG_ON (oh the irony) where it evaluated the
->    condition twice.
->  - Constified xa_head() / xa_parent() / xa_entry() and their _locked
->    variants.
->  - Moved xa_parent() to xarray.h so it can be used from the workingset code.
->  - Call the xarray testsuite from the radix tree test suite to ensure
->    that I remember to run both test suites ;-)
->  - Added some more tests to the test suite.
+> 
+>>
+>> The global expiration should be advanced accordingly when the
+>> bandwidth period timer is restarted.
+>>
+>> Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
+>> ---
+>>  kernel/sched/fair.c | 15 ++++++++++-----
+>>  1 file changed, 10 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 9f384264e832..bb006e671609 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -5204,13 +5204,18 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+>>  
+>>  void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+>>  {
+>> +	u64 overrun;
+>> +
+>>  	lockdep_assert_held(&cfs_b->lock);
+>>  
+>> -	if (!cfs_b->period_active) {
+>> -		cfs_b->period_active = 1;
+>> -		hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
+>> -		hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
+>> -	}
+>> +	if (cfs_b->period_active)
+>> +		return;
+>> +
+>> +	cfs_b->period_active = 1;
+>> +	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
+>> +	cfs_b->runtime_expires += (overrun + 1) * ktime_to_ns(cfs_b->period);
+> 
+> I think we actually want if (overrun) __refill_cfs_bandwidth_runtime(),
+> much like tg_set_cfs_bandwidth
 
-Hit another deadlock.  This one reproduces 100% of the time in my setup with
-XFS + DAX + generic/340.  It doesn't reproduce for me at all with
-next-20180615.  Here's the output from "echo w > /proc/sysrq-trigger":
+It's a little different, e.g. periods like below:
 
-[   92.849119] sysrq: SysRq : Show Blocked State
-[   92.850506]   task                        PC stack   pid father
-[   92.852299] holetest        D    0  1651   1466 0x00000000
-[   92.853912] Call Trace:
-[   92.854610]  __schedule+0x2c5/0xad0
-[   92.855612]  schedule+0x36/0x90
-[   92.856602]  get_unlocked_entry+0xce/0x120
-[   92.857756]  ? dax_insert_entry+0x2b0/0x2b0
-[   92.858931]  grab_mapping_entry+0x19e/0x250
-[   92.860119]  dax_iomap_pte_fault+0x115/0x1140
-[   92.860836]  dax_iomap_fault+0x37/0x40
-[   92.861235]  __xfs_filemap_fault+0x2de/0x310
-[   92.861681]  xfs_filemap_fault+0x2c/0x30
-[   92.862113]  __do_fault+0x26/0x160
-[   92.862531]  __handle_mm_fault+0xc96/0x1320
-[   92.863059]  handle_mm_fault+0x1ba/0x3c0
-[   92.863534]  __do_page_fault+0x2b4/0x590
-[   92.864029]  do_page_fault+0x38/0x2c0
-[   92.864472]  do_async_page_fault+0x2c/0xb0
-[   92.864985]  ? async_page_fault+0x8/0x30
-[   92.865459]  async_page_fault+0x1e/0x30
-[   92.865941] RIP: 0033:0x401442
-[   92.866322] Code: Bad RIP value.
-[   92.866739] RSP: 002b:00007fa29c9feec0 EFLAGS: 00010212
-[   92.867366] RAX: 00007fa29ca00400 RBX: 0000000000001000 RCX: 0000000000008000
-[   92.868219] RDX: 0000000000000009 RSI: 0000000000000000 RDI: 0000000000000000
-[   92.869082] RBP: 00007fa29c9ff700 R08: 00007fa29c9ff700 R09: 00007fa29c9ff700
-[   92.869939] R10: 0000000000000070 R11: 00007fa29e571ba0 R12: 00007fa29ca00000
-[   92.870804] R13: 00007fffd5f24160 R14: 0000000000000400 R15: 00007fffd5f240b0
+           Pm
+           |
+           v
+  |-----|-----|
+Pn-1   Pn    Pn+1
 
-This looks very similar to the one I reported last week with generic/269.
+Assuming we start_cfs_bandwidth() at some moment Pm between "Pn" and
+"Pn+1", cfs_b->runtime_expires we want here should be "Pn+1", while
+__refill_cfs_bandwidth_runtime() forces it to be "Pm+period"(hrtimer
+expires at "Pn+1").
 
-- Ross
+Regards,
+Xunlei
+
+> 
+>> +	cfs_b->expires_seq++;
+>> +	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
+>>  }
+>>  
+>>  static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
