@@ -2,184 +2,131 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C667C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5100C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563F42083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 691B32083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:18:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pukU/fJA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 563F42083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xm9w2gCJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Em3FR0wG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 691B32083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937442AbeFSJQD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:16:03 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46022 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756382AbeFSJQA (ORCPT
+        id S965504AbeFSJSz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 05:18:55 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60086 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756212AbeFSJSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:16:00 -0400
-Received: by mail-lf0-f68.google.com with SMTP id a13-v6so8910587lfk.12;
-        Tue, 19 Jun 2018 02:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iZzhhYtx/AxGE+eCWQ/rH02iOjnII9TU6FsFXviERoY=;
-        b=pukU/fJAeaOQ4vN+SLvLBHs2PSZvPyfel8FNNK3WPUOuBTe0cJrATwBa4rzeo4HEmC
-         yh1StQvw/0Ia6B+Lc7PO+w7uH+aO7Z4lCTCl/0fzcTsZCQPCQuKF5cdlKUedzNo4oKny
-         pbcppdEhJRA4EH+li+kWYzEbig9rtXJZhiVmKWo6SEqf6krAxj4LMsadJJxJVaPKoB3V
-         MzQgx8qQooRJPioco+8caB7EddmbEjhCfsrKTela/inAR5pSo+cIZq2PnKXctVjbCSDd
-         4EiGDPkFu+hnGio5vg9aj8P8LE3pqHLThqgOuVsJ5SaA1+ErQm2nNEHXwUB8oGTAmx63
-         b3UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iZzhhYtx/AxGE+eCWQ/rH02iOjnII9TU6FsFXviERoY=;
-        b=gzIw5T1EEEq9cM+xDUm9roUrhy9IVYWXW1o5LnLaiQcqsNGMI0jkteLnkqc/EleA90
-         cKjb0MDc1E1RpBRHZ4vu3C5/ASL+1ug8u1d8/oDBdiD/+fFYS1cg0tzqO5V96fzYyflh
-         mXWGWcrvYkbXRmdjh072xWuXCplvqoNFTDzg2pqggoRexEyWKYbOYnDOhA7b4VR1ZIIk
-         2P5G67NlOx80Nto1XHNT//GwAU5VIduPKIsWpQ6+85iblG1QWnLfoZvQgKOXVRyxefk4
-         D0BpH3K8qEGC6DozX+VqVcgCpdNSIRtu6UbbwzHAz1P5QxFsvnGofxfLr3gC9sBmGeHg
-         wfDw==
-X-Gm-Message-State: APt69E1ZIPpCmjIoKUU2YRPuY3EV8q8ByY/kab8YrGx9zYnFiAEWfsnJ
-        PbjoZmccJuIPTyNyxp+vImjfgsWS
-X-Google-Smtp-Source: ADUXVKJ0t12n6SgpK+FtVYqNfMH8u1I3naf6+dLCI0aDj/HTk9y08C+zyVrY1+Cax8tJpYf2o1eIDQ==
-X-Received: by 2002:a2e:6588:: with SMTP id e8-v6mr10257455ljf.50.1529399758617;
-        Tue, 19 Jun 2018 02:15:58 -0700 (PDT)
-Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id q10-v6sm87095lfq.52.2018.06.19.02.15.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 02:15:57 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.90_1)
-        (envelope-from <johan@kernel.org>)
-        id 1fVCjY-0005pv-MP; Tue, 19 Jun 2018 11:15:28 +0200
-Date:   Tue, 19 Jun 2018 11:15:28 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Karoly Pados <pados@pados.hu>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: cp210x: Improve baudrate support for CP2102N
-Message-ID: <20180619091528.GN32411@localhost>
-References: <20180615212957.26539-1-pados@pados.hu>
+        Tue, 19 Jun 2018 05:18:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6B39660B10; Tue, 19 Jun 2018 09:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529399932;
+        bh=MwwMtXhYHd5TCSVTk/luwo6w+f8A3OHM9YjsFxhAv9s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Xm9w2gCJAGHm4UhjuxKHw/gr2pNY/3s3dFNKnsvq5b0jaCvjQ5bh16PaMEGcfOCtx
+         xV9wAEh8vPiCA26XFGoA8cLjL0hx9k2yDyzrKYdG3CmnHSG6O8EJGn6Hs3mj4cWuiG
+         wwPD5e+SCvLHOGdb1XCLN1iqUDZDECJIflk7KF6U=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pkondeti@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 029A060714;
+        Tue, 19 Jun 2018 09:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529399931;
+        bh=MwwMtXhYHd5TCSVTk/luwo6w+f8A3OHM9YjsFxhAv9s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Em3FR0wGcTRzc8Gkeyt31aIv66RDK2sGyYcpzH/IQK0MJiiJ36FuwyKqbxmrh12i1
+         ktS+FXPXeDSvw+6vJzw64kKn0b01AWBzZSdo3qinmF/gpiJVMO8zmY3WVQLXF55ct1
+         luU3Q4XcsZ2LkubQxnnAANBxD/62rBXQJ0pGGBRI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 029A060714
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pkondeti@codeaurora.org
+Date:   Tue, 19 Jun 2018 14:48:41 +0530
+From:   Pavan Kondeti <pkondeti@codeaurora.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joelaf@google.com, smuckle@google.com,
+        adharmap@quicinc.com, skannan@quicinc.com, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 10/10] arch_topology: Start Energy Aware Scheduling
+Message-ID: <20180619091841.GD9208@codeaurora.org>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-11-quentin.perret@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180615212957.26539-1-pados@pados.hu>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180521142505.6522-11-quentin.perret@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 11:29:57PM +0200, Karoly Pados wrote:
-> The CP2102N supports more baudrates than earlier chips by SiLabs.
-> This patch adds support for all rates documented in the datasheet
-> of this device.
-> 
-> Signed-off-by: Karoly Pados <pados@pados.hu>
-> ---
->  drivers/usb/serial/cp210x.c | 39 ++++++++++++++++++++++++++-----------
->  1 file changed, 28 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-> index b1849f657e01..793b86252c46 100644
-> --- a/drivers/usb/serial/cp210x.c
-> +++ b/drivers/usb/serial/cp210x.c
-> @@ -357,6 +357,9 @@ static struct usb_serial_driver * const serial_drivers[] = {
->  #define CP210X_PARTNUM_CP2104	0x04
->  #define CP210X_PARTNUM_CP2105	0x05
->  #define CP210X_PARTNUM_CP2108	0x08
-> +#define CP210X_PARTNUM_CP2102N_QFN28	0x20
-> +#define CP210X_PARTNUM_CP2102N_QFN24	0x21
-> +#define CP210X_PARTNUM_CP2102N_QFN20	0x22
->  #define CP210X_PARTNUM_UNKNOWN	0xFF
+On Mon, May 21, 2018 at 03:25:05PM +0100, Quentin Perret wrote:
+
+<snip>
+
+> +static void start_eas_workfn(struct work_struct *work);
+> +static DECLARE_WORK(start_eas_work, start_eas_workfn);
+> +
+>  static int
+>  init_cpu_capacity_callback(struct notifier_block *nb,
+>  			   unsigned long val,
+> @@ -204,6 +209,7 @@ init_cpu_capacity_callback(struct notifier_block *nb,
+>  		free_raw_capacity();
+>  		pr_debug("cpu_capacity: parsing done\n");
+>  		schedule_work(&parsing_done_work);
+> +		schedule_work(&start_eas_work);
+>  	}
 >  
->  /* CP210X_GET_COMM_STATUS returns these 0x13 bytes */
-> @@ -758,8 +761,12 @@ static int cp210x_get_line_ctl(struct usb_serial_port *port, u16 *ctl)
->  /*
->   * cp210x_quantise_baudrate
->   * Quantises the baud rate as per AN205 Table 1
-> + * The CP2102N is fully (except for baud rate aliasing) software-
-> + * compatible, but supports some additional baudrates. However, there is
-> + * no quantitisation table available for this model, so in this case we
-> + * take the supported baudrate which is closest to the requested one.
->   */
-> -static unsigned int cp210x_quantise_baudrate(unsigned int baud)
-> +static unsigned int cp210x_quantise_baudrate(unsigned int baud, bool cp2102n)
-
-Pass in a struct usb_serial (or port) as a first argument instead which
-allows for more readable code as well as for this to be reused to handle
-other device type differences (e.g. only 2108 besides 2102n handles
-baudrates over 921.6k).
-
->  {
->  	if (baud <= 300)
->  		baud = 300;
-> @@ -790,10 +797,17 @@ static unsigned int cp210x_quantise_baudrate(unsigned int baud)
->  	else if (baud <= 491520)   baud = 460800;
->  	else if (baud <= 567138)   baud = 500000;
->  	else if (baud <= 670254)   baud = 576000;
-> -	else if (baud < 1000000)
-> -		baud = 921600;
-> -	else if (baud > 2000000)
-> -		baud = 2000000;
-> +	else if (cp2102n) {
-
-Add a static helper (looks like you add a define in the gpio patch)
-cp210x_is_cp2102n(serial) here. You can even test for bit 0x20 in the
-helper if you prefer (we can always change that later if needed).
-
-> +		if (baud <= 960800)        baud = 921600;
-> +		else if (baud <= 1100000)  baud = 1000000;
-> +		else if (baud <= 1350000)  baud = 1200000;
-> +		else if (baud <= 1750000)  baud = 1500000;
-> +		else if (baud <= 2500000)  baud = 2000000;
-> +		else                       baud = 3000000;
-
-And even if the current code uses this odd formatting, your amendments
-should not.
-
-> +	} else {
-> +		if (baud < 1000000)        baud = 921600;
-> +		else if (baud > 2000000)   baud = 2000000;
-> +	}
->  	return baud;
+>  	return 0;
+> @@ -249,6 +255,19 @@ static void parsing_done_workfn(struct work_struct *work)
+>  	free_cpumask_var(cpus_to_visit);
 >  }
 >  
-> @@ -1045,16 +1059,19 @@ static void cp210x_get_termios_port(struct usb_serial_port *port,
->  static void cp210x_change_speed(struct tty_struct *tty,
->  		struct usb_serial_port *port, struct ktermios *old_termios)
->  {
-> -	u32 baud;
-> -
-> -	baud = tty->termios.c_ospeed;
-> +	bool is_cp2102n;
-> +	u32 baud = tty->termios.c_ospeed;
-> +	struct cp210x_serial_private *priv = usb_get_serial_data(port->serial);
->  
-> -	/* This maps the requested rate to a rate valid on cp2102 or cp2103,
-> -	 * or to an arbitrary rate in [1M,2M].
-> +	/* This maps the requested rate to a rate valid on cp2102(n) or
-> +	 * cp2103 or to an arbitrary rate in [1M,2M].
->  	 *
->  	 * NOTE: B0 is not implemented.
->  	 */
-> -	baud = cp210x_quantise_baudrate(baud);
-> +	is_cp2102n =	(priv->partnum == CP210X_PARTNUM_CP2102N_QFN28) ||
-> +			(priv->partnum == CP210X_PARTNUM_CP2102N_QFN24) ||
-> +			(priv->partnum == CP210X_PARTNUM_CP2102N_QFN20);
-> +	baud = cp210x_quantise_baudrate(baud, is_cp2102n);
+> +static void start_eas_workfn(struct work_struct *work)
+> +{
+> +	/* Make sure the EM knows about the updated CPU capacities. */
+> +	rcu_read_lock();
+> +	em_rescale_cpu_capacity();
+> +	rcu_read_unlock();
+> +
+> +	/* Inform the scheduler about the EM availability. */
+> +	cpus_read_lock();
+> +	rebuild_sched_domains();
+> +	cpus_read_unlock();
+> +}
 
-So most of these changes would not be needed. Just pass in port->serial
-to cp210x_quantise_baudrate().
+Rebuilding the sched domains is unnecessary for the platform that don't have
+energy-model. In fact, we can completely avoid scheduling this work.
+
+There seems to be a sysfs interface exposed by this driver to change cpu_scale.
+Should we worry about it? I don't know what is the usecase for changing the
+cpu_scale from user space.
+
+Are we expecting that the energy-model is populated by this time? If it is
+not, should not we build the sched domains again after the energy-model is
+populated?
 
 Thanks,
-Johan
+Pavan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+
