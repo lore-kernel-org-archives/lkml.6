@@ -3,85 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D5CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D395DC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA732075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:07:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA732075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 93E912075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:09:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E912075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756726AbeFSJHr convert rfc822-to-8bit (ORCPT
+        id S1756749AbeFSJJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:07:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37451 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756342AbeFSJHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:07:43 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6E868207A5; Tue, 19 Jun 2018 11:07:41 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 287A520799;
-        Tue, 19 Jun 2018 11:07:41 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 11:07:41 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Martin Kaiser <martin@kaiser.cx>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3] mtd: rawnand: mxc: set spare area size register
- explicitly
-Message-ID: <20180619110741.32e4a5d8@xps13>
-In-Reply-To: <1529354463-23526-1-git-send-email-martin@kaiser.cx>
-References: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
-        <1529354463-23526-1-git-send-email-martin@kaiser.cx>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 19 Jun 2018 05:09:05 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56641 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756369AbeFSJJD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 05:09:03 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fVCd4-0002ot-U1; Tue, 19 Jun 2018 11:08:47 +0200
+Date:   Tue, 19 Jun 2018 11:08:46 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 5/8] x86/umwait.c: Add sysfs interface to show
+ tsc_khz
+In-Reply-To: <1529118375-90191-6-git-send-email-fenghua.yu@intel.com>
+Message-ID: <alpine.DEB.2.21.1806191104070.1692@nanos.tec.linutronix.de>
+References: <1529118375-90191-1-git-send-email-fenghua.yu@intel.com> <1529118375-90191-6-git-send-email-fenghua.yu@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Jun 2018 22:41:03 +0200, Martin Kaiser <martin@kaiser.cx>
-wrote:
+On Fri, 15 Jun 2018, Fenghua Yu wrote:
+ 
+> +static ssize_t tsc_khz_show(struct device *dev, struct device_attribute *attr,
+> +			    char *buf)
+> +{
+> +	return sprintf(buf, "%d\n", tsc_khz);
+> +}
+> +
+>  static DEVICE_ATTR_RW(umwait_disable_c0_2);
+> +static DEVICE_ATTR_RO(tsc_khz);
 
-> The v21 version of the NAND flash controller contains a Spare Area Size
-> Register (SPAS) at offset 0x10. Its setting defaults to the maximum
-> spare area size of 218 bytes. The size that is set in this register is
-> used by the controller when it calculates the ECC bytes internally in
-> hardware.
-> 
-> Usually, this register is updated from settings in the IIM fuses when
-> the system is booting from NAND flash. For other boot media, however,
-> the SPAS register remains at the default setting, which may not work for
-> the particular flash chip on the board. The same goes for flash chips
-> whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
-> sector size and 128 bytes spare area size can't be configured in the IIM
-> fuses on imx25 systems).
-> 
-> Set the SPAS register explicitly during the preset operation. Derive the
-> register value from mtd->oobsize that was detected during probe by
-> decoding the flash chip's ID bytes.
-> 
-> While at it, rename the define for the spare area register's offset to
-> NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
-> different from the register on v21 controllers.
-> 
-> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-> Cc: stable@vger.kernel.org
-> Fixes: d484018 ("mtd: mxc_nand: set NFC registers after reset")
+The right place to expose that information is the VDSO and a helper
+function which allows to convert from nsec to TSC.
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+>  static struct attribute *umwait_attrs[] = {
+>  	&dev_attr_umwait_disable_c0_2.attr,
+> @@ -92,6 +100,15 @@ static int __init umwait_init(void)
+>  	if (ret)
+>  		return ret;
+>  
+> +	/* Only add the tsc_khz interface when the value is known. */
+
+Why so? The only reason why you don't want to expose TSC frequency is when
+it's not constant frequency.
+
+> +	if (boot_cpu_has(X86_FEATURE_TSC_KNOWN_FREQ)) {
 
 Thanks,
-Miquèl
+
+	tglx
