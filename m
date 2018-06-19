@@ -2,102 +2,131 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 668BCC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF27BC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15A1F20836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:43:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EEFE208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 23:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFVrgmW/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A1F20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b83M8Ic0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EEFE208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752595AbeFSXnU (ORCPT
+        id S1752792AbeFSXpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 19:43:20 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:36753 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeFSXnR (ORCPT
+        Tue, 19 Jun 2018 19:45:34 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40505 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751003AbeFSXpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 19:43:17 -0400
-Received: by mail-vk0-f66.google.com with SMTP id o138-v6so890582vkd.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 16:43:16 -0700 (PDT)
+        Tue, 19 Jun 2018 19:45:30 -0400
+Received: by mail-pl0-f68.google.com with SMTP id t12-v6so682083plo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 16:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vPLiMWFskOauyh1u+ggoUJjvjjW/WcJwF2+kWpwiAng=;
-        b=fFVrgmW/lQwxcDacYqgqLAoNSm5R/s1ctXBeLuO4Cvff9UQfbyRxl0iEl6ybBMlmZc
-         U3NWtyMbs9Y81aA+5aFr07tL3Ppd7tXVU2f7UEwIPy6b2WcVYOR130XH4NOL0tCoUR+x
-         umpZ/hbQTEbB13sq4T3XL4/lgAQUPIc3bWHje7l8SW8728ka++4RpNQdRi1GjoY5TGXO
-         BvBTDcA9GfMuWiTfz4PWfH8MJcVR8U9KfelMN9jIwbthGJewWrCl8WBXRgkBi3dt2+wo
-         xvyzJR+0mxvIDF5FCLpdY3E/eBsStj7GwIeZYZgftcEBdRt/kBjeyF7wJ4tWXwf37GZo
-         xw0g==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=PM+MBg+PKev5Z1ZTi5puF0pkUcxiOjDvmt3X5LHlR9w=;
+        b=b83M8Ic041H2zo+yF5A5lgQnMfsfhaHZRI+hBJcEkBnQ9rwL8q1awdJ9tUz9t9uO/9
+         AQAxoH8u6TUJKL9z0OtAP0xv4VZ82H1ErEdt4tUL42Bcfuws0YDcnKJjQfVR4rZdJzZM
+         yC5o38nNu20JEjnnKPZSarhABPBnvJtF8yi1I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vPLiMWFskOauyh1u+ggoUJjvjjW/WcJwF2+kWpwiAng=;
-        b=Xs9cE6oW0aWmubZ7rMZlR4tQmNZM30aij8hW4wK3/fz5VUmzZay75RVkhxPUuNZ392
-         AqH/AGauyjAc24uu6hMV7Gi5yZHa9qcE1uyclgLHPV5seF00dfw2x0KbW3HQsJ6nxCVY
-         CpD+cSLyGcWyVUlwIPCoIhYc21iPZ0BHfZUOFsaNTzxSFbZ212/BqaLD+c2RJy+hJjMq
-         OeuQ7d9X3Ha44toaWVw6enYJyhGN3CMtH7Lwee+C1Y5At1wa+1boz5ZcGrkAi9G72OkN
-         We2azEhEKDituxccqlPJ5TlaNiuYEroEvlcFgRLnxb9RTitKHL2P66n91mPRxbOVKNuy
-         ToyA==
-X-Gm-Message-State: APt69E17PJoZAErpTMIFMybvI5onhJ51BHQmt5Gu0M/XXGgW/Rs75aV7
-        wpXADjXAN2mdv9F74Ei3RUixR+6lCSydl5eIqgs=
-X-Google-Smtp-Source: ADUXVKIhOop6Q9LWsQdUeW+Xdmsjey+hj45NnTymgpyOGEKkVy/IzJQ2YdvEIeQQHAM32Kaf0HWsNpmST+eUFimtAe8=
-X-Received: by 2002:a1f:1e10:: with SMTP id e16-v6mr11086599vke.176.1529451796347;
- Tue, 19 Jun 2018 16:43:16 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 16:43:14
- -0700 (PDT)
-In-Reply-To: <20180619225145.GA23389@kroah.com>
-References: <20180619205914.21375-1-javierm@redhat.com> <20180619225145.GA23389@kroah.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 20 Jun 2018 02:43:14 +0300
-Message-ID: <CAHp75VcOd5K+T6bkxyz3qgqNr4-=K9GGRh+DQ_qgW7dGKdzO5A@mail.gmail.com>
-Subject: Re: [PATCH] driver core: add a debugfs entry to show deferred devices
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Javier Martinez Canillas <javierm@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Mark Brown <broonie@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PM+MBg+PKev5Z1ZTi5puF0pkUcxiOjDvmt3X5LHlR9w=;
+        b=l05riMHu9TV4VQb1m5BL/qPc3EptAsbp8vuugytkcsEwH0oo+ohoVMaeSp9RrPbx3T
+         63GZd8Cl9qHAsuc//5HWg9+MAj/WpdY+Wh09waR+hCaf3MES/qIpVf6d0ZBelImXk8NF
+         Bw1wdEcQUSnUnHM5Epu6DckrX/bI40rYU8ktJEJRreC3etgQihkwP65HXV1WI2iVs2Xf
+         2QnU6kfbFuWzX8gj0uhkJ940AaQilMi1YAX4jgLNwop3gFPKrP0g9ZZxyMziLpgHdxnM
+         r24z1bXcFQpJzLe4qTk25yHdGAVERFvvopKe6Jq8MYBP/L2K9CrfAgy/iFH9zwlHEuK9
+         N4mA==
+X-Gm-Message-State: APt69E3SyoI2GmHUyVuF6iUSMxmls3UquykVoHOhGtbCnCb0hKksMI35
+        wammbMunFtQtwGeho9eBJVctWA==
+X-Google-Smtp-Source: ADUXVKKfA51c6UKzO6TOfETeWg3VmCkAsoyywakvsyXvr7zsLo+4UNfm/+y3fk6VrQHz+xZKbzmZkg==
+X-Received: by 2002:a17:902:d716:: with SMTP id w22-v6mr20936100ply.98.1529451930048;
+        Tue, 19 Jun 2018 16:45:30 -0700 (PDT)
+Received: from evgreen2.mtv.corp.google.com ([2620:0:1000:1511:116f:8bf3:133b:f7fd])
+        by smtp.gmail.com with ESMTPSA id n85-v6sm987973pfa.146.2018.06.19.16.45.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 19 Jun 2018 16:45:28 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     swboyd@chromium.org, Evan Green <evgreen@chromium.org>
+Subject: [PATCH] pinctrl: msm: Pass along set_wake failures
+Date:   Tue, 19 Jun 2018 16:43:49 -0700
+Message-Id: <20180619234349.166190-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 1:51 AM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Tue, Jun 19, 2018 at 10:59:14PM +0200, Javier Martinez Canillas wrote:
->> For debugging purposes it may be useful to know what are the devices whose
->> probe function was deferred. Add a debugfs entry showing that information.
->>
->>   $ cat /sys/kernel/debug/deferred_devices
->>   48070000.i2c:twl@48:bci
->>   musb-hdrc.0.auto
->>   omapdrm.0
+The MSM pinctrl driver quietly swallows errors that occur
+when trying to call .irq_set_wake. It should instead pass
+those failures up the chain so the caller can react to them.
+Swallowing the error for instance causes gpio_keys to think that
+it was able to successfully set a wake IRQ, when in fact it may
+not have been, causing the following warning on resume:
 
+[   53.777819] Unbalanced IRQ 9 wake disable
+[   53.781979] WARNING: CPU: 0 PID: 1362 at kernel/irq/manage.c:623
+irq_set_irq_wake+0xac/0x12c
+[   53.794758] Modules linked in: spi_gpio spi_bitbang qcom_q6v5_pil
+qcom_common cfg80211 ip6table_filter smsc95xx usbnet mii
+[   54.016419] [<ffffff80081054b0>] irq_set_irq_wake+0xac/0x12c
+[   54.022252] [<ffffff80083c86a4>] msm_gpio_irq_set_wake+0x48/0x68
+[   54.028447] [<ffffff8008104d8c>] set_irq_wake_real+0x50/0x5c
+[   54.034275] [<ffffff80081054d0>] irq_set_irq_wake+0xcc/0x12c
+[   54.040104] [<ffffff800860fd00>] gpio_keys_resume+0x74/0xd8
+[   54.045846] [<ffffff800852018c>] platform_pm_resume+0x54/0x60
+[   54.051771] [<ffffff800852ceb4>] dpm_run_callback+0x104/0x210
+[   54.057694] [<ffffff800852d7cc>] device_resume+0x178/0x1b0
+[   54.063355] [<ffffff800852e938>] dpm_resume+0x1c4/0x38c
+[   54.068745] [<ffffff800852efac>] dpm_resume_end+0x20/0x34
+[   54.074315] [<ffffff80080fe700>] suspend_devices_and_enter+0x518/0x964
+[   54.081044] [<ffffff80080ff1dc>] pm_suspend+0x690/0x6e0
+[   54.086433] [<ffffff80080fd0f8>] state_store+0xd4/0xf8
+[   54.091733] [<ffffff80088a3af0>] kobj_attr_store+0x18/0x28
+[   54.097396] [<ffffff80082980a4>] sysfs_kf_write+0x5c/0x68
+[   54.102961] [<ffffff8008297050>] kernfs_fop_write+0x174/0x1b8
+[   54.108887] [<ffffff800821a9c0>] __vfs_write+0x58/0x160
+[   54.114276] [<ffffff800821acd4>] vfs_write+0xcc/0x184
+[   54.119487] [<ffffff800821af4c>] SyS_write+0x64/0xb4
 
-> And what is the use of this file?  What can you do with this
-> information?  Who is going to use it?  Don't we have other deferred
-> probe debugging somewhere else?
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
+ drivers/pinctrl/qcom/pinctrl-msm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Indeed.
-
-Javier, have you tried to add 'initcall_debug' to a kernel command
-line followed by 'dyndbg="file drivers/base/dd.c +p"'?
-
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 0e22f52b2a19..d48a74ddbc1f 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -779,14 +779,15 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct msm_pinctrl *pctrl = gpiochip_get_data(gc);
+ 	unsigned long flags;
++	int rc;
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+-	irq_set_irq_wake(pctrl->irq, on);
++	rc = irq_set_irq_wake(pctrl->irq, on);
+ 
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+ 
+-	return 0;
++	return rc;
+ }
+ 
+ static void msm_gpio_irq_handler(struct irq_desc *desc)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.13.5
+
