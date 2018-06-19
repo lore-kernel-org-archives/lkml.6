@@ -6,95 +6,101 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C538C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C98BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FAEA20883
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:58:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FAEA20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 52AFF20874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52AFF20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966295AbeFSM6X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:58:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38614 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965727AbeFSM6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:58:21 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2394A40704A2;
-        Tue, 19 Jun 2018 12:58:21 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9FE7A2026D68;
-        Tue, 19 Jun 2018 12:58:19 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Stephen Hemminger <sthemmin@microsoft.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, devel@linuxdriverproject.org
-Subject: Re: [PATCH] x86/hyper-v: use cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST, SPACE} hypercalls when possible
-References: <20180615163010.20381-1-vkuznets@redhat.com>
-        <alpine.DEB.2.21.1806191403510.1684@nanos.tec.linutronix.de>
-Date:   Tue, 19 Jun 2018 14:58:18 +0200
-In-Reply-To: <alpine.DEB.2.21.1806191403510.1684@nanos.tec.linutronix.de>
-        (Thomas Gleixner's message of "Tue, 19 Jun 2018 14:05:04 +0200
-        (CEST)")
-Message-ID: <87wouvkk5x.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S966366AbeFSM6h (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:58:37 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:38979 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965883AbeFSM6W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:58:22 -0400
+Received: by mail-ua0-f195.google.com with SMTP id n4-v6so12964717uad.6;
+        Tue, 19 Jun 2018 05:58:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OxATvKLX57hJ7bCxyNylZe+NAlfHbwl3QiuYrJOk/BY=;
+        b=mfb8S53lnIxFJF5K2P+fu5oNGDOVDElexTipnO2urupRPgD417nyQ+SSYoiAcJ0BE6
+         1Bke60S54ZCv3ijGSdbONNVYIvPGNVfao8djLNlRbOnVNif0RVkYNDltNmDUxHA9YZWD
+         aCtFsmsX6FtD57T3kVO3ABkOOpI6EzTfOnBM/0I5cA0JQclTwX/MofRp3oP4YxbOc3uo
+         AyHKahrQtM31xxTmh8oMguh+uAUWODBHP/ngVwXrAmLUag68s18PIuavAZ1Ql2coaV3E
+         ll4GlaFUbluXxnS0y6EeRKW3e3XiIyu6FxPWttQoTNpX0BRhyQz4Q54gSa4NP9TsdyLS
+         F2Vg==
+X-Gm-Message-State: APt69E0nqaxCeEY53FjpQ9gzuEeB/xFF4VuPH4CyEfE67QbMhCP4hF3P
+        jSbIgX6I2Z9LE3umJ5m7hDRxgqoZuSTmbMd7ywTWnG6B
+X-Google-Smtp-Source: ADUXVKIlvUraGYP0R/hEv9tdxmyfsrrA/HkXvVEA0ZNMmlibvr+ukbyWfJCQFoIK1kN3VhuvYPua14UqN6OpzZ3NMME=
+X-Received: by 2002:ab0:5b18:: with SMTP id u24-v6mr10477503uae.72.1529413101203;
+ Tue, 19 Jun 2018 05:58:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 19 Jun 2018 12:58:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 19 Jun 2018 12:58:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+In-Reply-To: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 19 Jun 2018 14:58:10 +0200
+Message-ID: <CAMuHMdVXrppnFEBmR3xhwNu3i0N3mVE1+FJRjEcWBYpHHbsAsw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ofir Drang <ofir.drang@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
+Hi Gilad,
 
-> On Fri, 15 Jun 2018, Vitaly Kuznetsov wrote:
->>   * Fills in gva_list starting from offset. Returns the number of items added.
->> @@ -93,10 +95,19 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
->>  	if (cpumask_equal(cpus, cpu_present_mask)) {
->>  		flush->flags |= HV_FLUSH_ALL_PROCESSORS;
->>  	} else {
->> +		/*
->> +		 * It is highly likely that VP ids are in ascending order
->> +		 * matching Linux CPU ids; Check VP index for the highest CPU
->> +		 * in the supplied set to see if EX hypercall is required.
->> +		 * This is just a best guess but should work most of the time.
->
-> TLB flushing based on 'best guess' and 'should work most of the time' is
-> not a brilliant approach.
->
+On Thu, May 24, 2018 at 4:19 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
+> The patch set enables the use of CryptoCell found in some Renesas R-Car
+> Salvator-X boards and fixes some driver issues uncovered that prevented
+> to work properly.
 
-Oh no no no, that's not what I meant :-)
+With DEBUG enabled on R-Car H3, I see lots of
 
-We have the following problem: from the supplied CPU set we need to
-figure out if we can get away with HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,
-SPACE} hypercalls which are cheaper or if we need to use more expensing
-HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST, SPACE}_EX ones. The dividing line is
-the highest VP_INDEX of the supplied CPU set: in case it is < 64 cheaper
-hypercalls are OK. Now how do we check that? In the patch I have the
-following approach:
-1) Check VP number for the highest CPU in the supplied set. In case it
-is > 64 we for sure need more expensive hypercalls. This is the "guess"
-which works most of the time because Linux CPU ids usually match
-VP_INDEXes.
+    ccree e6601000.crypto: IRR includes unknown cause bits (0x00000098)
+    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000C0)
+    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D0)
+    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D8)
+    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000E0)
+    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F0)
+    ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F8)
 
-2) In case the answer to the previous question was negative we start
-preparing input for the cheaper hypercall. However, if while walking the
-CPU set we meet a CPU with VP_INDEX higher than 64 we'll discard the
-prepared input and switch to the more expensive hypercall.
+during boot. Is that expected?
 
-Said that the 'guess' here is just an optimization to avoid walking the
-whole CPU set when we find the required answer quickly by looking at the
-highest bit. This will help big systems with hundreds of CPUs.
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-  Vitaly
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
