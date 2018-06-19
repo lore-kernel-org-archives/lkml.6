@@ -2,105 +2,110 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19458C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4148CC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C03232083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEBC02083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:28:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GjjTilnP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03232083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YFK8eMti"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEBC02083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937468AbeFSI10 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:27:26 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43031 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937267AbeFSI1W (ORCPT
+        id S937470AbeFSI2p (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:28:45 -0400
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:35917 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937267AbeFSI2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:27:22 -0400
-Received: by mail-pl0-f66.google.com with SMTP id c41-v6so10543223plj.10;
-        Tue, 19 Jun 2018 01:27:22 -0700 (PDT)
+        Tue, 19 Jun 2018 04:28:43 -0400
+Received: by mail-oi0-f54.google.com with SMTP id 14-v6so17392121oie.3;
+        Tue, 19 Jun 2018 01:28:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Cl5YUUfahVyIU9R3gjgQfDHBHuT86a9lKZ1k2NtdW/Q=;
-        b=GjjTilnPZDabGAMBiuDKdojVpkzvxapfI68vtNbrNztyscWORRCvK9iOaLr88CTszZ
-         9nUrSIO3ThKDMk51Rj/EE/OtdHajC+4s/dv+D0HKu4Vdxcfxb4r9QMQnzPuqQwR2MGnG
-         HVsZKVkF3v3UR+OdYtVByityUyzGpyJNVzxbhrs/QA7Unv7frTztjHPN+k5fddi1cMV6
-         zKQvIWhyUX+PoP4heimiuVGxCXRfRwU+gQjXHxAzuhCtL/feFYqqcqMYSi8A8JzGTYni
-         Q8DkFelWoxtBOdBPEZ3B8BApmumtQvGNL3k6h16ec/+whQ2b9nlSlxBWlhvVOh5HvSfw
-         FXVg==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=15MdgXgZEpFd6D251bPSy80u+Neo1zIKATyviaPmXa4=;
+        b=YFK8eMtiMBudJ+TsEYnXZcVwMtxW6J/KVKPpTNHefEWKnqiBSDf5n/FkNf5bOSjhG7
+         h1pOJnx2Z0Oa4rR1y12fblXel24n/hCPyqc88yzScw7+zdwPPiDZLYqlBTyKhTpvYBnK
+         0iQ7coQ3nJ5EfkFzueROT+PmPIHZ6oy98iTMA/o5X0xGZF+0WIplwVRzvuPQh470UiEZ
+         ubIVccoufOZOL9YiGehmPUQ+5tmZc9DUM0SHRwI3kf9S0cM5Ya0XvkOcdjCZkbvBl6ro
+         2hnyzWbJG9W2NKiuyzpfiwSsUrXjW/LLZvqf1s2DXgWU6AhlTmCXzAd3qhLcHgWPiALj
+         g3FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Cl5YUUfahVyIU9R3gjgQfDHBHuT86a9lKZ1k2NtdW/Q=;
-        b=NqFvOWJFHuBQU/9pMtOa1SSdgIfx0HVWQIIem3tBUNNeT143l3Mpp04Kv4g7K12aFt
-         WTGB9NcKVtWKtMCUDgPp3hYl4uGVHTtuEgmGdfbRITijKPf8SMQz7K3pHgwaWBnEx2+G
-         hWAvAQojcVX1ZuvGU+82SnRA4bl0hP9Jy87ZySDm3Eb+zeFpvEGHth5TyufJVhzOyi6r
-         8k7RiQzfy+b4YaGLyuljiFgWUVhH1tn+9xKtA/hh2K6A+mo5KqBwGRz8lgfDzb7fF43r
-         /6qhf7wGqM0McFPX5GjKGttIbEgADyZWR5vYjhECh0Z5ddbw6ZH76EBPY6FcLaIetBAq
-         gy3g==
-X-Gm-Message-State: APt69E1wkNUE9AJJxFqk5mmA62BkFO/D4CWCTKOkS0w+FUUZ5Iw0U4aG
-        scRXOxzFBz829LuPclMwvMY=
-X-Google-Smtp-Source: ADUXVKKiejMpK83JZB2IbnyktzealVMPcJMZnxLJRdQr2MomiHHXQssNZ8TYNMFYj1ntK5DKsW4jYg==
-X-Received: by 2002:a17:902:8341:: with SMTP id z1-v6mr17988413pln.40.1529396841854;
-        Tue, 19 Jun 2018 01:27:21 -0700 (PDT)
-Received: from localhost ([175.223.26.106])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm21099193pgq.32.2018.06.19.01.27.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 01:27:20 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 17:27:16 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-kernel@vger.kernel.org, "4 . 13+" <stable@vger.kernel.org>
-Subject: Re: [PATCH] printk/nmi: Prevent deadlock when serializing NMI
- backtraces
-Message-ID: <20180619082716.GD405@jagdpanzerIV>
-References: <20180517143903.19339-1-pmladek@suse.com>
- <20180605124729.3vix5nlkjpjzdljx@pathway.suse.cz>
- <20180606051029.GA19211@tigerII.localdomain>
- <20180606103356.GB19211@tigerII.localdomain>
- <20180608104825.e7xoxteelaxnwx66@pathway.suse.cz>
- <20180618063738.GC27996@jagdpanzerIV>
- <20180618093917.qeaatnlqh5if6t3r@pathway.suse.cz>
- <20180618100718.GA555@jagdpanzerIV>
- <20180619075219.iq7ztwu43bn4uua7@pathway.suse.cz>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=15MdgXgZEpFd6D251bPSy80u+Neo1zIKATyviaPmXa4=;
+        b=nzLZTKeVjgDsejluy6wWEeu6lZlJqlNJyBkiLknLRKm9fNljm4DnNO5OblhDcRYxDM
+         l3rDO/ZzxVBdkz8uDiaG4AedwfbHs2+sJrr/MAt16DPKLRSiTTlsxVOYqfAD/3zS6bqU
+         hFTjWGDyKVx4E01n181L11+AY1KK+Tk5WjYdD0UCabCL1YnUSINkJvtAn5UiZvy6OREU
+         xooSZyaGRi0R1hXXYffSOXvxapyv2ADC14aKKgpWc1Pn5g59GlzdgxEHpuGEb6joasHz
+         8RcKz0P8qoO1UTFOfeVVd1EtMALnxCuKHGLQh0HFW7BfsiZAQkm+O7E1tgj0NbDOL3le
+         dL+Q==
+X-Gm-Message-State: APt69E35nuIe9Z6qmFYDGUwttSHEV2zgyM+YWSNvbIh0zh5D9JLqboHx
+        WLq2YuzEJRsDQcpOewUOzndiyeS9Pwn4x3t7wgE=
+X-Google-Smtp-Source: ADUXVKLWFi/9CDWdlU6bx0OfFbbsF675AD+F+VWGtx/sh7KBWN618lg6ncAeiCoj4mUuhQCvoWLNKT8oFqy+YPza7lo=
+X-Received: by 2002:aca:6914:: with SMTP id e20-v6mr8412771oic.358.1529396922698;
+ Tue, 19 Jun 2018 01:28:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619075219.iq7ztwu43bn4uua7@pathway.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 01:28:42
+ -0700 (PDT)
+In-Reply-To: <s5h8t7bfgnq.wl-tiwai@suse.de>
+References: <s5h8t7bfgnq.wl-tiwai@suse.de>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 19 Jun 2018 10:28:42 +0200
+X-Google-Sender-Auth: OLJ1BCln5JV49qDBoveoGNt1r3M
+Message-ID: <CAJZ5v0hidPav5kvTW05e0k5mouFyiUiyUW50=fDqVphbEBjQaA@mail.gmail.com>
+Subject: Re: [REGRESSION] 4.17 failed to probe ACPI PnP
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Noah Davis <noahadvs@gmail.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/19/18 09:52), Petr Mladek wrote:
-> On Mon 2018-06-18 19:07:18, Sergey Senozhatsky wrote:
-> > On (06/18/18 11:39), Petr Mladek wrote:
-> > [..]
-> > 
-> > Hmm. Can't answer right now :)
-> 
-> Please, let me know what name you would like ;-)
+On Tue, Jun 19, 2018 at 8:12 AM, Takashi Iwai <tiwai@suse.de> wrote:
+> Hi,
+>
+> there seems a regression regarding the probe of ACPI PnP devices.
+> The detailed logs are found in openSUSE bugzilla:
+>   https://bugzilla.opensuse.org/show_bug.cgi?id=1098074
 
-:) Wow, it's hard. Maybe we can derive some bits from the ftrace_dump()
-function name? Dunno... Does printk_dump_nmi_enter() sound terrible?
+But that's on this particular machine, not in general, right?
 
-Maybe Steven has some opinions on this?
+At least I don't see this on any of the systems in my office.
 
-	-ss
+> In short, since 4.17, the laptop keyboard is lost on ASUS K501UW.
+> Comparing the kernel messages and other logs indicates that the
+> complete lost of ACPI PnP devices:
+>
+> On 4.16:
+> [    0.390244] pnp: PnP ACPI: found 9 devices
+>
+> On 4.17:
+> [    0.263266] pnp: PnP ACPI: found 0 devices
+>
+> ... and this leads to the failure of PS/2 keyboard detection due to
+> the missing PNP030b entry as a result.
+>
+> Any hints for debugging this are appreciated.
+
+It looks like this may be related to the ACPICA changes that went in
+during the 4.17 cycle.
+
+I would try 4.18-rc1 as there is an ACPICA fix in it that may be
+related to this in theory.  If that doesn't help, I'd focus on the
+ACPICA changes.
+
+Thanks,
+Rafael
