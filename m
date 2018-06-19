@@ -2,71 +2,79 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6BFC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8610EC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA70220652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:13:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0JIwu9F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA70220652
+	by mail.kernel.org (Postfix) with ESMTP id 4845520652
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:15:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4845520652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937750AbeFSPNy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:13:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56754 "EHLO mail.kernel.org"
+        id S966406AbeFSPPD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:15:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54786 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755616AbeFSPNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:13:52 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F36A020652;
-        Tue, 19 Jun 2018 15:13:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529421232;
-        bh=yYNVv63HAaIcU1oiWWk6u9EILQoAz3VMZZZHIQF5F6A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H0JIwu9Fw2bN89rf2mQ4pAKTSM8rQ2eDSyZ+uCkIZu/ZellOe6DjkDE2U/0T7pZuy
-         qt7kyFnVCrVm1MuMU1XTc4VPoUnvbU6kF7MTySgBVJdLM5nmmnEFsiImBUOS6d3LMQ
-         zA2xcg3fL7UfykSogHeSj22ve4sxdN8jYhRZ38iY=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id D7BA81401E5; Tue, 19 Jun 2018 12:13:49 -0300 (-03)
-Date:   Tue, 19 Jun 2018 12:13:49 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Thomas Richter <tmricht@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Jiri Olsa <jolsa@redhat.com>
-Subject: Re: [PATCH 1/3 v2] perf alias: Remove trailing newline when reading
- sysfs files
-Message-ID: <20180619151349.GG20477@kernel.org>
-References: <20180615101105.47047-1-tmricht@linux.ibm.com>
+        id S937576AbeFSPPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:15:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 41A2AAE0C;
+        Tue, 19 Jun 2018 15:15:00 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 17:14:25 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Punit Agrawal <punit.agrawal@arm.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Xie XiuQi <xiexiuqi@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        tnowicki@caviumnetworks.com, linux-pci@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-mm@kvack.org, wanghuiqiang@huawei.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zhongjiang <zhongjiang@huawei.com>,
+        linux-arm <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
+Message-ID: <20180619151425.GH13685@dhcp22.suse.cz>
+References: <16c4db2f-bc70-d0f2-fb38-341d9117ff66@huawei.com>
+ <20180611134303.GC75679@bhelgaas-glaptop.roam.corp.google.com>
+ <20180611145330.GO13364@dhcp22.suse.cz>
+ <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
+ <87bmce60y3.fsf@e105922-lin.cambridge.arm.com>
+ <8b715082-14d4-f10b-d2d6-b23be7e4bf7e@huawei.com>
+ <20180619120714.GE13685@dhcp22.suse.cz>
+ <874lhz3pmn.fsf@e105922-lin.cambridge.arm.com>
+ <20180619140818.GA16927@e107981-ln.cambridge.arm.com>
+ <87wouu3jz1.fsf@e105922-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180615101105.47047-1-tmricht@linux.ibm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <87wouu3jz1.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Jun 15, 2018 at 12:11:03PM +0200, Thomas Richter escreveu:
-> Remove a trailing newline when reading sysfs file contents
-> such as /sys/devices/cpum_cf/events/TX_NC_TEND.
-> This shows when verbose option -v is used.
-> 
-> Output before:
-> tx_nc_tend -> 'cpum_cf'/'event=0x008d
-> '/
+On Tue 19-06-18 15:54:26, Punit Agrawal wrote:
+[...]
+> In terms of $SUBJECT, I wonder if it's worth taking the original patch
+> as a temporary fix (it'll also be easier to backport) while we work on
+> fixing these other issues and enabling memoryless nodes.
 
-Thanks, applied.
-
-- Arnaldo
+Well, x86 already does that but copying this antipatern is not really
+nice. So it is good as a quick fix but it would be definitely much
+better to have a robust fix. Who knows how many other places might hit
+this. You certainly do not want to add a hack like this all over...
+-- 
+Michal Hocko
+SUSE Labs
