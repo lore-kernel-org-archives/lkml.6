@@ -2,107 +2,93 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D97EC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0020C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 430C12075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:50:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGmb4/bL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430C12075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A33EF2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:50:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A33EF2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756836AbeFSJuA (ORCPT
+        id S1756956AbeFSJuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:50:00 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42605 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755270AbeFSJt6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:49:58 -0400
-Received: by mail-pg0-f68.google.com with SMTP id c10-v6so8922026pgu.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 02:49:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XeP8Yff6u2ryRFqZaJWbC1JL7sv3cjnk1xacczHn6D0=;
-        b=iGmb4/bLX2l/Tab3uK33i6ZHTOMLj9zWcJ5010llibm1i7ofQJAkuXJjTQn0Rrt1I2
-         Iphta7UcJ9m5XnZYeTWGTtIA0I3nng9hxrw4m/aVOxI09zUELJuI3UHJHda1rqbxfa4+
-         3G2bJktjihhYjsvSpPsQyN8Lmq8tlLXLS1H1H9Yx8JyLG7dds19JFdeuRyoLCEHGvgwH
-         xycWFZ9+mN+m+pPBrMOkrwWAtVk09a9ak0Cv3sMVD0YVFneDdYGfeQfs4MKM3mK7S7K4
-         pVIG2aaEByHhr4A9JUPZrT1EfSI7ZaAPQn/6zXTQMBZs2/lgQYCJXfQocGZwczBxOe3s
-         00GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XeP8Yff6u2ryRFqZaJWbC1JL7sv3cjnk1xacczHn6D0=;
-        b=jrv9utq4JY+FsIXnCaqpc4PIfI35vpsHdKL9GZYK0hue5cgxRtfor8X5ZG2fBAy48q
-         F2fI2jMwq8aED3hS+sQVPNMzTVs6XW5InhWeHXKb1KJTFdMEpMX5nuBnwHUQ5DLJMqAc
-         MJTUuvqWqUeShFuuPno8jhnFEO2s4UWpLwfQEEmGODk4e3e5Y1tHCvmvmOwHnVDIVgPO
-         On88pgZUV3sGfcGoCdOzWvoxQ2giMlB0OQ/csA0cD244cmdg/GGnAqG48a9Y25YbGMHM
-         rEGFVKYVpcEL3ZX6HOzK90Bayne8LiHf+1UNlOiGxaufcCPAbUJTGhjPPsNsNqZZvIV5
-         O2Zg==
-X-Gm-Message-State: APt69E1RFo4lz4ONQZwb8PAh0wF2+ly47CJ2Z+0sRXAQNG/YwxrIEhQc
-        iWh5U1lDE7IgMrBgaNtpVHppeslq
-X-Google-Smtp-Source: ADUXVKIRVtYecBXQS31ac0w8FZ690yaEHUGeX1vOwSGppqDImmnTj/2Oh2UWKJUFVRLytTglKMEAwQ==
-X-Received: by 2002:a65:48c9:: with SMTP id o9-v6mr14439562pgs.262.1529401798397;
-        Tue, 19 Jun 2018 02:49:58 -0700 (PDT)
-Received: from localhost ([175.223.26.106])
-        by smtp.gmail.com with ESMTPSA id o87-v6sm32253890pfa.106.2018.06.19.02.49.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 02:49:57 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 18:49:53 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Maninder Singh <maninder1.s@samsung.com>,
-        sergey.senozhatsky@gmail.com, rostedt@goodmis.org,
-        linux-kernel@vger.kernel.org, a.sahrawat@samsung.com,
-        pankaj.m@samsung.com, v.narang@samsung.com
-Subject: Re: [PATCH v2] printk: make sure to print log on console.
-Message-ID: <20180619094953.GB2631@jagdpanzerIV>
-References: <CGME20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26@epcas5p3.samsung.com>
- <20180601090029epcas5p3cc93d4bfbebb3199f0a2684058da7e26~z-a_jkmrI2993329933epcas5p3q@epcas5p3.samsung.com>
- <20180618061550.GA27996@jagdpanzerIV>
- <20180618062306.GA29683@jagdpanzerIV>
- <20180619093244.ehj34uhpnpv6447f@pathway.suse.cz>
+        Tue, 19 Jun 2018 05:50:11 -0400
+Received: from mga09.intel.com ([134.134.136.24]:24476 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755946AbeFSJuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 05:50:09 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 02:50:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
+   d="asc'?scan'208";a="64424072"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
+  by fmsmga004.fm.intel.com with ESMTP; 19 Jun 2018 02:50:05 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     linux-usb-owner@vger.kernel.org
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        David Lechner <david@lechnology.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: add error handling for skb_realloc_headroom
+In-Reply-To: <1528778503-41615-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528778503-41615-1-git-send-email-jiazhouyang09@gmail.com>
+Date:   Tue, 19 Jun 2018 12:47:42 +0300
+Message-ID: <87vaafw1j5.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619093244.ehj34uhpnpv6447f@pathway.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/19/18 11:32), Petr Mladek wrote:
-> > -               if (suppress_message_printing(msg->level)) {
-> > +               if (!ignore_loglevel && (msg->flags & LOG_NOCONS)) {
-> > 
-> > 
-> > `ignore_loglevel' is a module param and can change any time via
-> > 	/sys/module/printk/parameters/ignore_loglevel
-> > we need to respect its value.
-> 
-> I would prefer to keep the patch as is. I see it the following way.
-> 
-> Also console_loglevel can be changed anytime by /proc/sys/kernel/printk.
-> The patch basically moves the decision about the message visibility from
-> console_unlock() to vprintk_emit(). The logic is easier when all
-> aspects are handled in a single location and only once.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-But when I set /sys/module/printk/parameters/ignore_loglevel I naturally
-expect it to take an immediate action. Without waiting for the consoles
-to catch up and to discard N messages [if the consoles were behind the
-logbuf head].
 
-	-ss
+Hi,
+
+linux-usb-owner@vger.kernel.org writes:
+> When skb_realloc_headroom fails, the lack of error-handling code may
+> cause unexpected results.
+>
+> This patch adds error-handling code after calling skb_realloc_headroom.
+>
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+
+From=20linux-usb-owner??? I can't apply this patch.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlso0T4ACgkQzL64meEa
+mQY/xhAAs+30wERTUootYBnVRVWG+nxRFYVuvpUSu6lzt3Kfelo3hd+woVkjBeHF
+xUNzUiE1DAWoSGBIAnY51RIGJtNS85Kc+Q4aULyVhKu/4vteq5kf5Ju+8yoLu98l
+yzK+uEHvsv73meHVBiEvfxvsnL4UNbjLS/MS3Q/kPVU0f6pYV2d8yRAT7blLMj1Z
+m2W0vHupB0a9jVxYht/VfelfCrxkTgCEuulx6dBubRUxu9zHrt+VmAfILrNLRghz
+TOZjkc2GRHcTeUIE0CsSgkSqsjUg8iUllbcS9UdZDb7a+7t5uRHomako1heWWUB/
+d2U9M+ivYQTl+cCBUTCt2qEV1K/+XcN+nEoNaPnkmojF3Dcebj6tGlV6OZA4WKE2
+4Iz1jgbDqN18x+KxtdIAiFLfz0qgL+Gk7YFSvmM21Q7JmviGEmaJhwy7NHalRYFZ
+qwJBzTJW6kVp6vwty/RJcwTGVdOedZGjoWawbrUZTPVmvPSu7HeISH6XaOAGWFSw
+9is0CKXB0RbyJzT8YEG+XPEYNZ84umqQdnVeaBK0JQbCcEQWfCqMU6R7j+l/CEPw
+Gc3UHZXspWj5gcty8gRMQmsjT6d0pbyWIy85frcTO0IG2ogNoZ93c7W59On4VQsB
+P6gzeaRpF950DVCTlEUhGOhoFRIPrSEwfKG+VZb37M1mddyC/hk=
+=vh+D
+-----END PGP SIGNATURE-----
+--=-=-=--
