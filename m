@@ -2,125 +2,92 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11729C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E024C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49D02083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45BD220874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:22:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aFKn/sFb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49D02083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YBWBSKMc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45BD220874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937471AbeFSJV3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:21:29 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42115 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937314AbeFSJV0 (ORCPT
+        id S1756660AbeFSJWg (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 05:22:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44692 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756350AbeFSJWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:21:26 -0400
-Received: by mail-pf0-f194.google.com with SMTP id w7-v6so9625488pfn.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 02:21:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZCw6JnLVp05/7RW+Ta+9/QzQDzLLCOO4Hjg0AvR0vlE=;
-        b=aFKn/sFbA8vssGXGdcH6CSO2lC7PVb4T3lxZPK1LdUt/oixb8RmbGmj+zlnoOa9ceJ
-         zSpFu3uyB/lGqQFzwgjtTYZQJ6hq/hlx+yD2QuHDgZMt3HOjLai08UGZP2j31MGF0WlB
-         oS5idkUjxUVBMI94A1gmHBsJPTd+CEeDdLBEg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZCw6JnLVp05/7RW+Ta+9/QzQDzLLCOO4Hjg0AvR0vlE=;
-        b=eABduRymt4DuzqRpgW32mzsVY3bX/5WDExXa9AaYDSXEH/p2GSJiQOCVucpA74tE/R
-         aoQiIfyIkeSvZrnQBWFie8FJ0AlGKmkMhm5IMV1DBF4t31pGExrpXjUg+QB68dN9WbcF
-         oatNDaUEhF8cudYOomDgi/PdtHYZkQ8LVNG4Mxl/dSKBcHIg/Saf0n1tCpwewHlJeBwV
-         Cg7bJ0wUa64iyiq8MaIxF2vPZhjm/1TVTnAIm2H+Zk7T1w7eqox0yo9dEIoGSnX9k4j8
-         JJzlP913HgAfCPaudyXaKPV8K5DTRfPT4nrj9s95KClcnfxV49Epqcq+HaHIG2G7qGXe
-         ejDA==
-X-Gm-Message-State: APt69E3evs7ln/DVUS3Of9wj9v/yWadEpJrs6aA/434FnbcAqjNQjhDp
-        WFzBulkbI0Cn5U8C+0RSl4JAuA==
-X-Google-Smtp-Source: ADUXVKKg3G2R0ZNsY0FdfvMsspslSM0IrtL9HefHVCGZcoBo37EFEPj5Mxqe/GQ3iJUeMMWoiKKG5A==
-X-Received: by 2002:aa7:854e:: with SMTP id y14-v6mr16947949pfn.165.1529400085158;
-        Tue, 19 Jun 2018 02:21:25 -0700 (PDT)
-Received: from localhost ([122.171.103.96])
-        by smtp.gmail.com with ESMTPSA id q8-v6sm37363690pfi.96.2018.06.19.02.21.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 02:21:24 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 14:51:22 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Saravana Kannan <skannan@codeaurora.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW
- bindings
-Message-ID: <20180619092122.ul56qnh5uangti3e@vireshk-i7>
-References: <1528801355-18719-1-git-send-email-tdas@codeaurora.org>
- <1528801355-18719-2-git-send-email-tdas@codeaurora.org>
- <0f3f0223-3539-dc66-5300-8f30d827445d@arm.com>
- <7abb2da6-c130-117a-5404-d07bb132d915@codeaurora.org>
- <f57f2708-28bb-dcdd-8b93-d41ade10fa18@arm.com>
- <bc6dc152-7def-fc1d-4535-11a44fd64310@codeaurora.org>
- <CAHLCerMCM1qf1MJ3bz+ZwBQMjshKSCWKXjHCiuqxJTDBdauamQ@mail.gmail.com>
- <32e8f874-a58b-8ba3-7a53-dc89cb34f7d9@codeaurora.org>
- <fad24065-bb2d-33f9-e877-425db3391e8f@arm.com>
- <514eea88-1f98-7959-2341-3d57cff6f66b@codeaurora.org>
+        Tue, 19 Jun 2018 05:22:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ShJfiVZV7hyiFmuMagPDrULQ5+swCRupHD4iZxALYL8=; b=YBWBSKMcIS23QG+X6uVJY570J
+        ho7OG+pk4NQ2l47l9s+MsTCov/VRE2KIfqtEytBtq5YB/d/NpJ/ukifAEGmns7CUErfa6Z3XIWs+m
+        7V0bCx8/pKLyJS3yOGW0BcHE5zg0CnibwL4Bzz5PMF+WUC5rUepO2qHd1y23FpgxqBaClZQzwaEVx
+        4iU5EpNWlXdAsh9iWm7XLahSNkdUdN9PfmQNZOexWhyG6yIM+Qb0ux9hwQUbLqhn6h5HPoEfzR7S+
+        KWWs3Pw0AXEQuXI5F3zwlcIb+F9dJIey9pdSbCjAowIkAdmcl1W43pNFNIeh+46J7tipo6zq660z+
+        j7Z2TdFAg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVCqN-0000eP-8D; Tue, 19 Jun 2018 09:22:31 +0000
+Date:   Tue, 19 Jun 2018 02:22:30 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v14 00/74] Convert page cache to XArray
+Message-ID: <20180619092230.GA1438@bombadil.infradead.org>
+References: <20180617020052.4759-1-willy@infradead.org>
+ <20180619031257.GA12527@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <514eea88-1f98-7959-2341-3d57cff6f66b@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180619031257.GA12527@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-06-18, 13:23, Taniya Das wrote:
-> Driver code (The below representation is just for example).
-> =============
-> 
-> V1
-> #define ENABLE	0x0
-> #define LUT_V1	0x110
-> #define PERF_V1	0x920
-> 
-> V2
-> #define LUT_V2	0x150
-> #define PERF_V2	0x980
-> 
-> V3
-> #define LUT_V3	0x120
-> ....
-> 
-> Do you want me to use "compatible" flag to
-> 
-> if (compatible == v1)
->  enable =  readl_relaxed(X + LUT_V1);
-> else if (compatible == v2)
->  enable = readl_relaxed(X + LUT_V2);
-> else if (compatible == v3)
->  enable = readl_relaxed(X + LUT_V2);
+On Mon, Jun 18, 2018 at 09:12:57PM -0600, Ross Zwisler wrote:
+> Hit another deadlock.  This one reproduces 100% of the time in my setup with
+> XFS + DAX + generic/340.  It doesn't reproduce for me at all with
+> next-20180615.  Here's the output from "echo w > /proc/sysrq-trigger":
 
-You can have fields in a struct somewhere like enable_offset, which you can fill
-based on compatible string only once during probe and then the rest of the code
-would just do:
+*sigh*.  I wonder what the differences are between our setups ...
 
-enable = readl_relaxed(X + struct->enable_offset);
+> [   92.849119] sysrq: SysRq : Show Blocked State
+> [   92.850506]   task                        PC stack   pid father
+> [   92.852299] holetest        D    0  1651   1466 0x00000000
+> [   92.853912] Call Trace:
+> [   92.854610]  __schedule+0x2c5/0xad0
+> [   92.855612]  schedule+0x36/0x90
+> [   92.856602]  get_unlocked_entry+0xce/0x120
+> [   92.857756]  ? dax_insert_entry+0x2b0/0x2b0
+> [   92.858931]  grab_mapping_entry+0x19e/0x250
+> [   92.860119]  dax_iomap_pte_fault+0x115/0x1140
+> [   92.860836]  dax_iomap_fault+0x37/0x40
+...
+> This looks very similar to the one I reported last week with generic/269.
 
--- 
-viresh
+Yeah, another missing wakeup, no doubt.  Can you bisect this?  That was
+how I found the last one; bisected it to a single patch and stared very
+hard at the patch until I saw it.  I'm not going to be in a position to
+tinker with my DAX setup until the first week of July.
