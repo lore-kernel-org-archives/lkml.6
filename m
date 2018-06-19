@@ -2,141 +2,88 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4F7C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 632CDC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2436020652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:10:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2436020652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 19CA520652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:15:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19CA520652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753266AbeFTGKE (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 02:10:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49663 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751327AbeFTGKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 02:10:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3846FAC55;
-        Wed, 20 Jun 2018 06:10:00 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id DC322A1081; Wed, 20 Jun 2018 08:09:59 +0200 (CEST)
-Date:   Wed, 20 Jun 2018 08:09:59 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: [PATCH] proc: add missing '\0' back to /proc/$pid/cmdline
-Message-ID: <20180620060959.upeetkzaz7jpd57a@unicorn.suse.cz>
-References: <20180619092254.kmww3fpqjqcsjrna@unicorn.suse.cz>
- <20180619162411.B2B7AA1081@unicorn.suse.cz>
- <CA+55aFwa-mxOFKGiLmbxyJ+LyEjOG07fuYOmcWaYf-SJntneuw@mail.gmail.com>
- <20180620050824.hwijqfhzuu3ip4wo@unicorn.suse.cz>
- <CA+55aFwnXSmB_Xn+-wC1fhnAVSa5KQABah-d2_zt3iNL0Cpwvw@mail.gmail.com>
+        id S932082AbeFTGPV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 02:15:21 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:14815 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751587AbeFTGPQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 02:15:16 -0400
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 19 Jun 2018 23:15:11 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 8CAFFB0C25;
+        Tue, 19 Jun 2018 23:15:15 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Xavier Deguillard <xdeguillard@vmware.com>,
+        Arnd Bergmann <arnd@arndb.de>, <linux-kernel@vger.kernel.org>,
+        Nadav Amit <namit@vmware.com>, <stable@vger.kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>
+Subject: [PATCH v3 2/7] vmw_balloon: do not use 2MB without batching
+Date:   Tue, 19 Jun 2018 16:00:25 -0700
+Message-ID: <20180619230030.112906-3-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180619230030.112906-1-namit@vmware.com>
+References: <20180619230030.112906-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwnXSmB_Xn+-wC1fhnAVSa5KQABah-d2_zt3iNL0Cpwvw@mail.gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 02:51:23PM +0900, Linus Torvalds wrote:
-> On Wed, Jun 20, 2018 at 2:08 PM Michal Kubecek <mkubecek@suse.cz> wrote:
-> >
-> >
-> > > @@ -254,10 +258,19 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
-> > >       while (count) {
-> > >               int got;
-> > >               size_t size = min_t(size_t, PAGE_SIZE, count);
-> >
-> > We limit size to be at most PAGE_SIZE here.
-> >
-> > > +             long offset;
-> > >
-> > > -             got = access_remote_vm(mm, pos, page, size, FOLL_ANON);
-> > > -             if (got <= 0)
-> > > +             /*
-> > > +              * Are we already starting past the official end?
-> > > +              * We always include the last byte that is *supposed*
-> > > +              * to be NUL
-> > > +              */
-> > > +             offset = (pos >= arg_end) ? pos - arg_end + 1 : 0;
-> > > +
-> > > +             got = access_remote_vm(mm, pos - offset, page, size + offset, FOLL_ANON);
-> >
-> > But here we read (size + offset) bytes which may be more than PAGE_SIZE.
-> 
-> Actually, no. We limit size not just to PAGE_SIZE, but to count as well.
-> 
-> And there's *another* limit on 'count' that you missed, namely this part:
-> 
->         /* .. and limit it to a maximum of one page of slop */
->         if (env_end >= arg_end + PAGE_SIZE)
->                 env_end = arg_end + PAGE_SIZE - 1;
-> 
-> coupled with
-> 
->         /* .. and we never go past env_end */
->         if (env_end - pos < count)
->                 count = env_end - pos;
-> 
-> so we know that "pos + size" can never be larger than "arg_end + PAGE_SIZE - 1"
-> 
-> And then:
-> 
->                 offset = (pos >= arg_end) ? pos - arg_end + 1 : 0;
-> 
-> means that "offset" will be bigger than zero only if "pos > arg_end-1".
-> 
-> So let's ignore all other cases, and just say that we care about that
-> case where 'offset' can be non-zero.
-> 
-> So we have
-> 
->    offset = pos - arg_end +1
-> 
-> (from the above initialization of offset), but we also know that
-> 
->    pos + count <= end_end
-> 
-> and since we've limited end_end to "arg_end + PAGE_SIZE -1" we have
-> 
->    pos + count <= arg_end + PAGE_SIZE -1
-> 
-> agreed?
-> 
-> Now, we can do some math on the above. Re-write that "offset = .." equation as
-> 
->    pos = arg_end + offset - 1
-> 
-> And the same time we can  take that "pos + count" inequality, and
-> replacing "pos", we get
-> 
->    arg_end + offset - 1 + count <= arg_end + PAGE_SIZE -1
-> 
-> and then we can remove "arg_end - 1" from both sides, and get
-> 
->    offset+count <= PAGE_SIZE
-> 
-> agreed?
+If the hypervisor sets 2MB batching is on, while batching is cleared,
+the balloon code breaks. In this case the legacy mechanism is used with
+2MB page. The VM would report a 2MB page is ballooned, and the
+hypervisor would only take the first 4KB.
 
-Right... I missed the trick where env_end is no longer real env_end when
-it's used to limit count.
+While the hypervisor should not report such settings, make the code more
+robust by not enabling 2MB support without batching.
 
-And the tests look good too so
+Fixes: 365bd7ef7ec8e ("VMware balloon: Support 2m page ballooning.")
+Cc: stable@vger.kernel.org
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Signed-off-by: Nadav Amit <nadav.amit@gmail.com>
+---
+ drivers/misc/vmw_balloon.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
-Tested-by: Michal Kubecek <mkubecek@suse.cz>
-
-Michal Kubecek
+diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+index 28e77ab1e136..60ab83d3d0ef 100644
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -341,7 +341,13 @@ static bool vmballoon_send_start(struct vmballoon *b, unsigned long req_caps)
+ 		success = false;
+ 	}
+ 
+-	if (b->capabilities & VMW_BALLOON_BATCHED_2M_CMDS)
++	/*
++	 * 2MB pages are only supported with batching. If batching is for some
++	 * reason disabled, do not use 2MB pages, since otherwise the legacy
++	 * mechanism is used with 2MB pages, causing a failure.
++	 */
++	if ((b->capabilities & VMW_BALLOON_BATCHED_2M_CMDS) &&
++	    (b->capabilities & VMW_BALLOON_BATCHED_CMDS))
+ 		b->supported_page_sizes = 2;
+ 	else
+ 		b->supported_page_sizes = 1;
+-- 
+2.17.0
 
