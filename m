@@ -3,137 +3,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A37C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9A9C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 973A52083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:11:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973A52083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E09E20836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:12:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E09E20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757159AbeFSKLG convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:11:06 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5330 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757116AbeFSKLB (ORCPT
+        id S937535AbeFSKMS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 06:12:18 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:52893 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756569AbeFSKMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:11:01 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b28d69d0000>; Tue, 19 Jun 2018 03:10:37 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 19 Jun 2018 03:11:02 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 19 Jun 2018 03:11:02 -0700
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 19 Jun
- 2018 10:10:50 +0000
-Subject: Re: [PATCH] dt-bindings: Fix unbalanced quotation marks
-To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
-        <devicetree@vger.kernel.org>
-CC:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Anthony Kim <anthony.kim@hideep.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-mips@linux-mips.org>, <netdev@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <alsa-devel@alsa-project.org>
-References: <20180617143127.11421-1-j.neuschaefer@gmx.net>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <819db945-1f89-93d3-b213-365a9704e100@nvidia.com>
-Date:   Tue, 19 Jun 2018 11:10:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 06:12:16 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fVDcU-0000GY-0d; Tue, 19 Jun 2018 04:12:14 -0600
+Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fVDcE-0004Y1-LC; Tue, 19 Jun 2018 04:12:13 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+References: <20180619145605.1eb8e86f@canb.auug.org.au>
+Date:   Tue, 19 Jun 2018 05:11:45 -0500
+In-Reply-To: <20180619145605.1eb8e86f@canb.auug.org.au> (Stephen Rothwell's
+        message of "Tue, 19 Jun 2018 14:56:05 +1000")
+Message-ID: <874lhz9jby.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180617143127.11421-1-j.neuschaefer@gmx.net>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-XM-SPF: eid=1fVDcE-0004Y1-LC;;;mid=<874lhz9jby.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX183fVYYfAKDl4/NtHg6snwxtdrbrrB6vHo=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: linux-next: manual merge of the userns tree with the vfs tree
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
+> Hi all,
+>
+> Today's linux-next merge of the userns tree got conflicts in:
+>
+>   fs/proc/inode.c
+>   fs/proc/root.c
+>
+> between commits:
+>
+>   0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
+>   83cd45075c36 ("proc: Add fs_context support to procfs")
+>
+> from the vfs tree and commit:
+>
+>   cc8cda3af2ba ("proc: Simplify and fix proc by removing the kernel mount")
+>
+> from the userns tree.
+>
+> I don't know how to fix this up, so I just dropped the userns tree for
+> today (since it only contained that one commit).
 
-On 17/06/18 15:31, Jonathan Neuschäfer wrote:
-> Multiple binding documents have various forms of unbalanced quotation
-> marks. Fix them.
-> 
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
-> 
-> Should I split this patch so that different parts can go through different trees?
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.txt          | 2 +-
->  .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt        | 2 +-
->  Documentation/devicetree/bindings/input/touchscreen/hideep.txt  | 2 +-
->  .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt      | 2 +-
->  .../devicetree/bindings/interrupt-controller/st,stm32-exti.txt  | 2 +-
->  Documentation/devicetree/bindings/mips/brcm/soc.txt             | 2 +-
->  Documentation/devicetree/bindings/net/fsl-fman.txt              | 2 +-
->  Documentation/devicetree/bindings/power/power_domain.txt        | 2 +-
->  Documentation/devicetree/bindings/regulator/tps65090.txt        | 2 +-
->  Documentation/devicetree/bindings/reset/st,sti-softreset.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt    | 2 +-
->  Documentation/devicetree/bindings/sound/qcom,apq8096.txt        | 2 +-
->  12 files changed, 12 insertions(+), 12 deletions(-)
+The userns tree is a fix for a regression that I am sending to Linus
+ASAP.  I don't remember any fundamental conflicts.  After we get 4.17
+sorted out I will worry about this.
 
-...
+Eric
 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> index 1099fe0788fa..f246ccbf8838 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra20-ictlr.txt
-> @@ -15,7 +15,7 @@ Required properties:
->    include "nvidia,tegra30-ictlr".	
->  - reg : Specifies base physical address and size of the registers.
->    Each controller must be described separately (Tegra20 has 4 of them,
-> -  whereas Tegra30 and later have 5"  
-> +  whereas Tegra30 and later have 5).
->  - interrupt-controller : Identifies the node as an interrupt controller.
->  - #interrupt-cells : Specifies the number of cells needed to encode an
->    interrupt source. The value must be 3.
-
-For the above Tegra portion ...
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
-
--- 
-nvpublic
