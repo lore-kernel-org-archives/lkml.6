@@ -3,82 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36755C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D6FC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E36722083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:08:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EEFF2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:09:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O/6BrMj9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E36722083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+q5HHXW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EEFF2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756498AbeFSIIq (ORCPT
+        id S1756575AbeFSIJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:08:46 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59902 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756448AbeFSIIn (ORCPT
+        Tue, 19 Jun 2018 04:09:07 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41538 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756535AbeFSIJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:08:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yzuCCPw5tAkt3dW+ZM3YxgiO0gREicFwTILWVl3cMtg=; b=O/6BrMj9C15aeI0XeFD4LAe65
-        qkoYb1MN2OPtNVc6xSFA7EcVH3tLIWf9u4dvQdVMD/f/JHaC3G6zVBFgn8WMQoE2GqoZaqB/UfBrt
-        F1DUGGksABWRIT4uhsb5a3Tv+mxdhQttUx39ea4ONUUpCte+7hVDl2O5k6BTqOEKR5yr8RrfrGFF/
-        v/tVVuBXIv2PoDHPZqunGv0aJmYL3CGYx/3bYeFS8rxCvlS/CDtASoBORQCVkPnEzHPS4E/EVI1+W
-        K9UMAW9X+HeoZdsR6aJpL3w0JZDgtKygFsQaQp1NywspmLaCz1EfFGvKwwB6J5Jkw40M2WsQDSvkg
-        k7ESfZmZg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVBgl-0005aT-LF; Tue, 19 Jun 2018 08:08:31 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 15D8D2029FA0B; Tue, 19 Jun 2018 10:08:30 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 10:08:30 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
- locks
-Message-ID: <20180619080830.GD2476@hirez.programming.kicks-ass.net>
-References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
- <20180618143818.50b2f2f9@alans-desktop>
+        Tue, 19 Jun 2018 04:09:05 -0400
+Received: by mail-lf0-f65.google.com with SMTP id d24-v6so28715012lfa.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 01:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=pgITfR1LCt7o3P6uj5BDGBifDaW2vF7n4ElX8J9sYJ4=;
+        b=a+q5HHXWydPwHW/DbvB6mxFsgyQvvSEAyW7YbhM28f77SLbHoO7B9HwfkWJxrrLizW
+         KKzqVQVIaLAvZrQRZzTzNuIV19mor2mwfY/M9sH6Ij0G34MdBGGtH+pnf37tmHeYEltt
+         BESAzMAmx3qEYt1BsyoP6P8yM/HiEgvif4YzZjGM9TIEJ8vYEN6eVwKlwAM1ZsD66QL6
+         EY3uCXzRbjYHMUHZoxJwqtj3X/27dbCDGeJj65uYeVcFIt7v9KluATJvSWY8jZzdYFeZ
+         Y+ymeaOC2N9cYFnhFT1bDvAyOErQyy/ThOzbWoKEwIKN6jkweRulATwVQOJ5uFObjXJ3
+         TTHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=pgITfR1LCt7o3P6uj5BDGBifDaW2vF7n4ElX8J9sYJ4=;
+        b=chWU/fB/WFsA9p4i4iWT9/XFBu9K4AlwV49mYzU2xv6FFy9Plxw51LJWXj8O8ZPtzK
+         Qge8ArDUqabQlfJeYllnsb4wKNVzsh9BryusjyYplXsTmIP32v+p45xGO/sQ660ewKoj
+         ca6wSSFosDiUBWXOVYTJD5nhSQDt7UrBdIF5gmUrGot5FKrbxXqUKk7maqBRKrUxusAV
+         stP5gb4EkaIn1IzzPnmYTDM/nl1mgOdFTtKQd522/On7/KJMb0LnKPgLWD8aT48qzS4k
+         HMJL1JUeR4at6L7rdZxxI3A5vzHzXtZSvwRb7RlQ34MTcuoCq8LdvyxtLS3wEZGWJ+AA
+         wIdA==
+X-Gm-Message-State: APt69E1jIWOJf6u2OOPrRqLN5qfOWkONU2B+dGo4PX+W6p2HWx3Rho82
+        WlFl5yoA6kuGmzL05acfwl3H0Yy8+OfmyrIgWjeVqQ==
+X-Google-Smtp-Source: ADUXVKJLYc91X+yd1EZzDm9Tqeh6dvuTsR8y37zB8mnmQ1wGOCo4J1f1Y6VtyticxTC/HGYlNK4VVn8/+tNSYGSUr9A=
+X-Received: by 2002:a2e:804c:: with SMTP id p12-v6mr10250711ljg.22.1529395743668;
+ Tue, 19 Jun 2018 01:09:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618143818.50b2f2f9@alans-desktop>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 01:09:03
+ -0700 (PDT)
+In-Reply-To: <20180619071828.e3ahbyprthi6i6t4@kahja.local>
+References: <20180618150717.1066151-1-arnd@arndb.de> <20180619071828.e3ahbyprthi6i6t4@kahja.local>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 19 Jun 2018 10:09:03 +0200
+X-Google-Sender-Auth: jZog-Nw80f25iGSGTF_H1kDzzUc
+Message-ID: <CAK8P3a03_CdgLCfov7Ynn69-V3L7RKoJ=6jxsoTWf7+NM_8-Aw@mail.gmail.com>
+Subject: Re: [PATCH] staging: rtl8723bs: remove get_monotonic_boottime()
+To:     Quytelda Kahja <quytelda@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Bastien Nocera <hadess@hadess.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Quytelda Kahja <quytelda@tamalin.org>,
+        Arushi Singhal <arushisinghal19971997@gmail.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 02:38:18PM +0100, Alan Cox wrote:
-> Given printk nowdays is already somewhat unreliable with all the perf
-> related changes,
+On Tue, Jun 19, 2018 at 9:18 AM, Quytelda Kahja <quytelda@gmail.com> wrote:
+> I'm fairly sure this doesn't matter functionally (yet), but perhaps
+> 'notify_timestamp' should be updated to an 's64' type since ktime_to_us()
+> returns a signed type?
 
-printk is a steaming pile of @#$#@, unreliable doesn't even begin to
-cover it.
+I think it's fine either way, ktime_t is only signed to deal with
+differences between
+times and the theoretical case of running with local time set to a
+date before 1970
+(which I'm sure fails for a number of other reasons), but boottime is guaranteed
+to be positive as well as monotonically increasing, so an unsigned
+type is fine here.
 
-> and we have other good debug tools
+> That note aside, I think this is good.
 
-What other good debug tools do you have? The only thing I have that
-actually works is earlyser/8250_early -- and I route everything printk
-into that.
+> Reviewed-by: Quytelda Kahja <quytelda@tamalin.org>
+
+Thanks for taking a look!
+
+     Arnd
