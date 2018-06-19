@@ -2,132 +2,125 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F634C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0D2C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 091D920652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091D920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id D5C19205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:23:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="o2soD1yh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5C19205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966617AbeFSPWV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:22:21 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:42681 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965599AbeFSPWT (ORCPT
+        id S966630AbeFSPXI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:23:08 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37572 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965599AbeFSPXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:22:19 -0400
-Received: by mail-vk0-f67.google.com with SMTP id s187-v6so36449vke.9;
-        Tue, 19 Jun 2018 08:22:18 -0700 (PDT)
+        Tue, 19 Jun 2018 11:23:06 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 31-v6so32604plc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:23:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=SaN4Frn4nribuqiKUuDZC+THHVdnIlI6VvpmHTO1oZ4=;
+        b=o2soD1yhJdW7yfOGwrWAKWCPgOQxA+n4pfpRqfTQX4x8+VuF+1fZIBtYWNkpeJNJcJ
+         t+9+hmfH17sRmg3o1aJ204s5g5QxgUPXVIOYJ7VomIYfaXh7oodlcmvy8CFDMeRy00g+
+         3FNzbE+TncQcWjN5FypqOilQvaFHVFPZUoMAB7XD3FKceQN0Jtr4Xz2Xs7Q/t/CVcBDK
+         4X13wRP98TXFmCLlPlBi0fXdI7XrQmOE3ab0TjKjOeabToDM5zXUqGsTE6Jlz8cSSaxQ
+         pbr7wPZ6hplfLoJupS+BFrqEkRCY4XwZtiarVwUlUgjlBOb/DbfJkm7szvBoMmf6gjyG
+         AB3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ttpLxZC1KiR+QgbX3cdSBKAtZ5vW9fxtGC6X+qHpRGA=;
-        b=cilqzxNMygWN0g5WtUtlcyjiosSCIw7NbRHCAOkfuESKARB8ufhDUqHJggEV+Ypf5L
-         D6kHmhUeTW9zg5wtmMkEUr4J0rpoxPHKZ8Xoren7OJi7kEQlX6o4VQZ2htEbLE5V09Gw
-         OpJYyyF/hpUYoWnBKnsZvhw+FFDFKK2bcz4yL+vyf0kj4cHJ2pQy7PtxGseBkez9LVEn
-         r98QacGm6ZPc2RlGrFHXVqbg9vBULChdOpnW1TOOh5eXv1VoEXGkAm+6KqanLMETtne0
-         ANRSjbxx5/QVQwQnYXBdyUCD2O3uQy4vjXEfrOHIMT6hFpzS9tVPryC4spZpRaLgpg89
-         r1Bw==
-X-Gm-Message-State: APt69E3UmmEYrE1M1RCNd+vLXD5ST8XBfFXydJZtWzWPbLULwmeu1nEC
-        pTsWfGIz/B2JwBwFHaKkpeM789yKBqROAqGrrQg=
-X-Google-Smtp-Source: ADUXVKLhHUazeadbvhUKS0pske0Xy9L/WCW5A7dP0+eSNVYAbk4NoIKXkbInbsOLRpo1sqwUiITFDKrk95fZkchN5l8=
-X-Received: by 2002:a1f:8307:: with SMTP id f7-v6mr9837428vkd.3.1529421737795;
- Tue, 19 Jun 2018 08:22:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180619135518.8990-1-geert+renesas@glider.be>
- <20180619135518.8990-2-geert+renesas@glider.be> <CAJZ5v0gGuTDCf8Bsefyj5R6mF=SXZDrt7JacNU5vBZOf84QsvA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gGuTDCf8Bsefyj5R6mF=SXZDrt7JacNU5vBZOf84QsvA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 19 Jun 2018 17:22:06 +0200
-Message-ID: <CAMuHMdWgdsSS7qcfPmHnvL-XmXzyoS=bMGgc6q0urcvO5upWvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] PM / wakeup: Add callback for wake-up change notification
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=SaN4Frn4nribuqiKUuDZC+THHVdnIlI6VvpmHTO1oZ4=;
+        b=nM1wrT9McL+w2TIKrNdhPyTQLGehxORKZFloP17o7FLMJ33Gk62pqkwbnEcUKK//iS
+         uz4tUaWZLFh25WdDLAjbvuLHRAloF0VYUdojf7SYp65jlKHCn0+imSnMBPudklQKV7f1
+         U3yZiJluSloKWxWs7ey2/VFNqqS5oKuu5wvack3nZPiFevEi9SNZvGikOAjdnxUwEjFM
+         qPzITRh3tkw9Pvrey7g4PATh8Kafwh1TLlKm8zb8NE0jF9NczllHD6O3flJU1vSop6C8
+         2ku7Na9enfRoPBBQXlSPrc8/raefLi56oLXrHVJxvkHn4XLc0lyWx1COy8W/Eiq2zZJT
+         xUcA==
+X-Gm-Message-State: APt69E2RwXLw75+bhnBuzYx8N/OE0gKxs3Rz7wuG+a1tQjukz3S29pcD
+        iofQdgbGe5gHMdm1aC0huc0DMsqZXms=
+X-Google-Smtp-Source: ADUXVKLnNoKUGF7FoWdNuC/zsrpRXDkBRRKmceHTNrhDo2QidickveQzwG5Tm9u/qeH9ifJsvfmRoA==
+X-Received: by 2002:a17:902:2f43:: with SMTP id s61-v6mr19189101plb.274.1529421786250;
+        Tue, 19 Jun 2018 08:23:06 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b023:c12a:9165:dc8d:85a7:914? ([2600:1010:b023:c12a:9165:dc8d:85a7:914])
+        by smtp.gmail.com with ESMTPSA id p16-v6sm45203548pfd.47.2018.06.19.08.23.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 08:23:04 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] x86: Call fixup_exception() before notify_die() in math_error()
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <alpine.DEB.2.21.1806190820210.1692@nanos.tec.linutronix.de>
+Date:   Tue, 19 Jun 2018 08:23:03 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>, Siarhei.Liakh@concurrent-rt.com,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bpetkov@suse.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <048143ED-D567-4B6B-ABF4-EFE5F1B87607@amacapital.net>
+References: <DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com> <CALCETrXUdLZTnf0EF2LVM4ru2G6nkFX--gQ=6JpBRNZ7Gm+MsQ@mail.gmail.com> <alpine.DEB.2.21.1806190820210.1692@nanos.tec.linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
 
-On Tue, Jun 19, 2018 at 4:48 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Tue, Jun 19, 2018 at 3:55 PM, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > Add a callback to inform a device that its wake-up setting has been
-> > changed.  This allows a device to synchronize device configuration with
-> > an external user action.
-> >
-> > E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
-> > switch, the system suspend/resume procedure is:
-> >   1. Configure PMIC for DDR backup mode (by software), which changes the
-> >      role of the accessory power switch from a power to a wake-up
-> >      switch,
-> >   2. Switch accessory power switch off (manually), to prepare for system
-> >      suspend,
-> >   3. Suspend system (by software),
-> >   4. Switch accessory power switch on (manually), to wake up the system.
-> >
-> > As step 2 involves a manual operation, step 1 cannot be combined
-> > with step 3 and performed in the PMIC's suspend callback (unlike on
-> > systems with a momentary power switch).
-> >
-> > Adding the new callback allows to move step 1 to the new callback, to be
-> > performed in response to the user writing "enabled" to the PMIC's
-> > "wakeup" virtual file in sysfs.
->
-> I still don't quite understand this TBH.
->
-> In particular, why do you want a write to "wakeup" trigger this
-> instead of having a special sysfs attr for that exposed by your PMIC
-> driver?
 
-In v1 (https://patchwork.kernel.org/patch/9996567/), I had a
-driver-specific "backup_mode" sysfs file.
-In v2 and later of the driver series (https://lkml.org/lkml/2018/4/18/345),
-I changed that to use the standard "wakeup" file in sysfs, in response to
-a comment from Mark Brown.
+> On Jun 18, 2018, at 11:23 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>=20
+>> On Mon, 18 Jun 2018, Andy Lutomirski wrote:
+>>=20
+>> On Thu, Jun 14, 2018 at 10:10 PM Siarhei Liakh
+>> <Siarhei.Liakh@concurrent-rt.com> wrote:
+>>>=20
+>>> fpu__drop() has an explicit fwait which under some conditions can trigge=
+r
+>>> a fixable FPU exception while in kernel. Thus, we should attempt to fixu=
+p
+>>> the exception first, and only call notify_die() if the fixup failed just=
 
-> Writing "enabled" to "wakeup" for the PMIC should enable the PMIC
-> itself to wake up the system, which isn't quite the case, or is it?
+>>> like in do_general_protection(). The original call sequence incorrectly
+>>> triggers KDB entry on debug kernels under particular FPU-intensive
+>>> workloads. This issue had been privately observed, fixed, and tested
+>>> on 4.9.98, while this patch brings the fix to the upstream.
+>>=20
+>> Reviewed-by: Andy Lutomirski <luto@kernel.org>
+>>=20
+>> With the caveat that you are perpetuating what is arguably a bug in
+>> some of the other entries: math_error() can now be called with IRQs
+>> off and return with IRQs on.  If we actually start asserting good
+>> behavior in the entry code, we'll need to fix this.
+>=20
+> Confused. math_error() is still invoked with interrupts off. What's
+> different now is that notify_die() is called with interrupts conditionally=
 
-Actually the PMIC cannot wake up the system if backup mode is not enabled.
-When suspending the system (PSCI suspend) without enabling backup mode
-first, the system will just crash (which cannot be distinguished from being
-suspended, as PSCI doesn't support any other wake-up sources anyway[*] ;-)
-So in that sense writing "enabled" to the "wakeup" file does enable the
-PMIC to wake up the system.
+> enabled while upstream it's always called with interrupts disabled.
 
-Do you still prefer a driver-specific sysfs file?
-Thanks!
+True, but I don=E2=80=99t think that matters. What I=E2=80=99m grumbling abo=
+ut is that we can do cond_local_irq_enable() and then return without local_i=
+rq_disable().
 
-[*] Perhaps you remember my ill-received attempt to prevent the system from
-    using PSCI system suspend when any other wake-up sources were enabled?
-    ("[PATCH/RFC 0/6] PSCI: Fix non-PMIC wake-up if SYSTEM_SUSPEND cuts
-     power", https://lkml.org/lkml/2017/2/20/566).
+Anyway, I think the patch is fine as is. We can unsuck the entry IRQ handlin=
+g another day.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>=20
+> Thanks,
+>=20
+>    tglx
+>=20
+>=20
+>=20
