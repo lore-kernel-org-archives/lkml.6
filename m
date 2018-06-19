@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1774C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFA2C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:02:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 671F82083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:01:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 671F82083A
+	by mail.kernel.org (Postfix) with ESMTP id 6FB2D2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:02:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB2D2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937481AbeFSIBp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:01:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49675 "EHLO
+        id S937488AbeFSICK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:02:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38137 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937309AbeFSIBn (ORCPT
+        with ESMTP id S937349AbeFSICH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:01:43 -0400
+        Tue, 19 Jun 2018 04:02:07 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5J81MJp3015090
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5J81rAl3015138
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 01:01:22 -0700
+        Tue, 19 Jun 2018 01:01:53 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5J81Mtv3015087;
-        Tue, 19 Jun 2018 01:01:22 -0700
-Date:   Tue, 19 Jun 2018 01:01:22 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5J81rQQ3015135;
+        Tue, 19 Jun 2018 01:01:53 -0700
+Date:   Tue, 19 Jun 2018 01:01:53 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-d30faff900e666f9a6395a159fdd353c02f5bed0@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, john.stultz@linaro.org,
-        mlichvar@redhat.com, arnd@arndb.de, sboyd@kernel.org,
-        hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de
-Reply-To: arnd@arndb.de, john.stultz@linaro.org, mlichvar@redhat.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          mingo@kernel.org, sboyd@kernel.org
-In-Reply-To: <20180618140811.2998503-3-arnd@arndb.de>
-References: <20180618140811.2998503-3-arnd@arndb.de>
+Message-ID: <tip-58a10456d7175fa674b951f1fd7ead3d9a550db4@git.kernel.org>
+Cc:     hpa@zytor.com, deepa.kernel@gmail.com, arnd@arndb.de,
+        mingo@kernel.org, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, ebiederm@xmission.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org, arnd@arndb.de,
+          deepa.kernel@gmail.com, hpa@zytor.com
+In-Reply-To: <20180618143246.3865099-1-arnd@arndb.de>
+References: <20180618143246.3865099-1-arnd@arndb.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] timekeeping: Use ktime_get_real_ts64() instead of
- getnstimeofday64()
-Git-Commit-ID: d30faff900e666f9a6395a159fdd353c02f5bed0
+Subject: [tip:timers/core] posix-timers: Use new ktime_get_*_ts64() helpers
+Git-Commit-ID: 58a10456d7175fa674b951f1fd7ead3d9a550db4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,71 +57,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d30faff900e666f9a6395a159fdd353c02f5bed0
-Gitweb:     https://git.kernel.org/tip/d30faff900e666f9a6395a159fdd353c02f5bed0
+Commit-ID:  58a10456d7175fa674b951f1fd7ead3d9a550db4
+Gitweb:     https://git.kernel.org/tip/58a10456d7175fa674b951f1fd7ead3d9a550db4
 Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Mon, 18 Jun 2018 16:08:01 +0200
+AuthorDate: Mon, 18 Jun 2018 16:32:24 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 19 Jun 2018 09:56:26 +0200
+CommitDate: Tue, 19 Jun 2018 09:56:27 +0200
 
-timekeeping: Use ktime_get_real_ts64() instead of getnstimeofday64()
+posix-timers: Use new ktime_get_*_ts64() helpers
 
-The two do the same, this moves all users to the newer name for consistency.
+Some of the oddly named time accessor functions now have a more consistent
+naming, which should be used from now on so the aliases can be removed.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
 Cc: y2038@lists.linaro.org
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Miroslav Lichvar <mlichvar@redhat.com>
-Link: https://lkml.kernel.org/r/20180618140811.2998503-3-arnd@arndb.de
+Cc: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Link: https://lkml.kernel.org/r/20180618143246.3865099-1-arnd@arndb.de
 
 ---
- kernel/time/ntp.c         | 6 +++---
- kernel/time/timekeeping.c | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ kernel/time/posix-stubs.c  |  2 +-
+ kernel/time/posix-timers.c | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index a09ded765f6c..10a79053e82f 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -502,7 +502,7 @@ static void sched_sync_hw_clock(struct timespec64 now,
+diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
+index 26aa9569e24a..2c6847d5d69b 100644
+--- a/kernel/time/posix-stubs.c
++++ b/kernel/time/posix-stubs.c
+@@ -81,7 +81,7 @@ int do_clock_gettime(clockid_t which_clock, struct timespec64 *tp)
+ 		ktime_get_ts64(tp);
+ 		break;
+ 	case CLOCK_BOOTTIME:
+-		get_monotonic_boottime64(tp);
++		ktime_get_boottime_ts64(tp);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index e08ce3f27447..fcf90a10c43a 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -228,21 +228,21 @@ static int posix_ktime_get_ts(clockid_t which_clock, struct timespec64 *tp)
+  */
+ static int posix_get_monotonic_raw(clockid_t which_clock, struct timespec64 *tp)
  {
- 	struct timespec64 next;
+-	getrawmonotonic64(tp);
++	ktime_get_raw_ts64(tp);
+ 	return 0;
+ }
  
--	getnstimeofday64(&next);
-+	ktime_get_real_ts64(&next);
- 	if (!fail)
- 		next.tv_sec = 659;
- 	else {
-@@ -537,7 +537,7 @@ static void sync_rtc_clock(void)
- 	if (!IS_ENABLED(CONFIG_RTC_SYSTOHC))
- 		return;
  
--	getnstimeofday64(&now);
-+	ktime_get_real_ts64(&now);
+ static int posix_get_realtime_coarse(clockid_t which_clock, struct timespec64 *tp)
+ {
+-	*tp = current_kernel_time64();
++	ktime_get_coarse_real_ts64(tp);
+ 	return 0;
+ }
  
- 	adjust = now;
- 	if (persistent_clock_is_local)
-@@ -591,7 +591,7 @@ static bool sync_cmos_clock(void)
- 	 * Architectures are strongly encouraged to use rtclib and not
- 	 * implement this legacy API.
- 	 */
--	getnstimeofday64(&now);
-+	ktime_get_real_ts64(&now);
- 	if (rtc_tv_nsec_ok(-1 * target_nsec, &adjust, &now)) {
- 		if (persistent_clock_is_local)
- 			adjust.tv_sec -= (sys_tz.tz_minuteswest * 60);
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 4786df904c22..77c436a0070b 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2310,7 +2310,7 @@ int do_adjtimex(struct timex *txc)
- 			return ret;
- 	}
+ static int posix_get_monotonic_coarse(clockid_t which_clock,
+ 						struct timespec64 *tp)
+ {
+-	*tp = get_monotonic_coarse64();
++	ktime_get_coarse_ts64(tp);
+ 	return 0;
+ }
  
--	getnstimeofday64(&ts);
-+	ktime_get_real_ts64(&ts);
+@@ -254,13 +254,13 @@ static int posix_get_coarse_res(const clockid_t which_clock, struct timespec64 *
  
- 	raw_spin_lock_irqsave(&timekeeper_lock, flags);
- 	write_seqcount_begin(&tk_core.seq);
+ static int posix_get_boottime(const clockid_t which_clock, struct timespec64 *tp)
+ {
+-	get_monotonic_boottime64(tp);
++	ktime_get_boottime_ts64(tp);
+ 	return 0;
+ }
+ 
+ static int posix_get_tai(clockid_t which_clock, struct timespec64 *tp)
+ {
+-	timekeeping_clocktai64(tp);
++	ktime_get_clocktai_ts64(tp);
+ 	return 0;
+ }
+ 
