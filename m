@@ -2,86 +2,148 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAE7C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA3EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 483E720874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:59:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483E720874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BC9720883
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:01:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vc/lydKI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC9720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966397AbeFSM7F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:59:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:49674 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965883AbeFSM7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:59:03 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 773F180D;
-        Tue, 19 Jun 2018 05:59:03 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82D6F3F557;
-        Tue, 19 Jun 2018 05:58:59 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 13:58:58 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
- framework
-Message-ID: <20180619125857.GY17720@e108498-lin.cambridge.arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-4-quentin.perret@arm.com>
- <20180619113408.GQ2458@hirez.programming.kicks-ass.net>
+        id S1757219AbeFSNBO (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:01:14 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36579 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755616AbeFSNBM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:01:12 -0400
+Received: by mail-pg0-f66.google.com with SMTP id m5-v6so9152847pgd.3;
+        Tue, 19 Jun 2018 06:01:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Jwg4yjXFakzeSm/U0KvedSppQOjv6aTFz/fs5Kqj7ZQ=;
+        b=vc/lydKI4r1jbBoBxUKYOpbPv04/LLW0XMNVdI9ucPkX3pW9BUIaSHZdagSVwFyveg
+         fDOtr5rhZFsKPwCySLvt9eDWcwEr71YNt1gsH7w+Z5pcagbmEjpLlJMCjUYbVsL2792m
+         ty9L8tgW0TgqKf65bTFlrGhmnwiNr5mR6thKi4ep940i52t04O4/gM7Z8pjIybhPZnZA
+         OqrmvHxgr2SFNSaGs8KFMBPq/Cte/qkoZkScOLgalIJh56/v28oqJx7BcHYxnSu9zr/Z
+         alEpfUQjZ2phzwK6T/rl0jgfN+AQcl4QELbIHKTPSPgNvvWy0w/R13l0yOOApETWw1Ps
+         Hj2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Jwg4yjXFakzeSm/U0KvedSppQOjv6aTFz/fs5Kqj7ZQ=;
+        b=nF7QedZBjfOZ2Z6HDOOhbVMc9q6ekjXq2myRit2/KUTYH418VJkCOJ+NE37yY0i54f
+         zpbM9vRwidasnvMoGqvmcdxwPJHeCSX2R4a//bSt0iVEV4WXsndvh6Gkl9DZBx7L+wka
+         XIF7tXSpTNu3INE6w3GlLqU19NX4zSaFnz0yteElak0umA2f4uFuv9b933PmWG1DFUSb
+         85/gMvvi3DZka9fZsHMqOdko9FaDuDGJfZ7DWDZaQbA80NqD70zl1tE3PriM2iuT+hY+
+         RXTPmwP9do2UgPfGFYWxPiOMlMeus6caJF1NffKS/eKSBC+EgsIMNEuIh4oRsOVYToar
+         iEVg==
+X-Gm-Message-State: APt69E3at4ZhzZ9D2wfX2COsTcYn3K/UWJlxB+cs7WryqbIAaU3fkOo0
+        0KYT/gRsg/3gzXWtUKBocuE=
+X-Google-Smtp-Source: ADUXVKJC/xXKdVz2ynYzL10dka7LJKiW/pIc8MQB/Aqr0c+T/3yt4+XmdZFhCstiaWx83L3JkC8NGw==
+X-Received: by 2002:a63:4d14:: with SMTP id a20-v6mr15071908pgb.46.1529413271769;
+        Tue, 19 Jun 2018 06:01:11 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id d18-v6sm12003719pfn.118.2018.06.19.06.01.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 06:01:10 -0700 (PDT)
+Subject: Re: [PATCH] serial: mps2-uart: Initialize early console
+To:     Vladimir Murzin <vladimir.murzin@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <1529384097-1631-1-git-send-email-linux@roeck-us.net>
+ <173551dd-3632-08a6-ec42-2ee416ccb9ad@arm.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <da7ba538-a81e-f2d2-d51c-1b39f5b455f0@roeck-us.net>
+Date:   Tue, 19 Jun 2018 06:01:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619113408.GQ2458@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <173551dd-3632-08a6-ec42-2ee416ccb9ad@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 19 Jun 2018 at 13:34:08 (+0200), Peter Zijlstra wrote:
-> On Mon, May 21, 2018 at 03:24:58PM +0100, Quentin Perret wrote:
-> > +struct em_freq_domain *em_cpu_get(int cpu)
-> > +{
-> > +	struct em_freq_domain *fd;
-> > +	unsigned long flags;
-> > +
-> > +	read_lock_irqsave(&em_data_lock, flags);
-> > +	fd = per_cpu(em_data, cpu);
-> > +	read_unlock_irqrestore(&em_data_lock, flags);
+On 06/19/2018 02:07 AM, Vladimir Murzin wrote:
+> Hi Guenter,
 > 
-> Why can't this use RCU? This is the exact thing read_locks are terrible
-> at and RCU excells at.
+> On 19/06/18 05:54, Guenter Roeck wrote:
+>> The early console code for mps2-uart assumes that the serial hardware is
+>> enabled for transmit when the system boots. However, this is not the case
+>> after reset. This results in a hang in mps2_early_putchar() if the serial
+>> transmitter is not enabled by a boot loader or ROM monitor.
+> 
+> I was under impression that for earlycon there is an assumption/requirement
+> that the serial port must already be setup and configured. For instance, I
+> see such requirement for pl011. So it looks like boot code's fault not to
+> enable serial (for mps2 it needs to setup BAUDDIV as well).
+> 
 
-So the idea was that clients (the scheduler for ex) can get a reference
-to a frequency domain object once, and they're guaranteed it always
-exists without asking for it again.
+Good to know. Fine with me as well; I wasn't aware that such a requirement
+existed.
 
-For example, my proposal was to have the scheduler (patch 05) build its
-own private list of frequency domains on which it can iterate efficiently
-in the wake-up path. If we protect this per_cpu variable with RCU, then
-this isn't possible any-more. The scheduler will have to re-ask
-em_cpu_get() at every wake-up, and that makes iterating over frequency
-domains a whole lot more complex.
+Guenter
 
-Does that make any sense ?
+> I'm not against the patch per se, but I'd like to hear if my understanding of
+> earlycon requirements is correct or not.
+> 
+> Cheers
+> Vladimir
+> 
+>>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>>   drivers/tty/serial/mps2-uart.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/drivers/tty/serial/mps2-uart.c b/drivers/tty/serial/mps2-uart.c
+>> index 9f8f63719126..0743a0551ce1 100644
+>> --- a/drivers/tty/serial/mps2-uart.c
+>> +++ b/drivers/tty/serial/mps2-uart.c
+>> @@ -448,6 +448,14 @@ static struct console mps2_uart_console = {
+>>   
+>>   #define MPS2_SERIAL_CONSOLE (&mps2_uart_console)
+>>   
+>> +static void mps2_early_init(struct uart_port *port)
+>> +{
+>> +	u8 control = readb(port->membase + UARTn_CTRL);
+>> +
+>> +	control |= UARTn_CTRL_TX_ENABLE;
+>> +	writeb(control, port->membase + UARTn_CTRL);
+>> +}
+>> +
+>>   static void mps2_early_putchar(struct uart_port *port, int ch)
+>>   {
+>>   	while (readb(port->membase + UARTn_STATE) & UARTn_STATE_TX_FULL)
+>> @@ -469,6 +477,7 @@ static int __init mps2_early_console_setup(struct earlycon_device *device,
+>>   	if (!device->port.membase)
+>>   		return -ENODEV;
+>>   
+>> +	mps2_early_init(&device->port);
+>>   	device->con->write = mps2_early_write;
+>>   
+>>   	return 0;
+>>
+> 
+> 
 
-Thanks,
-Quentin
