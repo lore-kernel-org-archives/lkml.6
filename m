@@ -2,129 +2,128 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1735C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E29C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88ED320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63EF120836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 22:19:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o/mfD6jx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88ED320693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="wKKJhp7F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63EF120836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965088AbeFSWSa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 18:18:30 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:33309 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964949AbeFSWS0 (ORCPT
+        id S936117AbeFSWTR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 18:19:17 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:40723 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935912AbeFSWTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 18:18:26 -0400
-Received: by mail-yb0-f195.google.com with SMTP id e84-v6so516267ybb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 15:18:25 -0700 (PDT)
+        Tue, 19 Jun 2018 18:19:15 -0400
+Received: by mail-pg0-f66.google.com with SMTP id w8-v6so496037pgp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 15:19:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wSe+OmkgmTCnaER2cb7DzpJkBEG5Omh2Zt7bm2q68kQ=;
-        b=o/mfD6jxpzAVsKiX3n6SHThgp2y41E8c5eWFCWA4IQU76RhXlzz70p+R+DVzTHhUIZ
-         jmEgmE5fdIp8YwaxWS1Ky4/wAasx6a0iISTS0+JIWZRvK/1JpzuphfiaNkyHkFxUo75h
-         ceGJ3UXyjb+K7TdmL2x8+6fl23tAneDaY/YePfxEs/pIkBTYQkKM+OnBU/Grg43fGl/N
-         1trnuDmVM3N7y9u1wdnp3C+RhpLhM+/94bjNOHAEQ5uXxfzXxNcK2Uxn1m1zYtDl1wA2
-         2SKP0r29Jv5ATH3CBYMCQV2wLlJJy2pPxscLER4iPnow7NFuNXkeuAXipeq2KJW5MhnO
-         V05Q==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+sERxtNUIBI5JSphQbyJXa+JULTDg0FWPDhfOqQu4O4=;
+        b=wKKJhp7F73oCsiZErGNLU6/jvGCvGdFqJrMNvgZuD73PLQtt5ru/q/vn0dyMBhvSaZ
+         +a4+3OL0kLRox6LJywg/qCUfWgKnFctwG2bNc+MbtkV/OfOKGolNRJe+Y7+FTdfZSAkk
+         fMMoIp3r0N/oK6xGnOYIefX5I++EL6J7SD0a4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wSe+OmkgmTCnaER2cb7DzpJkBEG5Omh2Zt7bm2q68kQ=;
-        b=kayNQBePS565BMSZvrJLuvOqkKlcSj2KLH5aEmf8o/scvWk1aXy92JMSMxRujO7Nvn
-         BEr4NGLk0FtK+tiOBBKy7x/gUFeTp1IJZS7VxSkcYGl4pVUZ63gWzJlcJVxyseD31M2k
-         Ie//820MYdPFrKVKFAeAMSM29mBjd6da2UrnpoMAxM+V65EuxPUyRIw3Oyr3rjGGen4e
-         e+qEzyW0PDgU+2INNU9NaJiDewQDlSNKs9s8PfCkn+Ld1tRML9810LlzRbMzbpilihkh
-         MthAaiJrlldcbSncPgAksMEOi48b1KG3cj7KPJhQraq+0DeDPve7CY96wRXxCEJRk8eb
-         PFPQ==
-X-Gm-Message-State: APt69E0bukHOOILobCeytsR3/NTg59W5KzGQz54ONgsILGvneDufHRQp
-        vNzeJnUNPgXCeRLpBRaZbWrsy8J3yIWRGh6h5teikA==
-X-Google-Smtp-Source: ADUXVKIDeBbjiNsdwgQjDxKvaf0/vQ3kVcTMZwDZaICdJdgOOQ4bEXInigFRtR964VstMeQ1lsypsHQGYE2r6WlGFtI=
-X-Received: by 2002:a25:9d0b:: with SMTP id i11-v6mr9444174ybp.1.1529446705212;
- Tue, 19 Jun 2018 15:18:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180522222805.80314-1-rajatja@google.com> <20180523175808.28030-1-rajatja@google.com>
- <20180619221651.GH33049@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180619221651.GH33049@bhelgaas-glaptop.roam.corp.google.com>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Tue, 19 Jun 2018 15:17:49 -0700
-Message-ID: <CACK8Z6H7tRndUD4zvPu_GaRkAH7uNwacEb=a-O2ho9vGwHg3kg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Expose PCIe AER stats via sysfs
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Thomas Tai <thomas.tai@oracle.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+sERxtNUIBI5JSphQbyJXa+JULTDg0FWPDhfOqQu4O4=;
+        b=qcI0MB6wigpxAIZ+/XfS3zfr9Vje61p6vk7/LahkMA1UydsHFtnnPO4DStSVw/o8oJ
+         qTL9Xjx59ibI/+L/OrW2S2hP7WLDZxCXafpABinYk03ZYtvYZ0uiFCsqzGdM81EOmt6O
+         O6fpWADOdhUn+NGetAcDjltSdB2u6XTz1MqxAifP1FKML4TnHtHkvGOkn2XjTdV1mEBO
+         GoUhCrddiRPdq0YGmHV5BY6J0vWZJG/iHt10Tfoeef8CuCH3cuQSDxCvDXFSgH3Tr597
+         PzKL2FmFBXTvQb2FdW5KMF0epSKbt1fz3VTomeY/0bVuleIdKQdYukdKvhyoULmkemKa
+         UCDA==
+X-Gm-Message-State: APt69E1ZaIpeMjUAzT8xbZhowIqQDl2ruBKo5w3SGT9e2zawOs5zjZ0Z
+        Sbd72jHbFmSt+J2b1lEl6kphjQ==
+X-Google-Smtp-Source: ADUXVKKM5MshOMkPdQc1/kRxokh6Bq8TOpBcn7thmRGsN2tnUTJu9WhRbfREronWM1KVIujC1pvjcQ==
+X-Received: by 2002:a62:4e07:: with SMTP id c7-v6mr20064848pfb.149.1529446754863;
+        Tue, 19 Jun 2018 15:19:14 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id s75-v6sm912543pfj.125.2018.06.19.15.19.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 15:19:14 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 15:19:14 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        linux-pci <linux-pci@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jes Sorensen <jsorensen@fb.com>, Kyle McMartin <jkkm@fb.com>,
-        Rajat Jain <rajatxjain@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Byungchul Park <byungchul.park@lge.com>
+Subject: Re: [PATCH 1/2] rcu: Assign higher priority to RCU threads if its
+ rcutorture
+Message-ID: <20180619221914.GB41539@joelaf.mtv.corp.google.com>
+References: <20180619062215.221564-1-joel@joelfernandes.org>
+ <20180619063421.GA221670@joelaf.mtv.corp.google.com>
+ <20180619160024.GI3593@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619160024.GI3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sure, no problem. Will do.
-On Tue, Jun 19, 2018 at 3:16 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> On Wed, May 23, 2018 at 10:58:03AM -0700, Rajat Jain wrote:
-> > This patchset exposes the AER stats via the sysfs attributes.
-> >
-> > Patchset v2 has minor changes to v1 based on the review comments,
-> > no functional change.
-> > Primarily:
-> >  * Fix license header
-> >  * Use tabs instead of spaces
-> >  * Remove use on unlikely() etc
-> >  * Move documentation to Documentation/ABI/
-> >
-> > Rajat Jain (5):
-> >   PCI/AER: Define and allocate aer_stats structure for AER capable
-> >     devices
-> >   PCI/AER: Add sysfs stats for AER capable devices
-> >   PCI/AER: Add sysfs attributes to provide breakdown of AERs
-> >   PCI/AER: Add sysfs attributes for rootport cumulative stats
-> >   Documentation/ABI: Add details of PCI AER statistics
-> >
-> >  .../testing/sysfs-bus-pci-devices-aer_stats   | 103 ++++++++++
-> >  Documentation/PCI/pcieaer-howto.txt           |   5 +
-> >  drivers/pci/pci-sysfs.c                       |   3 +
-> >  drivers/pci/pci.h                             |   4 +-
-> >  drivers/pci/pcie/aer/Makefile                 |   2 +-
-> >  drivers/pci/pcie/aer/aerdrv.h                 |  15 ++
-> >  drivers/pci/pcie/aer/aerdrv_core.c            |  11 +
-> >  drivers/pci/pcie/aer/aerdrv_errprint.c        |   7 +-
-> >  drivers/pci/pcie/aer/aerdrv_stats.c           | 192 ++++++++++++++++++
-> >  drivers/pci/probe.c                           |   1 +
-> >  include/linux/pci.h                           |   3 +
-> >  11 files changed, 342 insertions(+), 4 deletions(-)
-> >  create mode 100644 Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >  create mode 100644 drivers/pci/pcie/aer/aerdrv_stats.c
->
-> I broke this by putting all the AER code in one file in v4.18-rc1,
-> sorry!  Would you mind rebasing these on top of that?
->
-> Since everything AER-related is now in aer.c, I'd suggest putting the
-> stats code there, too.
+On Tue, Jun 19, 2018 at 09:00:24AM -0700, Paul E. McKenney wrote:
+> On Mon, Jun 18, 2018 at 11:34:21PM -0700, Joel Fernandes wrote:
+> > On Mon, Jun 18, 2018 at 11:22:14PM -0700, Joel Fernandes wrote:
+> > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > > 
+> > > rcutorture boost tests fail even with CONFIG_RCU_BOOST set because
+> > > rcutorture's threads are equal priority to the default RCU kthreads (RT
+> > > class with priority of 1).
+> > 
+> > Sorry for the weird subject line, I meant "rcu: Assign higher prio if
+> > rcutorture is built into kernel". I have included the patch with the subject
+> > line fixed up below (if you prefer to take that instead).
+> > 
+> > Also one question, incase rcutorture is a module, we can't raise the priority
+> > of the kthreads because it would be too late to do at module load time. In
+> > this case, do you have any ideas on what we can do? I was thinking we can
+> > access the kernel command line from within rcutorture module and check if
+> > 'rcutree.kthread_prio' was passed. And if it is and isn't sufficiently high,
+> > then we avoid testing boost feature at all (and print a nice message telling
+> > the user about the issue).
+> 
+> I do like the idea of checking and printing the message in this case.
+
+Cool, I used this approach in the series I just sent. I agree its good to
+report it.
+
+> Another alternative would be to allow rcutree.kthread_prio to be changed
+> at runtime.  But one caution: rcutree.kthread_prio applies to a number
+> of kthreads, not just the boost kthreads, so this approach might have
+> some unwelcome side-effects.
+
+Yes, I was trying to avoid those complexities just because of rcutorture.
+
+> > OTOH, we can just let rcutorture module loaders fail the test if you feel
+> > very few automation tests do the module loading way of rcutorture and so a
+> > boost test failure there is tolerable. For me, I will likely be running
+> > rcutorture only as a built-in so I am Ok with not special casing it within
+> > rcutorture.
+> 
+> I don't know of anyone using the module-loading approach.  Probably
+> someone somewhere does it from time to time, though.
+
+Oh Ok :). Then I guess the warning print from rcutorture is sufficient as I did.
+
+thanks!
+
+ - Joel
+
