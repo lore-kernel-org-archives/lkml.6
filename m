@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A215C5AE5A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA80C5AE5A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238612075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C42422075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 19:57:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jyeq9yRb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238612075E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVlPqIIq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42422075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030846AbeFST5Q (ORCPT
+        id S1030823AbeFST5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 15:57:16 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52755 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030806AbeFST5K (ORCPT
+        Tue, 19 Jun 2018 15:57:12 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:55561 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1030448AbeFST5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 15:57:10 -0400
-Received: by mail-wm0-f67.google.com with SMTP id p126-v6so2305460wmb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 12:57:10 -0700 (PDT)
+        Tue, 19 Jun 2018 15:57:05 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v16-v6so2272526wmh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 12:57:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/Sa3kA+EAp14LH46GgtV7QPWU5+TByUHKF/FSAx4vn0=;
-        b=jyeq9yRbwOoPO/+WI2jkfFrwSzoTgeHpwPGPrgXm7Oeump262CLBjJMKOd/ezKfD1e
-         O+6/FHb9CEQqDi71ydVpG64Duh36BSTI0HUndVYjIC7jEbXrWze9mGD1CDqfsh7tv5kj
-         q0qauKkU2k8mK9MF7wJvbypYRUsH1fO7gfO94YEYQIea2ZHDi1pLK1ximxyiLPu+PlFT
-         F0Wan5gbKFcAPnzjFaZkX5i20m0rV1ZT9CoDX9rQcDajC5/k9ZDjHK14+Z0PCJ1m3vmm
-         8HPmeYiyl3BHym15vSb7z8xSVbo+W4XYlWGjJYSpy4iSkf6wMZ1QTwmF5RqF5sw9Vnlw
-         mQog==
+        bh=wkAcahGsPARvz4KXA49j3SuNHKNcz47sqBhDqxG0je0=;
+        b=JVlPqIIqn/hz8H8tgy9DopU9A2mcXkKDOYtbpycbBwendsjSsjeq1m5XppzXjsGZsv
+         zrYXYyYN/ruNUrRdwilj4n3C69KemBtuwZVPsPigg9EYUsqnKQwa7hlmqrm5R++n+ZSc
+         6hmaZU5mVkt9TgVKZiCV9HJ3BWgRHEO2a1SCISXX/9tq79nwJlOImpGGlZX5zQOgA6WS
+         tmnhLzZzBh2yAPjrt+53Wnzz9THZtlffsLOVqbncJY3yRJtDvY6eEnXqqaE3KDuIvcMn
+         6qN/4RfbW79XM04vACxkvP1qBF9rKgGq0JUAyFNSaULsq7i/KxjC6m50SDhF64zHlBMP
+         Lw1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/Sa3kA+EAp14LH46GgtV7QPWU5+TByUHKF/FSAx4vn0=;
-        b=Xi25QUHZ1u3xdag0tWfWubT5xmI2+S+51sJOIufsutpBKdnGPI/ChMS3nwI/Vl7aA9
-         cB5pKeycGeAY2Bob3rDCJrMlvc2YLJCr3Tu0O/FWYO9T4GFI5SOr5cyT330qNoJnDJYe
-         nSN7ehMI6cfAOV/oH2tbJXOXEu3TR4HuHMVdUCzDRaiWnrX7j++2NUdL8o6XP835V9Pu
-         BfGr1mO7FzpMy+rrBSMePjFMGhaH6HCx6bpLzDeOm/c2R4gk00K/uxmoZSlvduHVZLXG
-         EyxbI+0OUjecqZ4yGY94YGZlJ/uPzyi5CxQrBxNo+eHejfYFDCPe5+tq8Q71LkJLpENe
-         nJbw==
-X-Gm-Message-State: APt69E0yTnPNdecF+KRbKrm3d9iveVy+M70yVjgGbLHLVcc2mpujzAPv
-        TQ2hR50u5X4IBSQBxTLtkVXppg==
-X-Google-Smtp-Source: ADUXVKJSLjMl4AXTZWv65v4cdGf+weBabPhX7vmAcPdCW+32IpmO8wCQdekavfhBt1MJpBq4ipfrow==
-X-Received: by 2002:a1c:d9cb:: with SMTP id q194-v6mr12579728wmg.91.1529438229332;
-        Tue, 19 Jun 2018 12:57:09 -0700 (PDT)
+        bh=wkAcahGsPARvz4KXA49j3SuNHKNcz47sqBhDqxG0je0=;
+        b=R12Odphq8JMFdkLG1sSTBjLZdNK6MqpzWUv1H7a2TlvYQKTBSQMCgK3/tTCMvvftdy
+         7yQHtQ+SHPdfhz0JARZTOl4v4RsS1ojUG1MGZzVAq2UQS0L0JN0CA/He5ZEK0u0sNeJF
+         M5d/IxrsgBvnIzwPA3BCredOlmj9ZUwKFUEhkKiI8dXX5I8Gx+vvfL/B90CwYebxxyhi
+         ij5xyi2l6bpc6gaBKleRqvCyd+aHtEUsFCzvU35A/Qex7Jk8+lsGcaDFAG8KdwSEjian
+         T1emIs8a7MGm3VWZRJmZ5IWArYsgpIV7pbGadfmihJNDOG9vOCMa38EbmkV5uq3WrmT3
+         t6bw==
+X-Gm-Message-State: APt69E1T7p4kreEdSObyawhgl8ISoyZoUvVZS9l4fT9jbExl8a/Wm3Zv
+        asqxanKFFAAfPr7v4iEMt0A=
+X-Google-Smtp-Source: ADUXVKJhbQ2TH7Ya6eodlkqG9TbhD8/nfSZ5ZFwvg6ZZImGfxzFDd2mNblyyImyx4bRzjijbLUga+Q==
+X-Received: by 2002:a1c:110a:: with SMTP id 10-v6mr11797614wmr.130.1529438224389;
+        Tue, 19 Jun 2018 12:57:04 -0700 (PDT)
 Received: from localhost.localdomain (host86-190-130-185.range86-190.btcentralplus.com. [86.190.130.185])
-        by smtp.gmail.com with ESMTPSA id c53-v6sm1105983wrg.12.2018.06.19.12.57.07
+        by smtp.gmail.com with ESMTPSA id c53-v6sm1105983wrg.12.2018.06.19.12.57.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 12:57:08 -0700 (PDT)
+        Tue, 19 Jun 2018 12:57:03 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 9/9] staging: rtl8192u: Correction of spelling mistake in comment.
-Date:   Tue, 19 Jun 2018 20:56:05 +0100
-Message-Id: <20180619195605.31321-10-johnfwhitmore@gmail.com>
+Subject: [PATCH 6/9] staging: rtl8192u: Remove braces from single statement blocks - Style
+Date:   Tue, 19 Jun 2018 20:56:02 +0100
+Message-Id: <20180619195605.31321-7-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180619195605.31321-1-johnfwhitmore@gmail.com>
 References: <20180619195605.31321-1-johnfwhitmore@gmail.com>
@@ -73,26 +73,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simple spelling correction.
-
+Removed the unrequired braces from single statement blocks - Coding Style.
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 05f0c8130458..35d85e0a45a6 100644
+index 732d03e8474e..c942d886429e 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -879,7 +879,7 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
- 	/*
- 	 * TODO: fill suggested rate adaptive rate index and give firmware info
- 	 * using Tx command packet we also shall suggested the first start rate
--	 * set according to our singal strength
-+	 * set according to our signal strength
- 	 */
- 	HT_PickMCSRate(ieee, pOperateMCS);
+@@ -554,11 +554,10 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
  
+ 	//HT capability info
+ 	pCapELE->AdvCoding		= 0; // This feature is not supported now!!
+-	if (ieee->GetHalfNmodeSupportByAPsHandler(ieee->dev)) {
++	if (ieee->GetHalfNmodeSupportByAPsHandler(ieee->dev))
+ 		pCapELE->ChlWidth = 0;
+-	} else {
++	else
+ 		pCapELE->ChlWidth = (pHT->bRegBW40MHz ? 1 : 0);
+-	}
+ 
+ //	pCapELE->ChlWidth		= (pHT->bRegBW40MHz?1:0);
+ 	pCapELE->MimoPwrSave		= pHT->SelfMimoPs;
+@@ -727,9 +726,8 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+ 	*posRT2RTAgg++ = 0x01;
+ 	*posRT2RTAgg = 0x10;//*posRT2RTAgg = 0x02;
+ 
+-	if (ieee->bSupportRemoteWakeUp) {
++	if (ieee->bSupportRemoteWakeUp)
+ 		*posRT2RTAgg |= 0x08;//RT_HT_CAP_USE_WOW;
+-	}
+ 
+ 	*len = 6 + 2;
+ 	return;
+@@ -871,9 +869,8 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
+ 	u8 i = 0;
+ 
+ 	// filter out operational rate set not supported by AP, the length of it is 16
+-	for (i = 0; i <= 15; i++) {
++	for (i = 0; i <= 15; i++)
+ 		pOperateMCS[i] = ieee->Regdot11HTOperationalRateSet[i] & pSupportMCS[i];
+-	}
+ 
+ 	/*
+ 	 * TODO: adjust our operational rate set  according to our channel
 -- 
 2.17.1
 
