@@ -2,96 +2,80 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743BEC5AE5A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132FAC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E3020661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF2EB20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 20:20:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRJSPDPU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E3020661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="n7IfIAbZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF2EB20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757336AbeFSUTj (ORCPT
+        id S1030414AbeFSUU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 16:19:39 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:39439 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755265AbeFSUTi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 16:19:38 -0400
-Received: by mail-ua0-f195.google.com with SMTP id n4-v6so667315uad.6
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 13:19:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Cl7T09r+aPR+ac4wUzItobmTJRAlCxC0yELc1HRoIUg=;
-        b=FRJSPDPUbsgaV4A+a626WkosS+UckTaatptMevmHXzwAEu31sGuNZhoYwfEewaMtQK
-         SPGorJFJ38piant4TBb0Ivhpnb78+dtYPpZrd5GQcGbqAsE2g9mIr1K21evkvBYiE7KF
-         8Zg0HcybcHnEe0ujTGp7Qiz+4tP9KvP26wnMHWd9JWug1WGKFZi2ETt4qKmjsTUh3UzX
-         W6Ll00gTfXmQOWyjK130E2Ft+FMZ1CIDMQBNuKOjC0bT4m5DwGZmfOA2sOXd70XD2hfi
-         pzB4Pae8R60cefVeekQLIECk+085a5Q+dohWxNF4bOS09z15E8bVOm1a9PehQ7czsHI+
-         pyag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Cl7T09r+aPR+ac4wUzItobmTJRAlCxC0yELc1HRoIUg=;
-        b=Dq/ejDrFicJyv4GRDw6kJN8xdTMxZTup31VvDFpGjDD4lwbytE1J0j8wH+yzji2ypD
-         iDs0/g31oK0Yhtsj8QTZqjAJ2O6nAWPA3SlUlB54OjP4uVsQDAe0yHwCggTbzfv9lUiQ
-         Ey4WNTCEJhjnlVt9tc9A6DLzs4IlyUxeRKdc2kjYG+eMHmycCq7azqOkMNrK8GcDoKEG
-         ojjJ0Df+NywU/Aa+WeLumgmqqg2ilKSjLr//J+uOGOjVbhbLrKpgpSMC0Uti2fwODuOO
-         GbmQmPZ/P0DDCxi7OLtPm9k0g/oyfTVYWG+JUHzOpEPdbssi1wQrwbVjO+hQ5xFAdUx3
-         5pLQ==
-X-Gm-Message-State: APt69E2MAvJzNbisOoKH7qOg+OdAgGmqtb+CrLXPEMDFGr6lYM704ZLo
-        3iBondNOHwliFXoqb3wXWXQnzE9luslsmTK6Wlo=
-X-Google-Smtp-Source: ADUXVKJuEvtQ9Kggj5ERcE0h8bXTLfEyaPAag/QLrn2JKx+YcKGs9B8tSua5at5+uYxdsG0jCFA0oD5HmiDGMWTAtIM=
-X-Received: by 2002:a9f:3613:: with SMTP id r19-v6mr12118246uad.49.1529439577500;
- Tue, 19 Jun 2018 13:19:37 -0700 (PDT)
+        Tue, 19 Jun 2018 16:20:29 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:46821 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755265AbeFSUU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 16:20:28 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d8d794b5
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 19 Jun 2018 20:14:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=RYmmXi/6qoEk2ZGY65XQwZDUqsU=; b=n7IfIA
+        bZxCzkj9SHjo8NmT5o1Kar87MdnhaaAEDAaVxzND9vs6wMyYmAEgeTMYI+WlYL8f
+        M0zWvqFvNj8neSKfKq5Siq4kzC0hkiRpMF2FN1cVTap7yY7eJvRjptzv+3Y7uHfc
+        b0D8Q25j6pXM16UjhWyLa95JZbD/jpQXBR/OZQXttM99SCmcxfO59ceB/PTrtzE+
+        2PlmbtGHRix43w7pevKPUSLOtqOwOQukEgOr93EMMRjA0t/9IimHy0lY5agbUYHR
+        piaiG8RxA22woa97EjBfbeZr3xN9NlH6rZoC4Cp9Gw0ELbp8Ocv25qIQZIySMcpK
+        tAvfDXIxgSf4iylQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 42d1fd0a (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 19 Jun 2018 20:14:33 +0000 (UTC)
+Received: by mail-oi0-f42.google.com with SMTP id l22-v6so946497oib.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 13:20:27 -0700 (PDT)
+X-Gm-Message-State: APt69E2SINEtr+ENTTYJqMUO6OA3PRPo2qb7sMuCUPKKk8PcdCilPvwA
+        7b5wzztx0Nq1GMvRSYJNgAU4ifjKlNTkv/mgScA=
+X-Google-Smtp-Source: ADUXVKI8aCWjkL96JflmuNdKz7PCHT2K/7Q0imfjRe8ZWuaUk/1IIbKNTVfrfesvr+aT1F7Xbtmn3sjxOXqMrB2+6tU=
+X-Received: by 2002:aca:adc6:: with SMTP id w189-v6mr10686912oie.105.1529439626736;
+ Tue, 19 Jun 2018 13:20:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 13:19:37
- -0700 (PDT)
-In-Reply-To: <20180619195605.31321-6-johnfwhitmore@gmail.com>
-References: <20180619195605.31321-1-johnfwhitmore@gmail.com> <20180619195605.31321-6-johnfwhitmore@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 19 Jun 2018 23:19:37 +0300
-Message-ID: <CAHp75VcnFbc3SKh-6Ovc4nxNTPLaYU9LeGNz8eCRdJficek5EQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] staging: rtl8192u: Use %s and __func__ instead of
- hardcoded string - Style
-To:     John Whitmore <johnfwhitmore@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAHmME9q7aKGNiYauCjyy6Fu+bryPphEoLEMbAObTJgTrTfS2uw@mail.gmail.com>
+ <20180619192139.31781-1-shakeelb@google.com>
+In-Reply-To: <20180619192139.31781-1-shakeelb@google.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Tue, 19 Jun 2018 22:20:15 +0200
+X-Gmail-Original-Message-ID: <CAHmME9ppVOWn7Fo4DzaKN9M+-EZpDpA3Rp_4JoQVoSu8SEX=uw@mail.gmail.com>
+Message-ID: <CAHmME9ppVOWn7Fo4DzaKN9M+-EZpDpA3Rp_4JoQVoSu8SEX=uw@mail.gmail.com>
+Subject: Re: Possible regression in "slab, slub: skip unnecessary kasan_cache_shutdown()"
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>, aryabinin@virtuozzo.com,
+        Alexander Potapenko <glider@google.com>, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kasan-dev@googlegroups.com, Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 10:56 PM, John Whitmore <johnfwhitmore@gmail.com> wrote:
-> Changed a number of hard coded function names to use %s and __func__
+Hi Shakeel,
 
-Oh.
+On Tue, Jun 19, 2018 at 9:21 PM Shakeel Butt <shakeelb@google.com> wrote:
+> Jason, can you try the following patch?
 
-Looking at the code, much better fix would be...
+Your patch also fixed the problem, which was also fixed by enabling
+CONFIG_SLUB_DEBUG, per the other email. I haven't checked to see if
+your patch is simply a subset of what SLUB_DEBUG is doing or what. But
+hopefully this points in the right direction now.
 
-Move IEEE80211_DEBUG() to use netdev_dbg() [dev_dbg() or pr_dbg() as
-last resort) and actually drop it completely in favour of the
-netdev_dbg() followed by removing __func__ parameter completely from
-the messages as DYNAMIC DEBUG will do this if user asks so.
-
-The IEEE80211_DEBUG_DATA() should be just print_hex_dump().
-
-P.S. I would rather NAK this patch because it brings nothing, just a
-waste of time for my opinion.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Jason
