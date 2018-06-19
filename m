@@ -6,71 +6,80 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 647AEC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED53C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0429E20661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:33:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0429E20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id E9B5420661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B5420661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967082AbeFSQdo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:33:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966692AbeFSQdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:33:32 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34DFB20020;
-        Tue, 19 Jun 2018 16:33:31 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 12:33:29 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        linux-media@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] Add TRACE_EVENTs in pwc_isoc_handler()
-Message-ID: <20180619123329.52bf6216@gandalf.local.home>
-In-Reply-To: <CAJs94EZAAuUS4rznPDmD=1aD8B72P0mLft+YDoNs+74pRXr+KA@mail.gmail.com>
-References: <20180617143625.32133-1-matwey@sai.msu.ru>
-        <20180618145854.2092c6e0@gandalf.local.home>
-        <CAJs94EZAAuUS4rznPDmD=1aD8B72P0mLft+YDoNs+74pRXr+KA@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S966935AbeFSQg3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:36:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53662 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966582AbeFSQg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:36:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE22D1596;
+        Tue, 19 Jun 2018 09:36:28 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7963C3F246;
+        Tue, 19 Jun 2018 09:36:27 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 17:36:25 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: An example of a much more impactful way of doing file
+ system-specific fuzzing
+Message-ID: <20180619163624.4sol67vmh7wrfgyo@lakrids.cambridge.arm.com>
+References: <20180618051522.GC28120@thunk.org>
+ <CACT4Y+aq6vXoQpFgg6-_rEttnM4i3j7ng5LkP9gbqX98im=afw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+aq6vXoQpFgg6-_rEttnM4i3j7ng5LkP9gbqX98im=afw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018 19:23:04 +0300
-"Matwey V. Kornilov" <matwey@sai.msu.ru> wrote:
+Hi Dmitry,
 
-> Hi Steven,
-> 
-> Thank you for valuable comments.
-> 
-> This is for measuring performance of URB completion callback inside PWC driver.
-> What do you think about moving events to __usb_hcd_giveback_urb() in
-> order to make this more generic? Like the following:
-> 
->         local_irq_save(flags);
-> // trace urb complete enter
->         urb->complete(urb);
-> // trace urb complete exit
->         local_irq_restore(flags);
-> 
-> 
+I hope the below doesn't sound like a criticism; I am a *huge* fan of
+syzkaller.
 
-If that can work for you, I'm fine with that. Trace events may be
-cheap, but they do come with some cost. I'd like to have all trace
-events be as valuable as possible, and limit the "special case" ones.
+On Tue, Jun 19, 2018 at 06:18:07PM +0200, 'Dmitry Vyukov' via syzkaller wrote:
+> On Mon, Jun 18, 2018 at 7:15 AM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> 3. You say "not actionable reports without reproducers", but you can
+> find hundreds of fixed bugs without reproducers at [1] and [2]. Fix
+> ratio for bugs without reproducers is 66% which is not significantly
+> lower than 76% for bugs with reproducers. A person without expertise
+> in a particular subsystem (me) can't know if a bug is actionable by an
+> expert in the subsystem (you) without first reporting this bug.
 
--- Steve
+I think it might be possible to make this a bit easier, without any
+manual effort per-bug.
+
+For comparison, when the LKP kernel test robot reports a bug, it
+provides a script to reproduce the issue in a VM, such that the
+developer need only provide a kernel. The script launches the VM with
+the right options, providing a filesystem if necessary, etc.
+
+This is a little more actionale, since the developer need not expend any
+effort trying to reproduce the correct envinronment, which can be
+especially tricky for bugs that don't have a C reproducer.
+
+Would it be possible for syzbot to do something similar?
+
+Thanks,
+Mark.
+ 
+> [1] https://syzkaller.appspot.com/?fixed=upstream
+> [2] https://github.com/google/syzkaller/blob/master/docs/linux/found_bugs.md
