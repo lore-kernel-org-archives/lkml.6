@@ -6,116 +6,149 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA76AC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178B3C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E53720836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:09:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E53720836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id CE60E20661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:10:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE60E20661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757339AbeFSPJa (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:09:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54149 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756803AbeFSPJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:09:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id CCDFAAE0C;
-        Tue, 19 Jun 2018 15:09:27 +0000 (UTC)
-Subject: Re: [PATCH v4 6/9] x86: prevent inline distortion by paravirt ops
-To:     Nadav Amit <namit@vmware.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-Cc:     Alok Kataria <akataria@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        virtualization@lists.linux-foundation.org
-References: <20180612115050.185112-1-namit@vmware.com>
- <20180612115050.185112-7-namit@vmware.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <39832e4b-db6c-e3bc-1013-d9f1aaf19c83@suse.com>
-Date:   Tue, 19 Jun 2018 17:09:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S966483AbeFSPKX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:10:23 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:45800 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S937365AbeFSPKW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 11:10:22 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5JF4MFC011120;
+        Tue, 19 Jun 2018 10:10:02 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2jmyy2d7wt-1;
+        Tue, 19 Jun 2018 10:10:02 -0500
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id B7C296255C63;
+        Tue, 19 Jun 2018 10:10:47 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.301.0; Tue, 19 Jun 2018
+ 16:10:01 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w5JFA03B016890; Tue,
+ 19 Jun 2018 16:10:00 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <broonie@kernel.org>, <hias@horus.com>
+CC:     <lgirdwood@gmail.com>, <linus.walleij@linaro.org>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] regulator: arizona-ldo1: Use correct device to get enable GPIO
+Date:   Tue, 19 Jun 2018 16:10:00 +0100
+Message-ID: <20180619151000.21693-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <20180612115050.185112-7-namit@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=777 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
+ definitions=main-1806190169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/18 13:50, Nadav Amit wrote:
-> GCC considers the number of statements in inlined assembly blocks,
-> according to new-lines and semicolons, as an indication to the cost of
-> the block in time and space. This data is distorted by the kernel code,
-> which puts information in alternative sections. As a result, the
-> compiler may perform incorrect inlining and branch optimizations.
-> 
-> The solution is to set an assembly macro and call it from the inlined
-> assembly block. As a result GCC considers the inline assembly block as
-> a single instruction.
-> 
-> The effect of the patch is a more aggressive inlining, which also
-> causes a size increase of kernel.
-> 
->    text	   data	    bss	    dec	    hex	filename
-> 18147336 10226688 2957312 31331336 1de1408 ./vmlinux before
-> 18162555 10226288 2957312 31346155 1de4deb ./vmlinux after (+14819)
-> 
-> Static text symbols:
-> Before:	40053
-> After:	39942	(-111)
-> 
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: Alok Kataria <akataria@vmware.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: virtualization@lists.linux-foundation.org
-> 
-> Signed-off-by: Nadav Amit <namit@vmware.com>
+Currently the enable GPIO is being looked up on the regulator
+device itself but that does not have its own DT node, this causes
+the lookup to fail and the regulator not to get its GPIO. The DT
+node is shared across the whole MFD and as such the lookup needs
+to happen on that parent device. Moving the lookup to the parent
+device also means devres can no longer be used as the life time
+would attach to the wrong device.
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Additionally, the enable GPIO is active high so we should be passing
+GPIOD_OUT_LOW to ensure the regulator starts in its off state allowing
+the driver to enable it when it is ready.
 
+Fixes: e1739e86f0cb ("regulator: arizona-ldo1: Look up a descriptor and pass to the core")
+Reported-by: Matthias Reichl <hias@horus.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
 
-Juergen
+Changes since v1:
+ - Pass GPIOD_OUT_LOW to gpiod_get_optional
+
+Thanks,
+Charles
+
+ drivers/regulator/arizona-ldo1.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+index f6d6a4ad9e8a..e976d073f28d 100644
+--- a/drivers/regulator/arizona-ldo1.c
++++ b/drivers/regulator/arizona-ldo1.c
+@@ -36,6 +36,8 @@ struct arizona_ldo1 {
+ 
+ 	struct regulator_consumer_supply supply;
+ 	struct regulator_init_data init_data;
++
++	struct gpio_desc *ena_gpiod;
+ };
+ 
+ static int arizona_ldo1_hc_list_voltage(struct regulator_dev *rdev,
+@@ -253,12 +255,17 @@ static int arizona_ldo1_common_init(struct platform_device *pdev,
+ 		}
+ 	}
+ 
+-	/* We assume that high output = regulator off */
+-	config.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "wlf,ldoena",
+-						   GPIOD_OUT_HIGH);
++	/* We assume that high output = regulator off
++	 * Don't use devm, since we need to get against the parent device
++	 * so clean up would happen at the wrong time
++	 */
++	config.ena_gpiod = gpiod_get_optional(parent_dev, "wlf,ldoena",
++					      GPIOD_OUT_LOW);
+ 	if (IS_ERR(config.ena_gpiod))
+ 		return PTR_ERR(config.ena_gpiod);
+ 
++	ldo1->ena_gpiod = config.ena_gpiod;
++
+ 	if (pdata->init_data)
+ 		config.init_data = pdata->init_data;
+ 	else
+@@ -276,6 +283,9 @@ static int arizona_ldo1_common_init(struct platform_device *pdev,
+ 	of_node_put(config.of_node);
+ 
+ 	if (IS_ERR(ldo1->regulator)) {
++		if (config.ena_gpiod)
++			gpiod_put(config.ena_gpiod);
++
+ 		ret = PTR_ERR(ldo1->regulator);
+ 		dev_err(&pdev->dev, "Failed to register LDO1 supply: %d\n",
+ 			ret);
+@@ -334,8 +344,19 @@ static int arizona_ldo1_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static int arizona_ldo1_remove(struct platform_device *pdev)
++{
++	struct arizona_ldo1 *ldo1 = platform_get_drvdata(pdev);
++
++	if (ldo1->ena_gpiod)
++		gpiod_put(ldo1->ena_gpiod);
++
++	return 0;
++}
++
+ static struct platform_driver arizona_ldo1_driver = {
+ 	.probe = arizona_ldo1_probe,
++	.remove = arizona_ldo1_remove,
+ 	.driver		= {
+ 		.name	= "arizona-ldo1",
+ 	},
+-- 
+2.11.0
+
