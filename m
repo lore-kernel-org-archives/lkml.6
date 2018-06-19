@@ -2,183 +2,156 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2790DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061DDC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD639205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:17:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F8C9205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 18:19:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YrbAQWiA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD639205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="XQUQ8Hiy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8C9205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967153AbeFSSRW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 14:17:22 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55678 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966078AbeFSSRT (ORCPT
+        id S967187AbeFSSTR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 14:19:17 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54614 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967022AbeFSSTO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 14:17:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=xlog6HnpcH68/dKXzvjM659CErpZPHjyr3/cT8T7oFw=; b=YrbAQWiA6pFYySqBtodnJxTS2U
-        37L0unVQODVVbSWmdMi0QTvha24/2ftuVY92TEZDqqXyHZPGE6mnjnsOI6j+aX1W5hQJjFXIuHoDk
-        3DHDewxOBEzW4CZmsA/9q3WmT3ZToVYYnlQWD0+FDLsUAvFLWIHmWxMPhKhdceiOR6u3tnPkYDV+o
-        /fq3hmSy/Mg5bkIMAvR7zzXTwkkXhcV3xotq4eqb8k6VrEjOPotOyxVd7v1RqHsyP4/Zfq+M8/Qal
-        XilmHLkSrtgh2kd1lq/CdNELUMk5ySxur1oyhSlYVHE8R3x9ShgpDCd3CgF51tubgf/UxeimVdGiB
-        +oxJlyrQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVLBr-0006qu-L6; Tue, 19 Jun 2018 18:17:15 +0000
-Subject: Re: uapi headers userspace build results
-To:     Jayant Chowdhary <jchowdhary@google.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kernel-team@android.com
-References: <8b90457a-5b1d-818c-d2d6-ba3d16ad3eaf@infradead.org>
- <1ef3a7b9-5172-9f7a-01fa-4866e765fbbe@google.com>
- <b5a73c3f-b70d-110f-896d-82fd81982cf8@infradead.org>
- <8a36d3ba-977b-49ca-c431-90ef53071f88@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9b76d1b6-08a4-36cf-4fc8-661b216ca433@infradead.org>
-Date:   Tue, 19 Jun 2018 11:17:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 14:19:14 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o13-v6so1864472wmf.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 11:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=xa3cYJjMBQXv7geUsRpzb7J7TR6WDACHMUpXEH0lJ78=;
+        b=XQUQ8HiytUMtkJxq1uTkFRYSFc+hV7rAc+6octSbiRPcliRs1k4jDHlXhExi3yzGJl
+         EMVHzAmFYP+0FhQS4ek0hWqbABl2kah9WU1+POvCV0VtEkb8i4pBNPFmymkfsoH8Kixm
+         VQ0uGbHiDHMk0msTO4GlD9mW8a2vipxt2LsPA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=xa3cYJjMBQXv7geUsRpzb7J7TR6WDACHMUpXEH0lJ78=;
+        b=fWs7/ajl3YrCdBVxZ0beqhU7gh0QG6Ezf+DUK9iffAFL4pgFGYM5aHbOZH3bJ8VKiJ
+         YVuzYtaash3no6/u6Sw6ULu/XzDpFGirBeDorcJ7Jftlc37wIIoa6175bYzTjTkzSTZj
+         Ibfb5DoR8s3r6Ra8L6Yk4rv/KtnN8g6omCL7LC/TlOGfT/+VSZmqrz2iVlhl0sf+Qhjt
+         wtXVw4RWVitPS/jk4XhYnbNw6KNboS1b7mpCH+Gcq4rl3gd8EzXL+sO7RUyny74AGVd6
+         JywMpGdT2XLCmWRws2B95zuWl53lRu8TLC3diceExsqPpFSXtnPUtTvyk76I42jaol49
+         JtOw==
+X-Gm-Message-State: APt69E2Nmq7XKneLZgiSSzdEAHQISbnSsupEYbdDddEG3rJ1+DwrAKJ2
+        t0vcyK49xyioFk3ZI9/yZ0CLCTcP+yI=
+X-Google-Smtp-Source: ADUXVKJSTH3FlF87tkcLWhrcNbEXekpftEQqYPnW8wyRvzzEg5C491QRnuT2AUhxFyTt/VOq2ARXaw==
+X-Received: by 2002:a50:8bfa:: with SMTP id n55-v6mr15635923edn.216.1529432353127;
+        Tue, 19 Jun 2018 11:19:13 -0700 (PDT)
+Received: from [192.168.178.129] (f140230.upc-f.chello.nl. [80.56.140.230])
+        by smtp.gmail.com with ESMTPSA id u23-v6sm716862edm.7.2018.06.19.11.19.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 11:19:11 -0700 (PDT)
+Subject: Re: [PATCH V2] brcmfmac: stop watchdog before detach and free
+ everything
+To:     Michael Trimarchi <michael@amarulasolutions.com>
+References: <1527493857-2220-1-git-send-email-michael@amarulasolutions.com>
+ <5B0D1C9E.4000800@broadcom.com> <20180530090633.GA15390@panicking>
+Cc:     Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Ian Molton <ian@mnementh.co.uk>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5B294920.5050909@broadcom.com>
+Date:   Tue, 19 Jun 2018 20:19:12 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-In-Reply-To: <8a36d3ba-977b-49ca-c431-90ef53071f88@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180530090633.GA15390@panicking>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18/2018 06:47 PM, Jayant Chowdhary wrote:
-> Hi Randy,
-> 
-> On 06/12/2018 05:07 PM, Randy Dunlap wrote:
->> On 06/12/2018 01:39 PM, Jayant Chowdhary wrote:
->>> Hi Randy,
->>>
->>> On 06/11/2018 10:49 PM, Randy Dunlap wrote:
->>>> Hi,
->>>>
->>>> Here is what I have so far.  It begins with a makefile and some
->>>> template files that are added to.  There's a good bit of Perl also.
->>>>
->>>> I put all of these files in tools/uapi/ and run them from there.
->>>>
->>>> There is one .c file generated for each .h file in builddir/usr/include
->>>> (O=builddir).
->>>>
->>>
->>> Thanks for this! I wrote a small Makefile (uapi-compile.mk) which I'd put in
->>> tools/build (I can change this to tools/uapi, if that is more apt).
->>
->> Your makefile foo is much better than mine is.
->> Yes, I think that it deserves to be in its own sub-directory.
->>
->>> uapi-compile.mk straight-away compiles the uapi headers, without pulling them
->>> into any generated c source files. It may also be invoked with an environment
->>
->> Hm, I didn't even know that is possible.
->>
->>> variable 'UAPI_DIR' specifying the directory, for which the user would like to
->>> compile headers. This way we can test a directory at a time as well. In your
->>
->> Yes, good, I was planning to make a way to restrict the build to certain sub-dirs.
->>
->>> opinion, would this be simpler to have rather than having to auto-generate c
->>> source files including each uapi header and also autog-enerating the make
->>> targets? I feel like this approach would make maintaining these makefiles/
->>> scripts easier as well.
->>
->> Sure, this is much better than my scripts.
->>
->>>> Out of 889 header files, I see 45 errors.  That is better than I expected.
->>>>
->>>> The makefiles and scripts are attached (tar), as well as the output (I used
->>>> 'make -ik' so that make would keep going after errors and attempt to build
->>>> all target files).
->>>>
->>>> have fun!
->>>>
->>>
->>> I did a 'make ARCH=arm64 headers_install' from the kernel source's root, and
->>> then a 'make -kf uapi-compile.mk all > build.log 2>&1' to compile all the
->>> headers. Out of 864 headers, I see 20 compilation failures.
->>>
->>> I'm attaching uapi-compile.mk and the build.log file along.
->>
->> I have some usage comments.
->>
->> Since I ran 'make ARCH=x86_64 O=xx64 headers_install', I had to modify
->> uapi-compile.mk to use that SRC_DIR:
->>
->> SRC_DIR :=../../xx64
->>
->> Also, I first tried to make BDIR as a sub-directory of tools/uapi/ and
->> uapi-compile.mk did not work (when using BDIR=BDIR).
->> Then I did 'mkdir ../../xx64/BDIR' and specified BDIR=../../xx64/BDIR and
->> that worked.  But:  that sub-dir is not used:
->>
->> gcc -I../../xx64/usr/include/ --include=../../xx64/usr/include/linux/posix_types.h --include=../../xx64/usr/include/asm-generic/ipcbuf.h --include=stdarg.h --include=stdint.h --include=stddef.h -c ../../xx64/usr/include//linux/caif/caif_socket.h -o ../../xx64/BDIR/../../xx64/usr/include//linux/caif/caif_socket.o
->> [see the next comment]
->>
->> Oh, this makefile builds the .o files in the same sub-dirs as their
->> respective .h files.  I don't especially like that, but as long as
->> make clean works, it will do.  [and make clean does work]
->>
-> 
-> Thanks for these comments. I'll take care of them in my patch-set. I've got a
-> couple of questions for you. Since most of the errors were found in the
-> include/uapi/linux directory, I tried investigating why.
+On 5/30/2018 11:06 AM, Michael Trimarchi wrote:
+> Using built-in in kernel image without a firmware in filesystem
+> or in the kernel image can lead to a kernel NULL pointer deference.
+> Watchdog need to be stopped in brcmf_sdio_remove
+>
+> The system is going down NOW!
+> [ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual address 000002f8
+> Sent SIGTERM to all processes
+> [ 1348.121412] Mem abort info:
+> [ 1348.126962]   ESR = 0x96000004
+> [ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
+> [ 1348.135948]   SET = 0, FnV = 0
+> [ 1348.138997]   EA = 0, S1PTW = 0
+> [ 1348.142154] Data abort info:
+> [ 1348.145045]   ISV = 0, ISS = 0x00000004
+> [ 1348.148884]   CM = 0, WnR = 0
+> [ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
+> [ 1348.158475] [00000000000002f8] pgd=0000000000000000
+> [ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+> [ 1348.168927] Modules linked in: ipv6
+> [ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted 4.17.0-rc5-next-20180517 #18
+> [ 1348.180757] Hardware name: Amarula A64-Relic (DT)
+> [ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
+> [ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
+> [ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
+> [ 1348.200253] sp : ffff00000b85be30
+> [ 1348.203561] x29: ffff00000b85be30 x28: 0000000000000000
+> [ 1348.208868] x27: ffff00000b6cb918 x26: ffff80003b990638
+> [ 1348.214176] x25: ffff0000087b1a20 x24: ffff80003b94f800
+> [ 1348.219483] x23: ffff000008e620c8 x22: ffff000008f0b660
+> [ 1348.224790] x21: ffff000008c6a858 x20: 00000000fffffe00
+> [ 1348.230097] x19: ffff80003b94f800 x18: 0000000000000001
+> [ 1348.235404] x17: 0000ffffab2e8a74 x16: ffff0000080d7de8
+> [ 1348.240711] x15: 0000000000000000 x14: 0000000000000400
+> [ 1348.246018] x13: 0000000000000400 x12: 0000000000000001
+> [ 1348.251324] x11: 00000000000002c4 x10: 0000000000000a10
+> [ 1348.256631] x9 : ffff00000b85bc40 x8 : ffff80003be11870
+> [ 1348.261937] x7 : ffff80003dfc7308 x6 : 000000078ff08b55
+> [ 1348.267243] x5 : 00000139e1058400 x4 : 0000000000000000
+> [ 1348.272550] x3 : dead000000000100 x2 : 958f2788d6618100
+> [ 1348.277856] x1 : 00000000fffffe00 x0 : 0000000000000000
 
-Please also repost your latest patch-set.
+Forgot about this one.
 
-> 1) I found that multiple headers depend on the definition of types such as
-> pid_t, which have no definition in the set of uapi headers. There is a
-> definition (of pid_t) in include/linux/types.h, and I thought we could try
-> exposing that in the set of uapi headers. One problem I can see with that is
-> that the header has some definitions which depend on kernel configs: eg:
-> CONFIG_ARCH_DMA_ADDR_T_64BIT. Since user-land programs shouldn't really assume
-> kernel configs, I was thinking we should re-factor this header so that
-> appropriate parts can be exposed to user-land.
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> ---
+>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> index 412a05b..061f69d 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> @@ -4294,6 +4294,13 @@ void brcmf_sdio_remove(struct brcmf_sdio *bus)
+>   	brcmf_dbg(TRACE, "Enter\n");
+>
+>   	if (bus) {
+> +		/* Stop watchdog task */
+> +		if (bus->watchdog_tsk) {
+> +			send_sig(SIGTERM, bus->watchdog_tsk, 1);
+> +			kthread_stop(bus->watchdog_tsk);
+> +			bus->watchdog_tsk = NULL;
+> +		}
+> +
+>   		/* De-register interrupt handler */
+>   		brcmf_sdiod_intr_unregister(bus->sdiodev);
+>
+>
 
-Sure, that's worth a try.  Mostly on a case-by-case basis.
-
-I see that (at least in the distro that I am using)
-/usr/include/asm-generic/posix_types.h has a typedef for __kernel_pid_t.
-I wonder if that could be co-opted, but I expect that this would have
-type/size issues.
-
-OTOH, 'man getpid' uses pid_t and refers to <sys/types.h> and <unistd.h>,
-so there should already be a pid_t for userspace.  Just #include more
-headers files.  :)
-
-> 2) Some headers try to expose information which should probably not be exposed
-> to user-land. eg: wait_queue_head in linux/coda_psdev.h (this header should
-> probably be removed altogether ?)
-
-I suppose that header file describes a kernel-to-userspace ("Venus") interface,
-so maybe not removed altogether.  But the wait_queue_head_t part of it should
-just be some padding/reserved field (of what size/type?).
-
-
-> Do you have better ideas ?
-
-slow and steady.
-
--- 
-~Randy
