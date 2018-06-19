@@ -2,116 +2,112 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0451C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7D5C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C9D20836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:18:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WIBpQP0M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C9D20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 50AED20836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 10:19:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50AED20836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757043AbeFSKSX (ORCPT
+        id S1757170AbeFSKTH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 06:18:23 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39391 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757102AbeFSKSV (ORCPT
+        Tue, 19 Jun 2018 06:19:07 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38633 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756548AbeFSKTF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 06:18:21 -0400
-Received: by mail-lf0-f67.google.com with SMTP id t2-v6so22869637lfd.6
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 03:18:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=ZOevVGOnHluOjuZq1XEyFEq0N3VIhtahmszAw14I/lI=;
-        b=WIBpQP0Mz0J6IPE8GSCkEU3zV5H252ZmbqfJwn5Rd3UCncxp0W+orU9G/2coLHpPKa
-         JCp7SIkA7GSyLZ4UDxoZqkuNN+IGtdCSutL+MX52QBCJaPF6H4Aqkaw/JtCwN6uZ6phn
-         tyVPgiNbokKqxEhlJ75QFKBkOBsvYGsVjJF4tOXUAhpYcdCw+LwJ8KQZFHHB29FQItFD
-         KmHSvF41BlWBRXOhZFPr9VnH+bj0MoXyTzgkj7io5nH64TQSaT+OerGzX7wN+c1dovPI
-         MNmvU3LuX8nhtfUjcCXJdTKcw2E84fcLV2fNP/VXy7ndWG/86wRnm9YVDn1R4/AkiLto
-         gf3g==
+        Tue, 19 Jun 2018 06:19:05 -0400
+Received: by mail-wm0-f68.google.com with SMTP id 69-v6so20959872wmf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 03:19:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=ZOevVGOnHluOjuZq1XEyFEq0N3VIhtahmszAw14I/lI=;
-        b=QItmHO1XLthHT1abV73tBMFfOTsh11ptrsNUERD/hmUBqvFGLLNXdhDmqoh8pVxsL/
-         JnQujjW0fYrlhAcwE4mdpE3EeQY49+25KLlsD4b+GLbzho54RG1uNm+KRRO6TyQ7Ahqz
-         wvhOfU6leb23yGhDQWN+W497EooOERuzStsKaWzVJaaC1Ao3KHxntkNag/pdzgX7t14P
-         77fWQdpOyspeKup8t11WVCdMmLB9SB7GK5daMs4PT2AV7OUavDK7Fk+mBvv5Crf2eo0A
-         L0BZOo6ysfgiqb4qBW1MkQEBauDcrNrdHN+rkGsP8fJ5VJ+RgU/3hWjA9iL7lUVTrL+n
-         CpLA==
-X-Gm-Message-State: APt69E2KENkjwr2OvZI6pFp8/zd9trWwYbbh501ZYV+XLI4Ftje1bHK9
-        Lzkz9k/McMMUj3xLjkaRtnLc6+AbSzT90B2gIIQ=
-X-Google-Smtp-Source: ADUXVKLXESrMCII8aCJSgDWgh/HEUnwNt9yFlreaA6/RlzxGkqc3blGSIHE+eW/zaj5IeVvEZ97nBgI2oO1Bfcgd52w=
-X-Received: by 2002:a2e:401b:: with SMTP id n27-v6mr11165813lja.6.1529403500182;
- Tue, 19 Jun 2018 03:18:20 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PB2EbKXB9DEsvRNJ7ll+FIVhxw6CbwWtN75AQs/yNFQ=;
+        b=GOSYDsUcALlVqMglQOiUs4TFVgJeCgCoBHoSCaQUZStEOF5n0fKHDG/VpppQYnph5f
+         hv6G5pv2yb9z3ceLsqlr4ZXXTvIc8eR0q521gYITMfJmwck9BGd/zNSG6DTUvsUw6Oxz
+         G7SK8sq43Iijht5WjnSqDLO8h9E6dugsG26ci6YsPpDyC0XalXl8dIB1jft7ERuTEp16
+         yppcke/ZEPkUXJj3Sc4Qb5k8Aw1Wd8vElKTGui+t1yTIqLfpQV+zku5EkZ0cEmyUNMXE
+         DgIFJf37sknvO5PIW6sal9GBIp27FXhwJkqd5JqNWAfZg2RAJNZETV/ECA1k5f5ejH7K
+         lxvw==
+X-Gm-Message-State: APt69E1qf3uBf36VIoTKYOigmKzZRXRu/6KeeLpzU7LLPo8lj8Jn6/c4
+        COnsFt18QccmxNYc5fDUlzsLdQ==
+X-Google-Smtp-Source: ADUXVKIkZzuBckQuO+afgI4hGVqE8bbBn6a4lNCqyXwTacYaPgS9Kin3hkn/I/Ix+Xt7Mc/U2OdNAg==
+X-Received: by 2002:a1c:c90:: with SMTP id 138-v6mr10673335wmm.110.1529403544759;
+        Tue, 19 Jun 2018 03:19:04 -0700 (PDT)
+Received: from localhost.localdomain ([151.15.207.242])
+        by smtp.gmail.com with ESMTPSA id c18-v6sm16211202wrq.17.2018.06.19.03.19.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 03:19:04 -0700 (PDT)
+Date:   Tue, 19 Jun 2018 12:19:01 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Pavan Kondeti <pkondeti@codeaurora.org>, peterz@infradead.org,
+        rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 10/10] arch_topology: Start Energy Aware Scheduling
+Message-ID: <20180619101901.GC13617@localhost.localdomain>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-11-quentin.perret@arm.com>
+ <20180619091841.GD9208@codeaurora.org>
+ <20180619094002.GR17720@e108498-lin.cambridge.arm.com>
+ <20180619094714.GA13617@localhost.localdomain>
+ <20180619100224.GT17720@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 03:18:19
- -0700 (PDT)
-In-Reply-To: <87efh3hndq.fsf@igel.home>
-References: <20180618140518.2920804-1-arnd@arndb.de> <CA+7wUswcgxLz_GAqkyVLpdAmTNEPUZ-cXJ8Ej7Xx9+OgjGUo=Q@mail.gmail.com>
- <87efh3hndq.fsf@igel.home>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 19 Jun 2018 12:18:19 +0200
-X-Google-Sender-Auth: MdqxXDPbAxwNfuoxN-1mDW-Jtr8
-Message-ID: <CAK8P3a1_3UfYGnTcWJ7GS_gO+_WOhS90pUoC97yVAgkox9sQeg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] powerpc: mac: fix rtc read functions
-To:     Andreas Schwab <schwab@linux-m68k.org>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, funaho@jurai.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Meelis Roos <mroos@linux.ee>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619100224.GT17720@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 10:04 PM, Andreas Schwab <schwab@linux-m68k.org> wrote:
-> On Jun 18 2018, Mathieu Malaterre <malat@debian.org> wrote:
->
->> Sadly, trying again today does not work anymore. Adding some printk
->> just before WARN_ON:
->>
->> +printk(KERN_ERR " rtc DBG pmu_get_time1: %lld %d %lld \n", now,
->> RTC_OFFSET, now - RTC_OFFSET );
->> +printk(KERN_ERR " rtc DBG pmu_get_time2: %x %x %x %x %d \n",
->> req.reply[0], req.reply[1], req.reply[2], req.reply[3] ,
->> req.reply_len);
->>
->> leads to:
->>
->> [    0.000000]  rtc DBG pmu_get_time1: 14096662 2082844800 -2068748138
->> [    0.000000]  rtc DBG pmu_get_time2: 0 d7 19 16 4
->
-> A good value would have 0xd7 in the first byte.  The problem is that
-> pmu_set_rtc_time is also broken, and leads to an invalid time value
-> stored in the RTC.  Since pmu_request is a varargs function passing
-> values of type time64_t without casting won't work.
->
-> You need to reset your RTC before you can continue.
->
-> I think the right fix is to change nowtime in pmu_set_rtc_time and
-> cuda_set_rtc_time back to unsigned int (or to u32).
+On 19/06/18 11:02, Quentin Perret wrote:
+> On Tuesday 19 Jun 2018 at 11:47:14 (+0200), Juri Lelli wrote:
+> > On 19/06/18 10:40, Quentin Perret wrote:
+> > > Hi Pavan,
+> > > 
+> > > On Tuesday 19 Jun 2018 at 14:48:41 (+0530), Pavan Kondeti wrote:
+> > 
+> > [...]
+> > 
+> > > > There seems to be a sysfs interface exposed by this driver to change cpu_scale.
+> > > > Should we worry about it? I don't know what is the usecase for changing the
+> > > > cpu_scale from user space.
+> > > 
+> > > This is something I've been wondering as well. TBH, I'm not sure what to
+> > > do in this case. And I'm not sure to know what is the use-case either.
+> > > Debugging purpose I assume ?
+> > > 
+> > > Juri, did you have a specific use-case for this feature when the
+> > > arch_topology driver was first introduced ? Or was it just to align
+> > > with the existing arm/arm64 code ?
+> > 
+> > It was requested (IIRC) because DT might have bogus values and not be
+> > easily modifiable. So, this is another way to get things right for your
+> > platform at runtime.
+> 
+> Right, but that also allows you to set different capacities to CPUs
+> inside the same freq domain, which isn't supported by the EM framework,
+> at least for now. So I would prefer to assume that your values in DT must
+> to be correct to use EAS, and leave the code as-is for now.
 
-Thanks for the additional analysis. I'll do it like you suggest and send
-an updated patch.
+It's actually built on the (current) assumption that siblings share
+capacity [1], so it seems to align with what EM requires.
 
-       Arnd
+[1] https://elixir.bootlin.com/linux/latest/source/drivers/base/arch_topology.c#L71
