@@ -2,101 +2,106 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEA2C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0196BC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25BD62083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:31:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t2xcfarI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25BD62083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B61FB2083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 07:32:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B61FB2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756158AbeFSHbT (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 03:31:19 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39114 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755614AbeFSHbR (ORCPT
+        id S937321AbeFSHc3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 03:32:29 -0400
+Received: from mail1.bemta8.messagelabs.com ([216.82.243.197]:42085 "EHLO
+        mail1.bemta8.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755674AbeFSHc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 03:31:17 -0400
-Received: by mail-pl0-f66.google.com with SMTP id f1-v6so10467689plt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 00:31:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i3nA5XfMpvLeaTLcn03ISzJGduCGaoI+gJkp3sLaeBw=;
-        b=t2xcfarIbMls2ey7GpnVEBGGXytIDSX2bEXxApv657LUNm2oYpZL0dqWjdijLP7YcQ
-         4j5845/M+c3UxTdlgXlU6R5vBdovvP8E2RfCE1BxGOKZHiU0nYxh+Er6qEaQghC9WCus
-         guPZVffC9QEeXG0gvwoWJrfBtMlzDYXh81wmDlR1FdzhQPqM7c2xhyOYRw+/cnQ5BZ6/
-         8Fz6IfkrcKyjsQluI50q49YIsN16/CpW2ZtOO6269EpHO+hN5Jsb88eIsr2rg6ZZxVVQ
-         gZGwliqJa7mktYRvqYyjBJV3ktZWAQcPPDBqf+hxo99/m0bf7MAb2LFHH7QyqUZza62K
-         oBRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i3nA5XfMpvLeaTLcn03ISzJGduCGaoI+gJkp3sLaeBw=;
-        b=FmJyhRzpxIDE31ljN4nBUvdNd9JurWw56H31Usti6Lj30zXsHyCkcl90E2hI0/ysfN
-         S/kg12hfRwM9tL4Kao8oAAqVL5lpfDvxuxMfcCv2wXjWQQtnyhWilk5Vz4NaT9WqriWA
-         1kAhK05SoeoaWOherHIaR/nawEpfix3PzOriFrrG6xGYe7xSdCz3h6zXlJf4Q8RMrVum
-         Hmp9M/2pu2TQHWbtSBEqBEGOYajZKlprnEORAbbmSmBwkWEHDtV8sO+iLF6LNmT4ioRe
-         3FBrqLUQukCxPL+68N1Nb2J8BeaSoSD/pJKwJ/fMaAKgF1/kZHtobALtW2c14wNuEdRm
-         H6eA==
-X-Gm-Message-State: APt69E1OlrrIEWYHbXQ6C+X1lknwTh5+o/gfC7dpJtIjm11jFUZFmDCU
-        yIGW9wO41yQNJm0HgXl5OdK15g==
-X-Google-Smtp-Source: ADUXVKJV/qYdAdxx8HWV9Nv6SKrUOcY/ra4YjmLg3ZtyY9wSI676+6U0kqgOoCFYLkISVzK/ZJR0fw==
-X-Received: by 2002:a17:902:7e42:: with SMTP id a2-v6mr17472806pln.151.1529393476983;
-        Tue, 19 Jun 2018 00:31:16 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id w7-v6sm19612565pgs.68.2018.06.19.00.31.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 00:31:15 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 00:31:15 -0700
-From:   Joel Fernandes <joelaf@google.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Byungchul Park <byungchul.park@lge.com>
-Subject: Re: [PATCH 2/2] rcutorture: Fix rcu_barrier successes counter
-Message-ID: <20180619073115.GA241700@joelaf.mtv.corp.google.com>
-References: <20180619062215.221564-1-joel@joelfernandes.org>
- <20180619062215.221564-2-joel@joelfernandes.org>
+        Tue, 19 Jun 2018 03:32:27 -0400
+Received: from [216.82.241.196] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-5.bemta-8.messagelabs.com id EA/78-05848-A81B82B5; Tue, 19 Jun 2018 07:32:26 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNIsWRWlGSWpSXmKPExsXi5LtOQLdro0a
+  0wYQZ7Bbzj5xjtdi4+TaLxaqpO1ksNj2+xmrR9Wsls8XlXXPYLJZev8hk0br3CLvF3+2bWCxe
+  bBF34PJYM28No8emVZ1sHpuX1HtsfLeDyaP/r4HH501yAWxRrJl5SfkVCawZC+fvZCro4qrom
+  7mGuYHxHEcXIxeHkMBqRokDp9rYIZw1jBKd828wQjhbGCUm/HnF1MXIycEmoCMxZf9hFhBbRE
+  BSYu3KRcwgRcwCvxglXv45zgaSEBbwkWj518gKYrMIqEq8/j8VrJlXwFWib8knZhBbQkBO4ua
+  5TmaIuKDEyZlPwIYyC2hKtG7/zQ5hy0s0b50NViMkoCyxZcUFRoheBYm1B84zTWDkn4WkfRaS
+  9llI2hcwMq9i1ChOLSpLLdI1NtBLKspMzyjJTczM0TU0sNDLTS0uTkxPzUlMKtZLzs/dxAiMi
+  HoGBsYdjO+XRR9ilORgUhLlFYvTiBbiS8pPqcxILM6ILyrNSS0+xCjDwaEkwSu4ASgnWJSanl
+  qRlpkDjE2YtAQHj5IIryZImre4IDG3ODMdInWKUZfjTltPD7MQS15+XqqUOK8CSJEASFFGaR7
+  cCFiauMQoKyXMy8jAwCDEU5BalJtZgir/ilGcg1FJmNcJZApPZl4J3KZXQEcwAR2xpUod5IiS
+  RISUVANjuI/T9oObuFjfdOqUpV19vXrTvDWL7ksnaihlK6yffKn3SvGvh6Hr34RbFS+bLRda1
+  5b3z+fNr3XvpogvY3kaFHun6X10Uaxeodj6zZuUDnJP/P1GI18hT7xl6ctfJw/7lK3evoi5al
+  50lATz/YW6Jxq2h/mvdtG5ueqZkL2JbPa5MAPvhD2dSizFGYmGWsxFxYkAwNdvMQ4DAAA=
+X-Env-Sender: Alex.Gonzalez@digi.com
+X-Msg-Ref: server-15.tower-46.messagelabs.com!1529393545!80868646!1
+X-Originating-IP: [66.77.174.16]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 6173 invoked from network); 19 Jun 2018 07:32:25 -0000
+Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
+  by server-15.tower-46.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 19 Jun 2018 07:32:25 -0000
+Received: from MTK-SMS-XCH03.digi.com (10.10.8.197) by MCL-VMS-XCH01.digi.com
+ (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 19 Jun 2018
+ 02:32:25 -0500
+Received: from DOR-SMS-XCH01.digi.com (10.49.8.99) by MTK-SMS-XCH03.digi.com
+ (10.10.8.197) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 19 Jun
+ 2018 02:32:24 -0500
+Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
+ dor-sms-xch01.digi.com (10.49.8.99) with Microsoft SMTP Server (TLS) id
+ 14.3.399.0; Tue, 19 Jun 2018 09:32:23 +0200
+From:   Alex Gonzalez <alex.gonzalez@digi.com>
+To:     <shawnguo@kernel.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+        <fabio.estevam@nxp.com>, <linux-imx@nxp.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 0/2] Add support for the ConnectCore 6UL SOM and SBC Express
+Date:   Tue, 19 Jun 2018 09:32:12 +0200
+Message-ID: <1529393534-7827-1-git-send-email-alex.gonzalez@digi.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619062215.221564-2-joel@joelfernandes.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.101.2.214]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 11:22:15PM -0700, Joel Fernandes wrote:
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> 
-> rcutorture currently increments both successes and error counters for
-> the rcu_barrier test incase of errors. It should only increment the
-> error counter incase of errors so make it do so.
-> 
-> Test: Introduced rcu_barrier errors by returning from the barrier
-> callback without incrementing the callback counter.
+This patchset adds a device tree include for the ConnectCore 6UL
+System-On-Module and a device tree for the ConnectCore 6UL SBC Express board
+that includes it.
 
-Hi Paul,
-Think some more about this counter, I think you mean 'successes' as in
-'successful attempts' than 'successful test' ? If so, then perhaps you can
-drop this patch. It wasn't clear to me what the 'successes' meant so I may
-have been a bit misled into changing its meaning. If on the other hand, it
-means 'successful test', then yes this patch would be Ok then. thanks! -Joel
- 
+Not all the SOM hardware is supported in this initial patchset, specifically
+the 802.11 WiFi and BT chipset and the extended functionality provided by
+the on module NXP Kinetis KL03 are not supported.
+
+The SOM is based on NXP's i.MX6UL SoC, and the patchset is tested against
+v4.18-rc1.
+
+More information about the hardware can be found at:
+
+ConnectCore 6UL SOM:
+https://www.digi.com/products/embedded-systems/system-on-modules/connectcore-for-i-mx6ul
+
+ConnectCore 6UL SBC Express board:
+https://www.digi.com/products/embedded-systems/single-board-computers/connectcore-for-i-mx6ul-sbc-express
+
+Alex Gonzalez (2):
+  ARM: dts: imx6ul: Add DTS for ConnectCore 6UL System-On-Module (SOM)
+  ARM: dts: imx6ul: Add DTS for ConnectCore 6UL SBC Express
+
+ arch/arm/boot/dts/Makefile                      |   1 +
+ arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts | 205 ++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi       | 199 +++++++++++++++++++++++
+ 3 files changed, 405 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts
+ create mode 100644 arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi
+
