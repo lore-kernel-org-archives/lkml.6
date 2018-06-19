@@ -2,95 +2,131 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEA2C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9C0C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFC862075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:03:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dqXVPibe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFC862075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F658208B3
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:03:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F658208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937499AbeFSJDD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:03:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57990 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756178AbeFSJDB (ORCPT
+        id S965551AbeFSJDi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 05:03:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56621 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937229AbeFSJDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:03:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=J0rYBzZdgJuklfSmS0e1qKxSub3Cx5Lqcz2HUrE9S7g=; b=dqXVPibe5aTXn+LKzTfTylAla
-        tCDh74WvAh7TCroDSjM+RJwQpXPTDv/1qZjidbVJobx6JOsVgflG+xJ+o+UpyoYgraNaaCndc3PDX
-        yimhR9SzLsUZ5IPW/32gZAww27FXATtW5ObkL3LSwbWYEm4a4/cZL+9anZ8MWX5UkAiMVXmE6OHY8
-        UbU6Jf2TlEQqFA1e+gOBdrfx4sDv0N4fVXXObj6lqZkrIrwx32tCmCrNbO7jPJduiTm7ba/TyMumU
-        fQ+lEGUId1bm3PtMPj9A82/Esn9BUN3FgnM54KsF5cbCuw/VizdC3ypxzdw/XvOZ6iOqHoMhf5Ogf
-        CJd17sa2w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVCXP-0008U6-Sw; Tue, 19 Jun 2018 09:02:55 +0000
-Date:   Tue, 19 Jun 2018 02:02:55 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180619090255.GA25522@bombadil.infradead.org>
-References: <20180617200432.krw36wrcwidb25cj@ziepe.ca>
- <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
- <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com>
- <20180618081258.GB16991@lst.de>
- <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
- <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
- <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
- <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
- <0e6053b3-b78c-c8be-4fab-e8555810c732@nvidia.com>
- <20180619082949.wzoe42wpxsahuitu@quack2.suse.cz>
+        Tue, 19 Jun 2018 05:03:36 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fVCXq-0002lA-UR; Tue, 19 Jun 2018 11:03:23 +0200
+Date:   Tue, 19 Jun 2018 11:03:22 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 4/8] cpuidle: Set up maximum umwait time and umwait
+ states
+In-Reply-To: <1529118375-90191-5-git-send-email-fenghua.yu@intel.com>
+Message-ID: <alpine.DEB.2.21.1806191059040.1692@nanos.tec.linutronix.de>
+References: <1529118375-90191-1-git-send-email-fenghua.yu@intel.com> <1529118375-90191-5-git-send-email-fenghua.yu@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619082949.wzoe42wpxsahuitu@quack2.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 10:29:49AM +0200, Jan Kara wrote:
-> And for record, the problem with page cache pages is not only that
-> try_to_unmap() may unmap them. It is also that page_mkclean() can
-> write-protect them. And once PTEs are write-protected filesystems may end
-> up doing bad things if DMA then modifies the page contents (DIF/DIX
-> failures, data corruption, oopses). As such I don't think that solutions
-> based on page reference count have a big chance of dealing with the
-> problem.
-> 
-> And your page flag approach would also need to take page_mkclean() into
-> account. And there the issue is that until the flag is cleared (i.e., we
-> are sure there are no writers using references from GUP) you cannot
-> writeback the page safely which does not work well with your idea of
-> clearing the flag only once the page is evicted from page cache (hint, page
-> cache page cannot get evicted until it is written back).
-> 
-> So as sad as it is, I don't see an easy solution here.
+On Fri, 15 Jun 2018, Fenghua Yu wrote:
+> By default C0.2 is enabled so user wait can save more power but wakeup
+> time is slower. In some cases e.g. real time, user wants to disable C0.2
+> so that user wait saves less power but wakeup time is faster.
 
-Pages which are "got" don't need to be on the LRU list.  They'll be
-marked dirty when they're put, so we can use page->lru for fun things
-like a "got" refcount.  If we use bit 1 of page->lru for PageGot, we've
-got 30/62 bits in the first word and a full 64 bits in the second word.
+Why is this default enabled?
+
+> A new "/sys/devices/system/cpu/cpuidle/umwait_disable_c0_2" file is
+> created to allow user to check if C0.2 is enabled or disabled and also
+> allow user to enable or disable C0.2. Value "1" in the file means C0.2 is
+> disabled. Value "0" means C0.2 is enabled.
+
+Can we please use straight forward positive logic and have a enable file?
+
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * umwait.c - control user wait
+
+Please remove these pointless file references. They get stale before its merged.
+
+> + *
+> + * Copyright (c) 2018, Intel Corporation.
+> + * Fenghua Yu <fenghua.yu@intel.com>
+> + */
+> +/*
+> + * umwait.c adds control of user wait states that user enters through user wait
+> + * instructions umwait or tpause.
+
+umwait.c adds something?
+
+> + */
+> +#include <linux/cpu.h>
+> +#include <asm/msr.h>
+> +
+> +static int umwait_disable_c0_2;
+> +static DEFINE_MUTEX(umwait_lock);
+> +
+> +static ssize_t umwait_disable_c0_2_show(struct device *dev,
+> +					struct device_attribute *attr,
+> +					char *buf)
+> +{
+> +	return sprintf(buf, "%d\n", umwait_disable_c0_2);
+> +}
+> +
+> +static ssize_t umwait_disable_c0_2_store(struct device *dev,
+> +					 struct device_attribute *attr,
+> +					 const char *buf, size_t count)
+> +{
+> +	int disable_c0_2, cpu, ret;
+> +	u32 msr_val;
+> +
+> +	ret = kstrtou32(buf, 10, &disable_c0_2);
+> +	if (ret)
+> +		return ret;
+> +	if (disable_c0_2 != 1 && disable_c0_2 != 0)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&umwait_lock);
+> +	umwait_disable_c0_2 = disable_c0_2;
+> +	/*
+> +	 * No global umwait maximum time limit (0 in bits 31-0).
+> +	 * Enable or disable C0.2 based on global setting (bit 0) on all CPUs.
+> +	 */
+> +	msr_val = umwait_disable_c0_2 & UMWAIT_CONTROL_C02_MASK;
+
+That mask is there because the variable can only have 0 and 1 as content....
+
+> +	for_each_online_cpu(cpu)
+> +		wrmsr_on_cpu(cpu, MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
+
+This lacks protection against CPU hotplug.
+
+> +	mutex_unlock(&umwait_lock);
+> +
+> +	return count;
+
+Thanks,
+
+	tglx
