@@ -2,79 +2,81 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D153C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBC0C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DCE420874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:46:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d3X5OoOM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DCE420874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FE852075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 09:47:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE852075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757003AbeFSJq3 (ORCPT
+        id S1757091AbeFSJrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 05:46:29 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35576 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756608AbeFSJq0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 05:46:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kUFdeFatOBzU0whz9Rz2myZyeYBBS8+4Kcrij5uWqE0=; b=d3X5OoOMnd6L0HGi3IWSh9HID
-        JdjoMb4ZDXYzVCPdDfabKpKeA8a+kSJSxTTMPXyDuWBuizqxW8n4oQ4MgvnMi3tdH4OXSfIliVkxB
-        VwMNe3Fgx+1+Lf7zH/EbPXce0GEqx76S2eZW8bwmquUaAnPcxzeeefmiUDlS+oADWD+IEpSNf5hJE
-        AfGmPaeQUFveWAxfU8GOdEI4y2QZhfP5dBVqk9tzk+GmJG7lOIUMFapSIzhd+7sDi7OeWDgI+bBFQ
-        v4dcJEdVCURVrK8H/nyLRYpFi740NDAYtbMGgYQIZwNQL/aOPi7/Yl3YasYAEAF+aeCvzHV2y4ZzD
-        M2L41MGgw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVDD2-000724-3M; Tue, 19 Jun 2018 09:45:56 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DB5F520268507; Tue, 19 Jun 2018 11:45:54 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 11:45:54 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
+        Tue, 19 Jun 2018 05:47:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45592 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756535AbeFSJrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 05:47:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 99AFDAEE6;
+        Tue, 19 Jun 2018 09:47:03 +0000 (UTC)
+Date:   Tue, 19 Jun 2018 11:46:58 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Brijesh Singh <brijesh.singh@amd.com>
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
+        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v4 0/4] locking,drm: Fix ww mutex naming / algorithm
- inconsistency
-Message-ID: <20180619094554.GM2458@hirez.programming.kicks-ass.net>
-References: <20180619082445.11062-1-thellstrom@vmware.com>
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, felix@feldspaten.org
+Subject: Re: [PATCH] Use 'imply' with SEV Kconfig CRYPTO dependencies
+Message-ID: <20180619094658.GB31750@zn.tnic>
+References: <1526915573-22917-1-git-send-email-Janakarajan.Natarajan@amd.com>
+ <20180523144621.GB25143@pd.tnic>
+ <CAFLxGvyxHU_Xahwdf=0TYx8Nems78TLioLZGGLTkxNGCgxT4Dg@mail.gmail.com>
+ <4f565a11-9e99-b861-06d2-b42922e44c7a@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180619082445.11062-1-thellstrom@vmware.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4f565a11-9e99-b861-06d2-b42922e44c7a@amd.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 14, 2018 at 07:08:26AM -0500, Brijesh Singh wrote:
+> I think depends should look like this:
+> 
+> config KVM_AMD_SEV
+>     def_bool y
+>     bool "AMD Secure Encrypted Virtualization (SEV) support"
+>     depends KVM_AMD && X86_64
+>     depends CRYPTO_DEV_SP_PSP && !(KVM_AMD=y && CRYPTO_DEV_CCP_DD=m)
 
-I suspect you want this through the DRM tree? Ingo are you OK with that?
+CRYPTO_DEV_CCP_DD - this still doesn't belong here. KVM_AMD_SEV doesn't
+care about what kind of functionality the PSP needs to function and
+select it - it should only depend on a single symbol.
+
+Now, you can add a separate CRYPTO .config item which collects all
+required functionality for SEV guests and have KVM_AMD_SEV depend
+on that. Or a similar solution. But not have KVM_AMD_SEV poke into
+CRYPTO...PSP dependencies because it doesn't need to know about it.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
