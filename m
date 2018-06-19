@@ -2,177 +2,115 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA17CC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B20C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A4E2083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:46:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A4E2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B49D32083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:46:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49D32083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756648AbeFSIqf (ORCPT
+        id S1756700AbeFSIqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:46:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36623 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756528AbeFSIqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:46:30 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 57D7020799; Tue, 19 Jun 2018 10:46:28 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DD75520012;
-        Tue, 19 Jun 2018 10:46:27 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 10:46:27 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        Frieder Schrempf <frieder.schrempf@exceet.de>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        David Wolfe <david.wolfe@nxp.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "richard@nod.at" <richard@nod.at>,
-        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
-        Han Xu <han.xu@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>
-Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Message-ID: <20180619104627.31cfd22e@bbrezillon>
-In-Reply-To: <DB6PR0402MB2838FAF5CF0B0883EFAA3A9B99700@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
-        <DB6PR0402MB283825171DF93AD3C8590DD799780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180611121618.40f4b609@bbrezillon>
-        <DB6PR0402MB28388D9DEB86629BB58DD5E499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <DB6PR0402MB2838563F1BA71A9A21ABBE01997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180612091328.67734adb@bbrezillon>
-        <DB6PR0402MB28387FE79F2742C9BEBD4037997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180615145019.734f23a9@bbrezillon>
-        <DB6PR0402MB28382767652782E0CC6C14A0997C0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180615155541.4f43e9bb@bbrezillon>
-        <DB6PR0402MB2838C4F67D17337ADBC5D5F899710@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180618211536.0bf44f55@bbrezillon>
-        <VI1PR0402MB2845767966A437E0D376219799700@VI1PR0402MB2845.eurprd04.prod.outlook.com>
-        <20180619092832.3b6c8f22@bbrezillon>
-        <DB6PR0402MB2838FAF5CF0B0883EFAA3A9B99700@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 19 Jun 2018 04:46:45 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:44459 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1756655AbeFSIql (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 04:46:41 -0400
+X-UUID: 8c13ba7c52da4a5292af8bcd544698a0-20180619
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 531602735; Tue, 19 Jun 2018 16:46:37 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 19 Jun 2018 16:46:35 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Tue, 19 Jun 2018 16:46:35 +0800
+Message-ID: <1529397995.26480.19.camel@mtksdaap41>
+Subject: Re: [PATCH v6 23/29] drm/mediatek: add connection from RDMA2 to DSI2
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Tue, 19 Jun 2018 16:46:35 +0800
+In-Reply-To: <1529393670-26862-24-git-send-email-stu.hsieh@mediatek.com>
+References: <1529393670-26862-1-git-send-email-stu.hsieh@mediatek.com>
+         <1529393670-26862-24-git-send-email-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018 08:31:25 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-
-> > 
-> > Could you please use a mailer that is quoting things correctly. I
-> > have a hard time differentiating your replies from mine.  
+On Tue, 2018-06-19 at 15:34 +0800, Stu Hsieh wrote:
+> This patch add the connection from RDMA2 to DSI2
 > 
-> Sorry for this, have changed my mailer settings.
 
-Thanks for doing. It's still not perfect, but it's definitely better.
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> > 
-> > On Tue, 19 Jun 2018 07:10:37 +0000
-> > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> >   
-> > > Let us take below layout of memory address space map.
-> > > QuadSPI Controller can access range from 0x2000_0000 -
-> > > 0x2FFF_FFFF i.e. 256  
-> > MB address space reserved and it is having 4 slave devices
-> > connected.  
-> > > These slave devices[of size 64MB, 64MB, 32MB and 64MB ] are
-> > > connected at below address 0x2000_0000, 0x2400_0000, 0x2A00_0000,
-> > > 0x2C00_0000 i.e. there is gap of 32MB from 0x2800_0000 to
-> > > 0x29FF_FFFF.  
-> > 
-> > Okay, I'm fine with pre-reserving 32MB per chip select.
-> >   
-> > >
-> > > As per my understanding of the controller, flash XX top address,
-> > > register should  
-> > have below values:  
-> > >   QUADSPI_SFA1AD - 0x0
-> > >   QUADSPI_SFA2AD - 0x400_0000
-> > >   QUADSPI_SFB1AD - 0xA00_0000
-> > >   QUADSPI_SFB2AD - 0xC00_0000
-> > > And Register QUADSPI_SFAR should point to the range for the flash
-> > > in which  
-> > operation is happening.  
-> 
-> My mistake values of these register would be for said case are:
-> QUADSPI_SFA1AD - 0x400_0000
-> QUADSPI_SFA2AD - 0x800_0000
-> QUADSPI_SFB1AD - 0xC00_0000
-> QUADSPI_SFB2AD - 0x1000_0000
-> 
-> i.e. as per controller each register is having the Top address for
-> serial flash connected at A1/A2/B1/B2 respectively.
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index db78fad785e3..e5db1ab51c9b 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -95,6 +95,7 @@
+>  #define RDMA2_SOUT_DPI0			0x2
+>  #define RDMA2_SOUT_DPI1			0x3
+>  #define RDMA2_SOUT_DSI1			0x1
+> +#define RDMA2_SOUT_DSI2			0x4
+>  #define DPI0_SEL_IN_RDMA1		0x1
+>  #define DPI0_SEL_IN_RDMA2		0x3
+>  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+> @@ -102,6 +103,7 @@
+>  #define DSI1_SEL_IN_RDMA1		0x1
+>  #define DSI1_SEL_IN_RDMA2		0x4
+>  #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+> +#define DSI2_SEL_IN_RDMA2		(0x4 << 16)
+>  #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+>  #define COLOR1_SEL_IN_OVL1		0x1
+>  
+> @@ -209,6 +211,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+>  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+>  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+>  		value = RDMA2_SOUT_DSI1;
+> +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
+> +		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> +		value = RDMA2_SOUT_DSI2;
+>  	} else {
+>  		value = 0;
+>  	}
+> @@ -249,6 +254,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+>  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+>  		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
+>  		value = DSI1_SEL_IN_RDMA2;
+> +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
+> +		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
+> +		value = DSI2_SEL_IN_RDMA2;
+>  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+>  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+>  		value = COLOR1_SEL_IN_OVL1;
 
-This is still wrong ;-). I guess you mean:
 
-QUADSPI_SFA1AD - 0x2400_0000
-QUADSPI_SFA2AD - 0x2800_0000
-QUADSPI_SFB1AD - 0x2C00_0000
-QUADSPI_SFB2AD - 0x3000_0000
-
-> 
-> > 
-> > Wait, I thought it was supposed to be an absolute address, not one
-> > relative to the 0x20000000 offset.
-> >   
-> > >
-> > > Please check Table10-32, page 1657, in [1] for more details on
-> > > flash address  
-> > assignment.
-> > 
-> > Yes, I still don't see where it says that having one of the range
-> > with a zero size is forbidden, or anything mentioning a required
-> > alignment. 
-> > >
-> > > But say if I assign address to register QUADSPI_SFA2AD as "0 + 2
-> > > * -
-> > >ahb_buf_size" then this address value is not correct as per the
-> > >value range  
-> > explained in above mentioned table.
-> > 
-> > Why? If the SFA1AD is set to zero, that should not, right?  
-> What this table says that for TOP_ADDR_MEMA1 defines the top address
-> for flash connected at A1 and any address space between
-> TOP_ADDR_MEMA1 and QSPI_AMBA_BASE will be routed to Serial Flash A1.
-> In my example case TOP_ADDR_MEMA1 is 0x400_0000 If assign value to
-> SFAR register is "0 + 2 * ->ahb_buf_size", then this would lie in
-> access range of Serial Flash A1 and access happens to A1 flash
-> whereas we want access to A2 flash.
-
-No, not if SFA1AD is 0x20000000, because then the address range for CS0
-would be 0x20000000 -> 0x20000000.
-
-If you look at the code, you'll see that I adjust the CS mapping
-dynamically, making the one being access use the range
-0x20000000 -> (0x20000000 + 2 * ->ahb_buf_size) and assigning a 0-size
-range for the other ones (either 0x20000000 -> 0x20000000 or
-(0x20000000 + 2 * ->ahb_buf_size) -> (0x20000000 + 2 * ->ahb_buf_size))
-
-> 
-> For access of serial flash A2, any address space access between
-> TOP_ADDR_MEMA2 and TOP_ADDR_MEMA1 would be routed to serial flash A2.
-> Thus to access A2 flash, SFAR would be in range from 0x400_0000 and
-> 0x800_0000
-
-I understand what you're explaining, what I don't get is why the QSPI
-IP doesn't cope with a 0-size range. If you have SFA1AD set to
-0x20000000 and SFA2AD set so 0x20000800, I would except any access to
-the 0x20000000 -> 0x20000800 range to be routed to CS1 not CS0. But
-apparently it's not working like that.
