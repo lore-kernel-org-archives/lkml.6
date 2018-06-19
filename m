@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30571C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 03:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D024C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 03:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F30920660
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 03:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F30920660
+	by mail.kernel.org (Postfix) with ESMTP id 3E2BD20850
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 03:02:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2BD20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=themaw.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937243AbeFSDCi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 23:02:38 -0400
-Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:50332
+        id S937259AbeFSDCs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 23:02:48 -0400
+Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:50367
         "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755376AbeFSDC0 (ORCPT
+        by vger.kernel.org with ESMTP id S935690AbeFSDCr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 23:02:26 -0400
+        Mon, 18 Jun 2018 23:02:47 -0400
 X-IronPort-Anti-Spam-Filtered: true
 X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AWEwBicShb/6c80XZcHgEGDINJgU8SK?=
- =?us-ascii?q?IN5lFZGAQEBAQEGgQ00kDiEKIF4HhgBhEACgl8hNhYBAgEBAQEBAQJtKIUpBiN?=
- =?us-ascii?q?WEBgBDAIYDgICRxAGE4UYDKpTghwaAogtgWiBC4dJgQyBB4E/hxqDOIJVAodJh?=
- =?us-ascii?q?Vc/izcJjwmIGIUjK5JqByqBUk0uCoJ+kFwyMHoBAY4KgkgBAQ?=
+ =?us-ascii?q?IN5lFZGAQEBAQEGgQ00kDiEKIF4HhgBhEACgl8hNhYBAgEBAQEBAQJtKIUpBiM?=
+ =?us-ascii?q?EUhAYAQwCGA4CAkcQBhOFGAyqU4FpMxoCiC2BaIELh0mBDIEHgT+KUoJVAo0gi?=
+ =?us-ascii?q?3YJjwmIGIUjK5JqByqBUk0uCoJ+kFwyMHoBAZBSAQE?=
 X-IPAS-Result: =?us-ascii?q?A2AWEwBicShb/6c80XZcHgEGDINJgU8SKIN5lFZGAQEBAQE?=
- =?us-ascii?q?GgQ00kDiEKIF4HhgBhEACgl8hNhYBAgEBAQEBAQJtKIUpBiNWEBgBDAIYDgICR?=
- =?us-ascii?q?xAGE4UYDKpTghwaAogtgWiBC4dJgQyBB4E/hxqDOIJVAodJhVc/izcJjwmIGIU?=
- =?us-ascii?q?jK5JqByqBUk0uCoJ+kFwyMHoBAY4KgkgBAQ?=
+ =?us-ascii?q?GgQ00kDiEKIF4HhgBhEACgl8hNhYBAgEBAQEBAQJtKIUpBiMEUhAYAQwCGA4CA?=
+ =?us-ascii?q?kcQBhOFGAyqU4FpMxoCiC2BaIELh0mBDIEHgT+KUoJVAo0gi3YJjwmIGIUjK5J?=
+ =?us-ascii?q?qByqBUk0uCoJ+kFwyMHoBAZBSAQE?=
 X-IronPort-AV: E=Sophos;i="5.51,241,1526313600"; 
-   d="scan'208";a="90294647"
+   d="scan'208";a="90294669"
 Received: from unknown (HELO pluto.themaw.net) ([118.209.60.167])
-  by icp-osb-irony-out7.iinet.net.au with ESMTP; 19 Jun 2018 11:02:04 +0800
-Subject: [PATCH 2/6] autofs - fix clearing AUTOFS_EXP_LEAVES in
- autofs_expire_indirect()
+  by icp-osb-irony-out7.iinet.net.au with ESMTP; 19 Jun 2018 11:02:09 +0800
+Subject: [PATCH 3/6] autofs - make autofs_expire_direct() static
 From:   Ian Kent <raven@themaw.net>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         autofs mailing list <autofs@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 19 Jun 2018 11:02:04 +0800
-Message-ID: <152937732410.21213.7447294898147765076.stgit@pluto.themaw.net>
+Date:   Tue, 19 Jun 2018 11:02:09 +0800
+Message-ID: <152937732944.21213.11821977712410930973.stgit@pluto.themaw.net>
 In-Reply-To: <152937731702.21213.7371321165189170865.stgit@pluto.themaw.net>
 References: <152937731702.21213.7371321165189170865.stgit@pluto.themaw.net>
 User-Agent: StGit/0.17.1-dirty
@@ -55,30 +54,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The expire flag AUTOFS_EXP_LEAVES is cleared before the second
-call to should_expire() in autofs_expire_indirect() but the
-parameter passed in the second call is incorrect.
-
-Fortunately AUTOFS_EXP_LEAVES expire flag has not been used for
-a long time but might be needed in the future so fix it rather
-than remove the expire leaves functionality.
+autofs_expire_direct() isn't used outside of fs/autofs/expire.c
+so make it static.
 
 Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- fs/autofs/expire.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/autofs/autofs_i.h |    3 ---
+ fs/autofs/expire.c   |    8 ++++----
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
+diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
+index 9400a9f6318a..4192f8002f89 100644
+--- a/fs/autofs/autofs_i.h
++++ b/fs/autofs/autofs_i.h
+@@ -154,9 +154,6 @@ int autofs_do_expire_multi(struct super_block *sb, struct vfsmount *mnt,
+ 			   struct autofs_sb_info *sbi, int when);
+ int autofs_expire_multi(struct super_block *, struct vfsmount *,
+ 			struct autofs_sb_info *, int __user *);
+-struct dentry *autofs_expire_direct(struct super_block *sb,
+-				    struct vfsmount *mnt,
+-				    struct autofs_sb_info *sbi, int how);
+ struct dentry *autofs_expire_indirect(struct super_block *sb,
+ 				      struct vfsmount *mnt,
+ 				      struct autofs_sb_info *sbi, int how);
 diff --git a/fs/autofs/expire.c b/fs/autofs/expire.c
-index 295feec10ea6..41855cdc5630 100644
+index 41855cdc5630..64e6eba2c628 100644
 --- a/fs/autofs/expire.c
 +++ b/fs/autofs/expire.c
-@@ -467,7 +467,7 @@ struct dentry *autofs_expire_indirect(struct super_block *sb,
- 		 * things have changed.
- 		 */
- 		flags &= ~AUTOFS_EXP_LEAVES;
--		found = should_expire(expired, mnt, timeout, how);
-+		found = should_expire(expired, mnt, timeout, flags);
- 		if (!found || found != expired)
- 			/* Something has changed, continue */
- 			goto next;
+@@ -292,10 +292,10 @@ static struct dentry *autofs_check_leaves(struct vfsmount *mnt,
+ }
+ 
+ /* Check if we can expire a direct mount (possibly a tree) */
+-struct dentry *autofs_expire_direct(struct super_block *sb,
+-				    struct vfsmount *mnt,
+-				    struct autofs_sb_info *sbi,
+-				    int how)
++static struct dentry *autofs_expire_direct(struct super_block *sb,
++					   struct vfsmount *mnt,
++					   struct autofs_sb_info *sbi,
++					   int how)
+ {
+ 	unsigned long timeout;
+ 	struct dentry *root = dget(sb->s_root);
 
