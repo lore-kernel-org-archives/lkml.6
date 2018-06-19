@@ -2,171 +2,235 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44ED0C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9CFC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0CD12083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:19:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0CD12083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A7142083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 04:19:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NUZCMOQq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7142083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937288AbeFSETE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 00:19:04 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:48227 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750861AbeFSETC (ORCPT
+        id S965013AbeFSETR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 00:19:17 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:25759 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750771AbeFSETD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 00:19:02 -0400
-Received: by mail-io0-f200.google.com with SMTP id t11-v6so15023041iog.15
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:19:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=BYM2WV18VGSplCv4E2NpggT3uH9Ub4CA0+8PKj60DlY=;
-        b=bWfa4N7X/g7BEvHxaDmhjSIW4J01RzKCkJUGx86zWqZrf4DcCRaV+2OwZD6AhN0FUD
-         n/8I/OR6VEnFQXqtwPSf3sd9wbLmyUMtYubDIjGaE63ILY0/p6CAgEW2SVSdLdq2Utal
-         v9Abxpi36jNp2WZM/3ZpqA9L4uh4JOoUV6IPjrXgiY+Iajn0AAftFnLZS+vsSf+m/TGV
-         xJpZik29aumPpuMyVA+f+1YY+pkwxazw0Bos1JMhQOCLy2Iz1lXQXBApKpiT8DUaPzBC
-         rS5Kh+xnHOxhZuLSJyDaV/wj8DEYwQzPiDjjPTZ4nwgoD8rlHBzNr80pZY76P7Im2vZs
-         mKAA==
-X-Gm-Message-State: APt69E2s/QNYACwLLBC6Qr4Upfx3j8Il3PKX0HZ/lu59qruaKky95TJL
-        OExdAMxx879M0pwc9rWrK2zGlHA+ZMgBReMDCeHDgNBLH9+t
-X-Google-Smtp-Source: ADUXVKIIiHNYZguLpa+cNQd1IqlOpnEGHqQoFXYmz8NhDsWCF06f0MqJnfw/JW0xYiJkwLrALPMFo9F9f7zvAtzZ8lUg9OKxj117
-MIME-Version: 1.0
-X-Received: by 2002:a24:b302:: with SMTP id e2-v6mr458776itf.31.1529381941821;
- Mon, 18 Jun 2018 21:19:01 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 21:19:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005e4690056ef6fb66@google.com>
-Subject: general protection fault in scatterwalk_copychunks (3)
-From:   syzbot <syzbot+db0b320fadd1b9853ebb@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Tue, 19 Jun 2018 00:19:03 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180619041900epoutp03029f08709d7fcb88f62ff43a568b4b7e~5dMWI4hMq2245922459epoutp034;
+        Tue, 19 Jun 2018 04:19:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180619041900epoutp03029f08709d7fcb88f62ff43a568b4b7e~5dMWI4hMq2245922459epoutp034
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1529381940;
+        bh=bY0jhJPjon8+x5HE3spbf3h7Km2Zr4AfJmV3sSskobE=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=NUZCMOQqmzK/HO5wupifACiOW2+3xIzIYSxZ+376VSqj7J5v9gIyOkayLXWF8Hb7Q
+         taHAAmISoueJj1DHZxy7TQzWW0OSl3QbqDvwF0PnY47ZLGVyw7FUpS5mr32SI9VCxL
+         SYeZIF85qQnvW7ns+AMA51UhDVeQJKrfEjGMqAO0=
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.152]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20180619041857epcas1p3d7178b74483e21466cade6952db280fa~5dMTtlYek2913829138epcas1p3n;
+        Tue, 19 Jun 2018 04:18:57 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D9.05.04217.134882B5; Tue, 19 Jun 2018 13:18:57 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20180619041857epcas2p47c45471787365849472e56ebc045d36c~5dMTd4SvV2603126031epcas2p4u;
+        Tue, 19 Jun 2018 04:18:57 +0000 (GMT)
+X-AuditID: b6c32a45-441ff70000001079-31-5b288431e4ed
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id B1.85.04192.134882B5; Tue, 19 Jun
+        2018 13:18:57 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PAJ00A2NYNKAH10@mmp2.samsung.com>; Tue, 19 Jun 2018 13:18:57 +0900 (KST)
+Message-id: <5B288430.2040600@samsung.com>
+Date:   Tue, 19 Jun 2018 13:18:56 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Enric Balletbo Serra <eballetbo@gmail.com>, cwchoi00@gmail.com
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel@collabora.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] devfreq: rk3399_dmc: Fix duplicated opp table on
+ reload.
+In-reply-to: <CAFqH_51ptafw-Z_8-FqtxbTH9LU560cHoM5TFiF01ZwG_jW3VQ@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7bCmua5hi0a0weW3ShbPjmpbXPi9ks1i
+        ze1DjBabz/WwWpxtesNucXnXHDaLz71HGC1uN65gc+Dw2HF3CaPHzll32T36tqxi9Pi8SS6A
+        JSrVJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoCiWF
+        ssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVK0oaGRnqGBuZ6REZA2jrUyMgUqSUjN+L2vhamg
+        QaWi8fAcpgbGa1JdjJwcEgImEguPTWHuYuTiEBLYwSjRt+oSK4TznVGi5+pnNpiqL1POM0Ek
+        NjBKXO5dzQqS4BUQlPgx+R5LFyMHB7OAvMSRS9kgYWYBTYkXXyaxQNTfZZSY3HaBHaJeS2Ld
+        9jZmEJtFQFVi9c9pYHE2oPj+FzfAlvELKEpc/fGYEcQWFYiQ2Dn/G1iNiICTxM4pm8FOZRZo
+        YJJ49v8v2BHCAv4Sh5+9BRvKKRAs8XHXdLDNEgJn2CQ2vjjLAvGCi8STZdOgbGGJV8e3sEPY
+        0hLPVm1khGhoZ5T48qKZFcKZwCjx4dRmJogqY4lnC7uYIJ7jk+g4/Jcd5GcJAV6JjjYhiBIP
+        ifmz90HDaDGTxNGHf9gnMMrOQgqmWYhgmoUUTAsYmVcxiqUWFOempxYbFRjqFSfmFpfmpesl
+        5+duYgQnNy3XHYwzzvkcYhTgYFTi4dVYrx4txJpYVlyZe4hRgoNZSYT3WLVGtBBvSmJlVWpR
+        fnxRaU5q8SFGU2AoT2SWEk3OBybevJJ4Q1MjY2NjC1NzS2MDSyVxXsabAtFCAumJJanZqakF
+        qUUwfUwcnFINjGc3+Z/O+r48bUaOz1XPcN9NNjMKa9fLvkhv8HIo6am1X/dqeu+rVdZn1H1V
+        rv/7dpBRK8yv21apeC/btQX9OvO1sr7uWXK36NiKwxYT5E7Nb3++4dO0U79OpJgkbTJ89f77
+        7a8sm9sfWM38M/eksv/zVIuO+6/jWoRu+Dgs/G2+v3+/g1uqfLcSS3FGoqEWc1FxIgCvaJW8
+        hAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNLMWRmVeSWpSXmKPExsVy+t9jQV3DFo1ogz87+C2eHdW2uPB7JZvF
+        mtuHGC02n+thtTjb9Ibd4vKuOWwWn3uPMFrcblzB5sDhsePuEkaPnbPusnv0bVnF6PF5k1wA
+        SxSXTUpqTmZZapG+XQJXxu99LUwFDSoVjYfnMDUwXpPqYuTkkBAwkfgy5TxTFyMXh5DAOkaJ
+        pp7vrCAJXgFBiR+T77F0MXJwMAvISxy5lA1hqktMmZILUX6fUaLt3wIWiHItiXXb25hBbBYB
+        VYnVP6exg9hsQPH9L26wgdj8AooSV388ZgSZIyoQIdF9ohIkLCLgJLFzymZmkJnMAk1MEqc/
+        zAE7QVjAV+Lbi0dgtpDAYiaJSd84QWxOgWCJudf2ME9gFJiF5NJZCJfOQrh0ASPzKkbJ1ILi
+        3PTcYqMCo7zUcr3ixNzi0rx0veT83E2MwCDfdlirfwfj4yXxhxgFOBiVeHg11qtHC7EmlhVX
+        5h5ilOBgVhLhPVatES3Em5JYWZValB9fVJqTWnyIUZqDRUmclz//WKSQQHpiSWp2ampBahFM
+        lomDU6qBUTLaycd5RWV6OfOGD/6iRQeLimrnH5nz2uZ7w+Jp22xW+19eemmyVM7OC59PhSe8
+        U58rwzLRbLNzUxDvDenN+b1hdf1dHTMzSgViVZbvD05NOLGcb+6CuFaG+BWehXpfLIpmWQar
+        OzOp7bIU2M61a3eA9ZuIv4enrN0lvmmRBJvenQszpDc8VGIpzkg01GIuKk4EAO3ZtNVuAgAA
+X-CMS-MailID: 20180619041857epcas2p47c45471787365849472e56ebc045d36c
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180618091029epcas3p498708535c8f8df019bf3785a199d58b4
+References: <20180615151217.29872-1-enric.balletbo@collabora.com>
+        <CAGTfZH16O6u_3QJ2u1eecUnGptSBf1ho47RPefOTmrw+Syxr0w@mail.gmail.com>
+        <CGME20180618091029epcas3p498708535c8f8df019bf3785a199d58b4@epcas3p4.samsung.com>
+        <CAFqH_51ptafw-Z_8-FqtxbTH9LU560cHoM5TFiF01ZwG_jW3VQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Enric,
 
-syzbot found the following crash on:
+On 2018년 06월 18일 18:10, Enric Balletbo Serra wrote:
+> Hi Chanwoo,
+> 
+> Missatge de Chanwoo Choi <cwchoi00@gmail.com> del dia dg., 17 de juny
+> 2018 a les 5:23:
+>>
+>> Hi Enric,
+>>
+>> 2018-06-16 0:12 GMT+09:00 Enric Balletbo i Serra <enric.balletbo@collabora.com>:
+>>> The opp table is not removed when the driver is unloaded neither when
+>>> there is an error within probe, so if the driver is reloaded the opp
+>>> core shows the following warning:
+>>>
+>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
+>>>                200000000, volt: 900000, enabled: 1. New: freq: 200000000,
+>>>                volt: 900000, enabled: 1
+>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
+>>>                400000000, volt: 900000, enabled: 1. New: freq: 400000000,
+>>>                volt: 900000, enabled: 1
+>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
+>>>                666000000, volt: 900000, enabled: 1. New: freq: 666000000,
+>>>                volt: 900000, enabled: 1
+>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
+>>>                800000000, volt: 900000, enabled: 1. New: freq: 800000000,
+>>>                volt: 900000, enabled: 1
+>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
+>>>                928000000, volt: 900000, enabled: 1. New: freq: 928000000,
+>>>                volt: 900000, enabled: 1
+>>>
+>>> This patch fixes the error path in the probe function and adds a .remove
+>>> function to properly cleanup the opp table on unloading.
+>>>
+>>> Fixes: 5a893e31a636c (PM / devfreq: rockchip: add devfreq driver for rk3399 dmc)
+>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>> ---
+>>>
+>>>  drivers/devfreq/rk3399_dmc.c | 31 +++++++++++++++++++++++++++----
+>>>  1 file changed, 27 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
+>>> index d5c03e5abe13..e795ad2b3f6b 100644
+>>> --- a/drivers/devfreq/rk3399_dmc.c
+>>> +++ b/drivers/devfreq/rk3399_dmc.c
+>>> @@ -375,8 +375,10 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+>>>         data->rate = clk_get_rate(data->dmc_clk);
+>>>
+>>>         opp = devfreq_recommended_opp(dev, &data->rate, 0);
+>>> -       if (IS_ERR(opp))
+>>> -               return PTR_ERR(opp);
+>>> +       if (IS_ERR(opp)) {
+>>> +               ret = PTR_ERR(opp);
+>>> +               goto err_free_opp;
+>>> +       }
+>>>
+>>>         data->rate = dev_pm_opp_get_freq(opp);
+>>>         data->volt = dev_pm_opp_get_voltage(opp);
+>>> @@ -388,13 +390,33 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+>>>                                            &rk3399_devfreq_dmc_profile,
+>>>                                            DEVFREQ_GOV_SIMPLE_ONDEMAND,
+>>>                                            &data->ondemand_data);
+>>> -       if (IS_ERR(data->devfreq))
+>>> -               return PTR_ERR(data->devfreq);
+>>> +       if (IS_ERR(data->devfreq)) {
+>>> +               ret = PTR_ERR(data->devfreq);
+>>> +               goto err_free_opp;
+>>> +       }
+>>> +
+>>>         devm_devfreq_register_opp_notifier(dev, data->devfreq);
+>>>
+>>>         data->dev = dev;
+>>>         platform_set_drvdata(pdev, data);
+>>>
+>>> +       return 0;
+>>
+>> It looks strange. Because rk3399_dmcfreq_probe() already include
+>> 'return 0' when success.
+>> What is the base commit of this patch?
+>>
+> 
+> Sorry, I am not sure I understand your question, If I am not answering
+> below could you rephrase?
 
-HEAD commit:    9ffc59d57228 Merge tag '4.18-rc1-more-smb3-fixes' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=113b25bf800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f390986c4f7cd566
-dashboard link: https://syzkaller.appspot.com/bug?extid=db0b320fadd1b9853ebb
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16daf58f800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1376023f800000
+When I check the rk3399_dmcfreq_probe()[1], as I commented,
+rk3399_dmcfreq_probe() already 'return 0' after platform_set_drvdata().
+You can check it on link[1].
+[1] https://elixir.bootlin.com/linux/v4.18-rc1/source/drivers/devfreq/rk3399_dmc.c#L443
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+db0b320fadd1b9853ebb@syzkaller.appspotmail.com
+But, this patch add new '+       return 0;' line again in rk3399_dmcfreq_probe().
+So, just I asked what is base commit of this patch.
 
-RBP: 00007fff94c3a530 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000005 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000006 R14: 0000000000000000 R15: 0000000000000000
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 4538 Comm: syz-executor098 Not tainted 4.18.0-rc1+ #108
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:scatterwalk_start include/crypto/scatterwalk.h:86 [inline]
-RIP: 0010:scatterwalk_pagedone include/crypto/scatterwalk.h:111 [inline]
-RIP: 0010:scatterwalk_copychunks+0x3ae/0x500 crypto/scatterwalk.c:55
-Code: 4c 89 f8 48 c1 e8 03 80 3c 08 00 0f 85 2b 01 00 00 49 8d 7c 24 08 4d  
-89 27 48 ba 00 00 00 00 00 fc ff df 48 89 f8 48 c1 e8 03 <0f> b6 04 10 84  
-c0 74 08 3c 03 0f 8e 34 01 00 00 48 8b 45 c8 0f b6
-RSP: 0018:ffff8801d920eb10 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000022 RCX: dffffc0000000000
-RDX: dffffc0000000000 RSI: ffffffff835bb712 RDI: 0000000000000008
-RBP: ffff8801d920eb60 R08: ffff8801d8d86400 R09: ffffed0038774002
-R10: ffffed0038774004 R11: ffff8801c3ba0021 R12: 0000000000000000
-R13: 0000000000000022 R14: 0000000000000005 R15: ffff8801d920eba8
-FS:  00000000010b6880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004b63d8 CR3: 00000001acd52000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  scatterwalk_map_and_copy+0x1f0/0x260 crypto/scatterwalk.c:72
-  gcmaes_crypt_by_sg+0xcee/0x1ee0 arch/x86/crypto/aesni-intel_glue.c:908
-  gcmaes_encrypt.constprop.16+0x716/0xf10  
-arch/x86/crypto/aesni-intel_glue.c:929
-  generic_gcmaes_encrypt+0x12d/0x186 arch/x86/crypto/aesni-intel_glue.c:1294
-  crypto_aead_encrypt include/crypto/aead.h:335 [inline]
-  gcmaes_wrapper_encrypt+0x162/0x200 arch/x86/crypto/aesni-intel_glue.c:1127
-  crypto_aead_encrypt include/crypto/aead.h:335 [inline]
-  tls_do_encryption net/tls/tls_sw.c:211 [inline]
-  tls_push_record+0x966/0x1400 net/tls/tls_sw.c:247
-  tls_sw_sendpage+0x5ff/0xf60 net/tls/tls_sw.c:601
-  inet_sendpage+0x1de/0x750 net/ipv4/af_inet.c:815
-  kernel_sendpage+0x93/0xf0 net/socket.c:3367
-  sock_sendpage+0x8c/0xc0 net/socket.c:870
-  pipe_to_sendpage+0x2d0/0x400 fs/splice.c:452
-  splice_from_pipe_feed fs/splice.c:503 [inline]
-  __splice_from_pipe+0x38e/0x7c0 fs/splice.c:627
-  splice_from_pipe+0x1ea/0x340 fs/splice.c:662
-  generic_splice_sendpage+0x3c/0x50 fs/splice.c:833
-  do_splice_from fs/splice.c:852 [inline]
-  direct_splice_actor+0x128/0x190 fs/splice.c:1019
-  splice_direct_to_actor+0x318/0x8f0 fs/splice.c:974
-  do_splice_direct+0x2d4/0x420 fs/splice.c:1062
-  do_sendfile+0x623/0xe20 fs/read_write.c:1440
-  __do_sys_sendfile64 fs/read_write.c:1495 [inline]
-  __se_sys_sendfile64 fs/read_write.c:1487 [inline]
-  __x64_sys_sendfile64+0x15d/0x250 fs/read_write.c:1487
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440cc9
-Code: e8 0c b6 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 9b 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff94c3a518 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440cc9
-RDX: 00000000200000c0 RSI: 0000000000000005 RDI: 0000000000000004
-RBP: 00007fff94c3a530 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000005 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000006 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 687f8ba94a271f8a ]---
-RIP: 0010:scatterwalk_start include/crypto/scatterwalk.h:86 [inline]
-RIP: 0010:scatterwalk_pagedone include/crypto/scatterwalk.h:111 [inline]
-RIP: 0010:scatterwalk_copychunks+0x3ae/0x500 crypto/scatterwalk.c:55
-Code: 4c 89 f8 48 c1 e8 03 80 3c 08 00 0f 85 2b 01 00 00 49 8d 7c 24 08 4d  
-89 27 48 ba 00 00 00 00 00 fc ff df 48 89 f8 48 c1 e8 03 <0f> b6 04 10 84  
-c0 74 08 3c 03 0f 8e 34 01 00 00 48 8b 45 c8 0f b6
-RSP: 0018:ffff8801d920eb10 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000022 RCX: dffffc0000000000
-RDX: dffffc0000000000 RSI: ffffffff835bb712 RDI: 0000000000000008
-RBP: ffff8801d920eb60 R08: ffff8801d8d86400 R09: ffffed0038774002
-R10: ffffed0038774004 R11: ffff8801c3ba0021 R12: 0000000000000000
-R13: 0000000000000022 R14: 0000000000000005 R15: ffff8801d920eba8
-FS:  00000000010b6880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004b63d8 CR3: 00000001acd52000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> So, once the opp table is added we need an error path to free it if an
+> error occurs later. When the probe returns 0, we need to free the opp
+> table when we remove the module.
+> 
+>> [snip]
+>>
+>> Anyway, if probe fail, device driver have to remove registered OPP table.
+>> Looks good to me.
+>>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>
+> 
+> Thanks,
+>  Enric
+> 
+>> --
+>> Best Regards,
+>> Chanwoo Choi
+>> Samsung Electronics
+> 
+> 
+> 
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
