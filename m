@@ -3,173 +3,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C01C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03304C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F7192075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:21:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F7192075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 98AB520874
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:24:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98AB520874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937630AbeFSLVU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 07:21:20 -0400
-Received: from foss.arm.com ([217.140.101.70]:47990 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937497AbeFSLVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 07:21:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA8D21435;
-        Tue, 19 Jun 2018 04:21:18 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.207.54])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCBC33F589;
-        Tue, 19 Jun 2018 04:21:16 -0700 (PDT)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     linux-pci@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ley Foon Tan <lftan@altera.com>
-Subject: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch Kconfig
-Date:   Tue, 19 Jun 2018 12:21:05 +0100
-Message-Id: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
-X-Mailer: git-send-email 2.15.0
+        id S937663AbeFSLYE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 07:24:04 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:58098 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937497AbeFSLYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 07:24:02 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fVEjx-0007LC-8w; Tue, 19 Jun 2018 05:24:01 -0600
+Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fVEjw-0002lN-Nd; Tue, 19 Jun 2018 05:24:01 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Containers <containers@lists.linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Alistair Strachan <astrachan@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Date:   Tue, 19 Jun 2018 06:23:47 -0500
+Message-ID: <87muvr58ak.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fVEjw-0002lN-Nd;;;mid=<87muvr58ak.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+CfGcmYnZ6HBXY0pg76mjilrQP93Se0EU=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [GIT PULL] userns fixes for 4.17-rc2
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-added configuration options to allow PCI host controller drivers to be
-compile tested on all architectures.
 
-Some host controller drivers (eg PCIE_ALTERA) config entries select
-the PCI_DOMAINS config option to enable PCI domains management in
-the kernel. Now that host controller drivers can be compiled on
-all architectures, this triggers build regressions on arches that
-do not implement the PCI_DOMAINS required API (ie pci_domain_nr()):
+Linus,
 
-drivers/ata/pata_ali.c: In function 'ali_init_chipset':
-drivers/ata/pata_ali.c:469:38: error:
-        implicit declaration of function 'pci_domain_nr';
-                                          did you mean 'pci_iomap_wc'?
+Please pull the userns-linus branch from the git tree:
 
-Furthemore, some software configurations (ie Jailhouse) require a
-PCI_DOMAINS enabled kernel to configure multiple host controllers
-without having an explicit dependency on the ARM platform on which
-they run.
+   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git userns-linus
 
-Make PCI_DOMAINS a visible configuration option on ARM so that software
-configurations that need it can manually select it and move the
-PCI_DOMAINS selection from PCI controllers configuration file to ARM
-sub-arch config entries that currently require it, fixing the issue.
+   HEAD: 04035aa33a1258ca3c30f58138897ca3e97485f1 proc: Don't change mount options on remount failure.
 
-Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us.net
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Scott Branden <scott.branden@broadcom.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Ley Foon Tan <lftan@altera.com>
----
-v1 -> v2
-	- Removed ARCH_VIRT PCI_DOMAINS selection
-	- Added PCI_DOMAINS visible config option
+Mount options for proc have been something of a mess since they were
+added in the beginnging of 2012.  I compounded that in 2016 by merging
+a change that in practice ignored the proc mount options except on remount.
 
-v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
+Ordinarily noticing that in 2018 that had been broken for 2 years
+without complaint I would think hmm "Can we just get rid of these
+things".  Unfortunately it was someone who uses the proc hidepid option
+that noticed this problem.  So fixed it must be.
 
- arch/arm/Kconfig               | 8 +++++++-
- arch/arm/mach-bcm/Kconfig      | 1 +
- arch/arm/mach-socfpga/Kconfig  | 1 +
- drivers/pci/controller/Kconfig | 3 ---
- 4 files changed, 9 insertions(+), 4 deletions(-)
+I stared at this code for quite a while and I finally concluded that the
+best course forward is to simply things and remove the internal kernel
+mount of proc.  The internal mount of proc is directly responsible for
+this regression and it has been the source of pain over the years.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 54eeb8d00bc6..843edfd000be 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1245,8 +1245,14 @@ config PCI
- 	  VESA. If you have PCI, say Y, otherwise N.
- 
- config PCI_DOMAINS
--	bool
-+	bool "Support for multiple PCI domains"
- 	depends on PCI
-+	help
-+	  Enable PCI domains kernel management. Say Y if your machine
-+	  has a PCI bus hierarchy that requires more than one PCI
-+	  domain (aka segment) to be correctly managed. Say N otherwise.
-+
-+	  If you don't know what to do here, say N.
- 
- config PCI_DOMAINS_GENERIC
- 	def_bool PCI_DOMAINS
-diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-index c46a728df44e..25aac6ee2ab1 100644
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
- 	select GPIOLIB
- 	select ARM_AMBA
- 	select PINCTRL
-+	select PCI_DOMAINS if PCI
- 	help
- 	  This enables support for systems based on Broadcom IPROC architected SoCs.
- 	  The IPROC complex contains one or more ARM CPUs along with common
-diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-socfpga/Kconfig
-index d0f62eacf59d..4adb901dd5eb 100644
---- a/arch/arm/mach-socfpga/Kconfig
-+++ b/arch/arm/mach-socfpga/Kconfig
-@@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
- 	select HAVE_ARM_SCU
- 	select HAVE_ARM_TWD if SMP
- 	select MFD_SYSCON
-+	select PCI_DOMAINS if PCI
- 
- if ARCH_SOCFPGA
- config SOCFPGA_SUSPEND
-diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-index 18fa09b3ac8f..cc9fa02d32a0 100644
---- a/drivers/pci/controller/Kconfig
-+++ b/drivers/pci/controller/Kconfig
-@@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
- 	depends on OF
- 	select PCI_HOST_COMMON
- 	select IRQ_DOMAIN
--	select PCI_DOMAINS
- 	help
- 	  Say Y here if you want to support a simple generic PCI host
- 	  controller, such as the one emulated by kvmtool.
-@@ -138,7 +137,6 @@ config PCI_VERSATILE
- 
- config PCIE_IPROC
- 	tristate
--	select PCI_DOMAINS
- 	help
- 	  This enables the iProc PCIe core controller support for Broadcom's
- 	  iProc family of SoCs. An appropriate bus interface driver needs
-@@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
- config PCIE_ALTERA
- 	bool "Altera PCIe controller"
- 	depends on ARM || NIOS2 || COMPILE_TEST
--	select PCI_DOMAINS
- 	help
- 	  Say Y here if you want to enable PCIe controller support on Altera
- 	  FPGA.
--- 
-2.15.0
+The cost of this simplification is that proc_flush_task gains two more
+atomic operations.
 
+The upside is that proc is no longer special.  So following the same
+idioms as filesystems will no longer be a problem.
+
+
+While I was looking at the mount options of proc I found two more issues
+that date back to the original change that added them.  A remount of
+proc that fails did not return the proper error code.  A remount of proc
+that fails could wind up changing the proc mount options.
+
+I have personally tested all of these changed and verified everything
+works correctly.  Alistair Strachan has tested and verified that
+Android's use of proc's hidepid option works with this change.
+
+I had hoped to let this sit a little longer in linux-next just in case
+some of the build bots might turn up something I had missed.  But with
+the parallel fscontext changes to proc that testing won't happen.
+
+With linux-next useless, I figure the better part of valor is a pull
+request that explains the reasons for this change and highlights the
+subtle issues with mount option handling.  Hopefully something we can
+solve with the new fscontext userspace API before it gets merged.
+
+
+This also looks like time to revisit killing off sysctl syscall support.
+I don't believe anyone compiles it into their kernel any more and
+keeping the support made this change more difficult than necessary.
+
+Eric W. Biederman (3):
+      proc: Simplify and fix proc by removing the kernel mount
+      proc: Change proc_parse_options to return an errno value
+      proc: Don't change mount options on remount failure.
+
+ arch/um/drivers/mconsole_kern.c |  4 +--
+ fs/proc/base.c                  | 36 ++++++++++++++++++++-----
+ fs/proc/inode.c                 | 17 +++++++++---
+ fs/proc/internal.h              |  7 ++++-
+ fs/proc/root.c                  | 58 ++++++++++++++++++++++-------------------
+ include/linux/pid_namespace.h   |  3 +--
+ include/linux/proc_ns.h         |  7 ++---
+ kernel/pid.c                    |  8 ------
+ kernel/pid_namespace.c          |  7 -----
+ kernel/sysctl_binary.c          |  5 ++--
+ 10 files changed, 87 insertions(+), 65 deletions(-)
+
+Eric
