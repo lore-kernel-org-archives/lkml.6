@@ -2,112 +2,122 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25909C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A05E4C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA272083A
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:44:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA272083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 636A72083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 08:45:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636A72083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937460AbeFSIoc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 04:44:32 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:59211 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S937236AbeFSIo2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 04:44:28 -0400
-X-UUID: 3f12d83978f346abbd3d7f0ba3a13b77-20180619
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1559330548; Tue, 19 Jun 2018 16:44:25 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 19 Jun 2018 16:44:23 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 19 Jun 2018 16:44:23 +0800
-Message-ID: <1529397863.26480.18.camel@mtksdaap41>
-Subject: Re: [PATCH v6 22/29] drm/mediatek: add connection from RDMA2 to DSI1
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date:   Tue, 19 Jun 2018 16:44:23 +0800
-In-Reply-To: <1529393670-26862-23-git-send-email-stu.hsieh@mediatek.com>
-References: <1529393670-26862-1-git-send-email-stu.hsieh@mediatek.com>
-         <1529393670-26862-23-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1756459AbeFSIps (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 04:45:48 -0400
+Received: from mga18.intel.com ([134.134.136.126]:50667 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756317AbeFSIpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 04:45:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 01:45:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,242,1526367600"; 
+   d="scan'208";a="209247724"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 19 Jun 2018 01:45:44 -0700
+Received: from [10.125.252.170] (abudanko-mobl.ccr.corp.intel.com [10.125.252.170])
+        by linux.intel.com (Postfix) with ESMTP id 911895802AB;
+        Tue, 19 Jun 2018 01:45:42 -0700 (PDT)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v1]: perf tests: check that complex event name is parsed
+ correctly
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Message-ID: <ad30b774-219b-7b80-c610-4e9e298cf8a7@linux.intel.com>
+Date:   Tue, 19 Jun 2018 11:45:40 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-19 at 15:34 +0800, Stu Hsieh wrote:
-> This patch add the connection from RDMA2 to DSI1
-> 
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+Extend regression testing to cover case of complex event names enabled 
+by the patch "perf record: enable arbitrary event names thru name= modifier".
 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index a4b418302f32..db78fad785e3 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -94,11 +94,13 @@
->  #define RDMA1_SOUT_DSI3			0x5
->  #define RDMA2_SOUT_DPI0			0x2
->  #define RDMA2_SOUT_DPI1			0x3
-> +#define RDMA2_SOUT_DSI1			0x1
->  #define DPI0_SEL_IN_RDMA1		0x1
->  #define DPI0_SEL_IN_RDMA2		0x3
->  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
->  #define DPI1_SEL_IN_RDMA2		(0x3 << 8)
->  #define DSI1_SEL_IN_RDMA1		0x1
-> +#define DSI1_SEL_IN_RDMA2		0x4
->  #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
->  #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
->  #define COLOR1_SEL_IN_OVL1		0x1
-> @@ -204,6 +206,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
->  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
->  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
->  		value = RDMA2_SOUT_DPI1;
-> +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
-> +		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
-> +		value = RDMA2_SOUT_DSI1;
->  	} else {
->  		value = 0;
->  	}
-> @@ -241,6 +246,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
->  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
->  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
->  		value = DPI1_SEL_IN_RDMA2;
-> +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
-> +		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
-> +		value = DSI1_SEL_IN_RDMA2;
->  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
->  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
->  		value = COLOR1_SEL_IN_OVL1;
+tools/perf/perf test
+ 1: vmlinux symtab matches kallsyms                       : Skip
+ 2: Detect openat syscall event                           : Ok
+ 3: Detect openat syscall event on all cpus               : Ok
+ 4: Read samples using the mmap interface                 : Ok
+ 5: Test data source output                               : Ok
+ 6: Parse event definition strings                        : Ok		<===!
+ 7: Simple expression parser                              : Ok
+...
 
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ tools/perf/tests/parse-events.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index b9ebe15afb13..706b574f9747 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -1317,6 +1317,14 @@ static int test__intel_pt(struct perf_evlist *evlist)
+ 	return 0;
+ }
+ 
++static int test__checkevent_complex_name(struct perf_evlist *evlist)
++{
++	struct perf_evsel *evsel = perf_evlist__first(evlist);
++
++	TEST_ASSERT_VAL("wrong complex name parsing", strcmp(evsel->name, "COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks") == 0);
++	return 0;
++}
++
+ static int count_tracepoints(void)
+ {
+ 	struct dirent *events_ent;
+@@ -1651,6 +1659,11 @@ static struct evlist_test test__events[] = {
+ 		.check = test__intel_pt,
+ 		.id    = 52,
+ 	},
++	{
++		.name  = "cycles/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks'/Duk",
++		.check = test__checkevent_complex_name,
++		.id    = 53
++	}
+ };
+ 
+ static struct evlist_test test__events_pmu[] = {
+@@ -1669,6 +1682,11 @@ static struct evlist_test test__events_pmu[] = {
+ 		.check = test__checkevent_pmu_partial_time_callgraph,
+ 		.id    = 2,
+ 	},
++	{
++		.name  = "cpu/name='COMPLEX_CYCLES_NAME:orig=cycles,desc=chip-clock-ticks',period=0x1,event=0x2,umask=0x3/ukp",
++		.check = test__checkevent_complex_name,
++		.id    = 3,
++	}
+ };
+ 
+ struct terms_test {
