@@ -6,181 +6,287 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E24C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49AEC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B07E820652
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 875B22083A
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 17:03:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20150623.gappssmtp.com header.i=@dubeyko-com.20150623.gappssmtp.com header.b="ZaSPlTgU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B07E820652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="mFGLBY2F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 875B22083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030266AbeFSRDf (ORCPT
+        id S1030282AbeFSRDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 13:03:35 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:35558 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966775AbeFSRDb (ORCPT
+        Tue, 19 Jun 2018 13:03:36 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43989 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966449AbeFSRDa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 13:03:31 -0400
-Received: by mail-pg0-f68.google.com with SMTP id 15-v6so153094pge.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:03:31 -0700 (PDT)
+        Tue, 19 Jun 2018 13:03:30 -0400
+Received: by mail-lf0-f66.google.com with SMTP id x13-v6so562879lff.10
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 10:03:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RqxTRsQqX/Q5LghG+a6ognQu3YrlW4v9njWDPa68XuI=;
-        b=ZaSPlTgU1kl0BDlR1SOdIa/+Fxv3Hq1M/1ohQYAEqu8K+EUcYN9ZbvOC+G0eoZeC2M
-         7S8bPwCfO+7Fw+7U//ZD5WYXf4sSiTuzT66QhkrfqGH//B5cr09/OErKgMtajj8oua4y
-         LQNb6e64gjlxLjqxceUvvFRITrukH6hUuWN+349kkU7w4UcFSDoN2Vv57CJ8J1AJUkyv
-         tdIRyafuhAAVFWH5SK/OmH2RhGa6Ktfek9ddn1b8mtSwz6yJD5+gbIUw7F8gWvx6Zpu3
-         8Qu/WwTQfamm/uuPkeEuA5vZsQHZkEUufk09PlHpWd3emyr5dvT/YhDbZ3LhVKRR0JsB
-         BWfw==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9p3o9s3onXhDmRXd24tzo87bzE4P0QuQR/4h0T0p/KI=;
+        b=mFGLBY2FdTHSrQhiFcuvNLN99FnGRJKAEkkJ6n67fbS4OQB2T8W0IuvRa4cLjidiWo
+         0DWesAD5/kS0gy088oM9JTv1lmhInwzTcjAme+kCp0n1D7U5BNenwOD+vABrHcdWJKEO
+         2otHsryW7B9LsuoA6vH3loB5tep9kMmKDQkTo2hvoOrBbG1LPW59Lo7516jhMD8AIxZm
+         MSh5KnayEpP1oE0uP5eltnZdk0gSCZDxC/tbtM+9BgQMhx5nQrrzh6gRoaYHneh1vPPk
+         Dd0KxszZ9Epq0rjvoX4LG3RNXdygdrQvD/zg1aS3TZ2/MfWIMe63MZdDjTKBtSY5o8ED
+         Qzjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RqxTRsQqX/Q5LghG+a6ognQu3YrlW4v9njWDPa68XuI=;
-        b=WWxKIPjO8tkpsIYCb7EeojLE9NpVKC6k/rjEkYYiOoXt03Wojqq9AkVfx9Zw72LZUJ
-         WkcQVsjenAgzzxNRPVA998VRQ5NnKYEKkR+PfHaeft42Cgg6X1ZxHQtQCpwoqREDDg+8
-         tdEa3JaXyflF6ulvk8vY9X/j+BOkePqZJWzvq7QlCdkgk5oaRYISyUQZuEv4KHFThr6Z
-         Qjp2SQJJpY8ksWS72KDyJ3+dgYB4E1xz3DTVmSBK5XOXrEvCAQjojxWRNHJHAxB74q2N
-         LiBcmmSNajqDH2QmaUWWfFl8F8ltFZfhh6YWKazLOAQOgAzMrIOu+5LOrn4Au2vY+7T9
-         5yww==
-X-Gm-Message-State: APt69E2qD4gYCxg2xWY2on3GG/5cZcTYbuZ6e4YdxILKIKWcoTCqFnr7
-        j/aQ3PNmsxRrGvWB2Ey+aN2uVA==
-X-Google-Smtp-Source: ADUXVKJUILExQtOPH6EDdt8yBhG4U24O9RBjiuDFg8+x+nihxVocCqQtccoofuy0q0f0wdzKxilXag==
-X-Received: by 2002:a62:c4dd:: with SMTP id h90-v6mr19222852pfk.86.1529427811210;
-        Tue, 19 Jun 2018 10:03:31 -0700 (PDT)
-Received: from ubuntu-16 (c-24-130-14-162.hsd1.ca.comcast.net. [24.130.14.162])
-        by smtp.gmail.com with ESMTPSA id z12-v6sm149599pgu.57.2018.06.19.10.03.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 10:03:30 -0700 (PDT)
-Message-ID: <1529427809.2624.16.camel@dubeyko.com>
-Subject: Re: [PATCH 1/3] hfs: stop using timespec based interfaces
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     y2038@lists.linaro.org, Jeff Layton <jlayton@redhat.com>,
-        Jan Kara <jack@suse.cz>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 19 Jun 2018 10:03:29 -0700
-In-Reply-To: <20180619160223.4108556-1-arnd@arndb.de>
-References: <20180619160223.4108556-1-arnd@arndb.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9p3o9s3onXhDmRXd24tzo87bzE4P0QuQR/4h0T0p/KI=;
+        b=ttlnGP2msZ+iHov2AT4Fqgc1DN+jMizRJ7Y464s0jjJMt6Rp1nLO1x3sq/hi9VCmGV
+         uBd5lafiDt8+R+bhOOjZZ2g3uSxdqOEZ938ngsnIfv8ZwEv+HdMaHk0ZdI5rWNIFi4Yi
+         r+5jaBKEQJs91sbU/Fj2HqdmgNhXhkZ1kLBJ0wO/SmIb9a0IkAlCSVs9TPlijCxjFP3N
+         tXDk8aXNxAWQeA7uX93W8P876exIvoDeX3qM7rPoPMfvHzhxBEtdgFZVNHbXu/oNyb4Q
+         anJq9eBBpQkDWCk6yFv685ATo2ikIqb3jQwHnC/1I4KAaIzM4Iq3B32wFxgj+JBjQWP+
+         Rgpw==
+X-Gm-Message-State: APt69E0/U6vRp5iyH90jJ4hDkyXAK2/yZgvmgjt9Ccq202eIyMLNHGN5
+        sV1EMeHXZ86+Wv8N5drQ+X687NwMJeQkPWUrJfGS
+X-Google-Smtp-Source: ADUXVKLiZ6Z3QwmqUu5yzkN8Q6QeykcErT5W1W6CIT90yu90MVZqx6E+7f1YMTyVS6BegtI0loeJfeb0HZaaQu2jGnU=
+X-Received: by 2002:a2e:4d0e:: with SMTP id a14-v6mr12141128ljb.106.1529427809021;
+ Tue, 19 Jun 2018 10:03:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180612080912.7827-1-peter.enderborg@sony.com> <20180612080912.7827-6-peter.enderborg@sony.com>
+In-Reply-To: <20180612080912.7827-6-peter.enderborg@sony.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 19 Jun 2018 13:03:18 -0400
+Message-ID: <CAHC9VhT+NNUf2dxkz1DxG21Ydz7ygAA2S1b7WfvDUD25EgybuA@mail.gmail.com>
+Subject: Re: [PATCH 05/13] selinux: Cleanup printk logging in avtab
+To:     peter.enderborg@sony.com
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>, danielj@mellanox.com,
+        dledford@redhat.com, selinux@tycho.nsa.gov,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, serge@hallyn.com
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-19 at 18:02 +0200, Arnd Bergmann wrote:
-> The native HFS timestamps overflow in year 2040, two years after the
-> Unix
-> y2038 overflow. However, the way that the conversion between on-disk
-> timestamps and in-kernel timestamps was implemented, 64-bit machines
-> actually ended up converting negative UTC timestamps (1902 through
-> 1969)
-> into times between 2038 and 2106.
-> 
-> Rather than making all machines faithfully represent timestamps in
-> the
-> ancient past but break after 2040, this changes the file system to
-> always use the unsigned UTC interpretation, reading back times
-> between
-> 1970 and 2106.
-> 
-
-The trouble with HFS and HFS+ that the specification [1] declares this:
-
-"HFS Plus stores dates in several data structures, including the volume
-header and catalog records. These dates are stored in unsigned 32-bit
-integers (UInt32) containing the number of seconds since midnight,
-January 1, 1904, GMT. This is slightly different from HFS, where the
-value represents local time. The maximum representable date is February
-6, 2040 at 06:28:15 GMT."
-
-So, I am not sure that we are able to support later dates because such
-timestamps cannot be stored on HFS/HFS+ volumes and will be
-incompatible with Mac OS X. Also, I am not sure that anybody will use
-HFS/HFS+ after 2040.
-
-Thanks,
-Vyacheslav Dubeyko.
-
-[1] https://developer.apple.com/library/archive/technotes/tn/tn1150.html
-
-
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Tue, Jun 12, 2018 at 4:09 AM Peter Enderborg
+<peter.enderborg@sony.com> wrote:
+>
+> Replace printk with pr_* to avoid checkpatch warnings.
+>
+> Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 > ---
->  fs/hfs/hfs_fs.h | 6 ++++--
->  fs/hfs/inode.c  | 4 ++--
->  2 files changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-> index 6d0783e2e276..ff432931a5b1 100644
-> --- a/fs/hfs/hfs_fs.h
-> +++ b/fs/hfs/hfs_fs.h
-> @@ -245,6 +245,8 @@ extern void hfs_mark_mdb_dirty(struct super_block
-> *sb);
->   *	Unix:	unsigned lil-endian since 00:00 GMT, Jan. 1,
-> 1970
->   *	mac:	unsigned big-endian since 00:00 GMT, Jan. 1,
-> 1904
->   *
-> + * We treat all timestamps before 1970 as times after 2038, so this
-> + * actually works until year 2106
->   */
->  #define __hfs_u_to_mtime(sec)	cpu_to_be32(sec + 2082844800U -
-> sys_tz.tz_minuteswest * 60)
->  #define __hfs_m_to_utime(sec)	(be32_to_cpu(sec) -
-> 2082844800U  + sys_tz.tz_minuteswest * 60)
-> @@ -252,9 +254,9 @@ extern void hfs_mark_mdb_dirty(struct super_block
-> *sb);
->  #define HFS_I(inode)	(container_of(inode, struct
-> hfs_inode_info, vfs_inode))
->  #define HFS_SB(sb)	((struct hfs_sb_info *)(sb)->s_fs_info)
->  
-> -#define hfs_m_to_utime(time)	(struct timespec){ .tv_sec =
-> __hfs_m_to_utime(time) }
-> +#define hfs_m_to_utime(time)	(struct timespec64){ .tv_sec =
-> __hfs_m_to_utime(time) }
->  #define hfs_u_to_mtime(time)	__hfs_u_to_mtime((time).tv_sec)
-> -#define hfs_mtime()		__hfs_u_to_mtime(get_seconds())
-> +#define hfs_mtime()		__hfs_u_to_mtime(ktime_get_real_s
-> econds())
->  
->  static inline const char *hfs_mdb_name(struct super_block *sb)
->  {
-> diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-> index 2a16111d312f..b3309b83371a 100644
-> --- a/fs/hfs/inode.c
-> +++ b/fs/hfs/inode.c
-> @@ -351,7 +351,7 @@ static int hfs_read_inode(struct inode *inode,
-> void *data)
->  		inode->i_mode &= ~hsb->s_file_umask;
->  		inode->i_mode |= S_IFREG;
->  		inode->i_ctime = inode->i_atime = inode->i_mtime =
-> -				timespec_to_timespec64(hfs_m_to_utim
-> e(rec->file.MdDat));
-> +				hfs_m_to_utime(rec->file.MdDat);
->  		inode->i_op = &hfs_file_inode_operations;
->  		inode->i_fop = &hfs_file_operations;
->  		inode->i_mapping->a_ops = &hfs_aops;
-> @@ -362,7 +362,7 @@ static int hfs_read_inode(struct inode *inode,
-> void *data)
->  		HFS_I(inode)->fs_blocks = 0;
->  		inode->i_mode = S_IFDIR | (S_IRWXUGO & ~hsb-
-> >s_dir_umask);
->  		inode->i_ctime = inode->i_atime = inode->i_mtime =
-> -				timespec_to_timespec64(hfs_m_to_utim
-> e(rec->dir.MdDat));
-> +				hfs_m_to_utime(rec->dir.MdDat);
->  		inode->i_op = &hfs_dir_inode_operations;
->  		inode->i_fop = &hfs_dir_operations;
->  		break;
+>  security/selinux/ss/avtab.c | 51 +++++++++++++++++++++++----------------------
+>  1 file changed, 26 insertions(+), 25 deletions(-)
+
+Merged, thanks.
+
+> diff --git a/security/selinux/ss/avtab.c b/security/selinux/ss/avtab.c
+> index a2c9148b0662..c0417cf17fee 100644
+> --- a/security/selinux/ss/avtab.c
+> +++ b/security/selinux/ss/avtab.c
+> @@ -338,7 +338,7 @@ int avtab_alloc(struct avtab *h, u32 nrules)
+>         h->nel = 0;
+>         h->nslot = nslot;
+>         h->mask = mask;
+> -       printk(KERN_DEBUG "SELinux: %d avtab hash slots, %d rules.\n",
+> +       pr_debug("SELinux: %d avtab hash slots, %d rules.\n",
+>                h->nslot, nrules);
+>         return 0;
+>  }
+> @@ -368,7 +368,7 @@ void avtab_hash_eval(struct avtab *h, char *tag)
+>                 }
+>         }
+>
+> -       printk(KERN_DEBUG "SELinux: %s:  %d entries and %d/%d buckets used, "
+> +       pr_debug("SELinux: %s:  %d entries and %d/%d buckets used, "
+>                "longest chain length %d sum of chain length^2 %llu\n",
+>                tag, h->nel, slots_used, h->nslot, max_chain_len,
+>                chain2_len_sum);
+> @@ -407,18 +407,18 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>         if (vers < POLICYDB_VERSION_AVTAB) {
+>                 rc = next_entry(buf32, fp, sizeof(u32));
+>                 if (rc) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated entry\n");
+> +                       pr_err("SELinux: avtab: truncated entry\n");
+>                         return rc;
+>                 }
+>                 items2 = le32_to_cpu(buf32[0]);
+>                 if (items2 > ARRAY_SIZE(buf32)) {
+> -                       printk(KERN_ERR "SELinux: avtab: entry overflow\n");
+> +                       pr_err("SELinux: avtab: entry overflow\n");
+>                         return -EINVAL;
+>
+>                 }
+>                 rc = next_entry(buf32, fp, sizeof(u32)*items2);
+>                 if (rc) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated entry\n");
+> +                       pr_err("SELinux: avtab: truncated entry\n");
+>                         return rc;
+>                 }
+>                 items = 0;
+> @@ -426,19 +426,19 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>                 val = le32_to_cpu(buf32[items++]);
+>                 key.source_type = (u16)val;
+>                 if (key.source_type != val) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated source type\n");
+> +                       pr_err("SELinux: avtab: truncated source type\n");
+>                         return -EINVAL;
+>                 }
+>                 val = le32_to_cpu(buf32[items++]);
+>                 key.target_type = (u16)val;
+>                 if (key.target_type != val) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated target type\n");
+> +                       pr_err("SELinux: avtab: truncated target type\n");
+>                         return -EINVAL;
+>                 }
+>                 val = le32_to_cpu(buf32[items++]);
+>                 key.target_class = (u16)val;
+>                 if (key.target_class != val) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated target class\n");
+> +                       pr_err("SELinux: avtab: truncated target class\n");
+>                         return -EINVAL;
+>                 }
+>
+> @@ -446,16 +446,16 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>                 enabled = (val & AVTAB_ENABLED_OLD) ? AVTAB_ENABLED : 0;
+>
+>                 if (!(val & (AVTAB_AV | AVTAB_TYPE))) {
+> -                       printk(KERN_ERR "SELinux: avtab: null entry\n");
+> +                       pr_err("SELinux: avtab: null entry\n");
+>                         return -EINVAL;
+>                 }
+>                 if ((val & AVTAB_AV) &&
+>                     (val & AVTAB_TYPE)) {
+> -                       printk(KERN_ERR "SELinux: avtab: entry has both access vectors and types\n");
+> +                       pr_err("SELinux: avtab: entry has both access vectors and types\n");
+>                         return -EINVAL;
+>                 }
+>                 if (val & AVTAB_XPERMS) {
+> -                       printk(KERN_ERR "SELinux: avtab: entry has extended permissions\n");
+> +                       pr_err("SELinux: avtab: entry has extended permissions\n");
+>                         return -EINVAL;
+>                 }
+>
+> @@ -470,7 +470,8 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>                 }
+>
+>                 if (items != items2) {
+> -                       printk(KERN_ERR "SELinux: avtab: entry only had %d items, expected %d\n", items2, items);
+> +                       pr_err("SELinux: avtab: entry only had %d items, expected %d\n",
+> +                              items2, items);
+>                         return -EINVAL;
+>                 }
+>                 return 0;
+> @@ -478,7 +479,7 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>
+>         rc = next_entry(buf16, fp, sizeof(u16)*4);
+>         if (rc) {
+> -               printk(KERN_ERR "SELinux: avtab: truncated entry\n");
+> +               pr_err("SELinux: avtab: truncated entry\n");
+>                 return rc;
+>         }
+>
+> @@ -491,7 +492,7 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>         if (!policydb_type_isvalid(pol, key.source_type) ||
+>             !policydb_type_isvalid(pol, key.target_type) ||
+>             !policydb_class_isvalid(pol, key.target_class)) {
+> -               printk(KERN_ERR "SELinux: avtab: invalid type or class\n");
+> +               pr_err("SELinux: avtab: invalid type or class\n");
+>                 return -EINVAL;
+>         }
+>
+> @@ -501,13 +502,13 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>                         set++;
+>         }
+>         if (!set || set > 1) {
+> -               printk(KERN_ERR "SELinux:  avtab:  more than one specifier\n");
+> +               pr_err("SELinux:  avtab:  more than one specifier\n");
+>                 return -EINVAL;
+>         }
+>
+>         if ((vers < POLICYDB_VERSION_XPERMS_IOCTL) &&
+>                         (key.specified & AVTAB_XPERMS)) {
+> -               printk(KERN_ERR "SELinux:  avtab:  policy version %u does not "
+> +               pr_err("SELinux:  avtab:  policy version %u does not "
+>                                 "support extended permissions rules and one "
+>                                 "was specified\n", vers);
+>                 return -EINVAL;
+> @@ -515,17 +516,17 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>                 memset(&xperms, 0, sizeof(struct avtab_extended_perms));
+>                 rc = next_entry(&xperms.specified, fp, sizeof(u8));
+>                 if (rc) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated entry\n");
+> +                       pr_err("SELinux: avtab: truncated entry\n");
+>                         return rc;
+>                 }
+>                 rc = next_entry(&xperms.driver, fp, sizeof(u8));
+>                 if (rc) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated entry\n");
+> +                       pr_err("SELinux: avtab: truncated entry\n");
+>                         return rc;
+>                 }
+>                 rc = next_entry(buf32, fp, sizeof(u32)*ARRAY_SIZE(xperms.perms.p));
+>                 if (rc) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated entry\n");
+> +                       pr_err("SELinux: avtab: truncated entry\n");
+>                         return rc;
+>                 }
+>                 for (i = 0; i < ARRAY_SIZE(xperms.perms.p); i++)
+> @@ -534,14 +535,14 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+>         } else {
+>                 rc = next_entry(buf32, fp, sizeof(u32));
+>                 if (rc) {
+> -                       printk(KERN_ERR "SELinux: avtab: truncated entry\n");
+> +                       pr_err("SELinux: avtab: truncated entry\n");
+>                         return rc;
+>                 }
+>                 datum.u.data = le32_to_cpu(*buf32);
+>         }
+>         if ((key.specified & AVTAB_TYPE) &&
+>             !policydb_type_isvalid(pol, datum.u.data)) {
+> -               printk(KERN_ERR "SELinux: avtab: invalid type\n");
+> +               pr_err("SELinux: avtab: invalid type\n");
+>                 return -EINVAL;
+>         }
+>         return insertf(a, &key, &datum, p);
+> @@ -562,12 +563,12 @@ int avtab_read(struct avtab *a, void *fp, struct policydb *pol)
+>
+>         rc = next_entry(buf, fp, sizeof(u32));
+>         if (rc < 0) {
+> -               printk(KERN_ERR "SELinux: avtab: truncated table\n");
+> +               pr_err("SELinux: avtab: truncated table\n");
+>                 goto bad;
+>         }
+>         nel = le32_to_cpu(buf[0]);
+>         if (!nel) {
+> -               printk(KERN_ERR "SELinux: avtab: table is empty\n");
+> +               pr_err("SELinux: avtab: table is empty\n");
+>                 rc = -EINVAL;
+>                 goto bad;
+>         }
+> @@ -580,9 +581,9 @@ int avtab_read(struct avtab *a, void *fp, struct policydb *pol)
+>                 rc = avtab_read_item(a, fp, pol, avtab_insertf, NULL);
+>                 if (rc) {
+>                         if (rc == -ENOMEM)
+> -                               printk(KERN_ERR "SELinux: avtab: out of memory\n");
+> +                               pr_err("SELinux: avtab: out of memory\n");
+>                         else if (rc == -EEXIST)
+> -                               printk(KERN_ERR "SELinux: avtab: duplicate entry\n");
+> +                               pr_err("SELinux: avtab: duplicate entry\n");
+>
+>                         goto bad;
+>                 }
+> --
+> 2.15.1
+>
+
+
+-- 
+paul moore
+www.paul-moore.com
