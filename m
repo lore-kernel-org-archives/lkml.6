@@ -2,71 +2,92 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6935EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E72C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F5212083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:31:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F5212083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 32BA82083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:31:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UkjjTBnJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32BA82083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757225AbeFSOa6 (ORCPT
+        id S1757307AbeFSObJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:30:58 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:34872 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756675AbeFSOaz (ORCPT
+        Tue, 19 Jun 2018 10:31:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58222 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756821AbeFSOa5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:30:55 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fVHeV-0005p1-Ek; Tue, 19 Jun 2018 22:30:35 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fVHeS-0007GH-9Q; Tue, 19 Jun 2018 22:30:32 +0800
-Date:   Tue, 19 Jun 2018 22:30:32 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Vinod Koul <vinod.koul@linaro.org>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v2 2/2] hwrng: msm - Add support for prng v2
-Message-ID: <20180619143032.4qov5jrbhbsbp6dv@gondor.apana.org.au>
-References: <20180619095430.26358-1-vkoul@kernel.org>
- <20180619095430.26358-3-vkoul@kernel.org>
+        Tue, 19 Jun 2018 10:30:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wiXYdNDX1A6oXT0bEeOp2BlHcqb7LpwyL0AmgVwPRG4=; b=UkjjTBnJIuQPMImC+E2d6k4Mt
+        3qnYCnKQ6jq/Fx0/sXdzyjGnxD9YXbzvyGbBSlO4eajp2lE1AFautoQYxPwUz+hC2NlWZrQ+zht6e
+        d/EWztwvx2L8Gf3AwVZsAw/CsXBf11usheLv//OWHvaGVdVg7QFZsOI9jwu+4gHmxdTxsRLJb9PGy
+        DTGir+s+iE1LGBxSp/ZUCU0lmKe1GCh8dGzLlaTQdZLsLYA4UqvoloXOakcl8VU1Y0aRdKyFeaDdM
+        AxlYx6eXqI1/DHmUvFRQVT+zn6apBugIoKJrKCXMUfOH/PK5zbNV2K0LQHMq6/ZV4RztbEFVz21vi
+        j2qqtUCug==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVHeg-0007Yp-UT; Tue, 19 Jun 2018 14:30:47 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B3A6B20267E79; Tue, 19 Jun 2018 16:30:44 +0200 (CEST)
+Date:   Tue, 19 Jun 2018 16:30:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     rjw@rjwysocki.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v3 03/10] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180619143044.GB2512@hirez.programming.kicks-ass.net>
+References: <20180521142505.6522-1-quentin.perret@arm.com>
+ <20180521142505.6522-4-quentin.perret@arm.com>
+ <20180619113408.GQ2458@hirez.programming.kicks-ass.net>
+ <20180619125857.GY17720@e108498-lin.cambridge.arm.com>
+ <20180619132338.GF2476@hirez.programming.kicks-ass.net>
+ <20180619133844.GB17720@e108498-lin.cambridge.arm.com>
+ <20180619141642.GE2494@hirez.programming.kicks-ass.net>
+ <20180619142116.GA2512@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619095430.26358-3-vkoul@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180619142116.GA2512@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 03:24:30PM +0530, Vinod Koul wrote:
-> Qcom 8996 and later chips support prng v2 which requires to
-> implement only .read callback for hwrng.
+On Tue, Jun 19, 2018 at 04:21:16PM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 19, 2018 at 04:16:42PM +0200, Peter Zijlstra wrote:
+> > On Tue, Jun 19, 2018 at 02:38:45PM +0100, Quentin Perret wrote:
+> > > But maybe I could use something simpler than a lock in this case ?
+> > > Would WRITE_ONCE/READ_ONCE be enough to ensure that atomicity for
+> > > example ?
+> > 
+> > Yes, since its a single pointer, smp_store_release() + READ_ONCE()
+> > should be sufficient (these are the foundations of RCU).
 > 
-> This version of chip has multiple Execution Environments (EE) and
-> secure world is typically responsible for configuring the prng.
-> 
-> Add driver data for qcom,prng as 0 and qcom,prng-v2 as 1 and use
-> that to skip initialization and cleanup routines.
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> Note that per_cpu()/this_cpu_read() and friends should imply READ_ONCE().
 
-Is this a pseudo RNG?
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Mark reminded me that per_cpu() does not in fact imply that, but
+READ_ONCE(per_cpu()) should work.
