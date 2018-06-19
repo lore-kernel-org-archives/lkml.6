@@ -2,107 +2,91 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E31C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5D0C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4971120661
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB9F120661
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 16:11:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Pup7JuNJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4971120661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CV3LxwJJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9F120661
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967104AbeFSQLL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 12:11:11 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:39002 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967036AbeFSQKB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 12:10:01 -0400
-Received: by mail-wr0-f196.google.com with SMTP id w7-v6so233691wrn.6
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 09:10:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=V0eszlvvLll1jSCx8Hip/81hnp7ScaDxD1FHTBML81M=;
-        b=Pup7JuNJPsFQJmBrceWSEs+VH9dBEmsCHIYo2HIu9Idvbh6YdnURDYkuFxMr7Ytwxv
-         tAZv5dtEUoOtyTfU9ql3NxGHIvNRGDFrKyWbudD0Nw8Sw0pJdysfFVPphv8n44sEtUrJ
-         6a1fWvEFihfJ9NkPkPK5askHHnsxZzPpyYsK0XPnRSn1UUQ/aCWnKeW9J3QMKdJjvCFq
-         VMXXaAu8CjKt72VPhjNkeWTG0KnI8RRuj8B9pAoJuojHiy9ivab2bkrLMeFpcqoTVfIR
-         AuJOn95quBCl0vT09/c4U6JZ7pTVXksL+zfVrCRYmZUniK/dNqyNE9340bII+azBDwUw
-         KMgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=V0eszlvvLll1jSCx8Hip/81hnp7ScaDxD1FHTBML81M=;
-        b=aJ35VybXHWARBFbRCyGEPsa6aHPpB1IcdGeLFcFQdh4nRX7VyIxOtxIE9NUQXmUER0
-         iU+qNhw/6yTjUDzqWnhrbCpUCvUwzOHUPLXX8iv1/PBK8s5ZubJ+j3vJhEo2Swp86xRj
-         IL5JzNiprZvgAXgPIKG5EcDM1iPYv8SiKca/l/OCCLPKVDKFBRJS7ila4OKjieXBAUER
-         esHqMlPkj0fD8kJdVbnn0V0tFJhVfEYVt6u//ziNzhbqqlqwa+vjb6K5Cbtu/J1Wqvcf
-         U9ORW0ghDgVSLH/qAhmix6jW4V3EYlrLEWxNQLZ0t7Dc7vGOgANXi1Mk6zQopfXI3tuC
-         Cc+Q==
-X-Gm-Message-State: APt69E01KkTXKBfetXK8ev0IXqoZQs5AxnsA05zoSiZCdPMTyOFhSDuY
-        F0b8p0K6VP9fx9EtNp/EWqtICQ==
-X-Google-Smtp-Source: ADUXVKJaVTiPlCpUoa36dwe6ePAOa5b4c+uRNPD+J7LeANUR0YkLK+UR85RMFB6VUBfCqhNpOhlt6g==
-X-Received: by 2002:adf:9187:: with SMTP id 7-v6mr15765097wri.69.1529424600789;
-        Tue, 19 Jun 2018 09:10:00 -0700 (PDT)
-Received: from brgl-bgdev.lan (LFbn-1-7080-22.w90-116.abo.wanadoo.fr. [90.116.249.22])
-        by smtp.gmail.com with ESMTPSA id 74-v6sm619327wmt.31.2018.06.19.09.09.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 09:10:00 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Rob Herring <robh@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/3] net: phy: set the of_node in the mdiodev's struct device
-Date:   Tue, 19 Jun 2018 18:09:49 +0200
-Message-Id: <20180619160950.6283-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180619160950.6283-1-brgl@bgdev.pl>
-References: <20180619160950.6283-1-brgl@bgdev.pl>
+        id S967096AbeFSQLu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 12:11:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966661AbeFSQLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 12:11:48 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 540A520652;
+        Tue, 19 Jun 2018 16:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529424708;
+        bh=LcUvhEQTMo3qkr9VOEtuL+Y3I/i9PHTthM2AqqVXk44=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CV3LxwJJwX3GjUxl3vRIqQCrtmLprmxuCs60ZUmELlN8k7EzmpTbQxG2Wx88zuQSL
+         6Miu3WQdlE9IVPCR8dHHNc2BNXVSUmLlNoR4aDt50b+v2S+BKK1S+fop1PnqhKY9WA
+         nKvhp44pzpO385ZfWxoFzmLd7liC8uiGAd3fc7/M=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-arch@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        linux-snps-arc@lists.infradead.org
+Subject: [PATCH -tip v6 15/27] ARC: kprobes: Don't call the ->break_handler() in ARC kprobes code
+Date:   Wed, 20 Jun 2018 01:11:24 +0900
+Message-Id: <152942468446.15209.13773902741600803798.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152942424698.15209.15245996287444292393.stgit@devbox>
+References: <152942424698.15209.15245996287444292393.stgit@devbox>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Don't call the ->break_handler() from the ARC kprobes code,
+because it was only used by jprobes which got removed.
 
-Copy the of_node over from mii_bus's struct device. This is needed
-for device-tree systems to be able to check the mdio device's
-compatible string.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: linux-snps-arc@lists.infradead.org
 ---
- drivers/net/phy/phy_device.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arc/kernel/kprobes.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index bd0f339f69fd..a92d5ee61813 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -411,6 +411,7 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
- 	mdiodev->dev.parent = &bus->dev;
- 	mdiodev->dev.bus = &mdio_bus_type;
- 	mdiodev->dev.type = &mdio_bus_phy_type;
-+	mdiodev->dev.of_node = bus->dev.of_node;
- 	mdiodev->bus = bus;
- 	mdiodev->bus_match = phy_bus_match;
- 	mdiodev->addr = addr;
--- 
-2.17.1
+diff --git a/arch/arc/kernel/kprobes.c b/arch/arc/kernel/kprobes.c
+index 7811a6bbe8f0..465365696c91 100644
+--- a/arch/arc/kernel/kprobes.c
++++ b/arch/arc/kernel/kprobes.c
+@@ -234,13 +234,6 @@ int __kprobes arc_kprobe_handler(unsigned long addr, struct pt_regs *regs)
+ 		}
+ 
+ 		return 1;
+-	} else if (kprobe_running()) {
+-		p = __this_cpu_read(current_kprobe);
+-		if (p->break_handler && p->break_handler(p, regs)) {
+-			setup_singlestep(p, regs);
+-			kcb->kprobe_status = KPROBE_HIT_SS;
+-			return 1;
+-		}
+ 	}
+ 
+ 	/* no_kprobe: */
 
