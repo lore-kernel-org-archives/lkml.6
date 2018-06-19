@@ -6,186 +6,92 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EB8C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49830C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D910620874
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:56:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D910620874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id E317C20875
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 12:56:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E317C20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937950AbeFSM4b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 08:56:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39149 "EHLO mx2.suse.de"
+        id S937969AbeFSM4m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 08:56:42 -0400
+Received: from mga12.intel.com ([192.55.52.136]:9811 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S937770AbeFSM4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 08:56:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B6FA0ACD9;
-        Tue, 19 Jun 2018 12:56:28 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 21563A0A1B; Tue, 19 Jun 2018 14:56:28 +0200 (CEST)
-Date:   Tue, 19 Jun 2018 14:56:28 +0200
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: regression: /proc/$pid/cmdline lacks trailing '\0' in 4.18-rc1
-Message-ID: <20180619125628.fso5wyqsgo7hgh33@unicorn.suse.cz>
-References: <20180619060754.voy2nziqwl5ehfp5@unicorn.suse.cz>
- <20180619092254.kmww3fpqjqcsjrna@unicorn.suse.cz>
+        id S937770AbeFSM4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 08:56:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 05:56:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,243,1526367600"; 
+   d="scan'208";a="60437856"
+Received: from aluisell-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.128])
+  by orsmga003.jf.intel.com with ESMTP; 19 Jun 2018 05:56:20 -0700
+Date:   Tue, 19 Jun 2018 15:56:18 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: Re: [PATCH 02/11] tpm/tpm_i2c_infineon: switch to i2c_lock_segment
+Message-ID: <20180619125618.GB5609@linux.intel.com>
+References: <20180615101506.8012-1-peda@axentia.se>
+ <20180615101506.8012-3-peda@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619092254.kmww3fpqjqcsjrna@unicorn.suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180615101506.8012-3-peda@axentia.se>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 11:22:55AM +0200, Michal Kubecek wrote:
-> On Tue, Jun 19, 2018 at 08:07:55AM +0200, Michal Kubecek wrote:
-> > In v4.18-rc1, /proc/$pid/cmdline is missing final null byte which used
-> > to be there in v4.17 and older kernels:
-> > 
-> > 4.17.1:
-> > tweed:~ # cat /proc/self/cmdline | od -t c
-> > 0000000   c   a   t  \0   /   p   r   o   c   /   s   e   l   f   /   c
-> > 0000020   m   d   l   i   n   e  \0
-> > 0000027
-> > 
-> > 4.18-rc1:
-> > lion:~ # cat /proc/self/cmdline | od -t c
-> > 0000000   c   a   t  \0   /   p   r   o   c   /   s   e   l   f   /   c
-> > 0000020   m   d   l   i   n   e
-> > 0000026
-> > 
-> > The code has been rewritten quite a lot in 4.18-rc1 so I didn't find yet
-> > where exactly does the change come from. Still looking.
+On Fri, Jun 15, 2018 at 12:14:57PM +0200, Peter Rosin wrote:
+> Locking the root adapter for __i2c_transfer will deadlock if the
+> device sits behind a mux-locked I2C mux. Switch to the finer-grained
+> i2c_lock_segment. If the device does not sit behind a mux-locked mux,
+> the two locking variants are equivalent.
 > 
-> The issue was introduced by commit 5ab827189965 ("fs/proc: simplify and
-> clarify get_mm_cmdline() function"). The problem is that when looking
-> for the null character at or after args_end, strnlen() is used and it
-> returns the length _without_ the null character (if there is one) so
-> that we don't copy it.
-> 
-> I'll submit a patch once I test it.
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-It was more complicated than I thought. The patch below seems to resolve
-the issue but I'll need to run more tests before I'm confident to submit
-it officially.
+Can you quickly explain (or give a reference) the difference with these
+functions? Not an expert in this area. Thanks.
 
-Michal Kubecek
-
-
-
-From: Michal Kubecek <mkubecek@suse.cz>
-Date: Tue, 19 Jun 2018 14:47:23 +0200
-Subject: [PATCH] proc: add missing '\0' back to /proc/$pid/cmdline
-
-Recent rewrite introduced a regression, /proc/$pid/cmdline is missing the
-trailing null character:
-
-mike@lion:/tmp> cat /proc/self/cmdline | od -t c
-0000000   c   a   t  \0   /   p   r   o   c   /   s   e   l   f   /   c
-0000020   m   d   l   i   n   e
-0000026
-
-This is because strnlen() is used to search for the null character but it
-returns the length without it so that we need to copy one byte more (but
-only if we actually found a null character). And once we pass the null
-character to userspace we need to make sure next read returns 0 (EOF).
-
-This is another problem, even if rather theoretical one: if userspace seeks
-to arg_end or past it, we only start checking for null character from that
-position so that we may return random segment of environment rather then
-EOF.
-
-Resolve both by always starting no later than at arg_end-1 (so that we
-always catch the right null character) but don't copy data until we reach
-the requested start position.
-
-Fixes: 5ab827189965 ("fs/proc: simplify and clarify get_mm_cmdline() function")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- fs/proc/base.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index b6572944efc3..ac60405f5015 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -209,7 +209,8 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
- 			      size_t count, loff_t *ppos)
- {
- 	unsigned long arg_start, arg_end, env_start, env_end;
--	unsigned long pos, len;
-+	unsigned long req_pos, pos, len;
-+	bool end_found = false;
- 	char *page;
- 
- 	/* Check if process spawned far enough to have cmdline. */
-@@ -236,25 +237,27 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
- 		env_start = env_end = arg_end;
- 
- 	/* We're not going to care if "*ppos" has high bits set */
--	pos = arg_start + *ppos;
-+	req_pos = arg_start + *ppos;
- 
- 	/* .. but we do check the result is in the proper range */
--	if (pos < arg_start || pos >= env_end)
-+	if (req_pos < arg_start || req_pos >= env_end)
- 		return 0;
- 
- 	/* .. and we never go past env_end */
--	if (env_end - pos < count)
-+	if (env_end - req_pos < count)
- 		count = env_end - pos;
- 
-+	pos = min_t(unsigned long, req_pos, arg_end - 1);
- 	page = (char *)__get_free_page(GFP_KERNEL);
- 	if (!page)
- 		return -ENOMEM;
- 
- 	len = 0;
--	while (count) {
-+	while (count && !end_found) {
- 		int got;
--		size_t size = min_t(size_t, PAGE_SIZE, count);
-+		size_t size = count + (pos < req_pos ? req_pos - pos : 0);
- 
-+		size = min_t(size_t, PAGE_SIZE, size);
- 		got = access_remote_vm(mm, pos, page, size, FOLL_ANON);
- 		if (got <= 0)
- 			break;
-@@ -276,11 +279,23 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
- 				n = arg_end - pos - 1;
- 
- 			/* Cut off at first NUL after 'n' */
--			got = n + strnlen(page+n, got-n);
-+			n += strnlen(page+n, got-n);
-+			got = min_t(int, got, n + 1);
-+			end_found = !page[n];
- 			if (!got)
- 				break;
- 		}
- 
-+		if (pos + got <= req_pos) {
-+			/* got > 0 here so that pos always advances */
-+			pos += got;
-+			continue;
-+		}
-+
-+		if (pos < req_pos) {
-+			got -= (req_pos - pos);
-+			pos = req_pos;
-+		}
- 		got -= copy_to_user(buf, page, got);
- 		if (unlikely(!got)) {
- 			if (!len)
--- 
-2.17.1
-
+/Jarkko
