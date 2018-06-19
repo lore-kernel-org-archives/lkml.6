@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F5FC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFA6C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37643204EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:33:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37643204EC
+	by mail.kernel.org (Postfix) with ESMTP id AE686204EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:34:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE686204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966283AbeFSNdy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:33:54 -0400
-Received: from mga07.intel.com ([134.134.136.100]:7674 "EHLO mga07.intel.com"
+        id S966326AbeFSNek (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:34:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:64703 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966110AbeFSNdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:33:52 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1755203AbeFSNei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:34:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 06:33:51 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 06:34:31 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,243,1526367600"; 
-   d="scan'208";a="48237726"
+   d="scan'208";a="48237895"
 Received: from aluisell-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.128])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Jun 2018 06:33:44 -0700
-Date:   Tue, 19 Jun 2018 16:33:43 +0300
+  by fmsmga007.fm.intel.com with ESMTP; 19 Jun 2018 06:34:23 -0700
+Date:   Tue, 19 Jun 2018 16:34:22 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
+To:     Neil Horman <nhorman@redhat.com>
 Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
         npmccallum@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
@@ -47,14 +48,14 @@ Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
         <linux-kernel@vger.kernel.org>,
         "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
 Subject: Re: [PATCH v11 07/13] x86, sgx: detect Intel SGX
-Message-ID: <20180619133343.GI5609@linux.intel.com>
+Message-ID: <20180619133422.GJ5609@linux.intel.com>
 References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
  <20180608171216.26521-8-jarkko.sakkinen@linux.intel.com>
- <4fc3b6b0-6e4b-3d5f-4d54-2bf7539c7a17@intel.com>
+ <20180611113521.GB22164@hmswarspite.think-freely.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4fc3b6b0-6e4b-3d5f-4d54-2bf7539c7a17@intel.com>
+In-Reply-To: <20180611113521.GB22164@hmswarspite.think-freely.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,19 +63,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 10:36:14AM -0700, Dave Hansen wrote:
+On Mon, Jun 11, 2018 at 07:35:21AM -0400, Neil Horman wrote:
+> On Fri, Jun 08, 2018 at 07:09:42PM +0200, Jarkko Sakkinen wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
+> > 
+> > Intel(R) SGX is a set of CPU instructions that can be used by applications
+> > to set aside private regions of code and data. The code outside the enclave
+> > is disallowed to access the memory inside the enclave by the CPU access
+> > control.
+> > 
+> > This commit adds the check for SGX to arch/x86 and a new config option,
+> > INTEL_SGX_CORE. Exposes a boolean variable 'sgx_enabled' to query whether
+> > or not the SGX support is available.
+> > 
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  arch/x86/Kconfig                | 19 ++++++++++++
+> >  arch/x86/include/asm/sgx.h      | 25 ++++++++++++++++
+> >  arch/x86/include/asm/sgx_pr.h   | 20 +++++++++++++
+> >  arch/x86/kernel/cpu/Makefile    |  1 +
+> >  arch/x86/kernel/cpu/intel_sgx.c | 53 +++++++++++++++++++++++++++++++++
+> >  5 files changed, 118 insertions(+)
+> >  create mode 100644 arch/x86/include/asm/sgx.h
+> >  create mode 100644 arch/x86/include/asm/sgx_pr.h
+> >  create mode 100644 arch/x86/kernel/cpu/intel_sgx.c
+> > 
+> > diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> > index c07f492b871a..42015d5366ef 100644
+> > --- a/arch/x86/Kconfig
+> > +++ b/arch/x86/Kconfig
+> > @@ -1925,6 +1925,25 @@ config X86_INTEL_MEMORY_PROTECTION_KEYS
+> >  
+> >  	  If unsure, say y.
+> >  
 > > +config INTEL_SGX_CORE
-> > +	prompt "Intel SGX core functionality
+> > +	prompt "Intel SGX core functionality"
+> > +	def_bool n
 > > +	depends on X86_64 && CPU_SUP_INTEL
 > > +	help
 > > +	Intel Software Guard eXtensions (SGX) is a set of CPU instructions
 > > +	that allows ring 3 applications to create enclaves; private regions
 > > +	of memory that are protected, by hardware, from unauthorized access
 > > +	and/or modification.
-> 
-> That semicolon needs to be a colon.  The second half of that sentence is
-> not a stand-alone statement.
-> 
+> > +
 > > +	This option enables kernel recognition of SGX, high-level management
 > > +	of the Enclave Page Cache (EPC), tracking and writing of SGX Launch
 > > +	Enclave Hash MSRs, and allows for virtualization of SGX via KVM. By
@@ -108,49 +142,12 @@ On Fri, Jun 08, 2018 at 10:36:14AM -0700, Dave Hansen wrote:
 > > +#include <linux/types.h>
 > > +
 > > +#define SGX_CPUID 0x12
+> > +
+> Agree with Dave, this can just be remoed and you can use the feature macro from
+> cpuid.h instead
 > 
-> Hey, I just saw 0x12 as a magic, hard-coded number earlier in these
-> patches.  It seems cruel to hard-code it, and then also have a #define
-> that isn't used.
+> Neil
 
-It i then is a regression in the series. I'll fix it.
-
-> > +enum sgx_cpuid {
-> > +	SGX_CPUID_CAPABILITIES	= 0,
-> > +	SGX_CPUID_ATTRIBUTES	= 1,
-> > +	SGX_CPUID_EPC_BANKS	= 2,
-> > +};
-> 
-> These are cpuid *leaves*, right?  Please make this clear that these are
-> hardware-defined values and not some kind of software construct.
-> 
-> > +bool sgx_enabled __ro_after_init = false;
-> > +EXPORT_SYMBOL(sgx_enabled);
-> > +
-> > +static __init bool sgx_is_enabled(void)
-> > +{
-> > +	unsigned long fc;
-> > +
-> > +	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-> > +		return false;
-> 
-> Not necessary. CPUID does this part for you.
-> 
-> > +	if (!boot_cpu_has(X86_FEATURE_SGX))
-> > +		return false;
-> > +
-> > +	if (!boot_cpu_has(X86_FEATURE_SGX1))
-> > +		return false;
-> > +
-> > +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> > +	if (!(fc & FEATURE_CONTROL_LOCKED))
-> > +		return false;
-> > +
-> > +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE))
-> > +		return false;
-> 
-> Comments, please.  Why would this happen?  What would it mean?
-
-Thanks for the feedback! I'll refine the parts that you pointed out.
+Will do, thanks.
 
 /Jarkko
