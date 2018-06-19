@@ -2,104 +2,211 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=BODY_8BITS,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 925E8C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D54C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589502083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:06:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589502083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E5F22083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 13:07:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5F22083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966468AbeFSNG2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 09:06:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49866 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965740AbeFSNG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 09:06:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1402A80D;
-        Tue, 19 Jun 2018 06:06:26 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E0783F557;
-        Tue, 19 Jun 2018 06:06:21 -0700 (PDT)
-Date:   Tue, 19 Jun 2018 14:06:20 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joelaf@google.com,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v3 04/10] PM / EM: Expose the Energy Model in sysfs
-Message-ID: <20180619130620.GZ17720@e108498-lin.cambridge.arm.com>
-References: <20180521142505.6522-1-quentin.perret@arm.com>
- <20180521142505.6522-5-quentin.perret@arm.com>
- <20180619121643.GR2458@hirez.programming.kicks-ass.net>
+        id S966388AbeFSNHZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 09:07:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40191 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755616AbeFSNHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 09:07:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A3FCBACD3;
+        Tue, 19 Jun 2018 13:07:22 +0000 (UTC)
+Subject: Re: [PATCH] btrfs: stop using get_seconds()
+To:     Allen Pais <allen.lkml@gmail.com>, linux-btrfs@vger.kernel.org
+Cc:     clm@fb.com, jbackik@fb.com, dsterba@suse.com,
+        linux-kernel@vger.kernel.org
+References: <1528804105-24100-1-git-send-email-allen.lkml@gmail.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b40f794f-16b6-0369-cb0d-bbb5b12aa46a@suse.com>
+Date:   Tue, 19 Jun 2018 16:07:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <1528804105-24100-1-git-send-email-allen.lkml@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180619121643.GR2458@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 19 Jun 2018 at 14:16:43 (+0200), Peter Zijlstra wrote:
-> On Mon, May 21, 2018 at 03:24:59PM +0100, Quentin Perret wrote:
-> > This exposes the Energy Model (read-only) of all frequency domains in
-> > sysfs for convenience. To do so, a parent kobject is added to the CPU
-> > subsystem under the umbrella of which a kobject for each frequency
-> > domain is attached.
-> > 
-> > The resulting hierarchy is as follows for a platform with two frequency
-> > domains for example:
-> > 
-> >    /sys/devices/system/cpu/energy_model
-> >    ├── fd0
-> >    │   ├── capacity
-> >    │   ├── cpus
-> >    │   ├── frequency
-> >    │   └── power
-> >    └── fd4
-> >        ├── capacity
-> >        ├── cpus
-> >        ├── frequency
-> >        └── power
-> > 
+
+
+On 12.06.2018 14:48, Allen Pais wrote:
+> The get_seconds() function is deprecated as it truncates
+> the timestamp to 32 bits. Change to either ktime_get_seconds()
+> or ktime_get_real_seconds()
+
+nit: In your patch you are only changing them to get-real-seconds. So
+the "ktime_get_seconds() or" part of the changelog is unnecessary.
 > 
-> Given that each FD can have multiple {freq,power} tuples and sysfs has a
-> one value per file policy, how does this work?
-
-This is meant to look a little bit like the sysfs entries of CPUFreq
-policies, so you get something like this:
-
-$ cat /sys/devices/system/cpu/energy_model/fd0/capacity 
-133 250 351 428 462 
-$ cat /sys/devices/system/cpu/energy_model/fd0/frequency 
-533000 999000 1402000 1709000 1844000 
-$ cat /sys/devices/system/cpu/energy_model/fd0/power 
-28 70 124 187 245 
-$ cat /sys/devices/system/cpu/energy_model/fd0/cpus
-0-3
-
-
-For example, CPUFreq exposes available governors and frequencies as:
-
-$ cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors 
-conservative ondemand userspace powersave performance schedutil
-
-$ cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies 
-533000 999000 1402000 1709000 1844000
+> Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+> ---
+>  fs/btrfs/ctree.h       | 4 ++--
+>  fs/btrfs/dev-replace.c | 8 ++++----
+>  fs/btrfs/disk-io.c     | 4 ++--
+>  fs/btrfs/transaction.c | 2 +-
+>  fs/btrfs/transaction.h | 2 +-
+>  5 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index 118346a..e671a1f 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -342,8 +342,8 @@ struct btrfs_path {
+>  					sizeof(struct btrfs_item))
+>  struct btrfs_dev_replace {
+>  	u64 replace_state;	/* see #define above */
+> -	u64 time_started;	/* seconds since 1-Jan-1970 */
+> -	u64 time_stopped;	/* seconds since 1-Jan-1970 */
+> +	time64_t time_started;	/* seconds since 1-Jan-1970 */
+> +	time64_t time_stopped;	/* seconds since 1-Jan-1970 */
+>  	atomic64_t num_write_errors;
+>  	atomic64_t num_uncorrectable_read_errors;
+>  
+> diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+> index e2ba041..1b30c38 100644
+> --- a/fs/btrfs/dev-replace.c
+> +++ b/fs/btrfs/dev-replace.c
+> @@ -465,7 +465,7 @@ int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
+>  	 * go to the tgtdev as well (refer to btrfs_map_block()).
+>  	 */
+>  	dev_replace->replace_state = BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED;
+> -	dev_replace->time_started = get_seconds();
+> +	dev_replace->time_started = ktime_get_real_seconds();
+>  	dev_replace->cursor_left = 0;
+>  	dev_replace->committed_cursor_left = 0;
+>  	dev_replace->cursor_left_last_write_of_item = 0;
+> @@ -618,7 +618,7 @@ static int btrfs_dev_replace_finishing(struct btrfs_fs_info *fs_info,
+>  			  : BTRFS_IOCTL_DEV_REPLACE_STATE_FINISHED;
+>  	dev_replace->tgtdev = NULL;
+>  	dev_replace->srcdev = NULL;
+> -	dev_replace->time_stopped = get_seconds();
+> +	dev_replace->time_stopped = ktime_get_real_seconds();
+>  	dev_replace->item_needs_writeback = 1;
+>  
+>  	/* replace old device with new one in mapping tree */
+> @@ -807,7 +807,7 @@ int btrfs_dev_replace_cancel(struct btrfs_fs_info *fs_info)
+>  		break;
+>  	}
+>  	dev_replace->replace_state = BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED;
+> -	dev_replace->time_stopped = get_seconds();
+> +	dev_replace->time_stopped = ktime_get_real_seconds();
+>  	dev_replace->item_needs_writeback = 1;
+>  	btrfs_dev_replace_write_unlock(dev_replace);
+>  	btrfs_scrub_cancel(fs_info);
+> @@ -848,7 +848,7 @@ void btrfs_dev_replace_suspend_for_unmount(struct btrfs_fs_info *fs_info)
+>  	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
+>  		dev_replace->replace_state =
+>  			BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED;
+> -		dev_replace->time_stopped = get_seconds();
+> +		dev_replace->time_stopped = ktime_get_real_seconds();
+>  		dev_replace->item_needs_writeback = 1;
+>  		btrfs_info(fs_info, "suspending dev_replace for unmount");
+>  		break;
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index 205092d..f3224e2 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -1803,7 +1803,7 @@ static int transaction_kthread(void *arg)
+>  	struct btrfs_trans_handle *trans;
+>  	struct btrfs_transaction *cur;
+>  	u64 transid;
+> -	unsigned long now;
+> +	time64_t now;
+>  	unsigned long delay;
+>  	bool cannot_commit;
+>  
+> @@ -1819,7 +1819,7 @@ static int transaction_kthread(void *arg)
+>  			goto sleep;
+>  		}
+>  
+> -		now = get_seconds();
+> +		now = ktime_get_real_seconds();
+>  		if (cur->state < TRANS_STATE_BLOCKED &&
+>  		    !test_bit(BTRFS_FS_NEED_ASYNC_COMMIT, &fs_info->flags) &&
+>  		    (now < cur->start_time ||
+> diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+> index ff5f6c7..56c8bab 100644
+> --- a/fs/btrfs/transaction.c
+> +++ b/fs/btrfs/transaction.c
+> @@ -241,7 +241,7 @@ static noinline int join_transaction(struct btrfs_fs_info *fs_info,
+>  	refcount_set(&cur_trans->use_count, 2);
+>  	atomic_set(&cur_trans->pending_ordered, 0);
+>  	cur_trans->flags = 0;
+> -	cur_trans->start_time = get_seconds();
+> +	cur_trans->start_time = ktime_get_real_seconds();
+>  
+>  	memset(&cur_trans->delayed_refs, 0, sizeof(cur_trans->delayed_refs));
+>  
+> diff --git a/fs/btrfs/transaction.h b/fs/btrfs/transaction.h
+> index 9443948..4cbb1b5 100644
+> --- a/fs/btrfs/transaction.h
+> +++ b/fs/btrfs/transaction.h
+> @@ -48,7 +48,7 @@ struct btrfs_transaction {
+>  	int aborted;
+>  	struct list_head list;
+>  	struct extent_io_tree dirty_pages;
+> -	unsigned long start_time;
+> +	time64_t start_time;
+>  	wait_queue_head_t writer_wait;
+>  	wait_queue_head_t commit_wait;
+>  	wait_queue_head_t pending_wait;
+> 
