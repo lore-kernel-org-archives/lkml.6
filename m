@@ -7,263 +7,121 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DFEC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA556C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5568F205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61199205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 14:16:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HfCNx5ML"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5568F205C9
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GAMFrWHa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61199205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937644AbeFSOPj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 10:15:39 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53989 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S937572AbeFSOPg (ORCPT
+        id S937696AbeFSOQG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 10:16:06 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38923 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937559AbeFSOQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 10:15:36 -0400
-Received: by mail-wm0-f68.google.com with SMTP id x6-v6so660594wmc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 07:15:36 -0700 (PDT)
+        Tue, 19 Jun 2018 10:16:04 -0400
+Received: by mail-pl0-f67.google.com with SMTP id f1-v6so11038500plt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 07:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Pbp3RnfkzKVCDuM/1bn+SJUC8WkWYTm8XZSitE1r5s8=;
-        b=HfCNx5MLjRITR9Je5oukk0srQZHLvNSY7truzaMsaWBkOSO2/TxKWgRNgScj69QCou
-         TlE0vTpjZw0sAVu5t5a6ZOn3jmavlk/zNKDVb8wEh1raraZimefTrriSZvGbzDF7dZxD
-         vcTKxeLgTpXAoYtT8Y0I3trsTbS3mtIjLkCaDfy7kjQytwO8MH0fCriqftBnyRikrKJM
-         IWB61bXYuj6Z0aF8Rnuv6j0H+0jH563gdNx2C7rMOS57pZLSJzKZR/C47tC9yRy8UrCN
-         lSWqMt+uby391Et8pBexxFKxs1q2iYhqXfPEfa4aT4caZB4tfJaQe8u7aVxNbAGzv1b4
-         h9EA==
+        bh=s/vulpBI71f4u7Y+Rh9ojoULWVwNFK05ZfboatkSWEE=;
+        b=GAMFrWHaUkBjI28JAHZOUDoTRLmZBW9RcnmI/Wvrqc772G30kH5R6qRb8D4bsqH6QS
+         ZM/eeYYIungycsKzY3lbWdtMTT1DqafTHJaF1C+jRXocYm18DyzeIRnkBDJFnZ+Kz1Cm
+         AY4w7PFh//b7k41voUkDISsoypHSP5SLOUXPnXEdkXzyeJBYWpUg2/Wvk8tiO11fgRIB
+         ijiYHw6JG0s8F1obKz45r77fO7XsQw6qbCtMWITd5muhUBfSntMcY++C2o6vFo5QT+cy
+         9COko93ZqxPfOT3YAUIgkBBxixxut6f1atif7yfFj9m8YEsOR8jCiFFUDf/S7+c+jSC9
+         kJ6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Pbp3RnfkzKVCDuM/1bn+SJUC8WkWYTm8XZSitE1r5s8=;
-        b=epF31zwhzNHmQniBUKEYYTtgbeA0it696aalQ605j+dx10WZAcQP0B+5xKwR8Dnjv6
-         AIDp65A6xgdD32zAatgDNtxzWbOKYW/zuZmVcnhC29plUzCb1P/pvq9qqpbyTMrxLVIA
-         mkvbp+fx054ZFR0XyFugPWp1fqMRGVOkI0AHANQQyRgQJz0sxfb9z0pmBbcu9iQnhzID
-         9dA3GkzKUWmi0jsRjL/A71Qai+GLI/JKseyOQQ/glnX7s1lQr43RpR+MolVf5Fze/SPD
-         OkiLRTZZ++Xrt2eZaFzc3PPPSlCzPjcKf3xioMPOGzTkmt/QDnEeuvvx2Lla5JO8SN1t
-         brKw==
-X-Gm-Message-State: APt69E3s8zeauovQ26veI8yXe081+8qn+Iw41fSSjY9m/RmFeq3584RH
-        4cqzFORyHZaIlOPCBzrZQUwzgRsfWXZ4QgIYysTekQ==
-X-Google-Smtp-Source: ADUXVKKg2Ba0bmkjoPutjISfUcVSe/GFIdv2RJ/LWh6Z4mXcQ6Y4+TXT6tKDlGuG1WSbHd6oOcF309wf8JxJzQW1DQo=
-X-Received: by 2002:a1c:443:: with SMTP id 64-v6mr12888077wme.140.1529417735017;
- Tue, 19 Jun 2018 07:15:35 -0700 (PDT)
+        bh=s/vulpBI71f4u7Y+Rh9ojoULWVwNFK05ZfboatkSWEE=;
+        b=Yzwba2EBx9wA2LQHfx0xlRc5JzYTExONUcaNQ+yR82MLFRBOHVC8INDjjSpVXFi3ie
+         EFPXHlK+Oj1sWi3xn6zNAX9JazItIb4Q4PelqQYmqJu2WQyiNRBF03/1UzElEIV6cUHL
+         9n4CUZPKvSgVtdnV4sm/1FjnaZScfKfDkKYBT3ifcWObhCLFD2pdYwJEQVlOoVDTotfU
+         8K3BXbOA46DdhMv+HVELNZTKN+qntQikk6/66Lcnuxhj1mTs8Htywbpd5XgF3UkKMEq2
+         M4beZnnVPqmAtzuPe922BgxpPvONVmUH3p91orY/oDBoXDvGGzSuwW70QbP+tg3ws9lM
+         98JQ==
+X-Gm-Message-State: APt69E0ObbZJY9icqleQCPHV55jeOTKfgAB8PcSmL+sxtQAx83Gg8zfm
+        pGLRcn4pmTiMA//SqskxrY6DuEdJ+aaNYqzHKlQUOA==
+X-Google-Smtp-Source: ADUXVKLryj1ZqjtW0XjmH6g8vS3fad7Ix48/uEluqXkAkerRBO2bSTU852/1VgGlWnr80BVCYAQ8jQnaKo77HHXAls0=
+X-Received: by 2002:a17:902:5a4c:: with SMTP id f12-v6mr19353572plm.85.1529417764069;
+ Tue, 19 Jun 2018 07:16:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180619051327.149716-1-shakeelb@google.com> <20180619051327.149716-3-shakeelb@google.com>
- <CAOQ4uxgACdbNryEKdcngy+Fm9vOdFQNrioPuHFULa8gmA-gYaQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgACdbNryEKdcngy+Fm9vOdFQNrioPuHFULa8gmA-gYaQ@mail.gmail.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Tue, 19 Jun 2018 07:15:20 -0700
-Message-ID: <CALvZod7pNo1aGtVepcP3G4ArO3ygM_EQMO2PMYUT0FJEoE2oyA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] fs: fsnotify: account fsnotify metadata to kmemcg
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>,
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Tue, 19 Jun 2018 07:15:42
+ -0700 (PDT)
+In-Reply-To: <9d0092e6-142a-7168-7b3c-084faa9268d5@i-love.sakura.ne.jp>
+References: <001a113ed5540f411c0568cc8418@google.com> <a274f8ff-989a-ccb8-3cc1-78fbdec0604a@I-love.SAKURA.ne.jp>
+ <CACT4Y+ZJTHfFOcbReD_nOYxvxaYcD2Sa=VToZL0RWYw1TemrPA@mail.gmail.com> <9d0092e6-142a-7168-7b3c-084faa9268d5@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 19 Jun 2018 16:15:42 +0200
+Message-ID: <CACT4Y+b=7Kt5iVj+jMcWwfFGmYQ5D0SpF_iaBK+pjMJLUfKFpw@mail.gmail.com>
+Subject: Re: INFO: task hung in __get_super
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     syzbot <syzbot+10007d66ca02b08f0e60@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 12:20 AM Amir Goldstein <amir73il@gmail.com> wrote:
+On Tue, Jun 19, 2018 at 4:10 PM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2018/06/19 20:53, Dmitry Vyukov wrote:
+>> On Tue, Jun 19, 2018 at 1:44 PM, Tetsuo Handa
+>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>> This bug report is getting no feedback, but I guess that this bug is in
+>>> block or mm or locking layer rather than fs layer.
+>>>
+>>> NMI backtrace for this bug tends to report that sb_bread() from fill_super()
+>>>  from mount_bdev() is stalling is the cause of keep holding s_umount_key for
+>>> more than 120 seconds. What is strange is that NMI backtrace for this bug tends
+>>> to point at rcu_read_lock()/pagecache_get_page()/radix_tree_deref_slot()/
+>>> rcu_read_unlock() which is expected not to stall.
+>>>
+>>> Since CONFIG_RCU_CPU_STALL_TIMEOUT is set to 120 (and actually +5 due to
+>>> CONFIG_PROVE_RCU=y) which is longer than CONFIG_DEFAULT_HUNG_TASK_TIMEOUT,
+>>> maybe setting CONFIG_RCU_CPU_STALL_TIMEOUT to smaller values (e.g. 25) can
+>>> give us some hints...
+>>
+>> If an rcu stall is the true root cause of this, then I guess would see
+>> "rcu stall" bug too. Rcu stall is detected after 120 seconds, but task
+>> hang after 120-240 seconds. So rcu stall has much higher chances to be
+>> detected. Do you see the corresponding "rcu stall" bug?
 >
-> On Tue, Jun 19, 2018 at 8:13 AM, Shakeel Butt <shakeelb@google.com> wrote:
-> > A lot of memory can be consumed by the events generated for the huge or
-> > unlimited queues if there is either no or slow listener.  This can cause
-> > system level memory pressure or OOMs.  So, it's better to account the
-> > fsnotify kmem caches to the memcg of the listener.
-> >
-> > There are seven fsnotify kmem caches and among them allocations from
-> > dnotify_struct_cache, dnotify_mark_cache, fanotify_mark_cache and
-> > inotify_inode_mark_cachep happens in the context of syscall from the
-> > listener.  So, SLAB_ACCOUNT is enough for these caches.
-> >
-> > The objects from fsnotify_mark_connector_cachep are not accounted as they
-> > are small compared to the notification mark or events and it is unclear
-> > whom to account connector to since it is shared by all events attached to
-> > the inode.
-> >
-> > The allocations from the event caches happen in the context of the event
-> > producer.  For such caches we will need to remote charge the allocations
-> > to the listener's memcg.  Thus we save the memcg reference in the
-> > fsnotify_group structure of the listener.
-> >
-> > This patch has also moved the members of fsnotify_group to keep the size
-> > same, at least for 64 bit build, even with additional member by filling
-> > the holes.
-> >
-> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> > Acked-by: Jan Kara <jack@suse.cz>
-> > Cc: Michal Hocko <mhocko@kernel.org>
-> > Cc: Amir Goldstein <amir73il@gmail.com>
-> > Cc: Christoph Lameter <cl@linux.com>
-> > Cc: Pekka Enberg <penberg@kernel.org>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > Cc: Greg Thelen <gthelen@google.com>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> > Cc: Mel Gorman <mgorman@suse.de>
-> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > ---
-> > Changelog since v5:
-> > - None
-> >
-> > Changelog since v4:
-> > - Fixed the build for CONFIG_MEMCG=n
-> >
-> > Changelog since v3:
-> > - Rebased over Jan's patches.
-> > - Some cleanup based on Amir's comments.
-> >
-> > Changelog since v2:
-> > - None
-> >
-> > Changelog since v1:
-> > - no more charging fsnotify_mark_connector objects
-> > - Fixed the build for SLOB
-> >
-> >  fs/notify/dnotify/dnotify.c          |  5 +++--
-> >  fs/notify/fanotify/fanotify.c        |  6 ++++--
-> >  fs/notify/fanotify/fanotify_user.c   |  5 ++++-
-> >  fs/notify/group.c                    |  6 ++++++
-> >  fs/notify/inotify/inotify_fsnotify.c |  2 +-
-> >  fs/notify/inotify/inotify_user.c     |  5 ++++-
-> >  include/linux/fsnotify_backend.h     | 12 ++++++++----
-> >  include/linux/memcontrol.h           |  7 +++++++
-> >  mm/memcontrol.c                      | 15 +++++++++++++--
-> >  9 files changed, 50 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-> > index e2bea2ac5dfb..a6365e6bc047 100644
-> > --- a/fs/notify/dnotify/dnotify.c
-> > +++ b/fs/notify/dnotify/dnotify.c
-> > @@ -384,8 +384,9 @@ int fcntl_dirnotify(int fd, struct file *filp, unsigned long arg)
-> >
-> >  static int __init dnotify_init(void)
-> >  {
-> > -       dnotify_struct_cache = KMEM_CACHE(dnotify_struct, SLAB_PANIC);
-> > -       dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC);
-> > +       dnotify_struct_cache = KMEM_CACHE(dnotify_struct,
-> > +                                         SLAB_PANIC|SLAB_ACCOUNT);
-> > +       dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC|SLAB_ACCOUNT);
-> >
-> >         dnotify_group = fsnotify_alloc_group(&dnotify_fsnotify_ops);
-> >         if (IS_ERR(dnotify_group))
-> > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> > index f90842efea13..c8d6e37a4855 100644
-> > --- a/fs/notify/fanotify/fanotify.c
-> > +++ b/fs/notify/fanotify/fanotify.c
-> > @@ -154,14 +154,16 @@ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
-> >         if (fanotify_is_perm_event(mask)) {
-> >                 struct fanotify_perm_event_info *pevent;
-> >
-> > -               pevent = kmem_cache_alloc(fanotify_perm_event_cachep, gfp);
-> > +               pevent = kmem_cache_alloc_memcg(fanotify_perm_event_cachep, gfp,
-> > +                                               group->memcg);
-> >                 if (!pevent)
-> >                         return NULL;
-> >                 event = &pevent->fae;
-> >                 pevent->response = 0;
-> >                 goto init;
-> >         }
-> > -       event = kmem_cache_alloc(fanotify_event_cachep, gfp);
-> > +       event = kmem_cache_alloc_memcg(fanotify_event_cachep, gfp,
-> > +                                      group->memcg);
-> >         if (!event)
-> >                 return NULL;
-> >  init: __maybe_unused
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > index ec4d8c59d0e3..0cf45041dc32 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/uaccess.h>
-> >  #include <linux/compat.h>
-> >  #include <linux/sched/signal.h>
-> > +#include <linux/memcontrol.h>
-> >
-> >  #include <asm/ioctls.h>
-> >
-> > @@ -756,6 +757,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
-> >
-> >         group->fanotify_data.user = user;
-> >         atomic_inc(&user->fanotify_listeners);
-> > +       group->memcg = get_mem_cgroup_from_mm(current->mm);
-> >
+> RCU stall is detected after 125 seconds due to CONFIG_PROVE_RCU=y
+> (e.g. https://syzkaller.appspot.com/bug?id=1fac0fd91219f3f2a03d6fa7deafc95fbed79cc2 ).
 >
-> It seem to me that you should export a wrapper to modules with
-> the mem_cgroup_ prefix and not sure that need to pass current->mm
-> to this wrapper.
+> I didn't find the corresponding "rcu stall" bug. But it is not required
+> that one RCU stall takes longer than 120 seconds.
 >
+> down(); // Will take 120 seconds due to multiple RCU stalls
+>   rcu_read_lock():
+>   do_something();
+>   rcu_read_unlock(): // Took 30 seconds for unknown reason.
+>   rcu_read_lock():
+>   do_something();
+>   rcu_read_unlock(): // Took 30 seconds for unknown reason.
+>   rcu_read_lock():
+>   do_something();
+>   rcu_read_unlock(): // Took 30 seconds for unknown reason.
+>   rcu_read_lock():
+>   do_something();
+>   rcu_read_unlock(): // Took 30 seconds for unknown reason.
+> up();
 
-Thanks, I will test with fsnotify as module.
 
-> >         oevent = fanotify_alloc_event(group, NULL, FS_Q_OVERFLOW, NULL);
-> >         if (unlikely(!oevent)) {
-> > @@ -957,7 +959,8 @@ COMPAT_SYSCALL_DEFINE6(fanotify_mark,
-> >   */
-> >  static int __init fanotify_user_setup(void)
-> >  {
-> > -       fanotify_mark_cache = KMEM_CACHE(fsnotify_mark, SLAB_PANIC);
-> > +       fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
-> > +                                        SLAB_PANIC|SLAB_ACCOUNT);
-> >         fanotify_event_cachep = KMEM_CACHE(fanotify_event_info, SLAB_PANIC);
-> >         if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
-> >                 fanotify_perm_event_cachep =
-> > diff --git a/fs/notify/group.c b/fs/notify/group.c
-> > index aa5468f23e45..300fc0f62115 100644
-> > --- a/fs/notify/group.c
-> > +++ b/fs/notify/group.c
-> > @@ -22,6 +22,7 @@
-> >  #include <linux/srcu.h>
-> >  #include <linux/rculist.h>
-> >  #include <linux/wait.h>
-> > +#include <linux/memcontrol.h>
-> >
-> >  #include <linux/fsnotify_backend.h>
-> >  #include "fsnotify.h"
-> > @@ -36,6 +37,11 @@ static void fsnotify_final_destroy_group(struct fsnotify_group *group)
-> >         if (group->ops->free_group_priv)
-> >                 group->ops->free_group_priv(group);
-> >
-> > +#ifdef CONFIG_MEMCG
-> > +       if (group->memcg)
-> > +               css_put(&group->memcg->css);
-> > +#endif
-> > +
->
-> This looks very much like an internal implementation detail that has no
-> business in an external module. I see evidence that you have used
-> mem_cgroup_put() in the patch at some point and I agree that you
-> need to export a pair of matching helpers to external modules.
->
-
-Do not worry. Andrew will change this to mem_cgroup_put(). Basically
-mem_cgroup_put() was defined by still-in-review patch series by Roman.
-There were build failure reports where someone was taking this series
-either without Roman's series or applying series out of order.
-
-thanks,
-Shakeel
+You think this is another false positive?
+Like this one https://github.com/google/syzkaller/issues/516#issuecomment-395685629
+?
