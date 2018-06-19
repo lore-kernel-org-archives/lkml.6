@@ -2,110 +2,111 @@ Return-Path: <SRS0=r7UP=JF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC722C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8306EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782E220693
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3638020875
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 05:13:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T8j1DxVU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782E220693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WMP14NhH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3638020875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937299AbeFSFMS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 01:12:18 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:39396 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935908AbeFSFMR (ORCPT
+        id S937318AbeFSFNo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 01:13:44 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37745 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S937236AbeFSFNm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 01:12:17 -0400
-Received: by mail-lf0-f65.google.com with SMTP id t2-v6so21682877lfd.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 22:12:16 -0700 (PDT)
+        Tue, 19 Jun 2018 01:13:42 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 31-v6so10277625plc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 22:13:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FNSOZOmA2ot7rKxU/a3LenCBv8RIBV3UFCmvkiMr8uc=;
-        b=T8j1DxVUCvoe3RD8rnHF8KpwRdD2YDRNAvfkcHfeBujbb4rZPgWMP7RRJtjzeYj+r5
-         1/V+2nK7pItUeZWYsWDtWLLIfvfsZRf7v6u65bdxVALl9BgtZfRn8BdFHMOTIdCshqf8
-         fXQPblhfbAbqJEj6bjoVSfN6Pe6gONDF2/L6m5trkvJvETEu5a8Sjzyx//hXRYa+rdTz
-         eme3AFv/Y+bNob8Cleu3//sYHO3/jz1cdyXlHVBWyMYkFXcACFkXBUJ8sgHuKl9jqewP
-         pjmGAWaIG0OvIs/mgmTWwxTzviciD6qzQOXcbJZqzWuXphh1WaNignfGjN9WEtNtwBkE
-         BKNA==
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=isp0D7fOHm2B+eMegAVDPCkhp4suKkoR3rfaJmek6NA=;
+        b=WMP14NhHdhEEe1tr3TYy4Fh5PUDmWJwERjLvnD7kYaPUNW/EM057iCQl2VBgsu1bhi
+         nXxleeEcUiYLziOmfPbQ3XBANbGx8Cb/Pjhs007nO90wothgdcc8SoAL3JonBg7PXYGi
+         GYuk1Kt2c6Uu+cKpfcwGQGurMCtNKjrYYQUcYnmfmegT0982350lv7OSB+xCP5B4GXM9
+         7IqhmY8O/uFjEzk05BByqyvD9TIuFbbdlgHlsw1siWXngcX7hzabe0HFTJcg8DuXfZ9N
+         XbXujiMBhcNAFOstQTyTm026k6XijzBRfD5BPQoA+kHxLxPru3NDtXCXdzsqeuGLfWI1
+         R04A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FNSOZOmA2ot7rKxU/a3LenCBv8RIBV3UFCmvkiMr8uc=;
-        b=iDHlo6LNDBbtHmM/4HFzbLUNKAN7IIQnZnHylua9phdvMukIP8cpd0rOPygE0EiAJE
-         qC+mfIJii01WoPnF28GMHnzeV2+wqDkGyw/wkovGv5hicdADEJvotsaofqoK6FHHHwPS
-         Z/hFAxcsXrQ+xF4F/8It+XgOp6v32Bzv91bijydWClLkVHNe0OReGSlwgePHI7bIdAcz
-         FY+yAV7v+bJkyuEbK1hSSEERf+solEAMk+HkM/MKWXam2iRYd9otGCDmqaUhbFJyvsu0
-         WNt4R9wJDeyTX8HF3Jq/I3RKnDATLNcl0oEX/tjUwCSVlFqVPWBG3xpYR9jTUmVP1Frz
-         PBaw==
-X-Gm-Message-State: APt69E0mMGZzm2OyLdXHeYdRQ3ISnjKnWHYfSm+fRf0TgRBojyHdXxyn
-        /NMRjOOI0Bow/m2JFpSWbUNRQbsMxOKiWNvbx5I=
-X-Google-Smtp-Source: ADUXVKKDzviAmE368UqPzamw95RMNJFJoC5tsX1N27LnjysM8fY/eYXIjVluYecaixuwr71Quujw8z2Y/zsdcUEFKuA=
-X-Received: by 2002:a2e:3613:: with SMTP id d19-v6mr9905589lja.31.1529385136204;
- Mon, 18 Jun 2018 22:12:16 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:2b43:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 22:12:15
- -0700 (PDT)
-In-Reply-To: <CAFqt6zbQxx+20SNT8r1q2ZjtQZLTh=CC50s4LkHExkBju-1KJA@mail.gmail.com>
-References: <20180510150448.GA26306@jordon-HP-15-Notebook-PC>
- <20180511092205.GB16141@n2100.armlinux.org.uk> <CAFqt6zY2amJC4bkRZJgjs7=wCuTTxZbufk9cXcMZLE8VGh_dww@mail.gmail.com>
- <CAFqt6zYyL6YfvmiX90=Te3PQdcK32irdPPU0awEbp9Q16Bz9=w@mail.gmail.com> <CAFqt6zbQxx+20SNT8r1q2ZjtQZLTh=CC50s4LkHExkBju-1KJA@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 19 Jun 2018 10:42:15 +0530
-Message-ID: <CAFqt6zacTP-HgQzkXS=d2w-+=QbhkPA0oH9X5Py_GJ0+8_PcYQ@mail.gmail.com>
-Subject: Re: [PATCH v2] gpu: drm: armada: Adding new typedef vm_fault_t
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>, airlied@linux.ie
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=isp0D7fOHm2B+eMegAVDPCkhp4suKkoR3rfaJmek6NA=;
+        b=eb9v1KtKwquDeByWkRAoE+dm+oK00AtQZ6mHiMhoBODZgwfw0ft1FQRYLiP7rSbOpR
+         m76yrIm0G7GpW5IPj6JO8VOaP0M2Vbihbgi6SxXWJjMqHxLXJ0mY2OYzNPvQ5yWBUcfQ
+         YDE65U/ecuixd02OHCQlwfdPr0cwDUhnGl3M24CJUBnK4DcK+2R/A355XqAzJTuvwsHH
+         LrsxMdI4GlpQ1mDXh1lVr43zeJPTJCM75z1FZd9EAmH/lZTJ1Asp5zSWQ8L17DimbBfu
+         KqasQHLphgL8KxbL35kOuPJ5h86GzFBHNNTKF+XARdCgw5IF+6+hsiFWqN0tC/5B2ndr
+         fGNQ==
+X-Gm-Message-State: APt69E0LQ8HKL7gj3eFTk6QM91SeSYEHbhR1zzBztU9KzEpZ/+4y+bQZ
+        2YafksPdE8N5hpS1aQ95BNXG/w==
+X-Google-Smtp-Source: ADUXVKLJY6zQyEauVQy9GxiaFAFe8H9+ib1Zv1bqZYFtyJScPbES9NGqfJaxoVZuctYHq6C8Iy9gEQ==
+X-Received: by 2002:a17:902:a9:: with SMTP id a38-v6mr17416687pla.102.1529385221337;
+        Mon, 18 Jun 2018 22:13:41 -0700 (PDT)
+Received: from shakeelb.mtv.corp.google.com ([2620:15c:2cb:201:3a5f:3a4f:fa44:6b63])
+        by smtp.gmail.com with ESMTPSA id a23-v6sm28390504pfj.117.2018.06.18.22.13.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 22:13:39 -0700 (PDT)
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Shakeel Butt <shakeelb@google.com>
+Subject: [PATCH v6 0/3] Directed kmem charging
+Date:   Mon, 18 Jun 2018 22:13:24 -0700
+Message-Id: <20180619051327.149716-1-shakeelb@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 4, 2018 at 10:46 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> On Wed, May 23, 2018 at 3:09 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->> On Wed, May 16, 2018 at 10:05 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->>> On Fri, May 11, 2018 at 2:52 PM, Russell King - ARM Linux
->>> <linux@armlinux.org.uk> wrote:
->>>> On Thu, May 10, 2018 at 08:34:48PM +0530, Souptick Joarder wrote:
->>>>> Use new return type vm_fault_t for fault handler in
->>>>> struct vm_operations_struct. For now, this is just
->>>>> documenting that the function returns a VM_FAULT
->>>>> value rather than an errno. Once all instances are
->>>>> converted, vm_fault_t will become a distinct type.
->>>>>
->>>>> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>>>>
->>>>> Previously vm_insert_pfn() returns err which driver
->>>>> mapped into VM_FAULT_* type. The new function
->>>>> vmf_insert_pfn() will replace this inefficiency by
->>>>> returning VM_FAULT_* type.
->>>>>
->>>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->>>>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
->>>>
->>>> Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
->>>>
->>>> Thanks.
->>>
->>> If no further comment, we would like to get this patch in queue
->>> for 4.18.
->>
->> We would like to get this patch in queue
->> for 4.18.
->
-> We  would like to get this patch in 4.18.
+This patchset introduces memcg variant memory allocation functions.  The
+caller can explicitly pass the memcg to charge for kmem allocations.
+Currently the kernel, for __GFP_ACCOUNT memory allocation requests,
+extract the memcg of the current task to charge for the kmem allocation.
+This patch series introduces kmem allocation functions where the caller
+can pass the pointer to the remote memcg.  The remote memcg will be
+charged for the allocation instead of the memcg of the caller.  However
+the caller must have a reference to the remote memcg.  This patch series
+also introduces scope API for targeted memcg charging. So, all the
+__GFP_ACCOUNT alloctions within the specified scope will be charged to
+the given target memcg.
 
-Russell, This patch is not merged in 4.18-rc-1.
+Shakeel Butt (3):
+  mm: memcg: remote memcg charging for kmem allocations
+  fs: fsnotify: account fsnotify metadata to kmemcg
+  fs, mm: account buffer_head to kmemcg
+
+ fs/buffer.c                          | 14 ++++-
+ fs/notify/dnotify/dnotify.c          |  5 +-
+ fs/notify/fanotify/fanotify.c        |  6 +-
+ fs/notify/fanotify/fanotify_user.c   |  5 +-
+ fs/notify/group.c                    |  6 ++
+ fs/notify/inotify/inotify_fsnotify.c |  2 +-
+ fs/notify/inotify/inotify_user.c     |  5 +-
+ include/linux/fsnotify_backend.h     | 12 ++--
+ include/linux/memcontrol.h           | 14 +++++
+ include/linux/sched.h                |  3 +
+ include/linux/sched/mm.h             | 24 ++++++++
+ include/linux/slab.h                 | 83 ++++++++++++++++++++++++++++
+ kernel/fork.c                        |  3 +
+ mm/memcontrol.c                      | 54 ++++++++++++++++--
+ 14 files changed, 220 insertions(+), 16 deletions(-)
+
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
+
