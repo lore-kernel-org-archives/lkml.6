@@ -3,131 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1AEC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED8AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97318205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796BD205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 15:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gUZcXoaa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97318205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="S0fUIO0Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796BD205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966730AbeFSP3K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 11:29:10 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35688 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966641AbeFSP3F (ORCPT
+        id S966752AbeFSP3S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 11:29:18 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:36734 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966641AbeFSP3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 11:29:05 -0400
-Received: by mail-it0-f68.google.com with SMTP id a3-v6so980853itd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:29:05 -0700 (PDT)
+        Tue, 19 Jun 2018 11:29:15 -0400
+Received: by mail-wr0-f195.google.com with SMTP id f16-v6so107759wrm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 08:29:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+Bii4H98d5lZzWOxEYun/5G7g+u2fB5Ok8emyDtROeo=;
-        b=gUZcXoaaCyl56dtbUo1ngZJqpvPThWVNk/FvVzszIg407Zdk3T3Fafggd3Mw+6HaBc
-         sPL6mRe0vfgguAA/bSR/064e0J8y080W9vd/5ltg7qDCms7lFctaSMdxoJNUDEEEeVHQ
-         8WKf4B0LaaxYh4qGmPS3beBSEYDc/o4lwBJvg=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kvAZA/UmVY1ldsJkl46fpogJzoSBcrGqFPWsQ3V7DrU=;
+        b=S0fUIO0YMT3mT0WxEewxLrDCQAJSR8KTE0ovmcn4nGNs/Vkt7sAYVjLu5cP4dPFm7E
+         +3KPPgNN+Xvye19EVTJMvrHbw5oHGv60SLmdwNALoSezz0fADS6+Jpj76Bbgo4Wd8n11
+         N6mI7an0bcagyaV6Wy6Shi26UKWXmQBS7r91K1WqdDASfkmmCEO2JQD6srdPCHJSI7fA
+         Gu+ZuaQkE/sYApu/uBIMi8I6LKEjEhNaLu+o6JyAt4U9ahEGNSG7zkrOvniJBiYBfBvG
+         YWZKR04H1xswsKA6j239U4Fj7MwYzcIuzWE9iDV1enK07GfyaTIyQxXIhtTCaCTLYvLv
+         +gSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+Bii4H98d5lZzWOxEYun/5G7g+u2fB5Ok8emyDtROeo=;
-        b=lT4ge+5hW20G8a0CagAM5tn39Tbjam+AvxZw2VHMZFvf3917KyUNUA23ix1xpIsDqB
-         H0HfZtHbAMB7+S/DLzR2UKK+eT3qt2e6fcyfTrZ3EzK8YfDAeHH14In22KfPGw102CMG
-         xyBLotPDLk/W0Yh9zwKArV0MiF6lQE9CTACurt0iklhXNbKdChSeFdEnEa5B0bjG4StA
-         h++nK6YnXAJc08OF8iCm9UE45pjYFjTFtQ1hgbvN30p7WxhmpGo2TEe4uPg1NFM4s5N+
-         UzSMsJ7UIL2f6UWCap5f/5mRY99lg8fdVvfYfoZWEfUIFT0QHGhi1apD70VUZboU8gl6
-         psfQ==
-X-Gm-Message-State: APt69E2DcBn9ts4bwAhZ/RqBnvgAgko9vx/ixo40fFnAkLJTPNQtmeKO
-        Ka+uqFW24O5VCXt0m5/zCICHTURB+2YlM329U++lkA==
-X-Google-Smtp-Source: ADUXVKJfWeKuJDehWqlKcBSOKT1cAifSIUXWQOJtDiOtmJ+lJrV58q2df1y8nczjTEARhIdVf62ne5+41ESf4FVVjPc=
-X-Received: by 2002:a24:3105:: with SMTP id y5-v6mr13535919ity.138.1529422144395;
- Tue, 19 Jun 2018 08:29:04 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 08:29:03
- -0700 (PDT)
-In-Reply-To: <20180619152805.GN13984@arm.com>
-References: <20180530044806.18449-1-yaojun8558363@gmail.com>
- <20180530091457.GB2452@arm.com> <CAKv+Gu8Zc7eQbG-Ww51GXUCEmhe2J03vbq5vVdyaKra-s13KrA@mail.gmail.com>
- <20180619152035.GM13984@arm.com> <CAKv+Gu-Mad64U63jjuKGjhg=h2wdoEKm2vywzATBYr-t_UY_bQ@mail.gmail.com>
- <20180619152805.GN13984@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 19 Jun 2018 17:29:03 +0200
-Message-ID: <CAKv+Gu81zgvcLd-N_MMENykxcm6ENvvfCuWOoMGsrfUf9Usy5g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: mm: mark tramp_pg_dir read-only
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     YaoJun <yaojun8558363@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kvAZA/UmVY1ldsJkl46fpogJzoSBcrGqFPWsQ3V7DrU=;
+        b=WmGbT7GJdgci1gbssA6Qh/Xao9E+v40P69WqpbKZKaGAn6Hw0U7eOHzncGVF2GTak6
+         B2WVXhNuVd+hZe5csnMdak/rmfJL01+Eb1f0LSKWbcjCjcOBSlZYygmgGtey8KduElNo
+         l3X0hdFpOWctL+4pMAa+TobbJ03JhBvmi5p69GK0AzkchzgpLTrB8izOiLiO2vOi2u68
+         BW4xL7QSs3SUp6PnNTFs1HIGK2jh7iOUwvUxdFiTRdasyeVm+8Kb4qjpttB0l4mtQI2B
+         UDEOo5NMOneUEn8nzn4oV1v4yvEvkes98kGzYYNoLUU3D/g/qOUG7b14hCKZ0e5XYnH7
+         +mQA==
+X-Gm-Message-State: APt69E3V9dxDGcE9hRq5UzPOH+Ntp5VD82afwiCdmBrX4+3vEMYz97wd
+        wPqva6myOh+MyycJTmTfHpY1Qg==
+X-Google-Smtp-Source: ADUXVKIaLR4DcCRSsDms6RW4tuTWgf5XZVoHvyUqPAmLUPt0JT79QhtoirHXuXrMtKWSBrdnRCMaUg==
+X-Received: by 2002:adf:8610:: with SMTP id 16-v6mr14270850wrv.255.1529422154362;
+        Tue, 19 Jun 2018 08:29:14 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b74-v6sm544481wmi.13.2018.06.19.08.29.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 08:29:13 -0700 (PDT)
+Message-ID: <1529422152.28510.24.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org,
+        mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Tue, 19 Jun 2018 17:29:12 +0200
+In-Reply-To: <1528892771.2292.2.camel@baylibre.com>
+References: <1528892421-12180-1-git-send-email-narmstrong@baylibre.com>
+         <1528892771.2292.2.camel@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 June 2018 at 17:28, Will Deacon <will.deacon@arm.com> wrote:
-> On Tue, Jun 19, 2018 at 05:23:41PM +0200, Ard Biesheuvel wrote:
->> On 19 June 2018 at 17:20, Will Deacon <will.deacon@arm.com> wrote:
->> > Hi Ard,
->> >
->> > Sorry, I forgot to reply to this.
->> >
->> > On Wed, May 30, 2018 at 11:53:20AM +0200, Ard Biesheuvel wrote:
->> >> On 30 May 2018 at 11:14, Will Deacon <will.deacon@arm.com> wrote:
->> >> > On Wed, May 30, 2018 at 12:48:06PM +0800, YaoJun wrote:
->> >> >> To protect against KSMA(Kernel Space Mirroring Attack), make
->> >> >> tramp_pg_dir read-only. The principle of KSMA is to insert a
->> >> >> carefully constructed PGD entry into the translation table.
->> >> >> The type of this entry is block, which maps the kernel text
->> >> >> and its access permissions bits are 01. The user process can
->> >> >> then modify kernel text directly through this mapping. In this
->> >> >> way, an arbitrary write can be converted to multiple arbitrary
->> >> >> writes.
->> >> >>
->> >> >> Signed-off-by: YaoJun <yaojun8558363@gmail.com>
->> >> >> ---
->> >> >>  arch/arm64/mm/mmu.c | 4 ++++
->> >> >>  1 file changed, 4 insertions(+)
->> >> >>
->> >> >> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> >> >> index 2dbb2c9f1ec1..ac4b22c7e435 100644
->> >> >> --- a/arch/arm64/mm/mmu.c
->> >> >> +++ b/arch/arm64/mm/mmu.c
->> >> >> @@ -551,6 +551,10 @@ static int __init map_entry_trampoline(void)
->> >> >>       __create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
->> >> >>                            prot, pgd_pgtable_alloc, 0);
->> >> >>
->> >> >> +     update_mapping_prot(__pa_symbol(tramp_pg_dir),
->> >> >> +                             (unsigned long)tramp_pg_dir,
->> >> >> +                             PGD_SIZE, PAGE_KERNEL_RO);
->> >> >
->> >> > Hmm, I like the idea but is there a risk that the page table has been mapped
->> >> > as part of a block entry, which we can't safely split at this point (i.e.
->> >> > we'll run into one of the BUG_ONs in the mapping code)?
->> >> >
->> >>
->> >> We'd need to create a separate segment for it initially so the mapping
->> >> is already at the right granularity.
->> >
->> > Why do you think that's the case? I can't see anything that guarantees this
->> > for the page table itself.
->> >
->>
->> We'd need to pass NO_BLOCK_MAPPINGS to map_kernel_segment(),
->> obviously, but that shouldn't hurt since that segment is relatively
->> tiny anyway.
->
-> Ah right, with NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS, I agree that we're good.
-> Ideally, we'd move {idmap,swapper,tramp}_pg_dir into .rodata...
->
+On Wed, 2018-06-13 at 14:26 +0200, Jerome Brunet wrote:
+> On Wed, 2018-06-13 at 14:20 +0200, Neil Armstrong wrote:
+> > On Amlogic Meson GXBB & GXL platforms, the SCPI Cortex-M4 Co-Processor
+> > seems to be dependent on the FCLK_DIV2 to be operationnal.
+> > 
+> > The issue occured since v4.17-rc1 by freezing the kernel boot when
+> > the 'schedutil' cpufreq governor was selected as default :
+> > 
+> >    [   12.071837] scpi_protocol scpi: SCP Protocol 0.0 Firmware 0.0.0 version
+> >    domain-0 init dvfs: 4
+> >    [   12.087757] hctosys: unable to open rtc device (rtc0)
+> >    [   12.087907] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+> >    [   12.102241] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+> > 
+> > But when disabling the MMC driver, the boot finished but cpufreq failed to
+> > change the CPU frequency :
+> > 
+> >    [   12.153045] cpufreq: __target_index: Failed to change cpu frequency: -5
+> > 
+> > A bisect between v4.16 and v4.16-rc1 gave the 05f814402d61 commit to be
+> > the first bad commit.
+> > This commit added support for the missing clock gates before the fixed PLL
+> > fixed dividers (FCLK_DIVx) and the clock framework basically disabled
+> > all the unused fixed dividers, thus disabled a critical clock path for
+> > the SCPI Co-Processor.
+> > 
+> > This patch simply sets the FCLK_DIV2 gate as critical to ensure
+> > nobody can disable it.
+> > 
+> > Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> Good catch !
+> We'll probably have to check the axg family as well
 
-idmap and tramp yes, but swapper needs to be modifiable at runtime, no?
+SCPI is not enabled on AXG at this time. We'll deal with it when the time comes.
+
+patch applied.
+Thx
