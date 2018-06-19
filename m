@@ -3,72 +3,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65410C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F593C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24C1420836
-	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:57:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C1420836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 307A920836
+	for <linux-kernel@archiver.kernel.org>; Tue, 19 Jun 2018 11:57:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307A920836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757305AbeFSL5L (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 07:57:11 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48402 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757217AbeFSL4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 07:56:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0F1015AD;
-        Tue, 19 Jun 2018 04:56:09 -0700 (PDT)
-Received: from approximate.cambridge.arm.com (approximate.cambridge.arm.com [10.1.206.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 939DB3F557;
-        Tue, 19 Jun 2018 04:56:08 -0700 (PDT)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Yang Yingliang <yangyingliang@huawei.com>
-Subject: [PATCH 2/6] irqchip/ls-scfg-msi: Fix MSI affinity handling
-Date:   Tue, 19 Jun 2018 12:55:42 +0100
-Message-Id: <20180619115546.12196-3-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180619115546.12196-1-marc.zyngier@arm.com>
-References: <20180619115546.12196-1-marc.zyngier@arm.com>
+        id S937696AbeFSL5a (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 19 Jun 2018 07:57:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40222 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1757217AbeFSL53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 07:57:29 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 647927DAC4;
+        Tue, 19 Jun 2018 11:57:28 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-75.ams2.redhat.com [10.36.116.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 86FF02026D68;
+        Tue, 19 Jun 2018 11:57:27 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] printk: Make CONSOLE_LOGLEVEL_QUIET configurable
+Date:   Tue, 19 Jun 2018 13:57:26 +0200
+Message-Id: <20180619115726.3098-1-hdegoede@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 19 Jun 2018 11:57:28 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 19 Jun 2018 11:57:28 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'hdegoede@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ls-scfs-msi driver is not dealing with the effective affinity
-as it should. Let's fix that, and make it clear that the effective
-affinity is restricted to a single CPU.
+The goal of passing the "quiet" option to the kernel is for the kernel
+to be quiet unless something really is wrong.
 
-Reported-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Sofar passing quiet has been (mostly) equivalent to passing
+loglevel=4 on the kernel commandline. Which means to show any messages
+with a level of KERN_ERR or higher severity on the console.
+
+In practice this often does not result in a quiet boot though, since
+there are many false-positive or otherwise harmless error messages printed,
+defeating the purpose of the quiet option. Esp. the ACPICA code is really
+bad wrt this, but there are plenty of others too.
+
+This commit makes CONSOLE_LOGLEVEL_QUIET configurable.
+
+This for example will allow distros which want quiet to really mean quiet
+to set CONSOLE_LOGLEVEL_QUIET so that only messages with a higher severity
+then KERN_ERR (CRIT, ALERT, EMERG) get printed, avoiding an endless game
+of whack-a-mole silencing harmless error messages.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/irqchip/irq-ls-scfg-msi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/printk.h |  6 +++---
+ lib/Kconfig.debug      | 11 +++++++++++
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
-index 1ec3bfe56693..2811cc53e425 100644
---- a/drivers/irqchip/irq-ls-scfg-msi.c
-+++ b/drivers/irqchip/irq-ls-scfg-msi.c
-@@ -121,7 +121,8 @@ static int ls_scfg_msi_set_affinity(struct irq_data *irq_data,
- 		return -EINVAL;
- 	}
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index 6d7e800affd8..18602bb3eca8 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -50,15 +50,15 @@ static inline const char *printk_skip_headers(const char *buffer)
+ /* We show everything that is MORE important than this.. */
+ #define CONSOLE_LOGLEVEL_SILENT  0 /* Mum's the word */
+ #define CONSOLE_LOGLEVEL_MIN	 1 /* Minimum loglevel we let people use */
+-#define CONSOLE_LOGLEVEL_QUIET	 4 /* Shhh ..., when booted with "quiet" */
+ #define CONSOLE_LOGLEVEL_DEBUG	10 /* issue debug messages */
+ #define CONSOLE_LOGLEVEL_MOTORMOUTH 15	/* You can't shut this one up */
  
--	cpumask_copy(irq_data->common->affinity, mask);
-+	cpumask_copy(irq_data->common->affinity, cpumask_of(cpu));
-+	irq_data_update_effective_affinity(irq_data, cpumask_of(cpu));
+ /*
+- * Default used to be hard-coded at 7, we're now allowing it to be set from
+- * kernel config.
++ * Default used to be hard-coded at 7, quiet used to be hardcoded at 4,
++ * we're now allowing both to be set from kernel config.
+  */
+ #define CONSOLE_LOGLEVEL_DEFAULT CONFIG_CONSOLE_LOGLEVEL_DEFAULT
++#define CONSOLE_LOGLEVEL_QUIET	 CONFIG_CONSOLE_LOGLEVEL_QUIET
  
- 	return IRQ_SET_MASK_OK;
- }
+ extern int console_printk[];
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 8838d1158d19..0d1c48dd22a9 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -30,6 +30,17 @@ config CONSOLE_LOGLEVEL_DEFAULT
+ 	  usage in the kernel. That is controlled by the MESSAGE_LOGLEVEL_DEFAULT
+ 	  option.
+ 
++config CONSOLE_LOGLEVEL_QUIET
++	int "quiet console loglevel (1-15)"
++	range 1 15
++	default "4"
++	help
++	  loglevel to use when "quiet" is passed on the kernel commandline.
++
++	  When "quiet" is passed on the kernel commandline this loglevel
++	  will be used as the loglevel. IOW passing "quiet" will be the
++	  equivalent of passing "loglevel=<CONSOLE_LOGLEVEL_QUIET>"
++
+ config MESSAGE_LOGLEVEL_DEFAULT
+ 	int "Default message log level (1-7)"
+ 	range 1 7
 -- 
 2.17.1
 
