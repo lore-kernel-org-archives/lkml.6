@@ -2,103 +2,90 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F32CC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084B8C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EDDE20872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="megRal5N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDDE20872
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BE79720872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE79720872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754374AbeFTN2O (ORCPT
+        id S1754438AbeFTN2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:28:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57772 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754342AbeFTN2A (ORCPT
+        Wed, 20 Jun 2018 09:28:31 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:47647 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754406AbeFTN23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:28:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=djUFlbeabQQKdJBGtq97E/X/fZXBWeimfgL8KIcf+g0=; b=megRal5NT+fZWoCzk+v2qxPWe
-        /c6NiOqyli1SnHf7cxhDF5ooXfwD9+fYRTM4DHH/xGR4ikkQQ3F1aQ+SnR1O3/qa5zWRTS3errRea
-        S0epas4ee++NUJo5vIKewFhPa9BxYzhHxLf6EEqK5BSy8iuEBO+0CSCO0zSpCyV0bPuNw=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fVd9P-0002Hz-FS; Wed, 20 Jun 2018 13:27:55 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fVd9P-00087e-1p; Wed, 20 Jun 2018 14:27:55 +0100
-Date:   Wed, 20 Jun 2018 14:27:55 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Esben Haabendal <esben.haabendal@gmail.com>
-Cc:     linux-spi@vger.kernel.org, Kurt Kanzenbach <kurt@linutronix.de>,
-        Angelo Dureghello <angelo@sysam.it>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Sanchayan Maity <maitysanchayan@gmail.com>,
-        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>
-Subject: Re: [PATCH 03/12] spi: spi-fsl-dspi: Fix per transfer cs_change
- handling
-Message-ID: <20180620132755.GF6242@sirena.org.uk>
-References: <20180620073442.20913-1-esben.haabendal@gmail.com>
- <20180620073442.20913-4-esben.haabendal@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4VrXvz3cwkc87Wze"
-Content-Disposition: inline
-In-Reply-To: <20180620073442.20913-4-esben.haabendal@gmail.com>
-X-Cookie: No directory.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 20 Jun 2018 09:28:29 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue007 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0LbCQQ-1ftSRh0qaY-00kxUU; Wed, 20 Jun 2018 15:28:23 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     David Howells <dhowells@redhat.com>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] [v2] cachefiles: avoid deprecated get_seconds()
+Date:   Wed, 20 Jun 2018 15:28:03 +0200
+Message-Id: <20180620132820.16467-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:P8aFXgh8yseBHyQq3UsF/rAh7KigW1hA1ZbgzZ8pqtZEkm38DjJ
+ oltBN2qJq8PmUuYh3u99tAjCe2IndUKw9al0Fz4HGxaZJYppMeRQKqx2O77nGpJriyzq6Xa
+ /daKgBL6ohb3t7PwQDbZ9Tz3rFfxnVcyk+dNMPGxj+q9x7n4YUv7uNriTXIl3u5ltFm9FZO
+ ol3fa4zb7vEnLSRPfHsYQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:f/tYAiz6nD0=:4CxgXuX9G6ZjVRTGNtNgBT
+ 2/oX6zR5/7j+OAtS1cmkeyuCAUgy0aJy54nXRdZSYMOEkkX152zaaSxuvZQZuk7sb9X6vD5pm
+ Irg0f2p3gwG0TNg2CHexZt/12lXC75mEHEDkC04UYTjY+MAa70H9n8hT1/zCgi6uQoGfSI1X6
+ /UmNEiHxxdtYMp0oliGwQWko1T6dVnUNJiiJIYRRYuChfkf+kOo7Uzw8cbL6pDhXsyxeM6fHa
+ So9s+pdK7N0/S4eNcf7vIlVo9U1k+4fT1pK8E/yYTTL0AS6Y1uii3SlGKdQ1I6qnW7euPhd0P
+ SqGyTLCBCQMdF3WOQ59SmwG8rBxwjPDko06Vowd8CHP7UeqkPfsuGf1LowjX3ACnWmIUsYyzA
+ AA7cKc3Z+xUkeLzHKzzfaMT0GKDt6oSuV+W72e4r+xryc8GTwlNhO1i5dQW+Wv2pOfRLGufDo
+ KeclG9TEcDrV9mZW5x1yBUHLbUnjBJFskwhb5SjHDs5bRmstLKxZf+eLXTrQsLW11zIe95zZW
+ 60x0L0R1aZgb1CMdS1B448uECB2I5C5tAKixdW16kqjw3hZ0fKxM6koXgm6rb5iO/3y2FS8HB
+ ISVcNYVLO1RfIwTOJIyRmjZxzEkdsMlaUHVsVsI0QOPSGSv/lYHjHAmWlVGa7fLBuN9zBt2WG
+ 4Ftp2r44H80s7nHOXeoLfvKi7N674pT1KG0N2753KvVjMosZqEvDigkm+aWWJbNj+fpA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+get_seconds() returns an unsigned long can overflow on some architectures
+and is deprecated because of that. In cachefs, we cast that number to
+a a 32-bit integer, which will overflow in year 2106 on all architectures.
 
---4VrXvz3cwkc87Wze
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+As confirmed by David Howells, the overflow probably isn't harmful
+in the end, since the timestamps are only used to make the file names
+unique, but they don't strictly have to be in monotonically increasing
+order since the files only exist in order to be deleted as quickly
+as possible.
 
-On Wed, Jun 20, 2018 at 09:34:33AM +0200, Esben Haabendal wrote:
+Moving to ktime_get_real_seconds() avoids the deprecated interface.
 
-> As of 92dc20d83adec565378254c0630e839ff5674e14, transfer->cs_change has
-> been supported for non-last transfers, but not for last transfer.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v2: only change to ktime_get_real_seconds() without printing the
+    extra leading digits
+---
+ fs/cachefiles/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please include human readable descriptions of things like commits and
-issues being discussed in e-mail in your mails, this makes them much
-easier for humans to read especially when they have no internet access.
-I do frequently catch up on my mail on flights or while otherwise
-travelling so this is even more pressing for me than just being about
-making things a bit easier to read.
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index ab0bbe93b398..0a38978b8cd3 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -337,7 +337,7 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
+ try_again:
+ 	/* first step is to make up a grave dentry in the graveyard */
+ 	sprintf(nbuffer, "%08x%08x",
+-		(uint32_t) get_seconds(),
++		(uint32_t) ktime_get_real_seconds(),
+ 		(uint32_t) atomic_inc_return(&cache->gravecounter));
+ 
+ 	/* do the multiway lock magic */
+-- 
+2.9.0
 
---4VrXvz3cwkc87Wze
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsqVloACgkQJNaLcl1U
-h9AWlgf+Jn8V8GuWmqwEjOKvD0pO8SCEE/IgKm5c/+b3o8F/A0emloVE+ajKiHbr
-oBK3+hMehOCGdgDuE9TYltcC3q8v64mqtIHqrqunm4cgFaE6xzWzBbBNn6lI07Z6
-6zleQcD5fYwaZv/AJOIIdcuxTOFISymveAuR1ghppifKWOub2cFhNdfC7cCUYUII
-5hOcMmb8+/P870I/45ZfOVoK+wZZ4Mt5DtXy2zVgwWL95FIIMMBIfFVlQ9UFCib5
-baIGM5L7JNNEHR536q9HB7BHqx69yCDNZk9F4SUMrc2yxFavpLzKsTjWZM6vwAnT
-e9IJKF1ocTg12yzqRbpGU/uJ6OrtEQ==
-=j208
------END PGP SIGNATURE-----
-
---4VrXvz3cwkc87Wze--
