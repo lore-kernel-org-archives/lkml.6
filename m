@@ -6,118 +6,121 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70ABC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A82C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A92CE20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A92CE20874
+	by mail.kernel.org (Postfix) with ESMTP id 92C6D20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:35:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C6D20846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754201AbeFTOdB (ORCPT
+        id S1754153AbeFTOfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:33:01 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:50459 "EHLO
+        Wed, 20 Jun 2018 10:35:11 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:52403 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753651AbeFTOc6 (ORCPT
+        with ESMTP id S1753202AbeFTOfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:32:58 -0400
+        Wed, 20 Jun 2018 10:35:10 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue004 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0LcC9p-1fxWBE0ODV-00jbe3; Wed, 20 Jun 2018 16:32:21 +0200
+ (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0M3dNR-1gMn0s1RQH-00rDit; Wed, 20 Jun 2018 16:34:51 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jan Kara <jack@suse.com>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        David Sterba <dsterba@suse.com>
 Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ext2: use ktime_get_real_seconds for timestamps
-Date:   Wed, 20 Jun 2018 16:31:40 +0200
-Message-Id: <20180620143203.42225-1-arnd@arndb.de>
+Subject: [PATCH 1/3] btrfs: use monotonic time for transaction handling
+Date:   Wed, 20 Jun 2018 16:34:32 +0200
+Message-Id: <20180620143448.44388-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:zL4mtlEOqtr9Q0vYs1tK9U4Ty4YLduzUOETI8BLVFwW4zHQ8sMj
- mEARG8mhv+zDQAEOgEQ9MQUmy1E1tu9r39Wm2Zwpr2BMwU5oq491PnQ+85DUrVS6+/6Q1xX
- Fiu/W27xWQgS38FFljnw6M+7ylOJNwvTzy++dg9jTW3S+IAvaFFi2KG2VYtdhw61LARlMs5
- R8dOEr5xCGwmrCdRV2Y1g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2ccxAz5qrY8=:fWCY7dlzBtjyHUJRK7xGE3
- CIrLN1tmyP4YL5l/Mk44RCxpxAaB/G9Vy+WUfOA/Uf2uDVGqtOpgdNsOdTvBX5IgLnjToDThu
- U7Nn7E2/qNB1a+qhYGkd4RoxYIZgRlKGO/LZ+qaVnf2uzHsa/utz/YnhkYeHxy3iN5vTRAwFu
- Qc9881T6T1f2lDK9BVsAXNPOwEZtsJJ7iAY189LcFq2VmvBaWY+Lj15Zgf/uOe60AiyGbAaNR
- x9rABlDvL9UU5hs8sr53UTE8nzqlHLKRTKa6/L5gZTRUdynj6DmO1fSr1ire5WSfhK1ZXtXwK
- SvRpkiP+39MDSV83f0SQtiriX7QdJ7Sg1/CNiG+P2M77KU1anfD0LNW7PWtZGGrNxrBSpAkmI
- O1yIccGa3weCJflKmQW4fRgI24isECl3GqX1vA7Qijb2YBYggGPtjTmD9OZNEoKbhZPbLe1PQ
- T0QG9ke4bAzPvE8Yt7/8t2/r2r015VBx8nOauOyc/RDU/nYSzfSgRRBAgtT7o7FxXyYCug9LX
- KEgLruK/t8KH+R7O+AWAz6RQLrC5gMJDJSxhGrgZbrYUiHNw9ZufM4Y3J5X2Zk3X1+eCxxQTc
- RAP12ZRQJUE54yQeKijwgCbis6AulhLNLtGDvXXBHBBlz9l/an8X2zKl6obE53mjQa5gjslzd
- YlANbFSDL693U78/PdRO/tic5kjjIM0uVU5OYEX4OKYihJmqh1U66UwEIVvNNaDyD3jg=
+X-Provags-ID: V03:K1:MtvJ2iFA9/LaYZd1ruuHDxsLXAOCr+xAiDICHrxoScZxVLigjuM
+ sosnnngWe5MtmRv21mB1rybde/V8XsTaVO6retjpOUQisaav+U49EVeTlRuU8DCfuINulCy
+ lCqGmA+nsE174ZEHbECaMBcs0270OuVIGuKJ7c5J6wEdW6DfXyI/v9wFE9099h4TSdveySz
+ E8HcsaZTAndvMTwoyIx3A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5HUJBgJCYTw=:/J/KS3M5coxrRiZ/V+QM41
+ 563/SwIgYY30v+0PIYzrqyWEfykJbf9VKRgCDDMPSYE5O/+h3OIDE4+AyQMvwTnUm9YBvhEWZ
+ Y2CrPzk4ru9z2gNLSLwwutuSugDNsZzzHrT1qUCKQtz5eNp8WaRPI4WvM7pSa65FUdUMOtUHz
+ 6ulN4nZECmO1R+ALqcmSOd0SHZ1ogoB82uqvvLglC+LI4bn9yug3gt3kivlBxnQDCnGKgIJIL
+ 0r17Exq3ap8c5G4rLN5Xk4mBZ4od2YSZtYFxhys5/jcNyWyqCVbgNYjyAPZnKm3YekXpI+t6Z
+ unpndKUXl46tYeraToRV1WE/h8sqz2JIb22r1jVlkXK9V+gGz95QcmcbZ5KTFqTGyZXDtbVZx
+ cF2xGqcpfpkjWCmmelxLhjIFWKCqMLqCHOlhBt0+5BOFJuevI534OfDc9hVFKTX1+ve/dJS4q
+ 1c3Ikv6wFsv9FCqgLmnEWlHYUUILBF98TLHUM7eABWzPrhx+ISWzarjSj2/CgcMTtmlP3YTXJ
+ KV37v3KlbXpEXSlh5Fr2G3g6KI/gB3OQevuxvNqTqKc4DqiPEGzEMXXqMgiXJjp68b4DOKPSw
+ kIteuOPAo52Ax6zWWDVNtU894/Etx3lO2jFuTVS6bYTde7e2djloVZUEbAfLWhJ5Lz9MwpkA5
+ BlROkHkKJm60GsdirUK5HgVRMjVyy1Oi/oPLfXtw+owMpx7HPJgYbh0qLN5z/NaFLf4U=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_seconds() is deprecated because of the y2038 overflow, so users
-should migrate to 64-bit timestamps using ktime_get_real_seconds().
-In ext2, the timestamps in the superblock and in the inode are all
-limited to 32-bit, and this won't get fixed, so let's just stop
-using the deprecated interface and keep truncating.
+get_seconds() is deprecated because of the overflow of 32-bit times,
+and it's not the best choice for measuring time intervals because it
+can go backwards or jump due to settimeofday() or leap seconds.
 
-All users of ext2 should migrate to ext4 before 2038 to prevent this
-from causing problems.
+This changes the transaction handling to instead use ktime_get_seconds(),
+which returns a CLOCK_MONOTONIC timestamp that has neither of those
+problems.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/ext2/inode.c | 2 +-
- fs/ext2/super.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ fs/btrfs/disk-io.c     | 4 ++--
+ fs/btrfs/transaction.c | 2 +-
+ fs/btrfs/transaction.h | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 71635909df3b..7f7ee18fe179 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -86,7 +86,7 @@ void ext2_evict_inode(struct inode * inode)
- 	if (want_delete) {
- 		sb_start_intwrite(inode->i_sb);
- 		/* set dtime */
--		EXT2_I(inode)->i_dtime	= get_seconds();
-+		EXT2_I(inode)->i_dtime	= ktime_get_real_seconds();
- 		mark_inode_dirty(inode);
- 		__ext2_write_inode(inode, inode_needs_sync(inode));
- 		/* truncate to 0 */
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 25ab1274090f..25e31afe961d 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -679,7 +679,7 @@ static int ext2_setup_super (struct super_block * sb,
- 			"running e2fsck is recommended");
- 	else if (le32_to_cpu(es->s_checkinterval) &&
- 		(le32_to_cpu(es->s_lastcheck) +
--			le32_to_cpu(es->s_checkinterval) <= get_seconds()))
-+			le32_to_cpu(es->s_checkinterval) <= ktime_get_real_seconds()))
- 		ext2_msg(sb, KERN_WARNING,
- 			"warning: checktime reached, "
- 			"running e2fsck is recommended");
-@@ -1245,7 +1245,7 @@ void ext2_sync_super(struct super_block *sb, struct ext2_super_block *es,
- 	spin_lock(&EXT2_SB(sb)->s_lock);
- 	es->s_free_blocks_count = cpu_to_le32(ext2_count_free_blocks(sb));
- 	es->s_free_inodes_count = cpu_to_le32(ext2_count_free_inodes(sb));
--	es->s_wtime = cpu_to_le32(get_seconds());
-+	es->s_wtime = cpu_to_le32(ktime_get_real_seconds());
- 	/* unlock before we do IO */
- 	spin_unlock(&EXT2_SB(sb)->s_lock);
- 	mark_buffer_dirty(EXT2_SB(sb)->s_sbh);
-@@ -1360,7 +1360,7 @@ static int ext2_remount (struct super_block * sb, int * flags, char * data)
- 		 * the rdonly flag and then mark the partition as valid again.
- 		 */
- 		es->s_state = cpu_to_le16(sbi->s_mount_state);
--		es->s_mtime = cpu_to_le32(get_seconds());
-+		es->s_mtime = cpu_to_le32(ktime_get_real_seconds());
- 		spin_unlock(&sbi->s_lock);
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 205092dc9390..bf0717f2824d 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1803,7 +1803,7 @@ static int transaction_kthread(void *arg)
+ 	struct btrfs_trans_handle *trans;
+ 	struct btrfs_transaction *cur;
+ 	u64 transid;
+-	unsigned long now;
++	time64_t now;
+ 	unsigned long delay;
+ 	bool cannot_commit;
  
- 		err = dquot_suspend(sb, -1);
+@@ -1819,7 +1819,7 @@ static int transaction_kthread(void *arg)
+ 			goto sleep;
+ 		}
+ 
+-		now = get_seconds();
++		now = ktime_get_seconds();
+ 		if (cur->state < TRANS_STATE_BLOCKED &&
+ 		    !test_bit(BTRFS_FS_NEED_ASYNC_COMMIT, &fs_info->flags) &&
+ 		    (now < cur->start_time ||
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index ff5f6c719976..ebe50dfb8947 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -241,7 +241,7 @@ static noinline int join_transaction(struct btrfs_fs_info *fs_info,
+ 	refcount_set(&cur_trans->use_count, 2);
+ 	atomic_set(&cur_trans->pending_ordered, 0);
+ 	cur_trans->flags = 0;
+-	cur_trans->start_time = get_seconds();
++	cur_trans->start_time = ktime_get_seconds();
+ 
+ 	memset(&cur_trans->delayed_refs, 0, sizeof(cur_trans->delayed_refs));
+ 
+diff --git a/fs/btrfs/transaction.h b/fs/btrfs/transaction.h
+index 94439482a0ec..4cbb1b55387d 100644
+--- a/fs/btrfs/transaction.h
++++ b/fs/btrfs/transaction.h
+@@ -48,7 +48,7 @@ struct btrfs_transaction {
+ 	int aborted;
+ 	struct list_head list;
+ 	struct extent_io_tree dirty_pages;
+-	unsigned long start_time;
++	time64_t start_time;
+ 	wait_queue_head_t writer_wait;
+ 	wait_queue_head_t commit_wait;
+ 	wait_queue_head_t pending_wait;
 -- 
 2.9.0
 
