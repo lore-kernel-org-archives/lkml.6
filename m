@@ -2,123 +2,163 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2E5C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F0FC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDFFA20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:02:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Av3PfxS6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFFA20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E5B4A20874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:05:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B4A20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932903AbeFTUCL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:02:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34428 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932368AbeFTUCJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:02:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mSGje/N9AlyD8es74rG94CIwGZIarqpF9Tr9Gv2j2mM=; b=Av3PfxS6h5/0lA7bt06gBh3SP
-        ShVjDAbzexqt3E/DA5PnFHnKUUoGaKv2LQkK/AlshsLaE5q9hguy3V/mOSMSBg4GbxOCYxrSP/I7H
-        W3dNq6gszqyN0kaFq6blB4G0rIYSx9H7r290a0NxJ9Rm5TzgfRDG9IuRIjzHT+kBpUrckJNbWBHWj
-        urs2JDFDSqqEp3sTUDdwGgAM+hgR0ELnKqj5rw6owhPUsPCVNtKFlz73ZGHzRAnSzlEnO7kk8bqrj
-        BxV6G5yIyHcJPWtUKZmqu1YAcYvjp6r5sX0djrEOvB08Lc88+HKvMk3Pz3qvBjcY9zLuHkPdDqPgQ
-        D3XqLGm9w==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVjIs-0002Nh-Ai; Wed, 20 Jun 2018 20:02:06 +0000
-Subject: Re: [RFC v8 1/1] mconf: global i-search in menu prompts
-To:     Dirk Gouders <dirk@gouders.net>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-References: <20180620084217.8597-1-dirk@gouders.net>
- <20180620084217.8597-2-dirk@gouders.net>
- <f02cc7c6-d92e-24f3-b0ad-df9e6bf7630a@infradead.org>
- <ghpo0l2spo.fsf@lena.gouders.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <126839db-5cc1-7dad-5a1f-21899dc6236e@infradead.org>
-Date:   Wed, 20 Jun 2018 13:02:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932808AbeFTUFS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:05:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55296 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932600AbeFTUFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 16:05:17 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77D652083A;
+        Wed, 20 Jun 2018 20:05:15 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 16:05:13 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zilstra <peterz@infradead.org>
+Cc:     Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH] softirq: reorder trace_softirqs_on to prevent lockdep
+ splat
+Message-ID: <20180620160513.0453247e@gandalf.local.home>
+In-Reply-To: <20180427041100.133772-1-joelaf@google.com>
+References: <20180427041100.133772-1-joelaf@google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <ghpo0l2spo.fsf@lena.gouders.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 11:55 AM, Dirk Gouders wrote:
-> Randy Dunlap <rdunlap@infradead.org> writes:
-> 
->> Hi,
->>
->> On 06/20/2018 01:42 AM, Dirk Gouders wrote:
->>>
->>> Operation
->>> ---------
->>> The TAB key is reserved to toggle the focus between menu and bottons.
->>> Focus is on the buttons if one of the buttens (the active one) is
->>> hightlighted, otherwise it is on the menu.
->>>
->>> When the focus is on the buttons, mconf operates as before with the
->>> exception of the TAB key.
->>>
->>> When the focus is on the menu, mconf operates in i-search mode and the
->>> following input has special meaning:
->>>
->>> * <\> (backslash) can be used to search for other occurences of an
->>>   already entered string.  On empty search strings, nothing happens.
->>>
->>> * Any other printable character than backslash and '\n' is appended to
->>>   the current search string and a match is searched for.  If a match
->>>   is found, it is immediately navigated to.
->>
->> About that paragraph above:  I tried to search for "fs-cache", as in:
->>
->> config FSCACHE_DEBUG
->> 	bool "Debug FS-Cache"
->>
->> but i-search does not allow me to enter a '-' character.  Seems odd to me.
-> 
-> Hi Randy,
-> 
-> thanks for all your testing.
-> 
-> '-' and '+' previously had the same meaning as <KEY_UP>, <KEY_DOWN>,
-> respectively.  If you are on the top menu item and press '-' there is
-> nothing to scroll up so it appears as if the pressed key wasn't
-> processed.
-> 
-> I-search should add those characters to the pattern but I broke that two
-> or three versions before when I fixed another issue.
-> 
-> I will add this to my list of test cases so this won't happen again.
-> 
-> Dirk
-> 
-> 
->> Still doing other testing...
 
-I haven't hit any other issues.
+Peter, can you ack this.
 
-thanks,
--- 
-~Randy
+On Thu, 26 Apr 2018 21:11:00 -0700
+Joel Fernandes <joelaf@google.com> wrote:
+
+> I'm able to reproduce a lockdep splat when CONFIG_PROVE_LOCKING=y and
+> CONFIG_PREEMPTIRQ_EVENTS=y.
+> 
+> $ echo 1 > /d/tracing/events/preemptirq/preempt_enable/enable
+> ---
+
+BTW, the "---" here causes git to ignore everything underneath it :-/
+
+> [   26.112609] DEBUG_LOCKS_WARN_ON(current->softirqs_enabled)
+> [   26.112636] WARNING: CPU: 0 PID: 118 at kernel/locking/lockdep.c:3854
+> [...]
+> [   26.144229] Call Trace:
+> [   26.144926]  <IRQ>
+> [   26.145506]  lock_acquire+0x55/0x1b0
+> [   26.146499]  ? __do_softirq+0x46f/0x4d9
+> [   26.147571]  ? __do_softirq+0x46f/0x4d9
+> [   26.148646]  trace_preempt_on+0x8f/0x240
+> [   26.149744]  ? trace_preempt_on+0x4d/0x240
+> [   26.150862]  ? __do_softirq+0x46f/0x4d9
+> [   26.151930]  preempt_count_sub+0x18a/0x1a0
+> [   26.152985]  __do_softirq+0x46f/0x4d9
+> [   26.153937]  irq_exit+0x68/0xe0
+> [   26.154755]  smp_apic_timer_interrupt+0x271/0x280
+> [   26.156056]  apic_timer_interrupt+0xf/0x20
+> [   26.157105]  </IRQ>
+> 
+> The problem is the softirqs annotation in lockdep goes out of sync with
+> the reality of the world that softirq is still off. This causes a
+> lockdep splat because the preempt_count_sub can call into a preemptoff
+> tracer or the trace events code, which inturn can call into lockdep
+> *before* softirqs are really turned back on, which can cause a softirqs
+> invalid annotation splat in lockdep.
+> 
+> The same issue was fixed in local_bh_disable_ip which has a comment so:
+> /*
+>  * The preempt tracer hooks into preempt_count_add and will break
+>  * lockdep because it calls back into lockdep after SOFTIRQ_OFFSET
+>  * is set and before current->softirq_enabled is cleared.
+>  * We must manually increment preempt_count here and manually
+>  * call the trace_preempt_off later.
+>  */
+> 
+> I have done a similar change to the local_bh_enable path to fix it.
+
+I now have a config that triggers this with this test:
+
+ tools/testing/selftests/ftrace/ftracetest test.d/event/toplevel-enable.tc
+
+and I see it never was Acked-by by Peter.
+
+Peter, can you ack this and I can apply it. It does fix a lockdep
+corruption issue.
+
+Thanks!
+
+-- Steve
+
+> 
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Peter Zilstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Thomas Glexiner <tglx@linutronix.de>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+> Cc: Frederic Weisbecker <fweisbec@gmail.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Fenguang Wu <fengguang.wu@intel.com>
+> Cc: Baohong Liu <baohong.liu@intel.com>
+> Cc: Vedang Patel <vedang.patel@intel.com>
+> Cc: kernel-team@android.com
+> Signed-off-by: Joel Fernandes <joelaf@google.com>
+> ---
+>  kernel/softirq.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/softirq.c b/kernel/softirq.c
+> index 177de3640c78..8a040bcaa033 100644
+> --- a/kernel/softirq.c
+> +++ b/kernel/softirq.c
+> @@ -139,9 +139,13 @@ static void __local_bh_enable(unsigned int cnt)
+>  {
+>  	lockdep_assert_irqs_disabled();
+>  
+> +	if (preempt_count() == cnt)
+> +		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+> +
+>  	if (softirq_count() == (cnt & SOFTIRQ_MASK))
+>  		trace_softirqs_on(_RET_IP_);
+> -	preempt_count_sub(cnt);
+> +
+> +	__preempt_count_sub(cnt);
+>  }
+>  
+>  /*
+
