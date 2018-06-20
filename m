@@ -4,95 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E489C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34808C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B37120836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DED4220836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:11:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XO/cyHSq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B37120836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CyBRNFWP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED4220836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753938AbeFTLIZ (ORCPT
+        id S1753541AbeFTLL3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 07:08:25 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48510 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752914AbeFTLIY (ORCPT
+        Wed, 20 Jun 2018 07:11:29 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37527 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeFTLL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 07:08:24 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KB4JnY012376;
-        Wed, 20 Jun 2018 11:08:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2017-10-26;
- bh=f8bFcp/3AuGfmcFnpVWlD+mZstpvuTSqyUThfG1T//I=;
- b=XO/cyHSqdLK4PPKQDF7IkezuHP8llUig40iq775B69XbqNp93ypJAbJgva1tTPUUycvE
- Drv4cP81oQTtXpHYiQ+50G85zxoFjFIaddX0+fHnxhYliyH6GPzR2pv8UAVzpwNuQdLM
- zOra/rzOQklhc8HhtuUxqT5zzD04II3Q/UHw/5PRKdxEayEg1siR+jgx6co1ZcKoyefS
- EuWtb9k93a9MxWBWDghJf5GZzTE1ahA8iUKcfryPc8q9p2metq3E76pQAcOnqzsuq2x3
- 0RGltaDnXG8kkiGcKt2c7GLjJfeyupynTQNKiFczyVX+wblsgLOlBT9aESw8Df+lYfYg Ow== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwuyv0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 11:08:10 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5KB89bj012765
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 11:08:09 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5KB88Ae004569;
-        Wed, 20 Jun 2018 11:08:08 GMT
-Received: from kili.mountain (/197.157.34.185)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Jun 2018 04:08:08 -0700
-Date:   Wed, 20 Jun 2018 14:08:00 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] tracing: Fix an off by one in __next()
-Message-ID: <20180620110758.crunhd5bfep7zuiz@kili.mountain>
+        Wed, 20 Jun 2018 07:11:27 -0400
+Received: by mail-lf0-f68.google.com with SMTP id g21-v6so4347376lfb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 04:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BjopVPYRVnCOz1AqVkcQdUVup+FiV6ghR1aHlEhyOTY=;
+        b=CyBRNFWPmzJzQxFP7YtMTGXvlkHFcvsFLJhG8cwPRVsbo62LYy5Nd+IpKRHl7BDi0r
+         hAfxTwLUwzNQKlRj6WdgGNOKf+pmgd1DRTpFG5Uy7LApRPUHZBbFfqsvN3yz5oJvKJmz
+         eqeRSfPsyy8Y66yfPdbUaRsZRSDKiYV3Ltsgk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BjopVPYRVnCOz1AqVkcQdUVup+FiV6ghR1aHlEhyOTY=;
+        b=DzCbQ3tCyzkUZcPFdLhpwhPvUrcPN4+ChWKur1GzMuxpvN/3O9sFPXNSs028PEUPF3
+         J2swGkjX43CchVPVWu1YFnTHN8mW6ALAr10rOzPTIbTbyAPw/18P4iSyGasvQUUhgzl9
+         m22kMDS6TxluVjWVUDC4mG2FVx6Iw1QJo2BAiD3Or2yRxdCbDevIp+DCrbAgjQ+D1yW8
+         ulcK0Fcn2wAB1IpeisTrtBvmLBQ76+LEr+9W/juGAoPNEXy9UliUzkXbl+ZAl0oqIQ+7
+         YnRBXRU32tMwhumHu+Q/DJtcab1e6A6CigyQkBfDU/vuwu7bwnyXlzx88prIV0FGRKiQ
+         HLsQ==
+X-Gm-Message-State: APt69E1ITKZFbbhDq52EbqRmp76vvKOCoqkbORRPWo6qtfcQbXpJMKpR
+        u/l+MsANBgEU1pXqVCGjLERf7MwLrWmutMNJPO/hxg==
+X-Google-Smtp-Source: ADUXVKJJBNYEiVUKgYoHaBKyC3xwTdGWt/dkp2/pCVTtjGnJB5fnUHZa3cp5XS3z2JVOLt67A5EkzX8ayc4S6LjIe8s=
+X-Received: by 2002:a19:51db:: with SMTP id g88-v6mr13380933lfl.78.1529493085979;
+ Wed, 20 Jun 2018 04:11:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806200127
+Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 04:11:24
+ -0700 (PDT)
+In-Reply-To: <20180620072138.yrz76kmms3oviv7i@linux-d8ym>
+References: <CA+G9fYsRgGsmi-tE8dU=pfSDDLg3bUuii_0KUPZ71jFLNre-5g@mail.gmail.com>
+ <20180620072138.yrz76kmms3oviv7i@linux-d8ym>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 20 Jun 2018 16:41:24 +0530
+Message-ID: <CA+G9fYtoML7G7f_sXB6hQJJAQOG94TsBXujmQgHxy-rKABaTtA@mail.gmail.com>
+Subject: Re: LTP CVE cve-2017-17053 test failed on x86_64 device
+To:     mmoese@suse.de
+Cc:     dave.hansen@linux.intel.com, ltp@lists.linux.it,
+        open list <linux-kernel@vger.kernel.org>,
+        Jan Stancek <jstancek@redhat.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Rafael Tinoco <rafael.tinoco@linaro.org>, ebiggers@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The > should be >= to prevent an off by one bug.
+On 20 June 2018 at 12:51, Michael Moese <mmoese@suse.de> wrote:
+> Hi,
+>
+> On Wed, Jun 20, 2018 at 12:14:22PM +0530, Naresh Kamboju wrote:
+>> Test FAIL case output,
+>> tst_test.c:1015: INFO: Timeout per run is 0h 15m 00s
+>> tst_taint.c:88: BROK: Kernel is already tainted: 512
+> The kernel is already tainted. In this case, the test refuses to run,
+> because it could not tell if the test is pass or fail.
+>
+> Could you please check if you could run the test directly after a
+> reboot?
 
-From reviewing the code, it seems possible for
-stack_trace_max.nr_entries to be set to .max_entries and in that case we
-would be reading one element beyond the end of the stack_dump_trace[]
-array.  If it's not set to .max_entries then the bug doesn't affect
-runtime.
+This single test ran immediately after the boot and bug reproduced.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+tst_taint.c:88: BROK: Kernel is already tainted: 512
+https://lkft.validation.linaro.org/scheduler/job/293222#L1204
 
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 4237eba4ef20..6e3edd745c68 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -286,7 +286,7 @@ __next(struct seq_file *m, loff_t *pos)
- {
- 	long n = *pos - 1;
- 
--	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
-+	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
- 		return NULL;
- 
- 	m->private = (void *)n;
+Test command for 10 iterations and it failed for all 10 iterations.
++ ./runltp -s cve-2017-17053 -I 10
+
+NOTE:
+We still see kernel warning while booting the x86_64 machine.
+DEBUG_LOCKS_WARN_ON(sem->owner !=3D ((struct task_struct *)(1UL << 0)))
+
+- Naresh
+
+>
+> Regards,
+> Michael
+> --
+> SUSE Linux GmbH, GF: Felix Imend=C3=B6rffer, Jane Smithard, Graham Norton=
+, HRB 21284 (AG N=C3=BCrnberg)
