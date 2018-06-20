@@ -1,58 +1,60 @@
 Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Level: *
+X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4BEC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC059C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B7B120872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8706320872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:13:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SXSahKX8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B7B120872
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="amUAOkXl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8706320872
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932224AbeFTMNI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 08:13:08 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52452 "EHLO
+        id S1754186AbeFTMNc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 08:13:32 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53856 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753760AbeFTMLw (ORCPT
+        with ESMTP id S1751337AbeFTMLu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:11:52 -0400
-Received: by mail-wm0-f67.google.com with SMTP id p126-v6so5641700wmb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 05:11:51 -0700 (PDT)
+        Wed, 20 Jun 2018 08:11:50 -0400
+Received: by mail-wm0-f67.google.com with SMTP id x6-v6so5604190wmc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 05:11:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YQedRsQJNuAfIwCAUJuQkZ5zDukYeoDlE3WusBgILBs=;
-        b=SXSahKX8uWMyt1WblmdQznBnUg+i40t+18Ryu5eMBARRnuV+m2LufALCVc1UMvScsE
-         BC9LdUuvTv9Y22jCdpdUrsZoKUNICANCohGWsokaYI108xs/nBux8CQvKQScpolCbOCa
-         0MXDjn8CPatrrqFDyjpwcVpZcnPxA+RJikokg=
+        bh=mMiG6cM8VBvBAXZfGrxSfXokkjogyEYvlGb3JfwBdAo=;
+        b=amUAOkXlniCfXibXy+jGsZmSGD6ZETsVvMsqABtHU6TJaWv+cPaqVbZxo9klgmFDLO
+         Cp/GmWzH3c9zDEhTrfpdQRwDYt1u3XG3ZEB7CDuFqjUnCvRrP+MJeajW24Rdrcln/DAP
+         hNaTlvkEBBonTN9r0pWH0Wd5rhEEVIWlr1p98=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YQedRsQJNuAfIwCAUJuQkZ5zDukYeoDlE3WusBgILBs=;
-        b=CyTnS84Tk46a2aJ/AoplqAzfsgTusw0vxGEO0CfnyF9YT/o9YrPWn4tJotWvfyS8Cn
-         9JVkQcbapZE4XFPxJvrKuHdU8kRMmb6+g5graXxldHu2aeyiTPQHS9tjQhVwAoGIkD4S
-         zdw55Rd1+yABjKAx6yoK9lBvcSdXb7r11+oQkGim9ubXW/M1fNXXqP2ITht1R1LhmOS3
-         IJ6P/vDx0iBN9K5uvR+DOcUgYuFEp1FaRyyDRVjVSdM29lttLto1dyT0fEH0/M9qVFqu
-         1EELSc9PGaeQHmX+TiVTjXmo+xdqAkSePOJBq03XT6PaIoSjBekegfgRBoz2naXGAbtn
-         n13Q==
-X-Gm-Message-State: APt69E3w08hEO1vRVmguqdQJcL/fU4w+NEnwCAX+ys1kmZONUhJ8+40K
-        zQ3e2tlz3cht2s2a1YAXkj9oSw==
-X-Google-Smtp-Source: ADUXVKLfkw8eCvTvYdHMuAJvc1m4rENgHURQBD0690gaFgMyV1Re4u1eVFxS4QS7D9EGsCJg7DEnbQ==
-X-Received: by 2002:a1c:c90:: with SMTP id 138-v6mr1463663wmm.110.1529496711240;
-        Wed, 20 Jun 2018 05:11:51 -0700 (PDT)
+        bh=mMiG6cM8VBvBAXZfGrxSfXokkjogyEYvlGb3JfwBdAo=;
+        b=r7InCvdRQrONNQgVHJ6X96CKTynW5H51a0uDAhBgiOCMmrIYv/87/XQEcxdtUsICRr
+         WZDq09umcDx+5/MvtvamR3t7n1pbcVBg1lNLNZj5aOEDJehMAayT7tcvc50tYCPY8DdF
+         B+X7JNaX9bYJPhnNMAakV4Dm4V05KxcUhZhhJaqB8/iXu1MC3ik53M2RHkVtOl2qoI5J
+         E8yxUr3NPsI46qe0f9h7dU9oa3+kCdjiCK9j/TtpjrFQU9ZtVIT5qXDX0ncM/N37NJeI
+         zrQroghvzVYXcF9ZqA/8lkG5F4hJM2Ut6lmh3b6qcjBIMYPk+w0U7oPqT0WbX4eRPkWU
+         y/zA==
+X-Gm-Message-State: APt69E2f+NnJDMVqRP7PDxM01GIVKbqLgCPYzH25njhFJS0JLwdo0j5I
+        9PMQgCqgm7/U61qfWLlODEveKw==
+X-Google-Smtp-Source: ADUXVKL5tBABOgyKWh0ins7l1WEB2JCn/AoS4IfFPw0KbW0usHtP+TByU5DJyE9OLMaDRIbK004zgQ==
+X-Received: by 2002:a1c:ea9b:: with SMTP id g27-v6mr1446987wmi.21.1529496709603;
+        Wed, 20 Jun 2018 05:11:49 -0700 (PDT)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id e14-v6sm1656483wmh.17.2018.06.20.05.11.49
+        by smtp.googlemail.com with ESMTPSA id e14-v6sm1656483wmh.17.2018.06.20.05.11.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 20 Jun 2018 05:11:50 -0700 (PDT)
+        Wed, 20 Jun 2018 05:11:48 -0700 (PDT)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
@@ -64,9 +66,9 @@ Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
         abailon@baylibre.com, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH v5 4/8] interconnect: qcom: Add RPM communication
-Date:   Wed, 20 Jun 2018 15:11:37 +0300
-Message-Id: <20180620121141.15403-5-georgi.djakov@linaro.org>
+Subject: [PATCH v5 3/8] interconnect: Add debugfs support
+Date:   Wed, 20 Jun 2018 15:11:36 +0300
+Message-Id: <20180620121141.15403-4-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180620121141.15403-1-georgi.djakov@linaro.org>
 References: <20180620121141.15403-1-georgi.djakov@linaro.org>
@@ -75,183 +77,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some Qualcomm SoCs, there is a remote processor, which controls some of
-the Network-On-Chip interconnect resources. Other CPUs express their needs
-by communicating with this processor. Add a driver to handle comminication
-with this remote processor.
+Add a functionality to provide information about the current constraints
+per each node and provider.
 
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- .../bindings/interconnect/qcom-smd.txt        | 32 +++++++
- drivers/interconnect/qcom/Makefile            |  2 +
- drivers/interconnect/qcom/smd-rpm.c           | 90 +++++++++++++++++++
- drivers/interconnect/qcom/smd-rpm.h           | 15 ++++
- 4 files changed, 139 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interconnect/qcom-smd.txt
- create mode 100644 drivers/interconnect/qcom/Makefile
- create mode 100644 drivers/interconnect/qcom/smd-rpm.c
- create mode 100644 drivers/interconnect/qcom/smd-rpm.h
+ drivers/interconnect/core.c | 78 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interconnect/qcom-smd.txt b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
-new file mode 100644
-index 000000000000..88a5aeb50935
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
-@@ -0,0 +1,32 @@
-+Qualcomm SMD-RPM interconnect driver binding
-+------------------------------------------------
-+The RPM (Resource Power Manager) is a dedicated hardware engine
-+for managing the shared SoC resources in order to keep the lowest
-+power profile. It communicates with other hardware subsystems via
-+the shared memory driver (SMD) back-end and accepts requests for
-+various resources.
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index e7f96fc6722e..dafc001ce758 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -6,6 +6,7 @@
+  * Author: Georgi Djakov <georgi.djakov@linaro.org>
+  */
+ 
++#include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/idr.h>
+ #include <linux/init.h>
+@@ -15,10 +16,12 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
++#include <linux/uaccess.h>
+ 
+ static DEFINE_IDR(icc_idr);
+ static LIST_HEAD(icc_provider_list);
+ static DEFINE_MUTEX(icc_lock);
++static struct dentry *icc_debugfs_dir;
+ 
+ /**
+  * struct icc_req - constraints that are attached to each node
+@@ -47,6 +50,81 @@ struct icc_path {
+ 	struct icc_req reqs[0];
+ };
+ 
++#ifdef CONFIG_DEBUG_FS
 +
-+Required properties :
-+- compatible : shall contain only one of the following:
-+			"qcom,interconnect-smd-rpm"
-+
-+Example:
-+	smd {
-+		compatible = "qcom,smd";
-+
-+		rpm {
-+			interrupts = <0 168 1>;
-+			qcom,ipc = <&apcs 8 0>;
-+			qcom,smd-edge = <15>;
-+
-+			rpm_requests {
-+				compatible = "qcom,rpm-msm8916";
-+				qcom,smd-channels = "rpm_requests";
-+
-+				interconnect-smd-rpm {
-+					compatible = "qcom,interconnect-smd-rpm";
-+				};
-+
-+			};
-+		};
-+	};
-diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
-new file mode 100644
-index 000000000000..2a0c41db91c4
---- /dev/null
-+++ b/drivers/interconnect/qcom/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-y += smd-rpm.o
-diff --git a/drivers/interconnect/qcom/smd-rpm.c b/drivers/interconnect/qcom/smd-rpm.c
-new file mode 100644
-index 000000000000..0cf772f51642
---- /dev/null
-+++ b/drivers/interconnect/qcom/smd-rpm.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RPM over SMD communication wrapper for interconects
-+ *
-+ * Copyright (C) 2018 Linaro Ltd
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#include <linux/interconnect-provider.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/soc/qcom/smd-rpm.h>
-+#include "smd-rpm.h"
-+
-+#define	RPM_KEY_BW	0x00007762
-+
-+static struct qcom_icc_rpm {
-+	struct qcom_smd_rpm *rpm;
-+} icc_rpm_smd;
-+
-+struct icc_rpm_smd_req {
-+	__le32 key;
-+	__le32 nbytes;
-+	__le32 value;
-+};
-+
-+bool qcom_icc_rpm_smd_available(void)
++static void icc_summary_show_one(struct seq_file *s, struct icc_node *n)
 +{
-+	if (!icc_rpm_smd.rpm)
-+		return false;
++	if (!n)
++		return;
 +
-+	return true;
++	seq_printf(s, "%-30s %12d %12d\n",
++		   n->name, n->avg_bw, n->peak_bw);
 +}
 +
-+int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val)
++static int icc_summary_show(struct seq_file *s, void *data)
 +{
-+	struct icc_rpm_smd_req req = {
-+		.key = cpu_to_le32(RPM_KEY_BW),
-+		.nbytes = cpu_to_le32(sizeof(u32)),
-+		.value = cpu_to_le32(val),
-+	};
++	struct icc_provider *provider;
 +
-+	return qcom_rpm_smd_write(icc_rpm_smd.rpm, ctx, rsc_type, id, &req,
-+				  sizeof(req));
-+}
-+EXPORT_SYMBOL(qcom_icc_rpm_smd_send);
++	seq_puts(s, " node                                   avg         peak\n");
++	seq_puts(s, "--------------------------------------------------------\n");
 +
-+static int qcom_icc_rpm_smd_probe(struct platform_device *pdev)
-+{
-+	icc_rpm_smd.rpm = dev_get_drvdata(pdev->dev.parent);
-+	if (!icc_rpm_smd.rpm) {
-+		dev_err(&pdev->dev, "unable to retrieve handle to RPM\n");
-+		return -ENODEV;
++	mutex_lock(&icc_lock);
++
++	list_for_each_entry(provider, &icc_provider_list, provider_list) {
++		struct icc_node *n;
++
++		list_for_each_entry(n, &provider->nodes, node_list) {
++			struct icc_req *r;
++
++			icc_summary_show_one(s, n);
++			hlist_for_each_entry(r, &n->req_list, req_node) {
++				if (!r->dev)
++					continue;
++
++				seq_printf(s, "    %-26s %12d %12d\n",
++					   dev_name(r->dev), r->avg_bw,
++					   r->peak_bw);
++			}
++		}
 +	}
++
++	mutex_unlock(&icc_lock);
 +
 +	return 0;
 +}
 +
-+static const struct of_device_id qcom_icc_rpm_smd_dt_match[] = {
-+	{ .compatible = "qcom,interconnect-smd-rpm", },
-+	{ },
++static int icc_summary_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, icc_summary_show, inode->i_private);
++}
++
++static const struct file_operations icc_summary_fops = {
++	.open		= icc_summary_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
 +};
 +
-+MODULE_DEVICE_TABLE(of, qcom_interconnect_rpm_smd_dt_match);
-+
-+static struct platform_driver qcom_interconnect_rpm_smd_driver = {
-+	.driver = {
-+		.name		= "qcom-interconnect-smd-rpm",
-+		.of_match_table	= qcom_icc_rpm_smd_dt_match,
-+	},
-+	.probe = qcom_icc_rpm_smd_probe,
-+};
-+
-+static int __init rpm_smd_interconnect_init(void)
++static int __init icc_debugfs_init(void)
 +{
-+	return platform_driver_register(&qcom_interconnect_rpm_smd_driver);
++	struct dentry *file;
++
++	icc_debugfs_dir = debugfs_create_dir("interconnect", NULL);
++	if (!icc_debugfs_dir) {
++		pr_err("interconnect: error creating debugfs directory\n");
++		return -ENODEV;
++	}
++
++	file = debugfs_create_file("interconnect_summary", 0444,
++				   icc_debugfs_dir, NULL, &icc_summary_fops);
++	if (!file)
++		return -ENODEV;
++
++	return 0;
 +}
-+subsys_initcall(rpm_smd_interconnect_init);
-+
-+static void __exit rpm_smd_interconnect_exit(void)
-+{
-+	platform_driver_unregister(&qcom_interconnect_rpm_smd_driver);
-+}
-+module_exit(rpm_smd_interconnect_exit)
-+
-+MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
-+MODULE_DESCRIPTION("Qualcomm SMD RPM interconnect driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/interconnect/qcom/smd-rpm.h b/drivers/interconnect/qcom/smd-rpm.h
-new file mode 100644
-index 000000000000..0f4a3da31cf6
---- /dev/null
-+++ b/drivers/interconnect/qcom/smd-rpm.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, Linaro Ltd.
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#ifndef __LINUX_INTERCONNECT_QCOM_RPM_H
-+#define __LINUX_INTERCONNECT_QCOM_RPM_H
-+
-+#include <linux/soc/qcom/smd-rpm.h>
-+
-+bool qcom_icc_rpm_smd_available(void);
-+int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val);
-+
++late_initcall(icc_debugfs_init);
 +#endif
++
+ static struct icc_node *node_find(const int id)
+ {
+ 	struct icc_node *node;
