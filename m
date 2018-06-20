@@ -3,101 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF35C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB8DC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4181E20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:42:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4181E20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C945B20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C945B20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932686AbeFTQmr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:42:47 -0400
-Received: from mga07.intel.com ([134.134.136.100]:56744 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932494AbeFTQmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:42:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 09:42:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,248,1526367600"; 
-   d="scan'208";a="50538160"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga007.jf.intel.com with SMTP; 20 Jun 2018 09:42:41 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 20 Jun 2018 19:42:40 +0300
-From:   Ville Syrjala <ville.syrjala@linux.intel.com>
-To:     linux-bluetooth@vger.kernel.org
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Kay Sievers <kay.sievers@vrfy.org>,
-        =?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>
-Subject: [PATCH v2] hid2hci: Fix udev rules for linux-4.14+
-Date:   Wed, 20 Jun 2018 19:42:40 +0300
-Message-Id: <20180620164240.6535-1-ville.syrjala@linux.intel.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180507130638.3516-1-ville.syrjala@linux.intel.com>
-References: <20180507130638.3516-1-ville.syrjala@linux.intel.com>
+        id S932756AbeFTQm7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 12:42:59 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:42709 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932494AbeFTQm4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 12:42:56 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R291e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T33eZv-_1529512954;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T33eZv-_1529512954)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 21 Jun 2018 00:42:38 +0800
+Subject: Re: [PATCH] thp: use mm_file_counter to determine update which rss
+ counter
+To:     Vlastimil Babka <vbabka@suse.cz>, hughd@google.com,
+        kirill.shutemov@linux.intel.com, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jerome Marchand <jmarchan@redhat.com>
+References: <1529442518-17398-1-git-send-email-yang.shi@linux.alibaba.com>
+ <000df63e-2f67-a1a3-42e6-c45d93d960cd@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <88cf1585-bddf-0f49-ee6c-e30473654d97@linux.alibaba.com>
+Date:   Wed, 20 Jun 2018 09:42:33 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <000df63e-2f67-a1a3-42e6-c45d93d960cd@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-Since commit 1455cf8dbfd0 ("driver core: emit uevents when
-device is bound to a driver") the kernel started emitting
-"bind" and "unbind" uevents which confuse the hid2hci
-udev rules.
 
-The symptoms on an affected machine (Dell E5400 in my case)
-include bluetooth devices not appearing and udev hogging
-the cpu as it's busy processing a constant stream of these
-"bind"+"unbind" uevents.
+On 6/20/18 3:57 AM, Vlastimil Babka wrote:
+> On 06/19/2018 11:08 PM, Yang Shi wrote:
+>> Since commit eca56ff906bdd0239485e8b47154a6e73dd9a2f3 ("mm, shmem: add
+>> internal shmem resident memory accounting"), MM_SHMEMPAGES is added to
+>> separate the shmem accounting from regular files. So, all shmem pages
+>> should be accounted to MM_SHMEMPAGES instead of MM_FILEPAGES.
+>>
+>> And, normal 4K shmem pages have been accounted to MM_SHMEMPAGES, so
+>> shmem thp pages should be not treated differently. Accouting them to
+>> MM_SHMEMPAGES via mm_counter_file() since shmem pages are swap backed
+>> to keep consistent with normal 4K shmem pages.
+>>
+>> This will not change the rss counter of processes since shmem pages are
+>> still a part of it.
+> <Andrew>So what are the user-visible effects of the patch then?</Andrew>
+>
+> Let's add this?:
+>
+> The /proc/pid/status and /proc/pid/statm counters will however be more
+> accurate wrt shmem usage, as originally intended.
 
-Change the udev rules not do anything except for "add" and
-"change" events. This seems to cure my machine at least.
+Thanks. Yes, other than this as commit 
+eca56ff906bdd0239485e8b47154a6e73dd9a2f3 mentioned, oom also could 
+report more accurate "shmem-rss"
 
-v2: Don't mess up "change" (Zbyszek)
-    Fix up the commit message a bit
+>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Good catch, thanks. I guess the discrepancy happened due to the
+> thp-tmpfs patchset existing externally for a long time and number of
+> iterations, while commit eca56ff906bdd was merged, and nobody noticed
+> that the thp case added more MM_FILEPAGES users.
+>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: Kay Sievers <kay.sievers@vrfy.org>
-Cc: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
-Cc: systemd-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-bluetooth@vger.kernel.org
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- tools/hid2hci.rules | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.
 
-diff --git a/tools/hid2hci.rules b/tools/hid2hci.rules
-index db6bb03d2ef3..5c7208af7a02 100644
---- a/tools/hid2hci.rules
-+++ b/tools/hid2hci.rules
-@@ -1,6 +1,6 @@
- # do not edit this file, it will be overwritten on update
- 
--ACTION=="remove", GOTO="hid2hci_end"
-+ACTION!="add|change", GOTO="hid2hci_end"
- SUBSYSTEM!="usb*", GOTO="hid2hci_end"
- 
- # Variety of Dell Bluetooth devices - match on a mouse device that is
--- 
-2.16.4
+Yang
+
+>
+>> ---
+>>   mm/huge_memory.c | 4 ++--
+>>   mm/memory.c      | 2 +-
+>>   2 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 1cd7c1a..2687f7c 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -1740,7 +1740,7 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>>   		} else {
+>>   			if (arch_needs_pgtable_deposit())
+>>   				zap_deposited_table(tlb->mm, pmd);
+>> -			add_mm_counter(tlb->mm, MM_FILEPAGES, -HPAGE_PMD_NR);
+>> +			add_mm_counter(tlb->mm, mm_counter_file(page), -HPAGE_PMD_NR);
+>>   		}
+>>   
+>>   		spin_unlock(ptl);
+>> @@ -2088,7 +2088,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>>   			SetPageReferenced(page);
+>>   		page_remove_rmap(page, true);
+>>   		put_page(page);
+>> -		add_mm_counter(mm, MM_FILEPAGES, -HPAGE_PMD_NR);
+>> +		add_mm_counter(mm, mm_counter_file(page), -HPAGE_PMD_NR);
+>>   		return;
+>>   	} else if (is_huge_zero_pmd(*pmd)) {
+>>   		/*
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 7206a63..4a2f2a8 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -3372,7 +3372,7 @@ static int do_set_pmd(struct vm_fault *vmf, struct page *page)
+>>   	if (write)
+>>   		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>>   
+>> -	add_mm_counter(vma->vm_mm, MM_FILEPAGES, HPAGE_PMD_NR);
+>> +	add_mm_counter(vma->vm_mm, mm_counter_file(page), HPAGE_PMD_NR);
+>>   	page_add_file_rmap(page, true);
+>>   	/*
+>>   	 * deposit and withdraw with pmd lock held
+>>
 
