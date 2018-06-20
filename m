@@ -2,227 +2,196 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ABDC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F1AC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3302020693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3302020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1446A20871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:38:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e1+pZD6d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1446A20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754129AbeFTKhr (ORCPT
+        id S1754166AbeFTKiY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:37:47 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50996 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752932AbeFTKhp (ORCPT
+        Wed, 20 Jun 2018 06:38:24 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:54912 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752855AbeFTKiT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:37:45 -0400
-Received: by mail-wm0-f68.google.com with SMTP id e16-v6so5192923wmd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 03:37:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+GyKN4+ZjSubA3jQ+29qRWbd0fXlECakEqgP/B7ZN+A=;
-        b=TnEL52IdceoYuzI2dEzJCJziaeMjkn2KCo3BfsBEXyww7cmmHFxTs62AJB1yGWexzk
-         9TTu8l8lsCnsos+ouzAsVol3yypZ8wg3rpxIX4gkfm1wCvNtglLQ5Rz9YX2tMOc22Miw
-         a8eFkKHjrYE33SY8nkS1h40FC1dx3op2nHhM0D3arb8EfKCYe/actNSX3owN+MxnlmDS
-         IFEmPGfrFFyGlN4JbZild48ulNK2zmMrzMRJ45oUhDq7Pf0xBYU9YTfQN08XVUYitrk5
-         IaQh5RRFhvEYYs7Hjcwu5bI4mKtBT3X+d8WM6EovqcWItuqri+F0Ir83wbITBu0U0Zab
-         zXJA==
-X-Gm-Message-State: APt69E3aclL6mR6DzfvlBsBxsHg8WhPD1DkqSAK9QOdCYSjGUBKF89k/
-        xXJYpvTvUib2M84M+c82I1A=
-X-Google-Smtp-Source: ADUXVKJAN/1wxmTn2yU8j5+jKidH+qaeSnRHGqPkPD9/YMRLmIIiyMYgZd03t00vIpqBRRrA9tPasQ==
-X-Received: by 2002:aa7:c6c3:: with SMTP id b3-v6mr17750541eds.302.1529491064341;
-        Wed, 20 Jun 2018 03:37:44 -0700 (PDT)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id e1-v6sm974072edr.23.2018.06.20.03.37.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 03:37:43 -0700 (PDT)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     <linux-mm@kvack.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Greg Thelen <gthelen@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [RFC PATCH] memcg, oom: move out_of_memory back to the charge path
-Date:   Wed, 20 Jun 2018 12:37:36 +0200
-Message-Id: <20180620103736.13880-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 20 Jun 2018 06:38:19 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5K7s4ZQ014509;
+        Wed, 20 Jun 2018 02:54:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1529481244;
+        bh=cuV0VxwoPm/YYzCp9V9lz0HOxMnHjizrx1IWDtvSZsM=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=e1+pZD6dUM4N8Ql6NoFpkwKxGK1ycCpUxzlFqHUuazKrBpH/AECegUT1Edjv4931t
+         M5v2uYxL22qGEcekZYZzpvVdiR2Ys18UUf9CJmHP22HJt66VeLnyjbmr519d82goSL
+         VFtXVX0nQyXWoeCrk1Hue7twbrseN5YekI+FdLms=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5K7s30I022804;
+        Wed, 20 Jun 2018 02:54:03 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 20
+ Jun 2018 02:54:03 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 20 Jun 2018 02:54:03 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5K7rxi9007994;
+        Wed, 20 Jun 2018 02:54:00 -0500
+Subject: Re: [PATCH v4 06/10] pci-epf-test/pci_endpoint_test: Cleanup
+ PCI_ENDPOINT_TEST memspace
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <jesper.nilsson@axis.com>
+References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+ <13077810f3630c01835041e41b338dd85fa91953.1529329262.git.gustavo.pimentel@synopsys.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <eea616bd-a5dd-f8bb-22b3-319401c70cc6@ti.com>
+Date:   Wed, 20 Jun 2018 13:23:59 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <13077810f3630c01835041e41b338dd85fa91953.1529329262.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
-
-3812c8c8f395 ("mm: memcg: do not trap chargers with full callstack on OOM")
-has changed the ENOMEM semantic of memcg charges. Rather than invoking
-the oom killer from the charging context it delays the oom killer to the
-page fault path (pagefault_out_of_memory). This in turn means that many
-users (e.g. slab or g-u-p) will get ENOMEM when the corresponding memcg
-hits the hard limit and the memcg is is OOM. This is behavior is
-inconsistent with !memcg case where the oom killer is invoked from the
-allocation context and the allocator keeps retrying until it succeeds.
-
-The difference in the behavior is user visible. mmap(MAP_POPULATE) might
-result in not fully populated ranges while the mmap return code doesn't
-tell that to the userspace. Random syscalls might fail with ENOMEM etc.
-
-The primary motivation of the different memcg oom semantic was the
-deadlock avoidance. Things have changed since then, though. We have
-an async oom teardown by the oom reaper now and so we do not have to
-rely on the victim to tear down its memory anymore. Therefore we can
-return to the original semantic as long as the memcg oom killer is not
-handed over to the users space.
-
-There is still one thing to be careful about here though. If the oom
-killer is not able to make any forward progress - e.g. because there is
-no eligible task to kill - then we have to bail out of the charge path
-to prevent from same class of deadlocks. We have basically two options
-here. Either we fail the charge with ENOMEM or force the charge and
-allow overcharge. The first option has been considered more harmful than
-useful because rare inconsistencies in the ENOMEM behavior is hard to
-test for and error prone. Basically the same reason why the page
-allocator doesn't fail allocations under such conditions. The later
-might allow runaways but those should be really unlikely unless somebody
-misconfigures the system. E.g. allowing to migrate tasks away from the
-memcg to a different unlimited memcg with move_charge_at_immigrate
-disabled.
-
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
-
 Hi,
-we have discussed this at LSFMM this year and my recollection is that
-we have agreed that we should do this. So I am sending the patch as an
-RFC. Please note I have only forward ported the patch without any
-testing yet. I would like to see a general agreement before I spend more
-time on this.
 
-Thoughts? Objections?
+On Monday 18 June 2018 08:30 PM, Gustavo Pimentel wrote:
+> Cleanup PCI_ENDPOINT_TEST memspace (by moving the interrupt number away
+> from command section).
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+> Change v2->v3:
+>  - New patch file created base on the previous patch
+> "misc: pci_endpoint_test: Add MSI-X support" patch file following
+> Kishon's suggestion.
+> Change v3->v4:
+>  - Rebased to Lorenzo's master branch v4.18-rc1.
+> 
+>  drivers/misc/pci_endpoint_test.c              | 84 ++++++++++++++++-----------
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 60 ++++++++++++-------
+>  2 files changed, 91 insertions(+), 53 deletions(-)
+> 
+> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+> index 7b37046..56be808 100644
+> --- a/drivers/misc/pci_endpoint_test.c
+> +++ b/drivers/misc/pci_endpoint_test.c
+> @@ -35,38 +35,42 @@
+>  
+>  #include <uapi/linux/pcitest.h>
+>  
+> -#define DRV_MODULE_NAME			"pci-endpoint-test"
+> -
+> -#define PCI_ENDPOINT_TEST_MAGIC		0x0
+> -
+> -#define PCI_ENDPOINT_TEST_COMMAND	0x4
+> -#define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+> -#define COMMAND_RAISE_MSI_IRQ		BIT(1)
+> -#define MSI_NUMBER_SHIFT		2
+> -/* 6 bits for MSI number */
+> -#define COMMAND_READ                    BIT(8)
+> -#define COMMAND_WRITE                   BIT(9)
+> -#define COMMAND_COPY                    BIT(10)
+> -
+> -#define PCI_ENDPOINT_TEST_STATUS	0x8
+> -#define STATUS_READ_SUCCESS             BIT(0)
+> -#define STATUS_READ_FAIL                BIT(1)
+> -#define STATUS_WRITE_SUCCESS            BIT(2)
+> -#define STATUS_WRITE_FAIL               BIT(3)
+> -#define STATUS_COPY_SUCCESS             BIT(4)
+> -#define STATUS_COPY_FAIL                BIT(5)
+> -#define STATUS_IRQ_RAISED               BIT(6)
+> -#define STATUS_SRC_ADDR_INVALID         BIT(7)
+> -#define STATUS_DST_ADDR_INVALID         BIT(8)
+> -
+> -#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
+> +#define DRV_MODULE_NAME				"pci-endpoint-test"
+> +
+> +#define IRQ_TYPE_LEGACY				0
+> +#define IRQ_TYPE_MSI				1
+> +
+> +#define PCI_ENDPOINT_TEST_MAGIC			0x0
+> +
+> +#define PCI_ENDPOINT_TEST_COMMAND		0x4
+> +#define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
+> +#define COMMAND_RAISE_MSI_IRQ			BIT(1)
 
- mm/memcontrol.c | 67 +++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 56 insertions(+), 11 deletions(-)
+Maybe you can add a comment here that BIT(2) is reserved for MSIX support
+> +#define COMMAND_READ				BIT(3)
+> +#define COMMAND_WRITE				BIT(4)
+> +#define COMMAND_COPY				BIT(5)
+> +
+> +#define PCI_ENDPOINT_TEST_STATUS		0x8
+> +#define STATUS_READ_SUCCESS			BIT(0)
+> +#define STATUS_READ_FAIL			BIT(1)
+> +#define STATUS_WRITE_SUCCESS			BIT(2)
+> +#define STATUS_WRITE_FAIL			BIT(3)
+> +#define STATUS_COPY_SUCCESS			BIT(4)
+> +#define STATUS_COPY_FAIL			BIT(5)
+> +#define STATUS_IRQ_RAISED			BIT(6)
+> +#define STATUS_SRC_ADDR_INVALID			BIT(7)
+> +#define STATUS_DST_ADDR_INVALID			BIT(8)
+> +
+> +#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0x0c
+>  #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
+>  
+>  #define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
+>  #define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
+>  
+> -#define PCI_ENDPOINT_TEST_SIZE		0x1c
+> -#define PCI_ENDPOINT_TEST_CHECKSUM	0x20
+> +#define PCI_ENDPOINT_TEST_SIZE			0x1c
+> +#define PCI_ENDPOINT_TEST_CHECKSUM		0x20
+> +
+> +#define PCI_ENDPOINT_TEST_IRQ_TYPE		0x24
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e6f0d5ef320a..7fe3ce1fd625 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1483,28 +1483,54 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
- 		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
- }
- 
--static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
-+enum oom_status {
-+	OOM_SUCCESS,
-+	OOM_FAILED,
-+	OOM_ASYNC,
-+	OOM_SKIPPED
-+};
-+
-+static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
- {
--	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
--		return;
-+	if (order > PAGE_ALLOC_COSTLY_ORDER)
-+		return OOM_SKIPPED;
- 	/*
- 	 * We are in the middle of the charge context here, so we
- 	 * don't want to block when potentially sitting on a callstack
- 	 * that holds all kinds of filesystem and mm locks.
- 	 *
--	 * Also, the caller may handle a failed allocation gracefully
--	 * (like optional page cache readahead) and so an OOM killer
--	 * invocation might not even be necessary.
-+	 * cgroup1 allows disabling the OOM killer and waiting for outside
-+	 * handling until the charge can succeed; remember the context and put
-+	 * the task to sleep at the end of the page fault when all locks are
-+	 * released.
-+	 *
-+	 * On the other hand, in-kernel OOM killer allows for an async victim
-+	 * memory reclaim (oom_reaper) and that means that we are not solely
-+	 * relying on the oom victim to make a forward progress and we can
-+	 * invoke the oom killer here.
- 	 *
--	 * That's why we don't do anything here except remember the
--	 * OOM context and then deal with it at the end of the page
--	 * fault when the stack is unwound, the locks are released,
--	 * and when we know whether the fault was overall successful.
-+	 * Please note that mem_cgroup_oom_synchronize might fail to find a
-+	 * victim and then we have rely on mem_cgroup_oom_synchronize otherwise
-+	 * we would fall back to the global oom killer in pagefault_out_of_memory
- 	 */
-+	if (!memcg->oom_kill_disable) {
-+		if (mem_cgroup_out_of_memory(memcg, mask, order))
-+			return OOM_SUCCESS;
-+
-+		WARN(!current->memcg_may_oom,
-+				"Memory cgroup charge failed because of no reclaimable memory! "
-+				"This looks like a misconfiguration or a kernel bug.");
-+		return OOM_FAILED;
-+	}
-+
-+	if (!current->memcg_may_oom)
-+		return OOM_SKIPPED;
- 	css_get(&memcg->css);
- 	current->memcg_in_oom = memcg;
- 	current->memcg_oom_gfp_mask = mask;
- 	current->memcg_oom_order = order;
-+
-+	return OOM_ASYNC;
- }
- 
- /**
-@@ -1899,6 +1925,7 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	unsigned long nr_reclaimed;
- 	bool may_swap = true;
- 	bool drained = false;
-+	bool oomed = false;
- 
- 	if (mem_cgroup_is_root(memcg))
- 		return 0;
-@@ -1986,6 +2013,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	if (nr_retries--)
- 		goto retry;
- 
-+	if (gfp_mask & __GFP_RETRY_MAYFAIL && oomed)
-+		goto nomem;
-+
- 	if (gfp_mask & __GFP_NOFAIL)
- 		goto force;
- 
-@@ -1994,8 +2024,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 
- 	memcg_memory_event(mem_over_limit, MEMCG_OOM);
- 
--	mem_cgroup_oom(mem_over_limit, gfp_mask,
-+	/*
-+	 * keep retrying as long as the memcg oom killer is able to make
-+	 * a forward progress or bypass the charge if the oom killer
-+	 * couldn't make any progress.
-+	 */
-+	oom_status = mem_cgroup_oom(mem_over_limit, gfp_mask,
- 		       get_order(nr_pages * PAGE_SIZE));
-+	switch (oom_status) {
-+	case OOM_SUCCESS:
-+		nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
-+		oomed = true;
-+		goto retry;
-+	case OOM_FAILED:
-+		goto force;
-+	default:
-+		goto nomem;
-+	}
- nomem:
- 	if (!(gfp_mask & __GFP_NOFAIL))
- 		return -ENOMEM;
--- 
-2.17.1
+Is this not redundant? COMMAND_RAISE_LEGACY_IRQ, COMMAND_RAISE_MSI_IRQ already
+indicates the irq type to be used.
+> +#define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
+>  
+>  static DEFINE_IDA(pci_endpoint_test_ida);
+>  
+> @@ -179,6 +183,9 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+>  {
+>  	u32 val;
+>  
+> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
+> +				 IRQ_TYPE_LEGACY);
+> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 0);
 
+Not sure if the above writes are really required.
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+>  				 COMMAND_RAISE_LEGACY_IRQ);
+>  	val = wait_for_completion_timeout(&test->irq_raised,
+> @@ -190,20 +197,22 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+>  }
+>  
+>  static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
+> -				      u8 msi_num)
+> +				      u8 irq_num)
+
+why do you want to rename this?
+
+Thanks
+Kishon
