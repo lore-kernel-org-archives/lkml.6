@@ -5,138 +5,85 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EF6C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1A9C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC51D2083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:42:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC51D2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A39FF20875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:43:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39FF20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754265AbeFTPmS (ORCPT
+        id S1754204AbeFTPni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:42:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57214 "EHLO mail.bootlin.com"
+        Wed, 20 Jun 2018 11:43:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753896AbeFTPmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:42:17 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D515E20794; Wed, 20 Jun 2018 17:42:14 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0F01D20012;
-        Wed, 20 Jun 2018 17:42:14 +0200 (CEST)
-Message-ID: <a2f7b1841410b4a9cd8ac9b5dd323ab2b060acef.camel@bootlin.com>
-Subject: Re: [PATCH v4 15/19] dt-bindings: media: Document bindings for the
- Sunxi-Cedrus VPU driver
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Date:   Wed, 20 Jun 2018 17:42:13 +0200
-In-Reply-To: <20180620154009.GA26099@rob-hp-laptop>
-References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
-         <20180618145843.14631-16-paul.kocialkowski@bootlin.com>
-         <20180620154009.GA26099@rob-hp-laptop>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-07SQVeov04rWTSqQRGWT"
-X-Mailer: Evolution 3.28.2 
-Mime-Version: 1.0
+        id S1752827AbeFTPnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 11:43:37 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BC6A2083A;
+        Wed, 20 Jun 2018 15:43:36 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 11:43:35 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        joel@joelfernandes.org
+Subject: Re: [RFC 1/2] rcu: Do prepare and cleanup idle depending on
+ in_nmi()
+Message-ID: <20180620114335.7a314642@gandalf.local.home>
+In-Reply-To: <20180620145058.GP3593@linux.vnet.ibm.com>
+References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
+        <20180620145058.GP3593@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 20 Jun 2018 07:50:58 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
---=-07SQVeov04rWTSqQRGWT
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> On Wed, Jun 20, 2018 at 05:47:19PM +0900, Byungchul Park wrote:
+> > Get rid of dependency on ->dynticks_nmi_nesting.
+> > 
+> > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> > ---
+> >  kernel/rcu/tree.c | 22 ++++++++++------------
+> >  1 file changed, 10 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index deb2508..59ae94e 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -797,6 +797,11 @@ void rcu_nmi_exit(void)
+> >  		return;
+> >  	}
+> > 
+> > +	if (!in_nmi()) {  
+> 
+> Is in_nmi() sufficiently reliable for use here?  In the past, there have
+> been tracepoints that invoked these functions between the time that the
+> handlers were entered and the time that software updated the state so that
+> the various handler-check functions (such as in_nmi()) would return true.
+> 
+> Steve, has there been any change in this situation?
+> 
 
-Hi,
+There shouldn't be any "trace events", but what we had to deal with was
+function tracing. And in the near future, we will be getting "function
+based events" that will allow you to create an event in any function.
 
-On Wed, 2018-06-20 at 09:40 -0600, Rob Herring wrote:
-> On Mon, Jun 18, 2018 at 04:58:39PM +0200, Paul Kocialkowski wrote:
-> > This adds a device-tree binding document that specifies the properties
-> > used by the Sunxi-Cedurs VPU driver, as well as examples.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> >=20
-> >  create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedru=
-s.txt
->=20
-> You are missing a '---' line so this is going to end up in the commit=20
-> msg.
+That said, even the function tracer shouldn't be called from the time
+the NMI triggers to "in_nmi()" is set. Because there's some function
+tracer callbacks that should not be executed from an NMI, and I use
+in_nmi() to determine if they get called or not.
 
-Yes, I can't really explain how this happened. It seems related to
-exporting patches with --summary.
-
-> Please add acked/reviewed bys when posting new versions.
-
-Oh, sorry for forgetting that. The bindings are indeed exactly the same
-as the ones your reviewed and acked already.
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-07SQVeov04rWTSqQRGWT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsqddYACgkQ3cLmz3+f
-v9GP9AgAgwc/pWCk+5Kbx5Pc3oTy8nPTKNE9lSRIdvLKSA4XuXcUZpTgION7rPIP
-XctR6IMQn10FcwnbtceKHWJuZdgAYbahRniHpQV9emQbH09MuHchT6PLcbLmjPhc
-WJ0a4wbH59SYUnpz+2UEEbh+goWHg/FYMS4usEo7+pjIJRm3Gtmh5SuV4SQ2KT8/
-dQMItv9l4Zydl0IWfRDSyDe/LBDu25cdNvkrBHmx6sqA/9YwsWI6UxuFPmH0+4Ms
-y996KQa6I3vDkzfxi+Hoztg27n8tMOCjuTrQ3maxCukgOxjPoBGOLAqSgRBHis5r
-uMafDTisyTmzF0SMtAsEToaFz31NOg==
-=H3vo
------END PGP SIGNATURE-----
-
---=-07SQVeov04rWTSqQRGWT--
-
+-- Steve
