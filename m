@@ -2,227 +2,116 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676FCC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC378C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9B620652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:28:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5C3420652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pFC0dKmq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9B620652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="iziVU5Mz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C3420652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932874AbeFTX24 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 19:28:56 -0400
-Received: from mail-qt0-f202.google.com ([209.85.216.202]:42493 "EHLO
-        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932789AbeFTX2v (ORCPT
+        id S932899AbeFTX3k (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 19:29:40 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41126 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932469AbeFTX3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 19:28:51 -0400
-Received: by mail-qt0-f202.google.com with SMTP id f8-v6so1025630qth.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:28:50 -0700 (PDT)
+        Wed, 20 Jun 2018 19:29:39 -0400
+Received: by mail-pg0-f66.google.com with SMTP id l65-v6so502323pgl.8
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:29:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
-         :cc;
-        bh=XVWBiQoW73MDz+ss3et58XuC+WEmn3lVaP0MbEEILLI=;
-        b=pFC0dKmqt58m89T35/999ozJSb8PiopkaThWvGSoyIUVzCHlcnzkZxHNxnsgesYCtL
-         7j6Ku36lRZKdB6yW1/IpPkFv0XBeGnNypv7bYtp6NN0iGh4FQJW7XmZ4tGlBCXwmxk4I
-         smkfxvrmemRDvUHUg5FW7DoUe5boFn7au6V3ByH9Z5+F6p/Wzq6lzhSWxo5uCcHND6Y8
-         k67Ka9uMDWhHiPO3uw/x4y4qxBUL2L3HTu4nYjhUUtOTqx7cnObv5YZSX0tIUR45mI/G
-         1/nDkHQQnR3QMDgExBfVcaKsiz3KUC6Eg31mp0Nxdg4pslqJeIy7c5wZgIkWd8SKWSQC
-         ADHA==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1HuZ69iXPm5k8WD3DdMw1PtNK5y+QBhVornzUTpjHtc=;
+        b=iziVU5MzRdcWSl0tDW6UdQgoW3WEFrwnVXcqABybvOKdEdZiaUQZWvdAQYX3FkxX8O
+         D3fxLsJx/2dxuOuQzp+KR2HkdvtzJ0TiqQR6glkWXSu72skelPdauWHTj24+0RrVVbzP
+         HQmf7ywcmxeAIGtz7oX9+JD35sjs+3WO6stMY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
-         :references:subject:from:to:cc;
-        bh=XVWBiQoW73MDz+ss3et58XuC+WEmn3lVaP0MbEEILLI=;
-        b=eNeMWtwF8hIcNaizh9Km/J4jcM2CUN6zqQRuAgp1WyIUAXom5UgLNpw8hUeGEkFbJL
-         rb05SpB76iWzIGdHiiH6KPWetwEmx0BXEjYiAGg0ZjSrxhza0+Yt4rN/+lrLcl5KdXBL
-         1W30FMRfOGZ/4TaABk1cibK25jsZaMhICa+bcyvR7O92jCFeGZuvXzuaRqqUMrEKn8Rv
-         xcuhYtkJhh9+L3NNGj+Sp3tOeHkYXY5Eu0pw74v+eYtdpFJ/5ryoLgYLR8zENrE9ezyD
-         sFwqiAxZpOxYCUFwuDO6qM4kh0eVDqyXH3jC7pqsKM60oeXaqb7vEygkSGl1BxInWOnk
-         wOAg==
-X-Gm-Message-State: APt69E00DfY1ynrTBpRvjunqDf55TWPliWeItqjk9mr3zWMKnyFYj0mm
-        YHX1fYqtkFRlyb129H1fsuE3n3ZsT93M
-X-Google-Smtp-Source: ADUXVKKOtp9A8j1y3haImPm6uqXpt0W04Tdb+YCggb6UFo5cCUyV4FPqqiT7a/+Ll3TG/dZbF3I6h1ZcUHx/
-MIME-Version: 1.0
-X-Received: by 2002:ac8:2cf2:: with SMTP id 47-v6mr12275854qtx.44.1529537330067;
- Wed, 20 Jun 2018 16:28:50 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 16:28:38 -0700
-In-Reply-To: <20180620232841.43922-1-rajatja@google.com>
-Message-Id: <20180620232841.43922-2-rajatja@google.com>
-References: <20180522222805.80314-1-rajatja@google.com> <20180620232841.43922-1-rajatja@google.com>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-Subject: [PATCH v4 2/5] PCI/AER: Add sysfs stats for AER capable devices
-From:   Rajat Jain <rajatja@google.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1HuZ69iXPm5k8WD3DdMw1PtNK5y+QBhVornzUTpjHtc=;
+        b=hgqXrVVpV/vyYRuEkyFnVYd04p+x21POTDsoXknXRGbUKbonkMEhiAd2knslBGfY2h
+         +zLD4uHXSM7Iy5bLw2+Q4rRA1lc+k8fsQUcRtvZZgwwIL9wT003MS6AkWvpYsW+0ttcE
+         /QwOmJtDUknhfwerTptWCDKrlIEmuSX/41yLqFozlAtXHWKz+xFOfYhZ0WAVH6zTgfV7
+         5RFNRoAd/RgSwv4gP94vl73Jd3D7rDhU0ScDivawpoFfRAroafEtW3GlW8lOFKDhC23h
+         lFH5LmDd2J0UDctFc3u0yyzhLfCQXdZg0wpbF3Bp0nWahj0IH6NYq7YJqbXQ9+2T8R9o
+         3oEw==
+X-Gm-Message-State: APt69E2e12hDurmzvQVS7qfV9NzZ+n4VD/4uRuAb8ZQI+m3C4oLNxD7c
+        LKcLMmtvFmX2bExMQJcGd/t/kw==
+X-Google-Smtp-Source: ADUXVKJm15go6MVCoQwhIIoefs2C4TYpWHHt2EUsB7YwR4+VsWqOhZ68jAzKR8m5ft5BkOPbfBiw/Q==
+X-Received: by 2002:a65:5cc8:: with SMTP id b8-v6mr20434569pgt.85.1529537378413;
+        Wed, 20 Jun 2018 16:29:38 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id o77-v6sm6497351pfj.0.2018.06.20.16.29.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 16:29:37 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 16:29:37 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Alistair Strachan <astrachan@google.com>,
+        linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Thomas Tai <thomas.tai@oracle.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
-        Kyle McMartin <jkkm@fb.com>, rajatxjain@gmail.com,
-        helgaas@kernel.org
-Cc:     Rajat Jain <rajatja@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>, devel@driverdev.osuosl.org,
+        kernel-team@android.com
+Subject: Re: [PATCH 2/2 v2] staging: android: ashmem: Fix mmap size validation
+Message-ID: <20180620232937.GA177510@joelaf.mtv.corp.google.com>
+References: <20180620005735.219840-1-astrachan@google.com>
+ <20180620005735.219840-2-astrachan@google.com>
+ <20180620043200.GA10888@joelaf.mtv.corp.google.com>
+ <CAKOZuetoYikhAz1c6NuaVjeU_E58hbH7wMsDUKCYWqb63ESPeA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKOZuetoYikhAz1c6NuaVjeU_E58hbH7wMsDUKCYWqb63ESPeA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the following AER sysfs stats to represent the counters for each
-kind of error as seen by the device:
+On Wed, Jun 20, 2018 at 02:21:57PM -0700, Daniel Colascione wrote:
+> On Tue, Jun 19, 2018 at 9:32 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > On Tue, Jun 19, 2018 at 05:57:35PM -0700, Alistair Strachan wrote:
+> > > The ashmem driver did not check that the size/offset of the vma passed
+> > > to its .mmap() function was not larger than the ashmem object being
+> > > mapped. This could cause mmap() to succeed, even though accessing parts
+> > > of the mapping would later fail with a segmentation fault.
+> > >
+> > > Ensure an error is returned by the ashmem_mmap() function if the vma
+> > > size is larger than the ashmem object size. This enables safer handling
+> > > of the problem in userspace.
+> 
+> Are we sure that this approach is a good idea? You can over-mmap
+> regular files. I don't like the idea of creating special mmap
 
-dev_total_cor_errs
-dev_total_fatal_errs
-dev_total_nonfatal_errs
+ashmem isn't a regular file.
 
-Signed-off-by: Rajat Jain <rajatja@google.com>
----
-v4: Same as v3
-v3: Merge everything in aer.c, use "%llu" in place of "%llx"
+> semantics for files that happen to be ashmem files. Ashmem users can
+> detect size-changing shenanigans with ASHMEM_GET_SIZE after mmap,
+> since an ashmem file's size can't change after an mmap call succeeds.
 
- drivers/pci/pci-sysfs.c |  3 ++
- drivers/pci/pci.h       |  4 ++-
- drivers/pci/pcie/aer.c  | 74 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 80 insertions(+), 1 deletion(-)
+But it is misleading to allow it. If the mmap succeeds, the any writes to the
+extra area is infact not a part of ashmem and will not be shared. Instead if
+the mmap fails up front, then we're telling the user upfront that they
+screwed up and they should do something about it. I would much rather have
+the mmap fail than to allow for other issues to later occur.
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 0c4653c1d2ce..9f1cb9051d7d 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -1746,6 +1746,9 @@ static const struct attribute_group *pci_dev_attr_groups[] = {
- #endif
- 	&pci_bridge_attr_group,
- 	&pcie_dev_attr_group,
-+#ifdef CONFIG_PCIEAER
-+	&aer_stats_attr_group,
-+#endif
- 	NULL,
- };
- 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index c358e7a07f3f..9a28ec600225 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -181,7 +181,9 @@ extern const struct attribute_group *pci_dev_groups[];
- extern const struct attribute_group *pcibus_groups[];
- extern const struct device_type pci_dev_type;
- extern const struct attribute_group *pci_bus_groups[];
--
-+#ifdef CONFIG_PCIEAER
-+extern const struct attribute_group aer_stats_attr_group;
-+#endif
- 
- /**
-  * pci_match_one_device - Tell if a PCI device structure has a matching
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index f9fa994b6c33..ce0d675d7bd3 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -573,6 +573,79 @@ static const char *aer_agent_string[] = {
- 	"Transmitter ID"
- };
- 
-+#define aer_stats_aggregate_attr(field)					\
-+	static ssize_t							\
-+	field##_show(struct device *dev, struct device_attribute *attr,	\
-+		     char *buf)						\
-+{									\
-+	struct pci_dev *pdev = to_pci_dev(dev);				\
-+	return sprintf(buf, "%llu\n", pdev->aer_stats->field);		\
-+}									\
-+static DEVICE_ATTR_RO(field)
-+
-+aer_stats_aggregate_attr(dev_total_cor_errs);
-+aer_stats_aggregate_attr(dev_total_fatal_errs);
-+aer_stats_aggregate_attr(dev_total_nonfatal_errs);
-+
-+static struct attribute *aer_stats_attrs[] __ro_after_init = {
-+	&dev_attr_dev_total_cor_errs.attr,
-+	&dev_attr_dev_total_fatal_errs.attr,
-+	&dev_attr_dev_total_nonfatal_errs.attr,
-+	NULL
-+};
-+
-+static umode_t aer_stats_attrs_are_visible(struct kobject *kobj,
-+					   struct attribute *a, int n)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+
-+	if (!pdev->aer_stats)
-+		return 0;
-+
-+	return a->mode;
-+}
-+
-+const struct attribute_group aer_stats_attr_group = {
-+	.name  = "aer_stats",
-+	.attrs  = aer_stats_attrs,
-+	.is_visible = aer_stats_attrs_are_visible,
-+};
-+
-+static void pci_dev_aer_stats_incr(struct pci_dev *pdev,
-+				   struct aer_err_info *info)
-+{
-+	int status, i, max = -1;
-+	u64 *counter = NULL;
-+	struct aer_stats *aer_stats = pdev->aer_stats;
-+
-+	if (!aer_stats)
-+		return;
-+
-+	switch (info->severity) {
-+	case AER_CORRECTABLE:
-+		aer_stats->dev_total_cor_errs++;
-+		counter = &aer_stats->dev_cor_errs[0];
-+		max = AER_MAX_TYPEOF_CORRECTABLE_ERRS;
-+		break;
-+	case AER_NONFATAL:
-+		aer_stats->dev_total_nonfatal_errs++;
-+		counter = &aer_stats->dev_uncor_errs[0];
-+		max = AER_MAX_TYPEOF_UNCORRECTABLE_ERRS;
-+		break;
-+	case AER_FATAL:
-+		aer_stats->dev_total_fatal_errs++;
-+		counter = &aer_stats->dev_uncor_errs[0];
-+		max = AER_MAX_TYPEOF_UNCORRECTABLE_ERRS;
-+		break;
-+	}
-+
-+	status = (info->status & ~info->mask);
-+	for (i = 0; i < max; i++)
-+		if (status & (1 << i))
-+			counter[i]++;
-+}
-+
- static void __print_tlp_header(struct pci_dev *dev,
- 			       struct aer_header_log_regs *t)
- {
-@@ -605,6 +678,7 @@ static void __aer_print_error(struct pci_dev *dev,
- 			pci_err(dev, "   [%2d] Unknown Error Bit%s\n",
- 				i, info->first_error == i ? " (First)" : "");
- 	}
-+	pci_dev_aer_stats_incr(dev, info);
- }
- 
- static void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
--- 
-2.18.0.rc1.244.gcf134e6275-goog
+Also if you look at the kernel sources, there are dozens of drivers that
+check for correct VMA size in mmap handler and fail if it isn't sized
+correctly.
+
+thanks!
+
+ - Joel
 
