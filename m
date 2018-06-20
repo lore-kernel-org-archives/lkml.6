@@ -2,195 +2,102 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B42C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82981C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6DC620693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6DC620693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B05E20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:19:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SPxmfk0L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B05E20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754206AbeFTATi (ORCPT
+        id S1754235AbeFTATq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:19:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:32927 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751955AbeFTATe (ORCPT
+        Tue, 19 Jun 2018 20:19:46 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33620 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751955AbeFTATk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:19:34 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0JTqi3297109
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 17:19:29 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0JTAl3297106;
-        Tue, 19 Jun 2018 17:19:29 -0700
-Date:   Tue, 19 Jun 2018 17:19:29 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-0a1ad189dfd4680e7c05273f43d39623b6bc4c66@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        reinette.chatre@intel.com, hpa@zytor.com
-Reply-To: reinette.chatre@intel.com, mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <0108de9c39225ff2e8359115f9283c4e410510de.1527593970.git.reinette.chatre@intel.com>
-References: <0108de9c39225ff2e8359115f9283c4e410510de.1527593970.git.reinette.chatre@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Introduce "bit_usage" to display
- cache allocations details
-Git-Commit-ID: 0a1ad189dfd4680e7c05273f43d39623b6bc4c66
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 19 Jun 2018 20:19:40 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 6-v6so734411plb.0;
+        Tue, 19 Jun 2018 17:19:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=m6X6wjoLXZZkQV8B5ln8H8j7VDlfyn15Qs82ZdsR1zE=;
+        b=SPxmfk0LzrzMqSX/WMrnCgLe21sKzLOEJSbKeVgz7ze+Q+XYN7+l92fuH/2ooozZcm
+         VkBS6YpBtCaIMwQQcuxmHwFRMe1vbFvTmq5Ym+onY0o5Im1LIro/eeHZkJuIOvynC+rH
+         PXX3JWNc2L2mZxc6uegMe8CQUPErHr8rnjZYTt9VXyB825VYrPzzW9mQW7p2pbao5glj
+         /GwhEJLojB8CfVM3EdgbN5keymIR8O3R/W2r0jKsDkJrR99PFMgg3GaZCM9jF9lvCVvm
+         2rM8zC7QGAbAZSVIq+WY5WlYvCHLK8o+jLudhWs/2cI8K/rITL7v9tjkocERbNX69gFB
+         8GOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=m6X6wjoLXZZkQV8B5ln8H8j7VDlfyn15Qs82ZdsR1zE=;
+        b=J9aXZ3y9JLZz5vYdXuKcIROoZe9kmEBuonD5R0lCCKpPjkZ8ehQ0kzmyXbqU/LLDPD
+         mwskriijbXb8nyx4GK0yikEtBuNB3PxHUBDxDstPadMY1WjULg5rE2s6FIX/+TeEc3+E
+         Xb+REr2OKHn8m5PoEkQSnmP7LFZG8A+jD1IA4Wfg0g8Pb1RZ2DS1TeJLpnMWOChasecd
+         o/aJ9Ovad4MPPlLBrjFlimyF3xB/ztrBMh5sg3x+SUh4wzIlClM615DyPal9yne/8zm1
+         Uuv47uPSIGWZFF534fL78+2/EEe1DxsYeZjyQAevMUZnqX/7QydFLjG6wWxtcHuzAxe6
+         O6wA==
+X-Gm-Message-State: APt69E16HC5+ZeULojT76RSWg9ZD22zu3aTI2iCaxKZ/DZF5nknw515v
+        UKG5eepTXIz02SaJUqWoGV4Th4vH
+X-Google-Smtp-Source: ADUXVKL2ubaEr8bYAw6CkBwdflkiqjr2mhWrzSyH3TNSBHsSY7QKpTsknUqsQwal4wlISMexeX7mfA==
+X-Received: by 2002:a17:902:714e:: with SMTP id u14-v6mr21273480plm.289.1529453979794;
+        Tue, 19 Jun 2018 17:19:39 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id f9-v6sm749842pgt.79.2018.06.19.17.19.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 17:19:38 -0700 (PDT)
+Subject: Re: [PATCH] Revert "net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are
+ friends"
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <20180615185645.8921-1-malat@debian.org>
+ <fbb95c11-240c-1a11-0a62-0483908c577e@gmail.com>
+ <87muvqwc06.fsf@concordia.ellerman.id.au>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <12e16d24-a2f5-33ef-1826-2371bc39a268@gmail.com>
+Date:   Tue, 19 Jun 2018 17:19:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <87muvqwc06.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0a1ad189dfd4680e7c05273f43d39623b6bc4c66
-Gitweb:     https://git.kernel.org/tip/0a1ad189dfd4680e7c05273f43d39623b6bc4c66
-Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Tue, 29 May 2018 05:57:38 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 20 Jun 2018 00:56:31 +0200
 
-x86/intel_rdt: Introduce "bit_usage" to display cache allocations details
 
-With cache regions now explicitly marked as "shareable" or "exclusive"
-we would like to communicate to the user how portions of the cache
-are used.
+On 06/19/2018 05:13 PM, Michael Ellerman wrote:
 
-Introduce "bit_usage" that indicates for each resource
-how portions of the cache are configured to be used.
+> Just so I'm clear, this turned out to be a driver/hw problem rather than
+> the arch csum implementation?
 
-To assist the user to distinguish whether the sharing is from software or
-hardware we add the following annotation:
 
-0 - currently unused
-X - currently available for sharing and used by software and hardware
-H - currently used by hardware only but available for software use
-S - currently used and shareable by software only
-E - currently used exclusively by one resource group
+Yes, that was a driver bug.
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com
-Cc: tony.luck@intel.com
-Cc: vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: dave.hansen@intel.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/0108de9c39225ff2e8359115f9283c4e410510de.1527593970.git.reinette.chatre@intel.com
+I will send an official patch to fix this.
 
----
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 79 ++++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+You guys will have faster RX, since CHECKSUM_COMPLETE will finally be used up to TCP/UDP stacks.
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 4574bb1cbd94..833bfce9146c 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -714,6 +714,78 @@ static int rdt_shareable_bits_show(struct kernfs_open_file *of,
- 	return 0;
- }
- 
-+/**
-+ * rdt_bit_usage_show - Display current usage of resources
-+ *
-+ * A domain is a shared resource that can now be allocated differently. Here
-+ * we display the current regions of the domain as an annotated bitmask.
-+ * For each domain of this resource its allocation bitmask
-+ * is annotated as below to indicate the current usage of the corresponding bit:
-+ *   0 - currently unused
-+ *   X - currently available for sharing and used by software and hardware
-+ *   H - currently used by hardware only but available for software use
-+ *   S - currently used and shareable by software only
-+ *   E - currently used exclusively by one resource group
-+ */
-+static int rdt_bit_usage_show(struct kernfs_open_file *of,
-+			      struct seq_file *seq, void *v)
-+{
-+	struct rdt_resource *r = of->kn->parent->priv;
-+	u32 sw_shareable, hw_shareable, exclusive;
-+	struct rdt_domain *dom;
-+	int i, hwb, swb, excl;
-+	enum rdtgrp_mode mode;
-+	bool sep = false;
-+	u32 *ctrl;
-+
-+	mutex_lock(&rdtgroup_mutex);
-+	hw_shareable = r->cache.shareable_bits;
-+	list_for_each_entry(dom, &r->domains, list) {
-+		if (sep)
-+			seq_putc(seq, ';');
-+		ctrl = dom->ctrl_val;
-+		sw_shareable = 0;
-+		exclusive = 0;
-+		seq_printf(seq, "%d=", dom->id);
-+		for (i = 0; i < r->num_closid; i++, ctrl++) {
-+			if (!closid_allocated(i))
-+				continue;
-+			mode = rdtgroup_mode_by_closid(i);
-+			switch (mode) {
-+			case RDT_MODE_SHAREABLE:
-+				sw_shareable |= *ctrl;
-+				break;
-+			case RDT_MODE_EXCLUSIVE:
-+				exclusive |= *ctrl;
-+				break;
-+			case RDT_NUM_MODES:
-+				WARN(1,
-+				     "invalid mode for closid %d\n", i);
-+				break;
-+			}
-+		}
-+		for (i = r->cache.cbm_len - 1; i >= 0; i--) {
-+			hwb = test_bit(i, (unsigned long *)&hw_shareable);
-+			swb = test_bit(i, (unsigned long *)&sw_shareable);
-+			excl = test_bit(i, (unsigned long *)&exclusive);
-+			if (hwb && swb)
-+				seq_putc(seq, 'X');
-+			else if (hwb && !swb)
-+				seq_putc(seq, 'H');
-+			else if (!hwb && swb)
-+				seq_putc(seq, 'S');
-+			else if (excl)
-+				seq_putc(seq, 'E');
-+			else /* Unused bits remain */
-+				seq_putc(seq, '0');
-+		}
-+		sep = true;
-+	}
-+	seq_putc(seq, '\n');
-+	mutex_unlock(&rdtgroup_mutex);
-+	return 0;
-+}
-+
- static int rdt_min_bw_show(struct kernfs_open_file *of,
- 			     struct seq_file *seq, void *v)
- {
-@@ -995,6 +1067,13 @@ static struct rftype res_common_files[] = {
- 		.seq_show	= rdt_shareable_bits_show,
- 		.fflags		= RF_CTRL_INFO | RFTYPE_RES_CACHE,
- 	},
-+	{
-+		.name		= "bit_usage",
-+		.mode		= 0444,
-+		.kf_ops		= &rdtgroup_kf_single_ops,
-+		.seq_show	= rdt_bit_usage_show,
-+		.fflags		= RF_CTRL_INFO | RFTYPE_RES_CACHE,
-+	},
- 	{
- 		.name		= "min_bandwidth",
- 		.mode		= 0444,
+
