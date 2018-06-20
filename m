@@ -6,135 +6,110 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27104C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC6FC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB72E20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:26:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB72E20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 32C0220693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:27:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C0220693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754268AbeFTA0y (ORCPT
+        id S1754275AbeFTA1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:26:54 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59365 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753011AbeFTA0w (ORCPT
+        Tue, 19 Jun 2018 20:27:06 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:53704 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754201AbeFTA04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:26:52 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0Qlrc3299548
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 17:26:47 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0Ql393299545;
-        Tue, 19 Jun 2018 17:26:47 -0700
+        Tue, 19 Jun 2018 20:26:56 -0400
+Received: from mipsdag02.mipstec.com (mail2.mips.com [12.201.5.32]) by mx1414.ess.rzc.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Wed, 20 Jun 2018 00:26:47 +0000
+Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag02.mipstec.com
+ (10.20.40.47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Tue, 19
+ Jun 2018 17:26:46 -0700
+Received: from localhost (10.20.2.29) by mipsdag02.mipstec.com (10.20.40.47)
+ with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Tue, 19 Jun
+ 2018 17:26:46 -0700
 Date:   Tue, 19 Jun 2018 17:26:47 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-fb3800795098d56468f755368f3cbc08da39dde1@git.kernel.org>
-Cc:     reinette.chatre@intel.com, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, reinette.chatre@intel.com
-In-Reply-To: <cf83951ef28f138aeb9a9242cd074a6e01a1fbb2.1527593971.git.reinette.chatre@intel.com>
-References: <cf83951ef28f138aeb9a9242cd074a6e01a1fbb2.1527593971.git.reinette.chatre@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Split resource group removal in two
-Git-Commit-ID: fb3800795098d56468f755368f3cbc08da39dde1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+From:   Paul Burton <paul.burton@mips.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+CC:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 7/7] MIPS: boot: rebuild ITB when contained DTB is updated
+Message-ID: <20180620002647.u2d7t3vzc2yinkft@pburton-laptop>
+References: <1523890067-13641-1-git-send-email-yamada.masahiro@socionext.com>
+ <1523890067-13641-8-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <1523890067-13641-8-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20180512
+X-BESS-ID: 1529454407-531716-21947-19827-1
+X-BESS-VER: 2018.7-r1806151722
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Envelope-From: Paul.Burton@mips.com
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194209
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-Orig-Rcpt: yamada.masahiro@socionext.com,ralf@linux-mips.org,jhogan@kernel.org,linux-mips@linux-mips.org,keescook@chromium.org,linux-kernel@vger.kernel.org
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fb3800795098d56468f755368f3cbc08da39dde1
-Gitweb:     https://git.kernel.org/tip/fb3800795098d56468f755368f3cbc08da39dde1
-Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Tue, 29 May 2018 05:57:51 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 20 Jun 2018 00:56:36 +0200
+Hi Masahiro,
 
-x86/intel_rdt: Split resource group removal in two
+On Mon, Apr 16, 2018 at 07:47:47AM -0700, Masahiro Yamada wrote:
+> Since now, the unnecessary rebuild of ITB has been fixed.  Another
+> problem to be taken care of is, missed rebuild of ITB.
+> 
+> For example, board-boston.its.S includes boston.dtb by the /incbin/
+> directive.  If boston.dtb is updated, vmlinux.*.dtb must be rebuilt.
+> Currently, the dependency between ITB and contained DTB files is not
+> described anywhere.  Previously, this problem was hidden since
+> vmlinux.*.itb was always rebuilt even if nothing is updated.  By
+> fixing the spurious rebuild, this is a real problem now.
+> 
+> Use the same strategy for automatic generation of the header file
+> dependency.  DTC works as a backend of mkimage, and DTC supports -d
+> option.  It outputs the dependencies, including binary files pulled
+> by the /incbin/ directive.
+> 
+> The implementation is simpler than cmd_dtc in scripts/Makefile.lib
+> since we do not need CPP here.  Just pass -d $(depfile) to DTC, and
+> let the resulted $(depfile) processed by fixdep.
+> 
+> It might be unclear why "$(obj)/dts/%.dtb: ;" is needed.  With this
+> commit, *.cmd files will contain dependency on DTB files.  In the
+> next invocation of build, the *.cmd files will be included, then
+> Make will try to find a rule to update *.dtb files.  Unfortunately,
+> it is found in scripts/Makefile.lib.  The build rule of $(obj)/%.dtb
+> is invoked by if_changed_dep, so it needs to include *.cmd files
+> of DTB, but they are not included because we are in arch/mips/boot,
+> but those *.cmd files reside in arch/mips/boot/dts/*/.  Cancel the
+> pattern rule in scripts/Makefile.lib to suppress unneeded rebuilding
+> of DTB.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  arch/mips/boot/Makefile | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
 
-Resource groups used for pseudo-locking do not require the same work on
-removal as the other resource groups.
+Thanks - this looks good to me except that it starts outputting a "Don't
+know how to preprocess itb-image" message after building the .itb.
 
-The resource group removal is split in two in preparation for support of
-pseudo-locking resource groups. A single re-ordering occurs - the
-setting of the rdtgrp flag is moved to later. This flag is not used by
-any of the code between its original and new location.
+I presume we just need an extra case adding to ksym_dep_filter. Do you
+want to add that in & resubmit this one?
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com
-Cc: tony.luck@intel.com
-Cc: vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: dave.hansen@intel.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/cf83951ef28f138aeb9a9242cd074a6e01a1fbb2.1527593971.git.reinette.chatre@intel.com
-
----
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 8f50914dc45e..5a197cdb8ab4 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -2612,6 +2612,21 @@ static int rdtgroup_rmdir_mon(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
- 	return 0;
- }
- 
-+static int rdtgroup_ctrl_remove(struct kernfs_node *kn,
-+				struct rdtgroup *rdtgrp)
-+{
-+	rdtgrp->flags = RDT_DELETED;
-+	list_del(&rdtgrp->rdtgroup_list);
-+
-+	/*
-+	 * one extra hold on this, will drop when we kfree(rdtgrp)
-+	 * in rdtgroup_kn_unlock()
-+	 */
-+	kernfs_get(kn);
-+	kernfs_remove(rdtgrp->kn);
-+	return 0;
-+}
-+
- static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
- 			       cpumask_var_t tmpmask)
- {
-@@ -2637,7 +2652,6 @@ static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
- 	cpumask_or(tmpmask, tmpmask, &rdtgrp->cpu_mask);
- 	update_closid_rmid(tmpmask, NULL);
- 
--	rdtgrp->flags = RDT_DELETED;
- 	closid_free(rdtgrp->closid);
- 	free_rmid(rdtgrp->mon.rmid);
- 
-@@ -2646,14 +2660,7 @@ static int rdtgroup_rmdir_ctrl(struct kernfs_node *kn, struct rdtgroup *rdtgrp,
- 	 */
- 	free_all_child_rdtgrp(rdtgrp);
- 
--	list_del(&rdtgrp->rdtgroup_list);
--
--	/*
--	 * one extra hold on this, will drop when we kfree(rdtgrp)
--	 * in rdtgroup_kn_unlock()
--	 */
--	kernfs_get(kn);
--	kernfs_remove(rdtgrp->kn);
-+	rdtgroup_ctrl_remove(kn, rdtgrp);
- 
- 	return 0;
- }
+Thanks,
+    Paul
