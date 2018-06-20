@@ -2,141 +2,109 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C83C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6DBC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AE8720693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:27:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eFlOgAyW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE8720693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 08ABF20875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:35:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08ABF20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754061AbeFTB15 (ORCPT
+        id S1754065AbeFTBfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 21:27:57 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:53454 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753242AbeFTB1y (ORCPT
+        Tue, 19 Jun 2018 21:35:13 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:18051 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752171AbeFTBfL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 21:27:54 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5K1OJ2D028572;
-        Wed, 20 Jun 2018 01:27:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=rP3T8I/vM1bLwQBZDRD7Fv7r4xkmbv61vpG/KRfDXjM=;
- b=eFlOgAyWFWdOfbBhWcaWk1SWD47L5EyjiH/8A4EYEbN4FJAszldpgxoj18xYKxY57s8C
- DkMX53avLQgjE2yfgJyXAeMX/o6HeMNZQQaE2kTIbFaUOlU/Th0pYkuU5iyZVgk6HVcj
- D9VGhb9aJB9hDjaO4SZT3El42+LGe8Wx02KxtrFpxh6v6r2EnQe3WiqTMsbWwqbSEjj1
- JHztSCrWdWcbTkM/RAHAYwgH0Svy0lOiYzV/NOnUsiHwy9aXLuDdBcBYVOkkR6SmJac4
- szguon8gL/aS2lRFb79UvhiRliOhj7puFU65/2BonTUfDtN/8WMaz/aAQScBzQWL4UGq 2w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwted5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 01:27:52 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5K1RpL4031961
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 01:27:51 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5K1RpZT012501;
-        Wed, 20 Jun 2018 01:27:51 GMT
-Received: from [10.182.69.179] (/10.182.69.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Jun 2018 18:27:51 -0700
-Subject: Re: [PATCH] blk-mq: use blk_mq_timeout_work to limit the max timeout
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-References: <1529391610-1654-1-git-send-email-jianchao.w.wang@oracle.com>
- <884a5cbb5622ca5c890585a8d5dff0e3a1d60cfe.camel@wdc.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <dd0484f6-ad41-5607-107f-4c487a739478@oracle.com>
-Date:   Wed, 20 Jun 2018 09:28:10 +0800
+        Tue, 19 Jun 2018 21:35:11 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b29af390000>; Tue, 19 Jun 2018 18:34:49 -0700
+Received: from HQMAIL107.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 19 Jun 2018 18:35:14 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 19 Jun 2018 18:35:14 -0700
+Received: from [10.110.48.28] (10.110.48.28) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 20 Jun
+ 2018 01:35:10 +0000
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+References: <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
+ <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com>
+ <20180618081258.GB16991@lst.de>
+ <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
+ <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
+ <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
+ <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
+ <0e6053b3-b78c-c8be-4fab-e8555810c732@nvidia.com>
+ <20180619082949.wzoe42wpxsahuitu@quack2.suse.cz>
+ <20180619090255.GA25522@bombadil.infradead.org>
+ <20180619104142.lpilc6esz7w3a54i@quack2.suse.cz>
+ <70001987-3938-d33e-11e0-de5b19ca3bdf@nvidia.com>
+ <CAPcyv4iGKYRpbv-KK3KUrm8Ab485DwX05y4uGH2ZZ8GNYh8Q_g@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <ecb54f89-52dc-a37a-5592-d2c40f216047@nvidia.com>
+Date:   Tue, 19 Jun 2018 18:34:12 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <884a5cbb5622ca5c890585a8d5dff0e3a1d60cfe.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAPcyv4iGKYRpbv-KK3KUrm8Ab485DwX05y4uGH2ZZ8GNYh8Q_g@mail.gmail.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806200014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart
-
-Thanks for your kindly response.
-
-On 06/19/2018 11:18 PM, Bart Van Assche wrote:
-> On Tue, 2018-06-19 at 15:00 +0800, Jianchao Wang wrote:
->> blk_rq_timeout is needed to limit the max timeout value, otherwise,
->> a idle hctx cannot be deactivated timely in shared-tag case.
+On 06/19/2018 06:24 PM, Dan Williams wrote:
+> On Tue, Jun 19, 2018 at 11:11 AM, John Hubbard <jhubbard@nvidia.com> wrote:
+>> On 06/19/2018 03:41 AM, Jan Kara wrote:
+>>> On Tue 19-06-18 02:02:55, Matthew Wilcox wrote:
+>>>> On Tue, Jun 19, 2018 at 10:29:49AM +0200, Jan Kara wrote:
+> [..]
+>>> And then there's the aspect that both these approaches are a bit too
+>>> heavyweight for some get_user_pages_fast() users (e.g. direct IO) - Al Viro
+>>> had an idea to use page lock for that path but e.g. fs/direct-io.c would have
+>>> problems due to lock ordering constraints (filesystem ->get_block would
+>>> suddently get called with the page lock held). But we can probably leave
+>>> performance optimizations for phase two.
 >>
->> Fixes: 12f5b931 (blk-mq: Remove generation seqeunce)
->> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
->> ---
->>  block/blk-mq.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/block/blk-mq.c b/block/blk-mq.c
->> index 70c65bb..ccebe7b 100644
->> --- a/block/blk-mq.c
->> +++ b/block/blk-mq.c
->> @@ -868,7 +868,7 @@ static void blk_mq_timeout_work(struct work_struct *work)
->>  	blk_mq_queue_tag_busy_iter(q, blk_mq_check_expired, &next);
->>  
->>  	if (next != 0) {
->> -		mod_timer(&q->timeout, next);
->> +		mod_timer(&q->timeout, blk_rq_timeout(round_jiffies_up(next)));
->>  	} else {
->>  		/*
->>  		 * Request timeouts are handled as a forward rolling timer. If
+>> So I assume that phase one would be to apply this approach only to
+>> get_user_pages_longterm. (Please let me know if that's wrong.)
 > 
-> Hello Jianchao,
-> 
-> What makes you think that it would be necessary to call blk_rq_timeout() from
-> blk_mq_timeout_work()? Have you noticed that blk_add_timer() already calls that
-> function? I think it is not necessary to call blk_rq_timeout() from
-> blk_mq_timeout_work() because it is guaranteed in that function that the next
-> timeout is less than BLK_MAX_TIMEOUT jiffies in the future.
+> I think that's wrong, because get_user_pages_longterm() is only a
+> filesystem-dax avoidance mechanism, it's not trying to address all the
+> problems that Jan is talking about. I don't see any viable half-step
+> solutions.
 > 
 
-blk_add_timer will not re-arm the timer if the timer's expire value is before the new rq's expire value.
+OK, but in that case, I'm slightly confused by Jan's comment above, about leaving 
+performance optimizations until phase two. Because that *is* a half-step approach: 
+phase one, phase two.  
 
-Let's look at the following scenario.
+Are you disagreeing with Jan, or are you suggesting "fix get_user_pages first, and
+leave get_user_pages_fast alone for now?" 
 
-0                    +30s
-|__________________|___|
-T0                T1   T2
+Or something else? 
 
-T1 = T2 - 1 jiffies 
 
-T0:  rq_a is issued and q->timer is armed and will expire at T2
-     then rq_a is completed.
-T1:  rq_b is issued and q->timer is not re-armed, because its next expire time is T2 < (T1 + 30s)
-
-T2:  if rq_b have not been completed when timer expires at T2, timer would be re-armed based on the rq_b 
-     If we don't have blk_rq_timerout here, the next expire time is about T2 + 30s.
- 
-This is not good for sharing-tag case.
-
-Thanks
-Jianchao
-
-> 
-> 
