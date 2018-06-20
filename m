@@ -2,152 +2,95 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8210DC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3927EC43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B96220846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCAA820846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:22:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1YDG69qD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B96220846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jtb16NRN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCAA820846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933425AbeFTVOA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 17:14:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42666 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932929AbeFTVN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 17:13:58 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4000220846;
-        Wed, 20 Jun 2018 21:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529529237;
-        bh=TsCCgD7ToPFrADH5JqhHtFvKxXDtBs9DsT/umKmTKw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1YDG69qDpFKxd1fCFzvw5EblsbFdwZDhMExmzBqtXgoFAx6j+Z1jGt/zSkIkAwF5/
-         I9bKqNBhqK3OlgHQRH6VBXYgboeJVs1EI6wPKneNDD4iUBrn9/7GbvA2y8JQdKPocX
-         oYAOGMBXCTcqKnwQl6jJfCJxKqfCK61Z4utBXL7Y=
-Date:   Wed, 20 Jun 2018 16:13:49 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Rafal <uzg@wp.pl>
-Cc:     linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Subject: Re: Fwd: [Bug 199879] New: Very basic the Pci device is not resumed
- from suspend mode
-Message-ID: <20180620211349.GB108993@bhelgaas-glaptop.roam.corp.google.com>
-References: <bug-199879-41252@https.bugzilla.kernel.org/>
- <CAErSpo5U9D5kmYix2SbcJH_mW8urpmZcgN6Zh=FbGtLch+ACuA@mail.gmail.com>
+        id S933344AbeFTVWA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 17:22:00 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52768 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933092AbeFTVV7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 17:21:59 -0400
+Received: by mail-it0-f65.google.com with SMTP id m194-v6so1725199itg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 14:21:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XG29ekBSSXhcQEmjNhRSuxxGXBbmxiwvPWXSPfxAbQE=;
+        b=jtb16NRNpUaIlqFLptRivFVywuF8K8FIVbB+ZZuGJYYxFwN7M2NiVScn9w8y4qSxhG
+         Rlu8Ozz+xnEGBpNubBB+8CoHEn2CeAAhHx6bixW8H25+PfkshWCSevPYDjS0UvNo532J
+         Q+yB9po0wbf6TWlq739qZDCFRwXRRDsU3TU49IXnzarj2TvT6FBu52RBjAd5GxYLtbeL
+         z5ojx3NXPtjWZLZMF7czKIzsiI+bbXhCM4fVfkoyPEQIgTBeyRa784moXA2mBSM0ZAuT
+         mqmuX6UgYgVoOi0O70wSt+45RuNOhDhvpRLEpZOeBkdB58RZDoYeitX83YX+vUfLrIxX
+         B6Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XG29ekBSSXhcQEmjNhRSuxxGXBbmxiwvPWXSPfxAbQE=;
+        b=kGOuDlhY0V43MtdZrVRq1mLtT4GWdxG3vL7V0u/AICyAJTxGKBvrVHrEosBALDKwMA
+         R5yEgOaDaUlVlKrnjZA7yQx4YJsWC7fxQRj52BiL9x4h7t78koLPZ1L4WpPYojCgT4bt
+         LpAddQqHjp31njlzNWIfe1lUI+rwQ2MRmR3PbGZp513zizP/Izny8zOGGoD+aGFrL7Mw
+         QntAZB6NlDpUDpHmt0AX6duleZvo48SNiqob0qM2HtzKsxfsKn057pxbgYSepF8tHcjk
+         4i3ltPd/ZkbHm7uUsExsiEmZJKU3ngluhH7SrHFtH+jM4H/SGj4DRWYfPIG9ZpxYsAZF
+         XidQ==
+X-Gm-Message-State: APt69E1SSjBM0YisQAiZ7JD0vdKbDsfqRrqohmSamdMXq5dzfMnnJHpy
+        L1rjY/sNtX6ksHjBdnkaquRnWgZOE1VX81MfQSJ22bptLEs=
+X-Google-Smtp-Source: ADUXVKJhWfmPaBsfeUf4uPxPlOV1z0M2368jDawaJxXokDW1Z3WR36jP2OE+rNJmS4hk9kh503R/5l6+6pTiG2TxDqE=
+X-Received: by 2002:a24:3cd7:: with SMTP id m206-v6mr2909540ita.113.1529529718524;
+ Wed, 20 Jun 2018 14:21:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAErSpo5U9D5kmYix2SbcJH_mW8urpmZcgN6Zh=FbGtLch+ACuA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a4f:8f86:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 14:21:57
+ -0700 (PDT)
+In-Reply-To: <20180620043200.GA10888@joelaf.mtv.corp.google.com>
+References: <20180620005735.219840-1-astrachan@google.com> <20180620005735.219840-2-astrachan@google.com>
+ <20180620043200.GA10888@joelaf.mtv.corp.google.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 20 Jun 2018 14:21:57 -0700
+Message-ID: <CAKOZuetoYikhAz1c6NuaVjeU_E58hbH7wMsDUKCYWqb63ESPeA@mail.gmail.com>
+Subject: Re: [PATCH 2/2 v2] staging: android: ashmem: Fix mmap size validation
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Alistair Strachan <astrachan@google.com>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>, devel@driverdev.osuosl.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+to Rafal]
+On Tue, Jun 19, 2018 at 9:32 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> On Tue, Jun 19, 2018 at 05:57:35PM -0700, Alistair Strachan wrote:
+> > The ashmem driver did not check that the size/offset of the vma passed
+> > to its .mmap() function was not larger than the ashmem object being
+> > mapped. This could cause mmap() to succeed, even though accessing parts
+> > of the mapping would later fail with a segmentation fault.
+> >
+> > Ensure an error is returned by the ashmem_mmap() function if the vma
+> > size is larger than the ashmem object size. This enables safer handling
+> > of the problem in userspace.
 
-Sorry, I'm an idiot and forgot to include Rafal, the submitter, when I
-forwarded this report to the mailing lists.
-
-I suspect that the config accessors used by lspci should temporarily
-wake up devices that are asleep, instead of reporting 0xff data (or if
-that's not feasible, maybe we should add a comment in the kernel and a
-note in the lspci man page).
-
-I'm not sure yet where to go beyond that.
-
-On Wed, May 30, 2018 at 07:41:35AM -0700, Bjorn Helgaas wrote:
-> [+cc linux-pci, linux-kernel, linux-pm]
-> 
-> I'm not sure I understand the problem yet, so please correct me if I'm wrong:
-> 
->   - Your system has both Nvidia and Intel graphics devices
-> 
->   - When you use Intel graphics, lspci, lshw, and /proc/bus/pci for
-> the Nvidia device show invalid data (0xff) after suspend/resume
-> 
->   - When you use Nvidia graphics, suspend/resume doesn't work (instead
-> of resuming, you just get a blank screen)
-> 
-> Can you attach the output of "sudo lspci -vv" to the bugzilla, please?
-> 
-> ---------- Forwarded message ---------
-> From: <bugzilla-daemon@bugzilla.kernel.org>
-> Date: Tue, May 29, 2018 at 1:29 PM
-> Subject: [Bug 199879] New: Very basic the Pci device is not resumed
-> from suspend mode
-> To: <bhelgaas@google.com>
-> 
-> 
-> https://bugzilla.kernel.org/show_bug.cgi?id=199879
-> 
->             Bug ID: 199879
->            Summary: Very basic the Pci device is not resumed from suspend
->                     mode
->            Product: Drivers
->            Version: 2.5
->     Kernel Version: kernel-4.15.17
->           Hardware: x86-64
->                 OS: Linux
->               Tree: Mainline
->             Status: NEW
->           Severity: high
->           Priority: P1
->          Component: PCI
->           Assignee: drivers_pci@kernel-bugs.osdl.org
->           Reporter: uzg@wp.pl
->         Regression: No
-> 
-> Hi, I have problem with very basic device. Device pci-e not resume from
-> suspend. Only sleep.
-> 
-> I have a problem with anyone interested in it, because everyone thinks it is
-> the fault of the device drivers themselves. But this is not a problem.
-> 
-> This device is a basic device. I've already installed drivers on various
-> hardware and it has always been ok, but not this time.
-> 
-> I'm an electronics technician. After diagnosing what I managed, in my opinion
-> the device remains asleep.
-> 
-> Where does my application come from?
-> I have multiuser mode and I do not use this device. After suspend lspci and
-> lshw show normal data. Normal data is in /proc/bus/pci/...
-> Next suspend and resume, and...
-> lspci see hardware, but is error
-> lshw see hardware as undefined device
-> data in /proc/bus/pci/... is only 0xFF
-> Hardware sleep, not work, not ready. This is bug.
-> 
-> But since the problem concerns the graphics card in the configuration with the
-> second default Intel card, everyone thinks that this is another driver problem
-> as always and nobody wants to take a look at it :(
-> 
-> The problem is easy to recognize. On the internet, I've seen a lot of
-> unresolved problems in which I could see exactly what I found.
-> 
-> My hardware is Lenovo with NVidia and Intel Graphics. Problem is with NVidia. I
-> tested Z710 and Z50-70. The first symptom of the problem is lspci in multiuser
-> mode (or when is XServer with intel graphics). After suspend NVidia have e.g
-> "rev. A1", after resume is "rev. FF". Next symptom lshw and /proc/bus/pci/...
-> When system started with normal NVidia driver, system not resume and halt, only
-> black screen.
-> 
-> There are many examples on the Internet with unsolved problems e.g
-> https://www.lwks.com/index.php?option=com_kunena&func=view&catid=21&id=124374&Itemid=81
-> 
-> --
-> You are receiving this mail because:
-> You are watching the assignee of the bug.
+Are we sure that this approach is a good idea? You can over-mmap
+regular files. I don't like the idea of creating special mmap
+semantics for files that happen to be ashmem files. Ashmem users can
+detect size-changing shenanigans with ASHMEM_GET_SIZE after mmap,
+since an ashmem file's size can't change after an mmap call succeeds.
