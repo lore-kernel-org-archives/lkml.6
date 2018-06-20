@@ -2,176 +2,155 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2883FC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19613C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7AF1208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:58:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7AF1208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C3BF620871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:59:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V621t4L7";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="gxTeyN/5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3BF620871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754702AbeFTD6U (ORCPT
+        id S1754532AbeFTD7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 23:58:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45652 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754421AbeFTD45 (ORCPT
+        Tue, 19 Jun 2018 23:59:30 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34491 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754338AbeFTD70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 23:56:57 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5K3tR5M122992
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 23:56:57 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqdxpjn40-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 23:56:57 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 20 Jun 2018 04:56:55 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Jun 2018 04:56:51 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5K3uoPr34734194
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Jun 2018 03:56:50 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B7811AE057;
-        Wed, 20 Jun 2018 04:45:32 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 051D8AE04D;
-        Wed, 20 Jun 2018 04:45:30 +0100 (BST)
-Received: from bangoria.in.ibm.com (unknown [9.124.31.59])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Jun 2018 04:45:29 +0100 (BST)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     oleg@redhat.com, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v4 4/9] Uprobe: Change uprobe_write_opcode definition
-Date:   Wed, 20 Jun 2018 09:26:24 +0530
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180620035629.7844-1-ravi.bangoria@linux.ibm.com>
-References: <20180620035629.7844-1-ravi.bangoria@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18062003-4275-0000-0000-0000028FB0A4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062003-4276-0000-0000-00003796F6C5
-Message-Id: <20180620035629.7844-5-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806200044
+        Tue, 19 Jun 2018 23:59:26 -0400
+Received: by mail-qt0-f196.google.com with SMTP id d3-v6so1864707qto.1;
+        Tue, 19 Jun 2018 20:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=YJcuQi4abNC5G8aMScx8jrToPc3zwhMm/0ZyoxVbevo=;
+        b=V621t4L7MqN1wv85jc1qYGHoXF8qDGfF5LoGNdHXfNQuvVQyC7GMgHOIj9fxJWNNBd
+         kZeNMaQdn0Vs9Mjc5ockbI68CuNuIb6tLcTIdsIFA7slcScAbJxvD1gpm5u689DN5S7S
+         Rl3W57xhnBfV2TQ1dwjIwdT08Wn5R+INRv7ZIUkdIXJyMN3nGatk1qa30BlGzMOtnAnz
+         xwTsdIlbT0LXXKfEXdPlsGgWinW9un/+Rhwi+ehXHGox4kqwR80errD4zerN7z7yZama
+         /ZT/hh19zZUzm2zA0PZcUZgWuiDSBsmdgQwe//Rl9hvC317FQQxen/NicPlNZmI+G766
+         R/fA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=YJcuQi4abNC5G8aMScx8jrToPc3zwhMm/0ZyoxVbevo=;
+        b=gxTeyN/52nx70cqIkUn6Jz4FjuLEaethpJyZCdg0VvKMDRKi824vzxpaFQEgnlwzgI
+         LUPThSzbugIO3AT89GigJcvi0Ybm03i0rwP2fzx3QbouGaEhNuwTlH87oyq2N3gAgmgy
+         6mM73Lek8+cQXKJ7sALmKBcKYudmaOzjBh11E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=YJcuQi4abNC5G8aMScx8jrToPc3zwhMm/0ZyoxVbevo=;
+        b=VfezC3FlIQ0lMUjuMVyuDIMfKyUbNg0I5IiSFvqZ7qdrJHQMfbKuXaGX3NGm51cMSt
+         BPVqhL+sqnnndtYT9dIq94+ZgZFXmqKYCTl5PCJN6e/g4n3X2+tMumXz9DcK2VdRdCCp
+         FXYGc/vNbcFitHAr2rXr77t4U4NFJ1HyT2kmh5OzroPZ5Rq9ukuIyY142W1pleuDyH+s
+         TQa/9Xf5oPvioYFGWCn9E9Sz0smKI8nzbzwpLaSfrp1qcudSv1GYyMwFabVWrCMsG0Io
+         qySH1TLdm6dlf8IuL65Rkp7dlNFW3nEzzmZJ+//TfpAWtKlV6Hv3jZ7n4y4qIhJspuhK
+         MlNg==
+X-Gm-Message-State: APt69E1AwxnvAe1Gh24WjOYSx/45KKsX71mgXaZ9timFX9B2YtfjHziE
+        YUME5Ph0LILONkYnZSM6VaOyLBcP8fdKTNes+hY=
+X-Google-Smtp-Source: ADUXVKIEuzz3RwSPsKVkCNOO6vmGwui+dobQ82lssX80M9PQqQpg3IvDMVnmWAaf/QTJXIiRQgi4mu8bHFf9Jypc3sA=
+X-Received: by 2002:ac8:32fa:: with SMTP id a55-v6mr17889896qtb.342.1529467165270;
+ Tue, 19 Jun 2018 20:59:25 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac8:184d:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 20:59:04
+ -0700 (PDT)
+In-Reply-To: <5d1f980286e2bba566421ebb29721770303fcf09.camel@kernel.crashing.org>
+References: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1528918579-27602-4-git-send-email-eajames@linux.vnet.ibm.com> <5d1f980286e2bba566421ebb29721770303fcf09.camel@kernel.crashing.org>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 20 Jun 2018 13:29:04 +0930
+X-Google-Sender-Auth: FEhkBiOVzQ6W1ZtatI-Xp9Pxydc
+Message-ID: <CACPK8XdQvRcS+n33BT=Fwm4OoMfck5B3NX=QKJc0HgoqMjwXTg@mail.gmail.com>
+Subject: Re: [PATCH v10 3/7] i2c: fsi: Add port structures
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Eddie James <eajames@linux.vnet.ibm.com>,
+        linux-i2c@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Peter Rosin <peda@axentia.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add addition argument 'uprobe' to uprobe_write_opcode(). We need
-this in later set of patches.
+On 20 June 2018 at 13:04, Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
+> On Wed, 2018-06-13 at 14:36 -0500, Eddie James wrote:
+>>  }
+>>
+>> +static int fsi_i2c_remove(struct device *dev)
+>> +{
+>> +       struct fsi_i2c_master *i2c = dev_get_drvdata(dev);
+>> +       struct fsi_i2c_port *port;
+>> +
+>> +       list_for_each_entry(port, &i2c->ports, list) {
+>> +               i2c_del_adapter(&port->adapter);
+>> +               kfree(port);
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>
+> This is a use-after-free, the list linkage of the freed port is used to
+> get to the next one. With memory poisoning, kbooom !
+>
+> You can fold that in:
+>
+> From f9d9092160897e7308f6990067a03e937339537f Mon Sep 17 00:00:00 2001
+> From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Date: Wed, 20 Jun 2018 13:27:32 +1000
+> Subject: [PATCH] i2c: fsi: Fix use after free
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- arch/arm/probes/uprobes/core.c | 2 +-
- arch/mips/kernel/uprobes.c     | 2 +-
- include/linux/uprobes.h        | 2 +-
- kernel/events/uprobes.c        | 9 +++++----
- 4 files changed, 8 insertions(+), 7 deletions(-)
+This fixes the issue I was seeing. For the series:
 
-diff --git a/arch/arm/probes/uprobes/core.c b/arch/arm/probes/uprobes/core.c
-index c678a5c..a4856a9 100644
---- a/arch/arm/probes/uprobes/core.c
-+++ b/arch/arm/probes/uprobes/core.c
-@@ -32,7 +32,7 @@ bool is_swbp_insn(uprobe_opcode_t *insn)
- int set_swbp(struct uprobe *uprobe, struct mm_struct *mm,
- 	     unsigned long vaddr)
- {
--	return uprobe_write_opcode(mm, vaddr,
-+	return uprobe_write_opcode(uprobe, mm, vaddr,
- 		   __opcode_to_mem_arm(uprobe->arch.bpinsn));
- }
- 
-diff --git a/arch/mips/kernel/uprobes.c b/arch/mips/kernel/uprobes.c
-index 2aaa378..8bdf4b5 100644
---- a/arch/mips/kernel/uprobes.c
-+++ b/arch/mips/kernel/uprobes.c
-@@ -224,7 +224,7 @@ unsigned long arch_uretprobe_hijack_return_addr(
- int __weak set_swbp(struct uprobe *uprobe, struct mm_struct *mm,
- 	unsigned long vaddr)
- {
--	return uprobe_write_opcode(mm, vaddr, UPROBE_SWBP_INSN);
-+	return uprobe_write_opcode(uprobe, mm, vaddr, UPROBE_SWBP_INSN);
- }
- 
- void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index 0b4e1fc..a179b59 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -121,7 +121,7 @@ struct uprobes_state {
- extern bool is_trap_insn(uprobe_opcode_t *insn);
- extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
- extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
--extern int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
-+extern int uprobe_write_opcode(struct uprobe *uprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t opcode);
- extern int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
- extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
- extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index bc078ea..de5258e 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -292,6 +292,7 @@ static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t
-  * that have fixed length instructions.
-  *
-  * uprobe_write_opcode - write the opcode at a given virtual address.
-+ * @uprobe: uprobe object.
-  * @mm: the probed process address space.
-  * @vaddr: the virtual address to store the opcode.
-  * @opcode: opcode to be written at @vaddr.
-@@ -299,8 +300,8 @@ static int verify_opcode(struct page *page, unsigned long vaddr, uprobe_opcode_t
-  * Called with mm->mmap_sem held for write.
-  * Return 0 (success) or a negative errno.
-  */
--int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr,
--			uprobe_opcode_t opcode)
-+int uprobe_write_opcode(struct uprobe *uprobe, struct mm_struct *mm,
-+			unsigned long vaddr, uprobe_opcode_t opcode)
- {
- 	struct page *old_page, *new_page;
- 	struct vm_area_struct *vma;
-@@ -351,7 +352,7 @@ int uprobe_write_opcode(struct mm_struct *mm, unsigned long vaddr,
-  */
- int __weak set_swbp(struct uprobe *uprobe, struct mm_struct *mm, unsigned long vaddr)
- {
--	return uprobe_write_opcode(mm, vaddr, UPROBE_SWBP_INSN);
-+	return uprobe_write_opcode(uprobe, mm, vaddr, UPROBE_SWBP_INSN);
- }
- 
- /**
-@@ -366,7 +367,7 @@ int __weak set_swbp(struct uprobe *uprobe, struct mm_struct *mm, unsigned long v
- int __weak
- set_orig_insn(struct uprobe *uprobe, struct mm_struct *mm, unsigned long vaddr)
- {
--	return uprobe_write_opcode(mm, vaddr,
-+	return uprobe_write_opcode(uprobe, mm, vaddr,
- 			*(uprobe_opcode_t *)&(uprobe->arch.insn));
- }
- 
--- 
-1.8.3.1
+Tested-by: Joel Stanley <joel@jms.id.au>
 
+Thanks,
+
+Joel
+
+
+>
+> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> ---
+>  drivers/i2c/busses/i2c-fsi.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
+> index 713959b44403..ff69ab6aa79a 100644
+> --- a/drivers/i2c/busses/i2c-fsi.c
+> +++ b/drivers/i2c/busses/i2c-fsi.c
+> @@ -696,9 +696,10 @@ static int fsi_i2c_probe(struct device *dev)
+>  static int fsi_i2c_remove(struct device *dev)
+>  {
+>         struct fsi_i2c_master *i2c = dev_get_drvdata(dev);
+> -       struct fsi_i2c_port *port;
+> +       struct fsi_i2c_port *port, *tmp;
+>
+> -       list_for_each_entry(port, &i2c->ports, list) {
+> +       list_for_each_entry_safe(port,tmp, &i2c->ports, list) {
+> +               list_del(&port->list);
+>                 i2c_del_adapter(&port->adapter);
+>                 kfree(port);
+>         }
+>
