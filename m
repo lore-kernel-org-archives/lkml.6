@@ -2,136 +2,227 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C48CC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ABDC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5482A20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:37:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5qvnv+h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5482A20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3302020693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3302020693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754093AbeFTKh1 (ORCPT
+        id S1754129AbeFTKhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:37:27 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40068 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752983AbeFTKh0 (ORCPT
+        Wed, 20 Jun 2018 06:37:47 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50996 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752932AbeFTKhp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:37:26 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n5-v6so5879655wmc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 03:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6s+p1TIw0pBcs/Fh+j/cgRtp6ZB9xEU7re7j+lxdpjQ=;
-        b=O5qvnv+hHg0fdhBwUG0wlAnuURNEfGZMzYOr3bjiHF5yhbgcrnM9grlBCUnko3YrFG
-         4O5x9f80gnpuy/dqq6kvOIJwEoVv/fs43A97elW7xNNo3MmJs/eJ7vOYM7zfxDvUQHYU
-         Ny2WzBUCwJNVTzg03IINmn0WThLiALgVUsobLVPhtJH+xZr6fAflOEO9OpbTLPzxTejJ
-         P2OklyvUBIEdBMsntPHbfC49WZ1uI3U2+q6mhYhhLvz2uEWaRjclO3JKaw0TPCLAcpIe
-         kMM90pwBVAeHG59OVRQBXUZh8m8f6ZAUWivIEHKhAo/MLxByNzq8AnEWy2b8YUYvYPl0
-         504Q==
+        Wed, 20 Jun 2018 06:37:45 -0400
+Received: by mail-wm0-f68.google.com with SMTP id e16-v6so5192923wmd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 03:37:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6s+p1TIw0pBcs/Fh+j/cgRtp6ZB9xEU7re7j+lxdpjQ=;
-        b=Qp9iKEO4z6DmYzl8uwNDLNykkDNFLv0wTf5lcGNEP08tuDmZ4g6IlmoBttH+5MzuAN
-         SPJzgdrnZCbOumPvlzx3x9C304fS6uaqyQ7ZeoqSlEYpVlGAUk7udLYCIAjEFGqkz2gM
-         mV4CWyWjQCz/1Dp7E9EgJ3DKOtERSL8wKYEspVWMnkM90PZO2vhhFRlvwjzgTSzO4hoc
-         u+C1BRYASPQcN6Be4PioMnjyripRZoA0IvxGZNEQaOnGKsOnRDl1hFPf/NUNlUTyxPy3
-         kQGLmJwXmvefFmxiXFOjV0yAlZwB9lwpSNV5XUCDYojnpyrKJdqvmVzXDBucqAvSiNeu
-         9p+Q==
-X-Gm-Message-State: APt69E22DNCRHpXE8i+Hca1/NoqeBe98xF54tH0sAzxZ5zQ8tp6TZ8iU
-        0CdC4/FT4qAct8xW2Wv71TqvRA==
-X-Google-Smtp-Source: ADUXVKLe88NqJ4GWcjwEN/+NrXIETuCePnyCZMc5AOVVH8oNwZ2PxrIne2FyjEBuvERc5bvVBZ0pRA==
-X-Received: by 2002:a1c:b211:: with SMTP id b17-v6mr1171088wmf.74.1529491044787;
-        Wed, 20 Jun 2018 03:37:24 -0700 (PDT)
-Received: from dvyukov-z840.muc.corp.google.com ([2a00:79e0:15:10:8971:4ae9:dd1c:10e])
-        by smtp.gmail.com with ESMTPSA id e81-v6sm3567427wmi.28.2018.06.20.03.37.23
+        bh=+GyKN4+ZjSubA3jQ+29qRWbd0fXlECakEqgP/B7ZN+A=;
+        b=TnEL52IdceoYuzI2dEzJCJziaeMjkn2KCo3BfsBEXyww7cmmHFxTs62AJB1yGWexzk
+         9TTu8l8lsCnsos+ouzAsVol3yypZ8wg3rpxIX4gkfm1wCvNtglLQ5Rz9YX2tMOc22Miw
+         a8eFkKHjrYE33SY8nkS1h40FC1dx3op2nHhM0D3arb8EfKCYe/actNSX3owN+MxnlmDS
+         IFEmPGfrFFyGlN4JbZild48ulNK2zmMrzMRJ45oUhDq7Pf0xBYU9YTfQN08XVUYitrk5
+         IaQh5RRFhvEYYs7Hjcwu5bI4mKtBT3X+d8WM6EovqcWItuqri+F0Ir83wbITBu0U0Zab
+         zXJA==
+X-Gm-Message-State: APt69E3aclL6mR6DzfvlBsBxsHg8WhPD1DkqSAK9QOdCYSjGUBKF89k/
+        xXJYpvTvUib2M84M+c82I1A=
+X-Google-Smtp-Source: ADUXVKJAN/1wxmTn2yU8j5+jKidH+qaeSnRHGqPkPD9/YMRLmIIiyMYgZd03t00vIpqBRRrA9tPasQ==
+X-Received: by 2002:aa7:c6c3:: with SMTP id b3-v6mr17750541eds.302.1529491064341;
+        Wed, 20 Jun 2018 03:37:44 -0700 (PDT)
+Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id e1-v6sm974072edr.23.2018.06.20.03.37.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 03:37:23 -0700 (PDT)
-From:   Dmitry Vyukov <dvyukov@gmail.com>
-To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>
-Subject: [PATCH] include/asm-generic/bug.h: clarify valid uses of WARN()
-Date:   Wed, 20 Jun 2018 12:37:16 +0200
-Message-Id: <20180620103716.61636-1-dvyukov@gmail.com>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+        Wed, 20 Jun 2018 03:37:43 -0700 (PDT)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     <linux-mm@kvack.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Greg Thelen <gthelen@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [RFC PATCH] memcg, oom: move out_of_memory back to the charge path
+Date:   Wed, 20 Jun 2018 12:37:36 +0200
+Message-Id: <20180620103736.13880-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Michal Hocko <mhocko@suse.com>
 
-Explicitly state that WARN*() should be used only for recoverable
-kernel issues/bugs and that it should not be used for any kind of
-invalid external inputs or transient conditions.
+3812c8c8f395 ("mm: memcg: do not trap chargers with full callstack on OOM")
+has changed the ENOMEM semantic of memcg charges. Rather than invoking
+the oom killer from the charging context it delays the oom killer to the
+page fault path (pagefault_out_of_memory). This in turn means that many
+users (e.g. slab or g-u-p) will get ENOMEM when the corresponding memcg
+hits the hard limit and the memcg is is OOM. This is behavior is
+inconsistent with !memcg case where the oom killer is invoked from the
+allocation context and the allocator keeps retrying until it succeeds.
 
-Motivation: it's a very useful capability to be able to understand
-if a particular kernel splat means a kernel bug or simply an invalid
-user-space program. For the former one wants to notify kernel developers,
-while notifying kernel developers for the latter is annoying.
-Even a kernel developer may not know what to do with a WARNING
-in an unfamiliar subsystem. This is especially critical for any automated
-testing systems that may use panic_on_warn and mail kernel developers.
+The difference in the behavior is user visible. mmap(MAP_POPULATE) might
+result in not fully populated ranges while the mmap return code doesn't
+tell that to the userspace. Random syscalls might fail with ENOMEM etc.
 
-The clear separation also serves as an additional documentation:
-is it a condition that must never occur because of additional
-checks/logic elsewhere? or is it simply a check for invalid inputs
-or unfortunate conditions?
+The primary motivation of the different memcg oom semantic was the
+deadlock avoidance. Things have changed since then, though. We have
+an async oom teardown by the oom reaper now and so we do not have to
+rely on the victim to tear down its memory anymore. Therefore we can
+return to the original semantic as long as the memcg oom killer is not
+handed over to the users space.
 
-Use of pr_err() for user messages also leads to better error messages.
-"Something is wrong in file foo on line X" is not particularly useful
-message for end user. pr_err() forces developers to write more meaningful
-error messages for user.
+There is still one thing to be careful about here though. If the oom
+killer is not able to make any forward progress - e.g. because there is
+no eligible task to kill - then we have to bail out of the charge path
+to prevent from same class of deadlocks. We have basically two options
+here. Either we fail the charge with ENOMEM or force the charge and
+allow overcharge. The first option has been considered more harmful than
+useful because rare inconsistencies in the ENOMEM behavior is hard to
+test for and error prone. Basically the same reason why the page
+allocator doesn't fail allocations under such conditions. The later
+might allow runaways but those should be really unlikely unless somebody
+misconfigures the system. E.g. allowing to migrate tasks away from the
+memcg to a different unlimited memcg with move_charge_at_immigrate
+disabled.
 
-As of now we are almost there. We are doing systematic kernel testing
-with panic_on_warn and are not seeing massive amounts of false positives.
-But every now and then another WARN on ENOMEM or invalid inputs pops up
-and leads to a lengthy argument each time. The goal of this change
-is to officially document the rules.
-
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- include/asm-generic/bug.h | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-index a7613e1b0c87..20561a60db9c 100644
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -75,9 +75,19 @@ struct bug_entry {
+Hi,
+we have discussed this at LSFMM this year and my recollection is that
+we have agreed that we should do this. So I am sending the patch as an
+RFC. Please note I have only forward ported the patch without any
+testing yet. I would like to see a general agreement before I spend more
+time on this.
+
+Thoughts? Objections?
+
+ mm/memcontrol.c | 67 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 56 insertions(+), 11 deletions(-)
+
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e6f0d5ef320a..7fe3ce1fd625 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1483,28 +1483,54 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
+ 		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
+ }
  
- /*
-  * WARN(), WARN_ON(), WARN_ON_ONCE, and so on can be used to report
-- * significant issues that need prompt attention if they should ever
-- * appear at runtime.  Use the versions with printk format strings
-- * to provide better diagnostics.
-+ * significant kernel issues that need prompt attention if they should ever
-+ * appear at runtime.
-+ *
-+ * Do not use these macros when checking for invalid external inputs
-+ * (e.g. invalid system call arguments, or invalid data coming from
-+ * network/devices), and on transient conditions like ENOMEM or EAGAIN.
-+ * These macros should be used for recoverable kernel issues only.
-+ * For invalid external inputs, transient conditions, etc use
-+ * pr_err[_once/_ratelimited]() followed by dump_stack(), if necessary.
-+ * Do not include "BUG"/"WARNING" in format strings manually to make these
-+ * conditions distinguishable from kernel issues.
-+ *
-+ * Use the versions with printk format strings to provide better diagnostics.
-  */
- #ifndef __WARN_TAINT
- extern __printf(3, 4)
+-static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
++enum oom_status {
++	OOM_SUCCESS,
++	OOM_FAILED,
++	OOM_ASYNC,
++	OOM_SKIPPED
++};
++
++static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+ {
+-	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
+-		return;
++	if (order > PAGE_ALLOC_COSTLY_ORDER)
++		return OOM_SKIPPED;
+ 	/*
+ 	 * We are in the middle of the charge context here, so we
+ 	 * don't want to block when potentially sitting on a callstack
+ 	 * that holds all kinds of filesystem and mm locks.
+ 	 *
+-	 * Also, the caller may handle a failed allocation gracefully
+-	 * (like optional page cache readahead) and so an OOM killer
+-	 * invocation might not even be necessary.
++	 * cgroup1 allows disabling the OOM killer and waiting for outside
++	 * handling until the charge can succeed; remember the context and put
++	 * the task to sleep at the end of the page fault when all locks are
++	 * released.
++	 *
++	 * On the other hand, in-kernel OOM killer allows for an async victim
++	 * memory reclaim (oom_reaper) and that means that we are not solely
++	 * relying on the oom victim to make a forward progress and we can
++	 * invoke the oom killer here.
+ 	 *
+-	 * That's why we don't do anything here except remember the
+-	 * OOM context and then deal with it at the end of the page
+-	 * fault when the stack is unwound, the locks are released,
+-	 * and when we know whether the fault was overall successful.
++	 * Please note that mem_cgroup_oom_synchronize might fail to find a
++	 * victim and then we have rely on mem_cgroup_oom_synchronize otherwise
++	 * we would fall back to the global oom killer in pagefault_out_of_memory
+ 	 */
++	if (!memcg->oom_kill_disable) {
++		if (mem_cgroup_out_of_memory(memcg, mask, order))
++			return OOM_SUCCESS;
++
++		WARN(!current->memcg_may_oom,
++				"Memory cgroup charge failed because of no reclaimable memory! "
++				"This looks like a misconfiguration or a kernel bug.");
++		return OOM_FAILED;
++	}
++
++	if (!current->memcg_may_oom)
++		return OOM_SKIPPED;
+ 	css_get(&memcg->css);
+ 	current->memcg_in_oom = memcg;
+ 	current->memcg_oom_gfp_mask = mask;
+ 	current->memcg_oom_order = order;
++
++	return OOM_ASYNC;
+ }
+ 
+ /**
+@@ -1899,6 +1925,7 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	unsigned long nr_reclaimed;
+ 	bool may_swap = true;
+ 	bool drained = false;
++	bool oomed = false;
+ 
+ 	if (mem_cgroup_is_root(memcg))
+ 		return 0;
+@@ -1986,6 +2013,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	if (nr_retries--)
+ 		goto retry;
+ 
++	if (gfp_mask & __GFP_RETRY_MAYFAIL && oomed)
++		goto nomem;
++
+ 	if (gfp_mask & __GFP_NOFAIL)
+ 		goto force;
+ 
+@@ -1994,8 +2024,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 
+ 	memcg_memory_event(mem_over_limit, MEMCG_OOM);
+ 
+-	mem_cgroup_oom(mem_over_limit, gfp_mask,
++	/*
++	 * keep retrying as long as the memcg oom killer is able to make
++	 * a forward progress or bypass the charge if the oom killer
++	 * couldn't make any progress.
++	 */
++	oom_status = mem_cgroup_oom(mem_over_limit, gfp_mask,
+ 		       get_order(nr_pages * PAGE_SIZE));
++	switch (oom_status) {
++	case OOM_SUCCESS:
++		nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
++		oomed = true;
++		goto retry;
++	case OOM_FAILED:
++		goto force;
++	default:
++		goto nomem;
++	}
+ nomem:
+ 	if (!(gfp_mask & __GFP_NOFAIL))
+ 		return -ENOMEM;
 -- 
-2.18.0.rc1.244.gcf134e6275-goog
+2.17.1
 
