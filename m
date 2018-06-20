@@ -2,147 +2,113 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE30C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F48C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270352083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FF8720874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:43:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EYlFIv/X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270352083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="kn4iMvzh";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AhbI22Ym"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF8720874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933383AbeFTXnP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 19:43:15 -0400
-Received: from mail-it0-f73.google.com ([209.85.214.73]:58184 "EHLO
-        mail-it0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933012AbeFTXmF (ORCPT
+        id S933443AbeFTXnT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 19:43:19 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:36265 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933135AbeFTXnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 19:42:05 -0400
-Received: by mail-it0-f73.google.com with SMTP id 13-v6so1122865itl.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:42:04 -0700 (PDT)
+        Wed, 20 Jun 2018 19:43:16 -0400
+Received: by mail-yw0-f193.google.com with SMTP id t198-v6so488894ywc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:43:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
-         :cc;
-        bh=Fy6bOjKKTweFLCCTIlnpZiRcE4qX5oDENmYHoVBVYu0=;
-        b=EYlFIv/X1rwRRvH6HBeswuuq9mXdgp0FFxajLAYbWnE5gdZ3zbN/3KuG+dYegpkryT
-         33KcDXWW9Lrv6VIS5f2ji35/kqebqU6s20jnc9zEoSMAFnGvVORwm+EUsjKxVMC0KfLu
-         NWa4tTAp9re+zcIBdEX5Ahj0aOQahK0xUzKHYHG7YEutzcLODtodLH5MkhdcojOaQOtF
-         v1kRJd3ajlizIlHm7FYi3ICF/LuKO/awN40MRlT/ZixXUa2CWWanaIg2kaxl9cJScqEq
-         ZSXjizzronzg5ZP8GwSe128Wqbt7hOS9qnvDZ8JFNZBurxAsxJsc9spgo8vX2hMDBx5e
-         CDoA==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=hrH6HRK3PEaSJxveilPPh7n4ZPk8zcx3D0T5g4UMz6U=;
+        b=kn4iMvzhOxKfEborGpb0OueByq2HL6ykOBzqg/BjtkRXYKwDFHqKrnS7cfhhMy6rC6
+         6mYwrKMi0Wxf3igIZt61Q+nnRxN4gcmAR+jQOnSdH+iPFKMEfrv22LbOq4m2M3AfUFSx
+         NOPOom4aBp5P9xmygzU0RuXl5wRZqe27+SORfzmftK09fHcLSGj+lzNlnFpKBrLA8Axn
+         z9qSlFPTrd/kaPxu5H81cyT484T3U9wL+xp7GKROYUr7UN0M7+qcyE5BjUEhmA8k3wJ8
+         pDHrjdM3UyNAQY1VCSl1VXz+uUitZEkLJiJOkj0rvZafcieYTGWHRscBbTcdCMXHgyPk
+         FE5A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=hrH6HRK3PEaSJxveilPPh7n4ZPk8zcx3D0T5g4UMz6U=;
+        b=AhbI22YmwqR/Eb7UUxMNxTmUCV932bYKVQILv9ga8Mdz3So1h/UsEAS5RPDvLV7QyW
+         5jXYpx7OOaBaVkUqMGthMF08bbO73KNqTtgL92CaoHP4mKaxdUiJPuN0VIyGC5PrM9ua
+         lK32nfdrEdHrpBlqBiDHATgbImXia3f+EL1CI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
-         :references:subject:from:to:cc;
-        bh=Fy6bOjKKTweFLCCTIlnpZiRcE4qX5oDENmYHoVBVYu0=;
-        b=m/IfsJsle7hAxblPXbV3J5ez92GNyON97RNwZOqNw5vqiu4z8GheSbLjeklf0WmKqm
-         yFST/aTBQoG3XERB4hH32kkLf6rud6VUrQVYlXtk6o0keXbyRAonsch5OfQ6aaSrp7fT
-         lYblWzwjFPZlO3LRP9B7VK69HKRf12D2EGl8T4hn1KZG5CdItGPaJN9t51OyTr+8nsTq
-         kmb33d9ETKEJ7bpGZjhA8oQXrgP22V0uD/PSnHxhN0HuvrP7p1NFEQheszOSznnb3bvd
-         kRrL7FqscRPPESXMjVdXKPz9jZ9o+U+mKzvkY8qhFeu9qAie8azbGZU0G667ZJjc99GY
-         S2Ig==
-X-Gm-Message-State: APt69E01ysqK1HxbKfVIGEfbbu3k+U4/a5vA4o0rpXFKl+PbnMKGDqtK
-        kz4Q/A/Lc42Sapqh4dI3r/nUGRTqSGm8
-X-Google-Smtp-Source: ADUXVKJ3hxZ4qN9tudZm+AqJulChSfUbtz2CoSjp7A+IreDXcm/tXvB56R8D5nvz+iubhXg5MwWKysptnwsg
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=hrH6HRK3PEaSJxveilPPh7n4ZPk8zcx3D0T5g4UMz6U=;
+        b=gcpJVYWX01YjR3nnCaIN09K8mWUABW0m3OjkTqgORbCnGAK/LNgiJR+TzdXfr/Adr7
+         p979x3K3wKALvOqNQpY9yasQRFdv0IUPR24DkHech8GVmOP4Kg0cySv1TZWqygLqNZPX
+         nOsctRAECySzR+nWjYf3AA/Jfn++hr2rMy2X6bx4LOkUNXT/YtG4U9nADv0LnvvuIAG2
+         6srVUXn4/JtD9IEsWbiNg8qvns2juwsPVttq9XZWlGw4XO4h64/DUqdNkguJH1+6o+43
+         eLUp176xbN/c4JFehgRMuGV0KtWUKfmZxlRF5VzSDio+k6K5MVHH+K+54ngWEXEL+gDb
+         fhAw==
+X-Gm-Message-State: APt69E0aj5wLc/cva4Yaz5IMl7YlRpzBEpUzZkD2pkfvoQoHCyB+jIJJ
+        9bnOELLiPeuCDvN1qsulgCqvjzvvMWHzuFM1aBnd4Q==
+X-Google-Smtp-Source: ADUXVKKDutRUEswl4FNIBI1cSA3sd5RcuEp3vHR+lmbZpplplK7+R4OpIiZ9KUucQWK2W/YrgeGfvD2m4Ak1DMTHSJU=
+X-Received: by 2002:a0d:d105:: with SMTP id t5-v6mr11437805ywd.53.1529538195526;
+ Wed, 20 Jun 2018 16:43:15 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:28c7:: with SMTP id h190-v6mr1716242ith.20.1529538124185;
- Wed, 20 Jun 2018 16:42:04 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 16:41:45 -0700
-In-Reply-To: <20180620234147.48438-1-rajatja@google.com>
-Message-Id: <20180620234147.48438-3-rajatja@google.com>
-References: <20180522222805.80314-1-rajatja@google.com> <20180620234147.48438-1-rajatja@google.com>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-Subject: [PATCH v5 3/5] PCI/AER: Add sysfs attributes to provide breakdown of AERs
-From:   Rajat Jain <rajatja@google.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Thomas Tai <thomas.tai@oracle.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
-        Kyle McMartin <jkkm@fb.com>, rajatxjain@gmail.com,
-        helgaas@kernel.org
-Cc:     Rajat Jain <rajatja@google.com>
+Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 16:43:14
+ -0700 (PDT)
+In-Reply-To: <20180620233736.GA3250@fury>
+References: <20180620213141.GA8957@beast> <20180620233736.GA3250@fury>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Jun 2018 16:43:14 -0700
+X-Google-Sender-Auth: xHdNE1nvdewyHBhCtGcZJoQCRlk
+Message-ID: <CAGXu5jL4V9sL7Ai1SVTNkg8OE70c6kLJBdqNtj9Z06MOb4zG0g@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: wmi: Do not mix pages and kmalloc
+To:     Darren Hart <dvhart@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        =?UTF-8?B?TWloYWkgRG9uyJt1?= <mihai.dontu@gmail.com>,
+        Mario.Limonciello@dell.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add sysfs attributes to provide breakdown of the AERs seen,
-into different type of correctable or uncorrectable errors:
+On Wed, Jun 20, 2018 at 4:37 PM, Darren Hart <dvhart@infradead.org> wrote:
+> On Wed, Jun 20, 2018 at 02:31:41PM -0700, Kees Cook wrote:
+>> The probe handler_data was being allocated with __get_free_pages()
+>> for no reason I could find. The error path was using kfree(). Since
+>
+> v4 of Mario's series used kmalloc:
+> https://patchwork.kernel.org/patch/9985827/
+>
+> This was changed in v10 to use __get_free_pages:
+> https://patchwork.kernel.org/patch/10018023/
+>
+> But... I'm not finding the discussion that led to this change.... Mario,
+> do you recall? Something about contiguous memory? We had a similar
+> discussion on an earlier series:
+>
+> https://patchwork.kernel.org/patch/9975277/
 
-dev_breakdown_correctable
-dev_breakdown_uncorrectable
+FWIW, kmalloc gets you contiguous memory...
 
-Signed-off-by: Rajat Jain <rajatja@google.com>
----
-v5: Fix the signature
-v4: use "%llu" in place of "%llx"
-v3: Merge everything in aer.c
+But if the reason is found and needs to stay, the probe error path's
+kfree() needs to be fixed, and __GFP_COMP needs to be added to the
+free page flags.
 
- drivers/pci/pcie/aer.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+-Kees
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index ce0d675d7bd3..c989bb5bb6f1 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -587,10 +587,38 @@ aer_stats_aggregate_attr(dev_total_cor_errs);
- aer_stats_aggregate_attr(dev_total_fatal_errs);
- aer_stats_aggregate_attr(dev_total_nonfatal_errs);
- 
-+#define aer_stats_breakdown_attr(field, stats_array, strings_array)	\
-+	static ssize_t							\
-+	field##_show(struct device *dev, struct device_attribute *attr,	\
-+		     char *buf)						\
-+{									\
-+	unsigned int i;							\
-+	char *str = buf;						\
-+	struct pci_dev *pdev = to_pci_dev(dev);				\
-+	u64 *stats = pdev->aer_stats->stats_array;			\
-+	for (i = 0; i < ARRAY_SIZE(strings_array); i++) {		\
-+		if (strings_array[i])					\
-+			str += sprintf(str, "%s = 0x%llu\n",		\
-+				       strings_array[i], stats[i]);	\
-+		else if (stats[i])					\
-+			str += sprintf(str, #stats_array "bit[%d] = 0x%llu\n",\
-+				       i, stats[i]);			\
-+	}								\
-+	return str-buf;							\
-+}									\
-+static DEVICE_ATTR_RO(field)
-+
-+aer_stats_breakdown_attr(dev_breakdown_correctable, dev_cor_errs,
-+			 aer_correctable_error_string);
-+aer_stats_breakdown_attr(dev_breakdown_uncorrectable, dev_uncor_errs,
-+			 aer_uncorrectable_error_string);
-+
- static struct attribute *aer_stats_attrs[] __ro_after_init = {
- 	&dev_attr_dev_total_cor_errs.attr,
- 	&dev_attr_dev_total_fatal_errs.attr,
- 	&dev_attr_dev_total_nonfatal_errs.attr,
-+	&dev_attr_dev_breakdown_correctable.attr,
-+	&dev_attr_dev_breakdown_uncorrectable.attr,
- 	NULL
- };
- 
 -- 
-2.18.0.rc1.244.gcf134e6275-goog
-
+Kees Cook
+Pixel Security
