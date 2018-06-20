@@ -7,230 +7,176 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AEADC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04A3C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA81720836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:15:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 550F220836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:15:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/0juxyi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA81720836
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXtdIJUa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 550F220836
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754093AbeFTNPg (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:15:36 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35554 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753952AbeFTNPd (ORCPT
+        id S932153AbeFTNPs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 09:15:48 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:39032 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754055AbeFTNPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:15:33 -0400
-Received: by mail-wr0-f196.google.com with SMTP id l8-v6so1711003wrr.2;
-        Wed, 20 Jun 2018 06:15:32 -0700 (PDT)
+        Wed, 20 Jun 2018 09:15:34 -0400
+Received: by mail-vk0-f68.google.com with SMTP id r83-v6so1907212vkf.6;
+        Wed, 20 Jun 2018 06:15:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=tB73JhffxrpYdtji+q3qnZzVuto+tI3jWk47X3c1nvA=;
-        b=S/0juxyilLFA4aaUga/27I71xkSW3d1tw24uJNM9BA+a8ybsDwBUtSi0Ik49QRblqy
-         mNgu+1TxjELlWRgFE4mXls4v9rcRfrl7yaFzAQNN7u8srFWC3F+Jdngswv6oyWS8RkC1
-         ONUT/+DiVofLpsmI6AvednVMxLQUSO3DVdovTmEUHAN0NPE54ZxWxS879/NkMLz18KtU
-         BEt3Jv12H+xoMAS/O9SWcmtKkkRDH2wlv7Q8NKtV/iF88/NdN8Tpq1C+l5RqmsoXxdef
-         U5i4NUhoKsOwCIz3TycAmMAPMtND/bP04NNCegpxctzYC6GZoJLD+H36lZEi3ajSlUZM
-         ACrA==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=SdzhVU+/385edT4mLOyG72TpiSFn2kiuXxwKCUjXTNo=;
+        b=AXtdIJUar/Fa/LyTjWXiOCFy0yWYpPi1qgSM3MUU++Bwr0UIhj/0Bbfsl20YpTjBxC
+         +vfntv4X0v5UcYAYp011rqWr5PHjAAR50h03dvBCOwixcU0yvUwQgv2c4xuhUk1TXnqu
+         X6+oIymnLPkDR0a2ncTSEI8DzbtXRs/1uAOAcyQhnmD735jjKNnXbugr366iRY5jrzfb
+         KZWavfo6yhtg+TkxHcjsRBZ6oCo+ekfEndQMNg00GiCdZOwe/hBu9GtCzROM0qW+CjLS
+         k3dUkZVnHvCuuVUvMF2qaOG674uxuLNOb91Is9X0tjCqBQhKLFzOHAYgTz19zwSe8CYb
+         s5wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:cc;
-        bh=tB73JhffxrpYdtji+q3qnZzVuto+tI3jWk47X3c1nvA=;
-        b=iIjjpooqXCPSK0MHhE5wtwxS1/iZ03CYaFXkz4JKFRrAf3FcUfQWTYQShqtyzbW5Ej
-         qah6q/bCNinW/9NWGau3FH430O0mzgxMBro4XwkhIFdnEiWvsKpqYy0XcRjAuXOSfEkI
-         3bX1Bg1V579eP9HoA6YoSjbyfX2Szk5Sg1P6fl5InQwsbJid8W1iy7d7s3aWlHW67Do2
-         L9L6nhOQDVdk+VfgS0Zldds4Aij5h/tLiQhsWFUITXagUqWxHvEvjOfKSv5BEqAYggVs
-         1Mcs59+7y94E2g1XgXuj63xWECxmRuYQWoWaapVi5hSRxBs+OmZFhKy0UZHcJVtrJmNh
-         geoA==
-X-Gm-Message-State: APt69E3sQNAF9VqKtYk8Rz9GQ2lFqq/4/M4xBoayYVA8QtU6IFVMenO4
-        9YmFLIOePp2fjSdtvZh3daHoS8uLrKhJWJMH6sM=
-X-Google-Smtp-Source: ADUXVKKfjWPsDyMfAsl8c1LxI18yuCv4pDQBfdUdE0XkzdIHRgmA2nNsKzlg3pifs2G3QbeUfPAMpbHSM7wePgoYTbY=
-X-Received: by 2002:adf:9025:: with SMTP id h34-v6mr19026421wrh.123.1529500532253;
- Wed, 20 Jun 2018 06:15:32 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=SdzhVU+/385edT4mLOyG72TpiSFn2kiuXxwKCUjXTNo=;
+        b=sL2GhkNYBosVHfl9DnyxKggzQNnb8NpIKLkGlN2YYbFELsEFkeaPHR5xMrLcYbJ5ff
+         Se5pmTOcNm89r4MKNfzisL94bKbeVE/xoYMN1jH8CDf+NGUaNhbDbA3sS/sytuPfzZ9c
+         lQu5EwEvnbeTyDxpgNgUCsdXBfPQQRkBeig1NWU7FHwvORogYRgMZB676evQrgp0Fjgh
+         ZlFdyvH01Q4SXDetKR0MKwQtQVbnYAjEPVMZR6cZ+mcH2W/vYrkIhTHYrhpuQ1dQbuLO
+         wzetg08dHO4twNzorkq3ZWgp44KM8flJk3gi855TV3FOc87/T70enp4VzSGFtdhngP2t
+         tJIw==
+X-Gm-Message-State: APt69E3eVZV4qd2CqQXURoa7O4EJX41ZY+SskeAuRX1ZXhxtdxv+2++d
+        ekzJpt9tNguOSr+DloiCNBkQ7zRUWRlXnhR3vOUrx71e9Pc=
+X-Google-Smtp-Source: ADUXVKK8f/rzBqb0qyTAvJNi6bL9cjX7+bhhJQdowvludnyF4G9bM8y+R3CAR9O5UoWKDkmtCOwGoRqdw04o5VGpqQY=
+X-Received: by 2002:a1f:1e10:: with SMTP id e16-v6mr12440406vke.176.1529500533343;
+ Wed, 20 Jun 2018 06:15:33 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:5c8d:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 06:15:11
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 06:15:32
  -0700 (PDT)
-Reply-To: andrea.merello@gmail.com
-In-Reply-To: <DM6PR02MB4361458180616B591C6742E2C7770@DM6PR02MB4361.namprd02.prod.outlook.com>
-References: <20180620083653.17010-1-andrea.merello@gmail.com> <DM6PR02MB4361458180616B591C6742E2C7770@DM6PR02MB4361.namprd02.prod.outlook.com>
-From:   Andrea Merello <andrea.merello@gmail.com>
-Date:   Wed, 20 Jun 2018 15:15:11 +0200
-Message-ID: <CAN8YU5N8en1dtUShuK=0KCtLk3v4kVqm-TcM4J0=XBZo0=Sh-A@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dmaengine: xilinx_dma: fix splitting transfer causes misalignments
-To:     Radhey Shyam Pandey <radheys@xilinx.com>
-Cc:     "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180530090633.GA15390@panicking>
+References: <1527493857-2220-1-git-send-email-michael@amarulasolutions.com>
+ <5B0D1C9E.4000800@broadcom.com> <20180530090633.GA15390@panicking>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 20 Jun 2018 16:15:32 +0300
+Message-ID: <CAHp75VfZoUV7u5JhquPrfE8qMWH8dv4WBaSvsy9H0DOS6vW6BA@mail.gmail.com>
+Subject: Re: [PATCH V2] brcmfmac: stop watchdog before detach and free everything
+To:     Michael Trimarchi <michael@amarulasolutions.com>
+Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        Ian Molton <ian@mnementh.co.uk>,
+        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
+        "open list:BROADCOM BRCM80211 IEEE802.11n WIRELESS DRIVER" 
+        <brcm80211-dev-list.pdl@broadcom.com>,
+        brcm80211-dev-list@cypress.com, netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 1:37 PM, Radhey Shyam Pandey <radheys@xilinx.com> wrote:
->> -----Original Message-----
->> From: dmaengine-owner@vger.kernel.org [mailto:dmaengine-
->> owner@vger.kernel.org] On Behalf Of Andrea Merello
->> Sent: Wednesday, June 20, 2018 2:07 PM
->> To: vkoul@kernel.org; dan.j.williams@intel.com; Michal Simek
->> <michals@xilinx.com>; Appana Durga Kedareswara Rao
->> <appanad@xilinx.com>; dmaengine@vger.kernel.org
->> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
->> Andrea Merello <andrea.merello@gmail.com>
->> Subject: [PATCH 1/6] dmaengine: xilinx_dma: fix splitting transfer causes
->> misalignments
+On Wed, May 30, 2018 at 12:06 PM, Michael Trimarchi
+<michael@amarulasolutions.com> wrote:
+> Using built-in in kernel image without a firmware in filesystem
+> or in the kernel image can lead to a kernel NULL pointer deference.
+> Watchdog need to be stopped in brcmf_sdio_remove
 >
-> We should rephrase commit message to something like "In axidma
-> slave_sg and dma_cylic mode align split descriptors"
-
-OK
-
->>
->> Whenever a single or cyclic transaction is prepared, the driver
->> could eventually split it over several SG descriptors in order
->> to deal with the HW maximum transfer length.
->>
->> This could end up in DMA operations starting from a misaligned
->> address. This seems fatal for the HW.
-> This seems fatal for the HW if DRE is not enabled.
-
-OK
-
->>
->> This patch eventually adjusts the transfer size in order to make sure
->> all operations start from an aligned address.
->>
->> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
->> ---
->>  drivers/dma/xilinx/xilinx_dma.c | 27 ++++++++++++++++++++-------
->>  1 file changed, 20 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
->> index 27b523530c4a..a516e7ffef21 100644
->> --- a/drivers/dma/xilinx/xilinx_dma.c
->> +++ b/drivers/dma/xilinx/xilinx_dma.c
->> @@ -376,6 +376,7 @@ struct xilinx_dma_chan {
->>       void (*start_transfer)(struct xilinx_dma_chan *chan);
->>       int (*stop_transfer)(struct xilinx_dma_chan *chan);
->>       u16 tdest;
->> +     u32 copy_mask;
-> We can reuse copy_align itself.  See below.
-
-OK
-
->>  };
->>
->>  /**
->> @@ -1789,10 +1790,14 @@ static struct dma_async_tx_descriptor
->> *xilinx_dma_prep_slave_sg(
->>
->>                       /*
->>                        * Calculate the maximum number of bytes to transfer,
->> -                      * making sure it is less than the hw limit
->> +                      * making sure it is less than the hw limit and that
->> +                      * the next chuck start address is aligned
+> The system is going down NOW!
+> [ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual address 000002f8
+> Sent SIGTERM to all processes
+> [ 1348.121412] Mem abort info:
+> [ 1348.126962]   ESR = 0x96000004
+> [ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
+> [ 1348.135948]   SET = 0, FnV = 0
+> [ 1348.138997]   EA = 0, S1PTW = 0
+> [ 1348.142154] Data abort info:
+> [ 1348.145045]   ISV = 0, ISS = 0x00000004
+> [ 1348.148884]   CM = 0, WnR = 0
+> [ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
+> [ 1348.158475] [00000000000002f8] pgd=0000000000000000
+> [ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+> [ 1348.168927] Modules linked in: ipv6
+> [ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted 4.17.0-rc5-next-20180517 #18
+> [ 1348.180757] Hardware name: Amarula A64-Relic (DT)
+> [ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
+> [ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
+> [ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
+> [ 1348.200253] sp : ffff00000b85be30
+> [ 1348.203561] x29: ffff00000b85be30 x28: 0000000000000000
+> [ 1348.208868] x27: ffff00000b6cb918 x26: ffff80003b990638
+> [ 1348.214176] x25: ffff0000087b1a20 x24: ffff80003b94f800
+> [ 1348.219483] x23: ffff000008e620c8 x22: ffff000008f0b660
+> [ 1348.224790] x21: ffff000008c6a858 x20: 00000000fffffe00
+> [ 1348.230097] x19: ffff80003b94f800 x18: 0000000000000001
+> [ 1348.235404] x17: 0000ffffab2e8a74 x16: ffff0000080d7de8
+> [ 1348.240711] x15: 0000000000000000 x14: 0000000000000400
+> [ 1348.246018] x13: 0000000000000400 x12: 0000000000000001
+> [ 1348.251324] x11: 00000000000002c4 x10: 0000000000000a10
+> [ 1348.256631] x9 : ffff00000b85bc40 x8 : ffff80003be11870
+> [ 1348.261937] x7 : ffff80003dfc7308 x6 : 000000078ff08b55
+> [ 1348.267243] x5 : 00000139e1058400 x4 : 0000000000000000
+> [ 1348.272550] x3 : dead000000000100 x2 : 958f2788d6618100
+> [ 1348.277856] x1 : 00000000fffffe00 x0 : 0000000000000000
 >
-> /s/chuck/chunk
 
-OK
+It was a 100% (or so) reproducible on Intel Edison with vanilla kernel
+and linux-firmware package, while calibration file (*.txt) is not in
+distribution.
 
->>                        */
->> -                     copy = min_t(size_t, sg_dma_len(sg) - sg_used,
->> -                                  XILINX_DMA_MAX_TRANS_LEN);
->> +                     copy = sg_dma_len(sg) - sg_used;
->> +                     if (copy > XILINX_DMA_MAX_TRANS_LEN)
->> +                             copy = XILINX_DMA_MAX_TRANS_LEN &
->> +                                     chan->copy_mask;
->> +
+The system is going down NOW!
+Sent SIGTERM to all processes
+[  118.695900] PGD 800000003bc3f067 P4D 800000003bc3f067 PUD 3bc5b067 PMD 0
+[  118.695935] Oops: 0002 [#1] SMP PTI
+[  118.711905] CPU: 1 PID: 1255 Comm: brcmf_wdog/mmc2 Not tainted
+4.18.0-rc1-next-20180618+ #59
+[  118.720354] Hardware name: Intel Corporation Merrifield/BODEGA BAY,
+BIOS 542 2015.01.21:18.19.48
+[  118.729181] RIP: 0010:brcmf_sdiod_freezer_count+0x7/0x10 [brcmfmac]
+
+After this patch applied problem was gone
+
+Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+P.S. Sorry it took a bit longer.
+
+> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+> ---
+>  drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >
+> diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> index 412a05b..061f69d 100644
+> --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+> @@ -4294,6 +4294,13 @@ void brcmf_sdio_remove(struct brcmf_sdio *bus)
+>         brcmf_dbg(TRACE, "Enter\n");
 >
-> In below implementation, we can reuse copy_align.
-> Same for dma_cyclic.
+>         if (bus) {
+> +               /* Stop watchdog task */
+> +               if (bus->watchdog_tsk) {
+> +                       send_sig(SIGTERM, bus->watchdog_tsk, 1);
+> +                       kthread_stop(bus->watchdog_tsk);
+> +                       bus->watchdog_tsk = NULL;
+> +               }
+> +
+>                 /* De-register interrupt handler */
+>                 brcmf_sdiod_intr_unregister(bus->sdiodev);
 >
-> if ((copy + sg_used  < sg_dma_len(sg)) &&
->         chan->xdev->common.copy_align) {
->         /* If this is not the last descriptor, make sure
->           * the next one will be properly aligned
->          */
->         copy = rounddown(copy,
->                (1 << chan->xdev->common.copy_align));
->      }
-
-OK for the general idea. But to me it seems a bit more complicated than needed:
-What's the point in setting 'copy' with min_t, performing also the
-subtraction sg_dma_len(sg) - sg_used, and then add sg_used again? What
-about something like:
+> --
+> 2.7.4
 
 
--                       copy = min_t(size_t, sg_dma_len(sg) - sg_used,
--                                    XILINX_DMA_MAX_TRANS_LEN);
-+                       copy = sg_dma_len(sg) - sg_used;
-+                       if (copy > XILINX_DMA_MAX_TRANS_LEN &&
-+                           chan->xdev->common.copy_align)
-+                               copy = rounddown(XILINX_DMA_MAX_TRANS_LEN,
-+                                        (1 << chan->xdev->common.copy_align));
-+
 
-
->>                       hw = &segment->hw;
->>
->>                       /* Fill in the descriptor */
->> @@ -1894,10 +1899,14 @@ static struct dma_async_tx_descriptor
->> *xilinx_dma_prep_dma_cyclic(
->>
->>                       /*
->>                        * Calculate the maximum number of bytes to transfer,
->> -                      * making sure it is less than the hw limit
->> +                      * making sure it is less than the hw limit and that
->> +                      * the next chuck start address is aligned
->>                        */
->> -                     copy = min_t(size_t, period_len - sg_used,
->> -                                  XILINX_DMA_MAX_TRANS_LEN);
->> +                     copy = period_len - sg_used;
->> +                     if (copy > XILINX_DMA_MAX_TRANS_LEN)
->> +                             copy = XILINX_DMA_MAX_TRANS_LEN &
->> +                                     chan->copy_mask;
->> +
->>                       hw = &segment->hw;
->>                       xilinx_axidma_buf(chan, hw, buf_addr, sg_used,
->>                                         period_len * i);
->> @@ -2402,8 +2411,12 @@ static int xilinx_dma_chan_probe(struct
->> xilinx_dma_device *xdev,
->>       if (width > 8)
->>               has_dre = false;
->>
->> -     if (!has_dre)
->> +     if (has_dre) {
->> +             chan->copy_mask = ~0;
->> +     } else {
->>               xdev->common.copy_align = fls(width - 1);
->> +             chan->copy_mask = ~(width - 1);
->> +     }
->
-> As mentioned above we don't need this additional field.
-
-OK
-
->>
->>       if (of_device_is_compatible(node, "xlnx,axi-vdma-mm2s-channel") ||
->>           of_device_is_compatible(node, "xlnx,axi-dma-mm2s-channel") ||
->> --
->> 2.17.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+With Best Regards,
+Andy Shevchenko
