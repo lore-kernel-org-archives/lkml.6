@@ -2,107 +2,222 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F174EC1B0F6
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF25C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD8620693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:23:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD8620693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 02AB420693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:23:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RsoyxmhT";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RsoyxmhT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02AB420693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754829AbeFTJXq (ORCPT
+        id S1754867AbeFTJXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:23:46 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:16664 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754533AbeFTI3x (ORCPT
+        Wed, 20 Jun 2018 05:23:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38404 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754533AbeFTJXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:29:53 -0400
-X-UUID: 611210d8faf4464dbc01749cea1d0bc8-20180620
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2042717637; Wed, 20 Jun 2018 16:19:49 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 20 Jun 2018 16:19:45 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 20 Jun 2018 16:19:45 +0800
-From:   Stu Hsieh <stu.hsieh@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, "Stu Hsieh" <stu.hsieh@mediatek.com>
-Subject: [PATCH v7 19/29] drm/mediatek: add connection from RDMA1 to DSI3
-Date:   Wed, 20 Jun 2018 16:19:21 +0800
-Message-ID: <1529482771-2153-20-git-send-email-stu.hsieh@mediatek.com>
+        Wed, 20 Jun 2018 05:23:48 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D1692605BD; Wed, 20 Jun 2018 09:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529486627;
+        bh=SYcuEyoB2bpHHLk87M3ZJun6sZCBQpY53WV/xgL07fg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RsoyxmhT28c4oKfe11Kj9EwqJR3l6MKzqMTTp9b2KPTwHfBpwXuERZs4gclbv3OD9
+         50IfA9HscQbPciwgc8G9U7BBjcXeOunr3FzUubh8nCvQ045BwHCnYlOVYfim61pfwN
+         U0R2MMWi0WTiBUZIy7rKr4YcYU8z/cikZdEe+VDs=
+Received: from srichara-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sricharan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D6DB605BD;
+        Wed, 20 Jun 2018 09:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529486627;
+        bh=SYcuEyoB2bpHHLk87M3ZJun6sZCBQpY53WV/xgL07fg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RsoyxmhT28c4oKfe11Kj9EwqJR3l6MKzqMTTp9b2KPTwHfBpwXuERZs4gclbv3OD9
+         50IfA9HscQbPciwgc8G9U7BBjcXeOunr3FzUubh8nCvQ045BwHCnYlOVYfim61pfwN
+         U0R2MMWi0WTiBUZIy7rKr4YcYU8z/cikZdEe+VDs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D6DB605BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From:   Sricharan R <sricharan@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     sricharan@codeaurora.org
+Subject: [PATCH] arm: dts: qcom: Fix 'interrupts = <>' property to use proper  macros
+Date:   Wed, 20 Jun 2018 14:53:39 +0530
+Message-Id: <1529486619-443-1-git-send-email-sricharan@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the connection from RDMA1 to DSI3
+Fix all nodes to use proper GIC_* macros for the interrupt type and the
+interrupt trigger settings to avoid the boot warnings.
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/qcom-ipq8064.dtsi | 41 ++++++++++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 9cf2fcb4932a..d0d5f337ce14 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -90,10 +90,12 @@
- #define RDMA1_SOUT_DPI1			0x3
- #define RDMA1_SOUT_DSI1			0x1
- #define RDMA1_SOUT_DSI2			0x4
-+#define RDMA1_SOUT_DSI3			0x5
- #define DPI0_SEL_IN_RDMA1		0x1
- #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
- #define DSI1_SEL_IN_RDMA1		0x1
- #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
-+#define DSI3_SEL_IN_RDMA1		(0x1 << 16)
- #define COLOR1_SEL_IN_OVL1		0x1
+diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+index 1e0a3b4..70790ac 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -5,6 +5,7 @@
+ #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
+ #include <dt-bindings/clock/qcom,lcc-ipq806x.h>
+ #include <dt-bindings/soc/qcom,gsbi.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
  
- #define OVL_MOUT_EN_RDMA		0x1
-@@ -182,6 +184,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI2) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA1_SOUT_EN;
- 		value = RDMA1_SOUT_DSI2;
-+	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI3) {
-+		*addr = DISP_REG_CONFIG_DISP_RDMA1_SOUT_EN;
-+		value = RDMA1_SOUT_DSI3;
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA1_SOUT_EN;
- 		value = RDMA1_SOUT_DPI0;
-@@ -216,6 +221,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI2) {
- 		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
- 		value = DSI2_SEL_IN_RDMA1;
-+	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI3) {
-+		*addr = DISP_REG_CONFIG_DSIO_SEL_IN;
-+		value = DSI3_SEL_IN_RDMA1;
- 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
- 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
- 		value = COLOR1_SEL_IN_OVL1;
+ / {
+ 	model = "Qualcomm IPQ8064";
+@@ -43,7 +44,8 @@
+ 
+ 	cpu-pmu {
+ 		compatible = "qcom,krait-pmu";
+-		interrupts = <1 10 0x304>;
++		interrupts = <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) |
++					  IRQ_TYPE_LEVEL_HIGH)>;
+ 	};
+ 
+ 	reserved-memory {
+@@ -97,7 +99,7 @@
+ 			clock-names = "ahbix-clk",
+ 					"mi2s-osr-clk",
+ 					"mi2s-bit-clk";
+-			interrupts = <0 85 1>;
++			interrupts = <GIC_SPI 85 IRQ_TYPE_EDGE_RISING>;
+ 			interrupt-names = "lpass-irq-lpaif";
+ 			reg = <0x28100000 0x10000>;
+ 			reg-names = "lpass-lpaif";
+@@ -111,7 +113,7 @@
+ 			#gpio-cells = <2>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+-			interrupts = <0 16 0x4>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		intc: interrupt-controller@2000000 {
+@@ -125,11 +127,16 @@
+ 		timer@200a000 {
+ 			compatible = "qcom,kpss-timer",
+ 				     "qcom,kpss-wdt-ipq8064", "qcom,msm-timer";
+-			interrupts = <1 1 0x301>,
+-				     <1 2 0x301>,
+-				     <1 3 0x301>,
+-				     <1 4 0x301>,
+-				     <1 5 0x301>;
++			interrupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(2) |
++						 IRQ_TYPE_EDGE_RISING)>,
++				     <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(2) |
++						 IRQ_TYPE_EDGE_RISING)>,
++				     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(2) |
++						 IRQ_TYPE_EDGE_RISING)>,
++				     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(2) |
++						 IRQ_TYPE_EDGE_RISING)>,
++				     <GIC_PPI 5 (GIC_CPU_MASK_SIMPLE(2) |
++						 IRQ_TYPE_EDGE_RISING)>;
+ 			reg = <0x0200a000 0x100>;
+ 			clock-frequency = <25000000>,
+ 					  <32768>;
+@@ -177,7 +184,7 @@
+ 				compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
+ 				reg = <0x12490000 0x1000>,
+ 				      <0x12480000 0x1000>;
+-				interrupts = <0 195 0x0>;
++				interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&gcc GSBI2_UART_CLK>, <&gcc GSBI2_H_CLK>;
+ 				clock-names = "core", "iface";
+ 				status = "disabled";
+@@ -186,7 +193,7 @@
+ 			i2c@124a0000 {
+ 				compatible = "qcom,i2c-qup-v1.1.1";
+ 				reg = <0x124a0000 0x1000>;
+-				interrupts = <0 196 0>;
++				interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 				clocks = <&gcc GSBI2_QUP_CLK>, <&gcc GSBI2_H_CLK>;
+ 				clock-names = "core", "iface";
+@@ -215,7 +222,7 @@
+ 				compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
+ 				reg = <0x16340000 0x1000>,
+ 				      <0x16300000 0x1000>;
+-				interrupts = <0 152 0x0>;
++				interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&gcc GSBI4_UART_CLK>, <&gcc GSBI4_H_CLK>;
+ 				clock-names = "core", "iface";
+ 				status = "disabled";
+@@ -224,7 +231,7 @@
+ 			i2c@16380000 {
+ 				compatible = "qcom,i2c-qup-v1.1.1";
+ 				reg = <0x16380000 0x1000>;
+-				interrupts = <0 153 0>;
++				interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 				clocks = <&gcc GSBI4_QUP_CLK>, <&gcc GSBI4_H_CLK>;
+ 				clock-names = "core", "iface";
+@@ -252,7 +259,7 @@
+ 				compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
+ 				reg = <0x1a240000 0x1000>,
+ 				      <0x1a200000 0x1000>;
+-				interrupts = <0 154 0x0>;
++				interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&gcc GSBI5_UART_CLK>, <&gcc GSBI5_H_CLK>;
+ 				clock-names = "core", "iface";
+ 				status = "disabled";
+@@ -261,7 +268,7 @@
+ 			i2c@1a280000 {
+ 				compatible = "qcom,i2c-qup-v1.1.1";
+ 				reg = <0x1a280000 0x1000>;
+-				interrupts = <0 155 0>;
++				interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 				clocks = <&gcc GSBI5_QUP_CLK>, <&gcc GSBI5_H_CLK>;
+ 				clock-names = "core", "iface";
+@@ -274,7 +281,7 @@
+ 			spi@1a280000 {
+ 				compatible = "qcom,spi-qup-v1.1.1";
+ 				reg = <0x1a280000 0x1000>;
+-				interrupts = <0 155 0>;
++				interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 				clocks = <&gcc GSBI5_QUP_CLK>, <&gcc GSBI5_H_CLK>;
+ 				clock-names = "core", "iface";
+@@ -301,7 +308,7 @@
+ 				compatible = "qcom,msm-uartdm-v1.3", "qcom,msm-uartdm";
+ 				reg = <0x16640000 0x1000>,
+ 				      <0x16600000 0x1000>;
+-				interrupts = <0 158 0x0>;
++				interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&gcc GSBI7_UART_CLK>, <&gcc GSBI7_H_CLK>;
+ 				clock-names = "core", "iface";
+ 				status = "disabled";
+@@ -323,7 +330,7 @@
+ 			compatible = "qcom,ipq806x-ahci", "generic-ahci";
+ 			reg = <0x29000000 0x180>;
+ 
+-			interrupts = <0 209 0x0>;
++			interrupts = <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			clocks = <&gcc SFAB_SATA_S_H_CLK>,
+ 				 <&gcc SATA_H_CLK>,
 -- 
-2.12.5
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
+is a member of Code Aurora Forum, hosted by The Linux Foundation
 
