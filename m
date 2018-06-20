@@ -6,157 +6,86 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5019CC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145FEC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A019208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A019208B0
+	by mail.kernel.org (Postfix) with ESMTP id CF388208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:31:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF388208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754253AbeFTIbX (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:31:23 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:44227 "EHLO
+        id S932422AbeFTIbd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:31:33 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:49057 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753321AbeFTIbU (ORCPT
+        with ESMTP id S1752595AbeFTIbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:31:20 -0400
+        Wed, 20 Jun 2018 04:31:31 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0M1ohG-1gJn650fLG-00tobA; Wed, 20 Jun 2018 10:06:07 +0200
+ (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0MJkO4-1fWeEr1yCq-0018NJ; Wed, 20 Jun 2018 10:17:49 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
 Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Sheng Yong <shengyong1@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Yunlei He <heyunlei@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Deepa Dinamani <deepa.kernel@gmail.com>,
-        Yunlong Song <yunlong.song@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] f2fs: use timespec64 for inode timestamps
-Date:   Wed, 20 Jun 2018 10:02:19 +0200
-Message-Id: <20180620080603.4156809-1-arnd@arndb.de>
+Subject: [PATCH] procfs: uptime: use ktime_get_boottime_ts64
+Date:   Wed, 20 Jun 2018 10:17:31 +0200
+Message-Id: <20180620081746.282742-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:euVe48uQ7fhYAIxYwhwLE6D+Tm69XWN5ugITgY1lJG6DmUF1JmC
- fqUy2OCFPhzpnZw5JzadZXGdyok3p+7UA0cqqadOSSyVLmkGNPRbhLsEwtX4qwBwDMk3mGf
- /DH7UcOj1B4opuZaM1DtrDeNiOC09M91pb+Rkg54DU6UmAJ6VvFUpFX168jZ2Kg3+I4Q33x
- any73YonO0E2mrreBjAnw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:VFI5UkHt4h4=:r4gn/Eq0oyx+oBAsLr5h+5
- Si7qxy+T5xk26czEPnIM7R2+kINPPtn6YRXCIxgLahLNQGIXZLQxpIon7qPUWDdH+NwPHyt85
- r88dYvyzyxU5nfqMAta/NGN9RDRD+QVJph8Ou9NGhASxeRP3vVaji1f2FTuIglF2K/RHnmvmv
- kcopTPddtD+FEbRPZDBnaSO+vPvICRDFzg6LIsqJT3Tf1RV1akHHj173nwSDBjKO/TzCnsh/M
- hLneW3CSzfteGC/3LP8an1sFwlkSO4qdNVNqhbCKPcXfDQ0/NPB1xMw+1AdtgoHhisuYcxe87
- J1H/ye7kigHHdaW3YYOpuWLlPC2TdEMJTrXLs0SjNSF6RZt57EhcWfQ995RlhvKGAMkHBz8hq
- hspayxyAR7vYAianjYz9T4B30xTaG0Z2Gp+lHngqJzn1MDpwgMvLl4MRRncAQ+LPkNeXZumdj
- YeVAhg7GgCcqyX8iBO2PUt8l/ISujOadqKSqm3UpujF9soHhIdPgJTPRcRB5/l8q6CnRZXybT
- KG+dwr5TkcyMguqtn0/D9LqcY9th/e3XWlq7UI7b5MDn3GqZNVUlWfD8RiVj6oCRkyf0+GvQv
- 2XqNBh3VLtHpVFV5vNRYg4Ip7B75RdhDZ/Gd2+s6m4hH2r8JSJughpEuRHsPyIB5NpKwtK7xH
- fZ9PMSxf9WzYf7jxA1XDSIXM4XCUH1eFukbohUx0kiiuwNY+CKsH8wngTR9lR+q6pSl4=
+X-Provags-ID: V03:K1:pwAj7eEw82m/gGe+74HXzzKRg4+7GieAut8Yu2Zf5uqU9ZIT8Uu
+ yAfie19HelIP8VIv0nL83ctky5pIFIBTMndxyJkg+JvpW3BPTCeDGGQXDWbDmTp1qa/gFIg
+ Y6DfN5eJd2GnyuPGxZc4XASnVFVN2SWeTuhRqFYoqQ3rYiV07wNh/P9qC4aQJtA1WDVvsGc
+ WE11GAil5+EaEnlYqQa1Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8q9V/tKs4Oo=:YFWYE1Wda9x35pT8f7EkV2
+ VyS+RKJgPU/vKq/VvTgJvysqct4G2k7gQqkt4H0ebRZ4Y3ka2ORIyT9hQSACaC6wQHR6TnjEi
+ KoS/lwUFClxe7gdiA0aQeO1NRU6oWfAMhc0kcOKBcC0T3ixOlHgHxa0RmEke2N5htwoCz3WDU
+ AMJ8ahJIpKWshI1KdoMk++DJpmyKilQgaRqf4LE3rX+Qp5pOfMbDAIPrnvAr0HIahiUl1YECL
+ LeLDl2hklQ0jOqqPXo4pPDw8Gzd9KVl9EcXWommq3ltsU4oFBBPcSW7wONxivH5SqlYQKV1tv
+ A48HRsYN/cVJhtIhFT5wy/6FRKkHKSH/SQRt3k4z/yFzHhAsVnji9W54J/VvPPsftkQLu3rR2
+ pLRUj5ZxubwecW+8d/AkGYJZbQEUm5jRaoxLPh5TFzhdofdtOYDdH/sxA7Ej9vuZg1c5dLuCN
+ YbqUwmkApKUdMoPDF2KPZIeDMCfypFj42KMvreoFc3LzCL5lmA6Tt5CCUBtwgK7yJPN1eiEqd
+ Y62qpFig4p/kBbUMq81VkHtvmy8cZ1aNsszvT9il5JaYkqbOEEp0HxAQgoXB2bPGYdg7OYVqO
+ d7pGi9A74eXOYRzXQzZkESF39CiHSJpbE4dU6xXij9rLdB63b/HqKxCc5fMDKPnYF9OPG+1mC
+ uNbJf+4azzE/ivcrL1kjNHK/FKk1k/59Im5v04L5rLBm/1jKQwQGT/d6rQ2MSdzPFyLk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The on-disk representation and the vfs both use 64-bit tv_sec values,
-so let's change the last missing piece in the middle.
+get_monotonic_boottime() is deprecated and uses the old timespec
+type. Let's convert /proc/uptime to use ktime_get_boottime_ts64().
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/f2fs/f2fs.h  | 16 ++++++----------
- fs/f2fs/inode.c | 12 ++++++------
- fs/f2fs/namei.c |  2 +-
- 3 files changed, 13 insertions(+), 17 deletions(-)
+ fs/proc/uptime.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 4d8b1de83143..8b519707433b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -669,8 +669,8 @@ struct f2fs_inode_info {
- 	int i_extra_isize;		/* size of extra space located in i_addr */
- 	kprojid_t i_projid;		/* id for project quota */
- 	int i_inline_xattr_size;	/* inline xattr size */
--	struct timespec i_crtime;	/* inode creation time */
--	struct timespec i_disk_time[4];	/* inode disk times */
-+	struct timespec64 i_crtime;	/* inode creation time */
-+	struct timespec64 i_disk_time[4];/* inode disk times */
- };
+diff --git a/fs/proc/uptime.c b/fs/proc/uptime.c
+index 3f723cb478af..a4c2791ab70b 100644
+--- a/fs/proc/uptime.c
++++ b/fs/proc/uptime.c
+@@ -9,7 +9,7 @@
  
- static inline void get_extent_info(struct extent_info *ext,
-@@ -2518,7 +2518,6 @@ static inline void clear_file(struct inode *inode, int type)
- 
- static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ static int uptime_proc_show(struct seq_file *m, void *v)
  {
--	struct timespec ts;
- 	bool ret;
+-	struct timespec uptime;
++	struct timespec64 uptime;
+ 	struct timespec64 idle;
+ 	u64 nsec;
+ 	u32 rem;
+@@ -19,7 +19,7 @@ static int uptime_proc_show(struct seq_file *m, void *v)
+ 	for_each_possible_cpu(i)
+ 		nsec += (__force u64) kcpustat_cpu(i).cpustat[CPUTIME_IDLE];
  
- 	if (dsync) {
-@@ -2534,16 +2533,13 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
- 			i_size_read(inode) & ~PAGE_MASK)
- 		return false;
- 
--	ts = timespec64_to_timespec(inode->i_atime);
--	if (!timespec_equal(F2FS_I(inode)->i_disk_time, &ts))
-+	if (!timespec64_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
- 		return false;
--	ts = timespec64_to_timespec(inode->i_ctime);
--	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 1, &ts))
-+	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
- 		return false;
--	ts = timespec64_to_timespec(inode->i_mtime);
--	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 2, &ts))
-+	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
- 		return false;
--	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 3,
-+	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 3,
- 						&F2FS_I(inode)->i_crtime))
- 		return false;
- 
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index f121c864f4c0..30a777369d2b 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -297,9 +297,9 @@ static int do_read_inode(struct inode *inode)
- 		fi->i_crtime.tv_nsec = le32_to_cpu(ri->i_crtime_nsec);
- 	}
- 
--	F2FS_I(inode)->i_disk_time[0] = timespec64_to_timespec(inode->i_atime);
--	F2FS_I(inode)->i_disk_time[1] = timespec64_to_timespec(inode->i_ctime);
--	F2FS_I(inode)->i_disk_time[2] = timespec64_to_timespec(inode->i_mtime);
-+	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-+	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-+	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
- 	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
- 	f2fs_put_page(node_page, 1);
- 
-@@ -470,9 +470,9 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
- 	if (inode->i_nlink == 0)
- 		clear_inline_node(node_page);
- 
--	F2FS_I(inode)->i_disk_time[0] = timespec64_to_timespec(inode->i_atime);
--	F2FS_I(inode)->i_disk_time[1] = timespec64_to_timespec(inode->i_ctime);
--	F2FS_I(inode)->i_disk_time[2] = timespec64_to_timespec(inode->i_mtime);
-+	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
-+	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
-+	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
- 	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
- }
- 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 231b7f3ea7d3..2ea0de4cbe76 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -51,7 +51,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	inode->i_ino = ino;
- 	inode->i_blocks = 0;
- 	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
--	F2FS_I(inode)->i_crtime = timespec64_to_timespec(inode->i_mtime);
-+	F2FS_I(inode)->i_crtime = inode->i_mtime;
- 	inode->i_generation = sbi->s_next_generation++;
- 
- 	if (S_ISDIR(inode->i_mode))
+-	get_monotonic_boottime(&uptime);
++	ktime_get_boottime_ts64(&uptime);
+ 	idle.tv_sec = div_u64_rem(nsec, NSEC_PER_SEC, &rem);
+ 	idle.tv_nsec = rem;
+ 	seq_printf(m, "%lu.%02lu %lu.%02lu\n",
 -- 
 2.9.0
 
