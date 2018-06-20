@@ -6,105 +6,82 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63387C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B68DC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29E0E20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:40:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29E0E20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BAE120693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:40:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BAE120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755002AbeFTJkM (ORCPT
+        id S1755006AbeFTJk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:40:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50841 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754423AbeFTJkJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:40:09 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K9dnPC3448379
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 20 Jun 2018 02:39:49 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K9dmh63448376;
-        Wed, 20 Jun 2018 02:39:48 -0700
-Date:   Wed, 20 Jun 2018 02:39:48 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-6519750210d9d3330e85d12e0128652edde448d2@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        tglx@linutronix.de
-Reply-To: peterz@infradead.org, tglx@linutronix.de,
-          torvalds@linux-foundation.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20180612083909.157076812@infradead.org>
-References: <20180612083909.157076812@infradead.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/swait: Remove __prepare_to_swait
-Git-Commit-ID: 6519750210d9d3330e85d12e0128652edde448d2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 20 Jun 2018 05:40:29 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47255 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754192AbeFTJk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:40:27 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 80503207D4; Wed, 20 Jun 2018 11:40:25 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4126A206D8;
+        Wed, 20 Jun 2018 11:40:25 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 11:40:25 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [RFC PATCH v2 5/6] mtd: rawnand: micron: add
+ ONFI_FEATURE_ON_DIE_ECC to supported features
+Message-ID: <20180620114025.0b18b22f@bbrezillon>
+In-Reply-To: <20180619053125.16792-6-chris.packham@alliedtelesis.co.nz>
+References: <20180619053125.16792-1-chris.packham@alliedtelesis.co.nz>
+        <20180619053125.16792-6-chris.packham@alliedtelesis.co.nz>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6519750210d9d3330e85d12e0128652edde448d2
-Gitweb:     https://git.kernel.org/tip/6519750210d9d3330e85d12e0128652edde448d2
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Tue, 12 Jun 2018 10:34:50 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 20 Jun 2018 11:35:56 +0200
+On Tue, 19 Jun 2018 17:31:24 +1200
+Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-sched/swait: Remove __prepare_to_swait
+> Add ONFI_FEATURE_ON_DIE_ECC to the set/get features list for Micron
+> NAND flash.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-There is no public user of this API, remove it.
+Queued to master (AKA mtd/fixes).
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: bigeasy@linutronix.de
-Cc: oleg@redhat.com
-Cc: paulmck@linux.vnet.ibm.com
-Cc: pbonzini@redhat.com
-Link: https://lkml.kernel.org/r/20180612083909.157076812@infradead.org
+Thanks,
 
----
- include/linux/swait.h | 1 -
- kernel/sched/swait.c  | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+Boris
 
-diff --git a/include/linux/swait.h b/include/linux/swait.h
-index bf8cb0dee23c..d6a5e949e4ca 100644
---- a/include/linux/swait.h
-+++ b/include/linux/swait.h
-@@ -161,7 +161,6 @@ extern void swake_up(struct swait_queue_head *q);
- extern void swake_up_all(struct swait_queue_head *q);
- extern void swake_up_locked(struct swait_queue_head *q);
- 
--extern void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait);
- extern void prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait, int state);
- extern long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait, int state);
- 
-diff --git a/kernel/sched/swait.c b/kernel/sched/swait.c
-index b6fb2c3b3ff7..e68bb1398b05 100644
---- a/kernel/sched/swait.c
-+++ b/kernel/sched/swait.c
-@@ -69,7 +69,7 @@ void swake_up_all(struct swait_queue_head *q)
- }
- EXPORT_SYMBOL(swake_up_all);
- 
--void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait)
-+static void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait)
- {
- 	wait->task = current;
- 	if (list_empty(&wait->task_list))
+> ---
+> Changes in v2:
+> - New
+> 
+>  drivers/mtd/nand/raw/nand_micron.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
+> index e582c9e61715..d1e8f57544a0 100644
+> --- a/drivers/mtd/nand/raw/nand_micron.c
+> +++ b/drivers/mtd/nand/raw/nand_micron.c
+> @@ -66,7 +66,9 @@ static int micron_nand_onfi_init(struct nand_chip *chip)
+>  
+>  	if (p->supports_set_get_features) {
+>  		set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->set_feature_list);
+> +		set_bit(ONFI_FEATURE_ON_DIE_ECC, p->set_feature_list);
+>  		set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->get_feature_list);
+> +		set_bit(ONFI_FEATURE_ON_DIE_ECC, p->get_feature_list);
+>  	}
+>  
+>  	return 0;
+
