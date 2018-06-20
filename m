@@ -2,194 +2,423 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A588FC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4765C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E1A20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AAC520846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:40:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bzqONYza"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E1A20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p1EcEq3t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AAC520846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754524AbeFTRjZ (ORCPT
+        id S1754597AbeFTRkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:39:25 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:42310 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754459AbeFTRjV (ORCPT
+        Wed, 20 Jun 2018 13:40:15 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43729 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754370AbeFTRkK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:39:21 -0400
-Received: by mail-qt0-f195.google.com with SMTP id y31-v6so354020qty.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:39:21 -0700 (PDT)
+        Wed, 20 Jun 2018 13:40:10 -0400
+Received: by mail-wr0-f195.google.com with SMTP id d2-v6so347494wrm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:40:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=u3amQ0Y6ke8QrUCHqEhj0Q1D6sFxaCgw3tcWvBmCs2Y=;
-        b=bzqONYzaQaApTy4s/npa4iZ+A0VyaZtLig0TdYDJydiIA3CIkBFL0P5Vo4GVrzlFzW
-         yLTLPVxXZavsmllAH4OcXBQJT9XDVjGhE13sevEnEihmDyM2uYo/qPKpkPWs6uueX11p
-         5FLvDD/BY8fIIi1tKEq7ZJ7Qg1Qmu0RA+vaoc=
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=H76dqaCjBA+NcQWTI0sXPN8plPyOVHqPaS4xdI4qCsI=;
+        b=p1EcEq3tEypmQNEmZKy5mu8gXQ5gtkPBEx9ridEDjvNyAr9xPqsKLaDBiO7BlOPS1u
+         UVpYuMAAe2LrT1NY5eFrwxJU13yoG3byJdvT9C8I4yW0krohYyjV925u/AhePlQ9q5rF
+         EjgypteoTjYEdfj3MGzjkmdK5TvkBnrX9kkInHSNZa3uSIA67U2ZYo1qqanXFI8sTW3+
+         sJVO5FQzDKFDvOAv67SDJHr080UIvIr4YLmwSqvvzhVLbIdrNyVcczgF/SPhUEnEJq44
+         0YUICR4u+YNXrGyyVUW/PrQ4gOmT28bbc3HfixD0cm1sDEkWD1m7ExVvW94TsB1vbvg6
+         gqJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u3amQ0Y6ke8QrUCHqEhj0Q1D6sFxaCgw3tcWvBmCs2Y=;
-        b=bpfDalr0NLH/tCO7Wx/SEIoT7+zlPc3+FPrXq/f0/6mECOgCB3P58322HX06fLVp6+
-         y552WB9zPySS00p9Lgo/Kh8FYtYt5LaSlAqgUNU0hzEAZn0mT8EgLpepDfZj8ecoml2l
-         RQ5vFjI1t0G8gQuDvz/7gfvSRa/rpgYeGiaI+J4WIR7+tAkBZXjzpicmjcnubSHSyZYj
-         ATVW9Muz98D2SN5tL+4AE9DhMvAQbe2BNfvbh9X8d2HVswWxTzrDREnjyjJ0yXbJvLeB
-         7IRButDdqJDIaTU0AZBU1cd39ASY4Dxq+uSUmX9SpON5qvuzgj4D2cLBnHhgT3LcVPVP
-         GNDA==
-X-Gm-Message-State: APt69E0I4h/0tEapBWNzf966CGlwfsNHHLJZS53Y1C2jj8gP6cwyvXr/
-        6X9SyADmSuAHHOOcLBlidZ5CSw==
-X-Google-Smtp-Source: ADUXVKLQ9zvy7xAm71roaFB0sd0qUOdSYGv9nwmIRL14HuU4nqB0/B2rmOYJ2fIh034pzMuKMrwUIw==
-X-Received: by 2002:ac8:2a07:: with SMTP id k7-v6mr20352893qtk.300.1529516360615;
-        Wed, 20 Jun 2018 10:39:20 -0700 (PDT)
-Received: from [10.136.8.248] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id r1-v6sm2126022qke.14.2018.06.20.10.39.17
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=H76dqaCjBA+NcQWTI0sXPN8plPyOVHqPaS4xdI4qCsI=;
+        b=hNBwyEp9R3YnNcSsSRgGrbX8ZcfTl1xwAFxV0DLl3fpCkzfkgWDVm8bvUsUtCpC/R9
+         x2ummvAnj+P6GTlYm/FFpsRcqOaIqzAMUVrt3KqjflqqDV8rYv0caH0Z9u/kt7XWfYnm
+         G6gNZGIfFjtHqUuTNXe4Oaxg9B8LsSiW0qahrdZdkDlwDCcarhy3zro4RvknJFjkqJvw
+         WEWAgYLG0JTjVaP8s1TFzMmnTrWP6Zxh17F/13MzsrCSoLLF9UAXzTD1h7FUNJijo/8W
+         XoKL8v0usG3P0l38N9vIWISKFItUdrr1leYVjBKfJbU30LzxkUxlAxA4/m1pKyPDs0z8
+         uvNg==
+X-Gm-Message-State: APt69E3qkLNgPqXyTS9EakUxFB+mOclzpLWqeiIlrDtpEwx25iA3Dp3D
+        4wpwQioXBVUBVFLl4nJHFi1ZCA==
+X-Google-Smtp-Source: ADUXVKIQ0okw2BGXQx+9aDHcKdh26HcDNsmDucm80I07lrOK1p8z6/CweMjuSGBxNNCr89sQVgKbQw==
+X-Received: by 2002:adf:b92d:: with SMTP id k42-v6mr18830260wrf.116.1529516408043;
+        Wed, 20 Jun 2018 10:40:08 -0700 (PDT)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
+        by smtp.gmail.com with ESMTPSA id f18-v6sm4388598wro.1.2018.06.20.10.40.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:39:19 -0700 (PDT)
-Subject: Re: [PATCH v4 1/6] Documentation: DT: Consolidate SP805 binding docs
-From:   Ray Jui <ray.jui@broadcom.com>
-To:     Rob Herring <robh@kernel.org>, Guenter Roeck <linux@roeck-us.net>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
+        Wed, 20 Jun 2018 10:40:07 -0700 (PDT)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>
-References: <1527530497-10392-1-git-send-email-ray.jui@broadcom.com>
- <1527530497-10392-2-git-send-email-ray.jui@broadcom.com>
- <20180605194124.GA26885@rob-hp-laptop>
- <e91c75f3-f7a4-6f51-9911-7e22d5d05084@roeck-us.net>
- <CABGGisxEvWDy16SKE2RG-vhUHBZHSCCHyfwJsPY16B1fQS-=cA@mail.gmail.com>
- <09c870cd-0a44-6634-58d8-f57f9fcd0cb5@broadcom.com>
-Message-ID: <46ca340f-4347-94ca-6463-d38bece820e2@broadcom.com>
-Date:   Wed, 20 Jun 2018 10:39:16 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <09c870cd-0a44-6634-58d8-f57f9fcd0cb5@broadcom.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org
+Cc:     Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v3 01/17] khwasan, mm: change kasan hooks signatures
+Date:   Wed, 20 Jun 2018 19:39:47 +0200
+Message-Id: <fe5ff92303da75a384369031ab20320c53860872.1529515183.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+In-Reply-To: <cover.1529515183.git.andreyknvl@google.com>
+References: <cover.1529515183.git.andreyknvl@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter/Rob,
+KHWASAN will change the value of the top byte of pointers returned from the
+kernel allocation functions (such as kmalloc). This patch updates KASAN
+hooks signatures and their usage in SLAB and SLUB code to reflect that.
 
-Kindly let me know how you want to proceed with this?
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ include/linux/kasan.h | 34 +++++++++++++++++++++++-----------
+ mm/kasan/kasan.c      | 24 ++++++++++++++----------
+ mm/slab.c             | 12 ++++++------
+ mm/slab.h             |  2 +-
+ mm/slab_common.c      |  4 ++--
+ mm/slub.c             | 15 +++++++--------
+ 6 files changed, 53 insertions(+), 38 deletions(-)
 
-Thanks,
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index de784fd11d12..cbdc54543803 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -53,14 +53,14 @@ void kasan_unpoison_object_data(struct kmem_cache *cache, void *object);
+ void kasan_poison_object_data(struct kmem_cache *cache, void *object);
+ void kasan_init_slab_obj(struct kmem_cache *cache, const void *object);
+ 
+-void kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags);
++void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags);
+ void kasan_kfree_large(void *ptr, unsigned long ip);
+ void kasan_poison_kfree(void *ptr, unsigned long ip);
+-void kasan_kmalloc(struct kmem_cache *s, const void *object, size_t size,
++void *kasan_kmalloc(struct kmem_cache *s, const void *object, size_t size,
+ 		  gfp_t flags);
+-void kasan_krealloc(const void *object, size_t new_size, gfp_t flags);
++void *kasan_krealloc(const void *object, size_t new_size, gfp_t flags);
+ 
+-void kasan_slab_alloc(struct kmem_cache *s, void *object, gfp_t flags);
++void *kasan_slab_alloc(struct kmem_cache *s, void *object, gfp_t flags);
+ bool kasan_slab_free(struct kmem_cache *s, void *object, unsigned long ip);
+ 
+ struct kasan_cache {
+@@ -105,16 +105,28 @@ static inline void kasan_poison_object_data(struct kmem_cache *cache,
+ static inline void kasan_init_slab_obj(struct kmem_cache *cache,
+ 				const void *object) {}
+ 
+-static inline void kasan_kmalloc_large(void *ptr, size_t size, gfp_t flags) {}
++static inline void *kasan_kmalloc_large(void *ptr, size_t size, gfp_t flags)
++{
++	return ptr;
++}
+ static inline void kasan_kfree_large(void *ptr, unsigned long ip) {}
+ static inline void kasan_poison_kfree(void *ptr, unsigned long ip) {}
+-static inline void kasan_kmalloc(struct kmem_cache *s, const void *object,
+-				size_t size, gfp_t flags) {}
+-static inline void kasan_krealloc(const void *object, size_t new_size,
+-				 gfp_t flags) {}
++static inline void *kasan_kmalloc(struct kmem_cache *s, const void *object,
++				size_t size, gfp_t flags)
++{
++	return (void *)object;
++}
++static inline void *kasan_krealloc(const void *object, size_t new_size,
++				 gfp_t flags)
++{
++	return (void *)object;
++}
+ 
+-static inline void kasan_slab_alloc(struct kmem_cache *s, void *object,
+-				   gfp_t flags) {}
++static inline void *kasan_slab_alloc(struct kmem_cache *s, void *object,
++				   gfp_t flags)
++{
++	return object;
++}
+ static inline bool kasan_slab_free(struct kmem_cache *s, void *object,
+ 				   unsigned long ip)
+ {
+diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
+index f185455b3406..f04aa1e0ba48 100644
+--- a/mm/kasan/kasan.c
++++ b/mm/kasan/kasan.c
+@@ -485,9 +485,9 @@ void kasan_init_slab_obj(struct kmem_cache *cache, const void *object)
+ 	__memset(alloc_info, 0, sizeof(*alloc_info));
+ }
+ 
+-void kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t flags)
++void *kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t flags)
+ {
+-	kasan_kmalloc(cache, object, cache->object_size, flags);
++	return kasan_kmalloc(cache, object, cache->object_size, flags);
+ }
+ 
+ static bool __kasan_slab_free(struct kmem_cache *cache, void *object,
+@@ -528,7 +528,7 @@ bool kasan_slab_free(struct kmem_cache *cache, void *object, unsigned long ip)
+ 	return __kasan_slab_free(cache, object, ip, true);
+ }
+ 
+-void kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
++void *kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
+ 		   gfp_t flags)
+ {
+ 	unsigned long redzone_start;
+@@ -538,7 +538,7 @@ void kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
+ 		quarantine_reduce();
+ 
+ 	if (unlikely(object == NULL))
+-		return;
++		return NULL;
+ 
+ 	redzone_start = round_up((unsigned long)(object + size),
+ 				KASAN_SHADOW_SCALE_SIZE);
+@@ -551,10 +551,12 @@ void kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
+ 
+ 	if (cache->flags & SLAB_KASAN)
+ 		set_track(&get_alloc_info(cache, object)->alloc_track, flags);
++
++	return (void *)object;
+ }
+ EXPORT_SYMBOL(kasan_kmalloc);
+ 
+-void kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
++void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
+ {
+ 	struct page *page;
+ 	unsigned long redzone_start;
+@@ -564,7 +566,7 @@ void kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
+ 		quarantine_reduce();
+ 
+ 	if (unlikely(ptr == NULL))
+-		return;
++		return NULL;
+ 
+ 	page = virt_to_page(ptr);
+ 	redzone_start = round_up((unsigned long)(ptr + size),
+@@ -574,21 +576,23 @@ void kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
+ 	kasan_unpoison_shadow(ptr, size);
+ 	kasan_poison_shadow((void *)redzone_start, redzone_end - redzone_start,
+ 		KASAN_PAGE_REDZONE);
++
++	return (void *)ptr;
+ }
+ 
+-void kasan_krealloc(const void *object, size_t size, gfp_t flags)
++void *kasan_krealloc(const void *object, size_t size, gfp_t flags)
+ {
+ 	struct page *page;
+ 
+ 	if (unlikely(object == ZERO_SIZE_PTR))
+-		return;
++		return ZERO_SIZE_PTR;
+ 
+ 	page = virt_to_head_page(object);
+ 
+ 	if (unlikely(!PageSlab(page)))
+-		kasan_kmalloc_large(object, size, flags);
++		return kasan_kmalloc_large(object, size, flags);
+ 	else
+-		kasan_kmalloc(page->slab_cache, object, size, flags);
++		return kasan_kmalloc(page->slab_cache, object, size, flags);
+ }
+ 
+ void kasan_poison_kfree(void *ptr, unsigned long ip)
+diff --git a/mm/slab.c b/mm/slab.c
+index aa76a70e087e..6fdca9ec2ea4 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3551,7 +3551,7 @@ void *kmem_cache_alloc(struct kmem_cache *cachep, gfp_t flags)
+ {
+ 	void *ret = slab_alloc(cachep, flags, _RET_IP_);
+ 
+-	kasan_slab_alloc(cachep, ret, flags);
++	ret = kasan_slab_alloc(cachep, ret, flags);
+ 	trace_kmem_cache_alloc(_RET_IP_, ret,
+ 			       cachep->object_size, cachep->size, flags);
+ 
+@@ -3617,7 +3617,7 @@ kmem_cache_alloc_trace(struct kmem_cache *cachep, gfp_t flags, size_t size)
+ 
+ 	ret = slab_alloc(cachep, flags, _RET_IP_);
+ 
+-	kasan_kmalloc(cachep, ret, size, flags);
++	ret = kasan_kmalloc(cachep, ret, size, flags);
+ 	trace_kmalloc(_RET_IP_, ret,
+ 		      size, cachep->size, flags);
+ 	return ret;
+@@ -3641,7 +3641,7 @@ void *kmem_cache_alloc_node(struct kmem_cache *cachep, gfp_t flags, int nodeid)
+ {
+ 	void *ret = slab_alloc_node(cachep, flags, nodeid, _RET_IP_);
+ 
+-	kasan_slab_alloc(cachep, ret, flags);
++	ret = kasan_slab_alloc(cachep, ret, flags);
+ 	trace_kmem_cache_alloc_node(_RET_IP_, ret,
+ 				    cachep->object_size, cachep->size,
+ 				    flags, nodeid);
+@@ -3660,7 +3660,7 @@ void *kmem_cache_alloc_node_trace(struct kmem_cache *cachep,
+ 
+ 	ret = slab_alloc_node(cachep, flags, nodeid, _RET_IP_);
+ 
+-	kasan_kmalloc(cachep, ret, size, flags);
++	ret = kasan_kmalloc(cachep, ret, size, flags);
+ 	trace_kmalloc_node(_RET_IP_, ret,
+ 			   size, cachep->size,
+ 			   flags, nodeid);
+@@ -3679,7 +3679,7 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+ 	ret = kmem_cache_alloc_node_trace(cachep, flags, node, size);
+-	kasan_kmalloc(cachep, ret, size, flags);
++	ret = kasan_kmalloc(cachep, ret, size, flags);
+ 
+ 	return ret;
+ }
+@@ -3715,7 +3715,7 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
+ 		return cachep;
+ 	ret = slab_alloc(cachep, flags, caller);
+ 
+-	kasan_kmalloc(cachep, ret, size, flags);
++	ret = kasan_kmalloc(cachep, ret, size, flags);
+ 	trace_kmalloc(caller, ret,
+ 		      size, cachep->size, flags);
+ 
+diff --git a/mm/slab.h b/mm/slab.h
+index 68bdf498da3b..15ef6a0d9c16 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -441,7 +441,7 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
+ 
+ 		kmemleak_alloc_recursive(object, s->object_size, 1,
+ 					 s->flags, flags);
+-		kasan_slab_alloc(s, object, flags);
++		p[i] = kasan_slab_alloc(s, object, flags);
+ 	}
+ 
+ 	if (memcg_kmem_enabled())
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 890b1f04a03a..c279b52c7565 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1179,7 +1179,7 @@ void *kmalloc_order(size_t size, gfp_t flags, unsigned int order)
+ 	page = alloc_pages(flags, order);
+ 	ret = page ? page_address(page) : NULL;
+ 	kmemleak_alloc(ret, size, 1, flags);
+-	kasan_kmalloc_large(ret, size, flags);
++	ret = kasan_kmalloc_large(ret, size, flags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(kmalloc_order);
+@@ -1457,7 +1457,7 @@ static __always_inline void *__do_krealloc(const void *p, size_t new_size,
+ 		ks = ksize(p);
+ 
+ 	if (ks >= new_size) {
+-		kasan_krealloc((void *)p, new_size, flags);
++		p = kasan_krealloc((void *)p, new_size, flags);
+ 		return (void *)p;
+ 	}
+ 
+diff --git a/mm/slub.c b/mm/slub.c
+index a3b8467c14af..a60887938c19 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1336,10 +1336,10 @@ static inline void dec_slabs_node(struct kmem_cache *s, int node,
+  * Hooks for other subsystems that check memory allocations. In a typical
+  * production configuration these hooks all should produce no code at all.
+  */
+-static inline void kmalloc_large_node_hook(void *ptr, size_t size, gfp_t flags)
++static inline void *kmalloc_large_node_hook(void *ptr, size_t size, gfp_t flags)
+ {
+ 	kmemleak_alloc(ptr, size, 1, flags);
+-	kasan_kmalloc_large(ptr, size, flags);
++	return kasan_kmalloc_large(ptr, size, flags);
+ }
+ 
+ static __always_inline void kfree_hook(void *x)
+@@ -2732,7 +2732,7 @@ void *kmem_cache_alloc_trace(struct kmem_cache *s, gfp_t gfpflags, size_t size)
+ {
+ 	void *ret = slab_alloc(s, gfpflags, _RET_IP_);
+ 	trace_kmalloc(_RET_IP_, ret, size, s->size, gfpflags);
+-	kasan_kmalloc(s, ret, size, gfpflags);
++	ret = kasan_kmalloc(s, ret, size, gfpflags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(kmem_cache_alloc_trace);
+@@ -2760,7 +2760,7 @@ void *kmem_cache_alloc_node_trace(struct kmem_cache *s,
+ 	trace_kmalloc_node(_RET_IP_, ret,
+ 			   size, s->size, gfpflags, node);
+ 
+-	kasan_kmalloc(s, ret, size, gfpflags);
++	ret = kasan_kmalloc(s, ret, size, gfpflags);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(kmem_cache_alloc_node_trace);
+@@ -3750,7 +3750,7 @@ void *__kmalloc(size_t size, gfp_t flags)
+ 
+ 	trace_kmalloc(_RET_IP_, ret, size, s->size, flags);
+ 
+-	kasan_kmalloc(s, ret, size, flags);
++	ret = kasan_kmalloc(s, ret, size, flags);
+ 
+ 	return ret;
+ }
+@@ -3767,8 +3767,7 @@ static void *kmalloc_large_node(size_t size, gfp_t flags, int node)
+ 	if (page)
+ 		ptr = page_address(page);
+ 
+-	kmalloc_large_node_hook(ptr, size, flags);
+-	return ptr;
++	return kmalloc_large_node_hook(ptr, size, flags);
+ }
+ 
+ void *__kmalloc_node(size_t size, gfp_t flags, int node)
+@@ -3795,7 +3794,7 @@ void *__kmalloc_node(size_t size, gfp_t flags, int node)
+ 
+ 	trace_kmalloc_node(_RET_IP_, ret, size, s->size, flags, node);
+ 
+-	kasan_kmalloc(s, ret, size, flags);
++	ret = kasan_kmalloc(s, ret, size, flags);
+ 
+ 	return ret;
+ }
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
 
-Ray
-
-On 6/6/2018 4:39 PM, Ray Jui wrote:
-> 
-> 
-> On 6/6/2018 9:33 AM, Rob Herring wrote:
->> On Wed, Jun 6, 2018 at 11:19 AM, Guenter Roeck <linux@roeck-us.net> 
->> wrote:
->>> On 06/05/2018 12:41 PM, Rob Herring wrote:
->>>>
->>>> On Mon, May 28, 2018 at 11:01:32AM -0700, Ray Jui wrote:
->>>>>
->>>>> Consolidate two SP805 binding documents "arm,sp805.txt" and
->>>>> "sp805-wdt.txt" into "arm,sp805.txt" that matches the naming of the
->>>>> desired compatible string to be used
->>>>>
->>>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
->>>>> ---
->>>>>    .../devicetree/bindings/watchdog/arm,sp805.txt     | 27
->>>>> ++++++++++++++-----
->>>>>    .../devicetree/bindings/watchdog/sp805-wdt.txt     | 31
->>>>> ----------------------
->>>>>    2 files changed, 20 insertions(+), 38 deletions(-)
->>>>>    delete mode 100644
->>>>> Documentation/devicetree/bindings/watchdog/sp805-wdt.txt
->>>>
->>>>
->>>> Would be good to get a ACK from FSL/NXP person on this. It looks to me
->>>> like the driver fetches the wrong clock as it gets the first one and 
->>>> the
->>>> driver really wants 'wdog_clk'. In any case, their dts files should be
->>>> updated.
->>>>
->>>
->>> This is really confusing, since he deleted file lists apb_pclk first.
->>> Does the watchdog driver need apb_pclk or wdog_clk ? That isn't clear 
->>> to me.
->>> arch/arm64/boot/dts/hisilicon/hi3660.dtsi only provides apb_pclk, or at
->>> least
->>> it says so.
->>
->> Note that that clock source is 32KHz. That is obviously a mistake
->> because no one clocks their bus/register interface at 32KHz. Someone
->> just filled in something that happened to work.
->>
->>> The fsl dts files all have apb_pclk first.
->>
->> It's all kind of a mess, but fortunately one we should be able to 
->> clean-up.
->>
-> 
-> It is indeed a mess. Note the SP805 driver only derive one clock from 
-> DT, and that's not done based on name. As a result, the first clock 
-> defined in DT will be fetched and the rate calculation will be carried 
-> out based on that clock rate.
-> 
-> I assumed the clock entries and their names defined in the binding 
-> document are just placeholders, at least for the 2nd clock.
-> 
-> Based on how the current driver is, the first clock needs to be the 
-> WDOGCLK for things to work properly.
-> 
-> According to the SP805 TRM, APB clock is the PCLK, that drives the bus 
-> for register access.
-> 
-> The relationship between WDOGCLK and PCLK is defined as:
-> 
-> - the rising edges of WDOGCLK must be synchronous and
-> balanced with a rising edge of PCLK
-> 
-> - the WDOGCLK frequency cannot be greater than the PCLK
-> frequency
-> 
->> The compatible string changes too, but AMBA bus devices don't actually
->> use the compatible string as they use the ID registers to match. I
->> suppose some other OS could do things differently. Worth the risk to
->> clean-up IMO.
->>
->>>
->>> Either case, why are two clocks asked for in the first place ? Are there
->>> situations where the second clock is actually used/useful ?
->>
->> For clocks, the bus needs "apb_pclk" and the driver just gets the
->> first clock. The driver is obviously going to want the functional
->> clock that determines the counter rate. That should
->>
->> Primecell peripherals are about the only ones that have clear specs
->> WRT clock inputs. Yet we've still managed to screw them up. There are
->> 2 clocks in the spec, so the DT has (or should have) 2 clocks.
->>
->> Rob
->>
-> 
-> Let me know how you guys want to proceed with this?
-> 
-> Thanks,
-> 
-> Ray
