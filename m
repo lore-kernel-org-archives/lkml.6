@@ -1,89 +1,211 @@
 Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AADFC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA424C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CFC3208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:16:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CFC3208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8DB5A20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:17:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DB5A20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754061AbeFTKQx (ORCPT
+        id S1754106AbeFTKRd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:16:53 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59753 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753930AbeFTKQw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:16:52 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fVaAG-0003AF-Rb; Wed, 20 Jun 2018 12:16:37 +0200
-Date:   Wed, 20 Jun 2018 12:16:36 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Feng Tang <feng.tang@intel.com>
-cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        peterz@infradead.org, prarit@redhat.com, pmladek@suse.com,
-        gnomes@lxorguk.ukuu.org.uk
-Subject: Re: [PATCH v10 7/7] x86/tsc: use tsc early
-In-Reply-To: <20180620101241.5vhmyvdjbenldp4r@shbuild888>
-Message-ID: <alpine.DEB.2.21.1806201214310.10546@nanos.tec.linutronix.de>
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com> <20180615174204.30581-8-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806192335390.10546@nanos.tec.linutronix.de> <20180620101241.5vhmyvdjbenldp4r@shbuild888>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 20 Jun 2018 06:17:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48416 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750982AbeFTKRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 06:17:32 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3778920862; Wed, 20 Jun 2018 12:17:30 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F100E206D8;
+        Wed, 20 Jun 2018 12:17:19 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 12:17:20 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/14] ubi: fastmap: Read PEB numbers more carefully
+Message-ID: <20180620121720.22ad75c9@bbrezillon>
+In-Reply-To: <20180613212344.11608-2-richard@nod.at>
+References: <20180613212344.11608-1-richard@nod.at>
+        <20180613212344.11608-2-richard@nod.at>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018, Feng Tang wrote:
-> On Wed, Jun 20, 2018 at 01:52:10AM +0200, Thomas Gleixner wrote:
-> >  
-> >  static DEFINE_STATIC_KEY_FALSE(__use_tsc);
-> > +static DEFINE_STATIC_KEY_TRUE(tsc_early_enabled);
+On Wed, 13 Jun 2018 23:23:31 +0200
+Richard Weinberger <richard@nod.at> wrote:
+
+> PEB numbers can be used as indices, make sure that they
+> are within bounds.
 > 
-> One potential problem may be the several static_keys used here,
-> the "__use_tsc", the "__sched_clock_stable", it may not be used
-> very early in boot phase. As the the static_branch_enable() will
-> use pageing related code while the paging is not setup ready yet.
+> Signed-off-by: Richard Weinberger <richard@nod.at>
+> ---
+>  drivers/mtd/ubi/fastmap.c | 71 ++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 58 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/mtd/ubi/fastmap.c b/drivers/mtd/ubi/fastmap.c
+> index 462526a10537..768fa8a76867 100644
+> --- a/drivers/mtd/ubi/fastmap.c
+> +++ b/drivers/mtd/ubi/fastmap.c
+> @@ -101,6 +101,29 @@ size_t ubi_calc_fm_size(struct ubi_device *ubi)
+>  	return roundup(size, ubi->leb_size);
+>  }
+>  
+> +static bool read_pnum(struct ubi_device *ubi, struct ubi_attach_info *ai,
+> +		     __be32 pnum, int *out_pnum)
 
-I know how static keys work and thats the reason for having the extra
-conditional. The key is disabled at a point where paging is available.
+Why not returning an int here, with negative values meaning that
+pnum is invalid and positive values encoding the actual PEB number?
+Also, I think check_pnum(), validate_pnum() or decode_pnum() would be
+better names than read_pnum().
 
-> >  /*
-> >   * Scheduler clock - returns current time in nanosec units.
-> >   */
-> >  u64 native_sched_clock(void)
-> >  {
-> > -	if (static_branch_likely(&__use_tsc)) {
-> > -		u64 tsc_now = rdtsc();
-> > +	if (static_branch_likely(&__use_tsc))
-> > +		return cycles_2_ns(rdtsc());
-> >  
-> > -		/* return the value in ns */
-> > -		return cycles_2_ns(tsc_now);
-> > +	if (static_branch_unlikely(&tsc_early_enabled)) {
-> > +		if (tsc_early_sched_clock)
-> > +			return cycles_2_ns(rdtsc());
-> >  	}
 
-Thanks,
+> +{
+> +	int ret = true;
+> +	int max_pnum = ubi->peb_count;
+> +
+> +	pnum = be32_to_cpu(pnum);
+> +	if (pnum == UBI_UNKNOWN) {
+> +		*out_pnum = pnum;
+> +		goto out;
+> +	}
+> +
+> +	if (pnum < 0 || pnum >= max_pnum) {
+> +		ubi_err(ubi, "fastmap references PEB out of range: %i", pnum);
+> +		ret = false;
+> +		goto out;
+> +	} else {
+> +		*out_pnum = pnum;
+> +	}
+> +
+> +out:
+> +	return ret;
+> +}
+>  
+>  /**
+>   * new_fm_vhdr - allocate a new volume header for fastmap usage.
+> @@ -438,7 +461,10 @@ static int scan_pool(struct ubi_device *ubi, struct ubi_attach_info *ai,
+>  		int scrub = 0;
+>  		int image_seq;
+>  
+> -		pnum = be32_to_cpu(pebs[i]);
+> +		if (!read_pnum(ubi, ai, pebs[i], &pnum)) {
+> +			ret = UBI_BAD_FASTMAP;
+> +			goto out;
+> +		}
+>  
+>  		if (ubi_io_is_bad(ubi, pnum)) {
+>  			ubi_err(ubi, "bad PEB in fastmap pool!");
+> @@ -565,7 +591,7 @@ static int ubi_attach_fastmap(struct ubi_device *ubi,
+>  	struct ubi_fm_ec *fmec;
+>  	struct ubi_fm_volhdr *fmvhdr;
+>  	struct ubi_fm_eba *fm_eba;
+> -	int ret, i, j, pool_size, wl_pool_size;
+> +	int ret, i, j, pool_size, wl_pool_size, pnum;
+>  	size_t fm_pos = 0, fm_size = ubi->fm_size;
+>  	unsigned long long max_sqnum = 0;
+>  	void *fm_raw = ubi->fm_buf;
+> @@ -647,8 +673,10 @@ static int ubi_attach_fastmap(struct ubi_device *ubi,
+>  		if (fm_pos >= fm_size)
+>  			goto fail_bad;
+>  
+> -		add_aeb(ai, &ai->free, be32_to_cpu(fmec->pnum),
+> -			be32_to_cpu(fmec->ec), 0);
+> +		if (!read_pnum(ubi, ai, fmec->pnum, &pnum))
+> +			goto fail_bad;
+> +
+> +		add_aeb(ai, &ai->free, pnum, be32_to_cpu(fmec->ec), 0);
+>  	}
+>  
+>  	/* read EC values from used list */
+> @@ -658,8 +686,10 @@ static int ubi_attach_fastmap(struct ubi_device *ubi,
+>  		if (fm_pos >= fm_size)
+>  			goto fail_bad;
+>  
+> -		add_aeb(ai, &used, be32_to_cpu(fmec->pnum),
+> -			be32_to_cpu(fmec->ec), 0);
+> +		if (!read_pnum(ubi, ai, fmec->pnum, &pnum))
+> +			goto fail_bad;
+> +
+> +		add_aeb(ai, &used, pnum, be32_to_cpu(fmec->ec), 0);
+>  	}
+>  
+>  	/* read EC values from scrub list */
+> @@ -669,8 +699,10 @@ static int ubi_attach_fastmap(struct ubi_device *ubi,
+>  		if (fm_pos >= fm_size)
+>  			goto fail_bad;
+>  
+> -		add_aeb(ai, &used, be32_to_cpu(fmec->pnum),
+> -			be32_to_cpu(fmec->ec), 1);
+> +		if (!read_pnum(ubi, ai, fmec->pnum, &pnum))
+> +			goto fail_bad;
+> +
+> +		add_aeb(ai, &used, pnum, be32_to_cpu(fmec->ec), 1);
+>  	}
+>  
+>  	/* read EC values from erase list */
+> @@ -680,8 +712,10 @@ static int ubi_attach_fastmap(struct ubi_device *ubi,
+>  		if (fm_pos >= fm_size)
+>  			goto fail_bad;
+>  
+> -		add_aeb(ai, &ai->erase, be32_to_cpu(fmec->pnum),
+> -			be32_to_cpu(fmec->ec), 1);
+> +		if (!read_pnum(ubi, ai, fmec->pnum, &pnum))
+> +			goto fail_bad;
+> +
+> +		add_aeb(ai, &ai->erase, pnum, be32_to_cpu(fmec->ec), 1);
+>  	}
+>  
+>  	ai->mean_ec = div_u64(ai->ec_sum, ai->ec_count);
+> @@ -731,7 +765,8 @@ static int ubi_attach_fastmap(struct ubi_device *ubi,
+>  		}
+>  
+>  		for (j = 0; j < be32_to_cpu(fm_eba->reserved_pebs); j++) {
+> -			int pnum = be32_to_cpu(fm_eba->pnum[j]);
+> +			if (!read_pnum(ubi, ai, fm_eba->pnum[j], &pnum))
+> +				goto fail_bad;
+>  
+>  			if (pnum < 0)
+>  				continue;
+> @@ -954,7 +989,10 @@ int ubi_scan_fastmap(struct ubi_device *ubi, struct ubi_attach_info *ai,
+>  	for (i = 0; i < used_blocks; i++) {
+>  		int image_seq;
+>  
+> -		pnum = be32_to_cpu(fmsb->block_loc[i]);
+> +		if (!read_pnum(ubi, ai, fmsb->block_loc[i], &pnum)) {
+> +			ret = UBI_BAD_FASTMAP;
+> +			goto free_hdr;
+> +		}
+>  
+>  		if (ubi_io_is_bad(ubi, pnum)) {
+>  			ret = UBI_BAD_FASTMAP;
+> @@ -1068,7 +1106,14 @@ int ubi_scan_fastmap(struct ubi_device *ubi, struct ubi_attach_info *ai,
+>  			goto free_hdr;
+>  		}
+>  
+> -		e->pnum = be32_to_cpu(fmsb2->block_loc[i]);
+> +		if (!read_pnum(ubi, ai, fmsb2->block_loc[i], &e->pnum)) {
+> +			while (i--)
+> +				kmem_cache_free(ubi_wl_entry_slab, fm->e[i]);
+> +
+> +			ret = -ENOMEM;
+> +			goto free_hdr;
+> +		}
+> +
+>  		e->ec = be32_to_cpu(fmsb2->block_ec[i]);
+>  		fm->e[i] = e;
+>  	}
 
-	tglx
