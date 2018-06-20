@@ -2,163 +2,100 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F0FC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE132C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5B4A20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:05:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B4A20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 71D082083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:09:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JXBsf1kZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D082083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932808AbeFTUFS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:05:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55296 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932600AbeFTUFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:05:17 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77D652083A;
-        Wed, 20 Jun 2018 20:05:15 +0000 (UTC)
-Date:   Wed, 20 Jun 2018 16:05:13 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zilstra <peterz@infradead.org>
-Cc:     Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH] softirq: reorder trace_softirqs_on to prevent lockdep
- splat
-Message-ID: <20180620160513.0453247e@gandalf.local.home>
-In-Reply-To: <20180427041100.133772-1-joelaf@google.com>
-References: <20180427041100.133772-1-joelaf@google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S932981AbeFTUI7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:08:59 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59570 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932689AbeFTUI6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 16:08:58 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KJwjUR007728;
+        Wed, 20 Jun 2018 20:08:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=tP5FToi1P3fywvKiUb8p4ma2NlirWppsuuD7Xkm9oMw=;
+ b=JXBsf1kZrHNL0z0Q0/K5uWMeqoi8997h9TFOaxfTeUJr6FYyRHEul7yUjmRpkxjDLGUB
+ G7gqKhnd+lVlh0OE3u23vz0Q3be0EjUiJuxZM56j3ujaQPopHZ2akbFKMGzA2LzOKir3
+ 6Mq82Jaqy9tC6d9HcBO6aUZU7wAskJYCAX6LQ9magcQ75fjSb2vJgr/CEA2h9jZldbhK
+ ZQHnzp7f9IS1sTCrRMAVRQ1Q7uxtpJh8zzZQkJKlWvRXs/fH/C3FmGQgS3tIfBgeiYxj
+ +8loYlMMEsJEMgi4MnpATra9DJb+HX0Ed0/YCUvjqY0m93ZO6OdECLPUwCV4F0oFWG9A FQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2jmtgwx1wv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 20:08:38 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5KK8cWh011883
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 20:08:38 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5KK8cq2020419;
+        Wed, 20 Jun 2018 20:08:38 GMT
+Received: from mwanda (/197.157.34.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Jun 2018 13:08:37 -0700
+Date:   Wed, 20 Jun 2018 23:08:29 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chris Opperman <eklikeroomys@gmail.com>
+Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] staging: wlan-ng: improved readability of function
+ prism2_add_key
+Message-ID: <20180620200829.qm2zxeyyl5kqh6gu@mwanda>
+References: <1529514635-17948-1-git-send-email-eklikeroomys@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529514635-17948-1-git-send-email-eklikeroomys@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=734
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806200218
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 20, 2018 at 07:10:26PM +0200, Chris Opperman wrote:
+> b) Added temporary "key" variable to reduce line length.
 
-Peter, can you ack this.
+No, that's nonsense.  Just fix the original variable so that it's not a
+million characters long.
 
-On Thu, 26 Apr 2018 21:11:00 -0700
-Joel Fernandes <joelaf@google.com> wrote:
+Using a shorter variable is good if it simplifies the code like so:
 
-> I'm able to reproduce a lockdep splat when CONFIG_PROVE_LOCKING=y and
-> CONFIG_PREEMPTIRQ_EVENTS=y.
-> 
-> $ echo 1 > /d/tracing/events/preemptirq/preempt_enable/enable
-> ---
+	struct foo *foo = &my->random_variable[INDEX].whatever;
 
-BTW, the "---" here causes git to ignore everything underneath it :-/
+You've reduced 4 variable names and a butt load of punctuation down to
+just "foo" so that we don't have to look at it repeated over and over
+on every line.
 
-> [   26.112609] DEBUG_LOCKS_WARN_ON(current->softirqs_enabled)
-> [   26.112636] WARNING: CPU: 0 PID: 118 at kernel/locking/lockdep.c:3854
-> [...]
-> [   26.144229] Call Trace:
-> [   26.144926]  <IRQ>
-> [   26.145506]  lock_acquire+0x55/0x1b0
-> [   26.146499]  ? __do_softirq+0x46f/0x4d9
-> [   26.147571]  ? __do_softirq+0x46f/0x4d9
-> [   26.148646]  trace_preempt_on+0x8f/0x240
-> [   26.149744]  ? trace_preempt_on+0x4d/0x240
-> [   26.150862]  ? __do_softirq+0x46f/0x4d9
-> [   26.151930]  preempt_count_sub+0x18a/0x1a0
-> [   26.152985]  __do_softirq+0x46f/0x4d9
-> [   26.153937]  irq_exit+0x68/0xe0
-> [   26.154755]  smp_apic_timer_interrupt+0x271/0x280
-> [   26.156056]  apic_timer_interrupt+0xf/0x20
-> [   26.157105]  </IRQ>
-> 
-> The problem is the softirqs annotation in lockdep goes out of sync with
-> the reality of the world that softirq is still off. This causes a
-> lockdep splat because the preempt_count_sub can call into a preemptoff
-> tracer or the trace events code, which inturn can call into lockdep
-> *before* softirqs are really turned back on, which can cause a softirqs
-> invalid annotation splat in lockdep.
-> 
-> The same issue was fixed in local_bh_disable_ip which has a comment so:
-> /*
->  * The preempt tracer hooks into preempt_count_add and will break
->  * lockdep because it calls back into lockdep after SOFTIRQ_OFFSET
->  * is set and before current->softirq_enabled is cleared.
->  * We must manually increment preempt_count here and manually
->  * call the trace_preempt_off later.
->  */
-> 
-> I have done a similar change to the local_bh_enable path to fix it.
+But if you're just using a temporary variable because the original
+variable name was poorly chosen, that's not the right thing.
 
-I now have a config that triggers this with this test:
-
- tools/testing/selftests/ftrace/ftracetest test.d/event/toplevel-enable.tc
-
-and I see it never was Acked-by by Peter.
-
-Peter, can you ack this and I can apply it. It does fix a lockdep
-corruption issue.
-
-Thanks!
-
--- Steve
-
-> 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Peter Zilstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Thomas Glexiner <tglx@linutronix.de>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Frederic Weisbecker <fweisbec@gmail.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Fenguang Wu <fengguang.wu@intel.com>
-> Cc: Baohong Liu <baohong.liu@intel.com>
-> Cc: Vedang Patel <vedang.patel@intel.com>
-> Cc: kernel-team@android.com
-> Signed-off-by: Joel Fernandes <joelaf@google.com>
-> ---
->  kernel/softirq.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/softirq.c b/kernel/softirq.c
-> index 177de3640c78..8a040bcaa033 100644
-> --- a/kernel/softirq.c
-> +++ b/kernel/softirq.c
-> @@ -139,9 +139,13 @@ static void __local_bh_enable(unsigned int cnt)
->  {
->  	lockdep_assert_irqs_disabled();
->  
-> +	if (preempt_count() == cnt)
-> +		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
-> +
->  	if (softirq_count() == (cnt & SOFTIRQ_MASK))
->  		trace_softirqs_on(_RET_IP_);
-> -	preempt_count_sub(cnt);
-> +
-> +	__preempt_count_sub(cnt);
->  }
->  
->  /*
+regards,
+dan carpenter
 
