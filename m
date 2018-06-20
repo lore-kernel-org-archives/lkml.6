@@ -2,99 +2,123 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB98C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2E5C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0AF12083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDFFA20874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:02:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="WWgB7Eg9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0AF12083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Av3PfxS6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFFA20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932856AbeFTUAZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:00:25 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45477 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932308AbeFTUAX (ORCPT
+        id S932903AbeFTUCL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:02:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34428 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932368AbeFTUCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:00:23 -0400
-Received: by mail-lf0-f67.google.com with SMTP id a13-v6so1104016lfk.12
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KhOkRFVS9GKT9E48ZH6LER/vfrvlJSIaqj1/KIFVIGI=;
-        b=WWgB7Eg9zFN5tsb+z9uzRk+JDyJTEHLcXdHO3Cmko2hWKj+14zGv/JB7OF3ONT/8Ji
-         dGRTqQExQ6yY2YkGK5FIDVsZMA3TWGlQRqqD6MP8KO994x3KOMp29S6RF1A29nfWpEF8
-         4m9ob7W2jOakHBIK+deHjorSkVngNTDPjMGogw90KMTdG8EqaqcKbeYuA8q//Yw7Xc+q
-         fUFwvjK5NuRRZ0k5qDScwF9ZoqsVRjh4Qp6zOZAnPtq69Pswy1qL3zWArEPk1WnR5BYd
-         Yve1fs6C9x8yI0rP8kvo/9F85CqF7cqkR/tusd2lfkVgl3EUWSOiH0GutQbrvwjRYmmu
-         nTTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KhOkRFVS9GKT9E48ZH6LER/vfrvlJSIaqj1/KIFVIGI=;
-        b=BwTk0r9AhZ5e4Hf6+BXZ/xKsNl4Xe574cinQwOZHDPbSjYUUIc1WMnddQh3ZMD+cNc
-         pLllykR+qudsfPqFSgl4MOCHb/iKmQwxBtbIyhf60DViM/jzxKArCnkgVIETUQZDtV8j
-         m4yqdKO97S+RkgylVgjMK6qgORI69E88pncIth16JbsgaCYp0AsOphERBJON7NWDOeWA
-         QdCgpELMtX7NeE8Gzd+K1ca5lweraaZoBBA6DvTx7Z1v6CMnb2dNebv0oJGwrd90hLEW
-         i4kAfYildXVRcRr+Da40GqX9zOcap2TaghQn8Om0+rz0WKZX4UcbfeERXhLaisR4vxaM
-         fCeQ==
-X-Gm-Message-State: APt69E18I+Z5hgAn2DatkxfDuOF4Nz+RUHrjpMX3u3oEaFrXXhh/LKcv
-        WgiPxdVdhBEPEmzFvKqYnFxMY9GuL/oPwAh2T2YV
-X-Google-Smtp-Source: ADUXVKLgjf6K1nb5Otcnc7czYnhCzuFoZzdSMqReHM4GoFDI9oXWeR3AW2nzPpBtXvf4mYzVqXcPz/x0hGQtcvjWdrQ=
-X-Received: by 2002:a2e:18b:: with SMTP id f11-v6mr15041045lji.83.1529524821827;
- Wed, 20 Jun 2018 13:00:21 -0700 (PDT)
+        Wed, 20 Jun 2018 16:02:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mSGje/N9AlyD8es74rG94CIwGZIarqpF9Tr9Gv2j2mM=; b=Av3PfxS6h5/0lA7bt06gBh3SP
+        ShVjDAbzexqt3E/DA5PnFHnKUUoGaKv2LQkK/AlshsLaE5q9hguy3V/mOSMSBg4GbxOCYxrSP/I7H
+        W3dNq6gszqyN0kaFq6blB4G0rIYSx9H7r290a0NxJ9Rm5TzgfRDG9IuRIjzHT+kBpUrckJNbWBHWj
+        urs2JDFDSqqEp3sTUDdwGgAM+hgR0ELnKqj5rw6owhPUsPCVNtKFlz73ZGHzRAnSzlEnO7kk8bqrj
+        BxV6G5yIyHcJPWtUKZmqu1YAcYvjp6r5sX0djrEOvB08Lc88+HKvMk3Pz3qvBjcY9zLuHkPdDqPgQ
+        D3XqLGm9w==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVjIs-0002Nh-Ai; Wed, 20 Jun 2018 20:02:06 +0000
+Subject: Re: [RFC v8 1/1] mconf: global i-search in menu prompts
+To:     Dirk Gouders <dirk@gouders.net>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+References: <20180620084217.8597-1-dirk@gouders.net>
+ <20180620084217.8597-2-dirk@gouders.net>
+ <f02cc7c6-d92e-24f3-b0ad-df9e6bf7630a@infradead.org>
+ <ghpo0l2spo.fsf@lena.gouders.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <126839db-5cc1-7dad-5a1f-21899dc6236e@infradead.org>
+Date:   Wed, 20 Jun 2018 13:02:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180620144227.18bab881@canb.auug.org.au> <8e17ad17-db3b-7588-b04e-3bd8b54060c0@infradead.org>
-In-Reply-To: <8e17ad17-db3b-7588-b04e-3bd8b54060c0@infradead.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 20 Jun 2018 16:00:10 -0400
-Message-ID: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
-Subject: Re: linux-next: Tree for Jun 20 (kernel/auditsc.c)
-To:     rdunlap@infradead.org, omosnace@redhat.com
-Cc:     sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>,
-        linux-audit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ghpo0l2spo.fsf@lena.gouders.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 11:48 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 06/19/2018 09:42 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Changes since 20180619:
-> >
->
-> on x86_64:
->
-> kernel/auditsc.o: In function `audit_filter_rules.isra.20':
-> auditsc.c:(.text+0x8c5): undefined reference to `groups_search'
-> auditsc.c:(.text+0x909): undefined reference to `groups_search'
->
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->
-> Full randconfig file is attached.
+On 06/20/2018 11:55 AM, Dirk Gouders wrote:
+> Randy Dunlap <rdunlap@infradead.org> writes:
+> 
+>> Hi,
+>>
+>> On 06/20/2018 01:42 AM, Dirk Gouders wrote:
+>>>
+>>> Operation
+>>> ---------
+>>> The TAB key is reserved to toggle the focus between menu and bottons.
+>>> Focus is on the buttons if one of the buttens (the active one) is
+>>> hightlighted, otherwise it is on the menu.
+>>>
+>>> When the focus is on the buttons, mconf operates as before with the
+>>> exception of the TAB key.
+>>>
+>>> When the focus is on the menu, mconf operates in i-search mode and the
+>>> following input has special meaning:
+>>>
+>>> * <\> (backslash) can be used to search for other occurences of an
+>>>   already entered string.  On empty search strings, nothing happens.
+>>>
+>>> * Any other printable character than backslash and '\n' is appended to
+>>>   the current search string and a match is searched for.  If a match
+>>>   is found, it is immediately navigated to.
+>>
+>> About that paragraph above:  I tried to search for "fs-cache", as in:
+>>
+>> config FSCACHE_DEBUG
+>> 	bool "Debug FS-Cache"
+>>
+>> but i-search does not allow me to enter a '-' character.  Seems odd to me.
+> 
+> Hi Randy,
+> 
+> thanks for all your testing.
+> 
+> '-' and '+' previously had the same meaning as <KEY_UP>, <KEY_DOWN>,
+> respectively.  If you are on the top menu item and press '-' there is
+> nothing to scroll up so it appears as if the pressed key wasn't
+> processed.
+> 
+> I-search should add those characters to the pattern but I broke that two
+> or three versions before when I fixed another issue.
+> 
+> I will add this to my list of test cases so this won't happen again.
+> 
+> Dirk
+> 
+> 
+>> Still doing other testing...
 
-Thanks Randy.
+I haven't hit any other issues.
 
-I believe the issue is that when CONFIG_MULTIUSER is not enabled
-groups.{c.o} is not included.  Ondrej, please look into this and
-submit a fix as soon as possible, thank you.
-
+thanks,
 -- 
-paul moore
-www.paul-moore.com
+~Randy
