@@ -2,152 +2,130 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE9CC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C0DC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E6DC20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:30:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DCE120693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:31:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="cbXpaFgU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E6DC20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ethantuttle-com.20150623.gappssmtp.com header.i=@ethantuttle-com.20150623.gappssmtp.com header.b="AahoqSUY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DCE120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ethantuttle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeFTEaQ (ORCPT
+        id S1752914AbeFTEbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 00:30:16 -0400
-Received: from mail-he1eur01on0048.outbound.protection.outlook.com ([104.47.0.48]:17792
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750827AbeFTEaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 00:30:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nSyAQ2RJ6TmFW1k34khsbkACZXXMIPXK2x6pl9rO0OY=;
- b=cbXpaFgUewlv7DRcMl66tgxcHgTMO1+b3aeR7bBsZxnPJ2s8kndc3E4KiLTHIxL4X8oDn+s+GvIpYHT4mnR+aI6PqpzGJpUnd0EGj+/xSWm+jQGIUS9DvHLh7Ogvcrhmo6EfK0h7e0sFj/xVldq7eu+/Fg67fcs5t5xGognYQSo=
-Received: from HE1PR0502MB3753.eurprd05.prod.outlook.com (10.167.127.143) by
- HE1PR0502MB2922.eurprd05.prod.outlook.com (10.175.34.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.19; Wed, 20 Jun 2018 04:30:10 +0000
-Received: from HE1PR0502MB3753.eurprd05.prod.outlook.com
- ([fe80::2972:3d1e:ffae:4bc4]) by HE1PR0502MB3753.eurprd05.prod.outlook.com
- ([fe80::2972:3d1e:ffae:4bc4%3]) with mapi id 15.20.0863.016; Wed, 20 Jun 2018
- 04:30:10 +0000
-From:   Vadim Pasternak <vadimp@mellanox.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-CC:     "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        Michael Shych <michaelsh@mellanox.com>,
-        "ivecera@redhat.com" <ivecera@redhat.com>
-Subject: RE: [PATCH v6 6/8] platform/mellanox: Introduce support for Mellanox
- register access driver
-Thread-Topic: [PATCH v6 6/8] platform/mellanox: Introduce support for Mellanox
- register access driver
-Thread-Index: AQHUBk6/VXLiq4IGjE+UO1GB1MVxhaRkqnoAgAOh4ICAAEVZIA==
-Date:   Wed, 20 Jun 2018 04:30:09 +0000
-Message-ID: <HE1PR0502MB37530DD5B696E1AC256E2632A2770@HE1PR0502MB3753.eurprd05.prod.outlook.com>
-References: <1529254615-88124-1-git-send-email-vadimp@mellanox.com>
- <b804ccc4-77c3-e7a9-9486-8d12d50ec5f7@infradead.org>
- <20180620002025.GC11460@fury>
-In-Reply-To: <20180620002025.GC11460@fury>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vadimp@mellanox.com; 
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0502MB2922;7:B0bsU9NQ3PHE8o7XeXhiQHQk01pXY9TOXWSd4bxDqdctNRkJdGh1N8fOXJyfynlvGg64mIvXT3zwRSluT1ov95xzfhp99B3mtwQ4COZSavbUcunjsmvr++PG8p7I+bZojOwrhuLBhJApKcUnNBEC+Bh83BIiXDWCCnn7grXf5wqV9wzi9XO1u2HmlbTB9JTqV3P7wkRrwCq9dKAbL/qvIlzoL2m08nCKBYjZ0i1/M9kS9xMDwyDjzSH7r+QxF57C
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 1031cfde-4772-44cb-d93c-08d5d6668215
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR0502MB2922;
-x-ms-traffictypediagnostic: HE1PR0502MB2922:
-x-microsoft-antispam-prvs: <HE1PR0502MB29226301349E34F57C9581ABA2770@HE1PR0502MB2922.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0502MB2922;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0502MB2922;
-x-forefront-prvs: 070912876F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(396003)(39860400002)(366004)(346002)(199004)(189003)(13464003)(39060400002)(5250100002)(3660700001)(105586002)(68736007)(3846002)(53936002)(6116002)(106356001)(6246003)(54906003)(2906002)(3280700002)(110136005)(5660300001)(102836004)(4326008)(6506007)(53546011)(86362001)(59450400001)(25786009)(76176011)(97736004)(33656002)(316002)(66066001)(478600001)(26005)(7696005)(8936002)(74316002)(8676002)(81166006)(305945005)(2900100001)(9686003)(81156014)(6436002)(229853002)(11346002)(99286004)(476003)(14454004)(55016002)(486006)(446003)(7736002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0502MB2922;H:HE1PR0502MB3753.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: gspOzTv+QCEa2R1qCTN7ahqNRd6ZVolWux0EO2tRw8Ay5sLDgqaXWKKm/wM+QuLf5d4rDoTwIWEK79CH7cfnsnfi7dCcZotFxXbeAF2xDLAfPxWufMiOfBcEesR8GOosUZiDl2v/DEs9ifnGIHHtN8hndrOe0iCYaTe6mU0o4cnydg46cgXbQ+bOM/Fx1m8v74vZOX4XkdzgBcAsiiNMFL2+79AwK8bwQHNNULQwhyh54EcFHXWKBned7FdvTztYpiiFatajKWn5BrCqyk5bGYvKAAneKhzZxdLPa930NUvpXz1N5xUeXRKsITkKkfMrSWTPqyLq/BnP0OKhICVS6Q==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1031cfde-4772-44cb-d93c-08d5d6668215
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2018 04:30:09.8700
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0502MB2922
+        Wed, 20 Jun 2018 00:31:23 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39483 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751293AbeFTEbU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 00:31:20 -0400
+Received: by mail-pf0-f194.google.com with SMTP id r11-v6so933905pfl.6
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 21:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ethantuttle-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=4WdIOnYBk/gaJ81rghZ0C9OItTocO8iZGa6//nyJE2o=;
+        b=AahoqSUYDiR08YKkIKwdXW+22BkOiuHrUtjEZl5Iplo8+hlQgPZhhDJfP3tJhJpfsO
+         6O5YuU7djFgEdW5+hme46rDIBuPbzB+HWSwzN5jevVnnp7mrJsisO70yEK+TAegVaAK7
+         KhM4qo91o56Iobk/ATrQIVOUrSan18wDbliwXl0eGGh0kbyxWgypkRuSUK9n6UEOCbMJ
+         KOgtP1ZJUnzwoBrcHLU6K2d7Td7NzX4deFqMK/VoHLOA0bioihmBMtFXVs/kFAhgX7Qf
+         vqfX0qUyw5DCj8cS0ddZPgZ0pc5V1S09WD1oc2jCnlJSPdHYokHxYX/cZfyS+Tcjg0Oc
+         63sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4WdIOnYBk/gaJ81rghZ0C9OItTocO8iZGa6//nyJE2o=;
+        b=ETAv4EWuy9TeGscw7A9CwzR1Z4T/JUlb2O5DM6DauT+w8m2mFmIbZOjxNYcEg7s1ct
+         vdzkdgn0zjmJhlOpqrLkxB6ODdKdgEyv4I4pJMIDUkKY4hA8gmm/zb65cwBIKVFHmAHL
+         0y/hs93mB84+i2Ep7mUme3P+OTz5U00hKJxz1dyEoaZnCof6Y3NJ3qB2Hlw9M19CI7Wu
+         d/uji450SPsr8hfHaJq2SE5covE/uZSx8kbT/9AmsZXTwlXr2dSBYTEmEtY6Vh5g8e/i
+         u9KY4thn2i4bWT0qD+gz146LBftq0nTq3J3iZvDbRr7gBhinOPHoV5zqCCwsls1adYT6
+         BNVA==
+X-Gm-Message-State: APt69E1TfGfjHme/JsBXzjQB+7kfMZEUuOzahPbJ4tvsO8w/kLrAtkUA
+        j1IGzze/KaWC8ynjFXK9iVSjrw==
+X-Google-Smtp-Source: ADUXVKJllbDxn99O3wEtGRggpFFz2AzoMl5maO5pKJsd82vRWONpRf51dFc9EmEx8Wnr1uomDVGk0A==
+X-Received: by 2002:a63:780b:: with SMTP id t11-v6mr17115738pgc.91.1529469079530;
+        Tue, 19 Jun 2018 21:31:19 -0700 (PDT)
+Received: from arch.hsd1.ca.comcast.net (c-67-169-71-69.hsd1.ca.comcast.net. [67.169.71.69])
+        by smtp.gmail.com with ESMTPSA id j23-v6sm1544432pfi.137.2018.06.19.21.31.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 21:31:18 -0700 (PDT)
+From:   Ethan Tuttle <ethan@ethantuttle.com>
+Cc:     Ethan Tuttle <ethan@ethantuttle.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: mvebu: declare asm symbols as character arrays in pmsu.c
+Date:   Tue, 19 Jun 2018 21:31:08 -0700
+Message-Id: <20180620043109.1190-1-ethan@ethantuttle.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+With CONFIG_FORTIFY_SOURCE, memcpy uses the declared size of operands to
+detect buffer overflows.  If src or dest is declared as a char, attempts to
+copy more than byte will result in a fortify_panic().
 
+Address this problem in mvebu_setup_boot_addr_wa() by declaring
+mvebu_boot_wa_start and mvebu_boot_wa_end as character arrays.  Also remove
+a couple addressof operators to avoid "arithmetic on pointer to an
+incomplete type" compiler error.
 
-> -----Original Message-----
-> From: Darren Hart [mailto:dvhart@infradead.org]
-> Sent: Wednesday, June 20, 2018 3:20 AM
-> To: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Vadim Pasternak <vadimp@mellanox.com>; andy.shevchenko@gmail.com;
-> gregkh@linuxfoundation.org; linux-kernel@vger.kernel.org; platform-driver=
--
-> x86@vger.kernel.org; jiri@resnulli.us; Michael Shych
-> <michaelsh@mellanox.com>; ivecera@redhat.com
-> Subject: Re: [PATCH v6 6/8] platform/mellanox: Introduce support for Mell=
-anox
-> register access driver
->=20
-> On Sun, Jun 17, 2018 at 09:52:16AM -0700, Randy Dunlap wrote:
-> > On 06/17/2018 09:56 AM, Vadim Pasternak wrote:
-> > > diff --git a/drivers/platform/mellanox/Kconfig
-> > > b/drivers/platform/mellanox/Kconfig
-> ...
-> > > +	  space trough sysfs interface. The sets of registers for sysfs
-> > > +access
-> >
-> > 	        through
-> >
-> > > +	  are defined per system type bases and includes the registers
-> > > +related
-> >
-> > 	                                    and include the
-> >
->=20
-> I've taken care of these, thanks Randy, and applied the series to my test=
-ing
-> queue. Once the builds complete, I'll move these to for-next.
->=20
-> Vadim, I see you've already updated the kernel version in the sys documen=
-tation
-> to 4.19, so I won't attempt to push these into the 4.18 RC cycle.
->=20
+See commit 54a7d50b9205 ("x86: mark kprobe templates as character arrays,
+not single characters") for a similar fix.
 
-Hi Daren,
+Fixes "detected buffer overflow in memcpy" error during init on some mvebu
+systems (armada-370-xp, armada-375):
 
-Thank you very much.
-Yes, it's good to push into 4.19.
+(fortify_panic) from (mvebu_setup_boot_addr_wa+0xb0/0xb4)
+(mvebu_setup_boot_addr_wa) from (mvebu_v7_cpu_pm_init+0x154/0x204)
+(mvebu_v7_cpu_pm_init) from (do_one_initcall+0x7c/0x1a8)
+(do_one_initcall) from (kernel_init_freeable+0x1bc/0x254)
+(kernel_init_freeable) from (kernel_init+0x8/0x114)
+(kernel_init) from (ret_from_fork+0x14/0x2c)
 
-Thanks,
-Vadim.
+Signed-off-by: Ethan Tuttle <ethan@ethantuttle.com>
+Tested-by: Ethan Tuttle <ethan@ethantuttle.com>
+---
+ arch/arm/mach-mvebu/pmsu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> --
-> Darren Hart
-> VMware Open Source Technology Center
+diff --git a/arch/arm/mach-mvebu/pmsu.c b/arch/arm/mach-mvebu/pmsu.c
+index 27a78c80e5b1..73d5d72dfc3e 100644
+--- a/arch/arm/mach-mvebu/pmsu.c
++++ b/arch/arm/mach-mvebu/pmsu.c
+@@ -116,8 +116,8 @@ void mvebu_pmsu_set_cpu_boot_addr(int hw_cpu, void *boot_addr)
+ 		PMSU_BOOT_ADDR_REDIRECT_OFFSET(hw_cpu));
+ }
+ 
+-extern unsigned char mvebu_boot_wa_start;
+-extern unsigned char mvebu_boot_wa_end;
++extern unsigned char mvebu_boot_wa_start[];
++extern unsigned char mvebu_boot_wa_end[];
+ 
+ /*
+  * This function sets up the boot address workaround needed for SMP
+@@ -130,7 +130,7 @@ int mvebu_setup_boot_addr_wa(unsigned int crypto_eng_target,
+ 			     phys_addr_t resume_addr_reg)
+ {
+ 	void __iomem *sram_virt_base;
+-	u32 code_len = &mvebu_boot_wa_end - &mvebu_boot_wa_start;
++	u32 code_len = mvebu_boot_wa_end - mvebu_boot_wa_start;
+ 
+ 	mvebu_mbus_del_window(BOOTROM_BASE, BOOTROM_SIZE);
+ 	mvebu_mbus_add_window_by_id(crypto_eng_target, crypto_eng_attribute,
+-- 
+2.17.1
+
