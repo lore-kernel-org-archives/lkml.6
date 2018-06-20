@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC4DC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B290CC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D10032083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:57:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10032083A
+	by mail.kernel.org (Postfix) with ESMTP id 6D21E20874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:58:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D21E20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932828AbeFTT52 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:57:28 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:52004 "EHLO
+        id S1754930AbeFTT5X (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 15:57:23 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:52058 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754766AbeFTT5H (ORCPT
+        with ESMTP id S1754818AbeFTT5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 15:57:07 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1fVjDr-0002g7-AZ; Wed, 20 Jun 2018 15:56:55 -0400
+        id 1fVjDr-0002g7-Ey; Wed, 20 Jun 2018 15:56:55 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     86@vger.kernel.org, luto@kernel.org, mingo@kernel.org,
         tglx@linutronix.de, dave.hansen@linux.intel.com, efault@gmx.de,
         songliubraving@fb.com, kernel-team@fb.com,
         Rik van Riel <riel@surriel.com>
-Subject: [PATCH 2/7] x86,tlb: leave lazy TLB mode at page table free time
-Date:   Wed, 20 Jun 2018 15:56:47 -0400
-Message-Id: <20180620195652.27251-3-riel@surriel.com>
+Subject: [PATCH 6/7] x86,mm: always use lazy TLB mode
+Date:   Wed, 20 Jun 2018 15:56:51 -0400
+Message-Id: <20180620195652.27251-7-riel@surriel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180620195652.27251-1-riel@surriel.com>
 References: <20180620195652.27251-1-riel@surriel.com>
@@ -44,158 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy discovered that speculative memory accesses while in lazy
-TLB mode can crash a system, when a CPU tries to dereference a
-speculative access using memory contents that used to be valid
-page table memory, but have since been reused for something else
-and point into la-la land.
-
-The latter problem can be prevented in two ways. The first is to
-always send a TLB shootdown IPI to CPUs in lazy TLB mode, while
-the second one is to only send the TLB shootdown at page table
-freeing time.
-
-The second should result in fewer IPIs, since operationgs like
-mprotect and madvise are very common with some workloads, but
-do not involve page table freeing. Also, on munmap, batching
-of page table freeing covers much larger ranges of virtual
-memory than the batching of unmapped user pages.
+Now that CPUs in lazy TLB mode no longer receive TLB shootdown IPIs, except
+at page table freeing time, and idle CPUs will no longer get shootdown IPIs
+for things like mprotect and madvise, we can always use lazy TLB mode.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
 Tested-by: Song Liu <songliubraving@fb.com>
 ---
- arch/x86/include/asm/tlbflush.h |  5 +++++
- arch/x86/mm/tlb.c               | 24 ++++++++++++++++++++++++
- include/asm-generic/tlb.h       | 10 ++++++++++
- mm/memory.c                     | 22 ++++++++++++++--------
- 4 files changed, 53 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/tlbflush.h | 16 ----------------
+ arch/x86/mm/tlb.c               | 15 +--------------
+ 2 files changed, 1 insertion(+), 30 deletions(-)
 
 diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 6690cd3fc8b1..3aa3204b5dc0 100644
+index 0a8bdd6084de..d59c247afc14 100644
 --- a/arch/x86/include/asm/tlbflush.h
 +++ b/arch/x86/include/asm/tlbflush.h
-@@ -554,4 +554,9 @@ extern void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
- 	native_flush_tlb_others(mask, info)
+@@ -148,22 +148,6 @@ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
+ #define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
  #endif
  
-+extern void tlb_flush_remove_tables(struct mm_struct *mm);
-+extern void tlb_flush_remove_tables_local(void *arg);
-+
-+#define HAVE_TLB_FLUSH_REMOVE_TABLES
-+
- #endif /* _ASM_X86_TLBFLUSH_H */
+-static inline bool tlb_defer_switch_to_init_mm(void)
+-{
+-	/*
+-	 * If we have PCID, then switching to init_mm is reasonably
+-	 * fast.  If we don't have PCID, then switching to init_mm is
+-	 * quite slow, so we try to defer it in the hopes that we can
+-	 * avoid it entirely.  The latter approach runs the risk of
+-	 * receiving otherwise unnecessary IPIs.
+-	 *
+-	 * This choice is just a heuristic.  The tlb code can handle this
+-	 * function returning true or false regardless of whether we have
+-	 * PCID.
+-	 */
+-	return !static_cpu_has(X86_FEATURE_PCID);
+-}
+-
+ struct tlb_context {
+ 	u64 ctx_id;
+ 	u64 tlb_gen;
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index e055d1a06699..61773b07ed54 100644
+index 40b00055c883..26b3aeef6266 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -646,6 +646,30 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 	put_cpu();
+@@ -378,20 +378,7 @@ void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
+ 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == &init_mm)
+ 		return;
+ 
+-	if (tlb_defer_switch_to_init_mm()) {
+-		/*
+-		 * There's a significant optimization that may be possible
+-		 * here.  We have accurate enough TLB flush tracking that we
+-		 * don't need to maintain coherence of TLB per se when we're
+-		 * lazy.  We do, however, need to maintain coherence of
+-		 * paging-structure caches.  We could, in principle, leave our
+-		 * old mm loaded and only switch to init_mm when
+-		 * tlb_remove_page() happens.
+-		 */
+-		this_cpu_write(cpu_tlbstate.state, TLBSTATE_LAZY);
+-	} else {
+-		switch_mm(NULL, &init_mm, NULL);
+-	}
++	this_cpu_write(cpu_tlbstate.state, TLBSTATE_LAZY);
  }
  
-+void tlb_flush_remove_tables_local(void *arg)
-+{
-+	struct mm_struct *mm = arg;
-+
-+	if (this_cpu_read(cpu_tlbstate.loaded_mm) == mm &&
-+			this_cpu_read(cpu_tlbstate.is_lazy))
-+		/*
-+		 * We're in lazy mode.  We need to at least flush our
-+		 * paging-structure cache to avoid speculatively reading
-+		 * garbage into our TLB.  Since switching to init_mm is barely
-+		 * slower than a minimal flush, just switch to init_mm.
-+		 */
-+		switch_mm_irqs_off(NULL, &init_mm, NULL);
-+}
-+
-+void tlb_flush_remove_tables(struct mm_struct *mm)
-+{
-+	int cpu = get_cpu();
-+	/*
-+	 * XXX: this really only needs to be called for CPUs in lazy TLB mode.
-+	 */
-+	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
-+		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
-+}
- 
- static void do_flush_tlb_all(void *info)
- {
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index faddde44de8c..f0b462ddfa15 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -295,4 +295,14 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- 
- #define tlb_migrate_finish(mm) do {} while (0)
- 
-+/*
-+ * Used to flush the TLB when page tables are removed, when lazy
-+ * TLB mode may cause a CPU to retain intermediate translations
-+ * pointing to about-to-be-freed page table memory.
-+ */
-+#ifndef HAVE_TLB_FLUSH_REMOVE_TABLES
-+#define tlb_flush_remove_tables(mm) do {} while (0)
-+#define tlb_flush_remove_tables_local(mm) do {} while (0)
-+#endif
-+
- #endif /* _ASM_GENERIC__TLB_H */
-diff --git a/mm/memory.c b/mm/memory.c
-index 01f5464e0fd2..77a908f88cb4 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -326,16 +326,20 @@ bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_
- 
- #ifdef CONFIG_HAVE_RCU_TABLE_FREE
- 
--/*
-- * See the comment near struct mmu_table_batch.
-- */
--
- static void tlb_remove_table_smp_sync(void *arg)
- {
--	/* Simply deliver the interrupt */
-+	struct mm_struct *mm = arg;
-+	/*
-+	 * On most architectures this does nothing. Simply delivering the
-+	 * interrupt is enough to prevent races with software page table
-+	 * walking like that done in get_user_pages_fast.
-+	 *
-+	 * See the comment near struct mmu_table_batch.
-+	 */
-+	tlb_flush_remove_tables_local(mm);
- }
- 
--static void tlb_remove_table_one(void *table)
-+static void tlb_remove_table_one(void *table, struct mmu_gather *tlb)
- {
- 	/*
- 	 * This isn't an RCU grace period and hence the page-tables cannot be
-@@ -344,7 +348,7 @@ static void tlb_remove_table_one(void *table)
- 	 * It is however sufficient for software page-table walkers that rely on
- 	 * IRQ disabling. See the comment near struct mmu_table_batch.
- 	 */
--	smp_call_function(tlb_remove_table_smp_sync, NULL, 1);
-+	smp_call_function(tlb_remove_table_smp_sync, tlb->mm, 1);
- 	__tlb_remove_table(table);
- }
- 
-@@ -365,6 +369,8 @@ void tlb_table_flush(struct mmu_gather *tlb)
- {
- 	struct mmu_table_batch **batch = &tlb->batch;
- 
-+	tlb_flush_remove_tables(tlb->mm);
-+
- 	if (*batch) {
- 		call_rcu_sched(&(*batch)->rcu, tlb_remove_table_rcu);
- 		*batch = NULL;
-@@ -387,7 +393,7 @@ void tlb_remove_table(struct mmu_gather *tlb, void *table)
- 	if (*batch == NULL) {
- 		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
- 		if (*batch == NULL) {
--			tlb_remove_table_one(table);
-+			tlb_remove_table_one(table, tlb);
- 			return;
- 		}
- 		(*batch)->nr = 0;
+ /*
 -- 
 2.14.4
 
