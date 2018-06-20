@@ -3,142 +3,225 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 851C9C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291B6C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF6E20872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:14:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF6E20872
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D8D1520872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:15:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8D1520872
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754101AbeFTOOq (ORCPT
+        id S1754104AbeFTOPi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:14:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49302 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754017AbeFTOOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:14:44 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BE7054022414;
-        Wed, 20 Jun 2018 14:14:43 +0000 (UTC)
-Received: from redhat.com (ovpn-122-53.rdu2.redhat.com [10.10.122.53])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 24B9E2156880;
-        Wed, 20 Jun 2018 14:14:42 +0000 (UTC)
-Date:   Wed, 20 Jun 2018 17:14:41 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     "Wang, Wei W" <wei.w.wang@intel.com>
-Cc:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: Re: [virtio-dev] Re: [PATCH v33 2/4] virtio-balloon:
- VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Message-ID: <20180620171320-mutt-send-email-mst@kernel.org>
-References: <20180615144000-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396A3D04@shsmsx102.ccr.corp.intel.com>
- <20180615171635-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396A5CB0@shsmsx102.ccr.corp.intel.com>
- <20180618051637-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396AA10C@shsmsx102.ccr.corp.intel.com>
- <20180619055449-mutt-send-email-mst@kernel.org>
- <5B28F371.9020308@intel.com>
- <20180619173256-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396AE2EC@shsmsx102.ccr.corp.intel.com>
+        Wed, 20 Jun 2018 10:15:38 -0400
+Received: from mga01.intel.com ([192.55.52.88]:60935 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752725AbeFTOPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 10:15:37 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 07:15:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,247,1526367600"; 
+   d="scan'208";a="238796964"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga005.fm.intel.com with ESMTP; 20 Jun 2018 07:15:35 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fVdtT-000L2s-Mb; Wed, 20 Jun 2018 22:15:31 +0800
+Date:   Wed, 20 Jun 2018 22:14:44 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+Cc:     kbuild-all@01.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
+        jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org,
+        Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+Subject: Re: [PATCH v2] tpm: Return the actual size when receiving an
+ unsupported command
+Message-ID: <201806202248.zEM6vINs%fengguang.wu@intel.com>
+References: <20180620095507.682-1-Ricardo.Schwarzmeier@infineon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <286AC319A985734F985F78AFA26841F7396AE2EC@shsmsx102.ccr.corp.intel.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 20 Jun 2018 14:14:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 20 Jun 2018 14:14:43 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180620095507.682-1-Ricardo.Schwarzmeier@infineon.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 09:11:39AM +0000, Wang, Wei W wrote:
-> On Tuesday, June 19, 2018 10:43 PM, Michael S. Tsirk wrote:
-> > On Tue, Jun 19, 2018 at 08:13:37PM +0800, Wei Wang wrote:
-> > > On 06/19/2018 11:05 AM, Michael S. Tsirkin wrote:
-> > > > On Tue, Jun 19, 2018 at 01:06:48AM +0000, Wang, Wei W wrote:
-> > > > > On Monday, June 18, 2018 10:29 AM, Michael S. Tsirkin wrote:
-> > > > > > On Sat, Jun 16, 2018 at 01:09:44AM +0000, Wang, Wei W wrote:
-> > > > > > > Not necessarily, I think. We have min(4m_page_blocks / 512,
-> > > > > > > 1024) above,
-> > > > > > so the maximum memory that can be reported is 2TB. For larger
-> > guests, e.g.
-> > > > > > 4TB, the optimization can still offer 2TB free memory (better
-> > > > > > than no optimization).
-> > > > > >
-> > > > > > Maybe it's better, maybe it isn't. It certainly muddies the waters even
-> > more.
-> > > > > > I'd rather we had a better plan. From that POV I like what
-> > > > > > Matthew Wilcox suggested for this which is to steal the necessary # of
-> > entries off the list.
-> > > > > Actually what Matthew suggested doesn't make a difference here.
-> > > > > That method always steal the first free page blocks, and sure can
-> > > > > be changed to take more. But all these can be achieved via kmalloc
-> > > > I'd do get_user_pages really. You don't want pages split, etc.
-> > 
-> > Oops sorry. I meant get_free_pages .
-> 
-> Yes, we can use __get_free_pages, and the max allocation is MAX_ORDER - 1, which can report up to 2TB free memory. 
-> 
-> "getting two pages isn't harder", do you mean passing two arrays (two allocations by get_free_pages(,MAX_ORDER -1)) to the mm API?
+Hi Ricardo,
 
-Yes, or generally a list of pages with as many as needed.
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on char-misc/char-misc-testing]
+[also build test WARNING on v4.18-rc1 next-20180620]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Ricardo-Schwarzmeier/tpm-Return-the-actual-size-when-receiving-an-unsupported-command/20180620-210928
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-> Please see if the following logic aligns to what you think:
-> 
->         uint32_t i, max_hints, hints_per_page, hints_per_array, total_arrays;
->         unsigned long *arrays;
->  
->      /*
->          * Each array size is MAX_ORDER_NR_PAGES. If one array is not enough to
->          * store all the hints, we need to allocate multiple arrays.
->          * max_hints: the max number of 4MB free page blocks
->          * hints_per_page: the number of hints each page can store
->          * hints_per_array: the number of hints an array can store
->          * total_arrays: the number of arrays we need
->          */
->         max_hints = totalram_pages / MAX_ORDER_NR_PAGES;
->         hints_per_page = PAGE_SIZE / sizeof(__le64);
->         hints_per_array = hints_per_page * MAX_ORDER_NR_PAGES;
->         total_arrays = max_hints /  hints_per_array +
->                        !!(max_hints % hints_per_array);
->         arrays = kmalloc(total_arrays * sizeof(unsigned long), GFP_KERNEL);
->         for (i = 0; i < total_arrays; i++) {
->                 arrays[i] = __get_free_pages(__GFP_ATOMIC | __GFP_NOMEMALLOC, MAX_ORDER - 1);
-> 
->               if (!arrays[i])
->                       goto out;
->         }
-> 
-> 
-> - the mm API needs to be changed to support storing hints to multiple separated arrays offered by the caller.
-> 
-> Best,
-> Wei
+sparse warnings: (new ones prefixed by >>)
 
-Yes. And add an API to just count entries so we know how many arrays to allocate.
+>> drivers/char/tpm/tpm-interface.c:426:30: sparse: incorrect type in return expression (different base types) @@    expected long @@    got restricted __be32 [usertylong @@
+   drivers/char/tpm/tpm-interface.c:426:30:    expected long
+   drivers/char/tpm/tpm-interface.c:426:30:    got restricted __be32 [usertype] length
+   drivers/char/tpm/tpm-interface.c:565:34: sparse: expression using sizeof(void)
+   drivers/char/tpm/tpm-interface.c:565:34: sparse: expression using sizeof(void)
+   drivers/char/tpm/tpm-interface.c:1258:31: sparse: expression using sizeof(void)
 
--- 
-MST
+vim +426 drivers/char/tpm/tpm-interface.c
+
+   401	
+   402	static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+   403					struct tpm_space *space,
+   404					u8 *buf, size_t bufsiz,
+   405					unsigned int flags)
+   406	{
+   407		struct tpm_output_header *header = (void *)buf;
+   408		int rc;
+   409		ssize_t len = 0;
+   410		u32 count, ordinal;
+   411		unsigned long stop;
+   412		bool need_locality;
+   413	
+   414		rc = tpm_validate_command(chip, space, buf, bufsiz);
+   415		if (rc == -EINVAL)
+   416			return rc;
+   417		/*
+   418		 * If the command is not implemented by the TPM, synthesize a
+   419		 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+   420		 */
+   421		if (rc == -EOPNOTSUPP) {
+   422			header->length = cpu_to_be32(sizeof(*header));
+   423			header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+   424			header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+   425							  TSS2_RESMGR_TPM_RC_LAYER);
+ > 426			return header->length;
+   427		}
+   428	
+   429		if (bufsiz > TPM_BUFSIZE)
+   430			bufsiz = TPM_BUFSIZE;
+   431	
+   432		count = be32_to_cpu(*((__be32 *) (buf + 2)));
+   433		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+   434		if (count == 0)
+   435			return -ENODATA;
+   436		if (count > bufsiz) {
+   437			dev_err(&chip->dev,
+   438				"invalid count value %x %zx\n", count, bufsiz);
+   439			return -E2BIG;
+   440		}
+   441	
+   442		if (!(flags & TPM_TRANSMIT_UNLOCKED))
+   443			mutex_lock(&chip->tpm_mutex);
+   444	
+   445	
+   446		if (chip->ops->clk_enable != NULL)
+   447			chip->ops->clk_enable(chip, true);
+   448	
+   449		/* Store the decision as chip->locality will be changed. */
+   450		need_locality = chip->locality == -1;
+   451	
+   452		if (!(flags & TPM_TRANSMIT_RAW) && need_locality) {
+   453			rc = tpm_request_locality(chip);
+   454			if (rc < 0)
+   455				goto out_no_locality;
+   456		}
+   457	
+   458		if (chip->dev.parent)
+   459			pm_runtime_get_sync(chip->dev.parent);
+   460	
+   461		rc = tpm2_prepare_space(chip, space, ordinal, buf);
+   462		if (rc)
+   463			goto out;
+   464	
+   465		rc = chip->ops->send(chip, buf, count);
+   466		if (rc < 0) {
+   467			if (rc != -EPIPE)
+   468				dev_err(&chip->dev,
+   469					"%s: tpm_send: error %d\n", __func__, rc);
+   470			goto out;
+   471		}
+   472	
+   473		if (chip->flags & TPM_CHIP_FLAG_IRQ)
+   474			goto out_recv;
+   475	
+   476		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+   477			stop = jiffies + tpm2_calc_ordinal_duration(chip, ordinal);
+   478		else
+   479			stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
+   480		do {
+   481			u8 status = chip->ops->status(chip);
+   482			if ((status & chip->ops->req_complete_mask) ==
+   483			    chip->ops->req_complete_val)
+   484				goto out_recv;
+   485	
+   486			if (chip->ops->req_canceled(chip, status)) {
+   487				dev_err(&chip->dev, "Operation Canceled\n");
+   488				rc = -ECANCELED;
+   489				goto out;
+   490			}
+   491	
+   492			tpm_msleep(TPM_TIMEOUT_POLL);
+   493			rmb();
+   494		} while (time_before(jiffies, stop));
+   495	
+   496		chip->ops->cancel(chip);
+   497		dev_err(&chip->dev, "Operation Timed out\n");
+   498		rc = -ETIME;
+   499		goto out;
+   500	
+   501	out_recv:
+   502		len = chip->ops->recv(chip, buf, bufsiz);
+   503		if (len < 0) {
+   504			rc = len;
+   505			dev_err(&chip->dev,
+   506				"tpm_transmit: tpm_recv: error %d\n", rc);
+   507			goto out;
+   508		} else if (len < TPM_HEADER_SIZE) {
+   509			rc = -EFAULT;
+   510			goto out;
+   511		}
+   512	
+   513		if (len != be32_to_cpu(header->length)) {
+   514			rc = -EFAULT;
+   515			goto out;
+   516		}
+   517	
+   518		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+   519	
+   520	out:
+   521		if (chip->dev.parent)
+   522			pm_runtime_put_sync(chip->dev.parent);
+   523	
+   524		if (need_locality)
+   525			tpm_relinquish_locality(chip);
+   526	
+   527	out_no_locality:
+   528		if (chip->ops->clk_enable != NULL)
+   529			chip->ops->clk_enable(chip, false);
+   530	
+   531		if (!(flags & TPM_TRANSMIT_UNLOCKED))
+   532			mutex_unlock(&chip->tpm_mutex);
+   533		return rc ? rc : len;
+   534	}
+   535	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
