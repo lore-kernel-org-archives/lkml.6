@@ -3,110 +3,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C09C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F858C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22BEE20020
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BEE20020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id DCF6C20020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF6C20020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754880AbeFTTeY (ORCPT
+        id S1754904AbeFTTep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:34:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52045 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754557AbeFTTeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:34:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0C0EBAB3F;
-        Wed, 20 Jun 2018 19:34:20 +0000 (UTC)
-Subject: Re: [PATCH 3/3] btrfs: use timespec64 for i_otime
-To:     dsterba@suse.cz, Arnd Bergmann <arnd@arndb.de>,
-        Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        David Sterba <dsterba@suse.com>, y2038@lists.linaro.org,
-        Omar Sandoval <osandov@fb.com>, Liu Bo <bo.li.liu@oracle.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180620143448.44388-1-arnd@arndb.de>
- <20180620143448.44388-3-arnd@arndb.de> <20180620163804.GE24375@twin.jikos.cz>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <263b1bc6-0efb-8803-fb9a-68a1393d35b2@suse.com>
-Date:   Wed, 20 Jun 2018 22:34:16 +0300
+        Wed, 20 Jun 2018 15:34:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52766 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754557AbeFTTen (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 15:34:43 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KJSrsk037981
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 15:34:42 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqw3fg81r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 15:34:42 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Wed, 20 Jun 2018 13:34:41 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Jun 2018 13:34:38 -0600
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KJYbZl1704304
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 20 Jun 2018 12:34:37 -0700
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6FAABE058;
+        Wed, 20 Jun 2018 13:34:37 -0600 (MDT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B03FBE053;
+        Wed, 20 Jun 2018 13:34:37 -0600 (MDT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Jun 2018 13:34:36 -0600 (MDT)
+Subject: Re: [PATCH 1/6] tpm: Introduce a kref for the tpm_chip
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
+        zohar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+References: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
+ <20180620161948.1464255-2-stefanb@linux.vnet.ibm.com>
+ <20180620183854.GC27445@ziepe.ca>
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+Date:   Wed, 20 Jun 2018 15:34:36 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180620163804.GE24375@twin.jikos.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180620183854.GC27445@ziepe.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18062019-0036-0000-0000-00000A0185E2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009228; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01049847; UDB=6.00537972; IPR=6.00828819;
+ MB=3.00021764; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-20 19:34:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062019-0037-0000-0000-000047CF6A46
+Message-Id: <0d37dbe0-d0f4-da13-ffa4-4f00d3542390@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806200214
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 20.06.2018 19:38, David Sterba wrote:
-> On Wed, Jun 20, 2018 at 04:34:34PM +0200, Arnd Bergmann wrote:
->> While the regular inode timestamps all use timespec64 now, the
->> i_otime field is btrfs specific and still needs to be converted
->> to correctly represent times beyond 2038.
+On 06/20/2018 02:38 PM, Jason Gunthorpe wrote:
+> On Wed, Jun 20, 2018 at 12:19:43PM -0400, Stefan Berger wrote:
+>> Introduce a kref for the tpm_chip that we initialize when the tpm_chip has
+>> been allocated and release before the tpm_chip is to be freed.
 >>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> This patch addresses the remaining type conversions, so I'm going to
-> merge it, thanks.
-> 
+>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>>   drivers/char/tpm/tpm-chip.c | 24 +++++++++++++++++++-----
+>>   drivers/char/tpm/tpm.h      |  1 +
+>>   2 files changed, 20 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> index 0a62c19937b6..a933676194a4 100644
+>> +++ b/drivers/char/tpm/tpm-chip.c
+>> @@ -119,8 +119,24 @@ struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
+>>   	return res;
+>>   }
+>>   
+>> +static void tpm_chip_free(struct kref *kref)
+>> +{
+>> +	struct tpm_chip *chip = container_of(kref, struct tpm_chip, kref);
+>> +
+>> +	kfree(chip->log.bios_event_log);
+>> +	kfree(chip->work_space.context_buf);
+>> +	kfree(chip->work_space.session_buf);
+>> +	kfree(chip);
+>> +}
+>> +
+>> +static void tpm_chip_put(struct tpm_chip *chip)
+>> +{
+>> +	if (chip)
+>> +		kref_put(&chip->kref, tpm_chip_free);
+>> +}
+>> +
+>>   /**
+>> - * tpm_dev_release() - free chip memory and the device number
+>> + * tpm_dev_release() - free the device number and release reference to chip
+>>    * @dev: the character device for the TPM chip
+>>    *
+>>    * This is used as the release function for the character device.
+>> @@ -133,10 +149,7 @@ static void tpm_dev_release(struct device *dev)
+>>   	idr_remove(&dev_nums_idr, chip->dev_num);
+>>   	mutex_unlock(&idr_lock);
+>>   
+>> -	kfree(chip->log.bios_event_log);
+>> -	kfree(chip->work_space.context_buf);
+>> -	kfree(chip->work_space.session_buf);
+>> -	kfree(chip);
+>> +	tpm_chip_put(chip);
+>>   }
+>>   static void tpm_devs_release(struct device *dev)
+>> @@ -195,6 +208,7 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
+>>   
+>>   	mutex_init(&chip->tpm_mutex);
+>>   	init_rwsem(&chip->ops_sem);
+>> +	kref_init(&chip->kref);
+>>   
+>>   	chip->ops = ops;
+>>   
+>> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+>> index 7f2d0f489e9c..098d7dcc04a4 100644
+>> +++ b/drivers/char/tpm/tpm.h
+>> @@ -211,6 +211,7 @@ struct tpm_chip {
+>>   	struct cdev cdev;
+>>   	struct cdev cdevs;
+>>   
+>> +	struct kref kref;
+> NAK, there is already a kref in struct device, that one must be used.
 
-Actually for the sake of consistency we might want to merge this series
-altogether. As it stands we now use ktime_get_seconds and
-ktime_get_real_seconds (from Allen's patch). I haven't dug to see what's
-the difference (if any) between the two .
+Right. Should make it simpler...
+
+
+>
+> Jason
+>
+
