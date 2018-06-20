@@ -2,262 +2,225 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DD9C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346E4C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6114220872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6E9920872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:32:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fai3jCMX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CsjWyuOX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6114220872
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixTxzZuR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E9920872
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754128AbeFTN13 (ORCPT
+        id S1754284AbeFTNcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:27:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33076 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754046AbeFTN10 (ORCPT
+        Wed, 20 Jun 2018 09:32:45 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46083 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752891AbeFTNcm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:27:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2DF4B60B1A; Wed, 20 Jun 2018 13:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529501245;
-        bh=NTxfr2ksAZv9Zh8xt4BqRq064aQjAW3ok6GCQFBHmHs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fai3jCMXFGuEFAvA6Sju63zhHka2HFwOMvFX+H9MtpLNsjZv9LIh9daATpX5A6gha
-         7GBOuY+Jef0fIgybAhjhIw2K3KFHUdx3eAFyVzsamQPWGy2kTl4kwU2Yvt9SQoI5UD
-         PTQq4RZNk4jeJknpZ/jz2MXDFPZ5Do57tcXlRAZI=
-Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E789760B15;
-        Wed, 20 Jun 2018 13:27:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529501244;
-        bh=NTxfr2ksAZv9Zh8xt4BqRq064aQjAW3ok6GCQFBHmHs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CsjWyuOXIvLLIXqqLXy8kgXgrkFeVjv93Uab3U4PjhXHhmhLsWNza3Bpm+OFLse52
-         WgfDoxvj/4WjK2IRawfVFJcxNf8fv/fwyCyKFMsKGQAXLuJOsymbXlFUtsR/xRZicO
-         vdWX8fbjzxQrShA1tsL/ftKpzznmjicd9m925Cg4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E789760B15
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From:   Raju P L S S S N <rplsssn@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        ilina@codeaurora.org, devicetree@vger.kernel.org,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH v13 02/10] dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
-Date:   Wed, 20 Jun 2018 18:56:59 +0530
-Message-Id: <1529501227-27163-3-git-send-email-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
-References: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
+        Wed, 20 Jun 2018 09:32:42 -0400
+Received: by mail-wr0-f194.google.com with SMTP id v13-v6so3305390wrp.13;
+        Wed, 20 Jun 2018 06:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=lqUjxbFZJnbLw6sxx3tgEDZ8J0hF4yGPrCfPxDnYrLA=;
+        b=ixTxzZuRqIFfj8M6psUno5so6JgYuwjN5xSxWYmsuAC2gpuxEL3YeMYOY22RyFvDwK
+         hwCYgHo4qenM6AMjJcCgAd5rLVNx6qN3o1rxShMKwvC8+onmTRcCci9ETealDPTWpIoL
+         tC0uSKecnLE7KQmmw+8y2eEj92A3Ml0HwNsJrfYdWLIgR42ks0z5s+wgT4SRBSxno0kk
+         d05KLj56/iSLUrH/b0RRP9mVLY22uxLjOsDBaQ1L5uBSbFr6Tfc2x/VxSFxt6ypW5UdU
+         eeZWl5hLmsIX8vO6EUiMUkrmBx/thnz6QPwKShnPX0bpBv+p7Rp07Ddo8g+p+qPC3BR4
+         ymSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
+         :from:date:message-id:subject:to:cc;
+        bh=lqUjxbFZJnbLw6sxx3tgEDZ8J0hF4yGPrCfPxDnYrLA=;
+        b=Tt6AWCorWxiFHgD5kFBxhZ1TqrIUyI3o6zBNLCza1P+Mmf37Fa7/vAV8CzbpFEIWex
+         eUuQ84gLMZJN3YjgTd/KH8ezjCa9D1jLxoifYdhHYcXz5K9zo05rFIhqxMPNprrhbooG
+         eWbKgrX+qKtkQoSSnnSxUU1iX62ITeJN5NjrLzhEqPjYnVsW8gO/HIb2hvAtMpmR3GPf
+         40oVKfLTwMFnikk12WHjT3TZiyF4ZQ5U7QcMkbRqjF5r5gGs4C9bv7pWbGr48FqxcOY1
+         xOz7jFY2JrQSO2FZIbgy8r/I1XzV/V7aH2RO/+8B1NM7J+v1kDgLQdfX1aDHGIJa7Y+l
+         sjOA==
+X-Gm-Message-State: APt69E1N1KoOECmMWUXge4oamkMTvYPE+VnDMitoWj0XMZOc9+Dlb4nn
+        vzmO6r4kSHgCHUrpQS1QuKGQ3kd/Xs2osTByz24=
+X-Google-Smtp-Source: ADUXVKJ7cWhfW0qPDysR3IQAoeVW8ubtd0AmJrv2GYNasbnGvimn1XBrLf3AdVfCQDYzmVUh55tr8ULpER3gHq3YftU=
+X-Received: by 2002:adf:e751:: with SMTP id c17-v6mr17960442wrn.143.1529501561236;
+ Wed, 20 Jun 2018 06:32:41 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1c:5c8d:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 06:32:20
+ -0700 (PDT)
+Reply-To: andrea.merello@gmail.com
+In-Reply-To: <DM6PR02MB43615ED0221189B6B8D9017EC7770@DM6PR02MB4361.namprd02.prod.outlook.com>
+References: <20180620083653.17010-1-andrea.merello@gmail.com>
+ <20180620083653.17010-2-andrea.merello@gmail.com> <DM6PR02MB43615ED0221189B6B8D9017EC7770@DM6PR02MB4361.namprd02.prod.outlook.com>
+From:   Andrea Merello <andrea.merello@gmail.com>
+Date:   Wed, 20 Jun 2018 15:32:20 +0200
+Message-ID: <CAN8YU5O35du2RpTV78sJMx+MpGdOKf2LCQu8FqO1og6FO-JBOQ@mail.gmail.com>
+Subject: Re: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is not
+ invoked for each DMA operation
+To:     Radhey Shyam Pandey <radheys@xilinx.com>
+Cc:     "vkoul@kernel.org" <vkoul@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Michal Simek <michals@xilinx.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <ilina@codeaurora.org>
+On Wed, Jun 20, 2018 at 2:36 PM, Radhey Shyam Pandey <radheys@xilinx.com> wrote:
+>> -----Original Message-----
+>> From: dmaengine-owner@vger.kernel.org [mailto:dmaengine-
+>> owner@vger.kernel.org] On Behalf Of Andrea Merello
+>> Sent: Wednesday, June 20, 2018 2:07 PM
+>> To: vkoul@kernel.org; dan.j.williams@intel.com; Michal Simek
+>> <michals@xilinx.com>; Appana Durga Kedareswara Rao
+>> <appanad@xilinx.com>; dmaengine@vger.kernel.org
+>> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+>> Andrea Merello <andrea.merello@gmail.com>
+>> Subject: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is not
+>> invoked for each DMA operation
+>>
+>> API specification says: "On completion of each DMA operation, the next in
+>> queue is started and a tasklet triggered. The tasklet will then call the
+>> client driver completion callback routine for notification, if set."
+>>
+>> Currently the driver keeps a "desc_pendingcount" counter of the total
+>> descriptor pending, and it uses as IRQ coalesce threshold, as result it
+>> only calls the CBs after ALL pending operations are completed, which is
+>> wrong.
+> I think IRQ coalescing enable/disable should be configurable.
+> Performance related usecases will need this support.
 
-Add device binding documentation for Qualcomm Technology Inc's RPMH RSC
-driver. The driver is used for communicating resource state requests for
-shared resources.
+I didn't intend this (only) wrt performances; my concern was mostly
+wrt correctness. If my point of view is wrong then I'll drop this
+patch from the series.
 
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-[rplsssn@codeaurora.org: minor order correction for TCS type]
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
----
-Changes in v13:
-	- Add missing Signed-off-by in commit text
+(.. I might respin it again in future: I had a patch wrt an old driver
+version that allowed submitting new descriptors to the HW while the
+DMA is running, and in this case disabling coalesce is needed i.e. in
+order to submit a new empty buffer whenever the DMA finishes a
+transfer without waiting the DMA to stop).
 
-Changes in v8:
-	- Describe IRQ for all DRVs
+BTW, is there any dmaengine API suitable for setting interrupt coalesce?
 
-Changes in v7:
-	- Fix example
-
-Changes in v6:
-	- Address comments from Stephen Boyd
-
-Changes in v3:
-	- Move to soc/qcom
-	- Amend text per Stephen's suggestions
-
-Changes in v2:
-	- Amend text to describe the registers in reg property
-	- Add reg-names for the registers
-	- Update examples to use GIC_SPI in interrupts instead of 0
-	- Rephrase incorrect description
-
-Changes in v3:
-	- Fix unwanted capitalization
-	- Remove clients from the examples, this doc does not describe
-	  them
-	- Rephrase introductory paragraph
-	- Remove hardware specifics from DT bindings
----
- .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 137 +++++++++++++++++++++
- 1 file changed, 137 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-
-diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-new file mode 100644
-index 0000000..9b86d1e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-@@ -0,0 +1,137 @@
-+RPMH RSC:
-+------------
-+
-+Resource Power Manager Hardened (RPMH) is the mechanism for communicating with
-+the hardened resource accelerators on Qualcomm SoCs. Requests to the resources
-+can be written to the Trigger Command Set (TCS)  registers and using a (addr,
-+val) pair and triggered. Messages in the TCS are then sent in sequence over an
-+internal bus.
-+
-+The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
-+(Resource State Coordinator a.k.a RSC) that can handle multiple sleep and
-+active/wake resource requests. Multiple such DRVs can exist in a SoC and can
-+be written to from Linux. The structure of each DRV follows the same template
-+with a few variations that are captured by the properties here.
-+
-+A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
-+have powered off to facilitate idle power saving. TCS could be classified as -
-+
-+	ACTIVE  /* Triggered by Linux */
-+	SLEEP   /* Triggered by F/W */
-+	WAKE    /* Triggered by F/W */
-+	CONTROL /* Triggered by F/W */
-+
-+The order in which they are described in the DT, should match the hardware
-+configuration.
-+
-+Requests can be made for the state of a resource, when the subsystem is active
-+or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
-+will be an aggregate of the sleep votes from each of those subsystems. Clients
-+may request a sleep value for their shared resources in addition to the active
-+mode requests.
-+
-+Properties:
-+
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Should be "qcom,rpmh-rsc".
-+
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: The first register specifies the base address of the
-+		    DRV(s). The number of DRVs in the dependent on the RSC.
-+	            The tcs-offset specifies the start address of the
-+	            TCS in the DRVs.
-+
-+- reg-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Maps the register specified in the reg property. Must be
-+	            "drv-0", "drv-1", "drv-2" etc and "tcs-offset". The
-+
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-interrupt>
-+	Definition: The interrupt that trips when a message complete/response
-+	           is received for this DRV from the accelerators.
-+
-+- qcom,drv-id:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: The id of the DRV in the RSC block that will be used by
-+		    this controller.
-+
-+- qcom,tcs-config:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: The tuple defining the configuration of TCS.
-+	            Must have 2 cells which describe each TCS type.
-+	            <type number_of_tcs>.
-+	            The order of the TCS must match the hardware
-+	            configuration.
-+	- Cell #1 (TCS Type): TCS types to be specified -
-+	            ACTIVE_TCS
-+	            SLEEP_TCS
-+	            WAKE_TCS
-+	            CONTROL_TCS
-+	- Cell #2 (Number of TCS): <u32>
-+
-+- label:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name for the RSC. The name would be used in trace logs.
-+
-+Drivers that want to use the RSC to communicate with RPMH must specify their
-+bindings as child nodes of the RSC controllers they wish to communicate with.
-+
-+Example 1:
-+
-+For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
-+register offsets for DRV2 start at 0D00, the register calculations are like
-+this -
-+DRV0: 0x179C0000
-+DRV2: 0x179C0000 + 0x10000 = 0x179D0000
-+DRV2: 0x179C0000 + 0x10000 * 2 = 0x179E0000
-+TCS-OFFSET: 0xD00
-+
-+	apps_rsc: rsc@179c0000 {
-+		label = "apps_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0x179c0000 0x10000>,
-+		      <0x179d0000 0x10000>,
-+		      <0x179e0000 0x10000>;
-+		reg-names = "drv-0", "drv-1", "drv-2";
-+		interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,tcs-offset = <0xd00>;
-+		qcom,drv-id = <2>;
-+		qcom,tcs-config = <ACTIVE_TCS  2>,
-+				  <SLEEP_TCS   3>,
-+				  <WAKE_TCS    3>,
-+				  <CONTROL_TCS 1>;
-+	};
-+
-+Example 2:
-+
-+For a TCS whose RSC base address is 0xAF20000 and is at DRV id of 0, the
-+register offsets for DRV0 start at 01C00, the register calculations are like
-+this -
-+DRV0: 0xAF20000
-+TCS-OFFSET: 0x1C00
-+
-+	disp_rsc: rsc@af20000 {
-+		label = "disp_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0xaf20000 0x10000>;
-+		reg-names = "drv-0";
-+		interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,tcs-offset = <0x1c00>;
-+		qcom,drv-id = <0>;
-+		qcom,tcs-config = <ACTIVE_TCS  0>,
-+				  <SLEEP_TCS   1>,
-+				  <WAKE_TCS    1>,
-+				  <CONTROL_TCS 0>;
-+	};
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
-
+>>
+>> This patch uses disable IRQ coalesce and checks for the completion flag
+>> for the descriptors (which is further divided in segments).
+>>
+>> Possibly a better optimization could be using proper IRQ coalesce
+>> threshold to get an IRQ after all segments of the descriptors are done.
+>> But we don't do that yet..
+>>
+>> NOTE: for now we do this only for AXI DMA, other DMA flavors are
+>> untested/untouched.
+>> This is loosely based on
+>> commit 65df81a6dc74 ("xilinx_dma: IrqThreshold set incorrectly, unreliable.")
+>> in my linux-4.6-zynq tree
+> NOTE description doesn't help much.
+>
+>>
+>> From: Jeremy Trimble [original patch]
+>> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+>> ---
+>>  drivers/dma/xilinx/xilinx_dma.c | 39 +++++++++++++++++++++------------
+>>  1 file changed, 25 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+>> index a516e7ffef21..cf12f7147f07 100644
+>> --- a/drivers/dma/xilinx/xilinx_dma.c
+>> +++ b/drivers/dma/xilinx/xilinx_dma.c
+>> @@ -164,6 +164,7 @@
+>>  #define XILINX_DMA_CR_COALESCE_SHIFT 16
+>>  #define XILINX_DMA_BD_SOP            BIT(27)
+>>  #define XILINX_DMA_BD_EOP            BIT(26)
+>> +#define XILINX_DMA_BD_CMPLT          BIT(31)
+>>  #define XILINX_DMA_COALESCE_MAX              255
+>>  #define XILINX_DMA_NUM_DESCS         255
+>>  #define XILINX_DMA_NUM_APP_WORDS     5
+>> @@ -1274,12 +1275,9 @@ static void xilinx_dma_start_transfer(struct
+>> xilinx_dma_chan *chan)
+>>
+>>       reg = dma_ctrl_read(chan, XILINX_DMA_REG_DMACR);
+>>
+>> -     if (chan->desc_pendingcount <= XILINX_DMA_COALESCE_MAX) {
+>> -             reg &= ~XILINX_DMA_CR_COALESCE_MAX;
+>> -             reg |= chan->desc_pendingcount <<
+>> -                               XILINX_DMA_CR_COALESCE_SHIFT;
+>> -             dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
+>> -     }
+>> +     reg &= ~XILINX_DMA_CR_COALESCE_MAX;
+>> +     reg |= 1 << XILINX_DMA_CR_COALESCE_SHIFT;
+>> +     dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
+>>
+>>       if (chan->has_sg && !chan->xdev->mcdma)
+>>               xilinx_write(chan, XILINX_DMA_REG_CURDESC,
+>> @@ -1378,6 +1376,20 @@ static void xilinx_dma_complete_descriptor(struct
+>> xilinx_dma_chan *chan)
+>>               return;
+>>
+>>       list_for_each_entry_safe(desc, next, &chan->active_list, node) {
+>> +             if (chan->xdev->dma_config->dmatype ==
+>> XDMA_TYPE_AXIDMA) {
+>> +                     /*
+>> +                      * Check whether the last segment in this descriptor
+>> +                      * has been completed.
+>> +                      */
+>> +                     const struct xilinx_axidma_tx_segment *const tail_seg
+>> =
+>> +                             list_last_entry(&desc->segments,
+>> +                                             struct
+>> xilinx_axidma_tx_segment,
+>> +                                             node);
+>> +
+>> +                     /* we've processed all the completed descriptors */
+>> +                     if (!(tail_seg->hw.status & XILINX_DMA_BD_CMPLT))
+>> +                             break;
+>> +             }
+>>               list_del(&desc->node);
+>>               if (!desc->cyclic)
+>>                       dma_cookie_complete(&desc->async_tx);
+>> @@ -1826,14 +1838,13 @@ static struct dma_async_tx_descriptor
+>> *xilinx_dma_prep_slave_sg(
+>>                                  struct xilinx_axidma_tx_segment, node);
+>>       desc->async_tx.phys = segment->phys;
+>>
+>> -     /* For the last DMA_MEM_TO_DEV transfer, set EOP */
+>> -     if (chan->direction == DMA_MEM_TO_DEV) {
+>> -             segment->hw.control |= XILINX_DMA_BD_SOP;
+>> -             segment = list_last_entry(&desc->segments,
+>> -                                       struct xilinx_axidma_tx_segment,
+>> -                                       node);
+>> -             segment->hw.control |= XILINX_DMA_BD_EOP;
+>> -     }
+>> +     /* For the first transfer, set SOP */
+>> +     segment->hw.control |= XILINX_DMA_BD_SOP;
+>> +     /* For the last transfer, set EOP */
+>> +     segment = list_last_entry(&desc->segments,
+>> +                               struct xilinx_axidma_tx_segment,
+>> +                               node);
+>> +     segment->hw.control |= XILINX_DMA_BD_EOP;
+>>
+>>       return &desc->async_tx;
+>>
+>> --
+>> 2.17.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
