@@ -2,86 +2,132 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B10C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 917C8C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C68B20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:33:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C68B20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 4904E20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:34:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IOlYdRrd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4904E20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753933AbeFTEd0 (ORCPT
+        id S1753475AbeFTEeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 00:33:26 -0400
-Received: from smtprelay0119.hostedemail.com ([216.40.44.119]:40938 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750821AbeFTEdW (ORCPT
+        Wed, 20 Jun 2018 00:34:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44116 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeFTEeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 00:33:22 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 9DBBE18096A28;
-        Wed, 20 Jun 2018 04:33:21 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: fight64_1d37dbbd70615
-X-Filterd-Recvd-Size: 3739
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 20 Jun 2018 04:33:20 +0000 (UTC)
-Message-ID: <9bd45007ddfe2c32b6ee5097e427aabdc267ce53.camel@perches.com>
-Subject: pci: pci_printk use
-From:   Joe Perches <joe@perches.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Frederick Lawler <fred@fredlawl.com>
-Date:   Tue, 19 Jun 2018 21:33:18 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 20 Jun 2018 00:34:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1vH85kXQFrRjbgVqqeJSFHQo1U3r6NK3DBp7RWNvaVI=; b=IOlYdRrdUq119lgOUjBFENX0c
+        7A8YeVGpeApXBHDthoa3DlavPbVhge5N3nL5ZZPFfLDy5tbJ2TxzHl1bRbUbLMkcAZc0mf7g8Skik
+        RePxX0/KHd7kDpZE5NIRJw3zJhgfg7TkMYHufpetqtEthOmgO+PMug5Cg7/fCbdT96Org9lwU6lk5
+        q/jF9f4tbLd9uYs0USWsjt375Psr5KE7/rmDgeRapcH/0iuJk94hSdcTd5ZyRHnAxF6hx6birMsak
+        Q2vSXPkaFOk0ztRpkcedUX49DhE0hWfPqu6Q2bGg0SnTs0bx0n+xH8DF8Qp0RZW+lYt1dufCCkNDs
+        yqNdnruEQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVUoy-0000ny-Db; Wed, 20 Jun 2018 04:34:16 +0000
+Date:   Tue, 19 Jun 2018 21:34:16 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] dma-mapping file renames for Linux 4.18
+Message-ID: <20180620043416.GA27631@infradead.org>
+References: <20180619044358.snyej666melspv46@infradead.org>
+ <CA+55aFwEZHzxXDdUGwwuw5HYZB9R5CfTv3XKbft46+ai7C_Q7w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwEZHzxXDdUGwwuw5HYZB9R5CfTv3XKbft46+ai7C_Q7w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All the pci_printk uses are at KERN_DEBUG which is always
-emitted into the kernel logging whenever the console log
-level is high enough.
+On Wed, Jun 20, 2018 at 07:52:53AM +0900, Linus Torvalds wrote:
+> On Tue, Jun 19, 2018 at 1:44 PM Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > below is a rename of the assorted dma-mapping files to that they live
+> > under kernel/dma and lose their dma-* prefixes.  If there is any time
+> > to do this it is right after -rc1, so let me know if this is something
+> > you'd take.
+> 
+> I iwas going to take it, but then I noticed that it's an unsigned tag
+> from a random site.
+> 
+> Yeah, yeah, I have pulled such things in the past, but  I'm really
+> trying to convince people to use signed tags.
+> 
+> I prefer signed tags even on kernel.org, where I know the security is
+> tight. On other sites, I really want that warm fuzzy feeling of
+> knowing that yeah, you actually put that code there.
 
-Are any of these appropriate for conversion to pci_dbg
-to allow these only to be emitted via dynamic_debug or
-if necessary via a #define DEBUG during compilation?
+In fact it wasn't tagged at all, just a branch as I simplify forgot
+to tag it.  Tagged version is here:
 
-$ git grep -w -n pci_printk drivers
-drivers/pci/bus.c:291:          pci_printk(KERN_DEBUG, dev, "%pR clipped to %pR\n",
-drivers/pci/hotplug/shpchp.h:51:                        pci_printk(KERN_DEBUG, ctrl->pci_dev,           \
-drivers/pci/pci.c:2484:                 pci_printk(KERN_DEBUG, dev, "supports%s%s\n",
-drivers/pci/pci.c:2491:         pci_printk(KERN_DEBUG, dev, "PME# supported from%s%s%s%s%s\n",
-drivers/pci/pci.c:2655:         pci_printk(KERN_DEBUG, dev, "BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
-drivers/pci/pci.c:2658:         pci_printk(KERN_DEBUG, dev, "ROM: %pR (from Enhanced Allocation, properties %#02x)\n",
-drivers/pci/pci.c:2661:         pci_printk(KERN_DEBUG, dev, "VF BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
-drivers/pci/pci.c:2664:         pci_printk(KERN_DEBUG, dev, "BEI %d res: %pR (from Enhanced Allocation, properties %#02x)\n",
-drivers/pci/pci.c:3775: pci_printk(KERN_DEBUG, dev, "cache line size of %d is not supported\n",
-drivers/pci/pcie/aer.c:775:             pci_printk(KERN_DEBUG, parent, "can't find device of ID%04x\n",
-drivers/pci/pcie/aer.c:1317:    pci_printk(KERN_DEBUG, dev, "Root Port link has been reset\n");
-drivers/pci/pcie/err.c:75:                      pci_printk(KERN_DEBUG, dev, "device has %s\n",
-drivers/pci/pcie/err.c:179:     pci_printk(KERN_DEBUG, dev, "downstream link has been reset\n");
-drivers/pci/pcie/err.c:205:             pci_printk(KERN_DEBUG, dev, "no link-reset support at upstream device %s\n",
-drivers/pci/pcie/err.c:211:             pci_printk(KERN_DEBUG, dev, "link reset at upstream device %s failed\n",
-drivers/pci/pcie/err.c:237:     pci_printk(KERN_DEBUG, dev, "broadcast %s message\n", error_mesg);
-drivers/pci/probe.c:321:                pci_printk(KERN_DEBUG, dev, "reg 0x%x: %pR\n", pos, res);
-drivers/pci/probe.c:388:                pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-drivers/pci/probe.c:410:                pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-drivers/pci/probe.c:463:                pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-drivers/pci/probe.c:493:                                pci_printk(KERN_DEBUG, dev,
-drivers/pci/probe.c:1598:       pci_printk(KERN_DEBUG, dev, "[%04x:%04x] type %02x class %#08x\n",
-drivers/pci/setup-bus.c:258:                            pci_printk(KERN_DEBUG, add_res->dev,
-drivers/pci/setup-bus.c:954:            pci_printk(KERN_DEBUG, bus->self, "bridge window %pR to %pR add_size %llx\n",
-drivers/pci/setup-bus.c:1101:           pci_printk(KERN_DEBUG, bus->self, "bridge window %pR to %pR add_size %llx add_align %llx\n",
-drivers/pci/setup-bus.c:1569:           pci_printk(KERN_DEBUG, dev, "resource %d %pR released\n",
+The following changes since commit be779f03d563981c65cc7417cc5e0dbbc5b89d30:
 
+  Merge tag 'kbuild-v4.18-2' of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild (2018-06-13 08:40:34 -0700)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-rename-4.18
+
+for you to fetch changes up to cf65a0f6f6ff7631ba0ac0513a14ca5b65320d80:
+
+  dma-mapping: move all DMA mapping code to kernel/dma (2018-06-14 08:50:37 +0200)
+
+----------------------------------------------------------------
+Move all the dma-mapping code to kernel/dma
+
+----------------------------------------------------------------
+Christoph Hellwig (2):
+      dma-mapping: use obj-y instead of lib-y for generic dma ops
+      dma-mapping: move all DMA mapping code to kernel/dma
+
+ Documentation/driver-api/infrastructure.rst        |  4 +-
+ MAINTAINERS                                        |  9 +---
+ drivers/base/Makefile                              |  3 --
+ include/linux/dma-contiguous.h                     |  2 +-
+ init/Kconfig                                       |  4 --
+ kernel/Makefile                                    |  1 +
+ kernel/dma/Kconfig                                 | 50 ++++++++++++++++++++++
+ kernel/dma/Makefile                                | 11 +++++
+ .../base/dma-coherent.c => kernel/dma/coherent.c   |  0
+ .../dma-contiguous.c => kernel/dma/contiguous.c    |  0
+ lib/dma-debug.c => kernel/dma/debug.c              |  0
+ lib/dma-direct.c => kernel/dma/direct.c            |  0
+ drivers/base/dma-mapping.c => kernel/dma/mapping.c |  2 +-
+ lib/dma-noncoherent.c => kernel/dma/noncoherent.c  |  0
+ {lib => kernel/dma}/swiotlb.c                      |  0
+ lib/dma-virt.c => kernel/dma/virt.c                |  2 -
+ lib/Kconfig                                        | 47 +-------------------
+ lib/Makefile                                       |  6 ---
+ 18 files changed, 69 insertions(+), 72 deletions(-)
+ create mode 100644 kernel/dma/Kconfig
+ create mode 100644 kernel/dma/Makefile
+ rename drivers/base/dma-coherent.c => kernel/dma/coherent.c (100%)
+ rename drivers/base/dma-contiguous.c => kernel/dma/contiguous.c (100%)
+ rename lib/dma-debug.c => kernel/dma/debug.c (100%)
+ rename lib/dma-direct.c => kernel/dma/direct.c (100%)
+ rename drivers/base/dma-mapping.c => kernel/dma/mapping.c (99%)
+ rename lib/dma-noncoherent.c => kernel/dma/noncoherent.c (100%)
+ rename {lib => kernel/dma}/swiotlb.c (100%)
+ rename lib/dma-virt.c => kernel/dma/virt.c (98%)
