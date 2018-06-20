@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CBCC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6207DC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09192208A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:52:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09192208A4
+	by mail.kernel.org (Postfix) with ESMTP id 14B8720874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:52:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B8720874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754115AbeFTNwX (ORCPT
+        id S1754226AbeFTNwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:52:23 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:36903 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753960AbeFTNwT (ORCPT
+        Wed, 20 Jun 2018 09:52:32 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46093 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753960AbeFTNwZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:52:19 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5KDnM2e012685;
-        Wed, 20 Jun 2018 15:51:46 +0200
+        Wed, 20 Jun 2018 09:52:25 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5KDn2DY003371;
+        Wed, 20 Jun 2018 15:51:45 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2jpma38ybt-1
+        by mx08-00178001.pphosted.com with ESMTP id 2jqqgq85vp-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 20 Jun 2018 15:51:46 +0200
+        Wed, 20 Jun 2018 15:51:45 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1FDCA34;
-        Wed, 20 Jun 2018 13:51:46 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 08FD52BE4;
-        Wed, 20 Jun 2018 13:51:46 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 20 Jun
- 2018 15:51:46 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F20D038;
+        Wed, 20 Jun 2018 13:51:44 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D873F2BE4;
+        Wed, 20 Jun 2018 13:51:44 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 20 Jun
+ 2018 15:51:45 +0200
 Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
  (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 20 Jun
- 2018 15:51:45 +0200
+ 2018 15:51:44 +0200
 From:   Ludovic Barre <ludovic.Barre@st.com>
 To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>,
@@ -52,9 +52,9 @@ CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Ludovic Barre <ludovic.barre@st.com>
-Subject: [PATCH V3 3/3] ARM: dts: stm32: add iwdg2 support for stm32mp157c-ed1
-Date:   Wed, 20 Jun 2018 15:51:38 +0200
-Message-ID: <1529502698-13263-4-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH V3 2/3] ARM: dts: stm32: add iwdg2 support for stm32mp157c
+Date:   Wed, 20 Jun 2018 15:51:37 +0200
+Message-ID: <1529502698-13263-3-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529502698-13263-1-git-send-email-ludovic.Barre@st.com>
 References: <1529502698-13263-1-git-send-email-ludovic.Barre@st.com>
@@ -70,30 +70,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch activates independent watchdog support for
-stm32mp157c board.
+This patch adds independent watchdog support for stm32mp157c.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- arch/arm/boot/dts/stm32mp157c-ed1.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/stm32mp157c.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-index ae33653..8af263a 100644
---- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-@@ -68,6 +68,11 @@
- 	status = "okay";
- };
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 7d17538..95cc166 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -784,6 +784,14 @@
+ 			status = "disabled";
+ 		};
  
-+&iwdg2 {
-+	timeout-sec = <32>;
-+	status = "okay";
-+};
++		iwdg2: watchdog@5a002000 {
++			compatible = "st,stm32mp1-iwdg";
++			reg = <0x5a002000 0x400>;
++			clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
++			clock-names = "pclk", "lsi";
++			status = "disabled";
++		};
 +
- &uart4 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart4_pins_a>;
+ 		usbphyc: usbphyc@5a006000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.7.4
 
