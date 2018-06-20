@@ -2,272 +2,271 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EE6C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D215C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E45520846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:01:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E45520846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C93F120871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:05:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="UB+qSvxi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RO0Pem0j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93F120871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751469AbeFTFBN (ORCPT
+        id S1751337AbeFTFFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 01:01:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44992 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750831AbeFTFBK (ORCPT
+        Wed, 20 Jun 2018 01:05:12 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:35869 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750821AbeFTFFK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 01:01:10 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5K4x19G137477
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:01:09 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqae23ag2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:01:09 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 01:01:08 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Jun 2018 01:01:05 -0400
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5K5147W3801598
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Jun 2018 05:01:04 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ABD96124054;
-        Wed, 20 Jun 2018 02:02:47 -0400 (EDT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73E6E124064;
-        Wed, 20 Jun 2018 02:02:47 -0400 (EDT)
-Received: from sofia.ibm.com (unknown [9.124.35.39])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Jun 2018 02:02:47 -0400 (EDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id 38D0E2E2E44; Wed, 20 Jun 2018 10:31:03 +0530 (IST)
-Date:   Wed, 20 Jun 2018 10:31:03 +0530
-From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        svaidy@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
-        npiggin@gmail.com, mpe@ellerman.id.au
-Subject: Re: [PATCH 3/3] powernv/cpuidle: Use parsed device tree values for
- cpuidle_init
-Reply-To: ego@linux.vnet.ibm.com
-References: <1529384668-27548-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
- <1529384668-27548-4-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+        Wed, 20 Jun 2018 01:05:10 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 494DE21ADA;
+        Wed, 20 Jun 2018 01:05:10 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Wed, 20 Jun 2018 01:05:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=U+s9xVQiY+lHx786TP4Y1R+2910Ppr8HtfH1fsWk/fE=; b=UB+qSvxi
+        ZEW6jGtbTeYGUNmA/HyDolypUlfS2VED7xZ/9UeqxjUtWQz5BJqXl3GxTlyM2PQp
+        wrg2HDwOvWSBFy5VRU538OvhKVE2dhJPMwmrQ0msA397Fp3RNjqY/Tu3HlFIJz/T
+        gosrmEqm5PioPP2e6pHNJUK5iPOPDyhIP1FpGIfsRZ7VS8z7UHFwWoguoz6g5cSl
+        TvzbGxxgdWpBlxVlms/D1aGswrI/XUOJJFXycWeVyZIz1oAYCkQo/CwTHZBvjIkJ
+        8y7OhO+Kue/rVucDVKnzE9oW9iGe17jmb4OGjFS0Vf8YciUgoWOVLk3vTxMdBK9w
+        kU+fwdjCniwW5g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=U+s9xVQiY+lHx786TP4Y1R+2910Pp
+        r8HtfH1fsWk/fE=; b=RO0Pem0jN9eQSIZ0abxxUwRWLraG6KVltOxthHaSk/Er3
+        x50UFA6d0J1vXws5HkuQcrMRevjtl5fbnRy3bVxJFKgkihh2UquPXFBjXBkRauJ+
+        71dm16tt2OGBpZtUzLqeYFg95n/T9GI9zPA3iWy+jOx3/iO6EMj769iyQdteZ6hF
+        qnV5t5tO5x4Xb4HWJ5V2Qv0GCjpmxtQ/ijbAb9IWa6cDAuFtu0VRlf0+9BqZUcra
+        H+xQrcN0ZHhX1RYkRbNIX5XYdvPiSqa0DuJizOFtD0Awp8p2zdYvKSD0Y9W9TjsA
+        bbUd6GCyq9ACZE4SOd0i9UvhMisc6hk4XhqWr97FA==
+X-ME-Proxy: <xmx:heApW3c7Uv_pjRs3fUT0F23R1ImAlx67hj4eYo2WWgFx52jTuB-PmA>
+    <xmx:heApW2pxZUjD79wdP9ZCNZ7yCs9rFS-cwUxB2IgmxTCaVW-Wqx6LYg>
+    <xmx:huApWwHUZL_SX6TXc7Ded-ZuV12RYkwFHApnZd3awDteRD2jepvtyg>
+    <xmx:huApW-s9PusykVw-7dKm37yUOC-9AjyVflGV4yjE9I44rC_l0MG-ug>
+    <xmx:huApW6Vl8g5punUlLmu8lzS2_kHh9VpoFNeVfvqTewmdO2iwEOEglQ>
+    <xmx:huApW00WQwYjNUGP4PjOs0wpWIfi0ratssKyxqZT5MCAaVjCdK5_aQ>
+X-ME-Sender: <xms:heApW99Lt01zu0hkAKAl-6kxBfVjlW1qDPMaTxTFJ9An6gmtoP5Vvg>
+Received: from localhost (ppp118-211-207-6.bras1.syd2.internode.on.net [118.211.207.6])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 35423E4270;
+        Wed, 20 Jun 2018 01:05:08 -0400 (EDT)
+Date:   Wed, 20 Jun 2018 15:05:05 +1000
+From:   "Tobin C . Harding" <me@tobin.cc>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+Subject: Re: [PATCH v3 1/4] seccomp: add a return code to trap to userspace
+Message-ID: <20180620050505.GB11671@eros>
+References: <20180531144949.24995-1-tycho@tycho.ws>
+ <20180531144949.24995-2-tycho@tycho.ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529384668-27548-4-git-send-email-akshay.adiga@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18062005-0068-0000-0000-0000030B99E9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009224; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01049561; UDB=6.00537803; IPR=6.00828535;
- MB=3.00021751; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-20 05:01:07
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062005-0069-0000-0000-000044BEE45B
-Message-Id: <20180620050103.GC21984@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806200057
+In-Reply-To: <20180531144949.24995-2-tycho@tycho.ws>
+X-Mailer: Mutt 1.9.4 (2018-02-28)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Akshay,
-
-On Tue, Jun 19, 2018 at 10:34:28AM +0530, Akshay Adiga wrote:
-> Export pnv_idle_states and nr_pnv_idle_states so that its accessible to
-> cpuidle driver. Use properties from pnv_idle_states structure for powernv
-> cpuidle_init.
+On Thu, May 31, 2018 at 08:49:46AM -0600, Tycho Andersen wrote:
+> This patch introduces a means for syscalls matched in seccomp to notify
+> some other task that a particular filter has been triggered.
 > 
-> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+> The motivation for this is primarily for use with containers. For example,
+> if a container does an init_module(), we obviously don't want to load this
+> untrusted code, which may be compiled for the wrong version of the kernel
+> anyway. Instead, we could parse the module image, figure out which module
+> the container is trying to load and load it on the host.
+> 
+> As another example, containers cannot mknod(), since this checks
+> capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
+> /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
+> coding some whitelist in the kernel. Another example is mount(), which has
+> many security restrictions for good reason, but configuration or runtime
+> knowledge could potentially be used to relax these restrictions.
+> 
+> This patch adds functionality that is already possible via at least two
+> other means that I know about, both of which involve ptrace(): first, one
+> could ptrace attach, and then iterate through syscalls via PTRACE_SYSCALL.
+> Unfortunately this is slow, so a faster version would be to install a
+> filter that does SECCOMP_RET_TRACE, which triggers a PTRACE_EVENT_SECCOMP.
+> Since ptrace allows only one tracer, if the container runtime is that
+> tracer, users inside the container (or outside) trying to debug it will not
+> be able to use ptrace, which is annoying. It also means that older
+> distributions based on Upstart cannot boot inside containers using ptrace,
+> since upstart itself uses ptrace to start services.
+> 
+> The actual implementation of this is fairly small, although getting the
+> synchronization right was/is slightly complex.
+> 
+> Finally, it's worth noting that the classic seccomp TOCTOU of reading
+> memory data from the task still applies here, but can be avoided with
+> careful design of the userspace handler: if the userspace handler reads all
+> of the task memory that is necessary before applying its security policy,
+> the tracee's subsequent memory edits will not be read by the tracer.
+> 
+> v2: * make id a u64; the idea here being that it will never overflow,
+>       because 64 is huge (one syscall every nanosecond => wrap every 584
+>       years) (Andy)
+>     * prevent nesting of user notifications: if someone is already attached
+>       the tree in one place, nobody else can attach to the tree (Andy)
+>     * notify the listener of signals the tracee receives as well (Andy)
+>     * implement poll
+> v3: * lockdep fix (Oleg)
+>     * drop unnecessary WARN()s (Christian)
+>     * rearrange error returns to be more rpetty (Christian)
+>     * fix build in !CONFIG_SECCOMP_USER_NOTIFICATION case
+> 
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Andy Lutomirski <luto@amacapital.net>
+> CC: Oleg Nesterov <oleg@redhat.com>
+> CC: Eric W. Biederman <ebiederm@xmission.com>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Christian Brauner <christian.brauner@ubuntu.com>
+> CC: Tyler Hicks <tyhicks@canonical.com>
+> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
 > ---
->  arch/powerpc/include/asm/cpuidle.h |  2 ++
->  drivers/cpuidle/cpuidle-powernv.c  | 49 +++++++++++++++++++++++---------------
->  2 files changed, 32 insertions(+), 19 deletions(-)
+>  arch/Kconfig                                  |   7 +
+>  include/linux/seccomp.h                       |   3 +-
+>  include/uapi/linux/seccomp.h                  |  18 +-
+>  kernel/seccomp.c                              | 398 +++++++++++++++++-
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 195 ++++++++-
+>  5 files changed, 615 insertions(+), 6 deletions(-)
 > 
-> diff --git a/arch/powerpc/include/asm/cpuidle.h b/arch/powerpc/include/asm/cpuidle.h
-> index 55ee7e3..1446747 100644
-> --- a/arch/powerpc/include/asm/cpuidle.h
-> +++ b/arch/powerpc/include/asm/cpuidle.h
-> @@ -93,6 +93,8 @@ struct pnv_idle_states_t {
->  	u32 flags;
->  };
-> 
-> +extern struct pnv_idle_states_t *pnv_idle_states;
-> +extern int nr_pnv_idle_states;
->  extern u32 pnv_fastsleep_workaround_at_entry[];
->  extern u32 pnv_fastsleep_workaround_at_exit[];
-> 
-> diff --git a/drivers/cpuidle/cpuidle-powernv.c b/drivers/cpuidle/cpuidle-powernv.c
-> index d29e4f0..de8ba26 100644
-> --- a/drivers/cpuidle/cpuidle-powernv.c
-> +++ b/drivers/cpuidle/cpuidle-powernv.c
-> @@ -285,6 +285,11 @@ static int powernv_add_idle_states(void)
->  		goto out;
->  	}
-> 
-> +	if (nr_pnv_idle_states <= 0) {
-> +		pr_warn("opal: No idle states found\n");
-
-We would have a warning of this type in the powernv/idle.c right ? We
-don't need to warn again. Or at least have a different warning
-something like: 
-
-      	         pr_warn("cpuidle: Only snooze state is available\n");
-> +		goto out;
-> +	}
-
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 75dd23acf133..1c1ae8d8c8b9 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -401,6 +401,13 @@ config SECCOMP_FILTER
+>  
+>  	  See Documentation/prctl/seccomp_filter.txt for details.
+>  
+> +config SECCOMP_USER_NOTIFICATION
+> +	bool "Enable the SECCOMP_RET_USER_NOTIF seccomp action"
+> +	depends on SECCOMP_FILTER
+> +	help
+> +	  Enable SECCOMP_RET_USER_NOTIF, a return code which can be used by seccomp
+> +	  programs to notify a userspace listener that a particular event happened.
 > +
->  	/* Read values of any property to determine the num of idle states */
->  	dt_idle_states = of_property_count_u32_elems(power_mgt, "ibm,cpu-idle-state-flags");
-
-
-We don't need to get dt_idle_states from the device tree now that we
-have nr_pnv_idle_states. 
-
-
->  	if (dt_idle_states < 0) {
-> @@ -338,7 +343,7 @@ static int powernv_add_idle_states(void)
->  	 * If the idle states use stop instruction, probe for psscr values
->  	 * and psscr mask which are necessary to specify required stop level.
->  	 */
-> -	has_stop_states = (flags[0] &
-> +	has_stop_states = (pnv_idle_states[0].flags &
->  			   (OPAL_PM_STOP_INST_FAST | OPAL_PM_STOP_INST_DEEP));
->  	if (has_stop_states) {
->  		count = of_property_count_u64_elems(power_mgt,
-> @@ -387,51 +392,55 @@ static int powernv_add_idle_states(void)
->  						residency_ns, dt_idle_states);
->  	}
-> 
-> -	for (i = 0; i < dt_idle_states; i++) {
-> +	for (i = 0; i < nr_pnv_idle_states; i++) {
->  		unsigned int exit_latency, target_residency;
->  		bool stops_timebase = false;
-> +		struct pnv_idle_states_t *state = &pnv_idle_states[i];
-> 
->  		/*
->  		 * Skip the platform idle state whose flag isn't in
-> -		 * the supported_cpuidle_states flag mask.
-> +		 * the supported_pnv_idle_states flag mask.
->  		 */
-> -		if ((flags[i] & supported_flags) != flags[i])
-> +		if ((state->flags & supported_flags) !=
-> +				state->flags)
->  			continue;
->  		/*
->  		 * If an idle state has exit latency beyond
->  		 * POWERNV_THRESHOLD_LATENCY_NS then don't use it
->  		 * in cpu-idle.
->  		 */
-> -		if (latency_ns[i] > POWERNV_THRESHOLD_LATENCY_NS)
-> +		if (state->latency_ns > POWERNV_THRESHOLD_LATENCY_NS)
->  			continue;
->  		/*
->  		 * Firmware passes residency and latency values in ns.
->  		 * cpuidle expects it in us.
->  		 */
-> -		exit_latency = DIV_ROUND_UP(latency_ns[i], 1000);
-> +		exit_latency = DIV_ROUND_UP(state->latency_ns, 1000);
->  		if (!rc)
-> -			target_residency = DIV_ROUND_UP(residency_ns[i], 1000);
-> +			target_residency = DIV_ROUND_UP(state->residency_ns, 1000);
->  		else
->  			target_residency = 0;
-> 
->  		if (has_stop_states) {
-> -			int err = validate_psscr_val_mask(&psscr_val[i],
-> -							  &psscr_mask[i],
-> -							  flags[i]);
-
-> +			int err;
-> +			err = validate_psscr_val_mask(&state->pm_ctrl_reg_val,
-> +						      &state->pm_ctrl_reg_mask,
-> +						      state->flags);
->  			if (err) {
-> -				report_invalid_psscr_val(psscr_val[i], err);
-> +				report_invalid_psscr_val(state->pm_ctrl_reg_val,
-> +							 err);
->  				continue;
->  			}
-
-We have already validated the states once. We should simply use the
-result here.
-
-
->  		}
-> 
-> -		if (flags[i] & OPAL_PM_TIMEBASE_STOP)
-> +		if (state->flags & OPAL_PM_TIMEBASE_STOP)
->  			stops_timebase = true;
-> 
->  		/*
->  		 * For nap and fastsleep, use default target_residency
->  		 * values if f/w does not expose it.
->  		 */
-> -		if (flags[i] & OPAL_PM_NAP_ENABLED) {
-> +		if (state->flags & OPAL_PM_NAP_ENABLED) {
->  			if (!rc)
->  				target_residency = 100;
->  			/* Add NAP state */
-> @@ -439,10 +448,11 @@ static int powernv_add_idle_states(void)
->  					  CPUIDLE_FLAG_NONE, nap_loop,
->  					  target_residency, exit_latency, 0, 0);
->  		} else if (has_stop_states && !stops_timebase) {
-> -			add_powernv_state(nr_idle_states, names[i],
-> +			add_powernv_state(nr_idle_states, state->name,
->  					  CPUIDLE_FLAG_NONE, stop_loop,
->  					  target_residency, exit_latency,
-> -					  psscr_val[i], psscr_mask[i]);
-> +					  state->pm_ctrl_reg_val,
-> +					  state->pm_ctrl_reg_mask);
->  		}
-> 
->  		/*
-> @@ -450,8 +460,8 @@ static int powernv_add_idle_states(void)
->  		 * within this config dependency check.
->  		 */
->  #ifdef CONFIG_TICK_ONESHOT
-> -		else if (flags[i] & OPAL_PM_SLEEP_ENABLED ||
-> -			 flags[i] & OPAL_PM_SLEEP_ENABLED_ER1) {
-> +		else if (state->flags & OPAL_PM_SLEEP_ENABLED ||
-> +			 state->flags & OPAL_PM_SLEEP_ENABLED_ER1) {
->  			if (!rc)
->  				target_residency = 300000;
->  			/* Add FASTSLEEP state */
-> @@ -460,10 +470,11 @@ static int powernv_add_idle_states(void)
->  					  fastsleep_loop,
->  					  target_residency, exit_latency, 0, 0);
->  		} else if (has_stop_states && stops_timebase) {
-> -			add_powernv_state(nr_idle_states, names[i],
-> +			add_powernv_state(nr_idle_states, state->name,
->  					  CPUIDLE_FLAG_TIMER_STOP, stop_loop,
->  					  target_residency, exit_latency,
-> -					  psscr_val[i], psscr_mask[i]);
-> +					  state->pm_ctrl_reg_val,
-> +					  state->pm_ctrl_reg_mask);
->  		}
+>  config HAVE_GCC_PLUGINS
+>  	bool
+>  	help
+> diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+> index c723a5c4e3ff..0fd3e0676a1c 100644
+> --- a/include/linux/seccomp.h
+> +++ b/include/linux/seccomp.h
+> @@ -5,7 +5,8 @@
+>  #include <uapi/linux/seccomp.h>
+>  
+>  #define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC | \
+> -					 SECCOMP_FILTER_FLAG_LOG)
+> +					 SECCOMP_FILTER_FLAG_LOG | \
+> +					 SECCOMP_FILTER_FLAG_GET_LISTENER)
+>  
+>  #ifdef CONFIG_SECCOMP
+>  
+> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+> index 2a0bd9dd104d..8160e6cad528 100644
+> --- a/include/uapi/linux/seccomp.h
+> +++ b/include/uapi/linux/seccomp.h
+> @@ -17,8 +17,9 @@
+>  #define SECCOMP_GET_ACTION_AVAIL	2
+>  
+>  /* Valid flags for SECCOMP_SET_MODE_FILTER */
+> -#define SECCOMP_FILTER_FLAG_TSYNC	1
+> -#define SECCOMP_FILTER_FLAG_LOG		2
+> +#define SECCOMP_FILTER_FLAG_TSYNC		1
+> +#define SECCOMP_FILTER_FLAG_LOG			2
+> +#define SECCOMP_FILTER_FLAG_GET_LISTENER	4
+>  
+>  /*
+>   * All BPF programs must return a 32-bit value.
+> @@ -34,6 +35,7 @@
+>  #define SECCOMP_RET_KILL	 SECCOMP_RET_KILL_THREAD
+>  #define SECCOMP_RET_TRAP	 0x00030000U /* disallow and force a SIGSYS */
+>  #define SECCOMP_RET_ERRNO	 0x00050000U /* returns an errno */
+> +#define SECCOMP_RET_USER_NOTIF   0x7fc00000U /* notifies userspace */
+>  #define SECCOMP_RET_TRACE	 0x7ff00000U /* pass to a tracer or disallow */
+>  #define SECCOMP_RET_LOG		 0x7ffc0000U /* allow after logging */
+>  #define SECCOMP_RET_ALLOW	 0x7fff0000U /* allow */
+> @@ -59,4 +61,16 @@ struct seccomp_data {
+>  	__u64 args[6];
+>  };
+>  
+> +struct seccomp_notif {
+> +	__u64 id;
+> +	pid_t pid;
+> +	struct seccomp_data data;
+> +};
+> +
+> +struct seccomp_notif_resp {
+> +	__u64 id;
+> +	__s32 error;
+> +	__s64 val;
+> +};
+> +
+>  #endif /* _UAPI_LINUX_SECCOMP_H */
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index dc77548167ef..f69327d5f7c7 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -31,6 +31,7 @@
 >  #endif
->  		else
-> -- 
-> 2.5.5
-> 
+>  
+>  #ifdef CONFIG_SECCOMP_FILTER
+> +#include <linux/file.h>
+>  #include <linux/filter.h>
+>  #include <linux/pid.h>
+>  #include <linux/ptrace.h>
+> @@ -38,6 +39,52 @@
+>  #include <linux/tracehook.h>
+>  #include <linux/uaccess.h>
+>  
+> +#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
+> +#include <linux/anon_inodes.h>
+> +
+> +enum notify_state {
+> +	SECCOMP_NOTIFY_INIT,
+> +	SECCOMP_NOTIFY_SENT,
+> +	SECCOMP_NOTIFY_REPLIED,
+> +};
+> +
+> +struct seccomp_knotif {
+> +	/* The pid whose filter triggered the notification */
+> +	pid_t pid;
+> +
+> +	/*
+> +	 * The "cookie" for this request; this is unique for this filter.
+> +	 */
+> +	u32 id;
 
+Perhaps
+	 /* The "cookie" for this request; this is unique for this filter. */
+
+
+Epic patch review :)
+
+thanks,
+Tobin.
