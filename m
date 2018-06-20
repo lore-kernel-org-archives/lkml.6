@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D67BEC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B67C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E2F2208B3
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2BB820846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:52:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Et11Y3HX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Et11Y3HX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E2F2208B3
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QK6/c9DG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Uja/17Qm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2BB820846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754789AbeFTIwO (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:52:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49640 "EHLO
+        id S932967AbeFTIwT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:52:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49634 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932872AbeFTIpE (ORCPT
+        with ESMTP id S1753906AbeFTIpE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 04:45:04 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D9A6B60B3C; Wed, 20 Jun 2018 07:28:25 +0000 (UTC)
+        id 9BBFA60B10; Wed, 20 Jun 2018 07:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479705;
-        bh=U7xGhBoBUaYz2FbRCFOOBwygcVX+Ji3Lpr50mrN4E/8=;
+        s=default; t=1529479677;
+        bh=GEjbLk+ZDg0Uh7Dn0hTtktdHgbTWSSeEmQiP0fuJweQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Et11Y3HXYQtc0ijRyf8M8JvBiOp1dg0nhX1gQob3Uoe/Y1HsN1DvuxAcPz4M0wBCq
-         8Oo776kRU3wkjaVUe4lGAXLdRoYJKh6ESQWcK43U4D2v5w08kDjb9fx2MqtdONYwVr
-         96Mi3K6N2Ww+/SITIDM6bh4xwMLm3o8vuGX7bRbs=
+        b=QK6/c9DGb44pNmr75cEK21hFFn7crlAC0HOInOyfMXuvtddQJbORwSU70PP4TV+9z
+         Z5HT7/j/n6AyXMVnOs5tT2rwUj/GHwlNOXHvwPAjwLfS/afCYg7LAc1AA+35OFvzKp
+         IR3Skq5curI26dEVs8Gt8S120oTqsrRhYiEs7qw4=
 Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: absahu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B1C3A60AD8;
-        Wed, 20 Jun 2018 07:28:21 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4102560B11;
+        Wed, 20 Jun 2018 07:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479705;
-        bh=U7xGhBoBUaYz2FbRCFOOBwygcVX+Ji3Lpr50mrN4E/8=;
+        s=default; t=1529479676;
+        bh=GEjbLk+ZDg0Uh7Dn0hTtktdHgbTWSSeEmQiP0fuJweQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Et11Y3HXYQtc0ijRyf8M8JvBiOp1dg0nhX1gQob3Uoe/Y1HsN1DvuxAcPz4M0wBCq
-         8Oo776kRU3wkjaVUe4lGAXLdRoYJKh6ESQWcK43U4D2v5w08kDjb9fx2MqtdONYwVr
-         96Mi3K6N2Ww+/SITIDM6bh4xwMLm3o8vuGX7bRbs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B1C3A60AD8
+        b=Uja/17QmEp4G78lpbTNk6uAQ9PuWfz7u00u4U79Bq6Fxbqc+RdKUd/U1m3Ji2pfYN
+         7k8I0gdiJEsh6saACo75HILzLUKAA+2swihSMkyTbIfQzVlK5pvVJLKjBOwgiDiZS5
+         SuwroZHLKfK5aF+iyAXe3ZLhKQ7eY6fuMW2oeQOI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4102560B11
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From:   Abhishek Sahu <absahu@codeaurora.org>
@@ -61,84 +60,119 @@ Cc:     David Woodhouse <dwmw2@infradead.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
         Archit Taneja <architt@codeaurora.org>,
-        Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v4 08/15] mtd: rawnand: qcom: fix null pointer access for erased page detection
-Date:   Wed, 20 Jun 2018 12:57:35 +0530
-Message-Id: <1529479662-4026-9-git-send-email-absahu@codeaurora.org>
+        Abhishek Sahu <absahu@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v4 01/15] mtd: rawnand: helper function for setting up ECC configuration
+Date:   Wed, 20 Jun 2018 12:57:28 +0530
+Message-Id: <1529479662-4026-2-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
 References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-parse_read_errors can be called with only oob_buf in which case
-data_buf will be NULL.  If data_buf is NULL, then don’t
-treat this page as completely erased in case of ECC uncorrectable
-error for RS ECC. For BCH ECC, the controller itself tells
-regarding erased page in status register.
+commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
+match, maximize ECC settings") provides generic helpers which
+drivers can use for setting up ECC parameters.
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Since same board can have different ECC strength nand chips so
+following is the logic for setting up ECC strength and ECC step
+size, which can be used by most of the drivers.
+
+1. If both ECC step size and ECC strength are already set
+   (usually by DT) then just check whether this setting
+   is supported by NAND controller.
+2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
+   supported by NAND controller.
+3. Otherwise, try to match the ECC step size and ECC strength closest
+   to the chip's requirement. If available OOB size can't fit the chip
+   requirement then select maximum ECC strength which can be fit with
+   available OOB size.
+
+This patch introduces nand_ecc_choose_conf function which calls the
+required helper functions for the above logic. The drivers can use
+this single function instead of calling the 3 helper functions
+individually.
+
+CC: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
 * Changes from v3:
-  NONE
+  1. call nand_maximize_ecc() 2 times to make code more clear.
 
 * Changes from v2:
-  NONE
+
+  1. Renamed function to nand_ecc_choose_conf.
+  2. Minor code reorganization to remove warning and 2 function calls
+     for nand_maximize_ecc.
 
 * Changes from v1:
-  1. Added more detail in commit message
-  2. Added comment before each if/else
+  NEW PATCH
 
- drivers/mtd/nand/raw/qcom_nandc.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/mtd/nand/raw/nand_base.c | 33 +++++++++++++++++++++++++++++++++
+ include/linux/mtd/rawnand.h      |  3 +++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index 0d931d5..a831f9c 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -1611,13 +1611,24 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
- 			int ret, ecclen, extraooblen;
- 			void *eccbuf;
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 10c4f991..c64e3fc 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -6287,6 +6287,39 @@ int nand_maximize_ecc(struct nand_chip *chip,
+ }
+ EXPORT_SYMBOL_GPL(nand_maximize_ecc);
  
--			/* ignore erased codeword errors */
-+			/*
-+			 * For BCH ECC, ignore erased codeword errors, if
-+			 * ERASED_CW bits are set.
-+			 */
- 			if (host->bch_enabled) {
- 				erased = (erased_cw & ERASED_CW) == ERASED_CW ?
- 					 true : false;
--			} else {
-+			/*
-+			 * For RS ECC, HW reports the erased CW by placing
-+			 * special characters at certain offsets in the buffer.
-+			 * These special characters will be valid only if
-+			 * complete page is read i.e. data_buf is not NULL.
-+			 */
-+			} else if (data_buf) {
- 				erased = erased_chunk_check_and_fixup(data_buf,
- 								      data_len);
-+			} else {
-+				erased = false;
- 			}
++/**
++ * nand_ecc_choose_conf - Set the ECC strength and ECC step size
++ * @chip: nand chip info structure
++ * @caps: ECC engine caps info structure
++ * @oobavail: OOB size that the ECC engine can use
++ *
++ * Choose the ECC configuration according to following logic
++ *
++ * 1. If both ECC step size and ECC strength are already set (usually by DT)
++ *    then check if it is supported by this controller.
++ * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
++ * 3. Otherwise, try to match the ECC step size and ECC strength closest
++ *    to the chip's requirement. If available OOB size can't fit the chip
++ *    requirement then fallback to the maximum ECC step size and ECC strength.
++ *
++ * On success, the chosen ECC settings are set.
++ */
++int nand_ecc_choose_conf(struct nand_chip *chip,
++			 const struct nand_ecc_caps *caps, int oobavail)
++{
++	if (chip->ecc.size && chip->ecc.strength)
++		return nand_check_ecc_caps(chip, caps, oobavail);
++
++	if (chip->ecc.options & NAND_ECC_MAXIMIZE)
++		return nand_maximize_ecc(chip, caps, oobavail);
++
++	if (!nand_match_ecc_req(chip, caps, oobavail))
++		return 0;
++
++	return nand_maximize_ecc(chip, caps, oobavail);
++}
++EXPORT_SYMBOL_GPL(nand_ecc_choose_conf);
++
+ /*
+  * Check if the chip configuration meet the datasheet requirements.
  
- 			if (erased) {
-@@ -1665,7 +1676,8 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
- 			max_bitflips = max(max_bitflips, stat);
- 		}
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 3e8ec3b..03a0061 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -1650,6 +1650,9 @@ int nand_match_ecc_req(struct nand_chip *chip,
+ int nand_maximize_ecc(struct nand_chip *chip,
+ 		      const struct nand_ecc_caps *caps, int oobavail);
  
--		data_buf += data_len;
-+		if (data_buf)
-+			data_buf += data_len;
- 		if (oob_buf)
- 			oob_buf += oob_len + ecc->bytes;
- 	}
++int nand_ecc_choose_conf(struct nand_chip *chip,
++			 const struct nand_ecc_caps *caps, int oobavail);
++
+ /* Default write_oob implementation */
+ int nand_write_oob_std(struct mtd_info *mtd, struct nand_chip *chip, int page);
+ 
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
 is a member of Code Aurora Forum, hosted by The Linux Foundation
