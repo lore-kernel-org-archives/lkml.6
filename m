@@ -2,73 +2,118 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47D0C1B0F9
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7E0C43168
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8C3620883
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:06:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8C3620883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id F085820836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:09:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZojuYoRu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F085820836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754259AbeFTQGO (ORCPT
+        id S1754237AbeFTQJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:06:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754184AbeFTQGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:06:13 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D69B940201A2;
-        Wed, 20 Jun 2018 16:06:12 +0000 (UTC)
-Received: from [10.10.124.140] (ovpn-124-140.rdu2.redhat.com [10.10.124.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 221AE2026A41;
-        Wed, 20 Jun 2018 16:06:12 +0000 (UTC)
-To:     hamish.martin@alliedtelesis.co.nz,
-        chris.packham@alliedtelesis.co.nz,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel List <linux-kernel@vger.kernel.org>
-From:   Mike Christie <mchristi@redhat.com>
-Subject: uio regression in 4.18-rc1 due to "uio: Prevent device destruction
- while fds are open"
-Message-ID: <5B2A7B73.5090000@redhat.com>
-Date:   Wed, 20 Jun 2018 11:06:11 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Wed, 20 Jun 2018 12:09:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58680 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754012AbeFTQJz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 12:09:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=T7uiVliXP1KEFcJ4UuoyZI1IbZ7weV8IvLwlL7V2OGU=; b=ZojuYoRuRlgHKa3BN7FIx14Re
+        HgdsQ/n1t6rBN7RCRIS/wmdulkcfo3Fp8t7iYFzhrj4GllheBUGndjgD6KWT/N50vFDp0oypK8QQ0
+        o4LGzwKdx+gKfaqxarMfy7gZZoL7sreMdGn1OQnDNs81FMrNlJgvftrnp+U+1Vnfws2N/nOmC5vSl
+        XD9th3eV3JKipog/QbydUgl8s3q40EEWAc0wsF+55u4lzjZBk1PVQUwcH2u6FImlHDJHcDNz/BH//
+        fkH44tAwoRORgRWLJiADvpuIVtAL5U27r79lcq/Wa+SJj7pndl9pngA9dnR6gYJSzm1Qi4byZNbjf
+        VcucWj9QA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVfg9-00020m-AD; Wed, 20 Jun 2018 16:09:53 +0000
+Subject: Re: [PATCH v8 4/4] vsprintf: Add command line option
+ debug_boot_weak_hash
+To:     "Tobin C. Harding" <me@tobin.cc>, Theodore Ts'o <tytso@mit.edu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20180620042046.30806-1-me@tobin.cc>
+ <20180620042046.30806-5-me@tobin.cc>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <e4f6bfb3-68c7-9f57-0d90-d68d0913234a@infradead.org>
+Date:   Wed, 20 Jun 2018 09:09:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180620042046.30806-5-me@tobin.cc>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 20 Jun 2018 16:06:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 20 Jun 2018 16:06:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mchristi@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hamish,
+On 06/19/2018 09:20 PM, Tobin C. Harding wrote:
+> Currently printing [hashed] pointers requires enough entropy to be
+> available.  Early in the boot sequence this may not be the case
+> resulting in a dummy string '(____ptrval____)' being printed.  This
+> makes debugging the early boot sequence difficult.  We can relax the
+> requirement to use cryptographically secure hashing during debugging.
+> This enables debugging while keeping development/production kernel
+> behaviour the same.
+> 
+> If new command line option debug_boot_weak_hash is enabled use
+> cryptographically insecure hashing and hash pointer value immediately.
+> 
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
+>  lib/vsprintf.c                                  | 17 +++++++++++++++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 638342d0a095..a116fc0366b0 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -748,6 +748,15 @@
+>  
+>  	debug		[KNL] Enable kernel debugging (events log level).
+>  
+> +	debug_boot_weak_hash
+> +			[KNL] Enable printing pointers early in the boot
+> +			sequence.  If enabled, we use a weak hash instead of
+> +			siphash to hash pointers.  Use this option if you need
+> +			to see pointer values during early boot (i.e you are
 
-I am hitting a regression with your patch:
+maybe:
+			to see hashed pointer values
+i.e., not raw pointers.
 
-commit a93e7b331568227500186a465fee3c2cb5dffd1f
-Author: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-Date:   Mon May 14 13:32:23 2018 +1200
+> +			seeing instances of '(___ptrval___)').
+> +			Cryptographically insecure, please do not use on
+> +			production kernels.
+> +
+>  	debug_locks_verbose=
+>  			[KNL] verbose self-tests
+>  			Format=<0|1>
 
-    uio: Prevent device destruction while fds are open
-
-The problem is the addition of spin_lock_irqsave in uio_write. This
-leads to hitting  uio_write -> copy_from_user -> _copy_from_user ->
-might_fault and the logs filling up with sleeping warnings.
-
-I also noticed some uio drivers allocate memory, sleep, grab mutexes
-from callouts like open() and release and uio is now doing
-spin_lock_irqsave while calling them.
-
-Note target_core_user's irqcontrol looks buggy and was just doing more
-work than it should in that callout. I can fix that driver.
+thanks,
+-- 
+~Randy
