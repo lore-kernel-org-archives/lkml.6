@@ -5,133 +5,138 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55152C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EF6C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139F520874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:41:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139F520874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id CC51D2083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:42:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC51D2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754310AbeFTPlS (ORCPT
+        id S1754265AbeFTPmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:41:18 -0400
-Received: from smtprelay0140.hostedemail.com ([216.40.44.140]:60392 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754085AbeFTPlR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:41:17 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 521C7182CF671;
-        Wed, 20 Jun 2018 15:41:16 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: offer19_280c35e2ed642
-X-Filterd-Recvd-Size: 3562
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 20 Jun 2018 15:41:15 +0000 (UTC)
-Message-ID: <87e66800d9e991499c43c2bcd5b0772f2dfa8ba8.camel@perches.com>
-Subject: Re: [PATCH 4.17.0-rc3 1/1]partition: Remove trailing spaces and
- correct indenting
-From:   Joe Perches <joe@perches.com>
-To:     kidega <kidegamoses88@gmail.com>, axboe@kernel.dk
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Date:   Wed, 20 Jun 2018 08:41:13 -0700
-In-Reply-To: <20180620161434.GA3513@kidega-PC>
-References: <20180620161434.GA3513@kidega-PC>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
+        Wed, 20 Jun 2018 11:42:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57214 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753896AbeFTPmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 11:42:17 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D515E20794; Wed, 20 Jun 2018 17:42:14 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0F01D20012;
+        Wed, 20 Jun 2018 17:42:14 +0200 (CEST)
+Message-ID: <a2f7b1841410b4a9cd8ac9b5dd323ab2b060acef.camel@bootlin.com>
+Subject: Re: [PATCH v4 15/19] dt-bindings: media: Document bindings for the
+ Sunxi-Cedrus VPU driver
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Date:   Wed, 20 Jun 2018 17:42:13 +0200
+In-Reply-To: <20180620154009.GA26099@rob-hp-laptop>
+References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
+         <20180618145843.14631-16-paul.kocialkowski@bootlin.com>
+         <20180620154009.GA26099@rob-hp-laptop>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-07SQVeov04rWTSqQRGWT"
+X-Mailer: Evolution 3.28.2 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-20 at 19:14 +0300, kidega wrote:
-> Reply-To:
 
-It seems this is your first attempt to patch something
-in the linux kernel.
+--=-07SQVeov04rWTSqQRGWT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-You should read https://kernelnewbies.org/ and you
-should start with files in drivers/staging.
+Hi,
 
-The Reply-To: line should not exist here
+On Wed, 2018-06-20 at 09:40 -0600, Rob Herring wrote:
+> On Mon, Jun 18, 2018 at 04:58:39PM +0200, Paul Kocialkowski wrote:
+> > This adds a device-tree binding document that specifies the properties
+> > used by the Sunxi-Cedurs VPU driver, as well as examples.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> >=20
+> >  create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedru=
+s.txt
+>=20
+> You are missing a '---' line so this is going to end up in the commit=20
+> msg.
 
-> > remove trailing spaces
-> > correct indenting 
+Yes, I can't really explain how this happened. It seems related to
+exporting patches with --summary.
 
-The leading "> " uses should not exist here.
+> Please add acked/reviewed bys when posting new versions.
 
-> Signed-off-by: kidega <kidegamoses88@gmail.com>
+Oh, sorry for forgetting that. The bindings are indeed exactly the same
+as the ones your reviewed and acked already.
 
-You need your full legal name here.
+Cheers,
 
-> diff --git a/block/partitions/mac.c b/block/partitions/mac.c
+Paul
 
-This file probably does not need style changes as
-it's pretty old and unlikely to change.
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-07SQVeov04rWTSqQRGWT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-But if it did:
+-----BEGIN PGP SIGNATURE-----
 
-> @@ -97,16 +97,14 @@ int mac_partition(struct parsed_partitions *state)
->  			int goodness = 0;
->  
->  			mac_fix_string(part->processor, 16);
-> -			mac_fix_string(part->name, 32);
-> -			mac_fix_string(part->type, 32);					
-> -		    
-> +			mac_fix_string(part->name, 32); mac_fix_string(part->type, 32);
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsqddYACgkQ3cLmz3+f
+v9GP9AgAgwc/pWCk+5Kbx5Pc3oTy8nPTKNE9lSRIdvLKSA4XuXcUZpTgION7rPIP
+XctR6IMQn10FcwnbtceKHWJuZdgAYbahRniHpQV9emQbH09MuHchT6PLcbLmjPhc
+WJ0a4wbH59SYUnpz+2UEEbh+goWHg/FYMS4usEo7+pjIJRm3Gtmh5SuV4SQ2KT8/
+dQMItv9l4Zydl0IWfRDSyDe/LBDu25cdNvkrBHmx6sqA/9YwsWI6UxuFPmH0+4Ms
+y996KQa6I3vDkzfxi+Hoztg27n8tMOCjuTrQ3maxCukgOxjPoBGOLAqSgRBHis5r
+uMafDTisyTmzF0SMtAsEToaFz31NOg==
+=H3vo
+-----END PGP SIGNATURE-----
 
-This needs separate lines for each single statement.
-
->  			if ((be32_to_cpu(part->status) & MAC_STATUS_BOOTABLE)
->  			    && strcasecmp(part->processor, "powerpc") == 0)
->  				goodness++;
->  
->  			if (strcasecmp(part->type, "Apple_UNIX_SVR2") == 0
-> -			    || (strncasecmp(part->type, "Linux", 5) == 0
-> -			        && strcasecmp(part->type, "Linux_swap") != 0)) {
-> +				|| (strncasecmp(part->type, "Linux", 5) == 0
-> +				&& strcasecmp(part->type, "Linux_swap") != 0)) {
-
-This is making the indentation worse as the parenthesized
-sub-test block is now unaligned.
-
-And some would prefer moving the && || to the end of the
-previous line like:
----
- block/partitions/mac.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/block/partitions/mac.c b/block/partitions/mac.c
-index b6095335636c..897da77e5379 100644
---- a/block/partitions/mac.c
-+++ b/block/partitions/mac.c
-@@ -98,15 +98,15 @@ int mac_partition(struct parsed_partitions *state)
- 
- 			mac_fix_string(part->processor, 16);
- 			mac_fix_string(part->name, 32);
--			mac_fix_string(part->type, 32);					
--		    
--			if ((be32_to_cpu(part->status) & MAC_STATUS_BOOTABLE)
--			    && strcasecmp(part->processor, "powerpc") == 0)
-+			mac_fix_string(part->type, 32);
-+
-+			if ((be32_to_cpu(part->status) & MAC_STATUS_BOOTABLE) &&
-+			    strcasecmp(part->processor, "powerpc") == 0)
- 				goodness++;
- 
--			if (strcasecmp(part->type, "Apple_UNIX_SVR2") == 0
--			    || (strncasecmp(part->type, "Linux", 5) == 0
--			        && strcasecmp(part->type, "Linux_swap") != 0)) {
-+			if (strcasecmp(part->type, "Apple_UNIX_SVR2") == 0 ||
-+			    (strncasecmp(part->type, "Linux", 5) == 0 &&
-+			     strcasecmp(part->type, "Linux_swap") != 0)) {
- 				int i, l;
- 
- 				goodness++;
+--=-07SQVeov04rWTSqQRGWT--
 
