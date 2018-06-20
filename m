@@ -1,202 +1,145 @@
 Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46C7C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC854C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930FF20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7958F20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:39:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mADI+xRK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930FF20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InOOevSx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7958F20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754830AbeFTJjZ (ORCPT
+        id S1754968AbeFTJjk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:39:25 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34974 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754346AbeFTI3g (ORCPT
+        Wed, 20 Jun 2018 05:39:40 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:32812 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754346AbeFTJjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:29:36 -0400
-Received: by mail-lf0-f68.google.com with SMTP id i15-v6so3644240lfc.2;
-        Wed, 20 Jun 2018 01:29:35 -0700 (PDT)
+        Wed, 20 Jun 2018 05:39:35 -0400
+Received: by mail-lf0-f65.google.com with SMTP id y20-v6so3969008lfy.0;
+        Wed, 20 Jun 2018 02:39:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=b7T5Eb7TPlBIKZUbHnEFXjjKePtflLcyXADjzmV9mDk=;
-        b=mADI+xRKT2F+s4FgsOdm/meJxWYnws7m/IZIlc0DAG7SFH37svYmernU4gq0T31O15
-         5fQNEgNzStsWnqTBI6sLPU5zYQjXoewqLjeRlk2fsi/xUFksqsQ5Cl8POHqJd1EMcU3A
-         3v6taKPiDvjBPXfifGosFguLL/e6ak8Sd97ard9nka/WpEe6FsSn+vieB9bCz7/ytM4G
-         jZfCQBuvYvijXuJnltmnO57ursUHF5iSg1MndE2C40bl85NFX5Lh7u8N5iqmUKmFr+qq
-         rvpUyVeSKSgBxp4coH1qPBxDNRMxUP8c7IjZukT91AGmG8XYdM2lcLv87glEyoXHAtnm
-         +DnA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=53RqdMgJe501ZwHBFy3GdDgzSQtdvcKbY6fc6DDTPuk=;
+        b=InOOevSxFtmk02rvTEy/BHKi+zyy3m5HUeLLGfgFvweMqudz1/cKc4M8rTcFX1cbmw
+         bW9hZ+Dxy3Ubr9YEC7ty8LpTigdHxwH/KGEMulPJB+6HOFZOo0z7H0aT4CsiasZhg8ti
+         MXo6vSNXWtbBLuihR/o9IWlzfP81gesuV97zk/687/aVB7kx0lpQCINfH024TZH7V0B1
+         3yO03TTBI2K86M29U3oPry3lbE+6yky7ZaeT6azFkU5cJP8YC6dGVsNoll+wfbRAaw01
+         rNez4Sis+Lzt3MkxAKElqIkmZWY+LIRogFdH9wR4cp/+cWb6P/VzzlD2z+xs9saoeV57
+         yomw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=b7T5Eb7TPlBIKZUbHnEFXjjKePtflLcyXADjzmV9mDk=;
-        b=hBbVg/2W1sUkNt9o7i8Bq7EHdw6ay8BvaRNlUzTqWW/pSXB7QIGWkPZqExTMYXhEs9
-         u8Oa9Ods1MI4m8DV0vucD/kLNldUQmAJyeAhOYcsQkSn+grx4dgoFQqd2/GdZDnWPCZC
-         fogQ5PInoKDfiE9C4ZtZGIBgLzUGsv9tOjHYtTgTyXENkd9Yebb4qImZ8fJKFFPoPQ3D
-         O2SRNik8g45lBnww3UXWjWLIay63iJOsYcLRiECw5L0fjPNKwOKjGBy2oLLxvAV4j7wt
-         DPHq9MZmax4rfWl7lVWKRDdfgs6qlSxS9UftBqcA3KUtzoj589+YC0xJO8v2E4XM/s64
-         AH2A==
-X-Gm-Message-State: APt69E3ASpS/TK6v7Vd2PNac7f9luNYzWT7PQ/NB25EhgFgequERQyV6
-        7pEhk5XLUfy/aRkgJLLhmh/C0H3M
-X-Google-Smtp-Source: ADUXVKIkUOUlbZvycuEnFK5UZg52pQWr8CDTRhUQSBINv5uvDzTpIkwxZLq5FSO9UiKqLc7T+jf6zA==
-X-Received: by 2002:a19:2182:: with SMTP id h124-v6mr1230242lfh.27.1529480107951;
-        Wed, 20 Jun 2018 00:35:07 -0700 (PDT)
-Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
-        by smtp.gmail.com with ESMTPSA id 4-v6sm274017ljc.1.2018.06.20.00.35.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 00:35:07 -0700 (PDT)
-From:   Esben Haabendal <esben.haabendal@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
-        Angelo Dureghello <angelo@sysam.it>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Sanchayan Maity <maitysanchayan@gmail.com>,
-        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
-Subject: [PATCH 10/12] spi: spi-fsl-dspi: XSPI FIFO handling (in TCFQ mode)
-Date:   Wed, 20 Jun 2018 09:34:40 +0200
-Message-Id: <20180620073442.20913-11-esben.haabendal@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180620073442.20913-1-esben.haabendal@gmail.com>
-References: <20180620073442.20913-1-esben.haabendal@gmail.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=53RqdMgJe501ZwHBFy3GdDgzSQtdvcKbY6fc6DDTPuk=;
+        b=YW+ViSMcOtxmpxMqJ/GAbkfSEplTRrrmiTj44o/4PAUATx8m/0tjLovs3sehnSq9fD
+         YcmxtT8IlsHn+eCA7qKzlEmWhVqdBJPnqoZfGwLEHrHzjiSN/zapCLSyypAD+ovzHrwI
+         4Eo9FIapcsTm96L9pwliKHYpNtiDrV3G8B7d37I+lQ5qydMQRbzOjLN5dXReO211SiwV
+         2/7u+PDUsul4H77iXHbkWXJH0w3jLSWf+dZe75ieFwK8KklgXEgYUoOfiWhHnzEOCzTE
+         JiosKX2+Nur/cjitfK+8oGGkJmE7luNBiW7+ZkknBorKrmNPgJ5Cx/gMjOxTjwUB6/eX
+         H7eA==
+X-Gm-Message-State: APt69E3+IgD1o/Ys8rZvcJlT1A0M1XDicKuyzTdHI+9e29ww1g+iQ5zp
+        /ORixAMuQOD6nNx5A4kmk5nQvMTG
+X-Google-Smtp-Source: ADUXVKIQJTzzVdEhPzff4OSHRCtCWefKLjUh17VRm7otxm4l0gIe/Ozn9XXZiNOZlhl2gGMxVxfCWg==
+X-Received: by 2002:a19:a586:: with SMTP id o128-v6mr1285012lfe.131.1529487574236;
+        Wed, 20 Jun 2018 02:39:34 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id f124-v6sm332771lfg.33.2018.06.20.02.39.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 02:39:33 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.90_1)
+        (envelope-from <johan@kernel.org>)
+        id 1fVZZx-0003Bn-57; Wed, 20 Jun 2018 11:39:05 +0200
+Date:   Wed, 20 Jun 2018 11:39:05 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Karoly Pados <pados@pados.hu>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: cp210x: Improve baudrate support for CP2102N
+Message-ID: <20180620093905.GP32411@localhost>
+References: <20180619091528.GN32411@localhost>
+ <20180615212957.26539-1-pados@pados.hu>
+ <0b27c3da292fa1f4b360614685fe8aa4@pados.hu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b27c3da292fa1f4b360614685fe8aa4@pados.hu>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <eha@deif.com>
+On Tue, Jun 19, 2018 at 09:50:54AM +0000, Karoly Pados wrote:
+> Hello,
+> 
+> > Pass in a struct usb_serial (or port) as a first argument instead which
+> > allows for more readable code as well as for this to be reused to handle
+> > other device type differences (e.g. only 2108 besides 2102n handles
+> > baudrates over 921.6k).
+> > 
+> 
+> Sure, will do.
+> 
+> > Add a static helper (looks like you add a define in the gpio patch)
+> > cp210x_is_cp2102n(serial) here.
+> 
+> Yes I have macro for that in the GPIO patch, and I will turn that into a
+> static function too.
+> 
+> To keep the baudrate and gpio patches independent,
+> do you think it is a good idea if I make a new patch which only adds the
+> partnum defines and the helper function first, then baudrate v2 and gpio v2
+> can build onto it?
 
-This implements handling of split CMD and TX FIFO queues for XSPI when
-running in TCFQ mode.
+No, that's fine. And you can submit it as a series, where the first
+patch using the helper includes it (e.g. the baud rate one).
 
-It should be simple to add it to EOQ mode also.  Currently, EOQ mode is
-only used with coldfire.  So if coldfire DSPI supports XSPI, XSPI FIFO
-handling should be added to EOQ mode also.
+> > You can even test for bit 0x20 in the
+> > helper if you prefer (we can always change that later if needed).
+> 
+> If you wish, but personally I think that is asking for future bugs
+> in the long run. Even though the helper can be easily adjusted if needed,
+> when/if a new partnum shows up which has nothing to do with the cp2102n,
+> no one will think of having to adjust cp2102n-spacific code until bug reports
+> start coming in. So I'd prefer to explicitly check for the packages, but in
+> the end I'll use whatever you prefer.
+> 
+> What do you prefer?
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Cc: Martin Hundebøll <martin@geanix.com>
----
- drivers/spi/spi-fsl-dspi.c | 55 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 48 insertions(+), 7 deletions(-)
+Sure, I have no strong preference. You can keep the explicit package type
+enumeration if you want, but move it to a static helper. We'll see how
+this ends up being used in the series.
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index ba83ff4512c9..67cd2e901255 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -215,15 +215,17 @@ struct fsl_dspi {
- 	struct fsl_dspi_dma	*dma;
- };
- 
--static u16 dspi_pop_tx(struct fsl_dspi *dspi)
-+static u32 dspi_pop_tx(struct fsl_dspi *dspi)
- {
--	u16 txdata = 0;
-+	u32 txdata = 0;
- 
- 	if (dspi->tx) {
- 		if (dspi->bytes_per_word == 1)
- 			txdata = *(u8 *)dspi->tx;
--		else /* dspi->bytes_per_word == 2 */
-+		else if (dspi->bytes_per_word == 2)
- 			txdata = *(u16 *)dspi->tx;
-+		else  /* dspi->bytes_per_word == 4 */
-+			txdata = *(u32 *)dspi->tx;
- 		dspi->tx += dspi->bytes_per_word;
- 	}
- 	dspi->len -= dspi->bytes_per_word;
-@@ -249,8 +251,10 @@ static void dspi_push_rx(struct fsl_dspi *dspi, u32 rxdata)
- 
- 	if (dspi->bytes_per_word == 1)
- 		*(u8 *)dspi->rx = rxdata;
--	else /* dspi->bytes_per_word == 2 */
-+	else if (dspi->bytes_per_word == 2)
- 		*(u16 *)dspi->rx = rxdata;
-+	else /* dspi->bytes_per_word == 4 */
-+		*(u32 *)dspi->rx = rxdata;
- 	dspi->rx += dspi->bytes_per_word;
- }
- 
-@@ -564,12 +568,47 @@ static void fifo_write(struct fsl_dspi *dspi)
- 	regmap_write(dspi->regmap, SPI_PUSHR, dspi_pop_tx_pushr(dspi));
- }
- 
-+static void cmd_fifo_write(struct fsl_dspi *dspi)
-+{
-+	u16 cmd = dspi->tx_cmd;
-+
-+	if (dspi->len > 0)
-+		cmd |= SPI_PUSHR_CMD_CONT;
-+	regmap_write(dspi->regmap_pushr, PUSHR_CMD, cmd);
-+}
-+
-+static void tx_fifo_write(struct fsl_dspi *dspi, u16 txdata)
-+{
-+	regmap_write(dspi->regmap_pushr, PUSHR_TX, txdata);
-+}
-+
- static void dspi_tcfq_write(struct fsl_dspi *dspi)
- {
- 	/* Clear transfer count */
- 	dspi->tx_cmd |= SPI_PUSHR_CMD_CTCNT;
--	/* Write one entry to both TX FIFO and CMD FIFO simultaneously */
--	fifo_write(dspi);
-+
-+	if (dspi->devtype_data->xspi_mode && dspi->bits_per_word > 16) {
-+		/* Write two TX FIFO entries first, and then the corresponding
-+		 * CMD FIFO entry.
-+		 */
-+		u32 data = dspi_pop_tx(dspi);
-+
-+		if (dspi->cur_chip->ctar_val & SPI_CTAR_LSBFE(1)) {
-+			/* LSB */
-+			tx_fifo_write(dspi, data & 0xFFFF);
-+			tx_fifo_write(dspi, data >> 16);
-+		} else {
-+			/* MSB */
-+			tx_fifo_write(dspi, data >> 16);
-+			tx_fifo_write(dspi, data & 0xFFFF);
-+		}
-+		cmd_fifo_write(dspi);
-+	} else {
-+		/* Write one entry to both TX FIFO and CMD FIFO
-+		 * simultaneously.
-+		 */
-+		fifo_write(dspi);
-+	}
- }
- 
- static u32 fifo_read(struct fsl_dspi *dspi)
-@@ -656,8 +695,10 @@ static int dspi_transfer_one_message(struct spi_master *master,
- 		dspi->bits_per_word = transfer->bits_per_word;
- 		if (transfer->bits_per_word <= 8)
- 			dspi->bytes_per_word = 1;
--		else
-+		else if (transfer->bits_per_word <= 16)
- 			dspi->bytes_per_word = 2;
-+		else
-+			dspi->bytes_per_word = 4;
- 
- 		regmap_update_bits(dspi->regmap, SPI_MCR,
- 				   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF,
--- 
-2.17.1
+> > And even if the current code uses this odd formatting, your amendments
+> > should not.
+> 
+> Of course. I also saw this is odd, but (apparently wrongly) decided to 
+> stay consistent inside the function with existing code. I will change
+> that too.
 
+Yeah, that's admittedly a bit arbitrary. I should probably just clean
+this up somehow once and for all.
+
+By the way, have you tried setting other baudrates except the ones you
+explicitly allow for here? According to the data sheet more rates should
+be available, so perhaps just handling cp2102n as cp2108 (e.g. by not
+trying to report back the exact rate used) or by actually calculating
+the resulting rate could be another option?
+
+Can be done later of course, just curious if you tried it.
+
+Thanks,
+Johan
