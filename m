@@ -6,127 +6,134 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D84C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB34C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 488282083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:53:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 488282083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 9DD772083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:55:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DD772083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754084AbeFTPxJ (ORCPT
+        id S1754290AbeFTPzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:53:09 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:56835 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754504AbeFTPwl (ORCPT
+        Wed, 20 Jun 2018 11:55:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55390 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754011AbeFTPzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:52:41 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0M7Wjr-1gRkPb1N6F-00xGMl; Wed, 20 Jun 2018 17:52:36 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Yan Zheng <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     y2038@lists.linaro.org, ceph-devel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] ceph: use 64-bit timespec for r_stamp
-Date:   Wed, 20 Jun 2018 17:50:37 +0200
-Message-Id: <20180620155101.57685-5-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180620155101.57685-1-arnd@arndb.de>
-References: <20180620155101.57685-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:ys71mwHTgJh5KNmV3E/6QWxtQV/Sz/hf4NtAdD83NniTNcu4UXk
- 7WQMIYqa0I2Nq3qhGjNRhJ6usehKbPHXXfQQru7+cF1ArTLVaR/FFvLV7nkJC6boSoIf5+4
- cmyc9pEDkOMW26U1pNTXhQd09VOckBNCP3yyL6U0H9Eedyjfe+71bSAxMEV3Q8lK+Kbdt3w
- Kgn779X3JRHHM8v8ghyyA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ID0eemQNOSQ=:BXbspyBpdfgTTigWm79oQX
- uUHk5p9TqHIJGTpBxPkYBzBePXcpZbsoo3GCqXM8YZt3yhgRkuzck7ST3CccPVYyD7WxM/6sJ
- XAGs4+o7DXqteqXfN/7Tx2O2cXmkKSCDfk9+ZM2ZLKtK6Wdt6Axwz8heiBrliEN2FfFg9C8cb
- XB3v0qEltE6JG/V4usMzpA5wUsTAQjyKuL1n6BbVPL0kYS2YJMEmVWlgFwj7Lq9ZFH1ofl7WJ
- 1nvlQot/bjU3oHc3q6CI+H3uleKE6dw5Ot0sJHLkMV3VsW1YqYudHCNaLks1+P/ogI4YkTR27
- AkeXtIqH1fGpJuXQQq1KVl0AfudMdVbJ3rFQr56rTH0h2btj5e884Xsheaw/aoMlumNg8IFfw
- cAVXyLKjrGNP6T+unUqnM6GBw36e4Q+ueC4R1kLLDWKtjdJUK9PRVw8rmeU2MG8hqc0Kiq0wv
- io0L3W/V7CfqkQhVmBKvfpIeNPc7L5ZUphR/mQpiDL13QBFeJ5rZXHuLKwDaxX5bsYrKA7Cp4
- KKmxSKfjzP/Le+8/yzmzztvPjQBI17PhiLhr7BxfhB+2PTsd7DZjN3lQ03RzJW2qRespD8HcA
- H1sLBrvnMhiBN3gIvgF4hVoXzKW+OCLPXab7o4klHFJyQOqjNiyTQxjvsMQMQs4wNOdYt3zr0
- V1IAztVGwCVjI7AefmigzCKX6gAze0qG64Pb+qwCptH5hSG0jww0xeoZ8O2qDWQK53B4=
+        Wed, 20 Jun 2018 11:55:03 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KFpXmU137855
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 11:55:03 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqsbnsmtf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 11:55:02 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 20 Jun 2018 11:55:02 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Jun 2018 11:54:57 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KFsumL9503062
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 20 Jun 2018 15:54:56 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 22E6DB2070;
+        Wed, 20 Jun 2018 11:54:45 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04249B205F;
+        Wed, 20 Jun 2018 11:54:45 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Jun 2018 11:54:44 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0EE3616C6B1D; Wed, 20 Jun 2018 08:56:58 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 08:56:58 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        joel@joelfernandes.org
+Subject: Re: [RFC 1/2] rcu: Do prepare and cleanup idle depending on in_nmi()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
+ <20180620145058.GP3593@linux.vnet.ibm.com>
+ <20180620114335.7a314642@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620114335.7a314642@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062015-2213-0000-0000-000002BCBBFA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009227; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01049774; UDB=6.00537929; IPR=6.00828746;
+ MB=3.00021761; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-20 15:55:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062015-2214-0000-0000-00005A8C0D12
+Message-Id: <20180620155658.GU3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806200174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ceph_mds_request stamp still uses the deprecated timespec structure,
-this converts it over as well.
+On Wed, Jun 20, 2018 at 11:43:35AM -0400, Steven Rostedt wrote:
+> On Wed, 20 Jun 2018 07:50:58 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> > On Wed, Jun 20, 2018 at 05:47:19PM +0900, Byungchul Park wrote:
+> > > Get rid of dependency on ->dynticks_nmi_nesting.
+> > > 
+> > > Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> > > ---
+> > >  kernel/rcu/tree.c | 22 ++++++++++------------
+> > >  1 file changed, 10 insertions(+), 12 deletions(-)
+> > > 
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index deb2508..59ae94e 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -797,6 +797,11 @@ void rcu_nmi_exit(void)
+> > >  		return;
+> > >  	}
+> > > 
+> > > +	if (!in_nmi()) {  
+> > 
+> > Is in_nmi() sufficiently reliable for use here?  In the past, there have
+> > been tracepoints that invoked these functions between the time that the
+> > handlers were entered and the time that software updated the state so that
+> > the various handler-check functions (such as in_nmi()) would return true.
+> > 
+> > Steve, has there been any change in this situation?
+> 
+> There shouldn't be any "trace events", but what we had to deal with was
+> function tracing. And in the near future, we will be getting "function
+> based events" that will allow you to create an event in any function.
+> 
+> That said, even the function tracer shouldn't be called from the time
+> the NMI triggers to "in_nmi()" is set. Because there's some function
+> tracer callbacks that should not be executed from an NMI, and I use
+> in_nmi() to determine if they get called or not.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/ceph/inode.c      | 2 +-
- fs/ceph/mds_client.c | 7 +++----
- fs/ceph/mds_client.h | 2 +-
- 3 files changed, 5 insertions(+), 6 deletions(-)
+OK, so in theory this change is safe from a tracing perspective.  But
+it does add conditionals to a fastpath.
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index d85f72bd585d..75fd2187833f 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2135,7 +2135,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
- 		req->r_inode_drop = release;
- 		req->r_args.setattr.mask = cpu_to_le32(mask);
- 		req->r_num_caps = 1;
--		req->r_stamp = timespec64_to_timespec(attr->ia_ctime);
-+		req->r_stamp = attr->ia_ctime;
- 		err = ceph_mdsc_do_request(mdsc, NULL, req);
- 	}
- 	dout("setattr %p result=%d (%s locally, %d remote)\n", inode, err,
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 580644b04737..09142d309912 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1799,8 +1799,7 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
- 	INIT_LIST_HEAD(&req->r_unsafe_item);
- 
- 	ktime_get_coarse_real_ts64(&ts);
--	req->r_stamp = timespec64_to_timespec(timespec64_trunc(ts,
--						mdsc->fsc->sb->s_time_gran));
-+	req->r_stamp = timespec64_trunc(ts, mdsc->fsc->sb->s_time_gran);
- 
- 	req->r_op = op;
- 	req->r_direct_mode = mode;
-@@ -2097,7 +2096,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_client *mdsc,
- 	/* time stamp */
- 	{
- 		struct ceph_timespec ts;
--		ceph_encode_timespec(&ts, &req->r_stamp);
-+		ceph_encode_timespec64(&ts, &req->r_stamp);
- 		ceph_encode_copy(&p, &ts, sizeof(ts));
- 	}
- 
-@@ -2190,7 +2189,7 @@ static int __prepare_send_request(struct ceph_mds_client *mdsc,
- 		p = msg->front.iov_base + req->r_request_release_offset;
- 		{
- 			struct ceph_timespec ts;
--			ceph_encode_timespec(&ts, &req->r_stamp);
-+			ceph_encode_timespec64(&ts, &req->r_stamp);
- 			ceph_encode_copy(&p, &ts, sizeof(ts));
- 		}
- 
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 2ec3b5b35067..80a7523e1523 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -229,7 +229,7 @@ struct ceph_mds_request {
- 	int r_fmode;        /* file mode, if expecting cap */
- 	kuid_t r_uid;
- 	kgid_t r_gid;
--	struct timespec r_stamp;
-+	struct timespec64 r_stamp;
- 
- 	/* for choosing which mds to send this request to */
- 	int r_direct_mode;
--- 
-2.9.0
+Byungchul, is there any reason to make this change other than preparation
+for your second patch?
+
+							Thanx, Paul
 
