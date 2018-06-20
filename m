@@ -2,97 +2,86 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD48C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10CFC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 763B420652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:16:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763B420652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 678ED20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:19:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D8ublxzN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 678ED20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754226AbeFTGQn (ORCPT
+        id S1754023AbeFTGTe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 02:16:43 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:14595 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752871AbeFTGPQ (ORCPT
+        Wed, 20 Jun 2018 02:19:34 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41315 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753622AbeFTGTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 02:15:16 -0400
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 19 Jun 2018 23:14:41 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id A1AA8B0AA2;
-        Tue, 19 Jun 2018 23:15:15 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Xavier Deguillard <xdeguillard@vmware.com>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-kernel@vger.kernel.org>,
-        Nadav Amit <namit@vmware.com>, <stable@vger.kernel.org>
-Subject: [PATCH v3 4/7] vmw_balloon: fix VMCI use when balloon built into kernel
-Date:   Tue, 19 Jun 2018 16:00:27 -0700
-Message-ID: <20180619230030.112906-5-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180619230030.112906-1-namit@vmware.com>
-References: <20180619230030.112906-1-namit@vmware.com>
+        Wed, 20 Jun 2018 02:19:31 -0400
+Received: by mail-pf0-f194.google.com with SMTP id a11-v6so1059710pff.8
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 23:19:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Hs4HRDO2PcGbW+s/nGj3XlSX67PwCXHo9tSUo6251dY=;
+        b=D8ublxzNupC00ZpZbcc32+1Qf+gL+BDVae1poL/kgOxPrtlN8inz9AlYYk+Vdi8XBI
+         Si6KGQ7ix8lk7plBoZubn6XQtvish5KTgLyYOkScNbmwnK8B4z+vrVN+Sn/c0sRMoJbe
+         EqQtvmsSWBhBKx/mBWYp95aQb2S1nas+ONTuc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Hs4HRDO2PcGbW+s/nGj3XlSX67PwCXHo9tSUo6251dY=;
+        b=jxic+hNHkQS6yzqckvtbQHa3EPE+1JuwZsCrH/Kd42GLGHSSi4gc9NOSREHR0aNUUD
+         ERx97DFaBTFcJx7u/CYCKnjnO0Grzer0nUPHHkxKwodmKRtRrqytHfbzosT07XRbVJUR
+         tw0SeIGvJq2cty7VHogswSgWn37NpObSFU+vjsY/d+3bfcYwSuSuE7NTPQhgoeWs64r0
+         pK4Lz5pzjMjK2ZeVw1babShMMej9dNteToUSGmtSwJUi3NKoqLWIq8gagoId8fgo+Gra
+         /yHTpMNPFTPxhAw8nC299CbBmZ119mG/bvbE6l2kILxsvsBnBp396OL+nDfiIapNTABu
+         EbvA==
+X-Gm-Message-State: APt69E1P+QwIYeVuH/Y7urbs97pQXwcFqzKgYHLCMFyS+uXosoJ7oJ+a
+        /hml5Zi4D5Iy7+UlhN1kBN7G0A==
+X-Google-Smtp-Source: ADUXVKIeHoTIl/JXeJuK+em2AjeTq+buswbWdOJ6CUkthOEvoRPUF3fYCzXCcX2vlvV17YWXWeJafQ==
+X-Received: by 2002:a65:4cc3:: with SMTP id n3-v6mr17270126pgt.98.1529475570642;
+        Tue, 19 Jun 2018 23:19:30 -0700 (PDT)
+Received: from localhost ([122.171.103.96])
+        by smtp.gmail.com with ESMTPSA id h9-v6sm2946577pfj.77.2018.06.19.23.19.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 23:19:29 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 11:49:28 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>
+Cc:     linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] PM / Domains: Rename opp_node to np
+Message-ID: <20180620061928.6vlvyhakzocpakth@vireshk-i7>
+References: <3d3687c030535189885d84c57dbffb034c4461c2.1528953706.git.viresh.kumar@linaro.org>
+ <7511c9837569aec34c56e0a40364f2f3c16563b6.1529475153.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7511c9837569aec34c56e0a40364f2f3c16563b6.1529475153.git.viresh.kumar@linaro.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, when all modules, including VMCI and VMware balloon are built
-into the kernel, the initialization of the balloon happens before the
-VMCI is probed. As a result, the balloon fails to initialize the VMCI
-doorbell, which it uses to get asynchronous requests for balloon size
-changes.
+On 20-06-18, 11:45, Viresh Kumar wrote:
 
-The problem can be seen in the logs, in the form of the following
-message:
-	"vmw_balloon: failed to initialize vmci doorbell"
+The subject should be "[PATCH V2 1/2] ***" instead.
 
-The driver would work correctly but slightly less efficiently, probing
-for requests periodically. This patch changes the balloon to be
-initialized using late_initcall() instead of module_init() to address
-this issue. It does not address a situation in which VMCI is built as a
-module and the balloon is built into the kernel.
-
-Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
-Cc: stable@vger.kernel.org
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- drivers/misc/vmw_balloon.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index a7df4c24a28d..e7cfc85f6961 100644
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -1297,7 +1297,14 @@ static int __init vmballoon_init(void)
- 
- 	return 0;
- }
--module_init(vmballoon_init);
-+
-+/*
-+ * Using late_initcall() instead of module_init() allows the balloon to use the
-+ * VMCI doorbell even when the balloon is built into the kernel. Otherwise the
-+ * VMCI is probed only after the balloon is initialized. If the balloon is used
-+ * as a module, late_initcall() is equivalent to module_init().
-+ */
-+late_initcall(vmballoon_init);
- 
- static void __exit vmballoon_exit(void)
- {
 -- 
-2.17.0
-
+viresh
