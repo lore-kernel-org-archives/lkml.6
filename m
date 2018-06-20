@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901B6C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34801C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE2F20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:26:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE87C20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:26:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dtRIJm7X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE2F20836
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+KVAB9a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE87C20836
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933047AbeFTR0F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:26:05 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44035 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeFTRXE (ORCPT
+        id S933002AbeFTR00 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 13:26:26 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45850 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932383AbeFTRXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:23:04 -0400
-Received: by mail-lf0-f67.google.com with SMTP id p23-v6so445615lfh.11
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:23:03 -0700 (PDT)
+        Wed, 20 Jun 2018 13:23:00 -0400
+Received: by mail-lf0-f68.google.com with SMTP id a13-v6so443153lfk.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=60U5bRPKDKJyHR17D5TYGPWZf08eZgljN5hkHwmsDUA=;
-        b=dtRIJm7XAWzuKjmeXnomgst7smQtEINE2MpLcO8A+M7VRbs5PKoD4FG61Lh2IkAMGu
-         Tl6hNssPK8su+rIU+OItVIdBlHViX+vq23nrBPUju9JY1EuKaQV59i1i4uCo2uGXeVtm
-         rfcKxJUrFLXrQedrqSEs/RaJza5ZkM8wxyA/4=
+        bh=24N1Dc3/4aVSfatj0cCLPTM9sDMCdxo5zYgoCR5YTHc=;
+        b=J+KVAB9aTvpKYALS4Wr+p8D1kMK7oRy9jJrRhoI+y086Fdf81Z8+HqPtV1GeeYQCev
+         KBJmQpmVoALyf7MJJsszcCcX9bDGTcZhH8yNCkG5/lMXAHjHIwdCTEX+qxQfzfQVsAwh
+         71D19Qu7OO+blVZjgHCqMdR+Jvl2sdvOR79ks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=60U5bRPKDKJyHR17D5TYGPWZf08eZgljN5hkHwmsDUA=;
-        b=KSECzsgWlJ42C+NCFH+E1u3wcXCJx/eg2jsF8uZpVKzERSYXrvvKA5fCbf+Ly4kcdC
-         wJB9TItWvW1P9XfxMpESI2rWxaX12mhocBhXFqxa2OQajqkQGee05Xtcno7yX9YITvA+
-         JnnZZizsmxV/JcmcJCpIAcbQ5P8Nns85iOsQPIiA7KMTrEgPvXa9SyYnyS7uME4t5haH
-         R9SaLYDxUVV9K4NrY97FxJvzfc6hiLcd9TAUWbLUk2qaP5F5JNESjXs/wboBCTVusn5U
-         7R7KWLmhA5isib3avQmPQN/eXH+n9/PvWrXGo9DMrX9FooES79b5wqCjqPymvkwk4rD2
-         71SA==
-X-Gm-Message-State: APt69E3TNLYeNcbIVdg17xQENVZtOnQe4PNIonyGYpovJpm9uujAYn5y
-        3CFvcNF4PEnd469WEYIq1aCU+g==
-X-Google-Smtp-Source: ADUXVKJiQlFWeGZEmlqwQkx047GLHSjmbFpCcwQ/EkZSuHGtcsYsECmjTNsT5vQg4C0qcFOJdXrHdA==
-X-Received: by 2002:a2e:4189:: with SMTP id d9-v6mr14339254ljf.36.1529515382622;
-        Wed, 20 Jun 2018 10:23:02 -0700 (PDT)
+        bh=24N1Dc3/4aVSfatj0cCLPTM9sDMCdxo5zYgoCR5YTHc=;
+        b=Uy/QsV78zEVyXlZxWq95jMj0aj4WRZxuxfaq60/9MhFa4dFi1QoWNKkKn5ymhUmZ1q
+         YaqgMzch98qaiXV89Wux5YphBNLA+maXmwzDWr53kXU0t66ntW6BZydX4/3YRV2ICqrs
+         FJ/A2NbsZJw8MDvrAVFr/iR4lAkE5j2wb12BAd35jLP9M3HXI0UE6zdAdrlobCdrtMYT
+         f/+ZXzEVvkUvq4Uh1vxqyiofq5YOo+JdHnwdzwK/GHa/DZ5Bcg7YmS13MAqsgKpOPZm4
+         myjE7TZ0sY6MIxG5xFar0gGe/VXKPbXJO9pRWUG/koBeGBp23kzWZ9+qkheauDup1UC0
+         9t6w==
+X-Gm-Message-State: APt69E3FFasBiXVTmCv71qSLM3MHK9XEV1qR9nnm4Nm+njjiLaLAV7QJ
+        oFcZvdWrc7me97yTXr7PxBieSw==
+X-Google-Smtp-Source: ADUXVKKAfapQ3eKmMpfxG+iNZ+44iV9V05WmGSBlbaS5XBfzU+lIVLCKALmJEEWJDZq9Nrlj57M4OA==
+X-Received: by 2002:a2e:8350:: with SMTP id l16-v6mr14437649ljh.7.1529515378526;
+        Wed, 20 Jun 2018 10:22:58 -0700 (PDT)
 Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm514441lji.85.2018.06.20.10.23.01
+        by smtp.gmail.com with ESMTPSA id b2-v6sm514441lji.85.2018.06.20.10.22.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:23:01 -0700 (PDT)
+        Wed, 20 Jun 2018 10:22:57 -0700 (PDT)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -71,9 +71,9 @@ Cc:     Kevin Hilman <khilman@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 15/26] drivers: firmware: psci: Split psci_dt_cpu_init_idle()
-Date:   Wed, 20 Jun 2018 19:22:15 +0200
-Message-Id: <20180620172226.15012-16-ulf.hansson@linaro.org>
+Subject: [PATCH v8 13/26] drivers: firmware: psci: Move psci to separate directory
+Date:   Wed, 20 Jun 2018 19:22:13 +0200
+Message-Id: <20180620172226.15012-14-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180620172226.15012-1-ulf.hansson@linaro.org>
 References: <20180620172226.15012-1-ulf.hansson@linaro.org>
@@ -82,83 +82,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's split psci_dt_cpu_init_idle() function into two functions, as to
-allow following changes to re-use some of the code.
+Some following changes extends the PSCI driver with some additional new
+files.  Let's avoid to continue cluttering the toplevel firmware directory
+and first move the PSCI files into a PSCI sub-directory.
 
-Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/firmware/psci/psci.c | 42 ++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
+ drivers/firmware/Kconfig                   | 15 +--------------
+ drivers/firmware/Makefile                  |  3 +--
+ drivers/firmware/psci/Kconfig              | 13 +++++++++++++
+ drivers/firmware/psci/Makefile             |  4 ++++
+ drivers/firmware/{ => psci}/psci.c         |  0
+ drivers/firmware/{ => psci}/psci_checker.c |  0
+ 6 files changed, 19 insertions(+), 16 deletions(-)
+ create mode 100644 drivers/firmware/psci/Kconfig
+ create mode 100644 drivers/firmware/psci/Makefile
+ rename drivers/firmware/{ => psci}/psci.c (100%)
+ rename drivers/firmware/{ => psci}/psci_checker.c (100%)
 
-diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index c80ec1d03274..9788bfc1cf8b 100644
---- a/drivers/firmware/psci/psci.c
-+++ b/drivers/firmware/psci/psci.c
-@@ -270,9 +270,26 @@ static int __init psci_features(u32 psci_func_id)
- #ifdef CONFIG_CPU_IDLE
- static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index 6e83880046d7..923c42d5a2e6 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -5,20 +5,6 @@
  
-+static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
-+{
-+	int err = of_property_read_u32(np, "arm,psci-suspend-param", state);
-+
-+	if (err) {
-+		pr_warn("%pOF missing arm,psci-suspend-param property\n", np);
-+		return err;
-+	}
-+
-+	if (!psci_power_state_is_valid(*state)) {
-+		pr_warn("Invalid PSCI power state %#x\n", *state);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
- {
--	int i, ret, count = 0;
-+	int i, ret = 0, count = 0;
- 	u32 *psci_states;
- 	struct device_node *state_node;
+ menu "Firmware Drivers"
  
-@@ -291,29 +308,16 @@ static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < count; i++) {
--		u32 state;
+-config ARM_PSCI_FW
+-	bool
 -
- 		state_node = of_parse_phandle(cpu_node, "cpu-idle-states", i);
-+		ret = psci_dt_parse_state_node(state_node, &psci_states[i]);
-+		of_node_put(state_node);
+-config ARM_PSCI_CHECKER
+-	bool "ARM PSCI checker"
+-	depends on ARM_PSCI_FW && HOTPLUG_CPU && CPU_IDLE && !TORTURE_TEST
+-	help
+-	  Run the PSCI checker during startup. This checks that hotplug and
+-	  suspend operations work correctly when using PSCI.
+-
+-	  The torture tests may interfere with the PSCI checker by turning CPUs
+-	  on and off through hotplug, so for now torture tests and PSCI checker
+-	  are mutually exclusive.
+-
+ config ARM_SCMI_PROTOCOL
+ 	bool "ARM System Control and Management Interface (SCMI) Message Protocol"
+ 	depends on ARM || ARM64 || COMPILE_TEST
+@@ -286,6 +272,7 @@ config TI_SCI_PROTOCOL
+ config HAVE_ARM_SMCCC
+ 	bool
  
--		ret = of_property_read_u32(state_node,
--					   "arm,psci-suspend-param",
--					   &state);
--		if (ret) {
--			pr_warn(" * %pOF missing arm,psci-suspend-param property\n",
--				state_node);
--			of_node_put(state_node);
-+		if (ret)
- 			goto free_mem;
--		}
++source "drivers/firmware/psci/Kconfig"
+ source "drivers/firmware/broadcom/Kconfig"
+ source "drivers/firmware/google/Kconfig"
+ source "drivers/firmware/efi/Kconfig"
+diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+index e18a041cfc53..ea284e551dc8 100644
+--- a/drivers/firmware/Makefile
++++ b/drivers/firmware/Makefile
+@@ -2,8 +2,6 @@
+ #
+ # Makefile for the linux kernel.
+ #
+-obj-$(CONFIG_ARM_PSCI_FW)	+= psci.o
+-obj-$(CONFIG_ARM_PSCI_CHECKER)	+= psci_checker.o
+ obj-$(CONFIG_ARM_SCPI_PROTOCOL)	+= arm_scpi.o
+ obj-$(CONFIG_ARM_SCPI_POWER_DOMAIN) += scpi_pm_domain.o
+ obj-$(CONFIG_ARM_SDE_INTERFACE)	+= arm_sdei.o
+@@ -26,6 +24,7 @@ CFLAGS_qcom_scm-32.o :=$(call as-instr,.arch armv7-a\n.arch_extension sec,-DREQU
+ obj-$(CONFIG_TI_SCI_PROTOCOL)	+= ti_sci.o
  
--		of_node_put(state_node);
--		pr_debug("psci-power-state %#x index %d\n", state, i);
--		if (!psci_power_state_is_valid(state)) {
--			pr_warn("Invalid PSCI power state %#x\n", state);
--			ret = -EINVAL;
--			goto free_mem;
--		}
--		psci_states[i] = state;
-+		pr_debug("psci-power-state %#x index %d\n", psci_states[i], i);
- 	}
+ obj-$(CONFIG_ARM_SCMI_PROTOCOL)	+= arm_scmi/
++obj-y				+= psci/
+ obj-y				+= broadcom/
+ obj-y				+= meson/
+ obj-$(CONFIG_GOOGLE_FIRMWARE)	+= google/
+diff --git a/drivers/firmware/psci/Kconfig b/drivers/firmware/psci/Kconfig
+new file mode 100644
+index 000000000000..26a3b32bf7ab
+--- /dev/null
++++ b/drivers/firmware/psci/Kconfig
+@@ -0,0 +1,13 @@
++config ARM_PSCI_FW
++	bool
 +
- 	/* Idle states parsed correctly, initialize per-cpu pointer */
- 	per_cpu(psci_power_state, cpu) = psci_states;
- 	return 0;
++config ARM_PSCI_CHECKER
++	bool "ARM PSCI checker"
++	depends on ARM_PSCI_FW && HOTPLUG_CPU && CPU_IDLE && !TORTURE_TEST
++	help
++	  Run the PSCI checker during startup. This checks that hotplug and
++	  suspend operations work correctly when using PSCI.
++
++	  The torture tests may interfere with the PSCI checker by turning CPUs
++	  on and off through hotplug, so for now torture tests and PSCI checker
++	  are mutually exclusive.
+diff --git a/drivers/firmware/psci/Makefile b/drivers/firmware/psci/Makefile
+new file mode 100644
+index 000000000000..1956b882470f
+--- /dev/null
++++ b/drivers/firmware/psci/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++obj-$(CONFIG_ARM_PSCI_FW)	+= psci.o
++obj-$(CONFIG_ARM_PSCI_CHECKER)	+= psci_checker.o
+diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci/psci.c
+similarity index 100%
+rename from drivers/firmware/psci.c
+rename to drivers/firmware/psci/psci.c
+diff --git a/drivers/firmware/psci_checker.c b/drivers/firmware/psci/psci_checker.c
+similarity index 100%
+rename from drivers/firmware/psci_checker.c
+rename to drivers/firmware/psci/psci_checker.c
 -- 
 2.17.1
 
