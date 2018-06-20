@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D6FC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC812C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD5D620652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D3CC208A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:58:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oaOMot0F";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GNkf+TvB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD5D620652
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LM9V0BdG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A5m8UB0c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3CC208A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933253AbeFTI5m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:57:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49550 "EHLO
+        id S933218AbeFTI5j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:57:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49554 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932269AbeFTIpA (ORCPT
+        with ESMTP id S932756AbeFTIpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 04:45:00 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8CABA60B22; Wed, 20 Jun 2018 07:28:01 +0000 (UTC)
+        id 3C40960BEA; Wed, 20 Jun 2018 07:28:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479681;
-        bh=pzadrc6s0gw4dN3aVQSYr9jYJbcZE8Q5gKt7Ce8bAgQ=;
+        s=default; t=1529479733;
+        bh=0o9UaX6OlMlC14uc977Q2L5xn6v+M44C1rFiRFUatq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oaOMot0F1i2vICNtMn1HOWEt25j0iGgHiq6VlAUdL01xTkwg3eo/9gzOu/Sh+8nAY
-         ZRwY5kLm9eu9h8H4HzrEMhTZr944u0BNatwUwev6TQAJvPVNE0PJTrM76d7y9x+O+X
-         V2BJr/BWqpqTjD+nKTblNjzKXtc5W0MAfaLEC8/E=
+        b=LM9V0BdGF0nFoQ2IvEWIPk9Fe3ziALVC9QXIHQIDYGbyeT3XdlnqcvdITw+6fRUu+
+         dbQFuQpZaT0OEDF5KOkY68VDrS6aUmONTl3Lh9nixcGgmuy1Crg24uCo7HETNATaRJ
+         OwAzYd3T8uN12aXgKgia4lcYXdWFjC7Aj4IwlxH4=
 Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: absahu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6945660B14;
-        Wed, 20 Jun 2018 07:27:57 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7294C60B19;
+        Wed, 20 Jun 2018 07:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479680;
-        bh=pzadrc6s0gw4dN3aVQSYr9jYJbcZE8Q5gKt7Ce8bAgQ=;
+        s=default; t=1529479731;
+        bh=0o9UaX6OlMlC14uc977Q2L5xn6v+M44C1rFiRFUatq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GNkf+TvBTKNyCaFxdvGUsawxh1PmM0Gn9GsGqkXT2OTJY2bsDkYVEh5UjTVhO/KIG
-         unPAn+bg0Zu8sh4SdoopfoB8vGBx8ILytRF1AQRc07vON32rwzyfK4Ax4SCHQvoVPt
-         5yA2scGLAGUoVwNnzTHhbgmANPHwH1CnT/9mbshc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6945660B14
+        b=A5m8UB0ceI8t8WqAAtLmSxoENd1k/ey3/dNmlHmkm4WHc2oEV997rMtDMckEqb65t
+         Y3KDlNZONOMd6vjjohyUcYWScwkJsCl8OGs/eY8tYtJjEreaK+BuMZU1mQNvUq4i85
+         NuxtQte8+2pddINwK6/BnoUz+FVY9jQGBYOGqiBk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7294C60B19
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From:   Abhishek Sahu <absahu@codeaurora.org>
@@ -60,10 +60,11 @@ Cc:     David Woodhouse <dwmw2@infradead.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
         Archit Taneja <architt@codeaurora.org>,
-        Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v4 02/15] mtd: rawnand: denali: use helper function for ecc setup
-Date:   Wed, 20 Jun 2018 12:57:29 +0530
-Message-Id: <1529479662-4026-3-git-send-email-absahu@codeaurora.org>
+        Abhishek Sahu <absahu@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v4 15/15] mtd: rawnand: provide only single helper function for ECC conf
+Date:   Wed, 20 Jun 2018 12:57:42 +0530
+Message-Id: <1529479662-4026-16-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
 References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
@@ -72,74 +73,164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the NAND core helper function nand_ecc_choose_conf to tune
-the ECC parameters instead of the function locally defined.
+Function nand_ecc_choose_conf() will be help for all the cases, so
+other helper functions can be made static.
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+nand_check_ecc_caps(): Invoke nand_ecc_choose_conf() with
+                       both chip->ecc.size and chip->ecc.strength
+                       value set.
+
+nand_maximize_ecc(): Invoke nand_ecc_choose_conf() with
+                     NAND_ECC_MAXIMIZE flag.
+
+nand_match_ecc_req(): Invoke nand_ecc_choose_conf() with either
+                      chip->ecc.size or chip->ecc.strength value
+                      set and without NAND_ECC_MAXIMIZE flag.
+
+CC: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
-* Changes from v3:
- NONE
+Changes from v3:
 
-* Changes from v2:
+NEW PATCH
 
-  1. Changed commit message
+ drivers/mtd/nand/raw/nand_base.c | 39 +++++++++++++++------------------------
+ include/linux/mtd/rawnand.h      |  9 ---------
+ 2 files changed, 15 insertions(+), 33 deletions(-)
 
-* Changes from v1:
-  NEW PATCH
-
- drivers/mtd/nand/raw/denali.c | 30 ++----------------------------
- 1 file changed, 2 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
-index 2a302a1..a586a1d 100644
---- a/drivers/mtd/nand/raw/denali.c
-+++ b/drivers/mtd/nand/raw/denali.c
-@@ -1120,33 +1120,6 @@ int denali_calc_ecc_bytes(int step_size, int strength)
- }
- EXPORT_SYMBOL(denali_calc_ecc_bytes);
- 
--static int denali_ecc_setup(struct mtd_info *mtd, struct nand_chip *chip,
--			    struct denali_nand_info *denali)
--{
--	int oobavail = mtd->oobsize - denali->oob_skip_bytes;
--	int ret;
--
--	/*
--	 * If .size and .strength are already set (usually by DT),
--	 * check if they are supported by this controller.
--	 */
--	if (chip->ecc.size && chip->ecc.strength)
--		return nand_check_ecc_caps(chip, denali->ecc_caps, oobavail);
--
--	/*
--	 * We want .size and .strength closest to the chip's requirement
--	 * unless NAND_ECC_MAXIMIZE is requested.
--	 */
--	if (!(chip->ecc.options & NAND_ECC_MAXIMIZE)) {
--		ret = nand_match_ecc_req(chip, denali->ecc_caps, oobavail);
--		if (!ret)
--			return 0;
--	}
--
--	/* Max ECC strength is the last thing we can do */
--	return nand_maximize_ecc(chip, denali->ecc_caps, oobavail);
--}
--
- static int denali_ooblayout_ecc(struct mtd_info *mtd, int section,
- 				struct mtd_oob_region *oobregion)
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index c64e3fc..f620236 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -6077,24 +6077,17 @@ static int nand_set_ecc_soft_ops(struct mtd_info *mtd)
+  * by the controller and the calculated ECC bytes fit within the chip's OOB.
+  * On success, the calculated ECC bytes is set.
+  */
+-int nand_check_ecc_caps(struct nand_chip *chip,
+-			const struct nand_ecc_caps *caps, int oobavail)
++static int
++nand_check_ecc_caps(struct nand_chip *chip,
++		    const struct nand_ecc_caps *caps, int oobavail)
  {
-@@ -1317,7 +1290,8 @@ int denali_init(struct denali_nand_info *denali)
- 	chip->ecc.mode = NAND_ECC_HW_SYNDROME;
- 	chip->options |= NAND_NO_SUBPAGE_WRITE;
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	const struct nand_ecc_step_info *stepinfo;
+ 	int preset_step = chip->ecc.size;
+ 	int preset_strength = chip->ecc.strength;
+-	int nsteps, ecc_bytes;
++	int ecc_bytes, nsteps = mtd->writesize / preset_step;
+ 	int i, j;
  
--	ret = denali_ecc_setup(mtd, chip, denali);
-+	ret = nand_ecc_choose_conf(chip, denali->ecc_caps,
-+				   mtd->oobsize - denali->oob_skip_bytes);
- 	if (ret) {
- 		dev_err(denali->dev, "Failed to setup ECC settings.\n");
- 		goto disable_irq;
+-	if (WARN_ON(oobavail < 0))
+-		return -EINVAL;
+-
+-	if (!preset_step || !preset_strength)
+-		return -ENODATA;
+-
+-	nsteps = mtd->writesize / preset_step;
+-
+ 	for (i = 0; i < caps->nstepinfos; i++) {
+ 		stepinfo = &caps->stepinfos[i];
+ 
+@@ -6127,7 +6120,6 @@ int nand_check_ecc_caps(struct nand_chip *chip,
+ 
+ 	return -ENOTSUPP;
+ }
+-EXPORT_SYMBOL_GPL(nand_check_ecc_caps);
+ 
+ /**
+  * nand_match_ecc_req - meet the chip's requirement with least ECC bytes
+@@ -6139,8 +6131,9 @@ int nand_check_ecc_caps(struct nand_chip *chip,
+  * number of ECC bytes (i.e. with the largest number of OOB-free bytes).
+  * On success, the chosen ECC settings are set.
+  */
+-int nand_match_ecc_req(struct nand_chip *chip,
+-		       const struct nand_ecc_caps *caps, int oobavail)
++static int
++nand_match_ecc_req(struct nand_chip *chip,
++		   const struct nand_ecc_caps *caps, int oobavail)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	const struct nand_ecc_step_info *stepinfo;
+@@ -6151,9 +6144,6 @@ int nand_match_ecc_req(struct nand_chip *chip,
+ 	int best_ecc_bytes_total = INT_MAX;
+ 	int i, j;
+ 
+-	if (WARN_ON(oobavail < 0))
+-		return -EINVAL;
+-
+ 	/* No information provided by the NAND chip */
+ 	if (!req_step || !req_strength)
+ 		return -ENOTSUPP;
+@@ -6212,7 +6202,6 @@ int nand_match_ecc_req(struct nand_chip *chip,
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(nand_match_ecc_req);
+ 
+ /**
+  * nand_maximize_ecc - choose the max ECC strength available
+@@ -6223,8 +6212,9 @@ int nand_match_ecc_req(struct nand_chip *chip,
+  * Choose the max ECC strength that is supported on the controller, and can fit
+  * within the chip's OOB.  On success, the chosen ECC settings are set.
+  */
+-int nand_maximize_ecc(struct nand_chip *chip,
+-		      const struct nand_ecc_caps *caps, int oobavail)
++static int
++nand_maximize_ecc(struct nand_chip *chip,
++		  const struct nand_ecc_caps *caps, int oobavail)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	const struct nand_ecc_step_info *stepinfo;
+@@ -6234,9 +6224,6 @@ int nand_maximize_ecc(struct nand_chip *chip,
+ 	int best_strength, best_ecc_bytes;
+ 	int i, j;
+ 
+-	if (WARN_ON(oobavail < 0))
+-		return -EINVAL;
+-
+ 	for (i = 0; i < caps->nstepinfos; i++) {
+ 		stepinfo = &caps->stepinfos[i];
+ 		step_size = stepinfo->stepsize;
+@@ -6285,7 +6272,6 @@ int nand_maximize_ecc(struct nand_chip *chip,
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(nand_maximize_ecc);
+ 
+ /**
+  * nand_ecc_choose_conf - Set the ECC strength and ECC step size
+@@ -6307,6 +6293,11 @@ int nand_maximize_ecc(struct nand_chip *chip,
+ int nand_ecc_choose_conf(struct nand_chip *chip,
+ 			 const struct nand_ecc_caps *caps, int oobavail)
+ {
++	struct mtd_info *mtd = nand_to_mtd(chip);
++
++	if (WARN_ON(oobavail < 0 || oobavail > mtd->oobsize))
++		return -EINVAL;
++
+ 	if (chip->ecc.size && chip->ecc.strength)
+ 		return nand_check_ecc_caps(chip, caps, oobavail);
+ 
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 03a0061..0945868 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -1641,15 +1641,6 @@ int nand_check_erased_ecc_chunk(void *data, int datalen,
+ 				void *extraoob, int extraooblen,
+ 				int threshold);
+ 
+-int nand_check_ecc_caps(struct nand_chip *chip,
+-			const struct nand_ecc_caps *caps, int oobavail);
+-
+-int nand_match_ecc_req(struct nand_chip *chip,
+-		       const struct nand_ecc_caps *caps,  int oobavail);
+-
+-int nand_maximize_ecc(struct nand_chip *chip,
+-		      const struct nand_ecc_caps *caps, int oobavail);
+-
+ int nand_ecc_choose_conf(struct nand_chip *chip,
+ 			 const struct nand_ecc_caps *caps, int oobavail);
+ 
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
 is a member of Code Aurora Forum, hosted by The Linux Foundation
