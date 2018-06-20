@@ -2,187 +2,270 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E96DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E11C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D215220652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:00:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D215220652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	by mail.kernel.org (Postfix) with ESMTP id 9001620652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:01:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H9J3+mHK";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b0hTaK87"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9001620652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754699AbeFTJAq (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:00:46 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:38022 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754614AbeFTJAl (ORCPT
+        id S933013AbeFTI5d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:57:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49590 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932862AbeFTIpC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:00:41 -0400
-Received: by mail-oi0-f65.google.com with SMTP id d5-v6so2343160oib.5
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 02:00:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iaf34ur3LmcIDpURuViIahNYd2DHXnMfAJ45qUPsCVI=;
-        b=LS7+j5I4iAxl8p3pX6jE6RrF/bu+QRLnC13z7LEBx3KGaU5d+Q3YmtPJ32IaksCUbO
-         rOm/1o6/oDaTbmIpdY3xTm88z6kieSeuyePFIB2z/7F+UUHxrnUCIKxfFs/M0JG6N2rv
-         EiNILiACT/z1q0nyFKmVbU6R63s1eyYVEec7Q9GoWnZhpmpKyA1HISbI0GFWkVY5d7gl
-         UR08kreCGakqLVA9/Q7JcWFX2W4oiT93Zk8ZDYvIoWxGGLw5r6bZ2hY0CW+HWqEh0Baz
-         v+0qkj8sZtvfRImZzc1LH+AHbie+5qh45UpJ4D/a6U/bfTRFHqNq0vyCwYoLys7MfT8D
-         qGcw==
-X-Gm-Message-State: APt69E1bYu6iXnClzCGrUV7Vb7s9DrNRtAP99HYsT38SRpgLM9MJQ2ia
-        /f0z4adsqzleb1BHLPeIdJxqOB8ZnKn9I5fu75ydkPBs
-X-Google-Smtp-Source: ADUXVKJKG3ou160SHe5bE0MF/Qdmj/g2WaKEz6Sc3NmVdJCoC9wUmiWfZnLZfiHxEl+4g3pPrT9zuD8490aG1uYEgwI=
-X-Received: by 2002:aca:a686:: with SMTP id t6-v6mr11561924oij.48.1529479001610;
- Wed, 20 Jun 2018 00:16:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180619140229.3615110-1-arnd@arndb.de>
-In-Reply-To: <20180619140229.3615110-1-arnd@arndb.de>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Wed, 20 Jun 2018 09:16:30 +0200
-Message-ID: <CA+7wUsyN_gru4rW0y3ZzXzYwhfaA=uHKaOG=z5bprnYq6oVfMg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] [v2] powerpc: mac: fix rtc read/write functions
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>, funaho@jurai.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        gerg@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>, y2038@lists.linaro.org,
-        Meelis Roos <mroos@linux.ee>, schwab@linux-m68k.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Jun 2018 04:45:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 681F360BE3; Wed, 20 Jun 2018 07:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529479725;
+        bh=kqWQOOk0xz9efo42aAJtuF+eDiEPhgy6Il3gCDA8Ufc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=H9J3+mHKwhzXv1TexJtl/vYMWMW6uqRwJonxreq/RTUjGIBQYalgMcibINbgK6owM
+         qHlSMjFR3Erdi/D/OOw2NwNRo5v+wKLGxyw2iGkBYqXwc+Db6yQav1oSHZSbR8W1Nm
+         h5UWFIihac48pqh8982WVKHcbaenVs2AqhFOHitU=
+Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: absahu@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D05E660B19;
+        Wed, 20 Jun 2018 07:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529479724;
+        bh=kqWQOOk0xz9efo42aAJtuF+eDiEPhgy6Il3gCDA8Ufc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=b0hTaK87/lCEjMpHoRXUl7MHu4AvQ8shryGU+uLk+g3mjOi2cvobr6JE8833gDpdM
+         LMzIaIIhzDm5mDpKMQt7lHHvGsp/c0bJHGe1FLMCjDWY9Pl7+uRp/JI9cBFl7InWZo
+         9yeXFz8233fCMRyJosC43fw1lEbLZIgnAp4dN5s8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D05E660B19
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
+From:   Abhishek Sahu <absahu@codeaurora.org>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v4 13/15] mtd: rawnand: qcom: code reorganization for raw read
+Date:   Wed, 20 Jun 2018 12:57:40 +0530
+Message-Id: <1529479662-4026-14-git-send-email-absahu@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
+References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 4:04 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> As Mathieu pointed out, my conversion to time64_t was incorrect and resulted
-> in negative times to be read from the RTC. The problem is that during the
-> conversion from a byte array to a time64_t, the 'unsigned char' variable
-> holding the top byte gets turned into a negative signed 32-bit integer
-> before being assigned to the 64-bit variable for any times after 1972.
->
-> This changes the logic to cast to an unsigned 32-bit number first for
-> the Macintosh time and then convert that to the Unix time, which then gives
-> us a time in the documented 1904..2040 year range. I decided not to use
-> the longer 1970..2106 range that other drivers use, for consistency with
-> the literal interpretation of the register, but that could be easily
-> changed if we decide we want to support any Mac after 2040.
->
-> Just to be on the safe side, I'm also adding a WARN_ON that will trigger
-> if either the year 2040 has come and is observed by this driver, or we
-> run into an RTC that got set back to a pre-1970 date for some reason
-> (the two are indistinguishable).
->
-> For the RTC write functions, Andreas found another problem: both
-> pmu_request() and cuda_request() are varargs functions, so changing
-> the type of the arguments passed into them from 32 bit to 64 bit
-> breaks the API for the set_rtc_time functions. This changes it
-> back to 32 bits.
->
-> The same code exists in arch/m68k/ and is patched in an identical way now
-> in a separate patch.
->
-> Fixes: 5bfd643583b2 ("powerpc: use time64_t in read_persistent_clock")
-> Reported-by: Mathieu Malaterre <malat@debian.org>
-> Reported-by: Andreas Schwab <schwab@linux-m68k.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Make separate function to perform raw read for one codeword and
+call this function multiple times for each codeword in case of
+raw page read. This separate function will help in subsequent
+patches related with erased codeword bitflip detection.
 
-Doing a reboot on Debian sets the hardware clock from system clock and
-upon reboot everything is back in shape:
+It will decrease throughput for raw page read. Raw page read
+is used for debug purpose so it won't affect normal flash
+operations.
 
-[    5.645082] rtc-generic rtc-generic: setting system clock to
-2018-06-20 07:12:04 UTC (1529478724)
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+* Changes from v3:
+  1. Major code changes for making separate function for raw_read
+  2. Changed commit message
 
+* Changes from v2:
+  NONE
 
-Tested-by: Mathieu Malaterre <malat@debian.org>
+* Changes from v1:
+ 1. Included more detail in function comment
 
-Thanks!
-> ---
->  arch/powerpc/platforms/powermac/time.c | 29 ++++++++++++++++++++---------
->  1 file changed, 20 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-> index 7c968e46736f..12e6e4d30602 100644
-> --- a/arch/powerpc/platforms/powermac/time.c
-> +++ b/arch/powerpc/platforms/powermac/time.c
-> @@ -42,7 +42,11 @@
->  #define DBG(x...)
->  #endif
->
-> -/* Apparently the RTC stores seconds since 1 Jan 1904 */
-> +/*
-> + * Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
-> + * times wrap in 2040. If we need to handle later times, the read_time functions
-> + * need to be changed to interpret wrapped times as post-2040.
-> + */
->  #define RTC_OFFSET     2082844800
->
->  /*
-> @@ -97,8 +101,11 @@ static time64_t cuda_get_time(void)
->         if (req.reply_len != 7)
->                 printk(KERN_ERR "cuda_get_time: got %d byte reply\n",
->                        req.reply_len);
-> -       now = (req.reply[3] << 24) + (req.reply[4] << 16)
-> -               + (req.reply[5] << 8) + req.reply[6];
-> +       now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
-> +                   (req.reply[5] << 8) + req.reply[6]);
-> +       /* it's either after year 2040, or the RTC has gone backwards */
-> +       WARN_ON(now < RTC_OFFSET);
-> +
->         return now - RTC_OFFSET;
->  }
->
-> @@ -106,10 +113,10 @@ static time64_t cuda_get_time(void)
->
->  static int cuda_set_rtc_time(struct rtc_time *tm)
->  {
-> -       time64_t nowtime;
-> +       u32 nowtime;
->         struct adb_request req;
->
-> -       nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
-> +       nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
->         if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
->                          nowtime >> 24, nowtime >> 16, nowtime >> 8,
->                          nowtime) < 0)
-> @@ -140,8 +147,12 @@ static time64_t pmu_get_time(void)
->         if (req.reply_len != 4)
->                 printk(KERN_ERR "pmu_get_time: got %d byte reply from PMU\n",
->                        req.reply_len);
-> -       now = (req.reply[0] << 24) + (req.reply[1] << 16)
-> -               + (req.reply[2] << 8) + req.reply[3];
-> +       now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16) +
-> +                   (req.reply[2] << 8) + req.reply[3]);
-> +
-> +       /* it's either after year 2040, or the RTC has gone backwards */
-> +       WARN_ON(now < RTC_OFFSET);
-> +
->         return now - RTC_OFFSET;
->  }
->
-> @@ -149,10 +160,10 @@ static time64_t pmu_get_time(void)
->
->  static int pmu_set_rtc_time(struct rtc_time *tm)
->  {
-> -       time64_t nowtime;
-> +       u32 nowtime;
->         struct adb_request req;
->
-> -       nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
-> +       nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
->         if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
->                         nowtime >> 16, nowtime >> 8, nowtime) < 0)
->                 return -ENXIO;
-> --
-> 2.9.0
->
+ drivers/mtd/nand/raw/qcom_nandc.c | 146 ++++++++++++++++++++------------------
+ 1 file changed, 78 insertions(+), 68 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+index 5999c39..160acdf 100644
+--- a/drivers/mtd/nand/raw/qcom_nandc.c
++++ b/drivers/mtd/nand/raw/qcom_nandc.c
+@@ -1587,6 +1587,74 @@ static int check_flash_errors(struct qcom_nand_host *host, int cw_cnt)
+ 	return 0;
+ }
+ 
++/* performs raw read for one codeword */
++static int
++qcom_nandc_read_cw_raw(struct mtd_info *mtd, struct nand_chip *chip,
++		       u8 *data_buf, u8 *oob_buf, int page, int cw)
++{
++	struct qcom_nand_host *host = to_qcom_nand_host(chip);
++	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
++	struct nand_ecc_ctrl *ecc = &chip->ecc;
++	int data_size1, data_size2, oob_size1, oob_size2;
++	int ret, reg_off = FLASH_BUF_ACC, read_loc = 0;
++
++	nand_read_page_op(chip, page, 0, NULL, 0);
++	host->use_ecc = false;
++
++	clear_bam_transaction(nandc);
++	set_address(host, host->cw_size * cw, page);
++	update_rw_regs(host, 1, true);
++	config_nand_page_read(nandc);
++
++	data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
++	oob_size1 = host->bbm_size;
++
++	if (cw == (ecc->steps - 1)) {
++		data_size2 = ecc->size - data_size1 -
++			     ((ecc->steps - 1) * 4);
++		oob_size2 = (ecc->steps * 4) + host->ecc_bytes_hw +
++			    host->spare_bytes;
++	} else {
++		data_size2 = host->cw_data - data_size1;
++		oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
++	}
++
++	if (nandc->props->is_bam) {
++		nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
++		read_loc += data_size1;
++
++		nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
++		read_loc += oob_size1;
++
++		nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
++		read_loc += data_size2;
++
++		nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
++	}
++
++	config_nand_cw_read(nandc, false);
++
++	read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
++	reg_off += data_size1;
++
++	read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
++	reg_off += oob_size1;
++
++	read_data_dma(nandc, reg_off, data_buf + data_size1, data_size2, 0);
++	reg_off += data_size2;
++
++	read_data_dma(nandc, reg_off, oob_buf + oob_size1, oob_size2, 0);
++
++	ret = submit_descs(nandc);
++	free_descs(nandc);
++	if (ret) {
++		dev_err(nandc->dev, "failure to read raw cw %d\n", cw);
++		return ret;
++	}
++
++	return check_flash_errors(host, 1);
++}
++
+ /*
+  * reads back status registers set by the controller to notify page read
+  * errors. this is equivalent to what 'ecc->correct()' would do.
+@@ -1851,79 +1919,21 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
+ 				    int oob_required, int page)
+ {
+ 	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+-	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+-	u8 *data_buf, *oob_buf;
+ 	struct nand_ecc_ctrl *ecc = &chip->ecc;
+-	int i, ret;
+-	int read_loc;
++	int cw, ret;
++	u8 *data_buf = buf, *oob_buf = chip->oob_poi;
+ 
+-	nand_read_page_op(chip, page, 0, NULL, 0);
+-	data_buf = buf;
+-	oob_buf = chip->oob_poi;
++	for (cw = 0; cw < ecc->steps; cw++) {
++		ret = qcom_nandc_read_cw_raw(mtd, chip, data_buf, oob_buf,
++					     page, cw);
++		if (ret)
++			return ret;
+ 
+-	host->use_ecc = false;
+-
+-	clear_bam_transaction(nandc);
+-	update_rw_regs(host, ecc->steps, true);
+-	config_nand_page_read(nandc);
+-
+-	for (i = 0; i < ecc->steps; i++) {
+-		int data_size1, data_size2, oob_size1, oob_size2;
+-		int reg_off = FLASH_BUF_ACC;
+-
+-		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
+-		oob_size1 = host->bbm_size;
+-
+-		if (i == (ecc->steps - 1)) {
+-			data_size2 = ecc->size - data_size1 -
+-				     ((ecc->steps - 1) << 2);
+-			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
+-				    host->spare_bytes;
+-		} else {
+-			data_size2 = host->cw_data - data_size1;
+-			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
+-		}
+-
+-		if (nandc->props->is_bam) {
+-			read_loc = 0;
+-			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
+-			read_loc += data_size1;
+-
+-			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
+-			read_loc += oob_size1;
+-
+-			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
+-			read_loc += data_size2;
+-
+-			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+-		}
+-
+-		config_nand_cw_read(nandc, false);
+-
+-		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+-		reg_off += data_size1;
+-		data_buf += data_size1;
+-
+-		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
+-		reg_off += oob_size1;
+-		oob_buf += oob_size1;
+-
+-		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
+-		reg_off += data_size2;
+-		data_buf += data_size2;
+-
+-		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
+-		oob_buf += oob_size2;
+-	}
+-
+-	ret = submit_descs(nandc);
+-	free_descs(nandc);
+-	if (ret) {
+-		dev_err(nandc->dev, "failure to read raw page\n");
+-		return ret;
++		data_buf += host->cw_data;
++		oob_buf += ecc->bytes;
+ 	}
+ 
+-	return check_flash_errors(host, ecc->steps);
++	return 0;
+ }
+ 
+ /* implements ecc->read_oob() */
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
+is a member of Code Aurora Forum, hosted by The Linux Foundation
+
