@@ -2,112 +2,143 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9C0C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851C9C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E46B20872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:13:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="IKbo12OE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E46B20872
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AF6E20872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:14:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF6E20872
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753970AbeFTONr (ORCPT
+        id S1754101AbeFTOOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:13:47 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:42193 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752891AbeFTONp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:13:45 -0400
-Received: by mail-ot0-f193.google.com with SMTP id 92-v6so3853008otw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 07:13:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8Z8VVmfitXpmsfo6jaLFltuSOq8qeLqoV8fwPstPQ/Y=;
-        b=IKbo12OEtqW9rRgEnPxHvnoGN6LsqusgfdDNkEJFp4jSIvcmupAX1A7vvIERgVqWz6
-         2J6NdBouu/7IDCWE9q08++k+kM8hdbXqMWWq2yYbCLr/WPqXJN+IdUy8exBeWPFYWsoA
-         qThqRu+DmPp2HIdwdda026f+AM+m5OgZ5GjNdYtzB5GnGMu6cMamsjoTwE80GkPDlxFS
-         x6QjNtcYRtvkKVw7OBahaIQERbKkMPHVgTEeCEU+XDYzyWH+f4Pu6obeF78Ns6xskGcK
-         T1YpiS5tAFufTbeScC92oIlMe0CyL5l7cDttYPjFXXeVIIgRBiX1mM6HZQ8/sYP4AV2v
-         0C/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8Z8VVmfitXpmsfo6jaLFltuSOq8qeLqoV8fwPstPQ/Y=;
-        b=Sd2+kErScrdxz8ld4079sA57rjEVY/lCOcze7B4Ave6a/RjlKIW9tJTGjNB2JR5iFw
-         MWqWO03MfL9HysfnBJ78q/CDX2Zb53yTycNNj7izfv54nTK/NiNxmtk+WD9Bt+oLiBpx
-         zwWEXsQNmsGAF+Gul7mfqgqdW1qn69zAiKbPJ1Rbz4xa3+7gboGyUau5o5qh8jQyyQX5
-         MEEyqwkvCoBQRDDXqw6duFOR96EFTlZ31+rSgpdPSbEv1z3BDoxPzd/Kyk2dZBHrebT0
-         9FS+T0yNSMvArQBKidvCTaAOBywkXGvT+zX0aimFYU5ijY3Pync5N0lhkkFnBHMmxGQu
-         /p1w==
-X-Gm-Message-State: APt69E2qtl7l0XYZGk4NsiVpjySi1I7222uaWCDQCYaHpOybCN6zPq4t
-        pquHlvVbh4pQUCTRdXeqzKGX7/dJpoCyUvvzlipVrA==
-X-Google-Smtp-Source: ADUXVKId5ry0NSd/V2BMEeaoez8AIbRrx/iPNje4XXmQ47oJ2CZw8EH5y0PNehMMnC2UWXX9x9eB8vagLTxVLbmI1WE=
-X-Received: by 2002:a9d:b52:: with SMTP id p18-v6mr5116741otd.64.1529504024530;
- Wed, 20 Jun 2018 07:13:44 -0700 (PDT)
+        Wed, 20 Jun 2018 10:14:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49302 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754017AbeFTOOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 10:14:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BE7054022414;
+        Wed, 20 Jun 2018 14:14:43 +0000 (UTC)
+Received: from redhat.com (ovpn-122-53.rdu2.redhat.com [10.10.122.53])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 24B9E2156880;
+        Wed, 20 Jun 2018 14:14:42 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 17:14:41 +0300
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     "Wang, Wei W" <wei.w.wang@intel.com>
+Cc:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "peterx@redhat.com" <peterx@redhat.com>
+Subject: Re: [virtio-dev] Re: [PATCH v33 2/4] virtio-balloon:
+ VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Message-ID: <20180620171320-mutt-send-email-mst@kernel.org>
+References: <20180615144000-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7396A3D04@shsmsx102.ccr.corp.intel.com>
+ <20180615171635-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7396A5CB0@shsmsx102.ccr.corp.intel.com>
+ <20180618051637-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7396AA10C@shsmsx102.ccr.corp.intel.com>
+ <20180619055449-mutt-send-email-mst@kernel.org>
+ <5B28F371.9020308@intel.com>
+ <20180619173256-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7396AE2EC@shsmsx102.ccr.corp.intel.com>
 MIME-Version: 1.0
-Received: by 2002:a4a:c584:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 07:13:44
- -0700 (PDT)
-In-Reply-To: <1529500964-28429-3-git-send-email-jianchao.w.wang@oracle.com>
-References: <1529500964-28429-1-git-send-email-jianchao.w.wang@oracle.com> <1529500964-28429-3-git-send-email-jianchao.w.wang@oracle.com>
-From:   Josef Bacik <josef@toxicpanda.com>
-Date:   Wed, 20 Jun 2018 10:13:44 -0400
-Message-ID: <CAEzrpqdFZ+HkBx6YG9Y+406dBssUsikbR7yaj9BAEJsWLFL48g@mail.gmail.com>
-Subject: Re: [PATCH 2/5] nbd: use __blk_mq_complete_request in timeout path
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Keith Busch <keith.busch@intel.com>, ulf.hansson@linaro.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <286AC319A985734F985F78AFA26841F7396AE2EC@shsmsx102.ccr.corp.intel.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 20 Jun 2018 14:14:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 20 Jun 2018 14:14:43 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You can add
+On Wed, Jun 20, 2018 at 09:11:39AM +0000, Wang, Wei W wrote:
+> On Tuesday, June 19, 2018 10:43 PM, Michael S. Tsirk wrote:
+> > On Tue, Jun 19, 2018 at 08:13:37PM +0800, Wei Wang wrote:
+> > > On 06/19/2018 11:05 AM, Michael S. Tsirkin wrote:
+> > > > On Tue, Jun 19, 2018 at 01:06:48AM +0000, Wang, Wei W wrote:
+> > > > > On Monday, June 18, 2018 10:29 AM, Michael S. Tsirkin wrote:
+> > > > > > On Sat, Jun 16, 2018 at 01:09:44AM +0000, Wang, Wei W wrote:
+> > > > > > > Not necessarily, I think. We have min(4m_page_blocks / 512,
+> > > > > > > 1024) above,
+> > > > > > so the maximum memory that can be reported is 2TB. For larger
+> > guests, e.g.
+> > > > > > 4TB, the optimization can still offer 2TB free memory (better
+> > > > > > than no optimization).
+> > > > > >
+> > > > > > Maybe it's better, maybe it isn't. It certainly muddies the waters even
+> > more.
+> > > > > > I'd rather we had a better plan. From that POV I like what
+> > > > > > Matthew Wilcox suggested for this which is to steal the necessary # of
+> > entries off the list.
+> > > > > Actually what Matthew suggested doesn't make a difference here.
+> > > > > That method always steal the first free page blocks, and sure can
+> > > > > be changed to take more. But all these can be achieved via kmalloc
+> > > > I'd do get_user_pages really. You don't want pages split, etc.
+> > 
+> > Oops sorry. I meant get_free_pages .
+> 
+> Yes, we can use __get_free_pages, and the max allocation is MAX_ORDER - 1, which can report up to 2TB free memory. 
+> 
+> "getting two pages isn't harder", do you mean passing two arrays (two allocations by get_free_pages(,MAX_ORDER -1)) to the mm API?
 
-Acked-by: Josef Bacik <josef@toxicpanda.com>
+Yes, or generally a list of pages with as many as needed.
 
-for the NBD patch.  Thanks,
 
-Josef
+> Please see if the following logic aligns to what you think:
+> 
+>         uint32_t i, max_hints, hints_per_page, hints_per_array, total_arrays;
+>         unsigned long *arrays;
+>  
+>      /*
+>          * Each array size is MAX_ORDER_NR_PAGES. If one array is not enough to
+>          * store all the hints, we need to allocate multiple arrays.
+>          * max_hints: the max number of 4MB free page blocks
+>          * hints_per_page: the number of hints each page can store
+>          * hints_per_array: the number of hints an array can store
+>          * total_arrays: the number of arrays we need
+>          */
+>         max_hints = totalram_pages / MAX_ORDER_NR_PAGES;
+>         hints_per_page = PAGE_SIZE / sizeof(__le64);
+>         hints_per_array = hints_per_page * MAX_ORDER_NR_PAGES;
+>         total_arrays = max_hints /  hints_per_array +
+>                        !!(max_hints % hints_per_array);
+>         arrays = kmalloc(total_arrays * sizeof(unsigned long), GFP_KERNEL);
+>         for (i = 0; i < total_arrays; i++) {
+>                 arrays[i] = __get_free_pages(__GFP_ATOMIC | __GFP_NOMEMALLOC, MAX_ORDER - 1);
+> 
+>               if (!arrays[i])
+>                       goto out;
+>         }
+> 
+> 
+> - the mm API needs to be changed to support storing hints to multiple separated arrays offered by the caller.
+> 
+> Best,
+> Wei
 
-On Wed, Jun 20, 2018 at 9:22 AM, Jianchao Wang
-<jianchao.w.wang@oracle.com> wrote:
-> To regain the capability to prevent normal completion path from
-> entering a timeout request, blk_mq_mark_rq_complete is introduced
-> in blk_mq_complete_request. Have to use __blk_mq_complete_request
-> in timeout path to complete a timeout request.
->
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-> ---
->  drivers/block/nbd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 3b7083b..d7e533a 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -354,7 +354,7 @@ static enum blk_eh_timer_return nbd_xmit_timeout(struct request *req,
->         sock_shutdown(nbd);
->         nbd_config_put(nbd);
->  done:
-> -       blk_mq_complete_request(req);
-> +       __blk_mq_complete_request(req);
->         return BLK_EH_DONE;
->  }
->
-> --
-> 2.7.4
->
+Yes. And add an API to just count entries so we know how many arrays to allocate.
+
+-- 
+MST
