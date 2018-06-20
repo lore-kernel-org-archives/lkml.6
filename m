@@ -6,102 +6,152 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD64C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4764C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C01F208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C01F208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 999DC208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:38:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999DC208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932583AbeFTIht (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:37:49 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:56377 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752595AbeFTIhq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:37:46 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0LuFsJ-1gEc482WUp-011fZ9; Wed, 20 Jun 2018 10:11:59 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fuse: convert last timespec use to timespec64
-Date:   Wed, 20 Jun 2018 10:11:46 +0200
-Message-Id: <20180620081158.83283-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:gVWRUHLYqRlFx41uDorRnyHIMpUa9P+ru5dJ82jgQM+niYPxT/B
- rals0Ef9xHe79rKdeeRL4v0PRPCFq0zZj2mgtnohLqQVtHZKg1oX+Nq+B74LAYzp2JZbj9P
- PCodzLbVUPZaKtEOtgkhDQqy5gH7ByUcUMyvlRuO1UXaIbFZS5A4k0zbki3UQ2b+rs3oE6J
- ab+qboHWA2fmsn5jBlY4g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZFbgleFKVFo=:QMzu8/zYpwmWVVWdor10nA
- u+NOuergvIu6j6w7fkVrfW9/vQPXx5zIydaxZHiCVaqVUK/LTmSxZ0QBUxm53ouFpPm39lUKI
- XJH6HldrN8KSGUUX15dzLs4hIl6l3hBKEhQe6k/JjXdlIpXw3TGI7teQ+I4kADb3h95WoYwxp
- GY9a+0su6JwvgiZAguRZ/zKHKFC1uB4j6jLI/1fAAkDzHNAckottiSzRsh1zrAWc5WgOMTG5Q
- 2EwYxJjN6SfBooMGZqFdrLOcrhK/9w1aV6CDLAwoT5inH2opi5YJ7gjW0nHJczxdglqApjN6O
- CId1PaW0RSfa88Or2qCDMhe4mGjNUbawQM2LhQPCbYCa506gfgN/4wxYrzOUkaFggklWQ3NSC
- 5yHEad7rO++JAPHJDAifTji1ZSsyA3dS2gsvYU0idn8ja10jBFiR7spWSyh9ebYATGzPpO+9M
- CrSxk47S8hnVFppwDYRjCaqIel5btY0hb073iSIvGCFTflo2BV8Sa1veLTf7O9Q1k3/Zgeub5
- L7RpbzMpEmUo/hKpljnwQfyjCm1Mpgh6RLahDAiugWILyea0mOlCttoOr7PKCBB0jCNF3TkzP
- /jGalzU1aF164jOb9CnInnh0RTg1PM/HbR7IeQ7N99gyym6fTrmEHUdHgUWY0gOUAtQYS9CAT
- 8Gt65s35VwZ5wmk0H4jrN0Gy3vK+tJ/IZeDa8aX/41hLgwp4Yp1p2MzCTS0sM4Ojgy/8=
+        id S1754614AbeFTIi3 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:38:29 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44622 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750877AbeFTIi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 04:38:27 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4407D20DC1; Wed, 20 Jun 2018 10:02:42 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EFD0E20CFE;
+        Wed, 20 Jun 2018 10:02:31 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 10:02:32 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH v3 4/4] mtd: rawnand: micron: support 8/512 on-die ECC
+Message-ID: <20180620100232.0ad18adc@bbrezillon>
+In-Reply-To: <20180620050544.31549-5-chris.packham@alliedtelesis.co.nz>
+References: <20180620050544.31549-1-chris.packham@alliedtelesis.co.nz>
+        <20180620050544.31549-5-chris.packham@alliedtelesis.co.nz>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All of fuse uses 64-bit timestamps with the exception of the
-fuse_change_attributes(), so let's convert this one as well.
+On Wed, 20 Jun 2018 17:05:44 +1200
+Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/fuse/inode.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> Micron MT29F1G08ABAFAWP-ITE:F supports an on-die ECC with 8 bits
+> per 512 bytes. Add support for this combination.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> Changes in v2:
+> - New
+> Changes in v3:
+> - Handle reporting of corrected errors that don't require a rewrite, expand
+>   comment for the ECC status bits.
+> 
+>  drivers/mtd/nand/raw/nand_micron.c | 34 ++++++++++++++++++++++++------
+>  1 file changed, 27 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
+> index 5cec79372181..0c2bde4411d7 100644
+> --- a/drivers/mtd/nand/raw/nand_micron.c
+> +++ b/drivers/mtd/nand/raw/nand_micron.c
+> @@ -18,10 +18,24 @@
+>  #include <linux/mtd/rawnand.h>
+>  
+>  /*
+> - * Special Micron status bit that indicates when the block has been
+> - * corrected by on-die ECC and should be rewritten
+> + * Special Micron status bit 3 indicates that the block has been
+> + * corrected by on-die ECC and should be rewritten.
+> + *
+> + * On chips with 8-bit ECC and additional bit can be used to distinguish
+> + * cases where a errors were corrected without needing a rewrite
+> + *
+> + * Bit 4 Bit 3 Bit 0 Description
+> + * ----- ----- ----- -----------
+> + * 0     0     0     No Errors
+> + * 0     0     1     Multiple uncorrected errors
+> + * 0     1     0     4 - 6 errors corrected, recommend rewrite
+> + * 0     0     1     Reserved
+> + * 1     0     0     1 - 3 errors corrected
+> + * 1     0     1     Reserved
+> + * 1     1     0     7 - 8 errors corrected, recommend rewrite
+>   */
+>  #define NAND_STATUS_WRITE_RECOMMENDED	BIT(3)
+> +#define NAND_STATUS_ERRORS_CORRECTED	BIT(4)
+>  
+>  struct nand_onfi_vendor_micron {
+>  	u8 two_plane_read;
+> @@ -141,7 +155,7 @@ micron_nand_read_page_on_die_ecc(struct mtd_info *mtd, struct nand_chip *chip,
+>  		mtd->ecc_stats.failed++;
+>  
+>  	/*
+> -	 * The internal ECC doesn't tell us the number of bitflips
+> +	 * The internal 4-bit ECC doesn't tell us the number of bitflips
+>  	 * that have been corrected, but tells us if it recommends to
+>  	 * rewrite the block. If it's the case, then we pretend we had
+>  	 * a number of bitflips equal to the ECC strength, which will
+> @@ -149,6 +163,12 @@ micron_nand_read_page_on_die_ecc(struct mtd_info *mtd, struct nand_chip *chip,
+>  	 */
+>  	else if (status & NAND_STATUS_WRITE_RECOMMENDED)
+>  		max_bitflips = chip->ecc.strength;
+> +	/*
+> +	 * Chips with 8-bit internal ECC do tell us if errors 1 to 3 bit
+> +	 * errors have been corrected without recommending a rewrite.
+> +	 */
+> +	else if (status & NAND_STATUS_ERRORS_CORRECTED)
+> +		max_bitflips = 3;
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index a24df8861b40..3c71eb062ef2 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -208,7 +208,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
- 	struct fuse_inode *fi = get_fuse_inode(inode);
- 	bool is_wb = fc->writeback_cache;
- 	loff_t oldsize;
--	struct timespec old_mtime;
-+	struct timespec64 old_mtime;
- 
- 	spin_lock(&fc->lock);
- 	if ((attr_version != 0 && fi->attr_version > attr_version) ||
-@@ -217,7 +217,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
- 		return;
- 	}
- 
--	old_mtime = timespec64_to_timespec(inode->i_mtime);
-+	old_mtime = inode->i_mtime;
- 	fuse_change_attributes_common(inode, attr, attr_valid);
- 
- 	oldsize = inode->i_size;
-@@ -237,7 +237,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
- 			truncate_pagecache(inode, attr->size);
- 			inval = true;
- 		} else if (fc->auto_inval_data) {
--			struct timespec new_mtime = {
-+			struct timespec64 new_mtime = {
- 				.tv_sec = attr->mtime,
- 				.tv_nsec = attr->mtimensec,
- 			};
-@@ -246,7 +246,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
- 			 * Auto inval mode also checks and invalidates if mtime
- 			 * has changed.
- 			 */
--			if (!timespec_equal(&old_mtime, &new_mtime))
-+			if (!timespec64_equal(&old_mtime, &new_mtime))
- 				inval = true;
- 		}
- 
--- 
-2.9.0
+Why not masking bit 3, 4 and 0 and having a switch-case block?
 
+Also, you should update ecc_stats.corrected (see the patch I just sent
+[1]).
+
+>  
+>  	ret = nand_read_data_op(chip, buf, mtd->writesize, false);
+>  	if (!ret && oob_required)
+> @@ -240,9 +260,9 @@ static int micron_supports_on_die_ecc(struct nand_chip *chip)
+>  
+>  	/*
+>  	 * Some Micron NANDs have an on-die ECC of 4/512, some other
+> -	 * 8/512. We only support the former.
+> +	 * 8/512.
+>  	 */
+> -	if (chip->ecc_strength_ds != 4)
+> +	if (chip->ecc_strength_ds != 4 && chip->ecc_strength_ds != 8)
+>  		return MICRON_ON_DIE_UNSUPPORTED;
+
+Given that our on-die-support detection procedure is not reliable, I'd
+recommend changing the way we do it and instead base this detection
+logic on the model name (in the ONFI param page) or the READ_ID bytes.
+
+>  
+>  	return MICRON_ON_DIE_SUPPORTED;
+> @@ -274,9 +294,9 @@ static int micron_nand_init(struct nand_chip *chip)
+>  			return -EINVAL;
+>  		}
+>  
+> -		chip->ecc.bytes = 8;
+> +		chip->ecc.bytes = chip->ecc_strength_ds * 2;
+>  		chip->ecc.size = 512;
+> -		chip->ecc.strength = 4;
+> +		chip->ecc.strength = chip->ecc_strength_ds;
+>  		chip->ecc.algo = NAND_ECC_BCH;
+>  		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
+>  		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
+
+[1]http://patchwork.ozlabs.org/patch/932006/
