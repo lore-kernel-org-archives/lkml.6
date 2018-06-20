@@ -2,101 +2,102 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A81C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E3AC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B95208B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:33:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="NQ5WRFGa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B95208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id 31DD120874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DD120874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754801AbeFTTdb (ORCPT
+        id S1754838AbeFTTeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:33:31 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:48630 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754653AbeFTTda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:33:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
-        ; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=5JdjDvMk5yQ1H5dvBF4jlKKN5fQUxG40qqisxcfxRT0=; b=NQ5WRFGaHOb/vqtt++qEUzLD6P
-        bRZx0l/eB2ZAKEAoh5baSeSPJ76CVAT+Rb91vIoKAv/aTTWzxdvJ6VIN+LE8rwG0SLX+jBySYA3+D
-        omiDWlWGkzX3qIul/40fCa7/mWhNHrqCvhyBgXS4UGWyI+oyQ5TS14oQBOAMeDFMznhU=;
-Date:   Wed, 20 Jun 2018 15:35:49 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Greg Thelen <gthelen@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] memcg, oom: move out_of_memory back to the charge
- path
-Message-ID: <20180620193549.GA4734@cmpxchg.org>
-References: <20180620103736.13880-1-mhocko@kernel.org>
- <20180620151812.GA2441@cmpxchg.org>
- <20180620153148.GO13685@dhcp22.suse.cz>
+        Wed, 20 Jun 2018 15:34:13 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55417 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754557AbeFTTeL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 15:34:11 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v16-v6so1296950wmh.5;
+        Wed, 20 Jun 2018 12:34:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CFt+omTgBby9fmUhQG+E/Ze+BajCVCPdsAKMIV+hAeY=;
+        b=QFo2U23QASNMvbhkFr673AwdSrZNlo2usBpFk7jxXisijXZa1hCgBUTHPnR0wSNcsw
+         zFNuJoH8aHYEcR9GRvAwZC3s6fuQB+GZappQ3nxv4hWaAgFA1G1/rWZp5enzEO6FyI6s
+         3TaVe777B3Injr/26g5FF0tdm/NuAE/Iv1ISCyI7dUiSPoaW2WYQWjK+JIQy8Iztu+Ll
+         +OiqLqUUX1FrReCHGvqJ+yISY3S3dP4Mx7kw0sVdt/sJ0KIsznzECAgJVI2KPiyINIzy
+         I+qgM3JVvl+SDmkq68GrtiIMs3fHMz7aYp3myMMY1+0cl2tSgXvPaE9VHxUslnvwfK8m
+         JxBw==
+X-Gm-Message-State: APt69E2QIJsEkEVd6FowVgaNyqcOEqm4/4+JejtE6NA96S0A9YRJZsNd
+        ADSw748VEvdv3ojENQelxIcN+gMB
+X-Google-Smtp-Source: ADUXVKL8/p2dD1TqZmvLq+qK+1aHmTFICDMv2UmHNOD3ITSIZCjN0BE8aQvRme8bjc/baweK37s4Wg==
+X-Received: by 2002:a50:b7fc:: with SMTP id i57-v6mr19511456ede.284.1529523249874;
+        Wed, 20 Jun 2018 12:34:09 -0700 (PDT)
+Received: from kozik-lap (adsl-84-227-236-43.adslplus.ch. [84.227.236.43])
+        by smtp.googlemail.com with ESMTPSA id r15-v6sm1331846edp.92.2018.06.20.12.34.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 12:34:09 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 21:34:07 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: exynos: Remove unneeded DSI and DECON
+ address/size cells in Exynos5433
+Message-ID: <20180620193407.gk5e5ecolo5bel3c@kozik-lap>
+References: <20180618174216.24801-1-krzk@kernel.org>
+ <CGME20180618174316epcas1p397b66c8e4e8479fce8655941a4d4279f@epcas1p3.samsung.com>
+ <20180618174216.24801-2-krzk@kernel.org>
+ <20180619072652eucas1p1943deb1b158eda52980448e41f83e5e9~5fwX6lI2o2633926339eucas1p1Q@eucas1p1.samsung.com>
+ <CAJKOXPeCT3CkqqNowEZaeTw7goJd6=Nbd2S61QzTFW-nGr5AKg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180620153148.GO13685@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAJKOXPeCT3CkqqNowEZaeTw7goJd6=Nbd2S61QzTFW-nGr5AKg@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 05:31:48PM +0200, Michal Hocko wrote:
-> This?
-> 	if (order > PAGE_ALLOC_COSTLY_ORDER)
-> 		return OOM_SKIPPED;
+On Tue, Jun 19, 2018 at 09:59:04AM +0200, Krzysztof Kozlowski wrote:
+> On 19 June 2018 at 09:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > Hi Krzysztof,
+> >
+> > On 2018-06-18 19:42, Krzysztof Kozlowski wrote:
+> >> The decon, decon_tv and dsi nodes have only one child port so
+> >> address/size mappings are not necessary.  This fixes DTC warnings like:
+> >>
+> >>      Warning (graph_child_address): /soc/decon@13800000/ports:
+> >>          graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >
+> > Works fine with current Exynos DRM Decon/MIC/DSI drivers.
+> >
+> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > 
-> 	/*
-> 	 * We are in the middle of the charge context here, so we
-> 	 * don't want to block when potentially sitting on a callstack
-> 	 * that holds all kinds of filesystem and mm locks.
-> 	 *
-> 	 * cgroup1 allows disabling the OOM killer and waiting for outside
-> 	 * handling until the charge can succeed; remember the context and put
-> 	 * the task to sleep at the end of the page fault when all locks are
-> 	 * released.
-> 	 *
-> 	 * On the other hand, in-kernel OOM killer allows for an async victim
-> 	 * memory reclaim (oom_reaper) and that means that we are not solely
-> 	 * relying on the oom victim to make a forward progress and we can
-> 	 * invoke the oom killer here.
-> 	 *
-> 	 * Please note that mem_cgroup_oom_synchronize might fail to find a
-> 	 * victim and then we have rely on mem_cgroup_oom_synchronize otherwise
-> 	 * we would fall back to the global oom killer in pagefault_out_of_memory
-> 	 */
-> 	if (memcg->oom_kill_disable) {
-> 		if (!current->memcg_may_oom)
-> 			return OOM_SKIPPED;
-> 		css_get(&memcg->css);
-> 		current->memcg_in_oom = memcg;
-> 		current->memcg_oom_gfp_mask = mask;
-> 		current->memcg_oom_order = order;
-> 
-> 		return OOM_ASYNC;
-> 	}
-> 
-> 	if (mem_cgroup_out_of_memory(memcg, mask, order))
-> 		return OOM_SUCCESS;
-> 
-> 	WARN(!current->memcg_may_oom,
-> 			"Memory cgroup charge failed because of no reclaimable memory! "
-> 			"This looks like a misconfiguration or a kernel bug.");
-> 	return OOM_FAILED;
+> Thanks for review and testing!
 
-Yep, this looks good IMO.
+I have second thoughs whether this patch is correct. AFAIU, the drivers
+get the remote endpoints by reg==0 (for example the
+of_graph_get_remote_node() in exynos_dsi_parse_dt()). If the port shall
+be ignored, then reg==-1 should be passed.
+
+Best regards,
+Krzysztof
+
