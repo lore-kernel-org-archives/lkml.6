@@ -6,185 +6,95 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EF6C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4592C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CB04208B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:27:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CB04208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siemens.com
+	by mail.kernel.org (Postfix) with ESMTP id A1E5E208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:27:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E5E208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753987AbeFTI1P (ORCPT
+        id S1754050AbeFTI11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:27:15 -0400
-Received: from david.siemens.de ([192.35.17.14]:46318 "EHLO david.siemens.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751327AbeFTI1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:27:09 -0400
-Received: from mail1.siemens.de (mail1.siemens.de [139.23.33.14])
-        by david.siemens.de (8.15.2/8.15.2) with ESMTPS id w5K87fYg015134
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 10:07:43 +0200
-Received: from [167.87.66.47] ([167.87.66.47])
-        by mail1.siemens.de (8.15.2/8.15.2) with ESMTP id w5K87X0x007013;
-        Wed, 20 Jun 2018 10:07:33 +0200
-Subject: Re: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch
- Kconfig
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ley Foon Tan <lftan@altera.com>
-References: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
-Date:   Wed, 20 Jun 2018 10:07:33 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        Wed, 20 Jun 2018 04:27:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38692 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751327AbeFTI1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 04:27:25 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 73DD08790A;
+        Wed, 20 Jun 2018 08:27:24 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CAC0F2156880;
+        Wed, 20 Jun 2018 08:27:22 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     KY Srinivasan <kys@microsoft.com>
+Cc:     "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "devel\@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>
+Subject: Re: [PATCH] x86/hyper-v: use cheaper HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} hypercalls when possible
+References: <20180615163010.20381-1-vkuznets@redhat.com>
+        <SN6PR2101MB11209236A3C18C7CA01F4061DC700@SN6PR2101MB1120.namprd21.prod.outlook.com>
+        <MW2PR2101MB111340FC6B6AFA7CEC494498A0700@MW2PR2101MB1113.namprd21.prod.outlook.com>
+Date:   Wed, 20 Jun 2018 10:27:21 +0200
+In-Reply-To: <MW2PR2101MB111340FC6B6AFA7CEC494498A0700@MW2PR2101MB1113.namprd21.prod.outlook.com>
+        (KY Srinivasan's message of "Tue, 19 Jun 2018 18:20:36 +0000")
+Message-ID: <87po0lkgly.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 20 Jun 2018 08:27:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 20 Jun 2018 08:27:24 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-19 13:21, Lorenzo Pieralisi wrote:
-> Commit 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-> added configuration options to allow PCI host controller drivers to be
-> compile tested on all architectures.
-> 
-> Some host controller drivers (eg PCIE_ALTERA) config entries select
-> the PCI_DOMAINS config option to enable PCI domains management in
-> the kernel. Now that host controller drivers can be compiled on
-> all architectures, this triggers build regressions on arches that
-> do not implement the PCI_DOMAINS required API (ie pci_domain_nr()):
-> 
-> drivers/ata/pata_ali.c: In function 'ali_init_chipset':
-> drivers/ata/pata_ali.c:469:38: error:
->         implicit declaration of function 'pci_domain_nr';
->                                           did you mean 'pci_iomap_wc'?
-> 
-> Furthemore, some software configurations (ie Jailhouse) require a
-> PCI_DOMAINS enabled kernel to configure multiple host controllers
-> without having an explicit dependency on the ARM platform on which
-> they run.
-> 
-> Make PCI_DOMAINS a visible configuration option on ARM so that software
-> configurations that need it can manually select it and move the
-> PCI_DOMAINS selection from PCI controllers configuration file to ARM
-> sub-arch config entries that currently require it, fixing the issue.
-> 
-> Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-> Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us.net
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Scott Branden <scott.branden@broadcom.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Jan Kiszka <jan.kiszka@siemens.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Ley Foon Tan <lftan@altera.com>
-> ---
-> v1 -> v2
-> 	- Removed ARCH_VIRT PCI_DOMAINS selection
-> 	- Added PCI_DOMAINS visible config option
-> 
-> v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
-> 
->  arch/arm/Kconfig               | 8 +++++++-
->  arch/arm/mach-bcm/Kconfig      | 1 +
->  arch/arm/mach-socfpga/Kconfig  | 1 +
->  drivers/pci/controller/Kconfig | 3 ---
->  4 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 54eeb8d00bc6..843edfd000be 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1245,8 +1245,14 @@ config PCI
->  	  VESA. If you have PCI, say Y, otherwise N.
->  
->  config PCI_DOMAINS
-> -	bool
-> +	bool "Support for multiple PCI domains"
->  	depends on PCI
-> +	help
-> +	  Enable PCI domains kernel management. Say Y if your machine
-> +	  has a PCI bus hierarchy that requires more than one PCI
-> +	  domain (aka segment) to be correctly managed. Say N otherwise.
-> +
-> +	  If you don't know what to do here, say N.
->  
->  config PCI_DOMAINS_GENERIC
->  	def_bool PCI_DOMAINS
-> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-> index c46a728df44e..25aac6ee2ab1 100644
-> --- a/arch/arm/mach-bcm/Kconfig
-> +++ b/arch/arm/mach-bcm/Kconfig
-> @@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
->  	select GPIOLIB
->  	select ARM_AMBA
->  	select PINCTRL
-> +	select PCI_DOMAINS if PCI
->  	help
->  	  This enables support for systems based on Broadcom IPROC architected SoCs.
->  	  The IPROC complex contains one or more ARM CPUs along with common
-> diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-socfpga/Kconfig
-> index d0f62eacf59d..4adb901dd5eb 100644
-> --- a/arch/arm/mach-socfpga/Kconfig
-> +++ b/arch/arm/mach-socfpga/Kconfig
-> @@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
->  	select HAVE_ARM_SCU
->  	select HAVE_ARM_TWD if SMP
->  	select MFD_SYSCON
-> +	select PCI_DOMAINS if PCI
->  
->  if ARCH_SOCFPGA
->  config SOCFPGA_SUSPEND
-> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-> index 18fa09b3ac8f..cc9fa02d32a0 100644
-> --- a/drivers/pci/controller/Kconfig
-> +++ b/drivers/pci/controller/Kconfig
-> @@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
->  	depends on OF
->  	select PCI_HOST_COMMON
->  	select IRQ_DOMAIN
-> -	select PCI_DOMAINS
->  	help
->  	  Say Y here if you want to support a simple generic PCI host
->  	  controller, such as the one emulated by kvmtool.
-> @@ -138,7 +137,6 @@ config PCI_VERSATILE
->  
->  config PCIE_IPROC
->  	tristate
-> -	select PCI_DOMAINS
->  	help
->  	  This enables the iProc PCIe core controller support for Broadcom's
->  	  iProc family of SoCs. An appropriate bus interface driver needs
-> @@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
->  config PCIE_ALTERA
->  	bool "Altera PCIe controller"
->  	depends on ARM || NIOS2 || COMPILE_TEST
-> -	select PCI_DOMAINS
->  	help
->  	  Say Y here if you want to enable PCIe controller support on Altera
->  	  FPGA.
-> 
+KY Srinivasan <kys@microsoft.com> writes:
 
-Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+>> -----Original Message-----
+>> From: Michael Kelley (EOSG)
+>> Sent: Tuesday, June 19, 2018 10:57 AM
+>> To: Vitaly Kuznetsov <vkuznets@redhat.com>; x86@kernel.org
+>> Cc: devel@linuxdriverproject.org; linux-kernel@vger.kernel.org; KY
+>> Srinivasan <kys@microsoft.com>; Haiyang Zhang
+>> <haiyangz@microsoft.com>; Stephen Hemminger
+>> <sthemmin@microsoft.com>; Thomas Gleixner <tglx@linutronix.de>; Ingo
+>> Molnar <mingo@redhat.com>; H. Peter Anvin <hpa@zytor.com>; Tianyu Lan
+>> <Tianyu.Lan@microsoft.com>
+>> Subject: RE: [PATCH] x86/hyper-v: use cheaper
+>> HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} hypercalls when possible
+>> 
+>> ...
+>>>
+>> This is a good idea.  We should probably do the same with the hypercalls for
+>> sending
+>> IPIs -- try the simpler version first and move to the more complex _EX
+>> version only
+>> if necessary.
+> I am not sure if this would work correctly. When I was developing the IPI enlightenment, 
+> what I remember was that the guest is expected to use the API recommended by the Hypervisor.
+>
 
+I was under the same impression when I implemented PV TLB flush. Turns
+out HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED is a misnomer or at least
+Windows treats it as HV_X64_EX_PROCESSOR_MASKS_AVAILABLE instead using
+only when needed.
+
+My guess would be that the situation with IPI is the same. In any case I
+can try to implement Hyper-V style PV IPIs for Windows in KVM and we'll
+see how Windows uses these hypercalls :-)
 
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+  Vitaly
