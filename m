@@ -2,112 +2,121 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D6AC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0BFC43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD6C020020
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:20:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="XnxVNBmJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD6C020020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 3F18E20020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F18E20020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933200AbeFTUUi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:20:38 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37111 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932760AbeFTUUh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:20:37 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 31-v6so375341plc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H2TrHhpH3pmhs7MS6ypwNwTrdqwCPgciwd1R1lWJkVg=;
-        b=XnxVNBmJ0xwUa2H+LNTablkv/iycTBD9DngDJ47ThSjx623bgXNUGn8HeRmtvST18A
-         5c1SnWhKgwUHDF3k5U+4aZR5m/ibyPhl5tIcNsTNXQJAJKhIEzHqDcCu94ImhSywsqw4
-         mj/UAJjPc2q3PRNMpx6lTb6GXXZGOBx5BQlI4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H2TrHhpH3pmhs7MS6ypwNwTrdqwCPgciwd1R1lWJkVg=;
-        b=rQERe9WiGyKrIUxf7W+gaULlWxfPTPeA9AddbxCrReVEmZmtRP2xYXu+JHC+T8HaiE
-         x5QCuoekRvdJyWMFBxtWAcfLSA5cqiXs/6+j2gobLcTRH0nyb46vUvgFJKmeax0T1iPZ
-         ysk4W6BhljWi6Yt27m+PDmBMldZSn19C7J/jlkbua0L1fYSgklnAveqaZ5YQsB3sB17+
-         31QVqnEJIBOH11HaPKqZ73wpAR4/nWRfrkFCcXdMekwz0+9bphMqlS7UQ1RWUk7/neWf
-         AH2NMLluxG+oi4acEmyPjc2sklAJS5rCSKyfZ5z5Nbt0kDh+NQ7ksQVO2mXesv6lMOXk
-         lALA==
-X-Gm-Message-State: APt69E3fSDL/PaoU0ogPURKl+rMkeCoBqaXmpcdOkmA8K7nSbktug9Ig
-        e2ijtqKMtXYCeMqcdd/9/zcQrw==
-X-Google-Smtp-Source: ADUXVKJgPh7sdFtmo4SGP2heyHJbLWdhXlqT6DOZJUaebB1Fohsrq/Q2pjuQuUj2yb9E3Q//V2uYfg==
-X-Received: by 2002:a17:902:8341:: with SMTP id z1-v6mr25597376pln.40.1529526036891;
-        Wed, 20 Jun 2018 13:20:36 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id l62-v6sm4223235pga.21.2018.06.20.13.20.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 13:20:36 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 13:20:35 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zilstra <peterz@infradead.org>,
-        Joel Fernandes <joelaf@google.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH] softirq: reorder trace_softirqs_on to prevent lockdep
- splat
-Message-ID: <20180620202035.GA122295@joelaf.mtv.corp.google.com>
-References: <20180427041100.133772-1-joelaf@google.com>
- <20180620160513.0453247e@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180620160513.0453247e@gandalf.local.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S933257AbeFTUU6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:20:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54167 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933146AbeFTUU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 16:20:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id AFF15AF4A;
+        Wed, 20 Jun 2018 20:20:55 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 22:20:55 +0200
+Message-ID: <s5hr2l1ciqg.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Noah Davis <noahadvs@gmail.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [REGRESSION] 4.17 failed to probe ACPI PnP
+In-Reply-To: <s5hbmc5oma2.wl-tiwai@suse.de>
+References: <s5h8t7bfgnq.wl-tiwai@suse.de>
+        <CAJZ5v0hidPav5kvTW05e0k5mouFyiUiyUW50=fDqVphbEBjQaA@mail.gmail.com>
+        <s5hpo0ndvc5.wl-tiwai@suse.de>
+        <s5hy3fac6ao.wl-tiwai@suse.de>
+        <CAJZ5v0gWRfbtKG0w1UiM=KbtZYkhL2kj-W_9Q+PUP293sX35_Q@mail.gmail.com>
+        <s5hbmc5oma2.wl-tiwai@suse.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 04:05:13PM -0400, Steven Rostedt wrote:
+On Wed, 20 Jun 2018 11:11:17 +0200,
+Takashi Iwai wrote:
 > 
-> Peter, can you ack this.
-> 
-> On Thu, 26 Apr 2018 21:11:00 -0700
-> Joel Fernandes <joelaf@google.com> wrote:
-> 
-> > I'm able to reproduce a lockdep splat when CONFIG_PROVE_LOCKING=y and
-> > CONFIG_PREEMPTIRQ_EVENTS=y.
+> On Wed, 20 Jun 2018 09:28:40 +0200,
+> Rafael J. Wysocki wrote:
 > > 
-> > $ echo 1 > /d/tracing/events/preemptirq/preempt_enable/enable
-> > ---
+> > On Wed, Jun 20, 2018 at 8:37 AM, Takashi Iwai <tiwai@suse.de> wrote:
+> > > On Tue, 19 Jun 2018 10:38:50 +0200,
+> > > Takashi Iwai wrote:
+> > >>
+> > >> On Tue, 19 Jun 2018 10:28:42 +0200,
+> > >> Rafael J. Wysocki wrote:
+> > >> >
+> > >> > On Tue, Jun 19, 2018 at 8:12 AM, Takashi Iwai <tiwai@suse.de> wrote:
+> > >> > > Hi,
+> > >> > >
+> > >> > > there seems a regression regarding the probe of ACPI PnP devices.
+> > >> > > The detailed logs are found in openSUSE bugzilla:
+> > >> > >   https://bugzilla.opensuse.org/show_bug.cgi?id=1098074
+> > >> >
+> > >> > But that's on this particular machine, not in general, right?
+> > >> >
+> > >> > At least I don't see this on any of the systems in my office.
+> > >>
+> > >> Yes, it looks so.  4.17 and later works on my several machines, too.
+> > >>
+> > >> >
+> > >> > > In short, since 4.17, the laptop keyboard is lost on ASUS K501UW.
+> > >> > > Comparing the kernel messages and other logs indicates that the
+> > >> > > complete lost of ACPI PnP devices:
+> > >> > >
+> > >> > > On 4.16:
+> > >> > > [    0.390244] pnp: PnP ACPI: found 9 devices
+> > >> > >
+> > >> > > On 4.17:
+> > >> > > [    0.263266] pnp: PnP ACPI: found 0 devices
+> > >> > >
+> > >> > > ... and this leads to the failure of PS/2 keyboard detection due to
+> > >> > > the missing PNP030b entry as a result.
+> > >> > >
+> > >> > > Any hints for debugging this are appreciated.
+> > >> >
+> > >> > It looks like this may be related to the ACPICA changes that went in
+> > >> > during the 4.17 cycle.
+> > >> >
+> > >> > I would try 4.18-rc1 as there is an ACPICA fix in it that may be
+> > >> > related to this in theory.  If that doesn't help, I'd focus on the
+> > >> > ACPICA changes.
+> > >>
+> > >> OK, Noah, could you test later the kernel in OBS Kernel:HEAD repo?
+> > >> Now 4.18-rc1 kernel is being built there, and hopefully will finish
+> > >> soon later.
+> > >
+> > > 4.18-rc1 was confirmed to work, so something had fixed it.
+> > 
+> > Please check this commit
+> > 
+> > 5088814a6e93 ACPICA: AML parser: attempt to continue loading table after error
+> > 
+> > None of the other ACPICA commits that have gone in since 4.17 should
+> > affect the behavior at hand.
 > 
-> BTW, the "---" here causes git to ignore everything underneath it :-/
+> OK, I'm building a test kernel with this backport.  Stay tuned.
 
-Oh ok, I actually already fixed the '---' issue in the change log since then:
+The result looks positive, things seem working with the backport.
 
-Here's a recent posting of the patch: https://patchwork.kernel.org/patch/10453483/
-(patch is the same, only the commit log is fixed to remove '---').
+Care to send it to Greg for 4.17.x stable?  Thanks!
 
-thanks,
 
-- Joel
- 
+Takashi
