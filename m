@@ -4,239 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492B5C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F29DC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1C6820871
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A43D20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:23:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="KwOfrPrp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1C6820871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ClPIj9eQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A43D20836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753073AbeFTKW6 (ORCPT
+        id S1753960AbeFTKXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:22:58 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:51102 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751031AbeFTKWz (ORCPT
+        Wed, 20 Jun 2018 06:23:23 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51674 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeFTKXV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:22:55 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id CBAD71E04A3;
-        Wed, 20 Jun 2018 12:22:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529490174; bh=FNL0H/UIeqLYABgt8Q0ZxMHoxO+uO46TonevBa3rx74=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=KwOfrPrpmJ5/a/FMpzWYBgaQUjOWcchTCaL4hbom7c0qQs8Y4pDd1JioW9d24E6JA
-         6r2GqMNbZsyJaG6IaRCUH590dK1JdBj913fPgjyv8Douafnn/ns5RKVPGfSxLd9clE
-         pVIAuBVA/v2IPb57w/x5qAFUErv9d9eVTusQxB21IUN5ezXGicZfUfXmS1TIVhuLXC
-         wmHTFHHT9rFesVLue02JV9GYniNU+8D1F2PoMrN/f3yW77K0Dlt8U2ODh/1KBfpK7M
-         UKGRmnLhDRWGpmNqoHPzi4vHtkHq3E7btbs/nQVXmR4AfHOocavhVwhnmSzypabKZR
-         SJI4a65VGMS+w==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1.internal.synopsys.com [10.12.239.235])
-        by mailhost.synopsys.com (Postfix) with ESMTP id CDC2C5B36;
-        Wed, 20 Jun 2018 03:22:52 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 20 Jun 2018 03:22:30 -0700
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 20 Jun 2018 12:22:28 +0200
-Received: from [10.107.25.102] (10.107.25.102) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Wed, 20 Jun 2018 12:22:28 +0200
-Subject: Re: [PATCH v4 04/10] PCI: dwc: Rework MSI callbacks handler
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "adouglas@cadence.com" <adouglas@cadence.com>,
-        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
- <c6320411aa93d76e3e861f6275cebb1caf6cf893.1529329262.git.gustavo.pimentel@synopsys.com>
- <ef846300-1606-397e-c790-45ddee6b2417@ti.com>
-From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Message-ID: <f2b5e607-6e9d-69f0-087d-3dd1cd6736c5@synopsys.com>
-Date:   Wed, 20 Jun 2018 11:20:27 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 20 Jun 2018 06:23:21 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KAJpMY138871;
+        Wed, 20 Jun 2018 10:23:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=grLWF4GfJarnzRcaIi5CBPHe/N5USPjtaDQIFruLb3U=;
+ b=ClPIj9eQs2J+GGLF/5l7EtPOnu8dEA9jxOTk4ERWqTso6kHv37SXZej0ajo7qmhEminI
+ bQ9bDAS1zA1Y0eHnrCU0k5Z/urssmuK3Jhxl/XpquLZNd3l5HGE2Vyozd7CcMrmnssxp
+ Jhjg4dvqVrQ+p4iFS90+g0oPYeJWKSFtIRRa1DvRHyf3CaAefvRAD/FYE2awi/TzpSCj
+ DrMDPdywxp4f9VTJFO/A88/zrqUcftu13ufi2CA50B6wnXfmrmXiqedZSFIS1a6Yeaiu
+ +v5MFILiMomvsj8g6j+BTwcYHmH6vyofT2UOlvdULpE9xPG/MQymGxApYbWUE50O/9d2 oQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2jmu6xuscy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 10:23:04 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5KAN23v023096
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 10:23:02 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5KAN1Oq012045;
+        Wed, 20 Jun 2018 10:23:01 GMT
+Received: from mwanda (/197.157.34.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Jun 2018 03:23:00 -0700
+Date:   Wed, 20 Jun 2018 13:22:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     cocci@systeme.lip6.fr, Julia Lawall <Julia.Lawall@lip6.fr>,
+        gregkh@linuxfoundation.org, quytelda@tamalin.org,
+        Larry.Finger@lwfinger.net, harshasharmaiitr@gmail.com,
+        arushisinghal19971997@gmail.com, amitoj1606@gmail.com,
+        jeremy.lefaure@lse.epita.fr, teo.dacquet@gmail.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: Fix two possible
+ sleep-in-atomic-context bugs in translate_scan()
+Message-ID: <20180620102249.djwmdv34zp5vyj2h@mwanda>
+References: <20180620095016.8484-1-baijiaju1990@gmail.com>
+ <20180620095650.fga6xi7fyjgybs76@mwanda>
+ <dd6eaaad-413e-bd5d-d0f4-0a6d05438395@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ef846300-1606-397e-c790-45ddee6b2417@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.102]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd6eaaad-413e-bd5d-d0f4-0a6d05438395@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=715
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806200118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 20/06/2018 07:49, Kishon Vijay Abraham I wrote:
-> Hi,
+On Wed, Jun 20, 2018 at 06:05:06PM +0800, Jia-Ju Bai wrote:
+> > Thanks!  It occurs to me that another way to detect this bug is that
+> > one of the allocations in this function already uses GFP_ATOMIC.  It
+> > doesn't normally make sense to mix GFP_ATOMIC and GFP_KERNEL when there
+> > isn't any locking in the function.
 > 
-> On Monday 18 June 2018 08:30 PM, Gustavo Pimentel wrote:
->> Remove duplicate defines located on pcie-designware.h file already
->> available on /include/uapi/linux/pci-regs.h file.
->>
->> Add pci_epc_set_msi() maximum 32 interrupts validation.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->> Change v1->v2:
->>  - Nothing changed, just to follow the patch set version.
->> Change v2->v3:
->>  - Replaced wrong return value 0 to -EINVAL.
->> Change v3->v4:
->>  - Rebased to Lorenzo's master branch v4.18-rc1.
->>
->>  drivers/pci/controller/dwc/pcie-designware-ep.c | 49 +++++++++++++++++--------
->>  drivers/pci/controller/dwc/pcie-designware.h    | 11 ------
->>  drivers/pci/endpoint/pci-epc-core.c             |  3 +-
->>  3 files changed, 35 insertions(+), 28 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> index ad25654..89d9e52 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> @@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
->>  
->>  static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
->>  {
->> -	int val;
->>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
->>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +	u32 val, reg;
->> +
->> +	if (!ep->msi_cap)
->> +		return -EINVAL;
->>  
->> -	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
->> -	if (!(val & MSI_CAP_MSI_EN_MASK))
->> +	reg = ep->msi_cap + PCI_MSI_FLAGS;
->> +	val = dw_pcie_readw_dbi(pci, reg);
->> +	if (!(val & PCI_MSI_FLAGS_ENABLE))
->>  		return -EINVAL;
->>  
->> -	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
->> +	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
->> +
->>  	return val;
->>  }
->>  
->> -static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
->> +static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
->>  {
->> -	int val;
->>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
->>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->> +	u32 val, reg;
->>  
->> -	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
->> -	val &= ~MSI_CAP_MMC_MASK;
->> -	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
->> +	if (!ep->msi_cap)
->> +		return -EINVAL;
->> +
->> +	reg = ep->msi_cap + PCI_MSI_FLAGS;
->> +	val = dw_pcie_readw_dbi(pci, reg);
->> +	val &= ~PCI_MSI_FLAGS_QMASK;
->> +	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
->>  	dw_pcie_dbi_ro_wr_en(pci);
->> -	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
->> +	dw_pcie_writew_dbi(pci, reg, val);
->>  	dw_pcie_dbi_ro_wr_dis(pci);
->>  
->>  	return 0;
->> @@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->>  	struct pci_epc *epc = ep->epc;
->>  	u16 msg_ctrl, msg_data;
->> -	u32 msg_addr_lower, msg_addr_upper;
->> +	u32 msg_addr_lower, msg_addr_upper, reg;
->>  	u64 msg_addr;
->>  	bool has_upper;
->>  	int ret;
->>  
->> +	if (!ep->msi_cap)
->> +		return -EINVAL;
->> +
->>  	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
->> -	msg_ctrl = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
->> +	reg = ep->msi_cap + PCI_MSI_FLAGS;
->> +	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
->>  	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
->> -	msg_addr_lower = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
->> +	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
->> +	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
->>  	if (has_upper) {
->> -		msg_addr_upper = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
->> -		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_64);
->> +		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
->> +		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
->> +		reg = ep->msi_cap + PCI_MSI_DATA_64;
->> +		msg_data = dw_pcie_readw_dbi(pci, reg);
->>  	} else {
->>  		msg_addr_upper = 0;
->> -		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
->> +		reg = ep->msi_cap + PCI_MSI_DATA_32;
->> +		msg_data = dw_pcie_readw_dbi(pci, reg);
->>  	}
->>  	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
->>  	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
->> index b22c5bb..a0ab12f 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.h
->> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->> @@ -96,17 +96,6 @@
->>  #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region)				\
->>  			((0x3 << 20) | ((region) << 9) | (0x1 << 8))
->>  
->> -#define MSI_MESSAGE_CONTROL		0x52
->> -#define MSI_CAP_MMC_SHIFT		1
->> -#define MSI_CAP_MMC_MASK		(7 << MSI_CAP_MMC_SHIFT)
->> -#define MSI_CAP_MME_SHIFT		4
->> -#define MSI_CAP_MSI_EN_MASK		0x1
->> -#define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
->> -#define MSI_MESSAGE_ADDR_L32		0x54
->> -#define MSI_MESSAGE_ADDR_U32		0x58
->> -#define MSI_MESSAGE_DATA_32		0x58
->> -#define MSI_MESSAGE_DATA_64		0x5C
->> -
->>  #define MAX_MSI_IRQS			256
->>  #define MAX_MSI_IRQS_PER_CTRL		32
->>  #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
->> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
->> index c72e656..094dcc3 100644
->> --- a/drivers/pci/endpoint/pci-epc-core.c
->> +++ b/drivers/pci/endpoint/pci-epc-core.c
->> @@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
->>  	u8 encode_int;
->>  	unsigned long flags;
->>  
->> -	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
->> +	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
->> +	    interrupts > 32)
->>  		return -EINVAL;
-> 
-> This is not related to $patch->subject
-
-A new patch file will be created for this.
-Thanks,
-Gustavo
-
-> 
-> Thanks
-> Kishon
+> Yes, this pattern is interesting for bug finding :)
+> But to fix the bugs of this pattern, we need to decide whether GFP_ATOMIC or
+> GFP_KERNEL should be used here.
 > 
 
+Sure.  But either way it's a bug. Plus this would be the first static
+checker warning which warns about using GFP_ATOMIC when it's supposed to
+be GFP_KERNEL.  #milestone
+
+regards,
+dan carpenter
