@@ -1,65 +1,59 @@
 Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE22C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BD8C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D209520874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D28620875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:49:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2M66UERA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D209520874
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBdXFX0F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D28620875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754030AbeFTNr7 (ORCPT
+        id S1754162AbeFTNtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:47:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37948 "EHLO mail.kernel.org"
+        Wed, 20 Jun 2018 09:49:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751166AbeFTNr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:47:57 -0400
+        id S1752725AbeFTNtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:49:09 -0400
 Received: from jouet.infradead.org (unknown [189.40.103.66])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F5D120846;
-        Wed, 20 Jun 2018 13:47:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 621CF20846;
+        Wed, 20 Jun 2018 13:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529502477;
-        bh=8lahS97MJobEncwu+YFdU44gOgybQv8KvmUuiIAk8uM=;
+        s=default; t=1529502548;
+        bh=QRpm8p0T/4ic/4YYJBknJgHfjnmb3ApLsNNd9AgXVdo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2M66UERA6wjr7czvSnnTQhO/a1ODTyu0aK7Vm5U8aScdpipUoSxX6yGUaaHsmNk+N
-         1xapI8VrwfU7K2FJZjY9Nv6qcfGGs9qm1KfLcX7R2M5Q7ovc3LkCZUAAOnWasF0czX
-         3IsY87oP84qzHd/pswqBsbg5V+63DH6g0vZX8UUE=
+        b=hBdXFX0Fjv0mWtnFi+hj4c84Eyq1IjKPmFCyq2c7yyB4uZOyhoj0vfx0BFtxOoH5U
+         3pf1WFF6bFROXHLfdq0NXlhbeTfEBG1NF+etv6dE9A9Ey6lOC7wWsW14J+e2Smg5on
+         v8CixYYmGTdwvkUUowouUI1zKZbUUo8F6sX1gh3E=
 Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 7415D1401E5; Wed, 20 Jun 2018 10:47:54 -0300 (-03)
-Date:   Wed, 20 Jun 2018 10:47:54 -0300
+        id 27F3E1401E5; Wed, 20 Jun 2018 10:49:05 -0300 (-03)
+Date:   Wed, 20 Jun 2018 10:49:05 -0300
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Kim Phillips <kim.phillips@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Hendrik =?iso-8859-1?Q?Br=FCckner?= 
-        <brueckner@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/2] perf test shell: Replace '|&' with '2>&1 |' to work
- with more shells
-Message-ID: <20180620134754.GN20477@kernel.org>
-References: <20180619184948.a2aabe8f0159f0fd589d4008@arm.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     jolsa@redhat.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, dsahern@gmail.com, davidcc@google.com,
+        ak@linux.intel.com, yao.jin@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] perf script: Fix crash because of missing feat_op[]
+ entry
+Message-ID: <20180620134905.GO20477@kernel.org>
+References: <20180620133030.2188-1-ravi.bangoria@linux.ibm.com>
+ <20180620133030.2188-4-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180619184948.a2aabe8f0159f0fd589d4008@arm.com>
+In-Reply-To: <20180620133030.2188-4-ravi.bangoria@linux.ibm.com>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,73 +61,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jun 19, 2018 at 06:49:48PM -0500, Kim Phillips escreveu:
-> Since we do not specify bash (and/or zsh) as a requirement, use the
+Em Wed, Jun 20, 2018 at 07:00:30PM +0530, Ravi Bangoria escreveu:
+> perf_event__process_feature() tries to access feat_ops[feat].process
+> which is not defined for feat = HEADER_LAST_FEATURE and thus perf is
+> crashing. Add dummy entry for HEADER_LAST_FEATURE in the feat_ops.
 
-This one is minor, so could be acceptable, but then if we make bash a
-requirement for 'perf test' due to the other patch in this series, we
-could as well keep the shorter |& form
+Humm, first impression is that we should check for HEADER_LAST_FEATURE
+and not try to access that array slot, as it is just a marker, not an
+actual feature.
 
 - Arnaldo
-
-> standard error redirection that is more widely supported.
+ 
+> Before:
+>   # ./perf record -o - ls | ./perf script
+>   Segmentation fault (core dumped)
 > 
-> BEFORE:
+> After:
+>   # ./perf record -o - ls | ./perf script
+>   ls 7031 4392.099856:  250000 cpu-clock:uhH:  7f5e0ce7cd60
+>   ls 7031 4392.100355:  250000 cpu-clock:uhH:  7f5e0c706ef7
 > 
-> $ sudo ./perf test -v 62
-> 62: Check open filename arg using perf trace + vfs_getname:
-> --- start ---
-> test child forked, pid 27305
-> ./tests/shell/trace+probe_vfs_getname.sh: 20: ./tests/shell/trace+probe_vfs_getname.sh: Syntax error: "&" unexpected
-> test child finished with -2
-> ---- end ----
-> Check open filename arg using perf trace + vfs_getname: Skip
-> 
-> AFTER:
-> 
-> $ sudo ./perf test -v 64
-> 64: Check open filename arg using perf trace + vfs_getname               :
-> --- start ---
-> test child forked, pid 23008
-> Added new event:
->   probe:vfs_getname    (on getname_flags:72 with pathname=result->name:string)
-> 
-> You can now use it in all perf tools, such as:
-> 
->         perf record -e probe:vfs_getname -aR sleep 1
-> 
->      0.361 ( 0.008 ms): touch/23032 openat(dfd: CWD, filename: /tmp/temporary_file.VEh0n, flags: CREAT|NOCTTY|NONBLOCK|WRONLY, mode: IRUGO|IWUGO) = 4
-> test child finished with 0
-> ---- end ----
-> Check open filename arg using perf trace + vfs_getname: Ok
-> 
-> Similar to commit 35435cd06081, with the same title.
-> 
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-> Cc: Michael Petlan <mpetlan@redhat.com>
-> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Fixes: 57b5de463925 ("perf report: Support forced leader feature in pipe mode")
 > ---
->  tools/perf/tests/shell/trace+probe_vfs_getname.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  tools/perf/util/header.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> index 55ad9793d544..4ce276efe6b4 100755
-> --- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> +++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-> @@ -17,7 +17,7 @@ skip_if_no_perf_probe || exit 2
->  file=$(mktemp /tmp/temporary_file.XXXXX)
+> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> index 540cd2dcd3e7..de8e3e29d870 100644
+> --- a/tools/perf/util/header.c
+> +++ b/tools/perf/util/header.c
+> @@ -2555,14 +2555,18 @@ struct feature_ops {
+>  	}
 >  
->  trace_open_vfs_getname() {
-> -	evts=$(echo $(perf list syscalls:sys_enter_open* |& egrep 'open(at)? ' | sed -r 's/.*sys_enter_([a-z]+) +\[.*$/\1/') | sed 's/ /,/')
-> +	evts=$(echo $(perf list syscalls:sys_enter_open* 2>&1 | egrep 'open(at)? ' | sed -r 's/.*sys_enter_([a-z]+) +\[.*$/\1/') | sed 's/ /,/')
->  	perf trace -e $evts touch $file 2>&1 | \
->  	egrep " +[0-9]+\.[0-9]+ +\( +[0-9]+\.[0-9]+ ms\): +touch\/[0-9]+ open(at)?\((dfd: +CWD, +)?filename: +${file}, +flags: CREAT\|NOCTTY\|NONBLOCK\|WRONLY, +mode: +IRUGO\|IWUGO\) += +[0-9]+$"
->  }
+>  /* feature_ops not implemented: */
+> +#define write_last_feature	NULL
+> +
+>  #define print_tracing_data	NULL
+>  #define print_build_id		NULL
+> +#define print_last_feature	NULL
+>  
+>  #define process_branch_stack	NULL
+>  #define process_stat		NULL
+> +#define process_last_feature	NULL
+>  
+>  
+> -static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
+> +static const struct feature_ops feat_ops[HEADER_LAST_FEATURE + 1] = {
+>  	FEAT_OPN(TRACING_DATA,	tracing_data,	false),
+>  	FEAT_OPN(BUILD_ID,	build_id,	false),
+>  	FEAT_OPR(HOSTNAME,	hostname,	false),
+> @@ -2585,6 +2589,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
+>  	FEAT_OPN(CACHE,		cache,		true),
+>  	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
+>  	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
+> +	FEAT_OPN(LAST_FEATURE,	last_feature,	false),
+>  };
+>  
+>  struct header_print_data {
 > -- 
-> 2.17.1
+> 2.14.4
