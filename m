@@ -2,145 +2,92 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFE0C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11000C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CDD320846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:55:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTYnUG+j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDD320846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id B7F1C2083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:57:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7F1C2083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932951AbeFTTz1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:55:27 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42050 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932372AbeFTTzZ (ORCPT
+        id S1754757AbeFTT5E (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 15:57:04 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:51978 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754580AbeFTT5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:55:25 -0400
-Received: by mail-lf0-f65.google.com with SMTP id z207-v6so1099996lff.9;
-        Wed, 20 Jun 2018 12:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=XvOCgmDhhrDhs4XBU1Pz7JIORVfXz8atk6MrvVDy3MU=;
-        b=BTYnUG+jG0wmbub6ln40yo+bDCf+8l90ESh5eIbnGqBi/l5/wdCmiKGA0WaIHAMqvu
-         QYGq0a2VlyM7jclnqY4gths9CgN7slnQtmr1h0K9B4R0B0rxTczDQgOyffuZ3YxBfeMF
-         bPFsYbp8cORlyCGJSc/0Mjd2DgIimTSgTWfC52G/LdimHsdUlg2DZcW10U11n80B/GfI
-         jAUoKFdJqdEyYlPM05Wqg5LeyxtQ1xlNZoaj2BJx8ZsBX4J47/HTkfa2FFm7paiz3UwP
-         sWKggXt7/yR4Pu/QEofmudIPuDZf07CEs8v3sMwVTIQCIQSB569PfxTM83P3k/ZKFueR
-         fHcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=XvOCgmDhhrDhs4XBU1Pz7JIORVfXz8atk6MrvVDy3MU=;
-        b=WvLYpV1IenXzVo85CaqgBHUMNABK0pAdJvCwPVH8sr4hOWfq7vWLiKHe21aRSlhyMT
-         dpRAlLwaAg44AkZQ6mn2voXI4ooT9lwubBOTPBTZWNN1EWSpy3/aB6EW6Fxxqq+LcZC9
-         JIlmlDa9/IcU0/9hLY/CNLdSrb5CviVdFYROYKZl7X9qmCC3Gl4Vk9THtn7estrNb7S3
-         5UauDm+LZzu5xp4Mj5HW/0Pt2ydttbiNtA3FHPhi2TLymWQJ59NCrfSgbRMXMbq2GKOi
-         h52GYDMILRNQZO+XGIj6Qn8Inj46no67/P1vd7UKLbb3xKRHQ9u60jCMNubeW98KbOLx
-         Sx6g==
-X-Gm-Message-State: APt69E1v2AM7AfjeEgkRF4+abIVnqPfSPH0pWN2ckFyarHBX7SxIzjWl
-        5hD63+GGCVYd+3vAMSGV3/quadLiSlC2cQ+tYkU=
-X-Google-Smtp-Source: ADUXVKKwM4ajcQ+g60lgxV9ycyTbv/wMkWKG6QLCFNPu3msqZ9NfnOn/qvhDHiywIzT4yJzVbb7P4HzI8e+s8btFgv4=
-X-Received: by 2002:a19:d5c7:: with SMTP id m190-v6mr4169458lfg.12.1529524523477;
- Wed, 20 Jun 2018 12:55:23 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 12:55:22
- -0700 (PDT)
-In-Reply-To: <1529513708.5833.29.camel@dubeyko.com>
-References: <20180619160223.4108556-1-arnd@arndb.de> <1529427809.2624.16.camel@dubeyko.com>
- <CAK8P3a0WNPxDqSNJUuijY0P9UwGXPD_DCAUw9AH_OvAg-cPf1Q@mail.gmail.com> <1529513708.5833.29.camel@dubeyko.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Jun 2018 21:55:22 +0200
-X-Google-Sender-Auth: pv7jimHlQq9WPalbInagxQnMBrk
-Message-ID: <CAK8P3a2X134US86LAecGqx4cd1AbhQgyp5NqFgymKs0v9Hx7dQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] hfs: stop using timespec based interfaces
-To:     Viacheslav Dubeyko <slava@dubeyko.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Jeff Layton <jlayton@redhat.com>, Jan Kara <jack@suse.cz>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Jun 2018 15:57:02 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fVjDr-0002g7-7p; Wed, 20 Jun 2018 15:56:55 -0400
+From:   Rik van Riel <riel@surriel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     86@vger.kernel.org, luto@kernel.org, mingo@kernel.org,
+        tglx@linutronix.de, dave.hansen@linux.intel.com, efault@gmx.de,
+        songliubraving@fb.com, kernel-team@fb.com
+Subject: [PATCH 0/7] x86,tlb,mm: make lazy TLB mode even lazier
+Date:   Wed, 20 Jun 2018 15:56:45 -0400
+Message-Id: <20180620195652.27251-1-riel@surriel.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 6:55 PM, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
-> On Tue, 2018-06-19 at 21:42 +0200, Arnd Bergmann wrote:
->> On Tue, Jun 19, 2018 at 7:03 PM, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
+Song noticed switch_mm_irqs_off taking a lot of CPU time in recent
+kernels, using 1.9% of a 48 CPU system during a netperf run. Digging
+into the profile, the atomic operations in cpumask_clear_cpu and
+cpumask_set_cpu are responsible for about half of that CPU use.
 
->> We never followed that interpretation in Linux though. As I wrote,
->> on 64-bit machines, these two calculations (hfs and hfs+,
->> respectively)
->>
->> #define __hfs_m_to_utime(sec)   (be32_to_cpu(sec) - 2082844800U  +
->> sys_tz.tz_minuteswest * 60)
->> #define __hfsp_mt2ut(t)                (be32_to_cpu(t) - 2082844800U)
->>
->> just wrap around when reading the timestamps before 1970 from
->> disk. On 32-bit machines they get wrapped another time when
->> we assign them to a signed 32-bit time_t.
->>
->
-> The whole patchset looks reasonable for me. I simply guess what the
-> correct behaviour of HFS/HFS+ file system driver could look like for
-> the case of achieving 2040 year. So, maybe the good way could be to
-> mount in the READ-ONLY mode. What do you think?
+However, the CPUs running netperf are simply switching back and
+forth between netperf and the idle task, which does not require any
+changes to the mm_cpumask if lazy TLB mode were used.
 
-We've discussed doing that in VFS before, this is something we
-need to revisit, but I'd like to do it in common code rather than
-in every file system with a particular limit.
+Additionally, the init_mm cpumask ends up being the most heavily
+contended one in the system, for no reason at all.
 
-Deepa has a patch set to introduce minimum/maximum timestamps
-in the superblock for this. We definitely want to use that for limiting
-the range of utimensat() arguments from user space, and the idea
-we had discussed in the past was to have a way to enforce
-read-only mounting of file systems that cannot write current i_mtime
-values past a certain (user-defined) future date.
+Making really lazy TLB mode work again on modern kernels, by sending
+a shootdown IPI only when page table pages are being unmapped, we get
+back some performance.
 
-We actually need something like that soon, as there are some
-organizations that want to support super-long service lifetimes
-for Linux systems (e.g. cars, industrial machines, ...) and want
-an early-fail behavior to ensure that everything that works today
-can in principle keep working for the foreseeable future, while
-everything that is known to break can be forced to break already.
 
-This is clearly not a priority for HFS in particular, but there is no
-reason for HFS to be different from ext3 here, which has a similar
-problem (timestamps are defined to range from 1902 to 2038).
+Using a memcache style workload on Broadwell systems, these patches
+result in about a 0.5% reduction of CPU use on the system. Numbers
+on Haswell are inconclusive so far.
 
->>  /* time macros: convert between 1904-2040 and 1970-2106 range,
->>   * pre-1970 timestamps are interpreted as post-2038 times after
->> wrap-around */
->> -#define __hfsp_mt2ut(t)                (be32_to_cpu(t) -
->> 2082844800U)
->> +#define __hfsp_mt2ut(t)                ((time64_t)be32_to_cpu(t) -
->> 2082844800U)
->>  #define __hfsp_ut2mt(t)                (cpu_to_be32(t +
->> 2082844800U))
->>
->>  /* compatibility */
->>
->> I can submit that separately so that it can get backported into
->> stable kernels if you like, with the type changes as a follow-up
->> on top.
->>
->
-> Sounds good.
 
-Ok, I'll send an updated version with that patch first then.
+Song's netperf performance results:
 
-       Arnd
+w/o patchset:
+
+Throughput: 1.74716e+06
+perf profile:
++    0.95%  swapper          [kernel.vmlinux]          [k] switch_mm_irqs_off
++    0.82%  netserver        [kernel.vmlinux]          [k] switch_mm_irqs_off
+
+w/ patchset:
+
+Throughput: 1.76911e+06
+perf profile:
++    0.81%  swapper          [kernel.vmlinux]          [k] switch_mm_irqs_off
+
+With these patches, netserver no longer calls switch_mm_irqs_off,
+and the CPU use of enter_lazy_tlb was below the 0.05% threshold of
+statistics gathered by Song's scripts.
+
+
+I am still working on a patch to also get rid of the continuous
+pounding on mm->count during lazy TLB entry and exit, when the same
+mm_struct is being used all the time. I do not have that working yet.
+
+Until then, these patches provide a nice performance boost, as well
+as a little memory savings by shrinking the size of mm_struct.
+
+
