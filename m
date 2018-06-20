@@ -6,94 +6,86 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C1AC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D17C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66CBC20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66CBC20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AA0320836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:55:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA0320836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754468AbeFTNxw (ORCPT
+        id S1754075AbeFTNwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:53:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37568 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754446AbeFTNxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:53:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB94D15B2;
-        Wed, 20 Jun 2018 06:53:49 -0700 (PDT)
-Received: from big-swifty.cambridge.arm.com (big-swifty.cambridge.arm.com [10.1.31.224])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B657D3F578;
-        Wed, 20 Jun 2018 06:53:44 -0700 (PDT)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>,
-        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        MaJun <majun258@huawei.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Lei Zhang <zhang.lei@jp.fujitsu.com>
-Subject: [PATCH 7/7] irqchip/gic-v3-its: Reduce minimum LPI allocation to 1 for PCI devices
-Date:   Wed, 20 Jun 2018 14:52:34 +0100
-Message-Id: <20180620135234.32101-8-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180620135234.32101-1-marc.zyngier@arm.com>
-References: <20180620135234.32101-1-marc.zyngier@arm.com>
+        Wed, 20 Jun 2018 09:52:21 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:46084 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753987AbeFTNwT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:52:19 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5KDn3Fi003374;
+        Wed, 20 Jun 2018 15:51:44 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2jqqgq85vk-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 20 Jun 2018 15:51:44 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F290631;
+        Wed, 20 Jun 2018 13:51:42 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A73BB1560;
+        Wed, 20 Jun 2018 13:51:42 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 20 Jun
+ 2018 15:51:42 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 20 Jun
+ 2018 15:51:42 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V3 0/3] add iwdg2 support for stm32mp157c
+Date:   Wed, 20 Jun 2018 15:51:35 +0200
+Message-ID: <1529502698-13263-1-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allocating a minimum of 32 LPIs per PCI device, let's reduce it to
-be just 1, as most devices do not need that many interrupts.
+From: Ludovic Barre <ludovic.barre@st.com>
 
-We still have to special-case DevID 0, as there is plenty of broken
-HW around where the PCI RID is not presented as a DevID to the ITS,
-and all the devices are presented as DevID 0. In this case, we keep
-the 32 minimal allocation.
+This patch series updates stm32_iwdg driver to manage config
+by compatible. stm32mp1 config requires a pclk clock.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/irq-gic-v3-its-pci-msi.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+v3:
+-remove stm32_iwdg_config structure, just assign the
+ boolean directly to .dat
 
-diff --git a/drivers/irqchip/irq-gic-v3-its-pci-msi.c b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
-index 75c3cafabc6a..8d6d009d1d58 100644
---- a/drivers/irqchip/irq-gic-v3-its-pci-msi.c
-+++ b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
-@@ -66,7 +66,7 @@ static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
- {
- 	struct pci_dev *pdev, *alias_dev;
- 	struct msi_domain_info *msi_info;
--	int alias_count = 0;
-+	int alias_count = 0, minnvec = 1;
- 
- 	if (!dev_is_pci(dev))
- 		return -EINVAL;
-@@ -86,9 +86,17 @@ static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
- 	/* ITS specific DeviceID, as the core ITS ignores dev. */
- 	info->scratchpad[0].ul = pci_msi_domain_get_msi_rid(domain, pdev);
- 
--	/* Allocate at least 32 MSIs, and always as a power of 2 */
-+	/*
-+	 * Always allocate a power of 2, and special case device 0 for
-+	 * broken systems where the DevID is not wired (and all devices
-+	 * appear as DevID 0). For that reason, we generously allocate a
-+	 * minimum of 32 MSIs for DevID 0. If you want more because all
-+	 * your devices are aliasing to DevID 0, consider fixing your HW.
-+	 */
- 	nvec = max(nvec, alias_count);
--	nvec = max_t(int, 32, roundup_pow_of_two(nvec));
-+	if (!info->scratchpad[0].ul)
-+		minnvec = 32;
-+	nvec = max_t(int, minnvec, roundup_pow_of_two(nvec));
- 	return msi_info->ops->msi_prepare(domain->parent, dev, nvec, info);
- }
- 
+Ludovic Barre (3):
+  watchdog: stm32: add pclk feature for stm32mp1
+  ARM: dts: stm32: add iwdg2 support for stm32mp157c
+  ARM: dts: stm32: add iwdg2 support for stm32mp157c-ed1
+
+ .../devicetree/bindings/watchdog/st,stm32-iwdg.txt |  21 +++-
+ arch/arm/boot/dts/stm32mp157c-ed1.dts              |   5 +
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |   8 ++
+ drivers/watchdog/stm32_iwdg.c                      | 116 +++++++++++++--------
+ 4 files changed, 104 insertions(+), 46 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
