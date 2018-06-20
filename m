@@ -2,400 +2,164 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA869C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F550C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 687DF20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687DF20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DECE20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:19:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DECE20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754161AbeFTPSk (ORCPT
+        id S1754185AbeFTPTF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:18:40 -0400
-Received: from smtprelay0194.hostedemail.com ([216.40.44.194]:43812 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753202AbeFTPSi (ORCPT
+        Wed, 20 Jun 2018 11:19:05 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:34997 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753541AbeFTPTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:18:38 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 8E19E16E20;
-        Wed, 20 Jun 2018 15:18:37 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: touch41_8549c4a724c21
-X-Filterd-Recvd-Size: 14337
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 20 Jun 2018 15:18:35 +0000 (UTC)
-Message-ID: <287c7b8c3ea7a4b17ea5b25772815374e39f9f82.camel@perches.com>
-Subject: Re: pci: pci_printk use
-From:   Joe Perches <joe@perches.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Frederick Lawler <fred@fredlawl.com>
-Date:   Wed, 20 Jun 2018 08:18:34 -0700
-In-Reply-To: <20180620132852.GA108993@bhelgaas-glaptop.roam.corp.google.com>
-References: <9bd45007ddfe2c32b6ee5097e427aabdc267ce53.camel@perches.com>
-         <20180620132852.GA108993@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 20 Jun 2018 11:19:03 -0400
+Received: by mail-it0-f71.google.com with SMTP id 7-v6so91746ita.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 08:19:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=4/B3okp/mnlcJg7zR0aivZ5esTsg22PDdN2jnTTsd60=;
+        b=Vz/I99Evvgwt9g+oj6nyJNoPu4/bCdNRag0xwEzcx/IjmtdhbVy7K7zGZqvSYA5jmS
+         ILFbyUZq5JdFVj9R4eshdZSkTskGFBkTHnRVBoBGDPDLLLn3IX8FAk+zrJ0XslwuoGVU
+         cWbZ9R2fKA10WmI+XIx8wdn5O982H73YCzGRSe45BTKoYPLe9cmxIH8qb1apbZ1wtMoA
+         Jfk3PmTuyZGQyYFaHq5WJYYqKj19tpDq4u27hdjyYmdUZ3cRtUmby2aImCJ16gLcMp3F
+         BN87ycU38Gs4WBT3tDru9B3jD+7VlnANSX1ssLxnveIEWe5dxavASHij4B4JzLt9kjxd
+         Oo6A==
+X-Gm-Message-State: APt69E2dVojSrNGIVjsijBVlQ7rCIG0JroLtGLAhxzJch0xYaiCIPodl
+        /CoMQeORCxfq3IDz5+enWhHM9Q6lqyfHdKy6Cbha5F8yyyx2
+X-Google-Smtp-Source: ADUXVKKnAAOaHLs1PoyQ3XlPh7kYZR2WyzIEnZAoDpm5e5MMWa6LXofpaVYOf/TdaDZ+YnXGAD3uvSkA9j7FH94+wEUauqNJtR1B
+MIME-Version: 1.0
+X-Received: by 2002:a02:95ad:: with SMTP id b42-v6mr9455133jai.48.1529507942811;
+ Wed, 20 Jun 2018 08:19:02 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 08:19:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009cd09a056f1451d1@google.com>
+Subject: KASAN: use-after-free Read in __dev_map_entry_free
+From:   syzbot <syzbot+457d3e2ffbcf31aee5c0@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-20 at 08:28 -0500, Bjorn Helgaas wrote:
-> On Tue, Jun 19, 2018 at 09:33:18PM -0700, Joe Perches wrote:
-> > All the pci_printk uses are at KERN_DEBUG which is always
-> > emitted into the kernel logging whenever the console log
-> > level is high enough.
-> > 
-> > Are any of these appropriate for conversion to pci_dbg
-> > to allow these only to be emitted via dynamic_debug or
-> > if necessary via a #define DEBUG during compilation?
-> 
-> I think pci_printk(KERN_DEBUG) is a little ugly to read.
+Hello,
 
-As do I which is why I bring it up.
+syzbot found the following crash on:
 
-> My
-> preference would be to remove them (and pci_dbg() uses) completely or
-> convert them to pci_info().  Most of these are boot-time or low
-> frequency messages, so I doubt the loglevel differentiation of
-> DEBUG/INFO is really necessary.
+HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ad7d10400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=457d3e2ffbcf31aee5c0
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1195225f800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=171a7ce4400000
 
-Perhaps so.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+457d3e2ffbcf31aee5c0@syzkaller.appspotmail.com
 
-Does anyone have objections to a patch that removes
-the #define pci_printk and does:
-$ git ls-files -- 'drivers/pci/*.[ch]' \
-  xargs sed -i 's/pci_printk(KERN_DEBUG, /pci_info(/'
-with some alignment neatening?
+==================================================================
+BUG: KASAN: use-after-free in dev_map_flush_old kernel/bpf/devmap.c:365  
+[inline]
+BUG: KASAN: use-after-free in __dev_map_entry_free+0x2a8/0x300  
+kernel/bpf/devmap.c:379
+Read of size 8 at addr ffff8801b8da38c8 by task ksoftirqd/1/18
 
-Only issue I see is ctrl_dbg in the hotplug code
-being emitted at KERN_INFO but it is only output
-when a guard flag is set.  Maybe those should use
-the normal pci_dbg instead of the shpchp_debug
-guard.
+CPU: 1 PID: 18 Comm: ksoftirqd/1 Not tainted 4.17.0+ #39
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  dev_map_flush_old kernel/bpf/devmap.c:365 [inline]
+  __dev_map_entry_free+0x2a8/0x300 kernel/bpf/devmap.c:379
+  __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2558 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2818 [inline]
+  __rcu_process_callbacks kernel/rcu/tree.c:2785 [inline]
+  rcu_process_callbacks+0xe9d/0x1760 kernel/rcu/tree.c:2802
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:284
+  run_ksoftirqd+0x86/0x100 kernel/softirq.c:645
+  smpboot_thread_fn+0x417/0x870 kernel/smpboot.c:164
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+Allocated by task 6675:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  kzalloc include/linux/slab.h:706 [inline]
+  dev_map_alloc+0x208/0x7f0 kernel/bpf/devmap.c:102
+  find_and_alloc_map kernel/bpf/syscall.c:129 [inline]
+  map_create+0x393/0x1010 kernel/bpf/syscall.c:453
+  __do_sys_bpf kernel/bpf/syscall.c:2351 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2328 [inline]
+  __x64_sys_bpf+0x303/0x510 kernel/bpf/syscall.c:2328
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 26:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  dev_map_free+0x4fa/0x670 kernel/bpf/devmap.c:191
+  bpf_map_free_deferred+0xba/0xf0 kernel/bpf/syscall.c:262
+  process_one_work+0xc64/0x1b70 kernel/workqueue.c:2153
+  worker_thread+0x181/0x13a0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+The buggy address belongs to the object at ffff8801b8da37c0
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 264 bytes inside of
+  512-byte region [ffff8801b8da37c0, ffff8801b8da39c0)
+The buggy address belongs to the page:
+page:ffffea0006e368c0 count:1 mapcount:0 mapping:ffff8801da800940  
+index:0xffff8801b8da3540
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea0007217b88 ffffea0006e30cc8 ffff8801da800940
+raw: ffff8801b8da3540 ffff8801b8da3040 0000000100000004 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b8da3780: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+  ffff8801b8da3800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801b8da3880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                               ^
+  ffff8801b8da3900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b8da3980: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
+
+
 ---
- drivers/pci/bus.c            |  3 +--
- drivers/pci/hotplug/shpchp.h |  3 +--
- drivers/pci/pci.c            | 28 ++++++++++++++--------------
- drivers/pci/pcie/aer.c       |  5 ++---
- drivers/pci/pcie/err.c       | 18 +++++++++---------
- drivers/pci/probe.c          | 18 +++++++++---------
- drivers/pci/setup-bus.c      | 26 +++++++++++++-------------
- include/linux/pci.h          |  3 ---
- 8 files changed, 49 insertions(+), 55 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index 35b7fc87eac5..82322c5bcc80 100644
---- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -288,8 +288,7 @@ bool pci_bus_clip_resource(struct pci_dev *dev, int idx)
- 		res->end = end;
- 		res->flags &= ~IORESOURCE_UNSET;
- 		orig_res.flags &= ~IORESOURCE_UNSET;
--		pci_printk(KERN_DEBUG, dev, "%pR clipped to %pR\n",
--				 &orig_res, res);
-+		pci_info(dev, "%pR clipped to %pR\n", &orig_res, res);
- 
- 		return true;
- 	}
-diff --git a/drivers/pci/hotplug/shpchp.h b/drivers/pci/hotplug/shpchp.h
-index 516e4835019c..64a74c364529 100644
---- a/drivers/pci/hotplug/shpchp.h
-+++ b/drivers/pci/hotplug/shpchp.h
-@@ -48,8 +48,7 @@ do {									\
- #define ctrl_dbg(ctrl, format, arg...)					\
- 	do {								\
- 		if (shpchp_debug)					\
--			pci_printk(KERN_DEBUG, ctrl->pci_dev,		\
--					format, ## arg);		\
-+			pci_info(ctrl->pci_dev, format, ## arg);	\
- 	} while (0)
- #define ctrl_err(ctrl, format, arg...)					\
- 	pci_err(ctrl->pci_dev, format, ## arg)
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 97acba712e4e..6a5390fa312f 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -2481,14 +2481,14 @@ void pci_pm_init(struct pci_dev *dev)
- 			dev->d2_support = true;
- 
- 		if (dev->d1_support || dev->d2_support)
--			pci_printk(KERN_DEBUG, dev, "supports%s%s\n",
--				   dev->d1_support ? " D1" : "",
--				   dev->d2_support ? " D2" : "");
-+			pci_info(dev, "supports%s%s\n",
-+				 dev->d1_support ? " D1" : "",
-+				 dev->d2_support ? " D2" : "");
- 	}
- 
- 	pmc &= PCI_PM_CAP_PME_MASK;
- 	if (pmc) {
--		pci_printk(KERN_DEBUG, dev, "PME# supported from%s%s%s%s%s\n",
-+		pci_info(dev, "PME# supported from%s%s%s%s%s\n",
- 			 (pmc & PCI_PM_CAP_PME_D0) ? " D0" : "",
- 			 (pmc & PCI_PM_CAP_PME_D1) ? " D1" : "",
- 			 (pmc & PCI_PM_CAP_PME_D2) ? " D2" : "",
-@@ -2652,17 +2652,17 @@ static int pci_ea_read(struct pci_dev *dev, int offset)
- 	res->flags = flags;
- 
- 	if (bei <= PCI_EA_BEI_BAR5)
--		pci_printk(KERN_DEBUG, dev, "BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
--			   bei, res, prop);
-+		pci_info(dev, "BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
-+			 bei, res, prop);
- 	else if (bei == PCI_EA_BEI_ROM)
--		pci_printk(KERN_DEBUG, dev, "ROM: %pR (from Enhanced Allocation, properties %#02x)\n",
--			   res, prop);
-+		pci_info(dev, "ROM: %pR (from Enhanced Allocation, properties %#02x)\n",
-+			 res, prop);
- 	else if (bei >= PCI_EA_BEI_VF_BAR0 && bei <= PCI_EA_BEI_VF_BAR5)
--		pci_printk(KERN_DEBUG, dev, "VF BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
--			   bei - PCI_EA_BEI_VF_BAR0, res, prop);
-+		pci_info(dev, "VF BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
-+			 bei - PCI_EA_BEI_VF_BAR0, res, prop);
- 	else
--		pci_printk(KERN_DEBUG, dev, "BEI %d res: %pR (from Enhanced Allocation, properties %#02x)\n",
--			   bei, res, prop);
-+		pci_info(dev, "BEI %d res: %pR (from Enhanced Allocation, properties %#02x)\n",
-+			 bei, res, prop);
- 
- out:
- 	return offset + ent_size;
-@@ -3772,8 +3772,8 @@ int pci_set_cacheline_size(struct pci_dev *dev)
- 	if (cacheline_size == pci_cache_line_size)
- 		return 0;
- 
--	pci_printk(KERN_DEBUG, dev, "cache line size of %d is not supported\n",
--		   pci_cache_line_size << 2);
-+	pci_info(dev, "cache line size of %d is not supported\n",
-+		 pci_cache_line_size << 2);
- 
- 	return -EINVAL;
- }
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index a2e88386af28..ed0c313bf09c 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -772,8 +772,7 @@ static bool find_source_device(struct pci_dev *parent,
- 	pci_walk_bus(parent->subordinate, find_device_iter, e_info);
- 
- 	if (!e_info->error_dev_num) {
--		pci_printk(KERN_DEBUG, parent, "can't find device of ID%04x\n",
--			   e_info->id);
-+		pci_info(parent, "can't find device of ID%04x\n", e_info->id);
- 		return false;
- 	}
- 	return true;
-@@ -1314,7 +1313,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
- 	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, reg32);
- 
- 	pci_reset_bridge_secondary_bus(dev);
--	pci_printk(KERN_DEBUG, dev, "Root Port link has been reset\n");
-+	pci_info(dev, "Root Port link has been reset\n");
- 
- 	/* Clear Root Error Status */
- 	pci_read_config_dword(dev, pos + PCI_ERR_ROOT_STATUS, &reg32);
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index f7ce0cb0b0b7..b0df9bf66b2e 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -72,9 +72,9 @@ static int report_error_detected(struct pci_dev *dev, void *data)
- 			 * of a driver for this device is unaware of
- 			 * its hw state.
- 			 */
--			pci_printk(KERN_DEBUG, dev, "device has %s\n",
--				   dev->driver ?
--				   "no AER-aware driver" : "no driver");
-+			pci_info(dev, "device has %s\n",
-+				 dev->driver ?
-+				 "no AER-aware driver" : "no driver");
- 		}
- 
- 		/*
-@@ -176,7 +176,7 @@ static int report_resume(struct pci_dev *dev, void *data)
- static pci_ers_result_t default_reset_link(struct pci_dev *dev)
- {
- 	pci_reset_bridge_secondary_bus(dev);
--	pci_printk(KERN_DEBUG, dev, "downstream link has been reset\n");
-+	pci_info(dev, "downstream link has been reset\n");
- 	return PCI_ERS_RESULT_RECOVERED;
- }
- 
-@@ -202,14 +202,14 @@ static pci_ers_result_t reset_link(struct pci_dev *dev, u32 service)
- 	} else if (udev->has_secondary_link) {
- 		status = default_reset_link(udev);
- 	} else {
--		pci_printk(KERN_DEBUG, dev, "no link-reset support at upstream device %s\n",
--			pci_name(udev));
-+		pci_info(dev, "no link-reset support at upstream device %s\n",
-+			 pci_name(udev));
- 		return PCI_ERS_RESULT_DISCONNECT;
- 	}
- 
- 	if (status != PCI_ERS_RESULT_RECOVERED) {
--		pci_printk(KERN_DEBUG, dev, "link reset at upstream device %s failed\n",
--			pci_name(udev));
-+		pci_info(dev, "link reset at upstream device %s failed\n",
-+			 pci_name(udev));
- 		return PCI_ERS_RESULT_DISCONNECT;
- 	}
- 
-@@ -234,7 +234,7 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
- {
- 	struct aer_broadcast_data result_data;
- 
--	pci_printk(KERN_DEBUG, dev, "broadcast %s message\n", error_mesg);
-+	pci_info(dev, "broadcast %s message\n", error_mesg);
- 	result_data.state = state;
- 	if (cb == report_error_detected)
- 		result_data.result = PCI_ERS_RESULT_CAN_RECOVER;
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index ac876e32de4b..828cb8f89066 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -318,7 +318,7 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
- 	res->flags = 0;
- out:
- 	if (res->flags)
--		pci_printk(KERN_DEBUG, dev, "reg 0x%x: %pR\n", pos, res);
-+		pci_info(dev, "reg 0x%x: %pR\n", pos, res);
- 
- 	return (res->flags & IORESOURCE_MEM_64) ? 1 : 0;
- }
-@@ -385,7 +385,7 @@ static void pci_read_bridge_io(struct pci_bus *child)
- 		region.start = base;
- 		region.end = limit + io_granularity - 1;
- 		pcibios_bus_to_resource(dev->bus, res, &region);
--		pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-+		pci_info(dev, "  bridge window %pR\n", res);
- 	}
- }
- 
-@@ -407,7 +407,7 @@ static void pci_read_bridge_mmio(struct pci_bus *child)
- 		region.start = base;
- 		region.end = limit + 0xfffff;
- 		pcibios_bus_to_resource(dev->bus, res, &region);
--		pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-+		pci_info(dev, "  bridge window %pR\n", res);
- 	}
- }
- 
-@@ -460,7 +460,7 @@ static void pci_read_bridge_mmio_pref(struct pci_bus *child)
- 		region.start = base;
- 		region.end = limit + 0xfffff;
- 		pcibios_bus_to_resource(dev->bus, res, &region);
--		pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-+		pci_info(dev, "  bridge window %pR\n", res);
- 	}
- }
- 
-@@ -490,9 +490,9 @@ void pci_read_bridge_bases(struct pci_bus *child)
- 			if (res && res->flags) {
- 				pci_bus_add_resource(child, res,
- 						     PCI_SUBTRACTIVE_DECODE);
--				pci_printk(KERN_DEBUG, dev,
--					   "  bridge window %pR (subtractive decode)\n",
--					   res);
-+				pci_info(dev,
-+					 "  bridge window %pR (subtractive decode)\n",
-+					 res);
- 			}
- 		}
- 	}
-@@ -1595,8 +1595,8 @@ int pci_setup_device(struct pci_dev *dev)
- 	dev->revision = class & 0xff;
- 	dev->class = class >> 8;		    /* upper 3 bytes */
- 
--	pci_printk(KERN_DEBUG, dev, "[%04x:%04x] type %02x class %#08x\n",
--		   dev->vendor, dev->device, dev->hdr_type, dev->class);
-+	pci_info(dev, "[%04x:%04x] type %02x class %#08x\n",
-+		 dev->vendor, dev->device, dev->hdr_type, dev->class);
- 
- 	/* Need to have dev->class ready */
- 	dev->cfg_size = pci_cfg_space_size(dev);
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 79b1824e83b4..308f8d10e4a7 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -255,10 +255,10 @@ static void reassign_resources_sorted(struct list_head *realloc_head,
- 				 (IORESOURCE_STARTALIGN|IORESOURCE_SIZEALIGN);
- 			if (pci_reassign_resource(add_res->dev, idx,
- 						  add_size, align))
--				pci_printk(KERN_DEBUG, add_res->dev,
--					   "failed to add %llx res[%d]=%pR\n",
--					   (unsigned long long)add_size,
--					   idx, res);
-+				pci_info(add_res->dev,
-+					 "failed to add %llx res[%d]=%pR\n",
-+					 (unsigned long long)add_size,
-+					 idx, res);
- 		}
- out:
- 		list_del(&add_res->list);
-@@ -951,9 +951,9 @@ static void pbus_size_io(struct pci_bus *bus, resource_size_t min_size,
- 	if (size1 > size0 && realloc_head) {
- 		add_to_list(realloc_head, bus->self, b_res, size1-size0,
- 			    min_align);
--		pci_printk(KERN_DEBUG, bus->self, "bridge window %pR to %pR add_size %llx\n",
--			   b_res, &bus->busn_res,
--			   (unsigned long long)size1-size0);
-+		pci_info(bus->self, "bridge window %pR to %pR add_size %llx\n",
-+			 b_res, &bus->busn_res,
-+			 (unsigned long long)size1 - size0);
- 	}
- }
- 
-@@ -1098,10 +1098,10 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
- 	b_res->flags |= IORESOURCE_STARTALIGN;
- 	if (size1 > size0 && realloc_head) {
- 		add_to_list(realloc_head, bus->self, b_res, size1-size0, add_align);
--		pci_printk(KERN_DEBUG, bus->self, "bridge window %pR to %pR add_size %llx add_align %llx\n",
--			   b_res, &bus->busn_res,
--			   (unsigned long long) (size1 - size0),
--			   (unsigned long long) add_align);
-+		pci_info(bus->self, "bridge window %pR to %pR add_size %llx add_align %llx\n",
-+			 b_res, &bus->busn_res,
-+			 (unsigned long long)size1 - size0,
-+			 (unsigned long long)add_align);
- 	}
- 	return 0;
- }
-@@ -1566,8 +1566,8 @@ static void pci_bridge_release_resources(struct pci_bus *bus,
- 	release_child_resources(r);
- 	if (!release_resource(r)) {
- 		type = old_flags = r->flags & PCI_RES_TYPE_MASK;
--		pci_printk(KERN_DEBUG, dev, "resource %d %pR released\n",
--					PCI_BRIDGE_RESOURCES + idx, r);
-+		pci_info(dev, "resource %d %pR released\n",
-+			 PCI_BRIDGE_RESOURCES + idx, r);
- 		/* keep the old size */
- 		r->end = resource_size(r) - 1;
- 		r->start = 0;
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 340029b2fb38..e93a55336ecc 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2298,9 +2298,6 @@ void pci_uevent_ers(struct pci_dev *pdev, enum  pci_ers_result err_type);
- /* Provide the legacy pci_dma_* API */
- #include <linux/pci-dma-compat.h>
- 
--#define pci_printk(level, pdev, fmt, arg...) \
--	dev_printk(level, &(pdev)->dev, fmt, ##arg)
--
- #define pci_emerg(pdev, fmt, arg...)	dev_emerg(&(pdev)->dev, fmt, ##arg)
- #define pci_alert(pdev, fmt, arg...)	dev_alert(&(pdev)->dev, fmt, ##arg)
- #define pci_crit(pdev, fmt, arg...)	dev_crit(&(pdev)->dev, fmt, ##arg)
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
