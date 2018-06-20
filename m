@@ -2,166 +2,226 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35E5C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99ED8C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E6520846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:39:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E6520846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5034F20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:39:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="QA/wT90g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5034F20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933376AbeFTUjQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:39:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56364 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932953AbeFTUjP (ORCPT
+        id S933388AbeFTUjk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:39:40 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:45674 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933097AbeFTUji (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:39:15 -0400
-Received: from localhost (113x41x139x141.ap113.ftth.ucom.ne.jp [113.41.139.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEE1DCB8;
-        Wed, 20 Jun 2018 20:39:14 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 05:39:12 +0900
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mawanda Henry <mawandahenrynaco@gmail.com>
-Cc:     mawanda111@gmail.com, xdeguillard@vmware.com, moltmann@vmware.com,
-        pv-drivers@vmware.com, arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/misc: SPDX-licensing
-Message-ID: <20180620203912.GA12402@kroah.com>
-References: <20180620170524.GA18126@sesnaco>
+        Wed, 20 Jun 2018 16:39:38 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KKZAeE030393
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:39:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date : from
+ : to : cc : subject : references : mime-version : content-type;
+ s=facebook; bh=lq/oIsJbPANub3qdvy/PR+2pAQeT+lhywcguFCiUDKs=;
+ b=QA/wT90g6FimbJumWX/jn4t/WIusyQ1WeU8gFKB+aIoy4ICw6QA1HyL/X+FdG5+W5aYP
+ vLuDo0mnIItbyNjqYi5bc84XI14dISMVj9WJ0wF5HEoTSl3iFN0lg5m6WFEYIhicPCtt
+ 95TxeowijByfLMTJNL7wEydQCaWWDMZu87k= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2jqvy2r6nd-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:39:38 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.21) with Microsoft SMTP Server (TLS) id 14.3.319.2; Wed, 20 Jun
+ 2018 13:39:37 -0700
+Received: by dev026.lla1.facebook.com (Postfix, from userid 152872)     id
+ 09EDC8A0910; Wed, 20 Jun 2018 13:37:03 -0700 (PDT)
+Message-ID: <20180620203702.996737905@fb.com>
+User-Agent: quilt/0.63-1
+Date:   Wed, 20 Jun 2018 13:30:52 -0700
+Smtp-Origin-Hostprefix: dev
+From:   Okash Khawaja <osk@fb.com>
+Smtp-Origin-Hostname: dev026.lla1.facebook.com
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <kernel-team@fb.com>,
+        <linux-kernel@vger.kernel.org>
+Smtp-Origin-Cluster: lla1c22
+Subject: [PATCH bpf-next 1/3] bpf: btf: export btf types and name by offset from lib
+References: <20180620203051.223156973@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180620170524.GA18126@sesnaco>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline; filename="01-export-from-libbtf.patch"
+X-FB-Internal: Safe
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 08:05:24PM +0300, Mawanda Henry wrote:
-> Attach SPDX license header. Concatinate int on unsigned
-> Signed-off-by: Mawanda Henry <mawandahenrynaco@gmail.com>
-> ---
->  drivers/misc/vmw_balloon.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-> index 9047c0a..762429d 100644
-> --- a/drivers/misc/vmw_balloon.c
-> +++ b/drivers/misc/vmw_balloon.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * VMware Balloon driver.
->   *
-> @@ -247,7 +248,7 @@ struct vmballoon_stats {
->  	unsigned int doorbell_unset;
->  };
->  
-> -#define STATS_INC(stat) (stat)++
-> +#define STATS_INC(stat) ((stat)++)
->  #else
->  #define STATS_INC(stat)
->  #endif
-> @@ -275,7 +276,7 @@ struct vmballoon {
->  	struct vmballoon_page_size page_sizes[VMW_BALLOON_NUM_PAGE_SIZES];
->  
->  	/* supported page sizes. 1 == 4k pages only, 2 == 4k and 2m pages */
-> -	unsigned supported_page_sizes;
-> +	unsigned int supported_page_sizes;
->  
->  	/* balloon size in pages */
->  	unsigned int size;
-> @@ -559,7 +560,7 @@ static void vmballoon_free_page(struct page *page, bool is_2m_page)
->  static void vmballoon_pop(struct vmballoon *b)
->  {
->  	struct page *page, *next;
-> -	unsigned is_2m_pages;
-> +	unsigned int is_2m_pages;
->  
->  	for (is_2m_pages = 0; is_2m_pages < VMW_BALLOON_NUM_PAGE_SIZES;
->  			is_2m_pages++) {
-> @@ -796,7 +797,7 @@ static void vmballoon_add_batched_page(struct vmballoon *b, int idx,
->   */
->  static void vmballoon_inflate(struct vmballoon *b)
->  {
-> -	unsigned rate;
-> +	unsigned int rate;
->  	unsigned int allocations = 0;
->  	unsigned int num_pages = 0;
->  	int error = 0;
-> @@ -936,7 +937,7 @@ static void vmballoon_inflate(struct vmballoon *b)
->   */
->  static void vmballoon_deflate(struct vmballoon *b)
->  {
-> -	unsigned is_2m_pages;
-> +	unsigned int is_2m_pages;
->  
->  	pr_debug("%s - size: %d, target %d\n", __func__, b->size, b->target);
->  
-> @@ -1234,7 +1235,7 @@ static int __init vmballoon_debugfs_init(struct vmballoon *b)
->  {
->  	int error;
->  
-> -	b->dbg_entry = debugfs_create_file("vmmemctl", S_IRUGO, NULL, b,
-> +	b->dbg_entry = debugfs_create_file("vmmemctl", 0444, NULL, b,
->  					   &vmballoon_debug_fops);
->  	if (IS_ERR(b->dbg_entry)) {
->  		error = PTR_ERR(b->dbg_entry);
-> @@ -1266,7 +1267,7 @@ static inline void vmballoon_debugfs_exit(struct vmballoon *b)
->  static int __init vmballoon_init(void)
->  {
->  	int error;
-> -	unsigned is_2m_pages;
-> +	unsigned int is_2m_pages;
->  	/*
->  	 * Check if we are running on VMware's hypervisor and bail out
->  	 * if we are not.
-> -- 
-> 2.7.4
+This patch introduces btf__resolve_type() function and exports two
+existing functions from libbpf. btf__resolve_type follows modifier
+types like const and typedef until it hits a type which actually takes
+up memory, and then returns it. This function follows similar pattern
+to btf__resolve_size but instead of computing size, it just returns
+the type.
 
-Hi,
+These  functions will be used in the followig patch which parses
+information inside array of `struct btf_type *`. btf_name_by_offset is
+used for printing variable names.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Signed-off-by: Okash Khawaja <osk@fb.com>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+---
+ tools/lib/bpf/btf.c |   65 ++++++++++++++++++++++++++++++++++++----------------
+ tools/lib/bpf/btf.h |    3 ++
+ 2 files changed, 48 insertions(+), 20 deletions(-)
 
-- Your patch did many different things all at once, making it difficult
-  to review.  All Linux kernel patches need to only do one thing at a
-  time.  If you need to do multiple things (such as clean up all coding
-  style issues in a file/driver), do it in a sequence of patches, each
-  one doing only one thing.  This will make it easier to review the
-  patches to ensure that they are correct, and to help alleviate any
-  merge issues that larger patches can cause.
+--- a/tools/lib/bpf/btf.c
++++ b/tools/lib/bpf/btf.c
+@@ -17,6 +17,11 @@
+ 
+ #define BTF_MAX_NR_TYPES 65535
+ 
++#define IS_MODIFIER(k) (((k) == BTF_KIND_TYPEDEF) || \
++		((k) == BTF_KIND_VOLATILE) || \
++		((k) == BTF_KIND_CONST) || \
++		((k) == BTF_KIND_RESTRICT))
++
+ static struct btf_type btf_void;
+ 
+ struct btf {
+@@ -33,14 +38,6 @@ struct btf {
+ 	int fd;
+ };
+ 
+-static const char *btf_name_by_offset(const struct btf *btf, uint32_t offset)
+-{
+-	if (offset < btf->hdr->str_len)
+-		return &btf->strings[offset];
+-	else
+-		return NULL;
+-}
+-
+ static int btf_add_type(struct btf *btf, struct btf_type *t)
+ {
+ 	if (btf->types_size - btf->nr_types < 2) {
+@@ -190,15 +187,6 @@ static int btf_parse_type_sec(struct btf
+ 	return 0;
+ }
+ 
+-static const struct btf_type *btf_type_by_id(const struct btf *btf,
+-					     uint32_t type_id)
+-{
+-	if (type_id > btf->nr_types)
+-		return NULL;
+-
+-	return btf->types[type_id];
+-}
+-
+ static bool btf_type_is_void(const struct btf_type *t)
+ {
+ 	return t == &btf_void || BTF_INFO_KIND(t->info) == BTF_KIND_FWD;
+@@ -234,7 +222,7 @@ int64_t btf__resolve_size(const struct b
+ 	int64_t size = -1;
+ 	int i;
+ 
+-	t = btf_type_by_id(btf, type_id);
++	t = btf__type_by_id(btf, type_id);
+ 	for (i = 0; i < MAX_RESOLVE_DEPTH && !btf_type_is_void_or_null(t);
+ 	     i++) {
+ 		size = btf_type_size(t);
+@@ -259,7 +247,7 @@ int64_t btf__resolve_size(const struct b
+ 			return -EINVAL;
+ 		}
+ 
+-		t = btf_type_by_id(btf, type_id);
++		t = btf__type_by_id(btf, type_id);
+ 	}
+ 
+ 	if (size < 0)
+@@ -271,6 +259,26 @@ int64_t btf__resolve_size(const struct b
+ 	return nelems * size;
+ }
+ 
++int32_t btf__resolve_type(const struct btf *btf, uint32_t type_id)
++{
++	const struct btf_type *t;
++	int depth = 0;
++
++	t = btf__type_by_id(btf, type_id);
++	while (depth < MAX_RESOLVE_DEPTH &&
++			!btf_type_is_void_or_null(t) &&
++			IS_MODIFIER(BTF_INFO_KIND(t->info))) {
++		type_id = t->type;
++		t = btf__type_by_id(btf, type_id);
++		depth++;
++	}
++
++	if (depth == MAX_RESOLVE_DEPTH || btf_type_is_void_or_null(t))
++		return -EINVAL;
++
++	return type_id;
++}
++
+ int32_t btf__find_by_name(const struct btf *btf, const char *type_name)
+ {
+ 	uint32_t i;
+@@ -280,7 +288,7 @@ int32_t btf__find_by_name(const struct b
+ 
+ 	for (i = 1; i <= btf->nr_types; i++) {
+ 		const struct btf_type *t = btf->types[i];
+-		const char *name = btf_name_by_offset(btf, t->name_off);
++		const char *name = btf__name_by_offset(btf, t->name_off);
+ 
+ 		if (name && !strcmp(type_name, name))
+ 			return i;
+@@ -371,3 +379,20 @@ int btf__fd(const struct btf *btf)
+ {
+ 	return btf->fd;
+ }
++
++const char *btf__name_by_offset(const struct btf *btf, uint32_t offset)
++{
++	if (offset < btf->hdr->str_len)
++		return &btf->strings[offset];
++	else
++		return NULL;
++}
++
++const struct btf_type *btf__type_by_id(const struct btf *btf,
++					     uint32_t type_id)
++{
++	if (type_id > btf->nr_types)
++		return NULL;
++
++	return btf->types[type_id];
++}
+--- a/tools/lib/bpf/btf.h
++++ b/tools/lib/bpf/btf.h
+@@ -17,6 +17,9 @@ void btf__free(struct btf *btf);
+ struct btf *btf__new(uint8_t *data, uint32_t size, btf_print_fn_t err_log);
+ int32_t btf__find_by_name(const struct btf *btf, const char *type_name);
+ int64_t btf__resolve_size(const struct btf *btf, uint32_t type_id);
++int32_t btf__resolve_type(const struct btf *btf, uint32_t type_id);
+ int btf__fd(const struct btf *btf);
++const char *btf__name_by_offset(const struct btf *btf, uint32_t offset);
++const struct btf_type *btf__type_by_id(const struct btf *btf, uint32_t type_id);
+ 
+ #endif
 
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what is needed in order to
-  properly describe the change.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/SubmittingPatches for what a proper Subject: line should
-  look like.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
