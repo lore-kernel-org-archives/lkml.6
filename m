@@ -2,98 +2,92 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A208C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBA5C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BB320693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:41:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BB320693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EBFF720693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:41:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBFF720693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755039AbeFTJkn (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:40:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49088 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754354AbeFTJkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:40:39 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3437E401EF00;
-        Wed, 20 Jun 2018 09:40:39 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 992532156880;
-        Wed, 20 Jun 2018 09:40:37 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCH] perf bench: Fix numa report output code
-Date:   Wed, 20 Jun 2018 11:40:36 +0200
-Message-Id: <20180620094036.17278-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 20 Jun 2018 09:40:39 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 20 Jun 2018 09:40:39 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        id S932308AbeFTJlN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 05:41:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47279 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932365AbeFTJlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:41:10 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E32A4207D4; Wed, 20 Jun 2018 11:41:08 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9F4C9206D8;
+        Wed, 20 Jun 2018 11:41:08 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 11:41:08 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Martin Kaiser <martin@kaiser.cx>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3] mtd: rawnand: mxc: set spare area size register
+ explicitly
+Message-ID: <20180620114108.4ef7ab58@bbrezillon>
+In-Reply-To: <20180619110741.32e4a5d8@xps13>
+References: <1528025495-14443-1-git-send-email-martin@kaiser.cx>
+        <1529354463-23526-1-git-send-email-martin@kaiser.cx>
+        <20180619110741.32e4a5d8@xps13>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we can hit following assert when running numa bench:
+On Tue, 19 Jun 2018 11:07:41 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-  $ perf bench numa mem -p 3 -t 1 -P 512 -s 100 -zZ0cm --thp 1
-  perf: bench/numa.c:1577: __bench_numa: Assertion `!(!(((wait_stat) & 0x7f) == 0))' failed.
+> On Mon, 18 Jun 2018 22:41:03 +0200, Martin Kaiser <martin@kaiser.cx>
+> wrote:
+> 
+> > The v21 version of the NAND flash controller contains a Spare Area Size
+> > Register (SPAS) at offset 0x10. Its setting defaults to the maximum
+> > spare area size of 218 bytes. The size that is set in this register is
+> > used by the controller when it calculates the ECC bytes internally in
+> > hardware.
+> > 
+> > Usually, this register is updated from settings in the IIM fuses when
+> > the system is booting from NAND flash. For other boot media, however,
+> > the SPAS register remains at the default setting, which may not work for
+> > the particular flash chip on the board. The same goes for flash chips
+> > whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
+> > sector size and 128 bytes spare area size can't be configured in the IIM
+> > fuses on imx25 systems).
+> > 
+> > Set the SPAS register explicitly during the preset operation. Derive the
+> > register value from mtd->oobsize that was detected during probe by
+> > decoding the flash chip's ID bytes.
+> > 
+> > While at it, rename the define for the spare area register's offset to
+> > NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
+> > different from the register on v21 controllers.
+> > 
+> > Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+> > Cc: stable@vger.kernel.org
+> > Fixes: d484018 ("mtd: mxc_nand: set NFC registers after reset")  
+> 
+> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-The assertion is correct, because we hit the SIGFPE in following line:
+Applied.
 
-  Thread 2.2 "thread 0/0" received signal SIGFPE, Arithmetic exception.
-  [Switching to Thread 0x7fffd28c6700 (LWP 11750)]
-  0x000.. in worker_thread (__tdata=0x7.. ) at bench/numa.c:1257
-  1257 td->speed_gbs = bytes_done / (td->runtime_ns / NSEC_PER_SEC) / 1e9;
+Thanks,
 
-We don't check if the runtime is actually bigger than 1 second,
-and thus this might end up with zero division within FPU.
-
-Adding the check to prevent this.
-
-Link: http://lkml.kernel.org/n/tip-9y8n4x48mjbbcay73sq6nche@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/bench/numa.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
-index 63eb49082774..44195514b19e 100644
---- a/tools/perf/bench/numa.c
-+++ b/tools/perf/bench/numa.c
-@@ -1098,7 +1098,7 @@ static void *worker_thread(void *__tdata)
- 	u8 *global_data;
- 	u8 *process_data;
- 	u8 *thread_data;
--	u64 bytes_done;
-+	u64 bytes_done, secs;
- 	long work_done;
- 	u32 l;
- 	struct rusage rusage;
-@@ -1254,7 +1254,8 @@ static void *worker_thread(void *__tdata)
- 	timersub(&stop, &start0, &diff);
- 	td->runtime_ns = diff.tv_sec * NSEC_PER_SEC;
- 	td->runtime_ns += diff.tv_usec * NSEC_PER_USEC;
--	td->speed_gbs = bytes_done / (td->runtime_ns / NSEC_PER_SEC) / 1e9;
-+	secs = td->runtime_ns / NSEC_PER_SEC;
-+	td->speed_gbs = secs ? bytes_done / secs / 1e9 : 0;
- 
- 	getrusage(RUSAGE_THREAD, &rusage);
- 	td->system_time_ns = rusage.ru_stime.tv_sec * NSEC_PER_SEC;
--- 
-2.13.6
+Boris
 
