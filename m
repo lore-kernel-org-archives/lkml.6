@@ -2,115 +2,145 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0FEC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFE0C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E99C720846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:52:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99C720846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5CDD320846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:55:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTYnUG+j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDD320846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932879AbeFTTwS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:52:18 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:42807 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932588AbeFTTwR (ORCPT
+        id S932951AbeFTTz1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 15:55:27 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:42050 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932372AbeFTTzZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:52:17 -0400
-Received: by mail-yw0-f194.google.com with SMTP id t184-v6so278995ywg.9;
-        Wed, 20 Jun 2018 12:52:17 -0700 (PDT)
+        Wed, 20 Jun 2018 15:55:25 -0400
+Received: by mail-lf0-f65.google.com with SMTP id z207-v6so1099996lff.9;
+        Wed, 20 Jun 2018 12:55:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=XvOCgmDhhrDhs4XBU1Pz7JIORVfXz8atk6MrvVDy3MU=;
+        b=BTYnUG+jG0wmbub6ln40yo+bDCf+8l90ESh5eIbnGqBi/l5/wdCmiKGA0WaIHAMqvu
+         QYGq0a2VlyM7jclnqY4gths9CgN7slnQtmr1h0K9B4R0B0rxTczDQgOyffuZ3YxBfeMF
+         bPFsYbp8cORlyCGJSc/0Mjd2DgIimTSgTWfC52G/LdimHsdUlg2DZcW10U11n80B/GfI
+         jAUoKFdJqdEyYlPM05Wqg5LeyxtQ1xlNZoaj2BJx8ZsBX4J47/HTkfa2FFm7paiz3UwP
+         sWKggXt7/yR4Pu/QEofmudIPuDZf07CEs8v3sMwVTIQCIQSB569PfxTM83P3k/ZKFueR
+         fHcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lySzHsXn0KVA8IEQMkXWe+zHmnR4iQ/2dPyaqm3CDO0=;
-        b=ZueSo4TD4Wt2l9hv+Iqqh80iZu8L4/df3PI7Aiz5F3FUGq8TZFSb1rS2IB7l/18Y33
-         PUdKRAWHBRNUmQa5/PDnyZOQpIL5ZCmGkf1XIw9QW1YsGLZ7qpqyNn7vmKtYNXuD3Vff
-         LzZ3dp6QY0MrrA74A2sjgIWSAtNux52+DEVCEd4Y4lQbqEiZDgNK0o+igNCizGrkrMXc
-         4HcRkDIz75us0PMD+2Suh46k5uy/fOMzN7pVMY9pJpHLrLTgbxHAWvhKsIMMeLZi4SDD
-         yusGrOzt8HTgrb7f2yvTB+IabBJTyoYs9qMFPQezEeP5FxGSQJXH1OIX0laEXHaBdVgY
-         RtNQ==
-X-Gm-Message-State: APt69E335p1fW6ydkg1APe3GSOulRMboVTrC2MubhehrZPVYjm+l6iZ+
-        Q0MzUPyy5kpNxs9ZS8nAxQ==
-X-Google-Smtp-Source: ADUXVKISoAYK5+UWGcN5WVU7IvnUi8T9bBVrDL0d11x78yHYwTkxXa7bLLOoOW7EbXMZYFwQ7Oi1RQ==
-X-Received: by 2002:a81:1d06:: with SMTP id d6-v6mr10824620ywd.322.1529524336594;
-        Wed, 20 Jun 2018 12:52:16 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id i5-v6sm1173807ywg.110.2018.06.20.12.52.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 12:52:15 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 13:52:14 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Pramod Kumar <pramod.kumar@broadcom.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: thermal: Add binding document for SR
- thermal
-Message-ID: <20180620195214.GA10436@rob-hp-laptop>
-References: <1529310679-13482-1-git-send-email-srinath.mannam@broadcom.com>
- <1529310679-13482-2-git-send-email-srinath.mannam@broadcom.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=XvOCgmDhhrDhs4XBU1Pz7JIORVfXz8atk6MrvVDy3MU=;
+        b=WvLYpV1IenXzVo85CaqgBHUMNABK0pAdJvCwPVH8sr4hOWfq7vWLiKHe21aRSlhyMT
+         dpRAlLwaAg44AkZQ6mn2voXI4ooT9lwubBOTPBTZWNN1EWSpy3/aB6EW6Fxxqq+LcZC9
+         JIlmlDa9/IcU0/9hLY/CNLdSrb5CviVdFYROYKZl7X9qmCC3Gl4Vk9THtn7estrNb7S3
+         5UauDm+LZzu5xp4Mj5HW/0Pt2ydttbiNtA3FHPhi2TLymWQJ59NCrfSgbRMXMbq2GKOi
+         h52GYDMILRNQZO+XGIj6Qn8Inj46no67/P1vd7UKLbb3xKRHQ9u60jCMNubeW98KbOLx
+         Sx6g==
+X-Gm-Message-State: APt69E1v2AM7AfjeEgkRF4+abIVnqPfSPH0pWN2ckFyarHBX7SxIzjWl
+        5hD63+GGCVYd+3vAMSGV3/quadLiSlC2cQ+tYkU=
+X-Google-Smtp-Source: ADUXVKKwM4ajcQ+g60lgxV9ycyTbv/wMkWKG6QLCFNPu3msqZ9NfnOn/qvhDHiywIzT4yJzVbb7P4HzI8e+s8btFgv4=
+X-Received: by 2002:a19:d5c7:: with SMTP id m190-v6mr4169458lfg.12.1529524523477;
+ Wed, 20 Jun 2018 12:55:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529310679-13482-2-git-send-email-srinath.mannam@broadcom.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 12:55:22
+ -0700 (PDT)
+In-Reply-To: <1529513708.5833.29.camel@dubeyko.com>
+References: <20180619160223.4108556-1-arnd@arndb.de> <1529427809.2624.16.camel@dubeyko.com>
+ <CAK8P3a0WNPxDqSNJUuijY0P9UwGXPD_DCAUw9AH_OvAg-cPf1Q@mail.gmail.com> <1529513708.5833.29.camel@dubeyko.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Jun 2018 21:55:22 +0200
+X-Google-Sender-Auth: pv7jimHlQq9WPalbInagxQnMBrk
+Message-ID: <CAK8P3a2X134US86LAecGqx4cd1AbhQgyp5NqFgymKs0v9Hx7dQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] hfs: stop using timespec based interfaces
+To:     Viacheslav Dubeyko <slava@dubeyko.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Jeff Layton <jlayton@redhat.com>, Jan Kara <jack@suse.cz>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 02:01:17PM +0530, Srinath Mannam wrote:
-> From: Pramod Kumar <pramod.kumar@broadcom.com>
-> 
-> Add binding document for supported thermal implementation
-> in Stingray.
-> 
-> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
-> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-> Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> ---
->  .../bindings/thermal/brcm,sr-thermal.txt           | 45 ++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> new file mode 100644
-> index 0000000..33f9e11
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> @@ -0,0 +1,45 @@
-> +* Broadcom Stingray Thermal
-> +
-> +This binding describes thermal sensors that is part of Stingray SoCs.
-> +
-> +Required properties:
-> +- compatible : Must be "brcm,sr-thermal"
-> +- reg : memory where tmon data will be available.
-> +
-> +Example:
-> +	tmons {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		tmon_ihost0: thermal@8f100000 {
-> +			compatible = "brcm,sr-thermal";
-> +			reg = <0x8f100000 0x4>;
-> +		};
+On Wed, Jun 20, 2018 at 6:55 PM, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
+> On Tue, 2018-06-19 at 21:42 +0200, Arnd Bergmann wrote:
+>> On Tue, Jun 19, 2018 at 7:03 PM, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
 
-You still haven't given me a compelling reason why you need a node per 
-register.
+>> We never followed that interpretation in Linux though. As I wrote,
+>> on 64-bit machines, these two calculations (hfs and hfs+,
+>> respectively)
+>>
+>> #define __hfs_m_to_utime(sec)   (be32_to_cpu(sec) - 2082844800U  +
+>> sys_tz.tz_minuteswest * 60)
+>> #define __hfsp_mt2ut(t)                (be32_to_cpu(t) - 2082844800U)
+>>
+>> just wrap around when reading the timestamps before 1970 from
+>> disk. On 32-bit machines they get wrapped another time when
+>> we assign them to a signed 32-bit time_t.
+>>
+>
+> The whole patchset looks reasonable for me. I simply guess what the
+> correct behaviour of HFS/HFS+ file system driver could look like for
+> the case of achieving 2040 year. So, maybe the good way could be to
+> mount in the READ-ONLY mode. What do you think?
 
-You have a single range of registers. Make this 1 node.
+We've discussed doing that in VFS before, this is something we
+need to revisit, but I'd like to do it in common code rather than
+in every file system with a particular limit.
 
-Rob
+Deepa has a patch set to introduce minimum/maximum timestamps
+in the superblock for this. We definitely want to use that for limiting
+the range of utimensat() arguments from user space, and the idea
+we had discussed in the past was to have a way to enforce
+read-only mounting of file systems that cannot write current i_mtime
+values past a certain (user-defined) future date.
+
+We actually need something like that soon, as there are some
+organizations that want to support super-long service lifetimes
+for Linux systems (e.g. cars, industrial machines, ...) and want
+an early-fail behavior to ensure that everything that works today
+can in principle keep working for the foreseeable future, while
+everything that is known to break can be forced to break already.
+
+This is clearly not a priority for HFS in particular, but there is no
+reason for HFS to be different from ext3 here, which has a similar
+problem (timestamps are defined to range from 1902 to 2038).
+
+>>  /* time macros: convert between 1904-2040 and 1970-2106 range,
+>>   * pre-1970 timestamps are interpreted as post-2038 times after
+>> wrap-around */
+>> -#define __hfsp_mt2ut(t)                (be32_to_cpu(t) -
+>> 2082844800U)
+>> +#define __hfsp_mt2ut(t)                ((time64_t)be32_to_cpu(t) -
+>> 2082844800U)
+>>  #define __hfsp_ut2mt(t)                (cpu_to_be32(t +
+>> 2082844800U))
+>>
+>>  /* compatibility */
+>>
+>> I can submit that separately so that it can get backported into
+>> stable kernels if you like, with the type changes as a follow-up
+>> on top.
+>>
+>
+> Sounds good.
+
+Ok, I'll send an updated version with that patch first then.
+
+       Arnd
