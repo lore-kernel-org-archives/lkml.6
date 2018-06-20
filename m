@@ -3,137 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC83C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9959AC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30BD20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:21:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30BD20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 5C7F220693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:22:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C7F220693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754597AbeFTJVk (ORCPT
+        id S1754374AbeFTJWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:21:40 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:37911 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932121AbeFTI37 (ORCPT
+        Wed, 20 Jun 2018 05:22:22 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:7496 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754465AbeFTI3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:29:59 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0M1hZS-1gJoru1vOU-00tgex; Wed, 20 Jun 2018 10:29:40 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ubifs: tnc: use monotonic znode timestamp
-Date:   Wed, 20 Jun 2018 10:29:11 +0200
-Message-Id: <20180620082937.719067-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:vxIMLQRBGMGZ82FXIXw3ZVG74RVbmt6DfFiQ3KR9OdnR8K8rjyx
- pzo8DMnWdiKdjKfV/Y+22HPFE07gRGye4EOG90/MpyWgMH4j2DhKBnFjP5DNLkrnmQ0Yhyi
- bdYTLufQRGFQUio5CzKWbV/kuo87DYulhY/iU8mP7Tj4TWKRDyxU3deiygtfaJE7fJJo8A6
- Up5WAJaVKUk/fjkwaiF2A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:PSXRrjG/+vo=:M+JjVeQ9cU6iOYjSN8gL+S
- 6sZ3Mxkf4GHjxwN1s0z5ZOEvF4b9bXPECWZwzKhHEnt93yulkFHaqUM8eFaC2hKxrK5e6Kq2a
- zkxQqFlC5BUtQAhmO59rZCnf/7BIEeDUZAdqkP5LTb41ehY8pGPYe12A9YAAdjSHEUoLAySW0
- R+nw0wy5WuNwCFuHIVEo7TF+z8ihAAs+s8D8nQ3+h8VGfdro1w+8WbqWfobmgRMdqt4p3HEfW
- G2R/BGZjDAJiGcihbTici27bS2Gq9SX1eQ77C3wRJw9d571UpBgJcAUjXkejPJs6yQcU+KkN4
- v+lG3yjarswIWa1bDaPOyZMoV58HQe6CkuiBug8qlhqO74O6x1LBu8erQ+LjVZDaeZmkwoWnn
- jWpAufZN+Urm4366W7V2JScoz9lxX0IZnNdI0wu97nQmEbCTR6omS8p45iBFMLp/Tdvlwrmuh
- /DHlATDzlha7ODb4oDU1QdO0tnD8JZgCKYsB++s0yUwQ6q5aiBdfpedatXNYb/gKybmy+d7CM
- Qc9ieBOCF8pDDq64TnLRschnMm/OzOU1UX8b3h5MwtdNhFSXh7uRqzTtRfViWU2iPfB0+PVO5
- ffv+XZXB4IOtdr2cHdnz4JyqAxpjgcuhcQDFMQPBWDBCLkf+e85Li22ibrSDb0yeCxdY6ufiv
- EQ/wcH6k+msnDzrRkRNT9uMZuG7Vpi+wJ1LqVLEUNLx9HtIhl8SKyYBFoAyYzJZRB1eI=
+        Wed, 20 Jun 2018 04:29:55 -0400
+X-UUID: a6e4f4e4be944962af16d4912b6968db-20180620
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2091981026; Wed, 20 Jun 2018 16:19:49 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 20 Jun 2018 16:19:46 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 20 Jun 2018 16:19:46 +0800
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, "Stu Hsieh" <stu.hsieh@mediatek.com>
+Subject: [PATCH v7 23/29] drm/mediatek: add connection from RDMA2 to DSI2
+Date:   Wed, 20 Jun 2018 16:19:25 +0800
+Message-ID: <1529482771-2153-24-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tnc uses get_seconds() based timestamps to check the age of a znode,
-which has two problems: on 32-bit architectures this may overflow in
-2038 or 2106, and it gives incorrect information when the system time
-is updated using settimeofday().
+This patch add the connection from RDMA2 to DSI2
 
-Using montonic timestamps with ktime_get_seconds() solves both thes
-problems.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- fs/ubifs/shrinker.c | 2 +-
- fs/ubifs/tnc.c      | 4 ++--
- fs/ubifs/tnc_misc.c | 2 +-
- fs/ubifs/ubifs.h    | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/fs/ubifs/shrinker.c b/fs/ubifs/shrinker.c
-index 9a9fb94a41c6..9d10cbdec2cc 100644
---- a/fs/ubifs/shrinker.c
-+++ b/fs/ubifs/shrinker.c
-@@ -71,7 +71,7 @@ static int shrink_tnc(struct ubifs_info *c, int nr, int age, int *contention)
- {
- 	int total_freed = 0;
- 	struct ubifs_znode *znode, *zprev;
--	int time = get_seconds();
-+	time64_t time = ktime_get_seconds();
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index db78fad785e3..e5db1ab51c9b 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -95,6 +95,7 @@
+ #define RDMA2_SOUT_DPI0			0x2
+ #define RDMA2_SOUT_DPI1			0x3
+ #define RDMA2_SOUT_DSI1			0x1
++#define RDMA2_SOUT_DSI2			0x4
+ #define DPI0_SEL_IN_RDMA1		0x1
+ #define DPI0_SEL_IN_RDMA2		0x3
+ #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+@@ -102,6 +103,7 @@
+ #define DSI1_SEL_IN_RDMA1		0x1
+ #define DSI1_SEL_IN_RDMA2		0x4
+ #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
++#define DSI2_SEL_IN_RDMA2		(0x4 << 16)
+ #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+ #define COLOR1_SEL_IN_OVL1		0x1
  
- 	ubifs_assert(mutex_is_locked(&c->umount_mutex));
- 	ubifs_assert(mutex_is_locked(&c->tnc_mutex));
-diff --git a/fs/ubifs/tnc.c b/fs/ubifs/tnc.c
-index 4a21e7f75e7a..6c497fb48b98 100644
---- a/fs/ubifs/tnc.c
-+++ b/fs/ubifs/tnc.c
-@@ -1179,7 +1179,7 @@ int ubifs_lookup_level0(struct ubifs_info *c, const union ubifs_key *key,
- {
- 	int err, exact;
- 	struct ubifs_znode *znode;
--	unsigned long time = get_seconds();
-+	time64_t time = ktime_get_seconds();
- 
- 	dbg_tnck(key, "search key ");
- 	ubifs_assert(key_type(c, key) < UBIFS_INVALID_KEY);
-@@ -1315,7 +1315,7 @@ static int lookup_level0_dirty(struct ubifs_info *c, const union ubifs_key *key,
- {
- 	int err, exact;
- 	struct ubifs_znode *znode;
--	unsigned long time = get_seconds();
-+	time64_t time = ktime_get_seconds();
- 
- 	dbg_tnck(key, "search and dirty key ");
- 
-diff --git a/fs/ubifs/tnc_misc.c b/fs/ubifs/tnc_misc.c
-index 93f5b7859e6f..49f647bc88f0 100644
---- a/fs/ubifs/tnc_misc.c
-+++ b/fs/ubifs/tnc_misc.c
-@@ -435,7 +435,7 @@ struct ubifs_znode *ubifs_load_znode(struct ubifs_info *c,
- 
- 	zbr->znode = znode;
- 	znode->parent = parent;
--	znode->time = get_seconds();
-+	znode->time = ktime_get_seconds();
- 	znode->iip = iip;
- 
- 	return znode;
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 04bf84d71e7b..54fb6b1cd042 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -758,7 +758,7 @@ struct ubifs_znode {
- 	struct ubifs_znode *parent;
- 	struct ubifs_znode *cnext;
- 	unsigned long flags;
--	unsigned long time;
-+	time64_t time;
- 	int level;
- 	int child_cnt;
- 	int iip;
+@@ -209,6 +211,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+ 		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+ 		value = RDMA2_SOUT_DSI1;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
++		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
++		value = RDMA2_SOUT_DSI2;
+ 	} else {
+ 		value = 0;
+ 	}
+@@ -249,6 +254,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+ 		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
+ 		value = DSI1_SEL_IN_RDMA2;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI2) {
++		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
++		value = DSI2_SEL_IN_RDMA2;
+ 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+ 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+ 		value = COLOR1_SEL_IN_OVL1;
 -- 
-2.9.0
+2.12.5
 
