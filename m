@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AB1C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C1AC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C6A620836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C6A620836
+	by mail.kernel.org (Postfix) with ESMTP id 66CBC20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66CBC20836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754444AbeFTNxq (ORCPT
+        id S1754468AbeFTNxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:53:46 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37544 "EHLO
+        Wed, 20 Jun 2018 09:53:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37568 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754418AbeFTNxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:53:44 -0400
+        id S1754446AbeFTNxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:53:50 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC3DC80D;
-        Wed, 20 Jun 2018 06:53:43 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB94D15B2;
+        Wed, 20 Jun 2018 06:53:49 -0700 (PDT)
 Received: from big-swifty.cambridge.arm.com (big-swifty.cambridge.arm.com [10.1.31.224])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D86D73F578;
-        Wed, 20 Jun 2018 06:53:37 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B657D3F578;
+        Wed, 20 Jun 2018 06:53:44 -0700 (PDT)
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -37,9 +37,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         MaJun <majun258@huawei.com>,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>,
         Lei Zhang <zhang.lei@jp.fujitsu.com>
-Subject: [PATCH 6/7] irqchip/gic-v3-its: Honor hypervisor enforced LPI range
-Date:   Wed, 20 Jun 2018 14:52:33 +0100
-Message-Id: <20180620135234.32101-7-marc.zyngier@arm.com>
+Subject: [PATCH 7/7] irqchip/gic-v3-its: Reduce minimum LPI allocation to 1 for PCI devices
+Date:   Wed, 20 Jun 2018 14:52:34 +0100
+Message-Id: <20180620135234.32101-8-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180620135234.32101-1-marc.zyngier@arm.com>
 References: <20180620135234.32101-1-marc.zyngier@arm.com>
@@ -48,53 +48,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A recent extension to the GIC architecture allows a hypervisor to
-arbitrarily reduce the number of LPIs available to a guest, no
-matter what the GIC says about the valid range of IntIDs.
+Allocating a minimum of 32 LPIs per PCI device, let's reduce it to
+be just 1, as most devices do not need that many interrupts.
 
-Let's factor in this information when computing the number of
-available LPIs
+We still have to special-case DevID 0, as there is plenty of broken
+HW around where the PCI RID is not presented as a DevID to the ITS,
+and all the devices are presented as DevID 0. In this case, we keep
+the 32 minimal allocation.
 
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 9 +++++++++
- include/linux/irqchip/arm-gic-v3.h | 1 +
- 2 files changed, 10 insertions(+)
+ drivers/irqchip/irq-gic-v3-its-pci-msi.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 8c7e8c235faf..903ca1c19553 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1525,8 +1525,17 @@ static int free_lpi_range(u32 base, u32 nr_lpis)
- static int __init its_lpi_init(u32 id_bits)
+diff --git a/drivers/irqchip/irq-gic-v3-its-pci-msi.c b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+index 75c3cafabc6a..8d6d009d1d58 100644
+--- a/drivers/irqchip/irq-gic-v3-its-pci-msi.c
++++ b/drivers/irqchip/irq-gic-v3-its-pci-msi.c
+@@ -66,7 +66,7 @@ static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
  {
- 	u32 lpis = (1UL << id_bits) - 8192;
-+	u32 numlpis;
- 	int err;
+ 	struct pci_dev *pdev, *alias_dev;
+ 	struct msi_domain_info *msi_info;
+-	int alias_count = 0;
++	int alias_count = 0, minnvec = 1;
  
-+	numlpis = 1UL << GICD_TYPER_NUM_LPIS(gic_rdists->gicd_typer);
-+
-+	if (numlpis > 1 && !WARN_ON(numlpis > lpis)) {
-+		lpis = numlpis;
-+		pr_info("ITS: Using hypervisor restricted LPI range [%u]\n",
-+			lpis);
-+	}
-+
- 	/*
- 	 * Initializing the allocator is just the same as freeing the
- 	 * full range of LPIs.
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 396cd99af02f..9d2ea3e907d0 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -73,6 +73,7 @@
- #define GICD_TYPER_MBIS			(1U << 16)
+ 	if (!dev_is_pci(dev))
+ 		return -EINVAL;
+@@ -86,9 +86,17 @@ static int its_pci_msi_prepare(struct irq_domain *domain, struct device *dev,
+ 	/* ITS specific DeviceID, as the core ITS ignores dev. */
+ 	info->scratchpad[0].ul = pci_msi_domain_get_msi_rid(domain, pdev);
  
- #define GICD_TYPER_ID_BITS(typer)	((((typer) >> 19) & 0x1f) + 1)
-+#define GICD_TYPER_NUM_LPIS(typer)	((((typer) >> 11) & 0x1f) + 1)
- #define GICD_TYPER_IRQS(typer)		((((typer) & 0x1f) + 1) * 32)
+-	/* Allocate at least 32 MSIs, and always as a power of 2 */
++	/*
++	 * Always allocate a power of 2, and special case device 0 for
++	 * broken systems where the DevID is not wired (and all devices
++	 * appear as DevID 0). For that reason, we generously allocate a
++	 * minimum of 32 MSIs for DevID 0. If you want more because all
++	 * your devices are aliasing to DevID 0, consider fixing your HW.
++	 */
+ 	nvec = max(nvec, alias_count);
+-	nvec = max_t(int, 32, roundup_pow_of_two(nvec));
++	if (!info->scratchpad[0].ul)
++		minnvec = 32;
++	nvec = max_t(int, minnvec, roundup_pow_of_two(nvec));
+ 	return msi_info->ops->msi_prepare(domain->parent, dev, nvec, info);
+ }
  
- #define GICD_IROUTER_SPI_MODE_ONE	(0U << 31)
 -- 
 2.17.1
 
