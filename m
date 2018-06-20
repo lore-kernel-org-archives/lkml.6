@@ -2,211 +2,177 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 491E9C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B276C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED6E220874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:16:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="sUOSe9/+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6E220874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F3C720874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:17:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3C720874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754106AbeFTPQB (ORCPT
+        id S1754139AbeFTPRw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:16:01 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:48578 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754075AbeFTPP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:15:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
-        ; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=jqxkfFwEagfA+T/8RI6lT964JvR/FbmhSgMXvlcheCQ=; b=sUOSe9/+fr5WQDsouugLrcuPgA
-        +rOOUNqs4gvJUB/+RYkttzzs7H451Rc3x+ez4h474n/BcwapnmOx/fjXtWi7aCMY1z3xyfhDm2Rzv
-        UaIv60wkdWp521UzpV9FxmTRswLZJdVsin/gq3wDzdwJg3RctypCK4/44UHvuIUVQ39o=;
-Date:   Wed, 20 Jun 2018 11:18:12 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Greg Thelen <gthelen@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [RFC PATCH] memcg, oom: move out_of_memory back to the charge
- path
-Message-ID: <20180620151812.GA2441@cmpxchg.org>
-References: <20180620103736.13880-1-mhocko@kernel.org>
+        Wed, 20 Jun 2018 11:17:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59610 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753202AbeFTPRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 11:17:50 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D65BD401EF0D;
+        Wed, 20 Jun 2018 15:17:49 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5BA662026D6B;
+        Wed, 20 Jun 2018 15:17:49 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 11:17:49 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] dm: prevent DAX mounts if not supported
+Message-ID: <20180620151748.GA4847@redhat.com>
+References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
+ <20180529195106.14268-5-ross.zwisler@linux.intel.com>
+ <20180601215513.GA18712@redhat.com>
+ <20180604231508.GA10666@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180620103736.13880-1-mhocko@kernel.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180604231508.GA10666@linux.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 20 Jun 2018 15:17:49 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 20 Jun 2018 15:17:49 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 12:37:36PM +0200, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+On Mon, Jun 04 2018 at  7:15pm -0400,
+Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+
+> On Fri, Jun 01, 2018 at 05:55:13PM -0400, Mike Snitzer wrote:
+> > On Tue, May 29 2018 at  3:51pm -0400,
+> > Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+> > 
+> > > Currently the code in dm_dax_direct_access() only checks whether the target
+> > > type has a direct_access() operation defined, not whether the underlying
+> > > block devices all support DAX.  This latter property can be seen by looking
+> > > at whether we set the QUEUE_FLAG_DAX request queue flag when creating the
+> > > DM device.
+> > 
+> > Wait... I thought DAX support was all or nothing?
 > 
-> 3812c8c8f395 ("mm: memcg: do not trap chargers with full callstack on OOM")
-> has changed the ENOMEM semantic of memcg charges. Rather than invoking
-> the oom killer from the charging context it delays the oom killer to the
-> page fault path (pagefault_out_of_memory). This in turn means that many
-> users (e.g. slab or g-u-p) will get ENOMEM when the corresponding memcg
-> hits the hard limit and the memcg is is OOM. This is behavior is
-> inconsistent with !memcg case where the oom killer is invoked from the
-> allocation context and the allocator keeps retrying until it succeeds.
+> Right, it is, and that's what I'm trying to capture.  The point of this series
+> is to make sure that we don't use DAX thru DM if one of the DM members doesn't
+> support DAX.
 > 
-> The difference in the behavior is user visible. mmap(MAP_POPULATE) might
-> result in not fully populated ranges while the mmap return code doesn't
-> tell that to the userspace. Random syscalls might fail with ENOMEM etc.
+> This is a bit tricky, though, because as you've pointed out there are a lot of
+> elements that go into a block device actually supporting DAX.  
 > 
-> The primary motivation of the different memcg oom semantic was the
-> deadlock avoidance. Things have changed since then, though. We have
-> an async oom teardown by the oom reaper now and so we do not have to
-> rely on the victim to tear down its memory anymore. Therefore we can
-> return to the original semantic as long as the memcg oom killer is not
-> handed over to the users space.
+> First, the block device has to have a direct_access() operation defined in its
+> struct dax_operations table.  This is a static definition in the drivers,
+> though, so it's necessary but not sufficient.  For example, the PMEM driver
+> always defines a direct_access() operation, but depending on the mode of the
+> namespace (raw, fsdax or sector) it may or may not support DAX.
 > 
-> There is still one thing to be careful about here though. If the oom
-> killer is not able to make any forward progress - e.g. because there is
-> no eligible task to kill - then we have to bail out of the charge path
-> to prevent from same class of deadlocks. We have basically two options
-> here. Either we fail the charge with ENOMEM or force the charge and
-> allow overcharge. The first option has been considered more harmful than
-> useful because rare inconsistencies in the ENOMEM behavior is hard to
-> test for and error prone. Basically the same reason why the page
-> allocator doesn't fail allocations under such conditions. The later
-> might allow runaways but those should be really unlikely unless somebody
-> misconfigures the system. E.g. allowing to migrate tasks away from the
-> memcg to a different unlimited memcg with move_charge_at_immigrate
-> disabled.
-
-This is more straight-forward than I thought it would be. I have no
-objections to this going forward, just a couple of minor notes.
-
-> @@ -1483,28 +1483,54 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
->  		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
->  }
->  
-> -static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
-> +enum oom_status {
-> +	OOM_SUCCESS,
-> +	OOM_FAILED,
-> +	OOM_ASYNC,
-> +	OOM_SKIPPED
-
-Either SUCCESS & FAILURE, or SUCCEEDED & FAILED ;)
-
-We're not distinguishing ASYNC and SKIPPED anywhere below, but I
-cannot think of a good name to communicate them both without this
-function making assumptions about the charge function's behavior.
-So it's a bit weird, but probably the best way to go.
-
-> +static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
->  {
-> -	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
-> -		return;
-> +	if (order > PAGE_ALLOC_COSTLY_ORDER)
-> +		return OOM_SKIPPED;
->  	/*
->  	 * We are in the middle of the charge context here, so we
->  	 * don't want to block when potentially sitting on a callstack
->  	 * that holds all kinds of filesystem and mm locks.
->  	 *
-> -	 * Also, the caller may handle a failed allocation gracefully
-> -	 * (like optional page cache readahead) and so an OOM killer
-> -	 * invocation might not even be necessary.
-> +	 * cgroup1 allows disabling the OOM killer and waiting for outside
-> +	 * handling until the charge can succeed; remember the context and put
-> +	 * the task to sleep at the end of the page fault when all locks are
-> +	 * released.
-> +	 *
-> +	 * On the other hand, in-kernel OOM killer allows for an async victim
-> +	 * memory reclaim (oom_reaper) and that means that we are not solely
-> +	 * relying on the oom victim to make a forward progress and we can
-> +	 * invoke the oom killer here.
->  	 *
-> -	 * That's why we don't do anything here except remember the
-> -	 * OOM context and then deal with it at the end of the page
-> -	 * fault when the stack is unwound, the locks are released,
-> -	 * and when we know whether the fault was overall successful.
-> +	 * Please note that mem_cgroup_oom_synchronize might fail to find a
-> +	 * victim and then we have rely on mem_cgroup_oom_synchronize otherwise
-> +	 * we would fall back to the global oom killer in pagefault_out_of_memory
->  	 */
-> +	if (!memcg->oom_kill_disable) {
-> +		if (mem_cgroup_out_of_memory(memcg, mask, order))
-> +			return OOM_SUCCESS;
-> +
-> +		WARN(!current->memcg_may_oom,
-> +				"Memory cgroup charge failed because of no reclaimable memory! "
-> +				"This looks like a misconfiguration or a kernel bug.");
-> +		return OOM_FAILED;
-> +	}
-> +
-> +	if (!current->memcg_may_oom)
-> +		return OOM_SKIPPED;
-
-memcg_may_oom was introduced to distinguish between userspace faults
-that can OOM and contexts that return -ENOMEM. Now we're using it
-slightly differently and it's confusing.
-
-1) Why warn for kernel allocations, but not userspace ones? This
-should have a comment at least.
-
-2) We invoke the OOM killer when !memcg_may_oom. We want to OOM kill
-in either case, but only set up the mem_cgroup_oom_synchronize() for
-userspace faults. So the code makes sense, but a better name would be
-in order -- current->in_user_fault?
-
->  	css_get(&memcg->css);
->  	current->memcg_in_oom = memcg;
->  	current->memcg_oom_gfp_mask = mask;
->  	current->memcg_oom_order = order;
-> +
-> +	return OOM_ASYNC;
-
-In terms of code flow, it would be much clearer to handle the
-memcg->oom_kill_disable case first, as a special case with early
-return, and make the OOM invocation the main code of this function,
-given its name.
-
-> @@ -1994,8 +2024,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  
->  	memcg_memory_event(mem_over_limit, MEMCG_OOM);
->  
-> -	mem_cgroup_oom(mem_over_limit, gfp_mask,
-> +	/*
-> +	 * keep retrying as long as the memcg oom killer is able to make
-> +	 * a forward progress or bypass the charge if the oom killer
-> +	 * couldn't make any progress.
-> +	 */
-> +	oom_status = mem_cgroup_oom(mem_over_limit, gfp_mask,
->  		       get_order(nr_pages * PAGE_SIZE));
-> +	switch (oom_status) {
-> +	case OOM_SUCCESS:
-> +		nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
-> +		oomed = true;
-> +		goto retry;
-> +	case OOM_FAILED:
-> +		goto force;
-> +	default:
-> +		goto nomem;
-> +	}
->  nomem:
->  	if (!(gfp_mask & __GFP_NOFAIL))
->  		return -ENOMEM;
-> -- 
-> 2.17.1
+> The next step is that a driver needs to say that he block queue supports
+> QUEUE_FLAG_DAX.  This again is necessary but not sufficient.  The PMEM driver
+> currently sets this for all namespace modes, but I agree that this should be
+> restricted to modes that support DAX.  Even once we do that, though, for the
+> block driver this isn't fully sufficient.  We'd really like users to call
+> bdev_dax_supported() so it can run some additional tests to make sure that DAX
+> will work.
 > 
+> So, the real test that filesystems rely on is bdev_dax_suppported().
+> 
+> The trick is that with DM we need to verify each block device via
+> bdev_dax_supported() just like a filesystem would, and then have some way of
+> communicating the result of all those checks to the filesystem which is
+> eventually mounted on the DM device.  At DAX mount time the filesystem will
+> call bdev_dax_supported() on the DM device, but it'll really only check the
+> first device.  
+> 
+> So, the strategy is to have DM manually check each member device via
+> bdev_dax_supported() then if they all pass set QUEUE_FLAG_DAX.  This then
+> becomes our one source of truth on whether or not a DM device supports DAX.
+> When the filesystem mounts with DAX support it'll also run
+> bdev_dax_supported(), but if we have QUEUE_FLAG_DAX set on the DM device, we
+> know that this check will pass.
+> 
+> > > This is problematic if we have, for example, a dm-linear device made up of
+> > > a PMEM namespace in fsdax mode followed by a ramdisk from BRD.
+> > > QUEUE_FLAG_DAX won't be set on the dm-linear device's request queue, but
+> > > we have a working direct_access() entry point and the first member of the
+> > > dm-linear set *does* support DAX.
+> > 
+> > If you don't have a uniformly capable device then it is very dangerous
+> > to advertise that the entire device has a certain capability.  That
+> > completely bit me in the past with discard (because for every IO I
+> > wasn't then checking if the destination device supported discards).
+> >
+> > It is all well and good that you're adding that check here.  But what I
+> > don't like is how you're saying QUEUE_FLAG_DAX implies direct_access()
+> > operation exists.. yet for raw PMEM namespaces we just discussed how
+> > that is a lie.
+> 
+> QUEUE_FLAG_DAX does imply that direct_access() exits.  However, as discussed
+> above for a given bdev we really do need to check bdev_dax_supported().
+> 
+> > SO this type of change showcases how the QUEUE_FLAG_DAX doesn't _really_
+> > imply direct_access() exists.
+> > 
+> > > This allows the user to create a filesystem on the dm-linear device, and
+> > > then mount it with DAX.  The filesystem's bdev_dax_supported() test will
+> > > pass because it'll operate on the first member of the dm-linear device,
+> > > which happens to be a fsdax PMEM namespace.
+> > > 
+> > > All DAX I/O will then fail to that dm-linear device because the lack of
+> > > QUEUE_FLAG_DAX prevents fs_dax_get_by_bdev() from working.  This means that
+> > > the struct dax_device isn't ever set in the filesystem, so
+> > > dax_direct_access() will always return -EOPNOTSUPP.
+> > 
+> > Now you've lost me... these past 2 paragraphs.  Why can a user mount it
+> > is DAX mode?  Because bdev_dax_supported() only accesses the first
+> > portion (which happens to have DAX capabilities?)
+> 
+> Right.  bdev_dax_supported() runs all of its checks, and because they are
+> running against the first block device in the dm set, they all pass.  But the
+> overall DM device does not actually support DAX.
+> 
+> > Isn't this exactly why you should be checking for QUEUE_FLAG_DAX in the
+> > caller (bdev_dax_supported)?  Why not use bdev_get_queue() and verify
+> > QUEUE_FLAG_DAX is set in there?
+> 
+> I'll look into that for the next revision, thanks.
+
+Have you made any progress on a new revision?
+
+> > > By failing out of dm_dax_direct_access() if QUEUE_FLAG_DAX isn't set we let
+> > > the filesystem know we don't support DAX at mount time.  The filesystem
+> > > will then silently fall back and remove the dax mount option, causing it to
+> > > work properly.
+> > 
+> > This shouldn't be needed.  Again, QUEUE_FLAG_DAX wasn't set.. so don't
+> > allow code to falsely try operations that should've been gated by the
+> > fact it wasn't set.
+> 
+> Right, the goal is to make QUEUE_FLAG_DAX our one source of truth for whether
+> DM devices support DAX, and not have it half defined by that and half by the
+> DM_TYPE_DAX_BIO_BASED.
+
+My hope is that you can ignore the DM-internal book-keeping
+(DM_TYPE_DAX_BIO_BASED) for now and just focus on fixing the real issue
+of needing proper checking (as well as properly _not_ setting
+QUEUE_FLAG_DAX in the case of pmem "raw").
+
+Please advise, thanks Ross!
+
+Mike
