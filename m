@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A600C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D6FC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3007C20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:57:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD5D620652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:57:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jqXdL/gC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="a3iNlpg4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3007C20836
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oaOMot0F";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GNkf+TvB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD5D620652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932727AbeFTI52 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:57:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49610 "EHLO
+        id S933253AbeFTI5m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:57:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49550 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752792AbeFTIpD (ORCPT
+        with ESMTP id S932269AbeFTIpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:45:03 -0400
+        Wed, 20 Jun 2018 04:45:00 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9164E60B74; Wed, 20 Jun 2018 07:28:18 +0000 (UTC)
+        id 8CABA60B22; Wed, 20 Jun 2018 07:28:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479698;
-        bh=xRr6ihtnuxQbPnqLk2c4FGabgzxmW0+135vPXzAVX/g=;
+        s=default; t=1529479681;
+        bh=pzadrc6s0gw4dN3aVQSYr9jYJbcZE8Q5gKt7Ce8bAgQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jqXdL/gCdGAOA+JvGEA91I5x81Nl7cai6Pv8UJltGHE1dwT2SViC58MGmiHBazWYe
-         mCcT4IAKgIcwiRCoK7bcibpfsmx6zBkJWQKA6QQ4kSW74kkCr76Yw0NpehJ0w7a04i
-         X36KRj5YN13ItvzmOF90VT9wMOOYoZ+OtVJN5eec=
+        b=oaOMot0F1i2vICNtMn1HOWEt25j0iGgHiq6VlAUdL01xTkwg3eo/9gzOu/Sh+8nAY
+         ZRwY5kLm9eu9h8H4HzrEMhTZr944u0BNatwUwev6TQAJvPVNE0PJTrM76d7y9x+O+X
+         V2BJr/BWqpqTjD+nKTblNjzKXtc5W0MAfaLEC8/E=
 Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: absahu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DDDB06085F;
-        Wed, 20 Jun 2018 07:28:13 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6945660B14;
+        Wed, 20 Jun 2018 07:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479697;
-        bh=xRr6ihtnuxQbPnqLk2c4FGabgzxmW0+135vPXzAVX/g=;
+        s=default; t=1529479680;
+        bh=pzadrc6s0gw4dN3aVQSYr9jYJbcZE8Q5gKt7Ce8bAgQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a3iNlpg4gLrQPaY2XJQ5TNGQPZaTXnB1NhFAA0h6mOlFMkHh48IeL+2hSXBSQs9ra
-         CS4m1rMK19wSNFuodA7dq+i8Kq7MLLUn9R2HscL/OSpTV848azc87nk9996gcrsE4c
-         1ZETjSxoNXTR7zXOVBlbPjw8CBAhgLy7SpkjJlU8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDDB06085F
+        b=GNkf+TvBTKNyCaFxdvGUsawxh1PmM0Gn9GsGqkXT2OTJY2bsDkYVEh5UjTVhO/KIG
+         unPAn+bg0Zu8sh4SdoopfoB8vGBx8ILytRF1AQRc07vON32rwzyfK4Ax4SCHQvoVPt
+         5yA2scGLAGUoVwNnzTHhbgmANPHwH1CnT/9mbshc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6945660B14
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From:   Abhishek Sahu <absahu@codeaurora.org>
@@ -60,10 +60,10 @@ Cc:     David Woodhouse <dwmw2@infradead.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
         Archit Taneja <architt@codeaurora.org>,
-        Abhishek Sahu <absahu@codeaurora.org>, stable@vger.kernel.org
-Subject: [PATCH v4 06/15] mtd: rawnand: qcom: wait for desc completion in all BAM channels
-Date:   Wed, 20 Jun 2018 12:57:33 +0530
-Message-Id: <1529479662-4026-7-git-send-email-absahu@codeaurora.org>
+        Abhishek Sahu <absahu@codeaurora.org>
+Subject: [PATCH v4 02/15] mtd: rawnand: denali: use helper function for ecc setup
+Date:   Wed, 20 Jun 2018 12:57:29 +0530
+Message-Id: <1529479662-4026-3-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
 References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
@@ -72,155 +72,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The BAM has 3 channels - tx, rx and command. command channel
-is used for register read/writes, tx channel for data writes
-and rx channel for data reads. Currently, the driver assumes the
-transfer completion once it gets all the command descriptors
-completed. Sometimes, there is race condition between data channel
-(tx/rx) and command channel completion. In these cases,
-the data present in buffer is not valid during small window
-between command descriptor completion and data descriptor
-completion.
+Use the NAND core helper function nand_ecc_choose_conf to tune
+the ECC parameters instead of the function locally defined.
 
-This patch generates NAND transfer completion when both
-(Data and Command) DMA channels have completed all its DMA
-descriptors. It assigns completion callback in last
-DMA descriptors of that channel and wait for completion.
-
-Fixes: 8d6b6d7e135e ("mtd: nand: qcom: support for command descriptor formation")
-Cc: stable@vger.kernel.org
 Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 ---
 * Changes from v3:
-  1. NONE
+ NONE
 
 * Changes from v2:
-  1. Changed commit message and comments slightly
-  2. Renamed wait_second_completion from first_chan_done and set
-     it before submit desc
-  3. Mark for stable tree
+
+  1. Changed commit message
 
 * Changes from v1:
-  NONE
+  NEW PATCH
 
- drivers/mtd/nand/raw/qcom_nandc.c | 53 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
+ drivers/mtd/nand/raw/denali.c | 30 ++----------------------------
+ 1 file changed, 2 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index 2375780..fc20149 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -213,6 +213,8 @@
- #define QPIC_PER_CW_CMD_SGL		32
- #define QPIC_PER_CW_DATA_SGL		8
- 
-+#define QPIC_NAND_COMPLETION_TIMEOUT	msecs_to_jiffies(2000)
-+
- /*
-  * Flags used in DMA descriptor preparation helper functions
-  * (i.e. read_reg_dma/write_reg_dma/read_data_dma/write_data_dma)
-@@ -245,6 +247,11 @@
-  * @tx_sgl_start - start index in data sgl for tx.
-  * @rx_sgl_pos - current index in data sgl for rx.
-  * @rx_sgl_start - start index in data sgl for rx.
-+ * @wait_second_completion - wait for second DMA desc completion before making
-+ *			     the NAND transfer completion.
-+ * @txn_done - completion for NAND transfer.
-+ * @last_data_desc - last DMA desc in data channel (tx/rx).
-+ * @last_cmd_desc - last DMA desc in command channel.
-  */
- struct bam_transaction {
- 	struct bam_cmd_element *bam_ce;
-@@ -258,6 +265,10 @@ struct bam_transaction {
- 	u32 tx_sgl_start;
- 	u32 rx_sgl_pos;
- 	u32 rx_sgl_start;
-+	bool wait_second_completion;
-+	struct completion txn_done;
-+	struct dma_async_tx_descriptor *last_data_desc;
-+	struct dma_async_tx_descriptor *last_cmd_desc;
- };
- 
- /*
-@@ -504,6 +515,8 @@ static void free_bam_transaction(struct qcom_nand_controller *nandc)
- 
- 	bam_txn->data_sgl = bam_txn_buf;
- 
-+	init_completion(&bam_txn->txn_done);
-+
- 	return bam_txn;
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index 2a302a1..a586a1d 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -1120,33 +1120,6 @@ int denali_calc_ecc_bytes(int step_size, int strength)
  }
+ EXPORT_SYMBOL(denali_calc_ecc_bytes);
  
-@@ -523,11 +536,33 @@ static void clear_bam_transaction(struct qcom_nand_controller *nandc)
- 	bam_txn->tx_sgl_start = 0;
- 	bam_txn->rx_sgl_pos = 0;
- 	bam_txn->rx_sgl_start = 0;
-+	bam_txn->last_data_desc = NULL;
-+	bam_txn->wait_second_completion = false;
+-static int denali_ecc_setup(struct mtd_info *mtd, struct nand_chip *chip,
+-			    struct denali_nand_info *denali)
+-{
+-	int oobavail = mtd->oobsize - denali->oob_skip_bytes;
+-	int ret;
+-
+-	/*
+-	 * If .size and .strength are already set (usually by DT),
+-	 * check if they are supported by this controller.
+-	 */
+-	if (chip->ecc.size && chip->ecc.strength)
+-		return nand_check_ecc_caps(chip, denali->ecc_caps, oobavail);
+-
+-	/*
+-	 * We want .size and .strength closest to the chip's requirement
+-	 * unless NAND_ECC_MAXIMIZE is requested.
+-	 */
+-	if (!(chip->ecc.options & NAND_ECC_MAXIMIZE)) {
+-		ret = nand_match_ecc_req(chip, denali->ecc_caps, oobavail);
+-		if (!ret)
+-			return 0;
+-	}
+-
+-	/* Max ECC strength is the last thing we can do */
+-	return nand_maximize_ecc(chip, denali->ecc_caps, oobavail);
+-}
+-
+ static int denali_ooblayout_ecc(struct mtd_info *mtd, int section,
+ 				struct mtd_oob_region *oobregion)
+ {
+@@ -1317,7 +1290,8 @@ int denali_init(struct denali_nand_info *denali)
+ 	chip->ecc.mode = NAND_ECC_HW_SYNDROME;
+ 	chip->options |= NAND_NO_SUBPAGE_WRITE;
  
- 	sg_init_table(bam_txn->cmd_sgl, nandc->max_cwperpage *
- 		      QPIC_PER_CW_CMD_SGL);
- 	sg_init_table(bam_txn->data_sgl, nandc->max_cwperpage *
- 		      QPIC_PER_CW_DATA_SGL);
-+
-+	reinit_completion(&bam_txn->txn_done);
-+}
-+
-+/* Callback for DMA descriptor completion */
-+static void qpic_bam_dma_done(void *data)
-+{
-+	struct bam_transaction *bam_txn = data;
-+
-+	/*
-+	 * In case of data transfer with NAND, 2 callbacks will be generated.
-+	 * One for command channel and another one for data channel.
-+	 * If current transaction has data descriptors
-+	 * (i.e. wait_second_completion is true), then set this to false
-+	 * and wait for second DMA descriptor completion.
-+	 */
-+	if (bam_txn->wait_second_completion)
-+		bam_txn->wait_second_completion = false;
-+	else
-+		complete(&bam_txn->txn_done);
- }
- 
- static inline struct qcom_nand_host *to_qcom_nand_host(struct nand_chip *chip)
-@@ -756,6 +791,12 @@ static int prepare_bam_async_desc(struct qcom_nand_controller *nandc,
- 
- 	desc->dma_desc = dma_desc;
- 
-+	/* update last data/command descriptor */
-+	if (chan == nandc->cmd_chan)
-+		bam_txn->last_cmd_desc = dma_desc;
-+	else
-+		bam_txn->last_data_desc = dma_desc;
-+
- 	list_add_tail(&desc->node, &nandc->desc_list);
- 
- 	return 0;
-@@ -1273,10 +1314,20 @@ static int submit_descs(struct qcom_nand_controller *nandc)
- 		cookie = dmaengine_submit(desc->dma_desc);
- 
- 	if (nandc->props->is_bam) {
-+		bam_txn->last_cmd_desc->callback = qpic_bam_dma_done;
-+		bam_txn->last_cmd_desc->callback_param = bam_txn;
-+		if (bam_txn->last_data_desc) {
-+			bam_txn->last_data_desc->callback = qpic_bam_dma_done;
-+			bam_txn->last_data_desc->callback_param = bam_txn;
-+			bam_txn->wait_second_completion = true;
-+		}
-+
- 		dma_async_issue_pending(nandc->tx_chan);
- 		dma_async_issue_pending(nandc->rx_chan);
-+		dma_async_issue_pending(nandc->cmd_chan);
- 
--		if (dma_sync_wait(nandc->cmd_chan, cookie) != DMA_COMPLETE)
-+		if (!wait_for_completion_timeout(&bam_txn->txn_done,
-+						 QPIC_NAND_COMPLETION_TIMEOUT))
- 			return -ETIMEDOUT;
- 	} else {
- 		if (dma_sync_wait(nandc->chan, cookie) != DMA_COMPLETE)
+-	ret = denali_ecc_setup(mtd, chip, denali);
++	ret = nand_ecc_choose_conf(chip, denali->ecc_caps,
++				   mtd->oobsize - denali->oob_skip_bytes);
+ 	if (ret) {
+ 		dev_err(denali->dev, "Failed to setup ECC settings.\n");
+ 		goto disable_irq;
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
 is a member of Code Aurora Forum, hosted by The Linux Foundation
