@@ -3,101 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEE4C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CBCC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A49CA20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:52:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A49CA20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 09192208A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:52:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09192208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753882AbeFTNwB (ORCPT
+        id S1754115AbeFTNwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:52:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36572 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752798AbeFTNwA (ORCPT
+        Wed, 20 Jun 2018 09:52:23 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:36903 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753960AbeFTNwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:52:00 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KDnPLX086889
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 09:51:59 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqp7tdygr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 09:51:59 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <imbrenda@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 14:51:56 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Jun 2018 14:51:53 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KDppcE34996362
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Jun 2018 13:51:51 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD63552049;
-        Wed, 20 Jun 2018 13:41:08 +0100 (BST)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.226])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 7BBF852041;
-        Wed, 20 Jun 2018 13:41:08 +0100 (BST)
-From:   Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
-To:     stefanha@redhat.com
-Cc:     davem@davemloft.net, jhansen@vmware.com, cavery@redhat.com,
-        borntraeger@de.ibm.com, fiuczy@linux.ibm.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH v1 1/1] VSOCK: fix loopback on big-endian systems
-Date:   Wed, 20 Jun 2018 15:51:51 +0200
+        Wed, 20 Jun 2018 09:52:19 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5KDnM2e012685;
+        Wed, 20 Jun 2018 15:51:46 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2jpma38ybt-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 20 Jun 2018 15:51:46 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1FDCA34;
+        Wed, 20 Jun 2018 13:51:46 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 08FD52BE4;
+        Wed, 20 Jun 2018 13:51:46 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 20 Jun
+ 2018 15:51:46 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 20 Jun
+ 2018 15:51:45 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V3 3/3] ARM: dts: stm32: add iwdg2 support for stm32mp157c-ed1
+Date:   Wed, 20 Jun 2018 15:51:38 +0200
+Message-ID: <1529502698-13263-4-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18062013-4275-0000-0000-0000028FE566
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062013-4276-0000-0000-000037972E8B
-Message-Id: <1529502711-8028-1-git-send-email-imbrenda@linux.vnet.ibm.com>
+In-Reply-To: <1529502698-13263-1-git-send-email-ludovic.Barre@st.com>
+References: <1529502698-13263-1-git-send-email-ludovic.Barre@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_06:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=556 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806200157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dst_cid and src_cid are 64 bits, therefore 64 bit accessors should be
-used, and in fact in virtio_transport_common.c only 64 bit accessors are
-used. Using 32 bit accessors for 64 bit values breaks big endian systems.
+From: Ludovic Barre <ludovic.barre@st.com>
 
-This patch fixes a wrong use of le32_to_cpu in virtio_transport_send_pkt.
+This patch activates independent watchdog support for
+stm32mp157c board.
 
-Fixes: b9116823189e85ccf384 ("VSOCK: add loopback to virtio_transport")
-
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- net/vmw_vsock/virtio_transport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/stm32mp157c-ed1.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
-index 8e03bd3..5d3cce9 100644
---- a/net/vmw_vsock/virtio_transport.c
-+++ b/net/vmw_vsock/virtio_transport.c
-@@ -201,7 +201,7 @@ virtio_transport_send_pkt(struct virtio_vsock_pkt *pkt)
- 		return -ENODEV;
- 	}
+diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+index ae33653..8af263a 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
+@@ -68,6 +68,11 @@
+ 	status = "okay";
+ };
  
--	if (le32_to_cpu(pkt->hdr.dst_cid) == vsock->guest_cid)
-+	if (le64_to_cpu(pkt->hdr.dst_cid) == vsock->guest_cid)
- 		return virtio_transport_send_pkt_loopback(vsock, pkt);
- 
- 	if (pkt->reply)
++&iwdg2 {
++	timeout-sec = <32>;
++	status = "okay";
++};
++
+ &uart4 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart4_pins_a>;
 -- 
 2.7.4
 
