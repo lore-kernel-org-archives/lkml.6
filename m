@@ -4,258 +4,373 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4898AC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C010C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C03812083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:55:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA14D20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:59:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Ghzqx51a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03812083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TIfkAwxS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA14D20836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932621AbeFTQzi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:55:38 -0400
-Received: from mail.efficios.com ([167.114.142.138]:56574 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932153AbeFTQzg (ORCPT
+        id S932547AbeFTQ7P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 12:59:15 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39872 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932153AbeFTQ7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:55:36 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 048931A9E4C;
-        Wed, 20 Jun 2018 12:55:36 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id maOdmjSxWo79; Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 70B311A9E48;
-        Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 70B311A9E48
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1529513735;
-        bh=I3PfK82MkcHE7EnhiraLAqll0qf0wm1EWUWzeqyOhOw=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Ghzqx51aKdyuz7uNanRX0NqfDowKg/OvRV3YxBhbRs2ms3+rESlRC4MmIZQz1rDSJ
-         hQeK5WP5r58exIup1jh+KvhUyINkyisAQSPuiik4vzy1n4JjZ+0e5Ldotaqlu6l2wF
-         z9PJw15bkrQimROMNfxLxFF4EBXcDCwCDZSdpyXoY1OPR8DHG1CdALibQMLbA6vCaP
-         2KfeYU1wAEKVUYu+YsDADfuVM/YBPptiA5ATH2m2oRVeAomMYVY1iwUOaxTfETtVxD
-         OPioqT+XxbKP+Jy9HExslFftINBNNWseKIXsp0luhUU2TcY043cmgFDmZ1WFkGnPFs
-         JdZNagnaiHhLg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id A9P4RLgdcn9q; Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 5C2A51A9E42;
-        Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
-Date:   Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Message-ID: <10453618.15.1529513735208.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1529512560-28007-1-git-send-email-will.deacon@arm.com>
-References: <1529512560-28007-1-git-send-email-will.deacon@arm.com>
-Subject: Re: [RFC PATCH] rseq: Avoid infinite recursion when delivering
- SIGSEGV
+        Wed, 20 Jun 2018 12:59:13 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KGwRTv039092;
+        Wed, 20 Jun 2018 16:58:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=PQVAiMp0NVnU25+ltJtr9tUFZl76wO++OUfnL+UxFrM=;
+ b=TIfkAwxSp38Ofw7XgofZz6xAGRgBSZjoa3I7C+EF4uEZ/QIrgXp+duZn7ZWCqFKLnACI
+ 1/0j634m36yLbzRfb2k0pb5rk2n0R+2JgAA2S5Zrw2IVR4SK28NGVkmhQ3S9wV6rbFNq
+ haINbn0ED968vk6Famd8ZshnCbgRvSxQVLtFBum1f3UNuxerBl7eiO0h3OHsuhIiqxaO
+ zswqq9/V8vhwcyZ0v3bE3YYSd0OBBQFyKF5BG+EJQoYnanG5RdE3F1itrD1gVjXF6qTc
+ TywTj7QMKG82V+/dwFh57q3Sg9xnB9vhBSMlorOS3vmt2hT4wKAkyC2p0L6OqUKSk5ha bw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2jmu6xwbsn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 16:58:54 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5KGwrUr024324
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 16:58:53 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5KGwqC4021219;
+        Wed, 20 Jun 2018 16:58:52 GMT
+Received: from [10.132.93.82] (/10.132.93.82)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 20 Jun 2018 09:58:52 -0700
+Subject: Re: [PATCH v6] pidns: introduce syscall translate_pid
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Jann Horn <jannh@google.com>,
+        Serge Hallyn <serge.hallyn@ubuntu.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+References: <152788068212.768348.15192457501079586650.stgit@buzz>
+From:   Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+Message-ID: <97f480b0-58f8-e1bc-0dbe-69309509cecf@oracle.com>
+Date:   Wed, 20 Jun 2018 09:53:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <152788068212.768348.15192457501079586650.stgit@buzz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq: Avoid infinite recursion when delivering SIGSEGV
-Thread-Index: k99nSYS/cn2LuEXA1At4wWDWA3b9fw==
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=45 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806200187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 20, 2018, at 12:36 PM, Will Deacon will.deacon@arm.com wrote:
 
-> When delivering a signal to a task that is using rseq, we call into
-> __rseq_handle_notify_resume() so that the registers pushed in the
-> sigframe are updated to reflect the state of the restartable sequence
-> (for example, ensuring that the signal returns to the abort handler if
-> necessary).
-> 
-> However, if the rseq management fails due to an unrecoverable fault when
-> accessing userspace or certain combinations of RSEQ_CS_* flags, then we
-> will attempt to deliver a SIGSEGV. This has the potential for infinite
-> recursion if the rseq code continuously fails on signal delivery.
-> 
-> Avoid this problem by using force_sigsegv() instead of force_sig(), which
-> is explicitly designed to reset the SEGV handler to SIG_DFL in the case
-> of a recursive fault.
 
-Your approach looks good. One nit below implementation-wise:
-
-> 
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
+On 06/01/2018 12:18 PM, Konstantin Khlebnikov wrote:
+> Each process have different pids, one for each pid namespace it belongs.
+> When interaction happens within single pid-ns translation isn't required.
+> More complicated scenarios needs special handling.
+>
+> For example:
+> - reading pid-files or logs written inside container with pid namespace
+> - writing logs with internal pids outside container for pushing them into
+> - attaching with ptrace to tasks from different pid namespace
+>
+> Generally speaking, any cross pid-ns API with pids needs translation.
+>
+> Currently there are several interfaces that could be used here:
+>
+> Pid namespaces are identified by device and inode of /proc/[pid]/ns/pid.
+>
+> Pids for nested pid namespaces are shown in file /proc/[pid]/status.
+> In some cases pid translation could be easily done using this information.
+> Backward translation requires scanning all tasks and becomes really
+> complicated for deeper namespace nesting.
+>
+> Unix socket automatically translates pid attached to SCM_CREDENTIALS.
+> This requires CAP_SYS_ADMIN for sending arbitrary pids and entering
+> into pid namespace, this expose process and could be insecure.
+>
+> This patch adds new syscall for converting pids between pid namespaces:
+>
+> pid_t translate_pid(pid_t pid, int source, int target);
+>
+> Pid-namespaces are referred file descriptors opened to proc files
+> /proc/[pid]/ns/pid or /proc/[pid]/ns/pid_for_children.
+> Negative argument points to current pid namespace.
+>
+> Syscall returns pid in target pid-ns or zero if task have no pid there.
+>
+> Error codes:
+> EBADF    - file descriptor is closed
+> EINVAL   - file descriptor isn't pid namespace
+> ESRCH    - task not found in @source namespace
+>
+> Translation could breach pid-ns isolation and return pids from outer pid
+> namespaces iff process already has file descriptor for these namespaces.
+>
+> Examples:
+> translate_pid(pid, ns, -1)      - get pid in our pid namespace
+> translate_pid(pid, -1, ns)      - get pid in other pid namespace
+> translate_pid(1, ns, -1)        - get pid of init task for namespace
+> translate_pid(pid, -1, ns) > 0  - is pid is reachable from ns?
+> translate_pid(1, ns1, ns2) > 0  - is ns1 inside ns2?
+> translate_pid(1, ns1, ns2) == 0 - is ns1 outside ns2?
+> translate_pid(1, ns1, ns2) == 1 - is ns1 equal ns2?
+>
+> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Reanimated-by: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
+>
 > ---
-> 
-> Sending as an RFC since I only spotted this via code inspection and haven't
-> tried to trigger it yet.
-> 
-> arch/arm/kernel/signal.c     |  2 +-
-> arch/powerpc/kernel/signal.c |  2 +-
-> arch/x86/kernel/signal.c     |  2 +-
-> include/linux/sched.h        | 20 ++++++++++++++------
-> kernel/rseq.c                |  7 ++++---
-> 5 files changed, 21 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-> index f09e9d66d605..6434a62591e8 100644
-> --- a/arch/arm/kernel/signal.c
-> +++ b/arch/arm/kernel/signal.c
-> @@ -544,7 +544,7 @@ static void handle_signal(struct ksignal *ksig, struct
-> pt_regs *regs)
-> 	 * Increment event counter and perform fixup for the pre-signal
-> 	 * frame.
-> 	 */
-> -	rseq_signal_deliver(regs);
-> +	rseq_signal_deliver(ksig, regs);
-> 
-> 	/*
-> 	 * Set up the stack frame
-> diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
-> index 17fe4339ba59..af822e764569 100644
-> --- a/arch/powerpc/kernel/signal.c
-> +++ b/arch/powerpc/kernel/signal.c
-> @@ -134,7 +134,7 @@ static void do_signal(struct task_struct *tsk)
-> 	/* Re-enable the breakpoints for the signal stack */
-> 	thread_change_pc(tsk, tsk->thread.regs);
-> 
-> -	rseq_signal_deliver(tsk->thread.regs);
-> +	rseq_signal_deliver(&ksig, tsk->thread.regs);
-> 
-> 	if (is32) {
->         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
-> diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-> index 445ca11ff863..92a3b312a53c 100644
-> --- a/arch/x86/kernel/signal.c
-> +++ b/arch/x86/kernel/signal.c
-> @@ -692,7 +692,7 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
-> 	 * Increment event counter and perform fixup for the pre-signal
-> 	 * frame.
-> 	 */
-> -	rseq_signal_deliver(regs);
-> +	rseq_signal_deliver(ksig, regs);
-> 
-> 	/* Set up the stack frame */
-> 	if (is_ia32_frame(ksig)) {
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 87bf02d93a27..277f8ccb0661 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1799,20 +1799,27 @@ static inline void rseq_set_notify_resume(struct
-> task_struct *t)
-> 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+>
+> v1: https://lkml.org/lkml/2015/9/15/411
+> v2: https://lkml.org/lkml/2015/9/24/278
+>   * use namespace-fd as second/third argument
+>   * add -pid for getting parent pid
+>   * move code into kernel/sys.c next to getppid
+>   * drop ifdef CONFIG_PID_NS
+>   * add generic syscall
+> v3: https://lkml.org/lkml/2015/9/28/3
+>   * use proc_ns_fdget()
+>   * update description
+>   * rebase to next-20150925
+>   * fix conflict with mlock2
+> v4: https://lkml.org/lkml/2017/10/13/177
+>   * rename from getvpid() into translate_pid()
+>   * remove syscall if CONFIG_PID_NS=n
+>   * drop -pid for parent task
+>   * drop fget-fdget optimizations
+>   * add helper get_pid_ns_by_fd()
+>   * wire only into x86
+> v5: https://lkml.org/lkml/2018/4/4/677
+>   * rewrite commit message
+>   * resolve pidns by task pid or by pidns fd
+>   * add arguments source_type and target_type
+> v6:
+>   * revert back minimized v4 design
+>   * rebase to next-20180601
+>   * fix COND_SYSCALL stub
+>   * use next syscall number, old used for io_pgetevents
+>
+> --- sample tool ---
+>
+> #define _GNU_SOURCE
+> #include <sys/syscall.h>
+> #include <sys/types.h>
+> #include <fcntl.h>
+> #include <unistd.h>
+> #include <stdlib.h>
+> #include <stdio.h>
+> #include <err.h>
+>
+> #ifndef SYS_translate_pid
+> #ifdef __x86_64__
+> #define SYS_translate_pid 334
+> #elif defined __i386__
+> #define SYS_translate_pid 386
+> #endif
+> #endif
+>
+> pid_t translate_pid(pid_t pid, int source, int target) {
+> 	return syscall(SYS_translate_pid, pid, source, target);
 > }
-> 
-> -void __rseq_handle_notify_resume(struct pt_regs *regs);
-> +void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
-> 
-> -static inline void rseq_handle_notify_resume(struct pt_regs *regs)
-> +static inline void _rseq_handle_notify_resume(struct ksignal *ksig,
-> +					      struct pt_regs *regs)
-> {
-> 	if (current->rseq)
-> -		__rseq_handle_notify_resume(regs);
-> +		__rseq_handle_notify_resume(ksig, regs);
+>
+> int main(int argc, char **argv) {
+> 	int pid, source, target;
+> 	char buf[64];
+>
+> 	if (argc != 4)
+> 		errx(1, "usage: %s <pid> <source> <target>", argv[0]);
+>
+> 	pid = atoi(argv[1]);
+> 	source = atoi(argv[2]);
+> 	target = atoi(argv[3]);
+>
+> 	if (source > 0) {
+> 		snprintf(buf, sizeof(buf), "/proc/%d/ns/pid", source);
+> 		source = open(buf, O_RDONLY);
+> 		if (source < 0)
+> 			err(2, "open source %s", buf);
+> 	}
+>
+> 	if (target > 0) {
+> 		snprintf(buf, sizeof(buf), "/proc/%d/ns/pid", target);
+> 		target = open(buf, O_RDONLY);
+> 		if (target < 0)
+> 			err(2, "open target %s", buf);
+> 	}
+>
+> 	pid = translate_pid(pid, source, target);
+> 	if (pid < 0)
+> 		err(2, "translate_pid");
+>
+> 	printf("%d\n", pid);
+> 	return 0;
+> }
+>
+> ---
+> ---
+>   arch/x86/entry/syscalls/syscall_32.tbl |    1
+>   arch/x86/entry/syscalls/syscall_64.tbl |    1
+>   include/linux/syscalls.h               |    1
+>   kernel/pid_namespace.c                 |   66 ++++++++++++++++++++++++++++++++
+>   kernel/sys_ni.c                        |    3 +
+>   5 files changed, 72 insertions(+)
+>
+> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> index 14a2f996e543..e70685750d43 100644
+> --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> @@ -397,3 +397,4 @@
+>   383	i386	statx			sys_statx			__ia32_sys_statx
+>   384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
+>   385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
+> +386	i386	translate_pid		sys_translate_pid		__ia32_sys_translate_pid
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> index cd36232ab62f..ebfd89055424 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -342,6 +342,7 @@
+>   331	common	pkey_free		__x64_sys_pkey_free
+>   332	common	statx			__x64_sys_statx
+>   333	common	io_pgetevents		__x64_sys_io_pgetevents
+> +334	common	translate_pid		__x64_sys_translate_pid
+>   
+>   #
+>   # x32-specific system call numbers start at 512 to avoid cache impact
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 390e814fdc8d..3f33971cf1c8 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -843,6 +843,7 @@ asmlinkage long sys_clock_adjtime(clockid_t which_clock,
+>   				struct timex __user *tx);
+>   asmlinkage long sys_syncfs(int fd);
+>   asmlinkage long sys_setns(int fd, int nstype);
+> +asmlinkage long sys_translate_pid(pid_t pid, int source, int target);
+>   asmlinkage long sys_sendmmsg(int fd, struct mmsghdr __user *msg,
+>   			     unsigned int vlen, unsigned flags);
+>   asmlinkage long sys_process_vm_readv(pid_t pid,
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 2a2ac53d8b8b..3b872cbbe264 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/user_namespace.h>
+>   #include <linux/syscalls.h>
+>   #include <linux/cred.h>
+> +#include <linux/file.h>
+>   #include <linux/err.h>
+>   #include <linux/acct.h>
+>   #include <linux/slab.h>
+> @@ -380,6 +381,71 @@ static void pidns_put(struct ns_common *ns)
+>   	put_pid_ns(to_pid_ns(ns));
+>   }
+>   
+> +static struct pid_namespace *get_pid_ns_by_fd(int fd)
+> +{
+> +	struct pid_namespace *pidns;
+> +	struct ns_common *ns;
+> +	struct file *file;
+> +
+> +	file = proc_ns_fget(fd);
+> +	if (IS_ERR(file))
+> +		return ERR_CAST(file);
+> +
+> +	ns = get_proc_ns(file_inode(file));
+> +	if (ns->ops->type == CLONE_NEWPID)
+> +		pidns = get_pid_ns(to_pid_ns(ns));
+> +	else
+> +		pidns = ERR_PTR(-EINVAL);
+> +
+> +	fput(file);
+> +	return pidns;
 > +}
 > +
-> +static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+> +/*
+> + * translate_pid - convert pid in source pid-ns into target pid-ns.
+> + * @pid:    pid for translation
+> + * @source: pid-ns file descriptor or -1 for active namespace
+> + * @target: pid-ns file descriptor or -1 for active namesapce
+> + *
+> + * Returns pid in @target pid-ns, zero if task have no pid there,
+> + * or -ESRCH if task with @pid does not found in @source pid-ns.
+> + */
+> +SYSCALL_DEFINE3(translate_pid, pid_t, pid, int, source, int, target)
 > +{
-> +	_rseq_handle_notify_resume(NULL, regs);
-> }
-
-
-If we add _rseq_handle_notify_resume() here, we'd need the CONFIG_RSEQ=n
-code to also have an empty static inline for it.
-
-So I'm not sure we want all 3 of:
-
-void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
-
-static inline void _rseq_handle_notify_resume(struct ksignal *ksig,
-				      struct pt_regs *regs)
-
-static inline void rseq_handle_notify_resume(struct pt_regs *regs)
-
-Instead, can we just have:
-
-__rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
-
-static inline void rseq_handle_notify_resume(struct ksignal *ksig,
-				      struct pt_regs *regs)
-
-and change the callers to rseq_handle_notify_resume to pass a NULL
-pointer when they are not within signal delivery ?
+> +	struct pid_namespace *source_ns, *target_ns;
+> +	struct pid *struct_pid;
+> +	pid_t result;
+> +
+> +	if (source >= 0) {
+> +		source_ns = get_pid_ns_by_fd(source);
+> +		result = PTR_ERR(source_ns);
+> +		if (IS_ERR(source_ns))
+> +			goto err_source;
+> +	} else
+> +		source_ns = task_active_pid_ns(current);
+> +
+> +	if (target >= 0) {
+> +		target_ns = get_pid_ns_by_fd(target);
+> +		result = PTR_ERR(target_ns);
+> +		if (IS_ERR(target_ns))
+> +			goto err_target;
+> +	} else
+> +		target_ns = task_active_pid_ns(current);
+> +
+> +	rcu_read_lock();
+> +	struct_pid = find_pid_ns(pid, source_ns);
+> +	result = struct_pid ? pid_nr_ns(struct_pid, target_ns) : -ESRCH;
+> +	rcu_read_unlock();
+> +
+> +	if (target >= 0)
+> +		put_pid_ns(target_ns);
+> +err_target:
+> +	if (source >= 0)
+> +		put_pid_ns(source_ns);
+> +err_source:
+> +	return result;
+> +}
+> +
+>   static int pidns_install(struct nsproxy *nsproxy, struct ns_common *ns)
+>   {
+>   	struct pid_namespace *active = task_active_pid_ns(current);
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index 06b4ccee0047..bf276e9ace9a 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -153,6 +153,9 @@ COND_SYSCALL_COMPAT(kexec_load);
+>   COND_SYSCALL(init_module);
+>   COND_SYSCALL(delete_module);
+>   
+> +/* kernel/pid_namespace.c */
+> +COND_SYSCALL(translate_pid);
+> +
+>   /* kernel/posix-timers.c */
+>   
+>   /* kernel/printk.c */
+>
+I believe all the major concerns raised on this patch has been 
+addressed. If there
+are no outstanding questions, can this patch get an Ack?
 
 Thanks,
+Nagarathnam.
 
-Mathieu
-
-> 
-> -static inline void rseq_signal_deliver(struct pt_regs *regs)
-> +static inline void rseq_signal_deliver(struct ksignal *ksig,
-> +				       struct pt_regs *regs)
-> {
-> 	preempt_disable();
-> 	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
-> 	preempt_enable();
-> -	rseq_handle_notify_resume(regs);
-> +	_rseq_handle_notify_resume(ksig, regs);
-> }
-> 
-> /* rseq_preempt() requires preemption to be disabled. */
-> @@ -1867,7 +1874,8 @@ static inline void rseq_set_notify_resume(struct
-> task_struct *t)
-> static inline void rseq_handle_notify_resume(struct pt_regs *regs)
-> {
-> }
-> -static inline void rseq_signal_deliver(struct pt_regs *regs)
-> +static inline void rseq_signal_deliver(struct ksignal *ksig,
-> +				       struct pt_regs *regs)
-> {
-> }
-> static inline void rseq_preempt(struct task_struct *t)
-> diff --git a/kernel/rseq.c b/kernel/rseq.c
-> index ae306f90c514..22b6acf1ad63 100644
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-> @@ -251,10 +251,10 @@ static int rseq_ip_fixup(struct pt_regs *regs)
->  * respect to other threads scheduled on the same CPU, and with respect
->  * to signal handlers.
->  */
-> -void __rseq_handle_notify_resume(struct pt_regs *regs)
-> +void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
-> {
-> 	struct task_struct *t = current;
-> -	int ret;
-> +	int ret, sig;
-> 
-> 	if (unlikely(t->flags & PF_EXITING))
-> 		return;
-> @@ -268,7 +268,8 @@ void __rseq_handle_notify_resume(struct pt_regs *regs)
-> 	return;
-> 
-> error:
-> -	force_sig(SIGSEGV, t);
-> +	sig = ksig ? ksig->sig : 0;
-> +	force_sigsegv(sig, t);
-> }
-> 
-> #ifdef CONFIG_DEBUG_RSEQ
-> --
-> 2.1.4
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
