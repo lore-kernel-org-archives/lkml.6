@@ -3,72 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3DCC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75A1C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C56092086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:34:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C56092086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A3232086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:35:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A3232086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754253AbeFTCex (ORCPT
+        id S1754310AbeFTCfQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 22:34:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49778 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754012AbeFTCev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 22:34:51 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7081D205C9;
-        Wed, 20 Jun 2018 02:34:49 +0000 (UTC)
-Date:   Tue, 19 Jun 2018 22:34:47 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-serial <linux-serial@vger.kernel.org>,
-        SergeySenozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
- locks
-Message-ID: <20180619223447.4369748b@vmware.local.home>
-In-Reply-To: <CA+55aFz9aGc-vGvKv_ZR2W2ZkZNSZfOHa0m_MbGH_a=x8oAW5Q@mail.gmail.com>
-References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
-        <20180618143818.50b2f2f9@alans-desktop>
-        <20180619005308.GA405@jagdpanzerIV>
-        <20180619083021.4avsgvcqjrpkat6s@pathway.suse.cz>
-        <CA+55aFz9aGc-vGvKv_ZR2W2ZkZNSZfOHa0m_MbGH_a=x8oAW5Q@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 19 Jun 2018 22:35:16 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:58317 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754014AbeFTCfP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 22:35:15 -0400
+Received: from mipsdag02.mipstec.com (mail2.mips.com [12.201.5.32]) by mx27.ess.sfj.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Wed, 20 Jun 2018 02:35:05 +0000
+Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag02.mipstec.com
+ (10.20.40.47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Tue, 19
+ Jun 2018 19:35:02 -0700
+Received: from localhost (10.20.78.225) by mipsdag02.mipstec.com (10.20.40.47)
+ with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Tue, 19 Jun
+ 2018 19:35:02 -0700
+Date:   Tue, 19 Jun 2018 19:35:02 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mips: generic: allow not building DTB in
+Message-ID: <20180620023502.r5e6j222qml2bb47@pburton-laptop>
+References: <20180425211607.2645-1-alexandre.belloni@bootlin.com>
+ <20180425211607.2645-2-alexandre.belloni@bootlin.com>
+ <20180425220149.GI4813@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180425220149.GI4813@piout.net>
+User-Agent: NeoMutt/20180512
+X-BESS-ID: 1529462099-637137-2582-19112-2
+X-BESS-VER: 2018.7-r1806151722
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Envelope-From: Paul.Burton@mips.com
+X-BESS-Outbound-Spam-Score: 0.60
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194212
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+        0.60 MARKETING_SUBJECT      HEADER: Subject contains popular marketing words 
+X-BESS-Outbound-Spam-Status: SCORE=0.60 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND, MARKETING_SUBJECT
+X-BESS-Orig-Rcpt: alexandre.belloni@bootlin.com,jhogan@kernel.org,ralf@linux-mips.org,allan.nielsen@microsemi.com,thomas.petazzoni@bootlin.com,linux-mips@linux-mips.org,linux-kernel@vger.kernel.org
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018 11:01:49 +0900
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Hi Alexandre,
 
-
-> There is no valid reason why an UART driver should do a printk() of
-> any sort inside the critical region where the console is locked.
+On Thu, Apr 26, 2018 at 12:01:49AM +0200, Alexandre Belloni wrote:
+> > diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+> > index 5e9fce076ab6..3d3554c13710 100644
+> > --- a/arch/mips/Makefile
+> > +++ b/arch/mips/Makefile
+> > @@ -404,7 +404,7 @@ endif
+> >  CLEAN_FILES += vmlinux.32 vmlinux.64
+> >  
+> >  # device-trees
+> > -core-$(CONFIG_BUILTIN_DTB) += arch/mips/boot/dts/
+> > +core-y += arch/mips/boot/dts/
+> >  
+> >  %.dtb %.dtb.S %.dtb.o: | scripts
+> >  	$(Q)$(MAKE) $(build)=arch/mips/boot/dts arch/mips/boot/dts/$@
+> > diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
+> > index 8982b19504a3..437ec65ec14a 100644
+> > --- a/arch/mips/boot/dts/mscc/Makefile
+> > +++ b/arch/mips/boot/dts/mscc/Makefile
+> > @@ -1,3 +1,3 @@
+> >  dtb-$(CONFIG_MSCC_OCELOT)	+= ocelot_pcb123.dtb
+> >  
+> > -obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+> > +obj-($CONFIG_BUILTIN_DTB)	+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
 > 
-> Just remove those printk's, don't add new crazy locking.
+> I made a typo here, I'll resend after waiting for a few comments.
 
-Perhaps we should do an audit of the console drivers and remove all
-printk, pr_* , WARN*, BUG* from them.
+Are you happy with this series apart from fixing up the above?
 
--- Steve
+If so I'm happy to s/(\$/$(/ whilst applying this.
+
+Thanks,
+    Paul
