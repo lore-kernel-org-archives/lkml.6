@@ -2,172 +2,313 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D91C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04424C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8974220693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8974220693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id A9E772086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:05:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E772086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754576AbeFTDFs (ORCPT
+        id S1754592AbeFTDFu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 23:05:48 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:36637 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754072AbeFTDDl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 23:03:41 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 19 Jun 2018 20:03:36 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 0911840DF8;
-        Tue, 19 Jun 2018 20:03:40 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC:     Nadav Amit <namit@vmware.com>, Christopher Li <sparse@chrisli.org>,
-        <linux-sparse@vger.kernel.org>
-Subject: [PATCH v5 2/9] x86: objtool: use asm macro for better compiler decisions
-Date:   Tue, 19 Jun 2018 12:48:47 -0700
-Message-ID: <20180619194854.69486-3-namit@vmware.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180619194854.69486-1-namit@vmware.com>
-References: <20180619194854.69486-1-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+        Tue, 19 Jun 2018 23:05:50 -0400
+Received: from mga05.intel.com ([192.55.52.43]:1910 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754030AbeFTDDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 23:03:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 20:03:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,245,1526367600"; 
+   d="scan'208";a="64681732"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.145])
+  by fmsmga004.fm.intel.com with ESMTP; 19 Jun 2018 20:03:40 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH V3] x86/efi: Free allocated memory if remap fails
+Date:   Tue, 19 Jun 2018 20:03:26 -0700
+Message-Id: <1529463806-4046-1-git-send-email-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC considers the number of statements in inlined assembly blocks,
-according to new-lines and semicolons, as an indication to the cost of
-the block in time and space. This data is distorted by the kernel code,
-which puts information in alternative sections. As a result, the
-compiler may perform incorrect inlining and branch optimizations.
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-In the case of objtool, this distortion is extreme, since anyhow the
-annotations of objtool are discarded during linkage.
+efi_memmap_alloc(), as the name suggests, allocates memory for a new efi
+memory map. It's referenced from couple of places, namely,
+efi_arch_mem_reserve() and efi_free_boot_services(). These callers,
+after allocating memory, remap it for further use. As usual, a routine
+check is performed to confirm successful remap. If the remap fails,
+ideally, the allocated memory should be freed but presently we just
+return without freeing it up. Hence, fix this bug by introducing
+efi_memmap_free() which frees memory allocated by efi_memmap_alloc().
 
-The solution is to set an assembly macro and call it from the inline
-assembly block. As a result GCC considers the inline assembly block as
-a single instruction.
+As efi_memmap_alloc() allocates memory depending on whether mm_init()
+has already been invoked or not, introduce a new argument called "late"
+that lets us know which type of allocation was performed by
+efi_memmap_alloc(). Later, this is used by efi_memmap_free() to invoke
+the appropriate method to free the allocated memory. The other main
+purpose "late" argument serves is to make sure that efi_memmap_alloc()
+and efi_memmap_free() are always binded properly i.e. there could be a
+scenario in which efi_memmap_alloc() is used before slab_is_available()
+and efi_memmap_free() could be used after slab_is_available(). Without
+"late", this could break because allocation would have been done using
+memblock_alloc() while freeing will be done using __free_pages().
 
-This patch slightly increases the kernel size.
+Since these API's could easily be misused make it explicit, so that the
+caller has to pass "late" argument to efi_memmap_alloc() and later use
+the same for efi_memmap_free().
 
-   text	   data	    bss	    dec	    hex	filename
-18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
-18140970 10225412 2957312 31323694 1ddf62e ./vmlinux after (+829)
+Also, efi_fake_memmap() references efi_memmap_alloc() but it frees
+memory correctly using memblock_free(), but replace it with
+efi_memmap_free() to maintain consistency, as in, allocate memory with
+efi_memmap_alloc() and free memory with efi_memmap_free().
 
-Static text symbols:
-Before:	40321
-After:	40302	(-19)
+It's a fact that memremap() and early_memremap() might never fail and
+this code might never get a chance to run but to maintain good kernel
+programming semantics, we might need this patch.
 
-Cc: Christopher Li <sparse@chrisli.org>
-Cc: linux-sparse@vger.kernel.org
-
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Lee Chun-Yi <jlee@suse.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Ricardo Neri <ricardo.neri@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/x86/kernel/macros.S |  2 ++
- include/linux/compiler.h | 56 ++++++++++++++++++++++++++++++----------
- 2 files changed, 45 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index cfc1c7d1a6eb..cee28c3246dc 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -5,3 +5,5 @@
-  * commonly used. The macros are precompiled into assmebly file which is later
-  * assembled together with each compiled file.
+Changes from V2 to V3:
+----------------------
+1. Add a new argument "late" to efi_memmap_alloc(), so that
+    efi_memmap_alloc() could communicate the type of allocation performed.
+2. Re-introduce efi_memmap_free() (from V1) but with an extra argument
+    "late", to know the type of allocation performed by efi_memmap_alloc().
+
+Changes from V1 to V2:
+----------------------
+1. Fix the bug of freeing memory map that was just installed by correctly
+    calling free_pages().
+2. Call memblock_free() and __free_pages() directly from the appropriate
+    places instead of efi_memmap_free().
+
+Note: Patch based on Linus's mainline tree V4.18-rc1
+
+ arch/x86/platform/efi/quirks.c  | 16 ++++++++++++----
+ drivers/firmware/efi/fake_mem.c |  5 +++--
+ drivers/firmware/efi/memmap.c   | 38 ++++++++++++++++++++++++++++++++++++--
+ include/linux/efi.h             |  3 ++-
+ 4 files changed, 53 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 36c1f8b9f7e0..ef5698a3af7a 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -248,6 +248,7 @@ void __init efi_arch_mem_reserve(phys_addr_t addr, u64 size)
+ 	efi_memory_desc_t md;
+ 	int num_entries;
+ 	void *new;
++	bool late;
+ 
+ 	if (efi_mem_desc_lookup(addr, &md)) {
+ 		pr_err("Failed to lookup EFI memory descriptor for %pa\n", &addr);
+@@ -276,7 +277,7 @@ void __init efi_arch_mem_reserve(phys_addr_t addr, u64 size)
+ 
+ 	new_size = efi.memmap.desc_size * num_entries;
+ 
+-	new_phys = efi_memmap_alloc(num_entries);
++	new_phys = efi_memmap_alloc(num_entries, &late);
+ 	if (!new_phys) {
+ 		pr_err("Could not allocate boot services memmap\n");
+ 		return;
+@@ -285,6 +286,7 @@ void __init efi_arch_mem_reserve(phys_addr_t addr, u64 size)
+ 	new = early_memremap(new_phys, new_size);
+ 	if (!new) {
+ 		pr_err("Failed to map new boot services memmap\n");
++		efi_memmap_free(new_phys, num_entries, late);
+ 		return;
+ 	}
+ 
+@@ -375,6 +377,7 @@ void __init efi_free_boot_services(void)
+ 	efi_memory_desc_t *md;
+ 	int num_entries = 0;
+ 	void *new, *new_md;
++	bool late;
+ 
+ 	for_each_efi_memory_desc(md) {
+ 		unsigned long long start = md->phys_addr;
+@@ -420,7 +423,7 @@ void __init efi_free_boot_services(void)
+ 		return;
+ 
+ 	new_size = efi.memmap.desc_size * num_entries;
+-	new_phys = efi_memmap_alloc(num_entries);
++	new_phys = efi_memmap_alloc(num_entries, &late);
+ 	if (!new_phys) {
+ 		pr_err("Failed to allocate new EFI memmap\n");
+ 		return;
+@@ -429,7 +432,7 @@ void __init efi_free_boot_services(void)
+ 	new = memremap(new_phys, new_size, MEMREMAP_WB);
+ 	if (!new) {
+ 		pr_err("Failed to map new EFI memmap\n");
+-		return;
++		goto free_mem;
+ 	}
+ 
+ 	/*
+@@ -452,8 +455,13 @@ void __init efi_free_boot_services(void)
+ 
+ 	if (efi_memmap_install(new_phys, num_entries)) {
+ 		pr_err("Could not install new EFI memmap\n");
+-		return;
++		goto free_mem;
+ 	}
++
++	return;
++
++free_mem:
++	efi_memmap_free(new_phys, num_entries, late);
+ }
+ 
+ /*
+diff --git a/drivers/firmware/efi/fake_mem.c b/drivers/firmware/efi/fake_mem.c
+index 6c7d60c239b5..52cb2b7fc2f7 100644
+--- a/drivers/firmware/efi/fake_mem.c
++++ b/drivers/firmware/efi/fake_mem.c
+@@ -57,6 +57,7 @@ void __init efi_fake_memmap(void)
+ 	phys_addr_t new_memmap_phy;
+ 	void *new_memmap;
+ 	int i;
++	bool late;
+ 
+ 	if (!nr_fake_mem)
+ 		return;
+@@ -71,7 +72,7 @@ void __init efi_fake_memmap(void)
+ 	}
+ 
+ 	/* allocate memory for new EFI memmap */
+-	new_memmap_phy = efi_memmap_alloc(new_nr_map);
++	new_memmap_phy = efi_memmap_alloc(new_nr_map, &late);
+ 	if (!new_memmap_phy)
+ 		return;
+ 
+@@ -79,7 +80,7 @@ void __init efi_fake_memmap(void)
+ 	new_memmap = early_memremap(new_memmap_phy,
+ 				    efi.memmap.desc_size * new_nr_map);
+ 	if (!new_memmap) {
+-		memblock_free(new_memmap_phy, efi.memmap.desc_size * new_nr_map);
++		efi_memmap_free(new_memmap_phy, new_nr_map, late);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+index 5fc70520e04c..678e85704054 100644
+--- a/drivers/firmware/efi/memmap.c
++++ b/drivers/firmware/efi/memmap.c
+@@ -32,6 +32,7 @@ static phys_addr_t __init __efi_memmap_alloc_late(unsigned long size)
+ /**
+  * efi_memmap_alloc - Allocate memory for the EFI memory map
+  * @num_entries: Number of entries in the allocated map.
++ * @late: Type of allocation performed (late or early?).
+  *
+  * Depending on whether mm_init() has already been invoked or not,
+  * either memblock or "normal" page allocation is used.
+@@ -39,17 +40,50 @@ static phys_addr_t __init __efi_memmap_alloc_late(unsigned long size)
+  * Returns the physical address of the allocated memory map on
+  * success, zero on failure.
   */
-+
-+#include <linux/compiler.h>
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 42506e4d1f53..2688f0d826e9 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -99,22 +99,13 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-  * unique, to convince GCC not to merge duplicate inline asm statements.
-  */
- #define annotate_reachable() ({						\
--	asm volatile("%c0:\n\t"						\
--		     ".pushsection .discard.reachable\n\t"		\
--		     ".long %c0b - .\n\t"				\
--		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+	asm volatile("ANNOTATE_REACHABLE counter=%c0"			\
-+		     : : "i" (__COUNTER__));				\
- })
- #define annotate_unreachable() ({					\
--	asm volatile("%c0:\n\t"						\
--		     ".pushsection .discard.unreachable\n\t"		\
--		     ".long %c0b - .\n\t"				\
--		     ".popsection\n\t" : : "i" (__COUNTER__));		\
-+	asm volatile("ANNOTATE_UNREACHABLE counter=%c0"			\
-+		     : : "i" (__COUNTER__));				\
- })
--#define ASM_UNREACHABLE							\
--	"999:\n\t"							\
--	".pushsection .discard.unreachable\n\t"				\
--	".long 999b - .\n\t"						\
--	".popsection\n\t"
- #else
- #define annotate_reachable()
- #define annotate_unreachable()
-@@ -280,6 +271,45 @@ unsigned long read_word_at_a_time(const void *addr)
+-phys_addr_t __init efi_memmap_alloc(unsigned int num_entries)
++phys_addr_t __init efi_memmap_alloc(unsigned int num_entries, bool *late)
+ {
+ 	unsigned long size = num_entries * efi.memmap.desc_size;
  
- #endif /* __KERNEL__ */
+-	if (slab_is_available())
++	if (!late)
++		return 0;
++
++	*late = slab_is_available();
++
++	if (*late)
+ 		return __efi_memmap_alloc_late(size);
  
-+#else /* __ASSEMBLY__ */
-+
-+#ifdef __KERNEL__
-+#ifndef LINKER_SCRIPT
-+
-+#ifdef CONFIG_STACK_VALIDATION
-+.macro ANNOTATE_UNREACHABLE counter:req
-+\counter:
-+	.pushsection .discard.unreachable
-+	.long \counter\()b -.
-+	.popsection
-+.endm
-+
-+.macro ANNOTATE_REACHABLE counter:req
-+\counter:
-+	.pushsection .discard.reachable
-+	.long \counter\()b -.
-+	.popsection
-+.endm
-+
-+.macro ASM_UNREACHABLE
-+999:
-+	.pushsection .discard.unreachable
-+	.long 999b - .
-+	.popsection
-+.endm
-+#else /* CONFIG_STACK_VALIDATION */
-+.macro ANNOTATE_UNREACHABLE counter:req
-+.endm
-+
-+.macro ANNOTATE_REACHABLE counter:req
-+.endm
-+
-+.macro ASM_UNREACHABLE
-+.endm
-+#endif /* CONFIG_STACK_VALIDATION */
-+
-+#endif /* LINKER_SCRIPT */
-+#endif /* __KERNEL__ */
- #endif /* __ASSEMBLY__ */
+ 	return __efi_memmap_alloc_early(size);
+ }
  
- #ifndef __optimize
+ /**
++ * efi_memmap_free - Free memory allocated by efi_memmap_alloc()
++ * @mem: Physical address allocated by efi_memmap_alloc().
++ * @num_entries: Number of entries in the allocated map.
++ * @late: What type of allocation did efi_memmap_alloc() perform?
++ *
++ * Use this function _only_ in conjunction with efi_memmap_alloc().
++ * efi_memmap_alloc() allocates memory depending on whether mm_init()
++ * has already been invoked or not. It uses either memblock or "normal"
++ * page allocation. Since the allocation is done in two different ways,
++ * similarly, we free it in two different ways.
++ *
++ */
++void __init efi_memmap_free(phys_addr_t mem, unsigned int num_entries, bool late)
++{
++	unsigned long size = num_entries * efi.memmap.desc_size;
++	unsigned int order = get_order(size);
++	phys_addr_t end = mem + size - 1;
++
++	if (late) {
++		__free_pages(pfn_to_page(PHYS_PFN(mem)), order);
++		return;
++	}
++
++	if (memblock_free(mem, size))
++		pr_err("Failed to free mem from %pa to %pa\n", &mem, &end);
++}
++
++/**
+  * __efi_memmap_init - Common code for mapping the EFI memory map
+  * @data: EFI memory map data
+  * @late: Use early or late mapping function?
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 56add823f190..f7f98d9a76f2 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1007,7 +1007,7 @@ static inline efi_status_t efi_query_variable_store(u32 attributes,
+ #endif
+ extern void __iomem *efi_lookup_mapped_addr(u64 phys_addr);
+ 
+-extern phys_addr_t __init efi_memmap_alloc(unsigned int num_entries);
++extern phys_addr_t __init efi_memmap_alloc(unsigned int num_entries, bool *late);
+ extern int __init efi_memmap_init_early(struct efi_memory_map_data *data);
+ extern int __init efi_memmap_init_late(phys_addr_t addr, unsigned long size);
+ extern void __init efi_memmap_unmap(void);
+@@ -1016,6 +1016,7 @@ extern int __init efi_memmap_split_count(efi_memory_desc_t *md,
+ 					 struct range *range);
+ extern void __init efi_memmap_insert(struct efi_memory_map *old_memmap,
+ 				     void *buf, struct efi_mem_range *mem);
++void __init efi_memmap_free(phys_addr_t mem, unsigned int num_entries, bool late);
+ 
+ extern int efi_config_init(efi_config_table_type_t *arch_tables);
+ #ifdef CONFIG_EFI_ESRT
 -- 
-2.17.0
+2.7.4
 
