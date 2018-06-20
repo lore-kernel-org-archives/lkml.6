@@ -2,98 +2,123 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A02A8C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 594E0C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F8D20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:46:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F8D20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 111EC20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:46:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0eq56GH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111EC20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754388AbeFTJqa (ORCPT
+        id S1754492AbeFTJqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:46:30 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:44253 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752392AbeFTI0Q (ORCPT
+        Wed, 20 Jun 2018 05:46:53 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36592 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751841AbeFTI0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:26:16 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue004 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MCMK5-1fN3zl1vDV-009AdF; Wed, 20 Jun 2018 10:26:00 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] shmem: use monotonic time for i_generation
-Date:   Wed, 20 Jun 2018 10:25:39 +0200
-Message-Id: <20180620082556.581543-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:m52VVL/SbVyYo0XHY4gYT+4xhV/5/hRoisTXVmmwfR9B4xWnaoR
- Oi5feigR2AVITHxFdLHmzHmJQABDqDZ6Ls6lvS3IpIoYSbUGakIOe70OlyercSRBmnAr3OQ
- hniNGPgqI5LJT7uZWNrAZQRNZfsJGg+5uu0Jgxt4IV7hDNlviicbtKDFXCSUjbsu4rOBm7Q
- o4UCV63oSzhc82iTcJ4Pg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:qNNG7wysrmc=:feNUcb6fcdKF6/64JwuPZ2
- +Zi+KX85xlbm5KmXLdW7uoI2bMs5M4//IlWhfUtUhkDbtddfAsx9Bk/lcutuFzg8uYj2D1VJe
- 3RLQ1KlqMtFI5uXHE8SPNHSO9JVWgARZnCWKqefV6v/n04jbxWSIyHzMnV7Hm3+RTPsnV4eBP
- lMeUqgWDOlyS6waXwuQ6J/Qehs+bJ60aWJTBFHVJKQuJL5ns7EH3JgblW9eAUVLEr2auC+C/g
- hQ9SdwUUp5EWH/1RULw30EtVbf8Nrc252pKSup/uWcG6oZmZqnx+wlXxRK/mb8RtOk502tf1q
- rueTBSos6/qHOrlBuq/CBeKyWOARHQKDEPcFHP0J8Z2+oS/dqZ1/aYU2ofFawPB2MN1561Djj
- lwdq53BnscQOwAVfBdrLkgtyxZ83wjL+C4JrTYCQvf3RayQTnVnae1B7/M4VvsE+TzNVx93nY
- Pg06S5O3FNwbZaqZO0Odjl4uC+7Rs3Zu3PeCDlROvBUS7yuyYAeK3nManfKeOKWZU6/zQ60VU
- tgmp9MqZtWZeValriGQieJAHrJEOWUNN13lRMX9AU1gMtRyUv0L/EHcfSBP7yVtn1tR9Xpudb
- L4075/eicW6EgV23GcDfA1tffVKKMXsp8UNF8wHECD5OYy/pBWWGCdSxPmjPleqAmtISWZTgv
- IcTeoeJCRw5PvbSJRfVkjv+52K8ccaEGvP+H/PVTr8x95tvHY/SpluGRBWqgVPULguOs=
+        Wed, 20 Jun 2018 04:26:12 -0400
+Received: by mail-lf0-f65.google.com with SMTP id n24-v6so3637174lfh.3;
+        Wed, 20 Jun 2018 01:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KVu3r8gm5HUo3zC5zlWyoHyblJAa32dQ2XhhpiE9R0k=;
+        b=N0eq56GHv42bO3Lam9yNjDI3Dl4Yx/XG5YpvY9ULDmjpmjW+VqlVSzd/OGM2JKpfzG
+         OpXfulmvZHkpG4KyXof/YAJGcazjd3hA240xMzPg6BdOuEXjt2Z4txKWdS5tRkCasfLp
+         iqNxMsS61yVgTEc08cZofFzmICen2kHA44OXryvzQMwK9VHvQVlPy9gvIDDkiusynVjg
+         Q8Qq6juMy0IAFAQwTlCVnaztqQpEQofs/7iMdBzIVVTZYJ/fBO58kuJon+30NtFYedhy
+         TwPhdYoCIPjqLQPhuxOCp/mm7XfIsvzEdrDLKtqrr1o53EjrlY4vHp6MtnjlWJuYjACl
+         hdmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=KVu3r8gm5HUo3zC5zlWyoHyblJAa32dQ2XhhpiE9R0k=;
+        b=n+0F4A3+wn3KfD96Hz0mxYSXkCLFiORhiZdTNbygjAS16c7ux63oRobKpgltuxHIXA
+         tNZdrRdzTsaLW4QaROK25glSw2Ei0lWMOKFiWeJ6jGUtOsRopBwb0QDZS52YBJ/rjNEs
+         2DzJSpEIMl7z66d3tbZla1JyLl4tH8fz9P4b3S7I8uAruP95bmzZYY5h6+wEP8SHd1Lj
+         yshSNe+j3mmmJ0yQvI76MsgSKdHmsEozxopivKOzroTNLQN1ZrD1/oOmXMQSyyru9/ec
+         E9Pd1Vrs5JPP5o1x7BsA/V2gCkqBhM1V4H2bG5pmf+PVSu3K07GIbeqT3hmLSwKHetMI
+         5uwA==
+X-Gm-Message-State: APt69E02FIwxz9CoeqOGVA5KHI6VQqdoUHFJ+4sRNMgmurMVrCXSHmsY
+        qC+wROIQpHuZHYK13Ywf+KAvD+gM
+X-Google-Smtp-Source: ADUXVKKoKv+6zd/z17I5W7F6ls6bHeVgP8AWA/ntnigQoburXDX8lXbeO3wWIHqdzeVFC2N2nR1V9A==
+X-Received: by 2002:a19:4a53:: with SMTP id x80-v6mr8132966lfa.69.1529480085137;
+        Wed, 20 Jun 2018 00:34:45 -0700 (PDT)
+Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
+        by smtp.gmail.com with ESMTPSA id l16-v6sm274494lji.40.2018.06.20.00.34.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 00:34:44 -0700 (PDT)
+From:   Esben Haabendal <esben.haabendal@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
+        Angelo Dureghello <angelo@sysam.it>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Sanchayan Maity <maitysanchayan@gmail.com>,
+        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>
+Subject: [PATCH 00/12] XSPI mode for LS1021A DSPI
+Date:   Wed, 20 Jun 2018 09:34:30 +0200
+Message-Id: <20180620073442.20913-1-esben.haabendal@gmail.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_seconds() is deprecated because it will lead to a 32-bit overflow
-in 2038 or 2106. We don't need the i_generation to be strictly
-monotonic anyway, and other file systems like ext4 and xfs just use
-prandom_u32(), so let's use the same one here.
+From: Esben Haabendal <eha@deif.com>
 
-If this is considered too slow, we could also use ktime_get_seconds()
-or ktime_get_real_seconds() to keep the previous behavior.
-Both of these return a time64_t and are not deprecated, but only
-return a unique value once per second, and are predictable.
+This patch series contains a number of fixes and cleanups for the spi-fsl-dspi
+driver (commit 1-7), and on top of that, implementation of XSPI mode for
+LS1021A allowing for SPI transfers larger than 16 bits (commit 8-12).
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- mm/shmem.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+User visible changes (improvements) are:
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 2cab84403055..387ae5323f56 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -29,6 +29,7 @@
- #include <linux/pagemap.h>
- #include <linux/file.h>
- #include <linux/mm.h>
-+#include <linux/random.h>
- #include <linux/sched/signal.h>
- #include <linux/export.h>
- #include <linux/swap.h>
-@@ -2187,7 +2188,7 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
- 		inode_init_owner(inode, dir, mode);
- 		inode->i_blocks = 0;
- 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
--		inode->i_generation = get_seconds();
-+		inode->i_generation = prandom_u32();
- 		info = SHMEM_I(inode);
- 		memset(info, 0, (char *)inode - (char *)info);
- 		spin_lock_init(&info->lock);
+* Support for all transfer sizes between 4 and 16, not just 4 (which I believe
+  were broken anyway), 8 and 16 bits per word.  
+
+* Full support for transfer->cs_change flag.  Setting cs_change in last
+  transfer leaves CS asserted.
+
+* Support for all transfers sizes between 4 and 32 bits per word for LS1021A.
+
+The XSPI mode can be trivially enabled for other target using TCQF mode.
+Enable for targets using EOQ mode requires additional work due to the split
+of TX FIFO into command and data FIFO.
+
+If you like, I will happily squash the last 5 commits into a single XSPI mode
+commit.
+
+Esben Haabendal (12):
+  spi: spi-fsl-dspi: Drop unreachable else if statement
+  spi: spi-fsl-dspi: Drop unneeded use of dataflags bits
+  spi: spi-fsl-dspi: Fix per transfer cs_change handling
+  spi: spi-fsl-dspi: Simplify transfer counter handling
+  spi: spi-fsl-dspi: Support 4 to 16 bits per word transfers
+  spi: spi-fsl-dspi: Fixup regmap configuration
+  spi: spi-fsl-dspi: Fix MCR register handling
+  spi: spi-fsl-dspi: Add support for XSPI mode registers
+  spi: spi-fsl-dspi: Framesize control for XSPI mode
+  spi: spi-fsl-dspi: XSPI FIFO handling (in TCFQ mode)
+  spi: spi-fsl-dspi: Advertise 32 bit for XSPI mode
+  spi: spi-fsl-dspi: Enable extended SPI mode
+
+ drivers/spi/spi-fsl-dspi.c | 458 ++++++++++++++++++++-----------------
+ 1 file changed, 250 insertions(+), 208 deletions(-)
+
 -- 
-2.9.0
+2.17.1
 
