@@ -2,232 +2,571 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46155C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E43AC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E037020874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30AE820872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:37:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="SimeQTK5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E037020874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X/ciAeJ5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OSQlrh/T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30AE820872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754027AbeFTMgN (ORCPT
+        id S1753760AbeFTMhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 08:36:13 -0400
-Received: from mail-sn1nam01on0060.outbound.protection.outlook.com ([104.47.32.60]:6752
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753880AbeFTMgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:36:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v8lCOmxiz1Qnt5FFHpJoXlH1+4OUMEzUOj2mBCzshIA=;
- b=SimeQTK5UjGFp9CwO24/oqbwFl3BCp6NiYw9U1BFOacc/8Eut6Q0975pCjxd64RaxoMDNRaFofubAx+zmWXnroIYhBujX16IDGouw0dTW3V4xDbayrdpKm8q3m29TGmh5YP4aC8VmtLZ+gyDd9GOdR0AgqS1iwsNVJ75S/gAKds=
-Received: from DM6PR02MB4361.namprd02.prod.outlook.com (20.176.105.26) by
- DM6PR02MB4361.namprd02.prod.outlook.com (20.176.105.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.17; Wed, 20 Jun 2018 12:36:09 +0000
-Received: from DM6PR02MB4361.namprd02.prod.outlook.com
- ([fe80::9cf9:1a80:115a:f9fa]) by DM6PR02MB4361.namprd02.prod.outlook.com
- ([fe80::9cf9:1a80:115a:f9fa%2]) with mapi id 15.20.0863.016; Wed, 20 Jun 2018
- 12:36:08 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     Andrea Merello <andrea.merello@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is not
- invoked for each DMA operation
-Thread-Topic: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is
- not invoked for each DMA operation
-Thread-Index: AQHUCHIQrPud7LE+Xk2xdT54xDVLUqRpD8yQ
-Date:   Wed, 20 Jun 2018 12:36:07 +0000
-Message-ID: <DM6PR02MB43615ED0221189B6B8D9017EC7770@DM6PR02MB4361.namprd02.prod.outlook.com>
-References: <20180620083653.17010-1-andrea.merello@gmail.com>
- <20180620083653.17010-2-andrea.merello@gmail.com>
-In-Reply-To: <20180620083653.17010-2-andrea.merello@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR02MB4361;7:X3PoiQn4vLor0siu2GZwjFEnSv79IlZcKT5A4HQ/W25muCWPjI0rRu45VN46Mx6tJcX2R4ocVSWLfRbvC44Op2OTiQy1HmQt9u4RDozYrlR3QKTOQLrA3oZar80tuPuR+106O4DfMhvCb4Sf5Bxyl/NJOll1KsRsx4ERSnDUU1q4bjXrLZH6bjknXWNjMQsRQNt8BtHkvr9mGbUHB70VKMRtEEuWDEQMeFWLJRxabOAf3DlypIn/M7eVIu8PWVbk
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(366004)(376002)(346002)(396003)(13464003)(189003)(199004)(5660300001)(26005)(2900100001)(53936002)(446003)(25786009)(74316002)(305945005)(33656002)(110136005)(486006)(7736002)(81156014)(8676002)(81166006)(105586002)(476003)(8936002)(106356001)(11346002)(54906003)(39060400002)(6246003)(186003)(4326008)(97736004)(316002)(3660700001)(76176011)(3280700002)(68736007)(102836004)(2906002)(59450400001)(66066001)(55236004)(14454004)(6436002)(7696005)(229853002)(99286004)(6306002)(55016002)(478600001)(9686003)(2201001)(2501003)(6116002)(5250100002)(966005)(53546011)(86362001)(6506007)(3846002)(422495003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4361;H:DM6PR02MB4361.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 5b6bf4bc-3d57-43fe-70cc-08d5d6aa659b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DM6PR02MB4361;
-x-ms-traffictypediagnostic: DM6PR02MB4361:
-x-microsoft-antispam-prvs: <DM6PR02MB4361DB4950A2BB4054F49DD4C7770@DM6PR02MB4361.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(258649278758335)(192813158149592)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:DM6PR02MB4361;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4361;
-x-forefront-prvs: 070912876F
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: zpGsCkxh8C7BAJtGnnd5vboEg1ai4047JsP6pssI+BWbP5AbmcvdqCp46vPGWV73zKZEn3tRfBKusSgUjebiblzt/sH9JJMk+gvb6K3nUlYxW9xPJvli2GWMh/SDVcd/1o8n2Urwt6uAWnkpKXL35yom/TPHKy+PKDMJDvv3RDonbVNRupk3Ihi1xMcVLI5bpnDKKXwUWAJRkYPdRGgB9Wfub5meX7irAF2afyAaVsQghHwu1Mio03W6xFko9lhYogWVGy6d4hclMEcyZyCTCSYPqlbtpNXTtSAZONMzMPjPg3NDU+7LVSmNxZ298Z0Oh1sY21HV+D3CgBV/Vn623w==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 20 Jun 2018 08:37:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58816 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750793AbeFTMhl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 08:37:41 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 76BBC608C1; Wed, 20 Jun 2018 12:37:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529498260;
+        bh=UUzMuotPv03ook7iSJu6uH5mZ/LtLk+UVduDWov36k8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=X/ciAeJ5VwJxV5RQlMkmNXTBTvEZzHsTpvq1HeD0nibR7AU5KJ0f/46Dc38AJPky1
+         5uWgqvCIO9jfOUb+zE8DYODvC7BhmxasTiq1g7uBGgv0HQOgihgaNkhK2C6lbKQoS9
+         On6DMDkE57gLTdTYF9Fyh7Bt8uahQdjye3NeFkyE=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 479E860227;
+        Wed, 20 Jun 2018 12:37:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529498259;
+        bh=UUzMuotPv03ook7iSJu6uH5mZ/LtLk+UVduDWov36k8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OSQlrh/T9eGu8l0yerLayFj07TxGWPPsOrxGEIcnP36Elb55tqdU/S5E5aFpQI+D/
+         UTlum4SpxNWMcTyspVSKO77lXXicyfVTzpUkOXTAhbtQGfjKvvyqHUg3TwrZY19Z8x
+         tLU/9sDeMQNylKqdNbRZ3nUtwF9DcKn01b4e6z8c=
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b6bf4bc-3d57-43fe-70cc-08d5d6aa659b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2018 12:36:07.9482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4361
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 20 Jun 2018 18:07:39 +0530
+From:   kgunda@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     jingoohan1@gmail.com, lee.jones@linaro.org,
+        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH V3 7/7] backlight: qcom-wled: Add auto string detection
+ logic
+In-Reply-To: <20180620062256.GK15126@tuxbook-pro>
+References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
+ <1529406822-15379-8-git-send-email-kgunda@codeaurora.org>
+ <20180620062256.GK15126@tuxbook-pro>
+Message-ID: <f93eafc1faadc1e0357d24cba7392fad@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: dmaengine-owner@vger.kernel.org [mailto:dmaengine-
-> owner@vger.kernel.org] On Behalf Of Andrea Merello
-> Sent: Wednesday, June 20, 2018 2:07 PM
-> To: vkoul@kernel.org; dan.j.williams@intel.com; Michal Simek
-> <michals@xilinx.com>; Appana Durga Kedareswara Rao
-> <appanad@xilinx.com>; dmaengine@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> Andrea Merello <andrea.merello@gmail.com>
-> Subject: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is no=
-t
-> invoked for each DMA operation
->=20
-> API specification says: "On completion of each DMA operation, the next in
-> queue is started and a tasklet triggered. The tasklet will then call the
-> client driver completion callback routine for notification, if set."
->=20
-> Currently the driver keeps a "desc_pendingcount" counter of the total
-> descriptor pending, and it uses as IRQ coalesce threshold, as result it
-> only calls the CBs after ALL pending operations are completed, which is
-> wrong.
-I think IRQ coalescing enable/disable should be configurable.=20
-Performance related usecases will need this support.
-
->=20
-> This patch uses disable IRQ coalesce and checks for the completion flag
-> for the descriptors (which is further divided in segments).
->=20
-> Possibly a better optimization could be using proper IRQ coalesce
-> threshold to get an IRQ after all segments of the descriptors are done.
-> But we don't do that yet..
->=20
-> NOTE: for now we do this only for AXI DMA, other DMA flavors are
-> untested/untouched.
-> This is loosely based on
-> commit 65df81a6dc74 ("xilinx_dma: IrqThreshold set incorrectly, unreliabl=
-e.")
-> in my linux-4.6-zynq tree
-NOTE description doesn't help much. =20
-
->=20
-> From: Jeremy Trimble [original patch]
-> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-> ---
->  drivers/dma/xilinx/xilinx_dma.c | 39 +++++++++++++++++++++------------
->  1 file changed, 25 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
-dma.c
-> index a516e7ffef21..cf12f7147f07 100644
-> --- a/drivers/dma/xilinx/xilinx_dma.c
-> +++ b/drivers/dma/xilinx/xilinx_dma.c
-> @@ -164,6 +164,7 @@
->  #define XILINX_DMA_CR_COALESCE_SHIFT	16
->  #define XILINX_DMA_BD_SOP		BIT(27)
->  #define XILINX_DMA_BD_EOP		BIT(26)
-> +#define XILINX_DMA_BD_CMPLT		BIT(31)
->  #define XILINX_DMA_COALESCE_MAX		255
->  #define XILINX_DMA_NUM_DESCS		255
->  #define XILINX_DMA_NUM_APP_WORDS	5
-> @@ -1274,12 +1275,9 @@ static void xilinx_dma_start_transfer(struct
-> xilinx_dma_chan *chan)
->=20
->  	reg =3D dma_ctrl_read(chan, XILINX_DMA_REG_DMACR);
->=20
-> -	if (chan->desc_pendingcount <=3D XILINX_DMA_COALESCE_MAX) {
-> -		reg &=3D ~XILINX_DMA_CR_COALESCE_MAX;
-> -		reg |=3D chan->desc_pendingcount <<
-> -				  XILINX_DMA_CR_COALESCE_SHIFT;
-> -		dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
-> -	}
-> +	reg &=3D ~XILINX_DMA_CR_COALESCE_MAX;
-> +	reg |=3D 1 << XILINX_DMA_CR_COALESCE_SHIFT;
-> +	dma_ctrl_write(chan, XILINX_DMA_REG_DMACR, reg);
->=20
->  	if (chan->has_sg && !chan->xdev->mcdma)
->  		xilinx_write(chan, XILINX_DMA_REG_CURDESC,
-> @@ -1378,6 +1376,20 @@ static void xilinx_dma_complete_descriptor(struct
-> xilinx_dma_chan *chan)
->  		return;
->=20
->  	list_for_each_entry_safe(desc, next, &chan->active_list, node) {
-> +		if (chan->xdev->dma_config->dmatype =3D=3D
-> XDMA_TYPE_AXIDMA) {
-> +			/*
-> +			 * Check whether the last segment in this descriptor
-> +			 * has been completed.
-> +			 */
-> +			const struct xilinx_axidma_tx_segment *const tail_seg
-> =3D
-> +				list_last_entry(&desc->segments,
-> +						struct
-> xilinx_axidma_tx_segment,
-> +						node);
-> +
-> +			/* we've processed all the completed descriptors */
-> +			if (!(tail_seg->hw.status & XILINX_DMA_BD_CMPLT))
-> +				break;
-> +		}
->  		list_del(&desc->node);
->  		if (!desc->cyclic)
->  			dma_cookie_complete(&desc->async_tx);
-> @@ -1826,14 +1838,13 @@ static struct dma_async_tx_descriptor
-> *xilinx_dma_prep_slave_sg(
->  				   struct xilinx_axidma_tx_segment, node);
->  	desc->async_tx.phys =3D segment->phys;
->=20
-> -	/* For the last DMA_MEM_TO_DEV transfer, set EOP */
-> -	if (chan->direction =3D=3D DMA_MEM_TO_DEV) {
-> -		segment->hw.control |=3D XILINX_DMA_BD_SOP;
-> -		segment =3D list_last_entry(&desc->segments,
-> -					  struct xilinx_axidma_tx_segment,
-> -					  node);
-> -		segment->hw.control |=3D XILINX_DMA_BD_EOP;
-> -	}
-> +	/* For the first transfer, set SOP */
-> +	segment->hw.control |=3D XILINX_DMA_BD_SOP;
-> +	/* For the last transfer, set EOP */
-> +	segment =3D list_last_entry(&desc->segments,
-> +				  struct xilinx_axidma_tx_segment,
-> +				  node);
-> +	segment->hw.control |=3D XILINX_DMA_BD_EOP;
->=20
->  	return &desc->async_tx;
->=20
+On 2018-06-20 11:52, Bjorn Andersson wrote:
+> On Tue 19 Jun 04:13 PDT 2018, Kiran Gunda wrote:
+> 
+>> The auto string detection algorithm checks if the current WLED
+>> sink configuration is valid. It tries enabling every sink and
+>> checks if the OVP fault is observed. Based on this information
+>> it detects and enables the valid sink configuration.
+>> Auto calibration will be triggered when the OVP fault interrupts
+>> are seen frequently thereby it tries to fix the sink configuration.
+>> 
+>> The auto-detection also kicks in when the connected LED string
+>> of the display-backlight malfunctions (because of damage) and
+>> requires the damaged string to be turned off to prevent the
+>> complete panel and/or board from being damaged.
+>> 
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> ---
+>>  drivers/video/backlight/qcom-wled.c | 408 
+>> +++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 403 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/drivers/video/backlight/qcom-wled.c 
+>> b/drivers/video/backlight/qcom-wled.c
+>> index e87ba70..6bc627c 100644
+>> --- a/drivers/video/backlight/qcom-wled.c
+>> +++ b/drivers/video/backlight/qcom-wled.c
+>> @@ -25,13 +25,23 @@
+>>  #define WLED_MAX_STRINGS				4
+>> 
+>>  #define WLED_DEFAULT_BRIGHTNESS				2048
+>> -
+>> +#define WLED_SOFT_START_DLY_US				10000
+>>  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
+>> 
+>>  /* WLED3 control registers */
+>> +#define WLED3_CTRL_REG_FAULT_STATUS			0x08
+>> +#define  WLED3_CTRL_REG_ILIM_FAULT_BIT			BIT(0)
+>> +#define  WLED3_CTRL_REG_OVP_FAULT_BIT			BIT(1)
+>> +#define  WLED4_CTRL_REG_SC_FAULT_BIT			BIT(2)
+>> +
+>> +#define WLED3_CTRL_REG_INT_RT_STS			0x10
+>> +#define  WLED3_CTRL_REG_OVP_FAULT_STATUS		BIT(1)
+>> +
+> 
+> These seems to be used in both WLED 3 and 4, so please drop the 3 from
+> the name.
+> 
+Sure. I will change it in the next series.
+>>  #define WLED3_CTRL_REG_MOD_EN				0x46
+>>  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
+>> 
+>> +#define WLED3_CTRL_REG_FEEDBACK_CONTROL			0x48
+>> +
+>>  #define WLED3_CTRL_REG_FREQ				0x4c
+>>  #define  WLED3_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
+>> 
+>> @@ -146,6 +156,7 @@ struct wled_config {
+>>  	bool ext_gen;
+>>  	bool cabc;
+>>  	bool external_pfet;
+>> +	bool auto_detection_enabled;
+>>  };
+>> 
+>>  struct wled {
+>> @@ -154,16 +165,22 @@ struct wled {
+>>  	struct regmap *regmap;
+>>  	struct mutex lock;	/* Lock to avoid race from ISR */
+>>  	ktime_t last_short_event;
+>> +	ktime_t start_ovp_fault_time;
+>>  	u16 ctrl_addr;
+>>  	u16 sink_addr;
+>> +	u16 auto_detection_ovp_count;
+>>  	u32 brightness;
+>>  	u32 max_brightness;
+>>  	u32 short_count;
+>> +	u32 auto_detect_count;
+>>  	const int *version;
+>>  	bool disabled_by_short;
+>>  	bool has_short_detect;
+>> +	int ovp_irq;
+>> +	bool ovp_irq_disabled;
+>> 
+>>  	struct wled_config cfg;
+>> +	struct delayed_work ovp_work;
+>>  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
+>>  	int (*wled_sync_toggle)(struct wled *wled);
+>>  };
+>> @@ -209,6 +226,27 @@ static int wled4_set_brightness(struct wled 
+>> *wled, u16 brightness)
+>>  	return 0;
+>>  }
+>> 
+>> +static void wled_ovp_work(struct work_struct *work)
+>> +{
+>> +	u32 val;
+>> +	int rc;
+>> +
+>> +	struct wled *wled = container_of(work,
+>> +					 struct wled, ovp_work.work);
+>> +
+>> +	rc = regmap_read(wled->regmap, wled->ctrl_addr + 
+>> WLED3_CTRL_REG_MOD_EN,
+>> +			 &val);
+>> +	if (rc < 0)
+>> +		return;
+>> +
+>> +	if (val & WLED3_CTRL_REG_MOD_EN_MASK) {
+> 
+> The way you implement this now makes this a "delayed enable_irq" 
+> worker,
+> as such you shouldn't need to check if the hardware is enabled here but
+> just blindly enable_irq() and then in module_enable() you can check the
+> return value of cancel_delayed_work() to know if enable_irq() has been
+> called.
+> 
+Ok. I will modify as per your suggestion in the next series.
+>> +		if (wled->ovp_irq > 0 && wled->ovp_irq_disabled) {
+>> +			enable_irq(wled->ovp_irq);
+>> +			wled->ovp_irq_disabled = false;
+>> +		}
+>> +	}
+>> +}
+>> +
+>>  static int wled_module_enable(struct wled *wled, int val)
+>>  {
+>>  	int rc;
+>> @@ -220,7 +258,20 @@ static int wled_module_enable(struct wled *wled, 
+>> int val)
+>>  				WLED3_CTRL_REG_MOD_EN,
+>>  				WLED3_CTRL_REG_MOD_EN_MASK,
+>>  				WLED3_CTRL_REG_MOD_EN_MASK);
+>> -	return rc;
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>> +	if (val) {
+>> +		schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
+>> +	} else {
+>> +		cancel_delayed_work(&wled->ovp_work);
+> 
+> I recommend using cancel_delayed_work_sync() to ensure that htis isn't
+> racing with the worker.
+> 
+Sure. I will modify it in next series.
+>> +		if (wled->ovp_irq > 0 && !wled->ovp_irq_disabled) {
+>> +			disable_irq(wled->ovp_irq);
+>> +			wled->ovp_irq_disabled = true;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>>  }
+>> 
+>>  static int wled3_sync_toggle(struct wled *wled)
+>> @@ -346,6 +397,305 @@ static irqreturn_t wled_short_irq_handler(int 
+>> irq, void *_wled)
+>>  	return IRQ_HANDLED;
+>>  }
+>> 
+>> +#define AUTO_DETECT_BRIGHTNESS		200
+>> +static int wled_auto_string_detection(struct wled *wled)
+> 
+> You don't care about the return value of this function in any of the
+> callers.
+> 
+I will make it void in the next series.
+>> +{
+>> +	int rc = 0, i;
+>> +	u32 sink_config = 0, int_sts;
+>> +	u8 sink_test = 0, sink_valid = 0, val;
+>> +
+>> +	/* read configured sink configuration */
+>> +	rc = regmap_read(wled->regmap, wled->sink_addr +
+>> +			 WLED4_SINK_REG_CURR_SINK, &sink_config);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to read SINK configuration rc=%d\n", rc);
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +	/* disable the module before starting detection */
+>> +	rc = regmap_update_bits(wled->regmap,
+>> +				wled->ctrl_addr + WLED3_CTRL_REG_MOD_EN,
+>> +				WLED3_CTRL_REG_MOD_EN_MASK, 0);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to disable WLED module rc=%d\n", rc);
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +	/* set low brightness across all sinks */
+>> +	rc = wled4_set_brightness(wled, AUTO_DETECT_BRIGHTNESS);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to set brightness for auto detection rc=%d\n",
+>> +		       rc);
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +	if (wled->cfg.cabc) {
+>> +		for (i = 0; i < wled->cfg.num_strings; i++) {
+>> +			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
+>> +						WLED4_SINK_REG_STR_CABC(i),
+>> +						WLED4_SINK_REG_STR_CABC_MASK,
+>> +						0);
+>> +			if (rc < 0)
+>> +				goto failed_detect;
+>> +		}
+>> +	}
+>> +
+>> +	/* disable all sinks */
+>> +	rc = regmap_write(wled->regmap,
+>> +			  wled->sink_addr + WLED4_SINK_REG_CURR_SINK, 0);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to disable all sinks rc=%d\n", rc);
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +	/* iterate through the strings one by one */
+>> +	for (i = 0; i < wled->cfg.num_strings; i++) {
+>> +		sink_test = BIT((WLED4_SINK_REG_CURR_SINK_SHFT + i));
+>> +
+>> +		/* Enable feedback control */
+>> +		rc = regmap_write(wled->regmap, wled->ctrl_addr +
+>> +				  WLED3_CTRL_REG_FEEDBACK_CONTROL, i + 1);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to enable feedback for SINK %d rc = %d\n",
+>> +			       i + 1, rc);
+>> +			goto failed_detect;
+>> +		}
+>> +
+>> +		/* enable the sink */
+>> +		rc = regmap_write(wled->regmap, wled->sink_addr +
+>> +				  WLED4_SINK_REG_CURR_SINK, sink_test);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to configure SINK %d rc=%d\n", i + 1,
+>> +			       rc);
+>> +			goto failed_detect;
+>> +		}
+>> +
+>> +		/* Enable the module */
+>> +		rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+>> +					WLED3_CTRL_REG_MOD_EN,
+>> +					WLED3_CTRL_REG_MOD_EN_MASK,
+>> +					WLED3_CTRL_REG_MOD_EN_MASK);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to enable WLED module rc=%d\n", rc);
+>> +			goto failed_detect;
+>> +		}
+>> +
+>> +		usleep_range(WLED_SOFT_START_DLY_US,
+>> +			     WLED_SOFT_START_DLY_US + 1000);
+>> +
+>> +		rc = regmap_read(wled->regmap, wled->ctrl_addr +
+>> +				 WLED3_CTRL_REG_INT_RT_STS, &int_sts);
+>> +		if (rc < 0) {
+>> +			pr_err("Error in reading WLED3_CTRL_INT_RT_STS rc=%d\n",
+>> +			       rc);
+> 
+> You should probably do something about the state of the hardware if it
+> fail here.
+> 
+This is a spmi read and it is very unlikely to fail. If it fails it 
+leads the complete
+system to go in to bad state.
+>> +			goto failed_detect;
+>> +		}
+>> +
+>> +		if (int_sts & WLED3_CTRL_REG_OVP_FAULT_STATUS)
+>> +			pr_debug("WLED OVP fault detected with SINK %d\n",
+>> +				 i + 1);
+>> +		else
+>> +			sink_valid |= sink_test;
+>> +
+>> +		/* Disable the module */
+>> +		rc = regmap_update_bits(wled->regmap,
+>> +					wled->ctrl_addr + WLED3_CTRL_REG_MOD_EN,
+>> +					WLED3_CTRL_REG_MOD_EN_MASK, 0);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to disable WLED module rc=%d\n", rc);
+>> +			goto failed_detect;
+>> +		}
+>> +	}
+>> +
+>> +	if (sink_valid == sink_config) {
+>> +		pr_debug("WLED auto-detection complete, default sink-config=%x 
+>> OK!\n",
+>> +			 sink_config);
+> 
+> It's not the "default" sink config we're using, it's whatever was
+> configured before this function was called.
+> 
+I will correct it in the next series.
+>> +	} else {
+>> +		pr_warn("Invalid WLED default sink config=%x changing it to=%x\n",
+> 
+> Use dev_warn(), and as it's not the "default sink config" that's 
+> invalid
+> write something like "New WLED string configuration found: %x". Perhaps
+> you can print it using %*pbl ?
+> 
+I will modify it in the next series. I missed to modify here.
+>> +			sink_config, sink_valid);
+>> +		sink_config = sink_valid;
+>> +	}
+>> +
+>> +	if (!sink_config) {
+>> +		pr_err("No valid WLED sinks found\n");
+> 
+> dev_err() and move this above the other prints, there's no reason to
+> first say that you found an "invalid WLED default" and then say that 
+> you
+> didn't findd a valid config.
+> 
+Sure. I will move it in the next series.
+>> +		wled->disabled_by_short = true;
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +	/* write the new sink configuration */
+>> +	rc = regmap_write(wled->regmap,
+>> +			  wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
+>> +			  sink_config);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to reconfigure the default sink rc=%d\n", rc);
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +	/* Enable valid sinks */
+>> +	for (i = 0; i < wled->cfg.num_strings; i++) {
+>> +		if (wled->cfg.cabc) {
+>> +			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
+>> +						WLED4_SINK_REG_STR_CABC(i),
+>> +						WLED4_SINK_REG_STR_CABC_MASK,
+>> +						WLED4_SINK_REG_STR_CABC_MASK);
+>> +			if (rc < 0)
+>> +				goto failed_detect;
+>> +		}
+>> +
+>> +		if (sink_config & BIT(WLED4_SINK_REG_CURR_SINK_SHFT + i))
+>> +			val = WLED4_SINK_REG_STR_MOD_MASK;
+>> +		else
+>> +			val = 0x0; /* disable modulator_en for unused sink */
+>> +
+>> +		rc = regmap_write(wled->regmap, wled->sink_addr +
+>> +				  WLED4_SINK_REG_STR_MOD_EN(i), val);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to configure MODULATOR_EN rc=%d\n", rc);
+>> +			goto failed_detect;
+>> +		}
+>> +	}
+>> +
+>> +	/* restore the feedback setting */
+>> +	rc = regmap_write(wled->regmap,
+>> +			  wled->ctrl_addr + WLED3_CTRL_REG_FEEDBACK_CONTROL, 0);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to restore feedback setting rc=%d\n", rc);
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +	/* restore  brightness */
+> 
+> Extra space
+> 
+Will remove it in the next series.
+>> +	rc = wled4_set_brightness(wled, wled->brightness);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to set brightness after auto detection rc=%d\n",
+>> +		       rc);
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +	rc = regmap_update_bits(wled->regmap,
+>> +				wled->ctrl_addr + WLED3_CTRL_REG_MOD_EN,
+>> +				WLED3_CTRL_REG_MOD_EN_MASK,
+>> +				WLED3_CTRL_REG_MOD_EN_MASK);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to enable WLED module rc=%d\n", rc);
+>> +		goto failed_detect;
+>> +	}
+>> +
+>> +failed_detect:
+>> +	return rc;
+>> +}
+>> +
+>> +#define WLED_AUTO_DETECT_OVP_COUNT		5
+>> +#define WLED_AUTO_DETECT_CNT_DLY_US		USEC_PER_SEC
+>> +static bool wled_auto_detection_required(struct wled *wled)
+>> +{
+>> +	s64 elapsed_time_us;
+>> +
+>> +	if (*wled->version == WLED_PM8941 || 
+>> !wled->cfg.auto_detection_enabled)
+> 
+> Ensure that auto_detection_enabled can't be enabled for pm8941, so that
+> you don't need to check the first part.
+> 
+I will change it in the next series.
+>> +		return false;
+>> +
+>> +	/*
+>> +	 * Check if the OVP fault was an occasional one
+>> +	 * or if it's firing continuously, the latter qualifies
+>> +	 * for an auto-detection check.
+>> +	 */
+>> +	if (!wled->auto_detection_ovp_count) {
+>> +		wled->start_ovp_fault_time = ktime_get();
+>> +		wled->auto_detection_ovp_count++;
+>> +	} else {
+>> +		elapsed_time_us = ktime_us_delta(ktime_get(),
+>> +						 wled->start_ovp_fault_time);
+>> +		if (elapsed_time_us > WLED_AUTO_DETECT_CNT_DLY_US)
+>> +			wled->auto_detection_ovp_count = 0;
+>> +		else
+>> +			wled->auto_detection_ovp_count++;
+>> +
+>> +		if (wled->auto_detection_ovp_count >=
+>> +				WLED_AUTO_DETECT_OVP_COUNT) {
+>> +			wled->auto_detection_ovp_count = 0;
+>> +			return true;
+>> +		}
+>> +	}
+>> +
+>> +	return false;
+>> +}
+>> +
+>> +static int wled_auto_detection_at_init(struct wled *wled)
+>> +{
+>> +	int rc;
+>> +	u32 fault_status = 0, rt_status = 0;
+> 
+> No need to initialize these, they will be filled out if regmap_read
+> return successfully.
+> 
+I will remove it in the next series.
+>> +
+>> +	if (!wled->cfg.auto_detection_enabled)
+>> +		return 0;
+>> +
+> [..]
+>> @@ -836,6 +1192,42 @@ static int wled_configure_short_irq(struct wled 
+>> *wled,
+>>  	return rc;
+>>  }
+>> 
+>> +static int wled_configure_ovp_irq(struct wled *wled,
+>> +				  struct platform_device *pdev)
+>> +{
+>> +	int rc = 0;
+> 
+> No need to initialize rc here.
+> 
+I will remove it in the next series.
+>> +	u32 val;
+>> +
+>> +	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
+>> +	if (wled->ovp_irq < 0) {
+>> +		dev_dbg(&pdev->dev, "ovp irq is not used\n");
+>> +		return 0;
+>> +	}
+>> +
+>> +	rc = devm_request_threaded_irq(wled->dev, wled->ovp_irq, NULL,
+>> +				       wled_ovp_irq_handler, IRQF_ONESHOT,
+>> +				       "wled_ovp_irq", wled);
+>> +	if (rc < 0) {
+>> +		dev_err(wled->dev, "Unable to request ovp_irq (err:%d)\n",
+>> +			rc);
+>> +		wled->ovp_irq = 0;
+>> +		return 0;
+>> +	}
+>> +
+>> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
+>> +			 WLED3_CTRL_REG_MOD_EN, &val);
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>> +	/* Keep OVP irq disabled until module is enabled */
+>> +	if (!rc && !(val & WLED3_CTRL_REG_MOD_EN_MASK)) {
+> 
+> If rc isn't 0 we returned above.
+> 
+I will remove it in the next series.
+>> +		disable_irq(wled->ovp_irq);
+>> +		wled->ovp_irq_disabled = true;
+>> +	}
+>> +
+>> +	return rc;
+> 
+> As such, it is always 0 here.
+> 
+I will modify it in the next series.
+>> +}
+>> +
+> 
+> Regards,
+> Bjorn
 > --
-> 2.17.1
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
