@@ -3,129 +3,168 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA59C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25852C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC9152086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:45:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D39732086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:45:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SYx0yfEf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC9152086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="s7kLRTle"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D39732086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754071AbeFTBpD (ORCPT
+        id S1754131AbeFTBpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 21:45:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:48979 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753173AbeFTBo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 21:44:59 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 419SLw6MNXz9s4v;
-        Wed, 20 Jun 2018 11:44:56 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529459098;
-        bh=yqn8pC6uj5N1EwgcedbaldaaZhiQZJjGv4K3sFuKc+A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SYx0yfEfSCJABsKAfQSeXy1Kh2p2Z7kffye7dkfCWEzkz/i+YGBKp0vh1UXQuScbq
-         uw9v2VEtACZI9uJblPFMWl5XFb7f6GMOXnZIWYohamNsItz4xPBh08Vof7BdW7NnQR
-         BJYLGqSnK6aS5OVBxyso4gPYi0fTkBa9D8YhKwOKL6l8fz2gY0oaITE6eJrb/Jl+3f
-         7zP7FKUwMiSDbdhVWVlNiqR719oWTHS5mB0UkQp+tnU+rLXWD0sD6oZA7sJHzrgjiu
-         pm9bx4LMigRlocQyQuVVY2cRc9mjOoqIUDSl6EHSwQTG0sYTitPuMLEU2atYccYtZo
-         9rmolULzTVfKA==
-Date:   Wed, 20 Jun 2018 11:44:41 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: manual merge of the userns tree with the vfs tree
-Message-ID: <20180620114441.285f5dfa@canb.auug.org.au>
+        Tue, 19 Jun 2018 21:45:14 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33532 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752861AbeFTBpK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 21:45:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5K1j9Jw042734;
+        Wed, 20 Jun 2018 01:45:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=EKGq6x9fO7+YfmfTEuW519s22L73T5vMVoDu8mUS+sA=;
+ b=s7kLRTleMiA+DtH4cCL2hCYp5JxPrvRpcaRf+DF6ecNOn4yMdenCa08/7Rr/g1XX25Ji
+ T4NjsTb9QNQ4emYEfjXlFxwy52WUsbv6a3SVr1oNh+6bJFthPIKnjCAM4y0y/1YzgJz3
+ N4k74ac/zwNaDH8kzOcbr4IgieQzZiP3K3kozjkspeT9JEzkWGZqNKlPnx0xZXu47wdS
+ gizUvPQ3i/GvzveNVY7AkOP3w6AFaJ4xvypLSwBxihspUfKqdP7gWx8jZOQIQuLAUSvm
+ 8jIIX0Br6d4RzcvAWvgIqqRSmkzyjxJo61FxvFrxnQQSs8NMr4Ku7gsG7OrgjW3DXCwP GQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2jmtgwtfuu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 01:45:08 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5K1j8XR007421
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 01:45:08 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5K1j7xg023420;
+        Wed, 20 Jun 2018 01:45:07 GMT
+Received: from [10.182.69.179] (/10.182.69.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Jun 2018 18:45:07 -0700
+Subject: Re: [PATCH] blk-mq: use blk_mq_timeout_work to limit the max timeout
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+References: <1529391610-1654-1-git-send-email-jianchao.w.wang@oracle.com>
+ <884a5cbb5622ca5c890585a8d5dff0e3a1d60cfe.camel@wdc.com>
+ <dd0484f6-ad41-5607-107f-4c487a739478@oracle.com>
+ <08b5a3e94f2265815a98abae7a8dde0894512d4e.camel@wdc.com>
+ <e75238d6-aefb-3673-1ce8-991f7fedfea6@oracle.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <e00d7ac7-642e-da56-d8b6-28b9b379f638@oracle.com>
+Date:   Wed, 20 Jun 2018 09:45:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nqzNhFJcXFpmRS21zpIK=ea"; protocol="application/pgp-signature"
+In-Reply-To: <e75238d6-aefb-3673-1ce8-991f7fedfea6@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806200017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/nqzNhFJcXFpmRS21zpIK=ea
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the userns tree got a conflict in:
+On 06/20/2018 09:37 AM, jianchao.wang wrote:
+> 
+> 
+> On 06/20/2018 09:35 AM, Bart Van Assche wrote:
+>> On Wed, 2018-06-20 at 09:28 +0800, jianchao.wang wrote:
+>>> Hi Bart
+>>>
+>>> Thanks for your kindly response.
+>>>
+>>> On 06/19/2018 11:18 PM, Bart Van Assche wrote:
+>>>> On Tue, 2018-06-19 at 15:00 +0800, Jianchao Wang wrote:
+>>>>> blk_rq_timeout is needed to limit the max timeout value, otherwise,
+>>>>> a idle hctx cannot be deactivated timely in shared-tag case.
+>>>>>
+>>>>> Fixes: 12f5b931 (blk-mq: Remove generation seqeunce)
+>>>>> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+>>>>> ---
+>>>>>  block/blk-mq.c | 2 +-
+>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>>>>> index 70c65bb..ccebe7b 100644
+>>>>> --- a/block/blk-mq.c
+>>>>> +++ b/block/blk-mq.c
+>>>>> @@ -868,7 +868,7 @@ static void blk_mq_timeout_work(struct work_struct *work)
+>>>>>  	blk_mq_queue_tag_busy_iter(q, blk_mq_check_expired, &next);
+>>>>>  
+>>>>>  	if (next != 0) {
+>>>>> -		mod_timer(&q->timeout, next);
+>>>>> +		mod_timer(&q->timeout, blk_rq_timeout(round_jiffies_up(next)));
+>>>>>  	} else {
+>>>>>  		/*
+>>>>>  		 * Request timeouts are handled as a forward rolling timer. If
+>>>>
+>>>> Hello Jianchao,
+>>>>
+>>>> What makes you think that it would be necessary to call blk_rq_timeout() from
+>>>> blk_mq_timeout_work()? Have you noticed that blk_add_timer() already calls that
+>>>> function? I think it is not necessary to call blk_rq_timeout() from
+>>>> blk_mq_timeout_work() because it is guaranteed in that function that the next
+>>>> timeout is less than BLK_MAX_TIMEOUT jiffies in the future.
+>>>>
+>>>
+>>> blk_add_timer will not re-arm the timer if the timer's expire value is before the new rq's expire value.
+>>>
+>>> Let's look at the following scenario.
+>>>
+>>> 0                    +30s
+>>>> __________________|___|
+>>>
+>>> T0                T1   T2
+>>>
+>>> T1 = T2 - 1 jiffies 
+>>>
+>>> T0:  rq_a is issued and q->timer is armed and will expire at T2
+>>>      then rq_a is completed.
+>>> T1:  rq_b is issued and q->timer is not re-armed, because its next expire time is T2 < (T1 + 30s)
+>>>
+>>> T2:  if rq_b have not been completed when timer expires at T2, timer would be re-armed based on the rq_b 
+>>>      If we don't have blk_rq_timeout here, the next expire time is about T2 + 30s.
+>>
+>> Hello Jianchao,
+>>
+>> I disagree with the last sentence above. I think for your example blk_mq_req_expired()
+>> will set next to T1 + 30s instead of T2 + 30s.
+>>
+> 
+> Would you please explain the reason ?
+> 
 
-  fs/proc/internal.h
+Oops, yes, it is T1. I thought you were saying T0. :)
 
-between commit:
+In this scenario, I have said, the T1 = T2 - 1 jiifies, it is very closed to T2.
+So I said "the next expire time is about T2 + 30s"
+It's my bad description.
 
-  0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
+The next time is T1 + 30s, but it is also not a good value
 
-from the vfs tree and commit:
-
-  04035aa33a12 ("proc: Don't change mount options on remount failure.")
-
-from the userns tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/proc/internal.h
-index ea8c5468eafc,69fa8d953cde..000000000000
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@@ -270,10 -252,16 +270,15 @@@ static inline void proc_tty_init(void)=20
-  /*
-   * root.c
-   */
-+ struct proc_mount_options {
-+ 	kgid_t pid_gid;
-+ 	int hide_pid;
-+ };
-+=20
-  extern struct proc_dir_entry proc_root;
- -extern int proc_parse_options(char *options, struct proc_mount_options *o=
-pts);
- =20
-  extern void proc_self_init(void);
- -extern int proc_remount(struct super_block *, int *, char *);
- +extern int proc_reconfigure(struct super_block *, struct fs_context *);
- =20
-  /*
-   * task_[no]mmu.c
-
---Sig_/nqzNhFJcXFpmRS21zpIK=ea
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlspsYkACgkQAVBC80lX
-0Gx24wf/YNUJzc1Pll442jxlvQsbnadnfTbmTRBLq9XH1lgdBLL5mmnGKDpXS4V+
-0uFSMbvm9y6vNWeOEiAGR2y02CRTDqc9QgMhdaECkq+zN8Z6C+7M9PdhzX5ifAa0
-pZf5+0b6B23rM8rMS+hQb3cEkaml2OfGHW70Sn5juTdKWRKoMww9Bd+DzF/LzfG8
-OUdSk/wgp988BIhl9+XMdPUS4AKor/pPk9HJxgGrhnZcUyjc2p5HyHInLd407eA+
-MLIqIkuDfJYl7fNCH6Q17Tn+X1pUdfT7yyTyWb3t6vFyAaep8GntG5eZLRktxEsT
-CNW0KZJXhlvJQpbtFYQjc8xEor2jzw==
-=wC3J
------END PGP SIGNATURE-----
-
---Sig_/nqzNhFJcXFpmRS21zpIK=ea--
+> Thanks
+> Jianchao
+> 
+>> Bart.
+>>
+>>
+> 
