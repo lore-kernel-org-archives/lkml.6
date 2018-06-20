@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2A0C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05208C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00BB520874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFF1320846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:40:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bNv7vRVa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00BB520874
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ul87aooq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF1320846
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754652AbeFTRkX (ORCPT
+        id S1754678AbeFTRkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:40:23 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39039 "EHLO
+        Wed, 20 Jun 2018 13:40:25 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38639 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754505AbeFTRkQ (ORCPT
+        with ESMTP id S1754604AbeFTRkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:40:16 -0400
-Received: by mail-wm0-f67.google.com with SMTP id p11-v6so971736wmc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:40:16 -0700 (PDT)
+        Wed, 20 Jun 2018 13:40:18 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so985929wmf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:40:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lLfYi37gaM0avQflOOXqZqRn7bz54yL74j4Bfvqwt8s=;
-        b=bNv7vRVaaxLGr0gCwndaM6ZM8oO/i0DMKlm/AtlSi2rNOhic4Oi9E0oro1XOFGqpHD
-         IXBBIBHM2PVLH11bIBJZdm/p16DSN2itB7+otjGP7RxxAyoFyZBgPn1bfiSoqI+kahgb
-         T3YCPVPkOt12qmlvX3CGBJ5+nm4GMx6ob7dNj8c1q027Az9iAGTDlydKlL6u8Vb5Ebwu
-         v65gl7GJ59HNdGKanCk5kr94lvhyC+Jp/kQWxb9nJrnMr+eGmfKEAmy5E92TKQkgGk7n
-         ez0feT4O77UpxK49KK1uTpCAsgOVpJAF+l6ftn0ZJbhuFN8iQcqarv6t0x1r4CU8u654
-         oqVw==
+        bh=3JRyQhTdC+u2oogyIrlq2ZoH/8cj6t0szX7aMWVFrqI=;
+        b=ul87aooq1BZG/ua2mVfhzy4uN/qXMn1UhnfPhLPsnejOFWAGkdptsDs3M1oTmI1nAl
+         C21Guh3/JlIPOD09uCLOi/BPVDdoVIByJeGnb5+0zYUBeO6K0u2ykMy0COZIgmOz1RLu
+         Zxb22xpZgwMuVJmAHzA/tiOzc8lJ9vj2KFxeTCFLKLfgUpo+M+Tm1wglu7mRA2K0TqbF
+         hvnFePrjRgmAQEcYRrMUgCtAycpp9xYn8sBFpPHZv1KPp5HCnPdX3LCPU/yxR8qpU4IX
+         TouAVK6EgxY9z8IBnh4SoOd7uxcao0fDK+ctG8NFDPZ/DgOTBe6PYuJ0kohJsQdfPC9g
+         TxrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=lLfYi37gaM0avQflOOXqZqRn7bz54yL74j4Bfvqwt8s=;
-        b=LOtGn41Dyqm4Qusqs8Y6VKdbEnl4NBvfsuffyCDZxSckLJmJV+s87tL2JJXx36MdSL
-         zPLbl2NlpW/yunt4y2BLkq6g9yN10mWpZkOOO5Ejy4lxTZgraLiZ2qMwdQz2EiAdvrB7
-         jcTAj7XV+8dJHgM2iq39n4eEjFvT2mkhj5AlRDQzAr/W+5dmMgLa/hSP5rp6p3Y717t7
-         IgzHSZLpp8ySKZ8BkDzR232HqXnWd8dEO5u0XhwGX0/KZToAwoJjT8pXGTuEzCwdMsUb
-         3BLUhCnmusvPe0C3puDq7B+b0Gk2GoAwU0v9pd1oobVQUaCDUZ/ScWtGkaslSTBn2zHJ
-         rSog==
-X-Gm-Message-State: APt69E1YC2XHIy2/RvMTHF0pJwEXWjRiZmPxX69Onr7/1dujBHXTclIv
-        c0rMS2HEE/DEcz5smgpqqQRyNw==
-X-Google-Smtp-Source: ADUXVKLJz9jElOdW8PoKdesAbOJxPunoe4UmBftvYga0gq4p83fjB/Oohe0VklbrYwMfHcS7pbZnzw==
-X-Received: by 2002:a1c:ad50:: with SMTP id w77-v6mr2599098wme.54.1529516415006;
-        Wed, 20 Jun 2018 10:40:15 -0700 (PDT)
+        bh=3JRyQhTdC+u2oogyIrlq2ZoH/8cj6t0szX7aMWVFrqI=;
+        b=R5N+w2Pqu84iARbQHDdzzyo59NB0koM7Z6HhFxpAWZpdRZ0oyrDmo/nHcSTZz+auXg
+         iLU/Q8ho9Kddk6WLL5j7gQ65/tud41cgLh0nn7ElVBwvPeAl2IiW05oF/wr409ctMO8t
+         RrBGmzntu4olBrUGqRfhhRBZ2PYNMeSMkKlOcB9ZaYbClUT9TMqnkJC6YN+q9PEpe+t/
+         wdeSWsdIXkaAa7SxLBddq5kOTQ0a0gNLUccc4hnPzVxwow8lXR/MThOAajt8x+vTVlh1
+         7ZguO0Jk/o7bFMRh39lA55lP8NT+vTnnAom/CtUNHq60hB/Fl94s5Y/C9BLYmv9ZIqVV
+         XnGA==
+X-Gm-Message-State: APt69E2Re6G4XDZ5Rrymv/3iXwovrSnymE2mJCB6vzIlLgBh87tMmhG0
+        cynPpALnKhArxnsLBoTZlJc7iw==
+X-Google-Smtp-Source: ADUXVKIVlEK10pHjqrgIg6B9IiEh/Scv3BRLQ1sYbPsfzIp6woFogpBtw12wTtllSZMEyn06q6NkAA==
+X-Received: by 2002:a1c:4787:: with SMTP id m7-v6mr2601468wmi.92.1529516416725;
+        Wed, 20 Jun 2018 10:40:16 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id f18-v6sm4388598wro.1.2018.06.20.10.40.13
+        by smtp.gmail.com with ESMTPSA id f18-v6sm4388598wro.1.2018.06.20.10.40.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:40:14 -0700 (PDT)
+        Wed, 20 Jun 2018 10:40:15 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -94,9 +94,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Mark Brand <markbrand@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v3 05/17] khwasan: initialize shadow to 0xff
-Date:   Wed, 20 Jun 2018 19:39:51 +0200
-Message-Id: <29bf9a5e71137411b8238fb2b8535811a91adbe8.1529515183.git.andreyknvl@google.com>
+Subject: [PATCH v3 06/17] khwasan, arm64: untag virt address in __kimg_to_phys and _virt_addr_is_linear
+Date:   Wed, 20 Jun 2018 19:39:52 +0200
+Message-Id: <44b51b47d2d0517332f37c39cb7ea0016dcf032e.1529515183.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 In-Reply-To: <cover.1529515183.git.andreyknvl@google.com>
 References: <cover.1529515183.git.andreyknvl@google.com>
@@ -105,108 +105,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A KHWASAN shadow memory cell contains a memory tag, that corresponds to
-the tag in the top byte of the pointer, that points to that memory. The
-native top byte value of kernel pointers is 0xff, so with KHWASAN we
-need to initialize shadow memory to 0xff. This commit does that.
+__kimg_to_phys (which is used by virt_to_phys) and _virt_addr_is_linear
+(which is used by virt_addr_valid) assume that the top byte of the address
+is 0xff, which isn't always the case with KHWASAN enabled.
+
+The solution is to reset the tag in those macros.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/mm/kasan_init.c | 16 ++++++++++++++--
- include/linux/kasan.h      |  8 ++++++++
- mm/kasan/common.c          |  3 ++-
- 3 files changed, 24 insertions(+), 3 deletions(-)
+ arch/arm64/include/asm/memory.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index 12145874c02b..7a31e8ccbad2 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -44,6 +44,15 @@ static phys_addr_t __init kasan_alloc_zeroed_page(int node)
- 	return __pa(p);
- }
- 
-+static phys_addr_t __init kasan_alloc_raw_page(int node)
-+{
-+	void *p = memblock_virt_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
-+						  __pa(MAX_DMA_ADDRESS),
-+						  MEMBLOCK_ALLOC_ACCESSIBLE,
-+						  node);
-+	return __pa(p);
-+}
-+
- static pte_t *__init kasan_pte_offset(pmd_t *pmdp, unsigned long addr, int node,
- 				      bool early)
- {
-@@ -89,7 +98,9 @@ static void __init kasan_pte_populate(pmd_t *pmdp, unsigned long addr,
- 
- 	do {
- 		phys_addr_t page_phys = early ? __pa_symbol(kasan_zero_page)
--					      : kasan_alloc_zeroed_page(node);
-+					      : kasan_alloc_raw_page(node);
-+		if (!early)
-+			memset(__va(page_phys), KASAN_SHADOW_INIT, PAGE_SIZE);
- 		next = addr + PAGE_SIZE;
- 		set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KERNEL));
- 	} while (ptep++, addr = next, addr != end && pte_none(READ_ONCE(*ptep)));
-@@ -139,6 +150,7 @@ asmlinkage void __init kasan_early_init(void)
- 		KASAN_SHADOW_END - (1UL << (64 - KASAN_SHADOW_SCALE_SHIFT)));
- 	BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_START, PGDIR_SIZE));
- 	BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_END, PGDIR_SIZE));
-+
- 	kasan_pgd_populate(KASAN_SHADOW_START, KASAN_SHADOW_END, NUMA_NO_NODE,
- 			   true);
- }
-@@ -235,7 +247,7 @@ void __init kasan_init(void)
- 		set_pte(&kasan_zero_pte[i],
- 			pfn_pte(sym_to_pfn(kasan_zero_page), PAGE_KERNEL_RO));
- 
--	memset(kasan_zero_page, 0, PAGE_SIZE);
-+	memset(kasan_zero_page, KASAN_SHADOW_INIT, PAGE_SIZE);
- 	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
- 
- 	/* At this point kasan is fully initialized. Enable error messages */
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index 6608aa9b35ac..336385baf926 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -139,6 +139,8 @@ static inline size_t kasan_metadata_size(struct kmem_cache *cache) { return 0; }
- 
- #ifdef CONFIG_KASAN_GENERIC
- 
-+#define KASAN_SHADOW_INIT 0
-+
- void kasan_cache_shrink(struct kmem_cache *cache);
- void kasan_cache_shutdown(struct kmem_cache *cache);
- 
-@@ -149,4 +151,10 @@ static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
- 
- #endif /* CONFIG_KASAN_GENERIC */
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index 6d084431b7f7..e9e054dfb1fc 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -92,6 +92,13 @@
+ #define KASAN_THREAD_SHIFT	0
+ #endif
  
 +#ifdef CONFIG_KASAN_HW
++#define KASAN_TAG_SHIFTED(tag)		((unsigned long)(tag) << 56)
++#define KASAN_SET_TAG(addr, tag)	(((addr) & ~KASAN_TAG_SHIFTED(0xff)) | \
++						KASAN_TAG_SHIFTED(tag))
++#define KASAN_RESET_TAG(addr)		KASAN_SET_TAG(addr, 0xff)
++#endif
 +
-+#define KASAN_SHADOW_INIT 0xFF
-+
-+#endif /* CONFIG_KASAN_HW */
-+
- #endif /* LINUX_KASAN_H */
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index e78ebeff1f4c..656baa8984c7 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -473,11 +473,12 @@ int kasan_module_alloc(void *addr, size_t size)
+ #define MIN_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
  
- 	ret = __vmalloc_node_range(shadow_size, 1, shadow_start,
- 			shadow_start + shadow_size,
--			GFP_KERNEL | __GFP_ZERO,
-+			GFP_KERNEL,
- 			PAGE_KERNEL, VM_NO_GUARD, NUMA_NO_NODE,
- 			__builtin_return_address(0));
+ /*
+@@ -225,7 +232,12 @@ static inline unsigned long kaslr_offset(void)
+ #define __is_lm_address(addr)	(!!((addr) & BIT(VA_BITS - 1)))
  
- 	if (ret) {
-+		__memset(ret, KASAN_SHADOW_INIT, shadow_size);
- 		find_vm_area(addr)->flags |= VM_KASAN;
- 		kmemleak_ignore(ret);
- 		return 0;
+ #define __lm_to_phys(addr)	(((addr) & ~PAGE_OFFSET) + PHYS_OFFSET)
++
++#ifdef CONFIG_KASAN_HW
++#define __kimg_to_phys(addr)	(KASAN_RESET_TAG(addr) - kimage_voffset)
++#else
+ #define __kimg_to_phys(addr)	((addr) - kimage_voffset)
++#endif
+ 
+ #define __virt_to_phys_nodebug(x) ({					\
+ 	phys_addr_t __x = (phys_addr_t)(x);				\
+@@ -301,7 +313,13 @@ static inline void *phys_to_virt(phys_addr_t x)
+ #endif
+ #endif
+ 
++#ifdef CONFIG_KASAN_HW
++#define _virt_addr_is_linear(kaddr)	(KASAN_RESET_TAG((u64)(kaddr)) >= \
++						PAGE_OFFSET)
++#else
+ #define _virt_addr_is_linear(kaddr)	(((u64)(kaddr)) >= PAGE_OFFSET)
++#endif
++
+ #define virt_addr_valid(kaddr)		(_virt_addr_is_linear(kaddr) && \
+ 					 _virt_addr_valid(kaddr))
+ 
 -- 
 2.18.0.rc1.244.gcf134e6275-goog
 
