@@ -2,71 +2,210 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A54FC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10083C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31BD7208A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:04:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31BD7208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B45CF208A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:05:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45CF208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754911AbeFTTEt (ORCPT
+        id S1754940AbeFTTFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:04:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58788 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754859AbeFTTEk (ORCPT
+        Wed, 20 Jun 2018 15:05:08 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:42784 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754626AbeFTTFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:04:40 -0400
-Received: from localhost (113x41x139x141.ap113.ftth.ucom.ne.jp [113.41.139.141])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07098E93;
-        Wed, 20 Jun 2018 19:04:39 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 03:51:54 +0900
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.16 000/279] 4.16.17-stable review
-Message-ID: <20180620185154.GE32326@kroah.com>
-References: <20180618080608.851973560@linuxfoundation.org>
- <20180618183049.GB29875@roeck-us.net>
+        Wed, 20 Jun 2018 15:05:05 -0400
+Received: by mail-pf0-f196.google.com with SMTP id w7-v6so251990pfn.9;
+        Wed, 20 Jun 2018 12:05:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JFGD1ThS2YkXhZKgGLjNqiOqzddp65bwqVozihTmQX8=;
+        b=YM1/V7AE16bbjCJw/OUh28ZuFEga3RKh74Wx6XDDHiNUAqkXoZbcRW+4njQrEwhkmd
+         /SDs35P+L9LCegfRSIfjOlPZ8T1S7j6RSfUGnqS0lRugF0ohtHlXLfN+zDaJFu4pLUfe
+         uhJGXeYd5kKDeKBStNUDbykmP6rzuUf/O6Tcf5gcNURL/aE8qRWJymbUdi1Yj0sVNOB0
+         IY8QzWpFNOF1Ci+NbMiIxMVwW+OTNmutsVTJ2zopyBA59N/klZCfIuniUG/0+MB6SJKR
+         z3UxvOzP7ptYETzA/vYVx8vHR8UR8RVoIj4lBLFvdDPYYjiQuULGhyQypNrAr1ttnsNt
+         +JrQ==
+X-Gm-Message-State: APt69E0dwokb1Wm+B69hmiAY+bXgrMMkGQLjt/CZg8lhYIpl7KH0lkm0
+        ag4sFwRlWF8N/of+/BjAgw==
+X-Google-Smtp-Source: ADUXVKJQ2IHiSAPUUadcx681kY3P6QXPz44RCY7O/ODQXTvvTZs/u9Wb6DICt9rhInGZsdVLcUhHCA==
+X-Received: by 2002:a62:9c0d:: with SMTP id f13-v6mr6702143pfe.215.1529521504390;
+        Wed, 20 Jun 2018 12:05:04 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id x5-v6sm4446206pfh.67.2018.06.20.12.05.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 12:05:03 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 13:05:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Kiran Gunda <kgunda@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V3 3/7] backlight: qcom-wled: Add new properties for
+ PMI8998
+Message-ID: <20180620190502.GA20160@rob-hp-laptop>
+References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
+ <1529406822-15379-4-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180618183049.GB29875@roeck-us.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1529406822-15379-4-git-send-email-kgunda@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 11:30:49AM -0700, Guenter Roeck wrote:
-> On Mon, Jun 18, 2018 at 10:09:45AM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.16.17 release.
-> > There are 279 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed Jun 20 08:05:28 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
+On Tue, Jun 19, 2018 at 04:43:38PM +0530, Kiran Gunda wrote:
+> Update the bindings with the new properties used for
+> PMI8998.
 > 
-> For v4.16.16-279-g957de89:
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> ---
+>  .../bindings/leds/backlight/qcom-wled.txt          | 84 ++++++++++++++++++++--
+>  1 file changed, 77 insertions(+), 7 deletions(-)
 > 
-> Build results:
-> 	total: 145 pass: 145 fail: 0
-> Qemu test results:
-> 	total: 152 pass: 152 fail: 0
-> 
-> Details are available at http://kerneltests.org/builders/.
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> index 14f28f2..503ce87 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+> @@ -48,11 +48,15 @@ platforms. The PMIC is connected to the host processor via SPMI bus.
+>  - qcom,current-limit
+>  	Usage:        optional
+>  	Value type:   <u32>
+> -	Definition:   mA; per-string current limit
+> -		      value: For pm8941: from 0 to 25 with 5 mA step
+> -			     Default 20 mA.
+> -			     For pmi8998: from 0 to 30 with 5 mA step
+> -			     Default 25 mA.
+> +	Definition:   mA; per-string current limit; value from 0 to 25 with
+> +		      1 mA step. Default 20 mA.
+> +		      This property is supported only for pm8941.
+> +
+> +- qcom,current-limit-microamp
+> +	Usage:        optional
+> +	Value type:   <u32>
+> +	Definition:   uA; per-string current limit; value from 0 to 30000 with
+> +		      2500 uA step. Default 25000 uA.
 
-Great, thanks for testing and letting me know.
+This doesn't really seem worth adding just to add '-microamp'.
 
-greg k-h
+
+>  - qcom,current-boost-limit
+>  	Usage:        optional
+> @@ -79,12 +83,61 @@ platforms. The PMIC is connected to the host processor via SPMI bus.
+>  		      27, 29, 32, 35. default: 29V
+>  		      This property is supported only for PM8941.
+>  
+> +- qcom,ovp-millivolt
+
+Is this the same as qcom,ovp? If so, same comment.
+
+> +	Usage:        optional
+> +	Value type:   <u32>
+> +	Definition:   mV; Over-voltage protection limit;
+> +		      For pmi8998: one of 18100, 19600, 29600, 31100
+> +		      Default: 29600 mV
+> +		      If this property is not specified for PM8941, it
+> +		      falls back to "qcom,ovp" property.
+> +
+>  - qcom,num-strings
+>  	Usage:        optional
+>  	Value type:   <u32>
+>  	Definition:   #; number of led strings attached;
+> -		      value from 1 to 3. default: 2
+> -		      This property is supported only for PM8941.
+> +		      value: For PM8941 from 1 to 3. default: 2
+> +			     For PMI8998 from 1 to 4. default: 4
+> +
+> +- interrupts
+> +	Usage:        optional
+> +	Value type:   <prop encoded array>
+> +	Definition:   Interrupts associated with WLED. This should be
+> +		      "short" and "ovp" interrupts. Interrupts can be
+> +		      specified as per the encoding listed under
+> +		      Documentation/devicetree/bindings/spmi/
+> +		      qcom,spmi-pmic-arb.txt.
+> +
+> +- interrupt-names
+> +	Usage:        optional
+> +	Value type:   <string>
+> +	Definition:   Interrupt names associated with the interrupts.
+> +		      Must be "short" and "ovp". The short circuit detection
+> +		      is not supported for PM8941.
+> +
+> +- qcom,enabled-strings
+> +	Usage:        optional
+> +	Value tyoe:   <u32 array>
+> +	Definition:   Array of the WLED strings numbered from 0 to 3. Each
+> +		      string of leds are operated individually. Specify the
+> +		      list of strings used by the device. Any combination of
+> +		      led strings can be used.
+> +		      for pm8941: Default values are [00 01].
+> +		      for pmi8998: Default values are [00 01 02 03].
+
+u32 or u8 because dts syntax for 8-bit array is [].
+
+> +
+> +- qcom,external-pfet
+> +	Usage:        optional
+> +	Value type:   <bool>
+> +	Definition:   Specify if external PFET control for short circuit
+> +		      protection is used. This property is supported only
+> +		      for PMI8998.
+> +
+> +- qcom,auto-string-detection
+> +	Usage:        optional
+> +	Value type:   <bool>
+> +	Definition:   Enables auto-detection of the WLED string configuration.
+> +		      This feature is not supported for PM8941.
+> +
+>  
+>  Example:
+>  
+> @@ -99,4 +152,21 @@ pm8941-wled@d800 {
+>  	qcom,switching-freq = <1600>;
+>  	qcom,ovp = <29>;
+>  	qcom,num-strings = <2>;
+> +	qcom,enabled-strings = <0x00 0x01>;
+> +};
+> +
+> +pmi8998-wled@d800 {
+
+led-controller {
+
+And needs a unit-address.
+
+> +	compatible = "qcom,pmi8998-wled";
+> +	reg = <0xd800 0xd900>;
+> +	label = "backlight";
+> +
+> +	interrupts = <3 0xd8 2 IRQ_TYPE_EDGE_RISING>,
+> +		     <3 0xd8 1 IRQ_TYPE_EDGE_RISING>;
+> +	interrupt-names = "short", "ovp";
+> +	qcom,current-limit-microamp = <25000>;
+> +	qcom,current-boost-limit = <805>;
+> +	qcom,switching-freq = <1600>;
+> +	qcom,ovp-millivolt = <29600>;
+> +	qcom,num-strings = <4>;
+> +	qcom,enabled-strings = <0x00 0x01 0x02 0x03>;
+>  };
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>  a Linux Foundation Collaborative Project
+> 
