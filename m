@@ -2,167 +2,187 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C8BC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E96DC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D75220836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:00:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iwVQbMV+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Jh/iXYs3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D75220836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id D215220652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:00:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D215220652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933085AbeFTI5g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:57:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49586 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932858AbeFTIpC (ORCPT
+        id S1754699AbeFTJAq (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 05:00:46 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:38022 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754614AbeFTJAl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:45:02 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 332BF60B62; Wed, 20 Jun 2018 07:28:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479694;
-        bh=MdPAtPQdZttTiELGEaRalu6bDPUoaiIDUe8pyutvMXU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iwVQbMV+VoPJADMDhy7y77xECWSki9o8qraV+awCFy3vXVjn8s5cJuCgTn+wIoPNr
-         LcMKWvuH3hebRyVMkk0w6i7gb4ZrVediqrTK0NQKr8ubg6J4NDx1pKJTSXcT05h25u
-         qv7rzSwamsYAfnZnsrq1mkk3uylZawORynSsEDnU=
-Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: absahu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E97E260B27;
-        Wed, 20 Jun 2018 07:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479693;
-        bh=MdPAtPQdZttTiELGEaRalu6bDPUoaiIDUe8pyutvMXU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jh/iXYs3WvnU0z42B2k1qHjDN/6NN4+T+lC99G4ceDAPZ/hBu7q/eMfqBP8O3zRTX
-         8qJ4EYLaDqxhW0Y+tk2nPmNwgGGEWltVDX8J/2sdiCis1BENNtkqsx51fYNvIZ6pAN
-         52PcJ4h78Sl4t65nZRfMpUwjKp7EE1kRIvlgn6fo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E97E260B27
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
-From:   Abhishek Sahu <absahu@codeaurora.org>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v4 05/15] mtd: rawnand: qcom: use the ecc strength from device parameter
-Date:   Wed, 20 Jun 2018 12:57:32 +0530
-Message-Id: <1529479662-4026-6-git-send-email-absahu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
-References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
+        Wed, 20 Jun 2018 05:00:41 -0400
+Received: by mail-oi0-f65.google.com with SMTP id d5-v6so2343160oib.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 02:00:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iaf34ur3LmcIDpURuViIahNYd2DHXnMfAJ45qUPsCVI=;
+        b=LS7+j5I4iAxl8p3pX6jE6RrF/bu+QRLnC13z7LEBx3KGaU5d+Q3YmtPJ32IaksCUbO
+         rOm/1o6/oDaTbmIpdY3xTm88z6kieSeuyePFIB2z/7F+UUHxrnUCIKxfFs/M0JG6N2rv
+         EiNILiACT/z1q0nyFKmVbU6R63s1eyYVEec7Q9GoWnZhpmpKyA1HISbI0GFWkVY5d7gl
+         UR08kreCGakqLVA9/Q7JcWFX2W4oiT93Zk8ZDYvIoWxGGLw5r6bZ2hY0CW+HWqEh0Baz
+         v+0qkj8sZtvfRImZzc1LH+AHbie+5qh45UpJ4D/a6U/bfTRFHqNq0vyCwYoLys7MfT8D
+         qGcw==
+X-Gm-Message-State: APt69E1bYu6iXnClzCGrUV7Vb7s9DrNRtAP99HYsT38SRpgLM9MJQ2ia
+        /f0z4adsqzleb1BHLPeIdJxqOB8ZnKn9I5fu75ydkPBs
+X-Google-Smtp-Source: ADUXVKJKG3ou160SHe5bE0MF/Qdmj/g2WaKEz6Sc3NmVdJCoC9wUmiWfZnLZfiHxEl+4g3pPrT9zuD8490aG1uYEgwI=
+X-Received: by 2002:aca:a686:: with SMTP id t6-v6mr11561924oij.48.1529479001610;
+ Wed, 20 Jun 2018 00:16:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180619140229.3615110-1-arnd@arndb.de>
+In-Reply-To: <20180619140229.3615110-1-arnd@arndb.de>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Wed, 20 Jun 2018 09:16:30 +0200
+Message-ID: <CA+7wUsyN_gru4rW0y3ZzXzYwhfaA=uHKaOG=z5bprnYq6oVfMg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] [v2] powerpc: mac: fix rtc read/write functions
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>, funaho@jurai.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        gerg@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>, y2038@lists.linaro.org,
+        Meelis Roos <mroos@linux.ee>, schwab@linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the driver uses the ECC strength specified in DT.
-The QPIC/EBI2 NAND supports 4 or 8-bit ECC correction. The same
-kind of board can have different NAND parts so use the ECC
-strength from device parameters if it is not specified in DT.
+On Tue, Jun 19, 2018 at 4:04 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> As Mathieu pointed out, my conversion to time64_t was incorrect and resulted
+> in negative times to be read from the RTC. The problem is that during the
+> conversion from a byte array to a time64_t, the 'unsigned char' variable
+> holding the top byte gets turned into a negative signed 32-bit integer
+> before being assigned to the 64-bit variable for any times after 1972.
+>
+> This changes the logic to cast to an unsigned 32-bit number first for
+> the Macintosh time and then convert that to the Unix time, which then gives
+> us a time in the documented 1904..2040 year range. I decided not to use
+> the longer 1970..2106 range that other drivers use, for consistency with
+> the literal interpretation of the register, but that could be easily
+> changed if we decide we want to support any Mac after 2040.
+>
+> Just to be on the safe side, I'm also adding a WARN_ON that will trigger
+> if either the year 2040 has come and is observed by this driver, or we
+> run into an RTC that got set back to a pre-1970 date for some reason
+> (the two are indistinguishable).
+>
+> For the RTC write functions, Andreas found another problem: both
+> pmu_request() and cuda_request() are varargs functions, so changing
+> the type of the arguments passed into them from 32 bit to 64 bit
+> breaks the API for the set_rtc_time functions. This changes it
+> back to 32 bits.
+>
+> The same code exists in arch/m68k/ and is patched in an identical way now
+> in a separate patch.
+>
+> Fixes: 5bfd643583b2 ("powerpc: use time64_t in read_persistent_clock")
+> Reported-by: Mathieu Malaterre <malat@debian.org>
+> Reported-by: Andreas Schwab <schwab@linux-m68k.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
-* Changes from v3:
-  1. Added parenthesis around (cwperpage * 4)
+Doing a reboot on Debian sets the hardware clock from system clock and
+upon reboot everything is back in shape:
 
-* Changes from v2:
-  1. s/<< 2/* 4/
-  2. Updated the cwperpage location
-  3. The block handling the ecc-step-size property has been
-     removed in a previous patch
+[    5.645082] rtc-generic rtc-generic: setting system clock to
+2018-06-20 07:12:04 UTC (1529478724)
 
-* Changes from v1:
 
-  1. Removed the custom logic and used the helper fuction.
+Tested-by: Mathieu Malaterre <malat@debian.org>
 
- drivers/mtd/nand/raw/qcom_nandc.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index bf80a61..2375780 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -2315,19 +2315,39 @@ static int qcom_nand_ooblayout_free(struct mtd_info *mtd, int section,
- 	.free = qcom_nand_ooblayout_free,
- };
- 
-+static int
-+qcom_nandc_calc_ecc_bytes(int step_size, int strength)
-+{
-+	return strength == 4 ? 12 : 16;
-+}
-+NAND_ECC_CAPS_SINGLE(qcom_nandc_ecc_caps, qcom_nandc_calc_ecc_bytes,
-+		     NANDC_STEP_SIZE, 4, 8);
-+
- static int qcom_nand_host_setup(struct qcom_nand_host *host)
- {
- 	struct nand_chip *chip = &host->chip;
- 	struct mtd_info *mtd = nand_to_mtd(chip);
- 	struct nand_ecc_ctrl *ecc = &chip->ecc;
- 	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
--	int cwperpage, bad_block_byte;
-+	int cwperpage, bad_block_byte, ret;
- 	bool wide_bus;
- 	int ecc_mode = 1;
- 
- 	/* controller only supports 512 bytes data steps */
- 	ecc->size = NANDC_STEP_SIZE;
- 	wide_bus = chip->options & NAND_BUSWIDTH_16 ? true : false;
-+	cwperpage = mtd->writesize / NANDC_STEP_SIZE;
-+
-+	/*
-+	 * Each CW has 4 available OOB bytes which will be protected with ECC
-+	 * so remaining bytes can be used for ECC.
-+	 */
-+	ret = nand_ecc_choose_conf(chip, &qcom_nandc_ecc_caps,
-+				   mtd->oobsize - (cwperpage * 4));
-+	if (ret) {
-+		dev_err(nandc->dev, "No valid ECC settings possible\n");
-+		return ret;
-+	}
- 
- 	if (ecc->strength >= 8) {
- 		/* 8 bit ECC defaults to BCH ECC on all platforms */
-@@ -2396,7 +2416,6 @@ static int qcom_nand_host_setup(struct qcom_nand_host *host)
- 
- 	mtd_set_ooblayout(mtd, &qcom_nand_ooblayout_ops);
- 
--	cwperpage = mtd->writesize / ecc->size;
- 	nandc->max_cwperpage = max_t(unsigned int, nandc->max_cwperpage,
- 				     cwperpage);
- 
-@@ -2412,12 +2431,6 @@ static int qcom_nand_host_setup(struct qcom_nand_host *host)
- 	 * for 8 bit ECC
- 	 */
- 	host->cw_size = host->cw_data + ecc->bytes;
--
--	if (ecc->bytes * (mtd->writesize / ecc->size) > mtd->oobsize) {
--		dev_err(nandc->dev, "ecc data doesn't fit in OOB area\n");
--		return -EINVAL;
--	}
--
- 	bad_block_byte = mtd->writesize - host->cw_size * (cwperpage - 1) + 1;
- 
- 	host->cfg0 = (cwperpage - 1) << CW_PER_PAGE
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
-is a member of Code Aurora Forum, hosted by The Linux Foundation
-
+Thanks!
+> ---
+>  arch/powerpc/platforms/powermac/time.c | 29 ++++++++++++++++++++---------
+>  1 file changed, 20 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
+> index 7c968e46736f..12e6e4d30602 100644
+> --- a/arch/powerpc/platforms/powermac/time.c
+> +++ b/arch/powerpc/platforms/powermac/time.c
+> @@ -42,7 +42,11 @@
+>  #define DBG(x...)
+>  #endif
+>
+> -/* Apparently the RTC stores seconds since 1 Jan 1904 */
+> +/*
+> + * Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
+> + * times wrap in 2040. If we need to handle later times, the read_time functions
+> + * need to be changed to interpret wrapped times as post-2040.
+> + */
+>  #define RTC_OFFSET     2082844800
+>
+>  /*
+> @@ -97,8 +101,11 @@ static time64_t cuda_get_time(void)
+>         if (req.reply_len != 7)
+>                 printk(KERN_ERR "cuda_get_time: got %d byte reply\n",
+>                        req.reply_len);
+> -       now = (req.reply[3] << 24) + (req.reply[4] << 16)
+> -               + (req.reply[5] << 8) + req.reply[6];
+> +       now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
+> +                   (req.reply[5] << 8) + req.reply[6]);
+> +       /* it's either after year 2040, or the RTC has gone backwards */
+> +       WARN_ON(now < RTC_OFFSET);
+> +
+>         return now - RTC_OFFSET;
+>  }
+>
+> @@ -106,10 +113,10 @@ static time64_t cuda_get_time(void)
+>
+>  static int cuda_set_rtc_time(struct rtc_time *tm)
+>  {
+> -       time64_t nowtime;
+> +       u32 nowtime;
+>         struct adb_request req;
+>
+> -       nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
+> +       nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
+>         if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
+>                          nowtime >> 24, nowtime >> 16, nowtime >> 8,
+>                          nowtime) < 0)
+> @@ -140,8 +147,12 @@ static time64_t pmu_get_time(void)
+>         if (req.reply_len != 4)
+>                 printk(KERN_ERR "pmu_get_time: got %d byte reply from PMU\n",
+>                        req.reply_len);
+> -       now = (req.reply[0] << 24) + (req.reply[1] << 16)
+> -               + (req.reply[2] << 8) + req.reply[3];
+> +       now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16) +
+> +                   (req.reply[2] << 8) + req.reply[3]);
+> +
+> +       /* it's either after year 2040, or the RTC has gone backwards */
+> +       WARN_ON(now < RTC_OFFSET);
+> +
+>         return now - RTC_OFFSET;
+>  }
+>
+> @@ -149,10 +160,10 @@ static time64_t pmu_get_time(void)
+>
+>  static int pmu_set_rtc_time(struct rtc_time *tm)
+>  {
+> -       time64_t nowtime;
+> +       u32 nowtime;
+>         struct adb_request req;
+>
+> -       nowtime = rtc_tm_to_time64(tm) + RTC_OFFSET;
+> +       nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
+>         if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
+>                         nowtime >> 16, nowtime >> 8, nowtime) < 0)
+>                 return -ENXIO;
+> --
+> 2.9.0
+>
