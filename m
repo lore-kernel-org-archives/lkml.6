@@ -3,126 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC962C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A66C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 696ED2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:18:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 696ED2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id C373920836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:18:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C373920836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753832AbeFTASA (ORCPT
+        id S1754139AbeFTASL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:18:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35427 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750949AbeFTAR7 (ORCPT
+        Tue, 19 Jun 2018 20:18:11 -0400
+Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:50185 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753644AbeFTASG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:17:59 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0Hs5T3296731
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 17:17:54 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0Hs9G3296728;
-        Tue, 19 Jun 2018 17:17:54 -0700
-Date:   Tue, 19 Jun 2018 17:17:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-b659774192534679d93009af9003eefc3d741d59@git.kernel.org>
-Cc:     mingo@kernel.org, reinette.chatre@intel.com, tglx@linutronix.de,
-        hpa@zytor.com, linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, hpa@zytor.com, reinette.chatre@intel.com,
-          mingo@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <d08cc1fa859f5751fd815ed8ef5499170badc9e5.1527593970.git.reinette.chatre@intel.com>
-References: <d08cc1fa859f5751fd815ed8ef5499170badc9e5.1527593970.git.reinette.chatre@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Making CBM name and type more
- explicit
-Git-Commit-ID: b659774192534679d93009af9003eefc3d741d59
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 19 Jun 2018 20:18:06 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 4B149100E806B;
+        Wed, 20 Jun 2018 00:18:05 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: car11_80970b6b9353a
+X-Filterd-Recvd-Size: 2099
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 20 Jun 2018 00:18:03 +0000 (UTC)
+Message-ID: <366638527170f814bbe98f7189900ebf6c04d007.camel@perches.com>
+Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in
+ update_permission_bitmask()
+From:   Joe Perches <joe@perches.com>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>, rkrcmar@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 19 Jun 2018 17:18:02 -0700
+In-Reply-To: <20180619234543.GG169030@google.com>
+References: <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
+         <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
+         <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
+         <ad7a9addf043ee7fda8907eff9f83c9709b575dc.camel@perches.com>
+         <d6a99e26-b100-715b-2615-b77259ec8397@redhat.com>
+         <66b5e5c3ed82a5e1559419deb841c57bf0751fd3.camel@perches.com>
+         <20180619183622.GB169030@google.com>
+         <7547dfd4045a5acf23505887065bc228e65f2ff9.camel@perches.com>
+         <20180619211019.GE169030@google.com>
+         <951ccf2a257fb8f8827f88e1c17ce64d23173e94.camel@perches.com>
+         <20180619234543.GG169030@google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b659774192534679d93009af9003eefc3d741d59
-Gitweb:     https://git.kernel.org/tip/b659774192534679d93009af9003eefc3d741d59
-Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Tue, 29 May 2018 05:57:35 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 20 Jun 2018 00:56:30 +0200
+On Tue, 2018-06-19 at 16:45 -0700, Matthias Kaehlcke wrote:
+> On Tue, Jun 19, 2018 at 02:55:05PM -0700, Joe Perches wrote:
+> > Well, you advocate to disable a possibly useful warning globally ...
+> > You're advocating for making the code more complex/ugly for a
+> > condition where the result is identical.
+> My goal is no to make the code (slightly) more complex/ugly but have
+> the rest of the kernel benefit from a possibly useful warning.
 
-x86/intel_rdt: Making CBM name and type more explicit
+For what case in the kernel is this warning useful?
 
-cbm_validate() receives a pointer to the variable that will be initialized
-with a validated capacity bitmask. The pointer points to a variable of type
-unsigned long that is immediately assigned to a variable of type u32 by the
-caller on return from cbm_validate().
-
-Let cbm_validate() initialize a variable of type u32 directly.
-
-At this time also change tha variable name "data" within parse_cbm() to a
-name more reflective of the content: "cbm_val". This frees up the generic
-"data" to be used later when it is indeed used for a collection of input.
-
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com
-Cc: tony.luck@intel.com
-Cc: vikas.shivappa@linux.intel.com
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: dave.hansen@intel.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/d08cc1fa859f5751fd815ed8ef5499170badc9e5.1527593970.git.reinette.chatre@intel.com
-
----
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index 2c23bb136ccc..b3da5b981dd8 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -87,7 +87,7 @@ int parse_bw(char *buf, struct rdt_resource *r, struct rdt_domain *d)
-  *	are allowed (e.g. FFFFH, 0FF0H, 003CH, etc.).
-  * Additionally Haswell requires at least two bits set.
-  */
--static bool cbm_validate(char *buf, unsigned long *data, struct rdt_resource *r)
-+static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
- {
- 	unsigned long first_bit, zero_bit, val;
- 	unsigned int cbm_len = r->cache.cbm_len;
-@@ -128,16 +128,17 @@ static bool cbm_validate(char *buf, unsigned long *data, struct rdt_resource *r)
-  */
- int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d)
- {
--	unsigned long data;
-+	u32 cbm_val;
- 
- 	if (d->have_new_ctrl) {
- 		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
- 		return -EINVAL;
- 	}
- 
--	if(!cbm_validate(buf, &data, r))
-+	if (!cbm_validate(buf, &cbm_val, r))
- 		return -EINVAL;
--	d->new_ctrl = data;
-+
-+	d->new_ctrl = cbm_val;
- 	d->have_new_ctrl = true;
- 
- 	return 0;
