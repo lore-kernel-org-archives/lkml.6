@@ -2,386 +2,214 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82EFEC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2564C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A6C620883
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:41:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44C1B20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:41:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aEAg7D9N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A6C620883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="I63B+sHT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C1B20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754719AbeFTRk6 (ORCPT
+        id S1754753AbeFTRlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:40:58 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39112 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932436AbeFTRkf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:40:35 -0400
-Received: by mail-wm0-f67.google.com with SMTP id p11-v6so973129wmc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:40:34 -0700 (PDT)
+        Wed, 20 Jun 2018 13:41:05 -0400
+Received: from mail-eopbgr700081.outbound.protection.outlook.com ([40.107.70.81]:35840
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754288AbeFTRk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 13:40:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=JoLP+rfhcghlh35REAdh3x/Y0TiEsr492KhTCTLFk0Q=;
-        b=aEAg7D9N/TdcuyLmTblXFpNhd/g4tTQ2JgrGD30oxL7HQEWigJUF6AV9bnoaLhGxu3
-         JQIVQqtlAwa1HEIBUkYalR4sG6BgS/qewNpLvtNLwADfbsMHsOVUp1mBMDrq78ZL2Jkt
-         NncnLkfvxGVv3+8jl/woAdPXEJadWK1dmUSa7FcyInV6x4tjX1VAjZBqlmjA6aH2xPQ6
-         m9RpZef/WP/Jiwx8eqCNKSV5LMGnuwohe4O0xNVNasNiitd2B2BeuAe38zUvJUZTzTY1
-         hnra/eB5HEFxDYJzZBF+N26x2tTUpR8iNdvNWrOzLVfNDfX/e+tV2x61ykdYHGjO6wGz
-         VSBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=JoLP+rfhcghlh35REAdh3x/Y0TiEsr492KhTCTLFk0Q=;
-        b=NP5u0GEfQKxXO5RzGP2AWE1mx/V9rB98rCSRPPT1Qhj6CQnzPZoRJMrup/ctY+y91n
-         tRy9v/jg2XW7SqddKFBUsrf8eSWkbI9/SebgGN1pgGS/YBe0HFCRbPKlB0S2NypkK8Iu
-         kKq7ps8qcYB0ij0SJwaUC7f6QXKP+lo4nIRd2WzA9nSODXrflt+lQHX9OAB1ocXqih8h
-         zrQ6Xlv4om5CU5aWNTe1x6pVoAU1ArBOkOd4Hw+avwcPQ4YTYkuRczeazdYUDKPDZsgJ
-         YmtyEiTVR3i+jFVFCflqtwdth18wRSrvShCaoq8TzDyxBx+IVl0U8h3vIxAioodrG8oI
-         nZ2w==
-X-Gm-Message-State: APt69E0Q4OL4Qx4Wr1A9BwdGpAeh5+88Ajms/Cm3eDS/xOjI9Lm8sWH/
-        HIwnfe7hLRI11obboihVClY0Kw==
-X-Google-Smtp-Source: ADUXVKIJAqgGxT0Fp5cQ+W94Q5YNyMq33fhbQD/KbpuGYRDub7EJfkbgyI4VrbjOqvGtdX3i9ITcGw==
-X-Received: by 2002:a1c:a54e:: with SMTP id o75-v6mr2555014wme.157.1529516433313;
-        Wed, 20 Jun 2018 10:40:33 -0700 (PDT)
-Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id f18-v6sm4388598wro.1.2018.06.20.10.40.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:40:32 -0700 (PDT)
-From:   Andrey Konovalov <andreyknvl@google.com>
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-        linux-kbuild@vger.kernel.org
-Cc:     Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v3 16/17] khwasan: update kasan documentation
-Date:   Wed, 20 Jun 2018 19:40:02 +0200
-Message-Id: <ce878d72ed7d9c416d7fa5d67b8bc053afcdfb3b.1529515183.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-In-Reply-To: <cover.1529515183.git.andreyknvl@google.com>
-References: <cover.1529515183.git.andreyknvl@google.com>
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CIkHm85z1WUVHuKMn8jcaQdPVsvWK1J86FnoIRstJGQ=;
+ b=I63B+sHTS3ciAQZUFeFxS1zHAWH5agXQJtBbgph4ARa6mamy63n/A2y4qEPDVmUkHtDh7TI+yt1M+Cm+SamU58P6nSD3Ghou16Ded0va8mNyGmQyivW1D3ZJHLwTkkgWZTgAAxhan7TdOnG3pnkxv9I6LNuUCXolGmb1tQm5nkM=
+Received: from SN6PR02CA0028.namprd02.prod.outlook.com (2603:10b6:805:a2::41)
+ by CY4PR02MB2646.namprd02.prod.outlook.com (2603:10b6:903:72::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.16; Wed, 20 Jun
+ 2018 17:40:57 +0000
+Received: from CY1NAM02FT044.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::201) by SN6PR02CA0028.outlook.office365.com
+ (2603:10b6:805:a2::41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.863.16 via Frontend
+ Transport; Wed, 20 Jun 2018 17:40:57 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT044.mail.protection.outlook.com (10.152.75.137) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.884.17
+ via Frontend Transport; Wed, 20 Jun 2018 17:40:56 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1fVh6F-0002P3-Ms; Wed, 20 Jun 2018 10:40:55 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1fVh6A-0004lu-JZ; Wed, 20 Jun 2018 10:40:50 -0700
+Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w5KHefqm002472;
+        Wed, 20 Jun 2018 10:40:42 -0700
+Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <jollys@xilinx.com>)
+        id 1fVh61-0004hY-Pq; Wed, 20 Jun 2018 10:40:41 -0700
+From:   Jolly Shah <jolly.shah@xilinx.com>
+To:     <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
+        <gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
+        <sudeep.holla@arm.com>, <hkallweit1@gmail.com>,
+        <keescook@chromium.org>, <dmitry.torokhov@gmail.com>,
+        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+        <michal.simek@xilinx.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-clk@vger.kernel.org>
+CC:     <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Jolly Shah <jollys@xilinx.com>
+Subject: [PATCH v9 03/10] firmware: xilinx: Add zynqmp IOCTL API for device control
+Date:   Wed, 20 Jun 2018 10:40:28 -0700
+Message-ID: <1529516435-7315-4-git-send-email-jollys@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+References: <1529516435-7315-1-git-send-email-jollys@xilinx.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(39860400002)(39380400002)(2980300002)(438002)(189003)(199004)(81166006)(8676002)(356003)(16586007)(6666003)(316002)(7416002)(72206003)(110136005)(106466001)(54906003)(106002)(5660300001)(63266004)(4326008)(9786002)(36386004)(81156014)(305945005)(50466002)(48376002)(336012)(77096007)(8936002)(39060400002)(126002)(76176011)(486006)(7696005)(186003)(26005)(50226002)(2201001)(2906002)(44832011)(47776003)(446003)(36756003)(11346002)(2616005)(476003)(107886003)(426003)(51416003)(478600001)(107986001)(921003)(1121003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR02MB2646;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT044;1:iMsdP4h41KuHjcumYxJOu9Kt75Ohat8FbkZzDDxkcVn99l/5KUJ3eaqNoKxjTNh6T+piff5NO2IO17iLi3zZQSs1GPnC3v77FXjARx9A3oufVGO4Tmj/Xy1l+mdlEc92
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c63d4d56-489d-4c68-f48c-08d5d6d4fad2
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(4608076)(2017052603328)(7153060);SRVR:CY4PR02MB2646;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2646;3:PfP6EYvwzmEmGSsS2lINK6zez1ahxcGgCLJu3Xx2FYhJ+PspLBl6CvuBrcLi6BYrNH93VlwCJ5baYL/1XANrXVoiYLl6sBBVqRuZTMxqto/iZzZFsPbgGwrY9LOiomWaSIpJ8A0LBOIv5wDrdvwqAQxB7UU0YII5Sz5/qFHTYQIV7oZHUr1Aw5z+uLqOU2BXcAYBR2dK0qjj504uBQ01q77RxWtYT/lddcayGGwKgOVKv8Cy3rs4bScW/GyJJG7c8L4tt9yvVyv4dBIHE0SlusI1ww8Gm26NX4wKYLQidRoCueEHFlvdym6tj2uysCOAd73BpM+8wmWYEC/4w9FXBsBaNqQQDEuAfgoFptuQCeg=;25:p+uXKPx02LsGmhR/l2tgiihzoikrvhLQGbziMVNqVZaI2zMY8Uzh2hEW1jNHbQmfMzhy1cdijiZOLzVmTyUqVadz4QhuDhKg2NJL0H81u9wKh0UksPu3v8vAMLboo/GZBj3ZROTGGxeLp1XiU9YjsGWV01J4JPw4YPlfLQ0DEJAChYNRrqeRilnE7buFNvX7TzXNDxaUMB+hzhJAhGbuH9e2Hpm2yHbKu3Fv3OO7xl188Tam4em07wgXO5qR7PZVF3NV0L35nICfduVMvPuJEZ7Fwonr9hlwNFwFNk8962q5aLpeR4oMFAVrLGAno3ZMWuQs+0/UENt+kMqC08tsQg==
+X-MS-TrafficTypeDiagnostic: CY4PR02MB2646:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2646;31:R19npHGiOOM+TUsVD0PQRuBCU/2EcywKMwCpfT9QiTEr6xUNNVM55ktKBOhi+oJPnAakiwz1G/XoFqs0A5zQWFpBRV5rovAzN4+VUxYFG2O8vwprs0YyrnI5oFq6g/fALQIvP2NNRNAxUTcQEKarhzwSCbXhOIOe6LnG12q9NC+UXu2wNBl1I0kBEVuOuSwbk9UeVSHitPjYY6X2HqHTZFs0qtXy3j6gCN/BjoxAhpA=;20:BhEKD9h4zVFO9SeFXdR+gLotGg7Bf8QJkOmCqWcwESTsZFFGxPwTEHBX3I0kJmA51RuS5Gq6EfeHO3wd+OqjCSIxayDfTZqbvJkCeOtnQsie8DE1bJcOF6PmELZm53KYhsxOWTn+wibk89VZGyxKI9P7KBzS/JZZpjPonwdkd7bZlL/Wb/UXDO+c6kr98OXSFUW74n3VmaXqobM8pvnD5aPoUp2D8z3Hv6OVDHIpDqgrBojixyvRWMvPlh4q9jWLFxVl6fQbEMYcUt5iI+hVE4P55LtGr8eBaFwg64WQpmSzw6L2skLvTwfFXfqorsbDWMYw2k2AsJ39Ns8HUodLA2LR7Xanf7J6USzD4Zmm6d7EtgmKdoZAQaNUJq7ba0f4jE9CwhYyYHtZyYX5ERNVZav3Fig4Hgi+BnmjLiZT471mU9LAR2YlbfVXICo/C5+fk+zUbhiRGsnCHkCsF10OstS0DQz34uZpBb8yT/p9cAzZD5TTVcCUtxYVWbMqSbma
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <CY4PR02MB26463AFAB1DCCECAF8EE9C00B8770@CY4PR02MB2646.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(93006095)(93004095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CY4PR02MB2646;BCL:0;PCL:0;RULEID:;SRVR:CY4PR02MB2646;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2646;4:WIOJtQKQgs97Q2JyYcFgx0/npfpxoFTAtAIUJppyUzddmSJ44x2lbb03EXTtYMULIk7awV1E9A+gOP3HxYEPXlOH2TEADmLdYcDp6/oK2aypeCTkKfxiMzl4SHKIk33/nC12b/Dw86YaCYZqHu0IYDCTcXULzANggxvzhb1zzSDuI3NxE68CX0ad3pBqCA2hpuDlxud2T3ON9mrrS0D7q+dgOAKQZXgSoS73OwmvhDnEQoGEasETXYSsouTmmOH6/elI5DhEpMM/psyeYg5uGgUQoEuPGJ1oV0XVhPLP61tJcQ0ROr+s1vDbIa5FUNv1
+X-Forefront-PRVS: 070912876F
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR02MB2646;23:bB58a/8AO/fiqeeGu5zlMYbcTM9tCx1FG2My3Bld8?=
+ =?us-ascii?Q?nZEXHK86/VCiU9zTz/WqW7jRz5U41YD0zv3AH3J9fBin8K9mV8iXw7gZzSX7?=
+ =?us-ascii?Q?lTcFvG7KXIAFFOTDwTdLCsXJA/8O09FJhJX1VbreW3BrB7jHzVJ6LiRRb6Nj?=
+ =?us-ascii?Q?k3uSI69QLFciUt3LycPg6WI4yOI6lwlZ3eVieuHDg428at0CNqUBrEow4NFo?=
+ =?us-ascii?Q?yF0MAzOloIluaMTun+sw0nwlqLlqs/M4vaexEek3rTOOCz02ZKCmxQTOh9rX?=
+ =?us-ascii?Q?dTxXQEuUcth79yTN3lhLWR9AE+iO23v0Bf6MipHDs6LAUuDnUcU8MdOQMB4g?=
+ =?us-ascii?Q?KYJ8kVqLDBvcNjmXe9MVhUTd7w50Wk3d+en/BU/1evWjEnvEodCEuSK5IQEG?=
+ =?us-ascii?Q?hPu7aNuoMv/rJOona8z+YTuZTEVVqPK6iVU8JR5Uu6M2YHVuD073YtANn6Tu?=
+ =?us-ascii?Q?3zkuJRDiEWgZHkfQm/ADYnyn+seDsbMciC82rejM6fp7UjzojjbVnqsXBSb3?=
+ =?us-ascii?Q?VEJ82aGBH8Xwj6T9b3OXxtyeY4zWEzBn7Wn4PAgxTAjESPXFQQgae2K4pUc+?=
+ =?us-ascii?Q?FlSgMUExfxypXwbTgVTBV2xJRFEQd6drWv220mTUJ9l25pddYZxup5ubqJH+?=
+ =?us-ascii?Q?B538NrbEzLrXXg95eWtDCjqUlU/J6MuKkgdDAjpqm9GHbjxu6q/PKpWpGnz4?=
+ =?us-ascii?Q?rd3uEIQ1vw5ugnzOablv3y9oBDdSwTQKwP1+Fm0LmCVO4bgacZ4WcmOqbM1E?=
+ =?us-ascii?Q?ZKQ04k5V//VPQvVLLsw09GGSGPKF8oVLXaeJ58aesodSB/2rgWfaHJdZEVw7?=
+ =?us-ascii?Q?o+/9jPhc8HUb6eBKlir55Y7rIOWojWjYHWrgM3e+OUD7yd+6OyHhHMtmm/XG?=
+ =?us-ascii?Q?OyQmEdUHGST/aJXiRzJi/85DAAI7p4mG3ZwzivWfPsfCc1HmnYCqvnzmKOmR?=
+ =?us-ascii?Q?Xe8kq7ST/n5rZNV22/wvB0ayXg/C5Yzbgj3smwcWp/o+5MMO/COEMdoIGdlm?=
+ =?us-ascii?Q?vMllVGzBsm7QTRYVE/+pYg9imSODv5kWDJX6ZDgmB+GtNtnHdXrjlpkLAxB5?=
+ =?us-ascii?Q?+/oFiMRanus4VzVB09r6JGAXGB/X3Bk+7a8XYpmy6kN8YxJxtGjo/8g6YNfC?=
+ =?us-ascii?Q?nLJBLsLDjHKSTZwnKduC+qCc1JppQPt7TAU/9Qyq5W/dArohE+d+71ydcNtn?=
+ =?us-ascii?Q?1QRVQj70Uc2TxxNhb7DxF4rO6umc4jQ5TB+0XqhrbHYQXQAGwdswwq0hZvVc?=
+ =?us-ascii?Q?jD0EPtvYUDkI2b5sT4JdVDYdGnv2owyhdWzF0f0?=
+X-Microsoft-Antispam-Message-Info: v6AmHEzItPXxvHctnJaZWBzzz8+g/u53gct1DHGd0TvgSMYJWHxWQwT8YZ5bRtjweFG/ZUEuEpOQ+iRkG7Gr15PWTgvQ6TKNUrCq0HhTg2zZ10nf/pQU45/Gc9Oa7lukn/4tQexJd0ReERbZqRUFzB7XikHeqaHouGHOUkw3btyYN5qz61S3j+BBv0ebnwr0UVWUSJtU9YO+ArHD5oOMewSKp8nfAWh5FGe75I8rD72nbGfSftKBeUnRR/7ITlWngLXiHpDNyAG1uK+1HNdDb4zMNNoDFYbDtBYZm/ZF1SdqPyaE1AcCPKfxh3ivgzmSvPiIetukMnBnqMKNWYWZyw==
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2646;6:82Wzk/R7U0E8NeyTsMSuWKbSVfEeRBcRnPHRn8wWSW6h80tYD0RgwpIKzCbyF3GVc1S/+ke98emsqXbjtDlDUqZZjX5Dv8gi2nLKEZGiM/OkCFxvLIHkeoDAUHCwFFswW3r3UJOYJo5qgaBSVqBZJQs5gOjd9PcBL4tAm5lYwfVFgY9IKgT4Ed1VvKkPM3lzjr/yjWEqJN+gnXoXboSx8Wm5lIoJpan9j91B9nACdkhrko/EBx4FGXC19qvt+k56uzi8WCFbO/NghMRgiWJ9Gnnv/xZOssHGWXE4/7aVg07gSW4DTzk7YoC3u+U2O2KU1DpuJb24d3LjB4VSsjv1eEzq5oJbkQ6rXG3PvmqzRphBIjxOfcBG2QL9zMwPO06GK76VeGm2bSGS39DGy2SfG3VrgO52l29IsgEXGF3B50XG120KLA06itNI5wL6kgk1LFhQz8iwtbYAx5Qv5hzZRQ==;5:2Kwygo+7Wv8gdrtPNpfLlAM+eGvY57ChOuQB/7af/599e3TpcxoSa+hPYxDK6qrVFXjKDJ+SMN3aS3AWqlyr9OrfcBgSfjM7FDQa2nASauLD47fKq2Vd5gzORR8whaykcDXWd0BUdGIf3pdGM0W/UGwbuy3GQz2JIf1vIqqgu7I=;24:eW1GG3CzEx32r++3XhHdqfrjGG75XPkMUlFpbUD+5VcfiCcnBzmoDXUW9PqdackZMaxRXI9L9kP5VDqNJD7tVZlWTfpqS7orFxejuW5ynuQ=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR02MB2646;7:9qQ3W2qca0jG5ZQ6KazsujcqT0G1E4udz9hAUk5Fmlb+K6TT2jQf+Kz7Py6kZrXc2muiInqBI37/BFEBV928wcj6sYWfCgucIC/xZn2PyOhx+YnTPskAjFvfAbKMv8/IP7Prr718iHFeeZEAsP2QuOnfHU0ONRESzVcmx7XiHx393d7hKw1WgBHXt87VokXDZrydh9ewveOvS52inI9aUMqYFcDN6YWKulsuEdBca/r+gFPYFYfAhAEwAuSPB4Qv
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2018 17:40:56.3114
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c63d4d56-489d-4c68-f48c-08d5d6d4fad2
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2646
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates KASAN documentation to reflect the addition of KHWASAN.
+From: Rajan Vaja <rajanv@xilinx.com>
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+Add ZynqMP firmware IOCTL API to control and configure
+devices like PLLs, SD, Gem, etc.
+
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
 ---
- Documentation/dev-tools/kasan.rst | 213 +++++++++++++++++-------------
- 1 file changed, 123 insertions(+), 90 deletions(-)
+ drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |  2 ++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
-index aabc8738b3d8..842d95af74d3 100644
---- a/Documentation/dev-tools/kasan.rst
-+++ b/Documentation/dev-tools/kasan.rst
-@@ -8,11 +8,19 @@ KernelAddressSANitizer (KASAN) is a dynamic memory error detector. It provides
- a fast and comprehensive solution for finding use-after-free and out-of-bounds
- bugs.
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 70e335a..34c5ad5 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -241,8 +241,28 @@ static int get_set_conduit_method(struct device_node *np)
+ 	return 0;
+ }
  
--KASAN uses compile-time instrumentation for checking every memory access,
--therefore you will need a GCC version 4.9.2 or later. GCC 5.0 or later is
--required for detection of out-of-bounds accesses to stack or global variables.
-+KASAN has two modes: classic KASAN (a classic version, similar to user space
-+ASan) and KHWASAN (a version based on memory tagging, similar to user space
-+HWASan).
- 
--Currently KASAN is supported only for the x86_64 and arm64 architectures.
-+KASAN uses compile-time instrumentation to insert validity checks before every
-+memory access, and therefore requires a compiler version that supports that.
-+For classic KASAN you need GCC version 4.9.2 or later. GCC 5.0 or later is
-+required for detection of out-of-bounds accesses on stack and global variables.
-+KHWASAN in turns is only supported in clang and requires revision 330044 or
-+later.
++/**
++ * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
++ * @node_id:	Node ID of the device
++ * @ioctl_id:	ID of the requested IOCTL
++ * @arg1:	Argument 1 to requested IOCTL call
++ * @arg2:	Argument 2 to requested IOCTL call
++ * @out:	Returned output value
++ *
++ * This function calls IOCTL to firmware for device control and configuration.
++ *
++ * Return: Returns status, either success or error+reason
++ */
++static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
++			   u32 *out)
++{
++	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
++				   arg1, arg2, out);
++}
 +
-+Currently classic KASAN is supported for the x86_64, arm64 and xtensa
-+architectures, and KHWASAN is supported only for arm64.
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
++	.ioctl = zynqmp_pm_ioctl,
+ };
  
- Usage
- -----
-@@ -21,12 +29,14 @@ To enable KASAN configure kernel with::
+ /**
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index cb63bed..2eec6e7 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -34,6 +34,7 @@
  
- 	  CONFIG_KASAN = y
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_IOCTL = 34,
+ };
  
--and choose between CONFIG_KASAN_OUTLINE and CONFIG_KASAN_INLINE. Outline and
--inline are compiler instrumentation types. The former produces smaller binary
--the latter is 1.1 - 2 times faster. Inline instrumentation requires a GCC
-+and choose between CONFIG_KASAN_GENERIC (to enable classic KASAN) and
-+CONFIG_KASAN_HW (to enabled KHWASAN). You also need to choose choose between
-+CONFIG_KASAN_OUTLINE and CONFIG_KASAN_INLINE. Outline and inline are compiler
-+instrumentation types. The former produces smaller binary while the latter is
-+1.1 - 2 times faster. For classic KASAN inline instrumentation requires GCC
- version 5.0 or later.
+ /* PMU-FW return status codes */
+@@ -49,6 +50,7 @@ enum pm_ret_status {
  
--KASAN works with both SLUB and SLAB memory allocators.
-+Both KASAN modes work with both SLUB and SLAB memory allocators.
- For better bug detection and nicer reporting, enable CONFIG_STACKTRACE.
+ struct zynqmp_eemi_ops {
+ 	int (*get_api_version)(u32 *version);
++	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
+ };
  
- To disable instrumentation for specific files or directories, add a line
-@@ -43,85 +53,80 @@ similar to the following to the respective kernel Makefile:
- Error reports
- ~~~~~~~~~~~~~
- 
--A typical out of bounds access report looks like this::
-+A typical out-of-bounds access classic KASAN report looks like this::
- 
-     ==================================================================
--    BUG: AddressSanitizer: out of bounds access in kmalloc_oob_right+0x65/0x75 [test_kasan] at addr ffff8800693bc5d3
--    Write of size 1 by task modprobe/1689
--    =============================================================================
--    BUG kmalloc-128 (Not tainted): kasan error
--    -----------------------------------------------------------------------------
--
--    Disabling lock debugging due to kernel taint
--    INFO: Allocated in kmalloc_oob_right+0x3d/0x75 [test_kasan] age=0 cpu=0 pid=1689
--     __slab_alloc+0x4b4/0x4f0
--     kmem_cache_alloc_trace+0x10b/0x190
--     kmalloc_oob_right+0x3d/0x75 [test_kasan]
--     init_module+0x9/0x47 [test_kasan]
--     do_one_initcall+0x99/0x200
--     load_module+0x2cb3/0x3b20
--     SyS_finit_module+0x76/0x80
--     system_call_fastpath+0x12/0x17
--    INFO: Slab 0xffffea0001a4ef00 objects=17 used=7 fp=0xffff8800693bd728 flags=0x100000000004080
--    INFO: Object 0xffff8800693bc558 @offset=1368 fp=0xffff8800693bc720
--
--    Bytes b4 ffff8800693bc548: 00 00 00 00 00 00 00 00 5a 5a 5a 5a 5a 5a 5a 5a  ........ZZZZZZZZ
--    Object ffff8800693bc558: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc568: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc578: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc588: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc598: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5a8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5b8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
--    Object ffff8800693bc5c8: 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b a5  kkkkkkkkkkkkkkk.
--    Redzone ffff8800693bc5d8: cc cc cc cc cc cc cc cc                          ........
--    Padding ffff8800693bc718: 5a 5a 5a 5a 5a 5a 5a 5a                          ZZZZZZZZ
--    CPU: 0 PID: 1689 Comm: modprobe Tainted: G    B          3.18.0-rc1-mm1+ #98
--    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
--     ffff8800693bc000 0000000000000000 ffff8800693bc558 ffff88006923bb78
--     ffffffff81cc68ae 00000000000000f3 ffff88006d407600 ffff88006923bba8
--     ffffffff811fd848 ffff88006d407600 ffffea0001a4ef00 ffff8800693bc558
-+    BUG: KASAN: slab-out-of-bounds in kmalloc_oob_right+0xa8/0xbc [test_kasan]
-+    Write of size 1 at addr ffff8800696f3d3b by task insmod/2734
-+    
-+    CPU: 0 PID: 2734 Comm: insmod Not tainted 4.15.0+ #98
-+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-     Call Trace:
--     [<ffffffff81cc68ae>] dump_stack+0x46/0x58
--     [<ffffffff811fd848>] print_trailer+0xf8/0x160
--     [<ffffffffa00026a7>] ? kmem_cache_oob+0xc3/0xc3 [test_kasan]
--     [<ffffffff811ff0f5>] object_err+0x35/0x40
--     [<ffffffffa0002065>] ? kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffff8120b9fa>] kasan_report_error+0x38a/0x3f0
--     [<ffffffff8120a79f>] ? kasan_poison_shadow+0x2f/0x40
--     [<ffffffff8120b344>] ? kasan_unpoison_shadow+0x14/0x40
--     [<ffffffff8120a79f>] ? kasan_poison_shadow+0x2f/0x40
--     [<ffffffffa00026a7>] ? kmem_cache_oob+0xc3/0xc3 [test_kasan]
--     [<ffffffff8120a995>] __asan_store1+0x75/0xb0
--     [<ffffffffa0002601>] ? kmem_cache_oob+0x1d/0xc3 [test_kasan]
--     [<ffffffffa0002065>] ? kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffffa0002065>] kmalloc_oob_right+0x65/0x75 [test_kasan]
--     [<ffffffffa00026b0>] init_module+0x9/0x47 [test_kasan]
--     [<ffffffff810002d9>] do_one_initcall+0x99/0x200
--     [<ffffffff811e4e5c>] ? __vunmap+0xec/0x160
--     [<ffffffff81114f63>] load_module+0x2cb3/0x3b20
--     [<ffffffff8110fd70>] ? m_show+0x240/0x240
--     [<ffffffff81115f06>] SyS_finit_module+0x76/0x80
--     [<ffffffff81cd3129>] system_call_fastpath+0x12/0x17
-+     __dump_stack lib/dump_stack.c:17
-+     dump_stack+0x83/0xbc lib/dump_stack.c:53
-+     print_address_description+0x73/0x280 mm/kasan/report.c:254
-+     kasan_report_error mm/kasan/report.c:352
-+     kasan_report+0x10e/0x220 mm/kasan/report.c:410
-+     __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:505
-+     kmalloc_oob_right+0xa8/0xbc [test_kasan] lib/test_kasan.c:42
-+     kmalloc_tests_init+0x16/0x769 [test_kasan]
-+     do_one_initcall+0x9e/0x240 init/main.c:832
-+     do_init_module+0x1b6/0x542 kernel/module.c:3462
-+     load_module+0x6042/0x9030 kernel/module.c:3786
-+     SYSC_init_module+0x18f/0x1c0 kernel/module.c:3858
-+     SyS_init_module+0x9/0x10 kernel/module.c:3841
-+     do_syscall_64+0x198/0x480 arch/x86/entry/common.c:287
-+     entry_SYSCALL_64_after_hwframe+0x21/0x86 arch/x86/entry/entry_64.S:251
-+    RIP: 0033:0x7fdd79df99da
-+    RSP: 002b:00007fff2229bdf8 EFLAGS: 00000202 ORIG_RAX: 00000000000000af
-+    RAX: ffffffffffffffda RBX: 000055c408121190 RCX: 00007fdd79df99da
-+    RDX: 00007fdd7a0b8f88 RSI: 0000000000055670 RDI: 00007fdd7a47e000
-+    RBP: 000055c4081200b0 R08: 0000000000000003 R09: 0000000000000000
-+    R10: 00007fdd79df5d0a R11: 0000000000000202 R12: 00007fdd7a0b8f88
-+    R13: 000055c408120090 R14: 0000000000000000 R15: 0000000000000000
-+    
-+    Allocated by task 2734:
-+     save_stack+0x43/0xd0 mm/kasan/common.c:176
-+     set_track+0x20/0x30 mm/kasan/common.c:188
-+     kasan_kmalloc+0x9a/0xc0 mm/kasan/kasan.c:372
-+     kmem_cache_alloc_trace+0xcd/0x1a0 mm/slub.c:2761
-+     kmalloc ./include/linux/slab.h:512
-+     kmalloc_oob_right+0x56/0xbc [test_kasan] lib/test_kasan.c:36
-+     kmalloc_tests_init+0x16/0x769 [test_kasan]
-+     do_one_initcall+0x9e/0x240 init/main.c:832
-+     do_init_module+0x1b6/0x542 kernel/module.c:3462
-+     load_module+0x6042/0x9030 kernel/module.c:3786
-+     SYSC_init_module+0x18f/0x1c0 kernel/module.c:3858
-+     SyS_init_module+0x9/0x10 kernel/module.c:3841
-+     do_syscall_64+0x198/0x480 arch/x86/entry/common.c:287
-+     entry_SYSCALL_64_after_hwframe+0x21/0x86 arch/x86/entry/entry_64.S:251
-+    
-+    The buggy address belongs to the object at ffff8800696f3cc0
-+     which belongs to the cache kmalloc-128 of size 128
-+    The buggy address is located 123 bytes inside of
-+     128-byte region [ffff8800696f3cc0, ffff8800696f3d40)
-+    The buggy address belongs to the page:
-+    page:ffffea0001a5bcc0 count:1 mapcount:0 mapping:          (null) index:0x0
-+    flags: 0x100000000000100(slab)
-+    raw: 0100000000000100 0000000000000000 0000000000000000 0000000180150015
-+    raw: ffffea0001a8ce40 0000000300000003 ffff88006d001640 0000000000000000
-+    page dumped because: kasan: bad access detected
-+    
-     Memory state around the buggy address:
--     ffff8800693bc300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc380: fc fc 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
--     ffff8800693bc400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc500: fc fc fc fc fc fc fc fc fc fc fc 00 00 00 00 00
--    >ffff8800693bc580: 00 00 00 00 00 00 00 00 00 00 03 fc fc fc fc fc
--                                                 ^
--     ffff8800693bc600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
--     ffff8800693bc700: fc fc fc fc fb fb fb fb fb fb fb fb fb fb fb fb
--     ffff8800693bc780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
--     ffff8800693bc800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-+     ffff8800696f3c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
-+     ffff8800696f3c80: fc fc fc fc fc fc fc fc 00 00 00 00 00 00 00 00
-+    >ffff8800696f3d00: 00 00 00 00 00 00 00 03 fc fc fc fc fc fc fc fc
-+                                            ^
-+     ffff8800696f3d80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
-+     ffff8800696f3e00: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-     ==================================================================
- 
--The header of the report discribe what kind of bug happened and what kind of
--access caused it. It's followed by the description of the accessed slub object
--(see 'SLUB Debug output' section in Documentation/vm/slub.rst for details) and
--the description of the accessed memory page.
-+The header of the report provides a short summary of what kind of bug happened
-+and what kind of access caused it. It's followed by a stack trace of the bad
-+access, a stack trace of where the accessed memory was allocated (in case bad
-+access happens on a slab object), and a stack trace of where the object was
-+freed (in case of a use-after-free bug report). Next comes a description of
-+the accessed slab object and information about the accessed memory page.
- 
- In the last section the report shows memory state around the accessed address.
- Reading this part requires some understanding of how KASAN works.
-@@ -138,18 +143,24 @@ inaccessible memory like redzones or freed memory (see mm/kasan/kasan.h).
- In the report above the arrows point to the shadow byte 03, which means that
- the accessed address is partially accessible.
- 
-+For KHWASAN this last report section shows the memory tags around the accessed
-+address (see Implementation details section).
-+
- 
- Implementation details
- ----------------------
- 
-+Classic KASAN
-+~~~~~~~~~~~~~
-+
- From a high level, our approach to memory error detection is similar to that
- of kmemcheck: use shadow memory to record whether each byte of memory is safe
--to access, and use compile-time instrumentation to check shadow memory on each
--memory access.
-+to access, and use compile-time instrumentation to insert checks of shadow
-+memory on each memory access.
- 
--AddressSanitizer dedicates 1/8 of kernel memory to its shadow memory
--(e.g. 16TB to cover 128TB on x86_64) and uses direct mapping with a scale and
--offset to translate a memory address to its corresponding shadow address.
-+Classic KASAN dedicates 1/8th of kernel memory to its shadow memory (e.g. 16TB
-+to cover 128TB on x86_64) and uses direct mapping with a scale and offset to
-+translate a memory address to its corresponding shadow address.
- 
- Here is the function which translates an address to its corresponding shadow
- address::
-@@ -162,12 +173,34 @@ address::
- 
- where ``KASAN_SHADOW_SCALE_SHIFT = 3``.
- 
--Compile-time instrumentation used for checking memory accesses. Compiler inserts
--function calls (__asan_load*(addr), __asan_store*(addr)) before each memory
--access of size 1, 2, 4, 8 or 16. These functions check whether memory access is
--valid or not by checking corresponding shadow memory.
-+Compile-time instrumentation is used to insert memory access checks. Compiler
-+inserts function calls (__asan_load*(addr), __asan_store*(addr)) before each
-+memory access of size 1, 2, 4, 8 or 16. These functions check whether memory
-+access is valid or not by checking corresponding shadow memory.
- 
- GCC 5.0 has possibility to perform inline instrumentation. Instead of making
- function calls GCC directly inserts the code to check the shadow memory.
- This option significantly enlarges kernel but it gives x1.1-x2 performance
- boost over outline instrumented kernel.
-+
-+KHWASAN
-+~~~~~~~
-+
-+KHWASAN uses the Top Byte Ignore (TBI) feature of modern arm64 CPUs to store
-+a pointer tag in the top byte of kernel pointers. KHWASAN also uses shadow
-+memory to store memory tags associated with each 16-byte memory cell (therefore
-+it dedicates 1/16th of the kernel memory for shadow memory).
-+
-+On each memory allocation KHWASAN generates a random tag, tags allocated memory
-+with this tag, and embeds this tag into the returned pointer. KHWASAN uses
-+compile-time instrumentation to insert checks before each memory access. These
-+checks make sure that tag of the memory that is being accessed is equal to tag
-+of the pointer that is used to access this memory. In case of a tag mismatch
-+KHWASAN prints a bug report.
-+
-+KHWASAN also has two instrumentation modes (outline, that emits callbacks to
-+check memory accesses; and inline, that performs the shadow memory checks
-+inline). With outline instrumentation mode, a bug report is simply printed
-+from the function that performs the access check. With inline instrumentation
-+a brk instruction is emitted by the compiler, and a dedicated brk handler is
-+used to print KHWASAN reports.
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
-2.18.0.rc1.244.gcf134e6275-goog
+2.7.4
 
