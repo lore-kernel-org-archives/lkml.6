@@ -2,523 +2,131 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UPPERCASE_50_75,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6A8C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AA6C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 675E420874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:24:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="oclpT5qi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675E420874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 451A120836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:25:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 451A120836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932149AbeFTMYt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 08:24:49 -0400
-Received: from mail-db5eur01on0064.outbound.protection.outlook.com ([104.47.2.64]:59456
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753882AbeFTMYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:24:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FoeXW4E/IG9p+NSfdB3OFb5jCzcDzr5lptGNj4RifTY=;
- b=oclpT5qiFBCL/zSlNq2vIfwB+c10Hr29aFxF60ebdO/SEIeM3Y1kkfxDLoBel4Yc4cu2u37okHAMjzgprV7Fl081vi/YqmMOg1jZQ7BxuPIsQlNCv5ycbvwzYrVTfhhbtAY8txXh/tFBqqTDCXaTO5c0W9UeO3T6iKqK5YS0QB0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-Received: from fsr-ub1664-175.ea.freescale.net (95.76.156.53) by
- AM4PR04MB1601.eurprd04.prod.outlook.com (2a01:111:e400:59e5::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.17; Wed, 20 Jun
- 2018 12:24:15 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     linux-gpio@vger.kernel.org, linux-imx@nxp.com,
-        Shawn Guo <shawnguo@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v4 2/2] pinctrl: imx: add driver for i.MX8MQ
-Date:   Wed, 20 Jun 2018 15:23:49 +0300
-Message-Id: <1529497429-8576-3-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529497429-8576-1-git-send-email-abel.vesa@nxp.com>
-References: <1529497429-8576-1-git-send-email-abel.vesa@nxp.com>
+        id S1754289AbeFTMZG (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 08:25:06 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:40704 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752787AbeFTMZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 08:25:01 -0400
+Received: by vps-vb.mhejs.net with esmtps (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <mail@maciej.szmigiero.name>)
+        id 1fVcAR-0005Li-GN; Wed, 20 Jun 2018 14:24:55 +0200
+Subject: Re: [PATCH v2][RESEND] X.509: unpack RSA signatureValue field from
+ BIT STRING
+From:   "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+To:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        james.morris@microsoft.com, "Serge E. Hallyn" <serge@hallyn.com>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <04f372f3-bc26-c629-2269-0e5d258f9d8f@maciej.szmigiero.name>
+ <80e95323-eb7f-6af3-ad05-f174c69fb948@maciej.szmigiero.name>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mail@maciej.szmigiero.name; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9a9bfd23-d7be-7f16-925e-5fe00cbfba9f@maciej.szmigiero.name>
+Date:   Wed, 20 Jun 2018 14:24:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [95.76.156.53]
-X-ClientProxiedBy: AM0PR05CA0030.eurprd05.prod.outlook.com
- (2603:10a6:208:55::43) To AM4PR04MB1601.eurprd04.prod.outlook.com
- (2a01:111:e400:59e5::19)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7781b195-869c-409e-f4c6-08d5d6a8bd46
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM4PR04MB1601;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR04MB1601;3:8yRHdJIE9rGM4/mHmzRfQB1RLgJjBlaoj72zFpVFS4djLdo1UG9lda4IWSZ3wtrr6Q9uT2DKK+8QEpU5Ii3EO9WS/89aA9czRetP7OszCkDk8CVURHeZ1kjYNTDWlv/L7cN9nRNiJJ29o9l9RVH7Z8CGsRmmYQk+zQ7NdbB9Wl/i68U25TWKYptxKmX00r9kJrvYJ5Hn0kzKgxjrZwXARppQSP3gZj9xVn8wP6YalbsXaiNwGiB+UceVFYFtgAcF;25:uHPsGLS6o5hf4TULnE12GZj+kpFN462+yaMPqx7vMrvRLvnpQZ4XDKffZ49gLiP+Us6+G81MYpGpUWF78+O1fhiTreY5dLg8fj1aBaG7eUo6dWmsV5zABQ1vFGNco49IRQdbJkyQxv1b5iaq9mkQM8VwaIIAiw6R2SKOHPovJifYr1JXvNzMh1Y5cVS9C+i8coDC6n5Lh0d+ONeMC8w/jkwYXIzXxPf82g9/6FCkn9f70Jro1JIx2eRFCYPS9Ey6A+/QZBG9ndQGZA3hrlVqk7usqtGVuYDLCJ4Zl7gnVIVLAc81+ovliELln8RBvVEqeXQsNWAXvf52zsKsYv9p0Q==;31:T5zCacelRRFwBkjPi+wAZisarr1Jn9R7yzSEqMFWg4lUcLQpXeNM1pwhuxcDhxwBV5s1FJJWS1W5gQkBplGpFOyAtB/epkxps2UGJjS6nOQoLSfQEkg2rOwWWNYIRQB7ORmmiYpIQXcDvAgHMuKje8HeHVs6bjFs0GEnCEVBMHvkVurqYBmIVFAqyS2oUGBaKeGqueu8pel5NC/5tqZfrz22zOC78OJotqv5MGgljmI=
-X-MS-TrafficTypeDiagnostic: AM4PR04MB1601:
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR04MB1601;20:S4hj3XXV3fWI8h3c8QyM9hbm2H9Z8jn273KVYi47b9v8Rrrd0PPnpq1suTXeZMkvabWjhw94BqgSH5+z9H5rBbEnjgr9wHnnX7IyaZ+ePucpwvah5mLhy2Q42P1/lVebYaYcyj1S4Xg14NqgESqX0eELqQ5nJkj2e6tf1P8FNesqkhIXBmBlulU9hYrNcTp99xrWQZ1GLIxBHq6XQntYivq5YftrLaVqv5zZ7ECjFz0gbxypt6wF+fLKbyVPuVivJRDPMa7H5Weq16m+W5DkghtWA2MCazDvNw51N1tXkVjsHiCOX+oD/sTxF3PhbrND130BeV6sYmP+KKfBzpYjYBAa84brW5o2LI5zO6IJr8zSwF0eITXyiU0lgepxtgHzERlzDHHR5VrsjD/BGybcBHf1JZ8rng8w4n25LqgsdCpYORY4GHrUvj+911gbSxMOlvk3MsfD8ZTxIueVnUwnhFy1ZEfIe1FSTvYEMINfv8iL/QOtYn9ugRYfQQwY07s/;4:Jz+LvuNTSVKktIRy54SONlHuuskl1Qw5iFb7TxX3b1Q/V4o6ZiZuFx2WJqihKdPsV9ek4ovERz7qa+5oBL9QSivavNU7dSiqvcAp4WAqawgCLcVSKccEOj/saSHIt0qHy5wozLhqn9kr7Jf5gZLOgc8DQOVVbEzViIxNL+Z0ByGs9usBA8xJ9dSFKfGme/ZajtLQEZK3q+Iw1LCMxnsZHH5uMLDxkzRFO4xGYpD2PSk57vONjp/RdA/6IIticNTFkdVjje/VlimJ95fPWiDsAmLhEQh6hWz2UXi5JddY/2r9601ZHRoChn9kOoPac7Py
-X-Microsoft-Antispam-PRVS: <AM4PR04MB16015B46136F4368AD5A16D7F6770@AM4PR04MB1601.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM4PR04MB1601;BCL:0;PCL:0;RULEID:;SRVR:AM4PR04MB1601;
-X-Forefront-PRVS: 070912876F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(396003)(346002)(39380400002)(366004)(189003)(199004)(11346002)(486006)(68736007)(106356001)(4326008)(5660300001)(956004)(446003)(105586002)(50466002)(44832011)(6486002)(6636002)(48376002)(2616005)(36756003)(476003)(47776003)(66066001)(478600001)(6666003)(7736002)(2906002)(86362001)(8676002)(81166006)(81156014)(316002)(50226002)(3846002)(97736004)(6512007)(54906003)(7416002)(8936002)(305945005)(52116002)(53936002)(6116002)(76176011)(186003)(51416003)(386003)(16586007)(110136005)(6506007)(16526019)(26005)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR04MB1601;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR04MB1601;23:sdmPoASgUelpQ9QYBFSxSAqjTY1ZQOHIPuql0vQuB?=
- =?us-ascii?Q?OVQfbWrSACdJdhbAsbB+NOqpVMX6vGlq0AwEe9SDVD4KoGJPBV39f4gQkfWc?=
- =?us-ascii?Q?NSEIDnn2CWyTKd0s5sG1LkegvRUCulm4hEIbrMocIv09rm5Vdytmhne/bcQt?=
- =?us-ascii?Q?u9/igPY+kBsnkpt8fhMlCz3Dn1UVBxFHibweeXyU6RsAYOhtGYtKRmniuJ5j?=
- =?us-ascii?Q?eHsHZGNCC5WxLCSBPf+nh7Rve75JBHT9ohGExkBhp3naUK5FZEyEOrf2iqzB?=
- =?us-ascii?Q?KN7Z8tbzZ+0LyYeZXVUOU+CGlBnbXe8duZwLC5qb2ngUSOY/tlyclmpQXxpu?=
- =?us-ascii?Q?2mdTNTrWcks9YGxnmu5HTdJEa+78wybuHnhhBTMm9YoGzmwUFPZ3hHNE6WuE?=
- =?us-ascii?Q?OgAzBYGp3yYrMl7mhrsyWV1Fv/qD/kFcvefhUfWONbcbu2IEvPNf7XHEwyVc?=
- =?us-ascii?Q?+q9Vetp1XORW9L2KXWDDeKWvgd079I5+iikpNIgcL1tEx9KIro3wIK139X1D?=
- =?us-ascii?Q?gZJRP6pkhk1j78Xm85s1EI0JruroPLuPJAjkqm1zk4nqZSumEETRlA2p5G5S?=
- =?us-ascii?Q?Z+MqRrqNRkgCl3e0WI28lfjRKH65AJuYMhri9LuOycDCSbf6APZ/LboJa0AV?=
- =?us-ascii?Q?duN4sYhu76X+nKHXPs+BsI7Hib0sLeKBCle6IZHwBPo+WHZhnJjX3iGZXVCK?=
- =?us-ascii?Q?Z/GYf7CpPZZw9dPb41XjgtbuicLMtEGLopnUxb+72vLYWkoz0cmAr98NSjZi?=
- =?us-ascii?Q?TK0I11bfi+Qlw1PKcdbwPzjY6CHYtNinX0ydVOOWqU8C4apnLqEujt+/23ce?=
- =?us-ascii?Q?p0Dr/RdjwSpb/kRqM/P5sY4nIqGszM99Xg/ImoHqKJU+Rx2malv9iSMZcWMi?=
- =?us-ascii?Q?Qt/xgGuYbJArJgjj17GiBqv7BsRGuN04ZzHA304eIrdTcAcVWMTIHc81B2dk?=
- =?us-ascii?Q?D1V4aphpDFauHTpoKC1pQNuWjFkO5fqHZMcF258YeJCPzDpLsoN09rmb6v1z?=
- =?us-ascii?Q?dlQ9eDAGlusqC671XtoXdzJkF+UY+QpyefYIImDuUBCP6qCAqVgIlrch5cMR?=
- =?us-ascii?Q?vnQDPS/e2+f+bIKapLjX7WKXjt9XGOWFXOZt5bx3mQBZ2HZJmctcSeiz9yk/?=
- =?us-ascii?Q?D5VXd+DbM3S8kWuY4/W4QXcwlBjudolp0GZFdBXXxW/o1nV6pyHkhQi9JhN4?=
- =?us-ascii?Q?RTMoK6Ae9jXLJuiQtZ2QAQEZaEQ6DE8+WBcJDQOrvUPMABV1/1ltdlOFcdrV?=
- =?us-ascii?Q?dDV934Bof905lMPNfUK7lIsVssz5XCfqMBOo71m?=
-X-Microsoft-Antispam-Message-Info: udleQyaWu8lMOL6kkyNa5TGmH5lvqeCdxAHYqAS2DVE8iAsGwR6+dX9Y3PxqKRMhNmu6Ne4qEcDKO0XLsTBkXK07mlPPdoATCqsfd2xPQ+DA8EeUdnxKsggW0TuNXZlknUWcL7AVQjLj1x/JA2Di1oP8hWcq0UOPfFAfYDqD1oQgqVPYrGQOrIWEOyGSFq5bt8XLL0XKeMYww3YjG3iEiP0XzhPh3pzIfrf7bOi4UnWEF5AZVRsApQULe4q7xATfizjGa9NFMyAwXXxUNSC5BlBYuc6ckWJrRtyArc8xKs3jQEYkpz6DASEWgBGVxDr0
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR04MB1601;6:mRrdAzhUGs+LZ7uoeMDpBtrSo14dgohE+T/TzY8px5UAILdG3yHMk1DUlOZeBZh9AC7T1OTct3TwtjiZEWw2XmBDZFCIw3BwftZEkXfhgpT2XzRK+Op8943k4Ro846VaDPYhBJCHn+WBucA988a0MN4e0LYtzUKmqUe48EqzAqyNqOLX3c5ujAxysHxDVe9XVBUypSX9xmVD1eaalIKyzNghjUkHftHch158I1Vhk04gJmxPt1e/ASrd/BvJdEZcjTOIHrgfGsCRr1RzIlEvC/up0yNKXzVdUsKY6E6oznFTHeZqXhjqi5QdspTVeBKPg60Cz+VqJolVu1GOxV+kw5+o5oMRxxY0jKRqBq9suHT2BEFDfoo7ucQqGeW25UWSTD0WgBNIc/LShKLU0r4KBi98JUmUjI8nT48zJoIiUQsFbDtUL/alxTaRjGf2tMi9PNJ/s5Qy/QjLC2zxKSK4sQ==;5:B/XiM1y7+rJTsi/OY+NiowGe50ksOBWytREAfOwxqi4Weg5yTfoVKm3Ge2sLmKc0Gs5CT+cp6wwrUJ0ls0UIUSH6y7/k1hipafRxsfq2vsl+4RKT6FuN2CNwzjqgEmFfr7zg0RUQr+dVF/Kt+wWhq6u8Ksm25j/AJrW6WvB53yU=;24:q0zGn4xNnZXtSzpg7QQ23hi9MpTSjp8/mr1Mh4r9aSVjnaCQYjm8JC9xJzUMnseDHZ4USM38+NRTM+og0/XWmGIuY9aD6yYvGw7aGFGxNhY=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR04MB1601;7:/lEBOvoI5WCJMEXT5Xk5tLDQW5xWIxFEw0MiHZZeXHoVtuk81Htj4Xb964RhG3ZZ6m1z6dewBuHiVNPhKE5u72/U8Ik9fNDPjVCwewVkQwNtvm3L/FCl4dyTu9r7WO/I44UqOTKgkZga0xGYufTurr5+klVeuJD50fkAz7RVUmVXc9CPmmyfBDdIC+8/MlkLceHZbr1l+lw03bDVV9mZy9Fg43z5dUlf/OfUShLiPAC2wZC3RNmSSWUPWcrFZthH
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2018 12:24:15.4871
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7781b195-869c-409e-f4c6-08d5d6a8bd46
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR04MB1601
+In-Reply-To: <80e95323-eb7f-6af3-ad05-f174c69fb948@maciej.szmigiero.name>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+On 02.06.2018 21:12, Maciej S. Szmigiero wrote:
+> On 19.05.2018 14:23, Maciej S. Szmigiero wrote:
+>> The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+>> For RSA signatures this BIT STRING is of so-called primitive subtype, which
+>> contains a u8 prefix indicating a count of unused bits in the encoding.
+>>
+>> We have to strip this prefix from signature data, just as we already do for
+>> key data in x509_extract_key_data() function.
+>>
+>> This wasn't noticed earlier because this prefix byte is zero for RSA key
+>> sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+>> prefixes has no bearing on its value.
+>>
+>> The signature length, however was incorrect, which is a problem for RSA
+>> implementations that need it to be exactly correct (like AMD CCP).
+> 
+> Any progress here?
+> This simple patch has already been submitted 3 times in last 3+ months...
+> 
 
-The i.MX8MQ pincontrol works in a similar way to the earlier i.MX SoCs.
-This driver builds on top of the generic pinconf handling introduced
-with the i.MX7ULP pinctrl driver.
+A friendly ping here.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/pinctrl/freescale/Kconfig          |   7 +
- drivers/pinctrl/freescale/Makefile         |   1 +
- drivers/pinctrl/freescale/pinctrl-imx8mq.c | 356 +++++++++++++++++++++++++++++
- 3 files changed, 364 insertions(+)
- create mode 100644 drivers/pinctrl/freescale/pinctrl-imx8mq.c
+@AMD people:
+Without this patch, in-kernel X.509 certificate verification is broken
+on AMD CCP RSA implementation.
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index 0d8ba1e..dccf64c 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -117,6 +117,13 @@ config PINCTRL_IMX7ULP
- 	help
- 	  Say Y here to enable the imx7ulp pinctrl driver
- 
-+config PINCTRL_IMX8MQ
-+	bool "IMX8MQ pinctrl driver"
-+	depends on SOC_IMX8MQ
-+	select PINCTRL_IMX
-+	help
-+	  Say Y here to enable the imx8mq pinctrl driver
-+
- config PINCTRL_VF610
- 	bool "Freescale Vybrid VF610 pinctrl driver"
- 	depends on SOC_VF610
-diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
-index 368be8c..73175b3 100644
---- a/drivers/pinctrl/freescale/Makefile
-+++ b/drivers/pinctrl/freescale/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_PINCTRL_IMX6SX)	+= pinctrl-imx6sx.o
- obj-$(CONFIG_PINCTRL_IMX6UL)	+= pinctrl-imx6ul.o
- obj-$(CONFIG_PINCTRL_IMX7D)	+= pinctrl-imx7d.o
- obj-$(CONFIG_PINCTRL_IMX7ULP)	+= pinctrl-imx7ulp.o
-+obj-$(CONFIG_PINCTRL_IMX8MQ)	+= pinctrl-imx8mq.o
- obj-$(CONFIG_PINCTRL_VF610)	+= pinctrl-vf610.o
- obj-$(CONFIG_PINCTRL_MXS)	+= pinctrl-mxs.o
- obj-$(CONFIG_PINCTRL_IMX23)	+= pinctrl-imx23.o
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx8mq.c b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-new file mode 100644
-index 0000000..be2c9c2
---- /dev/null
-+++ b/drivers/pinctrl/freescale/pinctrl-imx8mq.c
-@@ -0,0 +1,356 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ * Copyright (C) 2018 Pengutronix, Lucas Stach <kernel@pengutronix.de>
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-imx.h"
-+
-+enum imx8mq_pads {
-+	MX8MQ_PAD_RESERVE0 = 0,
-+	MX8MQ_PAD_RESERVE1 = 1,
-+	MX8MQ_PAD_RESERVE2 = 2,
-+	MX8MQ_PAD_RESERVE3 = 3,
-+	MX8MQ_PAD_RESERVE4 = 4,
-+	MX8MQ_IOMUXC_PMIC_STBY_REQ_CCMSRCGPCMIX = 5,
-+	MX8MQ_IOMUXC_PMIC_ON_REQ_SNVSMIX = 6,
-+	MX8MQ_IOMUXC_ONOFF_SNVSMIX = 7,
-+	MX8MQ_IOMUXC_POR_B_SNVSMIX = 8,
-+	MX8MQ_IOMUXC_RTC_RESET_B_SNVSMIX = 9,
-+	MX8MQ_IOMUXC_GPIO1_IO00 = 10,
-+	MX8MQ_IOMUXC_GPIO1_IO01 = 11,
-+	MX8MQ_IOMUXC_GPIO1_IO02 = 12,
-+	MX8MQ_IOMUXC_GPIO1_IO03 = 13,
-+	MX8MQ_IOMUXC_GPIO1_IO04 = 14,
-+	MX8MQ_IOMUXC_GPIO1_IO05 = 15,
-+	MX8MQ_IOMUXC_GPIO1_IO06 = 16,
-+	MX8MQ_IOMUXC_GPIO1_IO07 = 17,
-+	MX8MQ_IOMUXC_GPIO1_IO08 = 18,
-+	MX8MQ_IOMUXC_GPIO1_IO09 = 19,
-+	MX8MQ_IOMUXC_GPIO1_IO10 = 20,
-+	MX8MQ_IOMUXC_GPIO1_IO11 = 21,
-+	MX8MQ_IOMUXC_GPIO1_IO12 = 22,
-+	MX8MQ_IOMUXC_GPIO1_IO13 = 23,
-+	MX8MQ_IOMUXC_GPIO1_IO14 = 24,
-+	MX8MQ_IOMUXC_GPIO1_IO15 = 25,
-+	MX8MQ_IOMUXC_ENET_MDC = 26,
-+	MX8MQ_IOMUXC_ENET_MDIO = 27,
-+	MX8MQ_IOMUXC_ENET_TD3 = 28,
-+	MX8MQ_IOMUXC_ENET_TD2 = 29,
-+	MX8MQ_IOMUXC_ENET_TD1 = 30,
-+	MX8MQ_IOMUXC_ENET_TD0 = 31,
-+	MX8MQ_IOMUXC_ENET_TX_CTL = 32,
-+	MX8MQ_IOMUXC_ENET_TXC = 33,
-+	MX8MQ_IOMUXC_ENET_RX_CTL = 34,
-+	MX8MQ_IOMUXC_ENET_RXC = 35,
-+	MX8MQ_IOMUXC_ENET_RD0 = 36,
-+	MX8MQ_IOMUXC_ENET_RD1 = 37,
-+	MX8MQ_IOMUXC_ENET_RD2 = 38,
-+	MX8MQ_IOMUXC_ENET_RD3 = 39,
-+	MX8MQ_IOMUXC_SD1_CLK = 40,
-+	MX8MQ_IOMUXC_SD1_CMD = 41,
-+	MX8MQ_IOMUXC_SD1_DATA0 = 42,
-+	MX8MQ_IOMUXC_SD1_DATA1 = 43,
-+	MX8MQ_IOMUXC_SD1_DATA2 = 44,
-+	MX8MQ_IOMUXC_SD1_DATA3 = 45,
-+	MX8MQ_IOMUXC_SD1_DATA4 = 46,
-+	MX8MQ_IOMUXC_SD1_DATA5 = 47,
-+	MX8MQ_IOMUXC_SD1_DATA6 = 48,
-+	MX8MQ_IOMUXC_SD1_DATA7 = 49,
-+	MX8MQ_IOMUXC_SD1_RESET_B = 50,
-+	MX8MQ_IOMUXC_SD1_STROBE = 51,
-+	MX8MQ_IOMUXC_SD2_CD_B = 52,
-+	MX8MQ_IOMUXC_SD2_CLK = 53,
-+	MX8MQ_IOMUXC_SD2_CMD = 54,
-+	MX8MQ_IOMUXC_SD2_DATA0 = 55,
-+	MX8MQ_IOMUXC_SD2_DATA1 = 56,
-+	MX8MQ_IOMUXC_SD2_DATA2 = 57,
-+	MX8MQ_IOMUXC_SD2_DATA3 = 58,
-+	MX8MQ_IOMUXC_SD2_RESET_B = 59,
-+	MX8MQ_IOMUXC_SD2_WP = 60,
-+	MX8MQ_IOMUXC_NAND_ALE = 61,
-+	MX8MQ_IOMUXC_NAND_CE0_B = 62,
-+	MX8MQ_IOMUXC_NAND_CE1_B = 63,
-+	MX8MQ_IOMUXC_NAND_CE2_B = 64,
-+	MX8MQ_IOMUXC_NAND_CE3_B = 65,
-+	MX8MQ_IOMUXC_NAND_CLE = 66,
-+	MX8MQ_IOMUXC_NAND_DATA00 = 67,
-+	MX8MQ_IOMUXC_NAND_DATA01 = 68,
-+	MX8MQ_IOMUXC_NAND_DATA02 = 69,
-+	MX8MQ_IOMUXC_NAND_DATA03 = 70,
-+	MX8MQ_IOMUXC_NAND_DATA04 = 71,
-+	MX8MQ_IOMUXC_NAND_DATA05 = 72,
-+	MX8MQ_IOMUXC_NAND_DATA06 = 73,
-+	MX8MQ_IOMUXC_NAND_DATA07 = 74,
-+	MX8MQ_IOMUXC_NAND_DQS = 75,
-+	MX8MQ_IOMUXC_NAND_RE_B = 76,
-+	MX8MQ_IOMUXC_NAND_READY_B = 77,
-+	MX8MQ_IOMUXC_NAND_WE_B = 78,
-+	MX8MQ_IOMUXC_NAND_WP_B = 79,
-+	MX8MQ_IOMUXC_SAI5_RXFS = 80,
-+	MX8MQ_IOMUXC_SAI5_RXC = 81,
-+	MX8MQ_IOMUXC_SAI5_RXD0 = 82,
-+	MX8MQ_IOMUXC_SAI5_RXD1 = 83,
-+	MX8MQ_IOMUXC_SAI5_RXD2 = 84,
-+	MX8MQ_IOMUXC_SAI5_RXD3 = 85,
-+	MX8MQ_IOMUXC_SAI5_MCLK = 86,
-+	MX8MQ_IOMUXC_SAI1_RXFS = 87,
-+	MX8MQ_IOMUXC_SAI1_RXC = 88,
-+	MX8MQ_IOMUXC_SAI1_RXD0 = 89,
-+	MX8MQ_IOMUXC_SAI1_RXD1 = 90,
-+	MX8MQ_IOMUXC_SAI1_RXD2 = 91,
-+	MX8MQ_IOMUXC_SAI1_RXD3 = 92,
-+	MX8MQ_IOMUXC_SAI1_RXD4 = 93,
-+	MX8MQ_IOMUXC_SAI1_RXD5 = 94,
-+	MX8MQ_IOMUXC_SAI1_RXD6 = 95,
-+	MX8MQ_IOMUXC_SAI1_RXD7 = 96,
-+	MX8MQ_IOMUXC_SAI1_TXFS = 97,
-+	MX8MQ_IOMUXC_SAI1_TXC = 98,
-+	MX8MQ_IOMUXC_SAI1_TXD0 = 99,
-+	MX8MQ_IOMUXC_SAI1_TXD1 = 100,
-+	MX8MQ_IOMUXC_SAI1_TXD2 = 101,
-+	MX8MQ_IOMUXC_SAI1_TXD3 = 102,
-+	MX8MQ_IOMUXC_SAI1_TXD4 = 103,
-+	MX8MQ_IOMUXC_SAI1_TXD5 = 104,
-+	MX8MQ_IOMUXC_SAI1_TXD6 = 105,
-+	MX8MQ_IOMUXC_SAI1_TXD7 = 106,
-+	MX8MQ_IOMUXC_SAI1_MCLK = 107,
-+	MX8MQ_IOMUXC_SAI2_RXFS = 108,
-+	MX8MQ_IOMUXC_SAI2_RXC = 109,
-+	MX8MQ_IOMUXC_SAI2_RXD0 = 110,
-+	MX8MQ_IOMUXC_SAI2_TXFS = 111,
-+	MX8MQ_IOMUXC_SAI2_TXC = 112,
-+	MX8MQ_IOMUXC_SAI2_TXD0 = 113,
-+	MX8MQ_IOMUXC_SAI2_MCLK = 114,
-+	MX8MQ_IOMUXC_SAI3_RXFS = 115,
-+	MX8MQ_IOMUXC_SAI3_RXC = 116,
-+	MX8MQ_IOMUXC_SAI3_RXD = 117,
-+	MX8MQ_IOMUXC_SAI3_TXFS = 118,
-+	MX8MQ_IOMUXC_SAI3_TXC = 119,
-+	MX8MQ_IOMUXC_SAI3_TXD = 120,
-+	MX8MQ_IOMUXC_SAI3_MCLK = 121,
-+	MX8MQ_IOMUXC_SPDIF_TX = 122,
-+	MX8MQ_IOMUXC_SPDIF_RX = 123,
-+	MX8MQ_IOMUXC_SPDIF_EXT_CLK = 124,
-+	MX8MQ_IOMUXC_ECSPI1_SCLK = 125,
-+	MX8MQ_IOMUXC_ECSPI1_MOSI = 126,
-+	MX8MQ_IOMUXC_ECSPI1_MISO = 127,
-+	MX8MQ_IOMUXC_ECSPI1_SS0 = 128,
-+	MX8MQ_IOMUXC_ECSPI2_SCLK = 129,
-+	MX8MQ_IOMUXC_ECSPI2_MOSI = 130,
-+	MX8MQ_IOMUXC_ECSPI2_MISO = 131,
-+	MX8MQ_IOMUXC_ECSPI2_SS0 = 132,
-+	MX8MQ_IOMUXC_I2C1_SCL = 133,
-+	MX8MQ_IOMUXC_I2C1_SDA = 134,
-+	MX8MQ_IOMUXC_I2C2_SCL = 135,
-+	MX8MQ_IOMUXC_I2C2_SDA = 136,
-+	MX8MQ_IOMUXC_I2C3_SCL = 137,
-+	MX8MQ_IOMUXC_I2C3_SDA = 138,
-+	MX8MQ_IOMUXC_I2C4_SCL = 139,
-+	MX8MQ_IOMUXC_I2C4_SDA = 140,
-+	MX8MQ_IOMUXC_UART1_RXD = 141,
-+	MX8MQ_IOMUXC_UART1_TXD = 142,
-+	MX8MQ_IOMUXC_UART2_RXD = 143,
-+	MX8MQ_IOMUXC_UART2_TXD = 144,
-+	MX8MQ_IOMUXC_UART3_RXD = 145,
-+	MX8MQ_IOMUXC_UART3_TXD = 146,
-+	MX8MQ_IOMUXC_UART4_RXD = 147,
-+	MX8MQ_IOMUXC_UART4_TXD = 148,
-+};
-+
-+/* Pad names for the pinmux subsystem */
-+static const struct pinctrl_pin_desc imx8mq_pinctrl_pads[] = {
-+	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE0),
-+	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE1),
-+	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE2),
-+	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE3),
-+	IMX_PINCTRL_PIN(MX8MQ_PAD_RESERVE4),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_PMIC_STBY_REQ_CCMSRCGPCMIX),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_PMIC_ON_REQ_SNVSMIX),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ONOFF_SNVSMIX),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_POR_B_SNVSMIX),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_RTC_RESET_B_SNVSMIX),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO00),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO01),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO02),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO03),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO04),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO05),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO06),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO07),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO08),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO09),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO10),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO11),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO12),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO13),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO14),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_GPIO1_IO15),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_MDC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_MDIO),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TD3),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TD2),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TD1),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TD0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TX_CTL),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_TXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RX_CTL),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RD0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RD1),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RD2),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ENET_RD3),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_CLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_CMD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA1),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA2),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA3),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA4),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA5),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA6),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_DATA7),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_RESET_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD1_STROBE),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_CD_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_CLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_CMD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_DATA0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_DATA1),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_DATA2),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_DATA3),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_RESET_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SD2_WP),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_ALE),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CE0_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CE1_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CE2_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CE3_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_CLE),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA00),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA01),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA02),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA03),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA04),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA05),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA06),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DATA07),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_DQS),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_RE_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_READY_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_WE_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_NAND_WP_B),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXFS),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXD0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXD1),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXD2),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_RXD3),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI5_MCLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXFS),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD1),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD2),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD3),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD4),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD5),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD6),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_RXD7),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXFS),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD1),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD2),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD3),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD4),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD5),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD6),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_TXD7),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI1_MCLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_RXFS),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_RXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_RXD0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_TXFS),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_TXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_TXD0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI2_MCLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_RXFS),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_RXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_RXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_TXFS),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_TXC),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_TXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SAI3_MCLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SPDIF_TX),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SPDIF_RX),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_SPDIF_EXT_CLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI1_SCLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI1_MOSI),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI1_MISO),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI1_SS0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI2_SCLK),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI2_MOSI),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI2_MISO),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_ECSPI2_SS0),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C1_SCL),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C1_SDA),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C2_SCL),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C2_SDA),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C3_SCL),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C3_SDA),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C4_SCL),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_I2C4_SDA),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART1_RXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART1_TXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART2_RXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART2_TXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART3_RXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART3_TXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART4_RXD),
-+	IMX_PINCTRL_PIN(MX8MQ_IOMUXC_UART4_TXD),
-+};
-+
-+static const struct imx_pinctrl_soc_info imx8mq_pinctrl_info = {
-+	.pins = imx8mq_pinctrl_pads,
-+	.npins = ARRAY_SIZE(imx8mq_pinctrl_pads),
-+	.gpr_compatible = "fsl,imx8mq-iomuxc-gpr",
-+};
-+
-+static const struct of_device_id imx8mq_pinctrl_of_match[] = {
-+	{ .compatible = "fsl,imx8mq-iomuxc", .data = &imx8mq_pinctrl_info, },
-+	{ /* sentinel */ }
-+};
-+
-+static int imx8mq_pinctrl_probe(struct platform_device *pdev)
-+{
-+	const struct imx_pinctrl_soc_info *pinctrl_info;
-+
-+	pinctrl_info = of_device_get_match_data(&pdev->dev);
-+	if (!pinctrl_info)
-+		return -ENODEV;
-+
-+	return imx_pinctrl_probe(pdev, pinctrl_info);
-+}
-+
-+static struct platform_driver imx8mq_pinctrl_driver = {
-+	.driver = {
-+		.name = "imx8mq-pinctrl",
-+		.of_match_table = of_match_ptr(imx8mq_pinctrl_of_match),
-+	},
-+	.probe = imx8mq_pinctrl_probe,
-+};
-+
-+static int __init imx8mq_pinctrl_init(void)
-+{
-+	return platform_driver_register(&imx8mq_pinctrl_driver);
-+}
-+arch_initcall(imx8mq_pinctrl_init);
--- 
-2.7.4
+For example, loading wireless regulatory database gives the following
+errors:
+> [   21.310361] cfg80211: Problem loading in-kernel X.509 certificate (-22)
+> [   21.351717] cfg80211: loaded regulatory.db is malformed or signature is missing/invalid
 
+Kernel modules signature verification probably has similar problem, too.
+
+That's why it would be nice if you could ack this patch, please.
+
+Maciej
