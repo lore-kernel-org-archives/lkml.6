@@ -2,143 +2,141 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE2CC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DA9C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2878E20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 853BF20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:33:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="e9089IAn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IUpEq+GH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2878E20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="PtcA12G8";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ERwzKmd4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853BF20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933773AbeFTWaW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 18:30:22 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37235 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933528AbeFTWaV (ORCPT
+        id S933788AbeFTWds (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 18:33:48 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:45586 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933555AbeFTWdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 18:30:21 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5EBC221D7B;
-        Wed, 20 Jun 2018 18:30:18 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 20 Jun 2018 18:30:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=6NOdBvEcCWNnlMA4wBVywo3zt39RPJlVj3Sh6y0Dklg=; b=e9089IAn
-        5RAuoPRKEOQ559UVV3i6YOqxiu8yuDwbEJVZ6T4S+vkM3XkzwyzK/+8mwGM2buDG
-        yfetH1wMSVMoIO4x4X5wf+IuYYKOFhxGIrj9GlwnaoU1s7nUHmj1xs9uGQJrpArH
-        Yb4Nt49ALQSn0urNGigyPQU8FCl5h4bsAYT1YV+VrYr/0OSGan4fGQxfYMH8oatF
-        1pXGA93OgKJjG8piu+3iqQj59iutn94hrJDLLmb9ytjYgiOhB3n49r5RIlWJuIxH
-        xxVaE6yGoWeP9Kfkab5IbP3HOaeLiGaXbCDfJFMZPNyN3DNVjc3Hg45mhHhPhKeB
-        qtlqCKZX935mAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=6NOdBvEcCWNnlMA4wBVywo3zt39RP
-        JlVj3Sh6y0Dklg=; b=IUpEq+GHO8yuDLokBLpKf/bTuddyCYOgvIlAlUFZDh3mh
-        kVQa6o/QvKAIOfdYlYNM6pjyIpdV2Ymi8zLXH33RgAN/In5po3AgNH2mwWRRpfir
-        7E21ibPn1buW7ivR2jglxXbQXw2+Scmudgt+ruAI1qNVvtjxb6m0nIYCDO6AQ7k4
-        mYIcnRfh705BGIHiJlepgpntq9navvshYD92Yd5FuONUclYVrn2aRNOxxv5Mfnw/
-        Hbp5gqqC6A0qrcPqY73GeGT7+3xVSEOIyLTuxhdVq14iFvM5RsRMMQ77DG1myW69
-        ZqpTYZ2zZrgEW8uhud8va2oIg3k3UbVCFZ1t1YIEQ==
-X-ME-Proxy: <xmx:etUqWwKxiXEA58AHZ2rSfEDKuQQTH0v1z9Z5xZB-FX-UeByyI8x9RA>
-    <xmx:etUqW3yFWmrRgWalc-k9nkIVa-fuCUuMTkQGH6bo55prvcdO2jH8zA>
-    <xmx:etUqW-U4McEIVs1nAXZ0eZsSzUkkbNNG1TFK_ZUEEGo7AJUjN6DVTw>
-    <xmx:etUqW3i1uxetBeuf52CrFQ1nlxXZ_8Ws9TjqgqRcCLvrqufft2G9Hw>
-    <xmx:etUqW-Axf4-ZZbzoDnVXgK6PF2L_YuNnGvp26i-VvXy8zrAnmhGNPQ>
-    <xmx:etUqWydf30HhY-EF-voWi61IBSmro5ETWhy4508_pSqa2LXcG0DTKQ>
-X-ME-Sender: <xms:etUqWxgpxT5CqqslD773euwT64dqNIxQyGNUh0ZlLWBY_cKyN3nWlw>
-Received: from localhost (124-171-16-226.dyn.iinet.net.au [124.171.16.226])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 69F13E4445;
-        Wed, 20 Jun 2018 18:30:17 -0400 (EDT)
-Date:   Thu, 21 Jun 2018 08:30:14 +1000
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 4/4] vsprintf: Add command line option
- debug_boot_weak_hash
-Message-ID: <20180620223014.GE11671@eros>
-References: <20180620042046.30806-1-me@tobin.cc>
- <20180620042046.30806-5-me@tobin.cc>
- <e4f6bfb3-68c7-9f57-0d90-d68d0913234a@infradead.org>
+        Wed, 20 Jun 2018 18:33:46 -0400
+Received: by mail-yb0-f193.google.com with SMTP id x6-v6so451352ybl.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 15:33:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=LOgulzAfwf8styonf9oECNdvj1FK5UxBRxg+uOvtpEw=;
+        b=PtcA12G8PGcO5p0l3+U46eQC8amcvFLmh1LeEQNAl3o9aiBQxU9l/SchoU+UzGWcWN
+         oOFcvd+iIt7aJoHOi/G8hO8JzffvO9C2BH/L5or17Xm7qnsmcb8Oxt8m7gWq12RJv+wt
+         yp+cjnZScZ5HaktfkQn1Pe5m8MZNAi3/cdah7FUj0nNdCCzokQAcPsdJZ+8rQvUF9O/1
+         FSbtPM02fDWNDVxlCTNrAwJ21XGxRBCHgrXEyPV31KjQqh7qV/t+Dt5gS29w8Nz/0TvH
+         bAWtG/AvSAttDdgdqeeWeJd6mwyijjm5NyjQr4j1pxGgvcEh/YdoEibwynLfmUO3dQ6k
+         8eOQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=LOgulzAfwf8styonf9oECNdvj1FK5UxBRxg+uOvtpEw=;
+        b=ERwzKmd42sP8S1pJ0TY2FZ2iBbQjvwl38lY4PQNNHLGye4Ce0ztvTBiQaHjpl2gKW6
+         i9H/AKzxJUTm2GgPI7bRm4yisnqv1uCTuSstzOyCVUDzv+mtO+rt3VA3nI7IN5yyMJNs
+         junlW0qadBLZYvZsH+RnfLA/c8f4Y8V13Q5AY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=LOgulzAfwf8styonf9oECNdvj1FK5UxBRxg+uOvtpEw=;
+        b=cJHz7iWpM6hhxkOdbAM1rXb+GA+ng4qcw4ABvMXOxjMkYGFAfwzI/xHvNLGRqJmSUB
+         Y5j5lfhWIVW6EiQYkI2mPSVWAVQ90F/xdG93vvNjNqwy3yVYAV9jU1hN/1ddqeocnmO5
+         vvb1vwOcRplngqR5zlyzUtudDG06gdcFEYtYyEQjmhBsADcpmt+TUXh+/wjncxfDFrI5
+         fq8+5nRQ9VtixPi2uIOmmKfYBmIG6LerHnSCNArKf2WokckUzIT6yHunGHwdNTP1m6zI
+         oSo8f8QXcQQ11pDHNedwUQYxQSbgLUXRXGdWxa2X4+B7y0FGQNGctxVcRAlvrGAcBbR4
+         UmpQ==
+X-Gm-Message-State: APt69E1YBBVzK76+gVJXVnlxYs/mnQpFki4/0PjOyFLxm7RY4vz42v6y
+        dZ3YMBl+WUM5jBAVIn5vU9P0RuA/chi/kVhLs83IcA==
+X-Google-Smtp-Source: ADUXVKJD3vXML2Rzlzt02tzdoBy+XOBFE1P+U/AxYdSmtLruLd7PA01k45vyB4MZ8V4+AV2C2PvkSuwOntP5ByGPpbQ=
+X-Received: by 2002:a25:ab10:: with SMTP id u16-v6mr12048276ybi.112.1529534025697;
+ Wed, 20 Jun 2018 15:33:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e4f6bfb3-68c7-9f57-0d90-d68d0913234a@infradead.org>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 15:33:44
+ -0700 (PDT)
+In-Reply-To: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
+References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Jun 2018 15:33:44 -0700
+X-Google-Sender-Auth: iKDOTgbO8dDNLSNVp_6z6YkGaaI
+Message-ID: <CAGXu5jLt8Zv-p=9J590WFppc3O6LWrAVdi-xtU7r_8f4j0XeRg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] KASLR feature to randomize each loadable module
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kristen Accardi <kristen.c.accardi@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 09:09:49AM -0700, Randy Dunlap wrote:
-> On 06/19/2018 09:20 PM, Tobin C. Harding wrote:
-> > Currently printing [hashed] pointers requires enough entropy to be
-> > available.  Early in the boot sequence this may not be the case
-> > resulting in a dummy string '(____ptrval____)' being printed.  This
-> > makes debugging the early boot sequence difficult.  We can relax the
-> > requirement to use cryptographically secure hashing during debugging.
-> > This enables debugging while keeping development/production kernel
-> > behaviour the same.
-> > 
-> > If new command line option debug_boot_weak_hash is enabled use
-> > cryptographically insecure hashing and hash pointer value immediately.
-> > 
-> > Signed-off-by: Tobin C. Harding <me@tobin.cc>
-> > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
-> >  lib/vsprintf.c                                  | 17 +++++++++++++++++
-> >  2 files changed, 26 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index 638342d0a095..a116fc0366b0 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -748,6 +748,15 @@
-> >  
-> >  	debug		[KNL] Enable kernel debugging (events log level).
-> >  
-> > +	debug_boot_weak_hash
-> > +			[KNL] Enable printing pointers early in the boot
-> > +			sequence.  If enabled, we use a weak hash instead of
-> > +			siphash to hash pointers.  Use this option if you need
-> > +			to see pointer values during early boot (i.e you are
-> 
-> maybe:
-> 			to see hashed pointer values
-> i.e., not raw pointers.
+On Wed, Jun 20, 2018 at 3:09 PM, Rick Edgecombe
+<rick.p.edgecombe@intel.com> wrote:
+> This patch changes the module loading KASLR algorithm to randomize the position
+> of each module text section allocation with at least 18 bits of entropy in the
+> typical case. It used on x86_64 only for now.
 
-You cannot see 'raw pointers' anyways?
+Very cool! Thanks for sending the series. :)
 
-> 
-> > +			seeing instances of '(___ptrval___)').
-> > +			Cryptographically insecure, please do not use on
-> > +			production kernels.
+> Today the RANDOMIZE_BASE feature randomizes the base address where the module
+> allocations begin with 10 bits of entropy. From here, a highly deterministic
+> algorithm allocates space for the modules as they are loaded and un-loaded. If
+> an attacker can predict the order and identities for modules that will be
+> loaded, then a single text address leak can give the attacker access to the
 
-thanks for the review, I don't quiet see how to use your suggestion to
-make the text clearer.  If you still feel this change is needed perhaps
-you could write so I understand i.e 'Use this option if ...'
+nit: "text address" -> "module text address"
 
+> So the defensive strength of this algorithm in typical usage (<800 modules) for
+> x86_64 should be at least 18 bits, even if an address from the random area
+> leaks.
 
-thanks,
-Tobin.
+And most systems have <200 modules, really. I have 113 on a desktop
+right now, 63 on a server. So this looks like a trivial win.
+
+> As for fragmentation, this algorithm reduces the average number of modules that
+> can be loaded without an allocation failure by about 6% (~17000 to ~16000)
+> (p<0.05). It can also reduce the largest module executable section that can be
+> loaded by half to ~500MB in the worst case.
+
+Given that we only have 8312 tristate Kconfig items, I think 16000
+will remain just fine. And even large modules (i915) are under 2MB...
+
+> The new __vmalloc_node_try_addr function uses the existing function
+> __vmalloc_node_range, in order to introduce this algorithm with the least
+> invasive change. The side effect is that each time there is a collision when
+> trying to allocate in the random area a TLB flush will be triggered. There is
+> a more complex, more efficient implementation that can be used instead if
+> there is interest in improving performance.
+
+The only time when module loading speed is noticeable, I would think,
+would be boot time. Have you done any boot time delta analysis? I
+wouldn't expect it to change hardly at all, but it's probably a good
+idea to actually test it. :)
+
+Also: can this be generalized for use on other KASLRed architectures?
+For example, I know the arm64 module randomization is pretty similar
+to x86.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
