@@ -2,102 +2,111 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E3AC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C09C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31DD120874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DD120874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 22BEE20020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BEE20020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754838AbeFTTeN (ORCPT
+        id S1754880AbeFTTeY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:34:13 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55417 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754557AbeFTTeL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:34:11 -0400
-Received: by mail-wm0-f66.google.com with SMTP id v16-v6so1296950wmh.5;
-        Wed, 20 Jun 2018 12:34:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CFt+omTgBby9fmUhQG+E/Ze+BajCVCPdsAKMIV+hAeY=;
-        b=QFo2U23QASNMvbhkFr673AwdSrZNlo2usBpFk7jxXisijXZa1hCgBUTHPnR0wSNcsw
-         zFNuJoH8aHYEcR9GRvAwZC3s6fuQB+GZappQ3nxv4hWaAgFA1G1/rWZp5enzEO6FyI6s
-         3TaVe777B3Injr/26g5FF0tdm/NuAE/Iv1ISCyI7dUiSPoaW2WYQWjK+JIQy8Iztu+Ll
-         +OiqLqUUX1FrReCHGvqJ+yISY3S3dP4Mx7kw0sVdt/sJ0KIsznzECAgJVI2KPiyINIzy
-         I+qgM3JVvl+SDmkq68GrtiIMs3fHMz7aYp3myMMY1+0cl2tSgXvPaE9VHxUslnvwfK8m
-         JxBw==
-X-Gm-Message-State: APt69E2QIJsEkEVd6FowVgaNyqcOEqm4/4+JejtE6NA96S0A9YRJZsNd
-        ADSw748VEvdv3ojENQelxIcN+gMB
-X-Google-Smtp-Source: ADUXVKL8/p2dD1TqZmvLq+qK+1aHmTFICDMv2UmHNOD3ITSIZCjN0BE8aQvRme8bjc/baweK37s4Wg==
-X-Received: by 2002:a50:b7fc:: with SMTP id i57-v6mr19511456ede.284.1529523249874;
-        Wed, 20 Jun 2018 12:34:09 -0700 (PDT)
-Received: from kozik-lap (adsl-84-227-236-43.adslplus.ch. [84.227.236.43])
-        by smtp.googlemail.com with ESMTPSA id r15-v6sm1331846edp.92.2018.06.20.12.34.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 12:34:09 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 21:34:07 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: exynos: Remove unneeded DSI and DECON
- address/size cells in Exynos5433
-Message-ID: <20180620193407.gk5e5ecolo5bel3c@kozik-lap>
-References: <20180618174216.24801-1-krzk@kernel.org>
- <CGME20180618174316epcas1p397b66c8e4e8479fce8655941a4d4279f@epcas1p3.samsung.com>
- <20180618174216.24801-2-krzk@kernel.org>
- <20180619072652eucas1p1943deb1b158eda52980448e41f83e5e9~5fwX6lI2o2633926339eucas1p1Q@eucas1p1.samsung.com>
- <CAJKOXPeCT3CkqqNowEZaeTw7goJd6=Nbd2S61QzTFW-nGr5AKg@mail.gmail.com>
+        Wed, 20 Jun 2018 15:34:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52045 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754557AbeFTTeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 15:34:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0C0EBAB3F;
+        Wed, 20 Jun 2018 19:34:20 +0000 (UTC)
+Subject: Re: [PATCH 3/3] btrfs: use timespec64 for i_otime
+To:     dsterba@suse.cz, Arnd Bergmann <arnd@arndb.de>,
+        Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
+        David Sterba <dsterba@suse.com>, y2038@lists.linaro.org,
+        Omar Sandoval <osandov@fb.com>, Liu Bo <bo.li.liu@oracle.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180620143448.44388-1-arnd@arndb.de>
+ <20180620143448.44388-3-arnd@arndb.de> <20180620163804.GE24375@twin.jikos.cz>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <263b1bc6-0efb-8803-fb9a-68a1393d35b2@suse.com>
+Date:   Wed, 20 Jun 2018 22:34:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180620163804.GE24375@twin.jikos.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPeCT3CkqqNowEZaeTw7goJd6=Nbd2S61QzTFW-nGr5AKg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 09:59:04AM +0200, Krzysztof Kozlowski wrote:
-> On 19 June 2018 at 09:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> > Hi Krzysztof,
-> >
-> > On 2018-06-18 19:42, Krzysztof Kozlowski wrote:
-> >> The decon, decon_tv and dsi nodes have only one child port so
-> >> address/size mappings are not necessary.  This fixes DTC warnings like:
-> >>
-> >>      Warning (graph_child_address): /soc/decon@13800000/ports:
-> >>          graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
-> >>
-> >> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >
-> > Works fine with current Exynos DRM Decon/MIC/DSI drivers.
-> >
-> > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+
+On 20.06.2018 19:38, David Sterba wrote:
+> On Wed, Jun 20, 2018 at 04:34:34PM +0200, Arnd Bergmann wrote:
+>> While the regular inode timestamps all use timespec64 now, the
+>> i_otime field is btrfs specific and still needs to be converted
+>> to correctly represent times beyond 2038.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > 
-> Thanks for review and testing!
+> This patch addresses the remaining type conversions, so I'm going to
+> merge it, thanks.
+> 
 
-I have second thoughs whether this patch is correct. AFAIU, the drivers
-get the remote endpoints by reg==0 (for example the
-of_graph_get_remote_node() in exynos_dsi_parse_dt()). If the port shall
-be ignored, then reg==-1 should be passed.
-
-Best regards,
-Krzysztof
-
+Actually for the sake of consistency we might want to merge this series
+altogether. As it stands we now use ktime_get_seconds and
+ktime_get_real_seconds (from Allen's patch). I haven't dug to see what's
+the difference (if any) between the two .
