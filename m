@@ -6,106 +6,82 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2B5C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3FEC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61747208B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:28:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61747208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D3699208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:28:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3699208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754142AbeFTI2c (ORCPT
+        id S1754175AbeFTI2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:28:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43523 "EHLO mail.bootlin.com"
+        Wed, 20 Jun 2018 04:28:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57103 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751767AbeFTI21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:28:27 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8FE7120A33; Wed, 20 Jun 2018 09:49:16 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3F910207D4;
-        Wed, 20 Jun 2018 09:49:06 +0200 (CEST)
-Date:   Wed, 20 Jun 2018 09:49:06 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH v3 2/4] mtd: rawnand: add manufacturer fixup for ONFI
- parameter page
-Message-ID: <20180620094906.261b04f5@bbrezillon>
-In-Reply-To: <20180620050544.31549-3-chris.packham@alliedtelesis.co.nz>
-References: <20180620050544.31549-1-chris.packham@alliedtelesis.co.nz>
-        <20180620050544.31549-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1754106AbeFTI2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 04:28:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C229FAEF2;
+        Wed, 20 Jun 2018 08:28:30 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7515F1E0A21; Wed, 20 Jun 2018 10:28:30 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 10:28:30 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        y2038@lists.linaro.org, Jan Kara <jack@suse.cz>,
+        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] reiserfs: use 64-bit values in print_time
+Message-ID: <20180620082830.vwpcikmpnjluqud4@quack2.suse.cz>
+References: <20180619154343.3640484-1-arnd@arndb.de>
+ <20180619154343.3640484-3-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619154343.3640484-3-arnd@arndb.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018 17:05:42 +1200
-Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
-
-> This is called after the ONFI parameter page checksum is verified
-> and allows us to override the contents of the parameter page.
+On Tue 19-06-18 17:43:15, Arnd Bergmann wrote:
+> Inode timestamps are now 64-bit wide even on 32-bit machines, and reiserfs
+> interprets the 32-bit on-disk timestamps as unsigned when returning them
+> to user space with statx(), so for consistency we should print them
+> the same way in the emergency console logs.
 > 
-> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-Ditto.
-
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> Changes in v2:
-> - New
-> Changes in v3:
-> - Add doc comment and review from Boris
-> 
->  drivers/mtd/nand/raw/nand_base.c | 4 ++++
->  include/linux/mtd/rawnand.h      | 3 +++
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 0cd3e216b95c..65250308c82d 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5172,6 +5172,10 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  		}
->  	}
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+...
+> diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
+> index e3c558d1b78c..d0ab3a763962 100644
+> --- a/fs/reiserfs/item_ops.c
+> +++ b/fs/reiserfs/item_ops.c
+> @@ -33,11 +33,11 @@ static int sd_is_left_mergeable(struct reiserfs_key *key, unsigned long bsize)
+>  	return 0;
+>  }
 >  
-> +	if (chip->manufacturer.desc && chip->manufacturer.desc->ops &&
-> +	    chip->manufacturer.desc->ops->fixup_onfi_param_page)
-> +		chip->manufacturer.desc->ops->fixup_onfi_param_page(chip, p);
-> +
->  	/* Check version */
->  	val = le16_to_cpu(p->revision);
->  	if (val & (1 << 5))
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index 3e8ec3b8a39c..ef7e3b4e91ea 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -778,11 +778,14 @@ nand_get_sdr_timings(const struct nand_data_interface *conf)
->   *	  implementation) if any.
->   * @cleanup: the ->init() function may have allocated resources, ->cleanup()
->   *	     is here to let vendor specific code release those resources.
-> + * @fixup_onfi_param_page: apply vendor specific fixups to the ONFI
-> + *	parameter page. This is called after the checksum is verified.
-
-Can you align the second line on the colon?
-
->   */
->  struct nand_manufacturer_ops {
->  	void (*detect)(struct nand_chip *chip);
->  	int (*init)(struct nand_chip *chip);
->  	void (*cleanup)(struct nand_chip *chip);
-> +	void (*fixup_onfi_param_page)(struct nand_chip *chip, struct nand_onfi_params *p);
->  };
+> -static char *print_time(time_t t)
+> +static char *print_time(time64_t t)
+>  {
+>  	static char timebuf[256];
 >  
->  /**
+> -	sprintf(timebuf, "%ld", t);
+> +	sprintf(timebuf, "%lld", t);
+>  	return timebuf;
+>  }
 
+Well, seeing how print_time() is used, more appropriate prototype would be:
+
+static char *print_time(u32 t)
+
+and then print it as %u.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
