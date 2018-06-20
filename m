@@ -2,120 +2,128 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B5CC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22AEC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519E720693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:49:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519E720693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BBCD20872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:50:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p8nbsTQd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BBCD20872
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754153AbeFTJtC (ORCPT
+        id S1754011AbeFTJuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:49:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45365 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751311AbeFTJs7 (ORCPT
+        Wed, 20 Jun 2018 05:50:37 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41056 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751340AbeFTJuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:48:59 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K9mnR63451673
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 20 Jun 2018 02:48:49 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K9mmIm3451670;
-        Wed, 20 Jun 2018 02:48:48 -0700
-Date:   Wed, 20 Jun 2018 02:48:48 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Siarhei Liakh <tipbot@zytor.com>
-Message-ID: <tip-3ae6295ccb7cf6d344908209701badbbbb503e40@git.kernel.org>
-Cc:     Siarhei.Liakh@concurrent-rt.com, linux-kernel@vger.kernel.org,
-        bpetkov@suse.de, tglx@linutronix.de,
-        siarhei.liakh@concurrent-rt.com, mingo@kernel.org, luto@kernel.org,
-        hpa@zytor.com
-Reply-To: bpetkov@suse.de, linux-kernel@vger.kernel.org,
-          Siarhei.Liakh@concurrent-rt.com, tglx@linutronix.de,
-          mingo@kernel.org, siarhei.liakh@concurrent-rt.com, hpa@zytor.com,
-          luto@kernel.org
-In-Reply-To: <DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com>
-References: <DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86: Call fixup_exception() before notify_die() in
- math_error()
-Git-Commit-ID: 3ae6295ccb7cf6d344908209701badbbbb503e40
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 20 Jun 2018 05:50:35 -0400
+Received: by mail-pg0-f67.google.com with SMTP id l65-v6so1242758pgl.8
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 02:50:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6HA+Sc4127VnR0XoCzgvAGfwoxhAqa6oSGaBN0apa5A=;
+        b=p8nbsTQd5fjhA+lMZ94m6kKoevAchxjKHOfX5au21rMvfieWH5Oeu1EJuaTvEcnr/L
+         zLMnVoA+gYuRY0S+qb2YYGGhiBOeBXBMa3hlYZMUl6XQoMbZSvc9OYWnXbd+VVyPDMkL
+         4tMHUM0CEXd7bd2uiVCg/qWnixhUigaQThNOHyI+yfr/DFrwYKc68Toxrfz5GNaaERUN
+         9cYGa+wN23RY3vdrn70+z6hg8XjTsfrBnCToLPRmd4AO7cQeL0KkW4eIrDQPEr7iHxsR
+         x36Gpq6zap111kWJjTBHx0h08fCSvBL5sCESTxYey3qH6vW9J669VxYYYhPMhsprnvZX
+         dVrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6HA+Sc4127VnR0XoCzgvAGfwoxhAqa6oSGaBN0apa5A=;
+        b=FfeWQBb5oF2TfPogJCR180iakr3xnBPZokv3wL6e0mIEX8EZ/3pJRLEsd4bPgizvfw
+         q/t6wdnc9ru6xQnTCgtnfKmLZtmxtuI4aiM2THP3e5uLL6sknt5jyzQZKog4B0ohMUW+
+         FvArcr5lTdhEJN0Y5KWurcmlXfFTOEOXYGrqkjyPK5FEqRYaTPGK4AAR14NcaLZIhcMj
+         Nf6NqFXNqm8TGCqnI0yoLotI7it2cndna5pdv3KcTVKWEGGJ1aj4eyNoZNWtZ07sgPSd
+         kyUAo4sUgQFLxKMKro1AT4gbYpK4Wfo4NYze9gkyDx7z1xf1zbtPdr3C2uuJ/eIqAgZh
+         gC+g==
+X-Gm-Message-State: APt69E00L+04WLY9/Er9SlIviaawtlFcFQ/XTFSkaCQBxTlScKWNV89O
+        jdT48G/1eJZgb1Sk2qWYmyc=
+X-Google-Smtp-Source: ADUXVKJjgljrpmUJ9IXnp0VUbZ/JoaN4djAg+GJ1m8Tq5zaR3pA+62d45L4f+FmnbhpTCBmxd1nq0w==
+X-Received: by 2002:aa7:8491:: with SMTP id u17-v6mr22025818pfn.48.1529488234991;
+        Wed, 20 Jun 2018 02:50:34 -0700 (PDT)
+Received: from oslab.tsinghua.edu.cn ([2402:f000:1:4413:35c0:9e91:c7fc:672])
+        by smtp.gmail.com with ESMTPSA id k15-v6sm2975069pfi.37.2018.06.20.02.50.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 02:50:34 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     gregkh@linuxfoundation.org, quytelda@tamalin.org,
+        Larry.Finger@lwfinger.net, harshasharmaiitr@gmail.com,
+        arushisinghal19971997@gmail.com, amitoj1606@gmail.com,
+        jeremy.lefaure@lse.epita.fr, teo.dacquet@gmail.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] staging: rtl8723bs: Fix two possible sleep-in-atomic-context bugs in translate_scan()
+Date:   Wed, 20 Jun 2018 17:50:16 +0800
+Message-Id: <20180620095016.8484-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3ae6295ccb7cf6d344908209701badbbbb503e40
-Gitweb:     https://git.kernel.org/tip/3ae6295ccb7cf6d344908209701badbbbb503e40
-Author:     Siarhei Liakh <Siarhei.Liakh@concurrent-rt.com>
-AuthorDate: Thu, 14 Jun 2018 19:36:07 +0000
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 20 Jun 2018 11:44:56 +0200
+The driver may sleep with holding a spinlock.
+The function call paths (from bottom to top) in Linux-4.16.7 are:
 
-x86: Call fixup_exception() before notify_die() in math_error()
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 323: 
+		kzalloc in translate_scan
+drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 1554: 
+		translate_scan in rtw_wx_get_scan
+drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 1533: 
+		spin_lock_bh in rtw_wx_get_scan
 
-fpu__drop() has an explicit fwait which under some conditions can trigger a
-fixable FPU exception while in kernel. Thus, we should attempt to fixup the
-exception first, and only call notify_die() if the fixup failed just like
-in do_general_protection(). The original call sequence incorrectly triggers
-KDB entry on debug kernels under particular FPU-intensive workloads.
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 455: 
+		kzalloc in translate_scan
+drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 1554: 
+		translate_scan in rtw_wx_get_scan
+drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 1533: 
+		spin_lock_bh in rtw_wx_get_scan
 
-Andy noted, that this makes the whole conditional irq enable thing even
-more inconsistent, but fixing that it outside the scope of this.
+To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
 
-Signed-off-by: Siarhei Liakh <siarhei.liakh@concurrent-rt.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Borislav  Petkov" <bpetkov@suse.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com
+These bugs are found by my static analysis tool (DSAC-2) and checked by
+my code review.
 
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- arch/x86/kernel/traps.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 03f3d7695dac..162a31d80ad5 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -834,16 +834,18 @@ static void math_error(struct pt_regs *regs, int error_code, int trapnr)
- 	char *str = (trapnr == X86_TRAP_MF) ? "fpu exception" :
- 						"simd exception";
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index b26533983864..7632b8974563 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -321,7 +321,7 @@ static char *translate_scan(struct adapter *padapter,
+ 		RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("rtw_wx_get_scan: ssid =%s\n", pnetwork->network.Ssid.Ssid));
+ 		RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("rtw_wx_get_scan: wpa_len =%d rsn_len =%d\n", wpa_len, rsn_len));
  
--	if (notify_die(DIE_TRAP, str, regs, error_code, trapnr, SIGFPE) == NOTIFY_STOP)
--		return;
- 	cond_local_irq_enable(regs);
+-		buf = kzalloc(MAX_WPA_IE_LEN*2, GFP_KERNEL);
++		buf = kzalloc(MAX_WPA_IE_LEN*2, GFP_ATOMIC);
+ 		if (!buf)
+ 			return start;
+ 		if (wpa_len > 0) {
+@@ -453,7 +453,7 @@ static char *translate_scan(struct adapter *padapter,
+ 		u8 *buf;
+ 		u8 *p, *pos;
  
- 	if (!user_mode(regs)) {
--		if (!fixup_exception(regs, trapnr)) {
--			task->thread.error_code = error_code;
--			task->thread.trap_nr = trapnr;
-+		if (fixup_exception(regs, trapnr))
-+			return;
-+
-+		task->thread.error_code = error_code;
-+		task->thread.trap_nr = trapnr;
-+
-+		if (notify_die(DIE_TRAP, str, regs, error_code,
-+					trapnr, SIGFPE) != NOTIFY_STOP)
- 			die(str, regs, error_code);
--		}
- 		return;
- 	}
- 
+-		buf = kzalloc(MAX_WPA_IE_LEN, GFP_KERNEL);
++		buf = kzalloc(MAX_WPA_IE_LEN, GFP_ATOMIC);
+ 		if (!buf)
+ 			goto exit;
+ 		p = buf;
+-- 
+2.17.0
+
