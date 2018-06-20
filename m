@@ -6,131 +6,137 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFEAC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D30C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D095A20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B2E120872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:59:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="L5oTdssf";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ePHzgvGn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D095A20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="AXypA/fH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2E120872
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933199AbeFTXpC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 19:45:02 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:33146 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933027AbeFTXo7 (ORCPT
+        id S933202AbeFTX7n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 19:59:43 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37124 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932571AbeFTX7k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 19:44:59 -0400
-Received: by mail-yb0-f194.google.com with SMTP id e84-v6so521606ybb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:44:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=hmODcPiZ8sQhpo/WCFLhH69JLnaTXkKk1b/wq9Bn25U=;
-        b=L5oTdssf9Sfx9wEjKpRNqWlg9d+CY/DPTBEtDZ20I0fV7AC4OoQnZcKigG1c4cuZ9s
-         YWhI1Evig9szOTHEkOnm048RFm3nKPxp0rnJbArDysqUcXfDrwUnvjJbE1lvAPpmOO3Z
-         bwy7ikow8GIUCPyp4FTiPzjgOxvsd7f8EpaNQNEPBQIP6ADGTMCRynrGAeYZbfu8M3X8
-         LAtljrfqndkawxH6tGWqQ+mQ/nyJb4EniSwM0ptsKuMNrBNVDqwo1LuzsW9WLYlJCRHf
-         h/E+qRDmFGXGQslCAxSiLpwcDlTFv3Vbswi/ANEzpj7ZFLUoRa5I1a4guQOZg8lOL4Sj
-         1U1A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=hmODcPiZ8sQhpo/WCFLhH69JLnaTXkKk1b/wq9Bn25U=;
-        b=ePHzgvGnd3rj7dxJoJ7uQOt+WtxGP5Pw+CyLQTc2b2jaTHze5Hd3nf22hfF+N6COYn
-         GUhZpLOjGJPFZtSPsUvI5uiqkV/LFZX9pJbp4SfSBWcyYjjTJQwoiSpaP2ZJPTJfnTgt
-         EodLZrNqWEYWfH+3QHhMxPdSG5YwsHSODQusE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=hmODcPiZ8sQhpo/WCFLhH69JLnaTXkKk1b/wq9Bn25U=;
-        b=gSLDMUze8xzixUzX/FOeG13eGpL4SmR8HdKpY3rqZfSyZHU0CaZBZcEEz5sIQG3TjM
-         OAfHIaC7PDCdeoZ/o673oKqaxUPVDZb0JOSWMYKusGFR1HJ4OLthMIhgKPRjAW8dvD4d
-         6OyUjiWqxRynWPexQLqw84oUYYmimzDk/W1+116Ijp7ApjPQmMlTVDrTlzz0FJHA19Fy
-         V07N1qkM2gbug1z8ZfmD/SsWRDQ/cs3JQAYqheLwCQgwTaZjcfFRjq6dkVWTZ53IqR4u
-         4mTlSpb7ZfPfpnSryvWo+/Lk4RzDsUXIWZQQ1Dge19hFbnxWS07YP1M9JPvTjjP5YCtm
-         hDOA==
-X-Gm-Message-State: APt69E1MKLg0no1vphuHB1B3VTr5Bn+h+KuaBH4ko9ALX5tVi2S15Icn
-        751nNTSWzygH7ZIQWM5uXqiq5u4pjAcWt0cpCpp+IQ==
-X-Google-Smtp-Source: ADUXVKJLKZXik5pbF1Um85Z5a8vTGgG8fpdHbPR8Qrktq0JQcBOFbxaf/rOQ5HlNoUcznqqEaUTNB1mA9/yENXwHNtQ=
-X-Received: by 2002:a25:be4e:: with SMTP id d14-v6mr1117562ybm.309.1529538299061;
- Wed, 20 Jun 2018 16:44:59 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 16:44:58
- -0700 (PDT)
-In-Reply-To: <20180620233342.GB111712@gmail.com>
-References: <20180620190408.45104-1-keescook@chromium.org> <20180620190408.45104-5-keescook@chromium.org>
- <20180620233342.GB111712@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 20 Jun 2018 16:44:58 -0700
-X-Google-Sender-Auth: hPYLL_gAXASZJ97s9Q4mQJQvk-A
-Message-ID: <CAGXu5jKk254gzTPR4pOPmnVpr+0fFkKv1+z9cOeXpiQ2cMQTeQ@mail.gmail.com>
-Subject: Re: [dm-devel] [PATCH 04/11] dm verity fec: Remove VLA usage
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        qat-linux@intel.com, LKML <linux-kernel@vger.kernel.org>,
-        dm-devel@redhat.com, linux-crypto <linux-crypto@vger.kernel.org>,
-        Lars Persson <larper@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>
+        Wed, 20 Jun 2018 19:59:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5CD678EE1DB;
+        Wed, 20 Jun 2018 16:59:40 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id J0Fb7OXRQbF8; Wed, 20 Jun 2018 16:59:40 -0700 (PDT)
+Received: from jarvis (179.21.149.210.rev.iijmobile.jp [210.149.21.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9283A8EE01C;
+        Wed, 20 Jun 2018 16:59:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1529539180;
+        bh=HDhEPSPTqcCtT6Qo0jk7tszfkl8nNg5KZ0F+VJYoUjc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=AXypA/fHi8JJbIq/LPh4k3UQnfyy484w3zsQ0bUYC+HwI/Q/YfKcuS4we4wxruXQ6
+         rzVQXiXBVPx+pQKHOW2mJhDl4ci4e0yGyG6KTZFN9Tu74LC0GhQSS2TQlHGnLlG1A0
+         hQZlk78V65uB8kHPXDpFtUUAgUETTf+0PEkjRnF0=
+Message-ID: <1529539176.4163.2.camel@HansenPartnership.com>
+Subject: Re: [PATCH v3 0/2] tpm: add support for nonblocking operation
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, philip.b.tricca@intel.com,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
+Date:   Thu, 21 Jun 2018 08:59:36 +0900
+In-Reply-To: <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
+References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+         <20180619131046.GC5609@linux.intel.com>
+         <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 4:33 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Wed, Jun 20, 2018 at 12:04:01PM -0700, Kees Cook wrote:
->> In the quest to remove all stack VLA usage from the kernel[1], this
->> uses the newly defined max digest size macro. Also adds a sanity-check
->> at use-time.
->>
->> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  drivers/md/dm-verity-fec.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/md/dm-verity-fec.c b/drivers/md/dm-verity-fec.c
->> index 684af08d0747..0dfcc52835bc 100644
->> --- a/drivers/md/dm-verity-fec.c
->> +++ b/drivers/md/dm-verity-fec.c
->> @@ -212,12 +212,15 @@ static int fec_read_bufs(struct dm_verity *v, struct dm_verity_io *io,
->>       struct dm_verity_fec_io *fio = fec_io(io);
->>       u64 block, ileaved;
->>       u8 *bbuf, *rs_block;
->> -     u8 want_digest[v->digest_size];
->> +     u8 want_digest[AHASH_MAX_DIGESTSIZE];
->>       unsigned n, k;
->>
->>       if (neras)
->>               *neras = 0;
->>
->> +     if (WARN_ON(v->digest_size < sizeof(want_digest)))
->> +             return -EINVAL;
->> +
->
-> This is backwards; it should be 'v->digest_size > sizeof(want_digest)'.
+On Tue, 2018-06-19 at 17:45 -0700, Tadeusz Struk wrote:
+> On 06/19/2018 06:10 AM, Jarkko Sakkinen wrote:
+> > On Tue, Jun 12, 2018 at 10:58:26AM -0700, Tadeusz Struk wrote:
+> > > The TCG SAPI specification [1] defines a set of functions, which
+> > > allows applications to use the TPM device in either blocking or
+> > > non-blocking fashion. Each command defined by the specification
+> > > has a corresponding Tss2_Sys_<COMMAND>_Prepare() and
+> > > Tss2_Sys_<COMMAND>_Complete() call, which together with
+> > > Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+> > > mode of operation. Currently the TPM driver supports only
+> > > blocking calls, which doesn't allow asynchronous IO operations.
+> > > This patch changes it and adds support for nonblocking write and
+> > > a new poll function to enable applications, which want to take
+> > > advantage of this feature. The new functionality can be tested
+> > > using standard TPM tools implemented in [2], together with
+> > > modified TCTI from [3].
+> > > 
+> > > [1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI
+> > > _Version-1.1_Revision-22_review_030918.pdf
+> > > [2] https://github.com/tpm2-software/tpm2-tools
+> > > [3] https://github.com/tstruk/tpm2-tss/tree/async
+> > 
+> > For me the value is still a bit questionable. The benchmark looks a
+> > bit flakky to give much figures how this would work with real world
+> > workloads.
+> > 
+> > I read James response and I also have to question why not just a
+> > worker thread in user space? TPM does only one command at a time
+> > anyways.
+> > 
+> > Cannot take this in before I know that user space will (1) adapt to
+> > this and (2) gain value compared to a worker thread.
+> > 
+> 
+> Hi Jarkko,
+> Thanks for reviewing the patch.
+> There are applications/frameworks where a worker thread is not an
+> option.
+> Take for example the IoT use-cases and frameworks like IoT.js, or
+> "Node.js for IoT".
+> They are all single threaded, event-driven frameworks, using non-
+> blocking I/O as the base of their processing model.
 
-Yikes. Thank you for catching that! I will fix in v2.
+I'm slightly surprised by this statement.  I thought IoT Node.js
+runtimes (of which there are far too many, so I haven't looked at all
+of them) use libuv or one of the forks:
 
--Kees
+http://libuv.org/
 
--- 
-Kees Cook
-Pixel Security
+As the basis for their I/O handling?  While libuv can do polling for
+event driven interfaces it also support the worker thread model just as
+easily:
+
+http://docs.libuv.org/en/v1.x/threadpool.html
+
+> Similarly embedded applications, which are basically just a single
+> threaded event loop, quite often don't use threads because of
+> resources constrains.
+
+It's hard for me, as a kernel developer, to imagine any embedded
+scenario using the Linux kernel that would not allow threads unless the
+writers simply didn't bother with synchronization: The kernel schedules
+at the threads level and can't be configured not to use them plus
+threads are inherently more lightweight than processes so they're a
+natural fit for resource constrained scenarios.
+
+That's still not to say we shouldn't do this, but I've got to say I
+think the only consumers would be old fashioned C code: the code we
+used to write before we had thread libraries that did use signals and
+poll() for a single threaded event driven monolith (think green
+threads), because all the new webby languages use threading either
+explicitly or at the core of their operation.
+
+James
+
