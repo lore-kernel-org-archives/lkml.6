@@ -1,144 +1,124 @@
 Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C78DC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 596DAC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10BA620846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D91920874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:40:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bILUKDD4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BA620846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MkYzBzse"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D91920874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932591AbeFTQjZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:39:25 -0400
-Received: from mail-db5eur01on0052.outbound.protection.outlook.com ([104.47.2.52]:36192
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932232AbeFTQjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:39:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gsH4lxj8iYn2N1t/mk89W7MjfD5E/4ihCTmQvwzdSW0=;
- b=bILUKDD4x/g5TWY3O4AZ7JbW37t7vzMlu8emVe3eB9WnK+g5ybppgaqSlA9WdXdnZzOEm11HgZDwNhlh39YAMpKs+t254kv8XwdW0KuIS1rD+TwpC/8Gv++8auwqwAuDF+V7mAPCXSTvDP8UP/YUm9MALiRjkzGwh6b8O0FBwg4=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=vakul.garg@nxp.com; 
-Received: from lti.ap.freescale.net (14.142.187.166) by
- AM0PR04MB4242.eurprd04.prod.outlook.com (2603:10a6:208:66::28) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.17; Wed, 20 Jun 2018 16:39:17 +0000
-From:   Vakul Garg <vakul.garg@nxp.com>
-To:     davem@davemloft.net
-Cc:     doronrk@fb.com, tom@quantonium.net, john.fastabend@gmail.com,
-        davejwatson@fb.com, netdev@vger.kernel.org, ebiggers@google.com,
-        linux-kernel@vger.kernel.org, Vakul Garg <vakul.garg@nxp.com>
-Subject: [PATCH net][RESEND] strparser: Don't schedule in workqueue in paused state
-Date:   Thu, 21 Jun 2018 03:29:49 +0530
-Message-Id: <20180620215949.32334-1-vakul.garg@nxp.com>
-X-Mailer: git-send-email 2.13.6
+        id S932645AbeFTQkq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 12:40:46 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40436 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932088AbeFTQkn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 12:40:43 -0400
+Received: by mail-wr0-f195.google.com with SMTP id g18-v6so190459wro.7;
+        Wed, 20 Jun 2018 09:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=lIRLwoDYvUIhb7UdPPBBQwwgZ7alj2yOMNic2Z8nIb8=;
+        b=MkYzBzsei5AmZZUxM/Uxs1Xbd+iUNfTmHdzd44GVA0g29IiYyMVB8zhVxJScIl+eVR
+         /le+7FXBZ+irf6X+Aai7I8YfXorFlSV/BOPqX0v3y9c5RXCtJmQJMkPJ2IrHVc9OQTfB
+         LjXfWVGuVrk9rJqAMYUoXkMw3Qz3zZCGUR4yTjtzIGyf4EZCKpa09ss2yk6pFDChcs3C
+         AtHW8XGWZGroZTIzBXkNBmTjNs05qTAHNYojaDZ8sB55I3dZCoUatFdlKcchQHS2kubr
+         VXZ3ex3bYyH2Ez9QZHs4J7RLtGeb//qBcqx1I2rYTOl/FOE65xGo6dWY6tTCymFh9usc
+         /Mmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=lIRLwoDYvUIhb7UdPPBBQwwgZ7alj2yOMNic2Z8nIb8=;
+        b=jWktUuV41KU/gKyXbl+Ii+ycQy3HAJ3l0TseG+tumUNFkAG5muNFaYIbHp1XlUaeiD
+         qdCwPRADpbkvpNI383B/pyUHbMmrhyKeMpg64LazPVihmxQZoBPRcQuzwLquCNnpiRGI
+         bNvyZ/gLQqfLgIJrYBxrQ6y5TMnExrLYhXz+qlAHQmJUfGbhQTvmMHdTJhMJfIeN/KvF
+         pxEitwIO8NPsxe3bSTG0wfV59r2j3EDhP4dz0sN6ii9fxVX1b1q7bz89bGQhWlKJB6j1
+         XWyWS+FNRExbD6EIOkXjYZ+MIaujc3FgaeEAV+kLDp1QIdcdzsJjCg8K5s7OcMzTE5Us
+         5vPQ==
+X-Gm-Message-State: APt69E2GBSf7WHZ3OMeu10RHHQY055JFF4Ah+pLroV19gSPOBhzI0C/h
+        Dw0HE4SzjBi4EdTq1nAf5hU=
+X-Google-Smtp-Source: ADUXVKKHujra10SxJ6zQTOidPt8FMTTQhg0BavWFggSYnRVtLqVkCVlv3hatE3R7RPJOo0vqasGzXQ==
+X-Received: by 2002:adf:9f0f:: with SMTP id l15-v6mr18750726wrf.206.1529512841931;
+        Wed, 20 Jun 2018 09:40:41 -0700 (PDT)
+Received: from [10.0.0.26] (45.179.189.80.dyn.plus.net. [80.189.179.45])
+        by smtp.gmail.com with ESMTPSA id w126-v6sm3651426wmw.29.2018.06.20.09.40.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 09:40:40 -0700 (PDT)
+Subject: Re: [PATCH] [Bug 16494] NFS client over TCP hangs due to packet loss
+To:     Joe Perches <joe@perches.com>,
+        'Trond Myklebust' <Trond.Myklebust@netapp.com>
+Cc:     'Andrew Morton' <akpm@linux-foundation.org>,
+        'David Miller' <davem@davemloft.net>, kuznet@ms2.inr.ac.ru,
+        pekkas@netcore.fi, jmorris@namei.org, yoshfuji@linux-ipv6.org,
+        kaber@trash.net, eric.dumazet@gmail.com,
+        William.Allen.Simpson@gmail.com, gilad@codefidence.com,
+        ilpo.jarvinen@helsinki.fi, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        "'J. Bruce Fields'" <bfields@fieldses.org>,
+        'Neil Brown' <neilb@suse.de>,
+        'Chuck Lever' <chuck.lever@oracle.com>,
+        'Benny Halevy' <bhalevy@panasas.com>,
+        'Alexandros Batsakis' <batsakis@netapp.com>,
+        Andy Chittenden <andyc@bluearc.com>
+References: <4c57cfe8.887b0e0a.2f79.4772@mx.google.com>
+ <20100803.012144.267950450.davem@davemloft.net>
+ <20100803021110.f0b3877b.akpm@linux-foundation.org>
+ <4C57EE9A.7040308@gmail.com> <4c5ad0d6.42ecd80a.47d7.0dfc@mx.google.com>
+ <1281037822.2948.49.camel@heimdal.trondhjem.org>
+ <4c5bd64a.4a2ae30a.0283.0551@mx.google.com>
+ <4c5fc9f3.487e0e0a.2960.ffffe4ec@mx.google.com>
+ <0dead6e0deabafe0abdd4b30f97bcdf5c12cd824.camel@perches.com>
+From:   Andy C <andyc.bluearc@gmail.com>
+Message-ID: <bac42441-07c8-bb94-7559-94f9047654fa@gmail.com>
+Date:   Wed, 20 Jun 2018 17:40:40 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [14.142.187.166]
-X-ClientProxiedBy: PN1PR0101CA0048.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c00:c::34) To AM0PR04MB4242.eurprd04.prod.outlook.com
- (2603:10a6:208:66::28)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dcc01bfb-785c-427f-f517-08d5d6cc5ed4
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4242;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4242;3:Ey75O+WuDRGN63GZ7/R0hXfWhBi/AsgwVm6kmv7HW/+C3sxb7tGvtZ3+GWuE3tuRqPKd9rvjksBWVkN3ZNsjLf5WUIVMXebC8QacNsBOuMqouOFkHIbXIoxcX90ay8fb3PJ4sFz2pMAeH/enHu8AlMU6vI27BbldAGeSAMKQMj4hgg7TliKlxNRRH9ExSAZKuZiLGskvXg+Nepmh3KU1agXiolpTM+QEzUQdzBNRQELnAJ/RajwaOXZ12Z2k7MNC;25:qzFkJlTh8S53WOBrqdqM5Hgve7cAJmAbx71gj+Evq6f45e/ztls9rXXt8M2U/zdE4LmaOr5yfsU665tk7LmtpyNHAgpGY+cKoWk2sKi/zPsk0jAMRnaavK5Yh4VVqkwLljd03ndAyKJgTx9673gnMjxAE5EQ8E7NBiUmKWnRwvcwm6L7AMoP2z4sKYi5QOrSNXZtMQRk9tAufqDKulVXEwlJHVCjwU82mP0K1u4zxDlAr9ypuuqpr01Yd/bOCpyVjhzpXbG+J2xil+3T/3j3alM7O0u4M5tbWIavaXPyVDLoTkJqtWBN2mOBziP5gVsh3Crb5v6PpCpFyrbxtwz8Zg==;31:oo9wWw+p1HvRWHk93l24TctLfgvs9xQz4fteD7X9g7mXOrXxlu5cLLu1C7No3u7yKHOtBck/F6v6/Uy4kGZfLBkt0nJAWQyf1/+It0opTjfe3PA/JJRpz5y17Ih7HkGPmEWfDFYbT1mK5Zv2JqCF9AKnF43riJOhzevHaHcYJVl11ySaUaZQlu773eXySh+6GpiwQnKP5rmer3GbKCPl2ub6TgbfGh21G/uM4md/TrI=
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4242:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4242;20:CUL0gUjhq9hYwNSN4vCCE4NkA6DsNUTbSOISHvwcYhzCEbSrFZme/AnVfesF/kGmzZJWPPMmxz0ahP/9xUEMoP6PlkSXfP5Jz2YfIPC02ZOQz2WP9myGbEdv9nwpNj4Uyblujv/Ef0QYXRRRp+Ze4Km22m5iMU1KCLRkzKUI6lc0ADmznh7SINFaUACdukz5y4fo2GIxAIMDKmUWX59Ljr8OC2MLxdTmITi4OIghTttqlgm6dp8gbwQd789QlQ2j9QCLzppLSwBlguDubmL1Gz2cYziw9uU6RNVU5OVObynpSX0aRBnzWyzunMbccoHpMSjPwH6/2JjryGFKiGBUE6l3Ekjj77uCFThB3uRiAWXKW1Ha6+2saJQ60pE59CXZMgDMzPj9xK8ECMBiD0U06EOMqGBEcnj7kDLj4lnr3FmPvtGt4o7kR46IXZfjWtBlDrA/AN3A6cUhqHlYRlwlzQpEEfnAN6LR4dTHRtwhzwGu5QKbkp1LZR7DO0BinpUW;4:FLYqZqlVH4NussIKRwZsLKCqIY0qxALoMQyfTXh/Z1+vE/5sH64xsal+x6mMFZJPAmVLOIVhXzpkGl2qPo4+KktncrFatHcG22Amwnk6zJEWyltiyqc9E9iZbFBXkV8f9vhwHQkQ77s8UtEZMGgY7unastOOf9gvfkfjtvJQ9vHUj3jmkHsdb83yEphriOp9OLLuhDEMcZEH+pHNdcS2+Iqt/Uevp5Lw9SikrxoiRgAomRQDmGaKg0ishd3oQ0v4xsukUFRfyE6NorM95cwI/6vAiyXos+n6JnkJDWlnKjTJZhyDK6jmUGzcgTDPMT5Q
-X-Microsoft-Antispam-PRVS: <AM0PR04MB424244FB15686517CC5FC62B8B770@AM0PR04MB4242.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4242;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4242;
-X-Forefront-PRVS: 070912876F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(39380400002)(396003)(39860400002)(189003)(199004)(6116002)(2351001)(1076002)(39060400002)(68736007)(105586002)(50226002)(2361001)(8936002)(106356001)(316002)(86362001)(48376002)(486006)(81166006)(476003)(956004)(8676002)(25786009)(81156014)(2616005)(47776003)(6512007)(4326008)(478600001)(3846002)(50466002)(16586007)(66066001)(44832011)(53936002)(186003)(55236004)(5660300001)(36756003)(52116002)(6916009)(6506007)(51416003)(386003)(2906002)(16526019)(59450400001)(6666003)(26005)(5009440100003)(6486002)(97736004)(7736002)(305945005)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4242;H:lti.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4242;23:FvJrYanGc4nzVh32N9sGiPWUWfFepMnYqD+tH5oZG?=
- =?us-ascii?Q?wM+Qpcf9UVpdiCtDyV4aecv0/vIyzaIo0SbHIurA9s9KEhv0+VnmeLbd90hZ?=
- =?us-ascii?Q?qyEkN9FCPXFR/VuD/SFe1AOL8xXD9VOeNeju/PFgRMaQIp0224gsvO7cPEte?=
- =?us-ascii?Q?Xr18CkyI2s1WO3bAAXX9N3EURGZJ5lGoc9oRSZw/XPDI7Wv1htglw93Aeo7G?=
- =?us-ascii?Q?zfwFKOFxxQnCeWk/XgXnHq6P8EptF5TYyZLVleFto28ydYeyMbycNpJGRhsR?=
- =?us-ascii?Q?H6sJRQyAjVlGlgvOrhzy3Ck0fxd4ECqy0HmgFj7rlHnDLCcNA6qpzoEiX4/q?=
- =?us-ascii?Q?mz3aEY9FaRCXJJrdw5MgXLJ94Bvek2pSpIyAx86ix+47ZIKMG0noxXLSiYGQ?=
- =?us-ascii?Q?CZUKXxKYx2dB3ipbyaXfl78n+2/ly1ksVzVRN7p9zNUL2F/0ajHOXGPJKbyg?=
- =?us-ascii?Q?M55nvlnvguywTrLgFznIvQDb9e4sxZwnLGuMElkXxXuZr//AOK/+PyJuQx8N?=
- =?us-ascii?Q?n+bcn6K3uxlPyB94JVAavL4KtP+7GPpo6+ToxQxmbn4dH/QZfLkJmBxlSxwG?=
- =?us-ascii?Q?4bN0ACOKTWhyUrhxRXTJN/PhA/XbDPfwFaIOzyiFhNi8+gX0OAiSOSqo1pIr?=
- =?us-ascii?Q?2Ef8svCGlgn16JiQKHKc5fU5nDbwfQFZlVGmKqQz5TderUzmGv6UZVyGf9ug?=
- =?us-ascii?Q?En4pShyr7CGPw+nqzcw7H57b3CeFRmvAXCJTRYCJc7C/DkNtthfd6QeBtqT8?=
- =?us-ascii?Q?ed/Fdc9+pkFNEv6YDt2qY5nXSaj/WzuCz/qu0lCJOz7wAvcQvucWVbHdJTgs?=
- =?us-ascii?Q?OLu4YHkK6exMV/DerA+lTz8vtzzicGJ14JjXN1nqiCmmIM5bWEQfdUk7k5JM?=
- =?us-ascii?Q?KiGhG7AUMaoQgPra7EiUGz6SUgYz6PUfivfQ9iLdkvqiPr0nZS3UGwy2/A2E?=
- =?us-ascii?Q?4tSAIM691TNBodmfDoBw5A1ak8VjjQ45CQB6EQcPNldIEm4pk/EudvN8ExxP?=
- =?us-ascii?Q?LQVtvKHqZazZ8nLJxSgMb1P6uNjsZittkx47T1Y6CH2SoZlB3JPQgdrAdP5S?=
- =?us-ascii?Q?OMk5BUofrDtgR89ulJh4i9+RzXWM4ViM3QqAgYbVgdTAwRBMQebhUtrlp4+I?=
- =?us-ascii?Q?132otujlFL7fU4CuZsnFC+fMaZsJeFZ06XoZUSOueB6AZS0JSfqo1HrZ5GhG?=
- =?us-ascii?Q?BDZwXou/VL9fycZvH1PRw7dBtEcsRTmf72m67W/76IFq9QcyETpx968W2GVM?=
- =?us-ascii?Q?35f+uyJDteyq5I/y+mXPnp12qjqqzs6KzQfSgPE19/YLjpiJKyua9/erjKhM?=
- =?us-ascii?Q?D8foIG3AD+aQLKCTvjGKFf/8OIs8bDQajHIykhORbuQ?=
-X-Microsoft-Antispam-Message-Info: 2i0Ha6f37X4WXUkEDxauSerwJ6PBdT1va0TESSBVbcvj1XIC+n7tBseA6WUXeuOmHug9mOQ3TZjZwjDOVSta2qJtSj1UK24jLTSR0thPPL3WKLDWTcLuAu7xXGrDDTorl/9U7w2/rAguf4E5Pquu95rrffOGK/NR4+QnNiMotWCeJqx8c6VcOnMw/6/I30PCXM7FCHKpab71QWUyW/itA6yWFgxyO+EUypdS3/B9s0DLnjNgYU9b0BVJIyU7PsHTEoypc+WscDiO5CSgWklx0M2IExwahTvVx7C3R2NpTMinlwimvXC1r2ByOMuLlENMEya4qXId/8sEihSTaqnaUA==
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4242;6:ZqAGISJKlE+CkQ+OAV8KM2uzXMHvIANtWndVrvM6yKJLuRQ+Ls5uNaObeVoRvrE3WtKZt4BmJP9HyDBecjGz84g2+0skL9qyK3dYWZuQV+3UcTM30NobeTTZ2bBxf+R0pN3G48uiBgaadqcZDU6tsKffxV6brLkkeF+ioCpSe05Mr6FxxPv9xMghdtxq98x+Hby4pD9DVg+8mR1Vl14JUuuFZo6Cg9vQ+CcyqDF3vhlRW0Fi+jUkDVshG6kKWK+4h/BYu8Ot1EZG20xUOJetaPlQy0toTcDiryGO4FCsBUYLS2lZUdHl9juN6vHk9MeI/HJSKBJulPVrdqE661oBv38ZCwL0YrxXFSYusxgLZIw83hmip5eiZ2TY1HIxq/c86awgSWUx8doidB62yY7x2qxHC+O9wlLsMIh+x656mLockb9hhK7bL7scCFAZ+34XJ9W+HkZbkAhqK2Z9PhXWxQ==;5:9JhLhEWsRNxpreTI51cmtwFzQjg+ve7b26fILR/drtFmwOwJLPNgZr2yKayFPF2uJymAkww/XhAE9dUdQ/zwWCXrM7+990rnYxdUBGUxF07ohgJlmzLXn1TXUywa1y8A+hGp5V0kAKyhORfXZL+0jB7oLsXQdYOTcwfhGNwgVDs=;24:gkDIy3/RqLrTE3YQoTW8OZbEGBOxW5o9yzvHiw1XkNYujlU7bUNG7YJS0skXstrJwAdBtZN85cPawMVL2udFjqGRU3x4iIpYAOT4PArQVtc=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4242;7:qE+32GHtn+2sVy6R8+ID9q+igxi3EqLzRyDuOlTKZY/tDHq7UEGu0LbvMGd7sff8j5nmYHsQ9thYYH+rDBrJKTciVtNdm+nIKI322u2ZvC4cB2b3aX+KSLdqlpZTBgaUPdaN+glukn8w1paxFlCoyu8f37CvDSdxMYdhr62q8k5w3n7Tq4kmK5v5ZuklLpvU6ZroDx1PTZ/c4pntfhLiQKKpcTQpnccAmnWD7IxgQXwFY78pb4N2W5Hth2AQILmh
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2018 16:39:17.7888
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcc01bfb-785c-427f-f517-08d5d6cc5ed4
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4242
+In-Reply-To: <0dead6e0deabafe0abdd4b30f97bcdf5c12cd824.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+X-Antivirus: Avast (VPS 180620-2, 20/06/2018), Outbound message
+X-Antivirus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function strp_data_ready(), it is useless to call queue_work if
-the state of strparser is already paused. The state checking should
-be done before calling queue_work. The change reduces the context
-switches and improves the ktls-rx throughput by approx 20% (measured
-on cortex-a53 based platform).
+On 2018-06-19 22:56, Joe Perches wrote:
+> On Mon, 2010-08-09 at 10:27 +0100, Andy Chittenden wrote:
+>
+> You really need to check your clock.
+> Mail sent in the year 2010?
+>
+I didn't send it just now. I sent it on 2010-08-09 at 10:27. And I did 
+receive a copy at that time. If I'm reading the headers correctly, 
+something happened here:
 
-Signed-off-by: Vakul Garg <vakul.garg@nxp.com>
----
- net/strparser/strparser.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+	id 1fVNCq-0005da-3g; Tue, 19 Jun 2018 20:26:24 +0000
+Received: from vger.kernel.org ([209.132.180.67])
+	by bombadil.infradead.org with esmtp (Exim 4.72 #1 (Red Hat Linux))
+	id 1OiOdm-0004za-Ks; Mon, 09 Aug 2010 09:27:30 +0000
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+	id S1755981Ab0HIJ1U (ORCPT <rfc822;tgraf@infradead.org> + 8 others);
+	Mon, 9 Aug 2010 05:27:20 -0400
 
-diff --git a/net/strparser/strparser.c b/net/strparser/strparser.c
-index 1a9695183599..373836615c57 100644
---- a/net/strparser/strparser.c
-+++ b/net/strparser/strparser.c
-@@ -392,7 +392,7 @@ static int strp_read_sock(struct strparser *strp)
- /* Lower sock lock held */
- void strp_data_ready(struct strparser *strp)
- {
--	if (unlikely(strp->stopped))
-+	if (unlikely(strp->stopped) || strp->paused)
- 		return;
- 
- 	/* This check is needed to synchronize with do_strp_work.
-@@ -407,9 +407,6 @@ void strp_data_ready(struct strparser *strp)
- 		return;
- 	}
- 
--	if (strp->paused)
--		return;
--
- 	if (strp->need_bytes) {
- 		if (strp_peek_len(strp) < strp->need_bytes)
- 			return;
 -- 
-2.13.6
+Andy
 
