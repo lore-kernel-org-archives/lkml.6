@@ -3,104 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52396C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D60C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A93208CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A93208CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8318E208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8318E208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932385AbeFTIai (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:30:38 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59448 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbeFTIad (ORCPT
+        id S1754574AbeFTIag (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:30:36 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61035 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752930AbeFTIad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 04:30:33 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fVXqM-0000Sm-Bb; Wed, 20 Jun 2018 09:47:54 +0200
-Date:   Wed, 20 Jun 2018 09:47:53 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-cc:     Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Don Zickus <dzickus@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Babu Moger <babu.moger@oracle.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Christoffer Dall <cdall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        iommu@lists.linux-foundation.org
-Subject: Re: [RFC PATCH 17/23] watchdog/hardlockup/hpet: Convert the timer's
- interrupt to NMI
-In-Reply-To: <20180620001535.GA27531@voyager>
-Message-ID: <alpine.DEB.2.21.1806200940210.10546@nanos.tec.linutronix.de>
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com> <alpine.DEB.2.21.1806131128570.2280@nanos.tec.linutronix.de> <20180615020314.GA11625@voyager>
- <alpine.DEB.2.21.1806151029210.2079@nanos.tec.linutronix.de> <20180616005103.GC6659@voyager> <alpine.DEB.2.21.1806161517050.1582@nanos.tec.linutronix.de> <20180620001535.GA27531@voyager>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Received: from 79.184.254.22.ipv4.supernova.orange.pl (79.184.254.22) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 4d34ff52ab8a1549; Wed, 20 Jun 2018 10:03:51 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] PM / wakeup: Add callback for wake-up change notification
+Date:   Wed, 20 Jun 2018 10:02:41 +0200
+Message-ID: <2523505.Jaak4fIuPm@aspire.rjw.lan>
+In-Reply-To: <CAMuHMdWgdsSS7qcfPmHnvL-XmXzyoS=bMGgc6q0urcvO5upWvQ@mail.gmail.com>
+References: <20180619135518.8990-1-geert+renesas@glider.be> <CAJZ5v0gGuTDCf8Bsefyj5R6mF=SXZDrt7JacNU5vBZOf84QsvA@mail.gmail.com> <CAMuHMdWgdsSS7qcfPmHnvL-XmXzyoS=bMGgc6q0urcvO5upWvQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018, Ricardo Neri wrote:
-> On Sat, Jun 16, 2018 at 03:24:49PM +0200, Thomas Gleixner wrote:
-> > The status register is useless in case of MSI. MSI is edge triggered ....
-> > 
-> > The only register which gives you proper information is the counter
-> > register itself. That adds an massive overhead to each NMI, because the
-> > counter register access is synchronized to the HPET clock with hardware
-> > magic. Plus on larger systems, the HPET access is cross node and even
-> > slower.
+On Tuesday, June 19, 2018 5:22:06 PM CEST Geert Uytterhoeven wrote:
+> Hi Rafael,
 > 
-> It starts to sound that the HPET is too slow to drive the hardlockup detector.
+> On Tue, Jun 19, 2018 at 4:48 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > On Tue, Jun 19, 2018 at 3:55 PM, Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> > > Add a callback to inform a device that its wake-up setting has been
+> > > changed.  This allows a device to synchronize device configuration with
+> > > an external user action.
+> > >
+> > > E.g. on systems using a Rohm BD9571MWV PMIC and a toggle accessory power
+> > > switch, the system suspend/resume procedure is:
+> > >   1. Configure PMIC for DDR backup mode (by software), which changes the
+> > >      role of the accessory power switch from a power to a wake-up
+> > >      switch,
+> > >   2. Switch accessory power switch off (manually), to prepare for system
+> > >      suspend,
+> > >   3. Suspend system (by software),
+> > >   4. Switch accessory power switch on (manually), to wake up the system.
+> > >
+> > > As step 2 involves a manual operation, step 1 cannot be combined
+> > > with step 3 and performed in the PMIC's suspend callback (unlike on
+> > > systems with a momentary power switch).
+> > >
+> > > Adding the new callback allows to move step 1 to the new callback, to be
+> > > performed in response to the user writing "enabled" to the PMIC's
+> > > "wakeup" virtual file in sysfs.
+> >
+> > I still don't quite understand this TBH.
+> >
+> > In particular, why do you want a write to "wakeup" trigger this
+> > instead of having a special sysfs attr for that exposed by your PMIC
+> > driver?
 > 
-> Would it be possible to envision a variant of this implementation? In this
-> variant, the HPET only targets a single CPU. The actual hardlockup detector
-> is implemented by this single CPU sending interprocessor interrupts to the
-> rest of the CPUs.
+> In v1 (https://patchwork.kernel.org/patch/9996567/), I had a
+> driver-specific "backup_mode" sysfs file.
+> In v2 and later of the driver series (https://lkml.org/lkml/2018/4/18/345),
+> I changed that to use the standard "wakeup" file in sysfs, in response to
+> a comment from Mark Brown.
 
-And these IPIs must be NMIs which need to have a software based indicator
-that the watchdog needs to be checked, which is going to create yet another
-can of race conditions and in the worst case 'unknown NMI' splats. Not
-pretty either.
+Well, I'm not convinced that this is the right approach, though.
+
+> > Writing "enabled" to "wakeup" for the PMIC should enable the PMIC
+> > itself to wake up the system, which isn't quite the case, or is it?
+> 
+> Actually the PMIC cannot wake up the system if backup mode is not enabled.
+
+That doesn't really matter.  "enabled" in "wakeup" only means that user space
+allows the device to wake up the system from sleep, but it still may not be
+able to do that for certain reasons (like in this case).  By adding this
+callback you're changing the meaning of the attribute.
+
+> When suspending the system (PSCI suspend) without enabling backup mode
+> first, the system will just crash (which cannot be distinguished from being
+> suspended, as PSCI doesn't support any other wake-up sources anyway[*] ;-)
+> So in that sense writing "enabled" to the "wakeup" file does enable the
+> PMIC to wake up the system.
+> 
+> Do you still prefer a driver-specific sysfs file?
+
+Yes, I do.
 
 Thanks,
+Rafael
 
-	tglx
