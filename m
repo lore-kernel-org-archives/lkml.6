@@ -3,148 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD82C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C87DC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54B820872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:25:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D54B820872
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id C0F1520693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F1520693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754533AbeFTJZd (ORCPT
+        id S1754315AbeFTJXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:25:33 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:50439 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751327AbeFTJZ3 (ORCPT
+        Wed, 20 Jun 2018 05:23:38 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16664 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754097AbeFTI3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:25:29 -0400
-Received: from svr-orw-mbx-01.mgc.mentorg.com ([147.34.90.201])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1fVZMj-0000QQ-RG from Jiada_Wang@mentor.com ; Wed, 20 Jun 2018 02:25:25 -0700
-Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 20 Jun 2018 02:25:22 -0700
-From:   <jiada_wang@mentor.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <jiada_wang@mentor.com>
-Subject: [PATCH 1/1] ASoC: soc-pcm: DPCM cares BE channel constraint
-Date:   Wed, 20 Jun 2018 18:25:20 +0900
-Message-ID: <20180620092520.14101-1-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 20 Jun 2018 04:29:55 -0400
+X-UUID: d39248c390cc4f3685bf39d5e615c511-20180620
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 579083786; Wed, 20 Jun 2018 16:19:48 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 20 Jun 2018 16:19:45 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 20 Jun 2018 16:19:46 +0800
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
+Subject: [PATCH v7 21/29] drm/mediatek: add connection from RDMA2 to DPI1
+Date:   Wed, 20 Jun 2018 16:19:23 +0800
+Message-ID: <1529482771-2153-22-git-send-email-stu.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiada Wang <jiada_wang@mentor.com>
+This patch add the connection from RDMA2 to DPI1
 
-Current DPCM is caring only FE channel configuration. Sometimes
-it will be trouble if user selects channel which isn't supported
-by BE.
-
-This patch adds new .dpcm_merged_chan on struct snd_soc_dai_link.
-DPCM will use FE / BE merged channel if struct snd_soc_dai_link
-has it.
-
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- include/sound/soc.h |  2 ++
- sound/soc/soc-pcm.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 1378dcd2128a..f7579f82cc00 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -957,6 +957,8 @@ struct snd_soc_dai_link {
- 
- 	/* DPCM used FE & BE merged format */
- 	unsigned int dpcm_merged_format:1;
-+	/* DPCM used FE & BE merged channel */
-+	unsigned int dpcm_merged_chan:1;
- 
- 	/* pmdown_time is ignored at stop */
- 	unsigned int ignore_pmdown_time:1;
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 45b52f7b9690..19ebfc958b9d 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -1715,6 +1715,46 @@ static u64 dpcm_runtime_base_format(struct snd_pcm_substream *substream)
- 	return formats;
- }
- 
-+static void dpcm_runtime_base_chan(struct snd_pcm_substream *substream,
-+				   unsigned int *channels_min,
-+				   unsigned int *channels_max)
-+{
-+	struct snd_soc_pcm_runtime *fe = substream->private_data;
-+	struct snd_soc_dpcm *dpcm;
-+	int stream = substream->stream;
-+
-+	if (!fe->dai_link->dpcm_merged_chan)
-+		return;
-+
-+	*channels_min = 0;
-+	*channels_max = UINT_MAX;
-+
-+	/*
-+	 * It returns merged BE codec channel;
-+	 * if FE want to use it (= dpcm_merged_chan)
-+	 */
-+
-+	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
-+		struct snd_soc_pcm_runtime *be = dpcm->be;
-+		struct snd_soc_dai_driver *codec_dai_drv;
-+		struct snd_soc_pcm_stream *codec_stream;
-+		int i;
-+
-+		for (i = 0; i < be->num_codecs; i++) {
-+			codec_dai_drv = be->codec_dais[i]->driver;
-+			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
-+				codec_stream = &codec_dai_drv->playback;
-+			else
-+				codec_stream = &codec_dai_drv->capture;
-+
-+			*channels_min = max(*channels_min,
-+					    codec_stream->channels_min);
-+			*channels_max = min(*channels_max,
-+					    codec_stream->channels_max);
-+		}
-+	}
-+}
-+
- static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
-@@ -1722,11 +1762,17 @@ static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
- 	struct snd_soc_dai_driver *cpu_dai_drv = cpu_dai->driver;
- 	u64 format = dpcm_runtime_base_format(substream);
-+	unsigned int channels_min = 0, channels_max = UINT_MAX;
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
- 		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->playback, format);
- 	else
- 		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->capture, format);
-+
-+	dpcm_runtime_base_chan(substream, &channels_min, &channels_max);
-+
-+	runtime->hw.channels_min = max(channels_min, runtime->hw.channels_min);
-+	runtime->hw.channels_max = min(channels_max, runtime->hw.channels_max);
- }
- 
- static int dpcm_fe_dai_do_trigger(struct snd_pcm_substream *substream, int cmd);
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index c88742a6c2b9..a4b418302f32 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -93,9 +93,11 @@
+ #define RDMA1_SOUT_DSI2			0x4
+ #define RDMA1_SOUT_DSI3			0x5
+ #define RDMA2_SOUT_DPI0			0x2
++#define RDMA2_SOUT_DPI1			0x3
+ #define DPI0_SEL_IN_RDMA1		0x1
+ #define DPI0_SEL_IN_RDMA2		0x3
+ #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
++#define DPI1_SEL_IN_RDMA2		(0x3 << 8)
+ #define DSI1_SEL_IN_RDMA1		0x1
+ #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+ #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+@@ -199,6 +201,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+ 		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+ 		value = RDMA2_SOUT_DPI0;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
++		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
++		value = RDMA2_SOUT_DPI1;
+ 	} else {
+ 		value = 0;
+ 	}
+@@ -233,6 +238,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+ 	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+ 		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+ 		value = DPI0_SEL_IN_RDMA2;
++	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
++		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
++		value = DPI1_SEL_IN_RDMA2;
+ 	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+ 		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+ 		value = COLOR1_SEL_IN_OVL1;
 -- 
-2.17.0
+2.12.5
 
