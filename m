@@ -2,159 +2,145 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06370C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E358C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B440620846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4548320846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:28:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="XU/lZ66K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cWZIAYY3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B440620846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oGvFpzRh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4548320846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754251AbeFTEVs (ORCPT
+        id S1751648AbeFTE2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 00:21:48 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:60627 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750842AbeFTEVF (ORCPT
+        Wed, 20 Jun 2018 00:28:55 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:39306 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750842AbeFTE2x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 00:21:05 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id A232C21ADA;
-        Wed, 20 Jun 2018 00:21:04 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 20 Jun 2018 00:21:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :date:from:in-reply-to:message-id:references:subject:to
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=loZHnWsjHYT/D6T7p
-        gB8aGTq3jdPdKKvTW+EUwiREOo=; b=XU/lZ66Kw6Obp1av4JLr8SII58Wsudoxh
-        eAVsrKcRgsiAjYmFGVcIE9wEhmhTPR43RSJ91qJfJzTc6m3znnm8rWa1sRTgsRn6
-        v6biGzjwse0dImT4RY+uINFHLhSETldS2ku4stI5OPnG5XCRzkpgX3E6S61JbPu3
-        fs7FKwjH1VbfGR1DmzW+ECw8/8ERPUXTNwLlEbGSXoPkRcv0t/nhagBHJDtPbV3c
-        VtyIYeCQivln36JQGqKNRbOwtJg2usbGulMgn58N8bRWlEN+YGWADECFcagYS6q5
-        1mGL2MivqJ2OLyScDSoIvbK5S2COmvW/JsmGu/AzgtmVErsM9GAog==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:date:from:in-reply-to:message-id
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=loZHnWsjHYT/D6T7pgB8aGTq3jdPdKKvTW+EUwiREOo=; b=cWZIAYY3
-        iUJJOVAtWl1iYjWwYU5n0KpS1UNpkyLsW8uBCLFicyebERZF5ampFr1M80k6GFHy
-        bf8HpDASOpmnwNTRaesAKwesxiFL0zVUet56MISJXt4sNIgLSYnRvoIIk0mljR5k
-        rzqNDNyCeisxVPFROqxhxkCECGOFKsJIsEI9DNOwMfT2NiWNhatZ7TwLX5vLIuny
-        cPQ7kKHR9IXmkYR3bkiKTvMNknHjGtz4UkfXQrhiqCBGh1cOVl8TA5ZNxFL3oTfM
-        StG8aQx0zRffCae2G5kej4Y2NKghUKhxiSIzxiM/KFE+q0MhYgA4bVSCsanewKI7
-        18dUBxbLMKFvEg==
-X-ME-Proxy: <xmx:MNYpWzWaKpwOgTWSds68e-Dt9Rvkmmo9KI_jTmlLQL--76PPQYKA0A>
-    <xmx:MNYpW2uv_idk7uKCZ1v6ulppGgWg5H4AYufnFftripuLFUsph4PEUQ>
-    <xmx:MNYpW1x5XOzL3QTen6Cejdjjuxn02fHRU-8E0MtZCoHEm20HDJSckA>
-    <xmx:MNYpW5REy6NjHTXoEKh7WFraWxohuJFbPMf67s60-weALiZis2ddNA>
-    <xmx:MNYpW_9fScE_i3yf1OQqgOtr2NPhChfdaT6NBJxhYFdMXU7DMAE_RA>
-    <xmx:MNYpWwoPWjzPn6lGu7pNyUDFfoHRl_BrGWc8V_b4ec8HbE0GhwT7QQ>
-X-ME-Sender: <xms:MNYpWzd6ML4OKvleCLNdwsehaOOUCnyBWbxaytZW_7RG2zfbkDgkxw>
-Received: from localhost (ppp118-211-207-6.bras1.syd2.internode.on.net [118.211.207.6])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D4623E4076;
-        Wed, 20 Jun 2018 00:21:03 -0400 (EDT)
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     "Tobin C. Harding" <me@tobin.cc>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        Wed, 20 Jun 2018 00:28:53 -0400
+Received: by mail-pg0-f68.google.com with SMTP id w12-v6so860915pgc.6;
+        Tue, 19 Jun 2018 21:28:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5XxPFcbufTiQQMxTgixuo/u0WlgPO3UZSe1lymGHCaA=;
+        b=oGvFpzRh1JbWVsTYQXSzZ4TCjdRhu+8eXi7SiiMVIthWcJvCYEY+wRHpx1BXEO9KPr
+         pKwzlM4Ocj/70YJUrkpKLOeXuI2YCz/tR+5hd6+XpGzEMpOnM0sMUPOQNkq4955It8Vi
+         bZOykvqsk0Fk9rez6HN7fhXkmDM5R+AoDW7A29D8w5T2XCh6P90Lf8kISg+U6KWGMceB
+         rRELcGZ1KkkEfehGERrfnLc+irrUKW8W6QqZOzSZSjLyBF8IdM6ffp7d1FlHSDc2cIxg
+         4aWdXr9jdBbwpzZckqKko1bK/c2j18/2mthvKih4sQkCpzeVCn20j5Eu2DcDY0F/o7wN
+         hVXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5XxPFcbufTiQQMxTgixuo/u0WlgPO3UZSe1lymGHCaA=;
+        b=UhyEF9DWU6vTsWCu85+g+AK9KRu7KVOIvWba9PdsRAjC8oSEu+dAqjesAQXgBPlnC+
+         K/7t+cWz0oycoSAQic1bKco/+aOpqArVHtOVTlloPZ+PE2fiqXyjaYu+w7MdbVqdsML5
+         EkWl509Gb4XrS93jeHVT/hKXcnVjPABaHGrqtEJ2ZuRDtMMYWwJb3JYc7rZax0a9Y6Oh
+         LY98gl3MHKX8MOpQD7/fuS0TKg3ussj03SOy5Jp9pCn/aXfzspg1F0kgz7uVdi1PRL/C
+         wwTJ3fAGzXnDGz1JEp4uMFLNgHP63OcxZ/OKSsgBDcy4Oy2WLiTm2cv6mtLMNDF5GcRK
+         q0Sg==
+X-Gm-Message-State: APt69E2AkXCBiMZdoMQdrqw4M3EBoNRa9hlLyTshdUbw1G4ORv5jEezE
+        czVU+ewssbrpTxNqP6+qMqc=
+X-Google-Smtp-Source: ADUXVKLWNaT6yzCbhWEG+uV6IsqH0Zsz5lHog60pZPmXMMGXp4Fuf/7pU1JeG5+BvVNuiVL77yvx1Q==
+X-Received: by 2002:aa7:83d1:: with SMTP id j17-v6mr21198679pfn.236.1529468932853;
+        Tue, 19 Jun 2018 21:28:52 -0700 (PDT)
+Received: from localhost ([110.70.59.159])
+        by smtp.gmail.com with ESMTPSA id a10-v6sm1867725pfg.107.2018.06.19.21.28.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 21:28:51 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 13:28:47 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 2/4] random: Return nbytes filled from hw RNG
-Date:   Wed, 20 Jun 2018 14:20:44 +1000
-Message-Id: <20180620042046.30806-3-me@tobin.cc>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180620042046.30806-1-me@tobin.cc>
-References: <20180620042046.30806-1-me@tobin.cc>
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
+ locks
+Message-ID: <20180620042847.GH650@jagdpanzerIV>
+References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
+ <20180618143818.50b2f2f9@alans-desktop>
+ <20180619005308.GA405@jagdpanzerIV>
+ <20180619083021.4avsgvcqjrpkat6s@pathway.suse.cz>
+ <CA+55aFz9aGc-vGvKv_ZR2W2ZkZNSZfOHa0m_MbGH_a=x8oAW5Q@mail.gmail.com>
+ <20180620025050.GE650@jagdpanzerIV>
+ <CA+55aFzC5=awDhzOy9u_2FNaQmRprUTxj_KV2xO+GnpNAFg8MQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzC5=awDhzOy9u_2FNaQmRprUTxj_KV2xO+GnpNAFg8MQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the function get_random_bytes_arch() has return value 'void'.
-If the hw RNG fails we currently fall back to using get_random_bytes().
-This defeats the purpose of requesting random material from the hw RNG
-in the first place.
+On (06/20/18 12:38), Linus Torvalds wrote:
+> On Wed, Jun 20, 2018 at 11:50 AM Sergey Senozhatsky
+> <sergey.senozhatsky.work@gmail.com> wrote:
+> >
+> > It's not UART on its own that immediately calls into printk(), that would
+> > be trivial to fix, it's all those subsystems that serial console driver
+> > can call into.
+> 
+> We already have the whole PRINTK_SAFE_CONTEXT_MASK model that only
+> adds it to a secondary buffer if you get recursion.  Why isn't that
+> triggering? That's the whole point of it.
 
-There are currently no intree users of get_random_bytes_arch().
+This is exactly what I'm doing in my patch set.
+PRINTK_SAFE_CONTEXT_MASK so far worked *one* way only: when we start
+from printk.c
 
-Only get random bytes from the hw RNG, make function return the number
-of bytes retrieved from the hw RNG.
+IOW:
 
-Acked-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
- drivers/char/random.c  | 16 +++++++++-------
- include/linux/random.h |  2 +-
- 2 files changed, 10 insertions(+), 8 deletions(-)
+      printk -> printk_safe_mask -> vsprinf -> printk
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index ed679099afba..e98fa03cdb91 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1724,26 +1724,28 @@ EXPORT_SYMBOL(del_random_ready_callback);
-  * key known by the NSA).  So it's useful if we need the speed, but
-  * only if we're willing to trust the hardware manufacturer not to
-  * have put in a back door.
-+ *
-+ * Return number of bytes filled in.
-  */
--void get_random_bytes_arch(void *buf, int nbytes)
-+int __must_check get_random_bytes_arch(void *buf, int nbytes)
- {
-+	int left = nbytes;
- 	char *p = buf;
- 
--	trace_get_random_bytes_arch(nbytes, _RET_IP_);
--	while (nbytes) {
-+	trace_get_random_bytes_arch(left, _RET_IP_);
-+	while (left) {
- 		unsigned long v;
--		int chunk = min(nbytes, (int)sizeof(unsigned long));
-+		int chunk = min_t(int, left, sizeof(unsigned long));
- 
- 		if (!arch_get_random_long(&v))
- 			break;
- 
- 		memcpy(p, &v, chunk);
- 		p += chunk;
--		nbytes -= chunk;
-+		left -= chunk;
- 	}
- 
--	if (nbytes)
--		get_random_bytes(p, nbytes);
-+	return nbytes - left;
- }
- EXPORT_SYMBOL(get_random_bytes_arch);
- 
-diff --git a/include/linux/random.h b/include/linux/random.h
-index 2ddf13b4281e..f1c9bc5cd231 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -38,7 +38,7 @@ extern void get_random_bytes(void *buf, int nbytes);
- extern int wait_for_random_bytes(void);
- extern int add_random_ready_callback(struct random_ready_callback *rdy);
- extern void del_random_ready_callback(struct random_ready_callback *rdy);
--extern void get_random_bytes_arch(void *buf, int nbytes);
-+extern int __must_check get_random_bytes_arch(void *buf, int nbytes);
- 
- #ifndef MODULE
- extern const struct file_operations random_fops, urandom_fops;
--- 
-2.17.1
+But we also can have printk-related deadlocks the *other* way
+around. For instance:
 
+      uart -> printk -> uart
+
+printk_safe_mask is not triggering there because we don't use
+printk_safe in uart / tty yet. And this is what I do in my
+patch set - extend printk_safe usage.
+
+The patch set does not add any _new_ locks or locking rules.
+It just replaces the existing
+
+		spin_lock(a)
+with
+		prinkt_safe_enter();
+		spin_lock(a)
+
+and
+		spin_unlock(a)
+with
+		spin_unlock(a)
+		printk_safe_exit();
+
+and that's it.
+
+So now we use printk_safe mechanism to avoid another bunch of
+deadlock scenarious: which don't start from printk, but from
+parts of the kernel which printk eventually calls.
+
+	-ss
