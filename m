@@ -5,46 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A637DC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82965C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618D120846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:23:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618D120846
+	by mail.kernel.org (Postfix) with ESMTP id 3E8BF204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:24:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8BF204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754644AbeFTSXc (ORCPT
+        id S1754663AbeFTSYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 14:23:32 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:45165 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754492AbeFTSX2 (ORCPT
+        Wed, 20 Jun 2018 14:24:21 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:43998 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754226AbeFTSYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 14:23:28 -0400
-Received: by mail-yb0-f194.google.com with SMTP id x6-v6so191728ybl.12;
-        Wed, 20 Jun 2018 11:23:28 -0700 (PDT)
+        Wed, 20 Jun 2018 14:24:18 -0400
+Received: by mail-yw0-f196.google.com with SMTP id r19-v6so181566ywc.10;
+        Wed, 20 Jun 2018 11:24:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SNajXdI9YtjRREA+kQLTCYd2lqa+198XVBxRP7mReTY=;
-        b=n/J4m7pCJIrKmVjjFSSVRKywGOw/e7MvD88N5QshSBvWy1xIbIJNg6I9h3/eDUMtfc
-         tx45BbVCWOrh97AykJnk5vD7uL+zBsMtS9D0HopN6dYqQGOvuanqk+xEDfiJJgyCqaEU
-         eo9PUm1im1oiV3y9eMcYN+cnwVBaY2N9q5mbnTw2Xqi17Ofulf2x3Lpp8IlCjf3kbheD
-         AdL4rcloIKfdB1cSXn1WWswDWBufjwoErwjoIbuV8Gg8aXGHnlHaVnMoISBzzrV6Cf0d
-         /2FEKuKvSQlkmmFdMyCnU+AagXfpOvnHOQGfBcu2KrLKDuT9NoD3D9G74lXLLyrgz3E0
-         1Jqw==
-X-Gm-Message-State: APt69E3QXyq7n3jiPpuX04R1so6ZtecrQdh+3skF5v8RpcA1Pmui9EpY
-        VK9Hx0Ke78cJthdeQzlVNg==
-X-Google-Smtp-Source: ADUXVKIHNr4rHejr3Ht5rKZPx7eRECpGpqDA4QqMoF2xuRYCd91Wyc9ljN68FUyizo3G/5JI0qCJ2w==
-X-Received: by 2002:a25:5082:: with SMTP id e124-v6mr10717566ybb.349.1529519007508;
-        Wed, 20 Jun 2018 11:23:27 -0700 (PDT)
+        bh=zTHtEwj77Mp7Am3wJd5EMI+41YD1lx0d64gxaWTr3G0=;
+        b=D8XsMrJcOFG/w5VFv3J/vcT9umOkzY2exCj70bj65uyI7GFgGYMEwMQcNUe6dgKAb7
+         5jIgPQy8Tseq0fEK01Qdi2zfavPC6ZkQokO9IZiOzqIqdznHE72R3/plkGBdnvfxKmA4
+         UxbICjNSt4GbAqtv5An7+n7mN037njf9Uga9pHKG/jLE3VRWbdov7eGlRLTIDn2kZM5B
+         qg+AHjgtEMx7SQkfhxMixWYOYy0MEHBtNiXgZXx0EiFj79PEOXm27bc49ffuiuJobNjF
+         wtQq/dR9M8zb1kbQwygxChlUMXAqdfIkemZRyrBA8DBDQMBBus+U27IPXeAdSaDyKkLL
+         2dNg==
+X-Gm-Message-State: APt69E28IpsUx+tCcsr6VEdspUIJJ4z9uUECja9sc0juzdjdBjj6W1gP
+        MVAbMSV7sUQOxG+6EcQBZA==
+X-Google-Smtp-Source: ADUXVKLeD0gtZkTF3ngGC4pL8MhhQWLnp1dZ/DwGERomt/l/vKlZ3BOpXAdW+U6uU5qHLbhkqBX6WQ==
+X-Received: by 2002:a81:b70b:: with SMTP id v11-v6mr10201292ywh.182.1529519058010;
+        Wed, 20 Jun 2018 11:24:18 -0700 (PDT)
 Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id s4-v6sm1063256ywa.9.2018.06.20.11.23.26
+        by smtp.gmail.com with ESMTPSA id k84-v6sm1051749ywe.52.2018.06.20.11.24.16
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 11:23:26 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 12:23:25 -0600
+        Wed, 20 Jun 2018 11:24:17 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 12:24:16 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
@@ -56,27 +56,32 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/8] dt: bindings: tegra20-emc: Document clock property
-Message-ID: <20180620182325.GA3826@rob-hp-laptop>
+Subject: Re: [PATCH v3 3/8] dt: bindings: Move tegra20-emc binding to
+ memory-controllers directory
+Message-ID: <20180620182416.GA13759@rob-hp-laptop>
 References: <20180617145539.4758-1-digetx@gmail.com>
- <20180617145539.4758-3-digetx@gmail.com>
+ <20180617145539.4758-4-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180617145539.4758-3-digetx@gmail.com>
+In-Reply-To: <20180617145539.4758-4-digetx@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 05:55:33PM +0300, Dmitry Osipenko wrote:
-> Embedded memory controller has a corresponding clock, document the clock
-> property.
+On Sun, Jun 17, 2018 at 05:55:34PM +0300, Dmitry Osipenko wrote:
+> Move tegra20-emc binding to the memory-controllers directory for
+> consistency with the other Tegra memory bindings.
 > 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt      | 0
+>  1 file changed, 0 insertions(+), 0 deletions(-)
+>  rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (100%)
+
+Thanks.
 
 Acked-by: Rob Herring <robh@kernel.org>
+
