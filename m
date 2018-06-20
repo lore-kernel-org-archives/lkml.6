@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A562C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0269C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6E642083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EDEA20875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="mBXVozHl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E642083A
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ebwC3XQO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EDEA20875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932752AbeFTQ3g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:29:36 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:52410 "EHLO
+        id S932798AbeFTQ3h (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 12:29:37 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:52409 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932383AbeFTQ2r (ORCPT
+        with ESMTP id S932372AbeFTQ2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 12:28:47 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 104EA1E16D4;
-        Wed, 20 Jun 2018 18:28:44 +0200 (CEST)
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 0036D1E16D3;
+        Wed, 20 Jun 2018 18:28:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529512124; bh=HaSwa6U81zOx99Pb8IOJv20QkWJk4iJ2XVr8LaBmqBc=;
+        t=1529512124; bh=HOFg8VSYL5ouK2t8cw1jKsrWzBaP58e0baq1Hk8D/kg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=mBXVozHl6NmS/d8O1FPxVua5r+TPMm20oyUwWgHsqOcsVfCKltdj+CePyc99hCUsW
-         czjre35wS49QXBnc/tqXTqFi65RlidLAlmSJtbuOljmDTyczAqFoupHHpaObfTY8e5
-         Tl/hDDFwYpwXPIPLPRGD+fSMEcFt8vlhrtQaRnIe07xtE/tPg2wjJTbi03T/u3eCuJ
-         7nGdnJVi3Rt5F51DP9aDzVkhFZPg9i4w4hsphIIN3NSgtVwRciS21aPJwrdSWIble9
-         dY3mnH67IwVqR5Zf6nQCj/Ze/CPATI1hnvNkn5evya1ZLF4uivvpTIyquqRLfhaBLQ
-         DVSVOEdhfYh3g==
-Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id F29D737B8;
+        b=ebwC3XQOuH8oX+HpsODyW8PFTuniyMFc2pmaY35GjeJWUMQqnQ2fTLPDzCQSlR+t5
+         bQ1RU3Fhiz44zDayaFLqWT9L/JAiZWY3bjScHFhKGu+rT4PcMnro5Q6l+NeOv+XCX6
+         m4mLq48Q9HfyW4cJ07iFLH3wTCHI69rgFsbyIE9xSi2b42uNd2N3LjTg8nS5cU34ur
+         TtwnBrUBwMKFRki5CNpA4B8oPCjOhYciBuZVSxfwlSjb+2MvO2ab1wT+px+Uv/y506
+         +7ZkpxLacCFHzS8EMRezr6J3b4uaKhAXetmkhYh5z56uefJ8faIxUB+/gCiflWy6dd
+         8it4qfF3w5pgg==
+Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id B55E35CAD;
         Wed, 20 Jun 2018 09:28:42 -0700 (PDT)
 Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id 3E3CB3D4FE;
+        by pt02.synopsys.com (Postfix) with ESMTP id 4D3383D502;
         Wed, 20 Jun 2018 17:28:41 +0100 (WEST)
 From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
@@ -50,9 +50,9 @@ To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
 Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v5 07/11] pci-epf-test/pci_endpoint_test: Use irq_type module parameter
-Date:   Wed, 20 Jun 2018 17:28:29 +0100
-Message-Id: <99e94309e651dbc4d5fac25134b21685956e18ab.1529507416.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v5 08/11] pci-epf-test/pci_endpoint_test: Add MSI-X support
+Date:   Wed, 20 Jun 2018 17:28:30 +0100
+Message-Id: <75017264b560112aba5d631254f319961737fe7d.1529507416.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1529507416.git.gustavo.pimentel@synopsys.com>
 References: <cover.1529507416.git.gustavo.pimentel@synopsys.com>
@@ -63,7 +63,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new driver parameter to allow interruption type selection.
+Add MSI-X support and update driver documentation accordingly.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
@@ -76,102 +76,200 @@ Change v3->v4:
 Change v4->v5:
  - Nothing changed, just to follow the patch set version.
 
- drivers/misc/pci_endpoint_test.c | 30 +++++++++++++++++++++---------
- 1 file changed, 21 insertions(+), 9 deletions(-)
+ Documentation/misc-devices/pci-endpoint-test.txt |  3 +++
+ drivers/misc/pci_endpoint_test.c                 | 29 +++++++++++++++++-------
+ drivers/pci/endpoint/functions/pci-epf-test.c    | 24 ++++++++++++++++++--
+ 3 files changed, 46 insertions(+), 10 deletions(-)
 
+diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+index 4ebc359..fdfa0f6 100644
+--- a/Documentation/misc-devices/pci-endpoint-test.txt
++++ b/Documentation/misc-devices/pci-endpoint-test.txt
+@@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
+ 	*) verifying addresses programmed in BAR
+ 	*) raise legacy IRQ
+ 	*) raise MSI IRQ
++	*) raise MSI-X IRQ
+ 	*) read data
+ 	*) write data
+ 	*) copy data
+@@ -25,6 +26,8 @@ ioctl
+  PCITEST_LEGACY_IRQ: Tests legacy IRQ
+  PCITEST_MSI: Tests message signalled interrupts. The MSI number
+ 	      to be tested should be passed as argument.
++ PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
++	      to be tested should be passed as argument.
+  PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+ 		as argument.
+  PCITEST_READ: Perform read tests. The size of the buffer should be passed
 diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 35fbfbd..4d2c9cb 100644
+index 4d2c9cb..2b58887 100644
 --- a/drivers/misc/pci_endpoint_test.c
 +++ b/drivers/misc/pci_endpoint_test.c
-@@ -82,6 +82,10 @@ static bool no_msi;
- module_param(no_msi, bool, 0444);
- MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
+@@ -39,13 +39,14 @@
  
-+static int irq_type = IRQ_TYPE_MSI;
-+module_param(irq_type, int, 0444);
-+MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI)");
-+
+ #define IRQ_TYPE_LEGACY				0
+ #define IRQ_TYPE_MSI				1
++#define IRQ_TYPE_MSIX				2
+ 
+ #define PCI_ENDPOINT_TEST_MAGIC			0x0
+ 
+ #define PCI_ENDPOINT_TEST_COMMAND		0x4
+ #define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
+ #define COMMAND_RAISE_MSI_IRQ			BIT(1)
+-/* BIT(2) is reserved for raising MSI-X IRQ command */
++#define COMMAND_RAISE_MSIX_IRQ			BIT(2)
+ #define COMMAND_READ				BIT(3)
+ #define COMMAND_WRITE				BIT(4)
+ #define COMMAND_COPY				BIT(5)
+@@ -84,7 +85,7 @@ MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
+ 
+ static int irq_type = IRQ_TYPE_MSI;
+ module_param(irq_type, int, 0444);
+-MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI)");
++MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI, 2 - MSI-X)");
+ 
  enum pci_barno {
  	BAR_0,
- 	BAR_1,
-@@ -108,7 +112,7 @@ struct pci_endpoint_test {
- struct pci_endpoint_test_data {
- 	enum pci_barno test_reg_bar;
- 	size_t alignment;
--	bool no_msi;
-+	int irq_type;
- };
+@@ -202,16 +203,18 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+ }
  
- static inline u32 pci_endpoint_test_readl(struct pci_endpoint_test *test,
-@@ -291,8 +295,7 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
- 				 size);
+ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
+-				      u8 msi_num)
++				       u16 msi_num, bool msix)
+ {
+ 	u32 val;
+ 	struct pci_dev *pdev = test->pdev;
  
--	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
--				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
+ 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
+-				 IRQ_TYPE_MSI);
++				 msix == false ? IRQ_TYPE_MSI :
++				 IRQ_TYPE_MSIX);
+ 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, msi_num);
  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_COPY);
-@@ -361,8 +364,7 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
--	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
--				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_READ);
-@@ -419,8 +421,7 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
--	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
--				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_WRITE);
-@@ -505,11 +506,14 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	test->alignment = 0;
- 	test->pdev = pdev;
- 
-+	if (no_msi)
-+		irq_type = IRQ_TYPE_LEGACY;
-+
- 	data = (struct pci_endpoint_test_data *)ent->driver_data;
- 	if (data) {
- 		test_reg_bar = data->test_reg_bar;
- 		test->alignment = data->alignment;
--		no_msi = data->no_msi;
-+		irq_type = data->irq_type;
- 	}
- 
- 	init_completion(&test->irq_raised);
-@@ -529,13 +533,21 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 
- 	pci_set_master(pdev);
- 
--	if (!no_msi) {
-+	switch (irq_type) {
-+	case IRQ_TYPE_LEGACY:
-+		irq = 0;
-+		break;
-+	case IRQ_TYPE_MSI:
- 		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
- 		if (irq < 0)
+-				 COMMAND_RAISE_MSI_IRQ);
++				 msix == false ? COMMAND_RAISE_MSI_IRQ :
++				 COMMAND_RAISE_MSIX_IRQ);
+ 	val = wait_for_completion_timeout(&test->irq_raised,
+ 					  msecs_to_jiffies(1000));
+ 	if (!val)
+@@ -456,7 +459,8 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+ 		ret = pci_endpoint_test_legacy_irq(test);
+ 		break;
+ 	case PCITEST_MSI:
+-		ret = pci_endpoint_test_msi_irq(test, arg);
++	case PCITEST_MSIX:
++		ret = pci_endpoint_test_msi_irq(test, arg, cmd == PCITEST_MSIX);
+ 		break;
+ 	case PCITEST_WRITE:
+ 		ret = pci_endpoint_test_write(test, arg);
+@@ -543,6 +547,12 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
  			dev_err(dev, "Failed to get MSI interrupts\n");
  		test->num_irqs = irq;
+ 		break;
++	case IRQ_TYPE_MSIX:
++		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
++		if (irq < 0)
++			dev_err(dev, "Failed to get MSI-X interrupts\n");
++		test->num_irqs = irq;
 +		break;
-+	default:
-+		dev_err(dev, "Invalid IRQ type selected\n");
+ 	default:
+ 		dev_err(dev, "Invalid IRQ type selected\n");
+ 	}
+@@ -560,8 +570,9 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 				       pci_endpoint_test_irqhandler,
+ 				       IRQF_SHARED, DRV_MODULE_NAME, test);
+ 		if (err)
+-			dev_err(dev, "failed to request IRQ %d for MSI %d\n",
+-				pci_irq_vector(pdev, i), i + 1);
++			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
++				pci_irq_vector(pdev, i),
++				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
  	}
  
+ 	for (bar = BAR_0; bar <= BAR_5; bar++) {
+@@ -627,6 +638,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 
+ err_disable_msi:
+ 	pci_disable_msi(pdev);
++	pci_disable_msix(pdev);
+ 	pci_release_regions(pdev);
+ 
+ err_disable_pdev:
+@@ -658,6 +670,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+ 	for (i = 0; i < test->num_irqs; i++)
+ 		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
+ 	pci_disable_msi(pdev);
++	pci_disable_msix(pdev);
+ 	pci_release_regions(pdev);
+ 	pci_disable_device(pdev);
+ }
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index eb9cd00..bfef6d1 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -20,10 +20,11 @@
+ 
+ #define IRQ_TYPE_LEGACY			0
+ #define IRQ_TYPE_MSI			1
++#define IRQ_TYPE_MSIX			2
+ 
+ #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+ #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+-/* BIT(2) is reserved for raising MSI-X IRQ command */
++#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+ #define COMMAND_READ			BIT(3)
+ #define COMMAND_WRITE			BIT(4)
+ #define COMMAND_COPY			BIT(5)
+@@ -266,6 +267,9 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq_type,
+ 	case IRQ_TYPE_MSI:
+ 		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
+ 		break;
++	case IRQ_TYPE_MSIX:
++		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSIX, irq);
++		break;
+ 	default:
+ 		dev_err(dev, "Failed to raise IRQ, unknown type\n");
+ 		break;
+@@ -292,7 +296,7 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+ 	reg->command = 0;
+ 	reg->status = 0;
+ 
+-	if (reg->irq_type > IRQ_TYPE_MSI) {
++	if (reg->irq_type > IRQ_TYPE_MSIX) {
+ 		dev_err(dev, "Failed to detect IRQ type\n");
+ 		goto reset_handler;
+ 	}
+@@ -346,6 +350,16 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+ 		goto reset_handler;
+ 	}
+ 
++	if (command & COMMAND_RAISE_MSIX_IRQ) {
++		count = pci_epc_get_msix(epc, epf->func_no);
++		if (reg->irq_number > count || count <= 0)
++			goto reset_handler;
++		reg->status = STATUS_IRQ_RAISED;
++		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSIX,
++				  reg->irq_number);
++		goto reset_handler;
++	}
 +
- 	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
- 			       IRQF_SHARED, DRV_MODULE_NAME, test);
- 	if (err) {
+ reset_handler:
+ 	queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
+ 			   msecs_to_jiffies(1));
+@@ -481,6 +495,12 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ 		return ret;
+ 	}
+ 
++	ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
++	if (ret) {
++		dev_err(dev, "MSI-X configuration failed\n");
++		return ret;
++	}
++
+ 	if (!epf_test->linkup_notifier)
+ 		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
+ 
 -- 
 2.7.4
 
