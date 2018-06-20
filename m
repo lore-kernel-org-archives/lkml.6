@@ -2,561 +2,490 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DFFC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5056C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B2020874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62E3220846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:59:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WY5USpqd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B2020874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CKl7MF/r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62E3220846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933484AbeFTVmD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 17:42:03 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37037 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933227AbeFTVmB (ORCPT
+        id S933422AbeFTV7w (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 17:59:52 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39604 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933097AbeFTV7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 17:42:01 -0400
-Received: by mail-pg0-f66.google.com with SMTP id r21-v6so405115pgv.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 14:42:01 -0700 (PDT)
+        Wed, 20 Jun 2018 17:59:51 -0400
+Received: by mail-pl0-f66.google.com with SMTP id s24-v6so492121plq.6
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 14:59:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3S5SSScoWJtwb2w9CW53pETyGBQH5A0+ZeVSZb22nZc=;
-        b=WY5USpqd1bme76v8DiwCpsZ3JNb1/OzMMEarYe7PE1N3jagUf7Z8QpFPTjGU8f71Hl
-         MYuMVcrmQ9gHraFWbpjLq9SxMVMlcZWjkDm8swn/i3ILkXDt3VfC5tM3fvsb/FmY+rE9
-         HCPgO0LxXC8qcGtYQAkAA4hGoH3ZqG8XxycFk=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=VSrH3h9jVXDM+0v5V2qpbIsmK+5xrLMGDUEaQm6RAHk=;
+        b=CKl7MF/rXrL4FOSp+jU4G7d8RlNR9ed8yrwvpOcIvlMoswGgbbmZ3+m1gJXxRGu2Ji
+         DaJHZWhxMYnocpwoJKHuqnwog1sZ/EwG7Htp30zE/2htFMLtfpvU/pbuuZ+3QjH2lO1d
+         1WXxgBADXOYbSu5gZL0Xt7pqrpipS/kgECOJAO9YGaJWlv8fTmVQ4362rFWa4WGNxFiV
+         HDEtFb1QasGJfN+y0HfMqkwqvchesLfN+P06BXmXEmrFODTda80163XWgL9jepD3PbEs
+         1SdQqAUIFPMZlm8Kz4irXqLnY5M0QRrKr/dQJ1mk9OPA8KHLnxwmpKCiQp3wZj0wMsbp
+         NXTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3S5SSScoWJtwb2w9CW53pETyGBQH5A0+ZeVSZb22nZc=;
-        b=WioJRNjeC7j7GrMBNEoFBktk1HS5glDmn9AGgOoPPHkXiScSH4a3KsKqBHKqM6k+js
-         db3gwJ5agSGc/qa7rCxUO+NinHCCiIgAfiKIxwC/mDxdHaZ2qmMEvStGEy10N2y3vpVv
-         iPrDYCZW1EdfrereEkYQQQhwtmI2CUAdsSz/Jz+sR4i8MFnGSeO/J2MejhWPKu7bGMpQ
-         5H1zS46rZW1IR6068ZGAwsaMz4A9e3TcSiJf60BP2EgofcEVQ+wbBk4H3VsgEZgphEw6
-         nYofnKH1/67dkqOJnB/b7k566RK6jKYTl+zZ9LuOX9iErBbSb26V9X5ORu6ymCki2v8H
-         s3jw==
-X-Gm-Message-State: APt69E0IY2D6O8eD2xgZm4t3wDh7IDbdTwZxya5ZUQVvPC+NInYOm3pF
-        zzBG0dxF0a2mVoBtRnjGnpLjnA==
-X-Google-Smtp-Source: ADUXVKK4rqirqrhay4HdFUq5R5PCxzooSBxORxWmoP2XRJpghumJiX6bBo5syg+fxq3nZoEKy5wXSA==
-X-Received: by 2002:a62:ca4a:: with SMTP id n71-v6mr24523879pfg.14.1529530921032;
-        Wed, 20 Jun 2018 14:42:01 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm4777224pfn.118.2018.06.20.14.41.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 14:42:00 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 15:41:58 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] coresight: Introduce support for Coresight Address
- Translation Unit
-Message-ID: <20180620214157.GA20697@xps15>
-References: <1529319379-17895-1-git-send-email-suzuki.poulose@arm.com>
- <1529319379-17895-4-git-send-email-suzuki.poulose@arm.com>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=VSrH3h9jVXDM+0v5V2qpbIsmK+5xrLMGDUEaQm6RAHk=;
+        b=l0GYjXimZQhjcHwTbwODcomgV+5k7xOqNy12qOqSwhn30xOwaU/qKQvh3nzYmnbN9z
+         Ae3nsTlJPGepTGVHqy0rRP+SH78+P31wF8EyoDyiGwzlLqqk3eDolBymT22r5EOQuL2W
+         kGK+lOOC8cXcZf4ONozyIyG9thnJsRP1pFlf4/8GK2UGOmU25TufALr4yN7sN9Xk3KqI
+         pVdvffpTYzbq7IHg+2cpprhpBlXt9vTKFBpAefSQ0GxCGL5RjZgJOzby1AZmGuoiACps
+         /W+qFF9OPiNgdvqpIqRoQ95hq3kgOg0S/bDkwgAI+jOoklXhWgLjFAIxB3PhUf6rRnpc
+         5fpA==
+X-Gm-Message-State: APt69E3ihrrfFBawkezTguijpcBO9PBxPRzuQ9XUEbnjp6hVMoD5EujK
+        T2rnvvlx8hDGiIFlWIkhdiChXBl0hv4=
+X-Google-Smtp-Source: ADUXVKKEiACtFkpk/HC1rCciF7N67wZgm7HxWdJJcFLEv9U4lye+b83Y83MHvveNe4S6dWw83+nW0A==
+X-Received: by 2002:a17:902:981:: with SMTP id 1-v6mr25773525pln.11.1529531990434;
+        Wed, 20 Jun 2018 14:59:50 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id h27-v6sm9160313pfk.160.2018.06.20.14.59.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 14:59:49 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 14:59:48 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [patch v2] mm, oom: fix unnecessary killing of additional
+ processes
+In-Reply-To: <alpine.DEB.2.21.1806191314480.218079@chino.kir.corp.google.com>
+Message-ID: <alpine.DEB.2.21.1806201458540.14059@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com> <alpine.DEB.2.21.1806141339580.4543@chino.kir.corp.google.com> <20180618172733.39322643725b196ff4e64703@linux-foundation.org>
+ <alpine.DEB.2.21.1806191314480.218079@chino.kir.corp.google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529319379-17895-4-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+The oom reaper ensures forward progress by setting MMF_OOM_SKIP itself if
+it cannot reap an mm.  This can happen for a variety of reasons,
+including:
 
-On Mon, Jun 18, 2018 at 11:56:16AM +0100, Suzuki K Poulose wrote:
-> Add the initial support for Coresight Address Translation Unit, which
-> augments the TMC in Coresight SoC-600 by providing an improved Scatter
-> Gather mechanism. CATU is always connected to a single TMC-ETR and
-> converts the AXI address with a translated address (from a given SG
-> table with specific format). The CATU should be programmed in pass
-> through mode and enabled if the ETR doesn't translation by CATU.
+ - the inability to grab mm->mmap_sem in a sufficient amount of time,
 
-To me this sentence look broken.
+ - when the mm has blockable mmu notifiers that could cause the oom reaper
+   to stall indefinitely,
 
-> 
-> This patch provides mechanism to enable/disable the CATU always in the
-> pass through mode.
-> 
-> We reuse the existing ports mechanism to link the TMC-ETR to the
-> connected CATU.
-> 
-> i.e, TMC-ETR:output_port0 -> CATU:input_port0
-> 
-> Reference manual for CATU component is avilable in version r2p0 of :
-> "Arm Coresight System-on-Chip SoC-600 Technical Reference Manual".
-> 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  drivers/hwtracing/coresight/Kconfig             |  11 ++
->  drivers/hwtracing/coresight/Makefile            |   1 +
->  drivers/hwtracing/coresight/coresight-catu.c    | 214 ++++++++++++++++++++++++
->  drivers/hwtracing/coresight/coresight-catu.h    |  85 ++++++++++
->  drivers/hwtracing/coresight/coresight-tmc-etr.c |  52 ++++++
->  include/linux/coresight.h                       |   1 +
->  6 files changed, 364 insertions(+)
->  create mode 100644 drivers/hwtracing/coresight/coresight-catu.c
->  create mode 100644 drivers/hwtracing/coresight/coresight-catu.h
-> 
-> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-> index ef9cb3c..ad34380 100644
-> --- a/drivers/hwtracing/coresight/Kconfig
-> +++ b/drivers/hwtracing/coresight/Kconfig
-> @@ -31,6 +31,17 @@ config CORESIGHT_LINK_AND_SINK_TMC
->  	  complies with the generic implementation of the component without
->  	  special enhancement or added features.
->  
-> +config CORESIGHT_CATU
-> +	bool "Coresight Address Translation Unit (CATU) driver"
-> +	depends on CORESIGHT_LINK_AND_SINK_TMC
-> +	help
-> +	   Enable support for the Coresight Address Translation Unit (CATU).
-> +	   CATU supports a scatter gather table of 4K pages, with forward/backward
-> +	   lookup. CATU helps TMC ETR to use a large physically non-contiguous trace
-> +	   buffer by translating the addresses used by ETR to the physical address
-> +	   by looking up the provided table. CATU can also be used in pass-through
-> +	   mode where the address is not translated.
-> +
->  config CORESIGHT_SINK_TPIU
->  	bool "Coresight generic TPIU driver"
->  	depends on CORESIGHT_LINKS_AND_SINKS
-> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-> index 61db9dd..41870de 100644
-> --- a/drivers/hwtracing/coresight/Makefile
-> +++ b/drivers/hwtracing/coresight/Makefile
-> @@ -18,3 +18,4 @@ obj-$(CONFIG_CORESIGHT_SOURCE_ETM4X) += coresight-etm4x.o \
->  obj-$(CONFIG_CORESIGHT_DYNAMIC_REPLICATOR) += coresight-dynamic-replicator.o
->  obj-$(CONFIG_CORESIGHT_STM) += coresight-stm.o
->  obj-$(CONFIG_CORESIGHT_CPU_DEBUG) += coresight-cpu-debug.o
-> +obj-$(CONFIG_CORESIGHT_CATU) += coresight-catu.o
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-> new file mode 100644
-> index 0000000..11c84cb
-> --- /dev/null
-> +++ b/drivers/hwtracing/coresight/coresight-catu.c
-> @@ -0,0 +1,214 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 Arm Limited. All rights reserved.
-> + *
-> + * Coresight Address Translation Unit support
-> + *
-> + * Author: Suzuki K Poulose <suzuki.poulose@arm.com>
-> + */
-> +
-> +#include <linux/amba/bus.h>
-> +#include <linux/device.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/slab.h>
-> +
-> +#include "coresight-catu.h"
-> +#include "coresight-priv.h"
-> +
-> +#define csdev_to_catu_drvdata(csdev)	\
-> +	dev_get_drvdata(csdev->dev.parent)
-> +
-> +coresight_simple_reg32(struct catu_drvdata, devid, CORESIGHT_DEVID);
-> +coresight_simple_reg32(struct catu_drvdata, control, CATU_CONTROL);
-> +coresight_simple_reg32(struct catu_drvdata, status, CATU_STATUS);
-> +coresight_simple_reg32(struct catu_drvdata, mode, CATU_MODE);
-> +coresight_simple_reg32(struct catu_drvdata, axictrl, CATU_AXICTRL);
-> +coresight_simple_reg32(struct catu_drvdata, irqen, CATU_IRQEN);
-> +coresight_simple_reg64(struct catu_drvdata, sladdr,
-> +		       CATU_SLADDRLO, CATU_SLADDRHI);
-> +coresight_simple_reg64(struct catu_drvdata, inaddr,
-> +		       CATU_INADDRLO, CATU_INADDRHI);
-> +
-> +static struct attribute *catu_mgmt_attrs[] = {
-> +	&dev_attr_devid.attr,
-> +	&dev_attr_control.attr,
-> +	&dev_attr_status.attr,
-> +	&dev_attr_mode.attr,
-> +	&dev_attr_axictrl.attr,
-> +	&dev_attr_irqen.attr,
-> +	&dev_attr_sladdr.attr,
-> +	&dev_attr_inaddr.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group catu_mgmt_group = {
-> +	.attrs = catu_mgmt_attrs,
-> +	.name = "mgmt",
-> +};
-> +
-> +static const struct attribute_group *catu_groups[] = {
-> +	&catu_mgmt_group,
-> +	NULL,
-> +};
-> +
-> +
-> +static inline int catu_wait_for_ready(struct catu_drvdata *drvdata)
-> +{
-> +	return coresight_timeout(drvdata->base,
-> +				 CATU_STATUS, CATU_STATUS_READY, 1);
-> +}
-> +
-> +static int catu_enable_hw(struct catu_drvdata *drvdata, void *__unused)
-> +{
-> +	u32 control;
-> +
-> +	if (catu_wait_for_ready(drvdata))
-> +		dev_warn(drvdata->dev, "Timeout while waiting for READY\n");
-> +
-> +	control = catu_read_control(drvdata);
-> +	if (control & BIT(CATU_CONTROL_ENABLE)) {
-> +		dev_warn(drvdata->dev, "CATU is already enabled\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	control |= BIT(CATU_CONTROL_ENABLE);
-> +	catu_write_mode(drvdata, CATU_MODE_PASS_THROUGH);
-> +	catu_write_control(drvdata, control);
-> +	dev_dbg(drvdata->dev, "Enabled in Pass through mode\n");
-> +	return 0;
-> +}
-> +
-> +static int catu_enable(struct coresight_device *csdev, void *data)
-> +{
-> +	int rc;
-> +	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
-> +
-> +	CS_UNLOCK(catu_drvdata->base);
-> +	rc = catu_enable_hw(catu_drvdata, data);
-> +	CS_LOCK(catu_drvdata->base);
-> +	return rc;
-> +}
-> +
-> +static int catu_disable_hw(struct catu_drvdata *drvdata)
-> +{
-> +	int rc = 0;
-> +
-> +	if (catu_wait_for_ready(drvdata)) {
-> +		dev_info(drvdata->dev, "Timeout while waiting for READY\n");
-> +		rc = -EAGAIN;
-> +	}
-> +
-> +	catu_write_control(drvdata, 0);
+but we can also add a third when the oom reaper can "reap" an mm but doing
+so is unlikely to free any amount of memory:
 
-Is waiting for the ready bit before switching the component off comes from
-experimentation with the HW (i.e FPGA)?  From what the reference manual
-indicate, CONTROL.ENABLE should be set to 0 first, and then wait for
-STATUS.READY. 
+ - when the mm's memory is mostly mlocked.
 
-Thanks,
-Mathieu
+When all memory is mlocked, the oom reaper will not be able to free any
+substantial amount of memory.  It sets MMF_OOM_SKIP before the victim can
+unmap and free its memory in exit_mmap() and subsequent oom victims are
+chosen unnecessarily.  This is trivial to reproduce if all eligible
+processes on the system have mlocked their memory: the oom killer calls
+panic() even though forward progress can be made.
 
-> +	dev_dbg(drvdata->dev, "Disabled\n");
-> +	return rc;
-> +}
-> +
-> +static int catu_disable(struct coresight_device *csdev, void *__unused)
-> +{
-> +	int rc;
-> +	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
-> +
-> +	CS_UNLOCK(catu_drvdata->base);
-> +	rc = catu_disable_hw(catu_drvdata);
-> +	CS_LOCK(catu_drvdata->base);
-> +	return rc;
-> +}
-> +
-> +const struct coresight_ops_helper catu_helper_ops = {
-> +	.enable = catu_enable,
-> +	.disable = catu_disable,
-> +};
-> +
-> +const struct coresight_ops catu_ops = {
-> +	.helper_ops = &catu_helper_ops,
-> +};
-> +
-> +static int catu_probe(struct amba_device *adev, const struct amba_id *id)
-> +{
-> +	int ret = 0;
-> +	u32 dma_mask;
-> +	struct catu_drvdata *drvdata;
-> +	struct coresight_desc catu_desc;
-> +	struct coresight_platform_data *pdata = NULL;
-> +	struct device *dev = &adev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	void __iomem *base;
-> +
-> +	if (np) {
-> +		pdata = of_get_coresight_platform_data(dev, np);
-> +		if (IS_ERR(pdata)) {
-> +			ret = PTR_ERR(pdata);
-> +			goto out;
-> +		}
-> +		dev->platform_data = pdata;
-> +	}
-> +
-> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> +	if (!drvdata) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	drvdata->dev = dev;
-> +	dev_set_drvdata(dev, drvdata);
-> +	base = devm_ioremap_resource(dev, &adev->res);
-> +	if (IS_ERR(base)) {
-> +		ret = PTR_ERR(base);
-> +		goto out;
-> +	}
-> +
-> +	/* Setup dma mask for the device */
-> +	dma_mask = readl_relaxed(base + CORESIGHT_DEVID) & 0x3f;
-> +	switch (dma_mask) {
-> +	case 32:
-> +	case 40:
-> +	case 44:
-> +	case 48:
-> +	case 52:
-> +	case 56:
-> +	case 64:
-> +		break;
-> +	default:
-> +		/* Default to the 40bits as supported by TMC-ETR */
-> +		dma_mask = 40;
-> +	}
-> +	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(dma_mask));
-> +	if (ret)
-> +		goto out;
-> +
-> +	drvdata->base = base;
-> +	catu_desc.pdata = pdata;
-> +	catu_desc.dev = dev;
-> +	catu_desc.groups = catu_groups;
-> +	catu_desc.type = CORESIGHT_DEV_TYPE_HELPER;
-> +	catu_desc.subtype.helper_subtype = CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
-> +	catu_desc.ops = &catu_ops;
-> +	drvdata->csdev = coresight_register(&catu_desc);
-> +	if (IS_ERR(drvdata->csdev))
-> +		ret = PTR_ERR(drvdata->csdev);
-> +out:
-> +	pm_runtime_put(&adev->dev);
-> +	return ret;
-> +}
-> +
-> +static struct amba_id catu_ids[] = {
-> +	{
-> +		.id	= 0x000bb9ee,
-> +		.mask	= 0x000fffff,
-> +	},
-> +	{},
-> +};
-> +
-> +static struct amba_driver catu_driver = {
-> +	.drv = {
-> +		.name			= "coresight-catu",
-> +		.owner			= THIS_MODULE,
-> +		.suppress_bind_attrs	= true,
-> +	},
-> +	.probe				= catu_probe,
-> +	.id_table			= catu_ids,
-> +};
-> +
-> +builtin_amba_driver(catu_driver);
-> diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
-> new file mode 100644
-> index 0000000..05da33d
-> --- /dev/null
-> +++ b/drivers/hwtracing/coresight/coresight-catu.h
-> @@ -0,0 +1,85 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2018 Arm Limited. All rights reserved.
-> + *
-> + * Author: Suzuki K Poulose <suzuki.poulose@arm.com>
-> + */
-> +
-> +#ifndef _CORESIGHT_CATU_H
-> +#define _CORESIGHT_CATU_H
-> +
-> +#include "coresight-priv.h"
-> +
-> +/* Register offset from base */
-> +#define CATU_CONTROL		0x000
-> +#define CATU_MODE		0x004
-> +#define CATU_AXICTRL		0x008
-> +#define CATU_IRQEN		0x00c
-> +#define CATU_SLADDRLO		0x020
-> +#define CATU_SLADDRHI		0x024
-> +#define CATU_INADDRLO		0x028
-> +#define CATU_INADDRHI		0x02c
-> +#define CATU_STATUS		0x100
-> +#define CATU_DEVARCH		0xfbc
-> +
-> +#define CATU_CONTROL_ENABLE	0
-> +
-> +#define CATU_MODE_PASS_THROUGH	0U
-> +#define CATU_MODE_TRANSLATE	1U
-> +
-> +#define CATU_STATUS_READY	8
-> +#define CATU_STATUS_ADRERR	0
-> +#define CATU_STATUS_AXIERR	4
-> +
-> +#define CATU_IRQEN_ON		0x1
-> +#define CATU_IRQEN_OFF		0x0
-> +
-> +struct catu_drvdata {
-> +	struct device *dev;
-> +	void __iomem *base;
-> +	struct coresight_device *csdev;
-> +	int irq;
-> +};
-> +
-> +#define CATU_REG32(name, offset)					\
-> +static inline u32							\
-> +catu_read_##name(struct catu_drvdata *drvdata)				\
-> +{									\
-> +	return coresight_read_reg_pair(drvdata->base, offset, -1);	\
-> +}									\
-> +static inline void							\
-> +catu_write_##name(struct catu_drvdata *drvdata, u32 val)		\
-> +{									\
-> +	coresight_write_reg_pair(drvdata->base, val, offset, -1);	\
-> +}
-> +
-> +#define CATU_REG_PAIR(name, lo_off, hi_off)				\
-> +static inline u64							\
-> +catu_read_##name(struct catu_drvdata *drvdata)				\
-> +{									\
-> +	return coresight_read_reg_pair(drvdata->base, lo_off, hi_off);	\
-> +}									\
-> +static inline void							\
-> +catu_write_##name(struct catu_drvdata *drvdata, u64 val)		\
-> +{									\
-> +	coresight_write_reg_pair(drvdata->base, val, lo_off, hi_off);	\
-> +}
-> +
-> +CATU_REG32(control, CATU_CONTROL);
-> +CATU_REG32(mode, CATU_MODE);
-> +CATU_REG_PAIR(sladdr, CATU_SLADDRLO, CATU_SLADDRHI)
-> +CATU_REG_PAIR(inaddr, CATU_INADDRLO, CATU_INADDRHI)
-> +
-> +static inline bool coresight_is_catu_device(struct coresight_device *csdev)
-> +{
-> +	enum coresight_dev_subtype_helper subtype;
-> +
-> +	/* Make the checkpatch happy */
-> +	subtype = csdev->subtype.helper_subtype;
-> +
-> +	return IS_ENABLED(CONFIG_CORESIGHT_CATU) &&
-> +	       csdev->type == CORESIGHT_DEV_TYPE_HELPER &&
-> +	       subtype == CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
-> +}
-> +
-> +#endif
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> index 8af4512..e37923a 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> @@ -9,6 +9,7 @@
->  #include <linux/iommu.h>
->  #include <linux/slab.h>
->  #include <linux/vmalloc.h>
-> +#include "coresight-catu.h"
->  #include "coresight-priv.h"
->  #include "coresight-tmc.h"
->  
-> @@ -701,6 +702,48 @@ static const struct etr_buf_operations etr_sg_buf_ops = {
->  	.get_data = tmc_etr_get_data_sg_buf,
->  };
->  
-> +/*
-> + * TMC ETR could be connected to a CATU device, which can provide address
-> + * translation service. This is represented by the Output port of the TMC
-> + * (ETR) connected to the input port of the CATU.
-> + *
-> + * Returns	: coresight_device ptr for the CATU device if a CATU is found.
-> + *		: NULL otherwise.
-> + */
-> +static inline struct coresight_device *
-> +tmc_etr_get_catu_device(struct tmc_drvdata *drvdata)
-> +{
-> +	int i;
-> +	struct coresight_device *tmp, *etr = drvdata->csdev;
-> +
-> +	if (!IS_ENABLED(CONFIG_CORESIGHT_CATU))
-> +		return NULL;
-> +
-> +	for (i = 0; i < etr->nr_outport; i++) {
-> +		tmp = etr->conns[i].child_dev;
-> +		if (tmp && coresight_is_catu_device(tmp))
-> +			return tmp;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static inline void tmc_etr_enable_catu(struct tmc_drvdata *drvdata)
-> +{
-> +	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
-> +
-> +	if (catu && helper_ops(catu)->enable)
-> +		helper_ops(catu)->enable(catu, NULL);
-> +}
-> +
-> +static inline void tmc_etr_disable_catu(struct tmc_drvdata *drvdata)
-> +{
-> +	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
-> +
-> +	if (catu && helper_ops(catu)->disable)
-> +		helper_ops(catu)->disable(catu, NULL);
-> +}
-> +
->  static const struct etr_buf_operations *etr_buf_ops[] = {
->  	[ETR_MODE_FLAT] = &etr_flat_buf_ops,
->  	[ETR_MODE_ETR_SG] = &etr_sg_buf_ops,
-> @@ -844,6 +887,12 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
->  	u32 axictl, sts;
->  	struct etr_buf *etr_buf = drvdata->etr_buf;
->  
-> +	/*
-> +	 * If this ETR is connected to a CATU, enable it before we turn
-> +	 * this on
-> +	 */
-> +	tmc_etr_enable_catu(drvdata);
-> +
->  	CS_UNLOCK(drvdata->base);
->  
->  	/* Wait for TMCSReady bit to be set */
-> @@ -952,6 +1001,9 @@ static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
->  	tmc_disable_hw(drvdata);
->  
->  	CS_LOCK(drvdata->base);
-> +
-> +	/* Disable CATU device if this ETR is connected to one */
-> +	tmc_etr_disable_catu(drvdata);
->  }
->  
->  static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index 3d40a2b..d828a6e 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -65,6 +65,7 @@ enum coresight_dev_subtype_source {
->  
->  enum coresight_dev_subtype_helper {
->  	CORESIGHT_DEV_SUBTYPE_HELPER_NONE,
-> +	CORESIGHT_DEV_SUBTYPE_HELPER_CATU,
->  };
->  
->  /**
-> -- 
-> 2.7.4
-> 
+This is the same issue where the exit path sets MMF_OOM_SKIP before
+unmapping memory and additional processes can be chosen unnecessarily
+because the oom killer is racing with exit_mmap() and is separate from
+the oom reaper setting MMF_OOM_SKIP prematurely.
+
+We can't simply defer setting MMF_OOM_SKIP, however, because if there is
+a true oom livelock in progress, it never gets set and no additional
+killing is possible.
+
+To fix this, this patch introduces a per-mm reaping period, which is
+configurable through the new oom_free_timeout_ms file in debugfs and
+defaults to one second to match the current heuristics.  This support
+requires that the oom reaper's list becomes a proper linked list so that
+other mm's may be reaped while waiting for an mm's timeout to expire.
+
+This replaces the current timeouts in the oom reaper: (1) when trying to
+grab mm->mmap_sem 10 times in a row with HZ/10 sleeps in between and (2)
+a HZ sleep if there are blockable mmu notifiers.  It extends it with
+timeout to allow an oom victim to reach exit_mmap() before choosing
+additional processes unnecessarily.
+
+The exit path will now set MMF_OOM_SKIP only after all memory has been
+freed, so additional oom killing is justified, and rely on MMF_UNSTABLE to
+determine when it can race with the oom reaper.
+
+The oom reaper will now set MMF_OOM_SKIP only after the reap timeout has
+lapsed because it can no longer guarantee forward progress.  Since the
+default oom_free_timeout_ms is one second, the same as current heuristics,
+there should be no functional change with this patch for users who do not
+tune it to be longer other than MMF_OOM_SKIP is set by exit_mmap() after
+free_pgtables(), which is the preferred behavior.
+
+The reaping timeout can intentionally be set for a substantial amount of
+time, such as 10s, since oom livelock is a very rare occurrence and it's
+better to optimize for preventing additional (unnecessary) oom killing
+than a scenario that is much more unlikely.
+
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ v2:
+  - configurable timeout period through debugfs
+  - change mm->reap_timeout to mm->oom_free_expire and add more
+    descriptive comment per akpm
+  - add comment to describe task->oom_reap_list locking based on
+    oom_reaper_lock per akpm
+  - rework the exit_mmap() comment and split into two parts to be more
+    descriptive about the locking and the issue with the oom reaper
+    racing with munlock_vma_pages_all() per akpm
+---
+ include/linux/mm_types.h |   7 ++
+ include/linux/sched.h    |   3 +-
+ kernel/fork.c            |   3 +
+ mm/mmap.c                |  26 +++++---
+ mm/oom_kill.c            | 140 +++++++++++++++++++++++++--------------
+ 5 files changed, 119 insertions(+), 60 deletions(-)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -449,6 +449,13 @@ struct mm_struct {
+ #ifdef CONFIG_MMU_NOTIFIER
+ 	struct mmu_notifier_mm *mmu_notifier_mm;
+ #endif
++#ifdef CONFIG_MMU
++	/*
++	 * When to give up on memory freeing from this mm after its
++	 * threads have been oom killed, in jiffies.
++	 */
++	unsigned long oom_free_expire;
++#endif
+ #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
+ 	pgtable_t pmd_huge_pte; /* protected by page_table_lock */
+ #endif
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1163,7 +1163,8 @@ struct task_struct {
+ #endif
+ 	int				pagefault_disabled;
+ #ifdef CONFIG_MMU
+-	struct task_struct		*oom_reaper_list;
++	/* OOM victim queue for oom reaper, protected by oom_reaper_lock */
++	struct list_head		oom_reap_list;
+ #endif
+ #ifdef CONFIG_VMAP_STACK
+ 	struct vm_struct		*stack_vm_area;
+diff --git a/kernel/fork.c b/kernel/fork.c
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -842,6 +842,9 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
+ #ifdef CONFIG_FAULT_INJECTION
+ 	tsk->fail_nth = 0;
+ #endif
++#ifdef CONFIG_MMU
++	INIT_LIST_HEAD(&tsk->oom_reap_list);
++#endif
+ 
+ 	return tsk;
+ 
+diff --git a/mm/mmap.c b/mm/mmap.c
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3059,25 +3059,28 @@ void exit_mmap(struct mm_struct *mm)
+ 	if (unlikely(mm_is_oom_victim(mm))) {
+ 		/*
+ 		 * Manually reap the mm to free as much memory as possible.
+-		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
+-		 * this mm from further consideration.  Taking mm->mmap_sem for
+-		 * write after setting MMF_OOM_SKIP will guarantee that the oom
+-		 * reaper will not run on this mm again after mmap_sem is
+-		 * dropped.
+-		 *
+ 		 * Nothing can be holding mm->mmap_sem here and the above call
+ 		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
+ 		 * __oom_reap_task_mm() will not block.
+-		 *
+-		 * This needs to be done before calling munlock_vma_pages_all(),
+-		 * which clears VM_LOCKED, otherwise the oom reaper cannot
+-		 * reliably test it.
+ 		 */
+ 		mutex_lock(&oom_lock);
+ 		__oom_reap_task_mm(mm);
+ 		mutex_unlock(&oom_lock);
+ 
+-		set_bit(MMF_OOM_SKIP, &mm->flags);
++		/*
++		 * Now, set MMF_UNSTABLE to avoid racing with the oom reaper.
++		 * This needs to be done before calling munlock_vma_pages_all(),
++		 * which clears VM_LOCKED, otherwise the oom reaper cannot
++		 * reliably test for it.  If the oom reaper races with
++		 * munlock_vma_pages_all(), this can result in a kernel oops if
++		 * a pmd is zapped, for example, after follow_page_mask() has
++		 * checked pmd_none().
++		 *
++		 * Taking mm->mmap_sem for write after setting MMF_UNSTABLE will
++		 * guarantee that the oom reaper will not run on this mm again
++		 * after mmap_sem is dropped.
++		 */
++		set_bit(MMF_UNSTABLE, &mm->flags);
+ 		down_write(&mm->mmap_sem);
+ 		up_write(&mm->mmap_sem);
+ 	}
+@@ -3105,6 +3108,7 @@ void exit_mmap(struct mm_struct *mm)
+ 	unmap_vmas(&tlb, vma, 0, -1);
+ 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+ 	tlb_finish_mmu(&tlb, 0, -1);
++	set_bit(MMF_OOM_SKIP, &mm->flags);
+ 
+ 	/*
+ 	 * Walk the list again, actually closing and freeing it,
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -41,6 +41,7 @@
+ #include <linux/kthread.h>
+ #include <linux/init.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/debugfs.h>
+ 
+ #include <asm/tlb.h>
+ #include "internal.h"
+@@ -476,7 +477,7 @@ bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
+  */
+ static struct task_struct *oom_reaper_th;
+ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
+-static struct task_struct *oom_reaper_list;
++static LIST_HEAD(oom_reaper_list);
+ static DEFINE_SPINLOCK(oom_reaper_lock);
+ 
+ void __oom_reap_task_mm(struct mm_struct *mm)
+@@ -519,10 +520,8 @@ void __oom_reap_task_mm(struct mm_struct *mm)
+ 	}
+ }
+ 
+-static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
++static void oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ {
+-	bool ret = true;
+-
+ 	/*
+ 	 * We have to make sure to not race with the victim exit path
+ 	 * and cause premature new oom victim selection:
+@@ -540,9 +539,8 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 	mutex_lock(&oom_lock);
+ 
+ 	if (!down_read_trylock(&mm->mmap_sem)) {
+-		ret = false;
+ 		trace_skip_task_reaping(tsk->pid);
+-		goto unlock_oom;
++		goto out_oom;
+ 	}
+ 
+ 	/*
+@@ -551,69 +549,81 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 	 * TODO: we really want to get rid of this ugly hack and make sure that
+ 	 * notifiers cannot block for unbounded amount of time
+ 	 */
+-	if (mm_has_blockable_invalidate_notifiers(mm)) {
+-		up_read(&mm->mmap_sem);
+-		schedule_timeout_idle(HZ);
+-		goto unlock_oom;
+-	}
++	if (mm_has_blockable_invalidate_notifiers(mm))
++		goto out_mm;
+ 
+ 	/*
+-	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
+-	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
++	 * MMF_UNSTABLE is set by exit_mmap when the OOM reaper can't
++	 * work on the mm anymore. The check for MMF_UNSTABLE must run
+ 	 * under mmap_sem for reading because it serializes against the
+ 	 * down_write();up_write() cycle in exit_mmap().
+ 	 */
+-	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
+-		up_read(&mm->mmap_sem);
++	if (test_bit(MMF_UNSTABLE, &mm->flags)) {
+ 		trace_skip_task_reaping(tsk->pid);
+-		goto unlock_oom;
++		goto out_mm;
+ 	}
+ 
+ 	trace_start_task_reaping(tsk->pid);
+-
+ 	__oom_reap_task_mm(mm);
++	trace_finish_task_reaping(tsk->pid);
+ 
+ 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+ 			task_pid_nr(tsk), tsk->comm,
+ 			K(get_mm_counter(mm, MM_ANONPAGES)),
+ 			K(get_mm_counter(mm, MM_FILEPAGES)),
+ 			K(get_mm_counter(mm, MM_SHMEMPAGES)));
++out_mm:
+ 	up_read(&mm->mmap_sem);
+-
+-	trace_finish_task_reaping(tsk->pid);
+-unlock_oom:
++out_oom:
+ 	mutex_unlock(&oom_lock);
+-	return ret;
+ }
+ 
+-#define MAX_OOM_REAP_RETRIES 10
+ static void oom_reap_task(struct task_struct *tsk)
+ {
+-	int attempts = 0;
+ 	struct mm_struct *mm = tsk->signal->oom_mm;
+ 
+-	/* Retry the down_read_trylock(mmap_sem) a few times */
+-	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
+-		schedule_timeout_idle(HZ/10);
++	/*
++	 * If this mm has either been fully unmapped, or the oom reaper has
++	 * given up on it, nothing left to do except drop the refcount.
++	 */
++	if (test_bit(MMF_OOM_SKIP, &mm->flags))
++		goto drop;
+ 
+-	if (attempts <= MAX_OOM_REAP_RETRIES ||
+-	    test_bit(MMF_OOM_SKIP, &mm->flags))
+-		goto done;
++	/*
++	 * If this mm has already been reaped, doing so again will not likely
++	 * free additional memory.
++	 */
++	if (!test_bit(MMF_UNSTABLE, &mm->flags))
++		oom_reap_task_mm(tsk, mm);
+ 
+-	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
+-		task_pid_nr(tsk), tsk->comm);
+-	debug_show_all_locks();
++	if (time_after_eq(jiffies, mm->oom_free_expire)) {
++		if (!test_bit(MMF_OOM_SKIP, &mm->flags)) {
++			pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
++				task_pid_nr(tsk), tsk->comm);
++			debug_show_all_locks();
+ 
+-done:
+-	tsk->oom_reaper_list = NULL;
++			/*
++			 * Reaping has failed for the timeout period, so give up
++			 * and allow additional processes to be oom killed.
++			 */
++			set_bit(MMF_OOM_SKIP, &mm->flags);
++		}
++		goto drop;
++	}
+ 
+-	/*
+-	 * Hide this mm from OOM killer because it has been either reaped or
+-	 * somebody can't call up_write(mmap_sem).
+-	 */
+-	set_bit(MMF_OOM_SKIP, &mm->flags);
++	if (test_bit(MMF_OOM_SKIP, &mm->flags))
++		goto drop;
++
++	/* Enqueue to be reaped again */
++	spin_lock(&oom_reaper_lock);
++	list_add_tail(&tsk->oom_reap_list, &oom_reaper_list);
++	spin_unlock(&oom_reaper_lock);
+ 
+-	/* Drop a reference taken by wake_oom_reaper */
++	schedule_timeout_idle(HZ/10);
++	return;
++
++drop:
++	/* Drop the reference taken by wake_oom_reaper */
+ 	put_task_struct(tsk);
+ }
+ 
+@@ -622,11 +632,13 @@ static int oom_reaper(void *unused)
+ 	while (true) {
+ 		struct task_struct *tsk = NULL;
+ 
+-		wait_event_freezable(oom_reaper_wait, oom_reaper_list != NULL);
++		wait_event_freezable(oom_reaper_wait,
++				     !list_empty(&oom_reaper_list));
+ 		spin_lock(&oom_reaper_lock);
+-		if (oom_reaper_list != NULL) {
+-			tsk = oom_reaper_list;
+-			oom_reaper_list = tsk->oom_reaper_list;
++		if (!list_empty(&oom_reaper_list)) {
++			tsk = list_entry(oom_reaper_list.next,
++					 struct task_struct, oom_reap_list);
++			list_del(&tsk->oom_reap_list);
+ 		}
+ 		spin_unlock(&oom_reaper_lock);
+ 
+@@ -637,25 +649,57 @@ static int oom_reaper(void *unused)
+ 	return 0;
+ }
+ 
++/*
++ * Millisecs to wait for an oom mm to free memory before selecting another
++ * victim.
++ */
++u64 oom_free_timeout_ms = 1000;
+ static void wake_oom_reaper(struct task_struct *tsk)
+ {
+-	/* tsk is already queued? */
+-	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
++	/*
++	 * Set the reap timeout; if it's already set, the mm is enqueued and
++	 * this tsk can be ignored.
++	 */
++	if (cmpxchg(&tsk->signal->oom_mm->oom_free_expire, 0UL,
++			jiffies + msecs_to_jiffies(oom_free_timeout_ms)))
+ 		return;
+ 
+ 	get_task_struct(tsk);
+ 
+ 	spin_lock(&oom_reaper_lock);
+-	tsk->oom_reaper_list = oom_reaper_list;
+-	oom_reaper_list = tsk;
++	list_add(&tsk->oom_reap_list, &oom_reaper_list);
+ 	spin_unlock(&oom_reaper_lock);
+ 	trace_wake_reaper(tsk->pid);
+ 	wake_up(&oom_reaper_wait);
+ }
+ 
++#ifdef CONFIG_DEBUG_FS
++static int oom_free_timeout_ms_read(void *data, u64 *val)
++{
++	*val = oom_free_timeout_ms;
++	return 0;
++}
++
++static int oom_free_timeout_ms_write(void *data, u64 val)
++{
++	if (val > 60 * 1000)
++		return -EINVAL;
++
++	oom_free_timeout_ms = val;
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(oom_free_timeout_ms_fops, oom_free_timeout_ms_read,
++			oom_free_timeout_ms_write, "%llu\n");
++#endif /* CONFIG_DEBUG_FS */
++
+ static int __init oom_init(void)
+ {
+ 	oom_reaper_th = kthread_run(oom_reaper, NULL, "oom_reaper");
++#ifdef CONFIG_DEBUG_FS
++	if (!IS_ERR(oom_reaper_th))
++		debugfs_create_file("oom_free_timeout_ms", 0200, NULL, NULL,
++				    &oom_free_timeout_ms_fops);
++#endif
+ 	return 0;
+ }
+ subsys_initcall(oom_init)
