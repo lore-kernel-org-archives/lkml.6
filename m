@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015B2C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47452C1B0F6
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3EAC208B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:29:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3EAC208B1
+	by mail.kernel.org (Postfix) with ESMTP id 01F7D208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01F7D208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753594AbeFTI34 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:29:56 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:64736 "EHLO
+        id S932099AbeFTI36 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:29:58 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:23930 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754480AbeFTI3s (ORCPT
+        with ESMTP id S1754474AbeFTI3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 04:29:48 -0400
-X-UUID: e0f66d07bfe643909e59f08b248b3814-20180620
+X-UUID: a6d6cd562bc345d3ab98e302c03a24e3-20180620
 Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <stu.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1360931560; Wed, 20 Jun 2018 16:19:44 +0800
+        with ESMTP id 556875062; Wed, 20 Jun 2018 16:19:43 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 20 Jun 2018 16:19:42 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 20 Jun 2018 16:19:41 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 20 Jun 2018 16:19:43 +0800
+ Transport; Wed, 20 Jun 2018 16:19:41 +0800
 From:   Stu Hsieh <stu.hsieh@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
 CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
@@ -44,9 +43,9 @@ CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v7 13/29] drm/mediatek: add connection from RDMA0 to DPI0
-Date:   Wed, 20 Jun 2018 16:19:15 +0800
-Message-ID: <1529482771-2153-14-git-send-email-stu.hsieh@mediatek.com>
+Subject: [PATCH v7 06/29] drm/mediatek: add ddp component PWM2
+Date:   Wed, 20 Jun 2018 16:19:08 +0800
+Message-ID: <1529482771-2153-7-git-send-email-stu.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
 References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
@@ -58,44 +57,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the connection from RDMA0 to DPI0
+This patch add component PWM2
 
 Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 1 +
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 977df8facb79..3a3f37f523f2 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -29,6 +29,7 @@
- #define DISP_REG_CONFIG_DISP_COLOR0_SEL_IN	0x084
- #define DISP_REG_CONFIG_DISP_COLOR1_SEL_IN	0x088
- #define DISP_REG_CONFIG_DPI_SEL_IN		0x0ac
-+#define DISP_REG_CONFIG_DISP_RDMA0_SOUT_EN	0x0c4
- #define DISP_REG_CONFIG_DISP_RDMA1_SOUT_EN	0x0c8
- #define DISP_REG_CONFIG_MMSYS_CG_CON0		0x100
- 
-@@ -80,6 +81,7 @@
- #define COLOR0_SEL_IN_OVL0		0x1
- #define OVL1_MOUT_EN_COLOR1		0x1
- #define GAMMA_MOUT_EN_RDMA1		0x1
-+#define RDMA0_SOUT_DPI0			0x2
- #define RDMA1_SOUT_DPI0			0x2
- #define DPI0_SEL_IN_RDMA1		0x1
- #define COLOR1_SEL_IN_OVL1		0x1
-@@ -155,6 +157,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
- 	} else if (cur == DDP_COMPONENT_OD1 && next == DDP_COMPONENT_RDMA1) {
- 		*addr = DISP_REG_CONFIG_DISP_OD_MOUT_EN;
- 		value = OD1_MOUT_EN_RDMA1;
-+	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DPI0) {
-+		*addr = DISP_REG_CONFIG_DISP_RDMA0_SOUT_EN;
-+		value = RDMA0_SOUT_DPI0;
- 	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
- 		*addr = DISP_REG_CONFIG_DISP_RDMA1_SOUT_EN;
- 		value = RDMA1_SOUT_DPI0;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index a5c7ac2d162d..86e8c9e5df41 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -233,6 +233,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+ 	[DDP_COMPONENT_OVL1]	= { MTK_DISP_OVL,	1, NULL },
+ 	[DDP_COMPONENT_PWM0]	= { MTK_DISP_PWM,	0, NULL },
+ 	[DDP_COMPONENT_PWM1]	= { MTK_DISP_PWM,	1, NULL },
++	[DDP_COMPONENT_PWM2]	= { MTK_DISP_PWM,	2, NULL },
+ 	[DDP_COMPONENT_RDMA0]	= { MTK_DISP_RDMA,	0, NULL },
+ 	[DDP_COMPONENT_RDMA1]	= { MTK_DISP_RDMA,	1, NULL },
+ 	[DDP_COMPONENT_RDMA2]	= { MTK_DISP_RDMA,	2, NULL },
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+index 9b19fc4423f1..e00c2e798abd 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+@@ -56,6 +56,7 @@ enum mtk_ddp_comp_id {
+ 	DDP_COMPONENT_OVL1,
+ 	DDP_COMPONENT_PWM0,
+ 	DDP_COMPONENT_PWM1,
++	DDP_COMPONENT_PWM2,
+ 	DDP_COMPONENT_RDMA0,
+ 	DDP_COMPONENT_RDMA1,
+ 	DDP_COMPONENT_RDMA2,
 -- 
 2.12.5
 
