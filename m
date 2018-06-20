@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C56C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD785C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77C6E2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:21:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77C6E2086B
+	by mail.kernel.org (Postfix) with ESMTP id 893DC20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:22:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893DC20836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754172AbeFTAVo (ORCPT
+        id S1753933AbeFTAWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:21:44 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53479 "EHLO
+        Tue, 19 Jun 2018 20:22:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36531 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752707AbeFTAVn (ORCPT
+        with ESMTP id S1750929AbeFTAWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:21:43 -0400
+        Tue, 19 Jun 2018 20:22:13 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0Lc2q3297537
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0M9sU3297576
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 17:21:38 -0700
+        Tue, 19 Jun 2018 17:22:09 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0LcNV3297534;
-        Tue, 19 Jun 2018 17:21:38 -0700
-Date:   Tue, 19 Jun 2018 17:21:38 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0M9cH3297573;
+        Tue, 19 Jun 2018 17:22:09 -0700
+Date:   Tue, 19 Jun 2018 17:22:09 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-4d6959cf503a2a7395216f4bb14fb5409468fac9@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, reinette.chatre@intel.com,
-        hpa@zytor.com, linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          tglx@linutronix.de, reinette.chatre@intel.com
-In-Reply-To: <c8b54235b16f40b74fded417f5b6151afe8f27b1.1527593970.git.reinette.chatre@intel.com>
-References: <c8b54235b16f40b74fded417f5b6151afe8f27b1.1527593970.git.reinette.chatre@intel.com>
+Message-ID: <tip-dd0cd63323fc59c5e232c3d03ad4a2a73fc07395@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, reinette.chatre@intel.com
+Reply-To: tglx@linutronix.de, mingo@kernel.org, reinette.chatre@intel.com,
+          hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <9149005d01de4b197bae13a45e6efdb536383ca1.1527593970.git.reinette.chatre@intel.com>
+References: <9149005d01de4b197bae13a45e6efdb536383ca1.1527593970.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Respect read and write access
-Git-Commit-ID: 4d6959cf503a2a7395216f4bb14fb5409468fac9
+Subject: [tip:x86/cache] x86/intel_rdt: Add utility to test if tasks
+ assigned to resource group
+Git-Commit-ID: dd0cd63323fc59c5e232c3d03ad4a2a73fc07395
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,30 +57,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4d6959cf503a2a7395216f4bb14fb5409468fac9
-Gitweb:     https://git.kernel.org/tip/4d6959cf503a2a7395216f4bb14fb5409468fac9
+Commit-ID:  dd0cd63323fc59c5e232c3d03ad4a2a73fc07395
+Gitweb:     https://git.kernel.org/tip/dd0cd63323fc59c5e232c3d03ad4a2a73fc07395
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Tue, 29 May 2018 05:57:42 -0700
+AuthorDate: Tue, 29 May 2018 05:57:43 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 20 Jun 2018 00:56:33 +0200
 
-x86/intel_rdt: Respect read and write access
+x86/intel_rdt: Add utility to test if tasks assigned to resource group
 
-By default, if the opener has CAP_DAC_OVERRIDE, a kernfs file can be opened
-regardless of RW permissions. Writing to a kernfs file will thus succeed
-even if permissions are 0000.
+In considering changes to a resource group it becomes necessary to know
+whether tasks have been assigned to the resource group in question.
 
-It's required to restrict the actions that can be performed on a resource
-group from userspace based on the mode of the resource group.  This
-restriction will be done through a modification of the file
-permissions. That is, for example, if a resource group is locked then the
-user cannot add tasks to the resource group.
-
-For this restriction through file permissions to work it has to be ensured
-that the permissions are always respected. To do so the resctrl filesystem
-is created with the KERNFS_ROOT_EXTRA_OPEN_PERM_CHECK flag that will result
-in open(2) failing with -EACCESS regardless of CAP_DAC_OVERRIDE if the
-permission does not have the respective read or write access.
+Introduce a new utility that can be used to check if any tasks have been
+assigned to a particular resource group.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -90,23 +81,59 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/c8b54235b16f40b74fded417f5b6151afe8f27b1.1527593970.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/9149005d01de4b197bae13a45e6efdb536383ca1.1527593970.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel_rdt.h          |  1 +
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 26 ++++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index bda87f5ef7bc..10a1539cbec6 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -480,6 +480,7 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
+ 				  u32 cbm);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
++int rdtgroup_tasks_assigned(struct rdtgroup *r);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int update_domains(struct rdt_resource *r, int closid);
+ void closid_free(int closid);
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 9e69f4dbc686..0ddb455b126d 100644
+index 0ddb455b126d..be692e154546 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -2537,7 +2537,8 @@ static int __init rdtgroup_setup_root(void)
- 	int ret;
+@@ -564,6 +564,32 @@ static int __rdtgroup_move_task(struct task_struct *tsk,
+ 	return ret;
+ }
  
- 	rdt_root = kernfs_create_root(&rdtgroup_kf_syscall_ops,
--				      KERNFS_ROOT_CREATE_DEACTIVATED,
-+				      KERNFS_ROOT_CREATE_DEACTIVATED |
-+				      KERNFS_ROOT_EXTRA_OPEN_PERM_CHECK,
- 				      &rdtgroup_default);
- 	if (IS_ERR(rdt_root))
- 		return PTR_ERR(rdt_root);
++/**
++ * rdtgroup_tasks_assigned - Test if tasks have been assigned to resource group
++ * @r: Resource group
++ *
++ * Return: 1 if tasks have been assigned to @r, 0 otherwise
++ */
++int rdtgroup_tasks_assigned(struct rdtgroup *r)
++{
++	struct task_struct *p, *t;
++	int ret = 0;
++
++	lockdep_assert_held(&rdtgroup_mutex);
++
++	rcu_read_lock();
++	for_each_process_thread(p, t) {
++		if ((r->type == RDTCTRL_GROUP && t->closid == r->closid) ||
++		    (r->type == RDTMON_GROUP && t->rmid == r->mon.rmid)) {
++			ret = 1;
++			break;
++		}
++	}
++	rcu_read_unlock();
++
++	return ret;
++}
++
+ static int rdtgroup_task_write_permission(struct task_struct *task,
+ 					  struct kernfs_open_file *of)
+ {
