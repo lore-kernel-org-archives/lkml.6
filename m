@@ -5,121 +5,106 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6F2C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08F4C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ABDF2083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ABDF2083A
+	by mail.kernel.org (Postfix) with ESMTP id B381820875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:59:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B381820875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754192AbeFTP6U (ORCPT
+        id S1754276AbeFTP7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:58:20 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:45457 "EHLO
+        Wed, 20 Jun 2018 11:59:38 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:37391 "EHLO
         mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754061AbeFTP6S (ORCPT
+        with ESMTP id S1754061AbeFTP7f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:58:18 -0400
-Received: by mail-yw0-f193.google.com with SMTP id v190-v6so12571ywa.12;
-        Wed, 20 Jun 2018 08:58:18 -0700 (PDT)
+        Wed, 20 Jun 2018 11:59:35 -0400
+Received: by mail-yw0-f193.google.com with SMTP id j134-v6so25158ywg.4;
+        Wed, 20 Jun 2018 08:59:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PD5Gk8cwj2G0Cm/lA+bmtMEd4mZ8z3+BBzHrE06wl2Q=;
-        b=qzzD5dDEX2mGrLolb8ApvjHlr0t4EhAFz1VIHf2vdRP/SC+6TPSn8qFQQnsi8/6WFe
-         RLJABgKmzTTQk0uAhpa9WidlHVQWVPGDGZcLSTAQRDtfMvYQjk0F8U8vmzKmbSXdbm3c
-         Z2Ly3unTE58Vn5y5mh3yzPJadD+VcMEQx1OiywtinrAF/aMcEyeeVNOuYjjdyvGxuuiJ
-         6m5512hnv6Fel0vy8at6oYMG0/tJdcdG6cuyfmklTn8r4nzcFwh1G7FuX70sLm1dN9OV
-         3Kv/F0ldNPVlsiht9kiQzmsV9466JRdpXnhGHl5AqLkdhmUU9VacGldEIwgAivEksKyD
-         80ZA==
-X-Gm-Message-State: APt69E2PO1Y0pvqbNvV2LEa/IOgcq7XWl99t7ICSPC6vHucLDXvbr9uP
-        /aNoBpRmwq5+IkR3mdWRkg==
-X-Google-Smtp-Source: ADUXVKLKpUfcmDtZ7E+/6chthOxKwaH3fkVzIAzFKxmYOLfJQNf2EKzXiRuQtjJQe/D8CJ4DqNXazw==
-X-Received: by 2002:a81:c507:: with SMTP id k7-v6mr10781374ywi.395.1529510297696;
-        Wed, 20 Jun 2018 08:58:17 -0700 (PDT)
+        bh=CkNchnHrGXbn83Xyk+zGbZgOSmi4BY3kRyda8pGzCAY=;
+        b=CwCHysLz0McFD9sotkv184katwdZXDnRFRxyUHhN0bBJDrQfpVFF9w+skASQQBcJii
+         pryUwxTmyqzmTVRzKgzK+UqP/rBV4u2Rr0LpJTjHQfvHdDFYyByxY5df0gsGQyfPCy++
+         YMgnO13B8o7OAPsRFX5pTbvg6FoXzkMudpudewc/g6VQ+KLStP5mcS53LETSd7LTGkgy
+         oQOZ5ncBQZiBDTrmT67CP24jbMil56NOroWJQQ4/KsFfixfVy/fgxkaZe4TAR5qEu++e
+         Eq/DA2kOd/pY+m8XU+EM6I5qczJhHACmhxfWi5RXGTIjXIm5VfBfX3ryPnqtriSON63A
+         JWjA==
+X-Gm-Message-State: APt69E1IydGa4I8F3ddqfcUhpscVtGVQ/Ge+tHxVe4icCx+53WaxPcfC
+        3MTipJ/kBD4OuyZ8xb0MzA==
+X-Google-Smtp-Source: ADUXVKJoRmvx6PIYzsdBM+eTJlBN2FmgGqHTIR6cPmZK+P9tXV8O3G0s/h54g5rxaIfi/B+48TW0Bw==
+X-Received: by 2002:a0d:d951:: with SMTP id b78-v6mr10770861ywe.396.1529510374993;
+        Wed, 20 Jun 2018 08:59:34 -0700 (PDT)
 Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id o128-v6sm1107607ywo.54.2018.06.20.08.58.16
+        by smtp.gmail.com with ESMTPSA id l6-v6sm1005618ywd.58.2018.06.20.08.59.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 08:58:16 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 09:58:15 -0600
+        Wed, 20 Jun 2018 08:59:34 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 09:59:33 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Borys Movchan <borys.movchan@axis.com>
-Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        Borys Movchan <borysmn@axis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: iio: light: add ISL29033 device
- bindings
-Message-ID: <20180620155815.GA10569@rob-hp-laptop>
-References: <20180613140043.5802-1-borys.movchan@axis.com>
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: Re: [PATCH v4 02/19] dt-bindings: sram: sunxi: Add A10 binding for
+ the C1 SRAM region
+Message-ID: <20180620155933.GA19227@rob-hp-laptop>
+References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
+ <20180618145843.14631-3-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180613140043.5802-1-borys.movchan@axis.com>
+In-Reply-To: <20180618145843.14631-3-paul.kocialkowski@bootlin.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 04:00:15PM +0200, Borys Movchan wrote:
-> From: Borys Movchan <borysmn@axis.com>
-
-Commit msg missing
-
+On Mon, Jun 18, 2018 at 04:58:26PM +0200, Paul Kocialkowski wrote:
+> This introduces a dedicated binding for the C1 SRAM region for the A10
+> sunxi platform.
 > 
-> Signed-off-by: Borys Movchan <borys.movchan@axis.com>
-> ---
->  .../devicetree/bindings/iio/light/isl29033.txt         | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/light/isl29033.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/light/isl29033.txt b/Documentation/devicetree/bindings/iio/light/isl29033.txt
-> new file mode 100644
-> index 000000000000..988e40acc6ed
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/light/isl29033.txt
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Preferred name if there only one compatible is the full compatible 
-string plus '.txt'.
-
-> @@ -0,0 +1,18 @@
-> +Intersil ISL29033 Ultra-Low Lux, Low Power, Integrated Digital Ambient Light Sensor
-> +
-> +Required properties:
-> +  - compatible : Must be "isil,isl29033".
-> +  - reg: the I2C address of the device
-> +
-> +Optional properties:
-> +  - isil,rext-kohms: External resistor nominal in kOhms used for ADC
-> +    reference. If not specified, 499 kOhm value will be used.
-
--ohms and -micro-ohms are the documented units. Please use '-ohms' 
-unless there is a compelling reason not to.
-
-> +
-> +Example:
-> +
-> +        als_sensor@44 {
-
-light-sensor is the documented node name for ALSs.
-
-> +            compatible = "isil,isl29033";
-> +            reg = <0x44>;
-> +            isil,rext-kohms = <1000>;
-> +        };
-> +
-> -- 
-> 2.11.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Rob Herring <robh@kernel.org>
