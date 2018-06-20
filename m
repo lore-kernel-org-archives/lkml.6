@@ -2,116 +2,131 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 531E8C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3D6C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1432920872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:16:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1432920872
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 318E120652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:17:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 318E120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754870AbeFTJQU (ORCPT
+        id S1754659AbeFTJPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:16:20 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:32774 "EHLO gloria.sntech.de"
+        Wed, 20 Jun 2018 05:15:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57426 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754113AbeFTJQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:16:17 -0400
-Received: from ip5f5a8448.dynamic.kabel-deutschland.de ([95.90.132.72] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.1:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <heiko@sntech.de>)
-        id 1fVZDV-0001D1-5i; Wed, 20 Jun 2018 11:15:53 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Vagrant Cascadian <vagrant@debian.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Pierre-Hugues Husson <phh@phh.me>,
-        Jianqun Xu <jay.xu@rock-chips.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        khilman@baylibre.com
-Subject: Re: [PATCH 1/1] arm64: dts: rockchip: correct voltage selector Firefly-RK3399
-Date:   Wed, 20 Jun 2018 11:15:52 +0200
-Message-ID: <6592028.l3WmXB2ndK@diego>
-In-Reply-To: <459cb125-a3e2-8f1e-b960-011020d41b3c@gmx.de>
-References: <20180604171523.28454-1-xypron.glpk@gmx.de> <10782218.jfpm9omiT7@phil> <459cb125-a3e2-8f1e-b960-011020d41b3c@gmx.de>
+        id S1754291AbeFTIdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 04:33:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C4169AC71;
+        Wed, 20 Jun 2018 07:18:17 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 09:18:17 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        ldufour@linux.vnet.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
+ large mapping
+Message-ID: <20180620071817.GJ13685@dhcp22.suse.cz>
+References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
+ <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
+ <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
+ <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heinrich,
-
-Am Mittwoch, 20. Juni 2018, 07:59:34 CEST schrieb Heinrich Schuchardt:
-> On 06/20/2018 01:21 AM, Heiko Stuebner wrote:
-> > Am Donnerstag, 14. Juni 2018, 14:55:27 CEST schrieb Heiko Stuebner:
-> >> Am Montag, 4. Juni 2018, 19:15:23 CEST schrieb Heinrich Schuchardt:
-> >>> Without this patch the Firefly-RK3399 board boot process hangs after
-> >>> these
-> >>> 
-> >>> lines:
-> >>>    fan53555-regulator 0-0040: FAN53555 Option[8] Rev[1] Detected!
-> >>>    fan53555-reg: supplied by vcc_sys
-> >>>    vcc1v8_s3: supplied by vcc_1v8
-> >>> 
-> >>> Blacklisting driver fan53555 allows booting.
-> >>> 
-> >>> The device tree uses a value of fcs,suspend-voltage-selector different
-> >>> to
-> >>> any other board.
-> >>> 
-> >>> Changing this setting to the usual value is sufficient to enable
-> >>> booting.
-> >>> 
-> >>> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
-> >> 
-> >> applied for 4.19.
-> > 
-> > and dropped again.
-> > 
-> > Sadly it looks like the patch causes conflicts with at least one firefly
-> > board in a kernelci lab. My own is currently not ready to use, so I cannot
-> > look myself right now.
-> > 
-> > The issue kernelci people described sounded quite a lot like the one
-> > in your commit message, so my current theory is that the
-> > suspend-voltage-selector must in some form corespond to the
-> > cpu_b_sleep_h gpio setting we're currently not handling at all, which
-> > would therefore depend on how the bootloader sets this up.
->
-> please, provide a link to the log displaying the issue and the contact
-> who can provide the exact setup.
+On Tue 19-06-18 17:31:27, Nadav Amit wrote:
+> at 4:08 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
 > 
-> I have been testing with U-Boot as boot loader.
+> > 
+> > 
+> > On 6/19/18 3:17 PM, Nadav Amit wrote:
+> >> at 4:34 PM, Yang Shi <yang.shi@linux.alibaba.com>
+> >>  wrote:
+> >> 
+> >> 
+> >>> When running some mmap/munmap scalability tests with large memory (i.e.
+> >>> 
+> >>>> 300GB), the below hung task issue may happen occasionally.
+> >>>> 
+> >>> INFO: task ps:14018 blocked for more than 120 seconds.
+> >>>       Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+> >>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> >>> message.
+> >>> ps              D    0 14018      1 0x00000004
+> >>> 
+> >>> 
+> >> (snip)
+> >> 
+> >> 
+> >>> Zapping pages is the most time consuming part, according to the
+> >>> suggestion from Michal Hock [1], zapping pages can be done with holding
+> >>> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
+> >>> mmap_sem to manipulate vmas.
+> >>> 
+> >> Does munmap() == MADV_DONTNEED + munmap() ?
+> > 
+> > Not exactly the same. So, I basically copied the page zapping used by munmap instead of calling MADV_DONTNEED.
+> > 
+> >> 
+> >> For example, what happens with userfaultfd in this case? Can you get an
+> >> extra #PF, which would be visible to userspace, before the munmap is
+> >> finished?
+> >> 
+> > 
+> > userfaultfd is handled by regular munmap path. So, no change to userfaultfd part.
+> 
+> Right. I see it now.
+> 
+> > 
+> >> 
+> >> In addition, would it be ok for the user to potentially get a zeroed page in
+> >> the time window after the MADV_DONTNEED finished removing a PTE and before
+> >> the munmap() is done?
+> >> 
+> > 
+> > This should be undefined behavior according to Michal. This has been discussed in  https://lwn.net/Articles/753269/.
+> 
+> Thanks for the reference.
+> 
+> Reading the man page I see: "All pages containing a part of the indicated
+> range are unmapped, and subsequent references to these pages will generate
+> SIGSEGV.”
 
-failing boot can be found on
-https://kernelci.org/boot/id/5b2a053d59b514569079a872/
+Yes, this is true but I guess what Yang Shi meant was that an userspace
+access racing with munmap is not well defined. You never know whether
+you get your data, #PTF or SEGV because it depends on timing. The user
+visible change might be that you lose content and get zero page instead
+if you hit the race window while we are unmapping which was not possible
+before. But whouldn't such an access pattern be buggy anyway? You need
+some form of external synchronization AFAICS.
 
-As this board is sitting in the "lab-baylibre-seattle", I guess
-Kevin Hilman (Cc'ed now) is the one that can say a bit more about the
-board setup.
-
-
-The more interesting question would be how to make sure we don't
-die with possible different bootloader versions. As I don't really thing 
-"upgrade your bootloader" is an always valid option.
-
-
-Heiko
-
-
+But maybe some userspace depends on "getting right data or get SEGV"
+semantic. If we have to preserve that then we can come up with a VM_DEAD
+flag set before we tear it down and force the SEGV on the #PF path.
+Something similar we already do for MMF_UNSTABLE.
+-- 
+Michal Hocko
+SUSE Labs
