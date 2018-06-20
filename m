@@ -2,107 +2,224 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 333E7C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F1DC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED8020020
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A2920872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:29:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fr4xsnwb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED8020020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C7X5hmRZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FAV+dOCL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A2920872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754514AbeFTN24 (ORCPT
+        id S1754543AbeFTN3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:28:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752884AbeFTN2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:28:54 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 20 Jun 2018 09:29:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33702 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754284AbeFTN1v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:27:51 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 89DAE60B10; Wed, 20 Jun 2018 13:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529501270;
+        bh=8Jtp6Nep+NrIi4E4WFqUnaUfl5QUaN4i1VrIOFWxPyg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=C7X5hmRZ/A0/orHayMpZ42j8VYkKVFMNa3M/XMH7W/iRh5YpoW1PyKZCDhPf8xREs
+         T6Xkm0D6OVU2vyqTzHH5orh6fuFor8kbMHxh+qzLhv6RQHiKr7GoltR1mChds8KIue
+         3qrFMgDneDJ5BKGlTV8U5NzFl7ZqsqlP1Ix6sORU=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E0BA20020;
-        Wed, 20 Jun 2018 13:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529501333;
-        bh=0pn2B04MKDDIbCu0np3CKciflfCpQQEm1mM7eGwkI5g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Fr4xsnwbA4LdVRLh3ZGVYCPVr7Bp1Y9E9psQ8CHXkUrIp/6GgkEsPn4YLfG3EAPd0
-         7j2r1jPkcODMXvCQYjN4YmzAVw3++plyUZAhbUQtJmKnQeY/xAS1UYrvN1pm17RRRI
-         midsHfz8auI7V7hWp6Z439t5IfeiaWZ54lb5bdKo=
-Date:   Wed, 20 Jun 2018 08:28:52 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Frederick Lawler <fred@fredlawl.com>
-Subject: Re: pci: pci_printk use
-Message-ID: <20180620132852.GA108993@bhelgaas-glaptop.roam.corp.google.com>
-References: <9bd45007ddfe2c32b6ee5097e427aabdc267ce53.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9bd45007ddfe2c32b6ee5097e427aabdc267ce53.camel@perches.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F16BF60227;
+        Wed, 20 Jun 2018 13:27:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529501269;
+        bh=8Jtp6Nep+NrIi4E4WFqUnaUfl5QUaN4i1VrIOFWxPyg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FAV+dOCLrQiEaXQdTWjouXTR7x4ipTA1RUJWt65s8ajASBm7MkqUA1TqBUuP9HlwZ
+         uaHMoAwEEqA9+KjrPcjNmMrPrq2yJO9kgaGSGNeTSzHWpLzkzhNBHbZcvmyca80Ray
+         /8E/Abkn3EfxvnaXGnLFgF+VUouBwG3AOqy9JXQI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F16BF60227
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH v13 08/10] drivers: qcom: rpmh: allow requests to be sent asynchronously
+Date:   Wed, 20 Jun 2018 18:57:05 +0530
+Message-Id: <1529501227-27163-9-git-send-email-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
+References: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 09:33:18PM -0700, Joe Perches wrote:
-> All the pci_printk uses are at KERN_DEBUG which is always
-> emitted into the kernel logging whenever the console log
-> level is high enough.
-> 
-> Are any of these appropriate for conversion to pci_dbg
-> to allow these only to be emitted via dynamic_debug or
-> if necessary via a #define DEBUG during compilation?
+From: Lina Iyer <ilina@codeaurora.org>
 
-I think pci_printk(KERN_DEBUG) is a little ugly to read.  My
-preference would be to remove them (and pci_dbg() uses) completely or
-convert them to pci_info().  Most of these are boot-time or low
-frequency messages, so I doubt the loglevel differentiation of
-DEBUG/INFO is really necessary.
+Platform drivers that want to send a request but do not want to block
+until the RPMH request completes have now a new API -
+rpmh_write_async().
 
-Using pci_dbg() means the messages depend on the kernel config
-and the dynamic debug config, which is a bit of a hassle.
+The API allocates memory and send the requests and returns the control
+back to the platform driver. The tx_done callback from the controller is
+handled in the context of the controller's thread and frees the
+allocated memory. This API allows RPMH requests from atomic contexts as
+well.
 
-When I get bug reports, I'd much rather simply ask for a dmesg log
-than ask people to reproduce it with a different config or figure out
-the right dynamic debug option.
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+---
 
-> $ git grep -w -n pci_printk drivers
-> drivers/pci/bus.c:291:          pci_printk(KERN_DEBUG, dev, "%pR clipped to %pR\n",
-> drivers/pci/hotplug/shpchp.h:51:                        pci_printk(KERN_DEBUG, ctrl->pci_dev,           \
-> drivers/pci/pci.c:2484:                 pci_printk(KERN_DEBUG, dev, "supports%s%s\n",
-> drivers/pci/pci.c:2491:         pci_printk(KERN_DEBUG, dev, "PME# supported from%s%s%s%s%s\n",
-> drivers/pci/pci.c:2655:         pci_printk(KERN_DEBUG, dev, "BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
-> drivers/pci/pci.c:2658:         pci_printk(KERN_DEBUG, dev, "ROM: %pR (from Enhanced Allocation, properties %#02x)\n",
-> drivers/pci/pci.c:2661:         pci_printk(KERN_DEBUG, dev, "VF BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
-> drivers/pci/pci.c:2664:         pci_printk(KERN_DEBUG, dev, "BEI %d res: %pR (from Enhanced Allocation, properties %#02x)\n",
-> drivers/pci/pci.c:3775: pci_printk(KERN_DEBUG, dev, "cache line size of %d is not supported\n",
-> drivers/pci/pcie/aer.c:775:             pci_printk(KERN_DEBUG, parent, "can't find device of ID%04x\n",
-> drivers/pci/pcie/aer.c:1317:    pci_printk(KERN_DEBUG, dev, "Root Port link has been reset\n");
-> drivers/pci/pcie/err.c:75:                      pci_printk(KERN_DEBUG, dev, "device has %s\n",
-> drivers/pci/pcie/err.c:179:     pci_printk(KERN_DEBUG, dev, "downstream link has been reset\n");
-> drivers/pci/pcie/err.c:205:             pci_printk(KERN_DEBUG, dev, "no link-reset support at upstream device %s\n",
-> drivers/pci/pcie/err.c:211:             pci_printk(KERN_DEBUG, dev, "link reset at upstream device %s failed\n",
-> drivers/pci/pcie/err.c:237:     pci_printk(KERN_DEBUG, dev, "broadcast %s message\n", error_mesg);
-> drivers/pci/probe.c:321:                pci_printk(KERN_DEBUG, dev, "reg 0x%x: %pR\n", pos, res);
-> drivers/pci/probe.c:388:                pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-> drivers/pci/probe.c:410:                pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-> drivers/pci/probe.c:463:                pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
-> drivers/pci/probe.c:493:                                pci_printk(KERN_DEBUG, dev,
-> drivers/pci/probe.c:1598:       pci_printk(KERN_DEBUG, dev, "[%04x:%04x] type %02x class %#08x\n",
-> drivers/pci/setup-bus.c:258:                            pci_printk(KERN_DEBUG, add_res->dev,
-> drivers/pci/setup-bus.c:954:            pci_printk(KERN_DEBUG, bus->self, "bridge window %pR to %pR add_size %llx\n",
-> drivers/pci/setup-bus.c:1101:           pci_printk(KERN_DEBUG, bus->self, "bridge window %pR to %pR add_size %llx add_align %llx\n",
-> drivers/pci/setup-bus.c:1569:           pci_printk(KERN_DEBUG, dev, "resource %d %pR released\n",
-> 
+Changes in v10:
+	- Add EXPORT_SYMBOL
+Changes in v9:
+	- Remove EXPORT_SYMBOL
+	- check to free dynamically allocated request object
+	- free request object after notifying completion
+Changes in v6:
+	- replace rpmh_client with device *
+---
+ drivers/soc/qcom/rpmh-internal.h |  2 ++
+ drivers/soc/qcom/rpmh.c          | 51 ++++++++++++++++++++++++++++++++++++++++
+ include/soc/qcom/rpmh.h          |  7 ++++++
+ 3 files changed, 60 insertions(+)
+
+diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+index 101145c..6a8a4b7 100644
+--- a/drivers/soc/qcom/rpmh-internal.h
++++ b/drivers/soc/qcom/rpmh-internal.h
+@@ -54,6 +54,7 @@ struct tcs_group {
+  * @completion: triggered when request is done
+  * @dev: the device making the request
+  * @err: err return from the controller
++ * @needs_free: check to free dynamically allocated request object
+  */
+ struct rpmh_request {
+ 	struct tcs_request msg;
+@@ -61,6 +62,7 @@ struct rpmh_request {
+ 	struct completion *completion;
+ 	const struct device *dev;
+ 	int err;
++	bool needs_free;
+ };
+ 
+ /**
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index c355ba1..1e3d348 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -34,6 +34,7 @@
+ 		.cmd = { { 0 } },			\
+ 		.completion = q,			\
+ 		.dev = dev,				\
++		.needs_free = false,				\
+ 	}
+ 
+ #define ctrlr_to_drv(ctrlr) container_of(ctrlr, struct rsc_drv, client)
+@@ -75,6 +76,9 @@ void rpmh_tx_done(const struct tcs_request *msg, int r)
+ 	/* Signal the blocking thread we are done */
+ 	if (compl)
+ 		complete(compl);
++
++	if (rpm_msg->needs_free)
++		kfree(rpm_msg);
+ }
+ 
+ static struct cache_req *__find_req(struct rpmh_ctrlr *ctrlr, u32 addr)
+@@ -180,6 +184,53 @@ static int __rpmh_write(const struct device *dev, enum rpmh_state state,
+ 	return ret;
+ }
+ 
++static int __fill_rpmh_msg(struct rpmh_request *req, enum rpmh_state state,
++		const struct tcs_cmd *cmd, u32 n)
++{
++	if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
++		return -EINVAL;
++
++	memcpy(req->cmd, cmd, n * sizeof(*cmd));
++
++	req->msg.state = state;
++	req->msg.cmds = req->cmd;
++	req->msg.num_cmds = n;
++
++	return 0;
++}
++
++/**
++ * rpmh_write_async: Write a set of RPMH commands
++ *
++ * @dev: The device making the request
++ * @state: Active/sleep set
++ * @cmd: The payload data
++ * @n: The number of elements in payload
++ *
++ * Write a set of RPMH commands, the order of commands is maintained
++ * and will be sent as a single shot.
++ */
++int rpmh_write_async(const struct device *dev, enum rpmh_state state,
++		     const struct tcs_cmd *cmd, u32 n)
++{
++	struct rpmh_request *rpm_msg;
++	int ret;
++
++	rpm_msg = kzalloc(sizeof(*rpm_msg), GFP_ATOMIC);
++	if (!rpm_msg)
++		return -ENOMEM;
++	rpm_msg->needs_free = true;
++
++	ret = __fill_rpmh_msg(rpm_msg, state, cmd, n);
++	if (ret) {
++		kfree(rpm_msg);
++		return ret;
++	}
++
++	return __rpmh_write(dev, state, rpm_msg);
++}
++EXPORT_SYMBOL(rpmh_write_async);
++
+ /**
+  * rpmh_write: Write a set of RPMH commands and block until response
+  *
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index 42e62a0..1161a5c 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -14,6 +14,9 @@
+ int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 	       const struct tcs_cmd *cmd, u32 n);
+ 
++int rpmh_write_async(const struct device *dev, enum rpmh_state state,
++		     const struct tcs_cmd *cmd, u32 n);
++
+ int rpmh_flush(const struct device *dev);
+ 
+ int rpmh_invalidate(const struct device *dev);
+@@ -24,6 +27,10 @@ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 			     const struct tcs_cmd *cmd, u32 n)
+ { return -ENODEV; }
+ 
++static inline int rpmh_write_async(const struct device *dev,
++				   enum rpmh_state state,
++				   const struct tcs_cmd *cmd, u32 n)
++{ return -ENODEV; }
+ 
+ static inline int rpmh_flush(const struct device *dev)
+ { return -ENODEV; }
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+
