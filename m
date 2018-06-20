@@ -3,95 +3,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BA1C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF00C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A4120874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:07:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A4120874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 69CAD20872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:09:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69CAD20872
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754014AbeFTOH5 (ORCPT
+        id S1754061AbeFTOJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:07:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752838AbeFTOH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:07:56 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A0CA20872;
-        Wed, 20 Jun 2018 14:07:55 +0000 (UTC)
-Date:   Wed, 20 Jun 2018 10:07:53 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: Make CONSOLE_LOGLEVEL_QUIET configurable
-Message-ID: <20180620100753.7acaee14@gandalf.local.home>
-In-Reply-To: <20180620110335.sjzmtra2z3chvon2@pathway.suse.cz>
-References: <20180619115726.3098-1-hdegoede@redhat.com>
-        <20180620110335.sjzmtra2z3chvon2@pathway.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 20 Jun 2018 10:09:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48704 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753321AbeFTOJs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 10:09:48 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KE0grN139745
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:09:48 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqqv1htn0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:09:47 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 20 Jun 2018 15:09:45 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Jun 2018 15:09:41 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KE9e2X8650850
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 20 Jun 2018 14:09:40 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E47B142045;
+        Wed, 20 Jun 2018 14:59:39 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E8C8A4203F;
+        Wed, 20 Jun 2018 14:59:36 +0100 (BST)
+Received: from [9.195.33.217] (unknown [9.195.33.217])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Jun 2018 14:59:36 +0100 (BST)
+Subject: Re: [PATCH 3/3] perf script: Fix crash because of missing feat_op[]
+ entry
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     jolsa@redhat.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, dsahern@gmail.com, ak@linux.intel.com,
+        yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180620133030.2188-1-ravi.bangoria@linux.ibm.com>
+ <20180620133030.2188-4-ravi.bangoria@linux.ibm.com>
+ <20180620134905.GO20477@kernel.org>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 20 Jun 2018 19:39:36 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180620134905.GO20477@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18062014-0016-0000-0000-000001DE21E7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062014-0017-0000-0000-0000323236A0
+Message-Id: <883a0115-57f4-0bc3-9161-e5efc6a1a9d0@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806200159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018 13:03:35 +0200
-Petr Mladek <pmladek@suse.com> wrote:
+Hi Arnaldo,
 
-> I find it a bit confusing that "quiet" would mean something different
-> on different systems.
-
-I disagree. "quiet" to me is for people that really don't care to see
-anything from the kernel except for real issues that they need to
-report. The first thing that I do, and many other kernel developers I
-know, when installing a new distro, is to remove the "quiet" from the
-command line. Because *I* care about the output.
-
-
+On 06/20/2018 07:19 PM, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Jun 20, 2018 at 07:00:30PM +0530, Ravi Bangoria escreveu:
+>> perf_event__process_feature() tries to access feat_ops[feat].process
+>> which is not defined for feat = HEADER_LAST_FEATURE and thus perf is
+>> crashing. Add dummy entry for HEADER_LAST_FEATURE in the feat_ops.
 > 
-> Why did not you use loglevel=<whatever_you_need> instead of "quiet"?
-> 
-> Alternative solution would be to add "silent" or so to calm down
-> everything. But I am afraid that any change in this area would
-> just create a mess similar to grep -s and -q options.
-> 
-> 
-> Best Regards,
-> Petr
-> 
-> PS: I will not block it if Steven and Sergey are fine with this. But
-> I want to be sure that they considered the above views. It looked like
-> a no-brainer to me at the beginning. I even pushed this to printk.git.
-> But the pushing gave me some more time to think about it...
+> Humm, first impression is that we should check for HEADER_LAST_FEATURE
+> and not try to access that array slot, as it is just a marker, not an
+> actual feature.
 
-I prefer this patch over adding yet another kernel command line command
-that will just add to the confusion. I can imagine people saying
-"what's the difference between 'quiet' and 'silent'?". I would.
+Sure. Let me try to handle it inside perf_event__process_feature() itself.
+May be something like below.
 
-I think having it as a config option is the perfect solution. I imagine
-that as soon as Red Hat changes the meaning of "quiet" so will all the
-other distros. The alternative is for the distros to add a patch to
-make the change, which honestly is a worse solution.
+-----
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 540cd2dcd3e7..4dc251d3b372 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3461,6 +3461,10 @@ int perf_event__process_feature(struct perf_tool *tool,
+                return -1;
+        }
+ 
++       /* HEADER_LAST_FEATURE is just a marker. Ignore it. */
++       if (feat == HEADER_LAST_FEATURE)
++               return 0;
++
+        if (!feat_ops[feat].process)
+                return 0;
+-----
 
-I've only seen "quiet" added by distros and not by average developers.
-I don't think adding this option will be confusing to anyone that
-tinkers with kernel command lines anyway.
+Thanks,
+Ravi
 
-I'm for the patch.
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-
--- Steve
