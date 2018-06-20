@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2E6C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E54DC43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1568C20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28D5A2083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:28:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pd+AU57/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1568C20836
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aWFax21m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28D5A2083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932813AbeFTR2F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:28:05 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36812 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754519AbeFTRWt (ORCPT
+        id S932928AbeFTR2Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 13:28:25 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36805 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754458AbeFTRWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:22:49 -0400
-Received: by mail-lf0-f67.google.com with SMTP id n24-v6so485982lfh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:22:48 -0700 (PDT)
+        Wed, 20 Jun 2018 13:22:46 -0400
+Received: by mail-lf0-f68.google.com with SMTP id n24-v6so485751lfh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:22:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LFPzDs1JucyTyUU9q3YaT4OD/JzXpPsipsDpCqXWAns=;
-        b=Pd+AU57/ZbU9iVlM9eRTAuOn9GTqB6ot50bON6VCr0QtZEowyR6sePRKbj4JPhWgzu
-         mTOhEKCczfF/p3cFIkRwIpRAdYi31j2ESbGBOYI7oXPX/eWp4DodDrcwp4lYr8MK2T8y
-         mgxz3z+CuQXdsccOPAKsbsuwrNIXRQjLEj4F0=
+        bh=40LOjQ+YPGx6FLKxOB2XtXKEBIZOB0eV+AE7c0B9P1E=;
+        b=aWFax21mb/OlcZ7istRxEXtPKUgExdCY0cZkrEYF2+Jr5f3yKt7cA4JqeDOe8p1AJY
+         NNUJv+K8Al6QpPca5OFrRctUKi+y1W6JOcechSQQAEBT+F3kXon2QFO3P8WiL1gAl/Jp
+         QxV1m/BbjaPYRQ1CJfXLnW72fnBPVUOcxglkk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LFPzDs1JucyTyUU9q3YaT4OD/JzXpPsipsDpCqXWAns=;
-        b=GS86ZgdJaAU3I44WzuKCSOPgfseZRhc+KSjtJMklZ317exbnTgTVaEx6RB+fHkRVBy
-         7E45JPTff23D6iu8WjN6WMJj+xFh3xHwbvVFw7NJZT2UzEix1V3rW6TBfeVGVOckb9SV
-         JOobP4/McBC3sCwqvUOzOt4MDMCcScyKQ/xss+2JljIfV6CBrAxphfiQPqKDBPsqnxhd
-         YYbnxKCH18qtBOw4P+SrOwYcKSRzknUQeLSWFLJf/q1IfIcNJIgfe4mqvNhKqt/Zodpk
-         dfE0Wi+B7b0K77uJj7m70YI2g1fuGNin5h7EvY1VvjxAF5TihPNWObKClg+v0yOLsywP
-         OztQ==
-X-Gm-Message-State: APt69E1tnqiEigtP77+ip+OfrCBpmSo3jg9RibI607ZJjwhzutqyL5r5
-        0L6yxgQbGa2G3pBWpGfFlSVCiw==
-X-Google-Smtp-Source: ADUXVKIXzbzMOEIVwbTkD347j4lM5kxIzlrYLKIeVYq/rh6c3durBgY/IosyfyDugqxJq+GurWA87w==
-X-Received: by 2002:a2e:c52:: with SMTP id o18-v6mr14820774ljd.72.1529515367664;
-        Wed, 20 Jun 2018 10:22:47 -0700 (PDT)
+        bh=40LOjQ+YPGx6FLKxOB2XtXKEBIZOB0eV+AE7c0B9P1E=;
+        b=anjnaZ8adOKPyT0jOOlQxvS885uM39VADXVQ+uy85SRkt1+nzKj2dUIjEj8ydHSnA/
+         ba9wYIblgEbX06ch9kBO1Ia7yuHIauwZixIdM6HFI8J9u4vI8Q8FmG4R7SjvM+b6a0bi
+         g5WLNn60G6h2pV7FM6HVkRJpgdmbXWCn0mR0xHvzxVDzQ95vde5Q05KMuZIX9/MKfvnX
+         Sac0vVIZPvlD6K/dUgJJ5vjgcXtcaDhkobdVdpksgITz21NNXaRxntHl13yzQkcmWNJT
+         rusLhEvEpbiHJbub4MHyr0wjpid3M7QRdKiBd5C5rXxiiezgoSasOQHTvpQFjD1Q3bmK
+         p0qw==
+X-Gm-Message-State: APt69E0Ajt3jAIApSMeyOZ3jckfSEKv/YBGx/U3qDd/0gyiNGP8XE2Wf
+        UxfE+ySTuwfLwEFgSphzqWNJsw==
+X-Google-Smtp-Source: ADUXVKIIJjPRC5qpFFEOx8+I/8Zau9QXY7+lIPwkDkUPtNuVr2VDIS66YI54o1YXlQncriceQEnUqg==
+X-Received: by 2002:a2e:1d59:: with SMTP id d86-v6mr15375209ljd.104.1529515364476;
+        Wed, 20 Jun 2018 10:22:44 -0700 (PDT)
 Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm514441lji.85.2018.06.20.10.22.46
+        by smtp.gmail.com with ESMTPSA id b2-v6sm514441lji.85.2018.06.20.10.22.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:22:46 -0700 (PDT)
+        Wed, 20 Jun 2018 10:22:43 -0700 (PDT)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -70,12 +70,10 @@ Cc:     Kevin Hilman <khilman@kernel.org>,
         Juri Lelli <juri.lelli@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v8 07/26] PM / Domains: Add genpd governor for CPUs
-Date:   Wed, 20 Jun 2018 19:22:07 +0200
-Message-Id: <20180620172226.15012-8-ulf.hansson@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v8 05/26] PM / Domains: Add helper functions to attach/detach CPUs to/from genpd
+Date:   Wed, 20 Jun 2018 19:22:05 +0200
+Message-Id: <20180620172226.15012-6-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180620172226.15012-1-ulf.hansson@linaro.org>
 References: <20180620172226.15012-1-ulf.hansson@linaro.org>
@@ -84,139 +82,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As it's now perfectly possible that a PM domain managed by genpd contains
-devices belonging to CPUs, we should start to take into account the
-residency values for the idle states during the state selection process.
-The residency value specifies the minimum duration of time, the CPU or a
-group of CPUs, needs to spend in an idle state to not waste energy entering
-it.
+Introduce two new genpd helper functions, of_genpd_attach|detach_cpu(),
+which takes the CPU-number as an in-parameter.
 
-To deal with this, let's add a new genpd governor, pm_domain_cpu_gov, that
-may be used for a PM domain that have CPU devices attached or if the CPUs
-are attached through subdomains.
+To attach a CPU to a genpd, of_genpd_attach_cpu() starts by fetching the
+struct device belonging to the CPU. Then it calls genpd_dev_pm_attach(),
+which via DT tries to hook up the CPU device to its corresponding PM
+domain. If it succeeds, of_genpd_attach_cpu() continues to prepare/enable
+runtime PM of the device.
 
-The new governor computes the minimum expected idle duration time for the
-online CPUs being attached to the PM domain and its subdomains. Then in the
-state selection process, trying the deepest state first, it verifies that
-the idle duration time satisfies the state's residency value.
+To detach a CPU from its PM domain, of_genpd_attach_cpu() reverse the
+operations made from of_genpd_attach_cpu(). However, first it checks that
+the CPU device has a valid PM domain pointer assigned, as to make sure it
+belongs to genpd.
 
-It should be noted that, when computing the minimum expected idle duration
-time, we use the information from tick_nohz_get_next_wakeup(), to find the
-next wakeup for the related CPUs. Future wise, this may deserve to be
-improved, as there are more reasons to why a CPU may be woken up from idle.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
 Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/base/power/domain_governor.c | 58 ++++++++++++++++++++++++++++
- include/linux/pm_domain.h            |  2 +
- 2 files changed, 60 insertions(+)
+ drivers/base/power/domain.c | 69 +++++++++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h   |  9 +++++
+ 2 files changed, 78 insertions(+)
 
-diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
-index 99896fbf18e4..1aad55719537 100644
---- a/drivers/base/power/domain_governor.c
-+++ b/drivers/base/power/domain_governor.c
-@@ -10,6 +10,9 @@
- #include <linux/pm_domain.h>
- #include <linux/pm_qos.h>
- #include <linux/hrtimer.h>
-+#include <linux/cpumask.h>
-+#include <linux/ktime.h>
-+#include <linux/tick.h>
- 
- static int dev_update_qos_constraint(struct device *dev, void *data)
- {
-@@ -245,6 +248,56 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
- 	return false;
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 6149ce0bfa7b..299fa2febbec 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2445,6 +2445,75 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
  }
+ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
  
-+static bool cpu_power_down_ok(struct dev_pm_domain *pd)
++/*
++ * of_genpd_attach_cpu() - Attach a CPU to its PM domain
++ * @cpu: The CPU to be attached.
++ *
++ * Parses the OF node of the CPU's device, to find a PM domain specifier. If
++ * such is found, attaches the CPU's device to the retrieved pm_domain ops and
++ * enables runtime PM for it. This to allow the CPU to be power managed through
++ * its PM domain.
++ *
++ * Returns zero when successfully attached the CPU's device to its PM domain,
++ * else a negative error code.
++ */
++int of_genpd_attach_cpu(int cpu)
 +{
-+	struct generic_pm_domain *genpd = pd_to_genpd(pd);
-+	ktime_t domain_wakeup, cpu_wakeup;
-+	s64 idle_duration_ns;
-+	int cpu, i;
++	struct device *dev = get_cpu_device(cpu);
++	int ret;
 +
-+	if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
-+		return true;
-+
-+	/*
-+	 * Find the next wakeup for any of the online CPUs within the PM domain
-+	 * and its subdomains. Note, we only need the genpd->cpus, as it already
-+	 * contains a mask of all CPUs from subdomains.
-+	 */
-+	domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
-+	for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
-+		cpu_wakeup = tick_nohz_get_next_wakeup(cpu);
-+		if (ktime_before(cpu_wakeup, domain_wakeup))
-+			domain_wakeup = cpu_wakeup;
++	if (!dev) {
++		pr_warn("genpd: no dev for cpu%d\n", cpu);
++		return -ENODEV;
 +	}
 +
-+	/* The minimum idle duration is from now - until the next wakeup. */
-+	idle_duration_ns = ktime_to_ns(ktime_sub(domain_wakeup, ktime_get()));
++	ret = genpd_dev_pm_attach(dev);
++	if (ret != 1) {
++		dev_warn(dev, "genpd: attach cpu failed %d\n", ret);
++		return ret < 0 ? ret : -ENODEV;
++	}
 +
-+	/*
-+	 * Find the deepest idle state that has its residency value satisfied
-+	 * and by also taking into account the power off latency for the state.
-+	 * Start at the deepest supported state.
-+	 */
-+	i = genpd->state_count - 1;
-+	do {
-+		if (!genpd->states[i].residency_ns)
-+			break;
++	pm_runtime_irq_safe(dev);
++	pm_runtime_get_noresume(dev);
++	pm_runtime_set_active(dev);
++	pm_runtime_enable(dev);
 +
-+		/* Check idle_duration_ns >= 0 to compare signed/unsigned. */
-+		if (idle_duration_ns >= 0 && idle_duration_ns >=
-+		    (genpd->states[i].residency_ns +
-+		     genpd->states[i].power_off_latency_ns))
-+			break;
-+		i--;
-+	} while (i >= 0);
-+
-+	if (i < 0)
-+		return false;
-+
-+	genpd->state_idx = i;
-+	return true;
++	dev_info(dev, "genpd: attached cpu\n");
++	return 0;
 +}
++EXPORT_SYMBOL(of_genpd_attach_cpu);
 +
- struct dev_power_governor simple_qos_governor = {
- 	.suspend_ok = default_suspend_ok,
- 	.power_down_ok = default_power_down_ok,
-@@ -257,3 +310,8 @@ struct dev_power_governor pm_domain_always_on_gov = {
- 	.power_down_ok = always_on_power_down_ok,
- 	.suspend_ok = default_suspend_ok,
- };
++/**
++ * of_genpd_detach_cpu() - Detach a CPU from its PM domain
++ * @cpu: The CPU to be detached.
++ *
++ * Detach the CPU's device from its corresponding PM domain. If detaching is
++ * completed successfully, disable runtime PM and restore the runtime PM usage
++ * count for the CPU's device.
++ */
++void of_genpd_detach_cpu(int cpu)
++{
++	struct device *dev = get_cpu_device(cpu);
 +
-+struct dev_power_governor pm_domain_cpu_gov = {
-+	.suspend_ok = NULL,
-+	.power_down_ok = cpu_power_down_ok,
-+};
++	if (!dev) {
++		pr_warn("genpd: no dev for cpu%d\n", cpu);
++		return;
++	}
++
++	/* Check that the device is attached to a genpd. */
++	if (!(dev->pm_domain && dev->pm_domain->detach == genpd_dev_pm_detach))
++		return;
++
++	genpd_dev_pm_detach(dev, true);
++
++	pm_runtime_disable(dev);
++	pm_runtime_put_noidle(dev);
++	pm_runtime_reinit(dev);
++
++	dev_info(dev, "genpd: detached cpu\n");
++}
++EXPORT_SYMBOL(of_genpd_detach_cpu);
++
+ static const struct of_device_id idle_state_match[] = {
+ 	{ .compatible = "domain-idle-state", },
+ 	{ }
 diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 2c09cf80b285..97901c833108 100644
+index 3f67ff0c1c69..2c09cf80b285 100644
 --- a/include/linux/pm_domain.h
 +++ b/include/linux/pm_domain.h
-@@ -160,6 +160,7 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state);
+@@ -243,6 +243,8 @@ unsigned int of_genpd_opp_to_performance_state(struct device *dev,
+ int genpd_dev_pm_attach(struct device *dev);
+ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+ 					 unsigned int index);
++int of_genpd_attach_cpu(int cpu);
++void of_genpd_detach_cpu(int cpu);
+ #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
+ static inline int of_genpd_add_provider_simple(struct device_node *np,
+ 					struct generic_pm_domain *genpd)
+@@ -294,6 +296,13 @@ static inline struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+ 	return NULL;
+ }
  
- extern struct dev_power_governor simple_qos_governor;
- extern struct dev_power_governor pm_domain_always_on_gov;
-+extern struct dev_power_governor pm_domain_cpu_gov;
- #else
- 
- static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
-@@ -203,6 +204,7 @@ static inline int dev_pm_genpd_set_performance_state(struct device *dev,
- 
- #define simple_qos_governor		(*(struct dev_power_governor *)(NULL))
- #define pm_domain_always_on_gov		(*(struct dev_power_governor *)(NULL))
-+#define pm_domain_cpu_gov		(*(struct dev_power_governor *)(NULL))
- #endif
- 
- #ifdef CONFIG_PM_GENERIC_DOMAINS_SLEEP
++static inline int of_genpd_attach_cpu(int cpu)
++{
++	return -ENODEV;
++}
++
++static inline void of_genpd_detach_cpu(int cpu) {}
++
+ static inline
+ struct generic_pm_domain *of_genpd_remove_last(struct device_node *np)
+ {
 -- 
 2.17.1
 
