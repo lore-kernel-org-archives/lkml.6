@@ -4,85 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FA1C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6311C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CD772083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:31:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F4F320875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:31:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U2aMex46"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CD772083A
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r1wkEzfZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4F320875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933660AbeFTVa6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 17:30:58 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50124 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933326AbeFTVa4 (ORCPT
+        id S933679AbeFTVbE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 17:31:04 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44494 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933326AbeFTVbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 17:30:56 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KLQDsB067011
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 21:30:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=Dy9i5bpgX+9vpFIAGc/eGOrAZP9RdoDvYS1mMu7JWLQ=;
- b=U2aMex46jUlMr/R52nAehHL26krB6BhkILzD2ac/ScDZ4JYBpyBKJkGFdKKtjTMCHojo
- 073QXWHDORexxCJ78iY4yLq2hOCWQbDmEiYjEMn1PJmO+5FWwufZvQvSxbLO9WhZ6/yO
- F+rWB2VXY6dT5Wiki8CIb7HMDaTUaSBT9fkZMb0AcZcl3G56mLvqynUjavQa9QkXPiyX
- 7Dm86wQEEiLOw0T5Y+UiDEuBcdQNpscvbZNfgzLYoYxGSnEQDpdM+J7ABDgVqt9ic3IW
- FwQxboY9S6mMJmRyylwF+gNnwqUfF76d0fnWzcsM8sr2Gj6uJi7sneeeIZHUfZxiL+PG og== 
+        Wed, 20 Jun 2018 17:31:00 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KLOJ71004406;
+        Wed, 20 Jun 2018 21:27:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=corp-2017-10-26;
+ bh=PhlQovQUtqxvQY7YwG/AEyhHnbXUMSQojHf+J/RT/Wo=;
+ b=r1wkEzfZfH6m1WhiCpjbpge2drNsZ5WxnYnzkWkpydQa7D8LbbbzbsQt0qBD4TVwTk/i
+ 9+bmEYuEg2Dad1Y7uS9IvUi2tgafWVBvIkEiYlcGQ7Whig7kO0oM6npOz+mGbu4ggHsr
+ CG7OuXsBjACmgfu2ftNO0KZ6EaU1EYEZN2xaVtRtxyKi/+MBbb1B2lltdTGwPUsSF3dz
+ QoRB7Eo03h3/hFv/Wm+8QzjLmTt70lwY83WvyM4QzUcITgTPE3Bx1DAQQfNKfEtIxDI4
+ Kae2cps1EWQcr2y8SNhq3HL9se3gbjujIFO5ErmMb7qePLB29opRLa2IRe6iGZRR3fIS LA== 
 Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwxadf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 21:30:55 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5KLUs4E026104
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 21:30:54 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5KLUsBE002204
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 21:30:54 GMT
-Received: from mail-oi0-f49.google.com (/209.85.218.49)
+        by userp2130.oracle.com with ESMTP id 2jmt01pbtq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 21:27:16 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5KLRFrk013594
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 21:27:15 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5KLRCVx019102;
+        Wed, 20 Jun 2018 21:27:13 GMT
+Received: from xakep.us.oracle.com (/10.39.216.167)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Jun 2018 14:30:53 -0700
-Received: by mail-oi0-f49.google.com with SMTP id e8-v6so983769oii.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 14:30:53 -0700 (PDT)
-X-Gm-Message-State: APt69E32JwW7wsBAxu19D+jrDYG21wOycWngnZkMP4BuJ9bhlZX45I81
-        q/jT2VF6TROz/bi4ZMLfzXZtUosEu7dM6OULS+4=
-X-Google-Smtp-Source: ADUXVKID44pyGVEXLg0ujFwV4pTLqVzJHk40b0Rsai2s6wL4m01kK1iMRIq/UTgBTrQuRlGA0W3U3esverAahYnWAFs=
-X-Received: by 2002:aca:e5d2:: with SMTP id c201-v6mr13472081oih.191.1529530253307;
- Wed, 20 Jun 2018 14:30:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
- <20180615174204.30581-8-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806192335390.10546@nanos.tec.linutronix.de>
- <20180620091532.GK2476@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1806201231030.10546@nanos.tec.linutronix.de>
- <20180620123208.GN2476@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180620123208.GN2476@hirez.programming.kicks-ass.net>
+        with ESMTP ; Wed, 20 Jun 2018 14:27:12 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Wed, 20 Jun 2018 17:30:17 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZjKxiG+7P65=-sV7PdN_UepGT5QipWFScZ+TpAfDHQqQ@mail.gmail.com>
-Message-ID: <CAGM2reZjKxiG+7P65=-sV7PdN_UepGT5QipWFScZ+TpAfDHQqQ@mail.gmail.com>
-Subject: Re: [PATCH v10 7/7] x86/tsc: use tsc early
-To:     peterz@infradead.org
-Cc:     tglx@linutronix.de, Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
+To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        prarit@redhat.com, feng.tang@intel.com,
-        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk
-Content-Type: text/plain; charset="UTF-8"
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
+        feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
+Subject: [PATCH v11 5/6] sched: early boot clock
+Date:   Wed, 20 Jun 2018 17:26:59 -0400
+Message-Id: <20180620212700.29178-6-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180620212700.29178-1-pasha.tatashin@oracle.com>
+References: <20180620212700.29178-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=659
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=952
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1805220000 definitions=main-1806200231
 Sender: linux-kernel-owner@vger.kernel.org
@@ -90,24 +74,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Allow sched_clock() to be used before schec_clock_init() and
+sched_clock_init_late() are called. This provides us with a way to get
+early boot timestamps on machines with unstable clocks.
 
-> That said; flipping static keys early isn't hard. We should call
-> jump_label_init() early, because we want the entries sorted and the
-> key->entries link set. It will also replace the GENERIC_NOP5_ATOMIC
-> thing, which means we need to also do arch_init_ideal_nop() early, but
-> since that is pure CPUID based that should be doable.
->
-> And then something like the below could be used.
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+---
+ kernel/sched/clock.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-I like the idea of making static branches available early, as it can
-be used in more places
-during boot.
+diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
+index 10c83e73837a..f034392b0f6c 100644
+--- a/kernel/sched/clock.c
++++ b/kernel/sched/clock.c
+@@ -205,6 +205,11 @@ void clear_sched_clock_stable(void)
+  */
+ static int __init sched_clock_init_late(void)
+ {
++	/* Transition to unstable clock from early clock */
++	local_irq_disable();
++	__gtod_offset = sched_clock() + __sched_clock_offset - ktime_get_ns();
++	local_irq_enable();
++
+ 	sched_clock_running = 2;
+ 	/*
+ 	 * Ensure that it is impossible to not do a static_key update.
+@@ -350,8 +355,9 @@ u64 sched_clock_cpu(int cpu)
+ 	if (sched_clock_stable())
+ 		return sched_clock() + __sched_clock_offset;
+ 
+-	if (unlikely(!sched_clock_running))
+-		return 0ull;
++	/* Use early clock until sched_clock_init_late() */
++	if (unlikely(sched_clock_running < 2))
++		return sched_clock() + __sched_clock_offset;
+ 
+ 	preempt_disable_notrace();
+ 	scd = cpu_sdc(cpu);
+-- 
+2.17.1
 
-However, that should be part of a separate project, and a follow up
-cleanup can be done
-to places that benefit from it. Such as tsc.c and perhaps sched.c
-might benefit as well.
-
-Thank you,
-Pavel
