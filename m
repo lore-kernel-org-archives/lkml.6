@@ -4,106 +4,258 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34808C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD07C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED4220836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:11:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0C8720836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:12:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CyBRNFWP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED4220836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VwynEvLR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C8720836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753541AbeFTLL3 (ORCPT
+        id S1753987AbeFTLMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 07:11:29 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:37527 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeFTLL1 (ORCPT
+        Wed, 20 Jun 2018 07:12:45 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:28213 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751841AbeFTLMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 07:11:27 -0400
-Received: by mail-lf0-f68.google.com with SMTP id g21-v6so4347376lfb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 04:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=BjopVPYRVnCOz1AqVkcQdUVup+FiV6ghR1aHlEhyOTY=;
-        b=CyBRNFWPmzJzQxFP7YtMTGXvlkHFcvsFLJhG8cwPRVsbo62LYy5Nd+IpKRHl7BDi0r
-         hAfxTwLUwzNQKlRj6WdgGNOKf+pmgd1DRTpFG5Uy7LApRPUHZBbFfqsvN3yz5oJvKJmz
-         eqeRSfPsyy8Y66yfPdbUaRsZRSDKiYV3Ltsgk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BjopVPYRVnCOz1AqVkcQdUVup+FiV6ghR1aHlEhyOTY=;
-        b=DzCbQ3tCyzkUZcPFdLhpwhPvUrcPN4+ChWKur1GzMuxpvN/3O9sFPXNSs028PEUPF3
-         J2swGkjX43CchVPVWu1YFnTHN8mW6ALAr10rOzPTIbTbyAPw/18P4iSyGasvQUUhgzl9
-         m22kMDS6TxluVjWVUDC4mG2FVx6Iw1QJo2BAiD3Or2yRxdCbDevIp+DCrbAgjQ+D1yW8
-         ulcK0Fcn2wAB1IpeisTrtBvmLBQ76+LEr+9W/juGAoPNEXy9UliUzkXbl+ZAl0oqIQ+7
-         YnRBXRU32tMwhumHu+Q/DJtcab1e6A6CigyQkBfDU/vuwu7bwnyXlzx88prIV0FGRKiQ
-         HLsQ==
-X-Gm-Message-State: APt69E1ITKZFbbhDq52EbqRmp76vvKOCoqkbORRPWo6qtfcQbXpJMKpR
-        u/l+MsANBgEU1pXqVCGjLERf7MwLrWmutMNJPO/hxg==
-X-Google-Smtp-Source: ADUXVKJJBNYEiVUKgYoHaBKyC3xwTdGWt/dkp2/pCVTtjGnJB5fnUHZa3cp5XS3z2JVOLt67A5EkzX8ayc4S6LjIe8s=
-X-Received: by 2002:a19:51db:: with SMTP id g88-v6mr13380933lfl.78.1529493085979;
- Wed, 20 Jun 2018 04:11:25 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 04:11:24
- -0700 (PDT)
-In-Reply-To: <20180620072138.yrz76kmms3oviv7i@linux-d8ym>
-References: <CA+G9fYsRgGsmi-tE8dU=pfSDDLg3bUuii_0KUPZ71jFLNre-5g@mail.gmail.com>
- <20180620072138.yrz76kmms3oviv7i@linux-d8ym>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 20 Jun 2018 16:41:24 +0530
-Message-ID: <CA+G9fYtoML7G7f_sXB6hQJJAQOG94TsBXujmQgHxy-rKABaTtA@mail.gmail.com>
-Subject: Re: LTP CVE cve-2017-17053 test failed on x86_64 device
-To:     mmoese@suse.de
-Cc:     dave.hansen@linux.intel.com, ltp@lists.linux.it,
-        open list <linux-kernel@vger.kernel.org>,
-        Jan Stancek <jstancek@redhat.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Rafael Tinoco <rafael.tinoco@linaro.org>, ebiggers@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 20 Jun 2018 07:12:44 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180620111242epoutp03a5ccde2f2efcab889e13893dc5a98a14~52e11c9yh0079300793epoutp03n
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 11:12:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180620111242epoutp03a5ccde2f2efcab889e13893dc5a98a14~52e11c9yh0079300793epoutp03n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1529493162;
+        bh=3FuepOmFb2KY+caor8GLSzWeGZE6U4NZkgQsCUDwbxM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=VwynEvLRrIMvtWHaJRvJ9y95v8EuhXGnmD0pvoEKzPmMuwvaAH27HNin71vEnWwaa
+         1n78BCmgjuSYsbeQjQtiCDBl3bM2QDY1B9TROZyTsAunbY476/0dlCC2uIw84P5pOD
+         pLlt3g8rXEqWfO/6NMigA1GgaMf72Il/FEx/HKNI=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.40.195]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20180620111241epcas5p4f6e0d10c3e9d4f359664b6d18ede5daf~52e0-XRjN1689916899epcas5p44;
+        Wed, 20 Jun 2018 11:12:41 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A2.9B.04409.9A63A2B5; Wed, 20 Jun 2018 20:12:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20180620111240epcas5p309e7e578ebbc07b00347c3c1d23ab278~52e0B1WnI1857118571epcas5p38;
+        Wed, 20 Jun 2018 11:12:40 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180620111240epsmtrp132da57eafdccd322e4ae07ad2a4f1a24~52e0AbwIk1177611776epsmtrp1u;
+        Wed, 20 Jun 2018 11:12:40 +0000 (GMT)
+X-AuditID: b6c32a4a-abdff70000001139-62-5b2a36a93166
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        42.F1.03632.8A63A2B5; Wed, 20 Jun 2018 20:12:40 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.108.92.210]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180620111238epsmtip278fe69f3aca61d56b38e8d98dca35b76~52eyX_snY0059100591epsmtip2p;
+        Wed, 20 Jun 2018 11:12:38 +0000 (GMT)
+From:   Namit Gupta <gupta.namit@samsung.com>
+To:     pmladek@suse.com, sergey.senozhatsky@gmail.com, rostedt@goodmis.org
+Cc:     linux-kernel@vger.kernel.org, pankaj.m@samsung.com,
+        a.sahrawat@samsung.com, himanshu.m@samsung.com,
+        Namit Gupta <gupta.namit@samsung.com>
+Subject: [PATCH 1/1] remove unnecessary calls of kmalloc and kfree from
+ syslog_print_all.
+Date:   Wed, 20 Jun 2018 16:39:11 +0530
+X-Mailer: git-send-email 1.9.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7bCmpu5KM61og4lLJC0u7k61OHjgNKvF
+        vJbzLBaXd81hs7j3ZiuTxf/HX1kt9nU8YLJY+/kxuwOHx85Zd9k9WvbdYvfo27KK0WP9lqss
+        Hp83yQWwRqXaZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl
+        5gCdoqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVYo2NDTSMzQw1zMyAtKmsVZGpkAlCakZ
+        3edfMhccka1YsHUyUwPjTLEuRk4OCQETiYML/rF1MXJxCAnsZpR4vXMrE4TziVFi2pJjzCBV
+        QgLfGCVWfi2H6Tjx+ApU0V5GiVnzfrJAOF8YJWZP/sYGUsUmoC2x7f9ksG4RAXeJT98/gO1g
+        FpjIKDGp6TsTSEJYIFpi+tlDjF2MHBwsAqoSd5pYITbISZw8NpkVpF5CYAKbxIynh8CG8gqU
+        SZy9No0FoshF4sTyVkYIW1ji1fEt7BC2lMTL/jZ2iOZmRokVm48yQjhTGCVans+DWmEv8eDG
+        UXaQzcwCmhLrd+mDhJkF+CR6fz9hAglLCPBKdLQJQVSrSuy4eoQdIiwtMXu5AUTYQ6Lt13V2
+        SAjFStya0884gVFmFsLMBYyMqxglUwuKc9NTi00LjPJSy/WKE3OLS/PS9ZLzczcxgtOTltcO
+        xmXnfA4xCnAwKvHwMjBrRguxJpYVV+YeYpTgYFYS4WU4pREtxJuSWFmVWpQfX1Sak1p8iNEU
+        GGYTmaVEk/OBqTOvJN7Q1MjMzMDSwNTYwsxQSZz3x3WBaCGB9MSS1OzU1ILUIpg+Jg5OqQbG
+        9KSVLEVte6vb7avs+hYu3c9/y1Beeu39bvlpXIXyWfs85K978n6bYrwrUvM6w/TrmXcr+Ncn
+        aC6+/NHJk8tg7/3Xi06mtvw90MfP5aNzhJn/1aoN37hNH91/HnC7zVJ/SW/PvofKT3jLTtwR
+        1cwXvPPrmO+ZW1NYmH43J6mJC6abf58bl9inxFKckWioxVxUnAgAhQNXUWUDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprALMWRmVeSWpSXmKPExsWy7bCSvO4KM61og43zBCwu7k61OHjgNKvF
+        vJbzLBaXd81hs7j3ZiuTxf/HX1kt9nU8YLJY+/kxuwOHx85Zd9k9WvbdYvfo27KK0WP9lqss
+        Hp83yQWwRnHZpKTmZJalFunbJXBldJ9/yVxwRLZiwdbJTA2MM8W6GDk5JARMJE48vsLUxcjF
+        ISSwm1Hi+p87TBAJaYmJzV+YIWxhiZX/nrNDFH1ilLi5+w4LSIJNQFti2//JYEUiAt4SU6//
+        YgQpYhaYyijx5OYWsISwQKREf+cuti5GDg4WAVWJO02sIGFeAXeJlvWrGSEWyEmcPDaZdQIj
+        zwJGhlWMkqkFxbnpucWGBYZ5qeV6xYm5xaV56XrJ+bmbGMHhpKW5g/HykvhDjAIcjEo8vAzM
+        mtFCrIllxZW5hxglOJiVRHgZTmlEC/GmJFZWpRblxxeV5qQWH2KU5mBREud9mncsUkggPbEk
+        NTs1tSC1CCbLxMEp1cCYen6ZCp/VKcnlTrbH63eK7ki7NTmH0+CPToACU4n77q+crZJsy9UX
+        t7qtVNluX7sqgJHFgyNMvaEhb/X3bWYH3VK1899JMhv/zJtc/ESn7dxOL/NNG8Udupi/LLbN
+        Fvy84+u5Pu1n7ZOCjetXz/f6ukPr3gRDjmt+ZqrhXYF6SvvOlwY+s1FiKc5INNRiLipOBAAo
+        8JUXIwIAAA==
+Message-Id: <20180620111240epcas5p309e7e578ebbc07b00347c3c1d23ab278~52e0B1WnI1857118571epcas5p38@epcas5p3.samsung.com>
+X-CMS-MailID: 20180620111240epcas5p309e7e578ebbc07b00347c3c1d23ab278
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180620111240epcas5p309e7e578ebbc07b00347c3c1d23ab278
+References: <CGME20180620111240epcas5p309e7e578ebbc07b00347c3c1d23ab278@epcas5p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 June 2018 at 12:51, Michael Moese <mmoese@suse.de> wrote:
-> Hi,
->
-> On Wed, Jun 20, 2018 at 12:14:22PM +0530, Naresh Kamboju wrote:
->> Test FAIL case output,
->> tst_test.c:1015: INFO: Timeout per run is 0h 15m 00s
->> tst_taint.c:88: BROK: Kernel is already tainted: 512
-> The kernel is already tainted. In this case, the test refuses to run,
-> because it could not tell if the test is pass or fail.
->
-> Could you please check if you could run the test directly after a
-> reboot?
+When the request is only for clearing logs, there is no need for buffer allocation.
+So, the indexes could be reset and returned. This will save unnecessary kmalloc/kfree 
+calls also.
 
-This single test ran immediately after the boot and bug reproduced.
 
-tst_taint.c:88: BROK: Kernel is already tainted: 512
-https://lkft.validation.linaro.org/scheduler/job/293222#L1204
+Signed-off-by: Namit Gupta <gupta.namit@samsung.com>
+Signed-off-by: Himanshu Maithani <himanshu.m@samsung.com>
 
-Test command for 10 iterations and it failed for all 10 iterations.
-+ ./runltp -s cve-2017-17053 -I 10
+---
+ kernel/printk/printk.c | 111 ++++++++++++++++++++++++++-----------------------
+ 1 file changed, 60 insertions(+), 51 deletions(-)
 
-NOTE:
-We still see kernel warning while booting the x86_64 machine.
-DEBUG_LOCKS_WARN_ON(sem->owner !=3D ((struct task_struct *)(1UL << 0)))
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 512f7c2..53952ce 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1348,71 +1348,80 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
+ {
+ 	char *text;
+ 	int len = 0;
++	u64 next_seq;
++	u64 seq;
++	u32 idx;
++
++	if (!buf) {
++		if (clear) {
++			logbuf_lock_irq();
++			clear_seq = log_next_seq;
++			clear_idx = log_next_idx;
++			logbuf_unlock_irq();
++		}
++		return 0;
++	}
++
+ 
+ 	text = kmalloc(LOG_LINE_MAX + PREFIX_MAX, GFP_KERNEL);
+ 	if (!text)
+ 		return -ENOMEM;
+ 
+ 	logbuf_lock_irq();
+-	if (buf) {
+-		u64 next_seq;
+-		u64 seq;
+-		u32 idx;
+ 
+-		/*
+-		 * Find first record that fits, including all following records,
+-		 * into the user-provided buffer for this dump.
+-		 */
+-		seq = clear_seq;
+-		idx = clear_idx;
+-		while (seq < log_next_seq) {
+-			struct printk_log *msg = log_from_idx(idx);
+-
+-			len += msg_print_text(msg, true, NULL, 0);
+-			idx = log_next(idx);
+-			seq++;
+-		}
++	/*
++	 * Find first record that fits, including all following records,
++	 * into the user-provided buffer for this dump.
++	 */
++	seq = clear_seq;
++	idx = clear_idx;
++	while (seq < log_next_seq) {
++		struct printk_log *msg = log_from_idx(idx);
+ 
+-		/* move first record forward until length fits into the buffer */
+-		seq = clear_seq;
+-		idx = clear_idx;
+-		while (len > size && seq < log_next_seq) {
+-			struct printk_log *msg = log_from_idx(idx);
++		len += msg_print_text(msg, true, NULL, 0);
++		idx = log_next(idx);
++		seq++;
++	}
+ 
+-			len -= msg_print_text(msg, true, NULL, 0);
+-			idx = log_next(idx);
+-			seq++;
+-		}
++	/* move first record forward until length fits into the buffer */
++	seq = clear_seq;
++	idx = clear_idx;
++	while (len > size && seq < log_next_seq) {
++		struct printk_log *msg = log_from_idx(idx);
+ 
+-		/* last message fitting into this dump */
+-		next_seq = log_next_seq;
++		len -= msg_print_text(msg, true, NULL, 0);
++		idx = log_next(idx);
++		seq++;
++	}
+ 
+-		len = 0;
+-		while (len >= 0 && seq < next_seq) {
+-			struct printk_log *msg = log_from_idx(idx);
+-			int textlen;
++	/* last message fitting into this dump */
++	next_seq = log_next_seq;
+ 
+-			textlen = msg_print_text(msg, true, text,
+-						 LOG_LINE_MAX + PREFIX_MAX);
+-			if (textlen < 0) {
+-				len = textlen;
+-				break;
+-			}
+-			idx = log_next(idx);
+-			seq++;
++	len = 0;
++	while (len >= 0 && seq < next_seq) {
++		struct printk_log *msg = log_from_idx(idx);
++		int textlen;
+ 
+-			logbuf_unlock_irq();
+-			if (copy_to_user(buf + len, text, textlen))
+-				len = -EFAULT;
+-			else
+-				len += textlen;
+-			logbuf_lock_irq();
++		textlen = msg_print_text(msg, true, text,
++				LOG_LINE_MAX + PREFIX_MAX);
++		if (textlen < 0) {
++			len = textlen;
++			break;
++		}
++		idx = log_next(idx);
++		seq++;
+ 
+-			if (seq < log_first_seq) {
+-				/* messages are gone, move to next one */
+-				seq = log_first_seq;
+-				idx = log_first_idx;
+-			}
++		logbuf_unlock_irq();
++		if (copy_to_user(buf + len, text, textlen))
++			len = -EFAULT;
++		else
++			len += textlen;
++		logbuf_lock_irq();
++
++		if (seq < log_first_seq) {
++			/* messages are gone, move to next one */
++			seq = log_first_seq;
++			idx = log_first_idx;
+ 		}
+ 	}
+ 
+-- 
+1.9.1
 
-- Naresh
-
->
-> Regards,
-> Michael
-> --
-> SUSE Linux GmbH, GF: Felix Imend=C3=B6rffer, Jane Smithard, Graham Norton=
-, HRB 21284 (AG N=C3=BCrnberg)
