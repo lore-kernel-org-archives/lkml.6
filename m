@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1092BC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D16C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B765E20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:01:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 398FF20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:02:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F2WoM/dv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QUn50H0S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B765E20652
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jog8sov1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C0zAlQ9I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 398FF20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932948AbeFTI5a (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:57:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49612 "EHLO
+        id S1754797AbeFTJCH (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 05:02:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49552 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753709AbeFTIpD (ORCPT
+        with ESMTP id S932602AbeFTIpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:45:03 -0400
+        Wed, 20 Jun 2018 04:45:00 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 99A6C60B83; Wed, 20 Jun 2018 07:28:33 +0000 (UTC)
+        id 8D0FA60714; Wed, 20 Jun 2018 07:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479713;
-        bh=f1ZuNS+AL96dc3Yu0tDYkuTUIUz22p8bk9WRXfBFcuA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F2WoM/dvacd2auHolS9xWvEMsq+9IzwLYhtx6NpoVdTZcXC96okyFw3OAfiVVi6DA
-         IZKh1vPkMKTo2jfsX4wEQyBQ8wmAMZc8eA45IfbwJQnZnk+xPomKyJvi/1Gokmlc78
-         r/EVqkgG4M1r++H9bFLHGFTXfjtZlMeeSfLeNVq4=
+        s=default; t=1529479673;
+        bh=H5j6Hm2fEfVor/UOBsGNN62LwiD17JBFcwYZdSCnTOI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jog8sov1wUVSGAM1slf2OR7/SisQmfXTPaO/bT11QRc1/3PEszAoxAB/NbF/DV5Qw
+         D6APlF4z50B4pFmQC9707QNXVs5Cx/yaA1zJVQJlWVw//+ZZWmIFTl7PBETaFM41ye
+         4VchjPI1pEwpBdCPu3Z+rZ5fKMMUQWTP/k2nI0So=
 Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: absahu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 618EB60B15;
-        Wed, 20 Jun 2018 07:28:29 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 511D1605FF;
+        Wed, 20 Jun 2018 07:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529479712;
-        bh=f1ZuNS+AL96dc3Yu0tDYkuTUIUz22p8bk9WRXfBFcuA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QUn50H0S/VR8kpaRhthubXYIdqb0hzhbWiBlYnOooQVBCL2HBIVXkJQ+GRgegjLUy
-         OTDbYOu3aj2Dv/gpYyJPbbdG82X+3nl3EFW5Hs2/7GxyO8kUq2XDKkaep58NYLrFnz
-         w+UnTsWY1L4Zj4S94B6m+lYFK3jVyspY7jHt7vCA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 618EB60B15
+        s=default; t=1529479672;
+        bh=H5j6Hm2fEfVor/UOBsGNN62LwiD17JBFcwYZdSCnTOI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=C0zAlQ9InBVc+29A7mufOavUJ5NM2MbizpeS45JnB8199LPZWwLUbfouzgvBcKINA
+         e0WxNsn0brVF8tNNA4IO2GlOGBj4o60frlb0aRGmY1mwrmh4MSXeC/l0IQAHecfqhU
+         CE9AWZEAYF12dTletPGo31O9InVgQfedlCxOQZC4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 511D1605FF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
 From:   Abhishek Sahu <absahu@codeaurora.org>
@@ -61,85 +62,108 @@ Cc:     David Woodhouse <dwmw2@infradead.org>,
         linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
         Archit Taneja <architt@codeaurora.org>,
         Abhishek Sahu <absahu@codeaurora.org>
-Subject: [PATCH v4 10/15] mtd: rawnand: qcom: modify write_oob to remove read codeword part
-Date:   Wed, 20 Jun 2018 12:57:37 +0530
-Message-Id: <1529479662-4026-11-git-send-email-absahu@codeaurora.org>
+Subject: [PATCH v4 00/15] Update for QCOM NAND driver
+Date:   Wed, 20 Jun 2018 12:57:27 +0530
+Message-Id: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
-References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QCOM NAND controller layout protects available OOB data bytes with
-ECC also so when ecc->write_oob() is being called then it
-can't update just OOB bytes. Currently, it first reads the last
-codeword which includes old OOB bytes. Then it updates the old OOB
-bytes with new ones and then again writes the codeword back.
-The reading codeword is unnecessary since user is responsible to
-have these bytes cleared to 0xFF.
+* v4:
 
-This patch removes the read part and updates the OOB bytes with
-data area padded with OxFF.
+1. Added patch to make other ECC configurations function static.
+2. Clubbed the DT update patches.
+3. Removed the bad block related patch. Discussion is going on
+   related with for proper solution so planning to submit separate
+   patch series for all bad block related changes.
+4. Made the single codeword raw read function and used the same
+   for raw page read.
+5. Changes in erased codeword detection to raw read function.
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
-* Changes from v3:
-  NONE
+* v3:
 
-* Changes from v2:
+1. Addressed all review comments in v2.
+2. Added patch for removing redundant nand-ecc-step-size DT property.
+3. Renamed ECC configuration setup function with minor code changes.
+4. Modified comments and commit message for few patches.
 
-  1. Changed commit message and comments slightly
-  2. Changed host->use_ecc assignment place
+* v2:
 
-* Changes from v1:
-  NEW CHANGE
+1. Addressed all review comments in v1.
+1. Make the generic helper function for NAND ECC parameters setup
+   and used this helper function for QCOM and Denali nand driver
+   for ECC setup.
+2. Modified commit message for some of the patches and added more
+   comments.
+3. Added new patch for fixing ‘return 0’ for raw read.
+4. Removed the read last codeword part for nand oob write.
+5. Reorganized bad block check function and removed the
+   read_last_cw function completely.
 
- drivers/mtd/nand/raw/qcom_nandc.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+* v1:
 
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index 285b2ad3..28361b5 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -2064,11 +2064,9 @@ static int qcom_nandc_write_page_raw(struct mtd_info *mtd,
- /*
-  * implements ecc->write_oob()
-  *
-- * the NAND controller cannot write only data or only oob within a codeword,
-- * since ecc is calculated for the combined codeword. we first copy the
-- * entire contents for the last codeword(data + oob), replace the old oob
-- * with the new one in chip->oob_poi, and then write the entire codeword.
-- * this read-copy-write operation results in a slight performance loss.
-+ * the NAND controller cannot write only data or only OOB within a codeword
-+ * since ECC is calculated for the combined codeword. So update the OOB from
-+ * chip->oob_poi, and pad the data area with OxFF before writing.
-  */
- static int qcom_nandc_write_oob(struct mtd_info *mtd, struct nand_chip *chip,
- 				int page)
-@@ -2081,19 +2079,13 @@ static int qcom_nandc_write_oob(struct mtd_info *mtd, struct nand_chip *chip,
- 	int ret;
- 
- 	host->use_ecc = true;
--
--	clear_bam_transaction(nandc);
--	ret = copy_last_cw(host, page);
--	if (ret)
--		return ret;
--
--	clear_read_regs(nandc);
- 	clear_bam_transaction(nandc);
- 
- 	/* calculate the data and oob size for the last codeword/step */
- 	data_size = ecc->size - ((ecc->steps - 1) << 2);
- 	oob_size = mtd->oobavail;
- 
-+	memset(nandc->data_buffer, 0xff, host->cw_data);
- 	/* override new oob content to last codeword */
- 	mtd_ooblayout_get_databytes(mtd, nandc->data_buffer + data_size, oob,
- 				    0, mtd->oobavail);
+This patch series mainly deals with error handling and erased page
+bitflip detection for QCOM NAND driver.
+
+1. The error handling was missing for some of the cases so fixed
+   the same.
+
+2. Add the support for taking ECC strength from ONFI parameter.
+   The earlier QCOM boards were coming with 4-bit ECC chip but
+   now the same boards are coming with 8-bit ECC chip since the
+   earlier 4-bit parts are obsolete from some vendors.
+
+3. We got few issues related with NAND erased page bitflips. The
+   QCOM NAND controller can’t detect the bitflip in completely erased
+   page so added the support to detect the same. It implemented the
+   logic mentioned in patch [1] which didn’t go in mainline and later
+   the generic functions were provided [2] to count the number of
+   bitflips and make all 0xff. This patch series did some optimization
+   logic to prevent the unnecessary full page raw read and data copy
+   from QCOM NAND controller to DMA.
+
+4. Following are the testing done for these patches in QCOM IPQ8074
+   HK01 (4-bit and 8-bit ECC chip) and IPQ806x AP148 boards.
+    a. Run all mtd test and check if it passes
+    b. Introduce custom bitflips in erased page and check if it
+       returns no error/EUCLEAN/EBADMSG depending upon number of
+       bitflips and position.
+    c. Introduce failure condition for operational failure and
+       check if it detects the same.
+
+[1]: https://patchwork.ozlabs.org/patch/328994/
+[2]: https://patchwork.ozlabs.org/patch/509970/
+
+Abhishek Sahu (15):
+  mtd: rawnand: helper function for setting up ECC configuration
+  mtd: rawnand: denali: use helper function for ecc setup
+  dt-bindings: qcom_nandc: update for ECC strength and step size
+  mtd: rawnand: qcom: remove dt property nand-ecc-step-size
+  mtd: rawnand: qcom: use the ecc strength from device parameter
+  mtd: rawnand: qcom: wait for desc completion in all BAM channels
+  mtd: rawnand: qcom: erased page detection for uncorrectable errors
+    only
+  mtd: rawnand: qcom: fix null pointer access for erased page detection
+  mtd: rawnand: qcom: parse read errors for read oob also
+  mtd: rawnand: qcom: modify write_oob to remove read codeword part
+  mtd: rawnand: qcom: fix return value for raw page read
+  mtd: rawnand: qcom: check for operation errors in case of raw read
+  mtd: rawnand: qcom: code reorganization for raw read
+  mtd: rawnand: qcom: erased page bitflips detection
+  mtd: rawnand: provide only single helper function for ECC conf
+
+ .../devicetree/bindings/mtd/qcom_nandc.txt         |   7 +-
+ drivers/mtd/nand/raw/denali.c                      |  30 +-
+ drivers/mtd/nand/raw/nand_base.c                   |  72 ++-
+ drivers/mtd/nand/raw/qcom_nandc.c                  | 491 ++++++++++++++-------
+ include/linux/mtd/rawnand.h                        |  10 +-
+ 5 files changed, 380 insertions(+), 230 deletions(-)
+
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
 is a member of Code Aurora Forum, hosted by The Linux Foundation
