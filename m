@@ -2,156 +2,77 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C676C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C4C9C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B31B20020
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:35:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4hpydDm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B31B20020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 174D620020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:35:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 174D620020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754943AbeFTTfF (ORCPT
+        id S1754976AbeFTTfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:35:05 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43622 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754667AbeFTTfD (ORCPT
+        Wed, 20 Jun 2018 15:35:41 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:34228 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754800AbeFTTfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:35:03 -0400
-Received: by mail-lf0-f66.google.com with SMTP id x13-v6so1007025lff.10;
-        Wed, 20 Jun 2018 12:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=1TYUX0Ctd870+oAe4u9AOmTinwJeosIUhhRdCGH/peA=;
-        b=Z4hpydDmFRqFUzDJXcpcqDO94VOHK+OZNy9L2HMFebU5BqtoCvWZd6T1sV9lj2Xcay
-         3NxMBfgEAXK7HyZTRaEiavQg3FnhPT4EXd9w4+4tWa4pBGF/zKo3NeWFhmlIk+k6ow47
-         i656r2CPjRLisah5jvv8VAzydbzr48WCvf8CKms8F2a0YT+nlKi9/tMETaF7t94FkMrp
-         4Oo+Xxb6ZyZnjf/fcL/SiZgQfisPObxGYJpwkxrk1MDbFyEeOXzZbm8SzD1zJs6ZUsjm
-         bLcJnrnBL0ROa3fq6ulHDtVvasYwwocPDD/f7CcmVtELSXR9x/trvEFqFQ+/cvQc0lek
-         1UWg==
+        Wed, 20 Jun 2018 15:35:39 -0400
+Received: by mail-yw0-f193.google.com with SMTP id b125-v6so273684ywe.1;
+        Wed, 20 Jun 2018 12:35:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=1TYUX0Ctd870+oAe4u9AOmTinwJeosIUhhRdCGH/peA=;
-        b=b0J7wl44SiivC9pPgKaIa5kBkF+vScSr4PEAj/EDwDi+pNMY1eF+AZB0q6bFI7sIbR
-         Npy4U12B2gmjkHQYytTZ+VzVLHZHhmcp/BnCue4z8s8Rsiqy6JHeUyx2ogBjjk9sPKsU
-         VS1abs8DZ7xrWLpEIxPYTDNZZlcU0ayzMMnLtgm8o4umq1aWeKxIivaB8qrMq2E2F8OH
-         t4eWbg1C4FvQ/xcoX91VkrMVPJ2TSd+cACuDNG1NaLt5m8V/Uk2QUM2MyvqgDINGnYq2
-         U4R/s2Lct9e/Dg09sHLuaFtTl5pAol2v5C2ZfsJVvn7ZYqPxGyE8iy+I6zUVPz0qi3/I
-         Nb4w==
-X-Gm-Message-State: APt69E1kPHbXOHO2weJM/DB9tFlXsgG0MeQPPuLnhohFGruf2lAmmGKq
-        Yzs/w7gS3cmBAw+5C/hLN+fr3UmC/pneUQtu+R8=
-X-Google-Smtp-Source: ADUXVKLFwRKvYxijL1uIEw/CYpHI+MrsQw+cVKr+/hVoMzfrM3rt0hhqX9ooyJw28UTn4LAiTslrqC92cQOapMjt4Xo=
-X-Received: by 2002:a2e:804c:: with SMTP id p12-v6mr14937186ljg.22.1529523301304;
- Wed, 20 Jun 2018 12:35:01 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+IpjmmAyeG2wCSeQUSKU5YITICHNzL8mIa1wZfPZiNY=;
+        b=TDHaAige52CunUECZFBS4wDeuuiQzqfDY6ssqJ7RQ5sthL0EWG/G7wGw+ZA5CYOiv2
+         qTgkb/0aETpLSJVfB5VpVtJSfJLOqNreguXQWsrYG5IwKhfBizmrslDrtYkBtcUfzsyG
+         KQGPNBPzKY19pfBL19afr2vm0GZGIBpheAVsei6RG0CO1QdpdUD9QrSznTLemIoIw3Dq
+         kccCnSwgcf9fYKuUBEc4UEZyzDhJV/J1tcWOgCyEasUJHZGG8WRNVRdwA9WEWlUataZi
+         IBZdmoQO4U2pn92Usq0GeVyllKoITpkaHjUftV61iUw/eE/xRS5t1y3FF1uWxwiwZQAT
+         ALDA==
+X-Gm-Message-State: APt69E1ychHdwCD3NI9b2jBFtEskEvTfjFMR0i+h2JxDfV1sTDUGAYqm
+        p9u3V8O9/EdSygMBRlQgTvevFJhmnQ==
+X-Google-Smtp-Source: ADUXVKL1i28/yncTFSULFiuC+Ov9pbTlQgOGwsfp9qE2usKo121Ia9uFrj+063HDWgOYwKHYX5teeA==
+X-Received: by 2002:a81:4b57:: with SMTP id y84-v6mr10776624ywa.35.1529523338867;
+        Wed, 20 Jun 2018 12:35:38 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id c68-v6sm1072386ywc.95.2018.06.20.12.35.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 12:35:37 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 13:35:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ben Whitten <ben.whitten@gmail.com>
+Cc:     devicetree@vger.kernel.org, mark.rutland@arm.com,
+        alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, nicolas.ferre@microchip.com,
+        Ben Whitten <ben.whitten@lairdtech.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: add laird and giantec vendor prefix
+Message-ID: <20180620193536.GA26356@rob-hp-laptop>
+References: <1529070055-18701-1-git-send-email-ben.whitten@lairdtech.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 12:35:00
- -0700 (PDT)
-In-Reply-To: <87muvpsa61.fsf@linux.intel.com>
-References: <20180620150138.49380-1-arnd@arndb.de> <87r2l1sby0.fsf@linux.intel.com>
- <CAK8P3a1J9j7pz-d+otbJweWgOZZePdaMJEb_sU2GJKi3oYq7Xg@mail.gmail.com> <87muvpsa61.fsf@linux.intel.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Jun 2018 21:35:00 +0200
-X-Google-Sender-Auth: 2o9seSztMnOmeazK8jylqnYigTg
-Message-ID: <CAK8P3a1Lr2y1SZonodsyUETkc3d_NBOzyOGGv0OFSW=Xo_RVsA@mail.gmail.com>
-Subject: Re: [PATCH] vfs: replace current_kernel_time64 with ktime equivalent
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529070055-18701-1-git-send-email-ben.whitten@lairdtech.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 6:19 PM, Andi Kleen <ak@linux.intel.com> wrote:
-> Arnd Bergmann <arnd@arndb.de> writes:
->>
->> To clarify: current_kernel_time() uses at most millisecond resolution rather
->> than microsecond, as tkr_mono.xtime_nsec only gets updated during the
->> timer tick.
->
-> Ah you're right. I remember now: the motivation was to make sure there
-> is basically no overhead. In some setups the full gtod can be rather
-> slow, particularly if it falls back to some crappy timer.
->
-> I think it would be ok if it falls back to jiffies if TSC or a similar
-> fast timer doesn't work. But the function you're using likely
-> doesn't do that?
+On Fri, Jun 15, 2018 at 02:40:50PM +0100, Ben Whitten wrote:
+> This adds a vendor prefix "laird" for Laird PLC who make
+> CPU modules and system on chips.
+> Also adds "giantec" for Giantec Semiconductor, Inc. who
+> make eeprom memory used on Laird designs.
+> 
+> Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 
-My patch as posted just uses ktime_get_coarse_real_ts64(), which
-doesn't ever access the hires clocksource, the change is just cosmetic
-so far.
-
-The timekeeping and clocksource core code (maintainers added to Cc)
-doesn't yet export an API that we can use to determine whether the
-clocksource is "fast" or not, but I would expect that we can decide
-to add that if needed.
-
-This is also something that definitely changed over the years since
-your patch was originally added. Back then, the x86 TSC probably
-wasn't reliable enough to depend on it but now I would guess that
-very few x86 machines in production use care. On embedded systems,
-we used to have all kinds of clocksource drivers with varying
-characteristics, but nowadays the embedded market is dominated
-by ARMv7VE (Cortex-A7/A15/A17) or ARMv8, which are required
-to have a fast clocksource (drivers/clocksource/arm_arch_timer.c),
-and a lot of the others have it too (risc-v, modern mips, all ppc32,
-most ARM Cortex-A9, ...).
-The traditional non-x86 architectures (s390, powerpc, sparc) that
-are still being used have of course had low-latency clocksource
-access for a much longer time.
-
-This means, we're probably fine with a compile-time option that
-distros can choose to enable depending on what classes of hardware
-they are targetting, like
-
-struct timespec64 current_time(struct inode *inode)
-{
-        struct timespec64 now;
-        u64 gran = inode->i_sb->s_time_gran;
-
-        if (IS_ENABLED(CONFIG_HIRES_INODE_TIMES) &&
-            gran <= NSEC_PER_JIFFY)
-                  ktime_get_real_ts64(&now);
-        else
-                  ktime_get_coarse_real_ts64(&now);
-
-        return timespec64_trunc(now, gran);
-}
-
-With that implementation, we could still let file systems choose
-to get coarse timestamps by tuning the granularity in the
-superblock s_time_gran, which would result in nice round
-tv_nsec values that represent the actual accuracy.
-
-Obviously this still needs performance testing on various bits
-of real hardware, but I can imagine that the overhead is rather
-small on hardware from the past five years.
-
-     Arnd
+Reviewed-by: Rob Herring <robh@kernel.org>
