@@ -2,103 +2,124 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F7EC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145B0C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F73720846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6A19208B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:24:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="SDq+eh9h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F73720846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lEJigrz2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A19208B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754200AbeFTPUU (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:20:20 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:48592 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753853AbeFTPUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:20:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
-        ; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=ODfGZfJ34dLcUmeJ0tXg09XWEsQZcPRgJ3EeQerPpTE=; b=SDq+eh9h8Nlh26PWdUiBzUB84E
-        mNkefWmSe0TwXlEUJDjor4JDs9dF+dJ220eqbnl5lED4PeNd7nHe81YdsoZsZSVYa+/98sl2VoD9U
-        M4pjOOpEMuKGUTLZklv9iYv6VkbI14zQoJ84MzoF60zp74xmZkBP8vy33Hdt4Uv7Fwyo=;
-Date:   Wed, 20 Jun 2018 11:22:35 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 1/3] mm: memcg: remote memcg charging for kmem allocations
-Message-ID: <20180620152235.GB2441@cmpxchg.org>
-References: <20180619051327.149716-1-shakeelb@google.com>
- <20180619051327.149716-2-shakeelb@google.com>
- <20180619162429.GB27423@cmpxchg.org>
- <CALvZod7eq3WnMU8dzA+9CmbOuf-peaCyhLuMRW2n_VyOPqjZ7A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod7eq3WnMU8dzA+9CmbOuf-peaCyhLuMRW2n_VyOPqjZ7A@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S932411AbeFTPYk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 11:24:40 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42768 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754093AbeFTPYe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 11:24:34 -0400
+Received: by mail-wr0-f195.google.com with SMTP id w10-v6so3725337wrk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 08:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=XKjQm946wgqBcvKf36FFRVltlqNjqNquoHht/aDg6nU=;
+        b=lEJigrz2OiWBxMqQ2GbgTMNaf8HM5o4WfSODpVX11gR3uVG3NYEkX6OOAxhXBkO2VM
+         jomcNT4FHr5zvHDoAr14vO7x6jbK/mhwcwrRvRYcV3f14W3VEREc3BgU5Uu4PLBrMPvd
+         AxlLMDnVf6PytDxds14J7F6wIztQmBZ8ZVXxk0wQd7oBiM5FB87jNG8Z8VbYARGtapY0
+         Jqj71BFYcO6Arm4MqZyQEoxU7h9jidia7mGzCLpPPKekORuZtnizCR4o1aemqWBVwI7r
+         m/qrma4RcAX2hw+LUNMM9RiOQUTiUZer0boGMlOxJt1C6TjzUg1yXvyarAOiHl0ijDnv
+         X7Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=XKjQm946wgqBcvKf36FFRVltlqNjqNquoHht/aDg6nU=;
+        b=QoWpqBRSvDlt7DkhtFyCRcT0npg+eIYhqQYq7JO6o7/gpY9EgMifG8MQ4qBKxi7zTK
+         GBje4aicVg/dWcU4eRA/un6c875yKMYKEhjt8KKFsn5wckfnNV1oD2WON3x3ryNZsFVT
+         PKs1S5ttaLKrOhNMKaOQN8SajHT0ZqvQ0tb5o1N+if6QuHryXaMGiBhXXcmuUVXCT4md
+         HPCGvoyW3yif0pwowJtyZ93ZO/qPbvqY7FhzjNMvejyPn3yu30USwBGYb5Jya/hgTyRb
+         8MlxuEnM/DX0O84fNlY3wOunfT0LhtxgIetPs+bxPm5Jz9tYMFA1UCrwEGwJO5qNxiie
+         rzOQ==
+X-Gm-Message-State: APt69E0sY3M9OBLEmPlzUa8+vjTuuNyU8PLJJ+O7qhNNZHETYloZbOAR
+        tR9PS06cgn5DS3+ZKo8nev28sg==
+X-Google-Smtp-Source: ADUXVKKaG9tLMBQSmpdBkcvCAygtoJeNPH5U1f8+dJ0VYDreDtubosvrhkERRf+42VqZN8GkOQZ0gA==
+X-Received: by 2002:adf:a706:: with SMTP id c6-v6mr19077169wrd.61.1529508272731;
+        Wed, 20 Jun 2018 08:24:32 -0700 (PDT)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
+        by smtp.gmail.com with ESMTPSA id c11-v6sm3959244wrm.65.2018.06.20.08.24.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 08:24:32 -0700 (PDT)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v4 2/7] uaccess: add untagged_addr definition for other arches
+Date:   Wed, 20 Jun 2018 17:24:21 +0200
+Message-Id: <a937551f03c4617aa400fb75130627df7ed09506.1529507994.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+In-Reply-To: <cover.1529507994.git.andreyknvl@google.com>
+References: <cover.1529507994.git.andreyknvl@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 04:31:18PM -0700, Shakeel Butt wrote:
-> On Tue, Jun 19, 2018 at 9:22 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > On Mon, Jun 18, 2018 at 10:13:25PM -0700, Shakeel Butt wrote:
-> > > @@ -248,6 +248,30 @@ static inline void memalloc_noreclaim_restore(unsigned int flags)
-> > >       current->flags = (current->flags & ~PF_MEMALLOC) | flags;
-> > >  }
-> > >
-> > > +#ifdef CONFIG_MEMCG
-> > > +static inline struct mem_cgroup *memalloc_memcg_save(struct mem_cgroup *memcg)
-> > > +{
-> > > +     struct mem_cgroup *old_memcg = current->target_memcg;
-> > > +
-> > > +     current->target_memcg = memcg;
-> > > +     return old_memcg;
-> > > +}
-> > > +
-> > > +static inline void memalloc_memcg_restore(struct mem_cgroup *memcg)
-> > > +{
-> > > +     current->target_memcg = memcg;
-> > > +}
-> >
-> > The use_mm() and friends naming scheme would be better here:
-> > memalloc_use_memcg(), memalloc_unuse_memcg(), current->active_memcg
-> >
-> 
-> Ack. Though do you still think <linux/sched/mm.h> is the right place
-> for these functions?
+To allow arm64 syscalls accept tagged pointers from userspace, we must
+untag them when they are passed to the kernel. Since untagging is done in
+generic parts of the kernel (like the mm subsystem), the untagged_addr
+macro should be defined for all architectures.
 
-Yeah, since it has the memalloc_* prefix, we should keep it there.
+Define it as a noop for other architectures besides arm64.
 
-If we did use_memcg(), unuse_memcg(), I'd put it into memcontrol.h,
-but it seems a little terse; memalloc adds valuable context, IMO.
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ include/linux/uaccess.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks Shakeel!
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index efe79c1cdd47..c045b4eff95e 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -13,6 +13,10 @@
+ 
+ #include <asm/uaccess.h>
+ 
++#ifndef untagged_addr
++#define untagged_addr(addr) addr
++#endif
++
+ /*
+  * Architectures should provide two primitives (raw_copy_{to,from}_user())
+  * and get rid of their private instances of copy_{to,from}_user() and
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
+
