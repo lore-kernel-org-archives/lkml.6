@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F5BC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E7BC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9BC20020
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 810ED20020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:19:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="qfkYDm7E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9BC20020
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="dxlE7mej"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 810ED20020
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932132AbeFTFSx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 01:18:53 -0400
-Received: from mail-ve1eur01on0090.outbound.protection.outlook.com ([104.47.1.90]:31456
+        id S932264AbeFTFTA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 01:19:00 -0400
+Received: from mail-ve1eur01on0114.outbound.protection.outlook.com ([104.47.1.114]:17318
         "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754050AbeFTFSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 01:18:35 -0400
+        id S1753879AbeFTFSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 01:18:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VQCSNQL/37dY3ejcySXVopWlAnzUddsyuB4HyPiR5Os=;
- b=qfkYDm7EMlSrWTYPKsnLThga4I+sJu8VM2fMu2aIhjO4ixPbzuaWlJADNF01RsapQ7lUyo4oam98SLCADezWjUshhXNu08wCHa9qtsuMwIG8OejorOknQX8nnJz3RRHQN5eYNwMJj5tIp6hBJdtwYNsziRWnVZ4joeDnrp7bZNI=
+ bh=TV58Sd8YF+pNU9ABk/utiMotiOqOQ+bGP0pBn0L9C5M=;
+ b=dxlE7mejLoyZfoDyaHF+VUONmt/A3nvZL+GU95Ui1g9YBKc4vbS3TI+7klrzaJBZrP5hCSPir4Wi+l3E1V2WWwglWga/rns1Nc0M5Mi57/JuNYl+lHxJsemfRTOfi0IUdCarm29X+JfPt7STLaEGTqelBab8/kCRkPyGhsWCm7w=
 Received: from orc.pedanet (85.226.244.23) by
  AM5PR0201MB2452.eurprd02.prod.outlook.com (2603:10a6:203:35::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.20; Wed, 20 Jun
- 2018 05:18:27 +0000
+ 2018 05:18:33 +0000
 From:   Peter Rosin <peda@axentia.se>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
@@ -67,9 +67,9 @@ Cc:     Peter Rosin <peda@axentia.se>, Peter Huewe <peterhuewe@gmx.de>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
         linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH v2 03/10] input: rohm_bu21023: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
-Date:   Wed, 20 Jun 2018 07:17:56 +0200
-Message-Id: <20180620051803.12206-4-peda@axentia.se>
+Subject: [PATCH v2 04/10] media: af9013: switch to i2c_lock_bus(..., I2C_LOCK_SEGMENT)
+Date:   Wed, 20 Jun 2018 07:17:57 +0200
+Message-Id: <20180620051803.12206-5-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180620051803.12206-1-peda@axentia.se>
 References: <20180620051803.12206-1-peda@axentia.se>
@@ -80,54 +80,54 @@ X-ClientProxiedBy: HE1PR05CA0127.eurprd05.prod.outlook.com
  (2603:10a6:7:28::14) To AM5PR0201MB2452.eurprd02.prod.outlook.com
  (2603:10a6:203:35::9)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c4bd7941-c7bb-48a5-e3c2-08d5d66d42a3
+X-MS-Office365-Filtering-Correlation-Id: ff8ce800-54e8-4643-1c6b-08d5d66d45ad
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR0201MB2452;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;3:kQoNo0PSavTSlbSpdGyzquXjxWDc/DTPgx+y6F0XmECRoDIIhkscbU4dNt7mtiZw6eh71RTov+Q4tDKTo8L2MqfboNJq9kKpfNVcbb54V47YHWtEbm2wrTYsJ9xCGrkTQxhJrPIjNIk4Ygc2uAJKhOeCIqhF1dfDc3SwWtdpaFfoFyOjBHksV9gHJyz/Xt+uhFpDfTBKu2yBq5ukMfdjJLU2B2AIl0pxIDZ3g/01eVjnqtqjU17yL4s5cCe3YA2W;25:u2S6Nus8pccKsbxxFdPMHEh9ymRzov1FDbOlZdW/Z8q2RnPSHnYzjOkhkLaZaNRBqcInYbn9vHeAeiCMWBWTaJeUdeu5saUAwcQk6drzKPZynl9465Jr6YsXeocNOW76uSQUkArHFGQNup2t4/xU2cW+FZ0LX5Zbq/YBB27fPqgkOapo8lA8h9TFFPsiWxBE5bASwQ0BPMp79I1Fj9KGQFD0eaVBZe7cIxsAh7bCwkZZ8h1UIM38FmnldAk9tdZl4l/09OgQ05wOpFbayKZONjKoSalFTNQKsFiXedCO4Gk2N3ts12LKwwb9DCbZHjglVKTFv6A4di1DC3zMo6uMeA==;31:yY47wniyxLDS/AeKjgFkyPRVUaXoGlDx6iX3LzQQYHbC408wtcL87L5s04A3J6BsZEQmohQWgzM6RURtpKTGw5jaHe7s56ufV8tRA3hd+1qAxTHDesFUdzZEMR+O9uM03ikn4TCOHFaQM/EXY8NOANpqR5VnZ8HSi76AutkWHUWwULprN6QTth3YmWnbuRz6BmqT+R62SVfRiIcQWMQmRPh3qWESQF4vtt8dPDcGt6I=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;3:8Q8oRJG6rhuzTrcFW17jBVelo1R6qSqKH8VPEG4acweetib3ZTKNirFc6SrYlj5yV3HYesDKl1PiWVa4uAoRTHj7gqxotxBn7UjuNVBIsB3bP/Kau9HZYr5USE+/iQmiJYdHUabJIokRDkjZbrbabCtSSJDCSqUeJ752EOp5ZQcOKKQJ0LN2VDleOcnhU2SKvCNvmC96AnYKTggvbrOHPe3lHaYrQxlxwiSI+gKkkfHhqdM49ZsSPdOY+PVHNlff;25:57+KS/Audnw3Dk7jWG5vuaKJr1USnobtu5MJa2EBk0RY3Dc79l9CWzXPhEEIibHNQSU4nEqD5fX3oJP7rM7urwjphgDDew1PeTP71p51EUrFKxEh4GoberwW0ZJwtEaSfNp87us+xjxZIUzNJ7rvwbzc9GFJ8dyKpKqAWQNDns/GF+nbXIx7hHRCnlpoNrk6rjbBFTs97teYDjCPQ7xa+3CnkN2urydP95QSzDKCa25WfdmehqG1um8rGQvYNKIJsw1ugXrjjftWQWtAjTSqJwAvcPrJgZU2A5LS9N4GdIUIDVT8I04+2y1xnjsS1VHdjgs3/Th/LhgzWjHqNgov7g==;31:UzUyCYkUWwzUjjsMjCoKci1BK0NdGw1v7I45C9LOeZeihlW4Gm5uvKPz0PXOOjW8fI7NcZj5ziywr+kRsUOp4F40tCsFw7XV076UbeO9s06UdfduLutsOi2J/zZwqDZLz5Y+1AVT0WItecy9H1Ue8pkz8L0ycH2LrsyPO6HcuZvBxI9+6YuCSG9WgNCEDMYzBDw0sKlR1IeruqQivz2OeG0Qi7dNIJ36YI5lzjjOaqw=
 X-MS-TrafficTypeDiagnostic: AM5PR0201MB2452:
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se; 
-X-Microsoft-Antispam-PRVS: <AM5PR0201MB2452372E5A247C5AA174274ABC770@AM5PR0201MB2452.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <AM5PR0201MB24522EC69C48E34264C356C5BC770@AM5PR0201MB2452.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(2016111802025)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(6043046)(201708071742011)(7699016);SRVR:AM5PR0201MB2452;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0201MB2452;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;4:dtKrfwPpMR13RZzl0/mjhlQ2hA+cllRetuJt1LgqrUe3Ks0Vy4lOHvxiQ+KgPFvuIXE+mFN1nwPyq+NCEteSF8EvFbmnwxBWJlRyO8KVNTXYWvNyObA9u4yMKTbqKfl/oEnLSjiozeijrZPAbg5l8PTzL8C3fw4uX4QPq6ChyijqjQzb8mLBGmAJCLpRoZRUIhq7FJez8SN09n0USr+9hjKCH3CVS2mxzIM1UXu2ZkdIi7CE+ibYUSR3k0LuwIDjB899bfbL0tXPzidUnz5haw==
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;4:qwHyw0IdE1UAyBfA3hmrGwbIn7vD6rkQQRoAxAs6mKx6v+XCtwfcqjJfEEOH3eMnMMW3GRna8GEHy/bNh8jmjRtAqRXBGBtLwkj/NeVzdQONFclTMkr2M0wmRhrjEWqpktdxUiLRk971C/6uc6BoIc5lc2eLLA726XJp42N325RFPzLNAcrZydYZ8a/FaZfQhA+wmq5uxCS+czv3Im2y3DpHvBOpBMsaibMqXQHCr9PGE9C1zliPIpQu1gLTRFV/Z69kszwa19tNLgtDbpTwDw==
 X-Forefront-PRVS: 070912876F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39380400002)(346002)(376002)(39840400004)(189003)(199004)(51416003)(50466002)(7416002)(6116002)(186003)(59450400001)(48376002)(3846002)(26005)(6916009)(53936002)(6666003)(1076002)(7406005)(6512007)(76176011)(15760500003)(2906002)(316002)(386003)(36756003)(478600001)(6506007)(68736007)(86362001)(5660300001)(16586007)(50226002)(52116002)(54906003)(16526019)(2361001)(4326008)(2351001)(47776003)(25786009)(39060400002)(66066001)(8666007)(305945005)(486006)(8676002)(7736002)(97736004)(81166006)(956004)(106356001)(476003)(105586002)(81156014)(6486002)(2616005)(8936002)(74482002)(446003)(11346002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2452;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(1496009)(366004)(396003)(39380400002)(346002)(376002)(39840400004)(189003)(199004)(51416003)(50466002)(7416002)(6116002)(186003)(59450400001)(48376002)(3846002)(26005)(6916009)(53936002)(6666003)(1076002)(7406005)(6512007)(76176011)(15760500003)(2906002)(316002)(386003)(36756003)(478600001)(6506007)(68736007)(86362001)(5660300001)(16586007)(50226002)(52116002)(54906003)(16526019)(2361001)(4326008)(2351001)(47776003)(25786009)(39060400002)(66066001)(8666007)(305945005)(486006)(8676002)(7736002)(97736004)(81166006)(956004)(106356001)(476003)(105586002)(81156014)(6486002)(2616005)(8936002)(74482002)(446003)(11346002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2452;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: axentia.se does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0201MB2452;23:8PPR58CYxl2Pk3Aa4eaDKjEzysT6Yu7JtQmzehO?=
- =?us-ascii?Q?9zoslype1oOFiBp+WagfqrKGqPBT+Z7muYgqKe/OSGLMSgWNUBCrEAg51cUn?=
- =?us-ascii?Q?MkfeVrqmZ22BiqkoiaBWW7VSFz1DZuvP8FxIY99RLgR7htVoWk4TJB78Htr+?=
- =?us-ascii?Q?SWbxP8rqJ7XNZRWqjC2zJoa6FFq/WUMZyro50OxPBT5TcQCwjEuRU6qNMi/T?=
- =?us-ascii?Q?LNNBI/F6l8jig8/2XCq4CYoz+wzC4lVUee2+39upFYvLHAb8DShggcZiURUr?=
- =?us-ascii?Q?wWyihPuwKYbWKHFbmuH8nlEx9XRLmkyMdiz2VBQCwvKwmjkfdSv6bAt8l0+p?=
- =?us-ascii?Q?m/qY/2qVYS4ivmO1ry0d+FyQaJxDD7oIVnPsic4QisyYYGn+koEtMQHZywVS?=
- =?us-ascii?Q?W90OVkUYO8UEDQAlmbqUrlyGB46cmQg/JiRbybQt5o3V2+rTTCmVirxCBN/i?=
- =?us-ascii?Q?R0LLP7Mpli3r68u7ZnMF9IG0/XkP1NjdsaE2PmN0vqLTmc5Ye02ECofQrsH7?=
- =?us-ascii?Q?g5KlCW8lwYEfFOxKywTFEvauYOaggxaq+muuOmPxDsmISWOzIKtfb9SnnHvT?=
- =?us-ascii?Q?V++MNNcZp85tfF7ZCrFDLzwb4wY2cGMgH8Q6G7V0r7eAt0NpDV2C1dSXRrxF?=
- =?us-ascii?Q?G7rlva3PvkyKlMkYzozSTgSBoLdpIjeXbZ5SG69wVljV3fnCmqOlykur54Dl?=
- =?us-ascii?Q?vaFd9TJIqa0Aby5aXDabWv0vwKHB0/gacwd3k4zPG2/jQH4Cktqmuoj+DDxy?=
- =?us-ascii?Q?02A+A9qe16HshK5w2FC+pvs2zzPGns05HKmcej76031x30wuIhVOH3HGbcit?=
- =?us-ascii?Q?DQUH38bmLYOGzY5hhutPf9j6L3KPm4/+qJJgq52OH6e/GtDY1orgCRFOYNPE?=
- =?us-ascii?Q?aKLe5bpPJWZ9iIXs6lqpPLppEXtPHED1xyRzeyROph2wmh18b9WOCHvhT5Ns?=
- =?us-ascii?Q?tDJgyYjzQ0aWqDB2hvijhdWmXpQBVTK7nb8Yu3zfutioX4TpRXmJzcOTi8ZX?=
- =?us-ascii?Q?BeXZMviPJTMuSQkEUOfQwrSgN2aRkeMbGdiGSelEKifY00W18Z8dlslr+Y4t?=
- =?us-ascii?Q?/yKOFkVS8Zk36dl28l9MMJxHCfMD69QToNheo7ZW3GXBh3AuMm36EKLS7wuC?=
- =?us-ascii?Q?Pe0ez0VsSERsCzqwJezRdQ7L3j1ittzPyiKGVVlsN3ofvMeY31MYvvKu4/85?=
- =?us-ascii?Q?86QM09OQSJU5eUOzE9YmTIlxnXGFOfmFP0TBBLRvpb4r1MoO9sPCOuLPlqat?=
- =?us-ascii?Q?hvReVhIOCN9zkZmfXZaqMdkKKiiDi55jnXoHmRDJnzBgfbfau/Hq6w7Ddw5p?=
- =?us-ascii?Q?PWe1SiHTM+kIMriF7Lla40j+RPFnVs0rMECZOZqUskJ2b5ibLR9Mj+suc9Cf?=
- =?us-ascii?Q?/WE2zhMxGTxnnTacQSagCp5wddc/nlKDnMSnCtJIQMR2Y2rsf+ZHCdCqMPU5?=
- =?us-ascii?Q?NJwzU0rAaAhVX8Bqduht30w/lSY7TbLw=3D?=
-X-Microsoft-Antispam-Message-Info: F3aOupz9g4ogVdmEFgiohAhhaNc1hxCK+YOxBi5nFFKYSDnvn4WBRhR6+NsZLbeImabobCYAb0F2iNNu6jvRgLB9Xy2F4qFhMvYEHV98CLLp9bDZXSL2Et9hPby7dmJrbVOeNY6WRBge/9QYmy+SjPdHRlB45gNpo2GQ/fXmFvKPtSX1sL9Bf5O5Ga1/EfOL17iMhNsnug3nEwj0FIzbhedMSoFNa2E2XtihjYqfUfKXiNTEgajPPTzz+rkmDCwcMBuGcsu1RQtoO9putDhL6huY1lGcfuEGL/sCwLJwtAztTZNRoSphc5rRPpI89TmS4gMIr5VOJfQpVGEV0kNweg==
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;6:RX4qBzsup9zDZavxnABls7iodhN4b+mwHgacoJ8siazaQZuSrnfkAr8o/dWhsgDTitxAcEaeOH+GnJkTT0Kf/sebhq/nWyxE7FbTB84JXOtgVVq0k83862pKhlxWQIu3x55w47yV52jNsL7GGN0GO9VU0YzJHrPUYdrbV4VeZWSN1/7RN2YFUSjkFeuJ4Pdf0DEZE9OL0PbGfFozUnaMgMVLttqEpmYG8ytkeYYbXjocMEZdcCIT0ad2EaU0eIicyHL1H8ddS0n/PlgyBMwylbbVV4WUYof4bpsE0xm7H9Qx30+vjythnoShrf8J+hAJ3J68PpSCkCE90JIrJWPO7NM+7obBIwM25itYjM7TviljcqTXw5Vz3CL8933k2VdvKzp+zPpeS/bCXZpjzIVOqTNA6iUVvog1iLB0YPuJtp+tKToLWQ/oN77kcGf+IX8yrvdAPQBLpt5fOe59pVu/4Q==;5:nIak8/4ZOpERk92LAOvVJYyxizzorb+3zqyUUnUtxDVkSSvuEmvCaNAF6w10c/gMslLeWKUz2wYV8y4HhEIaZWtDUmPCM+kiD8Dxhb+CO8cF8Bcxm8FFOKHxh6DrHRgtlfdX1AL9/AlO1LNQLrlyAAb9HeSTmatXKwEpfuJzj1g=;24:eCgGN8jFMIs+L0NI+Vlf4FdEOW+/HzTWXLWlcTb5F1mVzK6SJBlrexQUsIAeodzPNH32ZP4wAEueEop/YUqUUsOw9ND975Z6j/nH3hI3x/E=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0201MB2452;23:b2Zr2FCcAyG3huy6AIg58qGUx/3cnMEfJb7eQoK?=
+ =?us-ascii?Q?tbTxNV9Snt61BKfTPOLlSy4c0yn0JAb+HSSXYBkXpCiCHDd3Eiq+U7fCLx8+?=
+ =?us-ascii?Q?6hBdOtn06qTIA2OGvPfpgXkAGhNGTb56hXln2CUypE4PsR7zpa8vUq0wlpOx?=
+ =?us-ascii?Q?MH+EBQXtfJad9V+ZZc5gQoUCtfqKs9fywSo9IOMXpeQZqryyKRPcbmH0BMDJ?=
+ =?us-ascii?Q?86RyG6Ium9B4dIgVwzn9K7AAq97KAjPs7yecH5w3EKfCrbn8ndz7xzzo8WWw?=
+ =?us-ascii?Q?8OTBFJMaT0dHw6kP+3VnbqzOux/6HlwTJT9HzVdn+eLJvSyLPKKAMUD8NL7j?=
+ =?us-ascii?Q?ttPIgzZbsPt7D9RZMioleWq3YRbXac9aPx+BIZCy4MzFHgeTpUWf2WxYe3DW?=
+ =?us-ascii?Q?Nyg0jeASCuq3JeZFCnMVVM9PeSIWvzybUn+YzIaMRZtPNt6VLRpLU+pQJ02z?=
+ =?us-ascii?Q?1OeQ0s5LRfOH10nOQvK29A8Z3haCr0UtvKdNaaBCJwApHg3ok4CEzj7XWgbi?=
+ =?us-ascii?Q?E8GlhiSQSgJCCGAQvpmAb00F/AXTxl00E+sOzOY7F6o6zhN5H8B59AHxw+fY?=
+ =?us-ascii?Q?LsollpEt8l3ZC8TrxPjI3lSAMokyTMN6Q19dGk2McrgFg0gRUeNyMZXopeFO?=
+ =?us-ascii?Q?/fghAQh040Te9skxMCMkA8Y6e/ZsTxcEJ3I8gc9jkkCeJA0U2x3cDeXqeKBE?=
+ =?us-ascii?Q?t7Py/QGdvjEXDtsLZk+FOWuG2Q6YuLMuyVAIZswmXmETgeL6Mr8oZ/4E4oZX?=
+ =?us-ascii?Q?Bp1L34cxE9Xi4V/HzYlpSJEc7g+jGJKw11UxcRHVkYbMCc5hP2jdlEEHxT6O?=
+ =?us-ascii?Q?y7QVAEvk/Cv+fRpBaRrRceRDhnofGWLYCyA1PViyEv0BwJZUYdluM4jyahTd?=
+ =?us-ascii?Q?Mr9kN2WHb6Adkh/2bmoyugEI1eHlIQieI48XEYqJN91YPEWmBokF+azmo8Tj?=
+ =?us-ascii?Q?+PG/1Imo7O7dapW6/rwOW8ytKfmFIgY80Q3H7D5ZsqfGhbVQvEMgxu7rDO4T?=
+ =?us-ascii?Q?zDaDZA+IBbkzGKGMlqmjuDAyc9UxCny4UMWbdtNjDbwBRbJJAdHZ3FuW64sd?=
+ =?us-ascii?Q?bTZ9t9h9WT4jqYZvXFcXAj7RK+JFpp6yYYlOQr5bePhrRMoq3z3UwrgehDtF?=
+ =?us-ascii?Q?nyoR1vfPgE/mtSBPLAP8cNYOh5ggleNv9aJKGX6ZD00Yce5x4Xe0f74nAMDi?=
+ =?us-ascii?Q?gl8dnd5ayaNCitGKKN5p2jFe695sD5f4kDcsmRt/3g7rs4ECBdtu87KFxPlP?=
+ =?us-ascii?Q?ZWE5UQrb9UTc0AjwvL6FwLmdpaIjdBblPxJ690/YQqwJcjDEOBQhaXNu28p7?=
+ =?us-ascii?Q?2+GaSA+er7J0D+h3GOXmqAJ6PhU/z+ZI2HnnmzUQT1wHnu10QTRmH/oeKz+g?=
+ =?us-ascii?Q?/I88am1sAHr7ojDQwA+xUcnockeITmPg9aNUY/6NVua26VoUzoSnnZsI+Mzf?=
+ =?us-ascii?Q?MHrC7Xnc38sFFqNnmUzPr7+r6uDemwg3sYB/UyvMywC6jOcbp05ea?=
+X-Microsoft-Antispam-Message-Info: W4EY5PxFkyTMJOwrHTs3jTIYudcjHCG2sSJbtd6KTQIvPC3AryBTzPXxjA8sAknbsDFj3oku1gdaPmQuThsiV5cGPaZqeVLmJtcVuK4xJeIvOgL8SMgQZMXfda7ec30P0T161RSweL5sBYKBPbe+PBz8MxvNcJmCyfVaPSwA2La9wMJU+PsyRYswLmTLCa/WUzt533+b7EhFX3iit2pRmt0K0FvanyceFy7DnC5O9fWQ3S0l2cHLZq7zHQcVCUmjJMGKjP0kLLhEZV+KYwST+FkE6ejt9sc73mfIqff8XSmTEtcNwiAFsZ+OWMvS38jJAiwI0vw2noDhEn7be+ZsSw==
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;6:kH1mX1nrbAA2L0D+TmUgdq6qBCqpdPZ8b+FqOo+51/YQdUxgNFaV0s9zSgw1thDPdWgTKjOj7izako2cwmpYfGf1SJP6Ch4YKDturIkMt6oZmgojd4Z34H0ZrE3ybV9hVrsgVBRb5uZr9nbfaFObqg9obP+6DcPOwtoGcSvkcyc40ehOqS5/NmSA0zTwicvSVqD4EWdhIiWsMJgsFDGMF1aaNBh5T5/mXX18YC+bee7Ufz3t7YbveUXFrNLu0M2mni9GGMhjGrpCcP8p8QD2rUg1BNKl60kreKhK690DOm9ZkrxQiX+nNhKeDph9KVegjSUCUZgsVXl7fULoSiGx75DZvurrOtDvaUXOSZDXLl+CQJIXLgxZj64n1Q2nZ4jeQ/ZgrgTL47hEdze8a8epldCPwZTKzt9jSotGojTCWnK2TyZsDcHqcQyeog4BhH3xNYk9sOCQDIl0uiMcBEPd2w==;5:O2DbC9n0WAFxurqA6aaDJPHXuss1isWA11y8B73mEbDHJLjN8VyUXUOPI8du5iYFBau5UbcWXozzeuLjDPRl+UNKvkB67aK0np9NQ4bzPSyjPRx7GMiycz1QgYZvX15sRl3Xt1qb/b0ty3nL796xfQUHEJTBK4Oh2vEAXgKPMxc=;24:UU/SsZVbJvEpIr7EEDO8O5I/85tf3eQFV+292c/L4hs/CvgR1ys8Jru6npD9jMKtp2uZiEqHUbcxjQrVvFPzQAjXInnU8jWL/H4Ku+3G+Ts=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;7:uLIjqAZatDGiT9djw/AMGsIdWh789aFubRcLQAq0nVPQ8plhtQorH5LmmdOwfbMRZ7SNibI6V7uo2FS3ZtI2IgVHdbTTOc7lLC3K1Xr4YK5V8+MSOq2ox/p+zkki36eh3rDPnGoXe8NgfVxfy5nwk5PVuXKxIAAv6/MCfI3ST0XWrSIr/N2i0W0NRPWOCuv7HWLq4Qizlomym/TA0ooVQoJ6GwbqZokVgbfZyRzmWokJJqnh/CfddDuylRpWGGg0
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2452;7:U8CwjjM00X5u9zOeBdz1b0ZVP1aD0oc3Hzcw8yUpOlP4xh0HXuh1MirVMzsBlrPpEdwBo+dYunxN8XKGARaw5ET69PQESBHwArJ1ous7GQqUg9Wa5h9f0zPkXKVKBf+BmYc1NjUOOa7sX2nhUCVMZ9xIZToa1Sx8ACdyQv4jJe8QPGgNcTX1uVVz9qr8FvcmXd+W6c6xTErzHcpSk8OX0N4cz+QtcffIw5o2qKsy/OMORywgWf5CmmomimxbGKNK
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2018 05:18:27.9516 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4bd7941-c7bb-48a5-e3c2-08d5d66d42a3
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2018 05:18:33.0608 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff8ce800-54e8-4643-1c6b-08d5d66d45ad
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0201MB2452
@@ -143,31 +143,39 @@ sit behind a mux-locked mux, the two locking variants are equivalent.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/input/touchscreen/rohm_bu21023.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/dvb-frontends/af9013.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/input/touchscreen/rohm_bu21023.c b/drivers/input/touchscreen/rohm_bu21023.c
-index bda0500c9b57..714affdd742f 100644
---- a/drivers/input/touchscreen/rohm_bu21023.c
-+++ b/drivers/input/touchscreen/rohm_bu21023.c
-@@ -304,7 +304,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
- 	msg[1].len = len;
- 	msg[1].buf = buf;
+diff --git a/drivers/media/dvb-frontends/af9013.c b/drivers/media/dvb-frontends/af9013.c
+index 482bce49819a..99361c113bca 100644
+--- a/drivers/media/dvb-frontends/af9013.c
++++ b/drivers/media/dvb-frontends/af9013.c
+@@ -1312,10 +1312,10 @@ static int af9013_wregs(struct i2c_client *client, u8 cmd, u16 reg,
+ 	memcpy(&buf[3], val, len);
  
--	i2c_lock_adapter(adap);
-+	i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
+ 	if (lock)
+-		i2c_lock_adapter(client->adapter);
++		i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
+ 	ret = __i2c_transfer(client->adapter, msg, 1);
+ 	if (lock)
+-		i2c_unlock_adapter(client->adapter);
++		i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
+ 	if (ret < 0) {
+ 		goto err;
+ 	} else if (ret != 1) {
+@@ -1353,10 +1353,10 @@ static int af9013_rregs(struct i2c_client *client, u8 cmd, u16 reg,
+ 	buf[2] = cmd;
  
- 	for (i = 0; i < 2; i++) {
- 		if (__i2c_transfer(adap, &msg[i], 1) < 0) {
-@@ -313,7 +313,7 @@ static int rohm_i2c_burst_read(struct i2c_client *client, u8 start, void *buf,
- 		}
- 	}
- 
--	i2c_unlock_adapter(adap);
-+	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
- 
- 	return ret;
- }
+ 	if (lock)
+-		i2c_lock_adapter(client->adapter);
++		i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
+ 	ret = __i2c_transfer(client->adapter, msg, 2);
+ 	if (lock)
+-		i2c_unlock_adapter(client->adapter);
++		i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
+ 	if (ret < 0) {
+ 		goto err;
+ 	} else if (ret != 2) {
 -- 
 2.11.0
 
