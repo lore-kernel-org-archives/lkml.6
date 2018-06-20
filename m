@@ -2,156 +2,125 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4764C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A30C1B0F6
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 999DC208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:38:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999DC208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 77B3B208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:38:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIctjDG/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77B3B208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754614AbeFTIi3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:38:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44622 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750877AbeFTIi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:38:27 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4407D20DC1; Wed, 20 Jun 2018 10:02:42 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EFD0E20CFE;
-        Wed, 20 Jun 2018 10:02:31 +0200 (CEST)
-Date:   Wed, 20 Jun 2018 10:02:32 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH v3 4/4] mtd: rawnand: micron: support 8/512 on-die ECC
-Message-ID: <20180620100232.0ad18adc@bbrezillon>
-In-Reply-To: <20180620050544.31549-5-chris.packham@alliedtelesis.co.nz>
-References: <20180620050544.31549-1-chris.packham@alliedtelesis.co.nz>
-        <20180620050544.31549-5-chris.packham@alliedtelesis.co.nz>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932632AbeFTIig (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:38:36 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38397 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754619AbeFTIid (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 04:38:33 -0400
+Received: by mail-lf0-f66.google.com with SMTP id i83-v6so3666269lfh.5;
+        Wed, 20 Jun 2018 01:38:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HNGcY90aw1jSuFjOhEkiTIFnEdW/74Jil9N8Th72Dv0=;
+        b=XIctjDG/wqaFqCoWQQzOJLF8NeV3kMJh0rGxn6FKD+hmgPZz3Uw3eclnNRji7J9M0W
+         XJSgtxJJQHYdza6lsnjPkYkhtzyPvZyK8JGOru9IdE8bkpTt0ZQOsvHzSbzDmYOGKqvI
+         A7S0Dda37gVqwXxk86msoT1equTl/NhT5v+dC7B2OPyh8Sje5otG5uLbEb6OE3IzFnqX
+         ja1Vx0ahIlJNN6YjaKalxDVjEo/oXqvZN0e8yToSguUc5rf4M/uuvxaKByEjNlLIYmNI
+         On7PqH7jQG+WsdbWOpmHj8Q7/SVkCe/dRmgkqQi5T0aEgf3HxAdcSRWpUUePGe2Rzo9q
+         meUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=HNGcY90aw1jSuFjOhEkiTIFnEdW/74Jil9N8Th72Dv0=;
+        b=XMFnqxfeBiUHhGmvrkRpKZc7h+sVJsHHxG1rVb94IzOhhgc4So622hKfhmjjYaakEU
+         utkuAqk0sriXamCYnoNqcbvGq37CDS44iY7oWe0GsuRUFGyPde6KIO0oFzhYX+t/fdxn
+         1Y7h11XF7LOLZ+N9OaJ/JHQ9G0YiW24BmcweuYEK8Gt1Z7AwxktABRObnYoWYww/pG0Y
+         sHvK61e77foC5qGDduVGQAVnqYFT/EHjopq4Qrmcp4QSGLFZCbSghIJEoklgbDTzL1AB
+         XRNfTBcmLJjC6QeNTfcZPWUqh+4lkqN+YjU26zhBz6ogXrkfWkkFemTnCwkxJ+5DjixY
+         fVKQ==
+X-Gm-Message-State: APt69E3EtGV8VIR3dtesgPdAen6E79c+0U35DRN52+wmg3IjPPYCBsxi
+        7uRElgL8Kk/fJ1msX7t1vFwK8RxI
+X-Google-Smtp-Source: ADUXVKL0IuXQXxVBzOZ6MwpmQd3H2mxBVQOdQ3UctVqt0MJ3Qeb39JPOCLnZXB4mXuSoLHwkqUTaeA==
+X-Received: by 2002:a2e:2948:: with SMTP id u69-v6mr13008471lje.130.1529480099287;
+        Wed, 20 Jun 2018 00:34:59 -0700 (PDT)
+Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
+        by smtp.gmail.com with ESMTPSA id f203-v6sm285735lff.27.2018.06.20.00.34.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 00:34:58 -0700 (PDT)
+From:   Esben Haabendal <esben.haabendal@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
+        Angelo Dureghello <angelo@sysam.it>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Sanchayan Maity <maitysanchayan@gmail.com>,
+        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>,
+        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
+Subject: [PATCH 06/12] spi: spi-fsl-dspi: Fixup regmap configuration
+Date:   Wed, 20 Jun 2018 09:34:36 +0200
+Message-Id: <20180620073442.20913-7-esben.haabendal@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180620073442.20913-1-esben.haabendal@gmail.com>
+References: <20180620073442.20913-1-esben.haabendal@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018 17:05:44 +1200
-Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+From: Esben Haabendal <eha@deif.com>
 
-> Micron MT29F1G08ABAFAWP-ITE:F supports an on-die ECC with 8 bits
-> per 512 bytes. Add support for this combination.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> Changes in v2:
-> - New
-> Changes in v3:
-> - Handle reporting of corrected errors that don't require a rewrite, expand
->   comment for the ECC status bits.
-> 
->  drivers/mtd/nand/raw/nand_micron.c | 34 ++++++++++++++++++++++++------
->  1 file changed, 27 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
-> index 5cec79372181..0c2bde4411d7 100644
-> --- a/drivers/mtd/nand/raw/nand_micron.c
-> +++ b/drivers/mtd/nand/raw/nand_micron.c
-> @@ -18,10 +18,24 @@
->  #include <linux/mtd/rawnand.h>
->  
->  /*
-> - * Special Micron status bit that indicates when the block has been
-> - * corrected by on-die ECC and should be rewritten
-> + * Special Micron status bit 3 indicates that the block has been
-> + * corrected by on-die ECC and should be rewritten.
-> + *
-> + * On chips with 8-bit ECC and additional bit can be used to distinguish
-> + * cases where a errors were corrected without needing a rewrite
-> + *
-> + * Bit 4 Bit 3 Bit 0 Description
-> + * ----- ----- ----- -----------
-> + * 0     0     0     No Errors
-> + * 0     0     1     Multiple uncorrected errors
-> + * 0     1     0     4 - 6 errors corrected, recommend rewrite
-> + * 0     0     1     Reserved
-> + * 1     0     0     1 - 3 errors corrected
-> + * 1     0     1     Reserved
-> + * 1     1     0     7 - 8 errors corrected, recommend rewrite
->   */
->  #define NAND_STATUS_WRITE_RECOMMENDED	BIT(3)
-> +#define NAND_STATUS_ERRORS_CORRECTED	BIT(4)
->  
->  struct nand_onfi_vendor_micron {
->  	u8 two_plane_read;
-> @@ -141,7 +155,7 @@ micron_nand_read_page_on_die_ecc(struct mtd_info *mtd, struct nand_chip *chip,
->  		mtd->ecc_stats.failed++;
->  
->  	/*
-> -	 * The internal ECC doesn't tell us the number of bitflips
-> +	 * The internal 4-bit ECC doesn't tell us the number of bitflips
->  	 * that have been corrected, but tells us if it recommends to
->  	 * rewrite the block. If it's the case, then we pretend we had
->  	 * a number of bitflips equal to the ECC strength, which will
-> @@ -149,6 +163,12 @@ micron_nand_read_page_on_die_ecc(struct mtd_info *mtd, struct nand_chip *chip,
->  	 */
->  	else if (status & NAND_STATUS_WRITE_RECOMMENDED)
->  		max_bitflips = chip->ecc.strength;
-> +	/*
-> +	 * Chips with 8-bit internal ECC do tell us if errors 1 to 3 bit
-> +	 * errors have been corrected without recommending a rewrite.
-> +	 */
-> +	else if (status & NAND_STATUS_ERRORS_CORRECTED)
-> +		max_bitflips = 3;
+Mark volatile registers to avoid caching bugs.
 
-Why not masking bit 3, 4 and 0 and having a switch-case block?
+Note: SPI_MCR is marked volatile because of CLR_TXF and CLR_RXF bits.
 
-Also, you should update ecc_stats.corrected (see the patch I just sent
-[1]).
+Signed-off-by: Esben Haabendal <eha@deif.com>
+Cc: Martin Hundebøll <martin@geanix.com>
+---
+ drivers/spi/spi-fsl-dspi.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
->  
->  	ret = nand_read_data_op(chip, buf, mtd->writesize, false);
->  	if (!ret && oob_required)
-> @@ -240,9 +260,9 @@ static int micron_supports_on_die_ecc(struct nand_chip *chip)
->  
->  	/*
->  	 * Some Micron NANDs have an on-die ECC of 4/512, some other
-> -	 * 8/512. We only support the former.
-> +	 * 8/512.
->  	 */
-> -	if (chip->ecc_strength_ds != 4)
-> +	if (chip->ecc_strength_ds != 4 && chip->ecc_strength_ds != 8)
->  		return MICRON_ON_DIE_UNSUPPORTED;
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index df07dd4722fb..5c5905b6509f 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -862,11 +862,23 @@ static int dspi_resume(struct device *dev)
+ 
+ static SIMPLE_DEV_PM_OPS(dspi_pm, dspi_suspend, dspi_resume);
+ 
++static const struct regmap_range dspi_volatile_ranges[] = {
++	regmap_reg_range(SPI_MCR, SPI_TCR),
++	regmap_reg_range(SPI_SR, SPI_SR),
++	regmap_reg_range(SPI_PUSHR, SPI_RXFR3),
++};
++
++static const struct regmap_access_table dspi_volatile_table = {
++	.yes_ranges     = dspi_volatile_ranges,
++	.n_yes_ranges   = ARRAY_SIZE(dspi_volatile_ranges),
++};
++
+ static const struct regmap_config dspi_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+ 	.max_register = 0x88,
++	.volatile_table = &dspi_volatile_table,
+ };
+ 
+ static void dspi_init(struct fsl_dspi *dspi)
+-- 
+2.17.1
 
-Given that our on-die-support detection procedure is not reliable, I'd
-recommend changing the way we do it and instead base this detection
-logic on the model name (in the ONFI param page) or the READ_ID bytes.
-
->  
->  	return MICRON_ON_DIE_SUPPORTED;
-> @@ -274,9 +294,9 @@ static int micron_nand_init(struct nand_chip *chip)
->  			return -EINVAL;
->  		}
->  
-> -		chip->ecc.bytes = 8;
-> +		chip->ecc.bytes = chip->ecc_strength_ds * 2;
->  		chip->ecc.size = 512;
-> -		chip->ecc.strength = 4;
-> +		chip->ecc.strength = chip->ecc_strength_ds;
->  		chip->ecc.algo = NAND_ECC_BCH;
->  		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
->  		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
-
-[1]http://patchwork.ozlabs.org/patch/932006/
