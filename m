@@ -2,136 +2,103 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF6CC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F32CC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C85EA20872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EDDE20872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gr6VKXV/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bYEQUe/R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C85EA20872
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="megRal5N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDDE20872
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932170AbeFTN2C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:28:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33868 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752870AbeFTN16 (ORCPT
+        id S1754374AbeFTN2O (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 09:28:14 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57772 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754342AbeFTN2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:27:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 33C4A605BD; Wed, 20 Jun 2018 13:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529501278;
-        bh=QTxwBMGQ4fycRne3exyNC0tD/2JU39COfMNLQl2LQkI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gr6VKXV/LnlIVBTpMXlv7/Im4LClWfNr4gLT/tztJeVWWtEPV3tqN+jLkH/Qc+hpS
-         4Xbx5dJAyoeMY8aDEMlfZJx8wFdQDuu+XAVuDsTRcMx6W2y1Wd/2FHo1gz9yT1g+9H
-         SS7ERCzX807obZjbVweTMl/wKHX9wHcvr3Ta/cQs=
-Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4AED060AD8;
-        Wed, 20 Jun 2018 13:27:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529501277;
-        bh=QTxwBMGQ4fycRne3exyNC0tD/2JU39COfMNLQl2LQkI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bYEQUe/Rt7D39Iglr3HPQb9RArYRgPeHbXgMo1HGEKtIsVj+z3fVO6gpQrmO09Ffc
-         9T2yK5jIRhXNRg9rp23JDXLrOVdOLQib88x8MKEtln7gsFQCO7kzJtX1zthQtVuSyc
-         TjP4QwOxDxkHiV2i2bEcodRi2TdPyFaEdBkXAZ5U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4AED060AD8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From:   Raju P L S S S N <rplsssn@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH v13 10/10] drivers: qcom: rpmh-rsc: allow active requests from wake TCS
-Date:   Wed, 20 Jun 2018 18:57:07 +0530
-Message-Id: <1529501227-27163-11-git-send-email-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
-References: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
+        Wed, 20 Jun 2018 09:28:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=djUFlbeabQQKdJBGtq97E/X/fZXBWeimfgL8KIcf+g0=; b=megRal5NT+fZWoCzk+v2qxPWe
+        /c6NiOqyli1SnHf7cxhDF5ooXfwD9+fYRTM4DHH/xGR4ikkQQ3F1aQ+SnR1O3/qa5zWRTS3errRea
+        S0epas4ee++NUJo5vIKewFhPa9BxYzhHxLf6EEqK5BSy8iuEBO+0CSCO0zSpCyV0bPuNw=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fVd9P-0002Hz-FS; Wed, 20 Jun 2018 13:27:55 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fVd9P-00087e-1p; Wed, 20 Jun 2018 14:27:55 +0100
+Date:   Wed, 20 Jun 2018 14:27:55 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Esben Haabendal <esben.haabendal@gmail.com>
+Cc:     linux-spi@vger.kernel.org, Kurt Kanzenbach <kurt@linutronix.de>,
+        Angelo Dureghello <angelo@sysam.it>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Sanchayan Maity <maitysanchayan@gmail.com>,
+        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>,
+        Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>
+Subject: Re: [PATCH 03/12] spi: spi-fsl-dspi: Fix per transfer cs_change
+ handling
+Message-ID: <20180620132755.GF6242@sirena.org.uk>
+References: <20180620073442.20913-1-esben.haabendal@gmail.com>
+ <20180620073442.20913-4-esben.haabendal@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4VrXvz3cwkc87Wze"
+Content-Disposition: inline
+In-Reply-To: <20180620073442.20913-4-esben.haabendal@gmail.com>
+X-Cookie: No directory.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <ilina@codeaurora.org>
 
-Some RSCs may only have sleep and wake TCS, i.e, there is no dedicated
-TCS for active mode request, but drivers may still want to make active
-requests from these RSCs. In such cases re-purpose the wake TCS to send
-active state requests.
+--4VrXvz3cwkc87Wze
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The requirement for this is that the driver is aware that the wake TCS
-is being repurposed to send active request, hence the sleep and wake
-TCSes be invalidated before the active request is sent.
+On Wed, Jun 20, 2018 at 09:34:33AM +0200, Esben Haabendal wrote:
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
----
-Changes in v10:
-	- return ERR_PTR if invalidate fails
-Changes in v9:
-	- invalidate again if -EAGAIN is returned by rpmh_rsc_invalidate
----
- drivers/soc/qcom/rpmh-rsc.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+> As of 92dc20d83adec565378254c0630e839ff5674e14, transfer->cs_change has
+> been supported for non-last transfers, but not for last transfer.
 
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 4c0c1f2..098feb9 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -148,7 +148,8 @@ int rpmh_rsc_invalidate(struct rsc_drv *drv)
- static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
- 					 const struct tcs_request *msg)
- {
--	int type;
-+	int type, ret;
-+	struct tcs_group *tcs;
- 
- 	switch (msg->state) {
- 	case RPMH_ACTIVE_ONLY_STATE:
-@@ -164,7 +165,25 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	return get_tcs_of_type(drv, type);
-+	/*
-+	 * If we are making an active request on a RSC that does not have a
-+	 * dedicated TCS for active state use, then re-purpose a wake TCS to
-+	 * send active votes.
-+	 * NOTE: The driver must be aware that this RSC does not have a
-+	 * dedicated AMC, and therefore would invalidate the sleep and wake
-+	 * TCSes before making an active state request.
-+	 */
-+	tcs = get_tcs_of_type(drv, type);
-+	if (msg->state == RPMH_ACTIVE_ONLY_STATE && IS_ERR(tcs)) {
-+		tcs = get_tcs_of_type(drv, WAKE_TCS);
-+		if (!IS_ERR(tcs)) {
-+			ret = rpmh_rsc_invalidate(drv);
-+			if (ret)
-+				return ERR_PTR(ret);
-+		}
-+	}
-+
-+	return tcs;
- }
- 
- static const struct tcs_request *get_req_from_tcs(struct rsc_drv *drv,
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+Please include human readable descriptions of things like commits and
+issues being discussed in e-mail in your mails, this makes them much
+easier for humans to read especially when they have no internet access.
+I do frequently catch up on my mail on flights or while otherwise
+travelling so this is even more pressing for me than just being about
+making things a bit easier to read.
 
+--4VrXvz3cwkc87Wze
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsqVloACgkQJNaLcl1U
+h9AWlgf+Jn8V8GuWmqwEjOKvD0pO8SCEE/IgKm5c/+b3o8F/A0emloVE+ajKiHbr
+oBK3+hMehOCGdgDuE9TYltcC3q8v64mqtIHqrqunm4cgFaE6xzWzBbBNn6lI07Z6
+6zleQcD5fYwaZv/AJOIIdcuxTOFISymveAuR1ghppifKWOub2cFhNdfC7cCUYUII
+5hOcMmb8+/P870I/45ZfOVoK+wZZ4Mt5DtXy2zVgwWL95FIIMMBIfFVlQ9UFCib5
+baIGM5L7JNNEHR536q9HB7BHqx69yCDNZk9F4SUMrc2yxFavpLzKsTjWZM6vwAnT
+e9IJKF1ocTg12yzqRbpGU/uJ6OrtEQ==
+=j208
+-----END PGP SIGNATURE-----
+
+--4VrXvz3cwkc87Wze--
