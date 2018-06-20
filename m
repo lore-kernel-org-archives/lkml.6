@@ -6,168 +6,751 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A133DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B111C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53AFA20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 035E520846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:53:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIrq2D8N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53AFA20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="KFes/Dpf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rxtc+cSD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 035E520846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753944AbeFTFw7 (ORCPT
+        id S1754055AbeFTFxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 01:52:59 -0400
-Received: from mail-lf0-f47.google.com ([209.85.215.47]:37927 "EHLO
-        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752308AbeFTFw4 (ORCPT
+        Wed, 20 Jun 2018 01:53:12 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:54981 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751376AbeFTFxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 01:52:56 -0400
-Received: by mail-lf0-f47.google.com with SMTP id i83-v6so3021013lfh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 22:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=Ee3IeSkDaWxYFx4qmsJ4mwl4g2rrSOKKLfrqCTvsdWs=;
-        b=XIrq2D8NQyHhUVx/Skboxwgl5vIb3LHWGx+o8oryFXx1940o1dHZcAMl5PXfesgsHV
-         aIJExlDIr3Qc7/JY2qAA3kTF3SvlvBFzkaFT8Y+B5aHxrTtTYh+Dug+j85aOdfR9BwHO
-         G3lyfExC1wy6r5g62Gelk3UE3aAGa+fzBS4FQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Ee3IeSkDaWxYFx4qmsJ4mwl4g2rrSOKKLfrqCTvsdWs=;
-        b=pEVP8t/fstowyhVLB1eyR7+7DXn//NgAvDALnVssXGp4u5bVy1NAqT9y416XixPl/b
-         Cx6FkdS3VEr/nj0p6ijnfB7DAjwRcTN0xR5blakX6GNpN9acYoFmiYudr4fc37LEr517
-         BBwL+lRS7FxDjom2XYZngi68x8tUkNSwlGm5uwIE8wlK00Hk3kItNZF+SFQEJCgzFyp6
-         /2zxErBwGBC7Hpfj8HbKbaxDehTERoCvLvvgiLktl5F+YfK6RaD6HesFnlaV0WqVJFpA
-         n8p4clv1brLaWO7bdNVvmIbx94YzTw4eFixUXw4pi97mtaWLgSn37UpSJ0BbpPkXLI45
-         OzVQ==
-X-Gm-Message-State: APt69E0rqBn0JT86QJkaa9iaQW+WGWK/wxoy7zuFpZ1wLca8WgokWSjm
-        jPbrFpGcPmIRYfUtnt8p3zVlozhIyZTVrY9O/jK77A==
-X-Google-Smtp-Source: ADUXVKKu8XA8l1bi1IsRRtyNh6606QG0gwNaz6Tuq0AYYbHeBsM8b0aGyLHgDW7xUUKjWCS306NuDFfjx+o5stzQNJM=
-X-Received: by 2002:a19:ccc6:: with SMTP id c189-v6mr2788581lfg.88.1529473974852;
- Tue, 19 Jun 2018 22:52:54 -0700 (PDT)
+        Wed, 20 Jun 2018 01:53:05 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 9812420A34;
+        Wed, 20 Jun 2018 01:53:04 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Wed, 20 Jun 2018 01:53:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=3pj/To0WqlnvMgICF0viW4rAhNzapbYWHdEQBNtBKuw=; b=KFes/Dpf
+        +sBwaEY33LSYe2ith1Pn6PncGwFYJpz6a4uzBM3xIyPdfjQaYCQanevNp63R/6Gf
+        xVdERYFeM1Hqns69axfOncWndHPEMNo+BVm2DGb9KOUhPWv81VdlguLeOWOe7Ygy
+        A/wjDHz5Sgz/gFFrjRTFeQM5nsiqYLGgEVjUrEe3biLtehyEpO0cCe3UFO+ii/19
+        +jpbAaOqA3kmITa8fpOPqO3MkRtXdsx+X3Bd8/MP27sAdADWrqrlJv7x1HTWQ+42
+        kH4bkLfROBlFVlhnfdQOb3Gju+DYh0hAsVk0EcNzNAZFtUVpzlk5MYUN4w9pquKI
+        tcrUAwUPJew3wg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=3pj/To0WqlnvMgICF0viW4rAhNzap
+        bYWHdEQBNtBKuw=; b=rxtc+cSD5XB5HCV3Yfcy8oUYWMYEqSFRtUQoTs9SaWD8s
+        qndf0S3zdrIZ5unn7sKWBWeLcdssM8ReQlMg8dl+/Dt3Lw0zCDgRQdwljiFlBTI3
+        3CKj8qHLkOEb1s0rDR8YZPV+vUMDxmdDg8JSc/lcHT0iVza4itqypgPFiRtU+x1W
+        J91j20zuk5a9qTpD9F3sNtZLHYlncuTPT5jOyf+btQJQ5j1HSsRePNzvFozWiAVd
+        u5pKWXEHccDZviOgAB1ba5h193KOBWnNvZP9d+jwiDSbwlb9brpIHOStoT+UneyY
+        8dxw6NPLuMYxzgDz6PPQOfL/C9lX2Axy9z228djhw==
+X-ME-Proxy: <xmx:wOspW0oqmzaq9612RSVXb5JHog-_-xqqEVDGVg3E3rBJSmDoISlCWw>
+    <xmx:wOspW-JiCTd8yc9xUY0Qv3KdoOk5EnwAiejFVaimznFrms_oAaEsFQ>
+    <xmx:wOspWxvNP8jjU6Zx9hrOsuGdqw74ANlUDgMFtM64UJaEaFEHaELpNA>
+    <xmx:wOspW-syT-K_LEE1SKVpGlkk5o3q1aQLm0nlcaT54C1Iv2eBzkubpg>
+    <xmx:wOspW4XDbEByDb9zkk37ZFSuULtmwUIDKlvEg8l-3GvMnoEHjKnECg>
+    <xmx:wOspW7TVEwzfiPHcNBNyc3p6Mw5Lz4yv5_PXFymn2h1zjMj0LasK9Q>
+X-ME-Sender: <xms:wOspW8q1byIRHhrFTd-8gVL0ZGS-YUF9q0O5qy9UUTk_AMn8vngEYQ>
+Received: from localhost (ppp118-211-207-6.bras1.syd2.internode.on.net [118.211.207.6])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 74264E44F1;
+        Wed, 20 Jun 2018 01:53:03 -0400 (EDT)
+Date:   Wed, 20 Jun 2018 15:53:00 +1000
+From:   "Tobin C . Harding" <me@tobin.cc>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+Subject: Re: [PATCH v3 1/4] seccomp: add a return code to trap to userspace
+Message-ID: <20180620055300.GC11671@eros>
+References: <20180531144949.24995-1-tycho@tycho.ws>
+ <20180531144949.24995-2-tycho@tycho.ws>
 MIME-Version: 1.0
-Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 22:52:54
- -0700 (PDT)
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 20 Jun 2018 11:22:54 +0530
-Message-ID: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
-Subject: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
-To:     linux-omap@vger.kernel.org
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org,
-        Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180531144949.24995-2-tycho@tycho.ws>
+X-Mailer: Mutt 1.9.4 (2018-02-28)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
+A few other piddly suggestions.
 
-Full log of trace please refer this link,
-https://lkft.validation.linaro.org/scheduler/job/291535#L946
+On Thu, May 31, 2018 at 08:49:46AM -0600, Tycho Andersen wrote:
+> This patch introduces a means for syscalls matched in seccomp to notify
+> some other task that a particular filter has been triggered.
+> 
+> The motivation for this is primarily for use with containers. For example,
+> if a container does an init_module(), we obviously don't want to load this
+> untrusted code, which may be compiled for the wrong version of the kernel
+> anyway. Instead, we could parse the module image, figure out which module
+> the container is trying to load and load it on the host.
+> 
+> As another example, containers cannot mknod(), since this checks
+> capable(CAP_SYS_ADMIN). However, harmless devices like /dev/null or
+> /dev/zero should be ok for containers to mknod, but we'd like to avoid hard
+> coding some whitelist in the kernel. Another example is mount(), which has
+> many security restrictions for good reason, but configuration or runtime
+> knowledge could potentially be used to relax these restrictions.
+> 
+> This patch adds functionality that is already possible via at least two
+> other means that I know about, both of which involve ptrace(): first, one
+> could ptrace attach, and then iterate through syscalls via PTRACE_SYSCALL.
+> Unfortunately this is slow, so a faster version would be to install a
+> filter that does SECCOMP_RET_TRACE, which triggers a PTRACE_EVENT_SECCOMP.
+> Since ptrace allows only one tracer, if the container runtime is that
+> tracer, users inside the container (or outside) trying to debug it will not
+> be able to use ptrace, which is annoying. It also means that older
+> distributions based on Upstart cannot boot inside containers using ptrace,
+> since upstart itself uses ptrace to start services.
+> 
+> The actual implementation of this is fairly small, although getting the
+> synchronization right was/is slightly complex.
+> 
+> Finally, it's worth noting that the classic seccomp TOCTOU of reading
+> memory data from the task still applies here, but can be avoided with
+> careful design of the userspace handler: if the userspace handler reads all
+> of the task memory that is necessary before applying its security policy,
+> the tracee's subsequent memory edits will not be read by the tracer.
+> 
+> v2: * make id a u64; the idea here being that it will never overflow,
+>       because 64 is huge (one syscall every nanosecond => wrap every 584
+>       years) (Andy)
+>     * prevent nesting of user notifications: if someone is already attached
+>       the tree in one place, nobody else can attach to the tree (Andy)
+>     * notify the listener of signals the tracee receives as well (Andy)
+>     * implement poll
+> v3: * lockdep fix (Oleg)
+>     * drop unnecessary WARN()s (Christian)
+>     * rearrange error returns to be more rpetty (Christian)
+>     * fix build in !CONFIG_SECCOMP_USER_NOTIFICATION case
+> 
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Andy Lutomirski <luto@amacapital.net>
+> CC: Oleg Nesterov <oleg@redhat.com>
+> CC: Eric W. Biederman <ebiederm@xmission.com>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Christian Brauner <christian.brauner@ubuntu.com>
+> CC: Tyler Hicks <tyhicks@canonical.com>
+> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> ---
+>  arch/Kconfig                                  |   7 +
+>  include/linux/seccomp.h                       |   3 +-
+>  include/uapi/linux/seccomp.h                  |  18 +-
+>  kernel/seccomp.c                              | 398 +++++++++++++++++-
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 195 ++++++++-
+>  5 files changed, 615 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 75dd23acf133..1c1ae8d8c8b9 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -401,6 +401,13 @@ config SECCOMP_FILTER
+>  
+>  	  See Documentation/prctl/seccomp_filter.txt for details.
+>  
+> +config SECCOMP_USER_NOTIFICATION
+> +	bool "Enable the SECCOMP_RET_USER_NOTIF seccomp action"
+> +	depends on SECCOMP_FILTER
+> +	help
+> +	  Enable SECCOMP_RET_USER_NOTIF, a return code which can be used by seccomp
+> +	  programs to notify a userspace listener that a particular event happened.
+> +
+>  config HAVE_GCC_PLUGINS
+>  	bool
+>  	help
+> diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+> index c723a5c4e3ff..0fd3e0676a1c 100644
+> --- a/include/linux/seccomp.h
+> +++ b/include/linux/seccomp.h
+> @@ -5,7 +5,8 @@
+>  #include <uapi/linux/seccomp.h>
+>  
+>  #define SECCOMP_FILTER_FLAG_MASK	(SECCOMP_FILTER_FLAG_TSYNC | \
+> -					 SECCOMP_FILTER_FLAG_LOG)
+> +					 SECCOMP_FILTER_FLAG_LOG | \
+> +					 SECCOMP_FILTER_FLAG_GET_LISTENER)
+>  
+>  #ifdef CONFIG_SECCOMP
+>  
+> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+> index 2a0bd9dd104d..8160e6cad528 100644
+> --- a/include/uapi/linux/seccomp.h
+> +++ b/include/uapi/linux/seccomp.h
+> @@ -17,8 +17,9 @@
+>  #define SECCOMP_GET_ACTION_AVAIL	2
+>  
+>  /* Valid flags for SECCOMP_SET_MODE_FILTER */
+> -#define SECCOMP_FILTER_FLAG_TSYNC	1
+> -#define SECCOMP_FILTER_FLAG_LOG		2
+> +#define SECCOMP_FILTER_FLAG_TSYNC		1
+> +#define SECCOMP_FILTER_FLAG_LOG			2
+> +#define SECCOMP_FILTER_FLAG_GET_LISTENER	4
+>  
+>  /*
+>   * All BPF programs must return a 32-bit value.
+> @@ -34,6 +35,7 @@
+>  #define SECCOMP_RET_KILL	 SECCOMP_RET_KILL_THREAD
+>  #define SECCOMP_RET_TRAP	 0x00030000U /* disallow and force a SIGSYS */
+>  #define SECCOMP_RET_ERRNO	 0x00050000U /* returns an errno */
+> +#define SECCOMP_RET_USER_NOTIF   0x7fc00000U /* notifies userspace */
+>  #define SECCOMP_RET_TRACE	 0x7ff00000U /* pass to a tracer or disallow */
+>  #define SECCOMP_RET_LOG		 0x7ffc0000U /* allow after logging */
+>  #define SECCOMP_RET_ALLOW	 0x7fff0000U /* allow */
+> @@ -59,4 +61,16 @@ struct seccomp_data {
+>  	__u64 args[6];
+>  };
+>  
+> +struct seccomp_notif {
+> +	__u64 id;
+> +	pid_t pid;
+> +	struct seccomp_data data;
+> +};
+> +
+> +struct seccomp_notif_resp {
+> +	__u64 id;
+> +	__s32 error;
+> +	__s64 val;
+> +};
+> +
+>  #endif /* _UAPI_LINUX_SECCOMP_H */
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index dc77548167ef..f69327d5f7c7 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -31,6 +31,7 @@
+>  #endif
+>  
+>  #ifdef CONFIG_SECCOMP_FILTER
+> +#include <linux/file.h>
+>  #include <linux/filter.h>
+>  #include <linux/pid.h>
+>  #include <linux/ptrace.h>
+> @@ -38,6 +39,52 @@
+>  #include <linux/tracehook.h>
+>  #include <linux/uaccess.h>
+>  
+> +#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
+> +#include <linux/anon_inodes.h>
+> +
+> +enum notify_state {
+> +	SECCOMP_NOTIFY_INIT,
+> +	SECCOMP_NOTIFY_SENT,
+> +	SECCOMP_NOTIFY_REPLIED,
+> +};
+> +
+> +struct seccomp_knotif {
+> +	/* The pid whose filter triggered the notification */
+> +	pid_t pid;
+> +
+> +	/*
+> +	 * The "cookie" for this request; this is unique for this filter.
+> +	 */
+> +	u32 id;
+> +
+> +	/*
+> +	 * The seccomp data. This pointer is valid the entire time this
+> +	 * notification is active, since it comes from __seccomp_filter which
+> +	 * eclipses the entire lifecycle here.
+> +	 */
+> +	const struct seccomp_data *data;
+> +
+> +	/*
+> +	 * Notification states. When SECCOMP_RET_USER_NOTIF is returned, a
+> +	 * struct seccomp_knotif is created and starts out in INIT. Once the
+> +	 * handler reads the notification off of an FD, it transitions to READ.
+> +	 * If a signal is received the state transitions back to INIT and
+> +	 * another message is sent. When the userspace handler replies, state
+> +	 * transitions to REPLIED.
+> +	 */
+> +	enum notify_state state;
+> +
+> +	/* The return values, only valid when in SECCOMP_NOTIFY_REPLIED */
+> +	int error;
+> +	long val;
+> +
+> +	/* Signals when this has entered SECCOMP_NOTIFY_REPLIED */
+> +	struct completion ready;
+> +
+> +	struct list_head list;
+> +};
+> +#endif
+> +
+>  /**
+>   * struct seccomp_filter - container for seccomp BPF programs
+>   *
+> @@ -64,6 +111,27 @@ struct seccomp_filter {
+>  	bool log;
+>  	struct seccomp_filter *prev;
+>  	struct bpf_prog *prog;
+> +
+> +#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
+> +	/*
+> +	 * A semaphore that users of this notification can wait on for
+> +	 * changes. Actual reads and writes are still controlled with
+> +	 * filter->notify_lock.
+> +	 */
+> +	struct semaphore request;
+> +
+> +	/* A lock for all notification-related accesses. */
+> +	struct mutex notify_lock;
+> +
+> +	/* Is there currently an attached listener? */
+> +	bool has_listener;
+> +
+> +	/* The id of the next request. */
+> +	u64 next_id;
+> +
+> +	/* A list of struct seccomp_knotif elements. */
+> +	struct list_head notifications;
+> +#endif
+>  };
+>  
+>  /* Limit any path through the tree to 256KB worth of instructions. */
+> @@ -383,6 +451,13 @@ static struct seccomp_filter *seccomp_prepare_filter(struct sock_fprog *fprog)
+>  	if (!sfilter)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> +#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
+> +	mutex_init(&sfilter->notify_lock);
+> +	sema_init(&sfilter->request, 0);
+> +	INIT_LIST_HEAD(&sfilter->notifications);
+> +	sfilter->next_id = get_random_u64();
+> +#endif
+> +
+>  	ret = bpf_prog_create_from_user(&sfilter->prog, fprog,
+>  					seccomp_check_filter, save_orig);
+>  	if (ret < 0) {
+> @@ -547,13 +622,15 @@ static void seccomp_send_sigsys(int syscall, int reason)
+>  #define SECCOMP_LOG_TRACE		(1 << 4)
+>  #define SECCOMP_LOG_LOG			(1 << 5)
+>  #define SECCOMP_LOG_ALLOW		(1 << 6)
+> +#define SECCOMP_LOG_USER_NOTIF		(1 << 7)
+>  
+>  static u32 seccomp_actions_logged = SECCOMP_LOG_KILL_PROCESS |
+>  				    SECCOMP_LOG_KILL_THREAD  |
+>  				    SECCOMP_LOG_TRAP  |
+>  				    SECCOMP_LOG_ERRNO |
+>  				    SECCOMP_LOG_TRACE |
+> -				    SECCOMP_LOG_LOG;
+> +				    SECCOMP_LOG_LOG |
+> +				    SECCOMP_LOG_USER_NOTIF;
+>  
+>  static inline void seccomp_log(unsigned long syscall, long signr, u32 action,
+>  			       bool requested)
+> @@ -572,6 +649,9 @@ static inline void seccomp_log(unsigned long syscall, long signr, u32 action,
+>  	case SECCOMP_RET_TRACE:
+>  		log = requested && seccomp_actions_logged & SECCOMP_LOG_TRACE;
+>  		break;
+> +	case SECCOMP_RET_USER_NOTIF:
+> +		log = requested && seccomp_actions_logged & SECCOMP_LOG_USER_NOTIF;
+> +		break;
+>  	case SECCOMP_RET_LOG:
+>  		log = seccomp_actions_logged & SECCOMP_LOG_LOG;
+>  		break;
+> @@ -645,6 +725,81 @@ void secure_computing_strict(int this_syscall)
+>  }
+>  #else
+>  
+> +#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
+> +static u64 seccomp_next_notify_id(struct seccomp_filter *filter)
+> +{
+> +	/* Note: overflow is ok here, the id just needs to be unique */
+> +	return filter->next_id++;
+> +}
+> +
+> +static void seccomp_do_user_notification(int this_syscall,
+> +					 struct seccomp_filter *match,
+> +					 const struct seccomp_data *sd)
+> +{
+> +	int err;
+> +	long ret = 0;
+> +	struct seccomp_knotif n = {};
+> +
+> +	mutex_lock(&match->notify_lock);
+> +	err = -ENOSYS;
+> +	if (!match->has_listener)
+> +		goto out;
+> +
+> +	n.pid = current->pid;
+> +	n.state = SECCOMP_NOTIFY_INIT;
+> +	n.data = sd;
+> +	n.id = seccomp_next_notify_id(match);
+> +	init_completion(&n.ready);
+> +
+> +	list_add(&n.list, &match->notifications);
+> +
+> +	mutex_unlock(&match->notify_lock);
+> +	up(&match->request);
+> +
+> +	err = wait_for_completion_interruptible(&n.ready);
+> +	mutex_lock(&match->notify_lock);
+> +
+> +	/*
+> +	 * Here it's possible we got a signal and then had to wait on the mutex
+> +	 * while the reply was sent, so let's be sure there wasn't a response
+> +	 * in the meantime.
+> +	 */
+> +	if (err < 0 && n.state != SECCOMP_NOTIFY_REPLIED) {
+> +		/*
+> +		 * We got a signal. Let's tell userspace about it (potentially
+> +		 * again, if we had already notified them about the first one).
+> +		 */
+> +		if (n.state == SECCOMP_NOTIFY_SENT) {
+> +			n.state = SECCOMP_NOTIFY_INIT;
+> +			up(&match->request);
+> +		}
+> +		mutex_unlock(&match->notify_lock);
+> +		err = wait_for_completion_killable(&n.ready);
+> +		mutex_lock(&match->notify_lock);
+> +		if (err < 0)
+> +			goto remove_list;
+> +	}
+> +
+> +	ret = n.val;
+> +	err = n.error;
+> +
+> +remove_list:
+> +	list_del(&n.list);
+> +out:
+> +	mutex_unlock(&match->notify_lock);
+> +	syscall_set_return_value(current, task_pt_regs(current),
+> +				 err, ret);
+> +}
+> +#else
+> +static void seccomp_do_user_notification(int this_syscall,
+> +					 struct seccomp_filter *match,
+> +					 const struct seccomp_data *sd)
+> +{
+> +	seccomp_log(this_syscall, SIGSYS, SECCOMP_RET_USER_NOTIF, true);
+> +	do_exit(SIGSYS);
+> +}
+> +#endif
+> +
+>  #ifdef CONFIG_SECCOMP_FILTER
+>  static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+>  			    const bool recheck_after_trace)
+> @@ -722,6 +877,9 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+>  
+>  		return 0;
+>  
+> +	case SECCOMP_RET_USER_NOTIF:
+> +		seccomp_do_user_notification(this_syscall, match, sd);
+> +		goto skip;
+>  	case SECCOMP_RET_LOG:
 
-Here is back trace,
-[    3.561640] omap_rng 48090000.rng: Random Number Generator ver. 20
-[    3.611949] brd: module loaded
-[    3.641298] loop: module loaded
-[    3.646435] at24 0-0050: 4096 byte 24c32 EEPROM, writable, 1 bytes/write
-[    3.658481] ------------[ cut here ]------------
-[    3.663196] WARNING: CPU: 0 PID: 1 at
-/srv/oe/build/tmp-rpb-glibc/work-shared/am57xx-evm/kernel-source/drivers/bus/omap_l3_noc.c:147
-l3_interrupt_handler+0x27c/0x39c
-[    3.678052] 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4_CFG
-(Read): Data Access in User mode during Functional access
-[    3.689330] Modules linked in:
-[    3.692426] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-4.18.0-rc1-next-20180619 #1
-[    3.699952] Hardware name: Generic DRA74X (Flattened Device Tree)
-[    3.706099] [<c04156f0>] (unwind_backtrace) from [<c040eec4>]
-(show_stack+0x20/0x24)
-[    3.713897] [<c040eec4>] (show_stack) from [<c116a668>]
-(dump_stack+0xb0/0xdc)
-[    3.721171] [<c116a668>] (dump_stack) from [<c0450a14>] (__warn+0x118/0x130)
-[    3.728270] [<c0450a14>] (__warn) from [<c0450a84>]
-(warn_slowpath_fmt+0x58/0x74)
-[    3.735808] [<c0450a84>] (warn_slowpath_fmt) from [<c08be648>]
-(l3_interrupt_handler+0x27c/0x39c)
-[    3.744742] [<c08be648>] (l3_interrupt_handler) from [<c04cd270>]
-(__handle_irq_event_percpu+0x90/0x45c)
-[    3.754286] [<c04cd270>] (__handle_irq_event_percpu) from
-[<c04cd678>] (handle_irq_event_percpu+0x3c/0x8c)
-[    3.764001] [<c04cd678>] (handle_irq_event_percpu) from
-[<c04cd710>] (handle_irq_event+0x48/0x6c)
-[    3.772933] [<c04cd710>] (handle_irq_event) from [<c04d170c>]
-(handle_fasteoi_irq+0xb0/0x164)
-[    3.781513] [<c04d170c>] (handle_fasteoi_irq) from [<c04cc344>]
-(generic_handle_irq+0x34/0x44)
-[    3.790183] [<c04cc344>] (generic_handle_irq) from [<c04cca48>]
-(__handle_domain_irq+0x6c/0xc4)
-[    3.798941] [<c04cca48>] (__handle_domain_irq) from [<c0402528>]
-(gic_handle_irq+0x68/0xac)
-[    3.807347] [<c0402528>] (gic_handle_irq) from [<c04019bc>]
-(__irq_svc+0x5c/0x7c)
-[    3.814874] Exception stack(0xee179c70 to 0xee179cb8)
-[    3.819963] 9c60:                                     fc140000
-ee3e2f10 ee3a9810 00000000
-[    3.828189] 9c80: 00000000 ee3e2f10 fc140004 fc140000 ee3a9800
-ee3a9810 00000000 ee179cdc
-[    3.836414] 9ca0: ee179ce0 ee179cc0 c0c3b364 c0c3b2ec 60000013 ffffffff
-[    3.843079] [<c04019bc>] (__irq_svc) from [<c0c3b2ec>]
-(ahci_enable_ahci+0x24/0x70)
-[    3.850789] [<c0c3b2ec>] (ahci_enable_ahci) from [<c0c3b364>]
-(ahci_save_initial_config+0x2c/0x388)
-[    3.859894] [<c0c3b364>] (ahci_save_initial_config) from
-[<c0c3cbdc>] (ahci_platform_init_host+0x9c/0x4f4)
-[    3.869609] [<c0c3cbdc>] (ahci_platform_init_host) from
-[<c0c3c33c>] (ahci_probe+0xa0/0xc0)
-[    3.878018] [<c0c3c33c>] (ahci_probe) from [<c0ba40f0>]
-(platform_drv_probe+0x58/0xac)
-[    3.885989] [<c0ba40f0>] (platform_drv_probe) from [<c0ba1aec>]
-(driver_probe_device+0x25c/0x338)
-[    3.894915] [<c0ba1aec>] (driver_probe_device) from [<c0ba1cbc>]
-(__driver_attach+0xf4/0xf8)
-[    3.903411] [<c0ba1cbc>] (__driver_attach) from [<c0b9f9ac>]
-(bus_for_each_dev+0x78/0xc4)
-[    3.911643] [<c0b9f9ac>] (bus_for_each_dev) from [<c0ba13b8>]
-(driver_attach+0x2c/0x30)
-[    3.919696] [<c0ba13b8>] (driver_attach) from [<c0ba0cfc>]
-(bus_add_driver+0x114/0x220)
-[    3.927752] [<c0ba0cfc>] (bus_add_driver) from [<c0ba2e2c>]
-(driver_register+0x88/0x11c)
-[    3.935896] [<c0ba2e2c>] (driver_register) from [<c0ba4044>]
-(__platform_driver_register+0x50/0x58)
-[    3.945003] [<c0ba4044>] (__platform_driver_register) from
-[<c1aa9cf0>] (ahci_driver_init+0x24/0x28)
-[    3.954195] [<c1aa9cf0>] (ahci_driver_init) from [<c0403a8c>]
-(do_one_initcall+0x9c/0x434)
-[    3.962517] [<c0403a8c>] (do_one_initcall) from [<c1a01410>]
-(kernel_init_freeable+0x3b8/0x53c)
-[    3.971276] [<c1a01410>] (kernel_init_freeable) from [<c118551c>]
-(kernel_init+0x18/0x128)
-[    3.979597] [<c118551c>] (kernel_init) from [<c04010ac>]
-(ret_from_fork+0x14/0x28)
-[    3.987210] Exception stack(0xee179fb0 to 0xee179ff8)
-[    3.992298] 9fa0:                                     00000000
-00000000 00000000 00000000
-[    4.000524] 9fc0: 00000000 00000000 00000000 00000000 00000000
-00000000 00000000 00000000
-[    4.008750] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    4.015405] irq event stamp: 663130
-[    4.018926] hardirqs last  enabled at (663129): [<c118d9d4>]
-_raw_spin_unlock_irqrestore+0x40/0x6c
-[    4.027939] hardirqs last disabled at (663130): [<c04019ac>]
-__irq_svc+0x4c/0x7c
-[    4.035384] softirqs last  enabled at (661486): [<c0402c98>]
-__do_softirq+0x2a8/0x5e8
-[    4.043262] softirqs last disabled at (661449): [<c04594a4>]
-irq_exit+0x178/0x1a4
-[    4.050826] ---[ end trace 095abac70926448f ]---
+Perhaps add newline after 'got skip;' (inline with rest of this function).
 
-Best regards
-Naresh Kamboju
+>  		seccomp_log(this_syscall, 0, action, true);
+>  		return 0;
+> @@ -828,6 +986,9 @@ static long seccomp_set_mode_strict(void)
+>  }
+>  
+>  #ifdef CONFIG_SECCOMP_FILTER
+> +static struct file *init_listener(struct task_struct *,
+> +				  struct seccomp_filter *);
+> +
+>  /**
+>   * seccomp_set_mode_filter: internal function for setting seccomp filter
+>   * @flags:  flags to change filter behavior
+> @@ -847,6 +1008,8 @@ static long seccomp_set_mode_filter(unsigned int flags,
+>  	const unsigned long seccomp_mode = SECCOMP_MODE_FILTER;
+>  	struct seccomp_filter *prepared = NULL;
+>  	long ret = -EINVAL;
+> +	int listener = 0;
+> +	struct file *listener_f = NULL;
+>  
+>  	/* Validate flags. */
+>  	if (flags & ~SECCOMP_FILTER_FLAG_MASK)
+> @@ -857,13 +1020,28 @@ static long seccomp_set_mode_filter(unsigned int flags,
+>  	if (IS_ERR(prepared))
+>  		return PTR_ERR(prepared);
+>  
+> +	if (flags & SECCOMP_FILTER_FLAG_GET_LISTENER) {
+> +		listener = get_unused_fd_flags(O_RDWR);
+> +		if (listener < 0) {
+> +			ret = listener;
+> +			goto out_free;
+> +		}
+> +
+> +		listener_f = init_listener(current, prepared);
+> +		if (IS_ERR(listener_f)) {
+> +			put_unused_fd(listener);
+> +			ret = PTR_ERR(listener_f);
+> +			goto out_free;
+> +		}
+> +	}
+> +
+>  	/*
+>  	 * Make sure we cannot change seccomp or nnp state via TSYNC
+>  	 * while another thread is in the middle of calling exec.
+>  	 */
+>  	if (flags & SECCOMP_FILTER_FLAG_TSYNC &&
+>  	    mutex_lock_killable(&current->signal->cred_guard_mutex))
+> -		goto out_free;
+> +		goto out_put_fd;
+>  
+>  	spin_lock_irq(&current->sighand->siglock);
+>  
+> @@ -881,6 +1059,16 @@ static long seccomp_set_mode_filter(unsigned int flags,
+>  	spin_unlock_irq(&current->sighand->siglock);
+>  	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
+>  		mutex_unlock(&current->signal->cred_guard_mutex);
+> +out_put_fd:
+> +	if (flags & SECCOMP_FILTER_FLAG_GET_LISTENER) {
+> +		if (ret < 0) {
+> +			fput(listener_f);
+> +			put_unused_fd(listener);
+> +		} else {
+> +			fd_install(listener, listener_f);
+> +			ret = listener;
+> +		}
+> +	}
+>  out_free:
+>  	seccomp_filter_free(prepared);
+>  	return ret;
+> @@ -909,6 +1097,9 @@ static long seccomp_get_action_avail(const char __user *uaction)
+>  	case SECCOMP_RET_LOG:
+>  	case SECCOMP_RET_ALLOW:
+>  		break;
+> +	case SECCOMP_RET_USER_NOTIF:
+> +		if (IS_ENABLED(CONFIG_SECCOMP_USER_NOTIFICATION))
+> +			break;
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -1105,6 +1296,7 @@ long seccomp_get_metadata(struct task_struct *task,
+>  #define SECCOMP_RET_KILL_THREAD_NAME	"kill_thread"
+>  #define SECCOMP_RET_TRAP_NAME		"trap"
+>  #define SECCOMP_RET_ERRNO_NAME		"errno"
+> +#define SECCOMP_RET_USER_NOTIF_NAME	"user_notif"
+>  #define SECCOMP_RET_TRACE_NAME		"trace"
+>  #define SECCOMP_RET_LOG_NAME		"log"
+>  #define SECCOMP_RET_ALLOW_NAME		"allow"
+> @@ -1114,6 +1306,7 @@ static const char seccomp_actions_avail[] =
+>  				SECCOMP_RET_KILL_THREAD_NAME	" "
+>  				SECCOMP_RET_TRAP_NAME		" "
+>  				SECCOMP_RET_ERRNO_NAME		" "
+> +				SECCOMP_RET_USER_NOTIF_NAME     " "
+>  				SECCOMP_RET_TRACE_NAME		" "
+>  				SECCOMP_RET_LOG_NAME		" "
+>  				SECCOMP_RET_ALLOW_NAME;
+> @@ -1131,6 +1324,7 @@ static const struct seccomp_log_name seccomp_log_names[] = {
+>  	{ SECCOMP_LOG_TRACE, SECCOMP_RET_TRACE_NAME },
+>  	{ SECCOMP_LOG_LOG, SECCOMP_RET_LOG_NAME },
+>  	{ SECCOMP_LOG_ALLOW, SECCOMP_RET_ALLOW_NAME },
+> +	{ SECCOMP_LOG_USER_NOTIF, SECCOMP_RET_USER_NOTIF_NAME },
+>  	{ }
+>  };
+>  
+> @@ -1279,3 +1473,203 @@ static int __init seccomp_sysctl_init(void)
+>  device_initcall(seccomp_sysctl_init)
+>  
+>  #endif /* CONFIG_SYSCTL */
+> +
+> +#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
+> +static int seccomp_notify_release(struct inode *inode, struct file *file)
+> +{
+> +	struct seccomp_filter *filter = file->private_data;
+> +	struct seccomp_knotif *knotif;
+> +
+> +	mutex_lock(&filter->notify_lock);
+> +
+> +	/*
+> +	 * If this file is being closed because e.g. the task who owned it
+> +	 * died, let's wake everyone up who was waiting on us.
+> +	 */
+> +	list_for_each_entry(knotif, &filter->notifications, list) {
+> +		if (knotif->state == SECCOMP_NOTIFY_REPLIED)
+> +			continue;
+> +
+> +		knotif->state = SECCOMP_NOTIFY_REPLIED;
+> +		knotif->error = -ENOSYS;
+> +		knotif->val = 0;
+> +
+> +		complete(&knotif->ready);
+> +	}
+> +
+> +	filter->has_listener = false;
+> +	mutex_unlock(&filter->notify_lock);
+> +	__put_seccomp_filter(filter);
+> +	return 0;
+> +}
+> +
+> +static ssize_t seccomp_notify_read(struct file *f, char __user *buf,
+> +				   size_t size, loff_t *ppos)
+> +{
+> +	struct seccomp_filter *filter = f->private_data;
+> +	struct seccomp_knotif *knotif = NULL, *cur;
+> +	struct seccomp_notif unotif;
+> +	ssize_t ret;
+> +
+> +	/* No offset reads. */
+> +	if (*ppos != 0)
+> +		return -EINVAL;
+> +
+> +	ret = down_interruptible(&filter->request);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	mutex_lock(&filter->notify_lock);
+> +	list_for_each_entry(cur, &filter->notifications, list) {
+> +		if (cur->state == SECCOMP_NOTIFY_INIT) {
+> +			knotif = cur;
+> +			break;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * If we didn't find a notification, it could be that the task was
+> +	 * interrupted between the time we were woken and when we were able to
+> +	 * acquire the rw lock. Should we retry here or just -ENOENT? -ENOENT
+> +	 * for now.
+> +	 */
+> +	if (!knotif) {
+> +		ret = -ENOENT;
+> +		goto out;
+> +	}
+> +
+> +	unotif.id = knotif->id;
+> +	unotif.pid = knotif->pid;
+> +	unotif.data = *(knotif->data);
+> +
+> +	size = min_t(size_t, size, sizeof(struct seccomp_notif));
+> +	if (copy_to_user(buf, &unotif, size)) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+> +
+> +	ret = sizeof(unotif);
+> +	knotif->state = SECCOMP_NOTIFY_SENT;
+> +
+> +out:
+> +	mutex_unlock(&filter->notify_lock);
+> +	return ret;
+> +}
+> +
+> +static ssize_t seccomp_notify_write(struct file *file, const char __user *buf,
+> +				    size_t size, loff_t *ppos)
+> +{
+> +	struct seccomp_filter *filter = file->private_data;
+> +	struct seccomp_notif_resp resp = {};
+> +	struct seccomp_knotif *knotif = NULL;
+
+Perhaps the other way around (inverse Christmas tree)
+
+	struct seccomp_knotif *knotif = NULL;
+	struct seccomp_notif_resp resp = {};
+
+> +	ssize_t ret = -EINVAL;
+> +
+> +	/* No partial writes. */
+> +	if (*ppos != 0)
+> +		return -EINVAL;
+> +
+> +	size = min_t(size_t, size, sizeof(resp));
+> +	if (copy_from_user(&resp, buf, size))
+> +		return -EFAULT;
+> +
+> +	ret = mutex_lock_interruptible(&filter->notify_lock);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	list_for_each_entry(knotif, &filter->notifications, list) {
+> +		if (knotif->id == resp.id)
+> +			break;
+> +	}
+> +
+> +	if (!knotif || knotif->id != resp.id) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* Allow exactly one reply. */
+> +	if (knotif->state != SECCOMP_NOTIFY_SENT) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	ret = size;
+> +	knotif->state = SECCOMP_NOTIFY_REPLIED;
+> +	knotif->error = resp.error;
+> +	knotif->val = resp.val;
+> +	complete(&knotif->ready);
+> +out:
+> +	mutex_unlock(&filter->notify_lock);
+> +	return ret;
+> +}
+> +
+> +static __poll_t seccomp_notify_poll(struct file *file,
+> +				    struct poll_table_struct *poll_tab)
+> +{
+> +	struct seccomp_filter *filter = file->private_data;
+> +	__poll_t ret = 0;
+> +	struct seccomp_knotif *cur;
+> +
+> +	ret = mutex_lock_interruptible(&filter->notify_lock);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	list_for_each_entry(cur, &filter->notifications, list) {
+> +		if (cur->state == SECCOMP_NOTIFY_INIT)
+> +			ret |= EPOLLIN | EPOLLRDNORM;
+> +		if (cur->state == SECCOMP_NOTIFY_SENT)
+> +			ret |= EPOLLOUT | EPOLLWRNORM;
+> +	}
+> +
+> +	mutex_unlock(&filter->notify_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct file_operations seccomp_notify_ops = {
+> +	.read = seccomp_notify_read,
+> +	.write = seccomp_notify_write,
+> +	.poll = seccomp_notify_poll,
+> +	.release = seccomp_notify_release,
+> +};
+> +
+> +static struct file *init_listener(struct task_struct *task,
+> +				  struct seccomp_filter *filter)
+> +{
+> +	struct file *ret = ERR_PTR(-EBUSY);
+> +	struct seccomp_filter *cur;
+> +	bool have_listener = false;
+> +	int filter_nesting = 0;
+> +
+> +	for (cur = task->seccomp.filter; cur; cur = cur->prev) {
+> +		mutex_lock_nested(&cur->notify_lock, filter_nesting);
+> +		filter_nesting++;
+> +		if (cur->has_listener)
+> +			have_listener = true;
+> +	}
+> +
+> +	if (have_listener)
+> +		goto out;
+
+Perhaps just goto out directly
+
+		if (cur->has_listener)
+			goto out;
+
+
+Hope this helps,
+Tobin
