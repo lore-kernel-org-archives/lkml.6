@@ -2,94 +2,136 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 608BDC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C48CC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BD3520693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD3520693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5482A20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:37:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5qvnv+h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5482A20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754065AbeFTKg4 (ORCPT
+        id S1754093AbeFTKh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:36:56 -0400
-Received: from mga02.intel.com ([134.134.136.20]:62775 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753880AbeFTKgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:36:55 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 03:36:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,246,1526367600"; 
-   d="scan'208";a="48515938"
-Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Jun 2018 03:36:51 -0700
-Date:   Wed, 20 Jun 2018 18:39:05 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
-        peterz@infradead.org, prarit@redhat.com, pmladek@suse.com,
-        gnomes@lxorguk.ukuu.org.uk
-Subject: Re: [PATCH v10 7/7] x86/tsc: use tsc early
-Message-ID: <20180620103905.s3vmhihbezvkzb5h@shbuild888>
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
- <20180615174204.30581-8-pasha.tatashin@oracle.com>
- <alpine.DEB.2.21.1806192335390.10546@nanos.tec.linutronix.de>
- <20180620101241.5vhmyvdjbenldp4r@shbuild888>
- <alpine.DEB.2.21.1806201214310.10546@nanos.tec.linutronix.de>
- <20180620102946.jdvyvv7jvhhjvskv@shbuild888>
- <alpine.DEB.2.21.1806201229530.10546@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806201229530.10546@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Wed, 20 Jun 2018 06:37:27 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40068 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752983AbeFTKh0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 06:37:26 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n5-v6so5879655wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 03:37:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6s+p1TIw0pBcs/Fh+j/cgRtp6ZB9xEU7re7j+lxdpjQ=;
+        b=O5qvnv+hHg0fdhBwUG0wlAnuURNEfGZMzYOr3bjiHF5yhbgcrnM9grlBCUnko3YrFG
+         4O5x9f80gnpuy/dqq6kvOIJwEoVv/fs43A97elW7xNNo3MmJs/eJ7vOYM7zfxDvUQHYU
+         Ny2WzBUCwJNVTzg03IINmn0WThLiALgVUsobLVPhtJH+xZr6fAflOEO9OpbTLPzxTejJ
+         P2OklyvUBIEdBMsntPHbfC49WZ1uI3U2+q6mhYhhLvz2uEWaRjclO3JKaw0TPCLAcpIe
+         kMM90pwBVAeHG59OVRQBXUZh8m8f6ZAUWivIEHKhAo/MLxByNzq8AnEWy2b8YUYvYPl0
+         504Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6s+p1TIw0pBcs/Fh+j/cgRtp6ZB9xEU7re7j+lxdpjQ=;
+        b=Qp9iKEO4z6DmYzl8uwNDLNykkDNFLv0wTf5lcGNEP08tuDmZ4g6IlmoBttH+5MzuAN
+         SPJzgdrnZCbOumPvlzx3x9C304fS6uaqyQ7ZeoqSlEYpVlGAUk7udLYCIAjEFGqkz2gM
+         mV4CWyWjQCz/1Dp7E9EgJ3DKOtERSL8wKYEspVWMnkM90PZO2vhhFRlvwjzgTSzO4hoc
+         u+C1BRYASPQcN6Be4PioMnjyripRZoA0IvxGZNEQaOnGKsOnRDl1hFPf/NUNlUTyxPy3
+         kQGLmJwXmvefFmxiXFOjV0yAlZwB9lwpSNV5XUCDYojnpyrKJdqvmVzXDBucqAvSiNeu
+         9p+Q==
+X-Gm-Message-State: APt69E22DNCRHpXE8i+Hca1/NoqeBe98xF54tH0sAzxZ5zQ8tp6TZ8iU
+        0CdC4/FT4qAct8xW2Wv71TqvRA==
+X-Google-Smtp-Source: ADUXVKLe88NqJ4GWcjwEN/+NrXIETuCePnyCZMc5AOVVH8oNwZ2PxrIne2FyjEBuvERc5bvVBZ0pRA==
+X-Received: by 2002:a1c:b211:: with SMTP id b17-v6mr1171088wmf.74.1529491044787;
+        Wed, 20 Jun 2018 03:37:24 -0700 (PDT)
+Received: from dvyukov-z840.muc.corp.google.com ([2a00:79e0:15:10:8971:4ae9:dd1c:10e])
+        by smtp.gmail.com with ESMTPSA id e81-v6sm3567427wmi.28.2018.06.20.03.37.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 03:37:23 -0700 (PDT)
+From:   Dmitry Vyukov <dvyukov@gmail.com>
+To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org
+Cc:     Dmitry Vyukov <dvyukov@google.com>
+Subject: [PATCH] include/asm-generic/bug.h: clarify valid uses of WARN()
+Date:   Wed, 20 Jun 2018 12:37:16 +0200
+Message-Id: <20180620103716.61636-1-dvyukov@gmail.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 12:30:58PM +0200, Thomas Gleixner wrote:
-> On Wed, 20 Jun 2018, Feng Tang wrote:
-> 
-> > On Wed, Jun 20, 2018 at 12:16:36PM +0200, Thomas Gleixner wrote:
-> > > On Wed, 20 Jun 2018, Feng Tang wrote:
-> > > > On Wed, Jun 20, 2018 at 01:52:10AM +0200, Thomas Gleixner wrote:
-> > > > >  
-> > > > >  static DEFINE_STATIC_KEY_FALSE(__use_tsc);
-> > > > > +static DEFINE_STATIC_KEY_TRUE(tsc_early_enabled);
-> > > > 
-> > > > One potential problem may be the several static_keys used here,
-> > > > the "__use_tsc", the "__sched_clock_stable", it may not be used
-> > > > very early in boot phase. As the the static_branch_enable() will
-> > > > use pageing related code while the paging is not setup ready yet.
-> > > 
-> > > I know how static keys work and thats the reason for having the extra
-> > > conditional. The key is disabled at a point where paging is available.
-> > 
-> > Maybe I'm wrong, for printk timestamp, it uses the local_clock() thus
-> >     sched_clock_cpu()
-> > 	sched_clock_stable
-> > 	    check the static_key "__sched_clock_stable" which is
-> > 	    defined FALSE, and need a static_branch_enable() to
-> > 	    take effect
-> 
-> And that has nothing to do with this particular patch. Please read the rest
-> of the series, especially
-> 
->    https://lkml.kernel.org/r/20180615174204.30581-5-pasha.tatashin@oracle.com
- 
-Had not read that patch, thanks for the pointing. No problem now :)
+From: Dmitry Vyukov <dvyukov@google.com>
 
-- Feng
+Explicitly state that WARN*() should be used only for recoverable
+kernel issues/bugs and that it should not be used for any kind of
+invalid external inputs or transient conditions.
+
+Motivation: it's a very useful capability to be able to understand
+if a particular kernel splat means a kernel bug or simply an invalid
+user-space program. For the former one wants to notify kernel developers,
+while notifying kernel developers for the latter is annoying.
+Even a kernel developer may not know what to do with a WARNING
+in an unfamiliar subsystem. This is especially critical for any automated
+testing systems that may use panic_on_warn and mail kernel developers.
+
+The clear separation also serves as an additional documentation:
+is it a condition that must never occur because of additional
+checks/logic elsewhere? or is it simply a check for invalid inputs
+or unfortunate conditions?
+
+Use of pr_err() for user messages also leads to better error messages.
+"Something is wrong in file foo on line X" is not particularly useful
+message for end user. pr_err() forces developers to write more meaningful
+error messages for user.
+
+As of now we are almost there. We are doing systematic kernel testing
+with panic_on_warn and are not seeing massive amounts of false positives.
+But every now and then another WARN on ENOMEM or invalid inputs pops up
+and leads to a lengthy argument each time. The goal of this change
+is to officially document the rules.
+
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+---
+ include/asm-generic/bug.h | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index a7613e1b0c87..20561a60db9c 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -75,9 +75,19 @@ struct bug_entry {
+ 
+ /*
+  * WARN(), WARN_ON(), WARN_ON_ONCE, and so on can be used to report
+- * significant issues that need prompt attention if they should ever
+- * appear at runtime.  Use the versions with printk format strings
+- * to provide better diagnostics.
++ * significant kernel issues that need prompt attention if they should ever
++ * appear at runtime.
++ *
++ * Do not use these macros when checking for invalid external inputs
++ * (e.g. invalid system call arguments, or invalid data coming from
++ * network/devices), and on transient conditions like ENOMEM or EAGAIN.
++ * These macros should be used for recoverable kernel issues only.
++ * For invalid external inputs, transient conditions, etc use
++ * pr_err[_once/_ratelimited]() followed by dump_stack(), if necessary.
++ * Do not include "BUG"/"WARNING" in format strings manually to make these
++ * conditions distinguishable from kernel issues.
++ *
++ * Use the versions with printk format strings to provide better diagnostics.
+  */
+ #ifndef __WARN_TAINT
+ extern __printf(3, 4)
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
+
