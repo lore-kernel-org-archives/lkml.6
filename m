@@ -2,115 +2,104 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1E1C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C9DC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D70A820846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U9JM/8Rw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D70A820846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EF9E5208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9E5208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754716AbeFTJDa (ORCPT
+        id S1754805AbeFTJDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:03:30 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:47098 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754012AbeFTIme (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:42:34 -0400
-Received: by mail-lf0-f65.google.com with SMTP id u5-v6so3648851lff.13
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:42:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sYHap52ZFvU1YoFIXSmQWxFDIVLNqxp0/nUZxn+RUiA=;
-        b=U9JM/8RwFdaS17LbpXbCXWptnGIcJfe/tM6C3jZ8qTPndyZ8spk0st/f+uDaJZJSUK
-         4mZTRvU1j0Dad0HcGPnujz9k7ehPn3X6h0mpwaLQTIlmiCg17xIMdai+vLRVfwdahnmQ
-         QYq6etRoMjhxGn9BWsFx8Mhw9VsSHe5YlTqnk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=sYHap52ZFvU1YoFIXSmQWxFDIVLNqxp0/nUZxn+RUiA=;
-        b=TspxhxgxelEZYWrz6zpwdJ0G+7CrtQlWWvZ1WKh9/fahHR96ZdFGFv4SLB1F0VcM8u
-         7qIbEFvml7YzRWThmHxW4YRW2cU5lNGhWdP+E3Yt5h5UY9rm4xYxtdsnpD2yOIetLkqx
-         o2NIE9Ulss7CSRFQ3vH1K8xSFBo89nfHm3J4Hs6HUB3XgMncHwSetJVpMWAuAft8lWfd
-         LtHtzEzgt+fkw1z/zVA4vopLa4GBBp9T4do3psyA8moOBOR9pYgomBX8QPo59GOWpBEq
-         SLT30WGzL682UUMt4beK9/4TbJhtcFf2jcgBagpIAFr4whZeX+/aJZEqY0irMehmEb1c
-         jy0g==
-X-Gm-Message-State: APt69E2ps3MPwLa+RthkhkIDXB/Q1YuuXTwrDVHCDPXsnsqmkCm4TuRA
-        WIR2slezIxfFpP7z1kHew2fo2A==
-X-Google-Smtp-Source: ADUXVKJWpHxRqCeghmtVb9Fae9OZh1TCsprzeURFGjtiKnumr9YTr4okShMqAtm7ARrgrTsHcP+s3g==
-X-Received: by 2002:a2e:3011:: with SMTP id w17-v6mr14437016ljw.20.1529484153062;
-        Wed, 20 Jun 2018 01:42:33 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id l25-v6sm301267ljj.30.2018.06.20.01.42.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 01:42:32 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     alagusankar@silex-india.com,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] ath10k: sdio: allocate correct size for RECV_1MORE_BLOCK rx packets
-Date:   Wed, 20 Jun 2018 10:42:21 +0200
-Message-Id: <20180620084222.3521-3-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180620084222.3521-1-niklas.cassel@linaro.org>
-References: <20180620084222.3521-1-niklas.cassel@linaro.org>
+        Wed, 20 Jun 2018 05:03:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60460 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752601AbeFTJDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:03:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0A647AD85;
+        Wed, 20 Jun 2018 06:52:18 +0000 (UTC)
+Subject: Re: [PATCH] xen: Fix two possible sleep-in-atomic-context bugs in
+ create_active()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>, boris.ostrovsky@oracle.com
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180620023846.30618-1-baijiaju1990@gmail.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c2f8d60a-58c5-9555-92f6-2a5ce2bd1e7e@suse.com>
+Date:   Wed, 20 Jun 2018 08:52:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180620023846.30618-1-baijiaju1990@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this, when receiving a packet that has this flag set
-from firmware, we will read invalid trailer data from the packet,
-which will be shown as various errors, e.g. "sdio mbox lookahead
-is zero" or "invalid rx packet" or "payload length x exceeds max
-htc length".
+On 20/06/18 04:38, Jia-Ju Bai wrote:
+> The driver may sleep with holding a spinlock.
+> The function call paths (from bottom to top) in Linux-4.16.7 are:
+> 
+> [FUNC] __get_free_pages(GFP_KERNEL)
+> drivers/xen/pvcalls-front.c, 351: __get_free_pages in create_active
+> drivers/xen/pvcalls-front.c, 800: create_active in pvcalls_front_accept
+> drivers/xen/pvcalls-front.c, 783: spin_lock in pvcalls_front_accept
+> 
+> [FUNC] __get_free_pages(GFP_KERNEL)
+> drivers/xen/pvcalls-front.c, 347: __get_free_pages in create_active
+> drivers/xen/pvcalls-front.c, 800: create_active in pvcalls_front_accept
+> drivers/xen/pvcalls-front.c, 783: spin_lock in pvcalls_front_accept
+> 
+> To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
+> 
+> These bugs are found by my static analysis tool (DSAC-2) and checked by my
+> code review.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- drivers/net/wireless/ath/ath10k/htc.h  | 1 +
- drivers/net/wireless/ath/ath10k/sdio.c | 3 +++
- 2 files changed, 4 insertions(+)
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-diff --git a/drivers/net/wireless/ath/ath10k/htc.h b/drivers/net/wireless/ath/ath10k/htc.h
-index 34877597dd6a..cf1068dc3254 100644
---- a/drivers/net/wireless/ath/ath10k/htc.h
-+++ b/drivers/net/wireless/ath/ath10k/htc.h
-@@ -58,6 +58,7 @@ enum ath10k_htc_tx_flags {
- };
- 
- enum ath10k_htc_rx_flags {
-+	ATH10K_HTC_FLAGS_RECV_1MORE_BLOCK = 0x01,
- 	ATH10K_HTC_FLAG_TRAILER_PRESENT = 0x02,
- 	ATH10K_HTC_FLAG_BUNDLE_MASK     = 0xF0
- };
-diff --git a/drivers/net/wireless/ath/ath10k/sdio.c b/drivers/net/wireless/ath/ath10k/sdio.c
-index d46523b0472c..0c57d6aaa437 100644
---- a/drivers/net/wireless/ath/ath10k/sdio.c
-+++ b/drivers/net/wireless/ath/ath10k/sdio.c
-@@ -603,6 +603,9 @@ static int ath10k_sdio_mbox_rx_alloc(struct ath10k *ar,
- 		 * ATH10K_HTC_FLAG_BUNDLE_MASK flag set, all bundled
- 		 * packet skb's have been allocated in the previous step.
- 		 */
-+		if (htc_hdr->flags & ATH10K_HTC_FLAGS_RECV_1MORE_BLOCK)
-+			full_len += ATH10K_HIF_MBOX_BLOCK_SIZE;
-+
- 		ret = ath10k_sdio_mbox_alloc_rx_pkt(&ar_sdio->rx_pkts[i],
- 						    act_len,
- 						    full_len,
--- 
-2.17.1
 
+Juergen
