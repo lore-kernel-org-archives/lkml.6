@@ -1,374 +1,141 @@
 Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7687BC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AB2C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B0320846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49662208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tgywpmd+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B0320846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZTale4e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49662208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754017AbeFTGpJ (ORCPT
+        id S1753011AbeFTI0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 02:45:09 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:22182 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeFTGpH (ORCPT
+        Wed, 20 Jun 2018 04:26:17 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37982 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbeFTI0L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 02:45:07 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5K6it79021824;
-        Wed, 20 Jun 2018 01:44:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529477095;
-        bh=MdbbGkzqNB7wkdfM1KGe8mdQw1RTwF1opvtmBEpe+Pc=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=tgywpmd+Fmf0Z4ctcd4cZ9NNs0baQIxTK46Wx45KALjd0TsNxuVwM0WLAENgkj/fE
-         58UT2axXboIbMZ+CFyIDdLyIkj9isI5B3ngtZKZEqyy+me4zzuFgZGk+5pnno0LKbl
-         C+s2uxZWYNYdZyRIyNjgQST6slVU0DGADjdNBWP8=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5K6itRQ028619;
-        Wed, 20 Jun 2018 01:44:55 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 20
- Jun 2018 01:44:55 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 20 Jun 2018 01:44:55 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5K6inNL029397;
-        Wed, 20 Jun 2018 01:44:51 -0500
-Subject: Re: [PATCH v4 02/10] PCI: dwc: Add MSI-X callbacks handler
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <adouglas@cadence.com>, <jesper.nilsson@axis.com>
-References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
- <5beae521c5ee475b1c0e04f5eec07d0120b0fa2b.1529329262.git.gustavo.pimentel@synopsys.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <88d14571-694e-db83-11df-0e647f7bf3db@ti.com>
-Date:   Wed, 20 Jun 2018 12:14:49 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Wed, 20 Jun 2018 04:26:11 -0400
+Received: by mail-ot0-f196.google.com with SMTP id p95-v6so2796556ota.5;
+        Wed, 20 Jun 2018 01:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=0tmXDAvqEHd/K8D09JFY4XHt7kQ44aitaf5QyvXW4Jc=;
+        b=IZTale4eIywmyear8bV/inX2Sr4Vbyp+Wdihox2BfLuTOd/DIozWA+IsAn7A20qMuV
+         Srj/drZlQ74YQsYEJTPV+9nvvOjVx+aNAaW2xTPxkvj0KEdUh6u86pX3T+PMd18c2Khd
+         NAQLplvB3OQHG3EsjUgny6i1Cet1TJuKkFx85Oc8mc9iO2xuAKyHW3i0nkjgKyCcnqV4
+         hurLWVTZTVi/4JOrDaGZsQf5o2EZ5stN5am9IZdV8GGng++3VSsDwsZMNFMTg+DOlbKU
+         FpFnVS9yo77ZhCa2QYYx2kBsHmJhLTu1UkgJU4vMhBByuv0fNXHHavDrBBYzNsJL9na5
+         vQdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=0tmXDAvqEHd/K8D09JFY4XHt7kQ44aitaf5QyvXW4Jc=;
+        b=uIn/esRg1xtFWtMXVAWFnoc71hzIrI1OXX0WLo+grsYZv1I4J3pPJiKa/0FhqOGKVs
+         UGFqH/iS63Wxa+m/6IInw173Re76tb7zGmUZ3gIHFSAeoR6NtCGi6T/gsTC+K0j+a5P1
+         owof2d/IlE1Zxdi2SeBM1joI7HwfDSTODOemoNiQtl9Pqu1HTXqtvkOFSd1w5ml4DWac
+         zy065fHIlJRsvZpyuHp994OYB9JWcFJOexLy0Y/h2b5WQWmNybq2oHfaAYf+5h1yUv5J
+         mVMIVNgiQqX5mycH+PBmue4XYEfZyUkWJJ0GxPDljywYww5K1PN5f5RunU4RLTyEBtZQ
+         1v5Q==
+X-Gm-Message-State: APt69E1BgxWzE5GyroXNxuM+v6nzDxRd2EFTvL8hbAAvT52XMLf/ovTy
+        /yHmBWK08GDMjRBEU1hgY5/y3JYvVIRpQa1scHmthg==
+X-Google-Smtp-Source: ADUXVKL8PUGpsGZgRKNz5X0gb12tfK4wix0R45Yz1447Unff3/jmitH90HkgFgYm5RObuJJ80TXzO8uxuZ5O0q4p4Ug=
+X-Received: by 2002:a9d:60d2:: with SMTP id b18-v6mr11621548otk.305.1529479720749;
+ Wed, 20 Jun 2018 00:28:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5beae521c5ee475b1c0e04f5eec07d0120b0fa2b.1529329262.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 00:28:40
+ -0700 (PDT)
+In-Reply-To: <s5hy3fac6ao.wl-tiwai@suse.de>
+References: <s5h8t7bfgnq.wl-tiwai@suse.de> <CAJZ5v0hidPav5kvTW05e0k5mouFyiUiyUW50=fDqVphbEBjQaA@mail.gmail.com>
+ <s5hpo0ndvc5.wl-tiwai@suse.de> <s5hy3fac6ao.wl-tiwai@suse.de>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 20 Jun 2018 09:28:40 +0200
+X-Google-Sender-Auth: z_miDO2213oCDToV3vp7SJP39Bo
+Message-ID: <CAJZ5v0gWRfbtKG0w1UiM=KbtZYkhL2kj-W_9Q+PUP293sX35_Q@mail.gmail.com>
+Subject: Re: [REGRESSION] 4.17 failed to probe ACPI PnP
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Noah Davis <noahadvs@gmail.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jun 20, 2018 at 8:37 AM, Takashi Iwai <tiwai@suse.de> wrote:
+> On Tue, 19 Jun 2018 10:38:50 +0200,
+> Takashi Iwai wrote:
+>>
+>> On Tue, 19 Jun 2018 10:28:42 +0200,
+>> Rafael J. Wysocki wrote:
+>> >
+>> > On Tue, Jun 19, 2018 at 8:12 AM, Takashi Iwai <tiwai@suse.de> wrote:
+>> > > Hi,
+>> > >
+>> > > there seems a regression regarding the probe of ACPI PnP devices.
+>> > > The detailed logs are found in openSUSE bugzilla:
+>> > >   https://bugzilla.opensuse.org/show_bug.cgi?id=1098074
+>> >
+>> > But that's on this particular machine, not in general, right?
+>> >
+>> > At least I don't see this on any of the systems in my office.
+>>
+>> Yes, it looks so.  4.17 and later works on my several machines, too.
+>>
+>> >
+>> > > In short, since 4.17, the laptop keyboard is lost on ASUS K501UW.
+>> > > Comparing the kernel messages and other logs indicates that the
+>> > > complete lost of ACPI PnP devices:
+>> > >
+>> > > On 4.16:
+>> > > [    0.390244] pnp: PnP ACPI: found 9 devices
+>> > >
+>> > > On 4.17:
+>> > > [    0.263266] pnp: PnP ACPI: found 0 devices
+>> > >
+>> > > ... and this leads to the failure of PS/2 keyboard detection due to
+>> > > the missing PNP030b entry as a result.
+>> > >
+>> > > Any hints for debugging this are appreciated.
+>> >
+>> > It looks like this may be related to the ACPICA changes that went in
+>> > during the 4.17 cycle.
+>> >
+>> > I would try 4.18-rc1 as there is an ACPICA fix in it that may be
+>> > related to this in theory.  If that doesn't help, I'd focus on the
+>> > ACPICA changes.
+>>
+>> OK, Noah, could you test later the kernel in OBS Kernel:HEAD repo?
+>> Now 4.18-rc1 kernel is being built there, and hopefully will finish
+>> soon later.
+>
+> 4.18-rc1 was confirmed to work, so something had fixed it.
 
-On Monday 18 June 2018 08:30 PM, Gustavo Pimentel wrote:
-> Add PCIe config space capability search function.
-> 
-> Add sysfs set/get interface to allow the change of EP MSI-X maximum number.
-> 
-> Add EP MSI-X callback for triggering interruptions.
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Change v1->v2:
->  - Nothing changed, just to follow the patch set version.
-> Change v2->v3:
->  - Moved dra7xx_pcie_raise_irq() signature change to patch file #3.
->  - Moved artpec6_pcie_raise_irq() signature change to patch file #3.
->  - Replaced wrong return value 0 to -EINVAL.
->  - Removed an else if by code refactoring.
->  - Reduced the size of ioremap_nocache mapping from ep->addr_size to
-> PCI_MSIX_ENTRY_SIZE.
->  - Fixed a small bug. If the MSI-X vector bit has been set, the function
-> would return without executing the proper unmap.
-> Change v3->v4:
->  - Rebased to Lorenzo's master branch v4.18-rc1.
->  - Added static prefix to __dw_pcie_ep_find_next_cap function.
-> 
->  drivers/pci/controller/dwc/pcie-designware-ep.c   | 146 +++++++++++++++++++++-
->  drivers/pci/controller/dwc/pcie-designware-plat.c |   4 +-
->  drivers/pci/controller/dwc/pcie-designware.h      |  14 ++-
->  3 files changed, 161 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 8650416..ad25654 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -40,6 +40,39 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
->  	__dw_pcie_ep_reset_bar(pci, bar, 0);
->  }
->  
-> +static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
-> +			      u8 cap)
-> +{
-> +	u8 cap_id, next_cap_ptr;
-> +	u16 reg;
-> +
-> +	reg = dw_pcie_readw_dbi(pci, cap_ptr);
-> +	next_cap_ptr = (reg & 0xff00) >> 8;
-> +	cap_id = (reg & 0x00ff);
-> +
-> +	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
-> +		return 0;
-> +
-> +	if (cap_id == cap)
-> +		return cap_ptr;
-> +
-> +	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
-> +}
-> +
-> +u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+Please check this commit
 
-This should be static?
+5088814a6e93 ACPICA: AML parser: attempt to continue loading table after error
 
-Thanks
-Kishon
-> +{
-> +	u8 next_cap_ptr;
-> +	u16 reg;
-> +
-> +	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
-> +	next_cap_ptr = (reg & 0x00ff);
-> +
-> +	if (!next_cap_ptr)
-> +		return 0;
-> +
-> +	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
-> +}
-> +
->  static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
->  				   struct pci_epf_header *hdr)
->  {
-> @@ -241,8 +274,47 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
->  	return 0;
->  }
->  
-> +static int dw_pcie_ep_get_msix(struct pci_epc *epc, u8 func_no)
-> +{
-> +	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	u32 val, reg;
-> +
-> +	if (!ep->msix_cap)
-> +		return -EINVAL;
-> +
-> +	reg = ep->msix_cap + PCI_MSIX_FLAGS;
-> +	val = dw_pcie_readw_dbi(pci, reg);
-> +	if (!(val & PCI_MSIX_FLAGS_ENABLE))
-> +		return -EINVAL;
-> +
-> +	val &= PCI_MSIX_FLAGS_QSIZE;
-> +
-> +	return val;
-> +}
-> +
-> +static int dw_pcie_ep_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
-> +{
-> +	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	u32 val, reg;
-> +
-> +	if (!ep->msix_cap)
-> +		return -EINVAL;
-> +
-> +	reg = ep->msix_cap + PCI_MSIX_FLAGS;
-> +	val = dw_pcie_readw_dbi(pci, reg);
-> +	val &= ~PCI_MSIX_FLAGS_QSIZE;
-> +	val |= interrupts;
-> +	dw_pcie_dbi_ro_wr_en(pci);
-> +	dw_pcie_writew_dbi(pci, reg, val);
-> +	dw_pcie_dbi_ro_wr_dis(pci);
-> +
-> +	return 0;
-> +}
-> +
->  static int dw_pcie_ep_raise_irq(struct pci_epc *epc, u8 func_no,
-> -				enum pci_epc_irq_type type, u8 interrupt_num)
-> +				enum pci_epc_irq_type type, u16 interrupt_num)
->  {
->  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
->  
-> @@ -282,6 +354,8 @@ static const struct pci_epc_ops epc_ops = {
->  	.unmap_addr		= dw_pcie_ep_unmap_addr,
->  	.set_msi		= dw_pcie_ep_set_msi,
->  	.get_msi		= dw_pcie_ep_get_msi,
-> +	.set_msix		= dw_pcie_ep_set_msix,
-> +	.get_msix		= dw_pcie_ep_get_msix,
->  	.raise_irq		= dw_pcie_ep_raise_irq,
->  	.start			= dw_pcie_ep_start,
->  	.stop			= dw_pcie_ep_stop,
-> @@ -322,6 +396,64 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  	return 0;
->  }
->  
-> +int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-> +			     u16 interrupt_num)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	struct pci_epc *epc = ep->epc;
-> +	u16 tbl_offset, bir;
-> +	u32 bar_addr_upper, bar_addr_lower;
-> +	u32 msg_addr_upper, msg_addr_lower;
-> +	u32 reg, msg_data, vec_ctrl;
-> +	u64 tbl_addr, msg_addr, reg_u64;
-> +	void __iomem *msix_tbl;
-> +	int ret;
-> +
-> +	reg = ep->msix_cap + PCI_MSIX_TABLE;
-> +	tbl_offset = dw_pcie_readl_dbi(pci, reg);
-> +	bir = (tbl_offset & PCI_MSIX_TABLE_BIR);
-> +	tbl_offset &= PCI_MSIX_TABLE_OFFSET;
-> +	tbl_offset >>= 3;
-> +
-> +	reg = PCI_BASE_ADDRESS_0 + (4 * bir);
-> +	bar_addr_upper = 0;
-> +	bar_addr_lower = dw_pcie_readl_dbi(pci, reg);
-> +	reg_u64 = (bar_addr_lower & PCI_BASE_ADDRESS_MEM_TYPE_MASK);
-> +	if (reg_u64 == PCI_BASE_ADDRESS_MEM_TYPE_64)
-> +		bar_addr_upper = dw_pcie_readl_dbi(pci, reg + 4);
-> +
-> +	tbl_addr = ((u64) bar_addr_upper) << 32 | bar_addr_lower;
-> +	tbl_addr += (tbl_offset + ((interrupt_num - 1) * PCI_MSIX_ENTRY_SIZE));
-> +	tbl_addr &= PCI_BASE_ADDRESS_MEM_MASK;
-> +
-> +	msix_tbl = ioremap_nocache(ep->phys_base + tbl_addr,
-> +				   PCI_MSIX_ENTRY_SIZE);
-> +	if (!msix_tbl)
-> +		return -EINVAL;
-> +
-> +	msg_addr_lower = readl(msix_tbl + PCI_MSIX_ENTRY_LOWER_ADDR);
-> +	msg_addr_upper = readl(msix_tbl + PCI_MSIX_ENTRY_UPPER_ADDR);
-> +	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
-> +	msg_data = readl(msix_tbl + PCI_MSIX_ENTRY_DATA);
-> +	vec_ctrl = readl(msix_tbl + PCI_MSIX_ENTRY_VECTOR_CTRL);
-> +
-> +	iounmap(msix_tbl);
-> +
-> +	if (vec_ctrl & PCI_MSIX_ENTRY_CTRL_MASKBIT)
-> +		return -EPERM;
-> +
-> +	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msix_mem_phys, msg_addr,
-> +				  epc->mem->page_size);
-> +	if (ret)
-> +		return ret;
-> +
-> +	writel(msg_data, ep->msix_mem);
-> +
-> +	dw_pcie_ep_unmap_addr(epc, func_no, ep->msix_mem_phys);
-> +
-> +	return 0;
-> +}
-> +
->  void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
->  {
->  	struct pci_epc *epc = ep->epc;
-> @@ -329,6 +461,9 @@ void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
->  	pci_epc_mem_free_addr(epc, ep->msi_mem_phys, ep->msi_mem,
->  			      epc->mem->page_size);
->  
-> +	pci_epc_mem_free_addr(epc, ep->msix_mem_phys, ep->msix_mem,
-> +			      epc->mem->page_size);
-> +
->  	pci_epc_mem_exit(epc);
->  }
->  
-> @@ -412,6 +547,15 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->  		dev_err(dev, "Failed to reserve memory for MSI\n");
->  		return -ENOMEM;
->  	}
-> +	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
-> +
-> +	ep->msix_mem = pci_epc_mem_alloc_addr(epc, &ep->msix_mem_phys,
-> +					     epc->mem->page_size);
-> +	if (!ep->msix_mem) {
-> +		dev_err(dev, "Failed to reserve memory for MSI-X\n");
-> +		return -ENOMEM;
-> +	}
-> +	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
->  
->  	epc->features = EPC_FEATURE_NO_LINKUP_NOTIFIER;
->  	EPC_FEATURE_SET_BAR(epc->features, BAR_0);
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-> index 5937fed..654dcb5 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-> @@ -78,7 +78,7 @@ static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
->  
->  static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->  				     enum pci_epc_irq_type type,
-> -				     u8 interrupt_num)
-> +				     u16 interrupt_num)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->  
-> @@ -88,6 +88,8 @@ static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->  		return -EINVAL;
->  	case PCI_EPC_IRQ_MSI:
->  		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-> +	case PCI_EPC_IRQ_MSIX:
-> +		return dw_pcie_ep_raise_msix_irq(ep, func_no, interrupt_num);
->  	default:
->  		dev_err(pci->dev, "UNKNOWN IRQ type\n");
->  	}
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index bee4e25..b22c5bb 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -191,7 +191,7 @@ enum dw_pcie_as_type {
->  struct dw_pcie_ep_ops {
->  	void	(*ep_init)(struct dw_pcie_ep *ep);
->  	int	(*raise_irq)(struct dw_pcie_ep *ep, u8 func_no,
-> -			     enum pci_epc_irq_type type, u8 interrupt_num);
-> +			     enum pci_epc_irq_type type, u16 interrupt_num);
->  };
->  
->  struct dw_pcie_ep {
-> @@ -208,6 +208,10 @@ struct dw_pcie_ep {
->  	u32			num_ob_windows;
->  	void __iomem		*msi_mem;
->  	phys_addr_t		msi_mem_phys;
-> +	void __iomem		*msix_mem;
-> +	phys_addr_t		msix_mem_phys;
-> +	u8			msi_cap;	/* MSI capability offset */
-> +	u8			msix_cap;	/* MSI-X capability offset */
->  };
->  
->  struct dw_pcie_ops {
-> @@ -359,6 +363,8 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep);
->  void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
->  int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  			     u8 interrupt_num);
-> +int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-> +			     u16 interrupt_num);
->  void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar);
->  #else
->  static inline void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
-> @@ -380,6 +386,12 @@ static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  	return 0;
->  }
->  
-> +static inline int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-> +					   u16 interrupt_num)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
->  {
->  }
-> 
+None of the other ACPICA commits that have gone in since 4.17 should
+affect the behavior at hand.
+
+> Also, the symptom appears not only on a single machine but on another
+> (ASUS?) machine, according to the bug report.
+
+OK
+
+Thanks,
+Rafael
