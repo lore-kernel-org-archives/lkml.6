@@ -2,101 +2,145 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D938C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C71C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38C7E20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:14:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C7E20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id CCFE720846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:15:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="b32WYgZq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCFE720846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754827AbeFTJOk (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:14:40 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:44455 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754299AbeFTIdr (ORCPT
+        id S932552AbeFTJPG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 05:15:06 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:50863 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754315AbeFTJPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:33:47 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0LrGGm-1gChuk1us0-0135sI; Wed, 20 Jun 2018 10:33:42 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     David Howells <dhowells@redhat.com>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-cachefs@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH] cachefiles: avoid deprecated get_seconds()
-Date:   Wed, 20 Jun 2018 10:31:10 +0200
-Message-Id: <20180620083339.766780-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:5u9IqHPzy3OlmTSEzyeONOP86GAngA6lrWFV9i7lcKSXY2Edgx7
- X/9UXKcQEMZP6Jy35BvMYKRsKGKDGj0560PJrHGvsO0H5OUBlNavWiQwCmM2t3wp9dQ7nWr
- XMrnKkShGcZXFJAw7nj6kByAYg+hk0Y+Eytw9Z0fhQPTtqhcdYfmXGWlRrNY3KusvXOz2bn
- gXIzB4kxsRjw+XORDD4gA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cAuOoTufQ3I=:npO72s62Ui7Rz2uDl7mhS5
- jmkkB2nJNG0jc1JtDprUsarxkQ69UVWrPhWgnNXzbBpNeaAPWoRlE7CqnlEo5nYVF522jzjEb
- emdoSbmM14lBkRB54xhVCesUorT33/kh5lONckrwxydLSpEPehBNJ25HxUxjHQli1nkTIiILB
- ztO6icLWx9+xDSbX+06LnNtTnsxnEPOawnajOXqYnkqI7rnrbpQ8bQnzf12t/VbH3HdAenYEV
- 2opUU+1ri7yD8CW+bGKKhJgIvPJ5NwMCSPgC/OZTyO1p7L1u+5gxADOKtAw1i9LCq+Kx/E9CI
- NC/qEoOH1MSQvBvjCZ+CJnUWibDj0KAUreC89eW1cO9uAl3q+4ih1EPWJdMq3E8My2U0uqPUI
- MJrrPwJmdjLQTuvxnjmnbz7FqhaqUAmdw5OOWrKgQ8KeHTwfrTMdKit1GU/qsUHoQAWuC2WmH
- WZrVdRbYjYmy9cakC0lFeOqUm3sZKrTwC9CuHZFOtF2tdTq1ecU5JH8ukzwQfUDciDjAL0eLW
- KMOM/9b82OSCTKdfJnemIpKUiYq9KfzPYmiRdF0SO0TeGUgB3ialtM/WgbHEQ+wYGCbCY82pE
- XAtUnjuQKV/5MGdbB84TTYWSGHmIMwaALmO4kvvCzBlPLcIMdxAp4Ds0qdfR4aYmDnkorLtdm
- XbXH/qPDKx1IPOBwNd1JD/aXD71lmkMJGH75WK+pG+vHY6iXChIBqMFMbpjwL2ioq77M=
+        Wed, 20 Jun 2018 05:15:03 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6122B1E04A3;
+        Wed, 20 Jun 2018 11:15:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1529486101; bh=fAPM8umxGuItWPS5vJwUiMglPgzdojeg0EkdvTytikU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=b32WYgZqaVNNUd8OZ3qgDw3GyDaUVXjIBVP087NVGZdk0h75qcBRvQJFwTXHehTkp
+         pkLo1UxqIFJKcsVkn9J9rSpPws/sgldfnewHpd554vl2OdTdMuwV86+5lWiCaml69n
+         IRw+59D4+0P911oL0U5FqXZ889IKaNbO+rbKQsSc2ojbE88I32O/fcis6SGKItJKC+
+         NF9g/f9eQ8DPStJDCMuSTmItI/P1MGKW6Vn1HjEXCDRKr1ATPK5yBqTO8z7cTVCjCI
+         B5JEdTmkmfxnfAEnJOrmuh3FMXQOi/MnTPA5qBjIW2zRxy2Jlb8mIQ8JoLh0XKQ8Gh
+         o9AX5yxxFIgqw==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 590B23DF9;
+        Wed, 20 Jun 2018 02:15:00 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 20 Jun 2018 02:13:22 -0700
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 20 Jun 2018 11:13:21 +0200
+Received: from [10.107.25.102] (10.107.25.102) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 20 Jun 2018 11:13:20 +0200
+Subject: Re: [PATCH v4 03/10] PCI: Update xxx_pcie_ep_raise_irq() and
+ pci_epc_raise_irq() signatures
+To:     kbuild test robot <lkp@intel.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+CC:     "kbuild-all@01.org" <kbuild-all@01.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <5bfa0cf053878e0e859a8b97227ca03ea4d50e92.1529329262.git.gustavo.pimentel@synopsys.com>
+ <201806190312.UKq0zYJ1%fengguang.wu@intel.com>
+From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
+Message-ID: <e35c08f4-27ac-4979-91b1-2bf26e1e3298@synopsys.com>
+Date:   Wed, 20 Jun 2018 10:11:19 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <201806190312.UKq0zYJ1%fengguang.wu@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.25.102]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_seconds() returns an unsigned long can overflow on some architectures
-and is deprecated because of that. In cachefs, we cast that number to
-a a 32-bit integer, which will overflow in year 2106 on all architectures.
+Hi,
 
-The overflow probably isn't harmful in the end, since the timestamps are
-only used to make the file names unique, but they don't strictly have to
-be in monotonically increasing order. Moving to ktime_get_real_seconds()
-avoids the deprecated interface, the question is whether we should still
-truncate to 32 bits.
+Thanks for the suggestion.
 
-In this patch, I decided to not overflow, but instead to extend the
-file names using the 64-bit timestamp, so they will be 17 characters
-after 2106 rather than 16.
+Regards,
+Gustavo
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/cachefiles/namei.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index ab0bbe93b398..5705e29d4506 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -297,7 +297,7 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
- {
- 	struct dentry *grave, *trap;
- 	struct path path, path_to_graveyard;
--	char nbuffer[8 + 8 + 1];
-+	char nbuffer[16 + 8 + 1];
- 	int ret;
- 
- 	_enter(",'%pd','%pd'", dir, rep);
-@@ -336,8 +336,8 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
- 
- try_again:
- 	/* first step is to make up a grave dentry in the graveyard */
--	sprintf(nbuffer, "%08x%08x",
--		(uint32_t) get_seconds(),
-+	sprintf(nbuffer, "%08llx%08x",
-+		(uint64_t) ktime_get_real_seconds(),
- 		(uint32_t) atomic_inc_return(&cache->gravecounter));
- 
- 	/* do the multiway lock magic */
--- 
-2.9.0
+On 18/06/2018 20:31, kbuild test robot wrote:
+> Hi Gustavo,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on pci/next]
+> [also build test WARNING on v4.18-rc1 next-20180618]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_0day-2Dci_linux_commits_Gustavo-2DPimentel_Add-2DMSI-2DX-2Dsupport-2Don-2Dpcitest-2Dtool_20180619-2D004625&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=IFx9JKJsE2KvE7siiXs4GRW2a3OkFpE8BFO41SbTjJA&s=vuOhITY-_4Y-jxzyQ1ddb6M8E9-OELpKXzcJZqgWqvE&e=
+> base:   https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_linux_kernel_git_helgaas_pci.git&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=IFx9JKJsE2KvE7siiXs4GRW2a3OkFpE8BFO41SbTjJA&s=7xs_oUDvo5HRxpqsZAqdybMJcJDO6K3hooyy-CmXwkM&e= next
+> reproduce:
+>         # apt-get install sparse
+>         make ARCH=x86_64 allmodconfig
+>         make C=1 CF=-D__CHECK_ENDIAN__
+> 
+> 
+> sparse warnings: (new ones prefixed by >>)
+> 
+>    drivers/pci/controller/pcie-rockchip-ep.c:173:14: sparse: expression using sizeof(void)
+>>> drivers/pci/controller/pcie-rockchip-ep.c:516:27: sparse: incorrect type in initializer (incompatible argument 4 (different type sizes)) @@    expected int ( *raise_irq )( ... ) @@    got int ( *raise_irq )( ... ) @@
+>    drivers/pci/controller/pcie-rockchip-ep.c:516:27:    expected int ( *raise_irq )( ... )
+>    drivers/pci/controller/pcie-rockchip-ep.c:516:27:    got int ( *<noident> )( ... )
+>    drivers/pci/controller/pcie-rockchip-ep.c:516:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      .raise_irq = rockchip_pcie_ep_raise_irq,
+>                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>    drivers/pci/controller/pcie-rockchip-ep.c:516:15: note: (near initialization for 'rockchip_pcie_epc_ops.raise_irq')
+>    cc1: some warnings being treated as errors
+> 
+> vim +516 drivers/pci/controller/pcie-rockchip-ep.c
+> 
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  507  
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  508  static const struct pci_epc_ops rockchip_pcie_epc_ops = {
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  509  	.write_header	= rockchip_pcie_ep_write_header,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  510  	.set_bar	= rockchip_pcie_ep_set_bar,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  511  	.clear_bar	= rockchip_pcie_ep_clear_bar,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  512  	.map_addr	= rockchip_pcie_ep_map_addr,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  513  	.unmap_addr	= rockchip_pcie_ep_unmap_addr,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  514  	.set_msi	= rockchip_pcie_ep_set_msi,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  515  	.get_msi	= rockchip_pcie_ep_get_msi,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09 @516  	.raise_irq	= rockchip_pcie_ep_raise_irq,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  517  	.start		= rockchip_pcie_ep_start,
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  518  };
+> cf590b07 drivers/pci/host/pcie-rockchip-ep.c Shawn Lin 2018-05-09  519  
+> 
+> :::::: The code at line 516 was first introduced by commit
+> :::::: cf590b07839133146842d2d3d9a68f804c2edc4b PCI: rockchip: Add EP driver for Rockchip PCIe controller
+> 
+> :::::: TO: Shawn Lin <shawn.lin@rock-chips.com>
+> :::::: CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://urldefense.proofpoint.com/v2/url?u=https-3A__lists.01.org_pipermail_kbuild-2Dall&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=IFx9JKJsE2KvE7siiXs4GRW2a3OkFpE8BFO41SbTjJA&s=Mf1d7cz8MbsSZPkgXFwnxZJY1579nwc7-mpjeQBdweY&e=                   Intel Corporation
+> 
 
