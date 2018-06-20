@@ -2,111 +2,82 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8466DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4687C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 367F720846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:28:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NTy23Fns"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 367F720846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A4863208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:29:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4863208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754085AbeFTO17 (ORCPT
+        id S1754089AbeFTO3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:27:59 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58830 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752725AbeFTO16 (ORCPT
+        Wed, 20 Jun 2018 10:29:06 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:54233 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752856AbeFTO3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:27:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eMGX/vsz54Q4caqt50tNX8W2/XJte3L4ED1D2DYi3DM=; b=NTy23Fnsf7WLUGXDCU7Zw7jvu
-        1M4RHZa6VjWMn91F72ExcFloyGANed3g6cq6XvBzm8yPXCl4S4CBQykPADUjAeyX2odDPvAm0QQz6
-        yfxE7hqrJIbMtIDuYQO4oLeMDbDLHv/vUfqq93ZG9Y8df2nE8U2Ldw4mIGoJc+QAbYPVrMdKgmRiu
-        51JP9eVTIm7Ivyx2WSRrpLyubjbWfUhd1cvrBMQXeSXBz+U1yasuhs80zQY94T1MBG5MgkAtKVHq4
-        R0WtHHtz+UBNsed6zSZFwR2aYtFXi6CnktqZKGvIlj1FPjQNCs2k2jWcRWjE6tt7KUyS37zVp/8ue
-        y3MAHvLCg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVe5B-00065C-9M; Wed, 20 Jun 2018 14:27:37 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F322E2029F1D5; Wed, 20 Jun 2018 16:27:35 +0200 (CEST)
-Date:   Wed, 20 Jun 2018 16:27:35 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v10 2/9] cpuset: Add new v2 cpuset.sched.domain_root flag
-Message-ID: <20180620142735.GM2494@hirez.programming.kicks-ass.net>
-References: <1529295249-5207-1-git-send-email-longman@redhat.com>
- <1529295249-5207-3-git-send-email-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529295249-5207-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 20 Jun 2018 10:29:04 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LkhLo-1g64mk1qBI-00aSCY; Wed, 20 Jun 2018 16:28:58 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Abhi Das <adas@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] gfs2: call ktime_get_coarse_real_ts64() directly
+Date:   Wed, 20 Jun 2018 16:28:47 +0200
+Message-Id: <20180620142857.33297-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:l3p5GxGN7knTndQjforCziNa6/BXQmpytg19Pzs0nO4oha8/vCr
+ Kqz9XTW/E8zaWJy23JVOTL/+e9ahbYrxOO72pkBKub4yDgCFz/3+KFHIJhk6iPS0HArMoMh
+ p9B23vG6wTrk5p71hK48SnCiIswVHOOVMDhS2ix30n8/70B4qv/r4oV7aIDl1VKmA6LMtxt
+ JQdweWOVDKjVrpzKbizAg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:D7UryJOhb1g=:B4y5b3TPYgWyN0eMv45AR/
+ IeoxFLCdBi+q2oyjHbUyzEBheYF+MPIWcwR0JQWEmjma9MVX7MsLDu8rNWuhdocpx7Z1lnGBR
+ MKVwnFVXuxtH79SJfWQPsB4kOoSyUWjYVfCOhqc7RySxQX8wTohJ0d8Nk2W8OJ+OJ07ZBGZ09
+ 0ihR47tzeFVwoPN4F+W0i2sPHn4XnrPtSPZ1rdvIvwaEQSJbsXHobpX3a193J3WXVVMEe8TJ7
+ 1Cv9NQI4IzyW6/woQ5YCfj0ECaBwhewzA/lJ6d3CVXlvFtA1In32q9fcNi9QBWSMyFxJxFNGE
+ H1B9X+o4zDm1W1t+L0WiTIYaT+jWvTjjzua5wgRaWBLcfkRz7ZrHMpcpZVso4IJEbnJnfkWzG
+ qJ92biMNgOd5ZxHIIamBTbjUpsF2R6UFKu+3gsm/qSHoeaiY8OXr9apNDKi8CZ2gtUuLiaFII
+ MaqzZ6/9e/8mTlaYeL2E0xvdbS+mF01wED78FAdrP/ESCtNlpX0Sxc9WJ2wofMWOLqkeMKv87
+ cPLojF8lWna16mncKCUyGQPiYiaYBEmiEA60EifSaYEOqV/J5VyaFsRK8QfL1mXWOWOQcskBZ
+ H/VI7ncnNXTh49AhqujN8fY+g4Q1iZTLEvTqtxPV3przpRjYy08VZ1leghdYsWicwji7PnRSJ
+ 8neSTJUeu3o6xv6mrajibnofGZRYS3hpFax5IgtELR6W+gU4+Pvq5Fhu5IBc00QdBy1M=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 12:14:01PM +0800, Waiman Long wrote:
-> +  cpuset.sched.domain_root
+current_kernel_time64() is now just a deprecated wrapper around
+ktime_get_coarse_real_ts64(), so let's just call that directly.
 
-Why are we calling this a domain_root and not a partition?
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/gfs2/log.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	A read-write single value file which exists on non-root
-> +	cpuset-enabled cgroups.  It is a binary value flag that accepts
-> +	either "0" (off) or "1" (on).  This flag is set by the parent
-> +	and is not delegatable.
+diff --git a/fs/gfs2/log.c b/fs/gfs2/log.c
+index 0248835625f1..c7b1c0f75a55 100644
+--- a/fs/gfs2/log.c
++++ b/fs/gfs2/log.c
+@@ -689,7 +689,7 @@ void gfs2_write_log_header(struct gfs2_sbd *sdp, struct gfs2_jdesc *jd,
+ 	hash = ~crc32(~0, lh, LH_V1_SIZE);
+ 	lh->lh_hash = cpu_to_be32(hash);
+ 
+-	tv = current_kernel_time64();
++	ktime_get_coarse_real_ts64(&tv);
+ 	lh->lh_nsec = cpu_to_be32(tv.tv_nsec);
+ 	lh->lh_sec = cpu_to_be64(tv.tv_sec);
+ 	addr = gfs2_log_bmap(sdp);
+-- 
+2.9.0
 
-You still haven't answered:
-
-  https://lkml.kernel.org/r/20180531094943.GG12180@hirez.programming.kicks-ass.net
-
-the question stands.
-
-> +	If set, it indicates that the current cgroup is the root of a
-> +	new scheduling domain or partition that comprises itself and
-> +	all its descendants except those that are scheduling domain
-> +	roots themselves and their descendants.  The root cgroup is
-> +	always a scheduling domain root.
-> +
-> +	There are constraints on where this flag can be set.  It can
-> +	only be set in a cgroup if all the following conditions are true.
-> +
-> +	1) The "cpuset.cpus" is not empty and the list of CPUs are
-> +	   exclusive, i.e. they are not shared by any of its siblings.
-> +	2) The "cpuset.cpus" is also a proper subset of the parent's
-> +	   "cpuset.cpus.effective".
-> +	3) The parent cgroup is a scheduling domain root.
-> +	4) There is no child cgroups with cpuset enabled.  This is
-> +	   for eliminating corner cases that have to be handled if such
-> +	   a condition is allowed.
-> +
-> +	Setting this flag will take the CPUs away from the effective
-> +	CPUs of the parent cgroup.  Once it is set, this flag cannot be
-> +	cleared if there are any child cgroups with cpuset enabled.
-> +
-> +	A parent scheduling domain root cgroup cannot distribute
-> +	all its CPUs to its child scheduling domain root cgroups.
-> +	There must be at least one cpu left in the parent scheduling
-> +	domain root cgroup.
