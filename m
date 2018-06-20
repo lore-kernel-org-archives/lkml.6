@@ -7,118 +7,112 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F19C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499D3C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BAE820874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0104E20871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:01:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqN7zquA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BAE820874
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQeiWrWP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0104E20871
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753266AbeFTKAU (ORCPT
+        id S1754012AbeFTKBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:00:20 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:36221 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751031AbeFTKAO (ORCPT
+        Wed, 20 Jun 2018 06:01:34 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35168 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752133AbeFTKBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:00:14 -0400
-Received: by mail-pg0-f66.google.com with SMTP id m5-v6so1263042pgd.3;
-        Wed, 20 Jun 2018 03:00:14 -0700 (PDT)
+        Wed, 20 Jun 2018 06:01:32 -0400
+Received: by mail-pl0-f67.google.com with SMTP id k1-v6so1496493plt.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 03:01:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=b8sxHq2Hg1LmC9J95gsE8Z3KViyec70IXYAnekNK384=;
-        b=LqN7zquAKsYAbXk+9u0d5qi/VM4GpOlJLeisWW54y9hPLZAn2YiEtubOoUMyTRJr4w
-         UOSIrKnN0Z0yGvAiZloC/RU1wiuN7Iiu9SSPBuCs3BOov+V/OnHvira2dlw2y1Z93cs+
-         jv53IC0VN3+BM9TVvHntNanLucLNCDyQ+RiOr4Vjt8JO658H/RN/iZSxw4o0zFFUGnUq
-         +qaCd5aFobvCTg5wYJ6tf/QHUMcKFC20Vv0Tr+mr4flwA9uiYWvSr0yzYiO8yt8QRq/0
-         HvsO8272BYI/SpFz89mQ2j9gMhNisoBON8V8C/gAkqeBxteglL0CuRGXoJgt9rowdx9j
-         RuMQ==
+        bh=vTtXx9xvfYNAHzkc+ZWtqRbDljTl+RwzTlpylAuw6TU=;
+        b=ZQeiWrWPrU+tI2vS1vUXBZtokxrUeoZVUIWg1VSL5MXy4BjfzAmvMm7N9VGFUScckJ
+         zyiaHXXL+mR1St/K1baRFRZnHcMvAEPEpUaA+TNYWi97yZ5HCh5eyQBIFJiaq3MvZzYi
+         WNHwjnEx3JApi90gGZGO35aymw2m3w9SsQH7YLdS2Kr1V8Y9l2WjRhkzTewyplerXotf
+         9yc8KtgY4NggxQGDyrrF13uDaMSIWWp6JouTvGp5wHHs9rQAXzLZrbLUIDx+nIix+fyU
+         K9ooWN45uFE+UQBkwOviEb8ErHBKyYsxPSh4j3ECQMJnUcQej6Z1mSvj1h9XqpKvoYWL
+         zSDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=b8sxHq2Hg1LmC9J95gsE8Z3KViyec70IXYAnekNK384=;
-        b=CWNJKvMds6Cm4xwW3PZyryMacjEY534QT4J/CaKvaAUw9/eaAZzmj2KiHakgW4izSg
-         6lBaANLUQb8mt9EkCqeTxnBqRzI++qqP+phfFlBFm92EbEJ/XVJHKHjQaHfkLdyXL4nn
-         dSUiLca7jlg5g3DOQRobSI6hSuUSUJGoowkYQrYdMt+cjNyYfsXn4mq3AtGmhcQO1cYs
-         GZSCepQ6ZL+x+gJvmC8yeh5hlHn1F8XXvTehyWG4dGO0KwHnAZdrYvkC7AS0irDrz8G4
-         RNDTr68OI1r0Wg0Geyif+jwqKmdn6iBvGIQAibHtKWQTXPgZ78zzXkgQgo2rMgapmfRJ
-         4XOw==
-X-Gm-Message-State: APt69E0tdT63ILPV1yrbYEei/ynU8BsvT45SdLAkVVWjeCBCP59rqd0q
-        K7Am7w9PJKM2W5paLRT5HWfatdS9
-X-Google-Smtp-Source: ADUXVKLFYF37afgk4QPq0Kold2kWgZWdblSYUr9wGkDZSS/BHmxZV+9oqW0velkoyD9dNC0MpVbzAw==
-X-Received: by 2002:a62:a054:: with SMTP id r81-v6mr21849639pfe.10.1529488813990;
-        Wed, 20 Jun 2018 03:00:13 -0700 (PDT)
-Received: from ubuntu.AD.HARMAN.COM ([106.206.6.177])
-        by smtp.gmail.com with ESMTPSA id a8-v6sm4127073pfe.72.2018.06.20.03.00.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 20 Jun 2018 03:00:12 -0700 (PDT)
-From:   Allen Pais <allen.lkml@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, y2038@lists.linaro.org,
-        Allen Pais <allen.lkml@gmail.com>
-Subject: [PATCH] ceph: use ktime_get_real_seconds()
-Date:   Wed, 20 Jun 2018 15:30:01 +0530
-Message-Id: <1529488801-22093-1-git-send-email-allen.lkml@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        bh=vTtXx9xvfYNAHzkc+ZWtqRbDljTl+RwzTlpylAuw6TU=;
+        b=GPPiSLwMa2G887qP8gSbtYRh4Z9U8n0stCLjYKc8V1CygsaYjalBGCSL+V14Wq/nAM
+         tnd96kB7BIlHx+R3fb4CkxMQWpzlDFAQVipOmq0zLoyLNQxwSQx/hmqAjAxLPrk/gqfW
+         yAlk3FI3W8pDYG9vXxH0lowzTVdl2/NqnLYLliBxe/vmR3sYcg1PtvqzZkmoaAH8DNrZ
+         jveqtSLQ4JXGbXKjzngP48udvzvBc8RQxHmGHXuqobVWJGjTijw7DfL60h7ukbxBRoi9
+         bbcAkvGM7i68ratsml1dmjaWZ21OqfPQmbZY9I3nAtJd2NpM23MM1u3eqGw6+waGKea2
+         R09w==
+X-Gm-Message-State: APt69E1GTuvn49vWXFY9Fg4futulqw14tz9D6dI0y7WMXxelb4uTXdKf
+        0T7nd5vaBrYfb9MFghVLAcM=
+X-Google-Smtp-Source: ADUXVKJJwTI2HQEOx5RBfc4l85NTedOQH4JBC8HJ6O3r6yNreBkCuRfa4DEv9HfuIaDoeyeEiFBipA==
+X-Received: by 2002:a17:902:7891:: with SMTP id q17-v6mr23365145pll.186.1529488892288;
+        Wed, 20 Jun 2018 03:01:32 -0700 (PDT)
+Received: from oslab.tsinghua.edu.cn ([2402:f000:1:4413:35c0:9e91:c7fc:672])
+        by smtp.gmail.com with ESMTPSA id y17-v6sm3174901pfe.33.2018.06.20.03.01.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 03:01:31 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     gregkh@linuxfoundation.org, dan.carpenter@oracle.com,
+        jananis37@gmail.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] staging: rtl8188eu: Fix a possible sleep-in-atomic-context bug in rtw_disassoc_cmd()
+Date:   Wed, 20 Jun 2018 18:01:19 +0800
+Message-Id: <20180620100119.8740-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use ktime_get_real_seconds() as get_seconds() is deprecated.
+The driver may sleep with holding a spinlock.
+The function call paths (from bottom to top) in Linux-4.16.7 are:
 
-Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/staging/rtl8188eu/core/rtw_cmd.c, 502: 
+		kzalloc in rtw_disassoc_cmd
+drivers/staging/rtl8188eu/core/rtw_ioctl_set.c, 256: 
+		rtw_disassoc_cmd in rtw_set_802_11_ssid
+drivers/staging/rtl8188eu/core/rtw_ioctl_set.c, 235: 
+		spin_lock_bh in rtw_set_802_11_ssid
+
+[FUNC] kzalloc(GFP_KERNEL)
+drivers/staging/rtl8188eu/core/rtw_cmd.c, 502: 
+		kzalloc in rtw_disassoc_cmd
+drivers/staging/rtl8188eu/core/rtw_ioctl_set.c, 352: 
+		rtw_disassoc_cmd in rtw_set_802_11_infrastructure_mode
+drivers/staging/rtl8188eu/core/rtw_ioctl_set.c, 336: 
+		spin_lock_bh in rtw_set_802_11_infrastructure_mode
+
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
+
+This bug is found by my static analysis tool (DSAC-2) and checked by
+my code review.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- net/ceph/auth_x.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_cmd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ceph/auth_x.c b/net/ceph/auth_x.c
-index 2f4a1ba..99561c2 100644
---- a/net/ceph/auth_x.c
-+++ b/net/ceph/auth_x.c
-@@ -154,7 +154,7 @@ static int process_one_ticket(struct ceph_auth_client *ac,
- 	void **ptp;
- 	struct ceph_crypto_key new_session_key = { 0 };
- 	struct ceph_buffer *new_ticket_blob;
--	unsigned long new_expires, new_renew_after;
-+	u32 new_expires, new_renew_after;
- 	u64 new_secret_id;
- 	int ret;
+diff --git a/drivers/staging/rtl8188eu/core/rtw_cmd.c b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+index be8542676adf..f664fc935455 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_cmd.c
++++ b/drivers/staging/rtl8188eu/core/rtw_cmd.c
+@@ -499,7 +499,7 @@ u8 rtw_disassoc_cmd(struct adapter *padapter, u32 deauth_timeout_ms, bool enqueu
+ 	RT_TRACE(_module_rtl871x_cmd_c_, _drv_notice_, ("+%s\n", __func__));
  
-@@ -191,9 +191,9 @@ static int process_one_ticket(struct ceph_auth_client *ac,
- 
- 	ceph_decode_timespec(&validity, dp);
- 	dp += sizeof(struct ceph_timespec);
--	new_expires = get_seconds() + validity.tv_sec;
-+	new_expires = (u32)ktime_get_real_seconds() + validity.tv_sec;
- 	new_renew_after = new_expires - (validity.tv_sec / 4);
--	dout(" expires=%lu renew_after=%lu\n", new_expires,
-+	dout(" expires=%u renew_after=%u\n", new_expires,
- 	     new_renew_after);
- 
- 	/* ticket blob for service */
-@@ -385,13 +385,13 @@ static bool need_key(struct ceph_x_ticket_handler *th)
- 	if (!th->have_key)
- 		return true;
- 
--	return get_seconds() >= th->renew_after;
-+	return ktime_get_real_seconds() >= th->renew_after;
- }
- 
- static bool have_key(struct ceph_x_ticket_handler *th)
- {
- 	if (th->have_key) {
--		if (get_seconds() >= th->expires)
-+		if (ktime_get_real_seconds() >= th->expires)
- 			th->have_key = false;
- 	}
- 
+ 	/* prepare cmd parameter */
+-	param = kzalloc(sizeof(*param), GFP_KERNEL);
++	param = kzalloc(sizeof(*param), GFP_ATOMIC);
+ 	if (!param) {
+ 		res = _FAIL;
+ 		goto exit;
 -- 
-2.7.4
+2.17.0
 
