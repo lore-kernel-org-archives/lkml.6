@@ -2,135 +2,161 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615CBC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C0AC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0508020846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:32:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA3D920874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:34:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WZnDCD8O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0508020846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="dW3vD/ls"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3D920874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753569AbeFTLca (ORCPT
+        id S1754061AbeFTLeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 07:32:30 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:32869 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751337AbeFTLc2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 07:32:28 -0400
-Received: by mail-pl0-f67.google.com with SMTP id 6-v6so1631486plb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 04:32:28 -0700 (PDT)
+        Wed, 20 Jun 2018 07:34:44 -0400
+Received: from mail-sn1nam01on0045.outbound.protection.outlook.com ([104.47.32.45]:58880
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752747AbeFTLel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 07:34:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=y0+djVGhA6riyyXJNog/IxCc1PvKjVtmM8gQdG4Pues=;
-        b=WZnDCD8OglBfOwvcf+JPH6FH4XKqcu+CN8E3QPu2ajwXcp1sAGAC8Y9UeRgcMdxzNA
-         2VbcThohY3hsNuSjJmXWF7zzQ0GcjvPBMPP730Z5KMPj0BiI6bv0+iXKDmpv63w2U3vp
-         9xjAzsbWIjL3NXa2QhVHGK455K9zHhXBDRRljt8nKqqgJPrOhN48yr/87HL7BvIuyB6F
-         BqWVxb7VbGybRjU1DP4lH7zM92yTrbQI7VppjCqzhTorxNWjFZIxB/R6TNJ0/KFVWwXV
-         M3B0woRbWo3MnL0Oe37/KRrH6vPdFhBHBFhcV2v5W0DBoxeiujDK5alKwFDUCSgiG7xi
-         n6dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=y0+djVGhA6riyyXJNog/IxCc1PvKjVtmM8gQdG4Pues=;
-        b=W/5nJnxzkItiylwdtZWRSwTWSb9ty+G7+ioHs87Ao7r7UI05dSPZBI8gXj3UClMlTt
-         MU0vz5DIQd7aMQc3MBEhqbgRZiByVfmwH/IfqhYOihGPkt1GWP1fAAYfEbr52TwRKqOD
-         LNlpFTHgpRKa7qZpDgQBqj7EDucA3Ff7MMXwzSli5V6WfHbihiXHToawL2gRI2c7YC0S
-         XSvpppsGvOl2HOooO3PRT43VO/oLGzE9+gVTcR8ksAGqTpifBEgMzGTO/MDPvdMNAv24
-         orF80Mh+8NeMapOIIMrjXwBmAys1ubN0fhvH7ZnRvKU8YEHb2wtuPnEBJpSpRirLgn3G
-         S5Vg==
-X-Gm-Message-State: APt69E2TsGBNKBwnzTq5miXk2TGF44EPzqAsi5x8x/Iq3P5z1sI15Ihi
-        JGc6wXy2Z/DbgRdFm9m3J3vUiLoWab8Ifv5nH56qpA==
-X-Google-Smtp-Source: ADUXVKL8jgr1mvA4mzijyFP/06PhX01gJaSbMxDtIkpooIZEhCw6F17l90O50izAjwfYqx8/D/1KR1V3rOICy5r0uNQ=
-X-Received: by 2002:a17:902:8d85:: with SMTP id v5-v6mr23315407plo.93.1529494348120;
- Wed, 20 Jun 2018 04:32:28 -0700 (PDT)
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9J0L4IQji8ecFDLE8j+AxZrzz9JbPd7gwu5kLS+L+kQ=;
+ b=dW3vD/lsWt+KpyQDip1zZ8+QilgaRVzjLfVCJ/+tuRKEcZJd5hLOTtZyvnNhdHKuPnboo/qSxGHzhlZvmt5Woupd1hZg/dr9+UoSu4wMiN5CplSBbLkPQgKlXQOGsfsDd36khjpiVN4MCVtrVhAiPWsQ7uZP9g9hU8bAoaipGkA=
+Received: from BN7PR02CA0034.namprd02.prod.outlook.com (2603:10b6:408:20::47)
+ by MWHPR02MB2653.namprd02.prod.outlook.com (2603:10b6:300:44::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.19; Wed, 20 Jun
+ 2018 11:34:40 +0000
+Received: from SN1NAM02FT016.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::208) by BN7PR02CA0034.outlook.office365.com
+ (2603:10b6:408:20::47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.863.16 via Frontend
+ Transport; Wed, 20 Jun 2018 11:34:39 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; microchip.com; dkim=none (message not signed)
+ header.d=none;microchip.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT016.mail.protection.outlook.com (10.152.72.113) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.884.17
+ via Frontend Transport; Wed, 20 Jun 2018 11:34:38 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <harini.katakam@xilinx.com>)
+        id 1fVbNm-000872-Gi; Wed, 20 Jun 2018 04:34:38 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <harini.katakam@xilinx.com>)
+        id 1fVbNh-0004H3-D5; Wed, 20 Jun 2018 04:34:33 -0700
+Received: from [172.23.37.92] (helo=xhdharinik40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <harini.katakam@xilinx.com>)
+        id 1fVbNZ-0004G9-MC; Wed, 20 Jun 2018 04:34:26 -0700
+From:   Harini Katakam <harini.katakam@xilinx.com>
+To:     <nicolas.ferre@microchip.com>, <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <michal.simek@xilinx.com>, <harinikatakamlinux@gmail.com>,
+        <harini.katakam@xilinx.com>
+Subject: [PATCH] net: macb: Fix ptp time adjustment for large negative delta
+Date:   Wed, 20 Jun 2018 17:04:20 +0530
+Message-ID: <1529494460-4689-1-git-send-email-harini.katakam@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(39380400002)(396003)(2980300002)(438002)(199004)(189003)(6666003)(336012)(316002)(54906003)(16586007)(110136005)(106002)(107886003)(478600001)(5660300001)(36386004)(4326008)(39060400002)(50226002)(47776003)(8676002)(305945005)(486006)(356003)(63266004)(50466002)(8936002)(186003)(36756003)(2906002)(426003)(44832011)(26005)(51416003)(77096007)(7696005)(1857600001)(48376002)(126002)(106466001)(9786002)(81156014)(81166006)(476003)(2616005)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2653;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT016;1:vPvfC6+ERvl1Qtm37U+tWlHsONBbftrc28P/GxMxPwAPZfwNSuy8S281ASS8CHCynE7jE33dY4FIZOTwRoDrAkSGmlSIFM8+QIJb0j1YCOrIPs98lZskWUoLpEc4hwN3
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Wed, 20 Jun 2018 04:32:07
- -0700 (PDT)
-In-Reply-To: <20180620110759.GD444@jagdpanzerIV>
-References: <20180517112135.GB20796@jagdpanzerIV> <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
- <20180524021451.GA23443@jagdpanzerIV> <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
- <CACT4Y+ZGSefrYL9xtQs=yPMRNFsOUumuJXsShJPhCOBSLySxuw@mail.gmail.com>
- <20180620083126.GA477@jagdpanzerIV> <CACT4Y+YMubTm1xduj+XCbQnNwQxYFLjBT33cFKisN1HyeaBpZw@mail.gmail.com>
- <20180620090413.GA444@jagdpanzerIV> <20180620091541.GB444@jagdpanzerIV>
- <CACT4Y+bcp4fSBBq3F86T-C4+n-YkeXUGMqpvkJ6vj6mK-TU2EA@mail.gmail.com> <20180620110759.GD444@jagdpanzerIV>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 20 Jun 2018 13:32:07 +0200
-Message-ID: <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
-Subject: Re: [PATCH] printk: inject caller information into the body of message
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ea5985f2-b76d-40d0-1aaa-08d5d6a1cedf
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(4608076)(2017052603328)(7153060);SRVR:MWHPR02MB2653;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR02MB2653;3:ete9Ep66Q1JDnv0yeCwoZ6uFJYr2ozNov1JueQyYrZLMHcffsJfD053KyoBjH8NOZqdR2HepPq7gL7LZUg9Dw5FWppzH0GJ8VumpgAzbJJbM3lfKrE7LthkdaFNiJHro48mmxyTzCFXkU8cNYtnzdv0gPS2etb6um8nMIoQGnnTb47yrNTCL1fILApvAzLtM2IaYDLGdu9hmaj0KAN4eOp7WLVYriG0NDBARkLtGETL3U0kqoOKrXi+cGjdEww8GNFZksoKcaNg9zxJFVzpKNXCWdqukINNsXkendRwqdFfQo84U/FLwu4MlgV8+bkJlb2hMZn3uhAuoOWJyrPw4jWqdoSMQ02/gk2OUvy4kRSE=;25:9D8DLIrkfSjAlKXq/ZSea+arkv/LkJe8QosmfoQ+G5jrhvITZjah8F0YEjTMROk+S6zG6yNBWW19cYbUA/2yelrrtYCr/LJQmIwfQA/jNg+cKHrnq0vWZE/IhFtohzo+mvP4UoXIJUN100TT9FhwFzvyVL4w78muw3gHaAAK8v+RjDNaf18Qz/Jbz1UiJQu9Sk5+jfDbTqsvQsYxh1kKBh52SBrBYMGIKIwGL/3pIF9z2vGPrZ/kMfMP1bTvol3s49iuB7bjQzrNiOhveM6iuMhWZ1JdZhINehSNiU3EyZouVEiCPnLpPk6y6PKHvuhtNv50QtQz4LEl5j8DWEGrBQ==
+X-MS-TrafficTypeDiagnostic: MWHPR02MB2653:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR02MB2653;31:iKE37ScGc1y/8sEEgYQG4n76c4bWF2CN4I2tCNkgEm33RWST1XmYyvHSNWodAQYQLPcxFxfNva3FYhbgdHbRauIsqXgCyeJIaST1f3JVQcEPuvHcQ8agLTvPIMVZuwOTndMB0gktqMtuW5L+fOeHqvyLd9K7rMPaq/0wSBWdHhb1d5n36lfH1HfDCmDxtWg0jcIxeKslY8o43apT0gdeENKfL9DabVfsytlR3rcRugU=;20:uON//rHS/ujbjAlhCoVnvas3NpFc7s3po9wqBafLN+K8SMrlwaroNZ1N3hZdh1d/du0WXIr1nQBdU/sJQ3USWBSyPkUTSACNtjfQ3PFG0294Y72SsG+YEWhXxbqOsSlJByUZiu3h72ZAwnIkPCRz8GUZaKOyA8OpNt5whrqVKnGSwYKMYSNsCDHkTQBPVJy8t3wnA78vYGL+YoVgILtU1Io3R/vsB+fLQGixNWcb339WVmUgewJB287iBZV1wpAMl4h8YPN/8syymx6fMJ1RYNSQWRJdVxrtRhap52sU/GavVrLs3ZTytAM+u7kXhQ1V54dfC81em6zhaZ3rGf+8TO1glOjmglpRuFaywwAVQ7XDyLPVrh9HlLn+9vxvaoo//csqcVCjKHXBWiUK9UIUCxL+yASwZgZCnYWsP6kmaQYf+c/shiHVB4n85B5K3shOWIR/vVlDCal799njbioljXzhVGNlB4tK+Cf8Y2t/u1IP4qGktPZeoqsJ913WJVvF
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <MWHPR02MB2653E65576F82460927C8F2CC9770@MWHPR02MB2653.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:MWHPR02MB2653;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2653;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR02MB2653;4:I3z7Ja5aZSVhhNjVG3JRrfD390ucqrRvCna13bhWWVdSrr5UmEekMcS7WyTFkqAjJZZGNLYicGVPggGLpgnz0pe6Hmf+l3Rgu5rudYxBsaoJZVMU6QLY271IRQCeLDV3qw+1IuLBHmOMwoR3OSY+2M17h2HUJ/Ecvhr0cJqG4op1lbKZV+ZQiBOyKWme85emccYu/iznqQIPbazKk6rixOlX3JTVzr9FwVBb7D5h0S2pXRKSEVF99seXxeKNRby9vISMwtZsKeiuXdXXglZedm0513Tb1k65Lh65E5r7dFz/6/fs/qNqk9DqjEF3+WcG
+X-Forefront-PRVS: 070912876F
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR02MB2653;23:zV07yMVLZhUX8EO/0ddh9+cPZmsdH9QHyMB7Lmp21?=
+ =?us-ascii?Q?8d5BdXvqhlpzq2IMx1lmF/UPyke++XS7GzSpZ1iYxldD8L5L+85yz75VtQEN?=
+ =?us-ascii?Q?x2NByVWwBQQTNdpcp7HaKQwu1YJCIs4m1IuX7TR/NpORh/RFDMXDN95674sj?=
+ =?us-ascii?Q?Dfi/6VqzXx5ohRaa1mjqzad5EDwvFmg7Q1NaH1bdqDT9ZUvlere8k7sTw/BD?=
+ =?us-ascii?Q?Y/wMTxLglyJXXufl9copGb93qwP34OtSbv/MuR5IbMW/NMH9WDszFZlpSZhN?=
+ =?us-ascii?Q?s4J5/Ti+uYhRomU7XYlT9TB4miEY2kwDdTe26Owv0CCXxEFh2/v0WWhjTLJC?=
+ =?us-ascii?Q?g6Tq7UZn2lJCVwAezTGAHl+R/qDeiyIjjUzhWdTo0UYytXmfNN7LcLdFQB8J?=
+ =?us-ascii?Q?54juhTl67TumcwZSmBRqBnhAWa/03GfHlKZFeZUPJ9eL/jIxej3u9vPRu941?=
+ =?us-ascii?Q?kpmvmg7ZHcPNo1HcdSsPklf9hfjO26bxGKrZNdylSeY+tOIre8j/U6ELKzht?=
+ =?us-ascii?Q?Q5USy3VuMKvdwWy3VaYVkC9HHwM6SAdA5tSWwavIZBKDeBHMltofYQ8iB8Zi?=
+ =?us-ascii?Q?a2B4NaRiP35v/k9pNtEohsx7CyxglJyf0Kf1ijj02iPbGo8DzcYZuuCB1rQw?=
+ =?us-ascii?Q?Bs+OWBmbm6RXC0V01NijtpIPpjC/BtU1trNeHsqSSv4Ue8lDtb7SjiRNCYql?=
+ =?us-ascii?Q?ZLSnsgC359GJmTWO8n0t7mv+KJOciiRaqNU0eTKcuGgBf/hozMzG1a7NHJ9d?=
+ =?us-ascii?Q?HqXDRDxAD59v3K0zpsssqce2H69bdxeWYflOz5wj0POAwDd9RBN0oyd84kg1?=
+ =?us-ascii?Q?glELGSwOLnmW9M283Cwjh9RLTJYKjVGqT/ZT9xq5UsfAcIBpwKYO9sK55nqM?=
+ =?us-ascii?Q?0T5Ul7a5fIadIalDgZy2dOxDmDUdvjx9+dMIUAIiFAwkI0cgibpJwBjpnYuO?=
+ =?us-ascii?Q?qyYptSBtcWBftKpTvutJrubf9VnLUEl7mOGoZAwccTz2KYldpiPgcKJK0KMb?=
+ =?us-ascii?Q?W+xsavdPsirKQXFTtVn4hXxSN2vjHXJQKrSlaflAnh5EbuIGdAlSG9ddX/sE?=
+ =?us-ascii?Q?b4DqQ0eSYkUFffWwKZLg55JFVTOJZ73Gy3oDoebxQ5+kJBxfa0nKzyMER1CC?=
+ =?us-ascii?Q?u6PFcToUdDFSAWS9OAwko9i88WWksAZ?=
+X-Microsoft-Antispam-Message-Info: 7z7B/InSQVjPB46A7ocMoOPx7UkToJHlF60dAYCL4H2mV9jqP0ejkcxUrLuDvZcdWX3fEnd7JjD92ITGU6AymcawGAA9+NtGkq4rCtSdB9dm5aqxfmCwqjjwrdB3ZAluybHtltEXT/GQNDryJFKyGXyT93VgXl2m+4fJDpJN+iT9kYcgiNxO7UkxnPXU5HmxvedguCyMXZDSFpxoxhKTu1PVM0REV2oZYr6bZTvyHmgt72156mW/iiBeLITgMkg0LiU32GCTC8+t6uwwvYxdyHld0D/dEQY4erqGmUOCWKL6QHdlbP3AHO4W61DUsDW+STqNTijJeSMyN772bN7tMA==
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR02MB2653;6:xL+1AXajKnVbS+GWSMvaehqxdChC5AKOmCnkGFnw7qhj7XBLKIdqw1lwh0iXeBgcZKNt2+SVveHl1k5Hq7vqVwcktDovPyx5b10X6PPKhjOXcabhiemZMHdnz1LGsvrfzTwLmbooF2QUcCYufbeD6y5npqH2XT/5TjDrqOXmpPWAHP4AhbrXMqMscWTFDN/4iv2J8M7O2+Fan0X0NALJEsTp3+oD9Yssb2M+RaQ/6im8j3S00Q1XYHUTyhGEt7SHr9IAyhWp0d1YSWwL5qn/C4FjyZPZu1WMiBQ+b8PDoIPE1sFC6VQ7I5WpQW8CCfFVNZnvgGvgYG/RYmW2huPv3YXInEfAXjixl4uOq7sLx8NOh4GZCiahIaVux0ND2ESEMz2Z5htwCMeThfQRR06PAhlYOjvd7IGPkme0Itc6LEHQ0oiLnFKATW7NfPi7/zBnVGl7ac0/3G8Xb+SYj9FPrg==;5:7EaR3VoHNBqsGiBqTupv5objk/We+DprZ8WjMuvrDMZZnDJuaCf8dGueC6ek2X9jclbr/qH4LcSEUVPyvKlEpmjQTSs03DugOadqTLsSfpbqHVQS8uT8zBpHcqblYH0FRkE8XvhK6HWlWu/RXY4ctoCVyFp4tlZlHvISX5faEvw=;24:D7SN1mJKWLTguCP5C3QbUS0FEsZ9N1cLW3O/0X9es4B0fmdlNbYk2Cc6/YrEHThlHMn0mUPYD/pZzCTr+7PXiDYPvT6rhcHQ/xF1GBziGUk=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR02MB2653;7:mR/yGfTvRPhuUlI4YHRSO81sF79dOBFmc3Vbj7xQ2nfaoTie215CNUbRgQhxMirb8NbNCVH+bpz06I+Dp33KgQq/XSnTfbSWxkH6NEZXWfBB9JNfTVcJcspi0VOjeV+W+HrKCcCMgbb/v3eh3Sx3IMs+3XkXWxpKRhrVdQrfXrQhF+mQflfjv4xeIt8cMpLDXGA6ukAZJ+q0jMGJjw/Q1Y8rdUsDE4u6Znm2CgM3LUWDnpkeoEqMkFcYU+gzTiCu
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2018 11:34:38.9099
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea5985f2-b76d-40d0-1aaa-08d5d6a1cedf
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2653
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 1:07 PM, Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
-> On (06/20/18 11:31), Dmitry Vyukov wrote:
->> > BTW, pr_cont() handling is not so simple when we are in printk_safe()
->> > context. Unlike vprintk_emit() [normal printk], we don't use any
->> > dedicated pr_cont() buffer in printk_safe. So, at a glance, I suspect
->> > that injecting context info at every printk_safe_log_store() call for
->> > `for (...) pr_cont()' loop is going to produce something like this:
->> >         I<10> 23 I<10> 43 I<10> 47 ....
->> >
->> >         // Hmm, maybe the line will endup having two prefixes. Once
->> >         // from printk_safe_log_store, the other from normal printk
->> >         // log_store().
->> >
->> > While the same `for (...) pr_cont()' called from normal printk() context
->> > will produce
->> >         I<10> 32 43 47 ....
->> >
->> > It could be that I'm wrong.
->> > Tetsuo, have you tested pr_cont() from printk_safe() context?
->>
->>
->> So this is another reason to get rid of pr_cont entirely, right?
->
-> Getting rid of pr_cont() from important output would be totally cool.
-> Quoting Linus:
->
->     Only acceptable use of continuations is basically boot-time testing,
->     when you do things like
->
->      printk("Testing feature XYZ..");
->      this_may_blow_up_because_of_hw_bugs();
->      printk(KERN_CONT " ... ok\n");
->
->
-> I can recall at least 4 attempts when people tried to introduce new pr_cont()
-> or some concept with similar functionality to pr_cont(), but SMP safe. We
-> brought the first one - per-CPU pr_cont() buffers - to KS several years ago
-> but Linus didn't like it. Then there was a buffered printk() mode patch from
-> Tetsuo, then a solution from Steven, then I had my second try with a
-> soft-of-pr_cont() replacement.
->
-> So, if we could get rid of pr_cont() from the most important parts
-> (instruction dumps, etc) then I would just vote to leave pr_cont()
-> alone and avoid any handling of it in printk context tracking. Simply
-> because we wouldn't care about pr_cont(). This also could simplify
-> Tetsuo's patch significantly.
+When delta passed to gem_ptp_adjtime is negative, the sign is
+maintained in the ns_to_timespec64 conversion. Hence timespec_add
+should be used directly. timespec_sub will just subtract the negative
+value thus increasing the time difference.
 
-Sounds good to me.
+Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
+---
+ drivers/net/ethernet/cadence/macb_ptp.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb_ptp.c b/drivers/net/ethernet/cadence/macb_ptp.c
+index 2220c77..6788351 100644
+--- a/drivers/net/ethernet/cadence/macb_ptp.c
++++ b/drivers/net/ethernet/cadence/macb_ptp.c
+@@ -170,10 +170,7 @@ static int gem_ptp_adjtime(struct ptp_clock_info *ptp, s64 delta)
+ 
+ 	if (delta > TSU_NSEC_MAX_VAL) {
+ 		gem_tsu_get_time(&bp->ptp_clock_info, &now);
+-		if (sign)
+-			now = timespec64_sub(now, then);
+-		else
+-			now = timespec64_add(now, then);
++		now = timespec64_add(now, then);
+ 
+ 		gem_tsu_set_time(&bp->ptp_clock_info,
+ 				 (const struct timespec64 *)&now);
+-- 
+2.7.4
+
