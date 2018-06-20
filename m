@@ -3,211 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E90C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4F7C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12D7020652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D7020652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 2436020652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:10:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2436020652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753872AbeFTGGY (ORCPT
+        id S1753266AbeFTGKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 02:06:24 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:50699 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751327AbeFTGGV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 02:06:21 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0T31Pi3M_1529474766;
-Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T31Pi3M_1529474766)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 20 Jun 2018 14:06:07 +0800
-Reply-To: xlpang@linux.alibaba.com
-Subject: Re: [PATCH 2/2] sched/fair: Advance global expiration when period
- timer is restarted
-To:     bsegall@google.com
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-References: <20180618091657.21939-1-xlpang@linux.alibaba.com>
- <xm26o9g7q5ux.fsf@bsegall-linux.svl.corp.google.com>
- <5f5243c0-ff8c-fc11-9320-61313fd40214@linux.alibaba.com>
- <xm26k1qupsy0.fsf@bsegall-linux.svl.corp.google.com>
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-Message-ID: <6023891f-894a-f251-1d39-939f13143886@linux.alibaba.com>
-Date:   Wed, 20 Jun 2018 14:06:06 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        Wed, 20 Jun 2018 02:10:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49663 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751327AbeFTGKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 02:10:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 3846FAC55;
+        Wed, 20 Jun 2018 06:10:00 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id DC322A1081; Wed, 20 Jun 2018 08:09:59 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 08:09:59 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: [PATCH] proc: add missing '\0' back to /proc/$pid/cmdline
+Message-ID: <20180620060959.upeetkzaz7jpd57a@unicorn.suse.cz>
+References: <20180619092254.kmww3fpqjqcsjrna@unicorn.suse.cz>
+ <20180619162411.B2B7AA1081@unicorn.suse.cz>
+ <CA+55aFwa-mxOFKGiLmbxyJ+LyEjOG07fuYOmcWaYf-SJntneuw@mail.gmail.com>
+ <20180620050824.hwijqfhzuu3ip4wo@unicorn.suse.cz>
+ <CA+55aFwnXSmB_Xn+-wC1fhnAVSa5KQABah-d2_zt3iNL0Cpwvw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <xm26k1qupsy0.fsf@bsegall-linux.svl.corp.google.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwnXSmB_Xn+-wC1fhnAVSa5KQABah-d2_zt3iNL0Cpwvw@mail.gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/20/18 1:49 AM, bsegall@google.com wrote:
-> Xunlei Pang <xlpang@linux.alibaba.com> writes:
+On Wed, Jun 20, 2018 at 02:51:23PM +0900, Linus Torvalds wrote:
+> On Wed, Jun 20, 2018 at 2:08 PM Michal Kubecek <mkubecek@suse.cz> wrote:
+> >
+> >
+> > > @@ -254,10 +258,19 @@ static ssize_t get_mm_cmdline(struct mm_struct *mm, char __user *buf,
+> > >       while (count) {
+> > >               int got;
+> > >               size_t size = min_t(size_t, PAGE_SIZE, count);
+> >
+> > We limit size to be at most PAGE_SIZE here.
+> >
+> > > +             long offset;
+> > >
+> > > -             got = access_remote_vm(mm, pos, page, size, FOLL_ANON);
+> > > -             if (got <= 0)
+> > > +             /*
+> > > +              * Are we already starting past the official end?
+> > > +              * We always include the last byte that is *supposed*
+> > > +              * to be NUL
+> > > +              */
+> > > +             offset = (pos >= arg_end) ? pos - arg_end + 1 : 0;
+> > > +
+> > > +             got = access_remote_vm(mm, pos - offset, page, size + offset, FOLL_ANON);
+> >
+> > But here we read (size + offset) bytes which may be more than PAGE_SIZE.
 > 
->> On 6/19/18 2:58 AM, bsegall@google.com wrote:
->>> Xunlei Pang <xlpang@linux.alibaba.com> writes:
->>>
->>>> I noticed the group frequently got throttled even it consumed
->>>> low cpu usage, this caused some jitters on the response time
->>>> to some of our business containers enabling cpu quota.
->>>>
->>>> It's very easy to reproduce:
->>>> mkdir /sys/fs/cgroup/cpu/test
->>>> cd /sys/fs/cgroup/cpu/test
->>>> echo 100000 > cpu.cfs_quota_us
->>>> echo $$ > tasks
->>>> then repeat:
->>>> cat cpu.stat |grep nr_throttled  // nr_throttled will increase
->>>>
->>>> After some analysis, we found that cfs_rq::runtime_remaining will
->>>> be cleared by expire_cfs_rq_runtime() due to two equal but stale
->>>> "cfs_{b|q}->runtime_expires" after period timer is re-armed.
->>>
->>> If this is after the first patch, then this is no longer what should
->>> happen, and instead it would incorrectly /keep/ old local cfs_rq
->>> runtime, and not __refill global runtime until the period.
->>
->> Exactly, I can improve the changelog.
->>
->>>
->>>
->>>>
->>>> The global expiration should be advanced accordingly when the
->>>> bandwidth period timer is restarted.
->>>>
->>>> Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
->>>> ---
->>>>  kernel/sched/fair.c | 15 ++++++++++-----
->>>>  1 file changed, 10 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>>> index 9f384264e832..bb006e671609 100644
->>>> --- a/kernel/sched/fair.c
->>>> +++ b/kernel/sched/fair.c
->>>> @@ -5204,13 +5204,18 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->>>>  
->>>>  void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
->>>>  {
->>>> +	u64 overrun;
->>>> +
->>>>  	lockdep_assert_held(&cfs_b->lock);
->>>>  
->>>> -	if (!cfs_b->period_active) {
->>>> -		cfs_b->period_active = 1;
->>>> -		hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
->>>> -		hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
->>>> -	}
->>>> +	if (cfs_b->period_active)
+> Actually, no. We limit size not just to PAGE_SIZE, but to count as well.
 > 
->>>> +		return;
->>>> +
->>>> +	cfs_b->period_active = 1;
->>>> +	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
->>>> +	cfs_b->runtime_expires += (overrun + 1) * ktime_to_ns(cfs_b->period);
->>>
->>> I think we actually want if (overrun) __refill_cfs_bandwidth_runtime(),
->>> much like tg_set_cfs_bandwidth
->>
->> It's a little different, e.g. periods like below:
->>
->>            Pm
->>            |
->>            v
->>   |-----|-----|
->> Pn-1   Pn    Pn+1
->>
->> Assuming we start_cfs_bandwidth() at some moment Pm between "Pn" and
->> "Pn+1", cfs_b->runtime_expires we want here should be "Pn+1", while
->> __refill_cfs_bandwidth_runtime() forces it to be "Pm+period"(hrtimer
->> expires at "Pn+1").
->>
->> Regards,
->> Xunlei
->>
+> And there's *another* limit on 'count' that you missed, namely this part:
 > 
-> Hmm, yeah, it would wind up out of sync with the hrtimer unless we
-> restarted the period boundaries.
+>         /* .. and limit it to a maximum of one page of slop */
+>         if (env_end >= arg_end + PAGE_SIZE)
+>                 env_end = arg_end + PAGE_SIZE - 1;
 > 
-> Now that I look at it even more closely, I don't see how you're getting
-> problems like that, besides wasting tiny amounts of cpu time in expire:
-> we only disable the period timer when there has been a full period with
-> no activity, so we should have a full cfs_b->runtime, and a
-> runtime_expires from the period that was spent entirely idle (so it
-> should always be in the past). But with a working extend-local-deadline
-> check like after patch 1 it shouldn't /matter/ what the actual value of
-> runtime_expires is, we'll just waste tiny amounts of cpu time
-> incrementing runtime_expires every account_cfs_rq_runtime call rather
-> than aborting early.
+> coupled with
 > 
-> Actually, I think arguably the real issue may be in patch 1:
+>         /* .. and we never go past env_end */
+>         if (env_end - pos < count)
+>                 count = env_end - pos;
+> 
+> so we know that "pos + size" can never be larger than "arg_end + PAGE_SIZE - 1"
+> 
+> And then:
+> 
+>                 offset = (pos >= arg_end) ? pos - arg_end + 1 : 0;
+> 
+> means that "offset" will be bigger than zero only if "pos > arg_end-1".
+> 
+> So let's ignore all other cases, and just say that we care about that
+> case where 'offset' can be non-zero.
+> 
+> So we have
+> 
+>    offset = pos - arg_end +1
+> 
+> (from the above initialization of offset), but we also know that
+> 
+>    pos + count <= end_end
+> 
+> and since we've limited end_end to "arg_end + PAGE_SIZE -1" we have
+> 
+>    pos + count <= arg_end + PAGE_SIZE -1
+> 
+> agreed?
+> 
+> Now, we can do some math on the above. Re-write that "offset = .." equation as
+> 
+>    pos = arg_end + offset - 1
+> 
+> And the same time we can  take that "pos + count" inequality, and
+> replacing "pos", we get
+> 
+>    arg_end + offset - 1 + count <= arg_end + PAGE_SIZE -1
+> 
+> and then we can remove "arg_end - 1" from both sides, and get
+> 
+>    offset+count <= PAGE_SIZE
+> 
+> agreed?
 
-Ben,
+Right... I missed the trick where env_end is no longer real env_end when
+it's used to limit count.
 
-Thanks for the comments.
+And the tests look good too so
 
-Yes, the problematic throttle issue is solved by patch 1, and it's a
-different issue in patch 2. It wants to address another stale runtime
-issue(I will update the changelog in v2), specifically:
-An ever-running cfs_rq tends to retain some runtime(min_cfs_rq_runtime),
-it could be even more(sysctl_sched_cfs_bandwidth_slice) in the worst
-case, these runtime should be discarded once the period is advanced.
+Reviewed-by: Michal Kubecek <mkubecek@suse.cz>
+Tested-by: Michal Kubecek <mkubecek@suse.cz>
 
-Without this patch expire_cfs_rq_runtime() will see the two equal
-cfs_rq{b}->expires_seq after period gets restarted after some idle,
-so it will fall into the "clock drift" branch and go on consuming
-the old runtime if any.
+Michal Kubecek
 
-With the expiration update done in patch 2, we can ensure the stale
-cfs_rq->runtime_remaining gets cleared at expire_cfs_rq_runtime()
-once a new period begins.
-
-> 
->>> @@ -4637,8 +4640,10 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->>>  	 * spread between our sched_clock and the one on which runtime was
->>>  	 * issued.
->>>  	 */
->>> -	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
->>> +	if ((s64)(expires - cfs_rq->runtime_expires) > 0) {
->>>  		cfs_rq->runtime_expires = expires;
->>> +		cfs_rq->expires_seq = expires_seq;
->>> +	}
->>>  
->>>  	return cfs_rq->runtime_remaining > 0;
->>>  }
-> 
-> 
-> We don't want to clobber a tick-extended runtime_expires with the
-> original one, but we /do/ want update if expires_seq changes, no matter
-> what (rather than skipping updating both if we've tick-extended past the
-> /next/ period's runtime_expires).
-> 
-> I think this should actually be
-> 
-> if (cfs_rq->expires_seq != expires_seq) {
-> 	cfs_rq->runtime_expires = expires;
-> 	cfs_rq->expires_seq = expires_seq;
-> }
-> 
-> Can you easily check and see if this fixes the issue without this second
-> patch? That would clear up how the actual problem is happening, and I
-> think it's a change we'd want anyways.
-
-Agree, I will have it in v2.
-
-> 
-> That said, we should also just update runtime_expires like this patch
-> does regardless, and as mentioned we should have a full cfs_b->runtime
-> so we don't need a __refill like I was originally thinking.
->
-Regards,
-Xunlei
