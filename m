@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
 	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED2BC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D909C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF61420872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:27:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6C1720875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:27:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hcY2EJhH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f4wJiGtN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF61420872
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UhDaYji6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ClVeW6DB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6C1720875
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754027AbeFTN1U (ORCPT
+        id S1754218AbeFTN1c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:27:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:32880 "EHLO
+        Wed, 20 Jun 2018 09:27:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33216 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752725AbeFTN1S (ORCPT
+        with ESMTP id S1754136AbeFTN1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:27:18 -0400
+        Wed, 20 Jun 2018 09:27:30 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9E85E605BD; Wed, 20 Jun 2018 13:27:17 +0000 (UTC)
+        id CD06460227; Wed, 20 Jun 2018 13:27:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529501237;
-        bh=oKcSk0Jje/IRjxoxUsvgfKbI/uVvbtz+dJs4ffnWp+s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hcY2EJhHsVzAPIEjASYN7mlZEjrLjodzkdr670D5f0GdncGdH57zWXhjsEjEqQr9Y
-         Dm1+HiFZ8K/6O0HApnMRKH1t7AF04asTUGRIsvFkkD+ywMoEnat+qa3FWPD6rGC1OM
-         lLdJ4iSMiULXbkbU/q9dJgeh1GX3gO3ZmrPbYtgQ=
+        s=default; t=1529501249;
+        bh=0tmmVsdthkVMoP+Ukp5qc3rDejPMtHaA+Q1NTsiLF48=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UhDaYji6mpaNLGZOSP4JLzEzggKeo4QTBnwMP279Wlxo/TcIGP5Bv5iKak1M507LI
+         1ZbBJ9RlFO8zfbawEG68fQLXRSQk81wzcdBtA0lruZxb3w00A2UVpD55Cx4QiD6QAp
+         3m0+V7LkU/HCh1qd8xU/fNM4bgubdQVUolbgwEJc=
 Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9401D604A6;
-        Wed, 20 Jun 2018 13:27:12 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3B50760B16;
+        Wed, 20 Jun 2018 13:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529501236;
-        bh=oKcSk0Jje/IRjxoxUsvgfKbI/uVvbtz+dJs4ffnWp+s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=f4wJiGtNUU/uvbTCQ+0sxA6HMlcdjZA5PL7B70L9C2On+DByPrBYNDtLaNpO7UxN/
-         TFelMNc0V60iX/Ihl2pM9+hYI11tcIThy2CDGUu1pSIJTTaiiR9IXRxbdYqxEKhsXk
-         GAO+u6tVzZKex57yRdI7uVFBD/E8UFpiImr+Wgq8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9401D604A6
+        s=default; t=1529501248;
+        bh=0tmmVsdthkVMoP+Ukp5qc3rDejPMtHaA+Q1NTsiLF48=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ClVeW6DBgD013ffr59bUR9K92ewDzmLPQNoqrBvdu5njVqDeXcCwZxHnbBrSutzLu
+         y1hWWGb/RZMSpTwgyBPmJOaAhmbmz7QXTjAv+vVRohqI03eUo4t/R0osWQcnnlXnXc
+         C3HHHwJQbKIlvfuZw4+ebNXu9GEjLSqF1NTb8sgQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B50760B16
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
 From:   Raju P L S S S N <rplsssn@codeaurora.org>
@@ -58,178 +58,200 @@ Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org,
         evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
         ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH v13 00/10] drivers/qcom: add RPMH communication support
-Date:   Wed, 20 Jun 2018 18:56:57 +0530
-Message-Id: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
+Subject: [PATCH v13 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+Date:   Wed, 20 Jun 2018 18:57:00 +0530
+Message-Id: <1529501227-27163-4-git-send-email-rplsssn@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
+References: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+From: Lina Iyer <ilina@codeaurora.org>
 
+Log sent RPMH requests and interrupt responses in FTRACE.
+
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[rplsssn@codeaurora.org: rebase to v4.18-rc1 & fix merge conflict]
+Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+---
 Changes in v13:
-- Add missing Signed-off-by in commit text 
-
-Changes in v12:
-- Rename ctrlr to client in rsc_drv
-- Fix Bot reported errors - 'err' may be used uninitialized
-- Rebase on top of v4.18-rc1 
-
-Changes in v11:
-- move rpmh_request to rpmh-internal.h
-- Associate rpmh_ctrl to rsc_drv
-- Remove EXPORT_SYMBOL for rpmh_tx_done
-- Remove IS_ERR check for ctrlr
-- Remove rsc_drv instance from rpmh_ctrlr
-- Initialize cache & batch cache in probe
-
-Changes in v10:
-- Remove export.h inclusion as suggested by Doug
-- Remove rsc_drv_list
-- Add EXPORT_SYMBOL
-- Remove wait_count as suggested by Doug
-- Free memory if cache_batch returns error as suggested by Doug
-- Add batch requests to list and simplify error handling as
-- return ERR_PTR if invalidate fails
-
-Changes in v9:
-- Remove EXPORT_SYMBOL as suggested by Doug
-- Add Reviewed-by tags
-- Rename lock variable as suggested by Doug
-- Add WARN_ON if completion timeout occurs as suggested by Doug
-- Fix the bound checks as suggested by Matthias
-- Improve comments as suggested by Doug
-- Add check for freeing dynamically allocated request object
-- Rename label as suggested by Doug
-- Fix IS_ERR_OR_NULL check to IS_ERR as suggested by Doug
-- Add check to call rpmh_rsc_invalidate if -EAGAIN is retured
-  as suggested by Doug
-
-Changes in v8:
-- Bounds check for cmd_cache
-- Describe interrupts to other DRVs in DT bindings
-- Rebase on top of 4.17-rc3
+	- Add missing signed-off in commit text
 
 Changes in v7:
-- Rename 'm' and 'n' and use tcs_id and cmd_id instead
-- Bug fix in find_match() and other review comments from Matthias
-- Spinlock around get_rpmh_ctrlr()
-- DT documentation example fixes
-- Rebase on top of 4.16-rc2
+	- varible name changes and white space
 
 Changes in v6:
-- Remove tasklet in rpmh-rsc.c
-- Remove rpmh_client and use struct device * instead
-- Variable changes and bug fixes
-- DT binding changes to describe all DRVs in the RSC
-- Documentation and comment fixes
-
-Changes in v5:
-- Add Reviewed-by tags
-- Rebase on top of 4.16
-
+	- struct tcs_response was removed. Fix in trace as well.
 Changes in v4:
-- Rename variables as suggested by Stephen and Evan
-- Lot of minor syntax and style fixes
-- Fix FTRACE compilation error
-- Improve doc comments and DT description
-
+	- fix compilation issues, use __assign_str
+	- use %#x instead of 0x%08x
 Changes in v3:
-- Address Steven's comments in FTRACE
-- Fix DT documentation as suggested by Rob H
-- Fix error handling in IRQ handler as suggested by Evan
-- Remove locks in rpmh_flush()
-- Improve comments
-
-Changes in v2:
-- Added sleep/wake, async and batch requests support
-- Addressed Bjorn's comments
-- Private FTRACE for drivers/soc/qcom as suggested by Steven
-- Sparse checked on these patches
-- Use SPDX license commenting sytle
-
-This set of patches add the ability for platform drivers to make use of shared
-resources in newer Qualcomm SoCs like SDM845. Resources that are shared between
-multiple processors in a SoC are generally controlled by a dedicated remote
-processor. The remote processor (Resource Power Manager or RPM in previous QCOM
-SoCs) receives requests for resource state from other processors using the
-shared resource, aggregates the request and applies the result on the shared
-resource. SDM845 advances this concept and uses h/w (hardened I/P) blocks for
-aggregating requests and applying the result on the resource. The resources
-could be clocks, regulators or bandwidth requests for buses. This new
-architecture is called RPM-hardened or RPMH in short.
-
-Since this communication mechanism is completely hardware driven without a
-processor intervention on the remote end, existing mechanisms like RPM-SMD are
-no longer useful. Also, there is no serialization of data or is data is written
-to a shared memory in this new format. The data used is different, unsigned 32
-bits are used for representing an address, data and header. Each resource's
-property is a unique u32 address and have pre-defined set of property specific
-valid values. A request that comprises of <header, addr, data> is sent by
-writing to a set of registers from Linux and transmitted to the remote slave
-through an internal bus. The remote end aggregates this request along with
-requests from other processors for the <addr> and applies the result.
-
-The hardware block that houses this functionality is called Resource State
-Coordinator or RSC. Inside the RSC are set of slots for sending RPMH requests
-called Trigger Commands Sets (TCS). The set of patches are for writing the
-requests into these TCSes and sending them to hardened IP blocks.
-
-The driver design is split into two components. The RSC driver housed in
-rpmh-rsc.c and the set of library functions in rpmh.c that frame the request and
-transmit it using the controller. This first set of patches allow a simple
-synchronous request to be made by the platform drivers. Future patches will add
-more functionality that cater to complex drivers and use cases.
-
-Please consider reviewing this patchset.
-
-v1: https://www.spinics.net/lists/devicetree/msg210980.html
-v2: https://lkml.org/lkml/2018/2/15/852
-v3: https://lkml.org/lkml/2018/3/2/801
-v4: https://lkml.org/lkml/2018/3/9/979
-v5: https://lkml.org/lkml/2018/4/5/480
-v6: https://lkml.org/lkml/2018/4/19/914
-v7: https://lkml.org/lkml/2018/5/2/779
-v8: https://lkml.org/lkml/2018/5/9/729
-v9: https://lkml.org/lkml/2018/5/24/530
-v10: https://lkml.org/lkml/2018/6/11/542
-v11: https://lkml.org/lkml/2018/6/18/860
-v12: https://lkml.org/lkml/2018/6/19/535
-
-Lina Iyer (10):
-  drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
-  dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
-  drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
-  drivers: qcom: rpmh: add RPMH helper functions
-  drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
-  drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
-  drivers: qcom: rpmh: cache sleep/wake state requests
-  drivers: qcom: rpmh: allow requests to be sent asynchronously
-  drivers: qcom: rpmh: add support for batch RPMH request
-  drivers: qcom: rpmh-rsc: allow active requests from wake TCS
-
- .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 137 +++++
- drivers/soc/qcom/Kconfig                           |  10 +
- drivers/soc/qcom/Makefile                          |   4 +
- drivers/soc/qcom/rpmh-internal.h                   | 114 ++++
- drivers/soc/qcom/rpmh-rsc.c                        | 682 +++++++++++++++++++++
- drivers/soc/qcom/rpmh.c                            | 513 ++++++++++++++++
- drivers/soc/qcom/trace-rpmh.h                      |  82 +++
- include/dt-bindings/soc/qcom,rpmh-rsc.h            |  14 +
- include/soc/qcom/rpmh.h                            |  51 ++
- include/soc/qcom/tcs.h                             |  56 ++
- 10 files changed, 1663 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
- create mode 100644 drivers/soc/qcom/rpmh-internal.h
- create mode 100644 drivers/soc/qcom/rpmh-rsc.c
- create mode 100644 drivers/soc/qcom/rpmh.c
+	- Use __string() instead of char *
+	- fix TRACE_INCLUDE_PATH
+---
+ drivers/soc/qcom/Makefile     |  1 +
+ drivers/soc/qcom/rpmh-rsc.c   | 11 +++++-
+ drivers/soc/qcom/trace-rpmh.h | 82 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 93 insertions(+), 1 deletion(-)
  create mode 100644 drivers/soc/qcom/trace-rpmh.h
- create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
- create mode 100644 include/soc/qcom/rpmh.h
- create mode 100644 include/soc/qcom/tcs.h
 
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index 4724917..fa90171 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++CFLAGS_rpmh-rsc.o := -I$(src)
+ obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
+ obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
+ obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index c5e0793..89d41cd 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -23,6 +23,9 @@
+ 
+ #include "rpmh-internal.h"
+ 
++#define CREATE_TRACE_POINTS
++#include "trace-rpmh.h"
++
+ #define RSC_DRV_TCS_OFFSET		672
+ #define RSC_DRV_CMD_OFFSET		20
+ 
+@@ -135,7 +138,7 @@ static const struct tcs_request *get_req_from_tcs(struct rsc_drv *drv,
+ static irqreturn_t tcs_tx_done(int irq, void *p)
+ {
+ 	struct rsc_drv *drv = p;
+-	int i, j;
++	int i, j, err;
+ 	unsigned long irq_status;
+ 	const struct tcs_request *req;
+ 	struct tcs_cmd *cmd;
+@@ -149,6 +152,7 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
+ 			goto skip;
+ 		}
+ 
++		err = 0;
+ 		for (j = 0; j < req->num_cmds; j++) {
+ 			u32 sts;
+ 
+@@ -159,8 +163,11 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
+ 			   !(sts & CMD_STATUS_COMPL))) {
+ 				pr_err("Incomplete request: %s: addr=%#x data=%#x",
+ 				       drv->name, cmd->addr, cmd->data);
++				err = -EIO;
+ 			}
+ 		}
++
++		trace_rpmh_tx_done(drv, i, req, err);
+ skip:
+ 		/* Reclaim the TCS */
+ 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
+@@ -194,9 +201,11 @@ static void __tcs_buffer_write(struct rsc_drv *drv, int tcs_id, int cmd_id,
+ 		cmd_complete |= cmd->wait << j;
+ 		msgid = cmd_msgid;
+ 		msgid |= cmd->wait ? CMD_MSGID_RESP_REQ : 0;
++
+ 		write_tcs_cmd(drv, RSC_DRV_CMD_MSGID, tcs_id, j, msgid);
+ 		write_tcs_cmd(drv, RSC_DRV_CMD_ADDR, tcs_id, j, cmd->addr);
+ 		write_tcs_cmd(drv, RSC_DRV_CMD_DATA, tcs_id, j, cmd->data);
++		trace_rpmh_send_msg(drv, tcs_id, j, msgid, cmd);
+ 	}
+ 
+ 	write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, tcs_id, cmd_complete);
+diff --git a/drivers/soc/qcom/trace-rpmh.h b/drivers/soc/qcom/trace-rpmh.h
+new file mode 100644
+index 0000000..feb0cb4
+--- /dev/null
++++ b/drivers/soc/qcom/trace-rpmh.h
+@@ -0,0 +1,82 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ */
++
++#if !defined(_TRACE_RPMH_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_RPMH_H
++
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM rpmh
++
++#include <linux/tracepoint.h>
++#include "rpmh-internal.h"
++
++TRACE_EVENT(rpmh_tx_done,
++
++	TP_PROTO(struct rsc_drv *d, int m, const struct tcs_request *r, int e),
++
++	TP_ARGS(d, m, r, e),
++
++	TP_STRUCT__entry(
++			 __string(name, d->name)
++			 __field(int, m)
++			 __field(u32, addr)
++			 __field(u32, data)
++			 __field(int, err)
++	),
++
++	TP_fast_assign(
++		       __assign_str(name, d->name);
++		       __entry->m = m;
++		       __entry->addr = r->cmds[0].addr;
++		       __entry->data = r->cmds[0].data;
++		       __entry->err = e;
++	),
++
++	TP_printk("%s: ack: tcs-m: %d addr: %#x data: %#x errno: %d",
++		  __get_str(name), __entry->m, __entry->addr, __entry->data,
++		  __entry->err)
++);
++
++TRACE_EVENT(rpmh_send_msg,
++
++	TP_PROTO(struct rsc_drv *d, int m, int n, u32 h,
++		 const struct tcs_cmd *c),
++
++	TP_ARGS(d, m, n, h, c),
++
++	TP_STRUCT__entry(
++			 __string(name, d->name)
++			 __field(int, m)
++			 __field(int, n)
++			 __field(u32, hdr)
++			 __field(u32, addr)
++			 __field(u32, data)
++			 __field(bool, wait)
++	),
++
++	TP_fast_assign(
++		       __assign_str(name, d->name);
++		       __entry->m = m;
++		       __entry->n = n;
++		       __entry->hdr = h;
++		       __entry->addr = c->addr;
++		       __entry->data = c->data;
++		       __entry->wait = c->wait;
++	),
++
++	TP_printk("%s: send-msg: tcs(m): %d cmd(n): %d msgid: %#x addr: %#x data: %#x complete: %d",
++		  __get_str(name), __entry->m, __entry->n, __entry->hdr,
++		  __entry->addr, __entry->data, __entry->wait)
++);
++
++#endif /* _TRACE_RPMH_H */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH .
++
++#undef TRACE_INCLUDE_FILE
++#define TRACE_INCLUDE_FILE trace-rpmh
++
++#include <trace/define_trace.h>
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
 
