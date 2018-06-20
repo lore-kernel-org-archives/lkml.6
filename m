@@ -6,152 +6,157 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03502C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5019CC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03D56208B3
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:31:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03D56208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A019208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:31:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A019208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754577AbeFTIbF (ORCPT
+        id S1754253AbeFTIbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:31:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46163 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752725AbeFTIbC (ORCPT
+        Wed, 20 Jun 2018 04:31:23 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:44227 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753321AbeFTIbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:31:02 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K8UsJS3428587
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 20 Jun 2018 01:30:54 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K8UrcM3428584;
-        Wed, 20 Jun 2018 01:30:53 -0700
-Date:   Wed, 20 Jun 2018 01:30:53 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-a9347363748fbfc25d0ba7b60d866b8a10ca4561@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        reinette.chatre@intel.com, mingo@kernel.org
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-          reinette.chatre@intel.com, tglx@linutronix.de
-In-Reply-To: <5773274f9947c4d8becbabd2655bd1628f060147.1529474468.git.reinette.chatre@intel.com>
-References: <5773274f9947c4d8becbabd2655bd1628f060147.1529474468.git.reinette.chatre@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Fix passing of value to 32-bit
- register
-Git-Commit-ID: a9347363748fbfc25d0ba7b60d866b8a10ca4561
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 20 Jun 2018 04:31:20 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0M1ohG-1gJn650fLG-00tobA; Wed, 20 Jun 2018 10:06:07 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Sheng Yong <shengyong1@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Yunlei He <heyunlei@huawei.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Yunlong Song <yunlong.song@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] f2fs: use timespec64 for inode timestamps
+Date:   Wed, 20 Jun 2018 10:02:19 +0200
+Message-Id: <20180620080603.4156809-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:euVe48uQ7fhYAIxYwhwLE6D+Tm69XWN5ugITgY1lJG6DmUF1JmC
+ fqUy2OCFPhzpnZw5JzadZXGdyok3p+7UA0cqqadOSSyVLmkGNPRbhLsEwtX4qwBwDMk3mGf
+ /DH7UcOj1B4opuZaM1DtrDeNiOC09M91pb+Rkg54DU6UmAJ6VvFUpFX168jZ2Kg3+I4Q33x
+ any73YonO0E2mrreBjAnw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:VFI5UkHt4h4=:r4gn/Eq0oyx+oBAsLr5h+5
+ Si7qxy+T5xk26czEPnIM7R2+kINPPtn6YRXCIxgLahLNQGIXZLQxpIon7qPUWDdH+NwPHyt85
+ r88dYvyzyxU5nfqMAta/NGN9RDRD+QVJph8Ou9NGhASxeRP3vVaji1f2FTuIglF2K/RHnmvmv
+ kcopTPddtD+FEbRPZDBnaSO+vPvICRDFzg6LIsqJT3Tf1RV1akHHj173nwSDBjKO/TzCnsh/M
+ hLneW3CSzfteGC/3LP8an1sFwlkSO4qdNVNqhbCKPcXfDQ0/NPB1xMw+1AdtgoHhisuYcxe87
+ J1H/ye7kigHHdaW3YYOpuWLlPC2TdEMJTrXLs0SjNSF6RZt57EhcWfQ995RlhvKGAMkHBz8hq
+ hspayxyAR7vYAianjYz9T4B30xTaG0Z2Gp+lHngqJzn1MDpwgMvLl4MRRncAQ+LPkNeXZumdj
+ YeVAhg7GgCcqyX8iBO2PUt8l/ISujOadqKSqm3UpujF9soHhIdPgJTPRcRB5/l8q6CnRZXybT
+ KG+dwr5TkcyMguqtn0/D9LqcY9th/e3XWlq7UI7b5MDn3GqZNVUlWfD8RiVj6oCRkyf0+GvQv
+ 2XqNBh3VLtHpVFV5vNRYg4Ip7B75RdhDZ/Gd2+s6m4hH2r8JSJughpEuRHsPyIB5NpKwtK7xH
+ fZ9PMSxf9WzYf7jxA1XDSIXM4XCUH1eFukbohUx0kiiuwNY+CKsH8wngTR9lR+q6pSl4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a9347363748fbfc25d0ba7b60d866b8a10ca4561
-Gitweb:     https://git.kernel.org/tip/a9347363748fbfc25d0ba7b60d866b8a10ca4561
-Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Tue, 19 Jun 2018 23:19:27 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 20 Jun 2018 10:26:52 +0200
+The on-disk representation and the vfs both use 64-bit tv_sec values,
+so let's change the last missing piece in the middle.
 
-x86/intel_rdt: Fix passing of value to 32-bit register
-
-0-day kbuild test robot reported the following issue:
-
-   arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c: In function 'pseudo_lock_fn':
->> arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c:363:1: warning: unsupported size for integer register
-    }
-    ^
->> arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c:363:1: warning: unsupported size for integer register
-
-vim +363 arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-
-   361          wake_up_interruptible(&plr->lock_thread_wq);
-   362          return 0;
- > 363  }
-   364
-
-The issue is earlier in the code, and in more locations, where (in 32-bit)
-a u64 variable (i below) is used as the value of a 32-bit register:
-
-                asm volatile("mov (%0,%1,1), %%eax\n\t"
-                        :
-                        : "r" (mem_r), "r" (i)
-                        : "%eax", "memory");
-
-The behavior in this case would be that only the 32 bit lower part of the
-variable is passed. The variable is used as a counter in a for loop that
-iterates over the pseudo-locked region and its maximum value is thus the
-largest size of a pseudo-locked region. No pseudo-locked region currently
-supported would need more than 32-bits for its size. There is thus no
-potential for harm in the current state when using the u64 variable, but
-this should be fixed.
-
-Modify the variable with which the registers are initialized to be 64-bit
-when used for 64-bit register and 32-bit when used for 32-bit register.
-
-Fixes: 0438fb1aebf4 ("x86/intel_rdt: Pseudo-lock region creation/removal core")
-Reported-by: lkp@intel.com
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: kbuild-all@01.org
-Cc: tipbuild@zytor.com
-Cc: fenghua.yu@intel.com
-Cc: tony.luck@intel.com
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/5773274f9947c4d8becbabd2655bd1628f060147.1529474468.git.reinette.chatre@intel.com
-
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/f2fs/f2fs.h  | 16 ++++++----------
+ fs/f2fs/inode.c | 12 ++++++------
+ fs/f2fs/namei.c |  2 +-
+ 3 files changed, 13 insertions(+), 17 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index 0d44dc1f7146..a1670e50d6ce 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -415,7 +415,11 @@ static int pseudo_lock_fn(void *_rdtgrp)
- 	struct rdtgroup *rdtgrp = _rdtgrp;
- 	struct pseudo_lock_region *plr = rdtgrp->plr;
- 	u32 rmid_p, closid_p;
-+#ifdef CONFIG_X86_64
- 	u64 i;
-+#else
-+	u32 i;
-+#endif
- #ifdef CONFIG_KASAN
- 	/*
- 	 * The registers used for local register variables are also used
-@@ -870,7 +874,11 @@ static int measure_cycles_lat_fn(void *_plr)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 4d8b1de83143..8b519707433b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -669,8 +669,8 @@ struct f2fs_inode_info {
+ 	int i_extra_isize;		/* size of extra space located in i_addr */
+ 	kprojid_t i_projid;		/* id for project quota */
+ 	int i_inline_xattr_size;	/* inline xattr size */
+-	struct timespec i_crtime;	/* inode creation time */
+-	struct timespec i_disk_time[4];	/* inode disk times */
++	struct timespec64 i_crtime;	/* inode creation time */
++	struct timespec64 i_disk_time[4];/* inode disk times */
+ };
+ 
+ static inline void get_extent_info(struct extent_info *ext,
+@@ -2518,7 +2518,6 @@ static inline void clear_file(struct inode *inode, int type)
+ 
+ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
  {
- 	struct pseudo_lock_region *plr = _plr;
- 	u64 start, end;
-+#ifdef CONFIG_X86_64
- 	u64 i;
-+#else
-+	u32 i;
-+#endif
- #ifdef CONFIG_KASAN
- 	/*
- 	 * The registers used for local register variables are also used
-@@ -924,7 +932,11 @@ static int measure_cycles_perf_fn(void *_plr)
- 	struct pseudo_lock_region *plr = _plr;
- 	unsigned long long l2_hits, l2_miss;
- 	u64 l2_hit_bits, l2_miss_bits;
-+#ifdef CONFIG_X86_64
- 	u64 i;
-+#else
-+	u32 i;
-+#endif
- #ifdef CONFIG_KASAN
- 	/*
- 	 * The registers used for local register variables are also used
+-	struct timespec ts;
+ 	bool ret;
+ 
+ 	if (dsync) {
+@@ -2534,16 +2533,13 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+ 			i_size_read(inode) & ~PAGE_MASK)
+ 		return false;
+ 
+-	ts = timespec64_to_timespec(inode->i_atime);
+-	if (!timespec_equal(F2FS_I(inode)->i_disk_time, &ts))
++	if (!timespec64_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
+ 		return false;
+-	ts = timespec64_to_timespec(inode->i_ctime);
+-	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 1, &ts))
++	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
+ 		return false;
+-	ts = timespec64_to_timespec(inode->i_mtime);
+-	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 2, &ts))
++	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
+ 		return false;
+-	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 3,
++	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 3,
+ 						&F2FS_I(inode)->i_crtime))
+ 		return false;
+ 
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index f121c864f4c0..30a777369d2b 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -297,9 +297,9 @@ static int do_read_inode(struct inode *inode)
+ 		fi->i_crtime.tv_nsec = le32_to_cpu(ri->i_crtime_nsec);
+ 	}
+ 
+-	F2FS_I(inode)->i_disk_time[0] = timespec64_to_timespec(inode->i_atime);
+-	F2FS_I(inode)->i_disk_time[1] = timespec64_to_timespec(inode->i_ctime);
+-	F2FS_I(inode)->i_disk_time[2] = timespec64_to_timespec(inode->i_mtime);
++	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
++	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
++	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+ 	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+ 	f2fs_put_page(node_page, 1);
+ 
+@@ -470,9 +470,9 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
+ 	if (inode->i_nlink == 0)
+ 		clear_inline_node(node_page);
+ 
+-	F2FS_I(inode)->i_disk_time[0] = timespec64_to_timespec(inode->i_atime);
+-	F2FS_I(inode)->i_disk_time[1] = timespec64_to_timespec(inode->i_ctime);
+-	F2FS_I(inode)->i_disk_time[2] = timespec64_to_timespec(inode->i_mtime);
++	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
++	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
++	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+ 	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+ }
+ 
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index 231b7f3ea7d3..2ea0de4cbe76 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -51,7 +51,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+ 	inode->i_ino = ino;
+ 	inode->i_blocks = 0;
+ 	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
+-	F2FS_I(inode)->i_crtime = timespec64_to_timespec(inode->i_mtime);
++	F2FS_I(inode)->i_crtime = inode->i_mtime;
+ 	inode->i_generation = sbi->s_next_generation++;
+ 
+ 	if (S_ISDIR(inode->i_mode))
+-- 
+2.9.0
+
