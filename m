@@ -2,77 +2,62 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E485C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14723C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4163920846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:35:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4163920846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A6C5E20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C5E20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754075AbeFTGfm (ORCPT
+        id S1752856AbeFTGhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 02:35:42 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:34115 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752601AbeFTGfl (ORCPT
+        Wed, 20 Jun 2018 02:37:10 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56170 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbeFTGhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 02:35:41 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w5K6XAXp013332;
-        Wed, 20 Jun 2018 09:33:10 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
-        id 01F6662FFB; Wed, 20 Jun 2018 09:33:10 +0300 (IDT)
-From:   avifishman70@gmail.com
-To:     gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
-        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
-        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
-        digetx@gmail.com, kstewart@linuxfoundation.org,
-        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, Avi Fishman <AviFishman70@gmail.com>
-Subject: [PATCH v7 3/3] MAINTAINERS: add subfolders for nuvoton *npcm*
-Date:   Wed, 20 Jun 2018 09:33:06 +0300
-Message-Id: <20180620063306.134820-4-avifishman70@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180620063306.134820-1-avifishman70@gmail.com>
-References: <20180620063306.134820-1-avifishman70@gmail.com>
+        Wed, 20 Jun 2018 02:37:08 -0400
+Received: from localhost (unknown [61.102.160.116])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 19ED8146228F4;
+        Tue, 19 Jun 2018 23:37:05 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 15:37:02 +0900 (KST)
+Message-Id: <20180620.153702.722024386627396392.davem@davemloft.net>
+To:     andrew@lunn.ch
+Cc:     keescook@chromium.org, linus.walleij@linaro.org,
+        pramod.kumar@broadcom.com, f.fainelli@gmail.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mdio-mux-gpio: Remove VLA usage
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180620063248.GA9303@lunn.ch>
+References: <20180530205712.GB16286@lunn.ch>
+        <CAGXu5j+sh-gSXvGg25oN9Xsyw1W=i177=52ZXPV3OvEym6nr7g@mail.gmail.com>
+        <20180620063248.GA9303@lunn.ch>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 19 Jun 2018 23:37:07 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <AviFishman70@gmail.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Date: Wed, 20 Jun 2018 08:32:48 +0200
 
-Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
----
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+> Does it cleanly apply to net-next?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e0ce3c5f32e5..23c450adad44 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1727,7 +1727,10 @@ F:	arch/arm/mach-npcm/
- F:	arch/arm/boot/dts/nuvoton-npcm*
- F:	include/dt-bindings/clock/nuvoton,npcm7xx-clks.h
- F:	drivers/*/*npcm*
-+F:	drivers/*/*/*npcm*
- F:	Documentation/*/*npcm*
-+F:	Documentation/*/*/*npcm*
-+F:	Documentation/*/*/*/*npcm*
- 
- ARM/NUVOTON W90X900 ARM ARCHITECTURE
- M:	Wan ZongShun <mcuos.com@gmail.com>
--- 
-2.14.1
+net-next is closed, so net-next submissions should be sent when it
+opens back up which should be some time this weekend.
 
+Anything not in "Under Review" state in patchwork always must
+be resubmitted at the appropriate time.
