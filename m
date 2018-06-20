@@ -2,101 +2,170 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3E3C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91A0C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9C6C2083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:33:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q8Ml5Nza"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C6C2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D0852083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:34:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0852083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754530AbeFTQdz (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:33:55 -0400
-Received: from mail-qt0-f201.google.com ([209.85.216.201]:41362 "EHLO
-        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754367AbeFTQdx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:33:53 -0400
-Received: by mail-qt0-f201.google.com with SMTP id 12-v6so126996qtq.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 09:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=DqmTyLnVHPCzJLIa+OMwdi01ZbF/3M1QtvmuXjucO80=;
-        b=q8Ml5Nzaw1AureZJhKqxa+zwJpJeQ3caHd9B2hp/lwfn3ozKMrKk2YcIyhuSUx5dnK
-         OYZ7rJ6iOVM+UBnJ23PuCjgHdPtSdGnkPR4JB465e1d+RIvMpp6xTQ0wyVkpWpcP6/7w
-         G809vgADq59TlS9AyV/dxZ7+kuD1qeYK3RVu1upy1XSiwLlaX2UGO2iBvljJVOXaFQE/
-         WPo/vuq2l2zDPDhhhsXtFKES4XMCAmliuLCI//kZTSMLcG90MnBCTcWyr/QptPvf4s/W
-         b8GhF4uAHXUzkb/v1SR3LdVPofGggJMF5pjADGUZiv41S5cwdZNM/97LECtKeVtl5FyO
-         J3bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=DqmTyLnVHPCzJLIa+OMwdi01ZbF/3M1QtvmuXjucO80=;
-        b=Cly5LU07x0b4+BenlhM5J8KTGAhHGADRtFbxspwwbFopA+V3DrRl6icH7mDDwYcJsQ
-         F5t2qzfIMj9Q/4u8I+nXWuprMgCMVhjZn4CXvYE2dMbprf3o4Gsigs7AudVDvpKxwHsE
-         NMaPsOwmU4v9BJ1vKb3Z0RhxmqKvo7EsmewLy2Tn7/82MhIP6Vy/8mu1c6fk0s+P3u7n
-         4xngUpEtQiyj6NDMHe9UQOE6ZIIga0T+jc0ymo/bp+xf3tCIUjnsEyX7mEXoOxmTussZ
-         t3vr1Lm9o1yNCCTvKSrBgSi+ptHMdhr20+qOcfSghI51MC/gx3cjMXYZb0+0OZ0Lb7S0
-         cjuA==
-X-Gm-Message-State: APt69E0ha1qtY7HZQGVbAvID4Tod1hwdXAjjuT71qUynUsBQfU4oR4l8
-        3HtmE1wChZ6UiYFrjFPHTcJMGSSK1Q==
-X-Google-Smtp-Source: ADUXVKKDLIwady0setVnjehsCapyU5CA5GaMY9/C2X39C0HldHWGs/dHw254Zc40h7/gnnFj23WZSvdJog==
+        id S932385AbeFTQeE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 12:34:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8673 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754235AbeFTQeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 12:34:01 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 853C481A0842B;
+        Thu, 21 Jun 2018 00:33:46 +0800 (CST)
+Received: from [127.0.0.1] (10.57.101.250) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Thu, 21 Jun 2018
+ 00:33:22 +0800
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+To:     Will Deacon <will.deacon@arm.com>
+References: <5B2A6218.3030201@hisilicon.com> <20180620144257.GB27776@arm.com>
+ <5B2A7832.4010502@hisilicon.com>
+ <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
+ <5B2A7FE1.5040607@hisilicon.com> <20180620162845.GD27776@arm.com>
+CC:     James Morse <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <suzuki.poulose@arm.com>, <dave.martin@arm.com>,
+        <mark.rutland@arm.com>, <marc.zyngier@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, <xiexiuqi@huawei.com>,
+        huangdaode <huangdaode@hisilicon.com>,
+        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        <jonathan.cameron@huawei.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        <libeijian@hisilicon.com>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B2A81D1.6070507@hisilicon.com>
+Date:   Thu, 21 Jun 2018 00:33:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-X-Received: by 2002:a0c:8b4a:: with SMTP id d10-v6mr11890635qvc.14.1529512432757;
- Wed, 20 Jun 2018 09:33:52 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 18:33:45 +0200
-Message-Id: <20180620163345.212776-1-jannh@google.com>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-Subject: [PATCH net] netfilter: nf_log: fix uninit read in nf_log_proc_dostring
-From:   Jann Horn <jannh@google.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        jannh@google.com
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180620162845.GD27776@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.101.250]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When proc_dostring() is called with a non-zero offset in strict mode, it
-doesn't just write to the ->data buffer, it also reads. Make sure it
-doesn't read uninitialized data.
+Hi Will,
 
-Fixes: c6ac37d8d884 ("netfilter: nf_log: fix error on write NONE to [...]")
-Signed-off-by: Jann Horn <jannh@google.com>
----
- net/netfilter/nf_log.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On 2018/6/21 0:28, Will Deacon wrote:
+> On Thu, Jun 21, 2018 at 12:25:05AM +0800, Wei Xu wrote:
+>> Hi James,
+>>
+>> On 2018/6/20 23:54, James Morse wrote:
+>>> Hi Wei,
+>>>
+>>> On 20/06/18 16:52, Wei Xu wrote:
+>>>> On 2018/6/20 22:42, Will Deacon wrote:
+>>>>> Hmm, I wonder if this is at all related to RAS, since we've just enabled
+>>>>> that and if we take a fault whilst rewriting swapper then we're going to
+>>>>> get stuck. What happens if you set CONFIG_ARM64_RAS_EXTN=n in the guest?
+>>>> I will try it now.
+>>> It's not just the Kconfig symbol, could you also revert:
+>>>
+>>> f751daa4f9d3 ("arm64: Unconditionally enable IESB on exception entry/return for
+>>> firmware-first")
+>>>
+>>>
+>>> (reverts and build cleanly on 4.17)
+>> Thanks to point out this!
+>> I have disabled CONFIG_ARM64_RAS_EXTN and reverted that commit.
+>> But I still got the stack overflow issue sometimes.
+>> Do you have more hint?
+> [...]
+>
+>>      [    0.076797] pstate: 604003c5 (nZCv DAIF +PAN -UAO)
+>>      [    0.081727] pc : el1_sync+0x0/0xb0
+>>      [    0.085217] lr : kpti_install_ng_mappings+0x120/0x214
+> Please run:
+>
+> $ ./scripts/faddr2line vmlinux kpti_install_ng_mappings+0x120/0x214
 
-diff --git a/net/netfilter/nf_log.c b/net/netfilter/nf_log.c
-index 426457047578..2c47f9ec3511 100644
---- a/net/netfilter/nf_log.c
-+++ b/net/netfilter/nf_log.c
-@@ -424,6 +424,10 @@ static int nf_log_proc_dostring(struct ctl_table *table, int write,
- 	if (write) {
- 		struct ctl_table tmp = *table;
- 
-+		/* proc_dostring() can append to existing strings, so we need to
-+		 * initialize it as an empty string.
-+		 */
-+		buf[0] = '\0';
- 		tmp.data = buf;
- 		r = proc_dostring(&tmp, write, buffer, lenp, ppos);
- 		if (r)
--- 
-2.18.0.rc1.244.gcf134e6275-goog
+Thanks for your kindly guide :)
+The output is as below:
+
+     joyx@Turing-Arch-b:~/plinth-kernel-v200$ ./scripts/faddr2line 
+../kernel-dev.build/vmlinux kpti_install_ng_mappings+0x120/0x214
+     kpti_install_ng_mappings+0x120/0x214:
+     cpu_set_reserved_ttbr0 at arch/arm64/include/asm/mmu_context.h:52
+     47      /*
+     48       * Set TTBR0 to empty_zero_page. No translations will be 
+possible via TTBR0.
+     49       */
+     50      static inline void cpu_set_reserved_ttbr0(void)
+     51      {
+     52              unsigned long ttbr = 
+phys_to_ttbr(__pa_symbol(empty_zero_page));
+     53
+     54              write_sysreg(ttbr, ttbr0_el1);
+     55              isb();
+     56      }
+     57
+     (inlined by) cpu_uninstall_idmap at 
+arch/arm64/include/asm/mmu_context.h:123
+     118      */
+     119     static inline void cpu_uninstall_idmap(void)
+     120     {
+     121             struct mm_struct *mm = current->active_mm;
+     122
+     123             cpu_set_reserved_ttbr0();
+     124             local_flush_tlb_all();
+     125             cpu_set_default_tcr_t0sz();
+     126
+     127             if (mm != &init_mm && !system_uses_ttbr0_pan())
+     128                     cpu_switch_mm(mm->pgd, mm);
+     (inlined by) kpti_install_ng_mappings at 
+arch/arm64/kernel/cpufeature.c:922
+     917
+     918             remap_fn = (void 
+*)__pa_symbol(idmap_kpti_install_ng_mappings);
+     919
+     920             cpu_install_idmap();
+     921             remap_fn(cpu, num_online_cpus(), 
+__pa_symbol(swapper_pg_dir));
+     922             cpu_uninstall_idmap();
+     923
+     924             if (!cpu)
+     925                     kpti_applied = true;
+     926
+     927             return;
+
+Thanks!
+
+Best Regards,
+Wei
+
+> as the GDB output wasn't helpful (it only showed local variable
+> declarations?!).
+>
+> Will
+>
+> .
+>
+
 
