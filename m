@@ -2,123 +2,166 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C4FC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35E5C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D444E20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:38:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="fvknt2eI";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z+lAB4IN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D444E20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 96E6520846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:39:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E6520846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933360AbeFTUiY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:38:24 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:35261 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932953AbeFTUiW (ORCPT
+        id S933376AbeFTUjQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:39:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56364 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932953AbeFTUjP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:38:22 -0400
-Received: by mail-yb0-f194.google.com with SMTP id a16-v6so357141ybm.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:38:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=jdyZYn4J7cGa9q27FcbltND+tOnAiGP7IIw143jCsiY=;
-        b=fvknt2eIcy6bTVfDuoSLxoe5SnDUkv2VKrceVorV3Ltu9aGe1qfi/JI2ghVA2QuEu9
-         Qc5dAY9M5UtqGLvZql2qztal3Ln6uh/TvoVqMYr+833w8B5tB3Mo9s/vGe+wOtK5LuMG
-         Dj4qMDsa5zuK96ePwF7+Di0ks2GjImvdaeiYUT4p2J7ErUf6FCtWiN9Jrz9Yx3lFoZmx
-         4qUXfLUVct4Xldd7KHWk/AXIGDjw8I7Tf07PFRziJS/RYlbw7zZXSWY7OR9Ui7uyUuJJ
-         c5qy/oX3DeBUSxTZAzYF/72Yp7ocSE64arkLIBxCAmAbTR+bIHr1GbxOB+95yCQ6UCxD
-         PMaw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=jdyZYn4J7cGa9q27FcbltND+tOnAiGP7IIw143jCsiY=;
-        b=Z+lAB4INHziqr5oF/btKhzRzaUYbTLzUydI9Z8rpCAjrx09zvAOr9H7GFY3NH4rVmL
-         937DzQe5ekMpBw5kgrfSsLIbFyRGzaNPcheeUb+S6O2F2tFuPkPhzFtkfW32FOpqWziu
-         2znR+BjoiWHMys39lU7YjkNnKhqlL8W770oLc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=jdyZYn4J7cGa9q27FcbltND+tOnAiGP7IIw143jCsiY=;
-        b=YkAuUjzg+eiGKm4u5/wV0yOQ6RHNglRVTRqoSjNPIMAgvhsGBMRaXQLOIk/rsOCwP5
-         MfqLKhF1YMxtob3FypV1eNB8SopybaQP82vEG/14l7rbCAp7MuGiI6Yt24i1QDheiGru
-         vmezWKmeWqWnaFzG6OOHkE9r15JDYu9vAPEVfze+YZUkLDg/DwMcuWxDt0La22qcbBb7
-         IH3qp5jKo+S51qDEajl8pNUnnfbdCzGfWbpjSPZ1c3l/fl3t0mnPBHYmqFZzb/OGY/zl
-         jU5YsY/VKHqz7OB3BRn9Vmg/yWwBf8R0+WFsHrRU7O+DEugX2P5sJRtBCXaFUilo2Mwm
-         HxFg==
-X-Gm-Message-State: APt69E2MxP9HwFKRQpKvYys4k1qgpoME3/Csfx1uHlMctZzNZcDezCr6
-        tfbBJs3+m09UNeEkkSwDuzleNqJ5OG/8/M0BehSDFg==
-X-Google-Smtp-Source: ADUXVKJrirNBJqIhO5Rf73Z3iGeZMAkfO4dIr6gfrBboHfo6Do9syy7E3sK4pfZyLlDo5jO0c7dYMzqsZq4kh/DEz94=
-X-Received: by 2002:a25:a301:: with SMTP id d1-v6mr11706289ybi.193.1529527101429;
- Wed, 20 Jun 2018 13:38:21 -0700 (PDT)
+        Wed, 20 Jun 2018 16:39:15 -0400
+Received: from localhost (113x41x139x141.ap113.ftth.ucom.ne.jp [113.41.139.141])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AEE1DCB8;
+        Wed, 20 Jun 2018 20:39:14 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 05:39:12 +0900
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mawanda Henry <mawandahenrynaco@gmail.com>
+Cc:     mawanda111@gmail.com, xdeguillard@vmware.com, moltmann@vmware.com,
+        pv-drivers@vmware.com, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/misc: SPDX-licensing
+Message-ID: <20180620203912.GA12402@kroah.com>
+References: <20180620170524.GA18126@sesnaco>
 MIME-Version: 1.0
-Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 13:38:20
- -0700 (PDT)
-In-Reply-To: <CAK8P3a1U1RNxmx-G5QCS8emzXc3nHqEN5bqmZDMqZBBmo3vCtQ@mail.gmail.com>
-References: <20180620190408.45104-1-keescook@chromium.org> <20180620190408.45104-12-keescook@chromium.org>
- <CAK8P3a1U1RNxmx-G5QCS8emzXc3nHqEN5bqmZDMqZBBmo3vCtQ@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 20 Jun 2018 13:38:20 -0700
-X-Google-Sender-Auth: 5CDj4Ct5kyFjj4jZIII2gnc2DqE
-Message-ID: <CAGXu5j+P++iR=Vf6OKi31foxRAO+eRcDZHeHmc7K_G2rViCjmQ@mail.gmail.com>
-Subject: Re: [PATCH 11/11] crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620170524.GA18126@sesnaco>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 12:44 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, Jun 20, 2018 at 9:04 PM, Kees Cook <keescook@chromium.org> wrote:
->> In the quest to remove all stack VLA usage from the kernel[1], this
->> caps the skcipher request size similar to other limits and adds a sanity
->> check at registration.
->>
->>
->> +#define SKCIPHER_MAX_REQSIZE   (PAGE_SIZE / 8)
->> +
->>  #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
->>         char __##name##_desc[sizeof(struct skcipher_request) + \
->> -               crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
->> +               SKCIPHER_MAX_REQSIZE] CRYPTO_MINALIGN_ATTR; \
->>         struct skcipher_request *name = (void *)__##name##_desc
->>
->
-> This is probably a bad idea on kernels with large values of PAGE_SIZE.
-> Some users on ppc64 and arm64 use 64KB here, but still limit
-> the per-function stack size to 2KB.
+On Wed, Jun 20, 2018 at 08:05:24PM +0300, Mawanda Henry wrote:
+> Attach SPDX license header. Concatinate int on unsigned
+> Signed-off-by: Mawanda Henry <mawandahenrynaco@gmail.com>
+> ---
+>  drivers/misc/vmw_balloon.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+> index 9047c0a..762429d 100644
+> --- a/drivers/misc/vmw_balloon.c
+> +++ b/drivers/misc/vmw_balloon.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * VMware Balloon driver.
+>   *
+> @@ -247,7 +248,7 @@ struct vmballoon_stats {
+>  	unsigned int doorbell_unset;
+>  };
+>  
+> -#define STATS_INC(stat) (stat)++
+> +#define STATS_INC(stat) ((stat)++)
+>  #else
+>  #define STATS_INC(stat)
+>  #endif
+> @@ -275,7 +276,7 @@ struct vmballoon {
+>  	struct vmballoon_page_size page_sizes[VMW_BALLOON_NUM_PAGE_SIZES];
+>  
+>  	/* supported page sizes. 1 == 4k pages only, 2 == 4k and 2m pages */
+> -	unsigned supported_page_sizes;
+> +	unsigned int supported_page_sizes;
+>  
+>  	/* balloon size in pages */
+>  	unsigned int size;
+> @@ -559,7 +560,7 @@ static void vmballoon_free_page(struct page *page, bool is_2m_page)
+>  static void vmballoon_pop(struct vmballoon *b)
+>  {
+>  	struct page *page, *next;
+> -	unsigned is_2m_pages;
+> +	unsigned int is_2m_pages;
+>  
+>  	for (is_2m_pages = 0; is_2m_pages < VMW_BALLOON_NUM_PAGE_SIZES;
+>  			is_2m_pages++) {
+> @@ -796,7 +797,7 @@ static void vmballoon_add_batched_page(struct vmballoon *b, int idx,
+>   */
+>  static void vmballoon_inflate(struct vmballoon *b)
+>  {
+> -	unsigned rate;
+> +	unsigned int rate;
+>  	unsigned int allocations = 0;
+>  	unsigned int num_pages = 0;
+>  	int error = 0;
+> @@ -936,7 +937,7 @@ static void vmballoon_inflate(struct vmballoon *b)
+>   */
+>  static void vmballoon_deflate(struct vmballoon *b)
+>  {
+> -	unsigned is_2m_pages;
+> +	unsigned int is_2m_pages;
+>  
+>  	pr_debug("%s - size: %d, target %d\n", __func__, b->size, b->target);
+>  
+> @@ -1234,7 +1235,7 @@ static int __init vmballoon_debugfs_init(struct vmballoon *b)
+>  {
+>  	int error;
+>  
+> -	b->dbg_entry = debugfs_create_file("vmmemctl", S_IRUGO, NULL, b,
+> +	b->dbg_entry = debugfs_create_file("vmmemctl", 0444, NULL, b,
+>  					   &vmballoon_debug_fops);
+>  	if (IS_ERR(b->dbg_entry)) {
+>  		error = PTR_ERR(b->dbg_entry);
+> @@ -1266,7 +1267,7 @@ static inline void vmballoon_debugfs_exit(struct vmballoon *b)
+>  static int __init vmballoon_init(void)
+>  {
+>  	int error;
+> -	unsigned is_2m_pages;
+> +	unsigned int is_2m_pages;
+>  	/*
+>  	 * Check if we are running on VMware's hypervisor and bail out
+>  	 * if we are not.
+> -- 
+> 2.7.4
 
-We could make all of these PAGE_SIZE-related limits explicitly 512? I
-think that was the intent originally.
+Hi,
 
--Kees
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
--- 
-Kees Cook
-Pixel Security
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- Your patch did many different things all at once, making it difficult
+  to review.  All Linux kernel patches need to only do one thing at a
+  time.  If you need to do multiple things (such as clean up all coding
+  style issues in a file/driver), do it in a sequence of patches, each
+  one doing only one thing.  This will make it easier to review the
+  patches to ensure that they are correct, and to help alleviate any
+  merge issues that larger patches can cause.
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what is needed in order to
+  properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/SubmittingPatches for what a proper Subject: line should
+  look like.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
