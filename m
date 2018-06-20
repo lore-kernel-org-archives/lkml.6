@@ -6,41 +6,42 @@ X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E30C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB64C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE7520846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:17:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE7520846
+	by mail.kernel.org (Postfix) with ESMTP id EA1C320846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:17:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA1C320846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932442AbeFTRRr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:17:47 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:32221 "EHLO
+        id S1754360AbeFTRRy (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 13:17:54 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:34952 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932154AbeFTRRp (ORCPT
+        with ESMTP id S1754153AbeFTRRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:17:45 -0400
+        Wed, 20 Jun 2018 13:17:51 -0400
 Received: from belgarion ([90.55.203.186])
         by mwinf5d64 with ME
-        id 15Hj1y00W41oiFu035Hjib; Wed, 20 Jun 2018 19:17:44 +0200
+        id 15Hq1y00141oiFu035Hqjg; Wed, 20 Jun 2018 19:17:50 +0200
 X-ME-Helo: belgarion
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Wed, 20 Jun 2018 19:17:44 +0200
+X-ME-Date: Wed, 20 Jun 2018 19:17:50 +0200
 X-ME-IP: 90.55.203.186
 From:   Robert Jarzmik <robert.jarzmik@free.fr>
 To:     "David S. Miller" <davem@davemloft.net>
 Cc:     Daniel Mack <daniel@zonque.org>, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: Re: [PATCH v3 07/14] net: smc911x: remove the dmaengine compat need
+Subject: Re: [PATCH v3 08/14] net: smc91x: remove the dmaengine compat need
 References: <20180617170217.24177-1-robert.jarzmik@free.fr>
-        <20180617170217.24177-8-robert.jarzmik@free.fr>
+        <20180617170217.24177-9-robert.jarzmik@free.fr>
 X-URL:  http://belgarath.falguerolles.org/
-Date:   Wed, 20 Jun 2018 19:17:43 +0200
-In-Reply-To: <20180617170217.24177-8-robert.jarzmik@free.fr> (Robert Jarzmik's
-        message of "Sun, 17 Jun 2018 19:02:10 +0200")
-Message-ID: <87muvppebs.fsf@belgarion.home>
+Date:   Wed, 20 Jun 2018 19:17:49 +0200
+In-Reply-To: <20180617170217.24177-9-robert.jarzmik@free.fr> (Robert Jarzmik's
+        message of "Sun, 17 Jun 2018 19:02:11 +0200")
+Message-ID: <87lgb9pebm.fsf@belgarion.home>
 User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -79,46 +80,45 @@ Robert Jarzmik <robert.jarzmik@free.fr> writes:
 > ---
 > Since v2: converted to NULL filter function and NULL dma parameter call
 > ---
->  drivers/net/ethernet/smsc/smc911x.c | 13 ++-----------
->  1 file changed, 2 insertions(+), 11 deletions(-)
+>  drivers/net/ethernet/smsc/smc91x.c | 9 +--------
+>  drivers/net/ethernet/smsc/smc91x.h | 1 -
+>  2 files changed, 1 insertion(+), 9 deletions(-)
 >
-> diff --git a/drivers/net/ethernet/smsc/smc911x.c b/drivers/net/ethernet/smsc/smc911x.c
-> index 05157442a980..b1b53f6c452f 100644
-> --- a/drivers/net/ethernet/smsc/smc911x.c
-> +++ b/drivers/net/ethernet/smsc/smc911x.c
-> @@ -74,7 +74,6 @@ static const char version[] =
->  #include <linux/skbuff.h>
+> diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
+> index 080428762858..b944828f9ea3 100644
+> --- a/drivers/net/ethernet/smsc/smc91x.c
+> +++ b/drivers/net/ethernet/smsc/smc91x.c
+> @@ -2019,17 +2019,10 @@ static int smc_probe(struct net_device *dev, void __iomem *ioaddr,
+>  #  endif
+>  	if (lp->cfg.flags & SMC91X_USE_DMA) {
+>  		dma_cap_mask_t mask;
+> -		struct pxad_param param;
 >  
->  #include <linux/dmaengine.h>
-> -#include <linux/dma/pxa-dma.h>
->  
->  #include <asm/io.h>
->  
-> @@ -1795,7 +1794,6 @@ static int smc911x_probe(struct net_device *dev)
->  #ifdef SMC_USE_DMA
->  	struct dma_slave_config	config;
->  	dma_cap_mask_t mask;
-> -	struct pxad_param param;
+>  		dma_cap_zero(mask);
+>  		dma_cap_set(DMA_SLAVE, mask);
+> -		param.prio = PXAD_PRIO_LOWEST;
+> -		param.drcmr = -1UL;
+> -
+> -		lp->dma_chan =
+> -			dma_request_slave_channel_compat(mask, pxad_filter_fn,
+> -							 &param, &dev->dev,
+> -							 "data");
+> +		lp->dma_chan = dma_request_channel(mask, NULL, NULL);
+>  	}
 >  #endif
 >  
->  	DBG(SMC_DEBUG_FUNC, dev, "--> %s\n", __func__);
-> @@ -1971,15 +1969,8 @@ static int smc911x_probe(struct net_device *dev)
+> diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
+> index b337ee97e0c0..a27352229fc2 100644
+> --- a/drivers/net/ethernet/smsc/smc91x.h
+> +++ b/drivers/net/ethernet/smsc/smc91x.h
+> @@ -301,7 +301,6 @@ struct smc_local {
+>   * as RX which can overrun memory and lose packets.
+>   */
+>  #include <linux/dma-mapping.h>
+> -#include <linux/dma/pxa-dma.h>
 >  
->  	dma_cap_zero(mask);
->  	dma_cap_set(DMA_SLAVE, mask);
-> -	param.prio = PXAD_PRIO_LOWEST;
-> -	param.drcmr = -1UL;
-> -
-> -	lp->rxdma =
-> -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
-> -						 &param, &dev->dev, "rx");
-> -	lp->txdma =
-> -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
-> -						 &param, &dev->dev, "tx");
-> +	lp->rxdma = dma_request_channel(mask, NULL, NULL);
-> +	lp->txdma = dma_request_channel(mask, NULL, NULL);
->  	lp->rxdma_active = 0;
->  	lp->txdma_active = 0;
+>  #ifdef SMC_insl
+>  #undef SMC_insl
 
 -- 
 Robert
