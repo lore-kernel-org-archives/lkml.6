@@ -2,261 +2,638 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B627C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A163C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E101920846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:58:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oDYgne7E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E101920846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 355CE208A1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:03:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 355CE208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754050AbeFTM6c (ORCPT
+        id S1752924AbeFTNDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 08:58:32 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:53219 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeFTM62 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:58:28 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5KCwIDk017184;
-        Wed, 20 Jun 2018 07:58:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529499498;
-        bh=xD6La18pB5ME79DHHfAKtrUUBercYvLvkkySoNoz5c0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=oDYgne7EzOcAvQzf2x8+Cd8vcXfMqVPyynuqYvpaRvmRZHnjKH+mHmlcD3+1kROiR
-         jgW7AcNp9AWoeToW4WonYupkXOTqmQ1wDWef9hpJKi1dvyU6VRnkPHyZ2HPm02v+ap
-         tplOr5n1ZUN44DbIc8PFa7cHCFo1Qy5MHoyiUelA=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5KCwIuu010886;
-        Wed, 20 Jun 2018 07:58:18 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 20
- Jun 2018 07:58:18 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 20 Jun 2018 07:58:18 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5KCwFZ9013950;
-        Wed, 20 Jun 2018 07:58:15 -0500
-Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
-To:     Tony Lindgren <tony@atomide.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Samuel Morris <samorris@lexmark.com>, Tejun Heo <tj@kernel.org>
-CC:     <linux-omap@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, <ssantosh@kernel.org>,
-        Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>
-References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
- <20180620102904.GC112168@atomide.com>
-From:   Roger Quadros <rogerq@ti.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=rogerq@ti.com; prefer-encrypt=mutual; keydata=
- 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
- IwrfNkJOLj3CvocMIw==
-Message-ID: <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
-Date:   Wed, 20 Jun 2018 15:58:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 20 Jun 2018 09:03:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50293 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750852AbeFTNDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:03:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 341BDAF62;
+        Wed, 20 Jun 2018 13:03:35 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 15:03:11 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: fix unnecessary killing of additional processes
+Message-ID: <20180620130311.GM13685@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1806141339580.4543@chino.kir.corp.google.com>
+ <20180615065541.GA24039@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1806151559360.49038@chino.kir.corp.google.com>
+ <20180619083316.GB13685@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180620102904.GC112168@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619083316.GB13685@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony,
+On Tue 19-06-18 10:33:16, Michal Hocko wrote:
+[...]
+> As I've said, if you are not willing to work on a proper solution, I
+> will, but my nack holds for this patch until we see no other way around
+> existing and real world problems.
 
-On 20/06/18 13:29, Tony Lindgren wrote:
-> Hi,
-> 
-> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:
->> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
-> 
-> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
-> hotplug to save power").
-> 
-> Reverting the patch makes things work again. Any ideas what
-> might be going wrong here? Things clearly idle but then there
-> seems to be some register access with clocks disabled.
+OK, so I gave it a quick try and it doesn't look all that bad to me.
+This is only for blockable mmu notifiers.  I didn't really try to
+address all the problems down the road - I mean some of the blocking
+notifiers can check the range in their interval tree without blocking
+locks. It is quite probable that only few ranges will be of interest,
+right?
 
-The commit is doing this in probe.
-
-+	pm_runtime_set_active(dev);
- 	pm_runtime_enable(dev);
--	pm_runtime_get_sync(dev);
-+	pm_runtime_forbid(dev);
-
-On OMAP, the device is not guaranteed to be active at probe and so we can't
-say pm_runtime_set_active() and get rid of pm_runtime_get_sync().
-
-
-> 
->> Full log of trace please refer this link,
->> https://lkft.validation.linaro.org/scheduler/job/291535#L946
->>
->> Here is back trace,
->> [    3.561640] omap_rng 48090000.rng: Random Number Generator ver. 20
->> [    3.611949] brd: module loaded
->> [    3.641298] loop: module loaded
->> [    3.646435] at24 0-0050: 4096 byte 24c32 EEPROM, writable, 1 bytes/write
->> [    3.658481] ------------[ cut here ]------------
->> [    3.663196] WARNING: CPU: 0 PID: 1 at
->> /srv/oe/build/tmp-rpb-glibc/work-shared/am57xx-evm/kernel-source/drivers/bus/omap_l3_noc.c:147
->> l3_interrupt_handler+0x27c/0x39c
->> [    3.678052] 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4_CFG
->> (Read): Data Access in User mode during Functional access
->> [    3.689330] Modules linked in:
->> [    3.692426] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
->> 4.18.0-rc1-next-20180619 #1
->> [    3.699952] Hardware name: Generic DRA74X (Flattened Device Tree)
->> [    3.706099] [<c04156f0>] (unwind_backtrace) from [<c040eec4>]
->> (show_stack+0x20/0x24)
->> [    3.713897] [<c040eec4>] (show_stack) from [<c116a668>]
->> (dump_stack+0xb0/0xdc)
->> [    3.721171] [<c116a668>] (dump_stack) from [<c0450a14>] (__warn+0x118/0x130)
->> [    3.728270] [<c0450a14>] (__warn) from [<c0450a84>]
->> (warn_slowpath_fmt+0x58/0x74)
->> [    3.735808] [<c0450a84>] (warn_slowpath_fmt) from [<c08be648>]
->> (l3_interrupt_handler+0x27c/0x39c)
->> [    3.744742] [<c08be648>] (l3_interrupt_handler) from [<c04cd270>]
->> (__handle_irq_event_percpu+0x90/0x45c)
->> [    3.754286] [<c04cd270>] (__handle_irq_event_percpu) from
->> [<c04cd678>] (handle_irq_event_percpu+0x3c/0x8c)
->> [    3.764001] [<c04cd678>] (handle_irq_event_percpu) from
->> [<c04cd710>] (handle_irq_event+0x48/0x6c)
->> [    3.772933] [<c04cd710>] (handle_irq_event) from [<c04d170c>]
->> (handle_fasteoi_irq+0xb0/0x164)
->> [    3.781513] [<c04d170c>] (handle_fasteoi_irq) from [<c04cc344>]
->> (generic_handle_irq+0x34/0x44)
->> [    3.790183] [<c04cc344>] (generic_handle_irq) from [<c04cca48>]
->> (__handle_domain_irq+0x6c/0xc4)
->> [    3.798941] [<c04cca48>] (__handle_domain_irq) from [<c0402528>]
->> (gic_handle_irq+0x68/0xac)
->> [    3.807347] [<c0402528>] (gic_handle_irq) from [<c04019bc>]
->> (__irq_svc+0x5c/0x7c)
->> [    3.814874] Exception stack(0xee179c70 to 0xee179cb8)
->> [    3.819963] 9c60:                                     fc140000
->> ee3e2f10 ee3a9810 00000000
->> [    3.828189] 9c80: 00000000 ee3e2f10 fc140004 fc140000 ee3a9800
->> ee3a9810 00000000 ee179cdc
->> [    3.836414] 9ca0: ee179ce0 ee179cc0 c0c3b364 c0c3b2ec 60000013 ffffffff
->> [    3.843079] [<c04019bc>] (__irq_svc) from [<c0c3b2ec>]
->> (ahci_enable_ahci+0x24/0x70)
->> [    3.850789] [<c0c3b2ec>] (ahci_enable_ahci) from [<c0c3b364>]
->> (ahci_save_initial_config+0x2c/0x388)
->> [    3.859894] [<c0c3b364>] (ahci_save_initial_config) from
->> [<c0c3cbdc>] (ahci_platform_init_host+0x9c/0x4f4)
->> [    3.869609] [<c0c3cbdc>] (ahci_platform_init_host) from
->> [<c0c3c33c>] (ahci_probe+0xa0/0xc0)
->> [    3.878018] [<c0c3c33c>] (ahci_probe) from [<c0ba40f0>]
->> (platform_drv_probe+0x58/0xac)
->> [    3.885989] [<c0ba40f0>] (platform_drv_probe) from [<c0ba1aec>]
->> (driver_probe_device+0x25c/0x338)
->> [    3.894915] [<c0ba1aec>] (driver_probe_device) from [<c0ba1cbc>]
->> (__driver_attach+0xf4/0xf8)
->> [    3.903411] [<c0ba1cbc>] (__driver_attach) from [<c0b9f9ac>]
->> (bus_for_each_dev+0x78/0xc4)
->> [    3.911643] [<c0b9f9ac>] (bus_for_each_dev) from [<c0ba13b8>]
->> (driver_attach+0x2c/0x30)
->> [    3.919696] [<c0ba13b8>] (driver_attach) from [<c0ba0cfc>]
->> (bus_add_driver+0x114/0x220)
->> [    3.927752] [<c0ba0cfc>] (bus_add_driver) from [<c0ba2e2c>]
->> (driver_register+0x88/0x11c)
->> [    3.935896] [<c0ba2e2c>] (driver_register) from [<c0ba4044>]
->> (__platform_driver_register+0x50/0x58)
->> [    3.945003] [<c0ba4044>] (__platform_driver_register) from
->> [<c1aa9cf0>] (ahci_driver_init+0x24/0x28)
->> [    3.954195] [<c1aa9cf0>] (ahci_driver_init) from [<c0403a8c>]
->> (do_one_initcall+0x9c/0x434)
->> [    3.962517] [<c0403a8c>] (do_one_initcall) from [<c1a01410>]
->> (kernel_init_freeable+0x3b8/0x53c)
->> [    3.971276] [<c1a01410>] (kernel_init_freeable) from [<c118551c>]
->> (kernel_init+0x18/0x128)
->> [    3.979597] [<c118551c>] (kernel_init) from [<c04010ac>]
->> (ret_from_fork+0x14/0x28)
->> [    3.987210] Exception stack(0xee179fb0 to 0xee179ff8)
->> [    3.992298] 9fa0:                                     00000000
->> 00000000 00000000 00000000
->> [    4.000524] 9fc0: 00000000 00000000 00000000 00000000 00000000
->> 00000000 00000000 00000000
->> [    4.008750] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->> [    4.015405] irq event stamp: 663130
->> [    4.018926] hardirqs last  enabled at (663129): [<c118d9d4>]
->> _raw_spin_unlock_irqrestore+0x40/0x6c
->> [    4.027939] hardirqs last disabled at (663130): [<c04019ac>]
->> __irq_svc+0x4c/0x7c
->> [    4.035384] softirqs last  enabled at (661486): [<c0402c98>]
->> __do_softirq+0x2a8/0x5e8
->> [    4.043262] softirqs last disabled at (661449): [<c04594a4>]
->> irq_exit+0x178/0x1a4
->> [    4.050826] ---[ end trace 095abac70926448f ]---
->>
->> Best regards
->> Naresh Kamboju
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+So this is only to give an idea about the change. It probably even
+doesn't compile. Does that sound sane?
+---
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 6bcecc325e7e..ac08f5d711be 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7203,8 +7203,9 @@ static void vcpu_load_eoi_exitmap(struct kvm_vcpu *vcpu)
+ 	kvm_x86_ops->load_eoi_exitmap(vcpu, eoi_exit_bitmap);
+ }
+ 
+-void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+-		unsigned long start, unsigned long end)
++int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
++		unsigned long start, unsigned long end,
++		bool blockable)
+ {
+ 	unsigned long apic_address;
+ 
+@@ -7215,6 +7216,8 @@ void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+ 	apic_address = gfn_to_hva(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
+ 	if (start <= apic_address && apic_address < end)
+ 		kvm_make_all_cpus_request(kvm, KVM_REQ_APIC_PAGE_RELOAD);
++
++	return 0;
+ }
+ 
+ void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+index 83e344fbb50a..d138a526feff 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+@@ -136,12 +136,18 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
+  *
+  * Take the rmn read side lock.
+  */
+-static void amdgpu_mn_read_lock(struct amdgpu_mn *rmn)
++static int amdgpu_mn_read_lock(struct amdgpu_mn *rmn, bool blockable)
+ {
+-	mutex_lock(&rmn->read_lock);
++	if (blockable)
++		mutex_lock(&rmn->read_lock);
++	else if (!mutex_trylock(&rmn->read_lock))
++		return -EAGAIN;
++
+ 	if (atomic_inc_return(&rmn->recursion) == 1)
+ 		down_read_non_owner(&rmn->lock);
+ 	mutex_unlock(&rmn->read_lock);
++
++	return 0;
+ }
+ 
+ /**
+@@ -197,10 +203,11 @@ static void amdgpu_mn_invalidate_node(struct amdgpu_mn_node *node,
+  * We block for all BOs between start and end to be idle and
+  * unmap them by move them into system domain again.
+  */
+-static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
++static int amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
+ 						 struct mm_struct *mm,
+ 						 unsigned long start,
+-						 unsigned long end)
++						 unsigned long end,
++						 bool blockable)
+ {
+ 	struct amdgpu_mn *rmn = container_of(mn, struct amdgpu_mn, mn);
+ 	struct interval_tree_node *it;
+@@ -208,7 +215,11 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
+ 	/* notification is exclusive, but interval is inclusive */
+ 	end -= 1;
+ 
+-	amdgpu_mn_read_lock(rmn);
++	/* TODO we should be able to split locking for interval tree and
++	 * amdgpu_mn_invalidate_node
++	 */
++	if (amdgpu_mn_read_lock(rmn, blockable))
++		return -EAGAIN;
+ 
+ 	it = interval_tree_iter_first(&rmn->objects, start, end);
+ 	while (it) {
+@@ -219,6 +230,8 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
+ 
+ 		amdgpu_mn_invalidate_node(node, start, end);
+ 	}
++
++	return 0;
+ }
+ 
+ /**
+@@ -233,10 +246,11 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
+  * necessitates evicting all user-mode queues of the process. The BOs
+  * are restorted in amdgpu_mn_invalidate_range_end_hsa.
+  */
+-static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
++static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
+ 						 struct mm_struct *mm,
+ 						 unsigned long start,
+-						 unsigned long end)
++						 unsigned long end,
++						 bool blockable)
+ {
+ 	struct amdgpu_mn *rmn = container_of(mn, struct amdgpu_mn, mn);
+ 	struct interval_tree_node *it;
+@@ -244,7 +258,8 @@ static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
+ 	/* notification is exclusive, but interval is inclusive */
+ 	end -= 1;
+ 
+-	amdgpu_mn_read_lock(rmn);
++	if (amdgpu_mn_read_lock(rmn, blockable))
++		return -EAGAIN;
+ 
+ 	it = interval_tree_iter_first(&rmn->objects, start, end);
+ 	while (it) {
+@@ -262,6 +277,8 @@ static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
+ 				amdgpu_amdkfd_evict_userptr(mem, mm);
+ 		}
+ 	}
++
++	return 0;
+ }
+ 
+ /**
+diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
+index 854bd51b9478..5285df9331fa 100644
+--- a/drivers/gpu/drm/i915/i915_gem_userptr.c
++++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
+@@ -112,10 +112,11 @@ static void del_object(struct i915_mmu_object *mo)
+ 	mo->attached = false;
+ }
+ 
+-static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
++static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+ 						       struct mm_struct *mm,
+ 						       unsigned long start,
+-						       unsigned long end)
++						       unsigned long end,
++						       bool blockable)
+ {
+ 	struct i915_mmu_notifier *mn =
+ 		container_of(_mn, struct i915_mmu_notifier, mn);
+@@ -124,7 +125,7 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+ 	LIST_HEAD(cancelled);
+ 
+ 	if (RB_EMPTY_ROOT(&mn->objects.rb_root))
+-		return;
++		return 0;
+ 
+ 	/* interval ranges are inclusive, but invalidate range is exclusive */
+ 	end--;
+@@ -152,7 +153,8 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
+ 		del_object(mo);
+ 	spin_unlock(&mn->lock);
+ 
+-	if (!list_empty(&cancelled))
++	/* TODO: can we skip waiting here? */
++	if (!list_empty(&cancelled) && blockable)
+ 		flush_workqueue(mn->wq);
+ }
+ 
+diff --git a/drivers/gpu/drm/radeon/radeon_mn.c b/drivers/gpu/drm/radeon/radeon_mn.c
+index abd24975c9b1..b47e828b725d 100644
+--- a/drivers/gpu/drm/radeon/radeon_mn.c
++++ b/drivers/gpu/drm/radeon/radeon_mn.c
+@@ -118,10 +118,11 @@ static void radeon_mn_release(struct mmu_notifier *mn,
+  * We block for all BOs between start and end to be idle and
+  * unmap them by move them into system domain again.
+  */
+-static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
++static int radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
+ 					     struct mm_struct *mm,
+ 					     unsigned long start,
+-					     unsigned long end)
++					     unsigned long end,
++					     bool blockable)
+ {
+ 	struct radeon_mn *rmn = container_of(mn, struct radeon_mn, mn);
+ 	struct ttm_operation_ctx ctx = { false, false };
+@@ -130,7 +131,13 @@ static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
+ 	/* notification is exclusive, but interval is inclusive */
+ 	end -= 1;
+ 
+-	mutex_lock(&rmn->lock);
++	/* TODO we should be able to split locking for interval tree and
++	 * the tear down.
++	 */
++	if (blockable)
++		mutex_lock(&rmn->lock);
++	else if (!mutex_trylock(&rmn->lock))
++		return -EAGAIN;
+ 
+ 	it = interval_tree_iter_first(&rmn->objects, start, end);
+ 	while (it) {
+@@ -167,6 +174,8 @@ static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
+ 	}
+ 	
+ 	mutex_unlock(&rmn->lock);
++
++	return 0;
+ }
+ 
+ static const struct mmu_notifier_ops radeon_mn_ops = {
+diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
+index 182436b92ba9..f65f6a29daae 100644
+--- a/drivers/infiniband/core/umem_odp.c
++++ b/drivers/infiniband/core/umem_odp.c
+@@ -207,22 +207,29 @@ static int invalidate_range_start_trampoline(struct ib_umem *item, u64 start,
+ 	return 0;
+ }
+ 
+-static void ib_umem_notifier_invalidate_range_start(struct mmu_notifier *mn,
++static int ib_umem_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 						    struct mm_struct *mm,
+ 						    unsigned long start,
+-						    unsigned long end)
++						    unsigned long end,
++						    bool blockable)
+ {
+ 	struct ib_ucontext *context = container_of(mn, struct ib_ucontext, mn);
+ 
+ 	if (!context->invalidate_range)
+-		return;
++		return 0;
++
++	if (blockable)
++		down_read(&context->umem_rwsem);
++	else if (!down_read_trylock(&context->umem_rwsem))
++		return -EAGAIN;
+ 
+ 	ib_ucontext_notifier_start_account(context);
+-	down_read(&context->umem_rwsem);
+ 	rbt_ib_umem_for_each_in_range(&context->umem_tree, start,
+ 				      end,
+ 				      invalidate_range_start_trampoline, NULL);
+ 	up_read(&context->umem_rwsem);
++
++	return 0;
+ }
+ 
+ static int invalidate_range_end_trampoline(struct ib_umem *item, u64 start,
+diff --git a/drivers/infiniband/hw/hfi1/mmu_rb.c b/drivers/infiniband/hw/hfi1/mmu_rb.c
+index 70aceefe14d5..8780560d1623 100644
+--- a/drivers/infiniband/hw/hfi1/mmu_rb.c
++++ b/drivers/infiniband/hw/hfi1/mmu_rb.c
+@@ -284,10 +284,11 @@ void hfi1_mmu_rb_remove(struct mmu_rb_handler *handler,
+ 	handler->ops->remove(handler->ops_arg, node);
+ }
+ 
+-static void mmu_notifier_range_start(struct mmu_notifier *mn,
++static int mmu_notifier_range_start(struct mmu_notifier *mn,
+ 				     struct mm_struct *mm,
+ 				     unsigned long start,
+-				     unsigned long end)
++				     unsigned long end,
++				     bool blockable)
+ {
+ 	struct mmu_rb_handler *handler =
+ 		container_of(mn, struct mmu_rb_handler, mn);
+@@ -313,6 +314,8 @@ static void mmu_notifier_range_start(struct mmu_notifier *mn,
+ 
+ 	if (added)
+ 		queue_work(handler->wq, &handler->del_work);
++
++	return 0;
+ }
+ 
+ /*
+diff --git a/drivers/misc/mic/scif/scif_dma.c b/drivers/misc/mic/scif/scif_dma.c
+index 63d6246d6dff..d940568bed87 100644
+--- a/drivers/misc/mic/scif/scif_dma.c
++++ b/drivers/misc/mic/scif/scif_dma.c
+@@ -200,15 +200,18 @@ static void scif_mmu_notifier_release(struct mmu_notifier *mn,
+ 	schedule_work(&scif_info.misc_work);
+ }
+ 
+-static void scif_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
++static int scif_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 						     struct mm_struct *mm,
+ 						     unsigned long start,
+-						     unsigned long end)
++						     unsigned long end,
++						     bool blockable)
+ {
+ 	struct scif_mmu_notif	*mmn;
+ 
+ 	mmn = container_of(mn, struct scif_mmu_notif, ep_mmu_notifier);
+ 	scif_rma_destroy_tcw(mmn, start, end - start);
++
++	return 0
+ }
+ 
+ static void scif_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+diff --git a/drivers/misc/sgi-gru/grutlbpurge.c b/drivers/misc/sgi-gru/grutlbpurge.c
+index a3454eb56fbf..be28f05bfafa 100644
+--- a/drivers/misc/sgi-gru/grutlbpurge.c
++++ b/drivers/misc/sgi-gru/grutlbpurge.c
+@@ -219,9 +219,10 @@ void gru_flush_all_tlb(struct gru_state *gru)
+ /*
+  * MMUOPS notifier callout functions
+  */
+-static void gru_invalidate_range_start(struct mmu_notifier *mn,
++static int gru_invalidate_range_start(struct mmu_notifier *mn,
+ 				       struct mm_struct *mm,
+-				       unsigned long start, unsigned long end)
++				       unsigned long start, unsigned long end,
++				       bool blockable)
+ {
+ 	struct gru_mm_struct *gms = container_of(mn, struct gru_mm_struct,
+ 						 ms_notifier);
+@@ -231,6 +232,8 @@ static void gru_invalidate_range_start(struct mmu_notifier *mn,
+ 	gru_dbg(grudev, "gms %p, start 0x%lx, end 0x%lx, act %d\n", gms,
+ 		start, end, atomic_read(&gms->ms_range_active));
+ 	gru_flush_tlb_range(gms, start, end - start);
++
++	return 0;
+ }
+ 
+ static void gru_invalidate_range_end(struct mmu_notifier *mn,
+diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+index bd56653b9bbc..50724d09fe5c 100644
+--- a/drivers/xen/gntdev.c
++++ b/drivers/xen/gntdev.c
+@@ -465,14 +465,20 @@ static void unmap_if_in_range(struct grant_map *map,
+ 	WARN_ON(err);
+ }
+ 
+-static void mn_invl_range_start(struct mmu_notifier *mn,
++static int mn_invl_range_start(struct mmu_notifier *mn,
+ 				struct mm_struct *mm,
+-				unsigned long start, unsigned long end)
++				unsigned long start, unsigned long end,
++				bool blockable)
+ {
+ 	struct gntdev_priv *priv = container_of(mn, struct gntdev_priv, mn);
+ 	struct grant_map *map;
+ 
+-	mutex_lock(&priv->lock);
++	/* TODO do we really need a mutex here? */
++	if (blockable)
++		mutex_lock(&priv->lock);
++	else if (!mutex_trylock(&priv->lock))
++		return -EAGAIN;
++
+ 	list_for_each_entry(map, &priv->maps, next) {
+ 		unmap_if_in_range(map, start, end);
+ 	}
+@@ -480,6 +486,8 @@ static void mn_invl_range_start(struct mmu_notifier *mn,
+ 		unmap_if_in_range(map, start, end);
+ 	}
+ 	mutex_unlock(&priv->lock);
++
++	return true;
+ }
+ 
+ static void mn_release(struct mmu_notifier *mn,
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 4ee7bc548a83..e4181063e755 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1275,7 +1275,7 @@ static inline long kvm_arch_vcpu_async_ioctl(struct file *filp,
+ }
+ #endif /* CONFIG_HAVE_KVM_VCPU_ASYNC_IOCTL */
+ 
+-void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
++int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+ 		unsigned long start, unsigned long end);
+ 
+ #ifdef CONFIG_HAVE_KVM_VCPU_RUN_PID_CHANGE
+diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+index 392e6af82701..369867501bed 100644
+--- a/include/linux/mmu_notifier.h
++++ b/include/linux/mmu_notifier.h
+@@ -230,7 +230,8 @@ extern int __mmu_notifier_test_young(struct mm_struct *mm,
+ extern void __mmu_notifier_change_pte(struct mm_struct *mm,
+ 				      unsigned long address, pte_t pte);
+ extern void __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
+-				  unsigned long start, unsigned long end);
++				  unsigned long start, unsigned long end,
++				  bool blockable);
+ extern void __mmu_notifier_invalidate_range_end(struct mm_struct *mm,
+ 				  unsigned long start, unsigned long end,
+ 				  bool only_end);
+@@ -281,7 +282,17 @@ static inline void mmu_notifier_invalidate_range_start(struct mm_struct *mm,
+ 				  unsigned long start, unsigned long end)
+ {
+ 	if (mm_has_notifiers(mm))
+-		__mmu_notifier_invalidate_range_start(mm, start, end);
++		__mmu_notifier_invalidate_range_start(mm, start, end, true);
++}
++
++static inline int mmu_notifier_invalidate_range_start_nonblock(struct mm_struct *mm,
++				  unsigned long start, unsigned long end)
++{
++	int ret = 0;
++	if (mm_has_notifiers(mm))
++		ret = __mmu_notifier_invalidate_range_start(mm, start, end, false);
++
++	return ret;
+ }
+ 
+ static inline void mmu_notifier_invalidate_range_end(struct mm_struct *mm,
+diff --git a/mm/hmm.c b/mm/hmm.c
+index de7b6bf77201..81fd57bd2634 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -177,16 +177,19 @@ static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ 	up_write(&hmm->mirrors_sem);
+ }
+ 
+-static void hmm_invalidate_range_start(struct mmu_notifier *mn,
++static int hmm_invalidate_range_start(struct mmu_notifier *mn,
+ 				       struct mm_struct *mm,
+ 				       unsigned long start,
+-				       unsigned long end)
++				       unsigned long end,
++				       bool blockable)
+ {
+ 	struct hmm *hmm = mm->hmm;
+ 
+ 	VM_BUG_ON(!hmm);
+ 
+ 	atomic_inc(&hmm->sequence);
++
++	return 0;
+ }
+ 
+ static void hmm_invalidate_range_end(struct mmu_notifier *mn,
+diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
+index eff6b88a993f..30cc43121da9 100644
+--- a/mm/mmu_notifier.c
++++ b/mm/mmu_notifier.c
+@@ -174,18 +174,25 @@ void __mmu_notifier_change_pte(struct mm_struct *mm, unsigned long address,
+ 	srcu_read_unlock(&srcu, id);
+ }
+ 
+-void __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
+-				  unsigned long start, unsigned long end)
++int __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
++				  unsigned long start, unsigned long end,
++				  bool blockable)
+ {
+ 	struct mmu_notifier *mn;
++	int ret = 0;
+ 	int id;
+ 
+ 	id = srcu_read_lock(&srcu);
+ 	hlist_for_each_entry_rcu(mn, &mm->mmu_notifier_mm->list, hlist) {
+-		if (mn->ops->invalidate_range_start)
+-			mn->ops->invalidate_range_start(mn, mm, start, end);
++		if (mn->ops->invalidate_range_start) {
++			int _ret = mn->ops->invalidate_range_start(mn, mm, start, end, blockable);
++			if (_ret)
++				ret = _ret;
++		}
+ 	}
+ 	srcu_read_unlock(&srcu, id);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range_start);
+ 
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 84081e77bc51..7e0c6e78ae5c 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -479,9 +479,10 @@ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
+ static struct task_struct *oom_reaper_list;
+ static DEFINE_SPINLOCK(oom_reaper_lock);
+ 
+-void __oom_reap_task_mm(struct mm_struct *mm)
++bool __oom_reap_task_mm(struct mm_struct *mm)
+ {
+ 	struct vm_area_struct *vma;
++	bool ret = true;
+ 
+ 	/*
+ 	 * Tell all users of get_user/copy_from_user etc... that the content
+@@ -511,12 +512,17 @@ void __oom_reap_task_mm(struct mm_struct *mm)
+ 			struct mmu_gather tlb;
+ 
+ 			tlb_gather_mmu(&tlb, mm, start, end);
+-			mmu_notifier_invalidate_range_start(mm, start, end);
++			if (mmu_notifier_invalidate_range_start_nonblock(mm, start, end)) {
++				ret = false;
++				continue;
++			}
+ 			unmap_page_range(&tlb, vma, start, end, NULL);
+ 			mmu_notifier_invalidate_range_end(mm, start, end);
+ 			tlb_finish_mmu(&tlb, start, end);
+ 		}
+ 	}
++
++	return ret;
+ }
+ 
+ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+@@ -545,18 +551,6 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 		goto unlock_oom;
+ 	}
+ 
+-	/*
+-	 * If the mm has invalidate_{start,end}() notifiers that could block,
+-	 * sleep to give the oom victim some more time.
+-	 * TODO: we really want to get rid of this ugly hack and make sure that
+-	 * notifiers cannot block for unbounded amount of time
+-	 */
+-	if (mm_has_blockable_invalidate_notifiers(mm)) {
+-		up_read(&mm->mmap_sem);
+-		schedule_timeout_idle(HZ);
+-		goto unlock_oom;
+-	}
+-
+ 	/*
+ 	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
+ 	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
+@@ -571,7 +565,12 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 
+ 	trace_start_task_reaping(tsk->pid);
+ 
+-	__oom_reap_task_mm(mm);
++	/* failed to reap part of the address space. Try again later */
++	if (!__oom_reap_task_mm(mm)) {
++		up_read(&mm->mmap_sem);
++		ret = false;
++		goto out_unlock;
++	}
+ 
+ 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+ 			task_pid_nr(tsk), tsk->comm,
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index ada21f47f22b..6f7e709d2944 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -135,7 +135,7 @@ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm);
+ static unsigned long long kvm_createvm_count;
+ static unsigned long long kvm_active_vms;
+ 
+-__weak void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
++__weak int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+ 		unsigned long start, unsigned long end)
+ {
+ }
+@@ -354,13 +354,15 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
+ 	srcu_read_unlock(&kvm->srcu, idx);
+ }
+ 
+-static void kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
++static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 						    struct mm_struct *mm,
+ 						    unsigned long start,
+-						    unsigned long end)
++						    unsigned long end,
++						    bool blockable)
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+ 	int need_tlb_flush = 0, idx;
++	int ret;
+ 
+ 	idx = srcu_read_lock(&kvm->srcu);
+ 	spin_lock(&kvm->mmu_lock);
+@@ -378,9 +380,11 @@ static void kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+ 
+ 	spin_unlock(&kvm->mmu_lock);
+ 
+-	kvm_arch_mmu_notifier_invalidate_range(kvm, start, end);
++	ret = kvm_arch_mmu_notifier_invalidate_range(kvm, start, end, blockable);
+ 
+ 	srcu_read_unlock(&kvm->srcu, idx);
++
++	return ret;
+ }
+ 
+ static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Michal Hocko
+SUSE Labs
