@@ -6,82 +6,177 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B68DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38D4C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BAE120693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:40:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BAE120693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B2C5620693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:40:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C5620693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755006AbeFTJk3 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:40:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47255 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754192AbeFTJk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:40:27 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 80503207D4; Wed, 20 Jun 2018 11:40:25 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4126A206D8;
-        Wed, 20 Jun 2018 11:40:25 +0200 (CEST)
-Date:   Wed, 20 Jun 2018 11:40:25 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [RFC PATCH v2 5/6] mtd: rawnand: micron: add
- ONFI_FEATURE_ON_DIE_ECC to supported features
-Message-ID: <20180620114025.0b18b22f@bbrezillon>
-In-Reply-To: <20180619053125.16792-6-chris.packham@alliedtelesis.co.nz>
-References: <20180619053125.16792-1-chris.packham@alliedtelesis.co.nz>
-        <20180619053125.16792-6-chris.packham@alliedtelesis.co.nz>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932154AbeFTJko (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 05:40:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48183 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755017AbeFTJkj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:40:39 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K9eKUE3448430
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 20 Jun 2018 02:40:20 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K9eKpE3448427;
+        Wed, 20 Jun 2018 02:40:20 -0700
+Date:   Wed, 20 Jun 2018 02:40:20 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-0abf17bc7790dd0467ed0e38522242f23c5da1c4@git.kernel.org>
+Cc:     hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
+          mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          peterz@infradead.org
+In-Reply-To: <20180612083909.209762413@infradead.org>
+References: <20180612083909.209762413@infradead.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/swait: Switch to full exclusive mode
+Git-Commit-ID: 0abf17bc7790dd0467ed0e38522242f23c5da1c4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018 17:31:24 +1200
-Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+Commit-ID:  0abf17bc7790dd0467ed0e38522242f23c5da1c4
+Gitweb:     https://git.kernel.org/tip/0abf17bc7790dd0467ed0e38522242f23c5da1c4
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Tue, 12 Jun 2018 10:34:51 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 20 Jun 2018 11:35:56 +0200
 
-> Add ONFI_FEATURE_ON_DIE_ECC to the set/get features list for Micron
-> NAND flash.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+sched/swait: Switch to full exclusive mode
 
-Queued to master (AKA mtd/fixes).
+Linus noted that swait basically implements exclusive mode -- because
+swake_up() only wakes a single waiter. And because of that it should
+take care to properly deal with the interruptible case.
 
-Thanks,
+In short, the problem is that swake_up() can race with a signal. In
+this this case it is possible the swake_up() 'wakes' the waiter that
+is already on the way out because it just got a signal and the wakeup
+gets lost.
 
-Boris
+The normal wait code is very careful and avoids this situation, make
+sure we do too.
 
-> ---
-> Changes in v2:
-> - New
-> 
->  drivers/mtd/nand/raw/nand_micron.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
-> index e582c9e61715..d1e8f57544a0 100644
-> --- a/drivers/mtd/nand/raw/nand_micron.c
-> +++ b/drivers/mtd/nand/raw/nand_micron.c
-> @@ -66,7 +66,9 @@ static int micron_nand_onfi_init(struct nand_chip *chip)
->  
->  	if (p->supports_set_get_features) {
->  		set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->set_feature_list);
-> +		set_bit(ONFI_FEATURE_ON_DIE_ECC, p->set_feature_list);
->  		set_bit(ONFI_FEATURE_ADDR_READ_RETRY, p->get_feature_list);
-> +		set_bit(ONFI_FEATURE_ON_DIE_ECC, p->get_feature_list);
->  	}
->  
->  	return 0;
+Copy the exact exclusive semantics from wait.
 
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: bigeasy@linutronix.de
+Cc: oleg@redhat.com
+Cc: paulmck@linux.vnet.ibm.com
+Cc: pbonzini@redhat.com
+Link: https://lkml.kernel.org/r/20180612083909.209762413@infradead.org
+
+---
+ include/linux/swait.h | 11 ++++++-----
+ kernel/sched/swait.c  | 22 +++++++++++++++++-----
+ 2 files changed, 23 insertions(+), 10 deletions(-)
+
+diff --git a/include/linux/swait.h b/include/linux/swait.h
+index d6a5e949e4ca..dd032061112d 100644
+--- a/include/linux/swait.h
++++ b/include/linux/swait.h
+@@ -38,8 +38,8 @@
+  *    all wakeups are TASK_NORMAL in order to avoid O(n) lookups for the right
+  *    sleeper state.
+  *
+- *  - the exclusive mode; because this requires preserving the list order
+- *    and this is hard.
++ *  - the !exclusive mode; because that leads to O(n) wakeups, everything is
++ *    exclusive.
+  *
+  *  - custom wake callback functions; because you cannot give any guarantees
+  *    about random code. This also allows swait to be used in RT, such that
+@@ -167,9 +167,10 @@ extern long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queu
+ extern void __finish_swait(struct swait_queue_head *q, struct swait_queue *wait);
+ extern void finish_swait(struct swait_queue_head *q, struct swait_queue *wait);
+ 
+-/* as per ___wait_event() but for swait, therefore "exclusive == 0" */
++/* as per ___wait_event() but for swait, therefore "exclusive == 1" */
+ #define ___swait_event(wq, condition, state, ret, cmd)			\
+ ({									\
++	__label__ __out;						\
+ 	struct swait_queue __wait;					\
+ 	long __ret = ret;						\
+ 									\
+@@ -182,13 +183,13 @@ extern void finish_swait(struct swait_queue_head *q, struct swait_queue *wait);
+ 									\
+ 		if (___wait_is_interruptible(state) && __int) {		\
+ 			__ret = __int;					\
+-			break;						\
++			goto __out;					\
+ 		}							\
+ 									\
+ 		cmd;							\
+ 	}								\
+ 	finish_swait(&wq, &__wait);					\
+-	__ret;								\
++__out:	__ret;								\
+ })
+ 
+ #define __swait_event(wq, condition)					\
+diff --git a/kernel/sched/swait.c b/kernel/sched/swait.c
+index e68bb1398b05..66890de93ee5 100644
+--- a/kernel/sched/swait.c
++++ b/kernel/sched/swait.c
+@@ -73,7 +73,7 @@ static void __prepare_to_swait(struct swait_queue_head *q, struct swait_queue *w
+ {
+ 	wait->task = current;
+ 	if (list_empty(&wait->task_list))
+-		list_add(&wait->task_list, &q->task_list);
++		list_add_tail(&wait->task_list, &q->task_list);
+ }
+ 
+ void prepare_to_swait(struct swait_queue_head *q, struct swait_queue *wait, int state)
+@@ -89,12 +89,24 @@ EXPORT_SYMBOL(prepare_to_swait);
+ 
+ long prepare_to_swait_event(struct swait_queue_head *q, struct swait_queue *wait, int state)
+ {
+-	if (signal_pending_state(state, current))
+-		return -ERESTARTSYS;
++	unsigned long flags;
++	long ret = 0;
+ 
+-	prepare_to_swait(q, wait, state);
++	raw_spin_lock_irqsave(&q->lock, flags);
++	if (unlikely(signal_pending_state(state, current))) {
++		/*
++		 * See prepare_to_wait_event(). TL;DR, subsequent swake_up()
++		 * must not see us.
++		 */
++		list_del_init(&wait->task_list);
++		ret = -ERESTARTSYS;
++	} else {
++		__prepare_to_swait(q, wait);
++		set_current_state(state);
++	}
++	raw_spin_unlock_irqrestore(&q->lock, flags);
+ 
+-	return 0;
++	return ret;
+ }
+ EXPORT_SYMBOL(prepare_to_swait_event);
+ 
