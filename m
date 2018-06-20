@@ -2,133 +2,122 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3B9C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20A6C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5EF62083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:05:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CFBB2083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSB1Cpeh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5EF62083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Sp5JJf9W";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XgOZuwH3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFBB2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754207AbeFTXFS (ORCPT
+        id S1754271AbeFTXFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 19:05:18 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40978 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751337AbeFTXFQ (ORCPT
+        Wed, 20 Jun 2018 19:05:55 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:37265 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754210AbeFTXFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 19:05:16 -0400
-Received: by mail-lf0-f66.google.com with SMTP id d24-v6so1763413lfa.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:05:16 -0700 (PDT)
+        Wed, 20 Jun 2018 19:05:53 -0400
+Received: by mail-yb0-f194.google.com with SMTP id h141-v6so486140ybg.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:05:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MQhNTftR2vxVaOW+CzxURHzqAy3Jug2LT75dhvX7qPc=;
-        b=BSB1Cpeh1H/GslcYcrBj5ryPmbxC1OoNzICb5XB3E4ngYPsWDnJLkjujoMHeCmf7zR
-         hzsCt8Ih41zcBohDFgUACFBUst8oeUhs/iWa842dAtbcVXDup6Y5x4RSagedZSakvmsA
-         cZJMF87SYGYmK6hNXwxOPI8ayxLSgDFaHm2a1mshR07CpITQ6q2u8OyXBTBrd0V21xR6
-         +67ejOgCsgGGQmI2zHK9cXjxVkzBBHUj4PlBXKChC+94iVU9gG1VFI0O5jqVFmXTtzh7
-         WxCnRraRpExpLM0/rp9kFYaASEdBljt0L8cEbsvE1k9NLYrwI7b4ukV+Sb3e/pXM1lK2
-         RrLw==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=S2HCpZFP4Oe8GVuKL0bCH9cxVbaMdMNlqxOOmtqQHGE=;
+        b=Sp5JJf9WXzZAw0QJV4nAqdQnU1jXM3r462IkBbtE8AYZ3dpO2qnEZNsKR23zFgc6IJ
+         alxCuEUk3dWwPHVsIQRqug2RGkDlyWylee+1AWLV8WM/Me4lnGYAzTm+OuCDzoDAFKjD
+         oAw2pL0iSM5MpntZV3jX3paFhFtH2CTea/2ufVq3G9bcBDFM3aQqBxGHGCt4tiJe3bfE
+         UJx33kPp+vuaK8T6/8dGFibryWmqiHfa0FPIsF/MJ42hS0Q5QCFNK9nGihZwOYcQL16w
+         2+WHw93tXXkbs91X2RA5F3K4eU6XO+L7jjz8ORJTUeCwOEv47gQxpd20LxsgahFbVcUE
+         wvbw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=S2HCpZFP4Oe8GVuKL0bCH9cxVbaMdMNlqxOOmtqQHGE=;
+        b=XgOZuwH3MNDhdg7NXzHjZsRIpQnbaXnzq5S0UROXf9zMS0a7pZBG5VBgWiCvJxDG0t
+         ZK1YNTqSOcPWBLgg8475kngqmByK70X6/UXRNnmRAHRu2+EB49PG2nAMlharQgCPcF7C
+         sqGJflhv0JRUh/w2LO8XJst7c9544rtA8EoIs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MQhNTftR2vxVaOW+CzxURHzqAy3Jug2LT75dhvX7qPc=;
-        b=jppzVjGpW/x34p7hOx/A3oJndGkFi3YvcfYYsntfXVX9Ozkl8oNBXafgwn5S42nY7i
-         oeBJ1Mf9r7G1bLA3Iy5NS401Gh2xolH89VefgbmnsXJ28o9KKPJUfxR4TJiUnpWD3tEF
-         IMqB7w9pA8VjcVdHWEgMBMj5rRUt7XL7df8G5qL93BxXThqu3Nu5oKIU/xPSu1TUaL0p
-         /BW9FAvnjEeq3PIMuFcLD02NUeATfQvrRrDHqI6w1sO90sA8krTVh7ZRrHxWRj42f5zO
-         6MrQUgPrasj6nhy/hXTLE8EdjU3TpgkxTkLWl/T0tsCYpCUSuX8Z/b5ze4wlDNjWSXiB
-         P94w==
-X-Gm-Message-State: APt69E0kGLerWZySRED6cGDg2R2o6NkY57i3jedmIOTevyHOf0Mlosp+
-        SQ/xFO1mKE6NC4BOx0aT09OQHUVdxrgPyoSCwXQ=
-X-Google-Smtp-Source: ADUXVKJePtSOFtK1u988zw9JJNCYl2EmXUbH9ROBR75JWXFXkIOa29CjG4BJfbUWRvZHwlea8Om7vEM8WpzUfloqG6Y=
-X-Received: by 2002:a2e:21c7:: with SMTP id h68-v6mr15073034lji.108.1529535915234;
- Wed, 20 Jun 2018 16:05:15 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=S2HCpZFP4Oe8GVuKL0bCH9cxVbaMdMNlqxOOmtqQHGE=;
+        b=YliHQEDgqJW2L+ML348EmiRFfTsziRC4CZWL0N3+2nVGX74q1lf7wNLyT4pWtVhjyt
+         B259zODDHxQvtKyqV8vimKmAGQTZuvSHsYLvueCk84crVyIk3IGMsj7Fl1qwj+41HnTV
+         IZuz2RGuddPF7h2fR5XZ625PGkVS7VFExgzaFi6uF229MAGw+wSy+qGeYsi41/kYb9VK
+         wihQOpL64YFmkZRTu1mVA3dY+koOHcfQ2OBDMh/mSk/TW1VyT5q/h/qBNQA4xeMq/p66
+         rBmvCQkZbX5F1bPx0zxmajcm0XxA8UpJVS6Y+86R/7eErS31Dq3pAjGYocgrMRcvKjSS
+         dDNQ==
+X-Gm-Message-State: APt69E10KYtfduVnQYJ1gBt1j04pupfVo/2XyB7aMvyU90IoJEdpFyWP
+        WAodgaVB7aST2sdV99oxLxBgQ7b7Ip/maZX2XQnOGQ==
+X-Google-Smtp-Source: ADUXVKIKPONko7Z/0y/Q942DrmgvQvPUlft41I7aAAVvVvnC+t7tmbvmWeG7trHy7x99v8JISIlc8YaQ3gp/wwUBlHw=
+X-Received: by 2002:a25:f81e:: with SMTP id u30-v6mr9591125ybd.343.1529535952688;
+ Wed, 20 Jun 2018 16:05:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <1511194526-3729-1-git-send-email-thierry.escande@collabora.com> <1511194526-3729-3-git-send-email-thierry.escande@collabora.com>
-In-Reply-To: <1511194526-3729-3-git-send-email-thierry.escande@collabora.com>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Wed, 20 Jun 2018 16:05:03 -0700
-Message-ID: <CAKdAkRRtv41c-s7vunaBde9Oj8L5b5YdfHcOFEueGYenHV=byg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] cros_ec: Move cros_ec_dev module to drivers/mfd
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Guenter Roeck <groeck@google.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Thierry Escande <thierry.escande@collabora.com>
+Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 16:05:51
+ -0700 (PDT)
+In-Reply-To: <778b2a1b-d810-815b-0fba-8a1d191acd49@infradead.org>
+References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
+ <1529532570-21765-2-git-send-email-rick.p.edgecombe@intel.com>
+ <12014310-19f7-dc31-d983-9c7e00c8b446@infradead.org> <CAGXu5j+RgbMKqiBcsWMOZ-ci-rT19imgCoHtPKgDURF1tC+COg@mail.gmail.com>
+ <778b2a1b-d810-815b-0fba-8a1d191acd49@infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Jun 2018 16:05:51 -0700
+X-Google-Sender-Auth: On0H1ZWgqq01b3r0NyDD02gRnEo
+Message-ID: <CAGXu5j+TpZict=pSenHQ+_6V2fgoDrAGiB8sCd6bk-tb_Ec0zw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] vmalloc: Add __vmalloc_node_try_addr function
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kristen Accardi <kristen.c.accardi@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 20, 2017 at 8:18 AM Thierry Escande
-<thierry.escande@collabora.com> wrote:
+On Wed, Jun 20, 2018 at 3:44 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 06/20/2018 03:35 PM, Kees Cook wrote:
+>> On Wed, Jun 20, 2018 at 3:16 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>> On 06/20/2018 03:09 PM, Rick Edgecombe wrote:
+>>>> +void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
+>>>> +                     gfp_t gfp_mask, pgprot_t prot, unsigned long vm_flags,
+>>>> +                     int node, const void *caller)
+>>>> +{
+>>>
+>>> so this isn't optional, eh?  You are going to force it on people because?
+>>
+>> RANDOMIZE_BASE isn't optional either. :) This improves the module
+>> address entropy with (what seems to be) no down-side, so yeah, I think
+>> it should be non-optional. :)
 >
-> The cros_ec_dev module is responsible for registering the MFD devices
-> attached to the ChromeOS EC. This patch moves this module to drivers/mfd
-> so calls to mfd_add_devices() are not done from outside the MFD subtree
-> anymore.
+> In what kernel tree is RANDOMIZE_BASE not optional?
 
-I am quite a bit late to the party, but what's the rationale for not
-using mfd_add_devices() from outside of MFD tree? We do allow
-registering i2c clients from outside of i2c core, and spi from outside
-of spi core, etc, etc.
+Oh, sorry, I misspoke: on by default. It _is_ possible to turn it off.
 
-Right now I see cros_ec being split, quite haphazardly, between
-drivers/platform/chrome and drivers/mfd, with some transport drivers
-(i2C, SPI) and some interfaces living in MFD, while LPC transport and
-host of other stuff living in drivers/platform. On top of that we have
-cros_ec_keyb in input, RTC drivers, CEC, and god knows what else
-spread across various subsystems:
+But patch #2 does check for RANDOMIZE_BASE, so it should work as expected, yes?
 
-dtor@dtor-ws:~/kernel/linus $ find -name 'cros_ec*.c'
-./drivers/iio/light/cros_ec_light_prox.c
-./drivers/iio/accel/cros_ec_accel_legacy.c
-./drivers/iio/pressure/cros_ec_baro.c
-./drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-./drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-./drivers/mfd/cros_ec_spi.c
-./drivers/mfd/cros_ec.c
-./drivers/mfd/cros_ec_i2c.c
-./drivers/mfd/cros_ec_dev.c
-./drivers/input/keyboard/cros_ec_keyb.c
-./drivers/platform/chrome/cros_ec_vbc.c
-./drivers/platform/chrome/cros_ec_debugfs.c
-./drivers/platform/chrome/cros_ec_lpc.c
-./drivers/platform/chrome/cros_ec_lightbar.c
-./drivers/platform/chrome/cros_ec_lpc_reg.c
-./drivers/platform/chrome/cros_ec_proto.c
-./drivers/platform/chrome/cros_ec_lpc_mec.c
-./drivers/platform/chrome/cros_ec_sysfs.c
+Or did you want even this helper function to be compiled out without it?
 
-The fact that sysfs/debugfs code is in platform but we instantiate it
-from MFD is pure madness (it's driver private data, there is no reason
-why it should be exported to nclude/linux/mfd/cros_ec.h). This all
-creates unnecessary friction and I would love to move most of the code
-into drivers/platform/chrome.
-
-I see the wisdom of having code that could potentially be used in
-several systems in respective subsystems code (pretty much majority of
-drivers/mfd/ drivers are for chips/IP blocks that are used and reused
-by different systems and boards), but I think cros ec is quite
-different in that regard as it is only used by ChromeOS devices and
-has little to no chance to be useful anywhere else.
-
-Thanks.
+-Kees
 
 -- 
-Dmitry
+Kees Cook
+Pixel Security
