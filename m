@@ -2,196 +2,190 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2981C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF5AC1B0F7
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51AB62083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:52:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="WpkaH1dg";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oeCZk4Ir"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51AB62083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 326202083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:52:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 326202083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754531AbeFTPwm (ORCPT
+        id S1754550AbeFTPwn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:52:42 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:45281 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754485AbeFTPw2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:52:28 -0400
-Received: by mail-vk0-f67.google.com with SMTP id l64-v6so10122vkl.12
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 08:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=sZu0ml+H00giOw56WrKB6Op3EB96FhcG1xJBG6T/oHQ=;
-        b=WpkaH1dgBwc6Kuw120mZd8BT2aCcfPCClCJubU+Q+/TixVn7KMR+upAemN5kuRCdaE
-         cQFYxCWHT24f7XCu0LG3XWTwdOxAM/tqH1PDVZUbB3RvM3ej7LMac48FmTft9j4SLUz/
-         xBeyUt2CLu0cdyH2ZGpljU255bFkAXSUe0pyplxSMdmo3VCjeYIaoX67Q/gs53K5WkH/
-         KffSHz22NPa2SgvdF8IrCm57r8OeTbQED7lSDo0vaMoDdleV47S8+0VNunD1RpfHqyKU
-         ENTw4/FwYafpG6+aiBaN9SnHH1TBG1rDI7XYl9Ivv4Vv5mifzU2hVfTACvk3cfZtRUZl
-         66og==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=sZu0ml+H00giOw56WrKB6Op3EB96FhcG1xJBG6T/oHQ=;
-        b=oeCZk4Ir0ZeXOQ5ijAnzdabVaYSfe2eOnkq0Lo2yGsBvMYJ4Ykx/YOIwFDcG/Ydl+w
-         TTKl4R1D9D8VYIf27aeWGjs498UoN6gtXEprzZdnl9eS8UgVyDDCzT+j9uGWXX59VsYW
-         Tm4PU7ZRjsl3eBFl4LLlUtI3iSR9OkGBUjxlY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=sZu0ml+H00giOw56WrKB6Op3EB96FhcG1xJBG6T/oHQ=;
-        b=Rz9w6F1JfoFl/7oWfJzMdc/dsrnLPH9KVhWggMou53XLT+yPsZCI0ctXZ8e8ZJqE1a
-         AsfgPRbYwcd78o14MV7MygrLzU3oOrZ8b9F+YNLmexx2c98ojSamsvrhRXScQQWTuSWI
-         RxGTPM17MrR/h0NpATEV9suZIW1Hcflccnw1s/NY4bT8WWyU0gizfZI4C7yXjdVsT5yY
-         lkaTZZc1PxRX6UzF+f/gJxQbru4TGmiKNQwDlN5/2xF2AS9W463pTV/VsXg1uvxNJdtL
-         th7alliGWg/aufn27ra0LSF3pTObWZTKy2SZ71WRpUQ12oZ57W1Lxq0PAiN0nvjuPm2B
-         kc+g==
-X-Gm-Message-State: APt69E3aJ7MY513U609Xgg50yfSsaLkbP6w5stnHapV1LysHmUJgXa1g
-        phy2e+mxf7miFWxuFhb6aR/oz6L3cWSVo02M1xRDyQ==
-X-Google-Smtp-Source: ADUXVKLY3zVIIWTS4Ctjzsf0W5DQzC3us06bvHAOCoIVkqLx67lU1v8Jqi5L3jLJzeMo81uYFHqq0fFJbXu++n4VTro=
-X-Received: by 2002:a1f:2758:: with SMTP id n85-v6mr12552759vkn.117.1529509946938;
- Wed, 20 Jun 2018 08:52:26 -0700 (PDT)
+        Wed, 20 Jun 2018 11:52:43 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39752 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754490AbeFTPwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 11:52:30 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BE96340A42196;
+        Wed, 20 Jun 2018 23:52:24 +0800 (CST)
+Received: from [127.0.0.1] (10.57.101.250) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Wed, 20 Jun 2018
+ 23:52:19 +0800
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+To:     Will Deacon <will.deacon@arm.com>
+References: <5B2A6218.3030201@hisilicon.com> <20180620144257.GB27776@arm.com>
+CC:     <catalin.marinas@arm.com>, <suzuki.poulose@arm.com>,
+        <dave.martin@arm.com>, <mark.rutland@arm.com>,
+        <james.morse@arm.com>, <marc.zyngier@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, <xiexiuqi@huawei.com>,
+        huangdaode <huangdaode@hisilicon.com>,
+        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        <jonathan.cameron@huawei.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        <libeijian@hisilicon.com>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B2A7832.4010502@hisilicon.com>
+Date:   Wed, 20 Jun 2018 23:52:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 08:52:26
- -0700 (PDT)
-In-Reply-To: <20180620064509.GL15126@tuxbook-pro>
-References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-2-swboyd@chromium.org>
- <20180620064509.GL15126@tuxbook-pro>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 20 Jun 2018 08:52:26 -0700
-X-Google-Sender-Auth: Ts-m094OSOeTnPEw0BAwuJrbWrw
-Message-ID: <CAD=FV=U1bqg60f00-X72HUQ1DyuPaTX1Utw8QsV6Ucyf_Qy49w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: msm: Really mask level interrupts to prevent latching
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180620144257.GB27776@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.101.250]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Will,
 
-On Tue, Jun 19, 2018 at 11:45 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
+On 2018/6/20 22:42, Will Deacon wrote:
+> Hi Wei,
 >
->> The interrupt controller hardware in this pin controller has two status
->> enable bits. The first "normal" status enable bit enables or disables
->> the summary interrupt line being raised when a gpio interrupt triggers
->> and the "raw" status enable bit allows or prevents the hardware from
->> latching an interrupt into the status register for a gpio interrupt.
->> Currently we just toggle the "normal" status enable bit in the mask and
->> unmask ops so that the summary irq interrupt going to the CPU's
->> interrupt controller doesn't trigger for the masked gpio interrupt.
+> On Wed, Jun 20, 2018 at 10:18:00PM +0800, Wei Xu wrote:
+>> We have observed KVM guest sometimes failed to boot because of kernel stack
+>> overflow if KPTI is enabled on a hisilicon arm64 platform.
 >>
->> For a level triggered interrupt, the flow would be as follows: the pin
->> controller sees the interrupt, latches the status into the status
->> register, raises the summary irq to the CPU, summary irq handler runs
->> and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
->> interrupt, the interrupt handler runs, and finally unmask the interrupt.
->> When the interrupt handler completes, we expect that the interrupt line
->> level will go back to the deasserted state so the genirq code can unmask
->> the interrupt without it triggering again.
+>> We also tested with different kernel version and found it is only
+>> happened if the KPTI and KVM(enable-kvm & cpu=host) are enabled on the
+>> guest.
+>> The detail result is as below table.
 >>
->> If we only mask the interrupt by clearing the "normal" status enable bit
->> then we'll ack the interrupt but it will continue to show up as pending
->> in the status register because the raw status bit is enabled, the
->> hardware hasn't deasserted the line, and thus the asserted state latches
->> into the status register again. When the hardware deasserts the
->> interrupt the pin controller still thinks there is a pending unserviced
->> level interrupt because it latched it earlier. This behavior causes
->> software to see an extra interrupt for level type interrupts each time
->> the interrupt is handled.
+>> +---------+----------+--------+------------+-------------------+
+>>       |  host   |host KPTI | guest  | guest KPTI | kvm guest         |
+>>       |  kernel |enabled   | kernel | enabled    | booting result    |
+>> +---------+----------+--------+------------+-------------------+
+>>       |  4.17   |     Y    |  4.17  |     Y      |  stack overflow   |
+>> +---------+----------+--------+------------+-------------------+
+>>       |  4.17   |     Y    |  4.16  |     NA     | OK          |
+>> +---------+----------+--------+------------+-------------------+
+>>       |  4.16   |     NA   |  4.17  |     Y      |  stack overflow   |
+>> +---------+----------+--------+------------+-------------------+
+>>       |  4.16   |     NA   |  4.16  |     NA     | OK          |
+>> +---------+----------+--------+------------+-------------------+
 >>
->> Let's fix this by clearing the raw status enable bit for level type
->> interrupts so that the hardware stops latching the status of the
->> interrupt after we ack it. We don't do this for edge type interrupts
->> because it seems that toggling the raw status enable bit for edge type
->> interrupts causes spurious edge interrupts.
+>> A simple walk-around is adding this platform into the "kpti_safe_list".
+>> But it does not resolve the issue indeed.
+>> Could you please share any hint how to resolve this kind issue?
+>> Thanks!
 >>
->> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
->> Cc: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
->> ---
->>  drivers/pinctrl/qcom/pinctrl-msm.c | 17 +++++++++++++++++
->>  1 file changed, 17 insertions(+)
->>
->> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
->> index 0e22f52b2a19..3563c4394837 100644
->> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
->> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
->> @@ -626,6 +626,19 @@ static void msm_gpio_irq_mask(struct irq_data *d)
->>       raw_spin_lock_irqsave(&pctrl->lock, flags);
->>
->>       val = readl(pctrl->regs + g->intr_cfg_reg);
->> +     /*
->> +      * Leaving the RAW_STATUS_EN bit enabled causes level interrupts that
->> +      * are still asserted to re-latch after we ack them. Clear the raw
->> +      * status enable bit too so the interrupt can't even latch into the
->> +      * hardware while it's masked, but only do this for level interrupts
->> +      * because edge interrupts have a problem with the raw status bit
->> +      * toggling and causing spurious interrupts.
->> +      */
->> +     if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
->> +             val &= ~BIT(g->intr_raw_status_bit);
->> +             writel(val, pctrl->regs + g->intr_cfg_reg);
->> +     }
->> +
->>       val &= ~BIT(g->intr_enable_bit);
->>       writel(val, pctrl->regs + g->intr_cfg_reg);
->>
->> @@ -647,6 +660,10 @@ static void msm_gpio_irq_unmask(struct irq_data *d)
->>       raw_spin_lock_irqsave(&pctrl->lock, flags);
->>
->>       val = readl(pctrl->regs + g->intr_cfg_reg);
->> +     if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
->> +             val |= BIT(g->intr_raw_status_bit);
->> +             writel(val, pctrl->regs + g->intr_cfg_reg);
->> +     }
->>       val |= BIT(g->intr_enable_bit);
->>       writel(val, pctrl->regs + g->intr_cfg_reg);
->
-> I looked at the TLMM documentation, which states that the status bit
-> should be cleared after handling the interrupt and this driver used to
-> do this.
->
-> But Timur managed to hit the race where we lost edge triggered
-> interrupts with this behavior, so we changed it in the following commit:
->
-> a6566710adaa ("pinctrl: qcom: Don't clear status bit on irq_unmask")
->
->
-> But the reason that I had this in the driver originally is that msm-3.10
-> does this (clear status bit in unmask), so perhaps the appropriate way
-> to solve is to follow the documentation and the downstream driver and
-> ack the interrupt in unmask - but do so only for level triggered
-> interrupts?
+>> Another issue we found is "kpti_install_ng_mappings" will be invoked
+>> even "kpti=off" has been added in the kernel command line. Is that expected?
+>> This is because "kpti" is not a *early* param that "init_cpu_features" will
+>> be invoked before parsing the param.
+> That sounds like a straightforward bug, which means we should use
+> early_param instead of __setup. I assume that doesn't fix your crash,
+> though?
 
-LOL.  Stephen and I had an offline discussion about this and acking in
-the unmask was my preferred solution too.  It matches what I did to
-solve the same problem on a different controller back in 2013.  See
-commit 5a68e7a748c0 ("pinctrl: exynos: ack level-triggered interrupts
-before unmasking").  Stephen was of the opinion that it was cleaner to
-fully disable the interrupt and that the "ack on unmask" was a bit of
-a hack.  I figured that both worked OK and so I didn't insist.
+Thanks for you quick response!
+It can fix our crash but just another walk-around.
 
-Anyway, either is fine with me w/ a slight personal preference to
-acking in unmask.
+>> The command we are using to run the guest is as:
+>>
+>>      ./qemu-system-aarch64 -machine virt,kernel_irqchip=on,gic-version=3 -cpu
+>> host
+>>      -enable-kvm -smp 1 -m 1024 -kernel ./Image -initrd
+>> ../mini-rootfs-arm64.cpio.gz
+>>      -nographic -append "rdinit=init console=ttyAMA0
+>> earlycon=pl011,0x9000000"
+>>
+>> The log is as below:
+>>
+>>          [    0.000000] Booting Linux on physical CPU 0x0000000000
+>> [0x480fd010]
+>>          [    0.000000] Linux version 4.17.0-45864-g29dcea8-dirty
+>> (joyx@Turing-Arch-b) (gcc version 4.9.1 20140505 (prerelease) (crosstool-NG
+>> linaro-1.13.1-4.9-2014.05 - Linaro GCC 4.9-2014.05)) #6 SMP PREEMPT Fri Jun
+>> 15 21:39:52 CST 2018
+> ^^^ This is reproducible with vanilla v4.17 and defconfig, right?
 
--Doug
+Yes.
+
+>
+>>          [    0.038859] SMP: Total of 1 processors activated.
+>>          [    0.039338] CPU features: detected: GIC system register CPU
+>> interface
+>>          [    0.039988] CPU features: detected: Privileged Access Never
+>>          [    0.040560] CPU features: detected: User Access Override
+>>          [    0.041093] CPU features: detected: RAS Extension Support
+>>          [    0.042947] Insufficient stack space to handle exception!
+>>          [    0.042949] ESR: 0x96000046 -- DABT (current EL)
+>>          [    0.043963] FAR: 0xffff0000093a80e0
+>>          [    0.045794] Task stack: [0xffff0000093a8000..0xffff0000093ac000]
+>>          [    0.052181] IRQ stack: [0xffff000008000000..0xffff000008004000]
+>>          [    0.058572] Overflow stack:
+>> [0xffff80003efce2f0..0xffff80003efcf2f0]
+>>          [    0.065068] CPU: 0 PID: 12 Comm: migration/0 Not tainted
+>> 4.17.0-45864-g29dcea8-dirty #6
+>>          [    0.073138] Hardware name: linux,dummy-virt (DT)
+>>          [    0.077831] pstate: 604003c5 (nZCv DAIF +PAN -UAO)
+>>          [    0.082661] pc : el1_sync+0x0/0xb0
+>>          [    0.086152] lr : kpti_install_ng_mappings+0x120/0x214
+> Can you use scripts/faddr2line to find out which line of code the lr is
+> pointing at, please? It would be interesting to know if we managed to
+> install the idmap.
+I did not use addr2line before but with gdb we can get same info as below:
+
+(gdb) list *kpti_install_ng_mappings+0x120/0x214
+0xffff000008091d70 is in kpti_install_ng_mappings 
+(/home/joyx/plinth-kernel-v200/arch/arm64/kernel/cpufeature.c:907).
+902             return !has_cpuid_feature(entry, scope);
+903     }
+904
+905     static void
+906     kpti_install_ng_mappings(const struct arm64_cpu_capabilities 
+*__unused)
+907     {
+908             typedef void (kpti_remap_fn)(int, int, phys_addr_t);
+909             extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+910             kpti_remap_fn *remap_fn;
+911
+
+> Hmm, I wonder if this is at all related to RAS, since we've just enabled
+> that and if we take a fault whilst rewriting swapper then we're going to
+> get stuck. What happens if you set CONFIG_ARM64_RAS_EXTN=n in the guest?
+
+I will try it now.
+Thanks!
+
+Best Regards,
+Wei
+
+> Will
+>
+> .
+>
+
+
