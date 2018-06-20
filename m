@@ -2,113 +2,235 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47671C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE081C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F228020652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87A4320875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:28:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uoz1LmNU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F228020652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CDs7/xQj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87A4320875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932670AbeFTX0j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 19:26:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:43419 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932224AbeFTX0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 19:26:38 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41B1Dn3Bppz9s3R;
-        Thu, 21 Jun 2018 09:26:33 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529537196;
-        bh=DnWTDaY434yf2CqINcWVG+MShEh4faHoUG5SSzMoE8E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uoz1LmNUwM0d+yuejQ+VcNlWNW9QCpXp3lGZCce8vSqcua0uYzBebNJ3OyP96N0cP
-         8BFiEZr9LejK5v+332sPSnVWxaF//IqmBkG8AYRQOnzA82b6xNLBjdUaGwf/lnNPXh
-         D3W4G84Wa6uSDAvUHybwxJ6fxWXJxIjxvZ81yiYOfxODKYaVz/2zYVgjzYwVncTlxh
-         ObyqIwfESFLGoIFmfDjAJ1CBYdEoy6Elv5yCKzKkFr34+xtjTsFJ8wrR8/ucoshUpc
-         9w7SJZYw7eYVuO3wWvRN0nOwxsNaJsKoLqcyVFOS5hdfDbAItU/g+C7AmHArKcT7Jx
-         Vp2p0uEecRC9Q==
-Date:   Thu, 21 Jun 2018 09:26:07 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Chris Mason <clm@fb.com>
-Cc:     Josef Bacik <jbacik@fb.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>,
-        David Sterba <dsterba@suse.cz>
-Subject: Re: [GIT PULL] f2fs update for 4.16-rc1
-Message-ID: <20180621092607.3e13e43f@canb.auug.org.au>
-In-Reply-To: <0CA8215A-6529-40B1-90FB-A5902EA47549@fb.com>
-References: <20180130223220.GB65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180131095446.443670dc@canb.auug.org.au>
-        <20180131002535.GD65489@jaegeuk-macbookpro.roam.corp.google.com>
-        <20180201092551.759f32be@canb.auug.org.au>
-        <20180314101704.51aaae7f@canb.auug.org.au>
-        <20180403122919.3c503f74@canb.auug.org.au>
-        <20180618133817.6faba27e@canb.auug.org.au>
-        <0CA8215A-6529-40B1-90FB-A5902EA47549@fb.com>
+        id S932764AbeFTX2t (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 19:28:49 -0400
+Received: from mail-qt0-f201.google.com ([209.85.216.201]:44506 "EHLO
+        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932264AbeFTX2r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 19:28:47 -0400
+Received: by mail-qt0-f201.google.com with SMTP id n10-v6so992327qtp.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:28:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
+         :cc;
+        bh=u8Eu1raoFYSi1mefLPdJVHwPXjJ7GUxfNj1jxRHm+9E=;
+        b=CDs7/xQjNlHong6n3RvPWhfGvliWsFBA6EHjwqIxjBB/+cQPrhxn1QBU8LyD82EcEz
+         wZ2nY7vo1UAVaH3StMPJcbK7f2DEj9EIFqDivecH5GDmF6IuKtVnJ2gDMg3TjGUqFl/L
+         O1G+QjZQe3BEsKjyEQCmSdiiCtpHJA+jgumpJUbue2wJ77pKhR1rb3ds6LVHQZEE1Z2b
+         RkHb14wNKsdOB9XlUBgAV7WoUG6GfWu/oV3Od741IwYbEBcRmD9KvckPI+8NtANTkPxk
+         Jf9XJhVlYx6/WJKY1/xqsoPaMee0f8qaUR0yaOsXvSjjcpOD4q0G68YRoEIQTctq2r3b
+         9fpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
+         :references:subject:from:to:cc;
+        bh=u8Eu1raoFYSi1mefLPdJVHwPXjJ7GUxfNj1jxRHm+9E=;
+        b=dOlOrgfplHSGO4FXq/58uluTaALO9LDYFQQiVddfs7S0ZfvgcHuD9tNBY37qa60Rsi
+         Fe8RMgcM3WcPP6cwfOVVLBNWPUUxO2m2apIvQssNbrkr4F5HX3ZtmPnT4miueRum5spH
+         sjl6aDU6wGFf+VSLGTyf8oRZ22p3K9pl0aCsEmQ9mf30HODHZJ2Hwd06DoC7U3s0BTSl
+         6W6wcdFgC2J6BVIVZqChRDTJFfIf/S/FjOoxHaBvsGCcyKrC2yQbjOa0PXFrnegYY9d8
+         RwAJR/pOJPRbwjztC+E8nqS5HoszXGvNlzo4CuupWOkBcvmAg66Dgs7eQLEUnL5TBBIL
+         ITXg==
+X-Gm-Message-State: APt69E0vpZxwJSyaGgYlKGhc5iR0rXmYfS095p/z8osPYowXiwegFlrD
+        g+SBgU+nuN6a/5IeZM8kbFFYfRITsNGG
+X-Google-Smtp-Source: ADUXVKLvlILBxmQWOWoQgEvzdx/yHwXFDb3ZWbaP/xLusxEUCSshlf5l2dXRSf9Ge+Yta2IWJPBojqnfb2q/
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/faqi5hVO4SfNG7GmwxJOv+N"; protocol="application/pgp-signature"
+X-Received: by 2002:a37:ac0e:: with SMTP id e14-v6mr12463274qkm.22.1529537326348;
+ Wed, 20 Jun 2018 16:28:46 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 16:28:37 -0700
+In-Reply-To: <20180522222805.80314-1-rajatja@google.com>
+Message-Id: <20180620232841.43922-1-rajatja@google.com>
+References: <20180522222805.80314-1-rajatja@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+Subject: [PATCH v4 1/5] PCI/AER: Define and allocate aer_stats structure for
+ AER capable devices
+From:   Rajat Jain <rajatja@google.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Thomas Tai <thomas.tai@oracle.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
+        Kyle McMartin <jkkm@fb.com>, rajatxjain@gmail.com,
+        helgaas@kernel.org
+Cc:     Rajat Jain <rajatja@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/faqi5hVO4SfNG7GmwxJOv+N
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Define a structure to hold the AER statistics. There are 2 groups
+of statistics: dev_* counters that are to be collected for all AER
+capable devices and rootport_* counters that are collected for all
+(AER capable) rootports only. Allocate and free this structure when
+device is added or released (thus counters survive the lifetime of the
+device).
 
-Hi Chris,
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+v4: Same as v3
+v3: Merge everything in aer.c
 
-On Mon, 18 Jun 2018 14:05:32 -0400 Chris Mason <clm@fb.com> wrote:
->
-> Really sorry for the hassle, the f2fs subject line got this filtered=20
-> into a different inbox. Tejun and Josef are working out these btrfs=20
+ drivers/pci/pcie/aer.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/pci/probe.c    |  1 +
+ include/linux/pci.h    |  3 +++
+ 3 files changed, 64 insertions(+)
 
-Ah, that explains it.
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index a2e88386af28..f9fa994b6c33 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -33,6 +33,9 @@
+ #define AER_ERROR_SOURCES_MAX		100
+ #define AER_MAX_MULTI_ERR_DEVICES	5	/* Not likely to have more */
+ 
++#define AER_MAX_TYPEOF_CORRECTABLE_ERRS 16	/* as per PCI_ERR_COR_STATUS */
++#define AER_MAX_TYPEOF_UNCORRECTABLE_ERRS 26	/* as per PCI_ERR_UNCOR_STATUS*/
++
+ struct aer_err_info {
+ 	struct pci_dev *dev[AER_MAX_MULTI_ERR_DEVICES];
+ 	int error_dev_num;
+@@ -76,6 +79,40 @@ struct aer_rpc {
+ 					 */
+ };
+ 
++/* AER stats for the device */
++struct aer_stats {
++
++	/*
++	 * Fields for all AER capable devices. They indicate the errors
++	 * "as seen by this device". Note that this may mean that if an
++	 * end point is causing problems, the AER counters may increment
++	 * at its link partner (e.g. root port) because the errors will be
++	 * "seen" by the link partner and not the the problematic end point
++	 * itself (which may report all counters as 0 as it never saw any
++	 * problems).
++	 */
++	/* Individual counters for different type of correctable errors */
++	u64 dev_cor_errs[AER_MAX_TYPEOF_CORRECTABLE_ERRS];
++	/* Individual counters for different type of uncorrectable errors */
++	u64 dev_uncor_errs[AER_MAX_TYPEOF_UNCORRECTABLE_ERRS];
++	/* Total number of correctable errors seen by this device */
++	u64 dev_total_cor_errs;
++	/* Total number of fatal uncorrectable errors seen by this device */
++	u64 dev_total_fatal_errs;
++	/* Total number of fatal uncorrectable errors seen by this device */
++	u64 dev_total_nonfatal_errs;
++
++	/*
++	 * Fields for Root ports only, these indicate the total number of
++	 * ERR_COR, ERR_FATAL, and ERR_NONFATAL messages received by the
++	 * rootport, INCLUDING the ones that are generated internally (by
++	 * the rootport itself)
++	 */
++	u64 rootport_total_cor_errs;
++	u64 rootport_total_fatal_errs;
++	u64 rootport_total_nonfatal_errs;
++};
++
+ #define AER_LOG_TLP_MASKS		(PCI_ERR_UNC_POISON_TLP|	\
+ 					PCI_ERR_UNC_ECRC|		\
+ 					PCI_ERR_UNC_UNSUP|		\
+@@ -402,12 +439,35 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
+ 	return 0;
+ }
+ 
++static int pci_aer_stats_init(struct pci_dev *pdev)
++{
++	pdev->aer_stats = kzalloc(sizeof(struct aer_stats), GFP_KERNEL);
++	if (!pdev->aer_stats) {
++		dev_err(&pdev->dev, "No memory for aer_stats\n");
++		return -ENOMEM;
++	}
++	return 0;
++}
++
++static void pci_aer_stats_exit(struct pci_dev *pdev)
++{
++	kfree(pdev->aer_stats);
++	pdev->aer_stats = NULL;
++}
++
+ int pci_aer_init(struct pci_dev *dev)
+ {
+ 	dev->aer_cap = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR);
++	if (!dev->aer_cap || pci_aer_stats_init(dev))
++		return -EIO;
+ 	return pci_cleanup_aer_error_status_regs(dev);
+ }
+ 
++void pci_aer_exit(struct pci_dev *dev)
++{
++	pci_aer_stats_exit(dev);
++}
++
+ #define AER_AGENT_RECEIVER		0
+ #define AER_AGENT_REQUESTER		1
+ #define AER_AGENT_COMPLETER		2
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ac876e32de4b..48edd0c9e4bc 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2064,6 +2064,7 @@ static void pci_configure_device(struct pci_dev *dev)
+ 
+ static void pci_release_capabilities(struct pci_dev *dev)
+ {
++	pci_aer_exit(dev);
+ 	pci_vpd_release(dev);
+ 	pci_iov_release(dev);
+ 	pci_free_cap_save_buffers(dev);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 340029b2fb38..8d59c6c19a19 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -299,6 +299,7 @@ struct pci_dev {
+ 	u8		hdr_type;	/* PCI header type (`multi' flag masked out) */
+ #ifdef CONFIG_PCIEAER
+ 	u16		aer_cap;	/* AER capability offset */
++	struct aer_stats *aer_stats;	/* AER stats for this device */
+ #endif
+ 	u8		pcie_cap;	/* PCIe capability offset */
+ 	u8		msi_cap;	/* MSI capability offset */
+@@ -1471,10 +1472,12 @@ static inline bool pcie_aspm_support_enabled(void) { return false; }
+ void pci_no_aer(void);
+ bool pci_aer_available(void);
+ int pci_aer_init(struct pci_dev *dev);
++void pci_aer_exit(struct pci_dev *dev);
+ #else
+ static inline void pci_no_aer(void) { }
+ static inline bool pci_aer_available(void) { return false; }
+ static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
++static inline void pci_aer_exit(struct pci_dev *d) { }
+ #endif
+ 
+ #ifdef CONFIG_PCIE_ECRC
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
 
-> cgroup fixes, so I've pushed v4.17 to my -next tree for now.
-
-Thanks.
-
-> Dave has been doing the Btrfs merge window for some time, so focusing=20
-> linux-next on his tree is a better fit.  But either way, I've fixed my=20
-> my email filters so you're back at the top where you belong.
-
-I'll just leave things as they are for now.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/faqi5hVO4SfNG7GmwxJOv+N
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsq4o8ACgkQAVBC80lX
-0GwOIAf7B2AmazbsG5Ctu22dUEGqQ6KxhsTUOzKwTCvApkP5GfQ2GfuOFSmhNSm0
-87wyUeXxd/AIxyAOLrR8aQhz+gm1U4ZxhEm+QwFkr0ORtOHj9+4iZ5myQrsdel8t
-ErJRYRZ6AbXDv1s6QyTkALK2+E60q8Je071H1t5i2PhFQ1lNSBs5imrOhf2kqV66
-2V08vDOjSdxJr9Gj8lPeuy5I7zzW/xH0yWSWgwS0X6mB9T5Y2Rs0msKP1lWhS0nH
-9JmgJ+QQGVXyZ8bBZEBL/2LhSOOvQoRRf2Y9vLg9eMimZf9Czb3DIlhtxAN3dfvb
-cbgQSvAnCPHgOqekOBWgmdYJIRW0sQ==
-=RwbE
------END PGP SIGNATURE-----
-
---Sig_/faqi5hVO4SfNG7GmwxJOv+N--
