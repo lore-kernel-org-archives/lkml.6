@@ -5,123 +5,90 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1723FC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBC7C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A615220874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:33:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A615220874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id CEA8B20872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:35:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA8B20872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754324AbeFTNdN (ORCPT
+        id S1754011AbeFTNfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:33:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753594AbeFTNdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:33:12 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 812E520872;
-        Wed, 20 Jun 2018 13:33:11 +0000 (UTC)
-Date:   Wed, 20 Jun 2018 09:33:09 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        joel@joelfernandes.org
-Subject: Re: [RFC 1/2] rcu: Do prepare and cleanup idle depending on
- in_nmi()
-Message-ID: <20180620093309.7d07715a@gandalf.local.home>
-In-Reply-To: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
-References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 20 Jun 2018 09:35:37 -0400
+Received: from gateway20.websitewelcome.com ([192.185.53.25]:46209 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752901AbeFTNfg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:35:36 -0400
+X-Greylist: delayed 1430 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Jun 2018 09:35:36 EDT
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 63A8F400E63FF
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 08:11:03 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id Vct5fQ4GTSjJAVct5fxZHE; Wed, 20 Jun 2018 08:11:03 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=59518 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fVct3-003EGb-Qv; Wed, 20 Jun 2018 08:11:01 -0500
+Date:   Wed, 20 Jun 2018 08:10:59 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] fs/super.c: Fix lock/unlock imbalance in sget_fc
+Message-ID: <20180620131059.GA28925@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fVct3-003EGb-Qv
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:59518
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 20 Jun 2018 17:47:19 +0900
-Byungchul Park <byungchul.park@lge.com> wrote:
+It seems a spin_unlock is missing before return at line 532: return old.
 
-> Get rid of dependency on ->dynticks_nmi_nesting.
+Addresses-Coverity-ID: 1470111 ("Missing unlock")
+Fixes: 4f3911e76e19 ("vfs: Implement a filesystem superblock creation/configuration context")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-This is not a trivial change. Can you please explain the rational and
-background in the change log. Add enough context here to know why this
-change is needed.
-
-Thanks!
-
--- Steve
-
-> 
-> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> ---
->  kernel/rcu/tree.c | 22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index deb2508..59ae94e 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -797,6 +797,11 @@ void rcu_nmi_exit(void)
->  		return;
->  	}
->  
-> +	if (!in_nmi()) {
-> +		rcu_prepare_for_idle();
-> +		rcu_dynticks_task_enter();
-> +	}
-> +
->  	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
->  	trace_rcu_dyntick(TPS("Startirq"), rdtp->dynticks_nmi_nesting, 0, rdtp->dynticks);
->  	WRITE_ONCE(rdtp->dynticks_nmi_nesting, 0); /* Avoid store tearing. */
-> @@ -824,14 +829,8 @@ void rcu_nmi_exit(void)
->   */
->  void rcu_irq_exit(void)
->  {
-> -	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-> -
->  	lockdep_assert_irqs_disabled();
-> -	if (rdtp->dynticks_nmi_nesting == 1)
-> -		rcu_prepare_for_idle();
->  	rcu_nmi_exit();
-> -	if (rdtp->dynticks_nmi_nesting == 0)
-> -		rcu_dynticks_task_enter();
->  }
->  
->  /*
-> @@ -944,6 +943,11 @@ void rcu_nmi_enter(void)
->  	if (rcu_dynticks_curr_cpu_in_eqs()) {
->  		rcu_dynticks_eqs_exit();
->  		incby = 1;
-> +
-> +		if (!in_nmi()) {
-> +			rcu_dynticks_task_exit();
-> +			rcu_cleanup_after_idle();
-> +		}
->  	}
->  	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
->  			  rdtp->dynticks_nmi_nesting,
-> @@ -977,14 +981,8 @@ void rcu_nmi_enter(void)
->   */
->  void rcu_irq_enter(void)
->  {
-> -	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-> -
->  	lockdep_assert_irqs_disabled();
-> -	if (rdtp->dynticks_nmi_nesting == 0)
-> -		rcu_dynticks_task_exit();
->  	rcu_nmi_enter();
-> -	if (rdtp->dynticks_nmi_nesting == 1)
-> -		rcu_cleanup_after_idle();
->  }
->  
->  /*
+diff --git a/fs/super.c b/fs/super.c
+index 43400f5..ff24532 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -529,6 +529,7 @@ struct super_block *sget_fc(struct fs_context *fc,
+ 				destroy_unused_super(s);
+ 				s = NULL;
+ 			}
++			spin_unlock(&sb_lock);
+ 			return old;
+ 		}
+ 	}
+-- 
+2.7.4
 
