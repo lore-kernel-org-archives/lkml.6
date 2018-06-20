@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E08EC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C02C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4242083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:25:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4242083A
+	by mail.kernel.org (Postfix) with ESMTP id F30F42083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30F42083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754198AbeFTAZJ (ORCPT
+        id S1754142AbeFTAZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:25:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37947 "EHLO
+        Tue, 19 Jun 2018 20:25:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33569 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752915AbeFTAZF (ORCPT
+        with ESMTP id S1752707AbeFTAZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:25:05 -0400
+        Tue, 19 Jun 2018 20:25:38 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0P0wO3299351
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0PX5f3299426
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 17:25:01 -0700
+        Tue, 19 Jun 2018 17:25:33 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0P0KG3299348;
-        Tue, 19 Jun 2018 17:25:00 -0700
-Date:   Tue, 19 Jun 2018 17:25:00 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0PXHA3299423;
+        Tue, 19 Jun 2018 17:25:33 -0700
+Date:   Tue, 19 Jun 2018 17:25:33 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-165371cf12415680ee4833bae63d08b2a4475ea4@git.kernel.org>
-Cc:     tglx@linutronix.de, mingo@kernel.org, reinette.chatre@intel.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org,
-          reinette.chatre@intel.com, mingo@kernel.org, tglx@linutronix.de
-In-Reply-To: <9bdcbce670d1ca6067d6a0f2d1c27297901bc56a.1527593971.git.reinette.chatre@intel.com>
-References: <9bdcbce670d1ca6067d6a0f2d1c27297901bc56a.1527593971.git.reinette.chatre@intel.com>
+Message-ID: <tip-0bdc418eda0a37e049492e21f35eb0ec9c86910b@git.kernel.org>
+Cc:     reinette.chatre@intel.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
+Reply-To: hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, reinette.chatre@intel.com
+In-Reply-To: <4df361842569bc95a4fb4e6983a808446fcdfb98.1527593971.git.reinette.chatre@intel.com>
+References: <4df361842569bc95a4fb4e6983a808446fcdfb98.1527593971.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Introduce pseudo-locked region
-Git-Commit-ID: 165371cf12415680ee4833bae63d08b2a4475ea4
+Subject: [tip:x86/cache] x86/intel_rdt: Support enter/exit of locksetup mode
+Git-Commit-ID: 0bdc418eda0a37e049492e21f35eb0ec9c86910b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,22 +56,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  165371cf12415680ee4833bae63d08b2a4475ea4
-Gitweb:     https://git.kernel.org/tip/165371cf12415680ee4833bae63d08b2a4475ea4
+Commit-ID:  0bdc418eda0a37e049492e21f35eb0ec9c86910b
+Gitweb:     https://git.kernel.org/tip/0bdc418eda0a37e049492e21f35eb0ec9c86910b
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Tue, 29 May 2018 05:57:48 -0700
+AuthorDate: Tue, 29 May 2018 05:57:49 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 20 Jun 2018 00:56:35 +0200
+CommitDate: Wed, 20 Jun 2018 00:56:36 +0200
 
-x86/intel_rdt: Introduce pseudo-locked region
+x86/intel_rdt: Support enter/exit of locksetup mode
 
-A pseudo-locked region is introduced representing an instance of a
-pseudo-locked cache region. Each cache instance (domain) can support one
-pseudo-locked region. Similarly a resource group can be used for one
+The locksetup mode is the way in which the user communicates that the
+resource group will be used for a pseudo-locked region. Locksetup mode
+should thus ensure that all restrictions on a resource group are met before
+locksetup mode can be entered. The resource group should also be configured
+to ensure that it cannot be modified in unsupported ways when a
 pseudo-locked region.
 
-Include a pointer to a pseudo-locked region from the domain and resource
-group structures.
+Introduce the support where the request for entering locksetup mode can be
+validated. This includes: CDP is not active, no cpus or tasks are assigned
+to the resource group, monitoring is not in progress on the resource
+group. Once the resource group is determined ready for a pseudo-locked
+region it is configured to not allow future changes to these properties.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -82,102 +87,248 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/9bdcbce670d1ca6067d6a0f2d1c27297901bc56a.1527593971.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/4df361842569bc95a4fb4e6983a808446fcdfb98.1527593971.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt.h | 64 ++++++++++++++++++++++++++---------------
- 1 file changed, 41 insertions(+), 23 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h             |   2 +
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 187 +++++++++++++++++++++++++++-
+ 2 files changed, 183 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index c9b8d3d1d413..02ae088fd745 100644
+index 02ae088fd745..12b006178d3a 100644
 --- a/arch/x86/kernel/cpu/intel_rdt.h
 +++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -122,6 +122,20 @@ struct mongroup {
- 	u32			rmid;
- };
+@@ -501,6 +501,8 @@ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
+ 				  u32 cbm);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
+ int rdtgroup_tasks_assigned(struct rdtgroup *r);
++int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp);
++int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int update_domains(struct rdt_resource *r, int closid);
+ void closid_free(int closid);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 8693dbe602a2..ce8243c87877 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -11,8 +11,48 @@
+ 
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+ 
++#include <linux/slab.h>
+ #include "intel_rdt.h"
  
 +/**
-+ * struct pseudo_lock_region - pseudo-lock region information
-+ * @r:			RDT resource to which this pseudo-locked region
-+ *			belongs
-+ * @d:			RDT domain to which this pseudo-locked region
-+ *			belongs
-+ * @cbm:		bitmask of the pseudo-locked region
++ * pseudo_lock_init - Initialize a pseudo-lock region
++ * @rdtgrp: resource group to which new pseudo-locked region will belong
++ *
++ * A pseudo-locked region is associated with a resource group. When this
++ * association is created the pseudo-locked region is initialized. The
++ * details of the pseudo-locked region are not known at this time so only
++ * allocation is done and association established.
++ *
++ * Return: 0 on success, <0 on failure
 + */
-+struct pseudo_lock_region {
-+	struct rdt_resource	*r;
-+	struct rdt_domain	*d;
-+	u32			cbm;
-+};
++static int pseudo_lock_init(struct rdtgroup *rdtgrp)
++{
++	struct pseudo_lock_region *plr;
++
++	plr = kzalloc(sizeof(*plr), GFP_KERNEL);
++	if (!plr)
++		return -ENOMEM;
++
++	rdtgrp->plr = plr;
++	return 0;
++}
++
++/**
++ * pseudo_lock_free - Free a pseudo-locked region
++ * @rdtgrp: resource group to which pseudo-locked region belonged
++ *
++ * The pseudo-locked region's resources have already been released, or not
++ * yet created at this point. Now it can be freed and disassociated from the
++ * resource group.
++ *
++ * Return: void
++ */
++static void pseudo_lock_free(struct rdtgroup *rdtgrp)
++{
++	kfree(rdtgrp->plr);
++	rdtgrp->plr = NULL;
++}
 +
  /**
-  * struct rdtgroup - store rdtgroup's data in resctrl file system.
-  * @kn:				kernfs node
-@@ -135,17 +149,19 @@ struct mongroup {
-  *				monitor only or ctrl_mon group
-  * @mon:			mongroup related data
-  * @mode:			mode of resource group
-+ * @plr:			pseudo-locked region
+  * rdtgroup_monitor_in_progress - Test if monitoring in progress
+  * @r: resource group being queried
+@@ -20,8 +60,7 @@
+  * Return: 1 if monitor groups have been created for this resource
+  * group, 0 otherwise.
   */
- struct rdtgroup {
--	struct kernfs_node	*kn;
--	struct list_head	rdtgroup_list;
--	u32			closid;
--	struct cpumask		cpu_mask;
--	int			flags;
--	atomic_t		waitcount;
--	enum rdt_group_type	type;
--	struct mongroup		mon;
--	enum rdtgrp_mode	mode;
-+	struct kernfs_node		*kn;
-+	struct list_head		rdtgroup_list;
-+	u32				closid;
-+	struct cpumask			cpu_mask;
-+	int				flags;
-+	atomic_t			waitcount;
-+	enum rdt_group_type		type;
-+	struct mongroup			mon;
-+	enum rdtgrp_mode		mode;
-+	struct pseudo_lock_region	*plr;
- };
- 
- /* rdtgroup.flags */
-@@ -246,22 +262,24 @@ struct mbm_state {
-  * @mbps_val:	When mba_sc is enabled, this holds the bandwidth in MBps
-  * @new_ctrl:	new ctrl value to be loaded
-  * @have_new_ctrl: did user provide new_ctrl for this domain
-+ * @plr:	pseudo-locked region (if any) associated with domain
+-static int __attribute__ ((unused))
+-rdtgroup_monitor_in_progress(struct rdtgroup *rdtgrp)
++static int rdtgroup_monitor_in_progress(struct rdtgroup *rdtgrp)
+ {
+ 	return !list_empty(&rdtgrp->mon.crdtgrp_list);
+ }
+@@ -41,8 +80,7 @@ rdtgroup_monitor_in_progress(struct rdtgroup *rdtgrp)
+  * the state of the mode of these files will be uncertain when a failure
+  * occurs.
   */
- struct rdt_domain {
--	struct list_head	list;
--	int			id;
--	struct cpumask		cpu_mask;
--	unsigned long		*rmid_busy_llc;
--	struct mbm_state	*mbm_total;
--	struct mbm_state	*mbm_local;
--	struct delayed_work	mbm_over;
--	struct delayed_work	cqm_limbo;
--	int			mbm_work_cpu;
--	int			cqm_work_cpu;
--	u32			*ctrl_val;
--	u32			*mbps_val;
--	u32			new_ctrl;
--	bool			have_new_ctrl;
-+	struct list_head		list;
-+	int				id;
-+	struct cpumask			cpu_mask;
-+	unsigned long			*rmid_busy_llc;
-+	struct mbm_state		*mbm_total;
-+	struct mbm_state		*mbm_local;
-+	struct delayed_work		mbm_over;
-+	struct delayed_work		cqm_limbo;
-+	int				mbm_work_cpu;
-+	int				cqm_work_cpu;
-+	u32				*ctrl_val;
-+	u32				*mbps_val;
-+	u32				new_ctrl;
-+	bool				have_new_ctrl;
-+	struct pseudo_lock_region	*plr;
- };
+-static int __attribute__ ((unused))
+-rdtgroup_locksetup_user_restrict(struct rdtgroup *rdtgrp)
++static int rdtgroup_locksetup_user_restrict(struct rdtgroup *rdtgrp)
+ {
+ 	int ret;
  
- /**
+@@ -89,8 +127,7 @@ out:
+  * again but the state of the mode of these files will be uncertain when
+  * a failure occurs.
+  */
+-static int __attribute__ ((unused))
+-rdtgroup_locksetup_user_restore(struct rdtgroup *rdtgrp)
++static int rdtgroup_locksetup_user_restore(struct rdtgroup *rdtgrp)
+ {
+ 	int ret;
+ 
+@@ -124,3 +161,141 @@ err_tasks:
+ out:
+ 	return ret;
+ }
++
++/**
++ * rdtgroup_locksetup_enter - Resource group enters locksetup mode
++ * @rdtgrp: resource group requested to enter locksetup mode
++ *
++ * A resource group enters locksetup mode to reflect that it would be used
++ * to represent a pseudo-locked region and is in the process of being set
++ * up to do so. A resource group used for a pseudo-locked region would
++ * lose the closid associated with it so we cannot allow it to have any
++ * tasks or cpus assigned nor permit tasks or cpus to be assigned in the
++ * future. Monitoring of a pseudo-locked region is not allowed either.
++ *
++ * The above and more restrictions on a pseudo-locked region are checked
++ * for and enforced before the resource group enters the locksetup mode.
++ *
++ * Returns: 0 if the resource group successfully entered locksetup mode, <0
++ * on failure. On failure the last_cmd_status buffer is updated with text to
++ * communicate details of failure to the user.
++ */
++int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
++{
++	int ret;
++
++	/*
++	 * The default resource group can neither be removed nor lose the
++	 * default closid associated with it.
++	 */
++	if (rdtgrp == &rdtgroup_default) {
++		rdt_last_cmd_puts("cannot pseudo-lock default group\n");
++		return -EINVAL;
++	}
++
++	/*
++	 * Cache Pseudo-locking not supported when CDP is enabled.
++	 *
++	 * Some things to consider if you would like to enable this
++	 * support (using L3 CDP as example):
++	 * - When CDP is enabled two separate resources are exposed,
++	 *   L3DATA and L3CODE, but they are actually on the same cache.
++	 *   The implication for pseudo-locking is that if a
++	 *   pseudo-locked region is created on a domain of one
++	 *   resource (eg. L3CODE), then a pseudo-locked region cannot
++	 *   be created on that same domain of the other resource
++	 *   (eg. L3DATA). This is because the creation of a
++	 *   pseudo-locked region involves a call to wbinvd that will
++	 *   affect all cache allocations on particular domain.
++	 * - Considering the previous, it may be possible to only
++	 *   expose one of the CDP resources to pseudo-locking and
++	 *   hide the other. For example, we could consider to only
++	 *   expose L3DATA and since the L3 cache is unified it is
++	 *   still possible to place instructions there are execute it.
++	 * - If only one region is exposed to pseudo-locking we should
++	 *   still keep in mind that availability of a portion of cache
++	 *   for pseudo-locking should take into account both resources.
++	 *   Similarly, if a pseudo-locked region is created in one
++	 *   resource, the portion of cache used by it should be made
++	 *   unavailable to all future allocations from both resources.
++	 */
++	if (rdt_resources_all[RDT_RESOURCE_L3DATA].alloc_enabled ||
++	    rdt_resources_all[RDT_RESOURCE_L2DATA].alloc_enabled) {
++		rdt_last_cmd_puts("CDP enabled\n");
++		return -EINVAL;
++	}
++
++	if (rdtgroup_monitor_in_progress(rdtgrp)) {
++		rdt_last_cmd_puts("monitoring in progress\n");
++		return -EINVAL;
++	}
++
++	if (rdtgroup_tasks_assigned(rdtgrp)) {
++		rdt_last_cmd_puts("tasks assigned to resource group\n");
++		return -EINVAL;
++	}
++
++	if (!cpumask_empty(&rdtgrp->cpu_mask)) {
++		rdt_last_cmd_puts("CPUs assigned to resource group\n");
++		return -EINVAL;
++	}
++
++	if (rdtgroup_locksetup_user_restrict(rdtgrp)) {
++		rdt_last_cmd_puts("unable to modify resctrl permissions\n");
++		return -EIO;
++	}
++
++	ret = pseudo_lock_init(rdtgrp);
++	if (ret) {
++		rdt_last_cmd_puts("unable to init pseudo-lock region\n");
++		goto out_release;
++	}
++
++	/*
++	 * If this system is capable of monitoring a rmid would have been
++	 * allocated when the control group was created. This is not needed
++	 * anymore when this group would be used for pseudo-locking. This
++	 * is safe to call on platforms not capable of monitoring.
++	 */
++	free_rmid(rdtgrp->mon.rmid);
++
++	ret = 0;
++	goto out;
++
++out_release:
++	rdtgroup_locksetup_user_restore(rdtgrp);
++out:
++	return ret;
++}
++
++/**
++ * rdtgroup_locksetup_exit - resource group exist locksetup mode
++ * @rdtgrp: resource group
++ *
++ * When a resource group exits locksetup mode the earlier restrictions are
++ * lifted.
++ *
++ * Return: 0 on success, <0 on failure
++ */
++int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
++{
++	int ret;
++
++	if (rdt_mon_capable) {
++		ret = alloc_rmid();
++		if (ret < 0) {
++			rdt_last_cmd_puts("out of RMIDs\n");
++			return ret;
++		}
++		rdtgrp->mon.rmid = ret;
++	}
++
++	ret = rdtgroup_locksetup_user_restore(rdtgrp);
++	if (ret) {
++		free_rmid(rdtgrp->mon.rmid);
++		return ret;
++	}
++
++	pseudo_lock_free(rdtgrp);
++	return 0;
++}
