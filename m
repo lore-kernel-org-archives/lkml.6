@@ -2,111 +2,123 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD45C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DEAC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1837820693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D63620693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:55:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LtBl3J5g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1837820693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvU4AN0z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D63620693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754381AbeFTDzJ (ORCPT
+        id S1754433AbeFTDzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 23:55:09 -0400
-Received: from ozlabs.org ([203.11.71.1]:60963 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754304AbeFTDzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 23:55:13 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35986 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754331AbeFTDzE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 19 Jun 2018 23:55:04 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 419WDz4L6lz9s2t;
-        Wed, 20 Jun 2018 13:54:58 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529466902;
-        bh=Xw727UV2rJpFfONrecTz5fxXHCNTThycVMJlKqCWPV0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LtBl3J5grh3k7asb8W6yC2dN+8FqQq4udw/QOTV6ImFKOP5PB9egixnDmNcYAEfQ8
-         3qn3QQjBafzY5ePlrQNdx0/vraFVI3J/S+f30YHWC/RCX/v8yMaPp/gi5yBnhfEsIV
-         GPgumoHA96bPaVsyIpKxMazQEDNla602WmVipzEvA70btbPjyDpR8KVYeUg65HUwZO
-         rBd2MvrfKcEXm5agzhUEsCByN0dnFw+8efosEPBYGDWmr//ogAEl3S3JVT4Ui4B32F
-         Rkg2Pa2yrxWt6/JiFVK5KJHeN7NwLkv+6x7D9KIq5W75v9Jtk7Bt+yIIf6oFqkxhma
-         SHBoiV9Qyxm6Q==
-Date:   Wed, 20 Jun 2018 13:54:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: linux-next: manual merge of the akpm-current tree with the scsi
- tree
-Message-ID: <20180620135458.7cc22318@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tZ_iyskd9HJPiUe8mw42WyT"; protocol="application/pgp-signature"
+Received: by mail-pg0-f67.google.com with SMTP id m5-v6so832708pgd.3;
+        Tue, 19 Jun 2018 20:55:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EsdU5kluQMf1rXJS2hF6uW+T5S0HXqxcpa9E9XmD+/w=;
+        b=BvU4AN0zzyVK7+2xSqpYww5DDMLtCXCaUWh9VaIQ/6VeVUMMkAvuhJkxtYTtM6AXuD
+         hwWXdC9n6k9GooUOjaiTd5LoUvtVnjLrWuAcThlUCY1k/84crl7r8IIXJbWibtr15pgf
+         /FFUvlUaa2tziODQ/p+PadTPjPPz9dlUwHgVZzdd+XsihBeTT26xyugL3tzQKOSIQ0uy
+         51z1kunFH366j906Ce2sFz4rRzh7VcikBMdpXI4tyeKTzP5O3+f/0UcUVx3WVVGTOJxq
+         Hn8EA1cQ+eqK7jFOW6z86+kyG3yUDh+9XCK/5VlS7IZYqC/VQ81vYGkLbttzUsWQLaMc
+         8hMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EsdU5kluQMf1rXJS2hF6uW+T5S0HXqxcpa9E9XmD+/w=;
+        b=pl4XT7QuXUTY8dfndBT8tdyHGUvUhkXFJdJjYM/PQRS0gpIZj77m/Z4Te28D5rcJ+G
+         DfFWtRnOH7wRQidhEqnVUzBbd6AuOTxDukXFgzmqNm/2MQbkGRFtzEsx4fhqRaCo9LHH
+         TYdENGLofa1gIuek94Gf5k67QjyaDFQWfzrslXhfXfeQBjNYdvy3/FlnPlLlFnrmjvmt
+         WdNKNHimcwF6u1c5Hwma079qqJbJuAnxIk5mcYaXfvtwcGP+V2KbqhmUOuhgIna60lDP
+         ZE3DTQIBpRL+xv973C5yJroywJfhjtOaFPg2lX8jOl6hO8XISmHHKsEWBLp14DR+WOTx
+         Kowg==
+X-Gm-Message-State: APt69E2pYpQN8KFA5Lwmtvc7JzRjCvLnX6+pKGs+9Bt2mPbqiLfBCO2a
+        jvuQkt1QFEpcg1QLFqLMgdc=
+X-Google-Smtp-Source: ADUXVKLTp7Cyojd++ETzvhmp6l2as94tfbUH6agtcxfvbj9cQbQankLdcYRWPR+yDt1Gn8zoEJZ75A==
+X-Received: by 2002:a63:6741:: with SMTP id b62-v6mr17379352pgc.5.1529466903990;
+        Tue, 19 Jun 2018 20:55:03 -0700 (PDT)
+Received: from oslab.tsinghua.edu.cn ([2402:f000:1:4413:d85e:ce7f:5f7a:fdfe])
+        by smtp.gmail.com with ESMTPSA id 76-v6sm1682059pfr.172.2018.06.19.20.55.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 20:55:03 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org,
+        nicolas.ferre@microchip.com, keescook@chromium.org,
+        robert.jarzmik@free.fr, allen.lkml@gmail.com
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 1/2] usb: gadget: r8a66597: Fix two possible sleep-in-atomic-context bugs in init_controller()
+Date:   Wed, 20 Jun 2018 11:54:53 +0800
+Message-Id: <20180620035453.7721-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/tZ_iyskd9HJPiUe8mw42WyT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The driver may sleep with holding a spinlock.
+The function call paths (from bottom to top) in Linux-4.16.7 are:
 
-Hi all,
+[FUNC] msleep
+drivers/usb/gadget/udc/r8a66597-udc.c, 839: 
+		msleep in init_controller
+drivers/usb/gadget/udc/r8a66597-udc.c, 96: 
+		init_controller in r8a66597_usb_disconnect
+drivers/usb/gadget/udc/r8a66597-udc.c, 93: 
+		spin_lock in r8a66597_usb_disconnect
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+[FUNC] msleep
+drivers/usb/gadget/udc/r8a66597-udc.c, 835: 
+		msleep in init_controller
+drivers/usb/gadget/udc/r8a66597-udc.c, 96: 
+		init_controller in r8a66597_usb_disconnect
+drivers/usb/gadget/udc/r8a66597-udc.c, 93: 
+		spin_lock in r8a66597_usb_disconnect
 
-  lib/percpu_ida.c
+To fix these bugs, msleep() is replaced with mdelay().
 
-between commit:
+This bug is found by my static analysis tool (DSAC-2) and checked by
+my code review.
 
-  acf3ff616ee2 ("scsi: Remove percpu_ida")
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/usb/gadget/udc/r8a66597-udc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-from the scsi tree and commit:
+diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
+index a3ecce62662b..24ee9867964b 100644
+--- a/drivers/usb/gadget/udc/r8a66597-udc.c
++++ b/drivers/usb/gadget/udc/r8a66597-udc.c
+@@ -832,11 +832,11 @@ static void init_controller(struct r8a66597 *r8a66597)
+ 
+ 		r8a66597_bset(r8a66597, XCKE, SYSCFG0);
+ 
+-		msleep(3);
++		mdelay(3);
+ 
+ 		r8a66597_bset(r8a66597, PLLC, SYSCFG0);
+ 
+-		msleep(1);
++		mdelay(1);
+ 
+ 		r8a66597_bset(r8a66597, SCKE, SYSCFG0);
+ 
+-- 
+2.17.0
 
-  0c4d6e08c775 ("lib/percpu_ida.c: don't do alloc from per-CPU list if ther=
-e is none")
-
-from the akpm-current tree.
-
-I fixed it up (I just removed the file, but clearly the akpm-current
-tree commit could be removed) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/tZ_iyskd9HJPiUe8mw42WyT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsp0BIACgkQAVBC80lX
-0Gy8yQgAhEZt8CFANxAzBTjJQw8vBnrH6CdW3lwPUcy+F5Yzy0mBb+S8gEHtNBxN
-sa03TslDp/9ewgxYlGAMGpZ5lHhkEil1O+7jWCX5pgW/K7XSAGfByIsXCR8P9xpi
-tzkaMK1Fb1j1fBpqILCZN35GqMRz2KDWuE1/w6qtWdCxo8V9ReQ/bC29uuDUtRWN
-BxqLt+Bt2Ec+NcGldnYOkKKVcSFKhn2RScc2B6NCkavJ6Dvqj7b56dycVllKsklp
-C0RLvIPsLLgV94OtUyuAAdk3Z66pyTBSRPRZfsiRgi2hNtss3krrqLY6Gg5IvPug
-p54N0y5oDsyr+4D+ebmHOds+yjDwZA==
-=qfiD
------END PGP SIGNATURE-----
-
---Sig_/tZ_iyskd9HJPiUe8mw42WyT--
