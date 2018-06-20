@@ -3,113 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE55C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF36AC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D95E120846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:35:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D95E120846
+	by mail.kernel.org (Postfix) with ESMTP id B3969208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:36:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3969208B1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754166AbeFTOfT (ORCPT
+        id S1754207AbeFTOf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:35:19 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:58661 "EHLO
+        Wed, 20 Jun 2018 10:35:59 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:57985 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752856AbeFTOfR (ORCPT
+        with ESMTP id S1752856AbeFTOf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:35:17 -0400
+        Wed, 20 Jun 2018 10:35:58 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
  (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MYLUv-1fj2M40HXl-00V8Vn; Wed, 20 Jun 2018 16:35:05 +0200
+ 0MgI6w-1fs8dU01YM-00Ng8S; Wed, 20 Jun 2018 16:35:18 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
         David Sterba <dsterba@suse.com>
 Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Anand Jain <anand.jain@oracle.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Omar Sandoval <osandov@fb.com>, Liu Bo <bo.li.liu@oracle.com>,
         linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] btrfs: use 64-bit timestamps for struct btrfs_dev_replace_item
-Date:   Wed, 20 Jun 2018 16:34:33 +0200
-Message-Id: <20180620143448.44388-2-arnd@arndb.de>
+Subject: [PATCH 3/3] btrfs: use timespec64 for i_otime
+Date:   Wed, 20 Jun 2018 16:34:34 +0200
+Message-Id: <20180620143448.44388-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180620143448.44388-1-arnd@arndb.de>
 References: <20180620143448.44388-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:qfBHUeRe4dB1qRa0S8jd7SDPMnKRIt5xHOzntFHibu3uJJnuumo
- dy1cfElifhdyVTuiBRwrnxczzmZuiGythjLwCX5g1kg9vnaBc0CkTOqemChQfoXpgnZJhdm
- YlZun5zb1P2RszmzszGwwsMKn60eeTxec5wAYC4R/GASm38apvu3bfo6L8W8rUqKNVEOcqP
- nI0RPqttcwynVrfp5rZKA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:fUHJ0lXFL10=:FWCl/lSF8JKMqWaDusUkvr
- 9PsJlcSmk0BZDDxETliIT1yvXRgryKtrHY2d3GXw54SmKl+x3hhtd5vV6cX4UiPfhPD4ZKki3
- LDoybKt3DZLvm2v9ywNv4Ygh8d3TxUgeSjOJLn9RiHJ3N5JUF26k7V4kVVnsU4cLMhd1k/cHB
- EWZQkkk858Het2XJ6eIaCW27jgs6etAAykjgXSrv7e9T9x7JhqSpQ4XYFPtRswNGMtKktJ1xF
- Pf2fP6GszBXKkqCtalmvsilxbIaVkMuibh504QaYIykCOlMikKnA/dpkv4d9F3e4++GMR4+xu
- Ardgs1f6h+TFe96DKbuibeaxozKlfP1gH1/JtVTT09D2pdcjzv6334uCMa6qRH4TKTas8XnOE
- a2PasnvcZh4l4+gF7xJiX2LHnRUWHErMk5QPgtSeUx9zi0wjtGb8Hg5HSUczfYdGjNn/r+LoK
- vCAwv39WeZ6QtkwoqMJ7RQwq34dIIW84Ovd7rDPPjfwFLPEiP88vwMb9Vz2lHX9j+e2Hw+z4i
- kq70RNBftXHB5orSV0uynuXFDShRhQy77e4g2xtsHIrmkmRQ9F5VaEF2XVMPPd3yAE/hqHnCd
- 0Z7+B0Gaj8IkfyADcno9HrtsIpmARQTaakGp7wFcAGLNox9fZQGjvwqvugjUvzw4RNlZP+Nx/
- 1W1Hrrz2EALG8X17euunFRFcnPFhZZgFoo/gMm69/LHaMoJscXj+03QQJwDsFAyQo9lM=
+X-Provags-ID: V03:K1:64ae6ej6GWDaggWWkac+lHArkwY6qkKHJYloNUh0uQoskF5Sy9d
+ PZtYjHqS5RdsWDG1vADqfPLQi0dbEYcH2Z0/FeKvLx0ubpjSE3LVBungbhI1INYBaTlAHRA
+ aW4gU8WEKHEdUcp8isDxNTCOQ1O+V+3BBJNE0N58wv8rG9HTQNKQpuirUMdbOW+RaHVgaKa
+ 7PPL2VD7C125eoKtNhkOg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:MH9aXRGwem0=:Gpxc20+tA3ANirFW1kpcLT
+ racVDbqcZfdsq6Fo9GRqH1X4466q9qJRnyQHDKc+DAQpoGgpEdiaEeWM7ZXlB9i3SieXAvMAU
+ cQiuQofIXJhN1faaANTEkt57OlFv1hQWxWtiW80QmWFY4MpkynG3QkuHXFxlvKcHX/zOj1eaB
+ JOvSZFDv04Pi52D34HI4uafWK1bIQbcX9litevOJlTFr/5FtxNb0lxAWp7fQiEa3UexTdxOf/
+ QxUqK0u1aRFak7nixQ8PZ53Xhhx/DherDjZqgfNFS5VPZr3o/GSejhfj+YIooTVpHrZkrnxgW
+ mASiAsmv502XfzSGMR+kHp3olZwRmgB2VzQoNgI0XvCh5qOmN01Ljwn9jTQv+srAb/WeKGp4J
+ iF7tjsdpPvphZuv6TOAC3CjaCQSdr2oLkqpyDP+dHXcRrYAwH0uan0+bK0eWX1c9NvVTOpTgd
+ Xm/2x9vVCwOQSV7HFwc0gjSs6bqYBHaEgitMsrZq8yuA5xyjuLC7BeU99utZ09bLnKmWtaI4h
+ 6jVdDl4QihWJHZw9Fe/aeGgkwoBlzSuJ3QigvXTWFbY5KXPSwa6LpF0rhDU06Emw7ZhxCPN2g
+ kkl2zwKT8AALNwBoqZGpuCxROcv3YXB/Z3ibErqNxjzAQyoBLNGTXSGq2apJroQjBjKEkhfD9
+ cULHRfzcJ7xqrm7sJywvS3a/7UT0wJWWgXyPbx+R0AqbLHUfH6CqbRY8cWLm1yxygavs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The structure already has 64-bit fields for the timestamps, but
-calling get_seconds() may truncate and risk overflow on 32-bit
-architectures.
-
-This changes the dev-replace code to use ktime_get_real_seconds()
-instead, which always returns 64-bit timestamps.
+While the regular inode timestamps all use timespec64 now, the
+i_otime field is btrfs specific and still needs to be converted
+to correctly represent times beyond 2038.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/btrfs/dev-replace.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/btrfs/btrfs_inode.h | 2 +-
+ fs/btrfs/inode.c       | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-index e2ba0419297a..1b30c38d05c9 100644
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -465,7 +465,7 @@ int btrfs_dev_replace_start(struct btrfs_fs_info *fs_info,
- 	 * go to the tgtdev as well (refer to btrfs_map_block()).
- 	 */
- 	dev_replace->replace_state = BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED;
--	dev_replace->time_started = get_seconds();
-+	dev_replace->time_started = ktime_get_real_seconds();
- 	dev_replace->cursor_left = 0;
- 	dev_replace->committed_cursor_left = 0;
- 	dev_replace->cursor_left_last_write_of_item = 0;
-@@ -618,7 +618,7 @@ static int btrfs_dev_replace_finishing(struct btrfs_fs_info *fs_info,
- 			  : BTRFS_IOCTL_DEV_REPLACE_STATE_FINISHED;
- 	dev_replace->tgtdev = NULL;
- 	dev_replace->srcdev = NULL;
--	dev_replace->time_stopped = get_seconds();
-+	dev_replace->time_stopped = ktime_get_real_seconds();
- 	dev_replace->item_needs_writeback = 1;
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index 7e075343daa5..1343ac57b438 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -178,7 +178,7 @@ struct btrfs_inode {
+ 	struct btrfs_delayed_node *delayed_node;
  
- 	/* replace old device with new one in mapping tree */
-@@ -807,7 +807,7 @@ int btrfs_dev_replace_cancel(struct btrfs_fs_info *fs_info)
- 		break;
- 	}
- 	dev_replace->replace_state = BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED;
--	dev_replace->time_stopped = get_seconds();
-+	dev_replace->time_stopped = ktime_get_real_seconds();
- 	dev_replace->item_needs_writeback = 1;
- 	btrfs_dev_replace_write_unlock(dev_replace);
- 	btrfs_scrub_cancel(fs_info);
-@@ -848,7 +848,7 @@ void btrfs_dev_replace_suspend_for_unmount(struct btrfs_fs_info *fs_info)
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
- 		dev_replace->replace_state =
- 			BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED;
--		dev_replace->time_stopped = get_seconds();
-+		dev_replace->time_stopped = ktime_get_real_seconds();
- 		dev_replace->item_needs_writeback = 1;
- 		btrfs_info(fs_info, "suspending dev_replace for unmount");
- 		break;
+ 	/* File creation time. */
+-	struct timespec i_otime;
++	struct timespec64 i_otime;
+ 
+ 	/* Hook into fs_info->delayed_iputs */
+ 	struct list_head delayed_iput;
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index e9482f0db9d0..22dcc8afd38f 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -5745,7 +5745,7 @@ static struct inode *new_simple_dir(struct super_block *s,
+ 	inode->i_mtime = current_time(inode);
+ 	inode->i_atime = inode->i_mtime;
+ 	inode->i_ctime = inode->i_mtime;
+-	BTRFS_I(inode)->i_otime = timespec64_to_timespec(inode->i_mtime);
++	BTRFS_I(inode)->i_otime = inode->i_mtime;
+ 
+ 	return inode;
+ }
+@@ -6349,7 +6349,7 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
+ 	inode->i_mtime = current_time(inode);
+ 	inode->i_atime = inode->i_mtime;
+ 	inode->i_ctime = inode->i_mtime;
+-	BTRFS_I(inode)->i_otime = timespec64_to_timespec(inode->i_mtime);
++	BTRFS_I(inode)->i_otime = inode->i_mtime;
+ 
+ 	inode_item = btrfs_item_ptr(path->nodes[0], path->slots[0],
+ 				  struct btrfs_inode_item);
 -- 
 2.9.0
 
