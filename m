@@ -2,211 +2,98 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22692C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6CCC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0CC820846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:50:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="Ve0cuMbz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CC820846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
+	by mail.kernel.org (Postfix) with ESMTP id 0569020846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:50:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0569020846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=geanix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933066AbeFTIuX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:50:23 -0400
-Received: from services.gouders.net ([141.101.32.176]:55601 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932891AbeFTIt1 (ORCPT
+        id S933190AbeFTIud (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:50:33 -0400
+Received: from mail.hundeboll.net ([88.198.92.70]:47866 "EHLO
+        mail.hundeboll.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932850AbeFTIu3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:49:27 -0400
-Received: from lena.gouders.net ([193.175.198.193])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w5K8gRCc013731
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Wed, 20 Jun 2018 10:42:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1529484158; bh=6NL1EFwGkIcT/x/3Mr1VNv19qKolHcJ28+B9DaBP5Mc=;
-        h=From:To:Cc:Subject:Date;
-        b=Ve0cuMbzVPgsxoJ8XoDdVBbYAUKpldejHO1tMMtBT/5cz/PfUjixrFtiXyV3h5g6q
-         Su/irfo7gL4Q0m9s5PuWKZEIE/vLdOUfWrzeQoA5HXw8AdmP7+SQWODGTcEtnxAETt
-         Q276iRCI8MjBMVFnNtKeiqhukLtx8rKdzExQhwBg=
-From:   Dirk Gouders <dirk@gouders.net>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     Dirk Gouders <dirk@gouders.net>
-Subject: [RFC v8 0/1] mconf: global i-search in menu prompts
-Date:   Wed, 20 Jun 2018 10:42:16 +0200
-Message-Id: <20180620084217.8597-1-dirk@gouders.net>
-X-Mailer: git-send-email 2.13.6
+        Wed, 20 Jun 2018 04:50:29 -0400
+X-Greylist: delayed 583 seconds by postgrey-1.27 at vger.kernel.org; Wed, 20 Jun 2018 04:50:27 EDT
+Received: from [10.0.0.161] (unknown [85.184.147.232])
+        by mail.hundeboll.net (Postfix) with ESMTPSA id 2D6A01C08CB;
+        Wed, 20 Jun 2018 10:40:41 +0200 (CEST)
+Subject: Re: [PATCH 01/12] spi: spi-fsl-dspi: Drop unreachable else if
+ statement
+To:     Esben Haabendal <esben.haabendal@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
+        Angelo Dureghello <angelo@sysam.it>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Sanchayan Maity <maitysanchayan@gmail.com>,
+        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>
+References: <20180620073442.20913-1-esben.haabendal@gmail.com>
+ <20180620073442.20913-2-esben.haabendal@gmail.com>
+From:   =?UTF-8?Q?Martin_Hundeb=c3=b8ll?= <martin@geanix.com>
+Message-ID: <84f8dca3-d1af-5190-270b-5f5319ae4987@geanix.com>
+Date:   Wed, 20 Jun 2018 10:40:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180620073442.20913-2-esben.haabendal@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-Randy noticed segfaults with the last version and although that could
-be fixed, this version got rid of the additional data structure,
-because it is not needed to do the traversal.
 
-As everything is in place more or less now, it became rather
-forcibly clear that the tree traversal can be done with just a short
-helper function (see commit message).
+On 2018-06-20 09:34, Esben Haabendal wrote:
+> From: Esben Haabendal <eha@deif.com>
+> 
+> The if statement just above this if/else statement triggers on the same
+> condition, and then invalidates it.
+> 
+> Signed-off-by: Esben Haabendal <eha@deif.com>
+> Cc: Martin Hundebøll <martin@geanix.com>
 
-What I meanwhile noticed is that a search for 'retpoline' did not
-match any prompt, whereas the same search in config symbols gets a
-hit.  That made me think if i-search should search the symbol names as
-well but in this case, it would not be immediately clear to users why
-menu items produced a hit...
+For the entire series:
+Acked-by: Martin Hundebøll <martin@geanix.com>
 
-Anyway, this time, I provide a sample Kconfig file that can be used to
-easily watch the traversal as shown in the example in the commit
-message (just repeatedly search for 'a' from any position in the
-menu):
-
-config a
-       bool "a"
-
-config b
-       bool "b / a"
-       depends on a
-
-config c
-       bool "c / a"
-
-menu "d / a"
-
-config e
-       bool "e / a"
-
-endmenu
-
-config f
-       bool "f / a"
-
-Dirk
-
-Changes in v8:
-
-* Get rid of flat_array and use a short helper function
-  menu_get_next() for tree traversal.
-
-* Correct typos reported by Randy Dunlap.
-
-Changes in v7:
-
-* make menu_isearch() return void
-
-* Suggested-by removed, ask for Sam's permission
-
-* Rework i-search instructions text
-
-* Remember exact starting position in menu
-
-* Stay on menu item if it matches pattern with a character added
-
-* Fix print_autowrap for short texts
-
-* Focus on buttons: use A_STANDOUT for current menu item
-
-* Fix compiler warnings
-
-* Don't exclude comments in searches
-
-* ESC also clears search string
-
-* Remove the last parameter of print_isearch and use focus_on_buttons
-  instead
-
-* Document changes to print_autowrap and conf() in commit message
-
-* Rework comments in the code
-
-* Rework commit message, add a motivation part
-
-* Free serialized menu array on exit
-
-Changes in v6:
-
-* The modification of the function print_autowrap() was reworked and
-  is no longer a separate function.
-
-* The i-search navigation was completely reworked and now works on the
-  whole menu tree.
-
-* Hotkeys are back, because they do not interfere that much with this
-  version of i-search navigation.
-
-Changes in v5:
-
-* More thoroughly tested code
-
-* Hotkey navigation concept completely dropped
-
-* Printable characters except special ones form the search string
-
-* Focus-sensitive help text above menu
-
-* DEL erases search string
-
-* Matching string is highlighted in selected menu item
-
-* README help text adjusted
-
-Changes in v4:
-
-* Prototype: consequent i-search navigation concept
-
-Changes in v3:
-
-* Use current git tree to make the patch apply.
-
-* Eliminate debugging output to stderr.
-
-Changes in v2:
-
-* Additionally to CTRL-s, \ can be used to start isearch.
-
-* Raw mode is off by default an can be enabled by an environment
-  variable MENUCONFIG_RAW_MODE.
-
-* I also added a variable for toggling raw mode but did not implement
-  anything else.
-
-* The isearch indicator is now displayed as soon as isearch is
-  started.
-
-* Any key except \, CTRL-s, alphanumeric characters and space
-  terminates isearch and -- except ESC ESC -- is further processed,
-  e.g. ENTER terminates isearch and is then used to navigate into a
-  submenu.
-
-* Problems with mismatches and matches above the current position were
-  fixed.
-
-Dirk Gouders (1):
-  mconf: global i-search in menu prompts
-
- scripts/kconfig/lkc.h                |   1 +
- scripts/kconfig/lxdialog/checklist.c |   2 +-
- scripts/kconfig/lxdialog/dialog.h    |   3 +-
- scripts/kconfig/lxdialog/inputbox.c  |   2 +-
- scripts/kconfig/lxdialog/menubox.c   | 181 ++++++++++++++++++++++++++++++-----
- scripts/kconfig/lxdialog/util.c      |  45 ++++++++-
- scripts/kconfig/lxdialog/yesno.c     |   2 +-
- scripts/kconfig/mconf.c              | 173 +++++++++++++++++++++++++++++++--
- scripts/kconfig/menu.c               |  28 ++++++
- 9 files changed, 398 insertions(+), 39 deletions(-)
+> ---
+>   drivers/spi/spi-fsl-dspi.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+> index 0630962ce442..3ca9b9608801 100644
+> --- a/drivers/spi/spi-fsl-dspi.c
+> +++ b/drivers/spi/spi-fsl-dspi.c
+> @@ -593,8 +593,7 @@ static int dspi_eoq_write(struct fsl_dspi *dspi)
+>   			dspi_pushr |= SPI_PUSHR_EOQ;
+>   			if ((dspi->cs_change) && (!dspi->len))
+>   				dspi_pushr &= ~SPI_PUSHR_CONT;
+> -		} else if (tx_word && (dspi->len == 1))
+> -			dspi_pushr |= SPI_PUSHR_EOQ;
+> +		}
+>   
+>   		regmap_write(dspi->regmap, SPI_PUSHR, dspi_pushr);
+>   
+> 
 
 -- 
-2.13.6
+Kind regards,
+Martin Hundebøll
+Embedded Linux Consultant
 
++45 61 65 54 61
+martin@geanix.com
+
+Geanix IVS
+DK39600706
