@@ -7,94 +7,99 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5AAC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12DAC43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39CF420875
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A91892083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:36:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DoLZGajW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CF420875
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MXnmSmB2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A91892083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933635AbeFTVgB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 17:36:01 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43948 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933438AbeFTVf7 (ORCPT
+        id S933443AbeFTVgs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 17:36:48 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33923 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933225AbeFTVgr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 17:35:59 -0400
-Received: by mail-pl0-f67.google.com with SMTP id c41-v6so455191plj.10
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 14:35:59 -0700 (PDT)
+        Wed, 20 Jun 2018 17:36:47 -0400
+Received: by mail-wr0-f195.google.com with SMTP id a12-v6so977889wro.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 14:36:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=G2auKOMxQ9wI7wBvMKoDy9J9i6w5RWJR8sEiBNhapYo=;
-        b=DoLZGajWtFM8THj6hgvGfGflmQ+DUWNv5t12YB1f8f106cYJeKWDt81J/oqHs/OQZM
-         97hF6fIyA9FRaHWN0EKeFWSzVS7jXfFijdibW9H7ofg7JYkl9kUpmuKy9fb1HAXliQZ5
-         MFdQCZaS1d0u3GyuEbgzqS5ryvT9eDL+Ap4dg5W1JZ818cwrKiw+AIXa64EnGxR1S0A5
-         i6TvH33NuJT+jC5eqE3nF3IhaubV9y0lte0gvpgNY2ynaPFMikv1dwV7GXlhlhJDZ9y8
-         mDAfnyb8nXRzt+hJlqlMf4YYStgklpu4sxr58Z6kq9UzWJY4rFOKY9CRKERFxNEb9x8Z
-         QL0Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k8Pkgmes/3/iqbMtNDJpFKF39YTC864fd4gbEv6tRCw=;
+        b=MXnmSmB2cHtRxErjKFDq9lfiRXupwNCYlKMPv78cNEMa6XOL1FJ6e/JpXBpVZAymNT
+         Kd9DkZKxTjt2t9PCR3FDvg5OHYsUrPxwQnwU4WuYAvZ1dfwjgv0t+1CeqrZoZC/a3F2Z
+         rakzcCahuFAhLygXUE2tE0VDzeRCrTpAz9tT3hVRdPjOD2ubvyb8bQp1mB25YPYDC3mh
+         gB1l//JDfU4kKkpfIBr9Fwoqz02Lq2RU549hYfGiyZG8R6kPAvUcy1COLyj5qe59hII9
+         Gr4cr2z1bI6ZoSY/hqtovmxpoTT+ZcCr1NVzNqQlAAkt/6adbyZLCUUdb4BuvuEuwYb5
+         vsgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=G2auKOMxQ9wI7wBvMKoDy9J9i6w5RWJR8sEiBNhapYo=;
-        b=g1W3KJBAnCIjmTYLH9LA7dm1NUeZqbadEZkEBn3yxtCNPK9B/BKUNo2WKwhUDO9cUw
-         9YayPXne7qxnWNUzCrPf+JEhr4kstgezPuhs6HsdpCEYrIfEMab55g6/MpOYUuOPEdnK
-         6pD+kEtn5BN38XM0U5nd4CrAGFIN6kbQS3NwwHBigwaMFCjrr6/yMQVvxkeYWHO5zbmw
-         lh7JybFduNi7V6qHL+7qptwV2uHjXWR+aRE3taEPDpeukK7uc4Z8j/ws4mIpVa310GDd
-         AQl3mVL1Ycl/AP4BdEcj8AE+2iocEBBlmpcgZwFRIGkZGXMVmmjYwllT1hiVKrNcWXUU
-         Px7A==
-X-Gm-Message-State: APt69E2mINeYEc8k8KGtAU/nL8T/9xnQuXy4Vp37UBnghX777ppHmtbU
-        EyDSGmw3f9/co9Mil1snLPT6o0BWG6M=
-X-Google-Smtp-Source: ADUXVKIZBaRDmufpOWgikOtaogXejXnTYy70vDCobJ62R+7CoraTqzoOrw3Iz7fqctyAjurFPm6Ayg==
-X-Received: by 2002:a17:902:6f0f:: with SMTP id w15-v6mr24939491plk.216.1529530558892;
-        Wed, 20 Jun 2018 14:35:58 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id k12-v6sm3917825pgo.31.2018.06.20.14.35.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 14:35:58 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 14:35:57 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Greg Thelen <gthelen@google.com>
-cc:     Andi Kleen <andi@firstfloor.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-kbuild@vger.kernel.org, akpm@linux-foundation.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH] trace: fix SKIP_STACK_VALIDATION=1 build
-In-Reply-To: <20180608214746.136554-1-gthelen@google.com>
-Message-ID: <alpine.DEB.2.21.1806201435430.255247@chino.kir.corp.google.com>
-References: <20180608214746.136554-1-gthelen@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k8Pkgmes/3/iqbMtNDJpFKF39YTC864fd4gbEv6tRCw=;
+        b=J+2b7S3G9nVD4kLt/8GkHsSyAEJ7PdbOXNB11Am9OCFjZZAtZTpcO6bz4H3+aYGbvX
+         LsRLStdoHNW5aV9pGb7j8oRA33qj/T1QmOAmvd3DbiDZbkjVT1q7OuqSLO4NiPSClu/S
+         bwuKl2gyMDQWSZye8cwF71cg4j7KafUc62nw+tzZzCjEtYtSIHsxwfPrrvaeGEcP05aA
+         TB2yKbDctngHvx15cFonBL2qXX9n5G12fUYYTXbv8R6VSu/F9JOHTbc/IWvGSPMkczrX
+         Q89dObPnfiBWWlgYew57ssE+wP3G1e9SVrVzVE8ep6QIKR9lWvNQdjPlDAlCEW+TdmwG
+         erAQ==
+X-Gm-Message-State: APt69E1B0RpIIz80z/FmGkyT9d+P5IE19Rwdi9FKXKQIgkdcl5FzeodY
+        COjeYABImOGjJEcRLZD4YLVpwyjGMV5q4Yy1mDB0uQ==
+X-Google-Smtp-Source: ADUXVKKhi7UGNTRL2YUC2+PJRx7768Bxa/ep8kxRULkW7t8ENMtrBh4Mkzbk8bftmmokjr5WPDFX4m30cuOZJkHRTao=
+X-Received: by 2002:adf:e48e:: with SMTP id i14-v6mr20713220wrm.8.1529530605690;
+ Wed, 20 Jun 2018 14:36:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20180619213352.71740-1-shakeelb@google.com> <3f61e143-e7b3-5517-fbaf-d663675f0e96@virtuozzo.com>
+In-Reply-To: <3f61e143-e7b3-5517-fbaf-d663675f0e96@virtuozzo.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 20 Jun 2018 14:36:33 -0700
+Message-ID: <CALvZod5z8_6KytDdoS26qE1iLVg3yoOT+BUYtxHX2XuN1UKkCg@mail.gmail.com>
+Subject: Re: [PATCH] slub: fix __kmem_cache_empty for !CONFIG_SLUB_DEBUG
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 8 Jun 2018, Greg Thelen wrote:
+On Wed, Jun 20, 2018 at 5:08 AM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>
+>
+>
+> On 06/20/2018 12:33 AM, Shakeel Butt wrote:
+> > For !CONFIG_SLUB_DEBUG, SLUB does not maintain the number of slabs
+> > allocated per node for a kmem_cache. Thus, slabs_node() in
+> > __kmem_cache_empty() will always return 0. So, in such situation, it is
+> > required to check per-cpu slabs to make sure if a kmem_cache is empty or
+> > not.
+> >
+> > Please note that __kmem_cache_shutdown() and __kmem_cache_shrink() are
+> > not affected by !CONFIG_SLUB_DEBUG as they call flush_all() to clear
+> > per-cpu slabs.
+>
+> So what? Yes, they call flush_all() and then check if there are non-empty slabs left.
+> And that check doesn't work in case of disabled CONFIG_SLUB_DEBUG.
+> How is flush_all() or per-cpu slabs even relevant here?
+>
 
-> Non gcc-5 builds with CONFIG_STACK_VALIDATION=y and
-> SKIP_STACK_VALIDATION=1 fail.
-> Example output:
->   /bin/sh: init/.tmp_main.o: Permission denied
-> 
-> commit 96f60dfa5819 ("trace: Use -mcount-record for dynamic ftrace"),
-> added a mismatched endif.  This causes cmd_objtool to get mistakenly
-> set.
-> 
-> Relocate endif to balance the newly added -record-mcount check.
-> 
-> Fixes: 96f60dfa5819 ("trace: Use -mcount-record for dynamic ftrace")
-> Signed-off-by: Greg Thelen <gthelen@google.com>
-
-Tested-by: David Rientjes <rientjes@google.com>
+The flush_all() will move all cpu slabs and partials to node's partial
+list and thus later check of node's partial list will handle non-empty
+slabs situation. However what I missed is the 'full slabs' which are
+not on any list for !CONFIG_SLUB_DEBUG. So, this patch is not the
+complete solution. I think David's suggestion is the complete
+solution. I will post a patch based on David's suggestion.
