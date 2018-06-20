@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF09FC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFD9C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 654D520652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654D520652
+	by mail.kernel.org (Postfix) with ESMTP id 478F220846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:07:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 478F220846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932617AbeFTJHP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:07:15 -0400
-Received: from foss.arm.com ([217.140.101.70]:34050 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754826AbeFTJGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:06:54 -0400
+        id S932695AbeFTJHr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 05:07:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34028 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754838AbeFTJGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:06:52 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 55E0480D;
-        Wed, 20 Jun 2018 02:06:54 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (e105550-lin.cambridge.arm.com [10.1.211.30])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AF8D73F246;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FD4C1684;
         Wed, 20 Jun 2018 02:06:52 -0700 (PDT)
+Received: from e105550-lin.cambridge.arm.com (e105550-lin.cambridge.arm.com [10.1.211.30])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ECB643F246;
+        Wed, 20 Jun 2018 02:06:50 -0700 (PDT)
 From:   Morten Rasmussen <morten.rasmussen@arm.com>
 To:     peterz@infradead.org, mingo@redhat.com
 Cc:     valentin.schneider@arm.com, dietmar.eggemann@arm.com,
         vincent.guittot@linaro.org, gaku.inami.xh@renesas.com,
         linux-kernel@vger.kernel.org,
-        Chris Redpath <chris.redpath@arm.com>,
         Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: [PATCHv3 9/9] sched/fair: Don't move tasks to lower capacity cpus unless necessary
-Date:   Wed, 20 Jun 2018 10:05:49 +0100
-Message-Id: <1529485549-5191-10-git-send-email-morten.rasmussen@arm.com>
+Subject: [PATCHv3 8/9] sched/fair: Set sd->overload when misfit
+Date:   Wed, 20 Jun 2018 10:05:48 +0100
+Message-Id: <1529485549-5191-9-git-send-email-morten.rasmussen@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529485549-5191-1-git-send-email-morten.rasmussen@arm.com>
 References: <1529485549-5191-1-git-send-email-morten.rasmussen@arm.com>
@@ -45,47 +44,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Redpath <chris.redpath@arm.com>
+From: Valentin Schneider <valentin.schneider@arm.com>
 
-When lower capacity CPUs are load balancing and considering to pull
-something from a higher capacity group, we should not pull tasks from a
-cpu with only one task running as this is guaranteed to impede progress
-for that task. If there is more than one task running, load balance in
-the higher capacity group would have already made any possible moves to
-resolve imbalance and we should make better use of system compute
-capacity by moving a task if we still have more than one running.
+Idle balance is a great opportunity to pull a misfit task. However,
+there are scenarios where misfit tasks are present but idle balance is
+prevented by the overload flag.
+
+A good example of this is a workload of n identical tasks. Let's suppose
+we have a 2+2 Arm big.LITTLE system. We then spawn 4 fairly
+CPU-intensive tasks - for the sake of simplicity let's say they are just
+CPU hogs, even when running on big CPUs.
+
+They are identical tasks, so on an SMP system they should all end at
+(roughly) the same time. However, in our case the LITTLE CPUs are less
+performing than the big CPUs, so tasks running on the LITTLEs will have
+a longer completion time.
+
+This means that the big CPUs will complete their work earlier, at which
+point they should pull the tasks from the LITTLEs. What we want to
+happen is summarized as follows:
+
+a,b,c,d are our CPU-hogging tasks
+_ signifies idling
+
+LITTLE_0 | a a a a _ _
+LITTLE_1 | b b b b _ _
+---------|-------------
+  big_0  | c c c c a a
+  big_1  | d d d d b b
+                  ^
+                  ^
+    Tasks end on the big CPUs, idle balance happens
+    and the misfit tasks are pulled straight away
+
+This however won't happen, because currently the overload flag is only
+set when there is any CPU that has more than one runnable task - which
+may very well not be the case here if our CPU-hogging workload is all
+there is to run.
+
+As such, this commit sets the overload flag in update_sg_lb_stats when
+a group is flagged as having a misfit task.
 
 cc: Ingo Molnar <mingo@redhat.com>
 cc: Peter Zijlstra <peterz@infradead.org>
 
-Signed-off-by: Chris Redpath <chris.redpath@arm.com>
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
 Signed-off-by: Morten Rasmussen <morten.rasmussen@arm.com>
 ---
- kernel/sched/fair.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ kernel/sched/fair.c  | 6 ++++--
+ kernel/sched/sched.h | 6 +++++-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index aac7b9155bc4..5d612d3906d5 100644
+index 9dd147c71dd0..aac7b9155bc4 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -8796,6 +8796,17 @@ static struct rq *find_busiest_queue(struct lb_env *env,
+@@ -8165,7 +8165,7 @@ static bool update_nohz_stats(struct rq *rq, bool force)
+  * @load_idx: Load index of sched_domain of this_cpu for load calc.
+  * @local_group: Does group contain this_cpu.
+  * @sgs: variable to hold the statistics for this group.
+- * @overload: Indicate more than one runnable task for any CPU.
++ * @overload: Indicate pullable load (e.g. >1 runnable task).
+  */
+ static inline void update_sg_lb_stats(struct lb_env *env,
+ 			struct sched_group *group, int load_idx,
+@@ -8209,8 +8209,10 @@ static inline void update_sg_lb_stats(struct lb_env *env,
+ 			sgs->idle_cpus++;
  
- 		capacity = capacity_of(i);
+ 		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
+-		    sgs->group_misfit_task_load < rq->misfit_task_load)
++		    sgs->group_misfit_task_load < rq->misfit_task_load) {
+ 			sgs->group_misfit_task_load = rq->misfit_task_load;
++			*overload = 1;
++		}
+ 	}
  
-+		/*
-+		 * For ASYM_CPUCAPACITY domains, don't pick a cpu that could
-+		 * eventually lead to active_balancing high->low capacity.
-+		 * Higher per-cpu capacity is considered better than balancing
-+		 * average load.
-+		 */
-+		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
-+			capacity_of(env->dst_cpu) < capacity &&
-+			rq->nr_running == 1)
-+			continue;
-+
- 		wl = weighted_cpuload(rq);
+ 	/* Adjust by relative CPU capacity of the group */
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 791d9badad31..6dfab618e457 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -688,7 +688,11 @@ struct root_domain {
+ 	cpumask_var_t		span;
+ 	cpumask_var_t		online;
  
- 		/*
+-	/* Indicate more than one runnable task for any CPU */
++	/*
++	 * Indicate pullable load on at least one CPU, e.g:
++	 * - More than one runnable task
++	 * - Running task is misfit
++	 */
+ 	int			overload;
+ 
+ 	/*
 -- 
 2.7.4
 
