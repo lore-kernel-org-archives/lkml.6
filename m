@@ -2,92 +2,156 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691CDC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B560CC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2412A20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:37:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pn3aPXV6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2412A20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7010C20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:37:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7010C20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932220AbeFTNhg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:37:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754101AbeFTNhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:37:33 -0400
-Received: from localhost (unknown [106.200.222.147])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B33F120846;
-        Wed, 20 Jun 2018 13:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529501853;
-        bh=KbDOPDM66ETxBSlPC8Xp7mV5cqmnvxTXsAsXbvkL+sI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pn3aPXV6Un9rEuOjMgdgaUKljQXJrNssi3W8PIR1coHjTxNLwCToS+JsVe7cHhm02
-         hH0pBkbtQU7+KwjuO0vlV7gpuoR1f5Z5qgG5yHy8uRxtHtutzdfCGrjweGXIoE2v7E
-         w6YCxO6/Uu9bKa76bChIMu/RMEkM4+bMJIiRDq38=
-Date:   Wed, 20 Jun 2018 19:07:25 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] hwrng: msm - Add support for prng v2
-Message-ID: <20180620133725.GB27187@vkoul-mobl>
-References: <20180619095430.26358-1-vkoul@kernel.org>
- <20180619095430.26358-3-vkoul@kernel.org>
- <152947431955.16708.15247307054260887941@swboyd.mtv.corp.google.com>
+        id S932368AbeFTNhv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 09:37:51 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40391 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754162AbeFTNht (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:37:49 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n5-v6so6961917wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 06:37:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zdB29D++jwbYIlk4F6LVN+rbff9R/J2ATQ36MYRS4UU=;
+        b=RFWrC39MdoTSli4TWC2UheGuX5CTDGahaepGBJTV/WIZjP6TIVqil7slh4O3kKGEvT
+         apwXrBAbVySllQPlBTPwJHl0SLqNWGEss6o+hdk4ue16RuyaR1obAVYjHCzHysG7Qp28
+         Oh5XXDG1mE/RjQODeq0XERzgCfNLoMn9COKz9rRlGSjoi2Op14v9m+Ec8uP5C11C8YCv
+         R9tMyxPWKjGeNPyui9HScfxnXTfLKnQzCTM2Ia+a+LaLuAD0MTsISlvcEL+i4dqhFkvJ
+         wzAxcwzlmj9xlcx5k1kiiap3caJoCzUpN0DRnsxvUcuubdd0KQ99SjKhDMOut9mEP3N2
+         s/dw==
+X-Gm-Message-State: APt69E1mjzHbJanlaCIOVbAQ4ScKrtCFpzr0biKrDZdwEO0k9waHSJyJ
+        Gq4PpdiHvb6msHGrrcMZA2x8qrjnto4=
+X-Google-Smtp-Source: ADUXVKJ5JufU3X3RY02NPujVcCSvHh9pHAXvqqhA+XFXjeCcXJQaKqvJpWz7bs+xY3gYLZTZRphsDA==
+X-Received: by 2002:a50:870f:: with SMTP id i15-v6mr18474902edb.218.1529501868292;
+        Wed, 20 Jun 2018 06:37:48 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id c20-v6sm2096324ede.3.2018.06.20.06.37.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 06:37:47 -0700 (PDT)
+Subject: Re: [PATCH] printk: Make CONSOLE_LOGLEVEL_QUIET configurable
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+References: <20180619115726.3098-1-hdegoede@redhat.com>
+ <20180620110335.sjzmtra2z3chvon2@pathway.suse.cz>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <f60d844d-9d3b-3154-4eec-982432c8e502@redhat.com>
+Date:   Wed, 20 Jun 2018 15:37:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152947431955.16708.15247307054260887941@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180620110335.sjzmtra2z3chvon2@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-06-18, 22:58, Stephen Boyd wrote:
-> Quoting Vinod Koul (2018-06-19 02:54:30)
-> > Qcom 8996 and later chips support prng v2 which requires to
-> > implement only .read callback for hwrng.
-> > 
-> > This version of chip has multiple Execution Environments (EE) and
-> > secure world is typically responsible for configuring the prng.
+Hi,
+
+On 20-06-18 13:03, Petr Mladek wrote:
+> On Tue 2018-06-19 13:57:26, Hans de Goede wrote:
+>> The goal of passing the "quiet" option to the kernel is for the kernel
+>> to be quiet unless something really is wrong.
+>>
+>> Sofar passing quiet has been (mostly) equivalent to passing
+>> loglevel=4 on the kernel commandline. Which means to show any messages
+>> with a level of KERN_ERR or higher severity on the console.
+>>
+>> In practice this often does not result in a quiet boot though, since
+>> there are many false-positive or otherwise harmless error messages printed,
+>> defeating the purpose of the quiet option. Esp. the ACPICA code is really
+>> bad wrt this, but there are plenty of others too.
 > 
-> Sometimes secure world is not configuring the rng though. I prefer we
-> have a DT flag for this to indicate if secure world has configured it or
-> not and then skip the init logic when the bool property is present in
-> DT. Then the DT property can be set on firmwares that are making things
-> blow up when we try to read the 'configured' register. I'd also file a
-> bug to qcom to tell them to unlock that config register for reads so
-> that things can work simpler, but who knows how that will work out.
+> I see your pain. But this sounds like a workaround for a broken code.
+> This change might just encourage people to create even more mess.
 
-I dont feel that would be required. See below..
+I've been submitting patches upstream to fix false-positive KERN_ERR
+messages for more then a year now and getting a KERN_ERR free kernel
+(on more then 1 specific model hw) is just undoable. Every release some
+new nonsense error comes up, like e.g.:
 
-> It really sounds like the hardware isn't actually different, just the
-> firmware has decided to be more strict about making reads fail now.
+https://bugzilla.redhat.com/show_bug.cgi?id=1568276
 
-So in this case base hw block seems similar but consists of multiple
-Execution Environment (EEs) and all of these contain only data
-registers. Only secure environment has configuration. Each one has its
-own register space.
+Besides this random KERN_ERR cases (of which there are plenty
+by themselves) I've also had long discussions with the ACPICA upstream
+maintainers, but they refuse to change this instead insisting that:
 
-In a case where we dont have secure world, we can point to secure
-environment with v1 ops, so driver shall configure and run.
+a) Vendors should fix there DSDTs to be perfect; and
+b) end-users should then update their BIOS to fix this
 
-Thanks
--- 
-~Vinod
+Neither of which is a realistic expectation in anyway.
+
+IOW I've tried to fix this the right way and I will keep posting patches
+to keep "dmesg --level=err" output to a minimum, but it simply is not
+feasible to get the desired quiet boot with its current configuration
+of quiet mapping to loglevel=4.
+
+>> This commit makes CONSOLE_LOGLEVEL_QUIET configurable.
+>>
+>> This for example will allow distros which want quiet to really mean quiet
+>> to set CONSOLE_LOGLEVEL_QUIET so that only messages with a higher severity
+>> then KERN_ERR (CRIT, ALERT, EMERG) get printed, avoiding an endless game
+>> of whack-a-mole silencing harmless error messages.
+> 
+> I find it a bit confusing that "quiet" would mean something different
+> on different systems.
+
+The kernel is so configurable already that I don't think this really is much
+of an issue, quiet will still mean quiet on all systems, some might just
+be a tad more quiet (or actually be quiet) compared to others.
+
+The same argument could be made for the default loglevel being configurable,
+yet it is configurable already.
+
+> Why did not you use loglevel=<whatever_you_need> instead of "quiet"?
+
+We would still need to pass quiet, to also silence e.g. the messages
+from the EDD code, see arch/x86/boot/edd.c around line 147 and further,
+so then we would need to pass:
+
+quiet loglevel=3
+
+And we would need to pass it in that order! which is ugly also this
+complicates giving people instructions to turn it off to debug
+system not-booting problems.
+
+> Alternative solution would be to add "silent" or so to calm down
+> everything. But I am afraid that any change in this area would
+> just create a mess similar to grep -s and -q options.
+
+A better alternative would be to make quiet actually does what the
+name suggests and simply unconditionally change
+CONSOLE_LOGLEVEL_QUIET from 4 to 3. I went with making this configurable
+because I expect that to be a controversial change.
+
+A third, sucky, alternative would be for Fedora to permanently
+carry a downstream patch changing the CONSOLE_LOGLEVEL_QUIET from 4
+to 3 in printk.h. That would still lead to the confusion about quiet
+not meaning the same everywhere (although I would expect e.g. Ubuntu
+to follow suit) combined with extra downstream patches which are never
+good.
+
+Regards,
+
+Hans
+
