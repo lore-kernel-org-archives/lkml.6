@@ -2,102 +2,104 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD088C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1A6C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F49920652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:16:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F49920652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E9BDB20875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:17:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PgyJSmpz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9BDB20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932862AbeFTXQt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 19:16:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:29835 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754318AbeFTXP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 19:15:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 16:15:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,249,1526367600"; 
-   d="scan'208";a="66325213"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2018 16:15:25 -0700
-From:   "Chang S. Bae" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
+        id S1754299AbeFTXRB (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 19:17:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58590 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932154AbeFTXQs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 19:16:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Pgha93p1uk2gLQMqPYJdb+ZNaSI5Au9E4sjwqK/pDAQ=; b=PgyJSmpzAHUCoygydXZ48r/ec
+        pvIpanSATyrtwL7kNdtHUO1y8CPjvuERLCbalMEXwR5mDE8gRA/lxa066ocAIn+tdpo9WGeILlFpt
+        xuo6PN39q93jgnzM7AHJEVbpZTFOrq0qybMau/LkxQ6LWnjW2rJokcM9uLnVSSXtw6ODvSbLE7yPt
+        MctszFhWibhMVSJhvMwRHY81ZGa+/5NzYsmGPV0EAc2xgheUB6SmpXu77/IjZ0zacFGWWw2IwaqJ7
+        LgqRJYhz3/AqwDus2Kouz1zDS/oAw7rqDmE+Zk9vfkK/Bbdp2r2TsmgZySswP1/MX3aHAk/xOXE37
+        ccGKAmprw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVmLE-0003kB-8M; Wed, 20 Jun 2018 23:16:44 +0000
+Subject: Re: [PATCH 1/3] vmalloc: Add __vmalloc_node_try_addr function
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 3/7] x86/fsgsbase/64: Use FS/GS base helpers in core dump
-Date:   Wed, 20 Jun 2018 16:15:02 -0700
-Message-Id: <1529536506-26237-4-git-send-email-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com>
-References: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com>
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kristen Accardi <kristen.c.accardi@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
+References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
+ <1529532570-21765-2-git-send-email-rick.p.edgecombe@intel.com>
+ <12014310-19f7-dc31-d983-9c7e00c8b446@infradead.org>
+ <CAGXu5j+RgbMKqiBcsWMOZ-ci-rT19imgCoHtPKgDURF1tC+COg@mail.gmail.com>
+ <778b2a1b-d810-815b-0fba-8a1d191acd49@infradead.org>
+ <CAGXu5j+TpZict=pSenHQ+_6V2fgoDrAGiB8sCd6bk-tb_Ec0zw@mail.gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c26266cf-1f90-2688-d131-501dbaf9460a@infradead.org>
+Date:   Wed, 20 Jun 2018 16:16:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5j+TpZict=pSenHQ+_6V2fgoDrAGiB8sCd6bk-tb_Ec0zw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When new FSGSBASE instructions enabled, this read will
-become faster.
+On 06/20/2018 04:05 PM, Kees Cook wrote:
+> On Wed, Jun 20, 2018 at 3:44 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>> On 06/20/2018 03:35 PM, Kees Cook wrote:
+>>> On Wed, Jun 20, 2018 at 3:16 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>>>> On 06/20/2018 03:09 PM, Rick Edgecombe wrote:
+>>>>> +void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
+>>>>> +                     gfp_t gfp_mask, pgprot_t prot, unsigned long vm_flags,
+>>>>> +                     int node, const void *caller)
+>>>>> +{
+>>>>
+>>>> so this isn't optional, eh?  You are going to force it on people because?
+>>>
+>>> RANDOMIZE_BASE isn't optional either. :) This improves the module
+>>> address entropy with (what seems to be) no down-side, so yeah, I think
+>>> it should be non-optional. :)
+>>
+>> In what kernel tree is RANDOMIZE_BASE not optional?
+> 
+> Oh, sorry, I misspoke: on by default. It _is_ possible to turn it off.
+> 
+> But patch #2 does check for RANDOMIZE_BASE, so it should work as expected, yes?
+> 
+> Or did you want even this helper function to be compiled out without it?
 
-Based-on-code-from: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
----
- arch/x86/include/asm/elf.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks, I missed it.  :(
 
-diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
-index 0d157d2..49acefb 100644
---- a/arch/x86/include/asm/elf.h
-+++ b/arch/x86/include/asm/elf.h
-@@ -10,6 +10,7 @@
- #include <asm/ptrace.h>
- #include <asm/user.h>
- #include <asm/auxvec.h>
-+#include <asm/fsgsbase.h>
- 
- typedef unsigned long elf_greg_t;
- 
-@@ -205,7 +206,6 @@ void set_personality_ia32(bool);
- 
- #define ELF_CORE_COPY_REGS(pr_reg, regs)			\
- do {								\
--	unsigned long base;					\
- 	unsigned v;						\
- 	(pr_reg)[0] = (regs)->r15;				\
- 	(pr_reg)[1] = (regs)->r14;				\
-@@ -228,8 +228,8 @@ do {								\
- 	(pr_reg)[18] = (regs)->flags;				\
- 	(pr_reg)[19] = (regs)->sp;				\
- 	(pr_reg)[20] = (regs)->ss;				\
--	rdmsrl(MSR_FS_BASE, base); (pr_reg)[21] = base;		\
--	rdmsrl(MSR_KERNEL_GS_BASE, base); (pr_reg)[22] = base;	\
-+	(pr_reg)[21] = read_fsbase();				\
-+	(pr_reg)[22] = read_inactive_gsbase();			\
- 	asm("movl %%ds,%0" : "=r" (v)); (pr_reg)[23] = v;	\
- 	asm("movl %%es,%0" : "=r" (v)); (pr_reg)[24] = v;	\
- 	asm("movl %%fs,%0" : "=r" (v)); (pr_reg)[25] = v;	\
+Looks fine.
+
 -- 
-2.7.4
-
+~Randy
