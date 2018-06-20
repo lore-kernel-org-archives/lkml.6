@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 868ADC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503F8C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25E092083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056392083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:28:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mgOTohEa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E092083A
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rROkX0Ph"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 056392083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933488AbeFTV2V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 17:28:21 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48744 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933115AbeFTV2S (ORCPT
+        id S933524AbeFTV2X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 17:28:23 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:41424 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933459AbeFTV2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 17:28:18 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KLOXIH065881;
-        Wed, 20 Jun 2018 21:27:09 GMT
+        Wed, 20 Jun 2018 17:28:19 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KLO6Zb134489;
+        Wed, 20 Jun 2018 21:27:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id; s=corp-2017-10-26;
- bh=Rc31RxZ84M1CfmBcvrBg/6AhWu5Oswy7j/kWflOjw1Y=;
- b=mgOTohEaoqYdcEasULOto2UFLnv5VNzV7CyhETTG2qpgMMO1tOT9tOIDXi0YXJR+xUZY
- PtmIh0fAiDQFQnMxMosVlN/o1PUTjKf8L1iIu/GiEw6/cQRixaZhbNnhLXG1eXb3BeBW
- H+Dip56hOMwkOSlAKJV/e/NtpHemQJAMsRtzXTODroaxsI16O+Nzy4mBWty0mayP0V1i
- b5asp5p9/TI+El+jiANVUMPRYYOibMTz71ZyrGtlQHFYTbY/AC9Lho0afYhiqRHU1vkX
- Rn5Lwzsl/6JnpaiD4BgfVfw0pJpQl9ks2Wpdv9s4pxbDkgY6Oxys7ubbpMEoSEPIPD6P oQ== 
+ date : message-id : in-reply-to : references; s=corp-2017-10-26;
+ bh=KTfTGJuEknVpsQbIpnFslikTrYwobpFQwyRMEWyqxcg=;
+ b=rROkX0Pha+rhdNM0M0wqEGdTx0hVgOBjaLGS8o7I82S99D2PzJ9OfISTxwgZbSikI75/
+ mLAE4A8I5z7V1KUcB9nfs/SREzxG+HqD/k0eGUQCFC77RII1kR5oghbaylX2IijUQOdF
+ 1HtLaT+Sdxx3XAil/wS3y1sDzoC41bP89UmF+VAXrxPHXln1KkT3gojviGjAcHYK599E
+ yBdLMUD7+tZwMqxTiehOix5r2BndhOjemboPwMj2Fjws5t6FESGgKsFaFa5t84lNNCCF
+ efL1n8HPGNXXCI1KUNtHV/Q+AAGjhL3K2lStOtLIVAjX+I9SuvLiQbvkPdh8vRyZ/Jl0 jA== 
 Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwxa3p-1
+        by aserp2130.oracle.com with ESMTP id 2jmr2mpewd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 21:27:09 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5KLR8Jn013299
+        Wed, 20 Jun 2018 21:27:10 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5KLR8Dx013300
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Wed, 20 Jun 2018 21:27:08 GMT
 Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5KLR5bG026904;
-        Wed, 20 Jun 2018 21:27:06 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5KLR7WI026522;
+        Wed, 20 Jun 2018 21:27:07 GMT
 Received: from xakep.us.oracle.com (/10.39.216.167)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Jun 2018 14:27:05 -0700
+        with ESMTP ; Wed, 20 Jun 2018 14:27:06 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -58,10 +58,12 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
         douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: [PATCH v11 0/6] Early boot time stamps for x86
-Date:   Wed, 20 Jun 2018 17:26:54 -0400
-Message-Id: <20180620212700.29178-1-pasha.tatashin@oracle.com>
+Subject: [PATCH v11 1/6] x86/tsc: redefine notsc to behave as tsc=unstable
+Date:   Wed, 20 Jun 2018 17:26:55 -0400
+Message-Id: <20180620212700.29178-2-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180620212700.29178-1-pasha.tatashin@oracle.com>
+References: <20180620212700.29178-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
@@ -72,140 +74,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-changelog
----------
-v11 - v10
-	- Addressed all the comments from Thomas Gleixner.
-	- I added one more patch:
-	  "x86/tsc: prepare for early sched_clock" which fixes a problem
-	  that I discovered while testing. I am not particularly happy with
-	  the fix, as it adds a new argument that is used only in one
-	  place, but if you have a suggestion for a different approach on
-	  how to address this problem please let me know.
+Currently, notsc kernel parameter disables the use of tsc register by
+sched_clock(). However, this parameter does not prevent linux from
+accessing tsc in other places in kernel.
 
-v10 - v9
-	- Added another patch to this series that removes dependency
-	  between KVM clock, and memblock allocator. The benefit is that
-	  all clocks can now be initialized even earlier.
-v9 - v8
-	- Addressed more comments from Dou Liyang
+The only rational to boot with notsc is to avoid timing discrepancies on
+multi-socket systems where different tsc frequencies may present, and thus
+fallback to jiffies for clock source.
 
-v8 - v7
-	- Addressed comments from Dou Liyang:
-	- Moved tsc_early_init() and tsc_early_fini() to be all inside
-	  tsc.c, and changed them to be static.
-	- Removed warning when notsc parameter is used.
-	- Merged with:
-	  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+However, there is another method to solve the above problem, it is to boot
+with tsc=unstable parameter. This parameter allows sched_clock() to use tsc
+but in case tsc is outside of expected interval it is corrected back to a
+sane value.
 
-v7 - v6
-	- Removed tsc_disabled flag, now notsc is equivalent of
-	  tsc=unstable
-	- Simplified changes to sched/clock.c, by removing the
-	  sched_clock_early() and friends as requested by Peter Zijlstra.
-	  We know always use sched_clock()
-	- Modified x86 sched_clock() to return either early boot time or
-	  regular.
-	- Added another example why ealry boot time is important
+This is why there is no reason to keep notsc, and it can be removed. But,
+for compatibility reasons we will keep this parameter but change its
+definition to be the same as tsc=unstable.
 
-v5 - v6
-	- Added a new patch:
-		time: sync read_boot_clock64() with persistent clock
-	  Which fixes missing __init macro, and enabled time discrepancy
-	  fix that was noted by Thomas Gleixner
-	- Split "x86/time: read_boot_clock64() implementation" into a
-	  separate patch
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Reviewed-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+---
+ .../admin-guide/kernel-parameters.txt          |  2 --
+ Documentation/x86/x86_64/boot-options.txt      |  4 +---
+ arch/x86/kernel/tsc.c                          | 18 +++---------------
+ 3 files changed, 4 insertions(+), 20 deletions(-)
 
-v4 - v5
-	- Fix compiler warnings on systems with stable clocks.
-
-v3 - v4
-	- Fixed tsc_early_fini() call to be in the 2nd patch as reported
-	  by Dou Liyang
-	- Improved comment before __use_sched_clock_early to explain why
-	  we need both booleans.
-	- Simplified valid_clock logic in read_boot_clock64().
-
-v2 - v3
-	- Addressed comment from Thomas Gleixner
-	- Timestamps are available a little later in boot but still much
-	  earlier than in mainline. This significantly simplified this
-	  work.
-
-v1 - v2
-	In patch "x86/tsc: tsc early":
-	- added tsc_adjusted_early()
-	- fixed 32-bit compile error use do_div()
-
-The early boot time stamps were discussed recently in these threads:
-http://lkml.kernel.org/r/1527672059-6225-1-git-send-email-feng.tang@intel.com
-http://lkml.kernel.org/r/1527672059-6225-2-git-send-email-feng.tang@intel.com
-
-I updated my series to the latest mainline and sending it again.
-
-Peter mentioned he did not like patch 6,7, and we can discuss for a better
-way to do that, but I think patches 1-5 can be accepted separetly, since
-they already enable early timestamps on platforms where sched_clock() is
-available early. Such as KVM.
-
-Adding early boot time stamps support for x86 machines.
-SPARC patches for early boot time stamps are already integrated into
-mainline linux.
-
-Sample output
--------------
-Before:
-https://paste.ubuntu.com/26133428/
-
-After:
-https://paste.ubuntu.com/26133523/
-
-For exaples how early time stamps are used, see this work:
-Example 1:
-https://lwn.net/Articles/734374/
-- Without early boot time stamps we would not know about the extra time
-  that is spent zeroing struct pages early in boot even when deferred
-  page initialization.
-
-Example 2:
-https://patchwork.kernel.org/patch/10021247/
-- If early boot timestamps were available, the engineer who introduced
-  this bug would have noticed the extra time that is spent early in boot.
-Pavel Tatashin (7):
-  x86/tsc: remove tsc_disabled flag
-  time: sync read_boot_clock64() with persistent clock
-  x86/time: read_boot_clock64() implementation
-  sched: early boot clock
-  kvm/x86: remove kvm memblock dependency
-  x86/paravirt: add active_sched_clock to pv_time_ops
-  x86/tsc: use tsc early
-
-Example 3:
-http://lkml.kernel.org/r/20180615155733.1175-1-pasha.tatashin@oracle.com
-- Needed early time stamps to show improvement
-
-Pavel Tatashin (6):
-  x86/tsc: redefine notsc to behave as tsc=unstable
-  kvm/x86: remove kvm memblock dependency
-  time: replace read_boot_clock64() with
-    read_persistent_wall_and_boot_offset()
-  x86/tsc: prepare for early sched_clock.
-  sched: early boot clock
-  x86/tsc: use tsc early
-
- .../admin-guide/kernel-parameters.txt         |  2 -
- Documentation/x86/x86_64/boot-options.txt     |  4 +-
- arch/arm/kernel/time.c                        | 12 +--
- arch/s390/kernel/time.c                       | 11 ++-
- arch/x86/kernel/kvm.c                         |  1 +
- arch/x86/kernel/kvmclock.c                    | 64 ++-----------
- arch/x86/kernel/setup.c                       |  7 +-
- arch/x86/kernel/tsc.c                         | 89 +++++++++++--------
- include/linux/timekeeping.h                   |  3 +-
- kernel/sched/clock.c                          | 10 ++-
- kernel/time/timekeeping.c                     | 61 +++++++------
- 11 files changed, 117 insertions(+), 147 deletions(-)
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index efc7aa7a0670..f7123d28f318 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2835,8 +2835,6 @@
+ 
+ 	nosync		[HW,M68K] Disables sync negotiation for all devices.
+ 
+-	notsc		[BUGS=X86-32] Disable Time Stamp Counter
+-
+ 	nowatchdog	[KNL] Disable both lockup detectors, i.e.
+ 			soft-lockup and NMI watchdog (hard-lockup).
+ 
+diff --git a/Documentation/x86/x86_64/boot-options.txt b/Documentation/x86/x86_64/boot-options.txt
+index 8d109ef67ab6..66114ab4f9fe 100644
+--- a/Documentation/x86/x86_64/boot-options.txt
++++ b/Documentation/x86/x86_64/boot-options.txt
+@@ -92,9 +92,7 @@ APICs
+ Timing
+ 
+   notsc
+-  Don't use the CPU time stamp counter to read the wall time.
+-  This can be used to work around timing problems on multiprocessor systems
+-  with not properly synchronized CPUs.
++  Deprecated, use tsc=unstable instead.
+ 
+   nohpet
+   Don't use the HPET timer.
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 74392d9d51e0..186395041725 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -38,11 +38,6 @@ EXPORT_SYMBOL(tsc_khz);
+  */
+ static int __read_mostly tsc_unstable;
+ 
+-/* native_sched_clock() is called before tsc_init(), so
+-   we must start with the TSC soft disabled to prevent
+-   erroneous rdtsc usage on !boot_cpu_has(X86_FEATURE_TSC) processors */
+-static int __read_mostly tsc_disabled = -1;
+-
+ static DEFINE_STATIC_KEY_FALSE(__use_tsc);
+ 
+ int tsc_clocksource_reliable;
+@@ -248,8 +243,7 @@ EXPORT_SYMBOL_GPL(check_tsc_unstable);
+ #ifdef CONFIG_X86_TSC
+ int __init notsc_setup(char *str)
+ {
+-	pr_warn("Kernel compiled with CONFIG_X86_TSC, cannot disable TSC completely\n");
+-	tsc_disabled = 1;
++	mark_tsc_unstable("boot parameter notsc");
+ 	return 1;
+ }
+ #else
+@@ -1307,7 +1301,7 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 
+ static int __init init_tsc_clocksource(void)
+ {
+-	if (!boot_cpu_has(X86_FEATURE_TSC) || tsc_disabled > 0 || !tsc_khz)
++	if (!boot_cpu_has(X86_FEATURE_TSC) || !tsc_khz)
+ 		return 0;
+ 
+ 	if (tsc_unstable)
+@@ -1414,12 +1408,6 @@ void __init tsc_init(void)
+ 		set_cyc2ns_scale(tsc_khz, cpu, cyc);
+ 	}
+ 
+-	if (tsc_disabled > 0)
+-		return;
+-
+-	/* now allow native_sched_clock() to use rdtsc */
+-
+-	tsc_disabled = 0;
+ 	static_branch_enable(&__use_tsc);
+ 
+ 	if (!no_sched_irq_time)
+@@ -1455,7 +1443,7 @@ unsigned long calibrate_delay_is_known(void)
+ 	int constant_tsc = cpu_has(&cpu_data(cpu), X86_FEATURE_CONSTANT_TSC);
+ 	const struct cpumask *mask = topology_core_cpumask(cpu);
+ 
+-	if (tsc_disabled || !constant_tsc || !mask)
++	if (!constant_tsc || !mask)
+ 		return 0;
+ 
+ 	sibling = cpumask_any_but(mask, cpu);
 -- 
 2.17.1
 
