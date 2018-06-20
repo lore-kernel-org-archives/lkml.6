@@ -3,101 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B1CC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52396C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78664208B3
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78664208B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 17A93208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:30:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A93208CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932223AbeFTIaA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:30:00 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:52755 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754468AbeFTI3s (ORCPT
+        id S932385AbeFTIai (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:30:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59448 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750793AbeFTIad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:29:48 -0400
-X-UUID: f731c00423ed4851a60e210f1862f66b-20180620
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <stu.hsieh@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 33925274; Wed, 20 Jun 2018 16:19:43 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 20 Jun 2018 16:19:42 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 20 Jun 2018 16:19:42 +0800
-From:   Stu Hsieh <stu.hsieh@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v7 08/29] drm/mediatek: add component DSI2
-Date:   Wed, 20 Jun 2018 16:19:10 +0800
-Message-ID: <1529482771-2153-9-git-send-email-stu.hsieh@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
-References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
+        Wed, 20 Jun 2018 04:30:33 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fVXqM-0000Sm-Bb; Wed, 20 Jun 2018 09:47:54 +0200
+Date:   Wed, 20 Jun 2018 09:47:53 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+cc:     Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
+        Tony Luck <tony.luck@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Don Zickus <dzickus@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Christoffer Dall <cdall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        iommu@lists.linux-foundation.org
+Subject: Re: [RFC PATCH 17/23] watchdog/hardlockup/hpet: Convert the timer's
+ interrupt to NMI
+In-Reply-To: <20180620001535.GA27531@voyager>
+Message-ID: <alpine.DEB.2.21.1806200940210.10546@nanos.tec.linutronix.de>
+References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com> <alpine.DEB.2.21.1806131128570.2280@nanos.tec.linutronix.de> <20180615020314.GA11625@voyager>
+ <alpine.DEB.2.21.1806151029210.2079@nanos.tec.linutronix.de> <20180616005103.GC6659@voyager> <alpine.DEB.2.21.1806161517050.1582@nanos.tec.linutronix.de> <20180620001535.GA27531@voyager>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the component DSI2
+On Tue, 19 Jun 2018, Ricardo Neri wrote:
+> On Sat, Jun 16, 2018 at 03:24:49PM +0200, Thomas Gleixner wrote:
+> > The status register is useless in case of MSI. MSI is edge triggered ....
+> > 
+> > The only register which gives you proper information is the counter
+> > register itself. That adds an massive overhead to each NMI, because the
+> > counter register access is synchronized to the HPET clock with hardware
+> > magic. Plus on larger systems, the HPET access is cross node and even
+> > slower.
+> 
+> It starts to sound that the HPET is too slow to drive the hardlockup detector.
+> 
+> Would it be possible to envision a variant of this implementation? In this
+> variant, the HPET only targets a single CPU. The actual hardlockup detector
+> is implemented by this single CPU sending interprocessor interrupts to the
+> rest of the CPUs.
 
-Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 ++
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 1 +
- 2 files changed, 3 insertions(+)
+And these IPIs must be NMIs which need to have a software based indicator
+that the watchdog needs to be checked, which is going to create yet another
+can of race conditions and in the worst case 'unknown NMI' splats. Not
+pretty either.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-index cc74b1a7278c..071f9f5aefea 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-@@ -227,6 +227,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
- 	[DDP_COMPONENT_DPI1]	= { MTK_DPI,		1, NULL },
- 	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
- 	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
-+	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		2, NULL },
- 	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
- 	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
- 	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
-@@ -278,6 +279,7 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
- 	    comp_id == DDP_COMPONENT_DPI0 ||
- 	    comp_id == DDP_COMPONENT_DPI1 ||
- 	    comp_id == DDP_COMPONENT_DSI0 ||
-+	    comp_id == DDP_COMPONENT_DSI2 ||
- 	    comp_id == DDP_COMPONENT_PWM0) {
- 		comp->regs = NULL;
- 		comp->clk = NULL;
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-index 54c99c169093..8d152b337f15 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-@@ -50,6 +50,7 @@ enum mtk_ddp_comp_id {
- 	DDP_COMPONENT_DPI1,
- 	DDP_COMPONENT_DSI0,
- 	DDP_COMPONENT_DSI1,
-+	DDP_COMPONENT_DSI2,
- 	DDP_COMPONENT_GAMMA,
- 	DDP_COMPONENT_OD0,
- 	DDP_COMPONENT_OD1,
--- 
-2.12.5
+Thanks,
 
+	tglx
