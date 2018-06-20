@@ -2,80 +2,92 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA51AC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F7AC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B56420871
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:33:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KLqx1G7K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B56420871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 78F2720846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:34:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78F2720846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeFTGc6 (ORCPT
+        id S1752792AbeFTGe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 02:32:58 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:37242 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750852AbeFTGcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 02:32:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=G4gbKSe1h+lamzfspMEaf0bXM4LZ2DuCoS/0qNPy/Mg=;
-        b=KLqx1G7Kg/0X34vxUffhKkLKSoD+g93qztIpNBJyoT/8VU7XjYaGgfBCwtchgKIPmT5rxxLU3YjzpvGHGpcjGQqoDb9jovkAj4fY60SGGk4rg7IlsK/PyZzfhUtv6FKTm6ICH8lnlkbgnUwaISU+GhnRu/u71w2yG72QNHT7Vg8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fVWfg-0002Ue-61; Wed, 20 Jun 2018 08:32:48 +0200
-Date:   Wed, 20 Jun 2018 08:32:48 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Pramod Kumar <pramod.kumar@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mdio-mux-gpio: Remove VLA usage
-Message-ID: <20180620063248.GA9303@lunn.ch>
-References: <20180530204830.GA24884@beast>
- <20180530205712.GB16286@lunn.ch>
- <CAGXu5j+sh-gSXvGg25oN9Xsyw1W=i177=52ZXPV3OvEym6nr7g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5j+sh-gSXvGg25oN9Xsyw1W=i177=52ZXPV3OvEym6nr7g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 20 Jun 2018 02:34:27 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:34098 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750827AbeFTGeW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 02:34:22 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w5K6XA8n013331;
+        Wed, 20 Jun 2018 09:33:10 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
+        id EEAFC62FF8; Wed, 20 Jun 2018 09:33:09 +0300 (IDT)
+From:   avifishman70@gmail.com
+To:     gregkh@linuxfoundation.org, stern@rowland.harvard.edu
+Cc:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
+        yuenn@google.com, brendanhiggins@google.com,
+        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
+        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
+        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
+        digetx@gmail.com, kstewart@linuxfoundation.org,
+        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, Avi Fishman <AviFishman70@gmail.com>
+Subject: [PATCH v7 2/3] dt-bindings: usb: new ehci-npcm7xx dt
+Date:   Wed, 20 Jun 2018 09:33:05 +0300
+Message-Id: <20180620063306.134820-3-avifishman70@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180620063306.134820-1-avifishman70@gmail.com>
+References: <20180620063306.134820-1-avifishman70@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 09:44:27PM -0700, Kees Cook wrote:
-> On Wed, May 30, 2018 at 1:57 PM, Andrew Lunn <andrew@lunn.ch> wrote:
-> > On Wed, May 30, 2018 at 01:48:30PM -0700, Kees Cook wrote:
-> >> In the quest to remove all stack VLA usage from the kernel[1], this
-> >> moves the allocation into struct mdio_mux_gpio_state during probe.
-> >>
-> >> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> >>
-> >> Signed-off-by: Kees Cook <keescook@chromium.org>
-> >> ---
-> >> v2: allocate array as part of structure (Andrew Lunn)
-> >
-> > Hi Kees
-> >
-> > This looks much better, thanks.
-> >
-> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> 
-> Thanks! Who can take this patch? Linus?
+From: Avi Fishman <AviFishman70@gmail.com>
 
-David Miller.
+Device Tree documentation for Nuvoton npcm7xx EHCI.
 
-Does it cleanly apply to net-next?
+Signed-off-by: Avi Fishman <AviFishman70@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+---
+ Documentation/devicetree/bindings/usb/npcm7xx-usb.txt | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
 
-     Andrew
- 
+diff --git a/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt b/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+new file mode 100644
+index 000000000000..5a0f1f14fbfa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
+@@ -0,0 +1,18 @@
++Nuvoton NPCM7XX SoC USB controllers:
++-----------------------------
++
++EHCI:
++-----
++
++Required properties:
++- compatible: "nuvoton,npcm750-ehci"
++- interrupts: Should contain the EHCI interrupt
++- reg:        Physical address and length of the register set for the device
++
++Example:
++
++	ehci1: usb@f0806000 {
++		compatible = "nuvoton,npcm750-ehci";
++		reg = <0xf0806000 0x1000>;
++		interrupts = <0 61 4>;
++	};
+-- 
+2.14.1
+
