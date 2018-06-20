@@ -3,32 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCB8C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D01C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A3F20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:09:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A3F20874
+	by mail.kernel.org (Postfix) with ESMTP id DDE6720874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:09:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDE6720874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933622AbeFTWJd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 18:09:33 -0400
+        id S933712AbeFTWJ6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 18:09:58 -0400
 Received: from mga01.intel.com ([192.55.52.88]:19370 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933227AbeFTWJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 18:09:31 -0400
+        id S933578AbeFTWJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 18:09:32 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 15:09:30 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 15:09:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,249,1526367600"; 
-   d="scan'208";a="66312704"
+   d="scan'208";a="66312716"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-HP-Z240-Tower-Workstation.jf.intel.com) ([10.7.197.56])
-  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2018 15:09:30 -0700
+  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2018 15:09:32 -0700
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
@@ -36,155 +37,144 @@ To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
 Cc:     kristen.c.accardi@intel.com, dave.hansen@intel.com,
         arjan.van.de.ven@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 0/3] KASLR feature to randomize each loadable module
-Date:   Wed, 20 Jun 2018 15:09:27 -0700
-Message-Id: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
+Subject: [PATCH 2/3] x86/modules: Increase randomization for modules
+Date:   Wed, 20 Jun 2018 15:09:29 -0700
+Message-Id: <1529532570-21765-3-git-send-email-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
+References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-This is to add a KASLR feature for stronger randomization for the location of
-the text sections of dynamically loaded kernel modules.
+This changes the behavior of the KASLR logic for allocating memory for the text
+sections of loadable modules. It randomizes the location of each module text
+section with about 18 bits of entropy in typical use. This is enabled on X86_64
+only. For 32 bit, the behavior is unchanged.
 
-Today the RANDOMIZE_BASE feature randomizes the base address where the module
-allocations begin with 10 bits of entropy. From here, a highly deterministic
-algorithm allocates space for the modules as they are loaded and un-loaded. If
-an attacker can predict the order and identities for modules that will be
-loaded, then a single text address leak can give the attacker access to the
-locations of all the modules.
-
-This patch changes the module loading KASLR algorithm to randomize the position
-of each module text section allocation with at least 18 bits of entropy in the
-typical case. It used on x86_64 only for now.
-
-Allocation Algorithm
-====================
 The algorithm evenly breaks the module space in two, a random area and a backup
 area. For module text allocations, it first tries to allocate up to 10 randomly
 located starting pages inside the random section. If this fails, it will
 allocate in the backup area. The backup area base will be offset in the same
-way as current algorithm does for the base area, which has 10 bits of entropy.
+way as the current algorithm does for the base area, 1024 possible locations.
 
-Randomness and Fragmentation
-============================
-The advantages of this algorithm over the existing one are higher entropy and
-that each module text section is randomized in relation to the other sections,
-so that if one location is leaked the location of other sections cannot be
-inferred.
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ arch/x86/include/asm/pgtable_64_types.h |  1 +
+ arch/x86/kernel/module.c                | 80 ++++++++++++++++++++++++++++++---
+ 2 files changed, 76 insertions(+), 5 deletions(-)
 
-However, unlike the existing algorithm, the amount of randomness provided has a
-dependency on the number of modules allocated and the sizes of the modules text
-sections.
-
-The following estimates are based on simulations done with core section
-allocation sizes recorded from all in-tree x86_64 modules, and with a module
-space size of 1GB (the size when KASLR is enabled). The entropy provided for the
-Nth allocation will come from three sources of randomness, the address picked
-for the random area, the probability the section will be allocated in the backup
-area and randomness from the number of modules already allocated in the backup
-area. For computing a lower bound entropy in the following calculations, the
-randomness of the modules already in the backup area, or overlapping from the
-random area, is ignored since it is usually small for small numbers of modules
-and will only increase the entropy.
-
-For probability of the Nth module being in the backup area, p, a lower bound
-entropy estimate is calculated here as:
-Entropy = -((1-p)*log2((1-p)/(1073741824/4096)) + p*log2(p/1024))
-
-Nth Modules	Probability Nth in Backup (p<0.01)	Entropy (bits)
-200		0.00015658918				18.0009525805
-300		0.00061754750				18.0025340517
-400		0.00092257674				18.0032512276
-500		0.00143354729				18.0041398771
-600		0.00199926260				18.0048133611
-700		0.00303342527				18.0054763676
-800		0.00375362443				18.0056209924
-900		0.00449013182				18.0055609282
-1000		0.00506372420				18.0053909502
-2000		0.01655518527				17.9891937614
-
-For the subclass of control flow attacks, a wrong guess can often crash the
-process or even the system if is wrong, so the probability of the first guess
-being right can be more important than the Nth guess. KASLR schemes usually have
-equal probability for each possible position, but in this scheme that is not the
-case. So a more conservative comparison to existing schemes is the amount of
-information that would have to be guessed correctly for the position that has
-the highest probability for having the Nth module allocated (as that would be
-the attackers best guess).
-
-This next table shows the bits that would have to be guessed for a most likely
-position for the Nth module, assuming no other address has leaked:
-
-Min Info = MIN(-log2(p/1024), -log2((1-p)/(1073741824/4096)))
-
-Nth Modules	Min Info		Random Area 		Backup Area
-200		18.00022592813		18.00022592813		22.64072780584
-300		18.00089120792		18.00089120792		20.66116227856
-400		18.00133161125		18.00133161125		20.08204345143
-500		18.00206965540		18.00206965540		19.44619478537
-600		18.00288721335		18.00288721335		18.96631630463
-700		18.00438295865		18.00438295865		18.36483651470
-800		18.00542552443		18.00542552443		18.05749997547
-900		17.79902648177		18.00649247790		17.79902648177
-1000		17.62558545623		18.00732396876		17.62558545623
-2000		15.91657303366		18.02408399587		15.91657303366
-
-So the defensive strength of this algorithm in typical usage (<800 modules) for
-x86_64 should be at least 18 bits, even if an address from the random area
-leaks.
-
-If an address from a section in the backup area leaks however, the remaining
-information that would have to be guessed is reduced. To get at a lower bound,
-the following assumes the address of the leak is the first module in the backup
-area and ignores the probability of guessing the identity.
-
-Nth Modules	P of At Least 2 in Backup (p<0.01)	Info (bits)
-200		0.00005298177				14.20414443057
-300		0.00005298177				14.20414443057
-400		0.00034665456				11.49421363374
-500		0.00310895422				8.32935491164
-600		0.01299838019				6.26552433915
-700		0.04042051772				4.62876838940
-800		0.09812051823				3.34930133623
-900		0.19325547277				2.37141882470
-1000		0.32712329132				1.61209361130
-
-So the in typical usage, the entropy will still be decent if an address in the
-backup leaks as well.
-
-As for fragmentation, this algorithm reduces the average number of modules that
-can be loaded without an allocation failure by about 6% (~17000 to ~16000)
-(p<0.05). It can also reduce the largest module executable section that can be
-loaded by half to ~500MB in the worst case.
-
-Implementation
-==============
-This patch adds a new function in vmalloc (__vmalloc_node_try_addr) that tries
-to allocate at a specific address. In the x86 module loader, this new vmalloc
-function is used to implement the algorithm described above.
-
-The new __vmalloc_node_try_addr function uses the existing function 
-__vmalloc_node_range, in order to introduce this algorithm with the least
-invasive change. The side effect is that each time there is a collision when
-trying to allocate in the random area a TLB flush will be triggered. There is 
-a more complex, more efficient implementation that can be used instead if 
-there is interest in improving performance.
-
-
-Rick Edgecombe (3):
-  vmalloc: Add __vmalloc_node_try_addr function
-  x86/modules: Increase randomization for modules
-  vmalloc: Add debugfs modfraginfo
-
- arch/x86/include/asm/pgtable_64_types.h |   1 +
- arch/x86/kernel/module.c                |  80 +++++++++++++++--
- include/linux/vmalloc.h                 |   3 +
- mm/vmalloc.c                            | 151 +++++++++++++++++++++++++++++++-
- 4 files changed, 227 insertions(+), 8 deletions(-)
-
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 054765a..a98708a 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -141,6 +141,7 @@ extern unsigned int ptrs_per_p4d;
+ /* The module sections ends with the start of the fixmap */
+ #define MODULES_END		_AC(0xffffffffff000000, UL)
+ #define MODULES_LEN		(MODULES_END - MODULES_VADDR)
++#define MODULES_RAND_LEN	(MODULES_LEN/2)
+ 
+ #define ESPFIX_PGD_ENTRY	_AC(-2, UL)
+ #define ESPFIX_BASE_ADDR	(ESPFIX_PGD_ENTRY << P4D_SHIFT)
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index f58336a..833ea81 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -77,6 +77,71 @@ static unsigned long int get_module_load_offset(void)
+ }
+ #endif
+ 
++static unsigned long get_module_area_base(void)
++{
++	return MODULES_VADDR + get_module_load_offset();
++}
++
++#if defined(CONFIG_X86_64) && defined(CONFIG_RANDOMIZE_BASE)
++static unsigned long get_module_vmalloc_start(void)
++{
++	if (kaslr_enabled())
++		return MODULES_VADDR + MODULES_RAND_LEN
++						+ get_module_load_offset();
++	else
++		return get_module_area_base();
++}
++
++static void *try_module_alloc(unsigned long addr, unsigned long size)
++{
++	return __vmalloc_node_try_addr(addr, size, GFP_KERNEL,
++						PAGE_KERNEL_EXEC, 0,
++						NUMA_NO_NODE,
++						__builtin_return_address(0));
++}
++
++/*
++ * Try to allocate in 10 random positions starting in the random part of the
++ * module space. If these fail, return NULL.
++ */
++static void *try_module_randomize_each(unsigned long size)
++{
++	void *p = NULL;
++	unsigned int i;
++	unsigned long offset;
++	unsigned long addr;
++	unsigned long end;
++	const unsigned long nr_mod_positions = MODULES_RAND_LEN / MODULE_ALIGN;
++
++	if (!kaslr_enabled())
++		return NULL;
++
++	for (i = 0; i < 10; i++) {
++		offset = (get_random_long() % nr_mod_positions) * MODULE_ALIGN;
++		addr = (unsigned long)MODULES_VADDR + offset;
++		end = addr + size;
++
++		if (end > addr && end < MODULES_END) {
++			p = try_module_alloc(addr, size);
++
++			if (p)
++				return p;
++		}
++	}
++	return NULL;
++}
++#else
++static unsigned long get_module_vmalloc_start(void)
++{
++	return get_module_area_base();
++}
++
++static void *try_module_randomize_each(unsigned long size)
++{
++	return NULL;
++}
++#endif
++
+ void *module_alloc(unsigned long size)
+ {
+ 	void *p;
+@@ -84,11 +149,16 @@ void *module_alloc(unsigned long size)
+ 	if (PAGE_ALIGN(size) > MODULES_LEN)
+ 		return NULL;
+ 
+-	p = __vmalloc_node_range(size, MODULE_ALIGN,
+-				    MODULES_VADDR + get_module_load_offset(),
+-				    MODULES_END, GFP_KERNEL,
+-				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+-				    __builtin_return_address(0));
++	p = try_module_randomize_each(size);
++
++	if (!p)
++		p = __vmalloc_node_range(size, MODULE_ALIGN,
++						get_module_vmalloc_start(),
++						MODULES_END, GFP_KERNEL,
++						PAGE_KERNEL_EXEC, 0,
++						NUMA_NO_NODE,
++						__builtin_return_address(0));
++
+ 	if (p && (kasan_module_alloc(p, size) < 0)) {
+ 		vfree(p);
+ 		return NULL;
 -- 
 2.7.4
 
