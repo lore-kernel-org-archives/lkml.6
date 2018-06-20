@@ -1,514 +1,161 @@
 Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9660C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6B9C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D24520693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:43:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1681520693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:43:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pTY9Bo1T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D24520693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="NkcrN0u2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1681520693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754703AbeFTJnc (ORCPT
+        id S1754771AbeFTJno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:43:32 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45395 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754106AbeFTI2g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:28:36 -0400
-Received: by mail-lf0-f67.google.com with SMTP id a13-v6so3595589lfk.12;
-        Wed, 20 Jun 2018 01:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=fw3XjwJ0NAMzgkhD7GaMaFf8WDklx65QFGxdKqBfgS4=;
-        b=pTY9Bo1ToLWtI+RcY50c3YPbtcie91QH87xx8ZFdMKUGDaIDFwsVjoVOuwWQxhVLCd
-         0obt7Oo+wj4hSJs0PzmPBaXaHZSGkk5l8OUlhbHWg2E0SFAHe94R7TI6iLFPobK55jwP
-         hOkTaTvIJT7HKvBt7qkGguC1ETMWbYHqGlxDzvGWaX6DipF7yul6xZSHYNgeWDqkX5ay
-         mHE1ZRE8FedVLY+sJR4yZtTD6gqJ4/HSLQnLCBEZMNBaNKMb6530C2/4GiMDn0UKAchm
-         MiECBosuxLnSLbrXkWpandPCHveME6m89HOwhvCkQQ/SadFzlCdEPRlMH8A1Moe6xfzv
-         FFAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=fw3XjwJ0NAMzgkhD7GaMaFf8WDklx65QFGxdKqBfgS4=;
-        b=kk31qDD1IcmWF4w3LyYOnrb78ZOLf6X6Dxi/boSvMG39JDSo5BGEKX9SauGfTEz7RS
-         qk2leJeQubqz3CLcdfphYvTie/S/tCSK3ocuI9S/cqurCd5W2nlazOdHi2jL5waMLWyP
-         I4eQunDKTawQR9PNPPr6SnKA/tLwbuFFOUSP4v1jqRFK1MNEhQNrY+wG3gyvGSS1YFD1
-         gn5ZWKBdL4Qh6+e61CEdXrejsd0HSYU6wLUebej9CNsALkG/UGjv2NpXLcZCmet6coG5
-         1KazHpS7UOjoVlOLLrimV1J35hEy/CdjqTghwNrqtqiIVHdFiaG5E6vUquCJVkaEchbq
-         DeVA==
-X-Gm-Message-State: APt69E2woenHU5vMUyIUG9WnQ5tJR4epMPmd1/U5em8BDOu/CE3fkywi
-        O9ftHwhe4g6L8X3ZNxt29cnKaBok
-X-Google-Smtp-Source: ADUXVKI6JKX9G+nAubE5INEy+/U4xJA22vjSn6k+MpVCQQWyCz26iFgYRofWFX+4ZDsSeAFoa83lwQ==
-X-Received: by 2002:a19:6a0f:: with SMTP id u15-v6mr12805125lfu.81.1529480096950;
-        Wed, 20 Jun 2018 00:34:56 -0700 (PDT)
-Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
-        by smtp.gmail.com with ESMTPSA id i5-v6sm281738lfc.83.2018.06.20.00.34.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 00:34:56 -0700 (PDT)
-From:   Esben Haabendal <esben.haabendal@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
-        Angelo Dureghello <angelo@sysam.it>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Sanchayan Maity <maitysanchayan@gmail.com>,
-        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
-Subject: [PATCH 05/12] spi: spi-fsl-dspi: Support 4 to 16 bits per word transfers
-Date:   Wed, 20 Jun 2018 09:34:35 +0200
-Message-Id: <20180620073442.20913-6-esben.haabendal@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180620073442.20913-1-esben.haabendal@gmail.com>
-References: <20180620073442.20913-1-esben.haabendal@gmail.com>
+        Wed, 20 Jun 2018 05:43:44 -0400
+Received: from mail-db5eur01on0111.outbound.protection.outlook.com ([104.47.2.111]:56192
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754014AbeFTJnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:43:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=orCRzr7lOgSkz+wX2vQLMTe8SM4qVPc9723F6NojNMA=;
+ b=NkcrN0u2YqpIARUyV+IuWTTqgyv17cRgl1vc0By1CWfMKIP3XGLHaocA+xPjfHt5PWQU9GEqiqiZY6Fgd5GHaSJoa+lGUpTyD/yoteJPFKINA9Fs0Go4MELUOqL556tjSEsp9nBTRYnWcAibno2LXuL2qb4EAtcjL/3QXW2WGzw=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+Received: from orc.pedanet (85.226.244.23) by
+ VI1PR0201MB2464.eurprd02.prod.outlook.com (2603:10a6:800:55::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.19; Wed, 20 Jun
+ 2018 09:43:33 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     linux-kernel@vger.kernel.org
+Cc:     Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Subject: [PATCH] i2c: smbus: kill memory leak on emulated and failed DMA SMBus xfers
+Date:   Wed, 20 Jun 2018 11:43:23 +0200
+Message-Id: <20180620094323.8447-1-peda@axentia.se>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1PR0901CA0062.eurprd09.prod.outlook.com
+ (2603:10a6:3:45::30) To VI1PR0201MB2464.eurprd02.prod.outlook.com
+ (2603:10a6:800:55::7)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 21cf4658-1003-4618-c759-08d5d6924a36
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0201MB2464;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2464;3:wlhIqU1HZoxEyZ53lt9kPdi2JGiPhuwas0D3Ptmy87ke11qRhrZy/JtjzyFG7jL9bBD7FJyaNBJaNqIbpoycdGWz/wtHO7Ka/2npynTxap8QCUg/Qzz8Ui7+38oGJ8z3PiXTTjmX0O9MTDZIco8YFthVGayUr0S/hBqYBcHH5UhtWp6YZsBCc+gAJHf8WLVYu9Bx7i5v1jfXOn42ytrlM001+D8Or0VDi+BFvhXOlo7bT3fQ/ghahDilW6fp6Mde;25:a6tfUu8+prtfcFPEF9spdiYGbEi+MnsxnJpy8FuhYnYaiWwL3q4ntJsEsAF+q4vg32xgRyJoOIRisO6GjzO3qFsf4I2ppPxGudtqhbFydPmShG7Nh7EnCqSsvP7nczvY6gRnXMDmKN06r5n3mEC+79QTuAaRHvbSVf4jOLKWYiIqLulgEKQCvigWsSBkzKlpVjlZoDMWS4+r2IQqMQzvmIVa/QBZgDD3OgVcJM/nyVt+zk5sSQ0XI2np93W09iqLFjCdBFxJ8eF4CrOI/YIb2GbAxMfa60XuxnsPOeOihrW8K109DVe5aB/34FOj4XQ6nPqUfBUciD16qu3uIlM7Ag==;31:ElYWRtUsrJTkziLdpRB5aBe8zaEg7rb/NXDceGb5OVlMYk0vJntzS5QbxO/3ISi92ehJVg5mjJmNVxcIlQex7PEf+luNzTARcl+LVsu6UFjWKH9745bV78byN3zQUDc5GqdUdSWaVhNzhqHbC/kFAQu/th1E4ggY6O593seVbo9/QT2FDjNM+OTMmsgSUlM90DYLgWhmQu1wR7ew3fpXm8AU6kA16LBIYRPdyOvfbvU=
+X-MS-TrafficTypeDiagnostic: VI1PR0201MB2464:
+X-Microsoft-Antispam-PRVS: <VI1PR0201MB2464F9D9988DA3C839886B37BC770@VI1PR0201MB2464.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6043046)(6072148)(201708071742011)(7699016);SRVR:VI1PR0201MB2464;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0201MB2464;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2464;4:Uvag6bTJIzWvLZNTq62MNw5vPFoMUh9Il7ICH+RKg8boylOP0hv9FPiMl1avb7mcvMcBukerPuqjBk+Y3HVuyyNnaZ4fNOKmPSzhnbYydxSD1EJ2C8HyXGJdc4Ib3DqI5TiAr3qTL1XYXA1e2MP6S565ItzV5gWy+WAGf2cAn08gvIy1oZdzw30T5tDmXQFoqVfsEwc+4ri3JPzlL3XPQ70XMtg2AMvtlm6EICzKz0A1WJD75Zfe9wek6ob5YsWWhtqAGhjgzwPrbGyY2cbdxQ==
+X-Forefront-PRVS: 070912876F
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(39830400003)(366004)(346002)(376002)(189003)(199004)(2351001)(50466002)(48376002)(74482002)(478600001)(305945005)(6486002)(7736002)(3846002)(97736004)(6116002)(1076002)(6512007)(8936002)(81166006)(86362001)(8676002)(1857600001)(2906002)(81156014)(4326008)(53936002)(2361001)(26005)(25786009)(68736007)(50226002)(6916009)(54906003)(316002)(16586007)(5660300001)(36756003)(6666003)(52116002)(105586002)(51416003)(106356001)(47776003)(386003)(6506007)(66066001)(476003)(486006)(2616005)(186003)(956004)(16526019)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0201MB2464;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0201MB2464;23:W1+Vkcc0v6pIDrNJrV+X4bK3AxG+2TTJ2F9im9q?=
+ =?us-ascii?Q?IvGFeJM3HT8fiahu5YmwwhGJFxsxmt3WDztLVdBtnI6O6KsmS+t8eLCyKlvQ?=
+ =?us-ascii?Q?H4DznaJkFiEfvo4eicbdvl2wWv2547gIuZ66IHJidTHwlhrGfJQ/uDWKEOww?=
+ =?us-ascii?Q?UyODOz9oij8VRIMs8vC7fGIEme29VNpenr3qORAG4hU41i0HHmqnmmgIkHvq?=
+ =?us-ascii?Q?sXp4E4oqxa2uXHjr1OSRDxxC5Mgy+54dbZ7b17/3f0VuN9sIZYdkogCp8QHR?=
+ =?us-ascii?Q?e0VR7dpEPM4Mw2A7NEv+amUq9PaspladnU6pW0fFQVWwZ1cvZ21ejZZV13Ae?=
+ =?us-ascii?Q?3+uya72UdrXh+4QxX6nw+uMIW1rRpS0WFYuXMdF7QpXEITQnfQYB6Fiiz4xi?=
+ =?us-ascii?Q?Ta/60nrR8/5gOVSOhNmu4DuMB/YX7yzukiI9gsuE+F5zW+Vfb8bzr1lIMNpd?=
+ =?us-ascii?Q?EvgqB504QVq671posmS3i1/bwizRX5/lCP7wwdD84u0g/cd4HOhQFdLSh4Cn?=
+ =?us-ascii?Q?FXXPr3Tnn7UCzTKzHMfPnT4fWx+Ap6YkfShLa3QPMrq8p9q+s/D4epAhi+bI?=
+ =?us-ascii?Q?OTeq68Q3FubuL+RqaPtCX7l7QytDlLLbpKkFgIp5MMuUbaxieTPKY6pgWWVq?=
+ =?us-ascii?Q?BTF4YsqPu2Cjh4mYSB7gg9HrEB2yoyMzPLbyS0wZ3AuLjFTGbueiMViY3gr/?=
+ =?us-ascii?Q?6z1tB0mcKETLzgfOYIZ3y7Qmq+EVSZqacYFeYxkwMi7fIi454RLE+9MYBwm0?=
+ =?us-ascii?Q?kRcMGWYGG850neahUP3ZevnX7upheoiPka+yGEW6mcpEQfoUahruGxfHMdJv?=
+ =?us-ascii?Q?EqeJjnQSCr8+zdJWWZbh+HUlK0mNpD/Fstl4bpm0kygf+o7av4FhdrJaYxPj?=
+ =?us-ascii?Q?HNRdB3tTId2zDNrstYfmxd3iuUa0e/l3rnF7/U1zBlxZRmJmA0GDB2ijH7SA?=
+ =?us-ascii?Q?K8Nn+jN2QoeIW3XsrbwfQ5+86OJTh/c+EkP2iz72GBIZnhvyecquvuba8gu8?=
+ =?us-ascii?Q?DMJX4glPs3MlNjSTJgVl+o7AY1xUMRseOj6kfU6UYLIAh4JQaGnKhVg/Z67e?=
+ =?us-ascii?Q?lWVvoxSZe+lIYV5X3n5dNJAr3+nwTFbl8DAafBswfrXTVaqFYpyDrLER0jDt?=
+ =?us-ascii?Q?Gub9HY0PTy4+WD9g2MCsy6qEuhOiTbEo5TzU42Ym0ozg5nAIOJKCg1Id0vLw?=
+ =?us-ascii?Q?qmF5RpsBoLGdN93rw9x9yMiNQKaHvMprCuuRDombOt+p6QzBHfPd2LqtjXBn?=
+ =?us-ascii?Q?pxxz5CQePI/AZ9vEr3HlapSd85Lw2kax6iNHKr/DD?=
+X-Microsoft-Antispam-Message-Info: eAczAAxaTSz88sV1/qlPf/3Ht9uzWikBWkGRAlP6yWb6y81LwPcCQdGcEYXzItUr9YS9VRmVLUXDlhMKwrfYFXRI53MznJfi3ZEWr+60dgmCJgBE86pctKfOAPvL4U3j7D0IZ9/q8RshR+bZF0uDULe4/HciEbSy3sqDzfWxrhy4kDAFgJUf51u/UAkvPMLMhOPfcC6ke2NgqTs2VgxzVsPqmHakAbVQKyedKiNQHP7qQd+1xCwZnEokeXbqH7oOVjwkQd98K9nRwGJf6aRK1fzvFZ195Yo+T9hDNvJCbSDxfFMqOtye7lWc5RnZ9sfuk35eHTjRK+oLNd25qZZu6w==
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2464;6:Ie3g1VuHdYXUuFynMn7eUpssTfnsvzShk5E3VhG5iWRiCclIZr0xTG+XbsFly/x8Pcz66s4x/+djOSouexgFoLApEFxm6RnfgHinrntIyZWxUMhT3y90El591u0jmrwG8bp7BEfzaeScJVBeKA+r0xKjf6dDYmVd1KFYU7Fna693FZOtC+RqrLxsmaxZB+vH2XsUqJI4Nk5zJkcJnzM7A6suoJUDIuiQ23gmhL3MytQewAWHmIsLVE+1J/EG2uebPHmaDs/b+QW3+Uaipns6p2xnWmLsq8CdJ4Fi/g6cScocDU3cIyxgN9RKuQh7ABnur8+f1G7592ZvBZ5+HoPhF7q7/XmbUKKIAhQHy5fsc5vveuC+1kSwiMIfrrsBfZKJ+q/of4eMzmAaVs5tjK+EVPJyhuxf+CWBOf/dpmwyhpv+hU98dm+TcrHGmPV5NXR/YCQKKM33fNON1esLmYWVjw==;5:jStFpgSq/kCtwo0NWNCacGNiLLiBZCD/m7/yDeytXj0K0L3rFLNFfcml/q5I//nf8rRjeuYD6Y7MD1aUUCThc1j6XCh0cSZ365621N/4geG/3LQrqHYq2AwFZlAW41Fj9I3COleAzupT/0z0ZzifpReuqRwAcf4cTxklpX6srRc=;24:McCk10uKy6lMGaoeyRCYWOLBjwKP4BQu7dMsww3ZY9LcM/iPet9HgfJrVhfiVgFppsL5dBPoTiPh4kAJWx3QqzzK6ziawQrUYwH8/z0DWrg=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0201MB2464;7:RcTuf1bgG50ha6PlumwR5KPHN8JeTIZrXzm0CeYTIlO3JgyekUqHnaarHcgDTEiuY79sld+Ic3+Yn7XBX29g1SiOwfK3y9VcPVnQN8IQtVhhvvP8x3xD2mUuCrAn+A4PaUbmyyeiIGPe9DA6L+J/HcU+gUz/9AYdTvAdKCbnmojxVCqyXqEw9zvC4XSBz2zBOgZri4yAUz80vofJFFtUU2YeH+Z4W4c+WYbDkJxAjfgnwxjTscgsIYwg8vbF/HeW
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2018 09:43:33.6779 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21cf4658-1003-4618-c759-08d5d6924a36
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0201MB2464
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <eha@deif.com>
+If DMA safe memory was allocated, but the subsequent I2C transfer
+fails the memory is leaked. Plug this leak.
 
-This extends the driver with support for all SPI framesizes from 4 to 16
-bits, and adds support for per transfer specific bits_per_word, while at
-the same time reducing code size and complexity.
-
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Cc: Martin Hundebøll <martin@geanix.com>
+Fixes: 8a77821e74d6 ("i2c: smbus: use DMA safe buffers for emulated SMBus transactions")
+Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/spi/spi-fsl-dspi.c | 251 +++++++++++++------------------------
- 1 file changed, 88 insertions(+), 163 deletions(-)
+ drivers/i2c/i2c-core-smbus.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 2371b9978e65..df07dd4722fb 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -38,8 +38,6 @@
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index f3f683041e7f..51970bae3c4a 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -465,15 +465,18 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
  
- #define DRIVER_NAME "fsl-dspi"
- 
--#define TRAN_STATE_WORD_ODD_NUM	0x04
--
- #define DSPI_FIFO_SIZE			4
- #define DSPI_DMA_BUFSIZE		(DSPI_FIFO_SIZE * 1024)
- 
-@@ -187,13 +185,13 @@ struct fsl_dspi {
- 	struct spi_message	*cur_msg;
- 	struct chip_data	*cur_chip;
- 	size_t			len;
--	void			*tx;
--	void			*tx_end;
-+	const void		*tx;
- 	void			*rx;
- 	void			*rx_end;
--	char			dataflags;
- 	u16			void_write_data;
- 	u16			tx_cmd;
-+	u8			bits_per_word;
-+	u8			bytes_per_word;
- 	const struct fsl_dspi_devtype_data *devtype_data;
- 
- 	wait_queue_head_t	waitq;
-@@ -202,15 +200,43 @@ struct fsl_dspi {
- 	struct fsl_dspi_dma	*dma;
- };
- 
--static u32 dspi_data_to_pushr(struct fsl_dspi *dspi, int tx_word);
-+static u16 dspi_pop_tx(struct fsl_dspi *dspi)
-+{
-+	u16 txdata = 0;
-+
-+	if (dspi->tx) {
-+		if (dspi->bytes_per_word == 1)
-+			txdata = *(u8 *)dspi->tx;
-+		else /* dspi->bytes_per_word == 2 */
-+			txdata = *(u16 *)dspi->tx;
-+		dspi->tx += dspi->bytes_per_word;
+ 	status = i2c_transfer(adapter, msg, num);
+ 	if (status < 0)
+-		return status;
+-	if (status != num)
+-		return -EIO;
++		goto cleanup;
++	if (status != num) {
++		status = -EIO;
++		goto cleanup;
 +	}
-+	dspi->len -= dspi->bytes_per_word;
-+	return txdata;
-+}
++	status = 0;
  
--static inline int is_double_byte_mode(struct fsl_dspi *dspi)
-+static u32 dspi_pop_tx_pushr(struct fsl_dspi *dspi)
- {
--	unsigned int val;
-+	u16 cmd = dspi->tx_cmd, data = dspi_pop_tx(dspi);
- 
--	regmap_read(dspi->regmap, SPI_CTAR(0), &val);
-+	if (dspi->len > 0)
-+		cmd |= SPI_PUSHR_CMD_CONT;
-+	return cmd << 16 | data;
-+}
-+
-+static void dspi_push_rx(struct fsl_dspi *dspi, u32 rxdata)
-+{
-+	if (!dspi->rx)
-+		return;
-+
-+	/* Mask of undefined bits */
-+	rxdata &= (1 << dspi->bits_per_word) - 1;
- 
--	return ((val & SPI_FRAME_BITS_MASK) == SPI_FRAME_BITS(8)) ? 0 : 1;
-+	if (dspi->bytes_per_word == 1)
-+		*(u8 *)dspi->rx = rxdata;
-+	else /* dspi->bytes_per_word == 2 */
-+		*(u16 *)dspi->rx = rxdata;
-+	dspi->rx += dspi->bytes_per_word;
- }
- 
- static void dspi_tx_dma_callback(void *arg)
-@@ -225,19 +251,11 @@ static void dspi_rx_dma_callback(void *arg)
- {
- 	struct fsl_dspi *dspi = arg;
- 	struct fsl_dspi_dma *dma = dspi->dma;
--	int rx_word;
- 	int i;
--	u16 d;
--
--	rx_word = is_double_byte_mode(dspi);
- 
- 	if (dspi->rx) {
--		for (i = 0; i < dma->curr_xfer_len; i++) {
--			d = dspi->dma->rx_dma_buf[i];
--			rx_word ? (*(u16 *)dspi->rx = d) :
--						(*(u8 *)dspi->rx = d);
--			dspi->rx += rx_word + 1;
--		}
-+		for (i = 0; i < dma->curr_xfer_len; i++)
-+			dspi_push_rx(dspi, dspi->dma->rx_dma_buf[i]);
+ 	/* Check PEC if last message is a read */
+ 	if (i && (msg[num-1].flags & I2C_M_RD)) {
+ 		status = i2c_smbus_check_pec(partial_pec, &msg[num-1]);
+ 		if (status < 0)
+-			return status;
++			goto cleanup;
  	}
  
- 	complete(&dma->cmd_rx_complete);
-@@ -248,14 +266,10 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
- 	struct fsl_dspi_dma *dma = dspi->dma;
- 	struct device *dev = &dspi->pdev->dev;
- 	int time_left;
--	int tx_word;
- 	int i;
- 
--	tx_word = is_double_byte_mode(dspi);
--
--	for (i = 0; i < dma->curr_xfer_len; i++) {
--		dspi->dma->tx_dma_buf[i] = dspi_data_to_pushr(dspi, tx_word);
--	}
-+	for (i = 0; i < dma->curr_xfer_len; i++)
-+		dspi->dma->tx_dma_buf[i] = dspi_pop_tx_pushr(dspi);
- 
- 	dma->tx_desc = dmaengine_prep_slave_single(dma->chan_tx,
- 					dma->tx_dma_phys,
-@@ -326,16 +340,14 @@ static int dspi_dma_xfer(struct fsl_dspi *dspi)
- 	struct device *dev = &dspi->pdev->dev;
- 	int curr_remaining_bytes;
- 	int bytes_per_buffer;
--	int word = 1;
- 	int ret = 0;
- 
--	if (is_double_byte_mode(dspi))
--		word = 2;
- 	curr_remaining_bytes = dspi->len;
- 	bytes_per_buffer = DSPI_DMA_BUFSIZE / DSPI_FIFO_SIZE;
- 	while (curr_remaining_bytes) {
- 		/* Check if current transfer fits the DMA buffer */
--		dma->curr_xfer_len = curr_remaining_bytes / word;
-+		dma->curr_xfer_len = curr_remaining_bytes
-+			/ dspi->bytes_per_word;
- 		if (dma->curr_xfer_len > bytes_per_buffer)
- 			dma->curr_xfer_len = bytes_per_buffer;
- 
-@@ -345,7 +357,8 @@ static int dspi_dma_xfer(struct fsl_dspi *dspi)
- 			goto exit;
- 
- 		} else {
--			curr_remaining_bytes -= dma->curr_xfer_len * word;
-+			curr_remaining_bytes -= dma->curr_xfer_len
-+				* dspi->bytes_per_word;
- 			if (curr_remaining_bytes < 0)
- 				curr_remaining_bytes = 0;
- 		}
-@@ -531,127 +544,56 @@ static void ns_delay_scale(char *psc, char *sc, int delay_ns,
- 	}
- }
- 
--static u32 dspi_data_to_pushr(struct fsl_dspi *dspi, int tx_word)
-+static void fifo_write(struct fsl_dspi *dspi)
- {
--	u16 data, cmd;
--
--	if (dspi->tx) {
--		data = tx_word ? *(u16 *)dspi->tx : *(u8 *)dspi->tx;
--		dspi->tx += tx_word + 1;
--	} else {
--		data = dspi->void_write_data;
--	}
--
--	dspi->len -= tx_word + 1;
--
--	cmd = dspi->tx_cmd;
--	if (dspi->len > 0)
--		cmd |= SPI_PUSHR_CMD_CONT;
--
--	return (cmd << 16) | SPI_PUSHR_TXDATA(data);
-+	regmap_write(dspi->regmap, SPI_PUSHR, dspi_pop_tx_pushr(dspi));
- }
- 
--static void dspi_data_from_popr(struct fsl_dspi *dspi, int rx_word)
-+static void dspi_tcfq_write(struct fsl_dspi *dspi)
- {
--	u16 d;
--	unsigned int val;
--
--	regmap_read(dspi->regmap, SPI_POPR, &val);
--	d = SPI_POPR_RXDATA(val);
--
--	if (dspi->rx) {
--		rx_word ? (*(u16 *)dspi->rx = d) : (*(u8 *)dspi->rx = d);
--		dspi->rx += rx_word + 1;
--	}
-+	/* Clear transfer count */
-+	dspi->tx_cmd |= SPI_PUSHR_CMD_CTCNT;
-+	/* Write one entry to both TX FIFO and CMD FIFO simultaneously */
-+	fifo_write(dspi);
- }
- 
--static int dspi_eoq_write(struct fsl_dspi *dspi)
-+static u32 fifo_read(struct fsl_dspi *dspi)
- {
--	int tx_count = 0;
--	int tx_word;
--	u32 dspi_pushr = 0;
--
--	tx_word = is_double_byte_mode(dspi);
-+	u32 rxdata = 0;
- 
--	while (dspi->len && (tx_count < DSPI_FIFO_SIZE)) {
--		/* If we are in word mode, only have a single byte to transfer
--		 * switch to byte mode temporarily.  Will switch back at the
--		 * end of the transfer.
--		 */
--		if (tx_word && (dspi->len == 1)) {
--			dspi->dataflags |= TRAN_STATE_WORD_ODD_NUM;
--			regmap_update_bits(dspi->regmap, SPI_CTAR(0),
--					SPI_FRAME_BITS_MASK, SPI_FRAME_BITS(8));
--			tx_word = 0;
--		}
--
--		dspi_pushr = dspi_data_to_pushr(dspi, tx_word);
--
--		if (dspi->len == 0 || tx_count == DSPI_FIFO_SIZE - 1)
--			/* request EOQ flag for last transfer in queue */
--			dspi_pushr |= SPI_PUSHR_EOQ;
--
--		/* Clear transfer counter on first transfer (in FIFO) */
--		if (tx_count == 0)
--			dspi_pushr |= SPI_PUSHR_CTCNT;
--
--		regmap_write(dspi->regmap, SPI_PUSHR, dspi_pushr);
--
--		tx_count++;
--	}
--
--	return tx_count * (tx_word + 1);
-+	regmap_read(dspi->regmap, SPI_POPR, &rxdata);
-+	return rxdata;
- }
- 
--static int dspi_eoq_read(struct fsl_dspi *dspi)
-+static void dspi_tcfq_read(struct fsl_dspi *dspi)
- {
--	int rx_count = 0;
--	int rx_word = is_double_byte_mode(dspi);
--
--	while ((dspi->rx < dspi->rx_end)
--			&& (rx_count < DSPI_FIFO_SIZE)) {
--		if (rx_word && (dspi->rx_end - dspi->rx) == 1)
--			rx_word = 0;
--
--		dspi_data_from_popr(dspi, rx_word);
--		rx_count++;
--	}
--
--	return rx_count;
-+	dspi_push_rx(dspi, fifo_read(dspi));
- }
- 
--static int dspi_tcfq_write(struct fsl_dspi *dspi)
-+static void dspi_eoq_write(struct fsl_dspi *dspi)
- {
--	int tx_word;
--	u32 dspi_pushr = 0;
--
--	tx_word = is_double_byte_mode(dspi);
--
--	if (tx_word && (dspi->len == 1)) {
--		dspi->dataflags |= TRAN_STATE_WORD_ODD_NUM;
--		regmap_update_bits(dspi->regmap, SPI_CTAR(0),
--				SPI_FRAME_BITS_MASK, SPI_FRAME_BITS(8));
--		tx_word = 0;
-+	int fifo_size = DSPI_FIFO_SIZE;
-+
-+	/* Fill TX FIFO with as many transfers as possible */
-+	while (dspi->len && fifo_size--) {
-+		/* Request EOQF for last transfer in FIFO */
-+		if (dspi->len == dspi->bytes_per_word || fifo_size == 0)
-+			dspi->tx_cmd |= SPI_PUSHR_CMD_EOQ;
-+		/* Clear transfer count for first transfer in FIFO */
-+		if (fifo_size == (DSPI_FIFO_SIZE - 1))
-+			dspi->tx_cmd |= SPI_PUSHR_CMD_CTCNT;
-+		/* Write combined TX FIFO and CMD FIFO entry */
-+		fifo_write(dspi);
- 	}
--
--	dspi_pushr = dspi_data_to_pushr(dspi, tx_word);
--
--	/* Clear transfer counter on each transfer */
--	dspi_pushr |= SPI_PUSHR_CTCNT;
--
--	regmap_write(dspi->regmap, SPI_PUSHR, dspi_pushr);
--
--	return tx_word + 1;
- }
- 
--static void dspi_tcfq_read(struct fsl_dspi *dspi)
-+static void dspi_eoq_read(struct fsl_dspi *dspi)
- {
--	int rx_word = is_double_byte_mode(dspi);
--
--	if (rx_word && (dspi->rx_end - dspi->rx) == 1)
--		rx_word = 0;
-+	int fifo_size = DSPI_FIFO_SIZE;
- 
--	dspi_data_from_popr(dspi, rx_word);
-+	/* Read one FIFO entry at and push to rx buffer */
-+	while ((dspi->rx < dspi->rx_end) && fifo_size--)
-+		dspi_push_rx(dspi, fifo_read(dspi));
- }
- 
- static int dspi_transfer_one_message(struct spi_master *master,
-@@ -691,19 +633,24 @@ static int dspi_transfer_one_message(struct spi_master *master,
- 
- 		dspi->void_write_data = dspi->cur_chip->void_write_data;
- 
--		dspi->dataflags = 0;
--		dspi->tx = (void *)transfer->tx_buf;
--		dspi->tx_end = dspi->tx + transfer->len;
-+		dspi->tx = transfer->tx_buf;
- 		dspi->rx = transfer->rx_buf;
- 		dspi->rx_end = dspi->rx + transfer->len;
- 		dspi->len = transfer->len;
-+		/* Validated transfer specific frame size (defaults applied) */
-+		dspi->bits_per_word = transfer->bits_per_word;
-+		if (transfer->bits_per_word <= 8)
-+			dspi->bytes_per_word = 1;
-+		else
-+			dspi->bytes_per_word = 2;
- 
- 		regmap_write(dspi->regmap, SPI_MCR, dspi->cur_chip->mcr_val);
- 		regmap_update_bits(dspi->regmap, SPI_MCR,
- 				SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF,
- 				SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF);
- 		regmap_write(dspi->regmap, SPI_CTAR(0),
--				dspi->cur_chip->ctar_val);
-+			     dspi->cur_chip->ctar_val |
-+			     SPI_FRAME_BITS(transfer->bits_per_word));
- 
- 		trans_mode = dspi->devtype_data->trans_mode;
- 		switch (trans_mode) {
-@@ -754,16 +701,9 @@ static int dspi_setup(struct spi_device *spi)
- 	struct fsl_dspi_platform_data *pdata;
- 	u32 cs_sck_delay = 0, sck_cs_delay = 0;
- 	unsigned char br = 0, pbr = 0, pcssck = 0, cssck = 0;
--	unsigned char pasc = 0, asc = 0, fmsz = 0;
-+	unsigned char pasc = 0, asc = 0;
- 	unsigned long clkrate;
- 
--	if ((spi->bits_per_word >= 4) && (spi->bits_per_word <= 16)) {
--		fmsz = spi->bits_per_word - 1;
--	} else {
--		pr_err("Invalid wordsize\n");
--		return -ENODEV;
--	}
--
- 	/* Only alloc on first setup */
- 	chip = spi_get_ctldata(spi);
- 	if (chip == NULL) {
-@@ -799,8 +739,7 @@ static int dspi_setup(struct spi_device *spi)
- 	/* Set After SCK delay scale values */
- 	ns_delay_scale(&pasc, &asc, sck_cs_delay, clkrate);
- 
--	chip->ctar_val =  SPI_CTAR_FMSZ(fmsz)
--		| SPI_CTAR_CPOL(spi->mode & SPI_CPOL ? 1 : 0)
-+	chip->ctar_val = SPI_CTAR_CPOL(spi->mode & SPI_CPOL ? 1 : 0)
- 		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0)
- 		| SPI_CTAR_LSBFE(spi->mode & SPI_LSB_FIRST ? 1 : 0)
- 		| SPI_CTAR_PCSSCK(pcssck)
-@@ -832,24 +771,19 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
- 	enum dspi_trans_mode trans_mode;
- 	u32 spi_sr, spi_tcr;
- 	u16 spi_tcnt;
--	int tx_word;
- 
- 	regmap_read(dspi->regmap, SPI_SR, &spi_sr);
- 	regmap_write(dspi->regmap, SPI_SR, spi_sr);
- 
- 
- 	if (spi_sr & (SPI_SR_EOQF | SPI_SR_TCFQF)) {
--		tx_word = is_double_byte_mode(dspi);
--
- 		/* Get transfer counter (in number of SPI transfers). It was
- 		 * reset to 0 when transfer(s) were started.
- 		 */
- 		regmap_read(dspi->regmap, SPI_TCR, &spi_tcr);
- 		spi_tcnt = SPI_TCR_GET_TCNT(spi_tcr);
--
- 		/* Update total number of bytes that were transferred */
--		msg->actual_length += spi_tcnt * (tx_word + 1) -
--			(dspi->dataflags & TRAN_STATE_WORD_ODD_NUM ? 1 : 0);
-+		msg->actual_length += spi_tcnt * dspi->bytes_per_word;
- 
- 		trans_mode = dspi->devtype_data->trans_mode;
- 		switch (trans_mode) {
-@@ -866,14 +800,6 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
+ 	if (read_write == I2C_SMBUS_READ)
+@@ -499,12 +502,13 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
+ 			break;
  		}
  
- 		if (!dspi->len) {
--			if (dspi->dataflags & TRAN_STATE_WORD_ODD_NUM) {
--				regmap_update_bits(dspi->regmap,
--						   SPI_CTAR(0),
--						   SPI_FRAME_BITS_MASK,
--						   SPI_FRAME_BITS(16));
--				dspi->dataflags &= ~TRAN_STATE_WORD_ODD_NUM;
--			}
--
- 			dspi->waitflags = 1;
- 			wake_up_interruptible(&dspi->waitq);
- 		} else {
-@@ -973,8 +899,7 @@ static int dspi_probe(struct platform_device *pdev)
++cleanup:
+ 	if (msg[0].flags & I2C_M_DMA_SAFE)
+ 		kfree(msg[0].buf);
+ 	if (msg[1].flags & I2C_M_DMA_SAFE)
+ 		kfree(msg[1].buf);
  
- 	master->cleanup = dspi_cleanup;
- 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST;
--	master->bits_per_word_mask = SPI_BPW_MASK(4) | SPI_BPW_MASK(8) |
--					SPI_BPW_MASK(16);
-+	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 16);
+-	return 0;
++	return status;
+ }
  
- 	pdata = dev_get_platdata(&pdev->dev);
- 	if (pdata) {
+ /**
 -- 
-2.17.1
+2.11.0
 
