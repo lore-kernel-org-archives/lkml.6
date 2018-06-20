@@ -6,91 +6,147 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434D2C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B627C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2FC720846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E101920846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:58:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lexmark.com header.i=@lexmark.com header.b="RB14Od/Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FC720846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=lexmark.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oDYgne7E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E101920846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753880AbeFTM6V (ORCPT
+        id S1754050AbeFTM6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 08:58:21 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33361 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeFTM6T (ORCPT
+        Wed, 20 Jun 2018 08:58:32 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:53219 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeFTM62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:58:19 -0400
-Received: by mail-lf0-f65.google.com with SMTP id y20-v6so4850112lfy.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 05:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lexmark.com; s=lxk-google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vmAxgSco5onDpFokuvzCyMfqJRUs1YxXxr7kO1fluN4=;
-        b=RB14Od/YkJ641uS5ucFQj9T5ZpIG3pZpgvMQXCaRAwVi2U8ZFKadlaKugha+ziXLN+
-         wbmCqrz61fOtlCrrBbxBGjM/uNSOzdRpzi36UTDwl4x3OLLw90Z5gQv87mOJcjUl9dBm
-         4qndT3z04/0JqVSpKT5AL+w2MFtyxoQ+jfuhywdoCQLLUZQE5P/0Q5OrFlwBC8T8nhDj
-         SO8CinUTHYFGc9tX2Wpn3KLdkvfpnRQ9sC1X/tnUtR6/2qHexuio9e9R0Ezj0pBmjsyt
-         mhtqoI1i1pTydQWMFKc4+C8TRtWfLHDfSMc+IgcET4Mpy7oOS/xr8rQ1OCwscdtNvlzx
-         JWng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vmAxgSco5onDpFokuvzCyMfqJRUs1YxXxr7kO1fluN4=;
-        b=X+f0TrCm+p1ha0kodIuDefMB3j+VpN1AI70kfUT4dFWnh8OqdFuGuDCCaVytsWLXgO
-         PFD2HQpEOR+V+QyhwWn9U5VxpZeMT3n4AJ2hKCSaq/lamuHGUTBHFwXfgcoK3Mp5M5Sq
-         DDxSl5P2KbcD122xc4Qs+g9gtcSztz2CBw+b8jP0lueKJpe+YX8/nktD0x6dlATMSKFb
-         WlLNzmU0VOnx5zBFLIsDN1F9SdMpAxKSmg/4SPykinpkLkIXbvRC95LCROBikJInn2wQ
-         mwHZMtqSvTwSU85FdS4GaKHsEH83lCVEH45IrvigCYuxNERy4x5kPEOZSDg/olfWHo2D
-         21Kg==
-X-Gm-Message-State: APt69E2aXjNtk9ijMlZoengd0X1svySwhKsgykovjVQqqHjbS61pjDQY
-        mQvoDauUqFe0Ik5FaQF4WHP4NDa+7FuKZJUdWOqBLQ==
-X-Google-Smtp-Source: ADUXVKK1R2dAlNucAvWal4jcnzaLSLPZ3h2fxJ8wf/LJG6ZXFXBT5CT1OiIkObVKV3pBCRiGQepQ1uFZr0vZJjixlhs=
-X-Received: by 2002:a2e:4811:: with SMTP id v17-v6mr13513667lja.39.1529499497574;
- Wed, 20 Jun 2018 05:58:17 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:481a:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 05:57:37
- -0700 (PDT)
-In-Reply-To: <20180620102904.GC112168@atomide.com>
-References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
- <20180620102904.GC112168@atomide.com>
-From:   Samuel Morris <samorris@lexmark.com>
-Date:   Wed, 20 Jun 2018 08:57:37 -0400
-Message-ID: <CAFY_6qoER_GuMU4PBf_0cdbEMOW2AjcRJwx2Ankmz4LXQJHQEw@mail.gmail.com>
+        Wed, 20 Jun 2018 08:58:28 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5KCwIDk017184;
+        Wed, 20 Jun 2018 07:58:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1529499498;
+        bh=xD6La18pB5ME79DHHfAKtrUUBercYvLvkkySoNoz5c0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=oDYgne7EzOcAvQzf2x8+Cd8vcXfMqVPyynuqYvpaRvmRZHnjKH+mHmlcD3+1kROiR
+         jgW7AcNp9AWoeToW4WonYupkXOTqmQ1wDWef9hpJKi1dvyU6VRnkPHyZ2HPm02v+ap
+         tplOr5n1ZUN44DbIc8PFa7cHCFo1Qy5MHoyiUelA=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5KCwIuu010886;
+        Wed, 20 Jun 2018 07:58:18 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 20
+ Jun 2018 07:58:18 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 20 Jun 2018 07:58:18 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5KCwFZ9013950;
+        Wed, 20 Jun 2018 07:58:15 -0500
 Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Tejun Heo <tj@kernel.org>, Roger Quadros <rogerq@ti.com>,
-        linux-omap@vger.kernel.org,
+To:     Tony Lindgren <tony@atomide.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Samuel Morris <samorris@lexmark.com>, Tejun Heo <tj@kernel.org>
+CC:     <linux-omap@vger.kernel.org>,
         Linux-Next Mailing List <linux-next@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org,
-        Olof Johansson <olof@lixom.net>
-Content-Type: text/plain; charset="UTF-8"
+        Arnd Bergmann <arnd@arndb.de>, <ssantosh@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>
+References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
+ <20180620102904.GC112168@atomide.com>
+From:   Roger Quadros <rogerq@ti.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=rogerq@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+ IwrfNkJOLj3CvocMIw==
+Message-ID: <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+Date:   Wed, 20 Jun 2018 15:58:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180620102904.GC112168@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 6:29 AM, Tony Lindgren <tony@atomide.com> wrote:
+Tony,
+
+On 20/06/18 13:29, Tony Lindgren wrote:
 > Hi,
->
+> 
 > * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:
 >> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
->
+> 
 > Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
 > hotplug to save power").
->
+> 
 > Reverting the patch makes things work again. Any ideas what
 > might be going wrong here? Things clearly idle but then there
 > seems to be some register access with clocks disabled.
->
+
+The commit is doing this in probe.
+
++	pm_runtime_set_active(dev);
+ 	pm_runtime_enable(dev);
+-	pm_runtime_get_sync(dev);
++	pm_runtime_forbid(dev);
+
+On OMAP, the device is not guaranteed to be active at probe and so we can't
+say pm_runtime_set_active() and get rid of pm_runtime_get_sync().
+
+
+> 
 >> Full log of trace please refer this link,
 >> https://lkft.validation.linaro.org/scheduler/job/291535#L946
 >>
@@ -146,16 +202,6 @@ On Wed, Jun 20, 2018 at 6:29 AM, Tony Lindgren <tony@atomide.com> wrote:
 >> (ahci_save_initial_config+0x2c/0x388)
 >> [    3.859894] [<c0c3b364>] (ahci_save_initial_config) from
 >> [<c0c3cbdc>] (ahci_platform_init_host+0x9c/0x4f4)
-
-Now that the pm_runtime callbacks are actually implemented, the
-runtime_forbid() I think will call ahci_platform_runtime_resume(), and
-that will resume the host. That happens in
-ahci_platform_get_resources(), before ahci_platform_init_host(). I
-could see that putting the host in a bad state. Perhaps I should move
-the runtime_forbid() clause to ahci_platform_init_host() instead,
-after everything has been initialized. I can just make another patch
-version after I do some testing.
-
 >> [    3.869609] [<c0c3cbdc>] (ahci_platform_init_host) from
 >> [<c0c3c33c>] (ahci_probe+0xa0/0xc0)
 >> [    3.878018] [<c0c3c33c>] (ahci_probe) from [<c0ba40f0>]
@@ -208,5 +254,9 @@ version after I do some testing.
 >> the body of a message to majordomo@vger.kernel.org
 >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-thanks,
-Sam
+-- 
+cheers,
+-roger
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
