@@ -6,263 +6,130 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3100AC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 158E8C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB72020846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:46:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB72020846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id C89FD208B3
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:46:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C89FD208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932947AbeFTIqc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:46:32 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:37322 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933070AbeFTIpU (ORCPT
+        id S933136AbeFTIqn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:46:43 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51902 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932547AbeFTIqi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:45:20 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fVX50-0007m5-0R; Wed, 20 Jun 2018 08:58:58 +0200
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     linux-wireless@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v6 (resend) 3/3] bitfield: add tests
-Date:   Wed, 20 Jun 2018 08:58:30 +0200
-Message-Id: <20180620065830.6612-4-johannes@sipsolutions.net>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180620065830.6612-1-johannes@sipsolutions.net>
-References: <20180620065830.6612-1-johannes@sipsolutions.net>
+        Wed, 20 Jun 2018 04:46:38 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r15-v6so4622727wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:46:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bibe9FKIjJoV7YWwhOdDFDdz/KIMW/Q6mbiJAU8uHr4=;
+        b=Uz1eMS6j+uEDnmaX/mbro1cT2+QDif4twEvE61h9rhhtGLqcpRn7UXChwgrfINDhMx
+         BwrCWoQ9z669yZs7ey8fLw8T/I7HTSMMlYeqgQv23LSkEYM++dASWvXN07iZvTvurQ++
+         i0tp/nVJhRvN0EYuE6g17Bswhknv29eQo2VG3f4gF7l5OTFZOi3M3wEzTQXZbT9yVMK5
+         biM17RgpNWSFwoo8FolGdFzA41n3DTt/1RUmr2NIDdaApT1w40t6975+oUJabyQybQ99
+         rgde/xgi+NkKokuj9z/NwCcOKDF5bfXQMwLEC6RTeQmqSiVZvfcEFkFF/+rRjTgP/+dj
+         +UvQ==
+X-Gm-Message-State: APt69E1PAp3tiO2oO0AQOXQgd1umbpowdn6vJMczdk3j99+wC70sIGII
+        YHuN8E4QCgHpFyAEr3soHxUZubP5nPg=
+X-Google-Smtp-Source: ADUXVKK7cDhILSLAm+nFUe0LQbvYcg+KXSjOg0GAXsAK4TtqZ0z554zVb1nolYDZN41hig9eL+SAhg==
+X-Received: by 2002:a1c:ae94:: with SMTP id x142-v6mr927786wme.22.1529484397032;
+        Wed, 20 Jun 2018 01:46:37 -0700 (PDT)
+Received: from [10.201.33.7] ([195.166.127.210])
+        by smtp.gmail.com with ESMTPSA id h77-v6sm3399295wmd.9.2018.06.20.01.46.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 01:46:36 -0700 (PDT)
+Subject: Re: [PATCH] driver core: add a debugfs entry to show deferred devices
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh@kernel.org>
+References: <20180619205914.21375-1-javierm@redhat.com>
+ <20180619225145.GA23389@kroah.com>
+From:   Javier Martinez Canillas <javierm@redhat.com>
+Message-ID: <ea628ded-3cb3-c426-da6d-bf7cb51f4ca8@redhat.com>
+Date:   Wed, 20 Jun 2018 10:46:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180619225145.GA23389@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add tests for the bitfield helpers. The constant ones will all
-be folded to nothing by the compiler (if everything is correct
-in the header file), and the variable ones do some tests against
-open-coding the necessary shifts.
+On 06/20/2018 12:51 AM, Greg Kroah-Hartman wrote:
 
-A few test cases that should fail/warn compilation are provided
-under ifdef.
+[snip]
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
----
- lib/Kconfig.debug   |   7 +++
- lib/Makefile        |   1 +
- lib/test_bitfield.c | 168 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 176 insertions(+)
- create mode 100644 lib/test_bitfield.c
+>> @@ -233,6 +252,9 @@ void device_unblock_probing(void)
+>>   */
+>>  static int deferred_probe_initcall(void)
+>>  {
+>> +	debugfs_create_file("deferred_devices", 0444, NULL, NULL,
+>> +			    &deferred_devs_fops);
+> 
+> In the root of debugfs?
+>
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index eb885942eb0f..b0870377b4d1 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1799,6 +1799,13 @@ config TEST_BITMAP
+I added in the root for lack of a better place. Any suggestion is welcomed.
  
- 	  If unsure, say N.
+> Anyway, what about "devices_deferred", to help keep things semi-sane if
+> we have other driver core debugfs entries?
+>
+
+I don't have a strong opinion on the name really, so I'll change it.
  
-+config TEST_BITFIELD
-+	tristate "Test bitfield functions at runtime"
-+	help
-+	  Enable this option to test the bitfield functions at boot.
-+
-+	  If unsure, say N.
-+
- config TEST_UUID
- 	tristate "Test functions located in the uuid module at runtime"
+> And you don't remove the file ever?
+>
+
+Yeah, I saw that it wasn't removed in other places for debugfs entries
+created by the core since unlike drivers they can't be built as a module
+or re-loaded. But you are right, I'll add an __exitcall to remove there.
  
-diff --git a/lib/Makefile b/lib/Makefile
-index 84c6dcb31fbb..02ab4c1a64d1 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -68,6 +68,7 @@ obj-$(CONFIG_TEST_STATIC_KEYS) += test_static_keys.o
- obj-$(CONFIG_TEST_STATIC_KEYS) += test_static_key_base.o
- obj-$(CONFIG_TEST_PRINTF) += test_printf.o
- obj-$(CONFIG_TEST_BITMAP) += test_bitmap.o
-+obj-$(CONFIG_TEST_BITFIELD) += test_bitfield.o
- obj-$(CONFIG_TEST_UUID) += test_uuid.o
- obj-$(CONFIG_TEST_PARMAN) += test_parman.o
- obj-$(CONFIG_TEST_KMOD) += test_kmod.o
-diff --git a/lib/test_bitfield.c b/lib/test_bitfield.c
-new file mode 100644
-index 000000000000..5b8f4108662d
---- /dev/null
-+++ b/lib/test_bitfield.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Test cases for bitfield helpers.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/bitfield.h>
-+
-+#define CHECK_ENC_GET_U(tp, v, field, res) do {				\
-+		{							\
-+			u##tp _res;					\
-+									\
-+			_res = u##tp##_encode_bits(v, field);		\
-+			if (_res != res) {				\
-+				pr_warn("u" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != " #res "\n",\
-+					(u64)_res);			\
-+				return -EINVAL;				\
-+			}						\
-+			if (u##tp##_get_bits(_res, field) != v)		\
-+				return -EINVAL;				\
-+		}							\
-+	} while (0)
-+
-+#define CHECK_ENC_GET_LE(tp, v, field, res) do {			\
-+		{							\
-+			__le##tp _res;					\
-+									\
-+			_res = le##tp##_encode_bits(v, field);		\
-+			if (_res != cpu_to_le##tp(res)) {		\
-+				pr_warn("le" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != 0x%llx\n",\
-+					(u64)le##tp##_to_cpu(_res),	\
-+					(u64)(res));			\
-+				return -EINVAL;				\
-+			}						\
-+			if (le##tp##_get_bits(_res, field) != v)	\
-+				return -EINVAL;				\
-+		}							\
-+	} while (0)
-+
-+#define CHECK_ENC_GET_BE(tp, v, field, res) do {			\
-+		{							\
-+			__be##tp _res;					\
-+									\
-+			_res = be##tp##_encode_bits(v, field);		\
-+			if (_res != cpu_to_be##tp(res)) {		\
-+				pr_warn("be" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != 0x%llx\n",\
-+					(u64)be##tp##_to_cpu(_res),	\
-+					(u64)(res));			\
-+				return -EINVAL;				\
-+			}						\
-+			if (be##tp##_get_bits(_res, field) != v)	\
-+				return -EINVAL;				\
-+		}							\
-+	} while (0)
-+
-+#define CHECK_ENC_GET(tp, v, field, res) do {				\
-+		CHECK_ENC_GET_U(tp, v, field, res);			\
-+		CHECK_ENC_GET_LE(tp, v, field, res);			\
-+		CHECK_ENC_GET_BE(tp, v, field, res);			\
-+	} while (0)
-+
-+static int test_constants(void)
-+{
-+	/*
-+	 * NOTE
-+	 * This whole function compiles (or at least should, if everything
-+	 * is going according to plan) to nothing after optimisation.
-+	 */
-+
-+	CHECK_ENC_GET(16,  1, 0x000f, 0x0001);
-+	CHECK_ENC_GET(16,  3, 0x00f0, 0x0030);
-+	CHECK_ENC_GET(16,  5, 0x0f00, 0x0500);
-+	CHECK_ENC_GET(16,  7, 0xf000, 0x7000);
-+	CHECK_ENC_GET(16, 14, 0x000f, 0x000e);
-+	CHECK_ENC_GET(16, 15, 0x00f0, 0x00f0);
-+
-+	CHECK_ENC_GET_U(8,  1, 0x0f, 0x01);
-+	CHECK_ENC_GET_U(8,  3, 0xf0, 0x30);
-+	CHECK_ENC_GET_U(8, 14, 0x0f, 0x0e);
-+	CHECK_ENC_GET_U(8, 15, 0xf0, 0xf0);
-+
-+	CHECK_ENC_GET(32,  1, 0x00000f00, 0x00000100);
-+	CHECK_ENC_GET(32,  3, 0x0000f000, 0x00003000);
-+	CHECK_ENC_GET(32,  5, 0x000f0000, 0x00050000);
-+	CHECK_ENC_GET(32,  7, 0x00f00000, 0x00700000);
-+	CHECK_ENC_GET(32, 14, 0x0f000000, 0x0e000000);
-+	CHECK_ENC_GET(32, 15, 0xf0000000, 0xf0000000);
-+
-+	CHECK_ENC_GET(64,  1, 0x00000f0000000000ull, 0x0000010000000000ull);
-+	CHECK_ENC_GET(64,  3, 0x0000f00000000000ull, 0x0000300000000000ull);
-+	CHECK_ENC_GET(64,  5, 0x000f000000000000ull, 0x0005000000000000ull);
-+	CHECK_ENC_GET(64,  7, 0x00f0000000000000ull, 0x0070000000000000ull);
-+	CHECK_ENC_GET(64, 14, 0x0f00000000000000ull, 0x0e00000000000000ull);
-+	CHECK_ENC_GET(64, 15, 0xf000000000000000ull, 0xf000000000000000ull);
-+
-+	return 0;
-+}
-+
-+#define CHECK(tp, mask) do {						\
-+		u64 v;							\
-+									\
-+		for (v = 0; v < 1 << hweight32(mask); v++)		\
-+			if (tp##_encode_bits(v, mask) != v << __ffs64(mask)) \
-+				return -EINVAL;				\
-+	} while (0)
-+
-+static int test_variables(void)
-+{
-+	CHECK(u8, 0x0f);
-+	CHECK(u8, 0xf0);
-+	CHECK(u8, 0x38);
-+
-+	CHECK(u16, 0x0038);
-+	CHECK(u16, 0x0380);
-+	CHECK(u16, 0x3800);
-+	CHECK(u16, 0x8000);
-+
-+	CHECK(u32, 0x80000000);
-+	CHECK(u32, 0x7f000000);
-+	CHECK(u32, 0x07e00000);
-+	CHECK(u32, 0x00018000);
-+
-+	CHECK(u64, 0x8000000000000000ull);
-+	CHECK(u64, 0x7f00000000000000ull);
-+	CHECK(u64, 0x0001800000000000ull);
-+	CHECK(u64, 0x0000000080000000ull);
-+	CHECK(u64, 0x000000007f000000ull);
-+	CHECK(u64, 0x0000000018000000ull);
-+	CHECK(u64, 0x0000001f8000000ull);
-+
-+	return 0;
-+}
-+
-+static int __init test_bitfields(void)
-+{
-+	int ret = test_constants();
-+
-+	if (ret) {
-+		pr_warn("constant tests failed!\n");
-+		return ret;
-+	}
-+
-+	ret = test_variables();
-+	if (ret) {
-+		pr_warn("variable tests failed!\n");
-+		return ret;
-+	}
-+
-+#ifdef TEST_BITFIELD_COMPILE
-+	/* these should fail compilation */
-+	CHECK_ENC_GET(16, 16, 0x0f00, 0x1000);
-+	u32_encode_bits(7, 0x06000000);
-+
-+	/* this should at least give a warning */
-+	u16_encode_bits(0, 0x60000);
-+#endif
-+
-+	pr_info("tests passed\n");
-+
-+	return 0;
-+}
-+module_init(test_bitfields)
-+
-+MODULE_AUTHOR("Johannes Berg <johannes@sipsolutions.net>");
-+MODULE_LICENSE("GPL");
+> And what is the use of this file?  What can you do with this
+> information?  Who is going to use it?  Don't we have other deferred
+
+This patch is the result of a discussion with Tomeu and Mark (cc'ed) to
+allow https://kernelci.org to test if there was a regression that makes
+drivers to defer their probe.
+
+The problem with the probe deferral mechanism is that you don't have a
+way to distinguish between a valid deferral due a dependency not being
+available yet and a bug (i.e: wrong DTB, config symbol not enabled, etc)
+that prevents the device to eventually being probed.
+
+> probe debugging somewhere else?
+>
+
+There is some debug yes, but it isn't suitable for the use case I explained.
+
+For start, it only tells you if a given driver for a device was deferred or
+probed correctly while this patch attempts to tell what was left (if any)
+in the queue after the last driver was registered.
+
+Second, is only enabled until late_initcall so it will only print the probe
+deferral for built-in drivers and not for modules. This patch registers the
+debugfs entry after the probe debugging has been disabled.
+
+> thanks,
+> 
+> greg k-h
+> 
+
+Best regards,
 -- 
-2.14.4
-
+Javier Martinez Canillas
+Software Engineer - Desktop Hardware Enablement
+Red Hat
