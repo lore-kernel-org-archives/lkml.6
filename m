@@ -2,130 +2,100 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B28C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE59C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E14320020
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:42:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E14320020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id D0D3320020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:44:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D3320020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754537AbeFTSmm (ORCPT
+        id S1754639AbeFTSoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 14:42:42 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:42605 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754295AbeFTSml (ORCPT
+        Wed, 20 Jun 2018 14:44:10 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35945 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754018AbeFTSoH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 14:42:41 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R681e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0T33bM7P_1529520149;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T33bM7P_1529520149)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 21 Jun 2018 02:42:32 +0800
-Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
- large mapping
-To:     Michal Hocko <mhocko@kernel.org>, Nadav Amit <nadav.amit@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, ldufour@linux.vnet.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org
-References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
- <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
- <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
- <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
- <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
- <20180620071817.GJ13685@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <c184031d-b1db-503e-1a32-7963b4bf3de0@linux.alibaba.com>
-Date:   Wed, 20 Jun 2018 11:42:27 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 20 Jun 2018 14:44:07 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v131-v6so1314985wma.1;
+        Wed, 20 Jun 2018 11:44:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rpholrbbYXltyFhYdoTZcNlouuvMACYCHfXUWo6Bk/s=;
+        b=rUrqHvG7tWgdxFww/rPx/nIlR6tZVARDK83CtirIdMd+VNClIwBgwx/JtmaSJnZXjg
+         TAOIPHj7y16I2XER+ovQtqrD8Hp+067Z4/hAhoWL5DoZipVq5F74WWO9/oMa1LSa/f8g
+         WRfbGsvZAkEXqV77m2ix1qT9YWs0vepwKk63hgnoS0j/9Gx+l8W2JO3XrsnEY+QuwmAA
+         idv3KpK0OUdsPDz2dMYi/INQRqh0LAtvLATBE4Pqx81x3rk3Fn59PW3uIIlqD4N2NbmA
+         xvlcLKq0i0SbTPmBtXNn6FPpm7SJirzam7tvU45ADrxgWv41DAJdBPwYG/2yq23tumxi
+         9x7w==
+X-Gm-Message-State: APt69E2aMxj3dvY6+KzvcCBSDEDsdwA0MKaveqDWaptUiO2qPtHVw7mg
+        wKEZ/4pXjjVBuZqNWJy6Y7I=
+X-Google-Smtp-Source: ADUXVKIO+n9lRDW/Ve7YeoIKXTrDqMwhAnbCe+xNkr5XiUU4oZnqNyNhcjTWKBrSd0I7kWibPR+JHg==
+X-Received: by 2002:a50:a106:: with SMTP id 6-v6mr19418489edj.12.1529520246291;
+        Wed, 20 Jun 2018 11:44:06 -0700 (PDT)
+Received: from kozik-lap (adsl-84-227-236-43.adslplus.ch. [84.227.236.43])
+        by smtp.googlemail.com with ESMTPSA id g30-v6sm1536466edb.5.2018.06.20.11.44.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 11:44:05 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 20:44:03 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     arm@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        ionela.voinescu@arm.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        chris.redpath@arm.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/15] arm: dts: exynos: Add missing cooling device
+ properties for CPUs
+Message-ID: <20180620184403.u6tdqc2zvyslospe@kozik-lap>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+ <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180620071817.GJ13685@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cfd8de4b2ad1cfd7b0f1a0706c0b6b918e1ebffc.1527244201.git.viresh.kumar@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 25, 2018 at 04:01:53PM +0530, Viresh Kumar wrote:
+> The cooling device properties, like "#cooling-cells" and
+> "dynamic-power-coefficient", should either be present for all the CPUs
+> of a cluster or none. If these are present only for a subset of CPUs of
+> a cluster then things will start falling apart as soon as the CPUs are
+> brought online in a different order. For example, this will happen
+> because the operating system looks for such properties in the CPU node
+> it is trying to bring up, so that it can register a cooling device.
+> 
+> Add such missing properties.
+> 
+> Fix other missing properties (clocks, OPP, clock latency) as well to
+> make it all work.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos3250.dtsi | 16 ++++++++++++++++
+>  arch/arm/boot/dts/exynos4210.dtsi | 13 +++++++++++++
+>  arch/arm/boot/dts/exynos4412.dtsi |  9 +++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi | 23 +++++++++++++++++++++++
+>  4 files changed, 61 insertions(+)
+> 
 
+Thanks, applied.
 
-On 6/20/18 12:18 AM, Michal Hocko wrote:
-> On Tue 19-06-18 17:31:27, Nadav Amit wrote:
->> at 4:08 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
->>
->>>
->>> On 6/19/18 3:17 PM, Nadav Amit wrote:
->>>> at 4:34 PM, Yang Shi <yang.shi@linux.alibaba.com>
->>>>   wrote:
->>>>
->>>>
->>>>> When running some mmap/munmap scalability tests with large memory (i.e.
->>>>>
->>>>>> 300GB), the below hung task issue may happen occasionally.
->>>>>>
->>>>> INFO: task ps:14018 blocked for more than 120 seconds.
->>>>>        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>>>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->>>>> message.
->>>>> ps              D    0 14018      1 0x00000004
->>>>>
->>>>>
->>>> (snip)
->>>>
->>>>
->>>>> Zapping pages is the most time consuming part, according to the
->>>>> suggestion from Michal Hock [1], zapping pages can be done with holding
->>>>> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
->>>>> mmap_sem to manipulate vmas.
->>>>>
->>>> Does munmap() == MADV_DONTNEED + munmap() ?
->>> Not exactly the same. So, I basically copied the page zapping used by munmap instead of calling MADV_DONTNEED.
->>>
->>>> For example, what happens with userfaultfd in this case? Can you get an
->>>> extra #PF, which would be visible to userspace, before the munmap is
->>>> finished?
->>>>
->>> userfaultfd is handled by regular munmap path. So, no change to userfaultfd part.
->> Right. I see it now.
->>
->>>> In addition, would it be ok for the user to potentially get a zeroed page in
->>>> the time window after the MADV_DONTNEED finished removing a PTE and before
->>>> the munmap() is done?
->>>>
->>> This should be undefined behavior according to Michal. This has been discussed in  https://lwn.net/Articles/753269/.
->> Thanks for the reference.
->>
->> Reading the man page I see: "All pages containing a part of the indicated
->> range are unmapped, and subsequent references to these pages will generate
->> SIGSEGV.”
-> Yes, this is true but I guess what Yang Shi meant was that an userspace
-> access racing with munmap is not well defined. You never know whether
-> you get your data, #PTF or SEGV because it depends on timing. The user
-> visible change might be that you lose content and get zero page instead
-> if you hit the race window while we are unmapping which was not possible
-> before. But whouldn't such an access pattern be buggy anyway? You need
-> some form of external synchronization AFAICS.
->
-> But maybe some userspace depends on "getting right data or get SEGV"
-> semantic. If we have to preserve that then we can come up with a VM_DEAD
-> flag set before we tear it down and force the SEGV on the #PF path.
-> Something similar we already do for MMF_UNSTABLE.
-
-Set VM_DEAD with read mmap_sem held? It should be ok since this is the 
-only place to set this flag for this unique special case.
-
-Yang
-
+Best regards,
+Krzysztof
 
