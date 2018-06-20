@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEFFC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35886C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC29720693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:14:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC29720693
+	by mail.kernel.org (Postfix) with ESMTP id EDA2B20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:14:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDA2B20693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754069AbeFTAOS (ORCPT
+        id S1754089AbeFTAOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:14:18 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35023 "EHLO
+        Tue, 19 Jun 2018 20:14:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52371 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeFTAOO (ORCPT
+        with ESMTP id S1750949AbeFTAOp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:14:14 -0400
+        Tue, 19 Jun 2018 20:14:45 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0E6Ab3296272
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0EeXQ3296308
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 17:14:06 -0700
+        Tue, 19 Jun 2018 17:14:40 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0E66T3296269;
-        Tue, 19 Jun 2018 17:14:06 -0700
-Date:   Tue, 19 Jun 2018 17:14:06 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0Eekk3296305;
+        Tue, 19 Jun 2018 17:14:40 -0700
+Date:   Tue, 19 Jun 2018 17:14:40 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-5363fc10521acb00c4bdc19ab9e2482db12b5514@git.kernel.org>
-Cc:     tglx@linutronix.de, hpa@zytor.com, reinette.chatre@intel.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: hpa@zytor.com, reinette.chatre@intel.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <2f1844c590a87f96b8b948d5d6da54b532d25888.1527593970.git.reinette.chatre@intel.com>
-References: <2f1844c590a87f96b8b948d5d6da54b532d25888.1527593970.git.reinette.chatre@intel.com>
+Message-ID: <tip-417d29b4daa1a7c9f5fc4f0e8205ea7dbc967054@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        reinette.chatre@intel.com, mingo@kernel.org, hpa@zytor.com
+Reply-To: hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          reinette.chatre@intel.com, mingo@kernel.org
+In-Reply-To: <902574465439924850a6e7c4cc06b8a79bd7d2b4.1527593970.git.reinette.chatre@intel.com>
+References: <902574465439924850a6e7c4cc06b8a79bd7d2b4.1527593970.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Associate mode with each RDT
- resource group
-Git-Commit-ID: 5363fc10521acb00c4bdc19ab9e2482db12b5514
+Subject: [tip:x86/cache] x86/intel_rdt: Introduce resource group's mode
+ resctrl file
+Git-Commit-ID: 417d29b4daa1a7c9f5fc4f0e8205ea7dbc967054
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,25 +57,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5363fc10521acb00c4bdc19ab9e2482db12b5514
-Gitweb:     https://git.kernel.org/tip/5363fc10521acb00c4bdc19ab9e2482db12b5514
+Commit-ID:  417d29b4daa1a7c9f5fc4f0e8205ea7dbc967054
+Gitweb:     https://git.kernel.org/tip/417d29b4daa1a7c9f5fc4f0e8205ea7dbc967054
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Tue, 29 May 2018 05:57:28 -0700
+AuthorDate: Tue, 29 May 2018 05:57:29 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 20 Jun 2018 00:56:27 +0200
+CommitDate: Wed, 20 Jun 2018 00:56:28 +0200
 
-x86/intel_rdt: Associate mode with each RDT resource group
+x86/intel_rdt: Introduce resource group's mode resctrl file
 
-Each RDT resource group is associated with a mode that will reflect
-the level of sharing of its allocations. The default, shareable, will be
-associated with each resource group on creation since it is zero and
-resource groups are created with kzalloc. The managing of the mode of a
-resource group will follow. The default resource group always remain
-though so ensure that it is reset to the default mode when the resctrl
-filesystem is unmounted.
+A new resctrl file "mode" associated with each resource group is
+introduced. This file will display the resource group's current mode and an
+administrator can also use it to modify the resource group's mode.
 
-Also introduce a utility that can be used to determine the mode of a
-resource group when it is searched for based on its class of service.
+Only shareable mode is currently supported.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -87,78 +81,117 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/2f1844c590a87f96b8b948d5d6da54b532d25888.1527593970.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/902574465439924850a6e7c4cc06b8a79bd7d2b4.1527593970.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt.h          |  3 +++
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 22 ++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 83 ++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index c08eee73ecd3..7ff1f633bebe 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -122,6 +122,7 @@ struct mongroup {
-  * @type:			indicates type of this rdtgroup - either
-  *				monitor only or ctrl_mon group
-  * @mon:			mongroup related data
-+ * @mode:			mode of resource group
-  */
- struct rdtgroup {
- 	struct kernfs_node	*kn;
-@@ -132,6 +133,7 @@ struct rdtgroup {
- 	atomic_t		waitcount;
- 	enum rdt_group_type	type;
- 	struct mongroup		mon;
-+	enum rdtgrp_mode	mode;
- };
- 
- /* rdtgroup.flags */
-@@ -461,6 +463,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 				char *buf, size_t nbytes, loff_t off);
- int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 			   struct seq_file *s, void *v);
-+enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
- struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
- int alloc_rmid(void);
- void free_rmid(u32 rmid);
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 749856a2e736..70d7846041fe 100644
+index 70d7846041fe..eac60602c87b 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -126,6 +126,27 @@ static void closid_free(int closid)
- 	closid_free_map |= 1 << closid;
+@@ -147,6 +147,24 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
+ 	return RDT_NUM_MODES;
  }
  
++static const char * const rdt_mode_str[] = {
++	[RDT_MODE_SHAREABLE]	= "shareable",
++};
++
 +/**
-+ * rdtgroup_mode_by_closid - Return mode of resource group with closid
-+ * @closid: closid if the resource group
++ * rdtgroup_mode_str - Return the string representation of mode
++ * @mode: the resource group mode as &enum rdtgroup_mode
 + *
-+ * Each resource group is associated with a @closid. Here the mode
-+ * of a resource group can be queried by searching for it using its closid.
-+ *
-+ * Return: mode as &enum rdtgrp_mode of resource group with closid @closid
++ * Return: string representation of valid mode, "unknown" otherwise
 + */
-+enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
++static const char *rdtgroup_mode_str(enum rdtgrp_mode mode)
 +{
-+	struct rdtgroup *rdtgrp;
++	if (mode < RDT_MODE_SHAREABLE || mode >= RDT_NUM_MODES)
++		return "unknown";
 +
-+	list_for_each_entry(rdtgrp, &rdt_all_groups, rdtgroup_list) {
-+		if (rdtgrp->closid == closid)
-+			return rdtgrp->mode;
-+	}
-+
-+	return RDT_NUM_MODES;
++	return rdt_mode_str[mode];
 +}
 +
  /* set uid and gid of rdtgroup dirs and files to that of the creator */
  static int rdtgroup_kn_set_ugid(struct kernfs_node *kn)
  {
-@@ -1483,6 +1504,7 @@ static void rdt_kill_sb(struct super_block *sb)
- 		reset_all_ctrls(r);
- 	cdp_disable_all();
- 	rmdir_all_sub();
-+	rdtgroup_default.mode = RDT_MODE_SHAREABLE;
- 	static_branch_disable_cpuslocked(&rdt_alloc_enable_key);
- 	static_branch_disable_cpuslocked(&rdt_mon_enable_key);
- 	static_branch_disable_cpuslocked(&rdt_enable_key);
+@@ -761,6 +779,63 @@ static ssize_t max_threshold_occ_write(struct kernfs_open_file *of,
+ 	return nbytes;
+ }
+ 
++/*
++ * rdtgroup_mode_show - Display mode of this resource group
++ */
++static int rdtgroup_mode_show(struct kernfs_open_file *of,
++			      struct seq_file *s, void *v)
++{
++	struct rdtgroup *rdtgrp;
++
++	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		rdtgroup_kn_unlock(of->kn);
++		return -ENOENT;
++	}
++
++	seq_printf(s, "%s\n", rdtgroup_mode_str(rdtgrp->mode));
++
++	rdtgroup_kn_unlock(of->kn);
++	return 0;
++}
++
++static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
++				   char *buf, size_t nbytes, loff_t off)
++{
++	struct rdtgroup *rdtgrp;
++	enum rdtgrp_mode mode;
++	int ret = 0;
++
++	/* Valid input requires a trailing newline */
++	if (nbytes == 0 || buf[nbytes - 1] != '\n')
++		return -EINVAL;
++	buf[nbytes - 1] = '\0';
++
++	rdtgrp = rdtgroup_kn_lock_live(of->kn);
++	if (!rdtgrp) {
++		rdtgroup_kn_unlock(of->kn);
++		return -ENOENT;
++	}
++
++	rdt_last_cmd_clear();
++
++	mode = rdtgrp->mode;
++
++	if ((!strcmp(buf, "shareable") && mode == RDT_MODE_SHAREABLE))
++		goto out;
++
++	if (!strcmp(buf, "shareable")) {
++		rdtgrp->mode = RDT_MODE_SHAREABLE;
++	} else {
++		rdt_last_cmd_printf("unknown/unsupported mode\n");
++		ret = -EINVAL;
++	}
++
++out:
++	rdtgroup_kn_unlock(of->kn);
++	return ret ?: nbytes;
++}
++
+ /* rdtgroup information files for one cache resource. */
+ static struct rftype res_common_files[] = {
+ 	{
+@@ -874,6 +949,14 @@ static struct rftype res_common_files[] = {
+ 		.seq_show	= rdtgroup_schemata_show,
+ 		.fflags		= RF_CTRL_BASE,
+ 	},
++	{
++		.name		= "mode",
++		.mode		= 0644,
++		.kf_ops		= &rdtgroup_kf_single_ops,
++		.write		= rdtgroup_mode_write,
++		.seq_show	= rdtgroup_mode_show,
++		.fflags		= RF_CTRL_BASE,
++	},
+ };
+ 
+ static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
