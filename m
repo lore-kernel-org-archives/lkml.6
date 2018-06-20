@@ -2,176 +2,246 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7D6C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B7CC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DC4020874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:32:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34BA120874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:32:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fbn7h6TX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC4020874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lg/7g4gi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BA120874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753475AbeFTMcO (ORCPT
+        id S1753938AbeFTMcd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 08:32:14 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43898 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751422AbeFTMcM (ORCPT
+        Wed, 20 Jun 2018 08:32:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55084 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753619AbeFTMcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:32:12 -0400
-Received: by mail-pl0-f66.google.com with SMTP id c41-v6so1690889plj.10
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 05:32:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6cTA+aJb615kZ+SkgPVrIlZbry8vUTdPztmfxvqDUig=;
-        b=fbn7h6TXYHC6M1tx2nx5kAqapXoY4S0DSwsXVAjVM+QR0Ot8CLpYoeVfB8DgdNKYpe
-         XsiNOS1U++Hc0dVTlFAWIHTh0ts6rffnoQsaCV2VdIoZPxPVjoXzRMlcB82c6gvaHY6y
-         2n2Pxy1VOErTI8tMFBYNC16/N8tlsMttga/jdGrnVbEsHuCjcTI5Sy9wTM6MdM12QFCB
-         9nUSF+4V9jZCZu28Dq/q8uTca09vQv6masZO9ARl6OwhwsudebUDyr9O+kM9lfNqiQOK
-         ozuwbfDfcaYMHsi9yloh8bDcZeHvXqDbtMnl9VgtV+HN0tyJcsvzMKv94yovPPdyaycd
-         YheA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=6cTA+aJb615kZ+SkgPVrIlZbry8vUTdPztmfxvqDUig=;
-        b=P5JLAJot74sxO6PuEeBesHFdqMWyfjpOWfsD6wLMbYr/cy+6oaP3z5uX43Swv2WkZ+
-         WmJEej6ISoZ+Lh1qGj4aHZ0s5w02T+G5WBzPVBLXkkKVBb5tEnps+Id7bcZ/HEh/0wgc
-         4TGntq5GqYSYjt9ETbr0dvpx527dvk3iarl4OuwQgB68+76Wt22Co7R453CORr+str1O
-         Okp4NZxt6ttk59BtQTlkbhjqDH8n+7f++MUU9Ew9U36HJd6BaCGgS4yGZhU6s7i1zcKR
-         a4hixm9cJl6CmNoeXmjtu6gtDxD01mwtIxGlnhZEn7PM/bZOjbUz0Ly15+xs81UpgvHI
-         2pkg==
-X-Gm-Message-State: APt69E3kTpYgd3UIr8aNGFHKbzL5L+uEorAdXZmkbINARm1MGZODjfts
-        MdFPBTgm71SZCbF6TZHcsebXAe9d6s4GpQjjlwz3MA==
-X-Google-Smtp-Source: ADUXVKKY0w+iwpV6H1yq3ARiPjjrjDc3t6baYeMkT8P0cq9coQQMWxH71vUDabff9scFrCRvtIPNK4Xl9ClvtJPESgg=
-X-Received: by 2002:a17:902:8d85:: with SMTP id v5-v6mr23556198plo.93.1529497932090;
- Wed, 20 Jun 2018 05:32:12 -0700 (PDT)
+        Wed, 20 Jun 2018 08:32:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2s/eL9JHaseZHZ9/UkO1EdbXVfvWypSWz6ifnzNIPr4=; b=Lg/7g4gixsAqCOchV3KrgeWB+
+        2/WIovewCtQcqRd6DUuaZo0gvMIZLyzVWHZMd/BVKqXO1koB/+3SiDvQSN/1UrYyi4oax2dqcMbnm
+        k7UtgL1gnSRixlnfPeYSzMZn4uilLSuUvY2ZBf2LTjv4prOzmpbMqnNIfvS4gqzIrjWLjHkggEHXE
+        QzPcUZBw95DWOBqaxgKHJwMznFK2IkgvvZf9uRZcOZCpxSkpR0pGGGXj+A+VOcs/WMw2brybu3RsU
+        OjA9K034E3PIsnlrxAnZRSnNkXVLXr6ux3snvvnM29+xQBKf4xslFlTtMXvNTrvjSh2Atyg4Vd1vC
+        XGALYe8rg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVcHS-0006tZ-Sv; Wed, 20 Jun 2018 12:32:11 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CE1ED2029F1D7; Wed, 20 Jun 2018 14:32:08 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 14:32:08 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        prarit@redhat.com, feng.tang@intel.com, pmladek@suse.com,
+        gnomes@lxorguk.ukuu.org.uk
+Subject: Re: [PATCH v10 7/7] x86/tsc: use tsc early
+Message-ID: <20180620123208.GN2476@hirez.programming.kicks-ass.net>
+References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
+ <20180615174204.30581-8-pasha.tatashin@oracle.com>
+ <alpine.DEB.2.21.1806192335390.10546@nanos.tec.linutronix.de>
+ <20180620091532.GK2476@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1806201231030.10546@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Wed, 20 Jun 2018 05:31:51
- -0700 (PDT)
-In-Reply-To: <20180620113731.y7apmqoh6ke6ar2v@wfg-t540p.sh.intel.com>
-References: <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
- <20180517112135.GB20796@jagdpanzerIV> <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
- <20180524021451.GA23443@jagdpanzerIV> <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
- <CACT4Y+ZGSefrYL9xtQs=yPMRNFsOUumuJXsShJPhCOBSLySxuw@mail.gmail.com>
- <20180620083126.GA477@jagdpanzerIV> <CACT4Y+YMubTm1xduj+XCbQnNwQxYFLjBT33cFKisN1HyeaBpZw@mail.gmail.com>
- <20180620090413.GA444@jagdpanzerIV> <CACT4Y+a6nUqdpSyYGGcXKAgVbcw+uQOz2kYx8tUS+8T5-bzqkg@mail.gmail.com>
- <20180620113731.y7apmqoh6ke6ar2v@wfg-t540p.sh.intel.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 20 Jun 2018 14:31:51 +0200
-Message-ID: <CACT4Y+bw5j9aTRVFKHNO-YH0vXtuOvB4ez4wg6C=1GpSbvfSAQ@mail.gmail.com>
-Subject: Re: [PATCH] printk: inject caller information into the body of message
-To:     Fengguang Wu <fengguang.wu@intel.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1806201231030.10546@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 1:37 PM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> On Wed, Jun 20, 2018 at 11:30:05AM +0200, Dmitry Vyukov wrote:
->>
->> On Wed, Jun 20, 2018 at 11:06 AM, Sergey Senozhatsky
->> <sergey.senozhatsky.work@gmail.com> wrote:
->>>
->>> Hi Dmitry,
->>>
->>> On (06/20/18 10:45), Dmitry Vyukov wrote:
->>>>
->>>> Hi Sergey,
->>>>
->>>> What are the visible differences between this patch and Tetsuo's
->>>> patch?
->>>
->>>
->>> I guess none, and looking at your requirements below I tend to agree
->>> that Tetsuo's approach is probably what you need at the end of the day.
->>>
->>>> The only thing that will matter for syzkaller parsing in the
->>>> end is the resulting text format as it appears on console. But you say
->>>> "I'm not pushing for this particular message format", so what exactly
->>>> do you want me to provide feedback on?
->>>> I guess we need to handle pr_cont properly whatever approach we take.
->>>
->>>
->>> Mostly, was wondering about if:
->>> a) you need pr_cont() handling
->>> b) you need printk_safe() handling
->>>
->>> The reasons I left those things behind:
->>>
->>> a) pr_cont() is officially hated. It was never supposed to be used
->>>    on SMP systems. So I wasn't sure if we need all that effort and
->>>    add tricky code to handle pr_cont(). Given that syzkaller is
->>>    probably the only user of that functionality.
->>
->>
->> Well, if I put my syzkaller hat on, then I don't care what exactly
->> happens in the kernel, the only thing I care is well-formed output on
->> console that can be parsed unambiguously in all cases.
->
->
-> +1 for 0day kernel testing.
->
-> I admit that goal may never be 100% achievable -- at least some serial
-> console logs can sometimes become messy. So we'll have to write dmesg
-> parsing code in defensive ways.
->
-> But some unnecessary pr_cont() broken-up messages can obviously be
-> avoided. For example,
->
-> arch/x86/mm/fault.c:
->
->         printk(KERN_ALERT "BUG: unable to handle kernel ");
->         if (address < PAGE_SIZE)
->                 printk(KERN_CONT "NULL pointer dereference");
->         else
->                 printk(KERN_CONT "paging request");
->
-> I've actually proposed to remove the above KERN_CONT, unfortunately the
-> patch was silently ignored.
+On Wed, Jun 20, 2018 at 12:42:40PM +0200, Thomas Gleixner wrote:
+> On Wed, 20 Jun 2018, Peter Zijlstra wrote:
 
+> > I'm still puzzled by the entire need for tsc_early_enabled and all that.
+> > Esp. since both branches do the exact same thing:
+> > 
+> > 	return cycles_2_ns(rdtsc());
+> 
+> Right. But up to the point where the real sched_clock initialization can be
+> done and the static keys can be flipped, there must be a way to
+> conditinally use TSC depending on availablility and early initialization.
 
-I've just cooked this change too, but do you mind reviving your patch?
+Ah, so we want to flip keys early, can be done, see below.
 
-It actually makes the code even shorter, which is nice:
+> You might argue, that we shouldn't care becasue the jiffies case is just
+> the worst case fallback anyway. I wouldn't even disagree as those old
+> machines which have TSC varying with the CPU frequency really should not
+> matter anymore. Pavel might disagree of course.
 
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -671,13 +671,9 @@ show_fault_oops(struct pt_regs *regs, unsigned
-long error_code,
-                        printk(smep_warning, from_kuid(&init_user_ns,
-current_uid()));
-        }
+You forgot (rightfully) that we even use TSC on those !constant
+machines, we adjust the cycles_2_ns thing from the cpufreq notifiers.
 
--       printk(KERN_ALERT "BUG: unable to handle kernel ");
--       if (address < PAGE_SIZE)
--               printk(KERN_CONT "NULL pointer dereference");
--       else
--               printk(KERN_CONT "paging request");
--
--       printk(KERN_CONT " at %px\n", (void *) address);
-+       printk(KERN_ALERT "BUG: unable to handle kernel %s at %px\n",
-+               (address < PAGE_SIZE ? "NULL pointer dereference" :
-+               "paging request"), (void *) address);
+The only case we should _ever_ use that jiffies callback is when TSC
+really isn't there. Basically, if we kill notsc, we could make
+native_sched_clock() := cycles_2_ns(rdtsc()) (for CONFIG_X86_TSC), the
+end.
 
-        dump_pagetable(address);
+No static keys, nothing.
+
+That said; flipping static keys early isn't hard. We should call
+jump_label_init() early, because we want the entries sorted and the
+key->entries link set. It will also replace the GENERIC_NOP5_ATOMIC
+thing, which means we need to also do arch_init_ideal_nop() early, but
+since that is pure CPUID based that should be doable.
+
+And then something like the below could be used.
+
+---
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index e56c95be2808..2dd8c5bdd87b 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -140,4 +140,38 @@ __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
+ 		__jump_label_transform(entry, type, text_poke_early, 1);
  }
+ 
++void jump_label_update_early(struct static_key *key, bool enable)
++{
++	struct jump_entry *entry, *stop = __stop___jump_table;
++
++	/*
++	 * We need the table sorted and key->entries set up.
++	 */
++	WARN_ON_ONCE(!static_key_initialized);
++
++	entry = static_key_entries(key);
++
++	/*
++	 * Sanity check for early users, there had beter be a core kernel user.
++	 */
++	if (!entry || !entry->code || !core_kernel_text(entry->code)) {
++		WARN_ON(1);
++		return;
++	}
++
++	for ( ; (entry < stop) && (jump_entry_key(entry) == key); entry++) {
++		enum jump_label_type type = enable ^ jump_entry_branch(entry);
++		__jump_label_transform(entry, type, text_poke_early, 0);
++	}
++
++	atomic_set_release(&key->enabled, !!enabled);
++}
++
++#else
++
++void jump_label_update_early(struct static_key *key, bool enable)
++{
++	atomic_set(&key->enabled, !!enabled);
++}
++
+ #endif
+diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+index b46b541c67c4..cac61beca25f 100644
+--- a/include/linux/jump_label.h
++++ b/include/linux/jump_label.h
+@@ -79,6 +79,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/compiler.h>
++#include <linux/bug.h>
+ 
+ extern bool static_key_initialized;
+ 
+@@ -110,6 +111,17 @@ struct static_key {
+ 	};
+ };
+ 
++#define JUMP_TYPE_FALSE		0UL
++#define JUMP_TYPE_TRUE		1UL
++#define JUMP_TYPE_LINKED	2UL
++#define JUMP_TYPE_MASK		3UL
++
++static inline struct jump_entry *static_key_entries(struct static_key *key)
++{
++	WARN_ON_ONCE(key->type & JUMP_TYPE_LINKED);
++	return (struct jump_entry *)(key->type & ~JUMP_TYPE_MASK);
++}
++
+ #else
+ struct static_key {
+ 	atomic_t enabled;
+@@ -119,6 +131,17 @@ struct static_key {
+ 
+ #ifdef HAVE_JUMP_LABEL
+ #include <asm/jump_label.h>
++
++static inline struct static_key *jump_entry_key(struct jump_entry *entry)
++{
++	return (struct static_key *)((unsigned long)entry->key & ~1UL);
++}
++
++static inline bool jump_entry_branch(struct jump_entry *entry)
++{
++	return (unsigned long)entry->key & 1UL;
++}
++
+ #endif
+ 
+ #ifndef __ASSEMBLY__
+@@ -132,11 +155,6 @@ struct module;
+ 
+ #ifdef HAVE_JUMP_LABEL
+ 
+-#define JUMP_TYPE_FALSE		0UL
+-#define JUMP_TYPE_TRUE		1UL
+-#define JUMP_TYPE_LINKED	2UL
+-#define JUMP_TYPE_MASK		3UL
+-
+ static __always_inline bool static_key_false(struct static_key *key)
+ {
+ 	return arch_static_branch(key, false);
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 01ebdf1f9f40..9710fa7582aa 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -295,12 +295,6 @@ void __weak __init_or_module arch_jump_label_transform_static(struct jump_entry
+ 	arch_jump_label_transform(entry, type);
+ }
+ 
+-static inline struct jump_entry *static_key_entries(struct static_key *key)
+-{
+-	WARN_ON_ONCE(key->type & JUMP_TYPE_LINKED);
+-	return (struct jump_entry *)(key->type & ~JUMP_TYPE_MASK);
+-}
+-
+ static inline bool static_key_type(struct static_key *key)
+ {
+ 	return key->type & JUMP_TYPE_TRUE;
+@@ -321,16 +315,6 @@ static inline void static_key_set_linked(struct static_key *key)
+ 	key->type |= JUMP_TYPE_LINKED;
+ }
+ 
+-static inline struct static_key *jump_entry_key(struct jump_entry *entry)
+-{
+-	return (struct static_key *)((unsigned long)entry->key & ~1UL);
+-}
+-
+-static bool jump_entry_branch(struct jump_entry *entry)
+-{
+-	return (unsigned long)entry->key & 1UL;
+-}
+-
+ /***
+  * A 'struct static_key' uses a union such that it either points directly
+  * to a table of 'struct jump_entry' or to a linked list of modules which in
