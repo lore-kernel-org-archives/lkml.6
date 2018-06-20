@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF874C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA2CC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8215820871
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:23:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8215820871
+	by mail.kernel.org (Postfix) with ESMTP id 4389320871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:23:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4389320871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753619AbeFTI3y (ORCPT
+        id S1754686AbeFTJXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:29:54 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:23930 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754454AbeFTI3r (ORCPT
+        Wed, 20 Jun 2018 05:23:41 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:52383 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754550AbeFTI3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:29:47 -0400
-X-UUID: 08b4668b9e4f49378647988d48372412-20180620
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        Wed, 20 Jun 2018 04:29:54 -0400
+X-UUID: 75ba9b0a94b94c64ab0a08ff5c05f35c-20180620
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <stu.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1387421391; Wed, 20 Jun 2018 16:19:44 +0800
+        with ESMTP id 574564708; Wed, 20 Jun 2018 16:19:48 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 20 Jun 2018 16:19:42 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 20 Jun 2018 16:19:47 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 20 Jun 2018 16:19:42 +0800
+ Transport; Wed, 20 Jun 2018 16:19:47 +0800
 From:   Stu Hsieh <stu.hsieh@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
 CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
@@ -44,9 +44,9 @@ CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v7 09/29] drm/mediatek: add component DSI3
-Date:   Wed, 20 Jun 2018 16:19:11 +0800
-Message-ID: <1529482771-2153-10-git-send-email-stu.hsieh@mediatek.com>
+Subject: [PATCH v7 26/29] drm/mediatek: add DSI2 support for mutex
+Date:   Wed, 20 Jun 2018 16:19:28 +0800
+Message-ID: <1529482771-2153-27-git-send-email-stu.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
 References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
@@ -58,47 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the component DSI3
+This patch add the DSI2 support for mutex
 
 Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 ++
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 1 +
- 2 files changed, 3 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-index 071f9f5aefea..17b681686471 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-@@ -228,6 +228,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
- 	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
- 	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
- 	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		2, NULL },
-+	[DDP_COMPONENT_DSI3]	= { MTK_DSI,		3, NULL },
- 	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
- 	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
- 	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
-@@ -280,6 +281,7 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
- 	    comp_id == DDP_COMPONENT_DPI1 ||
- 	    comp_id == DDP_COMPONENT_DSI0 ||
- 	    comp_id == DDP_COMPONENT_DSI2 ||
-+	    comp_id == DDP_COMPONENT_DSI3 ||
- 	    comp_id == DDP_COMPONENT_PWM0) {
- 		comp->regs = NULL;
- 		comp->clk = NULL;
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-index 8d152b337f15..7413ffeb3c9d 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-@@ -51,6 +51,7 @@ enum mtk_ddp_comp_id {
- 	DDP_COMPONENT_DSI0,
- 	DDP_COMPONENT_DSI1,
- 	DDP_COMPONENT_DSI2,
-+	DDP_COMPONENT_DSI3,
- 	DDP_COMPONENT_GAMMA,
- 	DDP_COMPONENT_OD0,
- 	DDP_COMPONENT_OD1,
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 4c203d013d7c..a0b526b16da1 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -77,6 +77,7 @@
+ #define MUTEX_SOF_DSI1			2
+ #define MUTEX_SOF_DPI0			3
+ #define MUTEX_SOF_DPI1			4
++#define MUTEX_SOF_DSI2			5
+ 
+ #define OVL0_MOUT_EN_COLOR0		0x1
+ #define OD_MOUT_EN_RDMA0		0x1
+@@ -383,6 +384,9 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
+ 	case DDP_COMPONENT_DSI1:
+ 		reg = MUTEX_SOF_DSI0;
+ 		break;
++	case DDP_COMPONENT_DSI2:
++		reg = MUTEX_SOF_DSI2;
++		break;
+ 	case DDP_COMPONENT_DPI0:
+ 		reg = MUTEX_SOF_DPI0;
+ 		break;
+@@ -420,6 +424,7 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
+ 	switch (id) {
+ 	case DDP_COMPONENT_DSI0:
+ 	case DDP_COMPONENT_DSI1:
++	case DDP_COMPONENT_DSI2:
+ 	case DDP_COMPONENT_DPI0:
+ 	case DDP_COMPONENT_DPI1:
+ 		writel_relaxed(MUTEX_SOF_SINGLE_MODE,
 -- 
 2.12.5
 
