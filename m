@@ -2,163 +2,156 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F858C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C676C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF6C20020
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF6C20020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B31B20020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:35:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4hpydDm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B31B20020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754904AbeFTTep (ORCPT
+        id S1754943AbeFTTfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:34:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52766 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754557AbeFTTen (ORCPT
+        Wed, 20 Jun 2018 15:35:05 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43622 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754667AbeFTTfD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:34:43 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KJSrsk037981
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 15:34:42 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqw3fg81r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 15:34:42 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 13:34:41 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Jun 2018 13:34:38 -0600
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KJYbZl1704304
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Jun 2018 12:34:37 -0700
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6FAABE058;
-        Wed, 20 Jun 2018 13:34:37 -0600 (MDT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B03FBE053;
-        Wed, 20 Jun 2018 13:34:37 -0600 (MDT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Jun 2018 13:34:36 -0600 (MDT)
-Subject: Re: [PATCH 1/6] tpm: Introduce a kref for the tpm_chip
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-References: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
- <20180620161948.1464255-2-stefanb@linux.vnet.ibm.com>
- <20180620183854.GC27445@ziepe.ca>
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date:   Wed, 20 Jun 2018 15:34:36 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 20 Jun 2018 15:35:03 -0400
+Received: by mail-lf0-f66.google.com with SMTP id x13-v6so1007025lff.10;
+        Wed, 20 Jun 2018 12:35:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=1TYUX0Ctd870+oAe4u9AOmTinwJeosIUhhRdCGH/peA=;
+        b=Z4hpydDmFRqFUzDJXcpcqDO94VOHK+OZNy9L2HMFebU5BqtoCvWZd6T1sV9lj2Xcay
+         3NxMBfgEAXK7HyZTRaEiavQg3FnhPT4EXd9w4+4tWa4pBGF/zKo3NeWFhmlIk+k6ow47
+         i656r2CPjRLisah5jvv8VAzydbzr48WCvf8CKms8F2a0YT+nlKi9/tMETaF7t94FkMrp
+         4Oo+Xxb6ZyZnjf/fcL/SiZgQfisPObxGYJpwkxrk1MDbFyEeOXzZbm8SzD1zJs6ZUsjm
+         bLcJnrnBL0ROa3fq6ulHDtVvasYwwocPDD/f7CcmVtELSXR9x/trvEFqFQ+/cvQc0lek
+         1UWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=1TYUX0Ctd870+oAe4u9AOmTinwJeosIUhhRdCGH/peA=;
+        b=b0J7wl44SiivC9pPgKaIa5kBkF+vScSr4PEAj/EDwDi+pNMY1eF+AZB0q6bFI7sIbR
+         Npy4U12B2gmjkHQYytTZ+VzVLHZHhmcp/BnCue4z8s8Rsiqy6JHeUyx2ogBjjk9sPKsU
+         VS1abs8DZ7xrWLpEIxPYTDNZZlcU0ayzMMnLtgm8o4umq1aWeKxIivaB8qrMq2E2F8OH
+         t4eWbg1C4FvQ/xcoX91VkrMVPJ2TSd+cACuDNG1NaLt5m8V/Uk2QUM2MyvqgDINGnYq2
+         U4R/s2Lct9e/Dg09sHLuaFtTl5pAol2v5C2ZfsJVvn7ZYqPxGyE8iy+I6zUVPz0qi3/I
+         Nb4w==
+X-Gm-Message-State: APt69E1kPHbXOHO2weJM/DB9tFlXsgG0MeQPPuLnhohFGruf2lAmmGKq
+        Yzs/w7gS3cmBAw+5C/hLN+fr3UmC/pneUQtu+R8=
+X-Google-Smtp-Source: ADUXVKLFwRKvYxijL1uIEw/CYpHI+MrsQw+cVKr+/hVoMzfrM3rt0hhqX9ooyJw28UTn4LAiTslrqC92cQOapMjt4Xo=
+X-Received: by 2002:a2e:804c:: with SMTP id p12-v6mr14937186ljg.22.1529523301304;
+ Wed, 20 Jun 2018 12:35:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180620183854.GC27445@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18062019-0036-0000-0000-00000A0185E2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009228; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01049847; UDB=6.00537972; IPR=6.00828819;
- MB=3.00021764; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-20 19:34:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062019-0037-0000-0000-000047CF6A46
-Message-Id: <0d37dbe0-d0f4-da13-ffa4-4f00d3542390@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806200214
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 12:35:00
+ -0700 (PDT)
+In-Reply-To: <87muvpsa61.fsf@linux.intel.com>
+References: <20180620150138.49380-1-arnd@arndb.de> <87r2l1sby0.fsf@linux.intel.com>
+ <CAK8P3a1J9j7pz-d+otbJweWgOZZePdaMJEb_sU2GJKi3oYq7Xg@mail.gmail.com> <87muvpsa61.fsf@linux.intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 20 Jun 2018 21:35:00 +0200
+X-Google-Sender-Auth: 2o9seSztMnOmeazK8jylqnYigTg
+Message-ID: <CAK8P3a1Lr2y1SZonodsyUETkc3d_NBOzyOGGv0OFSW=Xo_RVsA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: replace current_kernel_time64 with ktime equivalent
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 02:38 PM, Jason Gunthorpe wrote:
-> On Wed, Jun 20, 2018 at 12:19:43PM -0400, Stefan Berger wrote:
->> Introduce a kref for the tpm_chip that we initialize when the tpm_chip has
->> been allocated and release before the tpm_chip is to be freed.
+On Wed, Jun 20, 2018 at 6:19 PM, Andi Kleen <ak@linux.intel.com> wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
 >>
->> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->>   drivers/char/tpm/tpm-chip.c | 24 +++++++++++++++++++-----
->>   drivers/char/tpm/tpm.h      |  1 +
->>   2 files changed, 20 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->> index 0a62c19937b6..a933676194a4 100644
->> +++ b/drivers/char/tpm/tpm-chip.c
->> @@ -119,8 +119,24 @@ struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
->>   	return res;
->>   }
->>   
->> +static void tpm_chip_free(struct kref *kref)
->> +{
->> +	struct tpm_chip *chip = container_of(kref, struct tpm_chip, kref);
->> +
->> +	kfree(chip->log.bios_event_log);
->> +	kfree(chip->work_space.context_buf);
->> +	kfree(chip->work_space.session_buf);
->> +	kfree(chip);
->> +}
->> +
->> +static void tpm_chip_put(struct tpm_chip *chip)
->> +{
->> +	if (chip)
->> +		kref_put(&chip->kref, tpm_chip_free);
->> +}
->> +
->>   /**
->> - * tpm_dev_release() - free chip memory and the device number
->> + * tpm_dev_release() - free the device number and release reference to chip
->>    * @dev: the character device for the TPM chip
->>    *
->>    * This is used as the release function for the character device.
->> @@ -133,10 +149,7 @@ static void tpm_dev_release(struct device *dev)
->>   	idr_remove(&dev_nums_idr, chip->dev_num);
->>   	mutex_unlock(&idr_lock);
->>   
->> -	kfree(chip->log.bios_event_log);
->> -	kfree(chip->work_space.context_buf);
->> -	kfree(chip->work_space.session_buf);
->> -	kfree(chip);
->> +	tpm_chip_put(chip);
->>   }
->>   static void tpm_devs_release(struct device *dev)
->> @@ -195,6 +208,7 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
->>   
->>   	mutex_init(&chip->tpm_mutex);
->>   	init_rwsem(&chip->ops_sem);
->> +	kref_init(&chip->kref);
->>   
->>   	chip->ops = ops;
->>   
->> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->> index 7f2d0f489e9c..098d7dcc04a4 100644
->> +++ b/drivers/char/tpm/tpm.h
->> @@ -211,6 +211,7 @@ struct tpm_chip {
->>   	struct cdev cdev;
->>   	struct cdev cdevs;
->>   
->> +	struct kref kref;
-> NAK, there is already a kref in struct device, that one must be used.
-
-Right. Should make it simpler...
-
-
+>> To clarify: current_kernel_time() uses at most millisecond resolution rather
+>> than microsecond, as tkr_mono.xtime_nsec only gets updated during the
+>> timer tick.
 >
-> Jason
+> Ah you're right. I remember now: the motivation was to make sure there
+> is basically no overhead. In some setups the full gtod can be rather
+> slow, particularly if it falls back to some crappy timer.
 >
+> I think it would be ok if it falls back to jiffies if TSC or a similar
+> fast timer doesn't work. But the function you're using likely
+> doesn't do that?
 
+My patch as posted just uses ktime_get_coarse_real_ts64(), which
+doesn't ever access the hires clocksource, the change is just cosmetic
+so far.
+
+The timekeeping and clocksource core code (maintainers added to Cc)
+doesn't yet export an API that we can use to determine whether the
+clocksource is "fast" or not, but I would expect that we can decide
+to add that if needed.
+
+This is also something that definitely changed over the years since
+your patch was originally added. Back then, the x86 TSC probably
+wasn't reliable enough to depend on it but now I would guess that
+very few x86 machines in production use care. On embedded systems,
+we used to have all kinds of clocksource drivers with varying
+characteristics, but nowadays the embedded market is dominated
+by ARMv7VE (Cortex-A7/A15/A17) or ARMv8, which are required
+to have a fast clocksource (drivers/clocksource/arm_arch_timer.c),
+and a lot of the others have it too (risc-v, modern mips, all ppc32,
+most ARM Cortex-A9, ...).
+The traditional non-x86 architectures (s390, powerpc, sparc) that
+are still being used have of course had low-latency clocksource
+access for a much longer time.
+
+This means, we're probably fine with a compile-time option that
+distros can choose to enable depending on what classes of hardware
+they are targetting, like
+
+struct timespec64 current_time(struct inode *inode)
+{
+        struct timespec64 now;
+        u64 gran = inode->i_sb->s_time_gran;
+
+        if (IS_ENABLED(CONFIG_HIRES_INODE_TIMES) &&
+            gran <= NSEC_PER_JIFFY)
+                  ktime_get_real_ts64(&now);
+        else
+                  ktime_get_coarse_real_ts64(&now);
+
+        return timespec64_trunc(now, gran);
+}
+
+With that implementation, we could still let file systems choose
+to get coarse timestamps by tuning the granularity in the
+superblock s_time_gran, which would result in nice round
+tv_nsec values that represent the actual accuracy.
+
+Obviously this still needs performance testing on various bits
+of real hardware, but I can imagine that the overhead is rather
+small on hardware from the past five years.
+
+     Arnd
