@@ -6,104 +6,207 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2C6C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 491E9C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA85020874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED6E220874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:16:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pespcEvr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA85020874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="sUOSe9/+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6E220874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754065AbeFTPPx (ORCPT
+        id S1754106AbeFTPQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:15:53 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42093 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753202AbeFTPPv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:15:51 -0400
-Received: by mail-lf0-f68.google.com with SMTP id z207-v6so5532313lff.9;
-        Wed, 20 Jun 2018 08:15:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to;
-        bh=3ApDaRhbM88FtRyogWLcbd0JpEWX0aQ/J49LvKrYlnc=;
-        b=pespcEvrFwhglqgwLP+wBJMHablpz7ES/VVc385BWQ4G+519n5oMCZBpJiR3DiJFY1
-         Lq+sEVWkFSW57r+75z++z2BfJOdNXCM64I5o/n0kFQ050Ae6Mp8/lkMHFgkGEAOyiQ//
-         HeDT6FcTyiAWzaKyxsUqGTtEdzdCM2pYyebCLhaSs0XiedIbDGBXAQoQV5OSAkulP1/O
-         JHWx74/Lw8YP32AW3vD8QU2HzObVl16a8w5mGgQpo3ln8J86Fk0EDzduwYTwq4eRVK3e
-         7L2yVJyDpNxGY/23ZWyd36UtlmPUawYEcO911vIinqOiejR5Y51GXbgOoGeLIumES/qv
-         Pv/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to;
-        bh=3ApDaRhbM88FtRyogWLcbd0JpEWX0aQ/J49LvKrYlnc=;
-        b=s07wqVkRBvObgAQ2UEcqWxUnTNbvh6MzScPI5pBIbnfSczZSVVuiGXjo37a8GRtdCw
-         tGEGnCb2LWJrh1PR669mAqywj8vIuMaYi286D8/6Ng8dpApt6a89IGCrZpCZ5Wt70XFm
-         eG+f0u5TeQHhwr7lemyrb79Nm7+4zCskGCHy1MEYG93N7lWkHS6yvJZmid+Uwezxuo9J
-         lgkwt64YtTs9JXtUL3lTCex8/aGpFZGFkKw/gvQGZkypkSSKgjtJUG1lGT7f9i1RUdsb
-         UpwwB0hHZppCZPppeW73e3FD6sbU8NJAwV+fXrg22/WO7MJy/fLuSlO6QNqZKWVUvvcQ
-         k3cg==
-X-Gm-Message-State: APt69E3H6U1smh6SNRZMAtR3zoQ89azIXUXkmcgptKNCK5H9YHa1L+LQ
-        r2t3doeztOSNlE/Y2DrPeAw7C2VMGid0uGcM4RHNnA==
-X-Google-Smtp-Source: ADUXVKIbGKTRRa3VV0xDXpYhKE58ekLcArSpaqgLM5Xt7eWvTiHy7KEXfgLS2mArpx8OsLjfkMk7xNb1HcRrNirN8UQ=
-X-Received: by 2002:a19:f03:: with SMTP id e3-v6mr10797241lfi.83.1529507749937;
- Wed, 20 Jun 2018 08:15:49 -0700 (PDT)
+        Wed, 20 Jun 2018 11:16:01 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:48578 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754075AbeFTPP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 11:15:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
+        ; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=jqxkfFwEagfA+T/8RI6lT964JvR/FbmhSgMXvlcheCQ=; b=sUOSe9/+fr5WQDsouugLrcuPgA
+        +rOOUNqs4gvJUB/+RYkttzzs7H451Rc3x+ez4h474n/BcwapnmOx/fjXtWi7aCMY1z3xyfhDm2Rzv
+        UaIv60wkdWp521UzpV9FxmTRswLZJdVsin/gq3wDzdwJg3RctypCK4/44UHvuIUVQ39o=;
+Date:   Wed, 20 Jun 2018 11:18:12 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Greg Thelen <gthelen@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [RFC PATCH] memcg, oom: move out_of_memory back to the charge
+ path
+Message-ID: <20180620151812.GA2441@cmpxchg.org>
+References: <20180620103736.13880-1-mhocko@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 08:15:49
- -0700 (PDT)
-In-Reply-To: <20180620143655.GD24375@twin.jikos.cz>
-References: <20180620143448.44388-1-arnd@arndb.de> <20180620143448.44388-2-arnd@arndb.de>
- <20180620143655.GD24375@twin.jikos.cz>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Jun 2018 17:15:49 +0200
-X-Google-Sender-Auth: bhWS4211t3BcSLq4ABvmVuHlHUs
-Message-ID: <CAK8P3a3=Obi3MS0bdrLRPJ2FE2igmzNkOM47mqtco0UwyW60sw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] btrfs: use 64-bit timestamps for struct btrfs_dev_replace_item
-To:     David Sterba <dsterba@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
-        Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Anand Jain <anand.jain@oracle.com>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Allen Pais <allen.lkml@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620103736.13880-1-mhocko@kernel.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 4:36 PM, David Sterba <dsterba@suse.cz> wrote:
-> On Wed, Jun 20, 2018 at 04:34:33PM +0200, Arnd Bergmann wrote:
->> The structure already has 64-bit fields for the timestamps, but
->> calling get_seconds() may truncate and risk overflow on 32-bit
->> architectures.
->>
->> This changes the dev-replace code to use ktime_get_real_seconds()
->> instead, which always returns 64-bit timestamps.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Thanks but there's a patch already fixng that, sent a few days ago
->
-> https://patchwork.kernel.org/patch/10473195/
->
-> and added to patch queue for the next dev cycle as it does not appear to
-> urgent for 4.18.
+On Wed, Jun 20, 2018 at 12:37:36PM +0200, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> 3812c8c8f395 ("mm: memcg: do not trap chargers with full callstack on OOM")
+> has changed the ENOMEM semantic of memcg charges. Rather than invoking
+> the oom killer from the charging context it delays the oom killer to the
+> page fault path (pagefault_out_of_memory). This in turn means that many
+> users (e.g. slab or g-u-p) will get ENOMEM when the corresponding memcg
+> hits the hard limit and the memcg is is OOM. This is behavior is
+> inconsistent with !memcg case where the oom killer is invoked from the
+> allocation context and the allocator keeps retrying until it succeeds.
+> 
+> The difference in the behavior is user visible. mmap(MAP_POPULATE) might
+> result in not fully populated ranges while the mmap return code doesn't
+> tell that to the userspace. Random syscalls might fail with ENOMEM etc.
+> 
+> The primary motivation of the different memcg oom semantic was the
+> deadlock avoidance. Things have changed since then, though. We have
+> an async oom teardown by the oom reaper now and so we do not have to
+> rely on the victim to tear down its memory anymore. Therefore we can
+> return to the original semantic as long as the memcg oom killer is not
+> handed over to the users space.
+> 
+> There is still one thing to be careful about here though. If the oom
+> killer is not able to make any forward progress - e.g. because there is
+> no eligible task to kill - then we have to bail out of the charge path
+> to prevent from same class of deadlocks. We have basically two options
+> here. Either we fail the charge with ENOMEM or force the charge and
+> allow overcharge. The first option has been considered more harmful than
+> useful because rare inconsistencies in the ENOMEM behavior is hard to
+> test for and error prone. Basically the same reason why the page
+> allocator doesn't fail allocations under such conditions. The later
+> might allow runaways but those should be really unlikely unless somebody
+> misconfigures the system. E.g. allowing to migrate tasks away from the
+> memcg to a different unlimited memcg with move_charge_at_immigrate
+> disabled.
 
-Ok, sounds good.
-I had missed that Allen has independently sent out some of the
-same patches that I created in the last weeks.
+This is more straight-forward than I thought it would be. I have no
+objections to this going forward, just a couple of minor notes.
 
-Allen, do you have more patches pending? I have sent out most of what
-I did (around 80 patches I think), with just ext4, ceph, nfs and xfs pending
-at the moment. It seems we also sent identical patches for procfs and
-I have something pending for ceph that duplicates another patch you did.
+> @@ -1483,28 +1483,54 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
+>  		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
+>  }
+>  
+> -static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+> +enum oom_status {
+> +	OOM_SUCCESS,
+> +	OOM_FAILED,
+> +	OOM_ASYNC,
+> +	OOM_SKIPPED
 
-      Arnd
+Either SUCCESS & FAILURE, or SUCCEEDED & FAILED ;)
+
+We're not distinguishing ASYNC and SKIPPED anywhere below, but I
+cannot think of a good name to communicate them both without this
+function making assumptions about the charge function's behavior.
+So it's a bit weird, but probably the best way to go.
+
+> +static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+>  {
+> -	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
+> -		return;
+> +	if (order > PAGE_ALLOC_COSTLY_ORDER)
+> +		return OOM_SKIPPED;
+>  	/*
+>  	 * We are in the middle of the charge context here, so we
+>  	 * don't want to block when potentially sitting on a callstack
+>  	 * that holds all kinds of filesystem and mm locks.
+>  	 *
+> -	 * Also, the caller may handle a failed allocation gracefully
+> -	 * (like optional page cache readahead) and so an OOM killer
+> -	 * invocation might not even be necessary.
+> +	 * cgroup1 allows disabling the OOM killer and waiting for outside
+> +	 * handling until the charge can succeed; remember the context and put
+> +	 * the task to sleep at the end of the page fault when all locks are
+> +	 * released.
+> +	 *
+> +	 * On the other hand, in-kernel OOM killer allows for an async victim
+> +	 * memory reclaim (oom_reaper) and that means that we are not solely
+> +	 * relying on the oom victim to make a forward progress and we can
+> +	 * invoke the oom killer here.
+>  	 *
+> -	 * That's why we don't do anything here except remember the
+> -	 * OOM context and then deal with it at the end of the page
+> -	 * fault when the stack is unwound, the locks are released,
+> -	 * and when we know whether the fault was overall successful.
+> +	 * Please note that mem_cgroup_oom_synchronize might fail to find a
+> +	 * victim and then we have rely on mem_cgroup_oom_synchronize otherwise
+> +	 * we would fall back to the global oom killer in pagefault_out_of_memory
+>  	 */
+> +	if (!memcg->oom_kill_disable) {
+> +		if (mem_cgroup_out_of_memory(memcg, mask, order))
+> +			return OOM_SUCCESS;
+> +
+> +		WARN(!current->memcg_may_oom,
+> +				"Memory cgroup charge failed because of no reclaimable memory! "
+> +				"This looks like a misconfiguration or a kernel bug.");
+> +		return OOM_FAILED;
+> +	}
+> +
+> +	if (!current->memcg_may_oom)
+> +		return OOM_SKIPPED;
+
+memcg_may_oom was introduced to distinguish between userspace faults
+that can OOM and contexts that return -ENOMEM. Now we're using it
+slightly differently and it's confusing.
+
+1) Why warn for kernel allocations, but not userspace ones? This
+should have a comment at least.
+
+2) We invoke the OOM killer when !memcg_may_oom. We want to OOM kill
+in either case, but only set up the mem_cgroup_oom_synchronize() for
+userspace faults. So the code makes sense, but a better name would be
+in order -- current->in_user_fault?
+
+>  	css_get(&memcg->css);
+>  	current->memcg_in_oom = memcg;
+>  	current->memcg_oom_gfp_mask = mask;
+>  	current->memcg_oom_order = order;
+> +
+> +	return OOM_ASYNC;
+
+In terms of code flow, it would be much clearer to handle the
+memcg->oom_kill_disable case first, as a special case with early
+return, and make the OOM invocation the main code of this function,
+given its name.
+
+> @@ -1994,8 +2024,23 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>  
+>  	memcg_memory_event(mem_over_limit, MEMCG_OOM);
+>  
+> -	mem_cgroup_oom(mem_over_limit, gfp_mask,
+> +	/*
+> +	 * keep retrying as long as the memcg oom killer is able to make
+> +	 * a forward progress or bypass the charge if the oom killer
+> +	 * couldn't make any progress.
+> +	 */
+> +	oom_status = mem_cgroup_oom(mem_over_limit, gfp_mask,
+>  		       get_order(nr_pages * PAGE_SIZE));
+> +	switch (oom_status) {
+> +	case OOM_SUCCESS:
+> +		nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
+> +		oomed = true;
+> +		goto retry;
+> +	case OOM_FAILED:
+> +		goto force;
+> +	default:
+> +		goto nomem;
+> +	}
+>  nomem:
+>  	if (!(gfp_mask & __GFP_NOFAIL))
+>  		return -ENOMEM;
+> -- 
+> 2.17.1
+> 
