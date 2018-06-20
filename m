@@ -6,41 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D83C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7F8C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE11620693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE11620693
+	by mail.kernel.org (Postfix) with ESMTP id 3FF9D20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:35:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF9D20693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754979AbeFTJfJ (ORCPT
+        id S1754997AbeFTJfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:35:09 -0400
-Received: from mga17.intel.com ([192.55.52.151]:19734 "EHLO mga17.intel.com"
+        Wed, 20 Jun 2018 05:35:25 -0400
+Received: from mga11.intel.com ([192.55.52.93]:52750 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754825AbeFTJfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:35:07 -0400
+        id S1754069AbeFTJfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:35:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 02:35:06 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 02:35:21 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,246,1526367600"; 
-   d="scan'208";a="234090119"
+   d="scan'208";a="50799913"
 Received: from sandybridge-desktop.sh.intel.com ([10.239.160.116])
-  by orsmga005.jf.intel.com with ESMTP; 20 Jun 2018 02:35:05 -0700
+  by orsmga008.jf.intel.com with ESMTP; 20 Jun 2018 02:35:18 -0700
 From:   Chen Yu <yu.c.chen@intel.com>
 To:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>
 Cc:     "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Chen Yu <yu.c.chen@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 2/3][RFC] PM / Hibernate: Encrypt the snapshot pages before submitted to the block device
-Date:   Wed, 20 Jun 2018 17:40:32 +0800
-Message-Id: <5a1cc6bff40ff9a3e023392c69b881e91b16837a.1529486870.git.yu.c.chen@intel.com>
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Denis Kenzior <denkenz@gmail.com>
+Subject: [PATCH 3/3][RFC] tools: create power/crypto utility
+Date:   Wed, 20 Jun 2018 17:40:51 +0800
+Message-Id: <78af30838d0bac69bdd6e138b659bcbb8464fd13.1529486870.git.yu.c.chen@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1529486870.git.yu.c.chen@intel.com>
 References: <cover.1529486870.git.yu.c.chen@intel.com>
@@ -49,452 +53,557 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the helper functions introduced previously to encrypt
-the page data before they are submitted to the block device.
-Besides, for the case of hibernation compression, the data
-are firstly compressed and then encrypted, and vice versa
-for the resume process.
+crypto_hibernate is a user-space utility to generate
+512bits AES key and pass it to the kernel via ioctl
+for hibernation encryption.(We can also add the key
+into kernel via keyctl if necessary, but currently
+using ioctl seems to be more straightforward as we
+need both the key and salt transit).
 
-Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The key derivation is based on a simplified implementation
+of PBKDF2[1] in e2fsprogs - both the key length and the hash
+bytes are the same - 512bits. crypto_hibernate will firstly
+probe the user for passphrase and get salt from kernel, then
+uses them to generate a 512bits AES key based on PBKDF2.
+
+Usage:
+1. install the kernel module:
+   modprobe crypto_hibernation
+2. run this tool to generate the key from
+   user provided passphrase (salt is needed too).
+3. launch the hibernation process, the kernel
+   uses the key from step 2 to encrypt the
+   hibernation snapshot.
+4. resume the system and the initrd will
+   launch cryto_hibernate to read previous salt
+   from kernel and probe the user passphrase
+   and generate the same key.
+5. kernel uses this key to decrypt the hibernation
+   snapshot and restore to previous system.
+
+[1] https://www.ietf.org/rfc/rfc2898.txt (5.2 PBKDF2)
+
+Suggested-by: "Theodore Ts'o" <tytso@mit.edu>
 Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "Lee, Chun-Yi" <jlee@suse.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Stephan Mueller <smueller@chronox.de>
+Cc: Eric Biggers <ebiggers3@gmail.com>
+Cc: Denis Kenzior <denkenz@gmail.com>
 Cc: linux-pm@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- kernel/power/power.h |   1 +
- kernel/power/swap.c  | 215 ++++++++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 205 insertions(+), 11 deletions(-)
+ MAINTAINERS                           |   8 +
+ tools/power/crypto/Makefile           |  26 ++
+ tools/power/crypto/crypto_hibernate.c | 447 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 481 insertions(+)
+ create mode 100644 tools/power/crypto/Makefile
+ create mode 100644 tools/power/crypto/crypto_hibernate.c
 
-diff --git a/kernel/power/power.h b/kernel/power/power.h
-index 660aac3..637695c 100644
---- a/kernel/power/power.h
-+++ b/kernel/power/power.h
-@@ -207,6 +207,7 @@ extern int swsusp_swap_in_use(void);
- #define SF_PLATFORM_MODE	1
- #define SF_NOCOMPRESS_MODE	2
- #define SF_CRC32_MODE	        4
-+#define SF_ENCRYPT_MODE		8
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cb468a5..e851afb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6393,6 +6393,14 @@ F:	include/linux/freezer.h
+ F:	include/linux/pm.h
+ F:	arch/*/include/asm/suspend*.h
  
- /* kernel/power/hibernate.c */
- extern int swsusp_check(void);
-diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-index c2bcf97..2b6b3d0 100644
---- a/kernel/power/swap.c
-+++ b/kernel/power/swap.c
-@@ -102,14 +102,16 @@ struct swap_map_handle {
- 	unsigned int k;
- 	unsigned long reqd_free_pages;
- 	u32 crc32;
-+	bool crypto;
- };
- 
- struct swsusp_header {
- 	char reserved[PAGE_SIZE - 20 - sizeof(sector_t) - sizeof(int) -
--	              sizeof(u32)];
-+			sizeof(u32) - HIBERNATE_SALT_BYTES];
- 	u32	crc32;
- 	sector_t image;
- 	unsigned int flags;	/* Flags to pass to the "boot" kernel */
-+	char salt[HIBERNATE_SALT_BYTES];
- 	char	orig_sig[10];
- 	char	sig[10];
- } __packed;
-@@ -127,6 +129,53 @@ struct swsusp_extent {
- 	unsigned long end;
- };
- 
-+/* For encryption/decryption. */
-+static struct hibernation_crypto *hibernation_crypto_ops;
++HIBERNATION CRYPTO UTILITY
++M:	"Chen Yu" <yu.c.chen@intel.com>
++M:	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
++L:	linux-pm@vger.kernel.org
++B:	https://bugzilla.kernel.org
++S:	Supported
++F:	tools/power/crypto/
 +
-+void set_hibernation_ops(struct hibernation_crypto *ops)
+ HID CORE LAYER
+ M:	Jiri Kosina <jikos@kernel.org>
+ R:	Benjamin Tissoires <benjamin.tissoires@redhat.com>
+diff --git a/tools/power/crypto/Makefile b/tools/power/crypto/Makefile
+new file mode 100644
+index 0000000..420301b
+--- /dev/null
++++ b/tools/power/crypto/Makefile
+@@ -0,0 +1,26 @@
++# SPDX-License-Identifier: GPL-2.0
++CC		= $(CROSS_COMPILE)gcc
++BUILD_OUTPUT	:= $(CURDIR)
++PREFIX		?= /usr
++DESTDIR		?=
++
++ifeq ("$(origin O)", "command line")
++	BUILD_OUTPUT := $(O)
++endif
++
++crypto_hibernate : crypto_hibernate.c
++CFLAGS +=	-Wall
++
++%: %.c
++	@mkdir -p $(BUILD_OUTPUT)
++	$(CC) $(CFLAGS) $< -o $(BUILD_OUTPUT)/$@
++
++.PHONY : clean
++clean :
++	@rm -f $(BUILD_OUTPUT)/cryphiber
++
++install : cryphiber
++	install -d  $(DESTDIR)$(PREFIX)/bin
++	install $(BUILD_OUTPUT)/cryphiber $(DESTDIR)$(PREFIX)/bin/cryphiber
++	install -d  $(DESTDIR)$(PREFIX)/share/man/man8
++	install turbostat.8 $(DESTDIR)$(PREFIX)/share/man/man8
+diff --git a/tools/power/crypto/crypto_hibernate.c b/tools/power/crypto/crypto_hibernate.c
+new file mode 100644
+index 0000000..149ba78
+--- /dev/null
++++ b/tools/power/crypto/crypto_hibernate.c
+@@ -0,0 +1,447 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * The hibernation key based derived function algorithm
++ *
++ * Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
++ * Copyright (C) 2018 Theodore Ts'o <tytso@mit.edu>
++ * (copied from e2fsprogs)
++ *
++ * The key derivation is based on a simplified implementation
++ * of PBKDF2 in e2fsprogs - both the key length and the hash
++ * bytes are the same - 512bits. crypto_hibernate will firstly
++ * probe the user for passphrase and salt, then uses them to
++ * generate a 512bits AES key by SHA512 hash and PBKDF2.
++ *
++ * Usage:
++ * 1. install the kernel module:
++ *    modprobe crypto_hibernation
++ * 2. run this tool to generate the key from
++ *    user provided passphrase (salt is read from kernel)
++ * 3. launch the hibernation process, the kernel
++ *    uses the key from step 2 to encrypt the
++ *    hibernation snapshot
++ * 4. resume the system and the initrd will
++ *    launch cryto_hibernate to read previous salt
++ *    from kernel and probe the user passphrase
++ *    and generate the same key
++ * 5. kernel uses this key to decrypt the hibernation
++ *    snapshot.
++ *
++ * %Begin-Header%
++ * This file may be redistributed under the terms of the GNU Library
++ * General Public License, version 2.
++ * %End-Header%
++ */
++#include <stdio.h>
++#include <stdlib.h>
++#include <stdarg.h>
++#include <string.h>
++#include <stdbool.h>
++#include <assert.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/syscall.h>
++#include <sys/ioctl.h>
++#include <ctype.h>
++#include <errno.h>
++#include <getopt.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <termios.h>
++
++#if HAVE_SYS_TYPES_H
++#include <sys/types.h>
++#endif
++
++#define PBKDF2_ITERATIONS          0xFFFF
++#define SHA512_BLOCKSIZE 128
++#define SHA512_LENGTH 64
++#define SALT_BYTES	16
++#define SYM_KEY_BYTES SHA512_LENGTH
++#define TOTAL_USER_INFO_LEN	(SALT_BYTES+SYM_KEY_BYTES)
++#define MAX_PASSPHRASE_SIZE	1024
++
++struct hibernation_crypto_keys {
++	char derived_key[SYM_KEY_BYTES];
++	char salt[SALT_BYTES];
++	bool valid;
++};
++
++struct hibernation_crypto_keys hib_keys;
++
++static char *get_key_ptr(void)
 +{
-+	hibernation_crypto_ops = ops;
++	return hib_keys.derived_key;
 +}
-+EXPORT_SYMBOL_GPL(set_hibernation_ops);
 +
-+static int crypto_data(const char *inbuf,
-+			    int inlen,
-+			    char *outbuf,
-+			    int outlen,
-+			    bool encrypt,
-+			    int page_idx)
++static char *get_salt_ptr(void)
 +{
-+	if (hibernation_crypto_ops &&
-+	    hibernation_crypto_ops->crypto_data)
-+		return hibernation_crypto_ops->crypto_data(inbuf,
-+			inlen, outbuf, outlen, encrypt, page_idx);
-+	else
-+		return -EINVAL;
++	return hib_keys.salt;
 +}
 +
-+static void crypto_save(void *outbuf)
++static const unsigned int K[64] = {
++    0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
++    0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
++    0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
++    0xc19bf174UL, 0xe49b69c1UL, 0xefbe4786UL, 0x0fc19dc6UL, 0x240ca1ccUL,
++    0x2de92c6fUL, 0x4a7484aaUL, 0x5cb0a9dcUL, 0x76f988daUL, 0x983e5152UL,
++    0xa831c66dUL, 0xb00327c8UL, 0xbf597fc7UL, 0xc6e00bf3UL, 0xd5a79147UL,
++    0x06ca6351UL, 0x14292967UL, 0x27b70a85UL, 0x2e1b2138UL, 0x4d2c6dfcUL,
++    0x53380d13UL, 0x650a7354UL, 0x766a0abbUL, 0x81c2c92eUL, 0x92722c85UL,
++    0xa2bfe8a1UL, 0xa81a664bUL, 0xc24b8b70UL, 0xc76c51a3UL, 0xd192e819UL,
++    0xd6990624UL, 0xf40e3585UL, 0x106aa070UL, 0x19a4c116UL, 0x1e376c08UL,
++    0x2748774cUL, 0x34b0bcb5UL, 0x391c0cb3UL, 0x4ed8aa4aUL, 0x5b9cca4fUL,
++    0x682e6ff3UL, 0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
++    0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL
++};
++
++/* Various logical functions */
++#define Ch(x,y,z)       (z ^ (x & (y ^ z)))
++#define Maj(x,y,z)      (((x | y) & z) | (x & y))
++#define S(x, n)         RORc((x),(n))
++#define R(x, n)         (((x)&0xFFFFFFFFUL)>>(n))
++#define Sigma0(x)       (S(x, 2) ^ S(x, 13) ^ S(x, 22))
++#define Sigma1(x)       (S(x, 6) ^ S(x, 11) ^ S(x, 25))
++#define Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
++#define Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
++#define RORc(x, y) ( ((((unsigned int)(x)&0xFFFFFFFFUL)>>(unsigned int)((y)&31)) | ((unsigned int)(x)<<(unsigned int)(32-((y)&31)))) & 0xFFFFFFFFUL)
++
++#define RND(a,b,c,d,e,f,g,h,i)                         \
++     t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];   \
++     t1 = Sigma0(a) + Maj(a, b, c);                    \
++     d += t0;                                          \
++     h  = t0 + t1;
++
++#define STORE64H(x, y) \
++	do { \
++		(y)[0] = (unsigned char)(((x)>>56)&255);\
++		(y)[1] = (unsigned char)(((x)>>48)&255);\
++		(y)[2] = (unsigned char)(((x)>>40)&255);\
++		(y)[3] = (unsigned char)(((x)>>32)&255);\
++		(y)[4] = (unsigned char)(((x)>>24)&255);\
++		(y)[5] = (unsigned char)(((x)>>16)&255);\
++		(y)[6] = (unsigned char)(((x)>>8)&255);\
++		(y)[7] = (unsigned char)((x)&255); } while(0)
++
++#define STORE32H(x, y)                                                                     \
++  do { (y)[0] = (unsigned char)(((x)>>24)&255); (y)[1] = (unsigned char)(((x)>>16)&255);   \
++       (y)[2] = (unsigned char)(((x)>>8)&255); (y)[3] = (unsigned char)((x)&255); } while(0)
++
++#define LOAD32H(x, y)                            \
++  do { x = ((unsigned int)((y)[0] & 255)<<24) | \
++           ((unsigned int)((y)[1] & 255)<<16) | \
++           ((unsigned int)((y)[2] & 255)<<8)  | \
++           ((unsigned int)((y)[3] & 255)); } while(0)
++
++struct sha512_state {
++	unsigned long long length;
++	unsigned int state[8], curlen;
++	unsigned char buf[64];
++};
++
++/* This is a highly simplified version from libtomcrypt */
++struct hash_state {
++	struct sha512_state sha512;
++};
++
++static void sha512_compress(struct hash_state * md, const unsigned char *buf)
 +{
-+	if (hibernation_crypto_ops &&
-+	    hibernation_crypto_ops->save)
-+		hibernation_crypto_ops->save(outbuf);
-+}
++	unsigned int S[8], W[64], t0, t1;
++	unsigned int t;
++	int i;
 +
-+static void crypto_restore(void *inbuf)
-+{
-+	if (hibernation_crypto_ops &&
-+	    hibernation_crypto_ops->restore)
-+		hibernation_crypto_ops->restore(inbuf);
-+}
-+
-+static int crypto_init(bool suspend)
-+{
-+	if (hibernation_crypto_ops &&
-+	    hibernation_crypto_ops->init)
-+		return hibernation_crypto_ops->init(suspend);
-+	else
-+		return -EINVAL;
-+}
-+
- static struct rb_root swsusp_extents = RB_ROOT;
- 
- static int swsusp_extents_insert(unsigned long swap_offset)
-@@ -318,6 +367,10 @@ static int mark_swapfiles(struct swap_map_handle *handle, unsigned int flags)
- 		swsusp_header->flags = flags;
- 		if (flags & SF_CRC32_MODE)
- 			swsusp_header->crc32 = handle->crc32;
-+		if (handle->crypto) {
-+			swsusp_header->flags |= SF_ENCRYPT_MODE;
-+			crypto_save((void *)swsusp_header->salt);
-+		}
- 		error = hib_submit_io(REQ_OP_WRITE, REQ_SYNC,
- 				      swsusp_resume_block, swsusp_header, NULL);
- 	} else {
-@@ -535,11 +588,12 @@ static int save_image(struct swap_map_handle *handle,
- {
- 	unsigned int m;
- 	int ret;
--	int nr_pages;
-+	int nr_pages, crypto_page_idx;
- 	int err2;
- 	struct hib_bio_batch hb;
- 	ktime_t start;
- 	ktime_t stop;
-+	void *tmp = NULL, *crypt_buf = NULL;
- 
- 	hib_init_batch(&hb);
- 
-@@ -549,12 +603,33 @@ static int save_image(struct swap_map_handle *handle,
- 	if (!m)
- 		m = 1;
- 	nr_pages = 0;
-+	crypto_page_idx = 0;
-+	if (handle->crypto) {
-+		crypt_buf = (void *)get_zeroed_page(GFP_KERNEL);
-+		if (!crypt_buf)
-+			return -ENOMEM;
++	/* copy state into S */
++	for (i = 0; i < 8; i++) {
++		S[i] = md->sha512.state[i];
 +	}
 +
- 	start = ktime_get();
- 	while (1) {
- 		ret = snapshot_read_next(snapshot);
- 		if (ret <= 0)
- 			break;
--		ret = swap_write_page(handle, data_of(*snapshot), &hb);
-+		tmp = data_of(*snapshot);
-+		if (handle->crypto) {
-+			/* Encryption before submit_io.*/
-+			ret = crypto_data(data_of(*snapshot),
-+					  PAGE_SIZE,
-+					  crypt_buf,
-+					  PAGE_SIZE,
-+					  true,
-+					  crypto_page_idx);
-+			if (ret)
-+				goto out;
-+			crypto_page_idx++;
-+			tmp = crypt_buf;
-+		}
-+		ret = swap_write_page(handle, tmp, &hb);
- 		if (ret)
- 			break;
- 		if (!(nr_pages % m))
-@@ -569,6 +644,9 @@ static int save_image(struct swap_map_handle *handle,
- 	if (!ret)
- 		pr_info("Image saving done\n");
- 	swsusp_show_speed(start, stop, nr_to_write, "Wrote");
-+ out:
-+	if (crypt_buf)
-+		free_page((unsigned long)crypt_buf);
- 	return ret;
- }
- 
-@@ -671,7 +749,7 @@ static int save_image_lzo(struct swap_map_handle *handle,
- {
- 	unsigned int m;
- 	int ret = 0;
--	int nr_pages;
-+	int nr_pages, crypto_page_idx;
- 	int err2;
- 	struct hib_bio_batch hb;
- 	ktime_t start;
-@@ -767,6 +845,7 @@ static int save_image_lzo(struct swap_map_handle *handle,
- 	if (!m)
- 		m = 1;
- 	nr_pages = 0;
-+	crypto_page_idx = 0;
- 	start = ktime_get();
- 	for (;;) {
- 		for (thr = 0; thr < nr_threads; thr++) {
-@@ -835,7 +914,25 @@ static int save_image_lzo(struct swap_map_handle *handle,
- 			for (off = 0;
- 			     off < LZO_HEADER + data[thr].cmp_len;
- 			     off += PAGE_SIZE) {
--				memcpy(page, data[thr].cmp + off, PAGE_SIZE);
-+				if (handle->crypto) {
-+					/*
-+					 * Encrypt the compressed data
-+					 * before we write them to the
-+					 * block device.
-+					 */
-+					ret = crypto_data(data[thr].cmp + off,
-+							  PAGE_SIZE,
-+							  page,
-+							  PAGE_SIZE,
-+							  true,
-+							  crypto_page_idx);
-+					if (ret)
-+						goto out_finish;
-+					crypto_page_idx++;
-+				} else {
-+					memcpy(page, data[thr].cmp + off,
-+						PAGE_SIZE);
-+				}
- 
- 				ret = swap_write_page(handle, page, &hb);
- 				if (ret)
-@@ -909,6 +1006,7 @@ int swsusp_write(unsigned int flags)
- 	int error;
- 
- 	pages = snapshot_get_image_size();
-+	memset(&handle, 0, sizeof(struct swap_map_handle));
- 	error = get_swap_writer(&handle);
- 	if (error) {
- 		pr_err("Cannot get swap writer\n");
-@@ -922,6 +1020,9 @@ int swsusp_write(unsigned int flags)
- 		}
- 	}
- 	memset(&snapshot, 0, sizeof(struct snapshot_handle));
-+	if (!crypto_init(true))
-+		/* The image needs to be encrypted. */
-+		handle.crypto = true;
- 	error = snapshot_read_next(&snapshot);
- 	if (error < PAGE_SIZE) {
- 		if (error >= 0)
-@@ -1059,7 +1160,8 @@ static int load_image(struct swap_map_handle *handle,
- 	ktime_t stop;
- 	struct hib_bio_batch hb;
- 	int err2;
--	unsigned nr_pages;
-+	unsigned nr_pages, crypto_page_idx;
-+	void *crypt_buf = NULL;
- 
- 	hib_init_batch(&hb);
- 
-@@ -1069,18 +1171,42 @@ static int load_image(struct swap_map_handle *handle,
- 	if (!m)
- 		m = 1;
- 	nr_pages = 0;
-+	crypto_page_idx = 0;
-+	if (handle->crypto) {
-+		crypt_buf = (void *)get_zeroed_page(GFP_KERNEL);
-+		if (!crypt_buf)
-+			return -ENOMEM;
++	/* copy the state into 512-bits into W[0..15] */
++	for (i = 0; i < 16; i++) {
++		LOAD32H(W[i], buf + (4*i));
 +	}
- 	start = ktime_get();
- 	for ( ; ; ) {
- 		ret = snapshot_write_next(snapshot);
- 		if (ret <= 0)
- 			break;
--		ret = swap_read_page(handle, data_of(*snapshot), &hb);
-+		if (handle->crypto)
-+			ret = swap_read_page(handle, crypt_buf, &hb);
-+		else
-+			ret = swap_read_page(handle, data_of(*snapshot), &hb);
- 		if (ret)
- 			break;
- 		if (snapshot->sync_read)
- 			ret = hib_wait_io(&hb);
- 		if (ret)
- 			break;
-+		if (handle->crypto) {
-+			/*
-+			 * Need a decryption for the
-+			 * data read from the block
-+			 * device.
-+			 */
-+			ret = crypto_data(crypt_buf, PAGE_SIZE,
-+					  data_of(*snapshot),
-+					  PAGE_SIZE,
-+					  false,
-+					  crypto_page_idx);
-+			if (ret)
-+				break;
-+			crypto_page_idx++;
-+		}
- 		if (!(nr_pages % m))
- 			pr_info("Image loading progress: %3d%%\n",
- 				nr_pages / m * 10);
-@@ -1097,6 +1223,8 @@ static int load_image(struct swap_map_handle *handle,
- 			ret = -ENODATA;
- 	}
- 	swsusp_show_speed(start, stop, nr_to_read, "Read");
-+	if (crypt_buf)
-+		free_page((unsigned long)crypt_buf);
- 	return ret;
- }
- 
-@@ -1164,7 +1292,7 @@ static int load_image_lzo(struct swap_map_handle *handle,
- 	struct hib_bio_batch hb;
- 	ktime_t start;
- 	ktime_t stop;
--	unsigned nr_pages;
-+	unsigned nr_pages, crypto_page_idx;
- 	size_t off;
- 	unsigned i, thr, run_threads, nr_threads;
- 	unsigned ring = 0, pg = 0, ring_size = 0,
-@@ -1173,6 +1301,7 @@ static int load_image_lzo(struct swap_map_handle *handle,
- 	unsigned char **page = NULL;
- 	struct dec_data *data = NULL;
- 	struct crc_data *crc = NULL;
-+	void *first_page = NULL;
- 
- 	hib_init_batch(&hb);
- 
-@@ -1278,6 +1407,18 @@ static int load_image_lzo(struct swap_map_handle *handle,
- 	}
- 	want = ring_size = i;
- 
-+	/*
-+	 * The first page of data[thr] contains the length of
-+	 * compressed data, this page should not mess up the
-+	 * read buffer, so we allocate a separate page for it.
-+	 */
-+	if (handle->crypto) {
-+		first_page = (void *)get_zeroed_page(GFP_KERNEL);
-+		if (!first_page) {
-+			ret = -ENOMEM;
-+			goto out_clean;
-+		}
-+	}
- 	pr_info("Using %u thread(s) for decompression\n", nr_threads);
- 	pr_info("Loading and decompressing image data (%u pages)...\n",
- 		nr_to_read);
-@@ -1285,6 +1426,7 @@ static int load_image_lzo(struct swap_map_handle *handle,
- 	if (!m)
- 		m = 1;
- 	nr_pages = 0;
-+	crypto_page_idx = 0;
- 	start = ktime_get();
- 
- 	ret = snapshot_write_next(snapshot);
-@@ -1336,7 +1478,24 @@ static int load_image_lzo(struct swap_map_handle *handle,
- 		}
- 
- 		for (thr = 0; have && thr < nr_threads; thr++) {
--			data[thr].cmp_len = *(size_t *)page[pg];
-+			if (handle->crypto) {
-+				/*
-+				 * Need to decrypt the first page
-+				 * of each data[thr], which contains
-+				 * the compressed data length.
-+				 */
-+				ret = crypto_data(page[pg],
-+						  PAGE_SIZE,
-+						  first_page,
-+						  PAGE_SIZE,
-+						  false,
-+						  crypto_page_idx);
-+				if (ret)
-+					goto out_finish;
-+				data[thr].cmp_len = *(size_t *)first_page;
-+			} else {
-+				data[thr].cmp_len = *(size_t *)page[pg];
-+			}
- 			if (unlikely(!data[thr].cmp_len ||
- 			             data[thr].cmp_len >
- 			             lzo1x_worst_compress(LZO_UNC_SIZE))) {
-@@ -1358,8 +1517,26 @@ static int load_image_lzo(struct swap_map_handle *handle,
- 			for (off = 0;
- 			     off < LZO_HEADER + data[thr].cmp_len;
- 			     off += PAGE_SIZE) {
--				memcpy(data[thr].cmp + off,
--				       page[pg], PAGE_SIZE);
-+				if (handle->crypto) {
-+					/*
-+					 * Decrypt the compressed data
-+					 * and leverage the decompression
-+					 * threads to get it done.
-+					 */
-+					ret = crypto_data(page[pg],
-+							  PAGE_SIZE,
-+							  data[thr].cmp + off,
-+							  PAGE_SIZE,
-+							  false,
-+							  crypto_page_idx);
-+					if (ret)
-+						goto out_finish;
-+					crypto_page_idx++;
-+				} else {
-+					memcpy(data[thr].cmp + off,
-+						page[pg], PAGE_SIZE);
 +
-+				}
- 				have--;
- 				want++;
- 				if (++pg >= ring_size)
-@@ -1452,6 +1629,8 @@ static int load_image_lzo(struct swap_map_handle *handle,
- out_clean:
- 	for (i = 0; i < ring_size; i++)
- 		free_page((unsigned long)page[i]);
-+	if (first_page)
-+		free_page((unsigned long)first_page);
- 	if (crc) {
- 		if (crc->thr)
- 			kthread_stop(crc->thr);
-@@ -1482,6 +1661,7 @@ int swsusp_read(unsigned int *flags_p)
- 	struct swsusp_info *header;
- 
- 	memset(&snapshot, 0, sizeof(struct snapshot_handle));
-+	memset(&handle, 0, sizeof(struct swap_map_handle));
- 	error = snapshot_write_next(&snapshot);
- 	if (error < PAGE_SIZE)
- 		return error < 0 ? error : -EFAULT;
-@@ -1489,6 +1669,16 @@ int swsusp_read(unsigned int *flags_p)
- 	error = get_swap_reader(&handle, flags_p);
- 	if (error)
- 		goto end;
-+	if (*flags_p & SF_ENCRYPT_MODE) {
-+		error = crypto_init(false);
-+		if (!error) {
-+			/* The image has been encrypted. */
-+			handle.crypto = true;
++	/* fill W[16..63] */
++	for (i = 16; i < 64; i++) {
++		W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
++	}
++
++	/* Compress */
++	for (i = 0; i < 64; ++i) {
++		RND(S[0],S[1],S[2],S[3],S[4],S[5],S[6],S[7],i);
++		t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4];
++		S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
++	}
++
++	/* feedback */
++	for (i = 0; i < 8; i++) {
++		md->sha512.state[i] = md->sha512.state[i] + S[i];
++	}
++}
++
++static void sha512_init(struct hash_state * md)
++{
++	md->sha512.curlen = 0;
++	md->sha512.length = 0;
++	md->sha512.state[0] = 0x6A09E667UL;
++	md->sha512.state[1] = 0xBB67AE85UL;
++	md->sha512.state[2] = 0x3C6EF372UL;
++	md->sha512.state[3] = 0xA54FF53AUL;
++	md->sha512.state[4] = 0x510E527FUL;
++	md->sha512.state[5] = 0x9B05688CUL;
++	md->sha512.state[6] = 0x1F83D9ABUL;
++	md->sha512.state[7] = 0x5BE0CD19UL;
++}
++
++#define MIN(x, y) ( ((x)<(y))?(x):(y) )
++
++static void sha512_process(struct hash_state * md, const unsigned char *in, unsigned long inlen)
++{
++	unsigned long n;
++
++	while (inlen > 0) {
++		if (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
++			sha512_compress(md, in);
++			md->sha512.length += SHA512_BLOCKSIZE * 8;
++			in += SHA512_BLOCKSIZE;
++			inlen -= SHA512_BLOCKSIZE;
 +		} else {
-+			pr_err("Failed to init cipher during resume.\n");
-+			goto end;
++			n = MIN(inlen, (SHA512_BLOCKSIZE - md->sha512.curlen));
++			memcpy(md->sha512.buf + md->sha512.curlen, in, (size_t)n);
++			md->sha512.curlen += n;
++			in += n;
++			inlen -= n;
++			if (md->sha512.curlen == SHA512_BLOCKSIZE) {
++				sha512_compress(md, md->sha512.buf);
++				md->sha512.length += 8*SHA512_BLOCKSIZE;
++				md->sha512.curlen = 0;
++			}
 +		}
 +	}
- 	if (!error)
- 		error = swap_read_page(&handle, header, NULL);
- 	if (!error) {
-@@ -1526,6 +1716,9 @@ int swsusp_check(void)
- 
- 		if (!memcmp(HIBERNATE_SIG, swsusp_header->sig, 10)) {
- 			memcpy(swsusp_header->sig, swsusp_header->orig_sig, 10);
-+			/* Read salt passed from previous kernel. */
-+			if (swsusp_header->flags & SF_ENCRYPT_MODE)
-+				crypto_restore((void *)&swsusp_header->salt);
- 			/* Reset swap signature now */
- 			error = hib_submit_io(REQ_OP_WRITE, REQ_SYNC,
- 						swsusp_resume_block,
++}
++
++static void sha512_done(struct hash_state * md, unsigned char *out)
++{
++	int i;
++
++	/* increase the length of the message */
++	md->sha512.length += md->sha512.curlen * 8;
++
++	/* append the '1' bit */
++	md->sha512.buf[md->sha512.curlen++] = (unsigned char)0x80;
++
++	/* if the length is currently above 56 bytes we append zeros
++	 * then compress.  Then we can fall back to padding zeros and length
++	 * encoding like normal.
++	 */
++	if (md->sha512.curlen > 56) {
++	while (md->sha512.curlen < 64) {
++		md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
++	}
++	sha512_compress(md, md->sha512.buf);
++	md->sha512.curlen = 0;
++	}
++
++	/* pad upto 56 bytes of zeroes */
++	while (md->sha512.curlen < 56) {
++		md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
++	}
++
++	/* store length */
++	STORE64H(md->sha512.length, md->sha512.buf+56);
++	sha512_compress(md, md->sha512.buf);
++
++	/* copy output */
++	for (i = 0; i < 8; i++) {
++		STORE32H(md->sha512.state[i], out+(4*i));
++	}
++}
++
++void start_sha512(const unsigned char *in, unsigned long in_size,
++		   unsigned char out[SHA512_LENGTH])
++{
++	struct hash_state md;
++
++	sha512_init(&md);
++	sha512_process(&md, in, in_size);
++	sha512_done(&md, out);
++}
++
++static void pbkdf2_sha512(const char *passphrase, const char *salt,
++			  unsigned int count,
++			  char *derived_key)
++{
++	size_t passphrase_size = strlen(passphrase);
++	unsigned char buf[SHA512_LENGTH + MAX_PASSPHRASE_SIZE] = {0};
++	unsigned char tempbuf[SHA512_LENGTH] = {0};
++	char final[SHA512_LENGTH] = {0};
++	unsigned char saltbuf[SALT_BYTES + MAX_PASSPHRASE_SIZE] = {0};
++	int actual_buf_len = SHA512_LENGTH + passphrase_size;
++	int actual_saltbuf_len = SALT_BYTES + passphrase_size;
++	unsigned int x, y;
++	unsigned int *final_u32 = (unsigned int *)final;
++	unsigned int *temp_u32 = (unsigned int *)tempbuf;
++
++	memcpy(saltbuf, salt, SALT_BYTES);
++	memcpy(&saltbuf[SALT_BYTES], passphrase, passphrase_size);
++	memcpy(&buf[SHA512_LENGTH], passphrase, passphrase_size);
++
++	for (x = 0; x < count; ++x) {
++		if (x == 0) {
++			start_sha512(saltbuf, actual_saltbuf_len, tempbuf);
++		} else {
++			/*
++			 * buf: [previous hash || passphrase]
++			 */
++			memcpy(buf, tempbuf, SHA512_LENGTH);
++			start_sha512(buf, actual_buf_len, tempbuf);
++		}
++		for (y = 0; y < (sizeof(final) / sizeof(*final_u32)); ++y)
++			final_u32[y] = final_u32[y] ^ temp_u32[y];
++	}
++	memcpy(derived_key, final, SYM_KEY_BYTES);
++}
++
++#define HIBERNATE_SALT_READ      _IOW('C', 3, struct hibernation_crypto_keys)
++#define HIBERNATE_KEY_WRITE     _IOW('C', 4, struct hibernation_crypto_keys)
++
++static int disable_echo(struct termios *saved_settings)
++{
++	struct termios current_settings;
++	int rc = 0;
++
++	rc = tcgetattr(0, &current_settings);
++	if (rc)
++		return rc;
++	*saved_settings = current_settings;
++	current_settings.c_lflag &= ~ECHO;
++	rc = tcsetattr(0, TCSANOW, &current_settings);
++
++	return rc;
++}
++
++static void get_passphrase(char *passphrase, int len)
++{
++	char *p;
++	struct termios current_settings;
++
++	assert(len > 0);
++	disable_echo(&current_settings);
++	p = fgets(passphrase, len, stdin);
++	tcsetattr(0, TCSANOW, &current_settings);
++	printf("\n");
++	if (!p) {
++		printf("Aborting.\n");
++		exit(1);
++	}
++	p = strrchr(passphrase, '\n');
++	if (!p)
++		p = passphrase + len - 1;
++	*p = '\0';
++}
++
++#define CRYPTO_FILE	"/dev/crypto_hibernate"
++
++static int write_keys(void)
++{
++	int fd;
++
++	fd = open(CRYPTO_FILE, O_RDWR);
++	if (fd < 0) {
++		printf("Cannot open device file...\n");
++		return -EINVAL;
++	}
++	ioctl(fd, HIBERNATE_KEY_WRITE, get_key_ptr());
++	return 0;
++}
++
++static int read_salt(void)
++{
++	int fd;
++
++	fd = open(CRYPTO_FILE, O_RDWR);
++	if (fd < 0) {
++		printf("Cannot open device file...\n");
++		return -EINVAL;
++	}
++	ioctl(fd, HIBERNATE_SALT_READ, get_salt_ptr());
++	return 0;
++}
++
++int key_derive_from_passphrase(const char *pass)
++{
++	unsigned int pass_len = strlen(pass);
++
++	if (pass_len > MAX_PASSPHRASE_SIZE) {
++		printf("Passphrase size is %d; max is %d.\n", pass_len,
++		       MAX_PASSPHRASE_SIZE);
++		exit(1);
++	}
++
++	/* Need to get salt from
++	 * kernel first.
++	 */
++	if (read_salt())
++		exit(1);
++	/* Store the derived key in result buf. */
++	pbkdf2_sha512(pass, get_salt_ptr(), PBKDF2_ITERATIONS, get_key_ptr());
++	if (write_keys())
++		exit(1);
++
++	return 0;
++}
++
++void help(void)
++{
++	printf(
++	"Usage: crypto_hibernate [OPTIONS]\n"
++	"-p	passphrase [probed from user if not given]\n"
++	"-s salt [read from kernel if not given]\n");
++}
++
++int main(int argc, char *argv[])
++{
++	int opt, option_index = 0;
++	char in_passphrase[MAX_PASSPHRASE_SIZE];
++
++	while ((opt = getopt_long_only(argc, argv, "+p:s:h",
++				NULL, &option_index)) != -1) {
++		switch (opt) {
++		case 'p':
++			{
++				char *p = optarg;
++
++				if (strlen(p) >= (MAX_PASSPHRASE_SIZE - 1)) {
++					printf("Please provide passphrase less than %d bytes.\n",
++						MAX_PASSPHRASE_SIZE);
++					exit(1);
++				}
++				strcpy(in_passphrase, p);
++			}
++			break;
++		case 's':
++			{
++				char *p = optarg;
++
++				if (strlen(p) != (SALT_BYTES - 1)) {
++					printf("Please provide salt with len less than %d bytes.\n",
++						SALT_BYTES);
++					exit(1);
++				}
++				strcpy(get_salt_ptr(), p);
++			}
++			break;
++		case 'h':
++		default:
++			help();
++			exit(1);
++		}
++	}
++
++	printf("Enter passphrase (echo disabled): ");
++	get_passphrase(in_passphrase, sizeof(in_passphrase));
++
++	if (key_derive_from_passphrase(in_passphrase))
++		exit(1);
++
++	return 0;
++}
 -- 
 2.7.4
 
