@@ -4,118 +4,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE5AC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FAFFC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9135D20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:37:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9A2C20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:37:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltWH/oIL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9135D20846
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tQlh2XcB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A2C20846
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754454AbeFTQhV (ORCPT
+        id S1754551AbeFTQh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:37:21 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37783 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754144AbeFTQhT (ORCPT
+        Wed, 20 Jun 2018 12:37:28 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44843 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754144AbeFTQh0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:37:19 -0400
-Received: by mail-wr0-f195.google.com with SMTP id k6-v6so188025wrp.4;
-        Wed, 20 Jun 2018 09:37:18 -0700 (PDT)
+        Wed, 20 Jun 2018 12:37:26 -0400
+Received: by mail-lf0-f68.google.com with SMTP id p23-v6so243899lfh.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 09:37:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=heUlefXVeVr7ZSpoHl63kOfpk0kzmwVF3vQ9Cuq9Wdw=;
-        b=ltWH/oILqD0OP4lcIyPu+qCFXUUVJkj/HwrR4V/x8vyPLaHQk3T93jEuu1qNrHo9zq
-         SNC3m91D2KYG7AR4JjwCjONVaGxUVR+TyD8clDv8MadeKuuksA4BDPyTm90sZ0x2smof
-         yNJIDN/oQLd/NmdnLKZxlR6M+uq3tk1h6Z0sqYhjqlLW5dAyCkX2JGBrFK+crJbvnTCE
-         PwcERJ58KXgwT5XPxpHaZbo3UJmp47AIgNCb+MKzUhtjSnhjc5Ogn0Mtlt2vUI7oxDyy
-         iy1mGpcn8ca9w06PN8mAQkLzYFjDgeRWAod3rLc6MDG/QWwRZ52qcxr5vhBJWxXVnSnr
-         Zo5w==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=nJcNDxCq3Jvbo07CQanbrW4MTWCXgui9hH4v0Tbg/Fw=;
+        b=tQlh2XcBWO01eG0xpCrmn7sIPPg611xajwaT5Z3Em3VbjCfCit9OmSU06rWYNi/YcC
+         dWG0uCE8kBMIkBd+dpo/ejuGU1/LwRwGf/HfX/U95M9DpiFVUOavlpM5dwQLFBqUvrwT
+         P+ydtO4Iafhr+UEy8JA4/jzMESMtwhbDBaY+he3e0ckUBtVz/KcNbMZ3zPiuax3TlyEE
+         CkLsyGxFgE1LJSldNponiPPl3AJx3yLs4ZC4Q/rsMUCgB6cZKoISRNwy9Kq3sJTT/QDN
+         1yVMvZNq2GhxRjo2Wo/zrwDOAk6RLm11kCOevcvy568LcvuzD8KLg8HjpZfCpxDxiqah
+         yuTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=heUlefXVeVr7ZSpoHl63kOfpk0kzmwVF3vQ9Cuq9Wdw=;
-        b=V9Ac9AWGKZNJ5JOGoqvlfPdX91OZHjP/FWwIi6NRRJ2R6YL7yHE8HP5WZhwatW+iJP
-         TQ2lGpDh1k/UsBJUeJKUSF6q37yxafWn0yWIWGqKnLleN8JaVAM23FcMEWkS1MWXDNTh
-         wlP8iaFt3m1NMUis+tmyMfCQo3zFqIiR1WoYp/cjc+W2b3YWqYHZTU8A1F4AvpdgEp2e
-         Va+hPz9wVs84bGFbmJcxCQVrW67DbP0bfkSCpJmo1G071F+RfwLxzOmd203Xzl9hkWsD
-         SAl9wvKmbrG035xwL3vnpLwPcV2HRjFAtlL5Qo3oPWfGQZphFHxQ1XOMfOXZ3hMZdoVp
-         in+Q==
-X-Gm-Message-State: APt69E2d8CDNRU4rkO67ZW12k4/VBB8YoRC6LI3YPAuL3xGxCicbjFgw
-        KDHeN9ZRCcySk4kUGHcLIFth6uz8bis9P1u/X6G/ow==
-X-Google-Smtp-Source: ADUXVKKjWGT4RL3b5sBwy33KEXbo6s0P7AGE4G3QHWU6qU8IQcENqDYTjetR1/zRguR40lzuIL4KT+MtPzAylmlFgmY=
-X-Received: by 2002:adf:9525:: with SMTP id 34-v6mr17422968wrs.99.1529512637825;
- Wed, 20 Jun 2018 09:37:17 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=nJcNDxCq3Jvbo07CQanbrW4MTWCXgui9hH4v0Tbg/Fw=;
+        b=alTJ3Nw/Zjs5oADmsxgchNmI4xVLGr4yUQMFrCTaWQJ5pklEnSPdITX/HEPvydsvw7
+         DNu5bvQhKoUKLSflTOn5RdXMwRJcGJ7dDr3f9gNRKrtsP2gSsgsL3uL2Vw6rXWh1fyt9
+         aDQHqSYdhXr+/fJ+H7Rwjhoyb9zITyPMRMY/Ixb2O2wNnnKBKQ7w41evaxOyYmj1XmFb
+         ikvVI+1h33aHtwa65EB+xAAguAFeYmeIbVTP4Qhx6HNGNPFeFYoFx5T/7UIQiagrv7kQ
+         e3GESCPKwpiJw0vIjYbUIIMBP7eIuij0/xPImVq9oNE97/NPLIRT4vhB34sAtERz6hMQ
+         18cQ==
+X-Gm-Message-State: APt69E3mBGqD8ap8TuXbb0HcuquVBEkqTDXlh4gllMPQxQ2wFDOuOR2M
+        TSJHZj1ycxzxOzqHjzVf7yNFovBHPPgU5zTsBPI=
+X-Google-Smtp-Source: ADUXVKLJJyImjTDmVsRQOuGwPvvFtS6XZZVSFiR+zI+8o4JTUILftyUqTrccThYH1Soz00RrGjxHOMkPuQCiGOQjtKc=
+X-Received: by 2002:a2e:419:: with SMTP id 25-v6mr14346952lje.146.1529512645051;
+ Wed, 20 Jun 2018 09:37:25 -0700 (PDT)
 MIME-Version: 1.0
-From:   Belisko Marek <marek.belisko@gmail.com>
-Date:   Wed, 20 Jun 2018 18:37:06 +0200
-Message-ID: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
-Subject: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
-To:     LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org
-Cc:     "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Tony Lindgren <tony@atomide.com>
+Received: by 2002:ab3:44ec:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 09:37:24
+ -0700 (PDT)
+In-Reply-To: <20180620121450.31724b69@gandalf.local.home>
+References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
+ <20180620145058.GP3593@linux.vnet.ibm.com> <20180620114335.7a314642@gandalf.local.home>
+ <20180620155658.GU3593@linux.vnet.ibm.com> <CANrsvRMW_LF1W3-OerHbXm1nqPBLGhQYP6ZsTMapGnfiT7-W3w@mail.gmail.com>
+ <20180620121450.31724b69@gandalf.local.home>
+From:   Byungchul Park <max.byungchul.park@gmail.com>
+Date:   Thu, 21 Jun 2018 01:37:24 +0900
+Message-ID: <CANrsvRNJdP4z-5HD5sSC3xb972SHzFKViGdBaC0NGD2nxXrVXQ@mail.gmail.com>
+Subject: Re: [RFC 1/2] rcu: Do prepare and cleanup idle depending on in_nmi()
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        jiangshanlai@gmail.com, josh@joshtriplett.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        Joel Fernandes <joel@joelfernandes.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Jun 21, 2018 at 1:14 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Thu, 21 Jun 2018 01:11:36 +0900
+> Byungchul Park <max.byungchul.park@gmail.com> wrote:
+>
+>> > Byungchul, is there any reason to make this change other than preparation
+>> > for your second patch?
+>>
+>> Sorry again I didn't explain it fully in advance. The only reason is to
+>> prepare for the 2nd. It was harder to read the patch when I made them
+>> into one. But I can make them into one if you don't think so.
+>
+> Please keep them as separate patches. It's fine to say in one patch
+> that it is needed for a following patch. Not exactly in those words
+> though.
+>
+> Each patch should be a stand alone patch, such that a git blame comes
+> to it, we don't need to go searching further to see why a change was
+> made.
+>
+> What a change log should say is something like.
+>
+> "In order to do X, we need to do Y, because of Z" Where X is a
+> description of what is to come, Y is a description of what the current
+> commit is doing, and Z is the rational for that change.
 
-I'm trying to fix warning (for omap5 board) produced by recent change
-to avoid using IRQ_TYPE_NONE like:
-[    1.818666] WARNING: CPU: 1 PID: 778 at
-drivers/irqchip/irq-gic.c:1016 gic_irq_domain_translate+0x78/0x100
-[    1.828839] Modules linked in:
+Very good comment and tip. You're helping me remind a good way
+to describe a change log.
 
-I did look to other commit which did update and without deep knowledge
-I just simply do this small change:
-diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi
-b/arch/arm/boot/dts/omap5-board-common.dtsi
-index 218892b..ab2df8c 100644
---- a/arch/arm/boot/dts/omap5-board-common.dtsi
-+++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-@@ -393,7 +393,7 @@
+From now on, I wanna try my best to write change logs in the form:
 
-        palmas: palmas@48 {
-                compatible = "ti,palmas";
--               interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* IRQ_SYS_1N */
-+               interrupts = <GIC_SPI 7 IRQ_TYPE_HIGH>; /* IRQ_SYS_1N */
-                reg = <0x48>;
-                interrupt-controller;
-                #interrupt-cells = <2>;
+   "In order to do X, we need to do Y, because of Z"
 
-and it looks board boots fine. Only issue is that gpadc driver is not
-working (at least not getting interrupts at all ADC fails with
-timeout). I did look to gpadc driver and driver is not using
-interrupts defined in dts but request interrupt directly from palmas
-mfd module. Any ideas what needs to be changed to have gpadc again
-working with mentioned patch?
+I will. Thanks a lot, Steve.
 
-I tried to use also IRQ_TYPE_LOW but in this case board cannot mount
-rootfs so I was thinking this is not way to go.
-
-Thanks for any hints.
-
-BR,
-
-marek
+>
+> Thanks,
+>
+> -- Steve
 
 -- 
-as simple and primitive as possible
--------------------------------------------------
-Marek Belisko - OPEN-NANDRA
-Freelance Developer
-
-Ruska Nova Ves 219 | Presov, 08005 Slovak Republic
-Tel: +421 915 052 184
-skype: marekwhite
-twitter: #opennandra
-web: http://open-nandra.com
+Thanks,
+Byungchul
