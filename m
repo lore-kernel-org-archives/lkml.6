@@ -4,105 +4,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3CAC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D9EC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8232083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79A882083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:51:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZtKvuFi4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8232083A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2jqT6OZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79A882083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754104AbeFTCuB (ORCPT
+        id S1754213AbeFTCu7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 22:50:01 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42072 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753730AbeFTCt7 (ORCPT
+        Tue, 19 Jun 2018 22:50:59 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44629 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753906AbeFTCuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 22:49:59 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w17-v6so897787pll.9
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 19:49:59 -0700 (PDT)
+        Tue, 19 Jun 2018 22:50:55 -0400
+Received: by mail-pf0-f193.google.com with SMTP id h12-v6so815854pfk.11;
+        Tue, 19 Jun 2018 19:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=M0rGZgWWY7dcASiTp0hDxNvg+Zcgxe+cBW6GCM7sAgg=;
-        b=ZtKvuFi4Zx5mS1jKGTFWPfH1XROdksRaz4PRn6IpGRqVdsyWJ061lqoLHcmq2W/okN
-         pdyQwrsUf922lDonh32uoi2tsnRiBT/9rZuRNrQhobTLB5pQFyZ66RnYdg9GzyqHpBgF
-         51T2gB+dcpt4nPeQO0UMseozKlZIo6gW1b2fmOotiEqo8O2oIymarJOVcou8uXQWIrcl
-         zaIGG4n2CRUAJUrkJtKlSkmrYeyJ+H5Urtqyl4s+Q8V+5hWmR8BonlkCNo0Ila9Jx8fW
-         +sgdi7qyQ7UIAaVQU9zOOHIRcB3FrtqHQDgnHIR+gZryLBXLmH4uUe8pMJ3aFfCzYAQh
-         ArBA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Gh5wpn/72YAHQNb9azvAnaSfWQhemAACqfG+y1LWwlM=;
+        b=d2jqT6OZAt7Sk1czQxXEi6Kr3SshL5J1o5WqCangmmwgyskbWy7hgYqOLCmmuQPjum
+         iUTg/JqPXtKJr0KgW/X5tPu2Id9mDvaFzNrxtOHDM2lxhjssvUrYp23H47gTEVtMdyyf
+         OFpPbnj+vMrTFHW7ZJQQefDOj7g3a9pVemP1rVwnvcRnisXL0NWGX75wcmDmT1snOi+m
+         vyNGsMlUpGWZJ3FF7F4Tk5s3J3lQHlvS5RuFm2H5MH0+a/ghEqNIWv5HO6sYjhUD8ywj
+         GopsnG1RBBZkC+pmc/eLlIUrNzPG1Rl/qgqo2G5GsVBv71UyDvNWrXZQCaz1yA35xoaj
+         7nEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=M0rGZgWWY7dcASiTp0hDxNvg+Zcgxe+cBW6GCM7sAgg=;
-        b=ZvwMUKUFic7YeL5I0JqgZGCL8qiP7TqFzRjeZLIvfvGX9kvFxijbtJcPqS1L5yBdkv
-         895olJPg0chs0wAjGoJGltB3zBdwHB6ei2gQhqPchmonEIiUiV8drAVlR+Qz9DyC4vOM
-         d83n1sUv6Zz6uPmIlsW7qZKzBHw0kw3yCVGUO0jvVTkd327tdrHImPFs4DbDZAyhxBWo
-         GlTmOQns5NeJtjvrH8lqfIGM57f8OmGWfTGFWqMqUHoBT2Omdw5H+YytwjbnflN/8hCg
-         OzXRV5Xia9OdD78R8W/Rva1tgkdHAPDPOH7qDNJfSQHsiNPSm4DF5q9ASZ/qdkYPNnzM
-         1VLg==
-X-Gm-Message-State: APt69E0Bb6M4wm6lEVWmWojLiIX3yW5P2DKQvc0p6WQ3ifGQPs0PnsNs
-        2ELvA7yIeygQDZVEm+wRMpvLfwEq
-X-Google-Smtp-Source: ADUXVKICrPNQ+Chesu1CsC4+IRzOMtfWbfOeYat6F36Sm4N5tVHKShreGVJeMOLB+WAOC2HCf6p+sw==
-X-Received: by 2002:a17:902:822:: with SMTP id 31-v6mr21357157plk.172.1529462999133;
-        Tue, 19 Jun 2018 19:49:59 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.70.11? ([2402:f000:1:1501:200:5efe:a66f:460b])
-        by smtp.gmail.com with ESMTPSA id i71-v6sm1044403pgd.22.2018.06.19.19.49.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 19:49:58 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] xen: Two possible sleep-in-atomic-context bugs in
- bind_evtchn_to_irqhandler()
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>, jgross@suse.com
-Cc:     xen-devel@lists.xenproject.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <80315b22-63c1-c8cc-1035-11fa36bee83a@gmail.com>
-Date:   Wed, 20 Jun 2018 10:49:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Gh5wpn/72YAHQNb9azvAnaSfWQhemAACqfG+y1LWwlM=;
+        b=cBn2xv8y9M1mh8kksN3nr3XlVZKFRBpFwPdoGx9NbqusiDIZRqQhCY1NZP5XEj8KyG
+         /jTvNFYCFPuTq1TTJ7PkaEgHnGEzYmQ0R9kpqQ1o3kyEZZPin4x7c2CIY81Aejh/67yu
+         TAb1wW+lt+Ij2xVwF3awvyu7D+lAXzi6nnETUbybI018/3f3oPuIAo47rIcNO2IcXDn5
+         8N0kwVD6Q6EGyBNHoMFPSzobBaSk4LZqXPhVJC6mfFdEroDYrzUmU751QsFJmtLdFirc
+         9OkBcHTYJ2Mxr1LJKZaEZLafKKCAQ+4OEiJ0eYS4nTsFQgJJqTKueLCswuJJ2beZkHWx
+         99mw==
+X-Gm-Message-State: APt69E30HqgjnKLw1R/wHfQ91RzD+ynmpUKBxyrolzOVKNbYSycuYxHh
+        fTn91nV391wwZlg0xSCSf7w=
+X-Google-Smtp-Source: ADUXVKL4b9F7qiwrto8Wo0Qk0Oz05fHX94gI5j8ObNfg7Ptj2Tf9HebRhws3csgGwiZtZtv44A0lXw==
+X-Received: by 2002:a65:51c9:: with SMTP id i9-v6mr17254820pgq.202.1529463055203;
+        Tue, 19 Jun 2018 19:50:55 -0700 (PDT)
+Received: from localhost ([110.70.59.159])
+        by smtp.gmail.com with ESMTPSA id x72-v6sm1431102pff.176.2018.06.19.19.50.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 19:50:53 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 11:50:50 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
+ locks
+Message-ID: <20180620025050.GE650@jagdpanzerIV>
+References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
+ <20180618143818.50b2f2f9@alans-desktop>
+ <20180619005308.GA405@jagdpanzerIV>
+ <20180619083021.4avsgvcqjrpkat6s@pathway.suse.cz>
+ <CA+55aFz9aGc-vGvKv_ZR2W2ZkZNSZfOHa0m_MbGH_a=x8oAW5Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFz9aGc-vGvKv_ZR2W2ZkZNSZfOHa0m_MbGH_a=x8oAW5Q@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
-The function call paths (from bottom to top) in Linux-4.16.7 are:
+On (06/20/18 11:01), Linus Torvalds wrote:
+> On Tue, Jun 19, 2018 at 5:30 PM Petr Mladek <pmladek@suse.com> wrote:
+> >
+> > To make it clear. This patch set adds yet another spin_lock API.
+> > It behaves exactly as spin_lock_irqsafe()/spin_unlock_irqrestore()
+> > but in addition it sets printk_context.
+> >
+> > This patchset forces safe context around TTY and UART locks.
+> > In fact, the deferred context would be enough to prevent
+> > all the mentioned deadlocks.
+> 
+> Please stop this garbage.
 
-[FUNC] mutex_lock_nested --> can sleep
-drivers/xen/events/events_base.c, 839: mutex_lock_nested in 
-bind_evtchn_to_irq
-drivers/xen/events/events_base.c, 1030: bind_evtchn_to_irq in 
-bind_evtchn_to_irqhandler
-drivers/xen/pvcalls-front.c, 371: bind_evtchn_to_irqhandler in create_active
-drivers/xen/pvcalls-front.c, 417: create_active in pvcalls_front_connect
-drivers/xen/pvcalls-front.c, 410: spin_lock in pvcalls_front_connect
+I'm guessing the message was addressed to me, not to Petr.
+Let me explain myself.
 
-[FUNC] request_irq --> can sleep
-drivers/xen/events/events_base.c, 1003: request_irq in 
-bind_evtchn_to_irqhandler
-drivers/xen/pvcalls-front.c, 371: bind_evtchn_to_irqhandler in create_active
-drivers/xen/pvcalls-front.c, 417: create_active in pvcalls_front_connect
-drivers/xen/pvcalls-front.c, 410: spin_lock in pvcalls_front_connect
+> The rule is simple: DO NOT DO THAT THEN.
+>
+> Don't make recursive locks. Don't make random complexity.  Just stop
+> doing the thing that hurts.
 
-These bugs are found by my static analysis tool (DSAC-2) and checked by my
-code review.
+We didn't add any of those recursive printk()-s. Those are the things
+like kmalloc()/scheduler/etc which tty/etc invoke that hurt.
 
-I do not know how to correctly fix these bugs, so I just report them.
-Maybe create_active() should not be called with holding a spinlock.
+> There is no valid reason why an UART driver should do a printk() of
+> any sort inside the critical region where the console is locked.
 
+It's not UART on its own that immediately calls into printk(), that would
+be trivial to fix, it's all those subsystems that serial console driver
+can call into.
 
-Best wishes,
-Jia-Ju Bai
+For instance, kernel/workqueue.c - it may WARN_ON/printk in various cases.
+And those WARNs/printks are OK. Except for one thing: workqueue can be
+called from a serial console driver, which suddenly will turn those
+WARNs/printks into illegal ones, due to possible deadlocks. And serial
+consoles can call into WQ. Not directly, but via tty code.
+
+A random example:
+
+s3c24xx_serial_rx_chars_dma()
+ spin_lock_irqsave(&port->lock, flags);
+  tty_flip_buffer_push()
+   __queue_work()
+ spin_unlock_irqrestore(&port->lock, flags);
+
+Should for some reason WQ warn/printk, we are done, because we will
+end up taking the same port->lock:
+
+  __queue_work()
+    printk()
+     call_console_drivers()
+      spin_lock_irqsave(&port->lock, flags);
+
+IOW, there is this tricky "we were called from a serial driver" context,
+which is hard to track, but printk_safe can help us in those cases. There
+are other examples. WQ is not the only thing serial drivers can call into.
+So that's why I sent the patch set.
+
+	-ss
