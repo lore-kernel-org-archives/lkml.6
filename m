@@ -2,103 +2,86 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE5FC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F07E0C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCEE20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:03:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fuiNxW92";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fuiNxW92"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCEE20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A749420836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:03:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A749420836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754272AbeFTLDL (ORCPT
+        id S1754320AbeFTLDi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 07:03:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49284 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754235AbeFTLDG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 07:03:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E3F3860B18; Wed, 20 Jun 2018 11:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529492585;
-        bh=0/yEzv6nHNUmDqj5u7jFGVQDYtpFVTb/FF40b8YthPU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fuiNxW92dZfQcetGOdK9NzfhiSkoL/em10I0HPuF5n+N8KdolgzeGjhy7o7pc4uWk
-         EqwpoRAXMM5eX1ivrPRnM2IGwT5uyPIrM/F0J7ZCgWUcdEyD+rlVNZFwwZxOKVG9SZ
-         ojnslvVEetPLdyLddAhszzdJeFEA7T/h9T2M0DyI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 3DE3F604A6;
-        Wed, 20 Jun 2018 11:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529492585;
-        bh=0/yEzv6nHNUmDqj5u7jFGVQDYtpFVTb/FF40b8YthPU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fuiNxW92dZfQcetGOdK9NzfhiSkoL/em10I0HPuF5n+N8KdolgzeGjhy7o7pc4uWk
-         EqwpoRAXMM5eX1ivrPRnM2IGwT5uyPIrM/F0J7ZCgWUcdEyD+rlVNZFwwZxOKVG9SZ
-         ojnslvVEetPLdyLddAhszzdJeFEA7T/h9T2M0DyI=
+        Wed, 20 Jun 2018 07:03:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40655 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754291AbeFTLDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 07:03:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 03DC3AEB0;
+        Wed, 20 Jun 2018 11:03:36 +0000 (UTC)
+Date:   Wed, 20 Jun 2018 13:03:35 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk: Make CONSOLE_LOGLEVEL_QUIET configurable
+Message-ID: <20180620110335.sjzmtra2z3chvon2@pathway.suse.cz>
+References: <20180619115726.3098-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 20 Jun 2018 16:33:05 +0530
-From:   kgunda@codeaurora.org
-To:     Vinod <vkoul@kernel.org>
-Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH V3 6/7] backlight: qcom-wled: add support for short
- circuit handling
-In-Reply-To: <20180620054722.GH13316@vkoul-mobl>
-References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
- <1529406822-15379-7-git-send-email-kgunda@codeaurora.org>
- <20180620054722.GH13316@vkoul-mobl>
-Message-ID: <830ec51a6ea0cb9bcf8981cda86975cc@codeaurora.org>
-X-Sender: kgunda@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619115726.3098-1-hdegoede@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-20 11:17, Vinod wrote:
-> On 19-06-18, 16:43, Kiran Gunda wrote:
+On Tue 2018-06-19 13:57:26, Hans de Goede wrote:
+> The goal of passing the "quiet" option to the kernel is for the kernel
+> to be quiet unless something really is wrong.
 > 
->>  struct wled {
->>  	const char *name;
->>  	struct device *dev;
->>  	struct regmap *regmap;
->> +	struct mutex lock;	/* Lock to avoid race from ISR */
+> Sofar passing quiet has been (mostly) equivalent to passing
+> loglevel=4 on the kernel commandline. Which means to show any messages
+> with a level of KERN_ERR or higher severity on the console.
 > 
-> the comment is wrong as you avoid race with thread handler and not the
-> main ISR. The ISR runs in atomic context so you cant use a mutex but 
-> you
-> may do so with a thread handler
+> In practice this often does not result in a quiet boot though, since
+> there are many false-positive or otherwise harmless error messages printed,
+> defeating the purpose of the quiet option. Esp. the ACPICA code is really
+> bad wrt this, but there are plenty of others too.
+
+I see your pain. But this sounds like a workaround for a broken code.
+This change might just encourage people to create even more mess.
+
+
+> This commit makes CONSOLE_LOGLEVEL_QUIET configurable.
 > 
-Will fix the comment in the next series.
->> +#define WLED_SHORT_DLY_MS			20
->> +#define WLED_SHORT_CNT_MAX			5
->> +#define WLED_SHORT_RESET_CNT_DLY_US		USEC_PER_SEC
-> 
-> an empty line after defines would be better
-> 
-Will add it in the next series.
->> +static int wled_configure_short_irq(struct wled *wled,
->> +				    struct platform_device *pdev)
->> +{
->> +	int rc = 0, short_irq;
-> 
-> superfluous initialization of rc
-Will remove the initialization in next series.
+> This for example will allow distros which want quiet to really mean quiet
+> to set CONSOLE_LOGLEVEL_QUIET so that only messages with a higher severity
+> then KERN_ERR (CRIT, ALERT, EMERG) get printed, avoiding an endless game
+> of whack-a-mole silencing harmless error messages.
+
+I find it a bit confusing that "quiet" would mean something different
+on different systems.
+
+Why did not you use loglevel=<whatever_you_need> instead of "quiet"?
+
+Alternative solution would be to add "silent" or so to calm down
+everything. But I am afraid that any change in this area would
+just create a mess similar to grep -s and -q options.
+
+
+Best Regards,
+Petr
+
+PS: I will not block it if Steven and Sergey are fine with this. But
+I want to be sure that they considered the above views. It looked like
+a no-brainer to me at the beginning. I even pushed this to printk.git.
+But the pushing gave me some more time to think about it...
