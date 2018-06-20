@@ -3,103 +3,171 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C9DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AD1C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF9E5208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9E5208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 1FFE620652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFE620652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754805AbeFTJDr (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:03:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60460 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752601AbeFTJDn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:03:43 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0A647AD85;
-        Wed, 20 Jun 2018 06:52:18 +0000 (UTC)
-Subject: Re: [PATCH] xen: Fix two possible sleep-in-atomic-context bugs in
- create_active()
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>, boris.ostrovsky@oracle.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20180620023846.30618-1-baijiaju1990@gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c2f8d60a-58c5-9555-92f6-2a5ce2bd1e7e@suse.com>
-Date:   Wed, 20 Jun 2018 08:52:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932844AbeFTJDw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 05:03:52 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59518 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754012AbeFTJDq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:03:46 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fVZ1h-0001ZO-5R; Wed, 20 Jun 2018 11:03:41 +0200
+Date:   Wed, 20 Jun 2018 11:03:40 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexander Dahl <ada@thorsis.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/6] clocksource/drivers: Add a new driver for the
+ Atmel ARM TC blocks
+In-Reply-To: <20180619211929.22908-3-alexandre.belloni@bootlin.com>
+Message-ID: <alpine.DEB.2.21.1806201037240.10546@nanos.tec.linutronix.de>
+References: <20180619211929.22908-1-alexandre.belloni@bootlin.com> <20180619211929.22908-3-alexandre.belloni@bootlin.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180620023846.30618-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/06/18 04:38, Jia-Ju Bai wrote:
-> The driver may sleep with holding a spinlock.
-> The function call paths (from bottom to top) in Linux-4.16.7 are:
-> 
-> [FUNC] __get_free_pages(GFP_KERNEL)
-> drivers/xen/pvcalls-front.c, 351: __get_free_pages in create_active
-> drivers/xen/pvcalls-front.c, 800: create_active in pvcalls_front_accept
-> drivers/xen/pvcalls-front.c, 783: spin_lock in pvcalls_front_accept
-> 
-> [FUNC] __get_free_pages(GFP_KERNEL)
-> drivers/xen/pvcalls-front.c, 347: __get_free_pages in create_active
-> drivers/xen/pvcalls-front.c, 800: create_active in pvcalls_front_accept
-> drivers/xen/pvcalls-front.c, 783: spin_lock in pvcalls_front_accept
-> 
-> To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
-> 
-> These bugs are found by my static analysis tool (DSAC-2) and checked by my
-> code review.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+On Tue, 19 Jun 2018, Alexandre Belloni wrote:
+> +
+> +static struct atmel_tcb_clksrc {
+> +	struct clocksource clksrc;
+> +	struct clock_event_device clkevt;
+> +	struct regmap *regmap;
+> +	void __iomem *base;
+> +	struct clk *clk[2];
+> +	char name[20];
+> +	int channels[2];
+> +	int bits;
+> +	int irq;
+> +	struct {
+> +		u32 cmr;
+> +		u32 imr;
+> +		u32 rc;
+> +		bool clken;
+> +	} cache[2];
+> +	u32 bmr_cache;
+> +	bool registered;
+> +} tc = {
+> +	.clksrc = {
+> +		.rating		= 200,
+> +		.mask		= CLOCKSOURCE_MASK(32),
+> +		.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+> +	},
+> +	.clkevt	= {
+> +		.features	= CLOCK_EVT_FEAT_ONESHOT,
+> +		/* Should be lower than at91rm9200's system timer */
+> +		.rating		= 125,
+> +	},
+> +};
+> +
+> +static struct tc_clkevt_device {
+> +	struct clock_event_device clkevt;
+> +	struct regmap *regmap;
+> +	void __iomem *base;
+> +	struct clk *slow_clk;
+> +	struct clk *clk;
+> +	char name[20];
+> +	int channel;
+> +	int irq;
+> +	struct {
+> +		u32 cmr;
+> +		u32 imr;
+> +		u32 rc;
+> +		bool clken;
+> +	} cache;
+> +	bool registered;
+> +	bool clk_enabled;
+> +} tce = {
+> +	.clkevt	= {
+> +		.features		= CLOCK_EVT_FEAT_PERIODIC |
+> +					  CLOCK_EVT_FEAT_ONESHOT,
+> +		/*
+> +		 * Should be lower than at91rm9200's system timer
+> +		 * but higher than tc.clkevt.rating
+> +		 */
+> +		.rating			= 140,
+> +	},
+> +};
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+To be honest: This stuff is horrible to read and the two structs are almost
+identical. There is really no good reason to have all this duplicated
+mess. I'm pretty sure you can consolidate stuff further when using _one_.
+
+And please define the structs separate from the define and arrange the
+struct members in tabluar fashion.
+
+> +/*
+> + * Clocksource and clockevent using the same channel(s)
+> + */
+> +static u64 tc_get_cycles(struct clocksource *cs)
+> +{
+> +	u32 lower, upper;
+> +
+> +	do {
+> +		upper = readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[1]));
+> +		lower = readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[0]));
+> +	} while (upper != readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[1])));
+> +
+> +	return (upper << 16) | lower;
+> +}
+
+For timekeeping the win of this is dubious. With a 5Mhz clock the 32bit
+part wraps around in ~859 seconds, which is plenty even for NOHZ.
+
+So I really would avoid the double read/compare/eventually repeat magic and
+just use the lower 32bits for performance sake. I assume the same is true
+for sched_clock(), but I might be wrong.
+
+> +static int tcb_clkevt_next_event(unsigned long delta,
+> +				 struct clock_event_device *d)
+> +{
+> +	u32 old, next, cur;
+> +
+> +	old = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
+> +	next = old + delta;
+> +	writel(next, tc.base + ATMEL_TC_RC(tc.channels[0]));
+> +	cur = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
+> +
+> +	/* check whether the delta elapsed while setting the register */
+> +	if ((next < old && cur < old && cur > next) ||
+> +	    (next > old && (cur < old || cur > next))) {
+> +		/*
+> +		 * Clear the CPCS bit in the status register to avoid
+> +		 * generating a spurious interrupt next time a valid
+> +		 * timer event is configured.
+> +		 */
+> +		old = readl(tc.base + ATMEL_TC_SR(tc.channels[0]));
+> +		return -ETIME;
+> +	}
+
+Aarg. Doesn;t that timer block have a simple count down and fire mode?
+These compare equal timers suck.
+
+Thanks,
+
+	tglx
 
 
-Juergen
