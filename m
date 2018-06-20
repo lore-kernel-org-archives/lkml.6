@@ -2,129 +2,238 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E918C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A99EC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1671208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0357A208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:43:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qL99QskN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1671208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJI3WfFG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0357A208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932903AbeFTImw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:42:52 -0400
-Received: from mail-eopbgr10074.outbound.protection.outlook.com ([40.107.1.74]:2620
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750793AbeFTImr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:42:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=grqkmLvSGFX74E1aUfx7ZR0c9gd/AhI/Vm9EJSjVe/0=;
- b=qL99QskNEFeFTeYcX12qVwLDlmeiXzesVFOsxc547VKA3svBBwj9Kguya3IYoCUad3bWRtlvJ+2X98GqzMwntX7w6MsohmmMi8+9RYmjcN9w7ps69LogVk0Csl9nYbqiQEbSbhHj2bRmSlWuJduOUohcXENQJSgZktV7mbrdIC0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-Received: from anson-OptiPlex-790.ap.freescale.net (119.31.174.66) by
- DB5PR04MB1320.eurprd04.prod.outlook.com (2a01:111:e400:51cc::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.16; Wed, 20 Jun
- 2018 08:42:39 +0000
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: imx6sll: declare src module to be compatible to imx51's src
-Date:   Wed, 20 Jun 2018 16:38:37 +0800
-Message-Id: <1529483917-18057-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
+        id S1754574AbeFTInA (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:43:00 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:45302 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932527AbeFTImv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 04:42:51 -0400
+Received: by mail-lf0-f66.google.com with SMTP id a13-v6so3657699lfk.12;
+        Wed, 20 Jun 2018 01:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oII4ZMKbJXtwvBgGAutyEFsQJzcGEkFEHVIYwbDTpE8=;
+        b=gJI3WfFGKj7f1KrBjHg9da9yDKbv1OUQD5WySvqLq8x6cJ3PPl3IPsokcqf/uDs46l
+         tNUQN75VGRkFtPnlnif0OiS2tU1ovTYTe4VI/dx1QNLsDkqksEc1nBGhgC3vwcZFcbOo
+         Q9EjixdkpefVFB8qdspfI3rAaC3tyXxaFGPPSJsyrjTV+88G+kb3aF/bwcPU9KDTmV35
+         nwej/htmQwe+CObYqWGghC+v6oYNDsw6Bbkd4osZTPml+fr2ytuWiqT4LZTwXllaEn0R
+         FkTzIGRex9wHkQhJfYEj2GqXs+yr8YG3hxTf4qQ3euakp2QkH+naDxrdiQL6Gkki4+/e
+         DKHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=oII4ZMKbJXtwvBgGAutyEFsQJzcGEkFEHVIYwbDTpE8=;
+        b=IrlSK4KVlnWKtAGHKhIX5TU+de3QbFLXe+977aO2oubuS13j1F9ZcNrRmkvenQVAuL
+         R1WVQAlidPtBEn3CNOfWafod0auTxugtV/F7IURq3iEYJYXWpNZjm0TMGbU6uHfaiIU1
+         6UMDvAOTAn0AefYoM5NBBE0Ncj7dFu4EFLR5zTsROchhJVORCh8/NdsYB7/Fev/C5TIn
+         R5NA8/bghWLaS+KES2Qx8or8bPgytWo/4m7R3lJ11VmiUum7pmAdkyODTuZxvlzg22q1
+         tqiK2IsbJGrukw8UFrQpI0gASEYuCmzczngnSEIwuEtuhXBSUobJuZ1EmPoaJ1jvJrZP
+         3s0A==
+X-Gm-Message-State: APt69E2tGjEyF0M6M+Ebdy53xzaWm5sNhbncRxbYcGpk8CR7xhq9Woah
+        JPTYtv0fT67sHu/fmsiKC27GGRP0
+X-Google-Smtp-Source: ADUXVKIdW3ofr1MvDhAe0RGI14wsDKIuUHbpMhDiID5RB5jQ4+yhM4tQUYPPKo9loar8es44+mUJeA==
+X-Received: by 2002:a2e:428e:: with SMTP id h14-v6mr13911951ljf.136.1529480091789;
+        Wed, 20 Jun 2018 00:34:51 -0700 (PDT)
+Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
+        by smtp.gmail.com with ESMTPSA id y71-v6sm123532lfk.5.2018.06.20.00.34.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 00:34:51 -0700 (PDT)
+From:   Esben Haabendal <esben.haabendal@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
+Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
+        Angelo Dureghello <angelo@sysam.it>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Sanchayan Maity <maitysanchayan@gmail.com>,
+        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>,
+        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
+Subject: [PATCH 03/12] spi: spi-fsl-dspi: Fix per transfer cs_change handling
+Date:   Wed, 20 Jun 2018 09:34:33 +0200
+Message-Id: <20180620073442.20913-4-esben.haabendal@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180620073442.20913-1-esben.haabendal@gmail.com>
+References: <20180620073442.20913-1-esben.haabendal@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: HK0PR03CA0006.apcprd03.prod.outlook.com
- (2603:1096:203:2e::18) To DB5PR04MB1320.eurprd04.prod.outlook.com
- (2a01:111:e400:51cc::11)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 7ab34330-2d97-4fd9-3023-08d5d689ca3c
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1320;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1320;3:C2HEyu+UJCTRRhpkCdlZEOBcXmUHeZD2dzxCIw1nyba8ddU72+zRA/OFzA6scg+3mgE3gFhWZFvShCKb4haazgapypIBVCSvU3rXtkP7vZ3vuEe50r7PLaYcg60EMmL6I0ej91Z9+PdBA2AxKQ8P+HShKq9bbUG5wrSNKvs8HH0xDeDK4ck8zBOXC+SrICLT1Jj1i6I1CICn+YN90DZqb2jixZyKrIhDLr30mFTgt0PNtQ0sl/v7cz2NcFfFzy6U;25:WMYFSaHnL+6ms2XhVnlPzUeWvlRY4THsYcd/77grARXqWQQ+kzEscclAYi/w8ohmaLBSYRLDFxLRjGYsfnFbDZ9mlgQaAGQrvltbNVNL0Ipt/N6hbD6tJGzau9fpcx3DqNEO7c1ru4JRLXoytJ1Um6+UzlCe1SXsSQPGpm4SV10YJ5Ce0mZcTuekZOcD+t6WcZNbMglV2Y/lw+Cnv8co4bWDqOolxSob+mE9atMnS3kj9KjZEWyURhjkP9f4kqIErtWpqYoVGL1aOdz8n4nlUM0ip5WrBGjqgnod4PfMPxFXdYZuW7twSRSi0nbs0sDdUCjtfhKHTkUSm57kBTz0tg==;31:zVAshliAwGla2W/LPUwAzg5VacGWTynBD6RB42j6qG/QovLQfEPzZg8UGjzrbTk6CELYLYTPByQ0ID1S9EEn0WvwvLI9obJF+6TU+4ug/+qqDm/w/0B9Hra7O/qgxLNvPsb1onnwil0rr+FzB2p9nn4/n348blENskmH0z1fElvVzKr/6wj2eGW7+iML6RcscI4jLSeICRucsz0uQvxvCvY+Q65MVgi9kKw9LBZwy1o=
-X-MS-TrafficTypeDiagnostic: DB5PR04MB1320:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1320;20:DSDX+3yjtROAjIr7UVCOCZn2KSRuFtBOKkwa7sInX1vMTfW8OWAgTH+vpOKgKRi2NuU9MYBolG6TGc8m4X3A4Vg1rypgY2CESvQMhW+Mi1cq1LIoHh6hV1WeM3tLrzBGaOnERfN+6ErfS/lpLE5f/IetmF2V5IIiSPVuwj6eGpBGudruEbw1HJRTDDO11Bj3vNnUK1BfLOYDX2yilhzGEJwXka04v32P1OFuWoZU3rFSerTvGqdyGzxv4pCZ/jtrM5ZNWn+6sAoN3rBXzU5gi5F2fRJHXVpkeAbI2y+JYnSIA0Gwu7YPXMyHzlNDXyFTsv45VmAoqH0vLQ6r+SowPnNKjaSUjPIeWKgcaZSIJ1ZtJq4EV/Nllu3wA2yJN+5LpGk0Y7RDwaKJJ7dIBoJE1OtdcErYCQOWzRSOl+Cwwp5DNEXyQDD0nBMEwa36ZMHF7xOBqCLamJBfFU0unLGQ8173YRiiIAfZ8aRPMZbc2dXMWoKvDoQ9ZOibNVqiEIKk;4:vPB1H4zHfAvWWBXdDQ3Q9t50rdCsTBaAqedhinG8afFmKww4lmvQONVFR/XPpSMy2F45VSnju2y2F53ECOSsGJ/KSvETrCs9vnHKaxeExhTm+M4/bdaom9l2hfGeMSOyVbbOwI2EakO52u+JdWc/KXxDelsrwpE/hZfJ72xTGCC1x2lrZ6EvH9XJG63K+H2mZmRVfryoaY3kY3xIrKy5uM44HboBnodhpI7ixzbO5XjTj7x7V0Q2qNU5/z+SeWPzjj0hnk39iPVp6EOFuVV7L5NFL0rgOuHKoj6MkwBtccvhAe/j4aN2aw2C44iDQxiG
-X-Microsoft-Antispam-PRVS: <DB5PR04MB1320B6FED424BF553145F617F5770@DB5PR04MB1320.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DB5PR04MB1320;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1320;
-X-Forefront-PRVS: 070912876F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(346002)(39380400002)(39860400002)(189003)(199004)(575784001)(316002)(16586007)(8676002)(476003)(486006)(2616005)(6486002)(36756003)(86362001)(956004)(8936002)(478600001)(66066001)(16526019)(1857600001)(186003)(48376002)(2906002)(3846002)(26005)(47776003)(5660300001)(106356001)(50466002)(105586002)(50226002)(97736004)(59450400001)(6512007)(7736002)(81166006)(51416003)(68736007)(386003)(53936002)(6506007)(81156014)(52116002)(4326008)(305945005)(6116002)(25786009)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1320;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1320;23:rXgY4BIF0WwT7UdarT1qG6xR+GZJofsNDGa9yGaO/?=
- =?us-ascii?Q?zA01pKGmESZOB2uxt35/8E4Yio2VM3kf60SZxQawfmRBhqKmooU1qEJuLcnd?=
- =?us-ascii?Q?HTrnB+5ogJ7MMfgiZjTxge+cgLpv0L7mZu4DrH5TkIOZCUNpQyNuUtut6vlW?=
- =?us-ascii?Q?aonrLTR67/kJyG8Q8HomlaJ9weVALF0w1226LEZvPl0ETx0iXqjOdeyKaO1A?=
- =?us-ascii?Q?o3ZauLdpzKbwv3oFZzye8k5rV+JCjWj5ktlRFV3i8r7fzbvOG3y5NA4oPqaq?=
- =?us-ascii?Q?oDCWHYKFagXt7YjGkN49hiZjFcF8NiIOyqBdNfGsT2s34y2NDcf+u+7l4rrL?=
- =?us-ascii?Q?27ymwAUBqwh5MVyNvPPzFXiyAOAqvg3Gg25X63PqWZ0AmK6OPRZvvOuKWQQO?=
- =?us-ascii?Q?hzv4oAUUftI0MU0KE9k0BPRyoHPsybDZ/ba3jkwvQ7NY+wmosPrOqKl7breZ?=
- =?us-ascii?Q?Q/bfW8hwGjctihr0HKEV9w5t9aYbiyo+yw0wJWgWEzof9AWRU2Eu3uWyl9Ci?=
- =?us-ascii?Q?4l+B1VVGQpVoJTV+xQKB9gFAosqAJteaFQ//ATwp6R+0K63xD0HrYNf/Wfdu?=
- =?us-ascii?Q?6A9SpefZBkDqKLQbDB0HnzrhTWztw/rflWw8r82Bx7YteqPiuJW9mWJF68UN?=
- =?us-ascii?Q?PX+d8+dywtcW6QzoHt3yn0TlsAQmCysCn62IUhg0lQrqmb6fT/oVraDBdLSy?=
- =?us-ascii?Q?JZVWYrogAzKZuBeehQneWlYeO9piYI52c6hRnTIygDndFI045pKvJ6inzLZX?=
- =?us-ascii?Q?Gk4TEE6QWx6OxHm5Enx+Cm0WKevSgNHuXTUD46k4GM57khXxtfr2LJ7gxHVE?=
- =?us-ascii?Q?KqmdLGlY2W90TSBCGK+ydjPG3lndQk4S94c2MisUC04OgJBYmbxrAnsXBide?=
- =?us-ascii?Q?3jd7gcSk26csTJZlBb0CPvFont231L/HWxsyQj3dsHJunb6JleQaPHG/94WA?=
- =?us-ascii?Q?wWMbpsWk2l8zB8DuVevBjgAenjGTUtkLkkF13Unm6tuFBDzFhTJnvlAvY2A7?=
- =?us-ascii?Q?taaNaEUAdrZgVDJgC8mKc+L+kUBZobECvhvJHt2ppE8dkIOKgt/sZXI6A1kj?=
- =?us-ascii?Q?NhVgdMUOBmbUalT1rN6ejlV1LZ2dCCCXDgNzwR3kVeGsaQoHF7lA/BCaaodb?=
- =?us-ascii?Q?gZEUf4rn2wSfVxRrll55bAigjDJlBosxopUjQ6D8fj7yzWsliuWc13cLIlBS?=
- =?us-ascii?Q?UKQIL8+fIG8xSs=3D?=
-X-Microsoft-Antispam-Message-Info: 3GdDmX+9gqYfjs1sE4I+rliCLVTvZrRvGVllroSvdPm3sYt3ZU9YCXLKx5aasHyfHCOyObiIaIwZzVjTG3h73hbtxHjHcG9o8Rrnb+OcRC3XX0MY/B1EGmSTrCggDNY06WWpzRbQDelghXbfmb/LWmkPcuyjmEsuMj2KEB5U724+v0/xhLu7zc5mjHz0HL+nvUCT4gpw97ENSlQm2tgQI2znhzc1TC2lGQMXjMOrl3kxvmGobTyHtrlJsiSSWYwlKdHzZ26e47Cl42AWyl9U+IUwFzAGN9ngFr611wgFi5UQ81XmFJ7AkaBoK1RZKTzZ
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1320;6:Jzquwv2cHpDyKbIC/IuhafjbcO3TGLCF15/+qftl2PZDwvNgkBl+aTLUAwVvwQwb7JbMvJ0P+/ozrANKd8qNTVjsmQ4FNp4iQgHT7bKJAnXaJUXpr8fFxKQN5dEAr7fam19zVbMPhWT2BA0a/c4m4C6Tsg7rzlKejBUAGWVjoQVE8zrhlYM4djMYi4nA3r+vv0qh7D/xYoSTDcVomrC4nL2yvUpsEqvzhQbFw/SXAnGdifS1t5CiiaTZAfQkUkgtP75qHFH2beAQ+RVth7OXklnBiw0/Ay4+E1F7jlVBNo6D5qg5vY6joLGoZS1z1drsicnfRHHi9JY2ckgR7RJQa/Cpctx/F0CeRLZ5blfu3ZI9JR+CUYN9azec3gW8NrpLhB8hBMrKDD4W7I11dEq7M56eVB1K40xBrmAIx2rGn7X/9doyKqkQ/14fdZ6jESa91CA1ByuO3Cd0SgEO+faHvA==;5:YxcZ1KXj2ynmGYfDcuefs12I66dccJgVynIDphw1jUKJWFFYr9KLRn9gexC9geb57OjnKMYIIzYTkp7nh5P16h6YYKcsBmN+fPIUoXSUaOQo4VCB/L9h2Hjvim+grv3S75GeadLcppSa8KcUwoEE6wzkGZbmn7xhH8x7wGXvIzk=;24:jytIhU41qgrts2ZnLQgOSsPA7uyShS87u6k7jRs8RlaXuMkVIrffeX452C1DKiQ3XBAkPDbY5TpdSqvFOxqferOFDEAVYp5K0bJXXMi0MfY=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1320;7:kJqLJi0OdLm6k/298wIQ+/YYlew0XIJ7gq+7YAD00Ha4GiThoPSBGpX7iZezXntUK80ew8w3XhgFJ22dUPJ3/enBBhLtceIgaVrSHYVQirdpEgaqKczKoAfcNilh5ijhtnxK7kQNuKtOxzyyauYZf+2O4RirfNSwzgmMwZsJ1qk1FFzqFkqzpRflo4kFH/qC/XXiIy9H7HyfxAzrGXexnc83n4Ghg0NbItX76wBeye3hyecnsG4dRf3sRWMxeYfL
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jun 2018 08:42:39.5555
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ab34330-2d97-4fd9-3023-08d5d689ca3c
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1320
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX6SLL uses same SRC module as i.MX51, add "fsl,imx51-src"
-compatible string to enable SRC driver to support setting
-CPU resume address for cpu-idle and suspend/resume.
+From: Esben Haabendal <eha@deif.com>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+As of 92dc20d83adec565378254c0630e839ff5674e14, transfer->cs_change has
+been supported for non-last transfers, but not for last transfer.
+
+This change brings handling of cs_change in line with the specification in
+spi.h, implementing handling of transfer->cs_change for all transfers.
+
+The value for CMD FIFO is precalculated with transfer->cs_change field
+taken into account, allowing for CS de-activate between transfers and
+keeping CS activated after last transfer.
+
+Signed-off-by: Esben Haabendal <eha@deif.com>
+Cc: Martin Hundebøll <martin@geanix.com>
+
+fixup! spi: spi-fsl-dspi: Fix per transfer cs_change handling
 ---
- arch/arm/boot/dts/imx6sll.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-fsl-dspi.c | 68 ++++++++++++++++++++++----------------
+ 1 file changed, 40 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
-index c9b0ccc..000e613 100644
---- a/arch/arm/boot/dts/imx6sll.dtsi
-+++ b/arch/arm/boot/dts/imx6sll.dtsi
-@@ -548,7 +548,7 @@
- 			};
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index 3bf135bf8b93..c0c3b8bf2781 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -84,11 +84,16 @@
+ #define SPI_RSER_TCFQE		0x80000000
  
- 			src: reset-controller@20d8000 {
--				compatible = "fsl,imx6sll-src";
-+				compatible = "fsl,imx6sll-src", "fsl,imx51-src";
- 				reg = <0x020d8000 0x4000>;
- 				interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
- 					     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+ #define SPI_PUSHR		0x34
+-#define SPI_PUSHR_CONT		(1 << 31)
+-#define SPI_PUSHR_CTAS(x)	(((x) & 0x00000003) << 28)
+-#define SPI_PUSHR_EOQ		(1 << 27)
+-#define SPI_PUSHR_CTCNT	(1 << 26)
+-#define SPI_PUSHR_PCS(x)	(((1 << x) & 0x0000003f) << 16)
++#define SPI_PUSHR_CMD_CONT	(1 << 15)
++#define SPI_PUSHR_CONT		(SPI_PUSHR_CMD_CONT << 16)
++#define SPI_PUSHR_CMD_CTAS(x)	(((x) & 0x0003) << 12)
++#define SPI_PUSHR_CTAS(x)	(SPI_PUSHR_CMD_CTAS(x) << 16)
++#define SPI_PUSHR_CMD_EOQ	(1 << 11)
++#define SPI_PUSHR_EOQ		(SPI_PUSHR_CMD_EOQ << 16)
++#define SPI_PUSHR_CMD_CTCNT	(1 << 10)
++#define SPI_PUSHR_CTCNT		(SPI_PUSHR_CMD_CTCNT << 16)
++#define SPI_PUSHR_CMD_PCS(x)	((1 << x) & 0x003f)
++#define SPI_PUSHR_PCS(x)	(SPI_PUSHR_CMD_PCS(x) << 16)
+ #define SPI_PUSHR_TXDATA(x)	((x) & 0x0000ffff)
+ 
+ #define SPI_PUSHR_SLAVE	0x34
+@@ -189,9 +194,8 @@ struct fsl_dspi {
+ 	void			*rx;
+ 	void			*rx_end;
+ 	char			dataflags;
+-	u8			cs;
+ 	u16			void_write_data;
+-	u32			cs_change;
++	u16			tx_cmd;
+ 	const struct fsl_dspi_devtype_data *devtype_data;
+ 
+ 	wait_queue_head_t	waitq;
+@@ -254,8 +258,6 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
+ 
+ 	for (i = 0; i < dma->curr_xfer_len; i++) {
+ 		dspi->dma->tx_dma_buf[i] = dspi_data_to_pushr(dspi, tx_word);
+-		if ((dspi->cs_change) && (!dspi->len))
+-			dspi->dma->tx_dma_buf[i] &= ~SPI_PUSHR_CONT;
+ 	}
+ 
+ 	dma->tx_desc = dmaengine_prep_slave_single(dma->chan_tx,
+@@ -534,21 +536,22 @@ static void ns_delay_scale(char *psc, char *sc, int delay_ns,
+ 
+ static u32 dspi_data_to_pushr(struct fsl_dspi *dspi, int tx_word)
+ {
+-	u16 d16;
++	u16 data, cmd;
+ 
+ 	if (dspi->tx) {
+-		d16 = tx_word ? *(u16 *)dspi->tx : *(u8 *)dspi->tx;
++		data = tx_word ? *(u16 *)dspi->tx : *(u8 *)dspi->tx;
+ 		dspi->tx += tx_word + 1;
+ 	} else {
+-		d16 = dspi->void_write_data;
++		data = dspi->void_write_data;
+ 	}
+ 
+ 	dspi->len -= tx_word + 1;
+ 
+-	return	SPI_PUSHR_TXDATA(d16) |
+-		SPI_PUSHR_PCS(dspi->cs) |
+-		SPI_PUSHR_CTAS(0) |
+-		SPI_PUSHR_CONT;
++	cmd = dspi->tx_cmd;
++	if (dspi->len > 0)
++		cmd |= SPI_PUSHR_CMD_CONT;
++
++	return (cmd << 16) | SPI_PUSHR_TXDATA(data);
+ }
+ 
+ static void dspi_data_from_popr(struct fsl_dspi *dspi, int rx_word)
+@@ -587,12 +590,9 @@ static int dspi_eoq_write(struct fsl_dspi *dspi)
+ 
+ 		dspi_pushr = dspi_data_to_pushr(dspi, tx_word);
+ 
+-		if (dspi->len == 0 || tx_count == DSPI_FIFO_SIZE - 1) {
+-			/* last transfer in the transfer */
++		if (dspi->len == 0 || tx_count == DSPI_FIFO_SIZE - 1)
++			/* request EOQ flag for last transfer in queue */
+ 			dspi_pushr |= SPI_PUSHR_EOQ;
+-			if ((dspi->cs_change) && (!dspi->len))
+-				dspi_pushr &= ~SPI_PUSHR_CONT;
+-		}
+ 
+ 		regmap_write(dspi->regmap, SPI_PUSHR, dspi_pushr);
+ 
+@@ -635,9 +635,6 @@ static int dspi_tcfq_write(struct fsl_dspi *dspi)
+ 
+ 	dspi_pushr = dspi_data_to_pushr(dspi, tx_word);
+ 
+-	if ((dspi->cs_change) && (!dspi->len))
+-		dspi_pushr &= ~SPI_PUSHR_CONT;
+-
+ 	regmap_write(dspi->regmap, SPI_PUSHR, dspi_pushr);
+ 
+ 	return tx_word + 1;
+@@ -672,11 +669,26 @@ static int dspi_transfer_one_message(struct spi_master *master,
+ 		dspi->cur_transfer = transfer;
+ 		dspi->cur_msg = message;
+ 		dspi->cur_chip = spi_get_ctldata(spi);
+-		dspi->cs = spi->chip_select;
+-		dspi->cs_change = 0;
++		/* Prepare command word for CMD FIFO */
++		dspi->tx_cmd = SPI_PUSHR_CMD_CTAS(0) |
++			SPI_PUSHR_CMD_PCS(spi->chip_select);
+ 		if (list_is_last(&dspi->cur_transfer->transfer_list,
+-				 &dspi->cur_msg->transfers) || transfer->cs_change)
+-			dspi->cs_change = 1;
++				 &dspi->cur_msg->transfers)) {
++			/* Leave PCS activated after last transfer when
++			 * cs_change is set.
++			 */
++			if (transfer->cs_change)
++				dspi->tx_cmd |= SPI_PUSHR_CMD_CONT;
++		} else {
++			/* Keep PCS active between transfers in same message
++			 * when cs_change is not set, and de-activate PCS
++			 * between transfers in the same message when
++			 * cs_change is set.
++			 */
++			if (!transfer->cs_change)
++				dspi->tx_cmd |= SPI_PUSHR_CMD_CONT;
++		}
++
+ 		dspi->void_write_data = dspi->cur_chip->void_write_data;
+ 
+ 		dspi->dataflags = 0;
 -- 
-2.7.4
+2.17.1
 
