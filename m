@@ -3,69 +3,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97667C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDF7C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9C6208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B55D208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:32:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mlWOLAmK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D9C6208B0
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QEPvkir0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B55D208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932545AbeFTIb5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:31:57 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33634 "EHLO
+        id S932570AbeFTIcF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:32:05 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37131 "EHLO
         mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932465AbeFTIbs (ORCPT
+        with ESMTP id S1753709AbeFTIb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:31:48 -0400
-Received: by mail-wr0-f196.google.com with SMTP id k16-v6so2350047wro.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:31:47 -0700 (PDT)
+        Wed, 20 Jun 2018 04:31:59 -0400
+Received: by mail-wr0-f196.google.com with SMTP id d8-v6so2332822wro.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=CAikuSFndMBVuJnohw9MxpLUs/ZKXgRPecMh41wuJ+I=;
-        b=mlWOLAmKiVqnChWlO+ZFawB/j0q6EFXiOcCAWK1jo/H4FLYSXNemdOHduU4iBZrfjN
-         d4EqY3itDLw+07f/6ufqXhy3po+ZwTMgssn+vCTNp2AZgBOsRaz8cYw/MVhDC8RpNyaD
-         YE0kIocKnYMDKtjCe6pUGqui2zYfLmdZH8nxlbeX3020KEqL/8/kQNRKEFhDILP7bhlq
-         Xj+KXLxP43untrvCR5VzhdqntoIB4cfB31GouNpZH9XmuSuBaqbW02SGGqOonDFjHnxm
-         5xR7xwqvhT5+hEWlxfLRzwvjIA+9kLqVi645s5VAEIRjNB/TXQ1aHwZ6UWiLkR06aFHO
-         pgiQ==
+        bh=3tOw0HCbLQYIFS3MeYe5E3IRiDVmH53ikPCudzzg7pk=;
+        b=QEPvkir0H0YQynyOkEiFWwTppHiaHy8Q3wlrwbHwj21mFJpx+vOOnWd4VS8UVMwBFr
+         P2BdrJbz2E3+Zqv1kVwiNZw0J6+jSGfvhK+/iyQ2ogYZJ1ZxjtSf42p1MGIhE89RbBuv
+         xFVca597wO45xC2kay4b9CC1E45E89tVq3VvvD+DCvV1Dc5kyuBuDK1CP0htD6fCOZkx
+         bTgCA3NjDnIW/vpr549fykH6brb0xeriahD1gg347kGcpzBbuceddLdwjFB5GIu0ry4+
+         CrGygh+TjLQPM/65s8tCK77h7oKdeP0w+qIsl9u9GHmnRuoaYLDgxNgy9jixpObfW2gm
+         ABSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=CAikuSFndMBVuJnohw9MxpLUs/ZKXgRPecMh41wuJ+I=;
-        b=RFgzjUkZDyVpCdgoEEqdY8ZXxf9j59z9CLVrr+5VTxhbkllcl3hbjGhwPrVkEYHABX
-         fuRt+UOqCLwz4R4yswQnalo/lSZKGq2QD16Zrq5zvY5ZAB2QlTmkZawcEjd9DiGGFoPT
-         95m8yNbCe2jrQN4CBk8l+2SAFHK9XwAD2OOt0fYTJNnY4RaVZ9v7UhxCMrvx+Ylo6skQ
-         yT6xZa2DKH6YIJEYyTkQLiVTgB4zZNtyuAlvBJycfFGaTbz1OthrxlpPr13hShbTVAvD
-         K0N7Y8LG6tc7Td0ykueDynesyK15j+ZXtolLjCSvgzVVqfNeK7i4fN63eMi5qfi+7ltu
-         yiXA==
-X-Gm-Message-State: APt69E2pipO2/CoaoXB8rfh4AbIIayBA6yIjnEvcMUnGhvWch6QrhP5C
-        urf+obhyoI6zRRgHfXlx1ZgFEU8VM8k=
-X-Google-Smtp-Source: ADUXVKIBc5aZwASQL2Q0F9xH5MM3I/OaFjFfayn+jHJAl0SJHclD8kc3HEXhDKBPDlrpP51+/5NX7g==
-X-Received: by 2002:adf:ad4c:: with SMTP id p70-v6mr15592661wrc.44.1529483506862;
-        Wed, 20 Jun 2018 01:31:46 -0700 (PDT)
+        bh=3tOw0HCbLQYIFS3MeYe5E3IRiDVmH53ikPCudzzg7pk=;
+        b=Y0m1KyHXQF0cMnCHLBhstUxgCX5QSnAmZGnHj7+xCEUEqrYLzNO/5chJEcyltAdLWQ
+         6ZytrCtf4boY42+Zb2blbL/zK965O2s97B9Xi4zwtpaZGciNEJYfwizY3kbyg272IOTT
+         oVpvoel6YtIfb8HNlfgs7M6xIRca/8nqyjLNw1NFD6C/guNdsAW/iCv7821jgQ7ClgEH
+         iOTswbPAsEkRg2uzV8brjdmfMGVk7iNmrQPjLMsOoPzdXyzy+xqm1e2eqorCGxORpyD3
+         3tcp3xezmd/8YCQyKbTppdc9P6f/Xm2Ubsf3uU0xdOccsk38Xj73g9PVpA50AOTiGkB8
+         wa8A==
+X-Gm-Message-State: APt69E1ggkZlhHcz6YJPfug2Z2/QRAIZV8hqp3cZov4ZLswdRSyCWuQu
+        V6oRLTa5m7DFUzsMFY6z6k2fSdoVM+s=
+X-Google-Smtp-Source: ADUXVKLyDO3ZUPNszm7kCJyzhD10Erqy6XmuY7EmEJAdmXHJJslYNGiTufL/JoLzSDwIJUoJhQEdsw==
+X-Received: by 2002:adf:ae09:: with SMTP id x9-v6mr16844367wrc.19.1529483518192;
+        Wed, 20 Jun 2018 01:31:58 -0700 (PDT)
 Received: from ?IPv6:2a01:cb1d:4ce:ea00:7411:64db:cd3a:8490? ([2a01:cb1d:4ce:ea00:7411:64db:cd3a:8490])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm2491566wrm.45.2018.06.20.01.31.45
+        by smtp.gmail.com with ESMTPSA id q17-v6sm1953580wrs.5.2018.06.20.01.31.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 01:31:45 -0700 (PDT)
-Subject: Re: [PATCH] clk: meson: audio-divider is one based
+        Wed, 20 Jun 2018 01:31:57 -0700 (PDT)
+Subject: Re: [PATCH] clk: meson: remove obsolete register access
 To:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Carlo Caione <carlo@caione.org>
 Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20180619154753.12788-1-jbrunet@baylibre.com>
+References: <20180619160050.26958-1-jbrunet@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -93,12 +93,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
  Acmp6h8g
 Organization: Baylibre
-Message-ID: <e8898e54-24b1-ec77-1b08-390607640747@baylibre.com>
-Date:   Wed, 20 Jun 2018 10:31:45 +0200
+Message-ID: <0e57617b-0ece-3c6d-f124-6197ef82b1c7@baylibre.com>
+Date:   Wed, 20 Jun 2018 10:31:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180619154753.12788-1-jbrunet@baylibre.com>
+In-Reply-To: <20180619160050.26958-1-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -107,29 +107,144 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/06/2018 17:47, Jerome Brunet wrote:
-> The audio divider is one based. This offset was mistakenly dropped from
-> recalc_rate() when migrating to clk_regmap.
+On 19/06/2018 18:00, Jerome Brunet wrote:
+> The legacy method to access the hhi register space is not longer used.
+> We can safely drop it now.
 > 
-> Fixes: 88a4e1283681 ("clk: meson: migrate the audio divider clock to clk_regmap")
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  drivers/clk/meson/clk-audio-divider.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/meson/axg.c  | 37 ++-----------------------------------
+>  drivers/clk/meson/gxbb.c | 36 ++----------------------------------
+>  2 files changed, 4 insertions(+), 69 deletions(-)
 > 
-> diff --git a/drivers/clk/meson/clk-audio-divider.c b/drivers/clk/meson/clk-audio-divider.c
-> index 58f546e04807..e4cf96ba704e 100644
-> --- a/drivers/clk/meson/clk-audio-divider.c
-> +++ b/drivers/clk/meson/clk-audio-divider.c
-> @@ -51,7 +51,7 @@ static unsigned long audio_divider_recalc_rate(struct clk_hw *hw,
->  	struct meson_clk_audio_div_data *adiv = meson_clk_audio_div_data(clk);
->  	unsigned long divider;
+> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+> index bd4dbc696b88..3fb884db1b10 100644
+> --- a/drivers/clk/meson/axg.c
+> +++ b/drivers/clk/meson/axg.c
+> @@ -12,7 +12,6 @@
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/init.h>
+> -#include <linux/of_address.h>
+>  #include <linux/of_device.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/platform_device.h>
+> @@ -995,49 +994,17 @@ static const struct of_device_id clkc_match_table[] = {
+>  	{}
+>  };
 >  
-> -	divider = meson_parm_read(clk->map, &adiv->div);
-> +	divider = meson_parm_read(clk->map, &adiv->div) + 1;
+> -static const struct regmap_config clkc_regmap_config = {
+> -	.reg_bits       = 32,
+> -	.val_bits       = 32,
+> -	.reg_stride     = 4,
+> -};
+> -
+>  static int axg_clkc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct resource *res;
+> -	void __iomem *clk_base = NULL;
+>  	struct regmap *map;
+>  	int ret, i;
 >  
->  	return DIV_ROUND_UP_ULL((u64)parent_rate, divider);
->  }
+>  	/* Get the hhi system controller node if available */
+>  	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
+>  	if (IS_ERR(map)) {
+> -		dev_err(dev,
+> -			"failed to get HHI regmap - Trying obsolete regs\n");
+> -
+> -		/*
+> -		 * FIXME: HHI registers should be accessed through
+> -		 * the appropriate system controller. This is required because
+> -		 * there is more than just clocks in this register space
+> -		 *
+> -		 * This fallback method is only provided temporarily until
+> -		 * all the platform DTs are properly using the syscon node
+> -		 */
+> -		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -		if (!res)
+> -			return -EINVAL;
+> -
+> -
+> -		clk_base = devm_ioremap(dev, res->start, resource_size(res));
+> -		if (!clk_base) {
+> -			dev_err(dev, "Unable to map clk base\n");
+> -			return -ENXIO;
+> -		}
+> -
+> -		map = devm_regmap_init_mmio(dev, clk_base,
+> -					    &clkc_regmap_config);
+> -		if (IS_ERR(map))
+> -			return PTR_ERR(map);
+> +		dev_err(dev, "failed to get HHI regmap\n");
+> +		return PTR_ERR(map);
+>  	}
+>  
+>  	/* Populate regmap for the regmap backed clocks */
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index 177fffb9ebef..297ebc391475 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -7,7 +7,6 @@
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/init.h>
+> -#include <linux/of_address.h>
+>  #include <linux/of_device.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/platform_device.h>
+> @@ -2228,17 +2227,9 @@ static const struct of_device_id clkc_match_table[] = {
+>  	{},
+>  };
+>  
+> -static const struct regmap_config clkc_regmap_config = {
+> -	.reg_bits       = 32,
+> -	.val_bits       = 32,
+> -	.reg_stride     = 4,
+> -};
+> -
+>  static int gxbb_clkc_probe(struct platform_device *pdev)
+>  {
+>  	const struct clkc_data *clkc_data;
+> -	struct resource *res;
+> -	void __iomem *clk_base;
+>  	struct regmap *map;
+>  	int ret, i;
+>  	struct device *dev = &pdev->dev;
+> @@ -2250,31 +2241,8 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+>  	/* Get the hhi system controller node if available */
+>  	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
+>  	if (IS_ERR(map)) {
+> -		dev_err(dev,
+> -			"failed to get HHI regmap - Trying obsolete regs\n");
+> -
+> -		/*
+> -		 * FIXME: HHI registers should be accessed through
+> -		 * the appropriate system controller. This is required because
+> -		 * there is more than just clocks in this register space
+> -		 *
+> -		 * This fallback method is only provided temporarily until
+> -		 * all the platform DTs are properly using the syscon node
+> -		 */
+> -		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -		if (!res)
+> -			return -EINVAL;
+> -
+> -		clk_base = devm_ioremap(dev, res->start, resource_size(res));
+> -		if (!clk_base) {
+> -			dev_err(dev, "Unable to map clk base\n");
+> -			return -ENXIO;
+> -		}
+> -
+> -		map = devm_regmap_init_mmio(dev, clk_base,
+> -					    &clkc_regmap_config);
+> -		if (IS_ERR(map))
+> -			return PTR_ERR(map);
+> +		dev_err(dev, "failed to get HHI regmap\n");
+> +		return PTR_ERR(map);
+>  	}
+>  
+>  	/* Populate regmap for the common regmap backed clocks */
 > 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
