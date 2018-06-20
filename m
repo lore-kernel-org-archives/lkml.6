@@ -4,113 +4,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6311C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13158C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4F320875
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81DD52083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:31:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r1wkEzfZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4F320875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ApaBt5y1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DD52083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933679AbeFTVbE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 17:31:04 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:44494 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933326AbeFTVbA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 17:31:00 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KLOJ71004406;
-        Wed, 20 Jun 2018 21:27:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=PhlQovQUtqxvQY7YwG/AEyhHnbXUMSQojHf+J/RT/Wo=;
- b=r1wkEzfZfH6m1WhiCpjbpge2drNsZ5WxnYnzkWkpydQa7D8LbbbzbsQt0qBD4TVwTk/i
- 9+bmEYuEg2Dad1Y7uS9IvUi2tgafWVBvIkEiYlcGQ7Whig7kO0oM6npOz+mGbu4ggHsr
- CG7OuXsBjACmgfu2ftNO0KZ6EaU1EYEZN2xaVtRtxyKi/+MBbb1B2lltdTGwPUsSF3dz
- QoRB7Eo03h3/hFv/Wm+8QzjLmTt70lwY83WvyM4QzUcITgTPE3Bx1DAQQfNKfEtIxDI4
- Kae2cps1EWQcr2y8SNhq3HL9se3gbjujIFO5ErmMb7qePLB29opRLa2IRe6iGZRR3fIS LA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jmt01pbtq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 21:27:16 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5KLRFrk013594
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 21:27:15 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5KLRCVx019102;
-        Wed, 20 Jun 2018 21:27:13 GMT
-Received: from xakep.us.oracle.com (/10.39.216.167)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Jun 2018 14:27:12 -0700
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
-        feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: [PATCH v11 5/6] sched: early boot clock
-Date:   Wed, 20 Jun 2018 17:26:59 -0400
-Message-Id: <20180620212700.29178-6-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180620212700.29178-1-pasha.tatashin@oracle.com>
-References: <20180620212700.29178-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=952
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806200231
+        id S933603AbeFTVb1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 17:31:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:47845 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933326AbeFTVbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 17:31:25 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 419ygv0QG5z9ryk;
+        Thu, 21 Jun 2018 07:31:23 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1529530283;
+        bh=tP+37CgG+ZB9q1qWn7urWbxVRd54fPXNC5CbqDG5A6o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ApaBt5y18MoyE7BmFQwK5MAslUuyyHtn/ImQQO/ahhlo33qcr4TUPkoQCGLi06IdO
+         t31+XTGmDfS2+LuBZWkR6KhIRl5+T2r77WtqqaCkhILhTPGgnaf5YSQCu1V166UF6Q
+         MG98kTO6UfeTQjkE2rozwSVlUcRZznOESdP8Nf1updMCa8P5iUqpBUyVTcKXhAi0Cc
+         zOPVtx67jSp+MakbG3wEOtth5TLVED83Hb6LUeWdgooveKUSPZngCB8NpWU4K9c6+u
+         f7xE3VZH4biQRbUeoUQom91aY6HpCv8cK5KC7ZQNOcGZkpKgx9j4+UPQIIijGHf0f4
+         fWGeGia+9F9+w==
+Date:   Thu, 21 Jun 2018 07:30:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
+        Ketan Mukadam <ketan.mukadam@broadcom.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the scsi-mkp
+ tree
+Message-ID: <20180621073058.32b95241@canb.auug.org.au>
+In-Reply-To: <yq1h8lxe7mm.fsf@oracle.com>
+References: <20180619211533.1dddf9b0@canb.auug.org.au>
+        <yq1y3fadxiz.fsf@oracle.com>
+        <20180620145436.4deb9079@canb.auug.org.au>
+        <yq1h8lxe7mm.fsf@oracle.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GhKSn2SRcPWp0IDcfHfwLk4"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow sched_clock() to be used before schec_clock_init() and
-sched_clock_init_late() are called. This provides us with a way to get
-early boot timestamps on machines with unstable clocks.
+--Sig_/GhKSn2SRcPWp0IDcfHfwLk4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- kernel/sched/clock.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Hi Martin,
 
-diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-index 10c83e73837a..f034392b0f6c 100644
---- a/kernel/sched/clock.c
-+++ b/kernel/sched/clock.c
-@@ -205,6 +205,11 @@ void clear_sched_clock_stable(void)
-  */
- static int __init sched_clock_init_late(void)
- {
-+	/* Transition to unstable clock from early clock */
-+	local_irq_disable();
-+	__gtod_offset = sched_clock() + __sched_clock_offset - ktime_get_ns();
-+	local_irq_enable();
-+
- 	sched_clock_running = 2;
- 	/*
- 	 * Ensure that it is impossible to not do a static_key update.
-@@ -350,8 +355,9 @@ u64 sched_clock_cpu(int cpu)
- 	if (sched_clock_stable())
- 		return sched_clock() + __sched_clock_offset;
- 
--	if (unlikely(!sched_clock_running))
--		return 0ull;
-+	/* Use early clock until sched_clock_init_late() */
-+	if (unlikely(sched_clock_running < 2))
-+		return sched_clock() + __sched_clock_offset;
- 
- 	preempt_disable_notrace();
- 	scd = cpu_sdc(cpu);
--- 
-2.17.1
+On Wed, 20 Jun 2018 12:37:53 -0400 "Martin K. Petersen" <martin.petersen@or=
+acle.com> wrote:
+>
+> >> Fixed, thanks! =20
+> >
+> > Unfortunately, James had already merged your tree :-( =20
+>=20
+> James' script will drop the offending original commit when I amend
+> something in the SCSI tree. So the discrepancy will go away next time he
+> updates.
 
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/GhKSn2SRcPWp0IDcfHfwLk4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsqx5IACgkQAVBC80lX
+0GycsQgAhtd3vDUObBgtzNOv5cNx/T/SosCo4ULGolcprqs5HPkeX/FAvh9F6U2c
+A6niay9YK2F8GOdzLc7G++Em1QwSOQCr+lmA1BNCFi4bwNnHc3bLuGWPzQxDKnlY
+T5Umv7Xxk+uEVUj19F3RVv47hA3RJR6KIVd/vRNSRzrH+W9W4oarGvdZYQ4Oqyd7
+THSWz50QvwZXsJHOIDJ0TiQkuYkcda7V6d/OWqbiKUBZgjjAzetmC41FtDJm26j/
+9qtrQV8FWLwzM+wAghgGTh0oWqVfi4RWHPZH3yHhphKEm8V8NACwGWRH13n8nVrm
+rtP+9VLsC0eUykPX0Bv3ZMUbEqujKQ==
+=H9bc
+-----END PGP SIGNATURE-----
+
+--Sig_/GhKSn2SRcPWp0IDcfHfwLk4--
