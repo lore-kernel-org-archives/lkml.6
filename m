@@ -2,117 +2,156 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F3BC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0558C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B75920872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:08:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6906720874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:08:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fxy3kyPX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B75920872
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPnhJb6B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6906720874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933493AbeFTWIC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 18:08:02 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:44867 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933249AbeFTWIA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 18:08:00 -0400
-Received: by mail-oi0-f65.google.com with SMTP id c128-v6so1031181oig.11;
-        Wed, 20 Jun 2018 15:08:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=J3nY396sRDoWoSZQznVRtR27oPKUZ8YKRf3bH1Q6I08=;
-        b=Fxy3kyPXgfLN2yhUSuCbVmUORo4bNuvzWBaujAovYQ1iTQXFQAZilF2+R0WhWLdIDl
-         x+JdpmHfKNAMMAObuWyn5HlCe3IZjhyIPtAQCyHiguOI7lJ9kp0lJkpiZEoRfAsoWW0S
-         s19IZQ1xb+Pks3MgPTI4akoJzmP4hO7dW1O6pJ8FunddkpZ+PLjq8zgd0pXh4M9BnE56
-         Z5BwvJyNtWJxHMtcW5jGe1QCB8tqlbP2W7gBP2YoSIJipTjOJ0BGDSE+U9RfAKQ8GOlF
-         7Y0IfDTSsuFArMT0Bc7orL8TXNmdLicsazkXjbbpLYxdImcVJ49pDi1nmPJAgAx1+fSI
-         NOwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=J3nY396sRDoWoSZQznVRtR27oPKUZ8YKRf3bH1Q6I08=;
-        b=es8DG7Z1BEPALyfxeQ5YAku6rsKM+mgyKu81fBzixaeD/phzdT6c4hTJ23CDqtzoZW
-         /eaHCn6vHj30fakw/jtBs0Yb/Jr2oO1tnpiaMg3IT72Y/p53jmnDk1ptuxQj/+8LeYq7
-         5KCLCB2VE4YIBC5gSTDClZMk+X9ykQ5tMRkVKIWOtD6HBsZ5l5N/n35tJZPGrTgSiAso
-         8Qi/MLjf0/f+v5Yd64+kYnNqYI+3cGRFWF0tTOH9FzK2Q2JgZIdfNB8ugcx/9ebKu/Mm
-         y2hDGulIdqIL+mn9CQHhm/Xd2k77dsTUnSp/4mEOqjA7VxFdiHlCkqQHWnZ0c10STBHb
-         cd4g==
-X-Gm-Message-State: APt69E0k0+MzDwZLOZ3sSZi/eoIhU1yvW1b8KG0pCw9olIfP0O9f/R6G
-        TM6irBe7YlVuIO0lpWqnQpPAh6VycaCE3mGnNCQ=
-X-Google-Smtp-Source: ADUXVKIATKxl5AkT1e47t1hn10dCClcvKrzCR0YvGOc7ZzhA30m1Jr8bACL6huS/DkWUp89bDzjkHvp0dZADGsTMxXU=
-X-Received: by 2002:aca:400b:: with SMTP id n11-v6mr13646933oia.44.1529532480083;
- Wed, 20 Jun 2018 15:08:00 -0700 (PDT)
+        id S933568AbeFTWIO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 18:08:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933249AbeFTWIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 18:08:13 -0400
+Received: from jamesdev (jahogan.plus.com [212.159.75.221])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55DCF20872;
+        Wed, 20 Jun 2018 22:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529532492;
+        bh=8c9Th0Bs/Kk9+gazLHbfR4eko57RihmLhcVBZuUcBO8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GPnhJb6Bb26dkrITxnxNkUvdIVPnYMxTJDWCN9CxrVJjwbvmSAc+TRaZ8U/rhYQkd
+         qgy04TcI7SdDAJIEzH6gDPWRBd3wCMdYDX4mOvPtANUUMWk3lC+y6pEKxagGCd8rmN
+         XWwCYoIkYY7h37N+k9FP8x1H3b9LFVCrMVp/IBqM=
+Date:   Wed, 20 Jun 2018 23:08:08 +0100
+From:   James Hogan <jhogan@kernel.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mips: generic: allow not building DTB in
+Message-ID: <20180620220807.GD22606@jamesdev>
+References: <20180425211607.2645-1-alexandre.belloni@bootlin.com>
+ <20180425211607.2645-2-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 15:07:59
- -0700 (PDT)
-In-Reply-To: <20180530173414.6121-1-andrew.smirnov@gmail.com>
-References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 20 Jun 2018 19:07:59 -0300
-Message-ID: <CAOMZO5AyAegbvUtX42by99mU8yQfi91bmhJfd9iqu1Ak0dEHiw@mail.gmail.com>
-Subject: Re: [PATCH] usb: chipidea: Fix ULPI on imx51
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Peter Chen <peter.chen@nxp.com>,
-        USB list <linux-usb@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RYJh/3oyKhIjGcML"
+Content-Disposition: inline
+In-Reply-To: <20180425211607.2645-2-alexandre.belloni@bootlin.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey,
 
-On Wed, May 30, 2018 at 2:34 PM, Andrey Smirnov
-<andrew.smirnov@gmail.com> wrote:
-> Workaround introduced for i.MX53 in be9cae2479f48 ("usb: chipidea:
-> imx: Fix ULPI on imx53") seems to be applicable in case of i.MX51 as
-> well. Running latest kernel on ZII RDU1 Board (imx51-zii-rdu1.dts)
-> exhibits a kernel frozen on PORTSC access and applying the workaround
-> resolves the issue.
->
-> Cc: Peter Chen <peter.chen@nxp.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-usb@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+--RYJh/3oyKhIjGcML
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patches causes a regression on a imx51-babbage running 4.18-rc1:
-I get a kernel hang.
+On Wed, Apr 25, 2018 at 11:16:07PM +0200, Alexandre Belloni wrote:
+> Allow not building any DTB in the generic kernel so it gets smaller. This
+> is necessary for ocelot because it can be built as a legacy platform that
+> needs a built-in DTB and it can also handle a separate DTB once it is
+> updated with a more modern bootloader. In the latter case, it is preferab=
+le
+> to not include any DTB in the kernel image so it is smaller.
 
-If I revert it on top of 4.18-rc1, then it boots fine and USB host is
-functional.
+Since bootloaders can modify DTs before passing them to the kernel (e.g.
+to add cmdline args or memory nodes), that would seem to make it
+impossible to have a kernel supporting both legacy bootloader, and a
+u-boot which might do that DT tweaking.
 
-I understand this patch fixes a kernel hang for you, so which commit
-is responsible for the hang you observe?
+Or perhaps its not important for this platform.
 
-It seems this commit fixes a hang for you and causes another hang for me :-)
+> diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+> index 5e9fce076ab6..3d3554c13710 100644
+> --- a/arch/mips/Makefile
+> +++ b/arch/mips/Makefile
+> @@ -404,7 +404,7 @@ endif
+>  CLEAN_FILES +=3D vmlinux.32 vmlinux.64
+> =20
+>  # device-trees
+> -core-$(CONFIG_BUILTIN_DTB) +=3D arch/mips/boot/dts/
+> +core-y +=3D arch/mips/boot/dts/
 
-Any ideas?
+Won't that result in DTBs being built unnecessarily on other platforms
+which support BUILTIN_DTB but don't have it enabled?
 
-Thanks
+I suppose the alternative is another Kconfig symbol for when building of
+DTBs is needed, selected by BUILTIN_DTB and MIPS_GENERIC.
+
+> =20
+>  %.dtb %.dtb.S %.dtb.o: | scripts
+>  	$(Q)$(MAKE) $(build)=3Darch/mips/boot/dts arch/mips/boot/dts/$@
+> diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/M=
+akefile
+> index 8982b19504a3..437ec65ec14a 100644
+> --- a/arch/mips/boot/dts/mscc/Makefile
+> +++ b/arch/mips/boot/dts/mscc/Makefile
+> @@ -1,3 +1,3 @@
+>  dtb-$(CONFIG_MSCC_OCELOT)	+=3D ocelot_pcb123.dtb
+> =20
+> -obj-y				+=3D $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+> +obj-($CONFIG_BUILTIN_DTB)	+=3D $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+
+(This part is already merged in 4.18-rc1 in commit fca3aa166422 ("MIPS:
+dts: Avoid unneeded built-in.a in DTS dirs"))
+
+> diff --git a/arch/mips/generic/Kconfig b/arch/mips/generic/Kconfig
+> index 6564f18b2012..012f283f99c4 100644
+> --- a/arch/mips/generic/Kconfig
+> +++ b/arch/mips/generic/Kconfig
+> @@ -3,6 +3,7 @@ if MIPS_GENERIC
+> =20
+>  config LEGACY_BOARDS
+>  	bool
+> +	select BUILTIN_DTB
+>  	help
+>  	  Select this from your board if the board must use a legacy, non-UHI,
+>  	  boot protocol. This will cause the kernel to scan through the list of
+> diff --git a/arch/mips/generic/vmlinux.its.S b/arch/mips/generic/vmlinux.=
+its.S
+> index 1a08438fd893..9c954f2ae561 100644
+> --- a/arch/mips/generic/vmlinux.its.S
+> +++ b/arch/mips/generic/vmlinux.its.S
+> @@ -21,6 +21,7 @@
+>  		};
+>  	};
+> =20
+> +#if IS_ENABLED(CONFIG_BUILTIN_DTB)
+
+An #ifdef would do, but no matter if it works. Though shouldn't that be
+if !IS_ENABLED (or #ifndef)?
+
+A comment would be great here too to mention why its helpful.
+
+Cheers
+James
+
+--RYJh/3oyKhIjGcML
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWyrQRwAKCRA1zuSGKxAj
+8u2XAPwOaQsDGCEy8PQdCR0hxJyLb/ZLthX1f4lTVcjnaf2KBwD9GDnCw0tJXsWM
+mhevw/torZmNvC+Dap23ntXernSm5QM=
+=MtcW
+-----END PGP SIGNATURE-----
+
+--RYJh/3oyKhIjGcML--
