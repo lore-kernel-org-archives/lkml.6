@@ -6,119 +6,132 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C43C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69196C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9739720020
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:22:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9739720020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E6F820020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:22:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E6F820020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933340AbeFTUWd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:22:33 -0400
-Received: from mga03.intel.com ([134.134.136.65]:17653 "EHLO mga03.intel.com"
+        id S933365AbeFTUWm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:22:42 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:42492 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933085AbeFTUWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:22:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 13:22:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,249,1526367600"; 
-   d="scan'208";a="209775747"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga004.jf.intel.com with ESMTP; 20 Jun 2018 13:22:23 -0700
-Date:   Wed, 20 Jun 2018 13:25:31 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     stable@vger.kernel.org, "Ashok Raj" <ashok.raj@intel.com>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v2 1/2] iommu/vt-d: add definitions for PFSID
-Message-ID: <20180620132531.460fdba4@jacob-builder>
-In-Reply-To: <1528390620-31565-2-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1528390620-31565-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1528390620-31565-2-git-send-email-jacob.jun.pan@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S933085AbeFTUWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 16:22:40 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 419x8W206gz9ttmc;
+        Wed, 20 Jun 2018 22:22:35 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Tndj5VldOE2z; Wed, 20 Jun 2018 22:22:35 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 419x8W1RMSz9ttmD;
+        Wed, 20 Jun 2018 22:22:35 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8281D8B83D;
+        Wed, 20 Jun 2018 22:22:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id lYdXz4YwVzwS; Wed, 20 Jun 2018 22:22:39 +0200 (CEST)
+Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id EE5328B82D;
+        Wed, 20 Jun 2018 22:22:38 +0200 (CEST)
+Subject: Re: [PATCH 11/11] crypto: skcipher: Remove VLA usage for
+ SKCIPHER_REQUEST_ON_STACK
+To:     Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, qat-linux@intel.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+References: <20180620190408.45104-1-keescook@chromium.org>
+ <20180620190408.45104-12-keescook@chromium.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <6537de88-cd81-1c96-afc0-45af17a07729@c-s.fr>
+Date:   Wed, 20 Jun 2018 20:22:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180620190408.45104-12-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg/David,
 
-Any comments on this? I will rebase to 18-rc1.
-Thanks,
 
-Jacob
-
-On Thu,  7 Jun 2018 09:56:59 -0700
-Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
-
-> When SRIOV VF device IOTLB is invalidated, we need to provide
-> the PF source ID such that IOMMU hardware can gauge the depth
-> of invalidation queue which is shared among VFs. This is needed
-> when device invalidation throttle (DIT) capability is supported.
+On 06/20/2018 07:04 PM, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> caps the skcipher request size similar to other limits and adds a sanity
+> check at registration.
 > 
-> This patch adds bit definitions for checking and tracking PFSID.
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 > 
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: stable@vger.kernel.org
-> Cc: "Ashok Raj" <ashok.raj@intel.com>
-> Cc: "Lu Baolu" <baolu.lu@linux.intel.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
+crypto/echainiv.c: In function ‘echainiv_encrypt’:
+crypto/echainiv.c:88:1: warning: the frame size of 2120 bytes is larger 
+than 1024 bytes [-Wframe-larger-than=]
+crypto/authenc.c: In function ‘crypto_authenc_copy_assoc’:
+crypto/authenc.c:197:1: warning: the frame size of 2120 bytes is larger 
+than 1024 bytes [-Wframe-larger-than=]
+crypto/authencesn.c: In function ‘crypto_authenc_esn_copy’:
+crypto/authencesn.c:194:1: warning: the frame size of 2120 bytes is 
+larger than 1024 bytes [-Wframe-larger-than=]
+crypto/algif_aead.c: In function ‘crypto_aead_copy_sgl’:
+crypto/algif_aead.c:90:1: warning: the frame size of 2120 bytes is 
+larger than 1024 bytes [-Wframe-larger-than=]
+
+Christophe
+
 > ---
->  drivers/iommu/intel-iommu.c | 1 +
->  include/linux/intel-iommu.h | 3 +++
->  2 files changed, 4 insertions(+)
+>   include/crypto/internal/skcipher.h | 1 +
+>   include/crypto/skcipher.h          | 4 +++-
+>   2 files changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 749d8f2..3d77d61 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -422,6 +422,7 @@ struct device_domain_info {
->  	struct list_head global; /* link to global list */
->  	u8 bus;			/* PCI bus number */
->  	u8 devfn;		/* PCI devfn number */
-> +	u16 pfsid;		/* SRIOV physical function source
-> ID */ u8 pasid_supported:3;
->  	u8 pasid_enabled:1;
->  	u8 pri_supported:1;
-> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-> index ef169d6..af1c05f 100644
-> --- a/include/linux/intel-iommu.h
-> +++ b/include/linux/intel-iommu.h
-> @@ -114,6 +114,7 @@
->   * Extended Capability Register
->   */
->  
-> +#define ecap_dit(e)		((e >> 41) & 0x1)
->  #define ecap_pasid(e)		((e >> 40) & 0x1)
->  #define ecap_pss(e)		((e >> 35) & 0x1f)
->  #define ecap_eafs(e)		((e >> 34) & 0x1)
-> @@ -284,6 +285,7 @@ enum {
->  #define QI_DEV_IOTLB_SID(sid)	((u64)((sid) & 0xffff) << 32)
->  #define QI_DEV_IOTLB_QDEP(qdep)	(((qdep) & 0x1f) << 16)
->  #define QI_DEV_IOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
-> +#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) |
-> ((u64)(pfsid & 0xfff) << 52)) #define QI_DEV_IOTLB_SIZE	1
->  #define QI_DEV_IOTLB_MAX_INVS	32
->  
-> @@ -308,6 +310,7 @@ enum {
->  #define QI_DEV_EIOTLB_PASID(p)	(((u64)p) << 32)
->  #define QI_DEV_EIOTLB_SID(sid)	((u64)((sid) & 0xffff) << 16)
->  #define QI_DEV_EIOTLB_QDEP(qd)	((u64)((qd) & 0x1f) << 4)
-> +#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) |
-> ((u64)(pfsid & 0xfff) << 52)) #define QI_DEV_EIOTLB_MAX_INVS	32
->  
->  #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 55)
-
-[Jacob Pan]
+> diff --git a/include/crypto/internal/skcipher.h b/include/crypto/internal/skcipher.h
+> index e42f7063f245..5035482cbe68 100644
+> --- a/include/crypto/internal/skcipher.h
+> +++ b/include/crypto/internal/skcipher.h
+> @@ -130,6 +130,7 @@ static inline struct crypto_skcipher *crypto_spawn_skcipher(
+>   static inline void crypto_skcipher_set_reqsize(
+>   	struct crypto_skcipher *skcipher, unsigned int reqsize)
+>   {
+> +	BUG_ON(reqsize > SKCIPHER_MAX_REQSIZE);
+>   	skcipher->reqsize = reqsize;
+>   }
+>   
+> diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+> index 2f327f090c3e..25294d0089b2 100644
+> --- a/include/crypto/skcipher.h
+> +++ b/include/crypto/skcipher.h
+> @@ -139,9 +139,11 @@ struct skcipher_alg {
+>   	struct crypto_alg base;
+>   };
+>   
+> +#define SKCIPHER_MAX_REQSIZE	(PAGE_SIZE / 8)
+> +
+>   #define SKCIPHER_REQUEST_ON_STACK(name, tfm) \
+>   	char __##name##_desc[sizeof(struct skcipher_request) + \
+> -		crypto_skcipher_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
+> +		SKCIPHER_MAX_REQSIZE] CRYPTO_MINALIGN_ATTR; \
+>   	struct skcipher_request *name = (void *)__##name##_desc
+>   
+>   /**
+> 
