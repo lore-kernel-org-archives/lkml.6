@@ -3,71 +3,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7D1C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAF9C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF9EA20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:00:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93AD020872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFY06zv7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF9EA20836
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DS/LmHfM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93AD020872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753266AbeFTMAV (ORCPT
+        id S1752871AbeFTMDn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 08:00:21 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41300 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeFTMAU (ORCPT
+        Wed, 20 Jun 2018 08:03:43 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33604 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750852AbeFTMDm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:00:20 -0400
-Received: by mail-lf0-f66.google.com with SMTP id d24-v6so4528758lfa.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 05:00:19 -0700 (PDT)
+        Wed, 20 Jun 2018 08:03:42 -0400
+Received: by mail-lf0-f67.google.com with SMTP id y20-v6so4594197lfy.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 05:03:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=ULnZEBUUHDHd5l/URfbrFKpTQmU8vPv7GaNb/fUdx2c=;
-        b=lFY06zv7ajYsavJmfgc6j0Yg+NoBh2/nwKV1nNR2BJMUJ29CLYh0/qlbthps/kpr3T
-         5CrBSemEIKMvl6imYyYeq4NVXBhGRuVvv/KzfU0PEGMs+++Us0WKqDXM/o6KhflN5tD2
-         FrgS6kLPW6vgjpvIPYxSSo572g/EhSfByVmnwvAMbIXnRZe02JI00EK+daQCHJpcUv0r
-         P6eUE+9e+/qVhk5N1cP2lvuaIw6454C6H9WJHQZZp3sN/7Zc+ius6eWBg2MfarL2W+Yz
-         Y997BDnYLSc4uV8T2Lor1i8kQWYppRKxrLIrfWcdRH4Z4f4LSfaIf3uG580YWTtjG3Sl
-         FFkA==
+        bh=HqoOgMEoaRmi7o6NkRMOkcwpdLU9/KbXEQGATRMyi3g=;
+        b=DS/LmHfMzW+8Q4ZAqJGGnOidOAaqYatG+KxR/ytnzDnzPgT1IkgnEHh+b/Kb6fYMTW
+         uuB1H9troCmbkFaUxmWCv6FMjz74MsYtZ0Mm7wMljY9jdpY+v5mYW/RTtpoWp+fdesXF
+         DzZTvC20WKOF2ExCPqj5wV12ZWxXvfbmjs8fKXAiRUjoKg8ZLw17dV84AeCHlC8Rueuu
+         60X1Q1cvzVaU5M7W6xxCPPVE28s+XWE71IH8R/2EVrI2EbKTEqSh0O8mhVwc0annzxfl
+         aKYwwE1wyIuzaM6PpiHfLfqo74TbDfBrTRKmeGR2Hqb/VpWpDgr5nnU9226GVEp3RTqd
+         iFzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=ULnZEBUUHDHd5l/URfbrFKpTQmU8vPv7GaNb/fUdx2c=;
-        b=BPjYJbo2QKCqsMf92aQdgYbEg67RAu9rA/wRvjUkVQpS+9h2i4FYwz5vyjLv3VcDjH
-         VkmwLR/PbeYY3/Y3uN67uOIO/fUIWgi6HsD4s/C/easky+ElilSbFo0V65Ky8LzVJIdb
-         ZXJ0b4StInqRP4VpW2NxLH68pbFK4U7n5fwo0kgIAtfSZ+k3uxwqWkL7MDB2GSkijQWK
-         vtlF18EtckCAtoj9hgI/ewWOgxNRrO2C/QdFWztWm9IGQpH6+9MzJ7gUICd6jnXq7Gkv
-         xcANdR08VSQYOIlxxfmB3co+kSTivKnsD/yctPbWDttPkzCR+iNPtHmZ1sBvyLRCOP8x
-         SFtg==
-X-Gm-Message-State: APt69E1DxO0FpbFiIqFck/mR0+sk2u4gfBXncd+Vt7RalLrs0bd9Mkqb
-        MGxjzy4uJy31fL1b6iZ2q833xFOKASfIpVXOMdaNPQ==
-X-Google-Smtp-Source: ADUXVKKROYlhLyJ5o+Ce/8YHcbkl3otlQYpT4bbv6ge7Acu0WFEYblmnprV9dYIk30euiK3B4OBlrRSbXG1fCMpuSPA=
-X-Received: by 2002:a2e:99c7:: with SMTP id l7-v6mr6725813ljj.148.1529496018751;
- Wed, 20 Jun 2018 05:00:18 -0700 (PDT)
+        bh=HqoOgMEoaRmi7o6NkRMOkcwpdLU9/KbXEQGATRMyi3g=;
+        b=TrwNU0tOvoMHtqZYzWvQdTT8BdoySJQPfEY8WWnDoGxiW7mvLeDmW7jDya5BBJKVAR
+         RodmSDBI584ak/4Dd8qcfCNCPURAWzneDTWXsK7Z9dVEqEmbZpv8uKn65qQtJaETJH+A
+         fKIIq8ZhHlSX8WAkupCyHNPwU4yx3oSeWmK5TW0qRSs+9TDGLzQYrykKwv4c7fkOvPIw
+         ABVs+u8FA/i4NDxmKm3SgfCiAFKSNWiNPWZbKnPBsV7Z01WCGgPdFUUZCnvA2o6hsWgo
+         fepHmypyRjgxTfqQJfZx/JU2aUNo2MneVCwv039d+XSXHaDvvtQKkz3hHCXFlDvurBGT
+         6z4A==
+X-Gm-Message-State: APt69E2lk3vUMu2U6G07U7E1WxYVR7M7fCvU3rYYpuFFtISQaOKSah05
+        +V/cDYUazQFCbyMav78GuE23cWMp5Zw6hD7rkL8=
+X-Google-Smtp-Source: ADUXVKL+HCZZIEjZ9eJCJop/ocg44SMrtNnHYeWYSHK33+ZTGtcDzmUR77m1gUjzI6z3eQDNGCeG7QcVTNN609cq588=
+X-Received: by 2002:a2e:99c7:: with SMTP id l7-v6mr6736785ljj.148.1529496220693;
+ Wed, 20 Jun 2018 05:03:40 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 05:00:17
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 05:03:40
  -0700 (PDT)
-In-Reply-To: <5320.1529492016@warthog.procyon.org.uk>
-References: <20180620074647.4152617-1-arnd@arndb.de> <5320.1529492016@warthog.procyon.org.uk>
+In-Reply-To: <5489.1529492311@warthog.procyon.org.uk>
+References: <20180620083339.766780-1-arnd@arndb.de> <5489.1529492311@warthog.procyon.org.uk>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 20 Jun 2018 14:00:17 +0200
-X-Google-Sender-Auth: fpZLVCvj2GzBv7p7C8fQlwrkPBs
-Message-ID: <CAK8P3a3hjbBKyoUS_3fbhgioPv4V+2H9Y4i_C+xwJsHJxrLE+w@mail.gmail.com>
-Subject: Re: [PATCH] afs: use a consistent interpretation of time values
+Date:   Wed, 20 Jun 2018 14:03:40 +0200
+X-Google-Sender-Auth: rLQVxi7wXj0iYH0zZs3IjJSVuQ0
+Message-ID: <CAK8P3a06uP18jei=b3Hwdoe21f3gM6K5j2129Ra5CdVx5aKh6g@mail.gmail.com>
+Subject: Re: [PATCH] cachefiles: avoid deprecated get_seconds()
 To:     David Howells <dhowells@redhat.com>
 Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-afs@lists.infradead.org,
+        linux-cachefs@redhat.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,52 +74,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 12:53 PM, David Howells <dhowells@redhat.com> wrote:
+On Wed, Jun 20, 2018 at 12:58 PM, David Howells <dhowells@redhat.com> wrote:
 > Arnd Bergmann <arnd@arndb.de> wrote:
 >
->> which avoids the y2038 overflow
+>> -     sprintf(nbuffer, "%08x%08x",
+>> -             (uint32_t) get_seconds(),
+>> +     sprintf(nbuffer, "%08llx%08x",
+>> +             (uint64_t) ktime_get_real_seconds(),
 >
-> No it doesn't.  The AFS protocol is limited.
+> It's not necessary to expand the 'time' field of the name.  It's not
+> interpreted by userspace, it's just there to prevent collisions when moving
+> directories about.  If your cache goes weird in the future because there was a
+> collision with an object that was moved to the graveyard 68 years ago and not
+> cleaned up, then that's probably a bug in cachefilesd.
 >
->> +     time64_t                mtime_client;   /* last time client changed data */
->> +     time64_t                mtime_server;   /* last time server changed data */
->> ...
->> -     time_t                  creation;       /* volume creation time */
->> +     time64_t                creation;       /* volume creation time */
->
-> Unless you can change the AFS protocol, this is a waste of memory.  It might
-> be better to change them to u32 as they are protocol values rather than system
-> values.
+> But I've no objection to using ktime_get_real_seconds() and truncating the
+> value.
 
-AFS uses 'unsigned' seconds, right? What I was trying to say there is
-that with the patch, the 32-bit overflow gets moved from 2038 to 2106, so at
-least the nearer problem is solved.
+Ok, fair enough. I was mainly worried about what might happen when the
+file names stop being strictly sorted in numerical order by their creation
+time. If that is not a problem, I'll send the simpler patch to use
+lower_32_bits(ktime_get_real_seconds()) for clarity.
 
-On 64-bit machines, we already waste a little memory here, the usual
-tradeoff I took was to use time64_t for all time storage when possible for
-clarity reasons, but that is easily changed if you prefer.
-
->> -     inode->i_ctime.tv_sec   = get_seconds();
->> -     inode->i_ctime.tv_nsec  = 0;
->> -     inode->i_atime          = inode->i_mtime = inode->i_ctime;
->> +     inode->i_ctime = inode->i_atime = inode->i_mtime = current_time(inode);
->
-> Surely, the tv_nsec should be zero since anything else cannot be represented
-> in the AFS protocol.
-
-current_time() truncates the nanoseconds to the granularity of the filesystem.
-Since AFS doesn't set s_time_gran, it gets the default 1000000000 value
-leads to tv_nsec being zero. Once Deepa's patch to truncate the tv_sec
-range lands, it will also ensure that this is within the range (this is less
-of a problem for setting the current time than it is for utimensat() which
-can set arbitrary future timestamps of course).
-
-> I will grant, however, I should be consistently using them as unsigned values.
->
-> Note that the answers to the above may change if and when I start supporting
-> the YFS protocol extensions, but for the AFS protocol, this is simply not
-> there.
-
-Ok, good to know this exists.
-
-      Arnd
+       Arnd
