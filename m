@@ -6,104 +6,222 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B17C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A600C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85CBA20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:56:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3007C20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:57:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ma13g5Zn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CBA20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jqXdL/gC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="a3iNlpg4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3007C20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754755AbeFTIwL (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:52:11 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:56125 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754666AbeFTIvu (ORCPT
+        id S932727AbeFTI52 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:57:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49610 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752792AbeFTIpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:51:50 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 5EDEF25B7A7;
-        Wed, 20 Jun 2018 18:51:48 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1529484708; bh=n/5BrlfLdT8LVLhAIAvdJ0U0p5LFzKu5nHFPNGkGlII=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ma13g5Znv5ArrVe2nDJnQfwtqYu5OWAZSWUcWpmHKOiH2ZIjK3m7UhTgrzwx8O7mV
-         fNPxj1Uh6t68jf0VHuZfPLG2/Ba6bouxMUOr4joW0ife5rN6R7wR0Xi0dlyYEbnBke
-         LwDl9zzEEPHNjukqC7e7NqW3dKPi9MZN8TNsr29Q=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 471359407DF; Wed, 20 Jun 2018 10:51:46 +0200 (CEST)
-Date:   Wed, 20 Jun 2018 10:51:46 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ofir Drang <ofir.drang@arm.com>
-Subject: Re: [PATCH v2 0/5] crypto: ccree: cleanup, fixes and R-Car enabling
-Message-ID: <20180620085145.7bxfbu7bi45sftnk@verge.net.au>
-References: <1527171551-21979-1-git-send-email-gilad@benyossef.com>
- <CAMuHMdVXrppnFEBmR3xhwNu3i0N3mVE1+FJRjEcWBYpHHbsAsw@mail.gmail.com>
- <CAOtvUMc8D9DQFC6vZ+GnaVBg5uFVrQmOrnSQKz7ZPHGh4BCsZg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOtvUMc8D9DQFC6vZ+GnaVBg5uFVrQmOrnSQKz7ZPHGh4BCsZg@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 20 Jun 2018 04:45:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9164E60B74; Wed, 20 Jun 2018 07:28:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529479698;
+        bh=xRr6ihtnuxQbPnqLk2c4FGabgzxmW0+135vPXzAVX/g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jqXdL/gCdGAOA+JvGEA91I5x81Nl7cai6Pv8UJltGHE1dwT2SViC58MGmiHBazWYe
+         mCcT4IAKgIcwiRCoK7bcibpfsmx6zBkJWQKA6QQ4kSW74kkCr76Yw0NpehJ0w7a04i
+         X36KRj5YN13ItvzmOF90VT9wMOOYoZ+OtVJN5eec=
+Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: absahu@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DDDB06085F;
+        Wed, 20 Jun 2018 07:28:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529479697;
+        bh=xRr6ihtnuxQbPnqLk2c4FGabgzxmW0+135vPXzAVX/g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=a3iNlpg4gLrQPaY2XJQ5TNGQPZaTXnB1NhFAA0h6mOlFMkHh48IeL+2hSXBSQs9ra
+         CS4m1rMK19wSNFuodA7dq+i8Kq7MLLUn9R2HscL/OSpTV848azc87nk9996gcrsE4c
+         1ZETjSxoNXTR7zXOVBlbPjw8CBAhgLy7SpkjJlU8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDDB06085F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
+From:   Abhishek Sahu <absahu@codeaurora.org>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Abhishek Sahu <absahu@codeaurora.org>, stable@vger.kernel.org
+Subject: [PATCH v4 06/15] mtd: rawnand: qcom: wait for desc completion in all BAM channels
+Date:   Wed, 20 Jun 2018 12:57:33 +0530
+Message-Id: <1529479662-4026-7-git-send-email-absahu@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
+References: <1529479662-4026-1-git-send-email-absahu@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 04:57:15PM +0300, Gilad Ben-Yossef wrote:
-> On Tue, Jun 19, 2018 at 3:58 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > Hi Gilad,
-> >
-> > On Thu, May 24, 2018 at 4:19 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> >> The patch set enables the use of CryptoCell found in some Renesas R-Car
-> >> Salvator-X boards and fixes some driver issues uncovered that prevented
-> >> to work properly.
-> >
-> > With DEBUG enabled on R-Car H3, I see lots of
-> >
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x00000098)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000C0)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D0)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000D8)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000E0)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F0)
-> >     ccree e6601000.crypto: IRR includes unknown cause bits (0x000000F8)
-> >
-> > during boot. Is that expected?
-> 
-> Yes. The condition itself it is reporting is not necessarily bad. It
-> means that driver
-> did not act on certain HW notification during interrupts and that's
-> OK, we don't act on all of them
-> depending on configuration - e.g. if you have CONFIG_FIPS enabled and
-> an active TEE module or not.
-> 
-> I can rate_limit the message if it bothers you but other than that it
-> is a harmless debug print.
+The BAM has 3 channels - tx, rx and command. command channel
+is used for register read/writes, tx channel for data writes
+and rx channel for data reads. Currently, the driver assumes the
+transfer completion once it gets all the command descriptors
+completed. Sometimes, there is race condition between data channel
+(tx/rx) and command channel completion. In these cases,
+the data present in buffer is not valid during small window
+between command descriptor completion and data descriptor
+completion.
 
-Rate limiting sounds like an excellent idea to me.
+This patch generates NAND transfer completion when both
+(Data and Command) DMA channels have completed all its DMA
+descriptors. It assigns completion callback in last
+DMA descriptors of that channel and wait for completion.
+
+Fixes: 8d6b6d7e135e ("mtd: nand: qcom: support for command descriptor formation")
+Cc: stable@vger.kernel.org
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+* Changes from v3:
+  1. NONE
+
+* Changes from v2:
+  1. Changed commit message and comments slightly
+  2. Renamed wait_second_completion from first_chan_done and set
+     it before submit desc
+  3. Mark for stable tree
+
+* Changes from v1:
+  NONE
+
+ drivers/mtd/nand/raw/qcom_nandc.c | 53 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+index 2375780..fc20149 100644
+--- a/drivers/mtd/nand/raw/qcom_nandc.c
++++ b/drivers/mtd/nand/raw/qcom_nandc.c
+@@ -213,6 +213,8 @@
+ #define QPIC_PER_CW_CMD_SGL		32
+ #define QPIC_PER_CW_DATA_SGL		8
+ 
++#define QPIC_NAND_COMPLETION_TIMEOUT	msecs_to_jiffies(2000)
++
+ /*
+  * Flags used in DMA descriptor preparation helper functions
+  * (i.e. read_reg_dma/write_reg_dma/read_data_dma/write_data_dma)
+@@ -245,6 +247,11 @@
+  * @tx_sgl_start - start index in data sgl for tx.
+  * @rx_sgl_pos - current index in data sgl for rx.
+  * @rx_sgl_start - start index in data sgl for rx.
++ * @wait_second_completion - wait for second DMA desc completion before making
++ *			     the NAND transfer completion.
++ * @txn_done - completion for NAND transfer.
++ * @last_data_desc - last DMA desc in data channel (tx/rx).
++ * @last_cmd_desc - last DMA desc in command channel.
+  */
+ struct bam_transaction {
+ 	struct bam_cmd_element *bam_ce;
+@@ -258,6 +265,10 @@ struct bam_transaction {
+ 	u32 tx_sgl_start;
+ 	u32 rx_sgl_pos;
+ 	u32 rx_sgl_start;
++	bool wait_second_completion;
++	struct completion txn_done;
++	struct dma_async_tx_descriptor *last_data_desc;
++	struct dma_async_tx_descriptor *last_cmd_desc;
+ };
+ 
+ /*
+@@ -504,6 +515,8 @@ static void free_bam_transaction(struct qcom_nand_controller *nandc)
+ 
+ 	bam_txn->data_sgl = bam_txn_buf;
+ 
++	init_completion(&bam_txn->txn_done);
++
+ 	return bam_txn;
+ }
+ 
+@@ -523,11 +536,33 @@ static void clear_bam_transaction(struct qcom_nand_controller *nandc)
+ 	bam_txn->tx_sgl_start = 0;
+ 	bam_txn->rx_sgl_pos = 0;
+ 	bam_txn->rx_sgl_start = 0;
++	bam_txn->last_data_desc = NULL;
++	bam_txn->wait_second_completion = false;
+ 
+ 	sg_init_table(bam_txn->cmd_sgl, nandc->max_cwperpage *
+ 		      QPIC_PER_CW_CMD_SGL);
+ 	sg_init_table(bam_txn->data_sgl, nandc->max_cwperpage *
+ 		      QPIC_PER_CW_DATA_SGL);
++
++	reinit_completion(&bam_txn->txn_done);
++}
++
++/* Callback for DMA descriptor completion */
++static void qpic_bam_dma_done(void *data)
++{
++	struct bam_transaction *bam_txn = data;
++
++	/*
++	 * In case of data transfer with NAND, 2 callbacks will be generated.
++	 * One for command channel and another one for data channel.
++	 * If current transaction has data descriptors
++	 * (i.e. wait_second_completion is true), then set this to false
++	 * and wait for second DMA descriptor completion.
++	 */
++	if (bam_txn->wait_second_completion)
++		bam_txn->wait_second_completion = false;
++	else
++		complete(&bam_txn->txn_done);
+ }
+ 
+ static inline struct qcom_nand_host *to_qcom_nand_host(struct nand_chip *chip)
+@@ -756,6 +791,12 @@ static int prepare_bam_async_desc(struct qcom_nand_controller *nandc,
+ 
+ 	desc->dma_desc = dma_desc;
+ 
++	/* update last data/command descriptor */
++	if (chan == nandc->cmd_chan)
++		bam_txn->last_cmd_desc = dma_desc;
++	else
++		bam_txn->last_data_desc = dma_desc;
++
+ 	list_add_tail(&desc->node, &nandc->desc_list);
+ 
+ 	return 0;
+@@ -1273,10 +1314,20 @@ static int submit_descs(struct qcom_nand_controller *nandc)
+ 		cookie = dmaengine_submit(desc->dma_desc);
+ 
+ 	if (nandc->props->is_bam) {
++		bam_txn->last_cmd_desc->callback = qpic_bam_dma_done;
++		bam_txn->last_cmd_desc->callback_param = bam_txn;
++		if (bam_txn->last_data_desc) {
++			bam_txn->last_data_desc->callback = qpic_bam_dma_done;
++			bam_txn->last_data_desc->callback_param = bam_txn;
++			bam_txn->wait_second_completion = true;
++		}
++
+ 		dma_async_issue_pending(nandc->tx_chan);
+ 		dma_async_issue_pending(nandc->rx_chan);
++		dma_async_issue_pending(nandc->cmd_chan);
+ 
+-		if (dma_sync_wait(nandc->cmd_chan, cookie) != DMA_COMPLETE)
++		if (!wait_for_completion_timeout(&bam_txn->txn_done,
++						 QPIC_NAND_COMPLETION_TIMEOUT))
+ 			return -ETIMEDOUT;
+ 	} else {
+ 		if (dma_sync_wait(nandc->chan, cookie) != DMA_COMPLETE)
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
+is a member of Code Aurora Forum, hosted by The Linux Foundation
+
