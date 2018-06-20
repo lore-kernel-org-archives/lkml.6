@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7324C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 100D5C1B0F6
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DD7E20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:37:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DD7E20693
+	by mail.kernel.org (Postfix) with ESMTP id CB29620693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:37:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB29620693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754444AbeFTI3p (ORCPT
+        id S1754891AbeFTJhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:29:45 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:63666 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754310AbeFTI3l (ORCPT
+        Wed, 20 Jun 2018 05:37:41 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:38939 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751629AbeFTI3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:29:41 -0400
-X-UUID: 035772afb456445392a844a0e6fa5576-20180620
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        Wed, 20 Jun 2018 04:29:45 -0400
+X-UUID: e8a764b156c54f9ea51f260c66773501-20180620
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
         (envelope-from <stu.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 660015893; Wed, 20 Jun 2018 16:19:35 +0800
+        with ESMTP id 2012952739; Wed, 20 Jun 2018 16:19:39 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 20 Jun 2018 16:19:33 +0800
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 20 Jun 2018 16:19:38 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 20 Jun 2018 16:19:33 +0800
+ Transport; Wed, 20 Jun 2018 16:19:38 +0800
 From:   Stu Hsieh <stu.hsieh@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
 CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
@@ -44,10 +44,12 @@ CC:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, Stu Hsieh <stu.hsieh@mediatek.com>
-Subject: [PATCH v7 00/29] Add support for mediatek SOC MT2712
-Date:   Wed, 20 Jun 2018 16:19:02 +0800
-Message-ID: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
+Subject: [PATCH v7 03/29] drm/mediatek: add ddp component AAL1
+Date:   Wed, 20 Jun 2018 16:19:05 +0800
+Message-ID: <1529482771-2153-4-git-send-email-stu.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
+References: <1529482771-2153-1-git-send-email-stu.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -56,54 +58,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add support for the Mediatek MT2712 DISP subsystem.
-MT2712 is base on MT8173, there are some difference as following:
-MT2712 support three disp output(two ovl and one rdma)
+This patch add component AAL1 and
+rename AAL to AAL0
 
-Change in v6:
-- Update commit message for the patch
-  "drm/mediatek: Update the definition of connection from RDMA1 to DPI0"
+Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 2 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 3 ++-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h | 3 ++-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c      | 2 +-
+ 4 files changed, 6 insertions(+), 4 deletions(-)
 
-Stu Hsieh (29):
-  drm/mediatek: update dt-bindings for mt2712
-  drm/mediatek: support maximum 64 mutex mod
-  drm/mediatek: add ddp component AAL1
-  drm/mediatek: add ddp component OD1
-  drm/mediatek: add ddp component PWM1
-  drm/mediatek: add ddp component PWM2
-  drm/mediatek: add component DPI1
-  drm/mediatek: add component DSI2
-  drm/mediatek: add component DSI3
-  drm/mediatek: add the DSI1 for component init condition
-  drm/mediatek: add connection from OD1 to RDMA1
-  drm/mediatek: Update the definition of connection from RDMA1 to DPI0
-  drm/mediatek: add connection from RDMA0 to DPI0
-  drm/mediatek: add connection from RDMA0 to DSI2
-  drm/mediatek: add connection from RDMA0 to DSI3
-  drm/mediatek: add connection from RDMA1 to DPI1
-  drm/mediatek: add connection from RDMA1 to DSI1
-  drm/mediatek: add connection from RDMA1 to DSI2
-  drm/mediatek: add connection from RDMA1 to DSI3
-  drm/mediatek: add connection from RDMA2 to DPI0
-  drm/mediatek: add connection from RDMA2 to DPI1
-  drm/mediatek: add connection from RDMA2 to DSI1
-  drm/mediatek: add connection from RDMA2 to DSI2
-  drm/mediatek: add connection from RDMA2 to DSI3
-  drm/mediatek: add DPI1 support for mutex
-  drm/mediatek: add DSI2 support for mutex
-  drm/mediatek: add DSI3 support for mutex
-  drm/mediatek: add third ddp path
-  drm/mediatek: Add support for mediatek SOC MT2712
-
- .../bindings/display/mediatek/mediatek,disp.txt    |   2 +-
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |   3 +
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 235 ++++++++++++++++++---
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c        |  15 +-
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h        |  10 +-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  47 ++++-
- drivers/gpu/drm/mediatek/mtk_drm_drv.h             |   5 +-
- 7 files changed, 274 insertions(+), 43 deletions(-)
-
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 47ffa240bd25..7217665f4b5d 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -110,7 +110,7 @@ static const unsigned int mt2701_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+ };
+ 
+ static const unsigned int mt8173_mutex_mod[DDP_COMPONENT_ID_MAX] = {
+-	[DDP_COMPONENT_AAL] = MT8173_MUTEX_MOD_DISP_AAL,
++	[DDP_COMPONENT_AAL0] = MT8173_MUTEX_MOD_DISP_AAL,
+ 	[DDP_COMPONENT_COLOR0] = MT8173_MUTEX_MOD_DISP_COLOR0,
+ 	[DDP_COMPONENT_COLOR1] = MT8173_MUTEX_MOD_DISP_COLOR1,
+ 	[DDP_COMPONENT_GAMMA] = MT8173_MUTEX_MOD_DISP_GAMMA,
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index 4672317e3ad1..0919039805aa 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -218,7 +218,8 @@ struct mtk_ddp_comp_match {
+ };
+ 
+ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+-	[DDP_COMPONENT_AAL]	= { MTK_DISP_AAL,	0, &ddp_aal },
++	[DDP_COMPONENT_AAL0]	= { MTK_DISP_AAL,	0, &ddp_aal },
++	[DDP_COMPONENT_AAL1]	= { MTK_DISP_AAL,	1, &ddp_aal },
+ 	[DDP_COMPONENT_BLS]	= { MTK_DISP_BLS,	0, NULL },
+ 	[DDP_COMPONENT_COLOR0]	= { MTK_DISP_COLOR,	0, NULL },
+ 	[DDP_COMPONENT_COLOR1]	= { MTK_DISP_COLOR,	1, NULL },
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+index 0828cf8bf85c..eee3c0cc2632 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+@@ -41,7 +41,8 @@ enum mtk_ddp_comp_type {
+ };
+ 
+ enum mtk_ddp_comp_id {
+-	DDP_COMPONENT_AAL,
++	DDP_COMPONENT_AAL0,
++	DDP_COMPONENT_AAL1,
+ 	DDP_COMPONENT_BLS,
+ 	DDP_COMPONENT_COLOR0,
+ 	DDP_COMPONENT_COLOR1,
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index a2ca90fc403c..a415260f3d5f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -149,7 +149,7 @@ static const enum mtk_ddp_comp_id mt2701_mtk_ddp_ext[] = {
+ static const enum mtk_ddp_comp_id mt8173_mtk_ddp_main[] = {
+ 	DDP_COMPONENT_OVL0,
+ 	DDP_COMPONENT_COLOR0,
+-	DDP_COMPONENT_AAL,
++	DDP_COMPONENT_AAL0,
+ 	DDP_COMPONENT_OD,
+ 	DDP_COMPONENT_RDMA0,
+ 	DDP_COMPONENT_UFOE,
 -- 
 2.12.5
 
