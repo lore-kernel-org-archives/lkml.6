@@ -3,176 +3,399 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B276C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA869C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F3C720874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:17:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3C720874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 687DF20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 15:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687DF20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754139AbeFTPRw (ORCPT
+        id S1754161AbeFTPSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 11:17:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59610 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753202AbeFTPRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 11:17:50 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D65BD401EF0D;
-        Wed, 20 Jun 2018 15:17:49 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5BA662026D6B;
-        Wed, 20 Jun 2018 15:17:49 +0000 (UTC)
-Date:   Wed, 20 Jun 2018 11:17:49 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Toshi Kani <toshi.kani@hpe.com>, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] dm: prevent DAX mounts if not supported
-Message-ID: <20180620151748.GA4847@redhat.com>
-References: <20180529195106.14268-1-ross.zwisler@linux.intel.com>
- <20180529195106.14268-5-ross.zwisler@linux.intel.com>
- <20180601215513.GA18712@redhat.com>
- <20180604231508.GA10666@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604231508.GA10666@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 20 Jun 2018 15:17:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 20 Jun 2018 15:17:49 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
+        Wed, 20 Jun 2018 11:18:40 -0400
+Received: from smtprelay0194.hostedemail.com ([216.40.44.194]:43812 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753202AbeFTPSi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 11:18:38 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 8E19E16E20;
+        Wed, 20 Jun 2018 15:18:37 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: touch41_8549c4a724c21
+X-Filterd-Recvd-Size: 14337
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 20 Jun 2018 15:18:35 +0000 (UTC)
+Message-ID: <287c7b8c3ea7a4b17ea5b25772815374e39f9f82.camel@perches.com>
+Subject: Re: pci: pci_printk use
+From:   Joe Perches <joe@perches.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Frederick Lawler <fred@fredlawl.com>
+Date:   Wed, 20 Jun 2018 08:18:34 -0700
+In-Reply-To: <20180620132852.GA108993@bhelgaas-glaptop.roam.corp.google.com>
+References: <9bd45007ddfe2c32b6ee5097e427aabdc267ce53.camel@perches.com>
+         <20180620132852.GA108993@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 04 2018 at  7:15pm -0400,
-Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
-
-> On Fri, Jun 01, 2018 at 05:55:13PM -0400, Mike Snitzer wrote:
-> > On Tue, May 29 2018 at  3:51pm -0400,
-> > Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
+On Wed, 2018-06-20 at 08:28 -0500, Bjorn Helgaas wrote:
+> On Tue, Jun 19, 2018 at 09:33:18PM -0700, Joe Perches wrote:
+> > All the pci_printk uses are at KERN_DEBUG which is always
+> > emitted into the kernel logging whenever the console log
+> > level is high enough.
 > > 
-> > > Currently the code in dm_dax_direct_access() only checks whether the target
-> > > type has a direct_access() operation defined, not whether the underlying
-> > > block devices all support DAX.  This latter property can be seen by looking
-> > > at whether we set the QUEUE_FLAG_DAX request queue flag when creating the
-> > > DM device.
-> > 
-> > Wait... I thought DAX support was all or nothing?
+> > Are any of these appropriate for conversion to pci_dbg
+> > to allow these only to be emitted via dynamic_debug or
+> > if necessary via a #define DEBUG during compilation?
 > 
-> Right, it is, and that's what I'm trying to capture.  The point of this series
-> is to make sure that we don't use DAX thru DM if one of the DM members doesn't
-> support DAX.
-> 
-> This is a bit tricky, though, because as you've pointed out there are a lot of
-> elements that go into a block device actually supporting DAX.  
-> 
-> First, the block device has to have a direct_access() operation defined in its
-> struct dax_operations table.  This is a static definition in the drivers,
-> though, so it's necessary but not sufficient.  For example, the PMEM driver
-> always defines a direct_access() operation, but depending on the mode of the
-> namespace (raw, fsdax or sector) it may or may not support DAX.
-> 
-> The next step is that a driver needs to say that he block queue supports
-> QUEUE_FLAG_DAX.  This again is necessary but not sufficient.  The PMEM driver
-> currently sets this for all namespace modes, but I agree that this should be
-> restricted to modes that support DAX.  Even once we do that, though, for the
-> block driver this isn't fully sufficient.  We'd really like users to call
-> bdev_dax_supported() so it can run some additional tests to make sure that DAX
-> will work.
-> 
-> So, the real test that filesystems rely on is bdev_dax_suppported().
-> 
-> The trick is that with DM we need to verify each block device via
-> bdev_dax_supported() just like a filesystem would, and then have some way of
-> communicating the result of all those checks to the filesystem which is
-> eventually mounted on the DM device.  At DAX mount time the filesystem will
-> call bdev_dax_supported() on the DM device, but it'll really only check the
-> first device.  
-> 
-> So, the strategy is to have DM manually check each member device via
-> bdev_dax_supported() then if they all pass set QUEUE_FLAG_DAX.  This then
-> becomes our one source of truth on whether or not a DM device supports DAX.
-> When the filesystem mounts with DAX support it'll also run
-> bdev_dax_supported(), but if we have QUEUE_FLAG_DAX set on the DM device, we
-> know that this check will pass.
-> 
-> > > This is problematic if we have, for example, a dm-linear device made up of
-> > > a PMEM namespace in fsdax mode followed by a ramdisk from BRD.
-> > > QUEUE_FLAG_DAX won't be set on the dm-linear device's request queue, but
-> > > we have a working direct_access() entry point and the first member of the
-> > > dm-linear set *does* support DAX.
-> > 
-> > If you don't have a uniformly capable device then it is very dangerous
-> > to advertise that the entire device has a certain capability.  That
-> > completely bit me in the past with discard (because for every IO I
-> > wasn't then checking if the destination device supported discards).
-> >
-> > It is all well and good that you're adding that check here.  But what I
-> > don't like is how you're saying QUEUE_FLAG_DAX implies direct_access()
-> > operation exists.. yet for raw PMEM namespaces we just discussed how
-> > that is a lie.
-> 
-> QUEUE_FLAG_DAX does imply that direct_access() exits.  However, as discussed
-> above for a given bdev we really do need to check bdev_dax_supported().
-> 
-> > SO this type of change showcases how the QUEUE_FLAG_DAX doesn't _really_
-> > imply direct_access() exists.
-> > 
-> > > This allows the user to create a filesystem on the dm-linear device, and
-> > > then mount it with DAX.  The filesystem's bdev_dax_supported() test will
-> > > pass because it'll operate on the first member of the dm-linear device,
-> > > which happens to be a fsdax PMEM namespace.
-> > > 
-> > > All DAX I/O will then fail to that dm-linear device because the lack of
-> > > QUEUE_FLAG_DAX prevents fs_dax_get_by_bdev() from working.  This means that
-> > > the struct dax_device isn't ever set in the filesystem, so
-> > > dax_direct_access() will always return -EOPNOTSUPP.
-> > 
-> > Now you've lost me... these past 2 paragraphs.  Why can a user mount it
-> > is DAX mode?  Because bdev_dax_supported() only accesses the first
-> > portion (which happens to have DAX capabilities?)
-> 
-> Right.  bdev_dax_supported() runs all of its checks, and because they are
-> running against the first block device in the dm set, they all pass.  But the
-> overall DM device does not actually support DAX.
-> 
-> > Isn't this exactly why you should be checking for QUEUE_FLAG_DAX in the
-> > caller (bdev_dax_supported)?  Why not use bdev_get_queue() and verify
-> > QUEUE_FLAG_DAX is set in there?
-> 
-> I'll look into that for the next revision, thanks.
+> I think pci_printk(KERN_DEBUG) is a little ugly to read.
 
-Have you made any progress on a new revision?
+As do I which is why I bring it up.
 
-> > > By failing out of dm_dax_direct_access() if QUEUE_FLAG_DAX isn't set we let
-> > > the filesystem know we don't support DAX at mount time.  The filesystem
-> > > will then silently fall back and remove the dax mount option, causing it to
-> > > work properly.
-> > 
-> > This shouldn't be needed.  Again, QUEUE_FLAG_DAX wasn't set.. so don't
-> > allow code to falsely try operations that should've been gated by the
-> > fact it wasn't set.
-> 
-> Right, the goal is to make QUEUE_FLAG_DAX our one source of truth for whether
-> DM devices support DAX, and not have it half defined by that and half by the
-> DM_TYPE_DAX_BIO_BASED.
+> My
+> preference would be to remove them (and pci_dbg() uses) completely or
+> convert them to pci_info().  Most of these are boot-time or low
+> frequency messages, so I doubt the loglevel differentiation of
+> DEBUG/INFO is really necessary.
 
-My hope is that you can ignore the DM-internal book-keeping
-(DM_TYPE_DAX_BIO_BASED) for now and just focus on fixing the real issue
-of needing proper checking (as well as properly _not_ setting
-QUEUE_FLAG_DAX in the case of pmem "raw").
+Perhaps so.
 
-Please advise, thanks Ross!
+Does anyone have objections to a patch that removes
+the #define pci_printk and does:
+$ git ls-files -- 'drivers/pci/*.[ch]' \
+  xargs sed -i 's/pci_printk(KERN_DEBUG, /pci_info(/'
+with some alignment neatening?
 
-Mike
+Only issue I see is ctrl_dbg in the hotplug code
+being emitted at KERN_INFO but it is only output
+when a guard flag is set.  Maybe those should use
+the normal pci_dbg instead of the shpchp_debug
+guard.
+---
+ drivers/pci/bus.c            |  3 +--
+ drivers/pci/hotplug/shpchp.h |  3 +--
+ drivers/pci/pci.c            | 28 ++++++++++++++--------------
+ drivers/pci/pcie/aer.c       |  5 ++---
+ drivers/pci/pcie/err.c       | 18 +++++++++---------
+ drivers/pci/probe.c          | 18 +++++++++---------
+ drivers/pci/setup-bus.c      | 26 +++++++++++++-------------
+ include/linux/pci.h          |  3 ---
+ 8 files changed, 49 insertions(+), 55 deletions(-)
+
+diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+index 35b7fc87eac5..82322c5bcc80 100644
+--- a/drivers/pci/bus.c
++++ b/drivers/pci/bus.c
+@@ -288,8 +288,7 @@ bool pci_bus_clip_resource(struct pci_dev *dev, int idx)
+ 		res->end = end;
+ 		res->flags &= ~IORESOURCE_UNSET;
+ 		orig_res.flags &= ~IORESOURCE_UNSET;
+-		pci_printk(KERN_DEBUG, dev, "%pR clipped to %pR\n",
+-				 &orig_res, res);
++		pci_info(dev, "%pR clipped to %pR\n", &orig_res, res);
+ 
+ 		return true;
+ 	}
+diff --git a/drivers/pci/hotplug/shpchp.h b/drivers/pci/hotplug/shpchp.h
+index 516e4835019c..64a74c364529 100644
+--- a/drivers/pci/hotplug/shpchp.h
++++ b/drivers/pci/hotplug/shpchp.h
+@@ -48,8 +48,7 @@ do {									\
+ #define ctrl_dbg(ctrl, format, arg...)					\
+ 	do {								\
+ 		if (shpchp_debug)					\
+-			pci_printk(KERN_DEBUG, ctrl->pci_dev,		\
+-					format, ## arg);		\
++			pci_info(ctrl->pci_dev, format, ## arg);	\
+ 	} while (0)
+ #define ctrl_err(ctrl, format, arg...)					\
+ 	pci_err(ctrl->pci_dev, format, ## arg)
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 97acba712e4e..6a5390fa312f 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2481,14 +2481,14 @@ void pci_pm_init(struct pci_dev *dev)
+ 			dev->d2_support = true;
+ 
+ 		if (dev->d1_support || dev->d2_support)
+-			pci_printk(KERN_DEBUG, dev, "supports%s%s\n",
+-				   dev->d1_support ? " D1" : "",
+-				   dev->d2_support ? " D2" : "");
++			pci_info(dev, "supports%s%s\n",
++				 dev->d1_support ? " D1" : "",
++				 dev->d2_support ? " D2" : "");
+ 	}
+ 
+ 	pmc &= PCI_PM_CAP_PME_MASK;
+ 	if (pmc) {
+-		pci_printk(KERN_DEBUG, dev, "PME# supported from%s%s%s%s%s\n",
++		pci_info(dev, "PME# supported from%s%s%s%s%s\n",
+ 			 (pmc & PCI_PM_CAP_PME_D0) ? " D0" : "",
+ 			 (pmc & PCI_PM_CAP_PME_D1) ? " D1" : "",
+ 			 (pmc & PCI_PM_CAP_PME_D2) ? " D2" : "",
+@@ -2652,17 +2652,17 @@ static int pci_ea_read(struct pci_dev *dev, int offset)
+ 	res->flags = flags;
+ 
+ 	if (bei <= PCI_EA_BEI_BAR5)
+-		pci_printk(KERN_DEBUG, dev, "BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
+-			   bei, res, prop);
++		pci_info(dev, "BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
++			 bei, res, prop);
+ 	else if (bei == PCI_EA_BEI_ROM)
+-		pci_printk(KERN_DEBUG, dev, "ROM: %pR (from Enhanced Allocation, properties %#02x)\n",
+-			   res, prop);
++		pci_info(dev, "ROM: %pR (from Enhanced Allocation, properties %#02x)\n",
++			 res, prop);
+ 	else if (bei >= PCI_EA_BEI_VF_BAR0 && bei <= PCI_EA_BEI_VF_BAR5)
+-		pci_printk(KERN_DEBUG, dev, "VF BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
+-			   bei - PCI_EA_BEI_VF_BAR0, res, prop);
++		pci_info(dev, "VF BAR %d: %pR (from Enhanced Allocation, properties %#02x)\n",
++			 bei - PCI_EA_BEI_VF_BAR0, res, prop);
+ 	else
+-		pci_printk(KERN_DEBUG, dev, "BEI %d res: %pR (from Enhanced Allocation, properties %#02x)\n",
+-			   bei, res, prop);
++		pci_info(dev, "BEI %d res: %pR (from Enhanced Allocation, properties %#02x)\n",
++			 bei, res, prop);
+ 
+ out:
+ 	return offset + ent_size;
+@@ -3772,8 +3772,8 @@ int pci_set_cacheline_size(struct pci_dev *dev)
+ 	if (cacheline_size == pci_cache_line_size)
+ 		return 0;
+ 
+-	pci_printk(KERN_DEBUG, dev, "cache line size of %d is not supported\n",
+-		   pci_cache_line_size << 2);
++	pci_info(dev, "cache line size of %d is not supported\n",
++		 pci_cache_line_size << 2);
+ 
+ 	return -EINVAL;
+ }
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index a2e88386af28..ed0c313bf09c 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -772,8 +772,7 @@ static bool find_source_device(struct pci_dev *parent,
+ 	pci_walk_bus(parent->subordinate, find_device_iter, e_info);
+ 
+ 	if (!e_info->error_dev_num) {
+-		pci_printk(KERN_DEBUG, parent, "can't find device of ID%04x\n",
+-			   e_info->id);
++		pci_info(parent, "can't find device of ID%04x\n", e_info->id);
+ 		return false;
+ 	}
+ 	return true;
+@@ -1314,7 +1313,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
+ 	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, reg32);
+ 
+ 	pci_reset_bridge_secondary_bus(dev);
+-	pci_printk(KERN_DEBUG, dev, "Root Port link has been reset\n");
++	pci_info(dev, "Root Port link has been reset\n");
+ 
+ 	/* Clear Root Error Status */
+ 	pci_read_config_dword(dev, pos + PCI_ERR_ROOT_STATUS, &reg32);
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index f7ce0cb0b0b7..b0df9bf66b2e 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -72,9 +72,9 @@ static int report_error_detected(struct pci_dev *dev, void *data)
+ 			 * of a driver for this device is unaware of
+ 			 * its hw state.
+ 			 */
+-			pci_printk(KERN_DEBUG, dev, "device has %s\n",
+-				   dev->driver ?
+-				   "no AER-aware driver" : "no driver");
++			pci_info(dev, "device has %s\n",
++				 dev->driver ?
++				 "no AER-aware driver" : "no driver");
+ 		}
+ 
+ 		/*
+@@ -176,7 +176,7 @@ static int report_resume(struct pci_dev *dev, void *data)
+ static pci_ers_result_t default_reset_link(struct pci_dev *dev)
+ {
+ 	pci_reset_bridge_secondary_bus(dev);
+-	pci_printk(KERN_DEBUG, dev, "downstream link has been reset\n");
++	pci_info(dev, "downstream link has been reset\n");
+ 	return PCI_ERS_RESULT_RECOVERED;
+ }
+ 
+@@ -202,14 +202,14 @@ static pci_ers_result_t reset_link(struct pci_dev *dev, u32 service)
+ 	} else if (udev->has_secondary_link) {
+ 		status = default_reset_link(udev);
+ 	} else {
+-		pci_printk(KERN_DEBUG, dev, "no link-reset support at upstream device %s\n",
+-			pci_name(udev));
++		pci_info(dev, "no link-reset support at upstream device %s\n",
++			 pci_name(udev));
+ 		return PCI_ERS_RESULT_DISCONNECT;
+ 	}
+ 
+ 	if (status != PCI_ERS_RESULT_RECOVERED) {
+-		pci_printk(KERN_DEBUG, dev, "link reset at upstream device %s failed\n",
+-			pci_name(udev));
++		pci_info(dev, "link reset at upstream device %s failed\n",
++			 pci_name(udev));
+ 		return PCI_ERS_RESULT_DISCONNECT;
+ 	}
+ 
+@@ -234,7 +234,7 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
+ {
+ 	struct aer_broadcast_data result_data;
+ 
+-	pci_printk(KERN_DEBUG, dev, "broadcast %s message\n", error_mesg);
++	pci_info(dev, "broadcast %s message\n", error_mesg);
+ 	result_data.state = state;
+ 	if (cb == report_error_detected)
+ 		result_data.result = PCI_ERS_RESULT_CAN_RECOVER;
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ac876e32de4b..828cb8f89066 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -318,7 +318,7 @@ int __pci_read_base(struct pci_dev *dev, enum pci_bar_type type,
+ 	res->flags = 0;
+ out:
+ 	if (res->flags)
+-		pci_printk(KERN_DEBUG, dev, "reg 0x%x: %pR\n", pos, res);
++		pci_info(dev, "reg 0x%x: %pR\n", pos, res);
+ 
+ 	return (res->flags & IORESOURCE_MEM_64) ? 1 : 0;
+ }
+@@ -385,7 +385,7 @@ static void pci_read_bridge_io(struct pci_bus *child)
+ 		region.start = base;
+ 		region.end = limit + io_granularity - 1;
+ 		pcibios_bus_to_resource(dev->bus, res, &region);
+-		pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
++		pci_info(dev, "  bridge window %pR\n", res);
+ 	}
+ }
+ 
+@@ -407,7 +407,7 @@ static void pci_read_bridge_mmio(struct pci_bus *child)
+ 		region.start = base;
+ 		region.end = limit + 0xfffff;
+ 		pcibios_bus_to_resource(dev->bus, res, &region);
+-		pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
++		pci_info(dev, "  bridge window %pR\n", res);
+ 	}
+ }
+ 
+@@ -460,7 +460,7 @@ static void pci_read_bridge_mmio_pref(struct pci_bus *child)
+ 		region.start = base;
+ 		region.end = limit + 0xfffff;
+ 		pcibios_bus_to_resource(dev->bus, res, &region);
+-		pci_printk(KERN_DEBUG, dev, "  bridge window %pR\n", res);
++		pci_info(dev, "  bridge window %pR\n", res);
+ 	}
+ }
+ 
+@@ -490,9 +490,9 @@ void pci_read_bridge_bases(struct pci_bus *child)
+ 			if (res && res->flags) {
+ 				pci_bus_add_resource(child, res,
+ 						     PCI_SUBTRACTIVE_DECODE);
+-				pci_printk(KERN_DEBUG, dev,
+-					   "  bridge window %pR (subtractive decode)\n",
+-					   res);
++				pci_info(dev,
++					 "  bridge window %pR (subtractive decode)\n",
++					 res);
+ 			}
+ 		}
+ 	}
+@@ -1595,8 +1595,8 @@ int pci_setup_device(struct pci_dev *dev)
+ 	dev->revision = class & 0xff;
+ 	dev->class = class >> 8;		    /* upper 3 bytes */
+ 
+-	pci_printk(KERN_DEBUG, dev, "[%04x:%04x] type %02x class %#08x\n",
+-		   dev->vendor, dev->device, dev->hdr_type, dev->class);
++	pci_info(dev, "[%04x:%04x] type %02x class %#08x\n",
++		 dev->vendor, dev->device, dev->hdr_type, dev->class);
+ 
+ 	/* Need to have dev->class ready */
+ 	dev->cfg_size = pci_cfg_space_size(dev);
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index 79b1824e83b4..308f8d10e4a7 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -255,10 +255,10 @@ static void reassign_resources_sorted(struct list_head *realloc_head,
+ 				 (IORESOURCE_STARTALIGN|IORESOURCE_SIZEALIGN);
+ 			if (pci_reassign_resource(add_res->dev, idx,
+ 						  add_size, align))
+-				pci_printk(KERN_DEBUG, add_res->dev,
+-					   "failed to add %llx res[%d]=%pR\n",
+-					   (unsigned long long)add_size,
+-					   idx, res);
++				pci_info(add_res->dev,
++					 "failed to add %llx res[%d]=%pR\n",
++					 (unsigned long long)add_size,
++					 idx, res);
+ 		}
+ out:
+ 		list_del(&add_res->list);
+@@ -951,9 +951,9 @@ static void pbus_size_io(struct pci_bus *bus, resource_size_t min_size,
+ 	if (size1 > size0 && realloc_head) {
+ 		add_to_list(realloc_head, bus->self, b_res, size1-size0,
+ 			    min_align);
+-		pci_printk(KERN_DEBUG, bus->self, "bridge window %pR to %pR add_size %llx\n",
+-			   b_res, &bus->busn_res,
+-			   (unsigned long long)size1-size0);
++		pci_info(bus->self, "bridge window %pR to %pR add_size %llx\n",
++			 b_res, &bus->busn_res,
++			 (unsigned long long)size1 - size0);
+ 	}
+ }
+ 
+@@ -1098,10 +1098,10 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
+ 	b_res->flags |= IORESOURCE_STARTALIGN;
+ 	if (size1 > size0 && realloc_head) {
+ 		add_to_list(realloc_head, bus->self, b_res, size1-size0, add_align);
+-		pci_printk(KERN_DEBUG, bus->self, "bridge window %pR to %pR add_size %llx add_align %llx\n",
+-			   b_res, &bus->busn_res,
+-			   (unsigned long long) (size1 - size0),
+-			   (unsigned long long) add_align);
++		pci_info(bus->self, "bridge window %pR to %pR add_size %llx add_align %llx\n",
++			 b_res, &bus->busn_res,
++			 (unsigned long long)size1 - size0,
++			 (unsigned long long)add_align);
+ 	}
+ 	return 0;
+ }
+@@ -1566,8 +1566,8 @@ static void pci_bridge_release_resources(struct pci_bus *bus,
+ 	release_child_resources(r);
+ 	if (!release_resource(r)) {
+ 		type = old_flags = r->flags & PCI_RES_TYPE_MASK;
+-		pci_printk(KERN_DEBUG, dev, "resource %d %pR released\n",
+-					PCI_BRIDGE_RESOURCES + idx, r);
++		pci_info(dev, "resource %d %pR released\n",
++			 PCI_BRIDGE_RESOURCES + idx, r);
+ 		/* keep the old size */
+ 		r->end = resource_size(r) - 1;
+ 		r->start = 0;
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 340029b2fb38..e93a55336ecc 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -2298,9 +2298,6 @@ void pci_uevent_ers(struct pci_dev *pdev, enum  pci_ers_result err_type);
+ /* Provide the legacy pci_dma_* API */
+ #include <linux/pci-dma-compat.h>
+ 
+-#define pci_printk(level, pdev, fmt, arg...) \
+-	dev_printk(level, &(pdev)->dev, fmt, ##arg)
+-
+ #define pci_emerg(pdev, fmt, arg...)	dev_emerg(&(pdev)->dev, fmt, ##arg)
+ #define pci_alert(pdev, fmt, arg...)	dev_alert(&(pdev)->dev, fmt, ##arg)
+ #define pci_crit(pdev, fmt, arg...)	dev_crit(&(pdev)->dev, fmt, ##arg)
+
