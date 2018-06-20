@@ -2,282 +2,166 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5E8C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8478C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5026720693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75AD220693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:50:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hxK+vgol"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5026720693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="v4yCpz/V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AD220693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754063AbeFTAud (ORCPT
+        id S1754128AbeFTAu6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:50:33 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:24524 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750757AbeFTAua (ORCPT
+        Tue, 19 Jun 2018 20:50:58 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:38626 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750757AbeFTAuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:50:30 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180620005028epoutp04af7922bda2e10879a5b2e83291605048~5t-jqsHNc2720627206epoutp04N;
-        Wed, 20 Jun 2018 00:50:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180620005028epoutp04af7922bda2e10879a5b2e83291605048~5t-jqsHNc2720627206epoutp04N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1529455828;
-        bh=LLHl3aZOMcRVPRQKbE8JmV6+g+dCDTxZb/cZYbBSiNs=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=hxK+vgolFhoourK8XAZfAxAj71t1J87ype9g5B2/lxy1udemL62df/xoP2FtP5ntw
-         HkiuYcbyGr4Wk5cAzlzMdVuZN2Q0V01fk8EgoURRs3Y4CC/6iwpPVVUckx08/0z+6J
-         JwJgU4sgL9/EggiIzZGr/r6aZZedsxjQndDOnSj4=
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.156]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20180620005023epcas1p4ba67418513fec0f8458501aff31775ca~5t-fHTf441573715737epcas1p4u;
-        Wed, 20 Jun 2018 00:50:23 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5A.1A.04066.EC4A92B5; Wed, 20 Jun 2018 09:50:22 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180620005022epcas1p24383a255876b51612299b6fae173ae4e~5t-eRrhAK0613906139epcas1p2l;
-        Wed, 20 Jun 2018 00:50:22 +0000 (GMT)
-X-AuditID: b6c32a35-0066c9c000000fe2-fe-5b29a4ce1fb8
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        75.DD.03915.EC4A92B5; Wed, 20 Jun 2018 09:50:22 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PAL007D6JNYVW40@mmp1.samsung.com>; Wed, 20 Jun 2018 09:50:22 +0900 (KST)
-Message-id: <5B29A4CE.9060009@samsung.com>
-Date:   Wed, 20 Jun 2018 09:50:22 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Enric Balletbo Serra <eballetbo@gmail.com>,
-        cwchoi00@gmail.com
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] devfreq: rk3399_dmc: Fix duplicated opp table on
- reload.
-In-reply-to: <65546a48-3291-9836-cb0c-1e65ff7c9d41@collabora.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHKsWRmVeSWpSXmKPExsWy7bCmnu65JZrRBq8atSyeHdW2uPB7JZvF
-        mtuHGC02n+thtTjb9Ibd4vKuOWwWn3uPMFrcblzB5sDhsePuEkaPnbPusnv0bVnF6PF5k1wA
-        S1SqTUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QFUoK
-        ZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6VoQ0MjPUMDcz0jIyBtHGtlZApUkpCaMXX9feaC
-        GfoVr3rfMzUwblTuYuTkkBAwkeibtJa1i5GLQ0hgB6PEsU0HGCGc74wSD7rnMcFUnd0whxnE
-        FhLYzSixcYYPiM0rICjxY/I9li5GDg5mAXmJI5eyQcLMApoSL75MYoGYc5dRYteqL8wQ9VoS
-        B262sIHYLAKqEmv+bwSz2YDi+1/cALP5BRQlrv54zAhiiwpESOyc/40dxBYRqJa48Pk+E8hQ
-        ZoHjjBJdP3+CDRUW8Jc4/OwtM8gRnAKOEnsP+YHUSAicYJO4smcbM8QDLhJfr85kh7CFJV4d
-        38IOUi8hIC1x6agtRH07o8SXF82sEM4ERokPpzZDfW8s8WxhFxPEa3wS7772sEI080p0tAlB
-        lHhIzJ+9jwni499MEj/O32abwCg7CymQZiECaRZSIC1gZF7FKJZaUJybnlpsWGCoV5yYW1ya
-        l66XnJ+7iRGc1rRMdzBOOedziFGAg1GJh5eBWTNaiDWxrLgy9xCjBAezkggvwymNaCHelMTK
-        qtSi/Pii0pzU4kOMpsAwnsgsJZqcD0y5eSXxhqZGxsbGFiaGZqaGhkrivBU3BaKFBNITS1Kz
-        U1MLUotg+pg4OKUaGBnnMmzfu/Ss+eLg3IjtSc4ROXzXq0y5PdZOLmPm/Vi2rPyhQPzug2Yh
-        3NxpCd3R2+23T4myintcfoxVduXCuGVdU6MWunitSqgoXm5uPLVq/6T3ER9WKHHNT/tbsqj1
-        pEXD019xAQzcoRp/T78NPLhF69HGrBJnXR4em8QHm8t6Ttq9ipj0VImlOCPRUIu5qDgRABjL
-        1byBAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNLMWRmVeSWpSXmKPExsVy+t9jAd1zSzSjDTq6xCyeHdW2uPB7JZvF
-        mtuHGC02n+thtTjb9Ibd4vKuOWwWn3uPMFrcblzB5sDhsePuEkaPnbPusnv0bVnF6PF5k1wA
-        SxSXTUpqTmZZapG+XQJXxtT195kLZuhXvOp9z9TAuFG5i5GTQ0LAROLshjnMXYxcHEICOxkl
-        /pxoZgNJ8AoISvyYfI+li5GDg1lAXuLIpWwIU11iypRciPL7jBIfvq6CKteSOHCzBcxmEVCV
-        WPN/I5jNBhTf/+IGmM0voChx9cdjRpA5ogIREt0nKkHCIgLVEsdvnGcCmckscJJR4tiCZkaQ
-        hLCAr8S3F49YIZb9ZpJ4d/UVK0gzp4CjxN5DfhMYBWYhuXQWwqWzEC5dwMi8ilEytaA4Nz23
-        2KjAMC+1XK84Mbe4NC9dLzk/dxMjMMi3Hdbq28F4f0n8IUYBDkYlHl4GZs1oIdbEsuLK3EOM
-        EhzMSiK8DKc0ooV4UxIrq1KL8uOLSnNSiw8xSnOwKInz3s47FikkkJ5YkpqdmlqQWgSTZeLg
-        lGpgZGgpXD/tyrzLUe0vCw8/E/s6K6WxkW1aZ2ZW5OoV4VsmNoUaaKrs3MhuMCEpONHjZY1c
-        1NKtc/KD+epild9ei+B/PTeMK5Fj3f+HE4NrtD8mxjUVJUiyJKT8kPHatuqNfpjTpxlLJ7J5
-        BQRLeB97sbcxz9w7lGNDXd3pWT9/TJPtrrh0VfewEktxRqKhFnNRcSIASuzJ4G4CAAA=
-X-CMS-MailID: 20180620005022epcas1p24383a255876b51612299b6fae173ae4e
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180618091029epcas3p498708535c8f8df019bf3785a199d58b4
-References: <20180615151217.29872-1-enric.balletbo@collabora.com>
-        <CAGTfZH16O6u_3QJ2u1eecUnGptSBf1ho47RPefOTmrw+Syxr0w@mail.gmail.com>
-        <CGME20180618091029epcas3p498708535c8f8df019bf3785a199d58b4@epcas3p4.samsung.com>
-        <CAFqH_51ptafw-Z_8-FqtxbTH9LU560cHoM5TFiF01ZwG_jW3VQ@mail.gmail.com>
-        <5B288430.2040600@samsung.com>
-        <65546a48-3291-9836-cb0c-1e65ff7c9d41@collabora.com>
+        Tue, 19 Jun 2018 20:50:52 -0400
+Received: by mail-pg0-f66.google.com with SMTP id c9-v6so644527pgf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 17:50:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=xMmIINNOshv7J1JN/QMQSaEjdcTPZZ/1wcz0rcuD+K0=;
+        b=v4yCpz/VUn+yx7MyGG4hudE1EssIKpZconmmvSjYY6AWX6G5U3+7BZY6klsgX98JoZ
+         cx1cYr02PMqSvTLPDdN0p5H8QMKNd9TUpaOy+GaKPRgnDTgPGN5d5QjlsDf+MrlC94YI
+         1u3qEGJyy28Eh2v8uYWSlfsFsmy15b01aez69P2DXJMBZowqTM4zvK8T4QvW52JhIlxe
+         qiKdC5u8p3fnU/BqgkKu0A1jfPKqzDExKQXbJijde4rUbjdGJ3vKtuu2cajVsc0/nB/k
+         A9Pmf1h5iFLw8jfkx/yj+oGlrq37GIVOl2KI2DfhC4DyF3nCEK6afW4D9jGhzxfiSBlF
+         GJEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=xMmIINNOshv7J1JN/QMQSaEjdcTPZZ/1wcz0rcuD+K0=;
+        b=uS0RDzRxz6NB6505arn86/pupcYrWz3fvltIx08DXyLU6dn35o3HCK1J3rKoYHUl29
+         OhqYXYZ/PL/yfCys5RcZNiaVp1Bho/vsa2wsJ29IE308Y+L8znHfNhidavY6j/vlJP1T
+         QminNs8Jj6Sn7puUK79e35yk0K5zad+S/JaflJoLBoZRXsv5t9djtDcsmJCp+NAt2GEr
+         sA25XpVV1PFosb81T3qV+8cVNYkrWd5nZDmcpqc4r1BZ7iAPLSNGVSicWhgyk3mb4zBY
+         Tbo2I8aBt3dXG1jPpJwhUR5tOkHb9siuV+WN/2v83CFCs8+PO/VXCqH+MsrS8o5lXxpS
+         9ErA==
+X-Gm-Message-State: APt69E16uUnKmxscH+8eePJsCqNkjdLQ9NL4tovtQL4QnoTpp87Wf7hB
+        VITYFjcSs9492yfrZmd7FaqB4g==
+X-Google-Smtp-Source: ADUXVKLmdMPEJr3PDMbAN+5PvhB6/PQNo73dmi22NUQcac9U6q1PcD0hCTb8GM0UyMgl7gAM9XixPQ==
+X-Received: by 2002:a62:444c:: with SMTP id r73-v6mr20358832pfa.255.1529455852061;
+        Tue, 19 Jun 2018 17:50:52 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b023:c12a:9165:dc8d:85a7:914? ([2600:1010:b023:c12a:9165:dc8d:85a7:914])
+        by smtp.gmail.com with ESMTPSA id 76-v6sm1196348pfr.172.2018.06.19.17.50.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 17:50:50 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow stack
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <1529447937.27370.33.camel@intel.com>
+Date:   Tue, 19 Jun 2018 17:50:49 -0700
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com, Florian Weimer <fweimer@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <13E3C29A-3295-4A7F-90EC-A84CF34F3E1A@amacapital.net>
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com>
+ <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com>
+ <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
+ <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com>
+ <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de>
+ <CAMe9rOoCiXQ4iVD3j_AHGrvEXtoaVVZVs7H7fCuqNEuuR5j+2Q@mail.gmail.com>
+ <CALCETrXO8R+RQPhJFk4oiA4PF77OgSS2Yro_POXQj1zvdLo61A@mail.gmail.com>
+ <CAMe9rOpLxPussn7gKvn0GgbOB4f5W+DKOGipe_8NMam+Afd+RA@mail.gmail.com>
+ <CALCETrWmGRkQvsUgRaj+j0CP4beKys+TT5aDR5+18nuphwr+Cw@mail.gmail.com>
+ <CAMe9rOpzcCdje=bUVs+C1WrY6GuwA-8AUFVLOG325LGz7KHJxw@mail.gmail.com>
+ <alpine.DEB.2.21.1806122046520.1592@nanos.tec.linutronix.de>
+ <CAMe9rOrGjJf0aMnUjAP38MqvOiW3=iXGQjcUT3O=f9pE85hXaw@mail.gmail.com>
+ <CALCETrVsh5t-V1Sm88LsZE_+DS0GE_bMWbcoX3SjD6GnrB08Pw@mail.gmail.com>
+ <CAGXu5jK0gospOXRpN6zYiQPXOZeE=YpVAz2qu4Zc3-32v85+EQ@mail.gmail.com>
+ <569B4719-6283-4575-A16E-D0A78D280F4E@amacapital.net> <CAGXu5jJNgu4bW_Zthqjfpe9gLxK0zxG8QFEqqK+pJNebz6tUaw@mail.gmail.com>
+ <1529427588.23068.7.camel@intel.com> <CAGXu5jJ4ivrvi-kG0iY=4C0mQQXBDXwPdfY36Dk+JqOpX19n0w@mail.gmail.com>
+ <0AF8B71E-B6CC-42DE-B95C-93896196C3D7@amacapital.net> <CAGXu5jLEMy_T_5OtXLT+pUCt=Nk53nBbuRvrUgJBhq-4RZ=yCA@mail.gmail.com>
+ <446EB18D-EF06-4A04-AF62-E72C68D96A84@amacapital.net> <1529447937.27370.33.camel@intel.com>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
-
-On 2018년 06월 19일 17:07, Enric Balletbo i Serra wrote:
-> Hi Chanwoo,
-> 
-> On 19/06/18 06:18, Chanwoo Choi wrote:
->> Hi Enric,
->>
->> On 2018년 06월 18일 18:10, Enric Balletbo Serra wrote:
->>> Hi Chanwoo,
->>>
->>> Missatge de Chanwoo Choi <cwchoi00@gmail.com> del dia dg., 17 de juny
->>> 2018 a les 5:23:
->>>>
->>>> Hi Enric,
->>>>
->>>> 2018-06-16 0:12 GMT+09:00 Enric Balletbo i Serra <enric.balletbo@collabora.com>:
->>>>> The opp table is not removed when the driver is unloaded neither when
->>>>> there is an error within probe, so if the driver is reloaded the opp
->>>>> core shows the following warning:
->>>>>
->>>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->>>>>                200000000, volt: 900000, enabled: 1. New: freq: 200000000,
->>>>>                volt: 900000, enabled: 1
->>>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->>>>>                400000000, volt: 900000, enabled: 1. New: freq: 400000000,
->>>>>                volt: 900000, enabled: 1
->>>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->>>>>                666000000, volt: 900000, enabled: 1. New: freq: 666000000,
->>>>>                volt: 900000, enabled: 1
->>>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->>>>>                800000000, volt: 900000, enabled: 1. New: freq: 800000000,
->>>>>                volt: 900000, enabled: 1
->>>>>   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->>>>>                928000000, volt: 900000, enabled: 1. New: freq: 928000000,
->>>>>                volt: 900000, enabled: 1
->>>>>
->>>>> This patch fixes the error path in the probe function and adds a .remove
->>>>> function to properly cleanup the opp table on unloading.
->>>>>
->>>>> Fixes: 5a893e31a636c (PM / devfreq: rockchip: add devfreq driver for rk3399 dmc)
->>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>>>> ---
->>>>>
->>>>>  drivers/devfreq/rk3399_dmc.c | 31 +++++++++++++++++++++++++++----
->>>>>  1 file changed, 27 insertions(+), 4 deletions(-)
->>>>>
->>>>> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
->>>>> index d5c03e5abe13..e795ad2b3f6b 100644
->>>>> --- a/drivers/devfreq/rk3399_dmc.c
->>>>> +++ b/drivers/devfreq/rk3399_dmc.c
->>>>> @@ -375,8 +375,10 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->>>>>         data->rate = clk_get_rate(data->dmc_clk);
->>>>>
->>>>>         opp = devfreq_recommended_opp(dev, &data->rate, 0);
->>>>> -       if (IS_ERR(opp))
->>>>> -               return PTR_ERR(opp);
->>>>> +       if (IS_ERR(opp)) {
->>>>> +               ret = PTR_ERR(opp);
->>>>> +               goto err_free_opp;
->>>>> +       }
->>>>>
->>>>>         data->rate = dev_pm_opp_get_freq(opp);
->>>>>         data->volt = dev_pm_opp_get_voltage(opp);
->>>>> @@ -388,13 +390,33 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->>>>>                                            &rk3399_devfreq_dmc_profile,
->>>>>                                            DEVFREQ_GOV_SIMPLE_ONDEMAND,
->>>>>                                            &data->ondemand_data);
->>>>> -       if (IS_ERR(data->devfreq))
->>>>> -               return PTR_ERR(data->devfreq);
->>>>> +       if (IS_ERR(data->devfreq)) {
->>>>> +               ret = PTR_ERR(data->devfreq);
->>>>> +               goto err_free_opp;
->>>>> +       }
->>>>> +
->>>>>         devm_devfreq_register_opp_notifier(dev, data->devfreq);
->>>>>
->>>>>         data->dev = dev;
->>>>>         platform_set_drvdata(pdev, data);
->>>>>
->>>>> +       return 0;
->>>>
->>>> It looks strange. Because rk3399_dmcfreq_probe() already include
->>>> 'return 0' when success.
->>>> What is the base commit of this patch?
->>>>
->>>
->>> Sorry, I am not sure I understand your question, If I am not answering
->>> below could you rephrase?
->>
->> When I check the rk3399_dmcfreq_probe()[1], as I commented,
->> rk3399_dmcfreq_probe() already 'return 0' after platform_set_drvdata().
->> You can check it on link[1].
->> [1] https://elixir.bootlin.com/linux/v4.18-rc1/source/drivers/devfreq/rk3399_dmc.c#L443
->>
->> But, this patch add new '+       return 0;' line again in rk3399_dmcfreq_probe().
->> So, just I asked what is base commit of this patch.
->>
-> 
-> I think that this is just how git did the diff and if you only look at the diff
-> is a bit confusing, if you apply the patch on top of mainline you will see that
-> there is only one return 0 in the probe function.
-
-Anyway, when I applied it to git, there is no problem. 
-Just I have never seen such a case and asked a question.
-Don't care about this anymore. Thanks.
-
-> 
-> +       return 0; (this new return ...)
-> +
-> +err_free_opp:
-> +       dev_pm_opp_of_remove_table(&pdev->dev);
-> +       return ret;
-> +}
-> +
-> +static int rk3399_dmcfreq_remove(struct platform_device *pdev)
-> +{
-> +       struct rk3399_dmcfreq *dmcfreq = dev_get_drvdata(&pdev->dev);
-> +
-> +       /*
-> +        * Before remove the opp table we need to unregister the opp notifier.
-> +        */
-> +       devm_devfreq_unregister_opp_notifier(dmcfreq->dev, dmcfreq->devfreq);
-> +       dev_pm_opp_of_remove_table(dmcfreq->dev);
-> +
->         return 0; (was this before the patch, but now is in another function)
-> 
-> Cheers,
->  Enric
-> 
->>>
->>> So, once the opp table is added we need an error path to free it if an
->>> error occurs later. When the probe returns 0, we need to free the opp
->>> table when we remove the module.
->>>
->>>> [snip]
->>>>
->>>> Anyway, if probe fail, device driver have to remove registered OPP table.
->>>> Looks good to me.
->>>>
->>>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>
->>>
->>> Thanks,
->>>  Enric
->>>
->>>> --
->>>> Best Regards,
->>>> Chanwoo Choi
->>>> Samsung Electronics
->>>
->>>
->>>
->>
->>
-> 
-> 
-> 
 
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> On Jun 19, 2018, at 3:38 PM, Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+>=20
+> On Tue, 2018-06-19 at 13:47 -0700, Andy Lutomirski wrote:
+>>>=20
+>>> On Jun 19, 2018, at 1:12 PM, Kees Cook <keescook@chromium.org>
+>>> wrote:
+>>>=20
+>>>>=20
+>>>> On Tue, Jun 19, 2018 at 10:20 AM, Andy Lutomirski <luto@amacapita
+>>>> l.net> wrote:
+>>>>=20
+>>>>>=20
+>>>>> On Jun 19, 2018, at 10:07 AM, Kees Cook <keescook@chromium.org>
+>>>>> wrote:
+>>>>>=20
+>>>>> Does it provide anything beyond what PR_DUMPABLE does?
+>>>> What do you mean?
+>>> I was just going by the name of it. I wasn't sure what "ptrace CET
+>>> lock" meant, so I was trying to understand if it was another "you
+>>> can't ptrace me" toggle, and if so, wouldn't it be redundant with
+>>> PR_SET_DUMPABLE =3D 0, etc.
+>>>=20
+>> No, other way around. The valid CET states are on/unlocked,
+>> off/unlocked, on/locked, off/locked. arch_prctl can freely the state
+>> unless locked. ptrace can change it no matter what.  The lock is to
+>> prevent the existence of a gadget to disable CET (unless the gadget
+>> involves ptrace, but I don=E2=80=99t think that=E2=80=99s a real concern)=
+.
+>=20
+> We have the arch_prctl now and only need to add ptrace lock/unlock.
+>=20
+> Back to the dlopen() "relaxed" mode. Would the following work?
+>=20
+> If the lib being loaded does not use setjmp/getcontext families (the
+> loader knows?), then the loader leaves shstk on. =20
+
+Will that actually work?  Are there libs that do something like longjmp with=
+out actually using the glibc longjmp routine?  What about compilers that sta=
+tically match a throw to a catch and try to return through several frames at=
+ once?
+
+
+> Otherwise, if the
+> system-wide setting is "relaxed", the loader turns off shstk and issues
+> a warning.  In addition, if (dlopen =3D=3D relaxed), then cet is not locke=
+d
+> in any time.
+>=20
+> The system-wide setting (somewhere in /etc?) can be:
+>=20
+>    dlopen=3Dforce|relaxed /* controls dlopen of non-cet libs */
+>    exec=3Dforce|relaxed /* controls exec of non-cet apps */
+>=20
+>=20
+
+Why do we need a whole new mechanism here?  Can=E2=80=99t all this use regul=
+ar glibc tunables?=
