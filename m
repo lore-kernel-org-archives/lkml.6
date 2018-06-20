@@ -2,100 +2,139 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE132C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8D2C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D082083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:09:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JXBsf1kZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D082083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 06E412083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:09:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E412083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932981AbeFTUI7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:08:59 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:59570 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932689AbeFTUI6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:08:58 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KJwjUR007728;
-        Wed, 20 Jun 2018 20:08:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=tP5FToi1P3fywvKiUb8p4ma2NlirWppsuuD7Xkm9oMw=;
- b=JXBsf1kZrHNL0z0Q0/K5uWMeqoi8997h9TFOaxfTeUJr6FYyRHEul7yUjmRpkxjDLGUB
- G7gqKhnd+lVlh0OE3u23vz0Q3be0EjUiJuxZM56j3ujaQPopHZ2akbFKMGzA2LzOKir3
- 6Mq82Jaqy9tC6d9HcBO6aUZU7wAskJYCAX6LQ9magcQ75fjSb2vJgr/CEA2h9jZldbhK
- ZQHnzp7f9IS1sTCrRMAVRQ1Q7uxtpJh8zzZQkJKlWvRXs/fH/C3FmGQgS3tIfBgeiYxj
- +8loYlMMEsJEMgi4MnpATra9DJb+HX0Ed0/YCUvjqY0m93ZO6OdECLPUwCV4F0oFWG9A FQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwx1wv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 20:08:38 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5KK8cWh011883
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 20:08:38 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5KK8cq2020419;
-        Wed, 20 Jun 2018 20:08:38 GMT
-Received: from mwanda (/197.157.34.185)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Jun 2018 13:08:37 -0700
-Date:   Wed, 20 Jun 2018 23:08:29 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Chris Opperman <eklikeroomys@gmail.com>
-Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] staging: wlan-ng: improved readability of function
- prism2_add_key
-Message-ID: <20180620200829.qm2zxeyyl5kqh6gu@mwanda>
-References: <1529514635-17948-1-git-send-email-eklikeroomys@gmail.com>
+        id S933111AbeFTUJv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:09:51 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:30608 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932996AbeFTUJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 16:09:49 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 419wsg4mb4z9ttmc;
+        Wed, 20 Jun 2018 22:09:43 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id BcpDRlaC3d7f; Wed, 20 Jun 2018 22:09:43 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 419wsg4F1Xz9ttmD;
+        Wed, 20 Jun 2018 22:09:43 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E7F698B83D;
+        Wed, 20 Jun 2018 22:09:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 2Ku-V9oUsqKS; Wed, 20 Jun 2018 22:09:47 +0200 (CEST)
+Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 676C08B82D;
+        Wed, 20 Jun 2018 22:09:47 +0200 (CEST)
+Subject: Re: [PATCH 01/11] crypto: shash: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, qat-linux@intel.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+References: <20180620190408.45104-1-keescook@chromium.org>
+ <20180620190408.45104-2-keescook@chromium.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <638faf05-946a-1345-dda4-f75fee5b07d9@c-s.fr>
+Date:   Wed, 20 Jun 2018 19:30:50 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529514635-17948-1-git-send-email-eklikeroomys@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=734
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806200218
+In-Reply-To: <20180620190408.45104-2-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 07:10:26PM +0200, Chris Opperman wrote:
-> b) Added temporary "key" variable to reduce line length.
 
-No, that's nonsense.  Just fix the original variable so that it's not a
-million characters long.
 
-Using a shorter variable is good if it simplifies the code like so:
+On 06/20/2018 07:03 PM, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> removes the VLAs in SHASH_DESC_ON_STACK (via crypto_shash_descsize())
+> by using the maximum allowable size (which is now more clearly captured
+> in a macro). Similar limits are turned into macros as well.
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-	struct foo *foo = &my->random_variable[INDEX].whatever;
+Got the following warnings:
 
-You've reduced 4 variable names and a butt load of punctuation down to
-just "foo" so that we don't have to look at it repeated over and over
-on every line.
+crypto/testmgr.c: In function ‘alg_test_crc32c.part.4’:
+crypto/testmgr.c:1896:1: warning: the frame size of 2088 bytes is larger 
+than 1024 bytes [-Wframe-larger-than=]
+crypto/hmac.c: In function ‘hmac_setkey’:
+crypto/hmac.c:88:1: warning: the frame size of 2088 bytes is larger than 
+1024 bytes [-Wframe-larger-than=]
 
-But if you're just using a temporary variable because the original
-variable name was poorly chosen, that's not the right thing.
+Christophe
 
-regards,
-dan carpenter
-
+> ---
+>   crypto/shash.c        | 6 +++---
+>   include/crypto/hash.h | 6 +++++-
+>   2 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/crypto/shash.c b/crypto/shash.c
+> index 5d732c6bb4b2..ab6902c6dae7 100644
+> --- a/crypto/shash.c
+> +++ b/crypto/shash.c
+> @@ -458,9 +458,9 @@ static int shash_prepare_alg(struct shash_alg *alg)
+>   {
+>   	struct crypto_alg *base = &alg->base;
+>   
+> -	if (alg->digestsize > PAGE_SIZE / 8 ||
+> -	    alg->descsize > PAGE_SIZE / 8 ||
+> -	    alg->statesize > PAGE_SIZE / 8)
+> +	if (alg->digestsize > SHASH_MAX_DIGESTSIZE ||
+> +	    alg->descsize > SHASH_MAX_DESCSIZE ||
+> +	    alg->statesize > SHASH_MAX_STATESIZE)
+>   		return -EINVAL;
+>   
+>   	base->cra_type = &crypto_shash_type;
+> diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+> index 76e432cab75d..308aad8bf523 100644
+> --- a/include/crypto/hash.h
+> +++ b/include/crypto/hash.h
+> @@ -151,9 +151,13 @@ struct shash_desc {
+>   	void *__ctx[] CRYPTO_MINALIGN_ATTR;
+>   };
+>   
+> +#define SHASH_MAX_DIGESTSIZE    (PAGE_SIZE / 8)
+> +#define SHASH_MAX_DESCSIZE      (PAGE_SIZE / 8)
+> +#define SHASH_MAX_STATESIZE     (PAGE_SIZE / 8)
+> +
+>   #define SHASH_DESC_ON_STACK(shash, ctx)				  \
+>   	char __##shash##_desc[sizeof(struct shash_desc) +	  \
+> -		crypto_shash_descsize(ctx)] CRYPTO_MINALIGN_ATTR; \
+> +		SHASH_MAX_DESCSIZE] CRYPTO_MINALIGN_ATTR; \
+>   	struct shash_desc *shash = (struct shash_desc *)__##shash##_desc
+>   
+>   /**
+> 
