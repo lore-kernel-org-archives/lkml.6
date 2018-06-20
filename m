@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3118FC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F26C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA65720652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:15:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA65720652
+	by mail.kernel.org (Postfix) with ESMTP id 154BE20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:15:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 154BE20652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932623AbeFTXPd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 19:15:33 -0400
-Received: from mga12.intel.com ([192.55.52.136]:65395 "EHLO mga12.intel.com"
+        id S932564AbeFTXPc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 19:15:32 -0400
+Received: from mga09.intel.com ([134.134.136.24]:29835 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754308AbeFTXP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754304AbeFTXP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 19:15:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 16:15:26 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 16:15:26 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,249,1526367600"; 
-   d="scan'208";a="66325217"
+   d="scan'208";a="66325210"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.139])
-  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2018 16:15:26 -0700
+  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2018 16:15:25 -0700
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>,
@@ -41,9 +41,9 @@ Cc:     Andi Kleen <ak@linux.intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 4/7] x86/fsgsbase/64: Factor out load FS/GS segments from __switch_to
-Date:   Wed, 20 Jun 2018 16:15:03 -0700
-Message-Id: <1529536506-26237-5-git-send-email-chang.seok.bae@intel.com>
+Subject: [PATCH v4 2/7] x86/fsgsbase/64: Make ptrace read FS/GS base accurately
+Date:   Wed, 20 Jun 2018 16:15:01 -0700
+Message-Id: <1529536506-26237-3-git-send-email-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com>
 References: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com>
@@ -52,53 +52,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of open coding the calls to load_seg_legacy(), add a
-load_fsgs() helper to handle fs and gs.  When FSGSBASE is enabled,
-load_fsgs() will be updated.
+From: Andy Lutomirski <luto@kernel.org>
 
+ptrace can read FS/GS base using the register access API
+(PTRACE_PEEKUSER, etc) or PTRACE_ARCH_PRCTL.  Make both of these
+mechanisms return the actual FS/GS base.
+
+This will improve debuggability by providing the correct information
+to ptracer (GDB and etc).
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+[chang: Rebase and revise patch description]
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/kernel/process_64.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ arch/x86/kernel/process_64.c | 67 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 51 insertions(+), 16 deletions(-)
 
 diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index e498671..cebf240 100644
+index ace0158..e498671 100644
 --- a/arch/x86/kernel/process_64.c
 +++ b/arch/x86/kernel/process_64.c
-@@ -279,6 +279,15 @@ static __always_inline void load_seg_legacy(unsigned short prev_index,
+@@ -279,6 +279,49 @@ static __always_inline void load_seg_legacy(unsigned short prev_index,
  	}
  }
  
-+static __always_inline void load_fsgs(struct thread_struct *prev,
-+				      struct thread_struct *next)
++static unsigned long task_seg_base(struct task_struct *task,
++				   unsigned short selector)
 +{
-+	load_seg_legacy(prev->fsindex, prev->fsbase,
-+			next->fsindex, next->fsbase, FS);
-+	load_seg_legacy(prev->gsindex, prev->gsbase,
-+			next->gsindex, next->gsbase, GS);
++	unsigned short idx = selector >> 3;
++	unsigned long base;
++
++	if (likely((selector & SEGMENT_TI_MASK) == 0)) {
++		if (unlikely(idx >= GDT_ENTRIES))
++			return 0;
++
++		/*
++		 * There are no user segments in the GDT with nonzero bases
++		 * other than the TLS segments.
++		 */
++		if (idx < GDT_ENTRY_TLS_MIN || idx > GDT_ENTRY_TLS_MAX)
++			return 0;
++
++		idx -= GDT_ENTRY_TLS_MIN;
++		base = get_desc_base(&task->thread.tls_array[idx]);
++	} else {
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++		struct ldt_struct *ldt;
++
++		/*
++		 * If performance here mattered, we could protect the LDT
++		 * with RCU.  This is a slow path, though, so we can just
++		 * take the mutex.
++		 */
++		mutex_lock(&task->mm->context.lock);
++		ldt = task->mm->context.ldt;
++		if (unlikely(idx >= ldt->nr_entries))
++			base = 0;
++		else
++			base = get_desc_base(ldt->entries + idx);
++		mutex_unlock(&task->mm->context.lock);
++#else
++		base = 0;
++#endif
++	}
++
++	return base;
 +}
 +
- static unsigned long task_seg_base(struct task_struct *task,
- 				   unsigned short selector)
+ void write_fsbase(unsigned long fsbase)
  {
-@@ -588,10 +597,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	if (unlikely(next->ds | prev->ds))
- 		loadsegment(ds, next->ds);
+ 	/* set the selector to 0 to not confuse __switch_to */
+@@ -297,16 +340,12 @@ unsigned long read_task_fsbase(struct task_struct *task)
+ {
+ 	unsigned long fsbase;
  
--	load_seg_legacy(prev->fsindex, prev->fsbase,
--			next->fsindex, next->fsbase, FS);
--	load_seg_legacy(prev->gsindex, prev->gsbase,
--			next->gsindex, next->gsbase, GS);
-+	load_fsgs(prev, next);
+-	if (task == current) {
++	if (task == current)
+ 		fsbase = read_fsbase();
+-	} else {
+-		/*
+-		 * XXX: This will not behave as expected if called
+-		 * if fsindex != 0. This preserves an existing bug
+-		 * that will be fixed.
+-		 */
++	else if (task->thread.fsindex == 0)
+ 		fsbase = task->thread.fsbase;
+-	}
++	else
++		fsbase = task_seg_base(task, task->thread.fsindex);
  
- 	switch_fpu_finish(next_fpu, cpu);
+ 	return fsbase;
+ }
+@@ -315,16 +354,12 @@ unsigned long read_task_gsbase(struct task_struct *task)
+ {
+ 	unsigned long gsbase;
  
+-	if (task == current) {
++	if (task == current)
+ 		gsbase = read_inactive_gsbase();
+-	} else {
+-		/*
+-		 * XXX: This will not behave as expected if called
+-		 * if gsindex != 0. Same bug preservation as above
+-		 * read_task_fsbase.
+-		 */
++	else if (task->thread.gsindex == 0)
+ 		gsbase = task->thread.gsbase;
+-	}
++	else
++		gsbase = task_seg_base(task, task->thread.gsindex);
+ 
+ 	return gsbase;
+ }
 -- 
 2.7.4
 
