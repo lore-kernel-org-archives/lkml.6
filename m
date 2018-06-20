@@ -2,105 +2,97 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B97CC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4692BC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B466020693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:12:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eeuvBCGI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B466020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F149A205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:14:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F149A205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754236AbeFTDMq (ORCPT
+        id S1754284AbeFTDOl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 23:12:46 -0400
-Received: from mail-pl0-f42.google.com ([209.85.160.42]:37839 "EHLO
-        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753972AbeFTDMo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 23:12:44 -0400
-Received: by mail-pl0-f42.google.com with SMTP id 31-v6so930974plc.4;
-        Tue, 19 Jun 2018 20:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:from:subject:cc:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=qLEqlNs2Tsej1THZNjXmq4yOTu9boAp9mTua8EpvQ5o=;
-        b=eeuvBCGIPKXljkHUilFlh9vCk+bZHK8fzU39b146cm2lr/EBlATw4ce93AXOXxYibd
-         sfdyloFwTUaItn7QSqaF1N3iBdA8Q34+VoDDB6YfYTqmvQv4Zt5YH6MCzeLkWCKrW9/i
-         SmvhjEE+RjDf28pOc/tf7Kk3nYmS1RGT57UNqjf1Y6jHMMDT5rciUOFxXQVsCTOgynwb
-         70kw+Sl1dcm/+g2yzkP2/1QpbhwKeuueGP7jBxKGlpCEa2c1rpkgbcJjqNXGWHqrg80t
-         r/QfvIzKTcZSrTo0LjJC+yj965aIijuNeFroF1+WyewPip0tzKBcjNTgGr8uoDvjhEdA
-         8dPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:cc:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=qLEqlNs2Tsej1THZNjXmq4yOTu9boAp9mTua8EpvQ5o=;
-        b=M+7rUWUA81Jq2MP8pvsFv0kw7/jWvVXDeIJ3MZBp2zdtmYYGqKMsRmBp0ZSDLAzcvY
-         3zruofpgS7TckrcHPLRq4V4ArD2VFj3RfFCD8ZAmj3LRn3KDNOrx+AYXjO3A0ZXC6XDD
-         mwKbCP312cQTkXy5/1gcArmvaHsnz7YVISlycEYwMSYzrvimr+e65KrL5iVb5Dv7ChFS
-         Q5Wsxr/ZeAs9Bh/g8WRFXbEyGN3XSox9gNofkRCW2Sb4f8PJbLR63b67IyLAKi85FlJo
-         eNC5yVNrGoU2pKJjzRaNOFOk8KLy5SecmiAWVHumTiAoozRdz6vCn2TcPqKI0dwYeo1h
-         pTYA==
-X-Gm-Message-State: APt69E1jlbKX/JC8vGcBvPM5A2uR0j4/qpNbBRvL/w1o4HUttkm7hn9Z
-        Ykl1yfzs1R9fAuHMApDlRKrCh9uU
-X-Google-Smtp-Source: ADUXVKKX4HQiOHKJNvYzgi9b17p5zTbeKDBW93LGrDNwrDfdXA5fcGEzFaUyBfTuLxjMmu/yMviu6g==
-X-Received: by 2002:a17:902:6105:: with SMTP id t5-v6mr21803105plj.138.1529464363846;
-        Tue, 19 Jun 2018 20:12:43 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.70.11? ([2402:f000:1:1501:200:5efe:a66f:460b])
-        by smtp.gmail.com with ESMTPSA id a10-v6sm985500pgw.90.2018.06.19.20.12.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 20:12:43 -0700 (PDT)
-To:     mathias.nyman@intel.com, gregkh@linuxfoundation.org
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] usb: xhci: Two possible sleep-in-atomic-context bugs
-Cc:     linux-usb@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <a2f62eac-b3e1-bd1e-3993-83e2f6adef03@gmail.com>
-Date:   Wed, 20 Jun 2018 11:12:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 19 Jun 2018 23:14:41 -0400
+Received: from mga04.intel.com ([192.55.52.120]:28075 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754046AbeFTDOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 23:14:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 20:14:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,245,1526367600"; 
+   d="scan'208";a="68415224"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by orsmga002.jf.intel.com with ESMTP; 19 Jun 2018 20:14:34 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fVTZq-000KJ0-1q; Wed, 20 Jun 2018 11:14:34 +0800
+Date:   Wed, 20 Jun 2018 11:13:40 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Rajat Jain <rajatja@google.com>
+Cc:     kbuild-all@01.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Thomas Tai <thomas.tai@oracle.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
+        Kyle McMartin <jkkm@fb.com>, rajatxjain@gmail.com,
+        helgaas@kernel.org, Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH v3 4/5] PCI/AER: Add sysfs attributes for rootport
+ cumulative stats
+Message-ID: <201806201004.xjxc8kiz%fengguang.wu@intel.com>
+References: <20180620011210.254601-4-rajatja@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620011210.254601-4-rajatja@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
-The function call paths (from bottom to top) in Linux-4.16.7 are:
+Hi Rajat,
 
-[FUNC] schedule
-drivers/base/power/runtime.c, 741: schedule in rpm_resume
-drivers/base/power/runtime.c, 1322: rpm_resume in pm_runtime_forbid
-drivers/usb/host/xhci-hub.c, 647: pm_runtime_forbid in xhci_enter_test_mode
-drivers/usb/host/xhci-hub.c, 632: _raw_spin_lock_irqsave in 
-xhci_enter_test_mode
+Thank you for the patch! Perhaps something to improve:
 
-[FUNC] schedule
-drivers/base/power/runtime.c, 570: schedule in rpm_suspend
-drivers/base/power/runtime.c, 434: rpm_suspend in rpm_idle
-drivers/base/power/runtime.c, 1343: rpm_idle in pm_runtime_allow
-drivers/usb/host/xhci-hub.c, 670: pm_runtime_allow in xhci_exit_test_mode
-drivers/usb/host/xhci-hub.c, 1387: xhci_exit_test_mode in xhci_hub_control
-drivers/usb/host/xhci-hub.c, 1038: _raw_spin_lock_irqsave in 
-xhci_hub_control
+[auto build test WARNING on pci/next]
+[also build test WARNING on v4.18-rc1 next-20180619]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-These bugs are found by my static analysis tool (DSAC-2) and checked by my
-code review.
-
-I do not know how to correctly fix these bugs, so I just report them.
+url:    https://github.com/0day-ci/linux/commits/Rajat-Jain/PCI-AER-Define-and-allocate-aer_stats-structure-for-AER-capable-devices/20180620-091551
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-Best wishes,
-Jia-Ju Bai
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/pci/pcie/aer.c:689:6: sparse: symbol 'pci_rootport_aer_stats_incr' was not declared. Should it be static?
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
