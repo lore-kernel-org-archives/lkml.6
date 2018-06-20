@@ -3,72 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F230C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A51D7C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22AE820836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:38:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22AE820836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 59F8420836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:38:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F8420836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754251AbeFTOiI (ORCPT
+        id S1754277AbeFTOi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:38:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59911 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753619AbeFTOiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:38:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B3D44AE2A;
-        Wed, 20 Jun 2018 14:38:05 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1D1CA1E04AE; Wed, 20 Jun 2018 16:38:05 +0200 (CEST)
-Date:   Wed, 20 Jun 2018 16:38:05 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, y2038@lists.linaro.org,
-        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] [v2] reiserfs: remove obsolete print_time function
-Message-ID: <20180620143805.2pfhuy4tm5lc66tr@quack2.suse.cz>
-References: <20180620142522.27639-1-arnd@arndb.de>
- <20180620142522.27639-3-arnd@arndb.de>
+        Wed, 20 Jun 2018 10:38:28 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:36224 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752932AbeFTOi1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 10:38:27 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fVeFR-00069V-0J; Wed, 20 Jun 2018 22:38:13 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fVeFL-0000Y2-KD; Wed, 20 Jun 2018 22:38:07 +0800
+Date:   Wed, 20 Jun 2018 22:38:07 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     David Howells <dhowells@redhat.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        james.morris@microsoft.com, "Serge E. Hallyn" <serge@hallyn.com>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2][RESEND] X.509: unpack RSA signatureValue field from
+ BIT STRING
+Message-ID: <20180620143807.fo7c5endwd5yy24r@gondor.apana.org.au>
+References: <04f372f3-bc26-c629-2269-0e5d258f9d8f@maciej.szmigiero.name>
+ <80e95323-eb7f-6af3-ad05-f174c69fb948@maciej.szmigiero.name>
+ <9a9bfd23-d7be-7f16-925e-5fe00cbfba9f@maciej.szmigiero.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180620142522.27639-3-arnd@arndb.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <9a9bfd23-d7be-7f16-925e-5fe00cbfba9f@maciej.szmigiero.name>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 20-06-18 16:25:04, Arnd Bergmann wrote:
-> Before linux-2.4.6, print_time() was used to pretty-print an inode
-> time when running reiserfs in user space, after that it has become
-> obsolete and is still a bit incorrect: It behaves differently on 32-bit
-> and 64-bit machines, and uses a static buffer to hold a string, which
-> could lead to undefined behavior if we ever called this from multiple
-> places simultaneously.
+On Wed, Jun 20, 2018 at 02:24:54PM +0200, Maciej S. Szmigiero wrote:
 > 
-> Since we always want to treat the timestamps as 'unsigned' anyway,
-> simply printing them as an integer is both simpler and safer while
-> avoiding the deprecated time_t type.
+> A friendly ping here.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: after a second look, I decided to remove it instead of fixing it.
+> @AMD people:
+> Without this patch, in-kernel X.509 certificate verification is broken
+> on AMD CCP RSA implementation.
+> 
+> For example, loading wireless regulatory database gives the following
+> errors:
+> > [   21.310361] cfg80211: Problem loading in-kernel X.509 certificate (-22)
+> > [   21.351717] cfg80211: loaded regulatory.db is malformed or signature is missing/invalid
+> 
+> Kernel modules signature verification probably has similar problem, too.
+> 
+> That's why it would be nice if you could ack this patch, please.
 
-Yes, that's a good idea. The patch looks good. You can add:
+David/James, is there an issue with the patch?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
+Thanks,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
