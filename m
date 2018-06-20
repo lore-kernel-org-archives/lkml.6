@@ -3,144 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B90DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 918BEC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 507EA20871
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:53:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 427B320846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:58:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nZpHvuJ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 507EA20871
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aolwsCt4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 427B320846
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754093AbeFTFxS (ORCPT
+        id S1753619AbeFTF6o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 01:53:18 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45671 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753957AbeFTFxH (ORCPT
+        Wed, 20 Jun 2018 01:58:44 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37039 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751553AbeFTF6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 01:53:07 -0400
-Received: by mail-pf0-f194.google.com with SMTP id a22-v6so1021199pfo.12
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 22:53:06 -0700 (PDT)
+        Wed, 20 Jun 2018 01:58:41 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y5-v6so1040626pfn.4
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 22:58:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
          :references:message-id:user-agent:subject:date;
-        bh=wnUgWklWPxxpCzmmwhK3cK6YQBQtl7x9kQ/ovr7XLuw=;
-        b=nZpHvuJ4quzT0ThLFCNSSXR33ZBQUUqYnK0YCjjbraHgzmqgP7wjZo/J0h1OQRZ3dl
-         9eKPVRC4Lq58ISZ3lnJf6xL/ZmcUBnDVpfIBChdn4HTMYpxVOqq+DP3NfhpoA+3I8GO3
-         D7OJIbkIIYIBR8hq8lj8huiy6IP0sM2venRag=
+        bh=Bhx7L5vMC8fGosK/O1h3c5Sl9H4w69InS0mqL0AJ44k=;
+        b=aolwsCt49CBzqMXveACYT4R+ujFsavct5+UzfaoYbN1kZa0h8YeVl03uNhpTeK5dZi
+         9g67jxV/spaWKuiaeMr5c9+yBGQsgxBeIXd5ju/cSQnTgwA9DOWBQmLZ88Qp29it+40M
+         mWvsKDA4tIUIdV81aUe5nVVb+jiC0Yne7oDoA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
          :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=wnUgWklWPxxpCzmmwhK3cK6YQBQtl7x9kQ/ovr7XLuw=;
-        b=pq72A1/XZ0U/iOOzZqQqIaSwOMJFlKVs2HgUYZWGNCKSvEzJBMZ/v1vwQwlHSmA/l+
-         UJPy8T92V3MYxRJX36DiN0wLlTwGxjV+Y2oKnHXl4n5xOpH8jId+9LN3oXP0TK5x+s25
-         RTvfgaN9JScdjEPOyaOhgq3xo/4xODxyGPa+4nlgodBKUMYEKtsrnSeoVzfkHPFK/177
-         WEOiQwEgh6jFEJ+cUCsCyRglZY4F3dPNSKoMkvYM994qYtnH313iim22wXILmKtTkp5z
-         TipQXFtdXi3Dg0MNVs8FKTZUqRHq5QHuV4runmeosBABoTfGqVJFhpc0gIPpNQJjNQiR
-         ht1A==
-X-Gm-Message-State: APt69E0N/1gepFNS++ON3JaWgMol/5F1FWjhXaGThLkIaj0NFoPdIlPO
-        nBsA1zo2zTrB1/SXDLkl1qlzRg==
-X-Google-Smtp-Source: ADUXVKI1J0M7qC0nON2Zr7mc/8dYDEJnlS/mU3qvrK2SekqwoiBGZlfWw+yCQa8HpPomA0yCKx19Cg==
-X-Received: by 2002:a65:5cc8:: with SMTP id b8-v6mr17447222pgt.85.1529473986505;
-        Tue, 19 Jun 2018 22:53:06 -0700 (PDT)
+        bh=Bhx7L5vMC8fGosK/O1h3c5Sl9H4w69InS0mqL0AJ44k=;
+        b=r9V3FUNoyYMDiwGY2WBQs2W1MPpnYVVUS3VkEPn4MqM07zm5ydQi3SLqHc3fOlf+L5
+         9leczNnmLuaC/iToC61v5m6muwjmQ+0hK3Vp0VCXkcCL1oB9MMEJ781Qu7at57eRMNU9
+         YJIHUYyWVXe6j/V21gyuieyQ19KD7x6TTmQl8Ifb4KJ3BMvPPMM38eji+0U+JKisOH2+
+         +LMbroPYbmaD+plwMPZEL66lKVNr4T+krpPxt5/k7ZnfJmL2XJc7zugG55x8FpVEdtdH
+         S+Tr0hNN9nNwgg2/zdKqddTePhXej9FBI2XKCb9gaZMFlHVRU4D+/6qCBBK6TSHNiVp6
+         Wd0A==
+X-Gm-Message-State: APt69E0OGLMPYxEjc2/N8cvoTt3UqzFhuPp1XY3EdaANq6N6gAraat9M
+        hRUrbCyyc9v+1YkacvSgI4WGLA==
+X-Google-Smtp-Source: ADUXVKJcZVEaT63f3mhAHe+VCsHp6aHaUIkOWAJmInMYXBVvOiUtesmmj8AczGSVu0XpURp0bDNfxQ==
+X-Received: by 2002:a63:2581:: with SMTP id l123-v6mr1114438pgl.226.1529474321074;
+        Tue, 19 Jun 2018 22:58:41 -0700 (PDT)
 Received: from localhost ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
-        by smtp.gmail.com with ESMTPSA id v27-v6sm2346691pfi.23.2018.06.19.22.53.05
+        by smtp.gmail.com with ESMTPSA id e68-v6sm2505326pfl.65.2018.06.19.22.58.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 22:53:05 -0700 (PDT)
+        Tue, 19 Jun 2018 22:58:40 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Doug Anderson <dianders@chromium.org>
+To:     Vinod Koul <vinod.koul@linaro.org>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <CAD=FV=VjqvPQA5jTUyiMzmetk2br-4fiPQdM4cVzb6ivWcta9A@mail.gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <20180618205255.246104-1-swboyd@chromium.org>
- <20180618205255.246104-3-swboyd@chromium.org>
- <CAD=FV=VpFR4hpREnWpvG2MQAONheKtNfLkyNM8-AFXMcGD7OPQ@mail.gmail.com>
- <152944311714.16708.13638961630238512631@swboyd.mtv.corp.google.com>
- <CAD=FV=VjqvPQA5jTUyiMzmetk2br-4fiPQdM4cVzb6ivWcta9A@mail.gmail.com>
-Message-ID: <152947398496.16708.16250874897441295979@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180619095430.26358-3-vkoul@kernel.org>
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, vinod.koul@linaro.org,
+        Vinod Koul <vkoul@kernel.org>
+References: <20180619095430.26358-1-vkoul@kernel.org>
+ <20180619095430.26358-3-vkoul@kernel.org>
+Message-ID: <152947431955.16708.15247307054260887941@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
-Date:   Tue, 19 Jun 2018 22:53:04 -0700
+Subject: Re: [PATCH v2 2/2] hwrng: msm - Add support for prng v2
+Date:   Tue, 19 Jun 2018 22:58:39 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Doug Anderson (2018-06-19 14:38:57)
-> On Tue, Jun 19, 2018 at 2:18 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> > Quoting Doug Anderson (2018-06-18 16:54:49)
-> >>
-> >> Is there a reason why you'd want to return 0 instead of some sort of
-> >> error code?  Wouldn't you want to know that this pin can't be a GPIO?
-> >
-> > On ACPI there aren't any functions and thus all pins are GPIO mode and
-> > only GPIO mode if they're used as GPIOs. At least that's my
-> > understanding of how the ACPI version of this driver works.
+Quoting Vinod Koul (2018-06-19 02:54:30)
+> Qcom 8996 and later chips support prng v2 which requires to
+> implement only .read callback for hwrng.
 > =
 
-> OK.  I have no understanding of how the ACPI version of this driver
-> works, so your understanding is much more likely to be right than
-> mine.  I guess this is just "pinctrl-qdf2xxx.c"?
-> =
+> This version of chip has multiple Execution Environments (EE) and
+> secure world is typically responsible for configuring the prng.
 
+Sometimes secure world is not configuring the rng though. I prefer we
+have a DT flag for this to indicate if secure world has configured it or
+not and then skip the init logic when the bool property is present in
+DT. Then the DT property can be set on firmwares that are making things
+blow up when we try to read the 'configured' register. I'd also file a
+bug to qcom to tell them to unlock that config register for reads so
+that things can work simpler, but who knows how that will work out.
 
-Yes that's the single ACPI driver.
-
-> =
-
-> >> Another non-ACPI example is sdc2 on sdm845 and it seems like you'd
-> >> want to know if someone tried to set one of those as a GPIO.
-> >>
-> >> ...oh, but I guess ufs_reset also has no funcs but it still probably
-> >> wants to use the GPIO framework to write something.  Hrmmm...  Maybe
-> >> check if either in_bit or out_bit is not -1?
-> >
-> > ufs_reset and sdc2 aren't in the GPIO chip's numberspace so I don't
-> > think we need to care? At least I can't convince myself that those pins
-> > would eventually call into the this function. We could check if offset
-> > is greater than ngpios for the chip but that seems useless if higher
-> > layers are handling this already.
-> =
-
-> Ah, I see what you mean.  These pins do have numbers in the code:
-> =
-
-> PINCTRL_PIN(150, "SDC2_CLK"),
-> PINCTRL_PIN(151, "SDC2_CMD"),
-> PINCTRL_PIN(152, "SDC2_DATA"),
-> PINCTRL_PIN(153, "UFS_RESET"),
-> =
-
-> ...but those are effectively made up numbers and they are all past the
-> "ngpios" (150).  ...and the higher level code seems to be already
-> checking that.
-
-Right. Hopefully that saves us from this trouble.
-
-> =
-
-> =
-
-> OK, thought I've already proven my cluelessness about this driver,
-> FWIW this patch makes sense to me now so FWIW:
-> =
-
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> =
-
-
-Thanks!
+It really sounds like the hardware isn't actually different, just the
+firmware has decided to be more strict about making reads fail now.
 
