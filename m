@@ -6,151 +6,159 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2B2C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DEFC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A69D92083D
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EA632086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 01:43:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HDfYVtO2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A69D92083D
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KOWwvPqT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA632086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754200AbeFTBhL (ORCPT
+        id S1753970AbeFTBnC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 21:37:11 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:58376 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753917AbeFTBhH (ORCPT
+        Tue, 19 Jun 2018 21:43:02 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:60370 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752171AbeFTBm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 21:37:07 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5K1XNkF035750;
-        Wed, 20 Jun 2018 01:37:06 GMT
+        Tue, 19 Jun 2018 21:42:59 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5K1chkC172727;
+        Wed, 20 Jun 2018 01:42:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=cyfOJj/q4HDMe6/eFoIHL5prKv3ynLX42mHJdtwjUbk=;
- b=HDfYVtO2cbT9xy3yOLU2+cMsa6R18e3R35hx/B+nf41qHU+5ea+o8ZOZwXcUvE/DTG5M
- xE4R0EMrsouW8g2S+T4o2ufkINKcmlMpKkwR6mdoKH4PGlqR1l8jZwXl78LzTMR95srz
- yG/jIsCEzpqgcne9IWQlDZKpRkw8T1EuIFVoqi4fs7+dYAMqFTzIrdi1N5skl9juaBi7
- IrNFwSd+IXZBl+YzEPUiKWMXrQYKd9NQ9mAwkCzzFfQE4yMTyWmdnZyuh80hGmISfYWu
- DvsarjN3a+4tZ5Szp5V/fa3EQdyHpNsOrV7wzLMebljVjOyHFW4itT5TUZjzV+5nKKyv hA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwtfdq-1
+ bh=9AWLfj1fk2iTRypmB2YRiG5f4QzLMMkB1PgM+CfZsmM=;
+ b=KOWwvPqT7JRf+wMKoM93TgTP1DqSI5ggAB8bsH7/rlXBWNV0n4mrix7eW2fpgXdO5X8V
+ vhHcNTVzo8RijBMv9QjAh7EL3/mVoKqZ6+nKOLVng5I8Y9sC0FhWqaDXthIus5VdH7Zp
+ 8wDwXBMU0xiIHePwgrSWwqTmczE+PTpXMRLFFm7XPonN4kQtwy5aPqrdQuxX7nFigq52
+ JwLK31vf9FiOB0WhiLx8Rv9UTsZPULMKwodwJCGTx6QfOYYdkv1g9bFV62hito4tPemZ
+ WqWWjKbZ/wPCJ9l02TYAe8aRUXb8qZtSkt6Q2CzkN/jNYVHR0yHGFVgGJvQlsA+4uIGo YA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2jmt01jh3w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 01:37:06 +0000
+        Wed, 20 Jun 2018 01:42:52 +0000
 Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5K1b5nU009976
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5K1gp2N014028
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 01:37:05 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5K1b57n020449;
-        Wed, 20 Jun 2018 01:37:05 GMT
-Received: from [10.182.69.179] (/10.182.69.179)
+        Wed, 20 Jun 2018 01:42:51 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5K1gonj022414;
+        Wed, 20 Jun 2018 01:42:50 GMT
+Received: from [10.159.143.233] (/10.159.143.233)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Jun 2018 18:37:04 -0700
-Subject: Re: [PATCH] blk-mq: use blk_mq_timeout_work to limit the max timeout
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-References: <1529391610-1654-1-git-send-email-jianchao.w.wang@oracle.com>
- <884a5cbb5622ca5c890585a8d5dff0e3a1d60cfe.camel@wdc.com>
- <dd0484f6-ad41-5607-107f-4c487a739478@oracle.com>
- <08b5a3e94f2265815a98abae7a8dde0894512d4e.camel@wdc.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <e75238d6-aefb-3673-1ce8-991f7fedfea6@oracle.com>
-Date:   Wed, 20 Jun 2018 09:37:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        with ESMTP ; Tue, 19 Jun 2018 18:42:49 -0700
+Subject: Re: [PATCH] selftests: net: add config fragments
+To:     Anders Roxell <anders.roxell@linaro.org>, davem@davemloft.net,
+        shuah@kernel.org, fw@strlen.de
+Cc:     netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180619164111.30785-1-anders.roxell@linaro.org>
+From:   Shannon Nelson <shannon.nelson@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <f8995ed8-7ff8-d5fd-b2e0-5664510a4972@oracle.com>
+Date:   Tue, 19 Jun 2018 18:42:47 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <08b5a3e94f2265815a98abae7a8dde0894512d4e.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180619164111.30785-1-anders.roxell@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806200015
+ engine=8.0.1-1805220000 definitions=main-1806200016
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/20/2018 09:35 AM, Bart Van Assche wrote:
-> On Wed, 2018-06-20 at 09:28 +0800, jianchao.wang wrote:
->> Hi Bart
->>
->> Thanks for your kindly response.
->>
->> On 06/19/2018 11:18 PM, Bart Van Assche wrote:
->>> On Tue, 2018-06-19 at 15:00 +0800, Jianchao Wang wrote:
->>>> blk_rq_timeout is needed to limit the max timeout value, otherwise,
->>>> a idle hctx cannot be deactivated timely in shared-tag case.
->>>>
->>>> Fixes: 12f5b931 (blk-mq: Remove generation seqeunce)
->>>> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
->>>> ---
->>>>  block/blk-mq.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>>> index 70c65bb..ccebe7b 100644
->>>> --- a/block/blk-mq.c
->>>> +++ b/block/blk-mq.c
->>>> @@ -868,7 +868,7 @@ static void blk_mq_timeout_work(struct work_struct *work)
->>>>  	blk_mq_queue_tag_busy_iter(q, blk_mq_check_expired, &next);
->>>>  
->>>>  	if (next != 0) {
->>>> -		mod_timer(&q->timeout, next);
->>>> +		mod_timer(&q->timeout, blk_rq_timeout(round_jiffies_up(next)));
->>>>  	} else {
->>>>  		/*
->>>>  		 * Request timeouts are handled as a forward rolling timer. If
->>>
->>> Hello Jianchao,
->>>
->>> What makes you think that it would be necessary to call blk_rq_timeout() from
->>> blk_mq_timeout_work()? Have you noticed that blk_add_timer() already calls that
->>> function? I think it is not necessary to call blk_rq_timeout() from
->>> blk_mq_timeout_work() because it is guaranteed in that function that the next
->>> timeout is less than BLK_MAX_TIMEOUT jiffies in the future.
->>>
->>
->> blk_add_timer will not re-arm the timer if the timer's expire value is before the new rq's expire value.
->>
->> Let's look at the following scenario.
->>
->> 0                    +30s
->>> __________________|___|
->>
->> T0                T1   T2
->>
->> T1 = T2 - 1 jiffies 
->>
->> T0:  rq_a is issued and q->timer is armed and will expire at T2
->>      then rq_a is completed.
->> T1:  rq_b is issued and q->timer is not re-armed, because its next expire time is T2 < (T1 + 30s)
->>
->> T2:  if rq_b have not been completed when timer expires at T2, timer would be re-armed based on the rq_b 
->>      If we don't have blk_rq_timeout here, the next expire time is about T2 + 30s.
+On 6/19/2018 9:41 AM, Anders Roxell wrote:
+> Add fragments to pass bridge and vlan tests.
 > 
-> Hello Jianchao,
+> Fixes: 33b01b7b4f19 ("selftests: add rtnetlink test script")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
 > 
-> I disagree with the last sentence above. I think for your example blk_mq_req_expired()
-> will set next to T1 + 30s instead of T2 + 30s.
+> Hi,
 > 
-
-Would you please explain the reason ?
-
-Thanks
-Jianchao
-
-> Bart.
+> net/rtnetlink.sh still fails on tc hbt hierarchy, addrlabel and ipsec:
+> Error: Specified qdisc not found.
+> RTNETLINK answers: No such file or directory
+> Error: Parent Qdisc doesn't exists.
+> We have an error talking to the kernel, -1
+> Error: Parent Qdisc doesn't exists.
+> We have an error talking to the kernel, -1
+> Error: Parent Qdisc doesn't exists.
+> We have an error talking to the kernel, -1
+> Error: Parent Qdisc doesn't exists.
+> We have an error talking to the kernel, -1
+> Error: Parent Qdisc doesn't exists.
+> We have an error talking to the kernel, -1
+> Error: Parent Qdisc doesn't exists.
+> We have an error talking to the kernel, -1
+> Error: Invalid handle.
+> FAIL: tc htb hierarchy
 > 
+> FAIL: ipv6 addrlabel
+> 
+> FAIL: can't add fou port 7777, skipping test
+> RTNETLINK answers: Operation not supported
+> FAIL: can't add macsec interface, skipping test
+> RTNETLINK answers: Protocol not supported
+> RTNETLINK answers: No such process
+> RTNETLINK answers: No such process
+> ./rtnetlink.sh: line 527:  5356 Terminated              ip x m >
+> $tmpfile
+> FAIL: ipsec
+> 
+> 
+> I'm using iproute2 tag: 4.17 and tried the qdisc command from the
+> function kci_test_tc in net/rtnetlink.sh:
+> $ tc qdisc add dev lo root handle 1: htb
+> Error: Specified qdisc not found.
+> 
+> For kci_test_addrlabel it fails on this row:
+> ip addrlabel list |grep -q "prefix dead::/64 dev lo label 1"
+> 
+> Any idea why these three fails?
+
+
+The "Terminated" line is there because "ip x m" had been put into the 
+background, and at the end of the ipsec test it is killed.  I can try to 
+play some games with exec and redirection to make that go away.
+
+The "FAIL: ipsec" is partly because the test isn't smart enough to look 
+to see if there is any offload actually available to test.  I'm working 
+on a patch to netdevsim to add the ipsec-offload in order to have a 
+better test.  And yes, this should say "ipsec-offload", not "ipsec".
+
+I don't know about the qdisk or addrlabel issues.
+
+Cheers,
+sln
+
+
+> 
+> Cheers,
+> Anders
+> 
+>   tools/testing/selftests/net/config | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/net/config b/tools/testing/selftests/net/config
+> index 7ba089b33e8b..cd3a2f1545b5 100644
+> --- a/tools/testing/selftests/net/config
+> +++ b/tools/testing/selftests/net/config
+> @@ -12,3 +12,5 @@ CONFIG_NET_IPVTI=y
+>   CONFIG_INET6_XFRM_MODE_TUNNEL=y
+>   CONFIG_IPV6_VTI=y
+>   CONFIG_DUMMY=y
+> +CONFIG_BRIDGE=y
+> +CONFIG_VLAN_8021Q=y
 > 
