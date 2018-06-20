@@ -2,134 +2,258 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A52C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF37C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A71F20871
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:19:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vcx4sEOZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A71F20871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1285B20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:21:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1285B20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753321AbeFTLTn (ORCPT
+        id S1752983AbeFTLVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 07:19:43 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33754 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbeFTLTl (ORCPT
+        Wed, 20 Jun 2018 07:21:11 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:46347 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752102AbeFTLVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 07:19:41 -0400
-Received: by mail-pl0-f66.google.com with SMTP id 6-v6so1614397plb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 04:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7L79PgrVQrsNXsPnNgVGXh5KwH2F2N+9XGWmUwwPtJI=;
-        b=vcx4sEOZYhgTpG0rthlcphJPpmjWjyzURYtEHMvXviu54R+ExkKKSW/5dLK4iUWb2B
-         vHmT8GCDPUAXv25lJ6PYbFhIOpmUZkir+rXO/tKURTVqqzjVbBcZv56WLCbCe4+qGPKF
-         sTTbZqclZynhttwq7TXRGIZbFTcq9t5rWzAjE89Xtjb0kU2SL09qfJHFQR5iGqwAZb/s
-         KLbx5yipO/K7ALtURwhILTKQit8UmFuzssSEq4Aou/YJCx/PlBxCmURF7x1U2x94qMrm
-         qQxJFKQORyTY8pi2al4YUxmJu/gpcxEqTscfocZcqUnU05gBHoyW49NCiV7qSbsOWx7l
-         7WVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7L79PgrVQrsNXsPnNgVGXh5KwH2F2N+9XGWmUwwPtJI=;
-        b=giWI/1N6IqAhHOrljBZMIYRqmgAu/Ljv8TMk1fHHMbO9fo22QPViOUSELsdyypBKKx
-         cDZBCIvJvdpp14Vtot2yGVMMUxw6nit+8nA5hK2Qxtx/uL8NOHPqc3IEw9NUiiqnMOTm
-         bbTGbjzr/aZ+ndYAkaMh0L2DZ+Do+PanOhBSpuKIlg5mIoec+zR/LS4wEaLvO20kXRlL
-         iIzftu5AloYj9do5wFN559N0T4KZvzm+1oBBuRw6hlyl04SH9Xjq2y4WsGLmr93AcL6D
-         UIDDvFXps3ONITkcXUcYP8g8WbwR9S1VSHv+3CSKIoob+VTIfc3ONQ/iw/B82iwT3ChW
-         pvSA==
-X-Gm-Message-State: APt69E2yagGnyk62vYVCLjGGAc0v81Q62nHmS2C5iTrbBDiUc5jZMNQt
-        6+ez9fpb0hHMTbg2ym4tcFs=
-X-Google-Smtp-Source: ADUXVKK7vDxQFx1c/Gvy5U63wF2Myoz88oRpiR/XQP5z9pZ0BYecLqcHJ0J7T3cDdngNCahcXo3mpw==
-X-Received: by 2002:a17:902:e187:: with SMTP id cd7-v6mr23564061plb.166.1529493581290;
-        Wed, 20 Jun 2018 04:19:41 -0700 (PDT)
-Received: from localhost ([110.70.59.159])
-        by smtp.gmail.com with ESMTPSA id t6-v6sm2570540pgp.3.2018.06.20.04.19.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 04:19:39 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 20:19:36 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20180620111936.GE444@jagdpanzerIV>
-References: <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
- <20180517112135.GB20796@jagdpanzerIV>
- <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
- <20180524021451.GA23443@jagdpanzerIV>
- <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
- <CACT4Y+ZGSefrYL9xtQs=yPMRNFsOUumuJXsShJPhCOBSLySxuw@mail.gmail.com>
- <20180620083126.GA477@jagdpanzerIV>
- <CACT4Y+YMubTm1xduj+XCbQnNwQxYFLjBT33cFKisN1HyeaBpZw@mail.gmail.com>
- <20180620090413.GA444@jagdpanzerIV>
- <CACT4Y+a6nUqdpSyYGGcXKAgVbcw+uQOz2kYx8tUS+8T5-bzqkg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+a6nUqdpSyYGGcXKAgVbcw+uQOz2kYx8tUS+8T5-bzqkg@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 20 Jun 2018 07:21:09 -0400
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5KBKsDa061699;
+        Wed, 20 Jun 2018 20:20:54 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Wed, 20 Jun 2018 20:20:54 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5KBKnuQ061680
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 20 Jun 2018 20:20:54 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     linux-mm@kvack.org
+Cc:     mhocko@kernel.org, rientjes@google.com, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM killer.
+Date:   Wed, 20 Jun 2018 20:20:38 +0900
+Message-Id: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/20/18 11:30), Dmitry Vyukov wrote:
-> 
-> https://gist.githubusercontent.com/dvyukov/1528e86e5139f2fd1bf9902398d48298/raw/3b42148554eefed210f1e626d5befd50405c5487/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/6e08ac521f3e19534970ed97aeee1603/raw/0f0bb361902de94e7ee331ac500a3ceebf812c22/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/6e9db2313e48773ad1cd861da8020008/raw/d5b7c023fc8a38c72b1cf8bb1da85fb1c31cea5f/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/3d1bda4c690414ac027de1da45759751/raw/2c68980eabf4f6be24060e807a75f2d3570b5a42/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/9b8831e9ac73ffafa111a33ad40c5667/raw/f4097fbea8f89b25a282a6ef7e648145e10ae4b7/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/d78a3187a1b4e004820e92efcb16f9e0/raw/5530bcbf009c3fba3c581b2d24c523c673c6ef12/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/da1e42436af9ad2afc7de49f2d503510/raw/7dd4cbcc651c5b87122f066a3c689999ae8c4121/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/4571b94bd8cbd78d759412c560fa395c/raw/964c73fc993fc8a9000571e0b7618000584f3638/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/b6deac5faa958ae3733413b34dd5feed/raw/c4da219e284f7fc55da8c3c3af623a87f31bf653/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/2f54c6a2e45347ea76d9c5ce3c0ff091/raw/45f4873898ec8e0d9aa16b9c5c63a85410fd05e0/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/96cb39e29124dbbe2a65a91ec7a5639e/raw/aa8f7b2b1dfa5b8bb8cf93d8a821ca9938e8fc54/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/424da8282d5b28f8be10eab595d37444/raw/acc2fb1ececc1ea9a8215213f7e37e08b524c096/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/b07f37720c632d6d56ae67d95e5599b3/raw/8624ba47d6eb4e7d4d58e3ae1242ebe6cc46d361/gistfile1.txt
-> https://gist.githubusercontent.com/dvyukov/bc24a7b92289ec04587fb29fc1085045/raw/3136e9262ee2233b5ab369a4a82e83953fc2d8a2/gistfile1.txt
+Sleeping with oom_lock held can cause AB-BA lockup bug because
+__alloc_pages_may_oom() does not wait for oom_lock. Since
+blocking_notifier_call_chain() in out_of_memory() might sleep, sleeping
+with oom_lock held is currently an unavoidable problem.
 
+As a preparation for not to sleep with oom_lock held, this patch brings
+OOM notifier callbacks to outside of OOM killer, with two small behavior
+changes explained below.
 
-Just a small remark
+One is that this patch makes it impossible for SysRq-f and PF-OOM to
+reclaim via OOM notifier. But such change should be tolerable because
+"we unlikely try to use SysRq-f for reclaiming memory via OOM notifier
+callbacks" and "pagefault_out_of_memory() will be called when OOM killer
+selected current thread as an OOM victim after OOM notifier callbacks
+already failed to reclaim memory".
 
-I randomly picked some links, and at least in several reports I saw:
+The other is that this patch makes it possible to reclaim memory via OOM
+notifier after OOM killer is disabled (that is, suspend/hibernate is in
+progress). But such change should be safe because of pm_suspended_storage()
+check.
 
-** 4495 printk messages dropped ** [   50.830930]  [<ffffffff8123ab47>] do_raw_write_lock+0xc7/0x1d0
-** 3816 printk messages dropped ** [   50.839887]  [<ffffffff814fb353>] SyS_read+0xd3/0x1c0
-** 3497 printk messages dropped ** [   50.848107]  [<ffffffff81003044>] ? lockdep_sys_exit_thunk+0x12/0x14
-** 4057 printk messages dropped ** [   50.857615] 	run_ksoftirqd+0x20/0x60
-** 2855 printk messages dropped ** [   50.864318]  [<ffffffff814fb353>] SyS_read+0xd3/0x1c0
-** 3490 printk messages dropped ** [   50.872518]  [<ffffffff815bee10>] ? fsnotify+0xe40/0xe40
-** 3600 printk messages dropped ** [   50.880974] 	SyS_fcntl+0x5be/0xc70
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ include/linux/oom.h |  1 +
+ mm/oom_kill.c       | 35 ++++++++++++++++++------
+ mm/page_alloc.c     | 76 +++++++++++++++++++++++++++++++----------------------
+ 3 files changed, 73 insertions(+), 39 deletions(-)
 
-This will not get any better if we have printk context tracking. The
-problem here is that we lose messages: your console is significantly slower
-than your CPUs. So while one CPU is doing its best printing pending logbuf
-messages to a slow console, the rest of CPUs don't hesitate to append new
-messages (printk -> log_store). Since logbuf is limited in size - we wrap
-around and this results in lost messages.
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 6adac11..085b033 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -101,6 +101,7 @@ extern unsigned long oom_badness(struct task_struct *p,
+ 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
+ 		unsigned long totalpages);
+ 
++extern unsigned long try_oom_notifier(void);
+ extern bool out_of_memory(struct oom_control *oc);
+ 
+ extern void exit_oom_victim(void);
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 84081e7..2ff5db2 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -1010,6 +1010,33 @@ int unregister_oom_notifier(struct notifier_block *nb)
+ EXPORT_SYMBOL_GPL(unregister_oom_notifier);
+ 
+ /**
++ * try_oom_notifier - Try to reclaim memory from OOM notifier list.
++ *
++ * Returns non-zero if notifier callbacks released something, zero otherwise.
++ */
++unsigned long try_oom_notifier(void)
++{
++	static DEFINE_MUTEX(oom_notifier_lock);
++	unsigned long freed = 0;
++
++	/*
++	 * Since OOM notifier callbacks must not depend on __GFP_DIRECT_RECLAIM
++	 * && !__GFP_NORETRY memory allocation, waiting for mutex here is safe.
++	 * If lockdep reports possible deadlock dependency, it will be a bug in
++	 * OOM notifier callbacks.
++	 *
++	 * If SIGKILL is pending, it is likely that current thread was selected
++	 * as an OOM victim. In that case, current thread should return as soon
++	 * as possible using memory reserves.
++	 */
++	if (mutex_lock_killable(&oom_notifier_lock))
++		return 0;
++	blocking_notifier_call_chain(&oom_notify_list, 0, &freed);
++	mutex_unlock(&oom_notifier_lock);
++	return freed;
++}
++
++/**
+  * out_of_memory - kill the "best" process when we run out of memory
+  * @oc: pointer to struct oom_control
+  *
+@@ -1020,19 +1047,11 @@ int unregister_oom_notifier(struct notifier_block *nb)
+  */
+ bool out_of_memory(struct oom_control *oc)
+ {
+-	unsigned long freed = 0;
+ 	enum oom_constraint constraint = CONSTRAINT_NONE;
+ 
+ 	if (oom_killer_disabled)
+ 		return false;
+ 
+-	if (!is_memcg_oom(oc)) {
+-		blocking_notifier_call_chain(&oom_notify_list, 0, &freed);
+-		if (freed > 0)
+-			/* Got some memory back in the last second. */
+-			return true;
+-	}
+-
+ 	/*
+ 	 * If current has a pending SIGKILL or is exiting, then automatically
+ 	 * select it.  The goal is to allow it to allocate so that it may
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 1521100..c72ef1e 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3447,10 +3447,50 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
+ 	return page;
+ }
+ 
++static inline bool can_oomkill(gfp_t gfp_mask, unsigned int order,
++			       const struct alloc_context *ac)
++{
++	/* Coredumps can quickly deplete all memory reserves */
++	if (current->flags & PF_DUMPCORE)
++		return false;
++	/* The OOM killer will not help higher order allocs */
++	if (order > PAGE_ALLOC_COSTLY_ORDER)
++		return false;
++	/*
++	 * We have already exhausted all our reclaim opportunities without any
++	 * success so it is time to admit defeat. We will skip the OOM killer
++	 * because it is very likely that the caller has a more reasonable
++	 * fallback than shooting a random task.
++	 */
++	if (gfp_mask & __GFP_RETRY_MAYFAIL)
++		return false;
++	/* The OOM killer does not needlessly kill tasks for lowmem */
++	if (ac->high_zoneidx < ZONE_NORMAL)
++		return false;
++	if (pm_suspended_storage())
++		return false;
++	/*
++	 * XXX: GFP_NOFS allocations should rather fail than rely on
++	 * other request to make a forward progress.
++	 * We are in an unfortunate situation where out_of_memory cannot
++	 * do much for this context but let's try it to at least get
++	 * access to memory reserved if the current task is killed (see
++	 * out_of_memory). Once filesystems are ready to handle allocation
++	 * failures more gracefully we should just bail out here.
++	 */
++
++	/* The OOM killer may not free memory on a specific node */
++	if (gfp_mask & __GFP_THISNODE)
++		return false;
++
++	return true;
++}
++
+ static inline struct page *
+ __alloc_pages_may_oom(gfp_t gfp_mask, unsigned int order,
+ 	const struct alloc_context *ac, unsigned long *did_some_progress)
+ {
++	const bool oomkill = can_oomkill(gfp_mask, order, ac);
+ 	struct oom_control oc = {
+ 		.zonelist = ac->zonelist,
+ 		.nodemask = ac->nodemask,
+@@ -3462,6 +3502,10 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
+ 
+ 	*did_some_progress = 0;
+ 
++	/* Try to reclaim via OOM notifier callback. */
++	if (oomkill)
++		*did_some_progress = try_oom_notifier();
++
+ 	/*
+ 	 * Acquire the oom lock.  If that fails, somebody else is
+ 	 * making progress for us.
+@@ -3485,37 +3529,7 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
+ 	if (page)
+ 		goto out;
+ 
+-	/* Coredumps can quickly deplete all memory reserves */
+-	if (current->flags & PF_DUMPCORE)
+-		goto out;
+-	/* The OOM killer will not help higher order allocs */
+-	if (order > PAGE_ALLOC_COSTLY_ORDER)
+-		goto out;
+-	/*
+-	 * We have already exhausted all our reclaim opportunities without any
+-	 * success so it is time to admit defeat. We will skip the OOM killer
+-	 * because it is very likely that the caller has a more reasonable
+-	 * fallback than shooting a random task.
+-	 */
+-	if (gfp_mask & __GFP_RETRY_MAYFAIL)
+-		goto out;
+-	/* The OOM killer does not needlessly kill tasks for lowmem */
+-	if (ac->high_zoneidx < ZONE_NORMAL)
+-		goto out;
+-	if (pm_suspended_storage())
+-		goto out;
+-	/*
+-	 * XXX: GFP_NOFS allocations should rather fail than rely on
+-	 * other request to make a forward progress.
+-	 * We are in an unfortunate situation where out_of_memory cannot
+-	 * do much for this context but let's try it to at least get
+-	 * access to memory reserved if the current task is killed (see
+-	 * out_of_memory). Once filesystems are ready to handle allocation
+-	 * failures more gracefully we should just bail out here.
+-	 */
+-
+-	/* The OOM killer may not free memory on a specific node */
+-	if (gfp_mask & __GFP_THISNODE)
++	if (!oomkill)
+ 		goto out;
+ 
+ 	/* Exhausted what can be done so it's blame time */
+-- 
+1.8.3.1
 
-	-ss
