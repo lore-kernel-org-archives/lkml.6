@@ -2,110 +2,161 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D711C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04D0C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED01A20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:06:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A371F20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:06:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1f0RKoH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED01A20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b2WivrWZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A371F20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753594AbeFTNGe (ORCPT
+        id S1753931AbeFTNGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:06:34 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43232 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751422AbeFTNGc (ORCPT
+        Wed, 20 Jun 2018 09:06:40 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57376 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752838AbeFTNGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:06:32 -0400
-Received: by mail-pf0-f196.google.com with SMTP id y8-v6so1580524pfm.10
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 06:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FzoI19nFiwY9NnsXAKsJxmG+GCMKkJ4j2eX8OxgTwBw=;
-        b=c1f0RKoHHmVmQN1aekS1z1NeL2sPGiNwJXIGWfuOw/hin973PYeF9imfzidzg9qAZ9
-         Ggh7ehGEBDrJSal2I9e08zdD81hkBqCiUmZqLuoN2Inr4fxMt4hKF1DkZr9lMXGVTgma
-         EUaCtHsB4ScFkNZr/tYwE+8BlNmmbfzT47rX+M/srWi2AigDeSEzMYqO/B/JnN2jU2IM
-         27L1AWdQibxmAfwDOdtRsJ6neJjh0lXBF8e1bELsHockyhb6RA4Wzw/4mV2tDwZVSVMq
-         vE/eyAQNHtvF4yNU7SHMroimkVsRf8c2rITcmAkCFA4UphVeeB341QJ274qxxGs6KkJT
-         7pAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FzoI19nFiwY9NnsXAKsJxmG+GCMKkJ4j2eX8OxgTwBw=;
-        b=SXnEm5VcwXzK6SOZ/S3inUQP/7P8E7Zc620EeFPUVqwWhg2piRNvp2dLe9zXLQVuch
-         aYfOf6laCu0XJHtfB0UkKgoZ+P7FkeX7gBkAvkJ6+eV23ng+6I9xjdAbVljmMeFBEhIY
-         VMcmHuld+1Xa9npCrbhqeGledR0nKhjQGJtoUAyJlB3ivn0zw9VSENpSz48p42etWRPD
-         HQe2+7X9UbC8j989lKzOYcmK3lvv6kiLZz1DPtpqSIVBtlHFwkpkIihBtMj+yjuSNJMp
-         k6bHzkjlMyuQyRWH4fczOUtZEbW/fLBcWOrfLT7usri9hBz9p32ivvIr7G6IDfOJNZwK
-         5bxg==
-X-Gm-Message-State: APt69E0lgk8zQoCl1jpAJBVFEMNq3dGtUSNum/jpFloNO5hkPrsZjLUL
-        z4O40SyntS743r8MlAumAcA=
-X-Google-Smtp-Source: ADUXVKLCcq4nMb7/GP6aLHhnQ5TxTnslGLcFw0leafen+CqDsS1hD50SYHozti0OGhan4WcSPjRQ7Q==
-X-Received: by 2002:a65:5143:: with SMTP id g3-v6mr18595105pgq.190.1529499991880;
-        Wed, 20 Jun 2018 06:06:31 -0700 (PDT)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id 63-v6sm4994390pfo.1.2018.06.20.06.06.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 06:06:30 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 22:06:28 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] printk: inject caller information into the body of
- message
-Message-ID: <20180620130628.GA1000@tigerII.localdomain>
-References: <20180524021451.GA23443@jagdpanzerIV>
- <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
- <CACT4Y+ZGSefrYL9xtQs=yPMRNFsOUumuJXsShJPhCOBSLySxuw@mail.gmail.com>
- <20180620083126.GA477@jagdpanzerIV>
- <CACT4Y+YMubTm1xduj+XCbQnNwQxYFLjBT33cFKisN1HyeaBpZw@mail.gmail.com>
- <20180620090413.GA444@jagdpanzerIV>
- <20180620091541.GB444@jagdpanzerIV>
- <CACT4Y+bcp4fSBBq3F86T-C4+n-YkeXUGMqpvkJ6vj6mK-TU2EA@mail.gmail.com>
- <20180620110759.GD444@jagdpanzerIV>
- <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
+        Wed, 20 Jun 2018 09:06:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=TJEh0uTDOlXwZQeHzFDMF3QbEXH8AiztTc3Y8g2InN4=; b=b2WivrWZGkiR4DrV5qjWRQ0Cj
+        h9JkVnRXnRtxPBHANu/gOoZ9yH9XU7AKeUcPhSCbmg5iPL+2UyToOC0y2DR1rcSAwazTApkFm/NTj
+        3YBU+2ga3Vw2m/rLtC/x5O2jqGYXRbD+o4jV1oampgOLAgMAfqlVmGB8IPJCkBjCTb//84VAbPbgu
+        24TDtFxWaIuCyLTB70Le++dIKtSATqk/zcqPi2futjXWfrRaJtSWwUKyaHlfnMD0vBV08hve54acl
+        laiplkrcjPPnYNIvbwchM48SISug4zX0v/DYhKOxeudIvb4FYp7QnuJBOBP94u7mJ72ueKaOC0mfM
+        IMx/nPE5A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVcod-00053l-CC; Wed, 20 Jun 2018 13:06:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AFDDC2029FA0A; Wed, 20 Jun 2018 15:06:24 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 15:06:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Subject: Re: [PATCH v5 9/9] x86: jump-labels: use macros instead of inline
+ assembly
+Message-ID: <20180620130624.GC2530@hirez.programming.kicks-ass.net>
+References: <20180619194854.69486-1-namit@vmware.com>
+ <20180619194854.69486-10-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
+In-Reply-To: <20180619194854.69486-10-namit@vmware.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/20/18 13:32), Dmitry Vyukov wrote:
-> > So, if we could get rid of pr_cont() from the most important parts
-> > (instruction dumps, etc) then I would just vote to leave pr_cont()
-> > alone and avoid any handling of it in printk context tracking. Simply
-> > because we wouldn't care about pr_cont(). This also could simplify
-> > Tetsuo's patch significantly.
-> 
-> Sounds good to me.
+On Tue, Jun 19, 2018 at 12:48:54PM -0700, Nadav Amit wrote:
+> diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+> index 8c0de4282659..f321a50e6727 100644
+> --- a/arch/x86/include/asm/jump_label.h
+> +++ b/arch/x86/include/asm/jump_label.h
+> @@ -108,6 +99,26 @@ struct jump_entry {
+>  	.popsection
+>  .endm
+>  
+> +.macro STATIC_BRANCH_NOP l_yes:req key:req branch:req
+> +1:
+> +	.byte STATIC_KEY_INIT_NOP
+> +	.pushsection __jump_table, "aw"
+> +	_ASM_ALIGN
+> +	_ASM_PTR 1b, \l_yes, \key + \branch
+> +	.popsection
+> +.endm
+> +
+> +.macro STATIC_BRANCH_JMP l_yes:req key:req branch:req
+> +1:
+> +	.byte 0xe9
+> +	.long \l_yes - 2f
+> +2:
+> +	.pushsection __jump_table, "aw"
+> +	_ASM_ALIGN
+> +	_ASM_PTR 1b, \l_yes, \key + \branch
+> +	.popsection
+> +.endm
+> +
+>  #endif	/* __ASSEMBLY__ */
+>  
+>  #endif
 
-Awesome. If you and Fengguang can combine forces and lead the
-whole thing towards "we couldn't care of pr_cont() less", it
-would be really huuuuuge. Go for it!
 
-	-ss
+This also allows the below, the old macros were slightly easier to
+understand, but not in wide use, in fact, only a single user, so I see
+no point in preserving them.
+
+---
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -67,38 +67,6 @@ struct jump_entry {
+ 
+ #else	/* __ASSEMBLY__ */
+ 
+-.macro STATIC_JUMP_IF_TRUE target, key, def
+-.Lstatic_jump_\@:
+-	.if \def
+-	/* Equivalent to "jmp.d32 \target" */
+-	.byte		0xe9
+-	.long		\target - .Lstatic_jump_after_\@
+-.Lstatic_jump_after_\@:
+-	.else
+-	.byte		STATIC_KEY_INIT_NOP
+-	.endif
+-	.pushsection __jump_table, "aw"
+-	_ASM_ALIGN
+-	_ASM_PTR	.Lstatic_jump_\@, \target, \key
+-	.popsection
+-.endm
+-
+-.macro STATIC_JUMP_IF_FALSE target, key, def
+-.Lstatic_jump_\@:
+-	.if \def
+-	.byte		STATIC_KEY_INIT_NOP
+-	.else
+-	/* Equivalent to "jmp.d32 \target" */
+-	.byte		0xe9
+-	.long		\target - .Lstatic_jump_after_\@
+-.Lstatic_jump_after_\@:
+-	.endif
+-	.pushsection __jump_table, "aw"
+-	_ASM_ALIGN
+-	_ASM_PTR	.Lstatic_jump_\@, \target, \key + 1
+-	.popsection
+-.endm
+-
+ .macro STATIC_BRANCH_NOP l_yes:req key:req branch:req
+ 1:
+ 	.byte STATIC_KEY_INIT_NOP
+diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+index 352e70cd33e8..7c0d2ace8839 100644
+--- a/arch/x86/entry/calling.h
++++ b/arch/x86/entry/calling.h
+@@ -338,7 +338,7 @@ For 32-bit we have the following conventions - kernel is built with
+ .macro CALL_enter_from_user_mode
+ #ifdef CONFIG_CONTEXT_TRACKING
+ #ifdef HAVE_JUMP_LABEL
+-	STATIC_JUMP_IF_FALSE .Lafter_call_\@, context_tracking_enabled, def=0
++	STATIC_BRANCH_JMP .Lafter_call_\@, context_tracking_enabled, 1
+ #endif
+ 	call enter_from_user_mode
+ .Lafter_call_\@:
