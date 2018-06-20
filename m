@@ -2,104 +2,300 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1A6C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D7EC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9BDB20875
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:17:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 568DB20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 23:18:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PgyJSmpz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9BDB20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="zhCJSGvf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 568DB20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754299AbeFTXRB (ORCPT
+        id S1754345AbeFTXSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 19:17:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58590 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932154AbeFTXQs (ORCPT
+        Wed, 20 Jun 2018 19:18:18 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:31399 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754129AbeFTXSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 19:16:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Pgha93p1uk2gLQMqPYJdb+ZNaSI5Au9E4sjwqK/pDAQ=; b=PgyJSmpzAHUCoygydXZ48r/ec
-        pvIpanSATyrtwL7kNdtHUO1y8CPjvuERLCbalMEXwR5mDE8gRA/lxa066ocAIn+tdpo9WGeILlFpt
-        xuo6PN39q93jgnzM7AHJEVbpZTFOrq0qybMau/LkxQ6LWnjW2rJokcM9uLnVSSXtw6ODvSbLE7yPt
-        MctszFhWibhMVSJhvMwRHY81ZGa+/5NzYsmGPV0EAc2xgheUB6SmpXu77/IjZ0zacFGWWw2IwaqJ7
-        LgqRJYhz3/AqwDus2Kouz1zDS/oAw7rqDmE+Zk9vfkK/Bbdp2r2TsmgZySswP1/MX3aHAk/xOXE37
-        ccGKAmprw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVmLE-0003kB-8M; Wed, 20 Jun 2018 23:16:44 +0000
-Subject: Re: [PATCH 1/3] vmalloc: Add __vmalloc_node_try_addr function
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kristen Accardi <kristen.c.accardi@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
-References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
- <1529532570-21765-2-git-send-email-rick.p.edgecombe@intel.com>
- <12014310-19f7-dc31-d983-9c7e00c8b446@infradead.org>
- <CAGXu5j+RgbMKqiBcsWMOZ-ci-rT19imgCoHtPKgDURF1tC+COg@mail.gmail.com>
- <778b2a1b-d810-815b-0fba-8a1d191acd49@infradead.org>
- <CAGXu5j+TpZict=pSenHQ+_6V2fgoDrAGiB8sCd6bk-tb_Ec0zw@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c26266cf-1f90-2688-d131-501dbaf9460a@infradead.org>
-Date:   Wed, 20 Jun 2018 16:16:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 20 Jun 2018 19:18:16 -0400
+Received: from mail-vk0-f47.google.com (mail-vk0-f47.google.com [209.85.213.47]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w5KNI1HX027214;
+        Thu, 21 Jun 2018 08:18:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w5KNI1HX027214
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1529536682;
+        bh=9vrsGmZqC+GEIrYCahrSYjjvsiH/Pb/HRSGorzhJ1AY=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=zhCJSGvfo9vi9wMXx0u5ghhHeRZfuqFlxzWjEVgauLZrTB9bvixTQ/JsJVFh4yEBE
+         THX1XqyY+0eOjHiG4axupQzIseA5fWyd7SAQUXU4MvsHnxDcPWKDuNJYTRhfDRFyO6
+         rH1iLrZl++HF7UE/z7LYtAzRpdyZBC/1gpD+tEYP6fIeUcQvBud5kgvb08NWCxViUT
+         NkJJ23l3o9w7lO+sH9gLINbN2Y4P1wAvdFFpJt8SsAncXxXNf/KhdYCGw5oyUpnfRC
+         uLPf6H+fxqDFuugnHyQCD78D2IMT1zOgmDOaV65EYz/Z88TiISFeMEilyAB8+OCidJ
+         VGGv1z3vx1RUA==
+X-Nifty-SrcIP: [209.85.213.47]
+Received: by mail-vk0-f47.google.com with SMTP id b77-v6so767473vkb.5;
+        Wed, 20 Jun 2018 16:18:02 -0700 (PDT)
+X-Gm-Message-State: APt69E2RBg2S9fTTSJKxdZ+IB5fQcz+VN1OrcydRyxfavkcMHZkAa0P0
+        Q+YYDN0xX6tDCJnRwVRKw+s2B1L4hixVexbySYM=
+X-Google-Smtp-Source: ADUXVKJ+CSATZmViNP7QSK2PN7hNYLM3YFRFJsR7LNNfctJ3Nx5V5/bn+R8vz04vr86PQPnxHPpcmt57lN/hciXKkYk=
+X-Received: by 2002:a1f:c944:: with SMTP id z65-v6mr13516653vkf.11.1529536681104;
+ Wed, 20 Jun 2018 16:18:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+TpZict=pSenHQ+_6V2fgoDrAGiB8sCd6bk-tb_Ec0zw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab0:1ec1:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 16:17:18
+ -0700 (PDT)
+In-Reply-To: <20180619201458.4559-2-paul.burton@mips.com>
+References: <20180619190225.7eguhiw3ixaiwpgl@pburton-laptop>
+ <20180619201458.4559-1-paul.burton@mips.com> <20180619201458.4559-2-paul.burton@mips.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 21 Jun 2018 08:17:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASxuQJJsbBQocWSDpeiEuB2A68r2Znbo8ayk2mujywkpQ@mail.gmail.com>
+Message-ID: <CAK7LNASxuQJJsbBQocWSDpeiEuB2A68r2Znbo8ayk2mujywkpQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] kbuild: add macro for controlling warnings to linux/compiler.h
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@kernel.org>,
+        Matthew Wilcox <matthew@wil.cx>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        He Zhe <zhe.he@windriver.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Khem Raj <raj.khem@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Gideon Israel Dsouza <gidisrael@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 04:05 PM, Kees Cook wrote:
-> On Wed, Jun 20, 2018 at 3:44 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 06/20/2018 03:35 PM, Kees Cook wrote:
->>> On Wed, Jun 20, 2018 at 3:16 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->>>> On 06/20/2018 03:09 PM, Rick Edgecombe wrote:
->>>>> +void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
->>>>> +                     gfp_t gfp_mask, pgprot_t prot, unsigned long vm_flags,
->>>>> +                     int node, const void *caller)
->>>>> +{
->>>>
->>>> so this isn't optional, eh?  You are going to force it on people because?
->>>
->>> RANDOMIZE_BASE isn't optional either. :) This improves the module
->>> address entropy with (what seems to be) no down-side, so yeah, I think
->>> it should be non-optional. :)
->>
->> In what kernel tree is RANDOMIZE_BASE not optional?
-> 
-> Oh, sorry, I misspoke: on by default. It _is_ possible to turn it off.
-> 
-> But patch #2 does check for RANDOMIZE_BASE, so it should work as expected, yes?
-> 
-> Or did you want even this helper function to be compiled out without it?
+Hi.
 
-Thanks, I missed it.  :(
 
-Looks fine.
+2018-06-20 5:14 GMT+09:00 Paul Burton <paul.burton@mips.com>:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> I have occasionally run into a situation where it would make sense to
+> control a compiler warning from a source file rather than doing so from
+> a Makefile using the $(cc-disable-warning, ...) or $(cc-option, ...)
+> helpers.
+>
+> The approach here is similar to what glibc uses, using __diag() and
+> related macros to encapsulate a _Pragma("GCC diagnostic ...") statement
+> that gets turned into the respective "#pragma GCC diagnostic ..." by
+> the preprocessor when the macro gets expanded.
+>
+> Like glibc, I also have an argument to pass the affected compiler
+> version, but decided to actually evaluate that one. For now, this
+> supports GCC_4_6, GCC_4_7, GCC_4_8, GCC_4_9, GCC_5, GCC_6, GCC_7,
+> GCC_8 and GCC_9. Adding support for CLANG_5 and other interesting
+> versions is straightforward here. GNU compilers starting with gcc-4.2
+> could support it in principle, but "#pragma GCC diagnostic push"
+> was only added in gcc-4.6, so it seems simpler to not deal with those
+> at all. The same versions show a large number of warnings already,
+> so it seems easier to just leave it at that and not do a more
+> fine-grained control for them.
+>
+> The use cases I found so far include:
+>
+> - turning off the gcc-8 -Wattribute-alias warning inside of the
+>   SYSCALL_DEFINEx() macro without having to do it globally.
+>
+> - Reducing the build time for a simple re-make after a change,
+>   once we move the warnings from ./Makefile and
+>   ./scripts/Makefile.extrawarn into linux/compiler.h
+>
+> - More control over the warnings based on other configurations,
+>   using preprocessor syntax instead of Makefile syntax. This should make
+>   it easier for the average developer to understand and change things.
+>
+> - Adding an easy way to turn the W=1 option on unconditionally
+>   for a subdirectory or a specific file. This has been requested
+>   by several developers in the past that want to have their subsystems
+>   W=1 clean.
+>
+> - Integrating clang better into the build systems. Clang supports
+>   more warnings than GCC, and we probably want to classify them
+>   as default, W=1, W=2 etc, but there are cases in which the
+>   warnings should be classified differently due to excessive false
+>   positives from one or the other compiler.
+>
+> - Adding a way to turn the default warnings into errors (e.g. using
+>   a new "make E=0" tag) while not also turning the W=1 warnings into
+>   errors.
+>
+> This patch for now just adds the minimal infrastructure in order to
+> do the first of the list above. As the #pragma GCC diagnostic
+> takes precedence over command line options, the next step would be
+> to convert a lot of the individual Makefiles that set nonstandard
+> options to use __diag() instead.
+>
+> [paul.burton@mips.com:
+>   - Rebase atop current master.
+>   - Add __diag_GCC, or more generally __diag_<compiler>, abstraction to
+>     avoid code outside of linux/compiler-gcc.h needing to duplicate
+>     knowledge about different GCC versions.
+>   - Add a comment argument to __diag_{ignore,warn,error} which isn't
+>     used in the expansion of the macros but serves to push people to
+>     document the reason for using them - per feedback from Kees Cook.
+>   - Translate severity to GCC-specific pragmas in linux/compiler-gcc.h
+>     rather than using GCC-specific in linux/compiler_types.h.
+>   - Drop all but GCC 8 macros, since we only need to define macros for
+>     versions that we need to introduce pragmas for, and as of this
+>     series that's just GCC 8.
+>   - Capitalize comments in linux/compiler-gcc.h to match the style of
+>     the rest of the file.
+>   - Line up macro definitions with tabs in linux/compiler-gcc.h.]
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Paul Burton <paul.burton@mips.com>
+> Tested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Tested-by: Stafford Horne <shorne@gmail.com>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Matthew Wilcox <matthew@wil.cx>
+> Cc: Matthias Kaehlcke <mka@chromium.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Gideon Israel Dsouza <gidisrael@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Stafford Horne <shorne@gmail.com>
+> Cc: Khem Raj <raj.khem@gmail.com>
+> Cc: He Zhe <zhe.he@windriver.com>
+> Cc: linux-kbuild@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mips@linux-mips.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+>
+> ---
+>
+> Changes in v2:
+> - Add version argument to fallback __diag_GCC definition.
+> - Translate severity from generic ignore,warn,error to GCC-specific
+>   pragma content ignored,warning,error in linux/compiler-gcc.h in order
+>   to keep linux/compiler_types.h generic per feedback from Masahiro
+>   Yamada.
+> - Drop all but GCC 8 macros, since we only need to define macros for
+>   versions that we need to introduce pragmas for, and as of this series
+>   that's just GCC 8.
+> - Capitalize comments in linux/compiler-gcc.h to match the style of the
+>   rest of the file.
+> - Line up macro definitions with tabs in linux/compiler-gcc.h.
+>
+>  include/linux/compiler-gcc.h   | 27 +++++++++++++++++++++++++++
+>  include/linux/compiler_types.h | 18 ++++++++++++++++++
+>  2 files changed, 45 insertions(+)
+>
+> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+> index f1a7492a5cc8..5067a90af9c3 100644
+> --- a/include/linux/compiler-gcc.h
+> +++ b/include/linux/compiler-gcc.h
+> @@ -347,3 +347,30 @@
+>  #if GCC_VERSION >= 50100
+>  #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
+>  #endif
+> +
+> +/*
+> + * Turn individual warnings and errors on and off locally, depending
+> + * on version.
+> + */
+> +#define __diag_GCC(version, severity, s) \
+> +       __diag_GCC_ ## version(__diag_GCC_ ## severity s)
+> +
+> +/* Severity used in pragma directives */
+> +#define __diag_GCC_ignore      ignored
+> +#define __diag_GCC_warn                warning
+> +#define __diag_GCC_error       error
+> +
+> +/* Compilers before gcc-4.6 do not understand "#pragma GCC diagnostic push" */
+> +#if GCC_VERSION >= 40600
+> +#define __diag_str1(s)         #s
+> +#define __diag_str(s)          __diag_str1(s)
+> +#define __diag(s)              _Pragma(__diag_str(GCC diagnostic s))
+> +#else
+> +#define __diag(s)
+
+
+You can omit the #else here
+because it is covered by compiler_types.h
+
+
+
+> +#endif
+> +
+> +#if GCC_VERSION >= 80000
+> +#define __diag_GCC_8(s)                __diag(s)
+> +#else
+> +#define __diag_GCC_8(s)
+> +#endif
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index 6b79a9bba9a7..a8ba6b04152c 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -271,4 +271,22 @@ struct ftrace_likely_data {
+>  # define __native_word(t) (sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
+>  #endif
+>
+> +#ifndef __diag
+> +#define __diag(string)
+> +#endif
+> +
+> +#ifndef __diag_GCC
+> +#define __diag_GCC(version, severity, string)
+> +#endif
+> +
+> +#define __diag_push()  __diag(push)
+> +#define __diag_pop()   __diag(pop)
+> +
+> +#define __diag_ignore(compiler, version, option, comment) \
+> +       __diag_ ## compiler(version, ignore, option)
+> +#define __diag_warn(compiler, version, option, comment) \
+> +       __diag_ ## compiler(version, warn, option)
+> +#define __diag_error(compiler, version, option, comment) \
+> +       __diag_ ## compiler(version, error, option)
+> +
+>  #endif /* __LINUX_COMPILER_TYPES_H */
+> --
+> 2.17.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-~Randy
+Best Regards
+Masahiro Yamada
