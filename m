@@ -2,260 +2,176 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3813C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71EFC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD6D205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A221B205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:39:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C74CW9Lq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD6D205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aw7WMQtm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A221B205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754238AbeFTCjM (ORCPT
+        id S1754315AbeFTCjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 22:39:12 -0400
-Received: from ozlabs.org ([203.11.71.1]:43119 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754136AbeFTCjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 22:39:08 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 419TYQ68jsz9s4v;
-        Wed, 20 Jun 2018 12:39:06 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529462346;
-        bh=d1SzmZVUAAClPfTgJOcKTab6RR4KUoeBiD86iZNn/VI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=C74CW9LqEI0GnO5P8MwBqDnO+cPyo5DA4s9ga/afxDC+K5tZ60hS3hLdXXl4vzasI
-         6GJJZ1Q5aopVYhv2uZbEvzaDyj/lZeGlD15ZZgzrnG1kCkR/h/qnv9RcLNh4LgtNR2
-         MnpyepxN39kj39u41kTezYiCAm6qyPh8plCK+JRBig/ens9Y0Z/AaVsWVUgpeQrsrD
-         Rl4qIs8joRnIJj4hdd/NuaY2RfSZ6Q07MSVexLfbhwEqT4MVKmd5nzC79kNjwhhbFX
-         o0FmenK3zkRg7I8AUuPvJOXjwK68tMexTSVZNJGDXBO5C51Dlb7uUFDhqFqr66SlWf
-         69lFKMJNaYl3A==
-Date:   Wed, 20 Jun 2018 12:39:05 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the userns tree with the vfs tree
-Message-ID: <20180620123905.348181b2@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xHdy3ugyKmaf5SHpn5r_2=/"; protocol="application/pgp-signature"
+        Tue, 19 Jun 2018 22:39:25 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38550 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754240AbeFTCjV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 22:39:21 -0400
+Received: by mail-pl0-f67.google.com with SMTP id d10-v6so891451plo.5;
+        Tue, 19 Jun 2018 19:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=A8v3wakaTcXuBObrrt6OwOnjuJ1SiXmHqQaUOF8hq54=;
+        b=aw7WMQtmwG7LIf4911gr/U1I6brRYihWNgrh7J4nlv9zmgofZkqe3EgIHaLDVohd45
+         h5pI6xtqsGwiru3JT0r9zBISsPrvZTeBAHZdBoPNvU6D92tpZx4e38/iOsLwjbCSyV+A
+         42TDlAaE7Znxd+iGsCdVIs9TOq0tnsKIsmuzv/9bmZztq2AJpybUCz2aaTniBLW1bKsJ
+         tqZMjSu8eG9d728MqN45RL+jM/iHQ34DNZQrNXiB2wmsyg0loqkPb/Epfstwigl0/LX3
+         OrkfUUX2T1HsAO0iwMoqdWuafy9zPBukkLiYIRHzX1aa9v9p8nhN1nfAK8UZbh8JvW91
+         lUTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=A8v3wakaTcXuBObrrt6OwOnjuJ1SiXmHqQaUOF8hq54=;
+        b=k+a5odA5m15aznM0x13AkAD5PGdjIEdV5Bgha+eUyU9Aa/7IPRMVsXderwIzlMhn6V
+         9oLOrn+lIzCBMjx9O91W6XAFx6VZRh09dCaWhwL6I5uHO6PmmCpW6YyY/fBXiIDBlr7c
+         U3RKmsiX2URYJegspR/rHAgWToHxnb7tPDqT+qoWUGMs9vehGkxlnfCq/ArzDIAwjhMI
+         fzUY4JWi9JYixlxopGn7Qiar5tV/UzzjFJW5DZaaXjvOLCoZF9JpUr016fy5kjm3HL6B
+         nXRUguCRT9rbCQ2j3TIVL1z3rFcGtv0bX1Rh2QVsuPRtxeL3SjsX1/TTIUDOWUw/1bhT
+         uJeA==
+X-Gm-Message-State: APt69E0Z08iEGGjnuV9DHjIW6Heflmjq423pUJ7LhEdnCXX1fsHBtklr
+        UozHWa/RFjg9ykp2Rtn3RHU=
+X-Google-Smtp-Source: ADUXVKKsVUsSBlCcrT+VCPQbJCMmvtJaiyumegO3WD+i2IQ3VeqKKwONHxClzl4rPt53ju0Z6sk3xQ==
+X-Received: by 2002:a17:902:b604:: with SMTP id b4-v6mr21453988pls.18.1529462360157;
+        Tue, 19 Jun 2018 19:39:20 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:1600:17a6:2407:f707:f7f9])
+        by smtp.gmail.com with ESMTPSA id w125-v6sm923835pgb.92.2018.06.19.19.39.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Jun 2018 19:39:19 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH] drivers: base: initcall_debug logs for driver probe times
+Date:   Tue, 19 Jun 2018 19:39:03 -0700
+Message-Id: <20180620023903.242758-1-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xHdy3ugyKmaf5SHpn5r_2=/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Todd Poynor <toddpoynor@google.com>
 
-Hi all,
+Add initcall_debug logs for each driver device probe call, for example:
 
-Today's linux-next merge of the userns tree got a conflict in:
+   probe of a3800000.ramoops returned after 3007 usecs
 
-  fs/proc/inode.c
-  fs/proc/root.c
+This replaces the previous code added to report times for deferred
+probes.  It also reports OF platform bus device creates that were
+formerly lumped together in a single entry for function
+of_platform_default_populate_init, as well as helping to annotate other
+initcalls that involve device probing.
 
-between commit:
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
+---
+ drivers/base/dd.c | 50 +++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 26 deletions(-)
 
-  0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
-  83cd45075c36 ("proc: Add fs_context support to procfs")
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 1435d7281c66..56db446a467a 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -62,26 +62,6 @@ static bool initcalls_done;
+  */
+ static bool defer_all_probes;
+ 
+-/*
+- * For initcall_debug, show the deferred probes executed in late_initcall
+- * processing.
+- */
+-static void deferred_probe_debug(struct device *dev)
+-{
+-	ktime_t calltime, delta, rettime;
+-	unsigned long long duration;
+-
+-	printk(KERN_DEBUG "deferred probe %s @ %i\n", dev_name(dev),
+-	       task_pid_nr(current));
+-	calltime = ktime_get();
+-	bus_probe_device(dev);
+-	rettime = ktime_get();
+-	delta = ktime_sub(rettime, calltime);
+-	duration = (unsigned long long) ktime_to_ns(delta) >> 10;
+-	printk(KERN_DEBUG "deferred probe %s returned after %lld usecs\n",
+-	       dev_name(dev), duration);
+-}
+-
+ /*
+  * deferred_probe_work_func() - Retry probing devices in the active list.
+  */
+@@ -125,11 +105,7 @@ static void deferred_probe_work_func(struct work_struct *work)
+ 		device_pm_move_to_tail(dev);
+ 
+ 		dev_dbg(dev, "Retrying from deferred list\n");
+-		if (initcall_debug && !initcalls_done)
+-			deferred_probe_debug(dev);
+-		else
+-			bus_probe_device(dev);
+-
++		bus_probe_device(dev);
+ 		mutex_lock(&deferred_probe_mutex);
+ 
+ 		put_device(dev);
+@@ -527,6 +503,25 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	return ret;
+ }
+ 
++/*
++ * For initcall_debug, show the driver probe time.
++ */
++static int really_probe_debug(struct device *dev, struct device_driver *drv)
++{
++	ktime_t calltime, delta, rettime;
++	unsigned long long duration;
++	int ret;
++
++	calltime = ktime_get();
++	ret = really_probe(dev, drv);
++	rettime = ktime_get();
++	delta = ktime_sub(rettime, calltime);
++	duration = (unsigned long long) ktime_to_ns(delta) >> 10;
++	printk(KERN_DEBUG "probe of %s returned after %lld usecs\n",
++	       dev_name(dev), duration);
++	return ret;
++}
++
+ /**
+  * driver_probe_done
+  * Determine if the probe sequence is finished or not.
+@@ -585,7 +580,10 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
+ 		pm_runtime_get_sync(dev->parent);
+ 
+ 	pm_runtime_barrier(dev);
+-	ret = really_probe(dev, drv);
++	if (initcall_debug && !initcalls_done)
++		ret = really_probe_debug(dev, drv);
++	else
++		ret = really_probe(dev, drv);
+ 	pm_request_idle(dev);
+ 
+ 	if (dev->parent)
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
 
-from the vfs tree and commit:
-
-  cc8cda3af2ba ("proc: Simplify and fix proc by removing the kernel mount")
-  9303f5f81bd4 ("proc: Change proc_parse_options to return an errno value")
-  04035aa33a12 ("proc: Don't change mount options on remount failure.")
-
-from the userns tree.
-
-I effectively reverted 9303f5f81bd4 and 04035aa33a12 since (I think)
-they are subsumed by the vfs tree changes.
-
-I fixed it up (I think I got it mostly right this time - see below) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/proc/root.c
-index efbdc08a3c86,3dceff6cd121..91e9b417bc6d
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@@ -80,71 -78,21 +80,74 @@@ static int proc_parse_option(struct fs_
-  	return 0;
-  }
- =20
- -int proc_remount(struct super_block *sb, int *flags, char *data)
- +static void proc_set_options(struct super_block *s,
- +			     struct fs_context *fc,
- +			     struct pid_namespace *pid_ns,
- +			     struct user_namespace *user_ns)
-  {
- -	struct pid_namespace *pid =3D sb->s_fs_info;
- -	struct proc_mount_options opts =3D {
- -		.pid_gid  =3D pid->pid_gid,
- -		.hide_pid =3D pid->hide_pid,
- -	};
- +	struct proc_fs_context *ctx =3D fc->fs_private;
- +
- +	if (ctx->mask & (1 << Opt_gid))
- +		pid_ns->pid_gid =3D make_kgid(user_ns, ctx->gid);
- +	if (ctx->mask & (1 << Opt_hidepid))
- +		pid_ns->hide_pid =3D ctx->hidepid;
- +}
- +
- +static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- +{
- +	struct pid_namespace *pid_ns =3D get_pid_ns(s->s_fs_info);
- +	struct inode *root_inode;
-  	int ret;
- =20
- -	sync_filesystem(sb);
- -	ret =3D proc_parse_options(data, &opts);
- -	if (ret)
- +	proc_set_options(s, fc, pid_ns, current_user_ns());
- +
- +	/* User space would break if executables or devices appear on proc */
- +	s->s_iflags |=3D SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
- +	s->s_flags |=3D SB_NODIRATIME | SB_NOSUID | SB_NOEXEC;
- +	s->s_blocksize =3D 1024;
- +	s->s_blocksize_bits =3D 10;
- +	s->s_magic =3D PROC_SUPER_MAGIC;
- +	s->s_op =3D &proc_sops;
- +	s->s_time_gran =3D 1;
- +
- +	/*
- +	 * procfs isn't actually a stacking filesystem; however, there is
- +	 * too much magic going on inside it to permit stacking things on
- +	 * top of it
- +	 */
- +	s->s_stack_depth =3D FILESYSTEM_MAX_STACK_DEPTH;
- +
- +	pde_get(&proc_root);
- +	root_inode =3D proc_get_inode(s, &proc_root);
- +	if (!root_inode) {
- +		pr_err("proc_fill_super: get root inode failed\n");
- +		return -ENOMEM;
- +	}
- +
- +	s->s_root =3D d_make_root(root_inode);
- +	if (!s->s_root) {
- +		pr_err("proc_fill_super: allocate dentry failed\n");
- +		return -ENOMEM;
- +	}
- +
- +	ret =3D proc_setup_self(s);
- +	if (ret) {
-  		return ret;
- -	pid->pid_gid  =3D opts.pid_gid;
- -	pid->hide_pid =3D opts.hide_pid;
- +	}
-- 	return proc_setup_thread_self(s);
-++	ret =3D proc_setup_thread_self(s);
-++
-++	rcu_assign_pointer(pid_ns->proc_super, s);
-++	return ret;
- +}
- +
- +int proc_reconfigure(struct super_block *sb, struct fs_context *fc)
- +{
- +	struct pid_namespace *pid =3D sb->s_fs_info;
- +
- +	sync_filesystem(sb);
- +
- +	if (fc)
- +		proc_set_options(sb, fc, pid, current_user_ns());
-  	return 0;
-  }
- =20
-@@@ -288,44 -208,23 +292,22 @@@ struct proc_dir_entry proc_root =3D=20
-  	.proc_fops	=3D &proc_root_operations,
-  	.parent		=3D &proc_root,
-  	.subdir		=3D RB_ROOT,
- -	.name		=3D proc_root.inline_name,
- -	.inline_name	=3D "/proc",
- +	.name		=3D "/proc",
-  };
- =20
-- int pid_ns_prepare_proc(struct pid_namespace *ns)
-+ #if defined(CONFIG_SYSCTL_SYSCALL) || defined(CONFIG_MCONSOLE)
-+ struct file *file_open_proc(const char *pathname, int flags, umode_t mode)
-  {
-- 	struct proc_fs_context *ctx;
-- 	struct fs_context *fc;
-  	struct vfsmount *mnt;
-- 	int ret;
--=20
-- 	fc =3D vfs_new_fs_context(&proc_fs_type, NULL, 0,
-- 				FS_CONTEXT_FOR_KERNEL_MOUNT);
-- 	if (IS_ERR(fc))
-- 		return PTR_ERR(fc);
--=20
-- 	ctx =3D fc->fs_private;
-- 	if (ctx->pid_ns !=3D ns) {
-- 		put_pid_ns(ctx->pid_ns);
-- 		get_pid_ns(ns);
-- 		ctx->pid_ns =3D ns;
-- 	}
-+ 	struct file *file;
- =20
-- 	ret =3D vfs_get_tree(fc);
-- 	if (ret < 0) {
-- 		put_fs_context(fc);
-- 		return ret;
-- 	}
--=20
-- 	mnt =3D vfs_create_mount(fc, 0);
-- 	put_fs_context(fc);
-+ 	mnt =3D kern_mount(&proc_fs_type);
-  	if (IS_ERR(mnt))
-- 		return PTR_ERR(mnt);
-+ 		return ERR_CAST(mnt);
- =20
-- 	ns->proc_mnt =3D mnt;
-- 	return 0;
-- }
-+ 	file =3D file_open_root(mnt->mnt_root, mnt, pathname, flags, mode);
-+ 	kern_unmount(mnt);
- =20
-- void pid_ns_release_proc(struct pid_namespace *ns)
-- {
-- 	kern_unmount(ns->proc_mnt);
-+ 	return file;
-  }
-+ #endif
-
---Sig_/xHdy3ugyKmaf5SHpn5r_2=/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlspvkkACgkQAVBC80lX
-0GxUPwf/ZvbJPpoji8aDN/GJEb1BV0oDEvHD+N5N2GQtd7CdQkQIa9VWWq24N8E+
-UC0cVjjcI6wu1E4Qg5My3M3j5q+8Owin3cXwwiOYrQc0YzpFjh9bN0WDNpx32ocw
-AeZ5+7UEll/JCuEXx1h9ebNFVCcMLnQUrGSkN6h9btlYzROgRTTp/cQRNQ3qgNpi
-CChRv4HLiPi/2Vx7+6ZLPf9I9uQ42R5JWyT1eK2dxNDrBI62/5IZbRnubtsYSBPP
-Kn5iqmYgVcnTyNJiiupWfjd72VSRJ5FqWjxs59FeYxh2MLGgYUajM+6ufzD6b7tQ
-h2GEDkh6fVTvIu4kIoiVSgW3feuv1Q==
-=Lw5x
------END PGP SIGNATURE-----
-
---Sig_/xHdy3ugyKmaf5SHpn5r_2=/--
