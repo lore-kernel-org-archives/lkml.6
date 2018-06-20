@@ -2,124 +2,176 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4DD9C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7D6C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 348C320836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DC4020874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 12:32:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oQQuGE2t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 348C320836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fbn7h6TX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC4020874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753202AbeFTM0y (ORCPT
+        id S1753475AbeFTMcO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 08:26:54 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:42424 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbeFTM0w (ORCPT
+        Wed, 20 Jun 2018 08:32:14 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43898 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751422AbeFTMcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 08:26:52 -0400
-Received: by mail-pg0-f65.google.com with SMTP id c10-v6so1419204pgu.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 05:26:52 -0700 (PDT)
+        Wed, 20 Jun 2018 08:32:12 -0400
+Received: by mail-pl0-f66.google.com with SMTP id c41-v6so1690889plj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 05:32:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jBC8owuoYNqjks91SC3dvZYyOm+rvpxctJjJr9LauWY=;
-        b=oQQuGE2tWmmwOOIRj4jNkwHfThQscgwu8LDL2FecFy8GvX1LWW6ebuYkYz+NQde4Zs
-         4vSwcicEXRJUxzqfF7XxV5I2aDl6HAUj/lIlYm2OQthLsECdcj7DbAPVXA4hsSG+TI1W
-         tgWnPkeiSYkiItNtdZAL7DCGHA97IYn83KtaOmtSuH9hnMN7SB6VRXy8NN+EQ+PPQpXG
-         HnfxdK92zvbJPqUj0pUVFxEZxh7IIdF2sRsxE6H8NghPzYxzOsk5VNXB+drdPrqyFrCL
-         9IpZXUAxu8x2ANIssioLRnLUDeqnR3UiNc+S60FU84AAfxkykljWPFLGaovxyBWwM+mF
-         XhNg==
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=6cTA+aJb615kZ+SkgPVrIlZbry8vUTdPztmfxvqDUig=;
+        b=fbn7h6TXYHC6M1tx2nx5kAqapXoY4S0DSwsXVAjVM+QR0Ot8CLpYoeVfB8DgdNKYpe
+         XsiNOS1U++Hc0dVTlFAWIHTh0ts6rffnoQsaCV2VdIoZPxPVjoXzRMlcB82c6gvaHY6y
+         2n2Pxy1VOErTI8tMFBYNC16/N8tlsMttga/jdGrnVbEsHuCjcTI5Sy9wTM6MdM12QFCB
+         9nUSF+4V9jZCZu28Dq/q8uTca09vQv6masZO9ARl6OwhwsudebUDyr9O+kM9lfNqiQOK
+         ozuwbfDfcaYMHsi9yloh8bDcZeHvXqDbtMnl9VgtV+HN0tyJcsvzMKv94yovPPdyaycd
+         YheA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=jBC8owuoYNqjks91SC3dvZYyOm+rvpxctJjJr9LauWY=;
-        b=rp3EFfM6fdOHptx5AzSkLcLUAUl2ELYqtIE3o3A0nS8qtfK1IcMx6sWC2407odR/Sd
-         pHaD1uJkkx/eWKypZP0nEM3NA1jrFGmwMAuFPmY8JA/P2K2RSaHGds9jD+9AoShKhXaU
-         dg+PCwAYuK60kJ3zS7kmkHNWlDYUUGwAm9NCxCdIEPQO69DY+QYyivkcM0Wbufma/B03
-         i+59ZF/E8xdsAap2mT+LYj7dVX1e2P3byUwREnkeNfbr+WiKsMAveJYoPXVg31FuYgT9
-         4vXSSgnujdNvYphsb6inYTvMSpmQkBj1FgaGgX+0+BLqrxun/NpirA/ZenuBrZcrRlq8
-         BBHw==
-X-Gm-Message-State: APt69E32tiyOptuMXtNty+QQU/hlmV0Fv7VQb8GyslKG0nvo+5MdUHnn
-        aoejyvY7bsLlrL/IQBu8qw==
-X-Google-Smtp-Source: ADUXVKKDeUrNWnO72yUx+Cwlb/GVS09aTrEH4jOpLP1zQDHW3nvLPpBPiM6Wgs33DLwYFBAygo3zzg==
-X-Received: by 2002:a62:6141:: with SMTP id v62-v6mr22541579pfb.197.1529497612031;
-        Wed, 20 Jun 2018 05:26:52 -0700 (PDT)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id u13-v6sm2451919pgr.36.2018.06.20.05.26.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 05:26:50 -0700 (PDT)
-Received: from t430.minyard.net (t430m.minyard.net [192.168.27.3])
-        by serve.minyard.net (Postfix) with ESMTPA id 2487B66B;
-        Wed, 20 Jun 2018 07:26:49 -0500 (CDT)
-Received: by t430.minyard.net (Postfix, from userid 1000)
-        id 9682A3000DD; Wed, 20 Jun 2018 07:26:48 -0500 (CDT)
-From:   minyard@acm.org
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     Linux Kernel list <linux-kernel@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH] ipmi: Cleanup oops on initialization failure
-Date:   Wed, 20 Jun 2018 07:26:46 -0500
-Message-Id: <1529497606-3857-1-git-send-email-minyard@acm.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <alpine.LRH.2.21.1806191553040.28622@math.ut.ee>
-References: <alpine.LRH.2.21.1806191553040.28622@math.ut.ee>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=6cTA+aJb615kZ+SkgPVrIlZbry8vUTdPztmfxvqDUig=;
+        b=P5JLAJot74sxO6PuEeBesHFdqMWyfjpOWfsD6wLMbYr/cy+6oaP3z5uX43Swv2WkZ+
+         WmJEej6ISoZ+Lh1qGj4aHZ0s5w02T+G5WBzPVBLXkkKVBb5tEnps+Id7bcZ/HEh/0wgc
+         4TGntq5GqYSYjt9ETbr0dvpx527dvk3iarl4OuwQgB68+76Wt22Co7R453CORr+str1O
+         Okp4NZxt6ttk59BtQTlkbhjqDH8n+7f++MUU9Ew9U36HJd6BaCGgS4yGZhU6s7i1zcKR
+         a4hixm9cJl6CmNoeXmjtu6gtDxD01mwtIxGlnhZEn7PM/bZOjbUz0Ly15+xs81UpgvHI
+         2pkg==
+X-Gm-Message-State: APt69E3kTpYgd3UIr8aNGFHKbzL5L+uEorAdXZmkbINARm1MGZODjfts
+        MdFPBTgm71SZCbF6TZHcsebXAe9d6s4GpQjjlwz3MA==
+X-Google-Smtp-Source: ADUXVKKY0w+iwpV6H1yq3ARiPjjrjDc3t6baYeMkT8P0cq9coQQMWxH71vUDabff9scFrCRvtIPNK4Xl9ClvtJPESgg=
+X-Received: by 2002:a17:902:8d85:: with SMTP id v5-v6mr23556198plo.93.1529497932090;
+ Wed, 20 Jun 2018 05:32:12 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Wed, 20 Jun 2018 05:31:51
+ -0700 (PDT)
+In-Reply-To: <20180620113731.y7apmqoh6ke6ar2v@wfg-t540p.sh.intel.com>
+References: <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
+ <20180517112135.GB20796@jagdpanzerIV> <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
+ <20180524021451.GA23443@jagdpanzerIV> <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
+ <CACT4Y+ZGSefrYL9xtQs=yPMRNFsOUumuJXsShJPhCOBSLySxuw@mail.gmail.com>
+ <20180620083126.GA477@jagdpanzerIV> <CACT4Y+YMubTm1xduj+XCbQnNwQxYFLjBT33cFKisN1HyeaBpZw@mail.gmail.com>
+ <20180620090413.GA444@jagdpanzerIV> <CACT4Y+a6nUqdpSyYGGcXKAgVbcw+uQOz2kYx8tUS+8T5-bzqkg@mail.gmail.com>
+ <20180620113731.y7apmqoh6ke6ar2v@wfg-t540p.sh.intel.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 20 Jun 2018 14:31:51 +0200
+Message-ID: <CACT4Y+bw5j9aTRVFKHNO-YH0vXtuOvB4ez4wg6C=1GpSbvfSAQ@mail.gmail.com>
+Subject: Re: [PATCH] printk: inject caller information into the body of message
+To:     Fengguang Wu <fengguang.wu@intel.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+On Wed, Jun 20, 2018 at 1:37 PM, Fengguang Wu <fengguang.wu@intel.com> wrote:
+> On Wed, Jun 20, 2018 at 11:30:05AM +0200, Dmitry Vyukov wrote:
+>>
+>> On Wed, Jun 20, 2018 at 11:06 AM, Sergey Senozhatsky
+>> <sergey.senozhatsky.work@gmail.com> wrote:
+>>>
+>>> Hi Dmitry,
+>>>
+>>> On (06/20/18 10:45), Dmitry Vyukov wrote:
+>>>>
+>>>> Hi Sergey,
+>>>>
+>>>> What are the visible differences between this patch and Tetsuo's
+>>>> patch?
+>>>
+>>>
+>>> I guess none, and looking at your requirements below I tend to agree
+>>> that Tetsuo's approach is probably what you need at the end of the day.
+>>>
+>>>> The only thing that will matter for syzkaller parsing in the
+>>>> end is the resulting text format as it appears on console. But you say
+>>>> "I'm not pushing for this particular message format", so what exactly
+>>>> do you want me to provide feedback on?
+>>>> I guess we need to handle pr_cont properly whatever approach we take.
+>>>
+>>>
+>>> Mostly, was wondering about if:
+>>> a) you need pr_cont() handling
+>>> b) you need printk_safe() handling
+>>>
+>>> The reasons I left those things behind:
+>>>
+>>> a) pr_cont() is officially hated. It was never supposed to be used
+>>>    on SMP systems. So I wasn't sure if we need all that effort and
+>>>    add tricky code to handle pr_cont(). Given that syzkaller is
+>>>    probably the only user of that functionality.
+>>
+>>
+>> Well, if I put my syzkaller hat on, then I don't care what exactly
+>> happens in the kernel, the only thing I care is well-formed output on
+>> console that can be parsed unambiguously in all cases.
+>
+>
+> +1 for 0day kernel testing.
+>
+> I admit that goal may never be 100% achievable -- at least some serial
+> console logs can sometimes become messy. So we'll have to write dmesg
+> parsing code in defensive ways.
+>
+> But some unnecessary pr_cont() broken-up messages can obviously be
+> avoided. For example,
+>
+> arch/x86/mm/fault.c:
+>
+>         printk(KERN_ALERT "BUG: unable to handle kernel ");
+>         if (address < PAGE_SIZE)
+>                 printk(KERN_CONT "NULL pointer dereference");
+>         else
+>                 printk(KERN_CONT "paging request");
+>
+> I've actually proposed to remove the above KERN_CONT, unfortunately the
+> patch was silently ignored.
 
-Commit 93c303d2045b3 "ipmi_si: Clean up shutdown a bit" didn't
-copy the behavior of the cleanup in one spot, it needed to
-check for a non-NULL interface before cleaning it up.
 
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
----
+I've just cooked this change too, but do you mind reviving your patch?
 
-This patch should fix the issue.
+It actually makes the code even shorter, which is nice:
 
-BTW, can you send me at least the IPMI portion of the output of
-dmidecode for your machine?  I have seen a lot of these where the
-address in the SMBIOS tables is incorrect, and I'm wondering if
-it's something in the driver, or if it's really the tables that
-are bad.
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -671,13 +671,9 @@ show_fault_oops(struct pt_regs *regs, unsigned
+long error_code,
+                        printk(smep_warning, from_kuid(&init_user_ns,
+current_uid()));
+        }
 
-Thanks for reporting this.  On your tested-by I'll send this up
-to Linus.
+-       printk(KERN_ALERT "BUG: unable to handle kernel ");
+-       if (address < PAGE_SIZE)
+-               printk(KERN_CONT "NULL pointer dereference");
+-       else
+-               printk(KERN_CONT "paging request");
+-
+-       printk(KERN_CONT " at %px\n", (void *) address);
++       printk(KERN_ALERT "BUG: unable to handle kernel %s at %px\n",
++               (address < PAGE_SIZE ? "NULL pointer dereference" :
++               "paging request"), (void *) address);
 
--corey
-
- drivers/char/ipmi/ipmi_si_intf.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index 3d0add6..a5987f8 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -2088,8 +2088,10 @@ static int try_smi_init(struct smi_info *new_smi)
- 	return 0;
- 
- out_err:
--	ipmi_unregister_smi(new_smi->intf);
--	new_smi->intf = NULL;
-+	if (new_smi->intf) {
-+		ipmi_unregister_smi(new_smi->intf);
-+		new_smi->intf = NULL;
-+	}
- 
- 	kfree(init_name);
- 
--- 
-2.7.4
-
+        dump_pagetable(address);
+ }
