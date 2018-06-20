@@ -4,296 +4,239 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 464D2C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 492B5C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 966A420836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1C6820871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:23:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eiLlyZpG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966A420836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="KwOfrPrp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1C6820871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752747AbeFTKVS (ORCPT
+        id S1753073AbeFTKW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:21:18 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:57830 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbeFTKVP (ORCPT
+        Wed, 20 Jun 2018 06:22:58 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:51102 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751031AbeFTKWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:21:15 -0400
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180620102112epoutp0249f76ea053ff3f6f24dffd579d1e97c8~51x4eaIKL2706827068epoutp02Y
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:21:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180620102112epoutp0249f76ea053ff3f6f24dffd579d1e97c8~51x4eaIKL2706827068epoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1529490072;
-        bh=8d1truYQ6IidyeEnvkyg+PcVINYHfEI9To84kpQN7xk=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=eiLlyZpGkNvVS96a5pWKFYI4kjOTT6MbTlcFzZg3VaZkzIseA/V8yHnAe0xmoDWTa
-         h72PqpTmnfTudG6Qo4MWJI0EdyZv5cU7N9Q3OKuVl/1wEKMDlCoW+pXSpwwYeWcLRT
-         /7TtbVdrLezydaJu1WF4yEvzGat0J6eeTU0IM3M0=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.40.197]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20180620102112epcas5p38b33375940929fa937596513e0b26425~51x4Fka6v2159521595epcas5p3Z;
-        Wed, 20 Jun 2018 10:21:12 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        16.5F.04408.89A2A2B5; Wed, 20 Jun 2018 19:21:12 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20180620102111epcas5p43b88ec3765ff3b088a8ec1c9e97dd71b~51x3osnzY2939929399epcas5p4V;
-        Wed, 20 Jun 2018 10:21:11 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20180620102111epsmtrp2e977c940850f8cfc22305275b9c7e042~51x3nREcm2227022270epsmtrp2r;
-        Wed, 20 Jun 2018 10:21:11 +0000 (GMT)
-X-AuditID: b6c32a4b-989ff70000001138-98-5b2a2a9814f5
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AD.C0.03632.79A2A2B5; Wed, 20 Jun 2018 19:21:11 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.108.92.210]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180620102109epsmtip12620b8b1546d3c57000af46f4a3ae927~51x1nARqu2699026990epsmtip1c;
-        Wed, 20 Jun 2018 10:21:09 +0000 (GMT)
-From:   Namit Gupta <gupta.namit@samsung.com>
-To:     pmladek@suse.com, sergey.senozhatsky@gmail.com, rostedt@goodmis.org
-Cc:     linux-kernel@vger.kernel.org, pankaj.m@samsung.com,
-        a.sahrawat@samsung.com, himanshu.m@samsung.com,
-        Namit Gupta <gupta.namit@samsung.com>
-Subject: [PATCH 1/1] remove unnecessary calls of kmalloc and kfree from
- syslog.
-Date:   Wed, 20 Jun 2018 15:46:24 +0530
-X-Mailer: git-send-email 1.9.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsWy7bCmlu4MLa1og67nohYXd6daHDxwmtVi
-        Xst5FovLu+awWdx7s5XJ4v/jr6wW+zoeMFms/fyY3YHDY+esu+weLftusXv0bVnF6LF+y1UW
-        j8+b5AJYo1JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwCdN0y
-        c4BOUVIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKkUbGhrpGRqY6xkZAWnTWCsjU6CShNSM
-        q62rmAp+qVTM//2DvYFxh3QXIyeHhICJxMq565m6GLk4hAR2M0o8PbmJFcL5xCjx5sFsKOcb
-        o0THw09ADgdYy8VPuRDxvYwSf5/sZAUZJSTwhVFixuRQEJtNQFti2//JzCC2iIC7xKfvH9hA
-        GpgFJjJKTGr6zgSSEBYIlLjW1cQGYrMIqEosXL+VBeImOYmTxyaDbZYQmMAmsfHhCbAiXoEy
-        iSsbfjNBFLlIvH3zEMoWlnh1fAs7hC0l8fndXjaI5mZGiRWbjzJCOFMYJVqez2OFqLKXeHDj
-        KDvIP8wCmhLrd+mDhJkF+CR6fz9hgniTV6KjTQiiWlVix9Uj7BBhaYnZyw0gwh4Svy6dAKsW
-        EoiV+H3CaQKjzCyEkQsYGVcxSqYWFOempxabFhjnpZbrFSfmFpfmpesl5+duYgQnJy3vHYyb
-        zvkcYhTgYFTi4WVg1owWYk0sK67MPcQowcGsJMLLcEojWog3JbGyKrUoP76oNCe1+BCjKTDM
-        JjJLiSbnAxNnXkm8oamRmZmBpYGpsYWZoZI474/rAtFCAumJJanZqakFqUUwfUwcnFINjKEL
-        43/UzjpiduPlssqEXA6H3NCeuPYpu/iWap96cHSblKqYQ+YvnV8f8+V2K03w/Mm42pyZ02Ab
-        j26sn+fZ+9vLP4stvqeio+9qeTSmqWLawZmLcsvY/N5t0jAVrVqy/eDy7X0n3xemGSxx7ms8
-        ybFfenK0Q9i1b5OOFDF/28WkdGxa9doV0kosxRmJhlrMRcWJAHzUtu5kAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjluLIzCtJLcpLzFFi42LZdlhJTne6lla0wcuvuhYXd6daHDxwmtVi
-        Xst5FovLu+awWdx7s5XJ4v/jr6wW+zoeMFms/fyY3YHDY+esu+weLftusXv0bVnF6LF+y1UW
-        j8+b5AJYo7hsUlJzMstSi/TtErgyrrauYir4pVIx//cP9gbGHdJdjBwcEgImEhc/5XYxcnEI
-        CexmlHi7dSdLFyMnUFxaYmLzF2YIW1hi5b/n7CC2kMAnRomf1ytBbDYBbYlt/yeD1YgIeEtM
-        vf6LEWQQs8BURoknN7cwgywQFvCXOP9cD6SGRUBVYuH6rWDzeQXcJO7tvMEOMV9O4uSxyawT
-        GHkWMDKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIDiUtzR2Ml5fEH2IU4GBU4uFl
-        YNaMFmJNLCuuzD3EKMHBrCTCy3BKI1qINyWxsiq1KD++qDQntfgQozQHi5I479O8Y5FCAumJ
-        JanZqakFqUUwWSYOTqkGxsxKTq0Nzy/E3v3neitpQ/Dj8sUnHKv8p8vk3bA1M73K630hUCZ/
-        6cYaDaNr26snPXhiVJrq8Tf2S+m5t8b55mv77rWFRl89mV96Ju37K65V3tfPdO/Q2PH3vY6G
-        q6W6t9/mnecKp8e97fqwZzpzR7DFaqPwymU57+32BjSyyUy3YDTcXl91XYmlOCPRUIu5qDgR
-        ANpIFjkhAgAA
-Message-Id: <20180620102111epcas5p43b88ec3765ff3b088a8ec1c9e97dd71b~51x3osnzY2939929399epcas5p4V@epcas5p4.samsung.com>
-X-CMS-MailID: 20180620102111epcas5p43b88ec3765ff3b088a8ec1c9e97dd71b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180620102111epcas5p43b88ec3765ff3b088a8ec1c9e97dd71b
-References: <CGME20180620102111epcas5p43b88ec3765ff3b088a8ec1c9e97dd71b@epcas5p4.samsung.com>
+        Wed, 20 Jun 2018 06:22:55 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id CBAD71E04A3;
+        Wed, 20 Jun 2018 12:22:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1529490174; bh=FNL0H/UIeqLYABgt8Q0ZxMHoxO+uO46TonevBa3rx74=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=KwOfrPrpmJ5/a/FMpzWYBgaQUjOWcchTCaL4hbom7c0qQs8Y4pDd1JioW9d24E6JA
+         6r2GqMNbZsyJaG6IaRCUH590dK1JdBj913fPgjyv8Douafnn/ns5RKVPGfSxLd9clE
+         pVIAuBVA/v2IPb57w/x5qAFUErv9d9eVTusQxB21IUN5ezXGicZfUfXmS1TIVhuLXC
+         wmHTFHHT9rFesVLue02JV9GYniNU+8D1F2PoMrN/f3yW77K0Dlt8U2ODh/1KBfpK7M
+         UKGRmnLhDRWGpmNqoHPzi4vHtkHq3E7btbs/nQVXmR4AfHOocavhVwhnmSzypabKZR
+         SJI4a65VGMS+w==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1.internal.synopsys.com [10.12.239.235])
+        by mailhost.synopsys.com (Postfix) with ESMTP id CDC2C5B36;
+        Wed, 20 Jun 2018 03:22:52 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 20 Jun 2018 03:22:30 -0700
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 20 Jun 2018 12:22:28 +0200
+Received: from [10.107.25.102] (10.107.25.102) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 20 Jun 2018 12:22:28 +0200
+Subject: Re: [PATCH v4 04/10] PCI: dwc: Rework MSI callbacks handler
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+ <c6320411aa93d76e3e861f6275cebb1caf6cf893.1529329262.git.gustavo.pimentel@synopsys.com>
+ <ef846300-1606-397e-c790-45ddee6b2417@ti.com>
+From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
+Message-ID: <f2b5e607-6e9d-69f0-087d-3dd1cd6736c5@synopsys.com>
+Date:   Wed, 20 Jun 2018 11:20:27 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <ef846300-1606-397e-c790-45ddee6b2417@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.25.102]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Below are the actual changes, rest all other visible changes are because of indentation.
-==========================================================================================
-@@ -1348,16 +1348,23 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- {
-    char *text;
-    int len = 0;
-+   u64 next_seq;
-+   u64 seq;
-+   u32 idx;
-+
-+	if (!buf) {
-+		if (clear) {
-+			logbuf_lock_irq();
-+			clear_seq = log_next_seq;
-+			clear_idx = log_next_idx;
-+			logbuf_unlock_irq();
-+		}
-+		return 0;
-+	}
-+
- 
-    text = kmalloc(LOG_LINE_MAX + PREFIX_MAX, GFP_KERNEL);
-    if (!text)
-            return -ENOMEM;
- 
-    logbuf_lock_irq();
--   if (buf) {
--      u64 next_seq;
--      u64 seq;
--      u32 idx;
- 
-    /*
-     * Find first record that fits, including all following records,
-@@ -1414,7 +1421,6 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
-                    idx = log_first_idx;
-            }
-    }
--   }
- 
-    if (clear) {
-            clear_seq = log_next_seq;
-==========================================================================================
+Hi,
 
-Signed-off-by: Namit Gupta <gupta.namit@samsung.com>
-Signed-off-by: Himanshu Maithani <himanshu.m@samsung.com>
+On 20/06/2018 07:49, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Monday 18 June 2018 08:30 PM, Gustavo Pimentel wrote:
+>> Remove duplicate defines located on pcie-designware.h file already
+>> available on /include/uapi/linux/pci-regs.h file.
+>>
+>> Add pci_epc_set_msi() maximum 32 interrupts validation.
+>>
+>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>> ---
+>> Change v1->v2:
+>>  - Nothing changed, just to follow the patch set version.
+>> Change v2->v3:
+>>  - Replaced wrong return value 0 to -EINVAL.
+>> Change v3->v4:
+>>  - Rebased to Lorenzo's master branch v4.18-rc1.
+>>
+>>  drivers/pci/controller/dwc/pcie-designware-ep.c | 49 +++++++++++++++++--------
+>>  drivers/pci/controller/dwc/pcie-designware.h    | 11 ------
+>>  drivers/pci/endpoint/pci-epc-core.c             |  3 +-
+>>  3 files changed, 35 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+>> index ad25654..89d9e52 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+>> @@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
+>>  
+>>  static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
+>>  {
+>> -	int val;
+>>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +	u32 val, reg;
+>> +
+>> +	if (!ep->msi_cap)
+>> +		return -EINVAL;
+>>  
+>> -	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
+>> -	if (!(val & MSI_CAP_MSI_EN_MASK))
+>> +	reg = ep->msi_cap + PCI_MSI_FLAGS;
+>> +	val = dw_pcie_readw_dbi(pci, reg);
+>> +	if (!(val & PCI_MSI_FLAGS_ENABLE))
+>>  		return -EINVAL;
+>>  
+>> -	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
+>> +	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
+>> +
+>>  	return val;
+>>  }
+>>  
+>> -static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
+>> +static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+>>  {
+>> -	int val;
+>>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +	u32 val, reg;
+>>  
+>> -	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
+>> -	val &= ~MSI_CAP_MMC_MASK;
+>> -	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
+>> +	if (!ep->msi_cap)
+>> +		return -EINVAL;
+>> +
+>> +	reg = ep->msi_cap + PCI_MSI_FLAGS;
+>> +	val = dw_pcie_readw_dbi(pci, reg);
+>> +	val &= ~PCI_MSI_FLAGS_QMASK;
+>> +	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
+>>  	dw_pcie_dbi_ro_wr_en(pci);
+>> -	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
+>> +	dw_pcie_writew_dbi(pci, reg, val);
+>>  	dw_pcie_dbi_ro_wr_dis(pci);
+>>  
+>>  	return 0;
+>> @@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>>  	struct pci_epc *epc = ep->epc;
+>>  	u16 msg_ctrl, msg_data;
+>> -	u32 msg_addr_lower, msg_addr_upper;
+>> +	u32 msg_addr_lower, msg_addr_upper, reg;
+>>  	u64 msg_addr;
+>>  	bool has_upper;
+>>  	int ret;
+>>  
+>> +	if (!ep->msi_cap)
+>> +		return -EINVAL;
+>> +
+>>  	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
+>> -	msg_ctrl = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
+>> +	reg = ep->msi_cap + PCI_MSI_FLAGS;
+>> +	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
+>>  	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
+>> -	msg_addr_lower = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
+>> +	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
+>> +	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
+>>  	if (has_upper) {
+>> -		msg_addr_upper = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
+>> -		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_64);
+>> +		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
+>> +		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
+>> +		reg = ep->msi_cap + PCI_MSI_DATA_64;
+>> +		msg_data = dw_pcie_readw_dbi(pci, reg);
+>>  	} else {
+>>  		msg_addr_upper = 0;
+>> -		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
+>> +		reg = ep->msi_cap + PCI_MSI_DATA_32;
+>> +		msg_data = dw_pcie_readw_dbi(pci, reg);
+>>  	}
+>>  	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
+>>  	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+>> index b22c5bb..a0ab12f 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware.h
+>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+>> @@ -96,17 +96,6 @@
+>>  #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region)				\
+>>  			((0x3 << 20) | ((region) << 9) | (0x1 << 8))
+>>  
+>> -#define MSI_MESSAGE_CONTROL		0x52
+>> -#define MSI_CAP_MMC_SHIFT		1
+>> -#define MSI_CAP_MMC_MASK		(7 << MSI_CAP_MMC_SHIFT)
+>> -#define MSI_CAP_MME_SHIFT		4
+>> -#define MSI_CAP_MSI_EN_MASK		0x1
+>> -#define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
+>> -#define MSI_MESSAGE_ADDR_L32		0x54
+>> -#define MSI_MESSAGE_ADDR_U32		0x58
+>> -#define MSI_MESSAGE_DATA_32		0x58
+>> -#define MSI_MESSAGE_DATA_64		0x5C
+>> -
+>>  #define MAX_MSI_IRQS			256
+>>  #define MAX_MSI_IRQS_PER_CTRL		32
+>>  #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
+>> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+>> index c72e656..094dcc3 100644
+>> --- a/drivers/pci/endpoint/pci-epc-core.c
+>> +++ b/drivers/pci/endpoint/pci-epc-core.c
+>> @@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+>>  	u8 encode_int;
+>>  	unsigned long flags;
+>>  
+>> -	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
+>> +	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
+>> +	    interrupts > 32)
+>>  		return -EINVAL;
+> 
+> This is not related to $patch->subject
 
----
- kernel/printk/printk.c | 111 ++++++++++++++++++++++++++-----------------------
- 1 file changed, 60 insertions(+), 51 deletions(-)
+A new patch file will be created for this.
+Thanks,
+Gustavo
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 512f7c2..53952ce 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1348,71 +1348,80 @@ static int syslog_print_all(char __user *buf, int size, bool clear)
- {
- 	char *text;
- 	int len = 0;
-+	u64 next_seq;
-+	u64 seq;
-+	u32 idx;
-+
-+	if (!buf) {
-+		if (clear) {
-+			logbuf_lock_irq();
-+			clear_seq = log_next_seq;
-+			clear_idx = log_next_idx;
-+			logbuf_unlock_irq();
-+		}
-+		return 0;
-+	}
-+
- 
- 	text = kmalloc(LOG_LINE_MAX + PREFIX_MAX, GFP_KERNEL);
- 	if (!text)
- 		return -ENOMEM;
- 
- 	logbuf_lock_irq();
--	if (buf) {
--		u64 next_seq;
--		u64 seq;
--		u32 idx;
- 
--		/*
--		 * Find first record that fits, including all following records,
--		 * into the user-provided buffer for this dump.
--		 */
--		seq = clear_seq;
--		idx = clear_idx;
--		while (seq < log_next_seq) {
--			struct printk_log *msg = log_from_idx(idx);
--
--			len += msg_print_text(msg, true, NULL, 0);
--			idx = log_next(idx);
--			seq++;
--		}
-+	/*
-+	 * Find first record that fits, including all following records,
-+	 * into the user-provided buffer for this dump.
-+	 */
-+	seq = clear_seq;
-+	idx = clear_idx;
-+	while (seq < log_next_seq) {
-+		struct printk_log *msg = log_from_idx(idx);
- 
--		/* move first record forward until length fits into the buffer */
--		seq = clear_seq;
--		idx = clear_idx;
--		while (len > size && seq < log_next_seq) {
--			struct printk_log *msg = log_from_idx(idx);
-+		len += msg_print_text(msg, true, NULL, 0);
-+		idx = log_next(idx);
-+		seq++;
-+	}
- 
--			len -= msg_print_text(msg, true, NULL, 0);
--			idx = log_next(idx);
--			seq++;
--		}
-+	/* move first record forward until length fits into the buffer */
-+	seq = clear_seq;
-+	idx = clear_idx;
-+	while (len > size && seq < log_next_seq) {
-+		struct printk_log *msg = log_from_idx(idx);
- 
--		/* last message fitting into this dump */
--		next_seq = log_next_seq;
-+		len -= msg_print_text(msg, true, NULL, 0);
-+		idx = log_next(idx);
-+		seq++;
-+	}
- 
--		len = 0;
--		while (len >= 0 && seq < next_seq) {
--			struct printk_log *msg = log_from_idx(idx);
--			int textlen;
-+	/* last message fitting into this dump */
-+	next_seq = log_next_seq;
- 
--			textlen = msg_print_text(msg, true, text,
--						 LOG_LINE_MAX + PREFIX_MAX);
--			if (textlen < 0) {
--				len = textlen;
--				break;
--			}
--			idx = log_next(idx);
--			seq++;
-+	len = 0;
-+	while (len >= 0 && seq < next_seq) {
-+		struct printk_log *msg = log_from_idx(idx);
-+		int textlen;
- 
--			logbuf_unlock_irq();
--			if (copy_to_user(buf + len, text, textlen))
--				len = -EFAULT;
--			else
--				len += textlen;
--			logbuf_lock_irq();
-+		textlen = msg_print_text(msg, true, text,
-+				LOG_LINE_MAX + PREFIX_MAX);
-+		if (textlen < 0) {
-+			len = textlen;
-+			break;
-+		}
-+		idx = log_next(idx);
-+		seq++;
- 
--			if (seq < log_first_seq) {
--				/* messages are gone, move to next one */
--				seq = log_first_seq;
--				idx = log_first_idx;
--			}
-+		logbuf_unlock_irq();
-+		if (copy_to_user(buf + len, text, textlen))
-+			len = -EFAULT;
-+		else
-+			len += textlen;
-+		logbuf_lock_irq();
-+
-+		if (seq < log_first_seq) {
-+			/* messages are gone, move to next one */
-+			seq = log_first_seq;
-+			idx = log_first_idx;
- 		}
- 	}
- 
--- 
-1.9.1
+> 
+> Thanks
+> Kishon
+> 
 
