@@ -3,169 +3,187 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91A0C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FE6C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0852083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:34:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0852083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 234B020874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:35:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 234B020874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932385AbeFTQeE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:34:04 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8673 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754235AbeFTQeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:34:01 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 853C481A0842B;
-        Thu, 21 Jun 2018 00:33:46 +0800 (CST)
-Received: from [127.0.0.1] (10.57.101.250) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Thu, 21 Jun 2018
- 00:33:22 +0800
-Subject: Re: KVM guest sometimes failed to boot because of kernel stack
- overflow if KPTI is enabled on a hisilicon ARM64 platform.
-To:     Will Deacon <will.deacon@arm.com>
-References: <5B2A6218.3030201@hisilicon.com> <20180620144257.GB27776@arm.com>
- <5B2A7832.4010502@hisilicon.com>
- <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
- <5B2A7FE1.5040607@hisilicon.com> <20180620162845.GD27776@arm.com>
-CC:     James Morse <james.morse@arm.com>, <catalin.marinas@arm.com>,
-        <suzuki.poulose@arm.com>, <dave.martin@arm.com>,
-        <mark.rutland@arm.com>, <marc.zyngier@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>, <xiexiuqi@huawei.com>,
-        huangdaode <huangdaode@hisilicon.com>,
-        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
-        "Xiongfanggou (James)" <james.xiong@huawei.com>,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
-        Zhangyi ac <zhangyi.ac@huawei.com>,
-        <jonathan.cameron@huawei.com>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
-        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
-        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
-        <libeijian@hisilicon.com>
-From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5B2A81D1.6070507@hisilicon.com>
-Date:   Thu, 21 Jun 2018 00:33:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180620162845.GD27776@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.101.250]
-X-CFilter-Loop: Reflected
+        id S932422AbeFTQf1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 12:35:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39986 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753960AbeFTQf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 12:35:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C371E1435;
+        Wed, 20 Jun 2018 09:35:25 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9482D3F589;
+        Wed, 20 Jun 2018 09:35:25 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 852D41AE0D56; Wed, 20 Jun 2018 17:36:01 +0100 (BST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mathieu.desnoyers@efficios.com, peterz@infradead.org,
+        paulmck@linux.vnet.ibm.com, boqun.feng@gmail.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: [RFC PATCH] rseq: Avoid infinite recursion when delivering SIGSEGV
+Date:   Wed, 20 Jun 2018 17:36:00 +0100
+Message-Id: <1529512560-28007-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+When delivering a signal to a task that is using rseq, we call into
+__rseq_handle_notify_resume() so that the registers pushed in the
+sigframe are updated to reflect the state of the restartable sequence
+(for example, ensuring that the signal returns to the abort handler if
+necessary).
 
-On 2018/6/21 0:28, Will Deacon wrote:
-> On Thu, Jun 21, 2018 at 12:25:05AM +0800, Wei Xu wrote:
->> Hi James,
->>
->> On 2018/6/20 23:54, James Morse wrote:
->>> Hi Wei,
->>>
->>> On 20/06/18 16:52, Wei Xu wrote:
->>>> On 2018/6/20 22:42, Will Deacon wrote:
->>>>> Hmm, I wonder if this is at all related to RAS, since we've just enabled
->>>>> that and if we take a fault whilst rewriting swapper then we're going to
->>>>> get stuck. What happens if you set CONFIG_ARM64_RAS_EXTN=n in the guest?
->>>> I will try it now.
->>> It's not just the Kconfig symbol, could you also revert:
->>>
->>> f751daa4f9d3 ("arm64: Unconditionally enable IESB on exception entry/return for
->>> firmware-first")
->>>
->>>
->>> (reverts and build cleanly on 4.17)
->> Thanks to point out this!
->> I have disabled CONFIG_ARM64_RAS_EXTN and reverted that commit.
->> But I still got the stack overflow issue sometimes.
->> Do you have more hint?
-> [...]
->
->>      [    0.076797] pstate: 604003c5 (nZCv DAIF +PAN -UAO)
->>      [    0.081727] pc : el1_sync+0x0/0xb0
->>      [    0.085217] lr : kpti_install_ng_mappings+0x120/0x214
-> Please run:
->
-> $ ./scripts/faddr2line vmlinux kpti_install_ng_mappings+0x120/0x214
+However, if the rseq management fails due to an unrecoverable fault when
+accessing userspace or certain combinations of RSEQ_CS_* flags, then we
+will attempt to deliver a SIGSEGV. This has the potential for infinite
+recursion if the rseq code continuously fails on signal delivery.
 
-Thanks for your kindly guide :)
-The output is as below:
+Avoid this problem by using force_sigsegv() instead of force_sig(), which
+is explicitly designed to reset the SEGV handler to SIG_DFL in the case
+of a recursive fault.
 
-     joyx@Turing-Arch-b:~/plinth-kernel-v200$ ./scripts/faddr2line 
-../kernel-dev.build/vmlinux kpti_install_ng_mappings+0x120/0x214
-     kpti_install_ng_mappings+0x120/0x214:
-     cpu_set_reserved_ttbr0 at arch/arm64/include/asm/mmu_context.h:52
-     47      /*
-     48       * Set TTBR0 to empty_zero_page. No translations will be 
-possible via TTBR0.
-     49       */
-     50      static inline void cpu_set_reserved_ttbr0(void)
-     51      {
-     52              unsigned long ttbr = 
-phys_to_ttbr(__pa_symbol(empty_zero_page));
-     53
-     54              write_sysreg(ttbr, ttbr0_el1);
-     55              isb();
-     56      }
-     57
-     (inlined by) cpu_uninstall_idmap at 
-arch/arm64/include/asm/mmu_context.h:123
-     118      */
-     119     static inline void cpu_uninstall_idmap(void)
-     120     {
-     121             struct mm_struct *mm = current->active_mm;
-     122
-     123             cpu_set_reserved_ttbr0();
-     124             local_flush_tlb_all();
-     125             cpu_set_default_tcr_t0sz();
-     126
-     127             if (mm != &init_mm && !system_uses_ttbr0_pan())
-     128                     cpu_switch_mm(mm->pgd, mm);
-     (inlined by) kpti_install_ng_mappings at 
-arch/arm64/kernel/cpufeature.c:922
-     917
-     918             remap_fn = (void 
-*)__pa_symbol(idmap_kpti_install_ng_mappings);
-     919
-     920             cpu_install_idmap();
-     921             remap_fn(cpu, num_online_cpus(), 
-__pa_symbol(swapper_pg_dir));
-     922             cpu_uninstall_idmap();
-     923
-     924             if (!cpu)
-     925                     kpti_applied = true;
-     926
-     927             return;
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
 
-Thanks!
+Sending as an RFC since I only spotted this via code inspection and haven't
+tried to trigger it yet.
 
-Best Regards,
-Wei
+ arch/arm/kernel/signal.c     |  2 +-
+ arch/powerpc/kernel/signal.c |  2 +-
+ arch/x86/kernel/signal.c     |  2 +-
+ include/linux/sched.h        | 20 ++++++++++++++------
+ kernel/rseq.c                |  7 ++++---
+ 5 files changed, 21 insertions(+), 12 deletions(-)
 
-> as the GDB output wasn't helpful (it only showed local variable
-> declarations?!).
->
-> Will
->
-> .
->
-
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index f09e9d66d605..6434a62591e8 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -544,7 +544,7 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
+ 	 * Increment event counter and perform fixup for the pre-signal
+ 	 * frame.
+ 	 */
+-	rseq_signal_deliver(regs);
++	rseq_signal_deliver(ksig, regs);
+ 
+ 	/*
+ 	 * Set up the stack frame
+diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+index 17fe4339ba59..af822e764569 100644
+--- a/arch/powerpc/kernel/signal.c
++++ b/arch/powerpc/kernel/signal.c
+@@ -134,7 +134,7 @@ static void do_signal(struct task_struct *tsk)
+ 	/* Re-enable the breakpoints for the signal stack */
+ 	thread_change_pc(tsk, tsk->thread.regs);
+ 
+-	rseq_signal_deliver(tsk->thread.regs);
++	rseq_signal_deliver(&ksig, tsk->thread.regs);
+ 
+ 	if (is32) {
+         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 445ca11ff863..92a3b312a53c 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -692,7 +692,7 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 	 * Increment event counter and perform fixup for the pre-signal
+ 	 * frame.
+ 	 */
+-	rseq_signal_deliver(regs);
++	rseq_signal_deliver(ksig, regs);
+ 
+ 	/* Set up the stack frame */
+ 	if (is_ia32_frame(ksig)) {
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 87bf02d93a27..277f8ccb0661 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1799,20 +1799,27 @@ static inline void rseq_set_notify_resume(struct task_struct *t)
+ 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+ }
+ 
+-void __rseq_handle_notify_resume(struct pt_regs *regs);
++void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+ 
+-static inline void rseq_handle_notify_resume(struct pt_regs *regs)
++static inline void _rseq_handle_notify_resume(struct ksignal *ksig,
++					      struct pt_regs *regs)
+ {
+ 	if (current->rseq)
+-		__rseq_handle_notify_resume(regs);
++		__rseq_handle_notify_resume(ksig, regs);
++}
++
++static inline void rseq_handle_notify_resume(struct pt_regs *regs)
++{
++	_rseq_handle_notify_resume(NULL, regs);
+ }
+ 
+-static inline void rseq_signal_deliver(struct pt_regs *regs)
++static inline void rseq_signal_deliver(struct ksignal *ksig,
++				       struct pt_regs *regs)
+ {
+ 	preempt_disable();
+ 	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
+ 	preempt_enable();
+-	rseq_handle_notify_resume(regs);
++	_rseq_handle_notify_resume(ksig, regs);
+ }
+ 
+ /* rseq_preempt() requires preemption to be disabled. */
+@@ -1867,7 +1874,8 @@ static inline void rseq_set_notify_resume(struct task_struct *t)
+ static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+ {
+ }
+-static inline void rseq_signal_deliver(struct pt_regs *regs)
++static inline void rseq_signal_deliver(struct ksignal *ksig,
++				       struct pt_regs *regs)
+ {
+ }
+ static inline void rseq_preempt(struct task_struct *t)
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index ae306f90c514..22b6acf1ad63 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -251,10 +251,10 @@ static int rseq_ip_fixup(struct pt_regs *regs)
+  * respect to other threads scheduled on the same CPU, and with respect
+  * to signal handlers.
+  */
+-void __rseq_handle_notify_resume(struct pt_regs *regs)
++void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+ {
+ 	struct task_struct *t = current;
+-	int ret;
++	int ret, sig;
+ 
+ 	if (unlikely(t->flags & PF_EXITING))
+ 		return;
+@@ -268,7 +268,8 @@ void __rseq_handle_notify_resume(struct pt_regs *regs)
+ 	return;
+ 
+ error:
+-	force_sig(SIGSEGV, t);
++	sig = ksig ? ksig->sig : 0;
++	force_sigsegv(sig, t);
+ }
+ 
+ #ifdef CONFIG_DEBUG_RSEQ
+-- 
+2.1.4
 
