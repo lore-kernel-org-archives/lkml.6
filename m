@@ -2,98 +2,110 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D951C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB82AC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C787620846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:34:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C787620846
+	by mail.kernel.org (Postfix) with ESMTP id 30A7F20871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:34:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYPaveeT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A7F20871
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753386AbeFTGeg (ORCPT
+        id S1753893AbeFTGeq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 02:34:36 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:34099 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750852AbeFTGeY (ORCPT
+        Wed, 20 Jun 2018 02:34:46 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33249 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752924AbeFTGee (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 02:34:24 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w5K6XAkj013329;
-        Wed, 20 Jun 2018 09:33:10 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 8441)
-        id E682162FF9; Wed, 20 Jun 2018 09:33:09 +0300 (IDT)
-From:   avifishman70@gmail.com
-To:     gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mathias.nyman@linux.intel.com, bjorn.andersson@linaro.org,
-        jhogan@kernel.org, albeu@free.fr, chunfeng.yun@mediatek.com,
-        tony@atomide.com, baolu.lu@linux.intel.com, elder@linaro.org,
-        digetx@gmail.com, kstewart@linuxfoundation.org,
-        hdegoede@redhat.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, openbmc@lists.ozlabs.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Subject: [PATCH v7 0/3] USB host: Add USB ehci support for nuvoton npcm7xx
-Date:   Wed, 20 Jun 2018 09:33:03 +0300
-Message-Id: <20180620063306.134820-1-avifishman70@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Wed, 20 Jun 2018 02:34:34 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 6-v6so1203574plb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 23:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fhMYWj7f6ty2qgF5VCBMsHhx9/p594MpeZRWWrCbdiM=;
+        b=PYPaveeTuBI7++mJQFzQriJRtFJsFRQbqiBXl0jggrK5FysRWd5xsYY7QC2MBnNCCj
+         hJRh2WKi/BImvKNEx0JGOEKHC2o9e4VtDvPKakAb62+K7RUq3yIQ5zSS7mxzIz50IL5H
+         PpuqzkLz7Vb8DH88S2EP5Oc4+Fwxs2dCG0x5wXxtxU7EFJ7IPm6B73Sv/R0tH4VelsP5
+         M6mquENrnii7zytK5/B73URFp0MGWv822XWyQ7GnlepG81ogMs1VFkeZnfeQSkgwWH+n
+         hQG15vwG0YkSLVvZGbuieiL1QkhDNbTuF6sfevC6iEcvxhPIKlQbLUvSq41lMJr44i32
+         J3/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fhMYWj7f6ty2qgF5VCBMsHhx9/p594MpeZRWWrCbdiM=;
+        b=WGtPXGS+qvIfRVJ4sRfuIIqsdnwW/m2ZjmQc+IRL7ZoRiE9ZwqEsL7uhDCJp5xIOLf
+         S0rn4E3ZP04GbXMspIwJrklYy5IZrYZmGy+gswLqrCKBZbRjaIraISJdLS7Rigp8GGbW
+         OHYRrq0YmgTd90TBIiAyMhEgRC0U+h5rMozr+eT3Q5nHznw19A7QyNbMtvtSOvEQIy6Z
+         wyqpNtb1CpWEZvF6//brsIRpfFQmnIw/r4PWvCkOk2kcJ6FomFTFOUvwH/potYwPOLhT
+         juy2Q/QizlvXpoDaOAuu6/Rx0uAsKZGhxHDfvsuSH8SrY584+j5msDX6BS/3edmf0XNz
+         Dk5Q==
+X-Gm-Message-State: APt69E2q0+J/+3uwm8j2lBFqtw+QsisTgjFVpZMoeAXMMZxsWN4gX3hQ
+        Me60ONEDdOdn1a9GRlvbyY4=
+X-Google-Smtp-Source: ADUXVKJRGItVBMxvaY8iLlgfesVwXCCrscbhgSvGZy5xbxTZk7u+apMWqwa2l4tg396YuvWhssb7og==
+X-Received: by 2002:a17:902:301:: with SMTP id 1-v6mr22116850pld.127.1529476474584;
+        Tue, 19 Jun 2018 23:34:34 -0700 (PDT)
+Received: from localhost ([110.70.59.159])
+        by smtp.gmail.com with ESMTPSA id i17-v6sm2454878pfj.95.2018.06.19.23.34.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 19 Jun 2018 23:34:33 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 15:34:30 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk: Make CONSOLE_LOGLEVEL_QUIET configurable
+Message-ID: <20180620063430.GA749@jagdpanzerIV>
+References: <20180619115726.3098-1-hdegoede@redhat.com>
+ <20180619093102.5ad9164d@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619093102.5ad9164d@gandalf.local.home>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <avifishman70@gmail.com>
+On (06/19/18 09:31), Steven Rostedt wrote:
+> > The goal of passing the "quiet" option to the kernel is for the kernel
+> > to be quiet unless something really is wrong.
+> > 
+> > Sofar passing quiet has been (mostly) equivalent to passing
+> > loglevel=4 on the kernel commandline. Which means to show any messages
+> > with a level of KERN_ERR or higher severity on the console.
+> > 
+> > In practice this often does not result in a quiet boot though, since
+> > there are many false-positive or otherwise harmless error messages printed,
+> > defeating the purpose of the quiet option. Esp. the ACPICA code is really
+> > bad wrt this, but there are plenty of others too.
+> > 
+> > This commit makes CONSOLE_LOGLEVEL_QUIET configurable.
+> > 
+> > This for example will allow distros which want quiet to really mean quiet
+> > to set CONSOLE_LOGLEVEL_QUIET so that only messages with a higher severity
+> > then KERN_ERR (CRIT, ALERT, EMERG) get printed, avoiding an endless game
+> > of whack-a-mole silencing harmless error messages.
+> > 
+> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> 
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Changes since version 6:
-- Follow Alan Stern comment on Kconfig: change from "default y" to
-  "default y if (USB_EHCI_HCD && ARCH_NPCM7XX)"
-- Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Looks OK to me
 
-Changes since version 5:
-- dt-bindings add 'reg' description according to Sergei Shtylyov comment
-- Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-Changes since version 4:
-- Reviewed-by: Rob Herring <robh@kernel.org>
-
-Changes since version 3:
-- Follow Rob Herring comments to change dt-bindings commit subject
-
-Changes since version 2:
-- Follow Sergei Shtylyov comments to rename the node name in in device
-  tree documentation
-
-Changes since version 1:
-- Follow Rob Herring comments in device tree documentation
-- minor log error fix in ehci-npcm7xx.c
-   
-This patch adds support for ehci controller for the Nuvoton npcm7xx
-platform.
-Most of the code was taken from ehci-spear.c + specific initialization
-code.
-
-Avi Fishman (3):
-  USB host: Add USB ehci support for nuvoton npcm7xx platform
-  dt-bindings: usb: new ehci-npcm7xx dt
-  MAINTAINERS: add subfolders for nuvoton *npcm*
-
- .../devicetree/bindings/usb/npcm7xx-usb.txt        |  18 ++
- MAINTAINERS                                        |   3 +
- drivers/usb/host/Kconfig                           |   8 +
- drivers/usb/host/Makefile                          |   1 +
- drivers/usb/host/ehci-npcm7xx.c                    | 212 +++++++++++++++++++++
- 5 files changed, 242 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/npcm7xx-usb.txt
- create mode 100644 drivers/usb/host/ehci-npcm7xx.c
-
--- 
-2.14.1
-
+	-ss
