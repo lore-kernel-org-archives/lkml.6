@@ -2,216 +2,260 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C092C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4898AC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 199A820836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C03812083A
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 16:55:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20150623.gappssmtp.com header.i=@dubeyko-com.20150623.gappssmtp.com header.b="0R+JfKRa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199A820836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Ghzqx51a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03812083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932521AbeFTQzN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 12:55:13 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36668 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932177AbeFTQzL (ORCPT
+        id S932621AbeFTQzi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 12:55:38 -0400
+Received: from mail.efficios.com ([167.114.142.138]:56574 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932153AbeFTQzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 12:55:11 -0400
-Received: by mail-pl0-f65.google.com with SMTP id a7-v6so106118plp.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 09:55:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tH7vaINwIkoKB+/kqBQKm2h9xvIAuylUYJawXKPEB6I=;
-        b=0R+JfKRa7SCF0OpdhVR1RJJADuTti+4hZVUYOeAEIPIADqJTUe8XrOQzu8VlrHoxMD
-         wdk5qVGlIU81MDDVjeBN7Z/BQwAghmaSitNpFV/iEbDEvZrl7ANf6cg5PCUoMaGovmUV
-         dgnSPY9uO/eRD9radI51gdeib9EDsgd1E9pRFaksb/HYTvfJEwZmwaa2fPbOQDoSet1F
-         HSKJaeVRHuQRul9NslUAVFLM0VWSfYv/1fm/kyIPs7d7bXSz35Q7U6PXU2u1CH0wWLw0
-         h8Bfu/VEkWNhVwvuM3kO4sgqKobIo2ef9oR7XefxzuVgwl1wxQyc4PtZMEARQBhaa0sE
-         2oNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tH7vaINwIkoKB+/kqBQKm2h9xvIAuylUYJawXKPEB6I=;
-        b=ra01bqimUdnJby3iOWAefhCf1+5gK6xO9dOYKDikMC63L/L+XtuGCwlK96ufWKS7mM
-         kEVbVPCMz7E1LfnHq/cGhgQs/6CuLM/nS/odYGKzgY4NGkAG6Y8fw6InP+xdT4FMUGY+
-         xRQo3A1kuUDDYDDuu/gNzVeSxb9Pq64sRxnf3ajiLk80OWChIJTyVCrIMx0Wj9iIyjnn
-         QhKqq6QxnXLnugMPt+n5W7xoTM+vZRaABZFTITsjQPTN3ycJ34HkRpgPkGg8OgOR+Su0
-         as6ulL98HeW12nPOk6Mcdcr6eZOUen57hfKBnOX83djb6yR2de6lKZ+KDIl3Me37DyNo
-         WrCA==
-X-Gm-Message-State: APt69E1b/sZm0BHUU8S73V0wLGm1X1iMsy+Txmc4WcEpDwffIcNGaCM0
-        UXSx1yQAdmoemZun53CeCpGjdA==
-X-Google-Smtp-Source: ADUXVKKZDG8Te5bQW7dpe5KkiFDU/CHxJf/txntYpXPQkOEAluOh9hIFFldGZ8eUymXjKT21t85Ytw==
-X-Received: by 2002:a17:902:d697:: with SMTP id v23-v6mr24425456ply.193.1529513710513;
-        Wed, 20 Jun 2018 09:55:10 -0700 (PDT)
-Received: from ubuntu-16 (c-24-130-14-162.hsd1.ca.comcast.net. [24.130.14.162])
-        by smtp.gmail.com with ESMTPSA id 84-v6sm6217627pfl.186.2018.06.20.09.55.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 09:55:09 -0700 (PDT)
-Message-ID: <1529513708.5833.29.camel@dubeyko.com>
-Subject: Re: [PATCH 1/3] hfs: stop using timespec based interfaces
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Jeff Layton <jlayton@redhat.com>, Jan Kara <jack@suse.cz>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 20 Jun 2018 09:55:08 -0700
-In-Reply-To: <CAK8P3a0WNPxDqSNJUuijY0P9UwGXPD_DCAUw9AH_OvAg-cPf1Q@mail.gmail.com>
-References: <20180619160223.4108556-1-arnd@arndb.de>
-         <1529427809.2624.16.camel@dubeyko.com>
-         <CAK8P3a0WNPxDqSNJUuijY0P9UwGXPD_DCAUw9AH_OvAg-cPf1Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 20 Jun 2018 12:55:36 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 048931A9E4C;
+        Wed, 20 Jun 2018 12:55:36 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id maOdmjSxWo79; Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 70B311A9E48;
+        Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 70B311A9E48
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1529513735;
+        bh=I3PfK82MkcHE7EnhiraLAqll0qf0wm1EWUWzeqyOhOw=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=Ghzqx51aKdyuz7uNanRX0NqfDowKg/OvRV3YxBhbRs2ms3+rESlRC4MmIZQz1rDSJ
+         hQeK5WP5r58exIup1jh+KvhUyINkyisAQSPuiik4vzy1n4JjZ+0e5Ldotaqlu6l2wF
+         z9PJw15bkrQimROMNfxLxFF4EBXcDCwCDZSdpyXoY1OPR8DHG1CdALibQMLbA6vCaP
+         2KfeYU1wAEKVUYu+YsDADfuVM/YBPptiA5ATH2m2oRVeAomMYVY1iwUOaxTfETtVxD
+         OPioqT+XxbKP+Jy9HExslFftINBNNWseKIXsp0luhUU2TcY043cmgFDmZ1WFkGnPFs
+         JdZNagnaiHhLg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id A9P4RLgdcn9q; Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 5C2A51A9E42;
+        Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
+Date:   Wed, 20 Jun 2018 12:55:35 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>
+Message-ID: <10453618.15.1529513735208.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1529512560-28007-1-git-send-email-will.deacon@arm.com>
+References: <1529512560-28007-1-git-send-email-will.deacon@arm.com>
+Subject: Re: [RFC PATCH] rseq: Avoid infinite recursion when delivering
+ SIGSEGV
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: rseq: Avoid infinite recursion when delivering SIGSEGV
+Thread-Index: k99nSYS/cn2LuEXA1At4wWDWA3b9fw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-19 at 21:42 +0200, Arnd Bergmann wrote:
-> On Tue, Jun 19, 2018 at 7:03 PM, Viacheslav Dubeyko <slava@dubeyko.co
-> m> wrote:
-> > 
-> > On Tue, 2018-06-19 at 18:02 +0200, Arnd Bergmann wrote:
-> > > 
-> > > The native HFS timestamps overflow in year 2040, two years after
-> > > the
-> > > Unix
-> > > y2038 overflow. However, the way that the conversion between on-
-> > > disk
-> > > timestamps and in-kernel timestamps was implemented, 64-bit
-> > > machines
-> > > actually ended up converting negative UTC timestamps (1902
-> > > through
-> > > 1969)
-> > > into times between 2038 and 2106.
-> > > 
-> > > Rather than making all machines faithfully represent timestamps
-> > > in
-> > > the
-> > > ancient past but break after 2040, this changes the file system
-> > > to
-> > > always use the unsigned UTC interpretation, reading back times
-> > > between
-> > > 1970 and 2106.
-> > > 
-> > The trouble with HFS and HFS+ that the specification [1] declares
-> > this:
-> > 
-> > "HFS Plus stores dates in several data structures, including the
-> > volume
-> > header and catalog records. These dates are stored in unsigned 32-
-> > bit
-> > integers (UInt32) containing the number of seconds since midnight,
-> > January 1, 1904, GMT. This is slightly different from HFS, where
-> > the
-> > value represents local time. The maximum representable date is
-> > February
-> > 6, 2040 at 06:28:15 GMT."
-> > 
-> > So, I am not sure that we are able to support later dates because
-> > such
-> > timestamps cannot be stored on HFS/HFS+ volumes and will be
-> > incompatible with Mac OS X.
-> We never followed that interpretation in Linux though. As I wrote,
-> on 64-bit machines, these two calculations (hfs and hfs+,
-> respectively)
-> 
-> #define __hfs_m_to_utime(sec)   (be32_to_cpu(sec) - 2082844800U  +
-> sys_tz.tz_minuteswest * 60)
-> #define __hfsp_mt2ut(t)                (be32_to_cpu(t) - 2082844800U)
-> 
-> just wrap around when reading the timestamps before 1970 from
-> disk. On 32-bit machines they get wrapped another time when
-> we assign them to a signed 32-bit time_t.
-> 
+----- On Jun 20, 2018, at 12:36 PM, Will Deacon will.deacon@arm.com wrote:
 
-The whole patchset looks reasonable for me. I simply guess what the
-correct behaviour of HFS/HFS+ file system driver could look like for
-the case of achieving 2040 year. So, maybe the good way could be to
-mount in the READ-ONLY mode. What do you think? 
+> When delivering a signal to a task that is using rseq, we call into
+> __rseq_handle_notify_resume() so that the registers pushed in the
+> sigframe are updated to reflect the state of the restartable sequence
+> (for example, ensuring that the signal returns to the abort handler if
+> necessary).
+> 
+> However, if the rseq management fails due to an unrecoverable fault when
+> accessing userspace or certain combinations of RSEQ_CS_* flags, then we
+> will attempt to deliver a SIGSEGV. This has the potential for infinite
+> recursion if the rseq code continuously fails on signal delivery.
+> 
+> Avoid this problem by using force_sigsegv() instead of force_sig(), which
+> is explicitly designed to reset the SEGV handler to SIG_DFL in the case
+> of a recursive fault.
 
-> > 
-> > Also, I am not sure that anybody will use HFS/HFS+ after 2040.
-> I'm trying to fix all file systems to be unambiguous regarding
-> inode timestamps. This means it should behave the same way
-> on 32-bit and 64-bit kernels, and if possible in a sane way.
-> 
-> Even if you don't care about running HFS in the future, you
-> can trivially create files with arbitrary timestamps, just try
-> 
-> touch -d "Jan 1 1901" 1901
-> touch -d "Jan 1 1905" 1905
-> touch -d "Jan 1 1969" 1969
-> touch -d "Jan 1 2038" 2038
-> touch -d "Jan 1 2040" 2040
-> touch -d "Jan 1 2106" 2106
-> touch -d "Jan 1 2107" 2107
-> 
-> on HFS and do an 'ls -l' after an unmount/remount.
-> 
-> If you think it's important that we change the current behavior
-> to be compatible with MacOS and represent the 1904..2040
-> time range rather than 1970..2106, we can definitely do that
-> as well, using this patch:
-> 
-> diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-> index ff432931a5b1..2c7366342656 100644
-> --- a/fs/hfs/hfs_fs.h
-> +++ b/fs/hfs/hfs_fs.h
-> @@ -249,7 +249,7 @@ extern void hfs_mark_mdb_dirty(struct super_block
-> *sb);
->   * actually works until year 2106
->   */
->  #define __hfs_u_to_mtime(sec)  cpu_to_be32(sec + 2082844800U -
-> sys_tz.tz_minuteswest * 60)
-> -#define __hfs_m_to_utime(sec)  (be32_to_cpu(sec) - 2082844800U  +
-> sys_tz.tz_minuteswest * 60)
-> +#define __hfs_m_to_utime(sec)  ((time64_t)be32_to_cpu(sec) -
-> 2082844800U  + sys_tz.tz_minuteswest * 60)
-> 
->  #define HFS_I(inode)   (container_of(inode, struct hfs_inode_info,
-> vfs_inode))
->  #define HFS_SB(sb)     ((struct hfs_sb_info *)(sb)->s_fs_info)
-> diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
-> index 1a6b469f8d22..4eaee8bdfcb2 100644
-> --- a/fs/hfsplus/hfsplus_fs.h
-> +++ b/fs/hfsplus/hfsplus_fs.h
-> @@ -534,7 +534,7 @@ int hfsplus_read_wrapper(struct super_block *sb);
-> 
->  /* time macros: convert between 1904-2040 and 1970-2106 range,
->   * pre-1970 timestamps are interpreted as post-2038 times after
-> wrap-around */
-> -#define __hfsp_mt2ut(t)                (be32_to_cpu(t) -
-> 2082844800U)
-> +#define __hfsp_mt2ut(t)                ((time64_t)be32_to_cpu(t) -
-> 2082844800U)
->  #define __hfsp_ut2mt(t)                (cpu_to_be32(t +
-> 2082844800U))
-> 
->  /* compatibility */
-> 
-> I can submit that separately so that it can get backported into
-> stable kernels if you like, with the type changes as a follow-up
-> on top.
-> 
+Your approach looks good. One nit below implementation-wise:
 
-Sounds good.
+> 
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
+> ---
+> 
+> Sending as an RFC since I only spotted this via code inspection and haven't
+> tried to trigger it yet.
+> 
+> arch/arm/kernel/signal.c     |  2 +-
+> arch/powerpc/kernel/signal.c |  2 +-
+> arch/x86/kernel/signal.c     |  2 +-
+> include/linux/sched.h        | 20 ++++++++++++++------
+> kernel/rseq.c                |  7 ++++---
+> 5 files changed, 21 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+> index f09e9d66d605..6434a62591e8 100644
+> --- a/arch/arm/kernel/signal.c
+> +++ b/arch/arm/kernel/signal.c
+> @@ -544,7 +544,7 @@ static void handle_signal(struct ksignal *ksig, struct
+> pt_regs *regs)
+> 	 * Increment event counter and perform fixup for the pre-signal
+> 	 * frame.
+> 	 */
+> -	rseq_signal_deliver(regs);
+> +	rseq_signal_deliver(ksig, regs);
+> 
+> 	/*
+> 	 * Set up the stack frame
+> diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+> index 17fe4339ba59..af822e764569 100644
+> --- a/arch/powerpc/kernel/signal.c
+> +++ b/arch/powerpc/kernel/signal.c
+> @@ -134,7 +134,7 @@ static void do_signal(struct task_struct *tsk)
+> 	/* Re-enable the breakpoints for the signal stack */
+> 	thread_change_pc(tsk, tsk->thread.regs);
+> 
+> -	rseq_signal_deliver(tsk->thread.regs);
+> +	rseq_signal_deliver(&ksig, tsk->thread.regs);
+> 
+> 	if (is32) {
+>         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+> diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+> index 445ca11ff863..92a3b312a53c 100644
+> --- a/arch/x86/kernel/signal.c
+> +++ b/arch/x86/kernel/signal.c
+> @@ -692,7 +692,7 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+> 	 * Increment event counter and perform fixup for the pre-signal
+> 	 * frame.
+> 	 */
+> -	rseq_signal_deliver(regs);
+> +	rseq_signal_deliver(ksig, regs);
+> 
+> 	/* Set up the stack frame */
+> 	if (is_ia32_frame(ksig)) {
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 87bf02d93a27..277f8ccb0661 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1799,20 +1799,27 @@ static inline void rseq_set_notify_resume(struct
+> task_struct *t)
+> 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+> }
+> 
+> -void __rseq_handle_notify_resume(struct pt_regs *regs);
+> +void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+> 
+> -static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+> +static inline void _rseq_handle_notify_resume(struct ksignal *ksig,
+> +					      struct pt_regs *regs)
+> {
+> 	if (current->rseq)
+> -		__rseq_handle_notify_resume(regs);
+> +		__rseq_handle_notify_resume(ksig, regs);
+> +}
+> +
+> +static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+> +{
+> +	_rseq_handle_notify_resume(NULL, regs);
+> }
+
+
+If we add _rseq_handle_notify_resume() here, we'd need the CONFIG_RSEQ=n
+code to also have an empty static inline for it.
+
+So I'm not sure we want all 3 of:
+
+void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+
+static inline void _rseq_handle_notify_resume(struct ksignal *ksig,
+				      struct pt_regs *regs)
+
+static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+
+Instead, can we just have:
+
+__rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+
+static inline void rseq_handle_notify_resume(struct ksignal *ksig,
+				      struct pt_regs *regs)
+
+and change the callers to rseq_handle_notify_resume to pass a NULL
+pointer when they are not within signal delivery ?
 
 Thanks,
-Vyacheslav Dubeyko.
 
+Mathieu
+
+> 
+> -static inline void rseq_signal_deliver(struct pt_regs *regs)
+> +static inline void rseq_signal_deliver(struct ksignal *ksig,
+> +				       struct pt_regs *regs)
+> {
+> 	preempt_disable();
+> 	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
+> 	preempt_enable();
+> -	rseq_handle_notify_resume(regs);
+> +	_rseq_handle_notify_resume(ksig, regs);
+> }
+> 
+> /* rseq_preempt() requires preemption to be disabled. */
+> @@ -1867,7 +1874,8 @@ static inline void rseq_set_notify_resume(struct
+> task_struct *t)
+> static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+> {
+> }
+> -static inline void rseq_signal_deliver(struct pt_regs *regs)
+> +static inline void rseq_signal_deliver(struct ksignal *ksig,
+> +				       struct pt_regs *regs)
+> {
+> }
+> static inline void rseq_preempt(struct task_struct *t)
+> diff --git a/kernel/rseq.c b/kernel/rseq.c
+> index ae306f90c514..22b6acf1ad63 100644
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -251,10 +251,10 @@ static int rseq_ip_fixup(struct pt_regs *regs)
+>  * respect to other threads scheduled on the same CPU, and with respect
+>  * to signal handlers.
+>  */
+> -void __rseq_handle_notify_resume(struct pt_regs *regs)
+> +void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+> {
+> 	struct task_struct *t = current;
+> -	int ret;
+> +	int ret, sig;
+> 
+> 	if (unlikely(t->flags & PF_EXITING))
+> 		return;
+> @@ -268,7 +268,8 @@ void __rseq_handle_notify_resume(struct pt_regs *regs)
+> 	return;
+> 
+> error:
+> -	force_sig(SIGSEGV, t);
+> +	sig = ksig ? ksig->sig : 0;
+> +	force_sigsegv(sig, t);
+> }
+> 
+> #ifdef CONFIG_DEBUG_RSEQ
+> --
+> 2.1.4
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
