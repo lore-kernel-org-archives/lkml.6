@@ -2,122 +2,88 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF00C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 635DDC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69CAD20872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:09:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69CAD20872
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 07CF020872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:12:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nkDEBr1v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07CF020872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754061AbeFTOJt (ORCPT
+        id S1754002AbeFTOMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:09:49 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48704 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753321AbeFTOJs (ORCPT
+        Wed, 20 Jun 2018 10:12:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59604 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752827AbeFTOMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:09:48 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KE0grN139745
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:09:48 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqqv1htn0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:09:47 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 20 Jun 2018 15:09:45 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Jun 2018 15:09:41 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KE9e2X8650850
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Jun 2018 14:09:40 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E47B142045;
-        Wed, 20 Jun 2018 14:59:39 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E8C8A4203F;
-        Wed, 20 Jun 2018 14:59:36 +0100 (BST)
-Received: from [9.195.33.217] (unknown [9.195.33.217])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Jun 2018 14:59:36 +0100 (BST)
-Subject: Re: [PATCH 3/3] perf script: Fix crash because of missing feat_op[]
- entry
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     jolsa@redhat.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, dsahern@gmail.com, ak@linux.intel.com,
-        yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180620133030.2188-1-ravi.bangoria@linux.ibm.com>
- <20180620133030.2188-4-ravi.bangoria@linux.ibm.com>
- <20180620134905.GO20477@kernel.org>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Wed, 20 Jun 2018 19:39:36 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 20 Jun 2018 10:12:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=fszqOchqOK3zF6lfDyZsNt7DpBDbt1prSdKz0mQ/Vac=; b=nkDEBr1v+wQdIXBAbpPMewwXH
+        ikym0EHbvTkNrpgGatILlOzNxqC+wGfnKDkFb4wHzyaPlqAa9xIz4J78Te/1OviOBCq9cI1D2GEhe
+        /EGBiryv3/kSnaFw3rmlz3+Bt3Y4cR2CWnsxiApROVEyuXTM1G6SfS5U74vh2JDS0gYDyqHRv+rMb
+        dofvYdyJCCySf/dkTUDDqHOZ94YzSHPT5xYLOBPwIRF2Vpf6heUKyM2Af3giTr42MXqgDjxmRuhds
+        7bT6v1NvJflu5WfF/AzGhqyuRgzphX7XZAUpa/voOKaMRSAPASzn6rDb3BhygM23vJXWpppjYALJy
+        gpSoX7y+w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVdpq-0000fS-FA; Wed, 20 Jun 2018 14:11:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 61DEA2029F1D5; Wed, 20 Jun 2018 16:11:44 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 16:11:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH v10 3/9] cpuset: Simulate auto-off of sched.domain_root
+ at cgroup removal
+Message-ID: <20180620141144.GI2494@hirez.programming.kicks-ass.net>
+References: <1529295249-5207-1-git-send-email-longman@redhat.com>
+ <1529295249-5207-4-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180620134905.GO20477@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18062014-0016-0000-0000-000001DE21E7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062014-0017-0000-0000-0000323236A0
-Message-Id: <883a0115-57f4-0bc3-9161-e5efc6a1a9d0@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806200159
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529295249-5207-4-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+On Mon, Jun 18, 2018 at 12:14:02PM +0800, Waiman Long wrote:
+> @@ -1058,7 +1060,12 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
+>  	 * Check if any CPUs in addmask or delmask are in the effective_cpus
+>  	 * of a sibling cpuset. The implied cpu_exclusive of a scheduling
+>  	 * domain root will ensure there are no overlap in cpus_allowed.
+> +	 *
+> +	 * This check is skipped if the cpuset is dying.
 
-On 06/20/2018 07:19 PM, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Jun 20, 2018 at 07:00:30PM +0530, Ravi Bangoria escreveu:
->> perf_event__process_feature() tries to access feat_ops[feat].process
->> which is not defined for feat = HEADER_LAST_FEATURE and thus perf is
->> crashing. Add dummy entry for HEADER_LAST_FEATURE in the feat_ops.
-> 
-> Humm, first impression is that we should check for HEADER_LAST_FEATURE
-> and not try to access that array slot, as it is just a marker, not an
-> actual feature.
+Comments that state what the code does are mostly useless; please
+explain _why_ if anything.
 
-Sure. Let me try to handle it inside perf_event__process_feature() itself.
-May be something like below.
-
------
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 540cd2dcd3e7..4dc251d3b372 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3461,6 +3461,10 @@ int perf_event__process_feature(struct perf_tool *tool,
-                return -1;
-        }
- 
-+       /* HEADER_LAST_FEATURE is just a marker. Ignore it. */
-+       if (feat == HEADER_LAST_FEATURE)
-+               return 0;
-+
-        if (!feat_ops[feat].process)
-                return 0;
------
-
-Thanks,
-Ravi
-
+>  	 */
+> +	if (dying)
+> +		goto updated_reserved_cpus;
+> +
+>  	rcu_read_lock();
+>  	cpuset_for_each_child(sibling, pos_css, parent) {
+>  		if ((sibling == cpuset) || !(sibling->css.flags & CSS_ONLINE))
