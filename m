@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062D2C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7719EC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B53FE20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:29:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B53FE20693
+	by mail.kernel.org (Postfix) with ESMTP id 3A4CE20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:30:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A4CE20693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754226AbeFTA3r (ORCPT
+        id S1754271AbeFTAaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:29:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44739 "EHLO
+        Tue, 19 Jun 2018 20:30:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51095 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752703AbeFTA3n (ORCPT
+        with ESMTP id S1752809AbeFTAaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:29:43 -0400
+        Tue, 19 Jun 2018 20:30:17 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0TcKH3299978
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0UD7o3300224
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 19 Jun 2018 17:29:38 -0700
+        Tue, 19 Jun 2018 17:30:13 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0Tc3M3299974;
-        Tue, 19 Jun 2018 17:29:38 -0700
-Date:   Tue, 19 Jun 2018 17:29:38 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0UDeG3300221;
+        Tue, 19 Jun 2018 17:30:13 -0700
+Date:   Tue, 19 Jun 2018 17:30:13 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-3b99f70ad03e2108e378c33af0ff13219dd9935e@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, reinette.chatre@intel.com
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          reinette.chatre@intel.com, mingo@kernel.org
-In-Reply-To: <5ae3b3fea500e814f72047572f0cf94c353e9081.1527593971.git.reinette.chatre@intel.com>
-References: <5ae3b3fea500e814f72047572f0cf94c353e9081.1527593971.git.reinette.chatre@intel.com>
+Message-ID: <tip-8b7a62905e930d7fb3f81362f41003ba03c78afb@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, reinette.chatre@intel.com
+Reply-To: reinette.chatre@intel.com, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org
+In-Reply-To: <72dee9c18ed095942783868eb1e299f13fefa3ff.1527593971.git.reinette.chatre@intel.com>
+References: <72dee9c18ed095942783868eb1e299f13fefa3ff.1527593971.git.reinette.chatre@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/intel_rdt: Resctrl files reflect pseudo-locked
- information
-Git-Commit-ID: 3b99f70ad03e2108e378c33af0ff13219dd9935e
+Subject: [tip:x86/cache] x86/intel_rdt: Ensure RDT cleanup on exit
+Git-Commit-ID: 8b7a62905e930d7fb3f81362f41003ba03c78afb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,27 +57,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3b99f70ad03e2108e378c33af0ff13219dd9935e
-Gitweb:     https://git.kernel.org/tip/3b99f70ad03e2108e378c33af0ff13219dd9935e
+Commit-ID:  8b7a62905e930d7fb3f81362f41003ba03c78afb
+Gitweb:     https://git.kernel.org/tip/8b7a62905e930d7fb3f81362f41003ba03c78afb
 Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Tue, 29 May 2018 05:57:56 -0700
+AuthorDate: Tue, 29 May 2018 05:57:57 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 20 Jun 2018 00:56:38 +0200
 
-x86/intel_rdt: Resctrl files reflect pseudo-locked information
+x86/intel_rdt: Ensure RDT cleanup on exit
 
-Information about resources as well as resource groups are contained in a
-variety of resctrl files. Now that pseudo-locked regions can be created the
-files can be updated to present appropriate information to the user.
+The RDT system's initialization does not have the corresponding exit
+handling to ensure everything initialized on load is cleaned up also.
 
-Update the resource group's schemata file to show only the information of
-the pseudo-locked region.
-
-Update the resource group's size file to show the size in bytes of only the
-pseudo-locked region.
-
-Update the bit_usage file to use the letter 'P' for all pseudo-locked
-regions.
+Introduce the cleanup routines that complement all initialization. This
+includes the removal of a duplicate rdtgroup_init() declaration.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -88,112 +81,80 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/5ae3b3fea500e814f72047572f0cf94c353e9081.1527593971.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/72dee9c18ed095942783868eb1e299f13fefa3ff.1527593971.git.reinette.chatre@intel.com
 
 ---
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c |  3 +++
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 31 +++++++++++++++++++++++------
- 2 files changed, 28 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.c          | 11 +++++++++++
+ arch/x86/kernel/cpu/intel_rdt.h          |  3 +--
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c |  7 +++++++
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index 6f4c0002b2c1..af358ca05160 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -402,6 +402,9 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
- 			for_each_alloc_enabled_rdt_resource(r)
- 				seq_printf(s, "%s:uninitialized\n", r->name);
-+		} else if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
-+			seq_printf(s, "%s:%d=%x\n", rdtgrp->plr->r->name,
-+				   rdtgrp->plr->d->id, rdtgrp->plr->cbm);
- 		} else {
- 			closid = rdtgrp->closid;
- 			for_each_alloc_enabled_rdt_resource(r) {
+diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+index ec4754f81cbd..abb71ac70443 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -859,6 +859,8 @@ static __init bool get_rdt_resources(void)
+ 	return (rdt_mon_capable || rdt_alloc_capable);
+ }
+ 
++static enum cpuhp_state rdt_online;
++
+ static int __init intel_rdt_late_init(void)
+ {
+ 	struct rdt_resource *r;
+@@ -880,6 +882,7 @@ static int __init intel_rdt_late_init(void)
+ 		cpuhp_remove_state(state);
+ 		return ret;
+ 	}
++	rdt_online = state;
+ 
+ 	for_each_alloc_capable_rdt_resource(r)
+ 		pr_info("Intel RDT %s allocation detected\n", r->name);
+@@ -891,3 +894,11 @@ static int __init intel_rdt_late_init(void)
+ }
+ 
+ late_initcall(intel_rdt_late_init);
++
++static void __exit intel_rdt_exit(void)
++{
++	cpuhp_remove_state(rdt_online);
++	rdtgroup_exit();
++}
++
++__exitcall(intel_rdt_exit);
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 886cd28b305f..c948266d59c8 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -209,6 +209,7 @@ extern struct list_head rdt_all_groups;
+ extern int max_name_width, max_data_width;
+ 
+ int __init rdtgroup_init(void);
++void __exit rdtgroup_exit(void);
+ 
+ /**
+  * struct rftype - describe each file in the resctrl file system
+@@ -431,8 +432,6 @@ extern struct rdt_resource rdt_resources_all[];
+ extern struct rdtgroup rdtgroup_default;
+ DECLARE_STATIC_KEY_FALSE(rdt_alloc_enable_key);
+ 
+-int __init rdtgroup_init(void);
+-
+ enum {
+ 	RDT_RESOURCE_L3,
+ 	RDT_RESOURCE_L3DATA,
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 3b21aa2cea4f..4e4b64338f9f 100644
+index 4e4b64338f9f..89ac02f91238 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -771,14 +771,16 @@ static int rdt_shareable_bits_show(struct kernfs_open_file *of,
-  *   H - currently used by hardware only but available for software use
-  *   S - currently used and shareable by software only
-  *   E - currently used exclusively by one resource group
-+ *   P - currently pseudo-locked by one resource group
-  */
- static int rdt_bit_usage_show(struct kernfs_open_file *of,
- 			      struct seq_file *seq, void *v)
- {
- 	struct rdt_resource *r = of->kn->parent->priv;
--	u32 sw_shareable, hw_shareable, exclusive;
-+	u32 sw_shareable = 0, hw_shareable = 0;
-+	u32 exclusive = 0, pseudo_locked = 0;
- 	struct rdt_domain *dom;
--	int i, hwb, swb, excl;
-+	int i, hwb, swb, excl, psl;
- 	enum rdtgrp_mode mode;
- 	bool sep = false;
- 	u32 *ctrl;
-@@ -803,12 +805,15 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
- 			case RDT_MODE_EXCLUSIVE:
- 				exclusive |= *ctrl;
- 				break;
-+			case RDT_MODE_PSEUDO_LOCKSETUP:
- 			/*
--			 * Temporarily handle pseudo-locking enums
--			 * to silence compile warnings until handling
--			 * added in later patches.
-+			 * RDT_MODE_PSEUDO_LOCKSETUP is possible
-+			 * here but not included since the CBM
-+			 * associated with this CLOSID in this mode
-+			 * is not initialized and no task or cpu can be
-+			 * assigned this CLOSID.
- 			 */
--			case RDT_MODE_PSEUDO_LOCKSETUP:
-+				break;
- 			case RDT_MODE_PSEUDO_LOCKED:
- 			case RDT_NUM_MODES:
- 				WARN(1,
-@@ -817,9 +822,11 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
- 			}
- 		}
- 		for (i = r->cache.cbm_len - 1; i >= 0; i--) {
-+			pseudo_locked = dom->plr ? dom->plr->cbm : 0;
- 			hwb = test_bit(i, (unsigned long *)&hw_shareable);
- 			swb = test_bit(i, (unsigned long *)&sw_shareable);
- 			excl = test_bit(i, (unsigned long *)&exclusive);
-+			psl = test_bit(i, (unsigned long *)&pseudo_locked);
- 			if (hwb && swb)
- 				seq_putc(seq, 'X');
- 			else if (hwb && !swb)
-@@ -828,6 +835,8 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
- 				seq_putc(seq, 'S');
- 			else if (excl)
- 				seq_putc(seq, 'E');
-+			else if (psl)
-+				seq_putc(seq, 'P');
- 			else /* Unused bits remain */
- 				seq_putc(seq, '0');
- 		}
-@@ -1147,6 +1156,15 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
- 		return -ENOENT;
- 	}
+@@ -2820,3 +2820,10 @@ cleanup_root:
  
-+	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
-+		seq_printf(s, "%*s:", max_name_width, rdtgrp->plr->r->name);
-+		size = rdtgroup_cbm_to_size(rdtgrp->plr->r,
-+					    rdtgrp->plr->d,
-+					    rdtgrp->plr->cbm);
-+		seq_printf(s, "%d=%u\n", rdtgrp->plr->d->id, size);
-+		goto out;
-+	}
+ 	return ret;
+ }
 +
- 	for_each_alloc_enabled_rdt_resource(r) {
- 		seq_printf(s, "%*s:", max_name_width, r->name);
- 		list_for_each_entry(d, &r->domains, list) {
-@@ -1164,6 +1182,7 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
- 		seq_putc(s, '\n');
- 	}
- 
-+out:
- 	rdtgroup_kn_unlock(of->kn);
- 
- 	return 0;
++void __exit rdtgroup_exit(void)
++{
++	unregister_filesystem(&rdt_fs_type);
++	sysfs_remove_mount_point(fs_kobj, "resctrl");
++	kernfs_destroy_root(rdt_root);
++}
