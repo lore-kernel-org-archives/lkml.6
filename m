@@ -2,117 +2,126 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB32C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4AEC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43D1920872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A93820871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:41:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nAqBMlYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43D1920872
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Tc++gDfP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A93820871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751629AbeFTFii (ORCPT
+        id S1752792AbeFTFlk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 01:38:38 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39121 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeFTFih (ORCPT
+        Wed, 20 Jun 2018 01:41:40 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:36136 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751166AbeFTFli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 01:38:37 -0400
-Received: by mail-wm0-f68.google.com with SMTP id p11-v6so4324177wmc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 22:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=bOJwD1M/0G3qWCAda8g7k4D9wDFaISizLW8dWZgbifk=;
-        b=nAqBMlYakjb6cjApRexSwfn8380uBd34YfO6NURI0v9O6YY09H9pScxV8Ydm0socM4
-         JmXVOwXzV4wzoGcPbHHTkFpXLmyp1QHz1entHUO4peHVxwSXtPaOx6PHo+W1xv3lfWwi
-         RiA5U9rR1X9uM/KPRyA5O+FvbPdCuS76RnjZqIJxCvtyLio14Fg0MjmuGxtntexVAlbi
-         AmoWimlYv2p4NDtgmqP2yseud/K28ET4MfEdxJLMhsR4OjBss6MsuE3mpdh4Qm46x7+L
-         HJ7R+xVRUJi0HRl1Mhyo0cewb+EwrTk0RBZtJAY6uiELZAQ07N5s8DSnscxDc7CXqqip
-         ea1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=bOJwD1M/0G3qWCAda8g7k4D9wDFaISizLW8dWZgbifk=;
-        b=ey4w7ZdFmlgW5UBRFkjCNiZdbd4U7kkoegRFhONFmqtzW/DEQ/O7OX0tS1/HOi66qv
-         A2MWQJPtqRjzUDRSMRoq2TKuvmmj8fZmldSK1eWBO4qFtaDOu2FYqtTfIWohaNIVZLrO
-         883/DdKme5bjqEVVD4quLd1QUMv3863l9L9ekJINwlyWKTdlx5rdbStJpiJVGRA0Grji
-         LNl1gfspM0U1ZOIvTKKZCAYWQJY9X+wQw6R6p3GyiLO3ubl2ZjQGvlPbdEXKuIXa6Wvw
-         1Ac+F3jE7YgP5Tdo1JtIP5ucbWlUw8792w+/ylSwGYtwlCWGRCjXQn4gDo1QpNfJIG84
-         xZxg==
-X-Gm-Message-State: APt69E3Qxco/eH6i7smHV0X5XLVtnrKj63Jbe/oeT5oKlK3yXCTTH9Bw
-        8TOlzqWisJuk1EeQfCAVjVO0a4v0B+wDuwIdmfc=
-X-Google-Smtp-Source: ADUXVKIlkyGPEr7OhcZ2rfTDGgN/lFnP734tmFOo8nFowrqCEpwQLH+LnFz56JmEl4CGRfc4vV0szFpZ72/eLHv2Dvk=
-X-Received: by 2002:a1c:6fd3:: with SMTP id c80-v6mr446421wmi.151.1529473116003;
- Tue, 19 Jun 2018 22:38:36 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:8271:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 22:38:35
- -0700 (PDT)
-In-Reply-To: <1281343974.18398.13.camel@wall-e.seibold.net>
-References: <1281342353-18180-1-git-send-email-stefani@seibold.net>
- <1281343038.12908.25.camel@localhost> <1281343974.18398.13.camel@wall-e.seibold.net>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Wed, 20 Jun 2018 07:38:35 +0200
-Message-ID: <CAFLxGvyHVhEfxa0Qm=sivMgisB1N71HGymT4zpVSrQ4zOnrjNA@mail.gmail.com>
-Subject: Re: [PATCH] Add quick erase format option
-To:     Stefani Seibold <stefani@seibold.net>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Artem Bityutskiy <Artem.Bityutskiy@nokia.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Jun 2018 01:41:38 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5K5cr8C051069;
+        Wed, 20 Jun 2018 05:41:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2017-10-26;
+ bh=UNqXwXf8pQUK/Gal0nYvApXqMLxVs0VF6/kANC2bd0Y=;
+ b=Tc++gDfPwhxMz7iVLzjqWo7BfgRHG/uLZ78/apdxGSYDeBt4webRIqv2Oqj7NtzwuX36
+ NMG6k2NZDHNPEJdGbgOih7kSD0SWzgeZxVTi9kYxpK3f6RNflZHa6NirFNCPy8uM0vFi
+ CqMpVs8aXdTkE6CV9i2uEyxE1cDAsli1J9/YJvv7ukw3DAOy5AS75gvaJTFks3xVQusE
+ 5RPZqiIwOXgnUylQzVSeyCrkbqCmw9/r4QMuIy2dWew6JLdS0ovhqTweVF8xplJ33x8/
+ I4OlVvGfZElNwfgN0RIrfxELBGl1ZLjwePf9kmeToLL0NIg25Zr3lyCI5tI9vzSUMXAS gA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2jmr2mk172-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 05:41:15 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5K5fDa6027405
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 20 Jun 2018 05:41:14 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5K5fD1t013762;
+        Wed, 20 Jun 2018 05:41:13 GMT
+Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 19 Jun 2018 22:41:12 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] nvme-pci: move nvme_kill_queues to nvme_remove_dead_ctrl
+Date:   Wed, 20 Jun 2018 13:42:22 +0800
+Message-Id: <1529473342-1886-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806200064
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 9, 2010 at 10:52 AM, Stefani Seibold <stefani@seibold.net> wrote:
-> Am Montag, den 09.08.2010, 09:37 +0100 schrieb David Woodhouse:
->> On Mon, 2010-08-09 at 09:25 +0100, stefani@seibold.net wrote:
->> > From: Stefani Seibold <stefani@seibold.net>
->> >
->> > This patch add a quick format option which skips erasing of already erased
->> > flash blocks. This is useful for first time production environments where
->> > the flash arrived erased.
->> >
->> > Signed-off-by: Stefani Seibold <stefani@seibold.net>
->>
->> This scares me, given the lengths we had to go to in JFFS2 to cope with
->> blocks which *look* like they're erased, but which actually start losing
->> data as soon as you start writing to them because the erase didn't
->> complete.
->>
->
-> I know the drawback. This is why it is only an option which must be
-> enabled. And in most use cases there is a subsequent ubimkvol, which
-> will fail if the flash is not correct initialized.
->
-> Flash are normally delivered erased. So this save in our production
-> environment (Nokia Siemens Networks) about 5 minutes per device (256 MB
-> NOR CFI Flash).
->
-> The old JFFS2 was very fast to install the first time on a flash, it was
-> only a simple mount of the MTD partition.
->
-> Which the quick format option i have now only a slightly first time
-> installation overhead compared to JFFS2. Without this option the
-> overhead is more than 5 minutes.
+There is race between nvme_remove and nvme_reset_work that can
+lead to io hang.
 
-This mail arrived now?!
-David, was it delayed by mailman for 8 years?
+nvme_remove                    nvme_reset_work
+                               -> nvme_remove_dead_ctrl
+                                 -> nvme_dev_disable
+                                   -> quiesce request_queue
+                                 -> queue remove_work
+-> cancel_work_sync reset_work
+-> nvme_remove_namespaces
+  -> splice ctrl->namespaces
+                               nvme_remove_dead_ctrl_work
+                               -> nvme_kill_queues
+  -> nvme_ns_remove               do nothing
+    -> blk_cleanup_queue
+      -> blk_freeze_queue
 
+Finally, the request_queue is quiesced state when wait freeze,
+we will get io hang here. To fix it, move the nvme_kill_queues
+from nvme_remove_dead_ctrl_work to nvme_remove_dead_ctrl.
+
+Suggested-by: Keith Busch <keith.busch@linux.intel.com>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+
+V2:
+ - Just not invoke nvme_remove_dead_ctrl cannot fix the hole completely.
+   Move the nvme_kill_queues to nvme_remove_dead_ctrl based on Keith's
+   suggestion
+ - Patch comment changes
+
+ drivers/nvme/host/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index fc33804..73a97fc 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2289,6 +2289,7 @@ static void nvme_remove_dead_ctrl(struct nvme_dev *dev, int status)
+ 
+ 	nvme_get_ctrl(&dev->ctrl);
+ 	nvme_dev_disable(dev, false);
++	nvme_kill_queues(&dev->ctrl);
+ 	if (!queue_work(nvme_wq, &dev->remove_work))
+ 		nvme_put_ctrl(&dev->ctrl);
+ }
+@@ -2405,7 +2406,6 @@ static void nvme_remove_dead_ctrl_work(struct work_struct *work)
+ 	struct nvme_dev *dev = container_of(work, struct nvme_dev, remove_work);
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 
+-	nvme_kill_queues(&dev->ctrl);
+ 	if (pci_get_drvdata(pdev))
+ 		device_release_driver(&pdev->dev);
+ 	nvme_put_ctrl(&dev->ctrl);
 -- 
-Thanks,
-//richard
+2.7.4
+
