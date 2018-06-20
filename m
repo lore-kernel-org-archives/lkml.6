@@ -2,165 +2,92 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D6EC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 691CDC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB02D20874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:37:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB02D20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owl.eu.com
+	by mail.kernel.org (Postfix) with ESMTP id 2412A20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:37:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pn3aPXV6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2412A20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754099AbeFTNhZ (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:37:25 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:54237 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752870AbeFTNhY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:37:24 -0400
-X-Originating-IP: 208.88.110.46
-Received: from localhost (mtl.savoirfairelinux.net [208.88.110.46])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id A5D591BF203;
-        Wed, 20 Jun 2018 13:37:29 +0000 (UTC)
-Date:   Wed, 20 Jun 2018 09:37:19 -0400
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org,
-        Marcus Wolf <linux@wolf-entwicklungen.de>,
-        linux-kernel@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v3] staging: pi433: fix race condition in pi433_open
-Message-ID: <20180620133719.GA17525@hle-laptop.local>
+        id S932220AbeFTNhg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 09:37:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754101AbeFTNhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:37:33 -0400
+Received: from localhost (unknown [106.200.222.147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B33F120846;
+        Wed, 20 Jun 2018 13:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529501853;
+        bh=KbDOPDM66ETxBSlPC8Xp7mV5cqmnvxTXsAsXbvkL+sI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Pn3aPXV6Un9rEuOjMgdgaUKljQXJrNssi3W8PIR1coHjTxNLwCToS+JsVe7cHhm02
+         hH0pBkbtQU7+KwjuO0vlV7gpuoR1f5Z5qgG5yHy8uRxtHtutzdfCGrjweGXIoE2v7E
+         w6YCxO6/Uu9bKa76bChIMu/RMEkM4+bMJIiRDq38=
+Date:   Wed, 20 Jun 2018 19:07:25 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] hwrng: msm - Add support for prng v2
+Message-ID: <20180620133725.GB27187@vkoul-mobl>
+References: <20180619095430.26358-1-vkoul@kernel.org>
+ <20180619095430.26358-3-vkoul@kernel.org>
+ <152947431955.16708.15247307054260887941@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <152947431955.16708.15247307054260887941@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The device structure contains a useless non-atomic users counter which
-is subject to race conditions. It has probably been created to handle
-the case where remove is executed while operations are still executing
-on open fds but this will never happen because of reference counts.
+On 19-06-18, 22:58, Stephen Boyd wrote:
+> Quoting Vinod Koul (2018-06-19 02:54:30)
+> > Qcom 8996 and later chips support prng v2 which requires to
+> > implement only .read callback for hwrng.
+> > 
+> > This version of chip has multiple Execution Environments (EE) and
+> > secure world is typically responsible for configuring the prng.
+> 
+> Sometimes secure world is not configuring the rng though. I prefer we
+> have a DT flag for this to indicate if secure world has configured it or
+> not and then skip the init logic when the bool property is present in
+> DT. Then the DT property can be set on firmwares that are making things
+> blow up when we try to read the 'configured' register. I'd also file a
+> bug to qcom to tell them to unlock that config register for reads so
+> that things can work simpler, but who knows how that will work out.
 
-Drop the users counter and move rx buffer {de,}allocation to probe()
-and remove(). Remove associated dead code from open() and release().
-Remove related TODO entry from ioctl().
+I dont feel that would be required. See below..
 
-Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
----
-Changes in v3:
-    - add missing free call in probe() (in case of failure during
-      memory allocation for rx buffer).
----
-diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index 94e0bfcec991..0638fd5f14d9 100644
---- a/drivers/staging/pi433/pi433_if.c
-+++ b/drivers/staging/pi433/pi433_if.c
-@@ -78,7 +78,6 @@ struct pi433_device {
- 	struct device		*dev;
- 	struct cdev		*cdev;
- 	struct spi_device	*spi;
--	unsigned int		users;
- 
- 	/* irq related values */
- 	struct gpio_desc	*gpiod[NUM_DIO];
-@@ -887,9 +886,6 @@ pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	if (_IOC_TYPE(cmd) != PI433_IOC_MAGIC)
- 		return -ENOTTY;
- 
--	/* TODO? guard against device removal before, or while,
--	 * we issue this ioctl. --> device_get()
--	 */
- 	instance = filp->private_data;
- 	device = instance->device;
- 
-@@ -963,19 +959,9 @@ static int pi433_open(struct inode *inode, struct file *filp)
- 		return -ENODEV;
- 	}
- 
--	if (!device->rx_buffer) {
--		device->rx_buffer = kmalloc(MAX_MSG_SIZE, GFP_KERNEL);
--		if (!device->rx_buffer)
--			return -ENOMEM;
--	}
--
--	device->users++;
- 	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
--	if (!instance) {
--		kfree(device->rx_buffer);
--		device->rx_buffer = NULL;
-+	if (!instance)
- 		return -ENOMEM;
--	}
- 
- 	/* setup instance data*/
- 	instance->device = device;
-@@ -992,23 +978,11 @@ static int pi433_open(struct inode *inode, struct file *filp)
- static int pi433_release(struct inode *inode, struct file *filp)
- {
- 	struct pi433_instance	*instance;
--	struct pi433_device	*device;
- 
- 	instance = filp->private_data;
--	device = instance->device;
- 	kfree(instance);
- 	filp->private_data = NULL;
- 
--	/* last close? */
--	device->users--;
--
--	if (!device->users) {
--		kfree(device->rx_buffer);
--		device->rx_buffer = NULL;
--		if (!device->spi)
--			kfree(device);
--	}
--
- 	return 0;
- }
- 
-@@ -1178,6 +1152,13 @@ static int pi433_probe(struct spi_device *spi)
- 	device->tx_active = false;
- 	device->interrupt_rx_allowed = false;
- 
-+	/* init rx buffer */
-+	device->rx_buffer = kmalloc(MAX_MSG_SIZE, GFP_KERNEL);
-+	if (!device->rx_buffer) {
-+		retval = -ENOMEM;
-+		goto RX_failed;
-+	}
-+
- 	/* init wait queues */
- 	init_waitqueue_head(&device->tx_wait_queue);
- 	init_waitqueue_head(&device->rx_wait_queue);
-@@ -1280,6 +1261,8 @@ static int pi433_probe(struct spi_device *spi)
- minor_failed:
- 	free_gpio(device);
- GPIO_failed:
-+	kfree(device->rx_buffer);
-+RX_failed:
- 	kfree(device);
- 
- 	return retval;
-@@ -1303,8 +1286,8 @@ static int pi433_remove(struct spi_device *spi)
- 
- 	pi433_free_minor(device);
- 
--	if (device->users == 0)
--		kfree(device);
-+	kfree(device->rx_buffer);
-+	kfree(device);
- 
- 	return 0;
- }
+> It really sounds like the hardware isn't actually different, just the
+> firmware has decided to be more strict about making reads fail now.
+
+So in this case base hw block seems similar but consists of multiple
+Execution Environment (EEs) and all of these contain only data
+registers. Only secure environment has configuration. Each one has its
+own register space.
+
+In a case where we dont have secure world, we can point to secure
+environment with v1 ops, so driver shall configure and run.
+
+Thanks
 -- 
-2.17.1
+~Vinod
