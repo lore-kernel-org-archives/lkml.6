@@ -2,167 +2,113 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2521C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5D4C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D18C20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:43:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D18C20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 3387D20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 06:44:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJWkreBN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3387D20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753853AbeFTGnY (ORCPT
+        id S1753945AbeFTGoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 02:43:24 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44461 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752871AbeFTGnV (ORCPT
+        Wed, 20 Jun 2018 02:44:25 -0400
+Received: from mail-lf0-f51.google.com ([209.85.215.51]:35331 "EHLO
+        mail-lf0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751648AbeFTGoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 02:43:21 -0400
-Received: by mail-lf0-f66.google.com with SMTP id p23-v6so3169663lfh.11;
-        Tue, 19 Jun 2018 23:43:20 -0700 (PDT)
+        Wed, 20 Jun 2018 02:44:24 -0400
+Received: by mail-lf0-f51.google.com with SMTP id i15-v6so3215564lfc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Jun 2018 23:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=cYhmFCWj/MVs+lJfREvQTFFXVCZgrutQQYawjnbzxZ0=;
+        b=EJWkreBNUxHWaJBrLMKP2lYlCHQEBUuKtEq+kORT5lJbB13ZobD9MA0XMgALpE0GEP
+         KBFvZUY6g//V65zL85lBiicDRZf32jZv5rtdUAnRhL8VSksNsqeac+IirIq/wEmUhN62
+         un+AQlJ4jw5pc8v4TGwlGuuymzN57MS1A4cvU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6O13VrLEyydz4l6iyi8LndIlLmdh+yMz0nhB2EUulrs=;
-        b=MFgT1WcMULnrouEf1vGSaqqj9ZO+oB2el9m4yE3g16cjLwynnLvwPp9J4TtIBB6exX
-         dwKUinANcBlaUvMiToKc+5kcilgH+2afOA+EUI2tl+pFNQxZ/LQjjamXzqq1ghysKjPr
-         VRK6yrBMbG3lt3u66hXc90+aNI2qsmMQ0TC3PQzKNh0ciKQ6Ff42QJTm5qfsUnPFCCZt
-         ijqHAore+W8tqslIsDow6GkWq2Q+2UNPJd06UKe5rOjbzjC2TH6yEe4/NXm+iHM0h5+i
-         ucHRX8fdN4GKtmHT1oEaP5wUzUoWUB0w63aTP9A5LUauLFdYpSrHTrSvtiiYAn51IFFb
-         ZP7w==
-X-Gm-Message-State: APt69E2CGLjAmGEP7qss7wPEv3ML0pthI0HTO9w/EV/vMc5FqVk8AmlR
-        Fl1PEakz4Mtsik+Lb2qXI7I=
-X-Google-Smtp-Source: ADUXVKI8fIklHNyLmqO0lvWNyC12vBdb7XsBOdDyl5meIkBawi3aXF7lmLYmDCy/ncIsiIwgLRgwuA==
-X-Received: by 2002:a2e:9744:: with SMTP id f4-v6mr365797ljj.5.1529476999840;
-        Tue, 19 Jun 2018 23:43:19 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.34])
-        by smtp.gmail.com with ESMTPSA id f124-v6sm266665lfg.33.2018.06.19.23.43.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Jun 2018 23:43:19 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 09:43:16 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
-        sre@kernel.org, chenjh@rock-chips.com, andrew.smirnov@gmail.com,
-        linus.walleij@linaro.org, kstewart@linuxfoundation.org,
-        heiko@sntech.de, gregkh@linuxfoundation.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [PATCH v7 4/4] input/power: Add driver for BD71837/BD71847 PMIC
- power button
-Message-ID: <20180620064316.GB28784@localhost.localdomain>
-References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <af60857c6db5fcf14fbf0112f74719d898952459.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
- <20180619175028.GA71788@dtor-ws>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=cYhmFCWj/MVs+lJfREvQTFFXVCZgrutQQYawjnbzxZ0=;
+        b=F3IoiFfMg2eEBwwNaLJWlmlsFZZR7gwVD8AsqF4EznNbxhe9OYEqIdemCpm7sl/Sjg
+         5PcwxEDH/VcW2gbwicRJC1FBeJEqsOevu+GREQ/Kiqwofba8KRV6yUxu/lyD3hNA31+r
+         Cs+/WZAKZBbRb5PFnEg2zacSJmejnulkPyeAGx8Rgga0P1yTBLGVBoc8i+FwVAwejpD+
+         795D802PpNV39Z6Zg0HeUS4iKHFmk0n5imTCzub6Te3GR/pCKXzGRHNGck9yR3zIsKtV
+         4oBst3s/9EUUzZdbGGnmt2vXCdySe02PpJ74PM1e1JMfTZBGFy0cKvJNvJcfvMfjrHKM
+         qzrA==
+X-Gm-Message-State: APt69E1YlltOpmO//pbkRgl4SHHEH++mu1cc1IV7fjFDtF5W/zgewVPq
+        TUN5OV8imLDlU3J1UryGwXuxr/5Kw5mu+C8nY6fILA==
+X-Google-Smtp-Source: ADUXVKIoOFFA0plDu/0AZgdue3x4WL8NtzF7HD34pgxJUMeEmsIrI5TVp4Xu6VWmKu0G0J7j9DBg1CrzB03cO5NGY7c=
+X-Received: by 2002:a2e:9789:: with SMTP id y9-v6mr12951512lji.52.1529477062762;
+ Tue, 19 Jun 2018 23:44:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180619175028.GA71788@dtor-ws>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Tue, 19 Jun 2018 23:44:22
+ -0700 (PDT)
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 20 Jun 2018 12:14:22 +0530
+Message-ID: <CA+G9fYsRgGsmi-tE8dU=pfSDDLg3bUuii_0KUPZ71jFLNre-5g@mail.gmail.com>
+Subject: LTP CVE cve-2017-17053 test failed on x86_64 device
+To:     ltp@lists.linux.it, open list <linux-kernel@vger.kernel.org>
+Cc:     mmoese@suse.de, Rafael Tinoco <rafael.tinoco@linaro.org>,
+        Jan Stancek <jstancek@redhat.com>, ebiggers@google.com,
+        dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dmitry,
+LTP CVE cve-2017-17053 test failed on x86_64 device.
+FAIL on linux-next, mainline, and stable-rc-4.17.
+PASS on stable-rc 4.16, 4.14, 4.9 and 4.4 kernel.
 
-First of all -  thanks for taking the time to review the patch =)
+Test FAIL case output,
+tst_test.c:1015: INFO: Timeout per run is 0h 15m 00s
+tst_taint.c:88: BROK: Kernel is already tainted: 512
+Summary:
+passed   0
+failed   0
+skipped  0
+warnings 0
 
-On Tue, Jun 19, 2018 at 10:50:28AM -0700, Dmitry Torokhov wrote:
-> Hi Matti,
-> 
-> On Tue, Jun 19, 2018 at 01:57:09PM +0300, Matti Vaittinen wrote:
-> > ROHM BD71837 PMIC power button driver providing power-key press
-> > information to user-space.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  drivers/input/misc/Kconfig          | 10 +++++
-> >  drivers/input/misc/Makefile         |  1 +
-> >  drivers/input/misc/bd718xx-pwrkey.c | 90 +++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 101 insertions(+)
-> >  create mode 100644 drivers/input/misc/bd718xx-pwrkey.c
-> > 
-> > +	platform_set_drvdata(pdev, pk);
-> > +	err = regmap_update_bits(pk->mfd->regmap,
-> > +				 BD71837_REG_PWRONCONFIG0,
-> > +				 BD718XX_PWRBTN_SHORT_PRESS_MASK,
-> > +				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
-> 
-> This seems to be the only custom bit of set up in the driver, the rest I
-> think can easily be handled by gpio-keys.c in interrupt-only mode. Maybe
-> we could move this into MFD piece and drop this driver?
+Test comments,
+/* Regression test for CVE-2017-17053, original reproducer can be found
+ * here:
+ * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ccd5b3235180eef3cfec337df1c8554ab151b5cc
+ *
+ * Be careful! This test may crash your kernel!
+ */
 
-I looked at the gpio_keys.c (for first time so please bear with me if I
-ask something you consider as obvious). This is also the first time I am
-dealing with input subsystem drivers. So this patch was kind of "RFC"
-because I am unsure if this is the best way...
+Full test log:
+https://lkft.validation.linaro.org/scheduler/job/290429#L9581
+https://lkft.validation.linaro.org/scheduler/job/259217#L10308
 
-HW we are dealing with is a PMIC which can hace a power-button attached.
-HW can generate 3 different types of interrupts for power button
-presses:
+History of the test case shows failed on
+Linux next kernel,
+https://qa-reports.linaro.org/lkft/linux-next-oe/tests/ltp-cve-tests/cve-2017-17053
 
-1. interrupt when button is pressed or released. (Eg. if someone just
-hits the button we get two interrupts of this type). We get no 'position
-information' from PMIC - just the irqs. Hence it is difficult to know if
-buttown was pressed or released. This is the reason why I decided not to
-use this IRQ (at least not for now).
+Linux mainline kernel,
+https://qa-reports.linaro.org/lkft/linux-mainline-oe/tests/ltp-cve-tests \
+/cve-2017-17053
+^ Please join link
 
-2. interrupt when button is pressed for 'short time'. Short time is
-configurable and IRQ is generated when button is released based on the
-duration it was held down. The limit for 'short time' can be configured.
-By default if button is pressed longer than 3 seconds but less than 10
-seconds the the PMIC detects 'short push'.
+Linux stable rc 4.17,
+https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/tests/ltp-cve-tests \
+/cve-2017-17053
+^ Please join link
 
-3. interrupt when button is pressed for 'long time'. Mechanism is same
-as with short push. Default time is button held over 10 seconds. This
-interrupt is not handled if PMIC provides power to processor as PMIC
-will cut the power when long push is detected.
+Test PASS on 4.16 kernel.
+https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe/tests/ltp-cve-tests \
+/cve-2017-17053
+^ Please join link
 
-So the custom piece is setting the 'short push detection' time from
-t > 3 sec to t > 10 msec. Driver is then using short push irq.
-
-This means that we don't detect button press if it is shorter than 10ms.
-But we don't need any button state information in driver either. This is
-why I decided to use the short push irq - is it Ok?
-
-After this explanation - the gpio_keys_irq_isr seems to be doing exactly
-what is needed for short push handling (as far as I can tell). Now it
-boils down to question how we should bundle the MFD and gpio_keys
-together?
-
-Should I just fill the gpio_keys_platform_data for gpio_keys in MFD
-driver? After my short browsing of existing MFD drivers I did not see
-any other drivers doing that. This is why I wonder if this is a correct
-approach?
-
-Still if MFD is configuring the button presses the gpio_keys for this chip
-should only be used if MFD is used, right? Hence the gpio_keys driver
-should be instantiaed from MFD, right?
-
-Another option would be using DT and adding gpio_keys node to MFD node
-or to simple-bus node. But I have an idea that this would make Rob
-unhappy :) I had lenghty discussion with him about declaring the PMIC
-as interrupt-controller in device-tree - and I was kindly educated that
-it was not the way to go :) I'd rather not started this discussion
-again.
-
-Finally, there may be cases when power button is not attached to PMIC
-or is needing different configuration for 'short push'. This is why I
-would prefer having own Kconfig option for this power-key driver. I am
-not sure if it is easily doable if we use gpio_keys?
-
-Can you please give me some further pointer on how I could use the
-gpio_keys from MFD?
-
-Best Regards
-    Matti Vaittinen
-
+Best regards
+Naresh Kamboju
