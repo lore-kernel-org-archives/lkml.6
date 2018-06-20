@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD3DC43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA34C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4CD20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:03:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4CD20836
+	by mail.kernel.org (Postfix) with ESMTP id D13BB20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:03:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13BB20836
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932862AbeFTRDi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:03:38 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49826 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932808AbeFTRDb (ORCPT
+        id S932899AbeFTRDl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 13:03:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42212 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932808AbeFTRDi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:03:31 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGx1uG139324
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:03:31 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqrc6qrck-1
+        Wed, 20 Jun 2018 13:03:38 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KGwxNn045418
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:03:38 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jqsvfk3qu-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:03:31 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 13:03:37 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 18:03:28 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 20 Jun 2018 18:03:36 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Jun 2018 18:03:25 +0100
+        Wed, 20 Jun 2018 18:03:33 +0100
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KH3OSI19792038
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KH3Wcm30933120
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Jun 2018 17:03:24 GMT
+        Wed, 20 Jun 2018 17:03:32 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7E0A9A4051;
-        Wed, 20 Jun 2018 17:54:04 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 0E855A405B;
+        Wed, 20 Jun 2018 17:54:13 +0100 (BST)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 18FF0A4053;
-        Wed, 20 Jun 2018 17:54:03 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 802E9A4059;
+        Wed, 20 Jun 2018 17:54:11 +0100 (BST)
 Received: from srikart450.in.ibm.com (unknown [9.124.219.212])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Jun 2018 17:54:02 +0100 (BST)
+        Wed, 20 Jun 2018 17:54:11 +0100 (BST)
 From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 To:     Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
@@ -58,16 +58,16 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 04/19] sched/numa: Set preferred_node based on best_cpu
-Date:   Wed, 20 Jun 2018 22:32:45 +0530
+Subject: [PATCH v2 07/19] sched/numa: Skip nodes that are at hoplimit
+Date:   Wed, 20 Jun 2018 22:32:48 +0530
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
 References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18062017-0020-0000-0000-0000029D08B9
+x-cbid: 18062017-0008-0000-0000-00000249E9B7
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062017-0021-0000-0000-000020E95CFE
-Message-Id: <1529514181-9842-5-git-send-email-srikar@linux.vnet.ibm.com>
+x-cbparentid: 18062017-0009-0000-0000-000021B03C91
+Message-Id: <1529514181-9842-8-git-send-email-srikar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -80,113 +80,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently preferred node is set to dst_nid which is the last node in the
-iteration whose group weight or task weight is greater than the current
-node. However it doesn't guarantee that dst_nid has the numa capacity
-to move. It also doesn't guarantee that dst_nid has the best_cpu which
-is the cpu/node ideal for node migration.
-
-Lets consider faults on a 4 node system with group weight numbers
-in different nodes being in 0 < 1 < 2 < 3 proportion. Consider the task
-is running on 3 and 0 is its preferred node but its capacity is full.
-Consider nodes 1, 2 and 3 have capacity. Then the task should be
-migrated to node 1. Currently the task gets moved to node 2. env.dst_nid
-points to the last node whose faults were greater than current node.
-
-Modify to set the preferred node based of best_cpu. Earlier setting
-preferred node was skipped if nr_active_nodes is 1. This could result in
-the task being moved out of the preferred node to a random node during
-regular load balancing.
-
-Also while modifying task_numa_migrate(), use sched_setnuma to set
-preferred node. This ensures out numa accounting is correct.
+When comparing two nodes at a distance of hoplimit, we should consider
+nodes only upto hoplimit. Currently we also consider nodes at hoplimit
+distance too. Hence two nodes at a distance of "hoplimit" will have same
+groupweight. Fix this by skipping nodes at hoplimit.
 
 Running SPECjbb2005 on a 4 node machine and comparing bops/JVM
 JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
-16    25122.9     25549.6     1.698
-1     73850       73190       -0.89
+16    25375.3     25308.6     -0.26
+1     72617       72964       0.477
 
 Running SPECjbb2005 on a 16 node machine and comparing bops/JVM
 JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
-8     105930      113437      7.08676
-1     178624      196130      9.80047
+8     113372      108750      -4.07684
+1     177403      183115      3.21979
 
 (numbers from v1 based on v4.17-rc5)
 Testcase       Time:         Min         Max         Avg      StdDev
-numa01.sh      Real:      435.78      653.81      534.58       83.20
-numa01.sh       Sys:      121.93      187.18      145.90       23.47
-numa01.sh      User:    37082.81    51402.80    43647.60     5409.75
-numa02.sh      Real:       60.64       61.63       61.19        0.40
-numa02.sh       Sys:       14.72       25.68       19.06        4.03
-numa02.sh      User:     5210.95     5266.69     5233.30       20.82
-numa03.sh      Real:      746.51      808.24      780.36       23.88
-numa03.sh       Sys:       97.26      108.48      105.07        4.28
-numa03.sh      User:    58956.30    61397.05    60162.95     1050.82
-numa04.sh      Real:      465.97      519.27      484.81       19.62
-numa04.sh       Sys:      304.43      359.08      334.68       20.64
-numa04.sh      User:    37544.16    41186.15    39262.44     1314.91
-numa05.sh      Real:      411.57      457.20      433.29       16.58
-numa05.sh       Sys:      230.05      435.48      339.95       67.58
-numa05.sh      User:    33325.54    36896.31    35637.84     1222.64
+numa01.sh      Real:      478.45      565.90      515.11       30.87
+numa01.sh       Sys:      207.79      271.04      232.94       21.33
+numa01.sh      User:    39763.93    47303.12    43210.73     2644.86
+numa02.sh      Real:       60.00       61.46       60.78        0.49
+numa02.sh       Sys:       15.71       25.31       20.69        3.42
+numa02.sh      User:     5175.92     5265.86     5235.97       32.82
+numa03.sh      Real:      776.42      834.85      806.01       23.22
+numa03.sh       Sys:      114.43      128.75      121.65        5.49
+numa03.sh      User:    60773.93    64855.25    62616.91     1576.39
+numa04.sh      Real:      456.93      511.95      482.91       20.88
+numa04.sh       Sys:      178.09      460.89      356.86       94.58
+numa04.sh      User:    36312.09    42553.24    39623.21     2247.96
+numa05.sh      Real:      393.98      493.48      436.61       35.59
+numa05.sh       Sys:      164.49      329.15      265.87       61.78
+numa05.sh      User:    33182.65    36654.53    35074.51     1187.71
 
 Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-numa01.sh      Real:      506.35      794.46      599.06      104.26 	 -10.76%
-numa01.sh       Sys:      150.37      223.56      195.99       24.94 	 -25.55%
-numa01.sh      User:    43450.69    61752.04    49281.50     6635.33 	 -11.43%
-numa02.sh      Real:       60.33       62.40       61.31        0.90 	 -0.195%
-numa02.sh       Sys:       18.12       31.66       24.28        5.89 	 -21.49%
-numa02.sh      User:     5203.91     5325.32     5260.29       49.98 	 -0.513%
-numa03.sh      Real:      696.47      853.62      745.80       57.28 	 4.6339%
-numa03.sh       Sys:       85.68      123.71       97.89       13.48 	 7.3347%
-numa03.sh      User:    55978.45    66418.63    59254.94     3737.97 	 1.5323%
-numa04.sh      Real:      444.05      514.83      497.06       26.85 	 -2.464%
-numa04.sh       Sys:      230.39      375.79      316.23       48.58 	 5.8343%
-numa04.sh      User:    35403.12    41004.10    39720.80     2163.08 	 -1.153%
-numa05.sh      Real:      423.09      460.41      439.57       13.92 	 -1.428%
-numa05.sh       Sys:      287.38      480.15      369.37       68.52 	 -7.964%
-numa05.sh      User:    34732.12    38016.80    36255.85     1070.51 	 -1.704%
+numa01.sh      Real:      414.64      819.20      556.08      147.70 	 -7.36%
+numa01.sh       Sys:       77.52      205.04      139.40       52.05 	 67.10%
+numa01.sh      User:    37043.24    61757.88    45517.48     9290.38 	 -5.06%
+numa02.sh      Real:       60.80       63.32       61.63        0.88 	 -1.37%
+numa02.sh       Sys:       17.35       39.37       25.71        7.33 	 -19.5%
+numa02.sh      User:     5213.79     5374.73     5268.90       55.09 	 -0.62%
+numa03.sh      Real:      780.09      948.64      831.43       63.02 	 -3.05%
+numa03.sh       Sys:      104.96      136.92      116.31       11.34 	 4.591%
+numa03.sh      User:    60465.42    73339.78    64368.03     4700.14 	 -2.72%
+numa04.sh      Real:      412.60      681.92      521.29       96.64 	 -7.36%
+numa04.sh       Sys:      210.32      314.10      251.77       37.71 	 41.74%
+numa04.sh      User:    34026.38    45581.20    38534.49     4198.53 	 2.825%
+numa05.sh      Real:      394.79      439.63      411.35       16.87 	 6.140%
+numa05.sh       Sys:      238.32      330.09      292.31       38.32 	 -9.04%
+numa05.sh      User:    33456.45    34876.07    34138.62      609.45 	 2.741%
 
+While there is a regression with this change, this change is needed from a
+correctness perspective. Also it helps consolidation as seen from perf bench
+output.
+
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Reviewed-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 ---
-Changelog v1->v2:
-Fix setting sched_setnuma under !sd pointed by Peter Zijlstra.
-Modify commit message to describe the reason for change.
-
- kernel/sched/fair.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 285d7ae..2366fda2 100644
+index 23c39fb..ed60fbd 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -1726,7 +1726,7 @@ static int task_numa_migrate(struct task_struct *p)
- 	 * elsewhere, so there is no point in (re)trying.
- 	 */
- 	if (unlikely(!sd)) {
--		p->numa_preferred_nid = task_node(p);
-+		sched_setnuma(p, task_node(p));
- 		return -EINVAL;
- 	}
+@@ -1273,7 +1273,7 @@ static unsigned long score_nearby_nodes(struct task_struct *p, int nid,
+ 		 * of each group. Skip other nodes.
+ 		 */
+ 		if (sched_numa_topology_type == NUMA_BACKPLANE &&
+-					dist > maxdist)
++					dist >= maxdist)
+ 			continue;
  
-@@ -1785,15 +1785,13 @@ static int task_numa_migrate(struct task_struct *p)
- 	 * trying for a better one later. Do not set the preferred node here.
- 	 */
- 	if (p->numa_group) {
--		struct numa_group *ng = p->numa_group;
--
- 		if (env.best_cpu == -1)
- 			nid = env.src_nid;
- 		else
--			nid = env.dst_nid;
-+			nid = cpu_to_node(env.best_cpu);
- 
--		if (ng->active_nodes > 1 && numa_is_active_node(env.dst_nid, ng))
--			sched_setnuma(p, env.dst_nid);
-+		if (nid != p->numa_preferred_nid)
-+			sched_setnuma(p, nid);
- 	}
- 
- 	/* No better CPU than the current one was found. */
+ 		/* Add up the faults from nearby nodes. */
 -- 
 1.8.3.1
 
