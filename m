@@ -5,139 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34780C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13990C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF6E920874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:28:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6E920874
+	by mail.kernel.org (Postfix) with ESMTP id C409720874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:29:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C409720874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754786AbeFTS2w (ORCPT
+        id S1754789AbeFTS3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 14:28:52 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52842 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754633AbeFTS2s (ORCPT
+        Wed, 20 Jun 2018 14:29:21 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:42427 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753760AbeFTS3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 14:28:48 -0400
-Received: by mail-wm0-f66.google.com with SMTP id p126-v6so1067218wmb.2;
-        Wed, 20 Jun 2018 11:28:47 -0700 (PDT)
+        Wed, 20 Jun 2018 14:29:19 -0400
+Received: by mail-yb0-f194.google.com with SMTP id m199-v6so203189ybm.9;
+        Wed, 20 Jun 2018 11:29:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wvpzYC9zpVeHZ0zO7pN3zZKy6foGSmi6UryrzQI98yk=;
-        b=CsoNVmB1HVX9KZ2wdu2kEc/3Ko+TejiG1EBdZwD/6S8MKgxrymb0ASSJE45INnxjBL
-         NFjc0v5fvKbhSkc2LeD61AmWrIPX6P0wy0ykVDtFe8x/z8EivzmD+ZWSFpxueq1Np3bd
-         iqv9vT/UhZmjSZowhxa3fzF3IdQSWfMzPQ3qiOyXH/x5Py2YxEHhrasXwgfC/OtK0a9y
-         m0BeNezKBj4cOJ1IebsmsSJ67vOWMRD3lvjZrTCt725sCOVsHJIcNkyKas7uLmlAR7HL
-         6SiKhQLC8a5S5ibReU4zzTcIPV2TVjSL39onF+CaNjA2k9sKgXYLSZoaCB7WQctELPUI
-         +8aw==
-X-Gm-Message-State: APt69E1Mv0G9J+TvIcm4/Xf5ocZDXw0IAWsFBUPumASIqvrBDMFd2hrH
-        qYV0lUSbev+YPopxN8Ez4Ps=
-X-Google-Smtp-Source: ADUXVKK4Dt+UPNkWGCDdbF5YwnfkcDjll9BjSngQJPszvrBO8mmlykiWzJOgFUA9DMOqQW9O/wP9fQ==
-X-Received: by 2002:a50:f310:: with SMTP id p16-v6mr19132204edm.183.1529519326832;
-        Wed, 20 Jun 2018 11:28:46 -0700 (PDT)
-Received: from kozik-lap (adsl-84-227-236-43.adslplus.ch. [84.227.236.43])
-        by smtp.googlemail.com with ESMTPSA id d13-v6sm2032869edb.18.2018.06.20.11.28.45
+        bh=onHZiM2LIvrjz4IzLMUB4bHg4QmswzBUqSeMTpW/Q5o=;
+        b=dt0oWVLNQWhhLUPCM1v3owvD+fye0IFHpqBS1abwh5wc+sGGtLGAaVGc38kF8Ed/z4
+         NE2sZz99s1vEsNkEdASRQzZhPqH6Y1sMANdYnmMpICx/Yzl3Wluu2tvhGK41OjNZkUVz
+         b1yHgENt3W7qMu5eVMjtTdu8ph4F9c7b87dhsB8XwMD9c5KWXgHC1S7czeGFGGEnWJ0m
+         MtX3l5kaYAJlqAcdAkBxHLCgmLIlLNGRrCYzTVQKKWKifc8FqD2WFoKAwPiyLH9kAeMD
+         Z4IXgP+jbbJn291NUNrlxorYI00lau83GwbWAm5JaUlkGZ+sm+s4Mfjp5pQQKV4yower
+         9hNQ==
+X-Gm-Message-State: APt69E0hEO/1RaW+HrSh48Rq5+63goX3fmBNFf79a2CJt2YGMwdxQI0c
+        KOhb81SfZk6ddJhdD/4fbw==
+X-Google-Smtp-Source: ADUXVKLFy7LhSeUT4UoAOQDgXTu0xRQyZLe3P07qzlB71ClVbkHYwW1XR3WLwj89EH57ltmKx0Rpyw==
+X-Received: by 2002:a25:4f8b:: with SMTP id d133-v6mr10993461ybb.359.1529519358973;
+        Wed, 20 Jun 2018 11:29:18 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id r64-v6sm1118750ywg.47.2018.06.20.11.29.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 11:28:45 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 20:28:44 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     "open list:DESIGNWARE USB3 DRD IP DRIVER" <linux-usb@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Wed, 20 Jun 2018 11:29:18 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 12:29:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Kiran Gunda <kgunda@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
+        lee.jones@linaro.org, b.zolnierkie@samsung.com,
+        dri-devel@lists.freedesktop.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
         Mark Rutland <mark.rutland@arm.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] arm64: dts: exynos: add OF graph between USB-PHY
- and MUIC
-Message-ID: <20180620182844.5nmlj5djbjgwy3wn@kozik-lap>
-References: <20180515121239.18192-1-a.hajda@samsung.com>
- <CGME20180515121251eucas1p160dd3dcff49f0dad845ed6be98f33bbe@eucas1p1.samsung.com>
- <20180515121239.18192-3-a.hajda@samsung.com>
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V3 2/7] backlight: qcom-wled: restructure the qcom-wled
+ bindings
+Message-ID: <20180620182917.GA18262@rob-hp-laptop>
+References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
+ <1529406822-15379-3-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180515121239.18192-3-a.hajda@samsung.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1529406822-15379-3-git-send-email-kgunda@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 15, 2018 at 02:12:39PM +0200, Andrzej Hajda wrote:
-> OF graph describes USB data lanes between USB-PHY and respective MUIC.
-> Since graph is present and DWC driver can use it to get extcon, obsolete
-> extcon property can be removed.
+On Tue, Jun 19, 2018 at 04:43:37PM +0530, Kiran Gunda wrote:
+> Restructure the qcom-wled bindings for the better readability.
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
 > ---
->  .../dts/exynos/exynos5433-tm2-common.dtsi     | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
+>  .../bindings/leds/backlight/qcom-wled.txt          | 110 ++++++++++++++++-----
+>  1 file changed, 85 insertions(+), 25 deletions(-)
 
-dtc W=1 now complains with:
-===
-Warning (graph_child_address):
-/soc/hsi2c@14d90000/max77843@66/max77843-muic/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
-===
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Do you plan to add more ports soon?
-
-Best regards,
-Krzysztof
-
-> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> index 03453b822093..042e5894a138 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-> @@ -868,6 +868,18 @@
->  					};
->  				};
->  			};
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					muic_to_usb: endpoint {
-> +						remote-endpoint = <&usb_to_muic>;
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		regulators {
-> @@ -1287,12 +1299,17 @@
->  
->  &usbdrd_dwc3 {
->  	dr_mode = "otg";
-> -	extcon = <&muic>;
->  };
->  
->  &usbdrd30_phy {
->  	vbus-supply = <&safeout1_reg>;
->  	status = "okay";
-> +
-> +	port {
-> +		usb_to_muic: endpoint {
-> +			remote-endpoint = <&muic_to_usb>;
-> +		};
-> +	};
->  };
->  
->  &xxti {
-> -- 
-> 2.17.0
-> 
