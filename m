@@ -2,214 +2,90 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E48C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C94F2C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5E2F20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:13:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tTasAoGn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5E2F20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A81420846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:14:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A81420846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754253AbeFTRNC (ORCPT
+        id S1754326AbeFTROZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:13:02 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42677 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753952AbeFTRNB (ORCPT
+        Wed, 20 Jun 2018 13:14:25 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:47101 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754137AbeFTROY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:13:01 -0400
-Received: by mail-pf0-f193.google.com with SMTP id w7-v6so115667pfn.9
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:13:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=OJGBw0Rvxihite/Hem7GqGPRnXCNQVCw36kTvgnIJnc=;
-        b=tTasAoGnKs6aX7XCnkE9Tl68UNcPDkNE5OeKgdOenBEKY2u7RhKRF57yzH61mQVPh2
-         dRtF+iKZRlpPGe1JZem2MrJDVndQ0VCPfbqsvAMEDdm23UCUv4M/asEGAym2vgQkFDR/
-         PbxvsDV7QruGA+cF9K48Ag8HOI+D136lIHwveOWBmLMQ2r16LaZ7l6fAzd3Vnc2TMfBz
-         ma67+1QngIQdSugh44Cj7L9C5UsxjVNiBc29QYX/hMfq3ZJDWSuugFDttbNTJiagvtu+
-         hQDxTbGUfX9RTWGqKmNdsjPS58vL53Y6FyXmeflfWCz0WWLkdgchBYHesfg4d7oCNufP
-         pKaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=OJGBw0Rvxihite/Hem7GqGPRnXCNQVCw36kTvgnIJnc=;
-        b=bb1wDgxRN6MVyAt05nmJX7HpMYvZGWhWr/s6GvdSqCDux0GN11PQbXoc34OM3aJ73g
-         G1t/QD7Pyccb8hEIoeiTVwWav2bwaIvsSxhZQmKktl03w0PRY2b09boGt8HXLNs0Hxw/
-         BlT8abblc6A71q0ReElOTlE6M9zU7cT6e8yTTNaq/8cCd1F2/CbRzxJ/l8QWgt9qRF3r
-         2ViSH+zuhN/3ktrJNGDVNB4bDT1wig+oqrh8vJQ88PCew+8uYRE18qLXRH1aYyy06qUj
-         p3OIXQr6I7ghGDg7Z65r60lWpjYpsP00jfrlCXUdzmKJ1AosBNO9ZXA46Zt7QVBQNYSo
-         BjCQ==
-X-Gm-Message-State: APt69E2qDFNmg/1Q83StGtdPBz75Akn5xrmSPA4flJxnfGaTmArctTIx
-        lQwbqY16cN7A4TDG4ihUagM=
-X-Google-Smtp-Source: ADUXVKI4pfvfXiUoAGExGm5XkSPLTF3wZ6G4w7xPHjpE56x9ldKdR/KGh74Kk7mZ2NypDKnegCmNCQ==
-X-Received: by 2002:a65:494b:: with SMTP id q11-v6mr19985031pgs.105.1529514780560;
-        Wed, 20 Jun 2018 10:13:00 -0700 (PDT)
-Received: from [10.2.101.129] ([208.91.2.2])
-        by smtp.gmail.com with ESMTPSA id l8-v6sm5586369pfb.102.2018.06.20.10.12.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:12:59 -0700 (PDT)
-From:   Nadav Amit <nadav.amit@gmail.com>
-Message-Id: <3FA297CB-2475-498A-8372-3955FBB87AE1@gmail.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_D08CC230-0835-452A-83AB-719FA45AFAB1";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [RFC v2 PATCH 2/2] mm: mmap: zap pages with read mmap_sem for
- large mapping
-Date:   Wed, 20 Jun 2018 10:12:56 -0700
-In-Reply-To: <20180620071817.GJ13685@dhcp22.suse.cz>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        ldufour@linux.vnet.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org
-To:     Michal Hocko <mhocko@kernel.org>
-References: <1529364856-49589-1-git-send-email-yang.shi@linux.alibaba.com>
- <1529364856-49589-3-git-send-email-yang.shi@linux.alibaba.com>
- <3DDF2672-FCC4-4387-9624-92F33C309CAE@gmail.com>
- <158a4e4c-d290-77c4-a595-71332ede392b@linux.alibaba.com>
- <BFD6A249-B1D7-43D5-8D7C-9FAED4A168A1@gmail.com>
- <20180620071817.GJ13685@dhcp22.suse.cz>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Wed, 20 Jun 2018 13:14:24 -0400
+Received: from mipsdag03.mipstec.com (mail3.mips.com [12.201.5.33]) by mx29.ess.sfj.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Wed, 20 Jun 2018 17:14:19 +0000
+Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag03.mipstec.com
+ (10.20.40.48) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Wed, 20
+ Jun 2018 10:14:18 -0700
+Received: from localhost (10.20.2.29) by mipsdag02.mipstec.com (10.20.40.47)
+ with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Wed, 20 Jun
+ 2018 10:14:18 -0700
+Date:   Wed, 20 Jun 2018 10:14:18 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mips@linux-mips.org>
+Subject: Re: [PATCH 0/5] MIPS: Clean-up DT bus probing
+Message-ID: <20180620171418.43yveoh3md4kqzvw@pburton-laptop>
+References: <20180619214710.22066-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180619214710.22066-1-robh@kernel.org>
+User-Agent: NeoMutt/20180512
+X-BESS-ID: 1529514859-637139-29444-50583-1
+X-BESS-VER: 2018.7-r1806151722
+X-BESS-Apparent-Source-IP: 12.201.5.33
+X-BESS-Envelope-From: Paul.Burton@mips.com
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194226
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-Orig-Rcpt: robh@kernel.org,ralf@linux-mips.org,jhogan@kernel.org,linux-kernel@vger.kernel.org,linux-mips@linux-mips.org
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob,
 
---Apple-Mail=_D08CC230-0835-452A-83AB-719FA45AFAB1
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+On Tue, Jun 19, 2018 at 03:47:05PM -0600, Rob Herring wrote:
+> This is a series of clean-ups of DT bus probing calls. Generally, the 
+> DT core code takes care of the default case and arches/platforms only 
+> need to do their own call if they have non-default matching 
+> requirements.
+> 
+> Rob
+> 
+> Rob Herring (5):
+>   MIPS: octeon: use of_platform_populate to probe devices
+>   MIPS: netlogic: remove unnecessary of_platform_bus_probe call
+>   MIPS: bmips: remove unnecessary call to register "simple-bus"
+>   MIPS: generic: remove unnecessary of_platform_populate call
+>   MIPS: lantiq: remove unnecessary of_platform_default_populate call
+> 
+>  arch/mips/bmips/setup.c                   |  7 -------
+>  arch/mips/cavium-octeon/octeon-platform.c |  2 +-
+>  arch/mips/generic/init.c                  | 13 -------------
+>  arch/mips/lantiq/prom.c                   |  8 --------
+>  arch/mips/netlogic/xlp/dt.c               | 14 --------------
+>  5 files changed, 1 insertion(+), 43 deletions(-)
 
-at 12:18 AM, Michal Hocko <mhocko@kernel.org> wrote:
+Thanks - series applied to mips-next for 4.19.
 
-> On Tue 19-06-18 17:31:27, Nadav Amit wrote:
->> at 4:08 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
->>=20
->>> On 6/19/18 3:17 PM, Nadav Amit wrote:
->>>> at 4:34 PM, Yang Shi <yang.shi@linux.alibaba.com>
->>>> wrote:
->>>>=20
->>>>=20
->>>>> When running some mmap/munmap scalability tests with large memory =
-(i.e.
->>>>>=20
->>>>>> 300GB), the below hung task issue may happen occasionally.
->>>>> INFO: task ps:14018 blocked for more than 120 seconds.
->>>>>      Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>>>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->>>>> message.
->>>>> ps              D    0 14018      1 0x00000004
->>>> (snip)
->>>>=20
->>>>=20
->>>>> Zapping pages is the most time consuming part, according to the
->>>>> suggestion from Michal Hock [1], zapping pages can be done with =
-holding
->>>>> read mmap_sem, like what MADV_DONTNEED does. Then re-acquire write
->>>>> mmap_sem to manipulate vmas.
->>>> Does munmap() =3D=3D MADV_DONTNEED + munmap() ?
->>>=20
->>> Not exactly the same. So, I basically copied the page zapping used =
-by munmap instead of calling MADV_DONTNEED.
->>>=20
->>>> For example, what happens with userfaultfd in this case? Can you =
-get an
->>>> extra #PF, which would be visible to userspace, before the munmap =
-is
->>>> finished?
->>>=20
->>> userfaultfd is handled by regular munmap path. So, no change to =
-userfaultfd part.
->>=20
->> Right. I see it now.
->>=20
->>>> In addition, would it be ok for the user to potentially get a =
-zeroed page in
->>>> the time window after the MADV_DONTNEED finished removing a PTE and =
-before
->>>> the munmap() is done?
->>>=20
->>> This should be undefined behavior according to Michal. This has been =
-discussed in https://lwn.net/Articles/753269/.
->>=20
->> Thanks for the reference.
->>=20
->> Reading the man page I see: "All pages containing a part of the =
-indicated
->> range are unmapped, and subsequent references to these pages will =
-generate
->> SIGSEGV.=E2=80=9D
->=20
-> Yes, this is true but I guess what Yang Shi meant was that an =
-userspace
-> access racing with munmap is not well defined. You never know whether
-> you get your data, #PTF or SEGV because it depends on timing. The user
-> visible change might be that you lose content and get zero page =
-instead
-> if you hit the race window while we are unmapping which was not =
-possible
-> before. But whouldn't such an access pattern be buggy anyway? You need
-> some form of external synchronization AFAICS.
-
-It seems to follow the specifications, so it is not clearly buggy IMHO. =
-I
-don=E2=80=99t know of such a use-case, but if somebody does so - the =
-proposed change
-might even cause a security vulnerability.
-
-> But maybe some userspace depends on "getting right data or get SEGV"
-> semantic. If we have to preserve that then we can come up with a =
-VM_DEAD
-> flag set before we tear it down and force the SEGV on the #PF path.
-> Something similar we already do for MMF_UNSTABLE.
-
-That seems reasonable.
-
-Regards,
-Nadav
-
---Apple-Mail=_D08CC230-0835-452A-83AB-719FA45AFAB1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE0YCJM4pMIpzxUdmOK4dOkxJsY0AFAlsqixgACgkQK4dOkxJs
-Y0CLohAAzDqyXV2YQ9gTS3P5ug+gfWrJEIkshCcVsiybRqoVD0zqDRZHADnxpfa3
-/yM5+HGNTizMA5+8/kYR0WF5iT0HudVxYwsCNWPFkroVKwFio5znLPQ9fl1ZHBah
-Gu+hFWP/TbkACKhn3TmnkvS8/7LkZlCvU+sBBGCo0++LH+rM6a+9E5T/+4h77f9v
-Ckjs9ncKlCvwI/zzTFa7aD7IDNUNSjzzC8asuytyGr6HrOjt8BOPSrkoknVa7d8P
-rw6nwi7v11Sni1ZkbhlomQus0EKCk+eJ6OxhMEqLHSQXVVqxZBNDVAR755iu0fwD
-aG5cseIaKSjycw23Go7iIYLS6ge2HRqEC5LX79wVfgLyjzKNQdEQu/kQpFIQgPYX
-kMNnrNmhHTEzmfYcR8vOgWYazInKJO5ECuCogg9SL/M1dHoSb7ocTdiBaBTS5M3i
-F/iKmBMzMFBf+r751wYDFkmFyvQVl6k/WXJvvvudB8U0D2hn6A4qBpt+tHj5LR4Q
-mnxlarsEfxnja/UEXdUktZsF8RrEVBLBC6lIvndX3qWP31coBcrk+dStN8FDklpI
-r/3pfIlK9ydfpVvYp6+wjuCBIMRqkVPQHHe8Xfv5GdlyOXQwWv8UnkMX95A8vUb5
-TojMmwoL/FHqSUKW+kh17NQ2jG+WGEVUwIBFVPmqH9jP0KXAWYU=
-=hifR
------END PGP SIGNATURE-----
-
---Apple-Mail=_D08CC230-0835-452A-83AB-719FA45AFAB1--
+Paul
