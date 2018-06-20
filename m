@@ -2,115 +2,113 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5EDC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13592C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6549820872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:29:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6549820872
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id C339B20872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 11:29:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="H6orUxUd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C339B20872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753760AbeFTL3S (ORCPT
+        id S1754011AbeFTL3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 07:29:22 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:58986 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752787AbeFTL3S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 07:29:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49962 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750852AbeFTL3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 07:29:16 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AB5A120741; Wed, 20 Jun 2018 13:29:14 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7C9BF203B0;
-        Wed, 20 Jun 2018 13:29:04 +0200 (CEST)
-Date:   Wed, 20 Jun 2018 13:29:05 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     davem@davemloft.net, f.fainelli@gmail.com, andrew@lunn.ch,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, quentin.schulz@bootlin.com,
-        allan.nielsen@microsemi.com
-Subject: Re: [PATCH net] net: mscc: fix the injection header
-Message-ID: <20180620112905.GF7737@piout.net>
-References: <20180620085046.2377-1-antoine.tenart@bootlin.com>
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id CFFB825B7FB;
+        Wed, 20 Jun 2018 21:29:16 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1529494157; bh=0i3UnQ0Ke8VeGhpjUM/MDYStCSVZml5/Xdr59KsEEB0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H6orUxUde58PncRhwSVMXitSADLCPhRyLCRKzf63qKLNx7jfYn594i9PXC6V+xco3
+         Tx06YRJsTLg3zcFl8/390ZfSYNpYmwGusAXCy4EO3RjyPZ8lZAQf4tBGhCXGWqyB7Q
+         Tw6QByb5QlbE2bsFtc6gFlEqC5uuXCnSE8/LBjjc=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id B2D529407DF; Wed, 20 Jun 2018 13:29:14 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 13:29:14 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     geert@linux-m68k.org, magnus.damm@gmail.com,
+        yoshihiro.shimoda.uh@renesas.com, joro@8bytes.org,
+        linux-renesas-soc@vger.kernel.org,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [RESEND 0/6] iommu: ipmmu-vmsa: Add more Gen3 SoCs support
+Message-ID: <20180620112909.gzbdpj2kwcehebnx@verge.net.au>
+References: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180620085046.2377-1-antoine.tenart@bootlin.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1528973306-7962-1-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/06/2018 10:50:46+0200, Antoine Ténart wrote:
-> When injecting frames in the Ocelot switch driver an injection header
-> (IFH) should be used to configure various parameters related to a given
-> frame, such as the port onto which the frame should be departed or its
-> vlan id. Other parameters in the switch configuration can led to an
-> injected frame being sent without an IFH but this led to various issues
-> as the per-frame parameters are then not used. This is especially true
-> when using multiple ports for injection.
-> 
-> The IFH was injected with the wrong endianness which led to the switch
-> not taking it into account as the IFH_INJ_BYPASS bit was then unset.
-> (The bit tells the switch to use the IFH over its internal
-> configuration). This patch fixes it.
-> 
-> In addition to the endianness fix, the IFH is also fixed. As it was
-> (unwillingly) unused, some of its fields were not configured the right
-> way.
-> 
-> Fixes: a556c76adc05 ("net: mscc: Add initial Ocelot switch support")
-> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+[CC Alex Williamson]
 
-> ---
->  drivers/net/ethernet/mscc/ocelot.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+On Thu, Jun 14, 2018 at 12:48:20PM +0200, Jacopo Mondi wrote:
+> Hello,
+>    this series collects patches sent to mailing lists in late 2017 to add
+> support for a number of R-Car Gen3 SoCs to the ipmmu-vmsa driver.
 > 
-> diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
-> index fb2c8f8071e6..52c57e0ff617 100644
-> --- a/drivers/net/ethernet/mscc/ocelot.c
-> +++ b/drivers/net/ethernet/mscc/ocelot.c
-> @@ -344,10 +344,9 @@ static int ocelot_port_stop(struct net_device *dev)
->  static int ocelot_gen_ifh(u32 *ifh, struct frame_info *info)
->  {
->  	ifh[0] = IFH_INJ_BYPASS;
-> -	ifh[1] = (0xff00 & info->port) >> 8;
-> +	ifh[1] = (0xf00 & info->port) >> 8;
->  	ifh[2] = (0xff & info->port) << 24;
-> -	ifh[3] = IFH_INJ_POP_CNT_DISABLE | (info->cpuq << 20) |
-> -		 (info->tag_type << 16) | info->vid;
-> +	ifh[3] = (info->tag_type << 16) | info->vid;
->  
->  	return 0;
->  }
-> @@ -370,11 +369,12 @@ static int ocelot_port_xmit(struct sk_buff *skb, struct net_device *dev)
->  			 QS_INJ_CTRL_SOF, QS_INJ_CTRL, grp);
->  
->  	info.port = BIT(port->chip_port);
-> -	info.cpuq = 0xff;
-> +	info.tag_type = IFH_TAG_TYPE_C;
-> +	info.vid = skb_vlan_tag_get(skb);
->  	ocelot_gen_ifh(ifh, &info);
->  
->  	for (i = 0; i < IFH_LEN; i++)
-> -		ocelot_write_rix(ocelot, ifh[i], QS_INJ_WR, grp);
-> +		ocelot_write_rix(ocelot, cpu_to_be32(ifh[i]), QS_INJ_WR, grp);
->  
->  	count = (skb->len + 3) / 4;
->  	last = skb->len % 4;
-> -- 
-> 2.17.1
+> Part of the series these patches were part of went in through Alex Williamson
+> tree and are now included in v4.17.
 > 
+> These patches have not yet been collected, and need to be rebased on v4.17,
+> and this what this series serves for.
+> 
+> The series:
+> - Increses the micro-TLB size to 48bits to accomodate newer SoCs
+> - Adds support for M3-N, M3-W, V3-M and E3 to ipmmu-vmsa driver
+> - Documents M3-N, V3H and E3 device tree bindings
+> 
+> All patches have been acked/reviewed by, if nothing big happens they should
+> be ready to be collected.
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+All patches:
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+Joerg, Alex,
+
+I'd be most grateful if we could find a way for these patches to progress
+into mainline.
+
+> 
+> Thanks
+>    j
+> 
+> Jacopo Mondi (2):
+>   dt-bindings: iommu/ipmmu-vmsa: Add R-Car M3-N (R8A77965)
+>   iommu/ipmmu-vmsa: Hook up R8A77965 DT matching code
+> 
+> Magnus Damm (3):
+>   iommu/ipmmu-vmsa: Increase maximum micro-TLBS to 48
+>   iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code
+>   iommu/ipmmu-vmsa: Document R-Car V3H and E3 IPMMU DT bindings
+> 
+> Simon Horman (1):
+>   iommu/ipmmu-vmsa: Hook up r8a779(70|95) DT matching code
+> 
+>  .../bindings/iommu/renesas,ipmmu-vmsa.txt          |  3 ++
+>  drivers/iommu/ipmmu-vmsa.c                         | 38 ++++++++++++++++++----
+>  2 files changed, 34 insertions(+), 7 deletions(-)
+> 
+> --
+> 2.7.4
+> 
