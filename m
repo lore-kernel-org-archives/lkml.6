@@ -6,133 +6,88 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18160C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0394EC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2787208A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:08:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF6F520693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:10:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mdjKIohn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2787208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iooSjIzo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6F520693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754864AbeFTTIF (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:08:05 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35667 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754553AbeFTTET (ORCPT
+        id S932501AbeFTTKH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 15:10:07 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:52956 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753541AbeFTTKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:04:19 -0400
-Received: by mail-pg0-f67.google.com with SMTP id i7-v6so243587pgp.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 12:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=SuMZWhlsR8+I8IGAnwiA2oJhRXzAkkN3kNbB4AfznQA=;
-        b=mdjKIohnlUJiDvDW3/KdSRxVU/GPzHbBkEZAHTlRyjJc3lNCP/23zfI/PeqkAOaZyj
-         qKpjSXcJH9x1tyZgWHqgVSxwL/X3celjkeFOrM8OyWU8k1XNaxccmZjMttpgLX+rUKXO
-         fu24Io3IL+TmvJfRB+O35dzKNO/KS6/B84fis=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SuMZWhlsR8+I8IGAnwiA2oJhRXzAkkN3kNbB4AfznQA=;
-        b=Ysy2FCI56ov51WCByi7MJsQoJrtCx6vvj6H5e2QThZqk4h/4kARuDetW8cgVgXRBOB
-         CI6I0lXce3Y4WSMcNKbQaLiKqFcTy1giD27sKQnBM2/ceZ0oCLW146A0Tqq2ddNXbffi
-         biB2NuVN+W6A9T6VD+Vc5Hcwu3VHA7fooKOR02HPC2aAs4xEpYyWmxCn42M8PObqps14
-         /JJuVDkuluJ1IcG4m7dYJeGpOzA5ZCR01GxLxwElt2e0n3uyJGbr2ui5vZBT9dlLZld4
-         TUA5FFEAuHY4EwxagYzOeUIu/N+JqCbnct4BqCl1xWtt2DMycbb5e+QbRI4PkKBkkv1J
-         znhQ==
-X-Gm-Message-State: APt69E1R13IkRWKUEZMMIFodPZ7pScvtUu1DkmGmdTj5Yl1XQsFuBDdq
-        BSGTjNmNTE7RUNRslBLeaLbCNg==
-X-Google-Smtp-Source: ADUXVKJbC14vLsK5gSCJYlijHeNLsksdrO+ElEb7ZsmCZQ/KE75x4TlByTmpJprD2209RbQodvOabw==
-X-Received: by 2002:a63:b34e:: with SMTP id x14-v6mr19895374pgt.243.1529521459208;
-        Wed, 20 Jun 2018 12:04:19 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id g66-v6sm8589160pfk.99.2018.06.20.12.04.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 12:04:16 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, qat-linux@intel.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 00/11] crypto: Remove VLA usage
-Date:   Wed, 20 Jun 2018 12:03:57 -0700
-Message-Id: <20180620190408.45104-1-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 20 Jun 2018 15:10:06 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id AB9BE1E04A8;
+        Wed, 20 Jun 2018 21:10:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1529521804; bh=nwQD0IDxq0gfWOSb1wzoWEoVW/c/R9Os5IvGlTmyVVk=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=iooSjIzoDrOjBvWy6g2uJ7rPqHy+FuW/6nw0d1LCZ0okemYesZaoGZEIUiQbFijDz
+         Qr+2/Y9r7pa0jrBFj8E7bCuNYHy+lKGOcSZj5pupZmJU+oWALxrh//KR1ZE6PBFYz1
+         iiUSvFETNnU4NgNRqeUyKagEQeAbKZsT4zdCd7jhi9xO/7I1hwY/d+Qe0vox8DtT1C
+         5NtiCDaqUAtH7e6NqG7TpAS2hBZ8AeTX/WAn82iASl9mt3Pq+zK63AEoNc7cXB3dyF
+         69MnCHdCNDTSisezOimE3dHjV3mkVZrzMgSxnuClwqIf5ADccNr3NTfH/FBbhY+FtE
+         /7ieFpWvG6Njw==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1.internal.synopsys.com [10.12.239.235])
+        by mailhost.synopsys.com (Postfix) with ESMTP id F3DDF54CB;
+        Wed, 20 Jun 2018 12:10:03 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 20 Jun 2018 12:10:03 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Wed,
+ 20 Jun 2018 21:10:00 +0200
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH v2] ARC: Add PCIe support for ARC HSDK platform
+Thread-Topic: [PATCH v2] ARC: Add PCIe support for ARC HSDK platform
+Thread-Index: AQHUCLTQbYBn4teVp0+qomsYPWSPd6RpYZ4A
+Date:   Wed, 20 Jun 2018 19:09:59 +0000
+Message-ID: <ba16de7195ab84cc6f29f1a7ec2844dbc202392d.camel@synopsys.com>
+References: <9f41b2f9d6da018563fa35aee462ddb60afd922f.1529505192.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <9f41b2f9d6da018563fa35aee462ddb60afd922f.1529505192.git.gustavo.pimentel@synopsys.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.225.15.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2262EC222F9DA640BD252CF8EBD5000F@internal.synopsys.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-This is nearly the last of the VLA removals[1], but it's one of the
-largest because crypto gets used in lots of places. After looking
-through code, usage, reading the threads Gustavo started, and comparing
-the use-cases to the other VLA removals that have landed in the kernel,
-I think this series is likely the best way forward to shut the door on
-VLAs forever.
-
-As background, the crypto stack usage is for callers to do an immediate
-bit of work that doesn't allocate new memory. This means that other VLA
-removal techniques (like just using kmalloc) aren't workable, and the
-next common technique is needed: examination of maximum stack usage and
-the addition of sanity checks. This series does that, and in several
-cases, these maximums were already implicit in the code.
-
-This series is intended to land via the crypto tree, though it touches
-dm as well, since there are dependent patches (new crypto #defines
-being used).
-
-Thanks!
-
--Kees
-
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-
-Kees Cook (11):
-  crypto: shash: Remove VLA usage
-  dm integrity: Remove VLA usage
-  crypto: ahash: Remove VLA usage
-  dm verity fec: Remove VLA usage
-  crypto alg: Introduce max blocksize and alignmask
-  crypto: cbc: Remove VLA usage
-  crypto: xcbc: Remove VLA usage
-  crypto: qat: Remove VLA usage
-  crypto: shash: Remove VLA usage in unaligned hashing
-  crypto: ahash: Remove VLA usage for AHASH_REQUEST_ON_STACK
-  crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-
- crypto/ahash.c                           |  4 ++--
- crypto/algapi.c                          |  5 ++++-
- crypto/algif_hash.c                      |  2 +-
- crypto/shash.c                           | 27 ++++++++++++------------
- crypto/xcbc.c                            |  5 ++++-
- drivers/crypto/qat/qat_common/Makefile   |  2 ++
- drivers/crypto/qat/qat_common/qat_algs.c |  8 +++++--
- drivers/md/dm-integrity.c                | 23 ++++++++++++++------
- drivers/md/dm-verity-fec.c               |  5 ++++-
- include/crypto/cbc.h                     |  2 +-
- include/crypto/hash.h                    | 12 +++++++++--
- include/crypto/internal/hash.h           |  1 +
- include/crypto/internal/skcipher.h       |  1 +
- include/crypto/skcipher.h                |  4 +++-
- include/linux/crypto.h                   |  4 ++++
- 15 files changed, 73 insertions(+), 32 deletions(-)
-
--- 
-2.17.1
-
+SGkgR3VzdGF2bywNCg0KT24gV2VkLCAyMDE4LTA2LTIwIGF0IDE3OjM2ICswMTAwLCBHdXN0YXZv
+IFBpbWVudGVsIHdyb3RlOg0KPiBBZGQgUENJIHN1cHBvcnQgdG8gdGhlIEFSQyBIU0RLIHBsYXRm
+b3JtIGFsbG93aW5nIHRvIHVzZSB0aGUgZ2VuZXJpYyBQQ0kNCj4gc2V0dXAgZnVuY3Rpb25zLg0K
+PiANCj4gU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQaW1lbnRlbCA8Z3VzdGF2by5waW1lbnRlbEBz
+eW5vcHN5cy5jb20+DQo+IC0tLQ0KPiBDaGFuZ2UgdjEtPnYyOg0KPiAgLSBTcGxpdCBpbml0aWFs
+IHBhdGNoLCBmb2xsb3dpbmcgQWxleGV5IEJyb2RraW4gc3VnZ2VzdGlvbi4NCj4gDQo+ICBhcmNo
+L2FyYy9wbGF0LWhzZGsvS2NvbmZpZyB8IDEgKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcmMvcGxhdC1oc2RrL0tjb25maWcgYi9h
+cmNoL2FyYy9wbGF0LWhzZGsvS2NvbmZpZw0KPiBpbmRleCAxOWFiM2NmLi41NTZiYzVlIDEwMDY0
+NA0KPiAtLS0gYS9hcmNoL2FyYy9wbGF0LWhzZGsvS2NvbmZpZw0KPiArKysgYi9hcmNoL2FyYy9w
+bGF0LWhzZGsvS2NvbmZpZw0KPiBAQCAtOSwzICs5LDQgQEAgbWVudWNvbmZpZyBBUkNfU09DX0hT
+REsNCj4gIAlib29sICJBUkMgSFMgRGV2ZWxvcG1lbnQgS2l0IFNPQyINCj4gIAlzZWxlY3QgQ0xL
+X0hTREsNCj4gIAlzZWxlY3QgUkVTRVRfSFNESw0KPiArCXNlbGVjdCBNSUdIVF9IQVZFX1BDSQ0K
+DQpBZGRpbmcgQmpvcm4gYW5kIGxpbnV4LXBjaSBtYWlsaW5nIGxpc3RzLCBvdGhlcndpc2UuLi4N
+Cg0KQWNrZWQtYnk6IEFsZXhleSBCcm9ka2luIDxhYnJvZGtpbkBzeW5vcHN5cy5jb20+DQoNCg==
