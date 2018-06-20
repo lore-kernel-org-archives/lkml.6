@@ -2,131 +2,180 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92380C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4857C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49CA620693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:51:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="t7B6s1Ga"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49CA620693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
+	by mail.kernel.org (Postfix) with ESMTP id 651B020693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:53:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651B020693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754115AbeFTJvs (ORCPT
+        id S1754129AbeFTJxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:51:48 -0400
-Received: from erza.pados.hu ([176.9.136.194]:46514 "EHLO erza.pados.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750827AbeFTJvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:51:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
-         s=february2016; h=References:In-Reply-To:Cc:To:Subject:Message-ID:From:
-        Content-Transfer-Encoding:Content-Type:Date:MIME-Version:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=G/eooBuIxPIc1PDMWhsVgetISF7ZB8EuCTESxAw0DMw=; b=t7B6s1Ga1p41Mks4hv+G5DHXKE
-        PqQz0okjNh0+Q+m+vTVKVnbJN0VDM84L0LbKJnhBvLdMkIV20aLz4F3zoHJ4sKeEsFu6twJV5C9oF
-        iMHogDlfKhnBaA2c8AJASOGp2fCVpsAGCmaKNsZSstriZuBTgoDC3SFjBlNop3pQ+6dt3K0rlrDwW
-        Xru5BwllHzHCAQsfmnsOI5zLQYSYU4jGUT0Or6Ij4Z6J9qqE06KrRIly85FHxHG4H4MHTDnEtjXQG
-        vLj+6rol/7925A5pBhEfgVfBm+4w7C7jLttg7pEWqqH2nEY7okmk9sr+EWti+16OwDbkKlmYZUOZe
-        VngdGrwQ==;
-Received: from localhost ([127.0.0.1] helo=webmail.pados.hu)
-        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <pados@pados.hu>)
-        id 1fVZmB-0006uN-OD; Wed, 20 Jun 2018 11:51:43 +0200
-MIME-Version: 1.0
-Date:   Wed, 20 Jun 2018 09:51:41 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: RainLoop/1.12.0
-From:   "Karoly Pados" <pados@pados.hu>
-Message-ID: <b82f656ba4c2c05d86ae7149be4109c6@pados.hu>
-Subject: Re: [PATCH] USB: serial: cp210x: Improve baudrate support for
- CP2102N
-To:     "Johan Hovold" <johan@kernel.org>
-Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180620093905.GP32411@localhost>
-References: <20180620093905.GP32411@localhost>
- <20180619091528.GN32411@localhost> <20180615212957.26539-1-pados@pados.hu>
- <0b27c3da292fa1f4b360614685fe8aa4@pados.hu>
-X-Spam_score: -2.9
-X-Spam_report: Spam detection software, running on the system "erza",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  > By the way, have you tried setting other baudrates except
-    the ones you > explicitly allow for here? According to the data sheet more
-    rates should > be available, so perhaps just handling cp2102n as cp2108 (e.g.
-    by not > trying to report back the exact rate used) or by actually calculating
-    > the resulting rate could be another option? > > Can be done later of course,
-    just curious if you tried it. > [...] 
- Content analysis details:   (-2.9 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
- -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
-                             [score: 0.0000]
+        Wed, 20 Jun 2018 05:53:00 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:51783 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeFTJw5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:52:57 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MUAFy-1fdrEI2qhu-00R0BY; Wed, 20 Jun 2018 11:52:32 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Coly Li <colyli@suse.de>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Jens Axboe <axboe@kernel.dk>, Michael Lyle <mlyle@lyle.org>,
+        Tang Junhui <tang.junhui@zte.com.cn>,
+        Hannes Reinecke <hare@suse.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bcache: stop using the deprecated get_seconds()
+Date:   Wed, 20 Jun 2018 11:51:54 +0200
+Message-Id: <20180620095228.3686471-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:YOfVpYdHYutSRnNrPihuD2wxMO1U+zy2Jt44j08qFN77H6Yxyby
+ vvOATHmkOE6/YnKRv4EwDp3WU8jhbF/CYuy6bSeXqjM10PXk5tJwfaBXwbvp/pPpSmpV/eb
+ PvfiilTATOSkuFBwvqYcCcNdckYj9YJuyIMI1T0YSMNFeAR7ooNQIU7VLf/iKucqXOR/h+c
+ Wa/NqQBTu7X1UqQArTUOg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Ud+DpFk1e3Y=:JaGR7bpHQd9eTXmD/UCYvl
+ lAwIvisDJtFubljNBXHIcEHz0UDt7bLvOSTo7BI5ObJHezHjcx4WrDKPJgWlGXUTjs3grYwvV
+ 2BQ91TQbW5m+VKv0tTnAVYHtLqAf3CrgLGOUuV7y6ofUagqUs8Q09Qw4LIrh3uekWBcqClSt+
+ rk5Uy0THfsgtbOBzPlQmh4SM7BzXOwx0my1b7ZrC9U0DzEQ8m8eDiRAszVNVlrPcpujvGDZBc
+ aZaRUfZjX2liJ9ZGoCb4ijjcBhhDMWP7fW0qwzoiTVFb4BolrWDEZImjesyn3+fVlhu4UFqeC
+ /5h6rMPdii7A39IU+bdlOuMVfArjvCFOTGVJekO6KV7Z5jpdQuRkclZt39lL1oqrpehbc9BG+
+ PkJ3lbRuX2mPWHlLmunmcoqJQhCeGk2UNFMydLlnk0hzVUdGi+ipKcdmcjhusQX4gNwtelul/
+ 3QiWXomPNxwxhbBDsxPFDgJEWWSqxP9pnWNeWfOev9dr50vRPMp9X5E1bAg1Crd7VAOyST8nW
+ sGuwpmwzqwcnIskgIjDl3Yg9k7SQQUpm8asVdVX+0k2TKOw0DjOA+xQL6gV+jLGq38Kl1WgCw
+ paYaT5hREJN1HTK4v1q4nHSPYvP6AXMkl/d+6IjTz4OVgWU9LPSwhxnjLizchLV+MfQGq/28W
+ bT97GafF2nEOujfklKJCP78M87LmManqDOU1hQ0Lc8pU4gJmrrDn+jV6HdfZ5BaELPbI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> By the way, have you tried setting other baudrates except the ones you=
-=0A> explicitly allow for here? According to the data sheet more rates sh=
-ould=0A> be available, so perhaps just handling cp2102n as cp2108 (e.g. b=
-y not=0A> trying to report back the exact rate used) or by actually calcu=
-lating=0A> the resulting rate could be another option?=0A> =0A> Can be do=
-ne later of course, just curious if you tried it.=0A> =0A=0AYeah I know, =
-I was thinking about this too while developing the patch. =0AOfficially t=
-he cp2102 and the cp2102n are fully software compatible (aside=0Afrom bau=
-drate aliasing), but if the cp2102n chooses different baudrates for =0Ath=
-e same inputs than the older devices would then they couldn't/wouldn't be=
-=0Acompatible. So I concluded it must also be doing the quantisation.=0A=
-=0AMaybe I am too naive and trust the datasheet to much. I'll do some mea=
-surements=0Awith my scope and let you know the results.=0A=0ABest,=0AKaro=
-ly=0A=0AJune 20, 2018 11:39 AM, "Johan Hovold" <johan@kernel.org> wrote:=
-=0A=0A> On Tue, Jun 19, 2018 at 09:50:54AM +0000, Karoly Pados wrote:=0A>=
- =0A>> Hello,=0A>> =0A>> Pass in a struct usb_serial (or port) as a first=
- argument instead which=0A>> allows for more readable code as well as for=
- this to be reused to handle=0A>> other device type differences (e.g. onl=
-y 2108 besides 2102n handles=0A>> baudrates over 921.6k).=0A>> =0A>> Sure=
-, will do.=0A>> =0A>> Add a static helper (looks like you add a define in=
- the gpio patch)=0A>> cp210x_is_cp2102n(serial) here.=0A>> =0A>> Yes I ha=
-ve macro for that in the GPIO patch, and I will turn that into a=0A>> sta=
-tic function too.=0A>> =0A>> To keep the baudrate and gpio patches indepe=
-ndent,=0A>> do you think it is a good idea if I make a new patch which on=
-ly adds the=0A>> partnum defines and the helper function first, then baud=
-rate v2 and gpio v2=0A>> can build onto it?=0A> =0A> No, that's fine. And=
- you can submit it as a series, where the first=0A> patch using the helpe=
-r includes it (e.g. the baud rate one).=0A> =0A>> You can even test for b=
-it 0x20 in the=0A>> helper if you prefer (we can always change that later=
- if needed).=0A>> =0A>> If you wish, but personally I think that is askin=
-g for future bugs=0A>> in the long run. Even though the helper can be eas=
-ily adjusted if needed,=0A>> when/if a new partnum shows up which has not=
-hing to do with the cp2102n,=0A>> no one will think of having to adjust c=
-p2102n-spacific code until bug reports=0A>> start coming in. So I'd prefe=
-r to explicitly check for the packages, but in=0A>> the end I'll use what=
-ever you prefer.=0A>> =0A>> What do you prefer?=0A> =0A> Sure, I have no =
-strong preference. You can keep the explicit package type=0A> enumeration=
- if you want, but move it to a static helper. We'll see how=0A> this ends=
- up being used in the series.=0A> =0A>> And even if the current code uses=
- this odd formatting, your amendments=0A>> should not.=0A>> =0A>> Of cour=
-se. I also saw this is odd, but (apparently wrongly) decided to=0A>> stay=
- consistent inside the function with existing code. I will change=0A>> th=
-at too.=0A> =0A> Yeah, that's admittedly a bit arbitrary. I should probab=
-ly just clean=0A> this up somehow once and for all.=0A> =0A> By the way, =
-have you tried setting other baudrates except the ones you=0A> explicitly=
- allow for here? According to the data sheet more rates should=0A> be ava=
-ilable, so perhaps just handling cp2102n as cp2108 (e.g. by not=0A> tryin=
-g to report back the exact rate used) or by actually calculating=0A> the =
-resulting rate could be another option?=0A> =0A> Can be done later of cou=
-rse, just curious if you tried it.=0A> =0A> Thanks,=0A> Johan
+bcache uses get_seconds() to read the current system time and store it in
+the superblock as well as in uuid_entry structures that are user visible.
+
+This changes over from the deprecated function to
+ktime_get_real_seconds(), which returns a 64-bit timestamp as it
+should. Unfortunately, the two structures are still limited to 32 bits,
+so this won't fix any real problems. Let's at least document that
+properly, in case we get an updated format in the future it can be
+fixed. Until then, we still have some time, and checking the tools
+at https://github.com/koverstreet/bcache-tools reveals no access to
+any of them.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/md/bcache/super.c   | 23 +++++++++++++++++------
+ include/uapi/linux/bcache.h |  4 ++--
+ 2 files changed, 19 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index fa4058e43202..aa9790ee5cb5 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -53,6 +53,17 @@ struct workqueue_struct *bcache_wq;
+ /* limitation of bcache devices number on single system */
+ #define BCACHE_DEVICE_IDX_MAX	((1U << MINORBITS)/BCACHE_MINORS)
+ 
++/*
++ * various timestamp fields in the superblock are unfortunately
++ * limited to 32 bits, which will lead to overflow in year 2106.
++ *
++ * If we ever get a new superblock format, that should be fixed.
++ */
++static inline u32 bcache_get_realtime32(void)
++{
++	return (u32)ktime_get_real_seconds();
++}
++
+ /* Superblock */
+ 
+ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+@@ -181,7 +192,7 @@ static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
+ 		goto err;
+ 	}
+ 
+-	sb->last_mount = get_seconds();
++	sb->last_mount = bcache_get_realtime32();
+ 	err = NULL;
+ 
+ 	get_page(bh->b_page);
+@@ -701,7 +712,7 @@ static void bcache_device_detach(struct bcache_device *d)
+ 
+ 		SET_UUID_FLASH_ONLY(u, 0);
+ 		memcpy(u->uuid, invalid_uuid, 16);
+-		u->invalidated = cpu_to_le32(get_seconds());
++		u->invalidated = cpu_to_le32(bcache_get_realtime32());
+ 		bch_uuid_write(d->c);
+ 	}
+ 
+@@ -1027,7 +1038,7 @@ void bch_cached_dev_detach(struct cached_dev *dc)
+ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
+ 			  uint8_t *set_uuid)
+ {
+-	uint32_t rtime = cpu_to_le32(get_seconds());
++	uint32_t rtime = cpu_to_le32(bcache_get_realtime32());
+ 	struct uuid_entry *u;
+ 	struct cached_dev *exist_dc, *t;
+ 
+@@ -1070,7 +1081,7 @@ int bch_cached_dev_attach(struct cached_dev *dc, struct cache_set *c,
+ 	    (BDEV_STATE(&dc->sb) == BDEV_STATE_STALE ||
+ 	     BDEV_STATE(&dc->sb) == BDEV_STATE_NONE)) {
+ 		memcpy(u->uuid, invalid_uuid, 16);
+-		u->invalidated = cpu_to_le32(get_seconds());
++		u->invalidated = cpu_to_le32(bcache_get_realtime32());
+ 		u = NULL;
+ 	}
+ 
+@@ -1390,7 +1401,7 @@ int bch_flash_dev_create(struct cache_set *c, uint64_t size)
+ 
+ 	get_random_bytes(u->uuid, 16);
+ 	memset(u->label, 0, 32);
+-	u->first_reg = u->last_reg = cpu_to_le32(get_seconds());
++	u->first_reg = u->last_reg = cpu_to_le32(bcache_get_realtime32());
+ 
+ 	SET_UUID_FLASH_ONLY(u, 1);
+ 	u->sectors = size >> 9;
+@@ -1894,7 +1905,7 @@ static void run_cache_set(struct cache_set *c)
+ 		goto err;
+ 
+ 	closure_sync(&cl);
+-	c->sb.last_mount = get_seconds();
++	c->sb.last_mount = bcache_get_realtime32();
+ 	bcache_write_super(c);
+ 
+ 	list_for_each_entry_safe(dc, t, &uncached_devices, list)
+diff --git a/include/uapi/linux/bcache.h b/include/uapi/linux/bcache.h
+index 821f71a2e48f..8d19e02d752a 100644
+--- a/include/uapi/linux/bcache.h
++++ b/include/uapi/linux/bcache.h
+@@ -195,7 +195,7 @@ struct cache_sb {
+ 	};
+ 	};
+ 
+-	__u32			last_mount;	/* time_t */
++	__u32			last_mount;	/* time overflow in y2106 */
+ 
+ 	__u16			first_bucket;
+ 	union {
+@@ -318,7 +318,7 @@ struct uuid_entry {
+ 		struct {
+ 			__u8	uuid[16];
+ 			__u8	label[32];
+-			__u32	first_reg;
++			__u32	first_reg; /* time overflow in y2106 */
+ 			__u32	last_reg;
+ 			__u32	invalidated;
+ 
+-- 
+2.9.0
+
