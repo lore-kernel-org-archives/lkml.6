@@ -2,109 +2,166 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D8BC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 512E6C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB036208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06DBD20875
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:46:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ards8LJN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB036208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXX0ZU6A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06DBD20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754188AbeFTWo6 (ORCPT
+        id S1754200AbeFTWqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 18:44:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52608 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753938AbeFTWo4 (ORCPT
+        Wed, 20 Jun 2018 18:46:02 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34797 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753651AbeFTWqA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 18:44:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gz6a9MAKUcUHj8vgXPbGcTLfhPrshJj7FYOD2kJNTEs=; b=Ards8LJN+SIbgZxsdgW+DVPFC
-        v+CECLPhBClEWFPy3xukuj+0Z2jN23AhUGJUA1SU45NihHYBUxwiwBSL0CboJy+HlbocQo7jEPffb
-        iAOfC2S8/cXFMQRD7sKhZEFzzCN2KKvKAVYQQ/I6y6N26wjNVRd46sANE7dEc95twUSIGSutiKQ04
-        fdDDMloqLvPP2zzQIbTpiCq+aXobt9KyAy2Ljl0LUQvxTEZqW9HqcecG9PcpTLZTPCsjc/jZysNOI
-        NvqKtJGMj5kWbGoV4v+3Bxdv05pfcjpp2RUNtzyr584yu9HQ22x0jafRyM6QzV0wr1AIo91o7tlCo
-        1jRPgdqQA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVlqQ-0007RG-8j; Wed, 20 Jun 2018 22:44:54 +0000
-Subject: Re: [PATCH 1/3] vmalloc: Add __vmalloc_node_try_addr function
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kristen Accardi <kristen.c.accardi@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>
-References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
- <1529532570-21765-2-git-send-email-rick.p.edgecombe@intel.com>
- <12014310-19f7-dc31-d983-9c7e00c8b446@infradead.org>
- <CAGXu5j+RgbMKqiBcsWMOZ-ci-rT19imgCoHtPKgDURF1tC+COg@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <778b2a1b-d810-815b-0fba-8a1d191acd49@infradead.org>
-Date:   Wed, 20 Jun 2018 15:44:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 20 Jun 2018 18:46:00 -0400
+Received: by mail-qk0-f196.google.com with SMTP id q70-v6so744817qke.1;
+        Wed, 20 Jun 2018 15:46:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ENMzouPXFPxc/mwmfEGBAa2xH+v0dRkuojp2f9YgbCg=;
+        b=BXX0ZU6AmcWKIWslc4/Zt/s3t/RNYq5XWHj/7OhbBjwbNZe4tPJIkR5M3h1xwRsVA4
+         Uc6WvEAl58IJ1Twq7pNkmQO4MyB6qrfptmzD9NdwirIJdZIshYAp3KLNqYw5JiIVLZpk
+         cOnLypgJpZmRRpOPHi0QdRzrNuWGK7DDOIZePief2DvUdSkhuKfBxyyeAx173IIPG4Ad
+         BrNKDV0M0rRyAEUtADWzwwSC74SJkbWydYiC5pV+TwUhspN8SnGUGiXSQOjtO9r/lTdy
+         79YEuNaNJzoiZw6OceotfYEeluLiVU+GuVGjLXhnvwwKjjpiq91kQNj4xO4qWhlhSLDJ
+         YgiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ENMzouPXFPxc/mwmfEGBAa2xH+v0dRkuojp2f9YgbCg=;
+        b=BviVJnTisabSvcOt9YacAi+YBvP9Nt3t5FEdDT2Qj2S//XIF+S89a4rkc6umbEDRhj
+         VgI2wtzSwPA+n0f5wQtQRRxfsSr7PylBzm0iVQZWMw5T+p9cYLiZCMu6x7svWEav5Y+z
+         2YPfUoymYQE6PXMAdtQ1LmKs/WwQjA09k/hQWWHx8a1OdHOWPvVFwPJRLsPDKumHLbTF
+         qjo1GNMFb914pKI44Cep9dKM5KsUJdowI7w3NZUN5jzigWmIJsl+zaBdb+XKGX24Q9Od
+         aSb/XUeS4LdbtRupXhzcP6il2FT5Lua8Kv55Y5vjkjXdtZCIKYFN7I4d498rGr5XD8Ea
+         qfZw==
+X-Gm-Message-State: APt69E3ijdUgLLyIvRMuhZCJKvFYdIzkPlz+hoaww24bxwpRxvXIVYNK
+        2OheTu5UJ87+o6HOKKmnEP4=
+X-Google-Smtp-Source: ADUXVKJRMuwk2JtrYzxlSeOF30UWtrd41D02UFGPFcK6Fc+/k0oHLZEnVoXQJ+NZVyGKLUxrz8G5kQ==
+X-Received: by 2002:a37:5704:: with SMTP id l4-v6mr19348320qkb.53.1529534760040;
+        Wed, 20 Jun 2018 15:46:00 -0700 (PDT)
+Received: from eaf ([181.47.179.0])
+        by smtp.gmail.com with ESMTPSA id w46-v6sm2967416qtw.55.2018.06.20.15.45.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 15:45:59 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 19:45:54 -0300
+From:   Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        y2038@lists.linaro.org, Vyacheslav Dubeyko <slava@dubeyko.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>
+Subject: Re: [PATCH 3/3] hfsplus: return inode birthtime for statx
+Message-ID: <20180620224553.wfz6abuvvz4ul42d@eaf>
+References: <20180619160223.4108556-1-arnd@arndb.de>
+ <20180619160223.4108556-3-arnd@arndb.de>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+RgbMKqiBcsWMOZ-ci-rT19imgCoHtPKgDURF1tC+COg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619160223.4108556-3-arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 03:35 PM, Kees Cook wrote:
-> On Wed, Jun 20, 2018 at 3:16 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 06/20/2018 03:09 PM, Rick Edgecombe wrote:
->>> +void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
->>> +                     gfp_t gfp_mask, pgprot_t prot, unsigned long vm_flags,
->>> +                     int node, const void *caller)
->>> +{
->>
->> so this isn't optional, eh?  You are going to force it on people because?
+Hi:
+
+On Tue, Jun 19, 2018 at 06:02:09PM +0200, Arnd Bergmann wrote:
+> We have the data in the kernel, so we might just as well provide it to
+> user space.
 > 
-> RANDOMIZE_BASE isn't optional either. :) This improves the module
-> address entropy with (what seems to be) no down-side, so yeah, I think
-> it should be non-optional. :)
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  fs/hfsplus/dir.c        |  1 +
+>  fs/hfsplus/hfsplus_fs.h |  2 ++
+>  fs/hfsplus/inode.c      | 14 ++++++++++++++
+>  3 files changed, 17 insertions(+)
+> 
+> diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+> index b5254378f011..df14b6dd5b5a 100644
+> --- a/fs/hfsplus/dir.c
+> +++ b/fs/hfsplus/dir.c
+> @@ -566,6 +566,7 @@ const struct inode_operations hfsplus_dir_inode_operations = {
+>  	.symlink		= hfsplus_symlink,
+>  	.mknod			= hfsplus_mknod,
+>  	.rename			= hfsplus_rename,
+> +	.getattr		= hfsplus_getattr,
+>  	.listxattr		= hfsplus_listxattr,
+>  #ifdef CONFIG_HFSPLUS_FS_POSIX_ACL
+>  	.get_acl		= hfsplus_get_posix_acl,
+> diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+> index 646c207be38d..1a6b469f8d22 100644
+> --- a/fs/hfsplus/hfsplus_fs.h
+> +++ b/fs/hfsplus/hfsplus_fs.h
+> @@ -489,6 +489,8 @@ int hfsplus_cat_read_inode(struct inode *inode, struct hfs_find_data *fd);
+>  int hfsplus_cat_write_inode(struct inode *inode);
+>  int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+>  		       int datasync);
+> +int hfsplus_getattr(const struct path *path, struct kstat *stat,
+> +		    u32 request_mask, unsigned int query_flags);
+>  
+>  /* ioctl.c */
+>  long hfsplus_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
+> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+> index c0c8d433864f..f9bb568f9479 100644
+> --- a/fs/hfsplus/inode.c
+> +++ b/fs/hfsplus/inode.c
+> @@ -276,6 +276,19 @@ static int hfsplus_setattr(struct dentry *dentry, struct iattr *attr)
+>  	return 0;
+>  }
+>  
+> +int hfsplus_getattr(const struct path *path, struct kstat *stat,
+> +		     u32 request_mask, unsigned int query_flags)
+> +{
+> +	struct inode *inode = d_backing_inode(path->dentry);
 
-In what kernel tree is RANDOMIZE_BASE not optional?
+I think d_inode() is better. They work the same, but "normal filesystems
+should not use this", according to the d_backing_inode() documentation.
 
-x86:
-config RANDOMIZE_BASE
-	bool "Randomize the address of the kernel image (KASLR)"
-	depends on RELOCATABLE
-	default y
+> +
+> +	generic_fillattr(inode, stat);
+> +
+> +	stat->btime = hfsp_mt2ut(HFSPLUS_I(inode)->create_date);
+> +	stat->result_mask |= STATX_BTIME;
+> +
+> +	return 0;
+> +}
+> +
+>  int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+>  		       int datasync)
+>  {
+> @@ -335,6 +348,7 @@ int hfsplus_file_fsync(struct file *file, loff_t start, loff_t end,
+>  
+>  static const struct inode_operations hfsplus_file_inode_operations = {
+>  	.setattr	= hfsplus_setattr,
+> +	.getattr	= hfsplus_getattr,
+>  	.listxattr	= hfsplus_listxattr,
+>  #ifdef CONFIG_HFSPLUS_FS_POSIX_ACL
+>  	.get_acl	= hfsplus_get_posix_acl,
+> -- 
+> 2.9.0
+> 
 
-mips:
-config RANDOMIZE_BASE
-	bool "Randomize the address of the kernel image"
-	depends on RELOCATABLE
+What about symlinks and special files?
 
-arm64:
-config RANDOMIZE_BASE
-	bool "Randomize the address of the kernel image"
-	select ARM64_MODULE_PLTS if MODULES
-	select RELOCATABLE
-
-
-thanks,
--- 
-~Randy
+Thanks,
+Ernest
