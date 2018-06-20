@@ -6,114 +6,108 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD3FC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E172C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1151220875
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:26:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1151220875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id DBC6520874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 14:26:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC6520874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.ee
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754168AbeFTO0C (ORCPT
+        id S1754199AbeFTO0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 10:26:02 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:42841 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932153AbeFTO0A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 10:26:00 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue004 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0Lla4p-1g5o1K1gKF-00bO8L; Wed, 20 Jun 2018 16:25:57 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     y2038@lists.linaro.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
-        reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] [v2] reiserfs: remove obsolete print_time function
-Date:   Wed, 20 Jun 2018 16:25:04 +0200
-Message-Id: <20180620142522.27639-3-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180620142522.27639-1-arnd@arndb.de>
-References: <20180620142522.27639-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:XNdbzTUm0j4bJiREs4SG+baP1izgegMxGgbrOBNplV4eiSG81xR
- RnYfrNZ6VPQKEjgZssURiXMfJzPGRiofkPIUTRvANeFZZ9WwGIbjzzCHrMPs6iEwi1L1O33
- +lGRk9hdGnDAr+zvml6R4RSujX9FF04kH5AvlQf0CP1c5oO37PE6UvKINp0axdAundSEdRf
- dNVmseMyawoWoYjmcrL+Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:A6aV3BrMv6s=:UFBNs0Q9gMo/5pdYFEE279
- UOL6v/9N5Ln5BpyOL9jUkrhkMg6YIxFAX14/xF00dqwXLexYgCTDsUENLxkaWBdjOkl+91s7M
- s+8d/pIvgv71hHW1yTNfv+EQySTR2v25ynAndzfEXjY5+DM0yJwuS9nb/RzEJrkKGF8qt/a4U
- 0TGjwbyHjp0IR60Fdvu6ajId4LMvixLsTDuDdLJGP8EOKjOXpeLXVHX9eVeUgF1ucdSGDGQdo
- eFKqAsxcrt/7sLPbV2x8oRW7+59TpSsfKABRUxIQCyMgAT9s2Hgl/aSX/rmfeuACs8A5pzVTg
- yHwkZz/cO/lCWUKFIokqPHYXLdTMmusnib7RNWO6jrPC/NOy2WkuJHCsoS4sBKzKqafg1j3xY
- dmbbK/I5uQWpwFzlSVOoqcdzSv2oq5BuFZsuvHf7ZQtZIpXZ4JIkLDRXqy8jjwIlikUSuCxBR
- RzawwUj6Q54TAy2XkMoCvy7+LFso9Qf1ngImpDC+YGcoYB2AnofPS93DAyqQ66SIzKYfVQwOt
- UsgP0faxu0tNSVe2xjg+KT1TYNOKQbk5J6N/bCcWS2MfLAbGlKjwP8UR+A0Kj3FVv+SgKQdCF
- lcHGKV0xlviaKQNrQALVi492DezQwKDdMv87b3L+pXePJbbD4yUqL7cHFIM+qVhSi8J3f/JRo
- y359Jm0fkBp5ypwoi6xaHnzW1Tv/nfhwIkdrwAgN0HV0sgc6Mwjw0QWcP185QGFuRVKo=
+        Wed, 20 Jun 2018 10:26:55 -0400
+Received: from smtp1.it.da.ut.ee ([193.40.5.66]:56610 "EHLO smtp1.it.da.ut.ee"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753619AbeFTO0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 10:26:53 -0400
+Received: from math.ut.ee (unknown [IPv6:2001:bb8:2002:2400:5054:ff:fe3b:8db9])
+        by smtp1.it.da.ut.ee (Postfix) with ESMTP id 0D7699002E;
+        Wed, 20 Jun 2018 17:26:51 +0300 (EEST)
+Received: by math.ut.ee (Postfix, from userid 1014)
+        id 59AC6220666; Wed, 20 Jun 2018 17:26:49 +0300 (EEST)
+Received: from localhost (localhost [127.0.0.1])
+        by math.ut.ee (Postfix) with ESMTP id 5380122009D;
+        Wed, 20 Jun 2018 17:26:49 +0300 (EEST)
+Date:   Wed, 20 Jun 2018 17:26:49 +0300 (EEST)
+From:   Meelis Roos <mroos@linux.ee>
+To:     minyard@acm.org
+cc:     Linux Kernel list <linux-kernel@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net,
+        Corey Minyard <cminyard@mvista.com>
+Subject: Re: [PATCH] ipmi: Cleanup oops on initialization failure
+In-Reply-To: <1529497606-3857-1-git-send-email-minyard@acm.org>
+Message-ID: <alpine.LRH.2.21.1806201725520.28187@math.ut.ee>
+References: <alpine.LRH.2.21.1806191553040.28622@math.ut.ee> <1529497606-3857-1-git-send-email-minyard@acm.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before linux-2.4.6, print_time() was used to pretty-print an inode
-time when running reiserfs in user space, after that it has become
-obsolete and is still a bit incorrect: It behaves differently on 32-bit
-and 64-bit machines, and uses a static buffer to hold a string, which
-could lead to undefined behavior if we ever called this from multiple
-places simultaneously.
+> Commit 93c303d2045b3 "ipmi_si: Clean up shutdown a bit" didn't
+> copy the behavior of the cleanup in one spot, it needed to
+> check for a non-NULL interface before cleaning it up.
+> 
+> Signed-off-by: Corey Minyard <cminyard@mvista.com>
 
-Since we always want to treat the timestamps as 'unsigned' anyway,
-simply printing them as an integer is both simpler and safer while
-avoiding the deprecated time_t type.
+Tested-by: Meelis Roos <mroos@linux.ee>
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: after a second look, I decided to remove it instead of fixing it.
----
- fs/reiserfs/item_ops.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/fs/reiserfs/item_ops.c b/fs/reiserfs/item_ops.c
-index e3c558d1b78c..3a5a752d96c7 100644
---- a/fs/reiserfs/item_ops.c
-+++ b/fs/reiserfs/item_ops.c
-@@ -33,30 +33,22 @@ static int sd_is_left_mergeable(struct reiserfs_key *key, unsigned long bsize)
- 	return 0;
- }
- 
--static char *print_time(time_t t)
--{
--	static char timebuf[256];
--
--	sprintf(timebuf, "%ld", t);
--	return timebuf;
--}
--
- static void sd_print_item(struct item_head *ih, char *item)
- {
- 	printk("\tmode | size | nlinks | first direct | mtime\n");
- 	if (stat_data_v1(ih)) {
- 		struct stat_data_v1 *sd = (struct stat_data_v1 *)item;
- 
--		printk("\t0%-6o | %6u | %2u | %d | %s\n", sd_v1_mode(sd),
-+		printk("\t0%-6o | %6u | %2u | %d | %u\n", sd_v1_mode(sd),
- 		       sd_v1_size(sd), sd_v1_nlink(sd),
- 		       sd_v1_first_direct_byte(sd),
--		       print_time(sd_v1_mtime(sd)));
-+		       sd_v1_mtime(sd));
- 	} else {
- 		struct stat_data *sd = (struct stat_data *)item;
- 
--		printk("\t0%-6o | %6llu | %2u | %d | %s\n", sd_v2_mode(sd),
-+		printk("\t0%-6o | %6llu | %2u | %d | %u\n", sd_v2_mode(sd),
- 		       (unsigned long long)sd_v2_size(sd), sd_v2_nlink(sd),
--		       sd_v2_rdev(sd), print_time(sd_v2_mtime(sd)));
-+		       sd_v2_rdev(sd), sd_v2_mtime(sd));
- 	}
- }
- 
+The corresponding dmesg:
+
+[    7.372830] IPMI System Interface driver.
+[    7.373034] ipmi_si dmi-ipmi-si.0: ipmi_platform: probing via SMBIOS
+[    7.373109] ipmi_si: SMBIOS: mem 0x0 regsize 1 spacing 1 irq 0
+[    7.373182] ipmi_si: Adding SMBIOS-specified kcs state machine
+[    7.373352] ipmi_si: Trying SMBIOS-specified kcs state machine at mem address 0x0, slave address 0x20, irq 0
+[    7.373479] ipmi_si dmi-ipmi-si.0: Could not set up I/O space
+
+> BTW, can you send me at least the IPMI portion of the output of
+> dmidecode for your machine?  I have seen a lot of these where the
+> address in the SMBIOS tables is incorrect, and I'm wondering if
+> it's something in the driver, or if it's really the tables that
+> are bad.
+
+Handle 0x001B, DMI type 38, 18 bytes
+IPMI Device Information
+        Interface Type: KCS (Keyboard Control Style)
+        Specification Version: 2.0
+        I2C Slave Address: 0x10
+        NV Storage Device: Not Present
+        Base Address: 0x0000000000000000 (Memory-mapped)
+        Register Spacing: Successive Byte Boundaries
+
+> 
+> Thanks for reporting this.  On your tested-by I'll send this up
+> to Linus.
+> 
+> -corey
+> 
+>  drivers/char/ipmi/ipmi_si_intf.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+> index 3d0add6..a5987f8 100644
+> --- a/drivers/char/ipmi/ipmi_si_intf.c
+> +++ b/drivers/char/ipmi/ipmi_si_intf.c
+> @@ -2088,8 +2088,10 @@ static int try_smi_init(struct smi_info *new_smi)
+>  	return 0;
+>  
+>  out_err:
+> -	ipmi_unregister_smi(new_smi->intf);
+> -	new_smi->intf = NULL;
+> +	if (new_smi->intf) {
+> +		ipmi_unregister_smi(new_smi->intf);
+> +		new_smi->intf = NULL;
+> +	}
+>  
+>  	kfree(init_name);
+>  
+> 
+
 -- 
-2.9.0
-
+Meelis Roos (mroos@linux.ee)
