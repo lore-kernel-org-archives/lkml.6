@@ -2,174 +2,179 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29AEC1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 758DCC1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717C22083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 257C2205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:14:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hIauDQXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 717C22083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NnUX2nNx";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NnUX2nNx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257C2205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754152AbeFTCJQ (ORCPT
+        id S1754173AbeFTCOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 22:09:16 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43244 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753619AbeFTCJM (ORCPT
+        Tue, 19 Jun 2018 22:14:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44818 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753741AbeFTCOv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 22:09:12 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5K28vcG055751;
-        Wed, 20 Jun 2018 02:09:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=f3IkzPvMrLoTHqPsCcpqLlqT3EEbVFy/ABFTRSw4GrY=;
- b=hIauDQXOYqmUXo5Ha0XYS6MeA6suD3sAXxGL0r7YVyzVG7Rkftb+T6Wnp26TXVuBeOo2
- 7ih52Zbjgf9B/DiJciSuWba3f63th5kAhpM10o7e1xUMI1FZvZxo3+oOFo2nMkZhELwy
- 8UQGWYFaVu2UmSrnEEajh1z5GB/WBxyC2FL5qm8F3vnxVnFZdBuozmYs9CMyKmFttnDB
- mvO3JB1epbJMjNDqrv9pUslKlnoEEnSgFbb6BvCErWTrF+d1/KN69MaWrNUtA9cYRWLo
- mgKzlKpAeZM6B8cjuG50Og0dvdTnCqCxlu4t96kWOOxroOfAWlTV+ir/Y3GsnxJ1cGqs Ew== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2jmtgwth1d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 02:09:10 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5K299w9015162
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 02:09:09 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5K298Tj000766;
-        Wed, 20 Jun 2018 02:09:08 GMT
-Received: from [10.182.69.179] (/10.182.69.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 19 Jun 2018 19:09:08 -0700
-Subject: Re: [PATCH] blk-mq: use mutex_trylock to avoid lock inversion
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-References: <1529391637-1704-1-git-send-email-jianchao.w.wang@oracle.com>
- <2409013d789ca266879d24c815b76c2193e23fe3.camel@wdc.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <d528a730-8e44-225b-2a35-3544160761dc@oracle.com>
-Date:   Wed, 20 Jun 2018 10:09:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 19 Jun 2018 22:14:51 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B219D6081B; Wed, 20 Jun 2018 02:14:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529460890;
+        bh=GG6iH0tfzd6ErPV6uC89Y8tZh2GVukDY3MwhvjAslJ0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NnUX2nNxs9qtJ/SOqKD3UgDxO0OVcv6t5WQW551zX5c1V9S+sm4aOMSkOBPG/UfgQ
+         VA8fR6UpLAIE/H308kNQZLdXtG7oYaP4JwgxwoomLUwul00iT367oDB6x0HU0pIsW9
+         3n/cwILhWG8LIvft5tyouHzWh+/eZLhUYK1N32cE=
+Received: from drakthul.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: okaya@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3C8AA6081B;
+        Wed, 20 Jun 2018 02:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529460890;
+        bh=GG6iH0tfzd6ErPV6uC89Y8tZh2GVukDY3MwhvjAslJ0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NnUX2nNxs9qtJ/SOqKD3UgDxO0OVcv6t5WQW551zX5c1V9S+sm4aOMSkOBPG/UfgQ
+         VA8fR6UpLAIE/H308kNQZLdXtG7oYaP4JwgxwoomLUwul00iT367oDB6x0HU0pIsW9
+         3n/cwILhWG8LIvft5tyouHzWh+/eZLhUYK1N32cE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C8AA6081B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From:   Sinan Kaya <okaya@codeaurora.org>
+To:     linux-pci@vger.kernel.org, timur@codeaurora.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V2] PCI: Enable PASID when End-to-End TLP is supported by all bridges
+Date:   Tue, 19 Jun 2018 22:14:46 -0400
+Message-Id: <1529460886-23722-1-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <2409013d789ca266879d24c815b76c2193e23fe3.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=813
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806200022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart
+A PCIe endpoint carries the process address space identifier (PASID) in
+the TLP prefix as part of the memory read/write transaction. The address
+information in the TLP is relevant only for a given PASID context.
 
-On 06/19/2018 11:20 PM, Bart Van Assche wrote:
-> On Tue, 2018-06-19 at 15:00 +0800, Jianchao Wang wrote:
->> Currently, the kobject_del for kobjs of mq, hctx and ctx is invoked
->> under sysfs_lock, lock inversion will come up when other one is
->> acessing the associated sysfs file and trying to acquire the
->> sysfs_lock. To fix it, use mutex_trylock in blk_mq_sysfs_ops and
->> blk_mq_hw_sysfs_ops, if the lock in on contending, return -EAGAIN.
-> 
-> Is this a theoretical issue or something you actually ran into? Which lock
-> other than sysfs_lock do you think is involved in the lock inversion?
-> 
+An IOMMU takes PASID value and the address information from the
+TLP to look up the physical address in the system.
 
-It is very easy to reproduce with following scripts.
+If a bridge drops the TLP prefix, the translation agent can resolve the
+address to an incorrect location and cause data corruption. Prevent
+this condition by requiring End-to-End TLP prefix to be supported on the
+entire data path between the endpoint and the root port.
 
-script 0
-while true
-do
-	modprobe null_blk queue_mode=2 shared_tags=1
-	sleep 0.1
-	rmmod null_blk
-	sleep 0.1
-done
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ drivers/pci/ats.c             |  9 +++++++++
+ drivers/pci/probe.c           | 17 +++++++++++++++++
+ include/linux/pci.h           |  1 +
+ include/uapi/linux/pci_regs.h |  1 +
+ 4 files changed, 28 insertions(+)
 
-script 1
-file0="/sys/block/nullb0/mq/0/nr_tags"
-file1="/sys/block/nullb0/mq/0/cpu0/rq_list"
-while true;
-do
-	if [ -e $file0 ];then
-		cat $file0
-	fi
-	if [ -e $file1 ];then
-		cat $file1
-	fi
-done
+diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+index 4923a2a..e1b2e6d 100644
+--- a/drivers/pci/ats.c
++++ b/drivers/pci/ats.c
+@@ -268,6 +268,7 @@ EXPORT_SYMBOL_GPL(pci_reset_pri);
+ int pci_enable_pasid(struct pci_dev *pdev, int features)
+ {
+ 	u16 control, supported;
++	struct pci_dev *bridge;
+ 	int pos;
+ 
+ 	if (WARN_ON(pdev->pasid_enabled))
+@@ -277,6 +278,14 @@ int pci_enable_pasid(struct pci_dev *pdev, int features)
+ 	if (!pos)
+ 		return -EINVAL;
+ 
++	bridge = pci_upstream_bridge(pdev);
++	while (bridge) {
++		if (!bridge->eetlp_prefix)
++			return -EINVAL;
++
++		bridge = pci_upstream_bridge(bridge);
++	}
++
+ 	pci_read_config_word(pdev, pos + PCI_PASID_CAP, &supported);
+ 	supported &= PCI_PASID_CAP_EXEC | PCI_PASID_CAP_PRIV;
+ 
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ac876e3..a7f7ac1 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2042,6 +2042,22 @@ static void pci_configure_ltr(struct pci_dev *dev)
+ #endif
+ }
+ 
++static void pci_configure_eetlp_prefix(struct pci_dev *dev)
++{
++#ifdef CONFIG_PCI_PASID
++	u32 cap;
++
++	if (!pci_is_pcie(dev))
++		return;
++
++	pcie_capability_read_dword(dev, PCI_EXP_DEVCAP2, &cap);
++	if (!(cap & PCI_EXP_DEVCAP2_E2ETLP))
++		return;
++
++	dev->eetlp_prefix = 1;
++#endif
++}
++
+ static void pci_configure_device(struct pci_dev *dev)
+ {
+ 	struct hotplug_params hpp;
+@@ -2051,6 +2067,7 @@ static void pci_configure_device(struct pci_dev *dev)
+ 	pci_configure_extended_tags(dev, NULL);
+ 	pci_configure_relaxed_ordering(dev);
+ 	pci_configure_ltr(dev);
++	pci_configure_eetlp_prefix(dev);
+ 
+ 	memset(&hpp, 0, sizeof(hpp));
+ 	ret = pci_get_hp_params(dev, &hpp);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 340029b..cf88d47 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -350,6 +350,7 @@ struct pci_dev {
+ 	unsigned int	ltr_path:1;	/* Latency Tolerance Reporting
+ 					   supported from root to here */
+ #endif
++	unsigned int	eetlp_prefix:1;	/* End-to-End TLP Prefix */
+ 
+ 	pci_channel_state_t error_state;	/* Current connectivity state */
+ 	struct device	dev;			/* Generic device interface */
+diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+index 4da87e2..a617ab2 100644
+--- a/include/uapi/linux/pci_regs.h
++++ b/include/uapi/linux/pci_regs.h
+@@ -636,6 +636,7 @@
+ #define  PCI_EXP_DEVCAP2_OBFF_MASK	0x000c0000 /* OBFF support mechanism */
+ #define  PCI_EXP_DEVCAP2_OBFF_MSG	0x00040000 /* New message signaling */
+ #define  PCI_EXP_DEVCAP2_OBFF_WAKE	0x00080000 /* Re-use WAKE# for OBFF */
++#define PCI_EXP_DEVCAP2_E2ETLP		0x00200000 /* End-to-End TLP Prefix */
+ #define PCI_EXP_DEVCTL2		40	/* Device Control 2 */
+ #define  PCI_EXP_DEVCTL2_COMP_TIMEOUT	0x000f	/* Completion Timeout Value */
+ #define  PCI_EXP_DEVCTL2_COMP_TMOUT_DIS	0x0010	/* Completion Timeout Disable */
+-- 
+2.7.4
 
-Here is the hung task log:
-
-[  246.752087] INFO: task rmmod:12789 blocked for more than 30 seconds.
-[  246.752801]       Not tainted 4.18.0-rc1 #88
-[  246.753458] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  246.754192] rmmod           D    0 12789   3142 0x00000080
-[  246.754951] Call Trace:
-[  246.755715]  ? __schedule+0x3f9/0xae0
-[  246.756546]  schedule+0x3c/0x90
-[  246.757440]  __kernfs_remove+0x1d0/0x2b0
-[  246.757644]  ? wait_woken+0xb0/0xb0
-[  246.757850]  kernfs_remove+0x1f/0x30
-[  246.758059]  kobject_del+0x13/0x40
-[  246.758271]  blk_mq_unregister_dev+0x4f/0xb0
-[  246.758488]  blk_unregister_queue+0x71/0x100
-[  246.758709]  del_gendisk+0x139/0x280
-[  246.758936]  null_del_dev+0x40/0xf0 [null_blk]
-[  246.759165]  null_exit+0x50/0xbec [null_blk]
-[  246.759397]  __x64_sys_delete_module+0x12e/0x1d0
-[  246.759636]  do_syscall_64+0x5a/0x1a0
-[  246.759876]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  246.760129] RIP: 0033:0x7fc518522927
-[  246.760481] Code: Bad RIP value.
-[  246.760736] RSP: 002b:00007ffee4c69b68 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-[  246.761005] RAX: ffffffffffffffda RBX: 00007ffee4c69bc8 RCX: 00007fc518522927
-[  246.761309] RDX: 000000000000000a RSI: 0000000000000800 RDI: 000055783881b248
-[  246.761612] RBP: 000055783881b1e0 R08: 0000000000000000 R09: 1999999999999999
-[  246.761902] R10: 0000000000000000 R11: 0000000000000206 R12: 00007ffee4c69d90
-[  246.762199] R13: 00007ffee4c6b774 R14: 000055783881a010 R15: 000055783881b1e0
-[  246.762503] INFO: task cat:12790 blocked for more than 30 seconds.
-[  246.762812]       Not tainted 4.18.0-rc1 #88
-[  246.763124] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  246.763453] cat             D    0 12790   3141 0x00000080
-[  246.763789] Call Trace:
-[  246.764130]  ? __schedule+0x3f9/0xae0
-[  246.764552]  schedule+0x3c/0x90
-[  246.764895]  schedule_preempt_disabled+0x14/0x20
-[  246.765244]  __mutex_lock+0x41c/0x990
-[  246.765595]  ? blk_mq_hw_sysfs_show+0x35/0x80
-[  246.765950]  ? preempt_count_sub+0x92/0xd0
-[  246.766311]  ? blk_mq_hw_sysfs_show+0x35/0x80
-[  246.766675]  blk_mq_hw_sysfs_show+0x35/0x80
-[  246.767043]  sysfs_kf_seq_show+0xad/0x100
-[  246.767416]  seq_read+0xa5/0x410
-[  246.767790]  __vfs_read+0x23/0x160
-[  246.768172]  vfs_read+0xa0/0x140
-[  246.768627]  ksys_read+0x45/0xa0
-[  246.769008]  do_syscall_64+0x5a/0x1a0
-[  246.769391]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  246.769798] RIP: 0033:0x7f743e39e260
-[  246.770216] Code: Bad RIP value.
-
-Thanks
-Jianchao
-> 
-> 
-> 
