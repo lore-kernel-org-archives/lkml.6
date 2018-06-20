@@ -3,75 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A66C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC675C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C373920836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:18:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C373920836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id AE2BE20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:18:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE2BE20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754139AbeFTASL (ORCPT
+        id S1754171AbeFTAST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:18:11 -0400
-Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:50185 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753644AbeFTASG (ORCPT
+        Tue, 19 Jun 2018 20:18:19 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:53347 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753644AbeFTASP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:18:06 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 4B149100E806B;
-        Wed, 20 Jun 2018 00:18:05 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: car11_80970b6b9353a
-X-Filterd-Recvd-Size: 2099
-Received: from XPS-9350.home (unknown [47.151.150.235])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 20 Jun 2018 00:18:03 +0000 (UTC)
-Message-ID: <366638527170f814bbe98f7189900ebf6c04d007.camel@perches.com>
-Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in
- update_permission_bitmask()
-From:   Joe Perches <joe@perches.com>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>, rkrcmar@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 19 Jun 2018 17:18:02 -0700
-In-Reply-To: <20180619234543.GG169030@google.com>
-References: <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
-         <ffe4b263-8a8d-c8ed-7ba1-ca55600ab273@redhat.com>
-         <CAKwvOdnhPCDRFMhYiAr2kSCDWrL_gaY8c6XHJ96PupcN-wcDpQ@mail.gmail.com>
-         <ad7a9addf043ee7fda8907eff9f83c9709b575dc.camel@perches.com>
-         <d6a99e26-b100-715b-2615-b77259ec8397@redhat.com>
-         <66b5e5c3ed82a5e1559419deb841c57bf0751fd3.camel@perches.com>
-         <20180619183622.GB169030@google.com>
-         <7547dfd4045a5acf23505887065bc228e65f2ff9.camel@perches.com>
-         <20180619211019.GE169030@google.com>
-         <951ccf2a257fb8f8827f88e1c17ce64d23173e94.camel@perches.com>
-         <20180619234543.GG169030@google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Tue, 19 Jun 2018 20:18:15 -0400
+X-UUID: 905c31c909fa4d269f033ba9d37e0c80-20180620
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 706182493; Wed, 20 Jun 2018 08:18:09 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 20 Jun 2018 08:18:07 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 20 Jun 2018 08:18:07 +0800
+Message-ID: <1529453887.8701.0.camel@mtkswgap22>
+Subject: Re: [PATCH 2/2] arm64: dts: mediatek: add mt6765 support
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>, CC Hwang <cc.hwang@mediatek.com>,
+        "Loda Chou" <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        "Jades Shih" <jades.shih@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        My Chuang <my.chuang@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date:   Wed, 20 Jun 2018 08:18:07 +0800
+In-Reply-To: <80bca2ae-eb08-3d6c-a863-140107286b2d@gmail.com>
+References: <1528843243-29782-1-git-send-email-mars.cheng@mediatek.com>
+         <1528843243-29782-3-git-send-email-mars.cheng@mediatek.com>
+         <80bca2ae-eb08-3d6c-a863-140107286b2d@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-19 at 16:45 -0700, Matthias Kaehlcke wrote:
-> On Tue, Jun 19, 2018 at 02:55:05PM -0700, Joe Perches wrote:
-> > Well, you advocate to disable a possibly useful warning globally ...
-> > You're advocating for making the code more complex/ugly for a
-> > condition where the result is identical.
-> My goal is no to make the code (slightly) more complex/ugly but have
-> the rest of the kernel benefit from a possibly useful warning.
+Hi Matthias
 
-For what case in the kernel is this warning useful?
+On Fri, 2018-06-15 at 10:54 +0200, Matthias Brugger wrote:
+> 
+> On 13/06/18 00:40, Mars Cheng wrote:
+> > +
+> > +	uart0: serial@11002000 {
+> > +		compatible = "mediatek,mt6765-uart",
+> > +			     "mediatek,mt6577-uart";
+> > +		reg = <0 0x11002000 0 0x400>;
+> > +		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
+> > +		clocks = <&uart_clk>;
+> > +		status = "disabled";
+> > +	};
+> 
+> You need "baud" and "bus" clock. Also add clock-names please.
+
+Got it, will add them in V2
+
+> 
+> > +
+> > +	uart1: serial@11003000 {
+> > +		compatible = "mediatek,mt6765-uart",
+> > +			     "mediatek,mt6577-uart";
+> > +		reg = <0 0x11003000 0 0x400>;
+> > +		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
+> > +		clocks = <&uart_clk>;
+> > +		status = "disabled";
+> 
+> Same here obviously.
+
+Will fixed in V2.
+
+Thanks.
+> 
+> Regards,
+> Matthias
+
 
