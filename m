@@ -2,95 +2,134 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3927EC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA5CC43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCAA820846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:22:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jtb16NRN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCAA820846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AD0E208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:27:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AD0E208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933344AbeFTVWA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 17:22:00 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:52768 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933092AbeFTVV7 (ORCPT
+        id S933385AbeFTV1R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 17:27:17 -0400
+Received: from gateway23.websitewelcome.com ([192.185.49.179]:47920 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933115AbeFTV1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 17:21:59 -0400
-Received: by mail-it0-f65.google.com with SMTP id m194-v6so1725199itg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 14:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XG29ekBSSXhcQEmjNhRSuxxGXBbmxiwvPWXSPfxAbQE=;
-        b=jtb16NRNpUaIlqFLptRivFVywuF8K8FIVbB+ZZuGJYYxFwN7M2NiVScn9w8y4qSxhG
-         Rlu8Ozz+xnEGBpNubBB+8CoHEn2CeAAhHx6bixW8H25+PfkshWCSevPYDjS0UvNo532J
-         Q+yB9po0wbf6TWlq739qZDCFRwXRRDsU3TU49IXnzarj2TvT6FBu52RBjAd5GxYLtbeL
-         z5ojx3NXPtjWZLZMF7czKIzsiI+bbXhCM4fVfkoyPEQIgTBeyRa784moXA2mBSM0ZAuT
-         mqmuX6UgYgVoOi0O70wSt+45RuNOhDhvpRLEpZOeBkdB58RZDoYeitX83YX+vUfLrIxX
-         B6Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XG29ekBSSXhcQEmjNhRSuxxGXBbmxiwvPWXSPfxAbQE=;
-        b=kGOuDlhY0V43MtdZrVRq1mLtT4GWdxG3vL7V0u/AICyAJTxGKBvrVHrEosBALDKwMA
-         R5yEgOaDaUlVlKrnjZA7yQx4YJsWC7fxQRj52BiL9x4h7t78koLPZ1L4WpPYojCgT4bt
-         LpAddQqHjp31njlzNWIfe1lUI+rwQ2MRmR3PbGZp513zizP/Izny8zOGGoD+aGFrL7Mw
-         QntAZB6NlDpUDpHmt0AX6duleZvo48SNiqob0qM2HtzKsxfsKn057pxbgYSepF8tHcjk
-         4i3ltPd/ZkbHm7uUsExsiEmZJKU3ngluhH7SrHFtH+jM4H/SGj4DRWYfPIG9ZpxYsAZF
-         XidQ==
-X-Gm-Message-State: APt69E1SSjBM0YisQAiZ7JD0vdKbDsfqRrqohmSamdMXq5dzfMnnJHpy
-        L1rjY/sNtX6ksHjBdnkaquRnWgZOE1VX81MfQSJ22bptLEs=
-X-Google-Smtp-Source: ADUXVKJhWfmPaBsfeUf4uPxPlOV1z0M2368jDawaJxXokDW1Z3WR36jP2OE+rNJmS4hk9kh503R/5l6+6pTiG2TxDqE=
-X-Received: by 2002:a24:3cd7:: with SMTP id m206-v6mr2909540ita.113.1529529718524;
- Wed, 20 Jun 2018 14:21:58 -0700 (PDT)
+        Wed, 20 Jun 2018 17:27:16 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 551F111B04
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:27:15 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id VkdEf6qBebXuJVkdFfJY8f; Wed, 20 Jun 2018 16:27:14 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=58076 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fVkdD-004HA4-Qt; Wed, 20 Jun 2018 16:27:11 -0500
+Subject: Re: [Intel-gfx] [PATCH] drm/i915: mark expected switch fall-through
+To:     Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20180620133100.GA608@embeddedor.com>
+ <20180620190628.GC8258@intel.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <26740470-d7b7-0a58-0aae-fc628bd4f416@embeddedor.com>
+Date:   Wed, 20 Jun 2018 16:27:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a4f:8f86:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 14:21:57
- -0700 (PDT)
-In-Reply-To: <20180620043200.GA10888@joelaf.mtv.corp.google.com>
-References: <20180620005735.219840-1-astrachan@google.com> <20180620005735.219840-2-astrachan@google.com>
- <20180620043200.GA10888@joelaf.mtv.corp.google.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Wed, 20 Jun 2018 14:21:57 -0700
-Message-ID: <CAKOZuetoYikhAz1c6NuaVjeU_E58hbH7wMsDUKCYWqb63ESPeA@mail.gmail.com>
-Subject: Re: [PATCH 2/2 v2] staging: android: ashmem: Fix mmap size validation
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Alistair Strachan <astrachan@google.com>,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>, devel@driverdev.osuosl.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180620190628.GC8258@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fVkdD-004HA4-Qt
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:58076
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 9:32 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Tue, Jun 19, 2018 at 05:57:35PM -0700, Alistair Strachan wrote:
-> > The ashmem driver did not check that the size/offset of the vma passed
-> > to its .mmap() function was not larger than the ashmem object being
-> > mapped. This could cause mmap() to succeed, even though accessing parts
-> > of the mapping would later fail with a segmentation fault.
-> >
-> > Ensure an error is returned by the ashmem_mmap() function if the vma
-> > size is larger than the ashmem object size. This enables safer handling
-> > of the problem in userspace.
 
-Are we sure that this approach is a good idea? You can over-mmap
-regular files. I don't like the idea of creating special mmap
-semantics for files that happen to be ashmem files. Ashmem users can
-detect size-changing shenanigans with ASHMEM_GET_SIZE after mmap,
-since an ashmem file's size can't change after an mmap call succeeds.
+
+On 06/20/2018 02:06 PM, Rodrigo Vivi wrote:
+> On Wed, Jun 20, 2018 at 08:31:00AM -0500, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Addresses-Coverity-ID: 1470102 ("Missing break in switch")
+> 
+> Any other advantage besides coverity?
+> Can't we address it by marking as "Intentional" on the tool?
+> 
+
+Yes. The advantage of this is that it will eventually allows to enable 
+-Wimplicit-fallthrough, hence, enabling the compiler to trigger a 
+warning, which will force us to double check if we are actually missing 
+a break before committing the code.
+
+The change in the code has nothing to do with the Coverity tool. The 
+tool is only reporting the issue, which, in this case, is a false positive.
+
+
+> I'm afraid there will be so many more places to add fallthrough
+> marks....
+> 
+
+Oh yeah, there are around 1000 similar places in the whole codebase. 
+There is an ongoing effort to review each case. Months ago, it used to 
+be around 1500 of these cases.
+
+Thanks
+--
+Gustavo
+
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/gpu/drm/i915/intel_dpll_mgr.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/i915/intel_dpll_mgr.c b/drivers/gpu/drm/i915/intel_dpll_mgr.c
+>> index 132fe63..6a40a77 100644
+>> --- a/drivers/gpu/drm/i915/intel_dpll_mgr.c
+>> +++ b/drivers/gpu/drm/i915/intel_dpll_mgr.c
+>> @@ -2566,6 +2566,7 @@ int icl_calc_dp_combo_pll_link(struct drm_i915_private *dev_priv,
+>>   	switch (index) {
+>>   	default:
+>>   		MISSING_CASE(index);
+>> +		/* fall through */
+>>   	case 0:
+>>   		link_clock = 540000;
+>>   		break;
+>> -- 
+>> 2.7.4
+>>
+>> _______________________________________________
+>> Intel-gfx mailing list
+>> Intel-gfx@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
