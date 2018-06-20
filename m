@@ -3,138 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8D2C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977F3C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E412083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:09:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E412083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 4E52020020
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 20:12:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E52020020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933111AbeFTUJv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 16:09:51 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:30608 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932996AbeFTUJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 16:09:49 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 419wsg4mb4z9ttmc;
-        Wed, 20 Jun 2018 22:09:43 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id BcpDRlaC3d7f; Wed, 20 Jun 2018 22:09:43 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 419wsg4F1Xz9ttmD;
-        Wed, 20 Jun 2018 22:09:43 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E7F698B83D;
-        Wed, 20 Jun 2018 22:09:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 2Ku-V9oUsqKS; Wed, 20 Jun 2018 22:09:47 +0200 (CEST)
-Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.232.3])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 676C08B82D;
-        Wed, 20 Jun 2018 22:09:47 +0200 (CEST)
-Subject: Re: [PATCH 01/11] crypto: shash: Remove VLA usage
-To:     Kees Cook <keescook@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, qat-linux@intel.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-References: <20180620190408.45104-1-keescook@chromium.org>
- <20180620190408.45104-2-keescook@chromium.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <638faf05-946a-1345-dda4-f75fee5b07d9@c-s.fr>
-Date:   Wed, 20 Jun 2018 19:30:50 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933133AbeFTUMo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 16:12:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58278 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932929AbeFTUMm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 16:12:42 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KK8WX1087463
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:12:41 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqwp805nh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 16:12:41 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mrochs@linux.vnet.ibm.com>;
+        Wed, 20 Jun 2018 14:12:41 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Jun 2018 14:12:39 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KKCcQo61669494
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 20 Jun 2018 13:12:38 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BC3913604F;
+        Wed, 20 Jun 2018 14:12:38 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF4DE136051;
+        Wed, 20 Jun 2018 14:12:37 -0600 (MDT)
+Received: from p8tul1-build.aus.stglabs.ibm.com (unknown [9.3.141.206])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Wed, 20 Jun 2018 14:12:37 -0600 (MDT)
+Date:   Wed, 20 Jun 2018 15:12:37 -0500
+From:   "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     willy@infradead.org, manoj@linux.vnet.ibm.com,
+        ukrishn@linux.vnet.ibm.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: cxlflash: Change return type for fault handler
+References: <20180620182507.GA21775@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <20180620190408.45104-2-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620182507.GA21775@jordon-HP-15-Notebook-PC>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18062020-0012-0000-0000-000016807141
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009228; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01049860; UDB=6.00537980; IPR=6.00828832;
+ MB=3.00021764; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-20 20:12:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062020-0013-0000-0000-00005365623B
+Message-Id: <20180620201237.GA19354@p8tul1-build.aus.stglabs.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806200219
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/20/2018 07:03 PM, Kees Cook wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> removes the VLAs in SHASH_DESC_ON_STACK (via crypto_shash_descsize())
-> by using the maximum allowable size (which is now more clearly captured
-> in a macro). Similar limits are turned into macros as well.
+On Wed, Jun 20, 2018 at 11:55:07PM +0530, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
 > 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-
-Got the following warnings:
-
-crypto/testmgr.c: In function ‘alg_test_crc32c.part.4’:
-crypto/testmgr.c:1896:1: warning: the frame size of 2088 bytes is larger 
-than 1024 bytes [-Wframe-larger-than=]
-crypto/hmac.c: In function ‘hmac_setkey’:
-crypto/hmac.c:88:1: warning: the frame size of 2088 bytes is larger than 
-1024 bytes [-Wframe-larger-than=]
-
-Christophe
-
-> ---
->   crypto/shash.c        | 6 +++---
->   include/crypto/hash.h | 6 +++++-
->   2 files changed, 8 insertions(+), 4 deletions(-)
+> Previously, VM_FAULT_NOPAGE was returned without verifying
+> return value of vm_insert_pfn. The new inline vmf_insert_pfn()
+> will address this issue by returning correct VM_FAULT_* type
+> from fault handler.
 > 
-> diff --git a/crypto/shash.c b/crypto/shash.c
-> index 5d732c6bb4b2..ab6902c6dae7 100644
-> --- a/crypto/shash.c
-> +++ b/crypto/shash.c
-> @@ -458,9 +458,9 @@ static int shash_prepare_alg(struct shash_alg *alg)
->   {
->   	struct crypto_alg *base = &alg->base;
->   
-> -	if (alg->digestsize > PAGE_SIZE / 8 ||
-> -	    alg->descsize > PAGE_SIZE / 8 ||
-> -	    alg->statesize > PAGE_SIZE / 8)
-> +	if (alg->digestsize > SHASH_MAX_DIGESTSIZE ||
-> +	    alg->descsize > SHASH_MAX_DESCSIZE ||
-> +	    alg->statesize > SHASH_MAX_STATESIZE)
->   		return -EINVAL;
->   
->   	base->cra_type = &crypto_shash_type;
-> diff --git a/include/crypto/hash.h b/include/crypto/hash.h
-> index 76e432cab75d..308aad8bf523 100644
-> --- a/include/crypto/hash.h
-> +++ b/include/crypto/hash.h
-> @@ -151,9 +151,13 @@ struct shash_desc {
->   	void *__ctx[] CRYPTO_MINALIGN_ATTR;
->   };
->   
-> +#define SHASH_MAX_DIGESTSIZE    (PAGE_SIZE / 8)
-> +#define SHASH_MAX_DESCSIZE      (PAGE_SIZE / 8)
-> +#define SHASH_MAX_STATESIZE     (PAGE_SIZE / 8)
-> +
->   #define SHASH_DESC_ON_STACK(shash, ctx)				  \
->   	char __##shash##_desc[sizeof(struct shash_desc) +	  \
-> -		crypto_shash_descsize(ctx)] CRYPTO_MINALIGN_ATTR; \
-> +		SHASH_MAX_DESCSIZE] CRYPTO_MINALIGN_ATTR; \
->   	struct shash_desc *shash = (struct shash_desc *)__##shash##_desc
->   
->   /**
-> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+
+Looks good.
+
+Acked-by: Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
+
