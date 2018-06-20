@@ -7,117 +7,105 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DEAC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37D7C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D63620693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68EAB20871
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 03:55:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvU4AN0z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D63620693
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ojqxStBg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EAB20871
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754433AbeFTDzN (ORCPT
+        id S1754464AbeFTDzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 23:55:13 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:35986 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754331AbeFTDzE (ORCPT
+        Tue, 19 Jun 2018 23:55:24 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37662 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754291AbeFTDzT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 23:55:04 -0400
-Received: by mail-pg0-f67.google.com with SMTP id m5-v6so832708pgd.3;
-        Tue, 19 Jun 2018 20:55:04 -0700 (PDT)
+        Tue, 19 Jun 2018 23:55:19 -0400
+Received: by mail-pf0-f195.google.com with SMTP id y5-v6so897920pfn.4;
+        Tue, 19 Jun 2018 20:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=EsdU5kluQMf1rXJS2hF6uW+T5S0HXqxcpa9E9XmD+/w=;
-        b=BvU4AN0zzyVK7+2xSqpYww5DDMLtCXCaUWh9VaIQ/6VeVUMMkAvuhJkxtYTtM6AXuD
-         hwWXdC9n6k9GooUOjaiTd5LoUvtVnjLrWuAcThlUCY1k/84crl7r8IIXJbWibtr15pgf
-         /FFUvlUaa2tziODQ/p+PadTPjPPz9dlUwHgVZzdd+XsihBeTT26xyugL3tzQKOSIQ0uy
-         51z1kunFH366j906Ce2sFz4rRzh7VcikBMdpXI4tyeKTzP5O3+f/0UcUVx3WVVGTOJxq
-         Hn8EA1cQ+eqK7jFOW6z86+kyG3yUDh+9XCK/5VlS7IZYqC/VQ81vYGkLbttzUsWQLaMc
-         8hMw==
+        bh=X9sDWrASE6x8WS0QY/DzosVA5CbOCMPpj4fZPLr4gEU=;
+        b=ojqxStBgFTPDpkCFR3SAtHZkefMRGAT39w0pvBiADQF80kGXYNV70ZujATHgf2Z4zy
+         ruR9v8xXwN1BrzRLbCK2mvyOG/ZHAAezTax2XMCGwL88jRVRNr3eQ+ir7fYcwldyo2S/
+         6a1UEh5zkDUsq+QaKl1x4x0C3UKTgrJuuJDq2mzvDPfFVaThm6Cz/aqA5Fp8rEBuOyLl
+         ef3+eyvegJ5rw16UKTK7mn4OQn/ePhHbx3Df8xw+d3Jh6CuVRCPYGfro5syFN0vo0PsJ
+         VTdlFXlm+5gVtfN4Ge95vvmt2HsC27h5mug1JZxIw/pVjsXrC7MJJiuDq9tH292UDcII
+         Wvfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EsdU5kluQMf1rXJS2hF6uW+T5S0HXqxcpa9E9XmD+/w=;
-        b=pl4XT7QuXUTY8dfndBT8tdyHGUvUhkXFJdJjYM/PQRS0gpIZj77m/Z4Te28D5rcJ+G
-         DfFWtRnOH7wRQidhEqnVUzBbd6AuOTxDukXFgzmqNm/2MQbkGRFtzEsx4fhqRaCo9LHH
-         TYdENGLofa1gIuek94Gf5k67QjyaDFQWfzrslXhfXfeQBjNYdvy3/FlnPlLlFnrmjvmt
-         WdNKNHimcwF6u1c5Hwma079qqJbJuAnxIk5mcYaXfvtwcGP+V2KbqhmUOuhgIna60lDP
-         ZE3DTQIBpRL+xv973C5yJroywJfhjtOaFPg2lX8jOl6hO8XISmHHKsEWBLp14DR+WOTx
-         Kowg==
-X-Gm-Message-State: APt69E2pYpQN8KFA5Lwmtvc7JzRjCvLnX6+pKGs+9Bt2mPbqiLfBCO2a
-        jvuQkt1QFEpcg1QLFqLMgdc=
-X-Google-Smtp-Source: ADUXVKLTp7Cyojd++ETzvhmp6l2as94tfbUH6agtcxfvbj9cQbQankLdcYRWPR+yDt1Gn8zoEJZ75A==
-X-Received: by 2002:a63:6741:: with SMTP id b62-v6mr17379352pgc.5.1529466903990;
-        Tue, 19 Jun 2018 20:55:03 -0700 (PDT)
+        bh=X9sDWrASE6x8WS0QY/DzosVA5CbOCMPpj4fZPLr4gEU=;
+        b=BGh1F9eTm2dpxiVE2mFfJb+1n0plK4I+ZorXimKKtELon/YzR4KXuH26+sCg7FcLzw
+         D7Vc8DjfB8+J75LgokM0dpIhdmm3t+EoGrnHsDdGRvuSX0J6XqgtywQEOMm/Li8qaMzi
+         oaWIREe8WrXyCzkdHRdyLAiGiAY0O6dYwAY33Iw4T4ahw3R11AIP+16kMo9B4aJbmrMO
+         BOaqBdks571peLtbC+bFAxHVX4MvcxM08aMTrOV5GJTAqBlieA4yJK8roOBQUub0Mb68
+         3vrIKo5+mheY2i/92ZlJehsg3g0w4r5m1Xd7NzTd6Kk2j95SqQmpBQuRKPMBTPVYstrP
+         DEqw==
+X-Gm-Message-State: APt69E3JylH7LQdH5jTai5qu/EGqdJPnS8B9X3Rf8BQghGPdoatNLI+6
+        N0Ooq8Uf+GGkcclfAUSTRwA=
+X-Google-Smtp-Source: ADUXVKIFoZZsa4UTyJqY9ClQEQIBqpvwy07XSdJRpYfNeGKeA5DCuSUymiFYiYSEqZEWuCKKAOMN+g==
+X-Received: by 2002:a63:3807:: with SMTP id f7-v6mr17243450pga.446.1529466918963;
+        Tue, 19 Jun 2018 20:55:18 -0700 (PDT)
 Received: from oslab.tsinghua.edu.cn ([2402:f000:1:4413:d85e:ce7f:5f7a:fdfe])
-        by smtp.gmail.com with ESMTPSA id 76-v6sm1682059pfr.172.2018.06.19.20.55.00
+        by smtp.gmail.com with ESMTPSA id q82-v6sm1627439pfg.170.2018.06.19.20.55.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Jun 2018 20:55:03 -0700 (PDT)
+        Tue, 19 Jun 2018 20:55:18 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     balbi@kernel.org, gregkh@linuxfoundation.org,
-        nicolas.ferre@microchip.com, keescook@chromium.org,
-        robert.jarzmik@free.fr, allen.lkml@gmail.com
+To:     balbi@kernel.org, gregkh@linuxfoundation.org, leoyang.li@nxp.com,
+        allen.lkml@gmail.com, johan@kernel.org, keescook@chromium.org
 Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 1/2] usb: gadget: r8a66597: Fix two possible sleep-in-atomic-context bugs in init_controller()
-Date:   Wed, 20 Jun 2018 11:54:53 +0800
-Message-Id: <20180620035453.7721-1-baijiaju1990@gmail.com>
+Subject: [PATCH 2/2] usb: gadget: r8a66597: Fix a possible sleep-in-atomic-context bugs in r8a66597_queue()
+Date:   Wed, 20 Jun 2018 11:55:08 +0800
+Message-Id: <20180620035509.7775-1-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep with holding a spinlock.
-The function call paths (from bottom to top) in Linux-4.16.7 are:
+The driver may sleep in an interrupt handler.
+The function call path (from bottom to top) in Linux-4.16.7 is:
 
-[FUNC] msleep
-drivers/usb/gadget/udc/r8a66597-udc.c, 839: 
-		msleep in init_controller
-drivers/usb/gadget/udc/r8a66597-udc.c, 96: 
-		init_controller in r8a66597_usb_disconnect
-drivers/usb/gadget/udc/r8a66597-udc.c, 93: 
-		spin_lock in r8a66597_usb_disconnect
+[FUNC] r8a66597_queue(GFP_KERNEL)
+drivers/usb/gadget/udc/r8a66597-udc.c, 1193: 
+		r8a66597_queue in get_status
+drivers/usb/gadget/udc/r8a66597-udc.c, 1301: 
+		get_status in setup_packet
+drivers/usb/gadget/udc/r8a66597-udc.c, 1381: 
+		setup_packet in irq_control_stage
+drivers/usb/gadget/udc/r8a66597-udc.c, 1508: 
+		irq_control_stage in r8a66597_irq (interrupt handler)
 
-[FUNC] msleep
-drivers/usb/gadget/udc/r8a66597-udc.c, 835: 
-		msleep in init_controller
-drivers/usb/gadget/udc/r8a66597-udc.c, 96: 
-		init_controller in r8a66597_usb_disconnect
-drivers/usb/gadget/udc/r8a66597-udc.c, 93: 
-		spin_lock in r8a66597_usb_disconnect
-
-To fix these bugs, msleep() is replaced with mdelay().
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
 
 This bug is found by my static analysis tool (DSAC-2) and checked by
 my code review.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/usb/gadget/udc/r8a66597-udc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/udc/r8a66597-udc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/gadget/udc/r8a66597-udc.c b/drivers/usb/gadget/udc/r8a66597-udc.c
-index a3ecce62662b..24ee9867964b 100644
+index a3ecce62662b..e1292c280a0b 100644
 --- a/drivers/usb/gadget/udc/r8a66597-udc.c
 +++ b/drivers/usb/gadget/udc/r8a66597-udc.c
-@@ -832,11 +832,11 @@ static void init_controller(struct r8a66597 *r8a66597)
- 
- 		r8a66597_bset(r8a66597, XCKE, SYSCFG0);
- 
--		msleep(3);
-+		mdelay(3);
- 
- 		r8a66597_bset(r8a66597, PLLC, SYSCFG0);
- 
--		msleep(1);
-+		mdelay(1);
- 
- 		r8a66597_bset(r8a66597, SCKE, SYSCFG0);
+@@ -1190,7 +1190,7 @@ __acquires(r8a66597->lock)
+ 	r8a66597->ep0_req->length = 2;
+ 	/* AV: what happens if we get called again before that gets through? */
+ 	spin_unlock(&r8a66597->lock);
+-	r8a66597_queue(r8a66597->gadget.ep0, r8a66597->ep0_req, GFP_KERNEL);
++	r8a66597_queue(r8a66597->gadget.ep0, r8a66597->ep0_req, GFP_ATOMIC);
+ 	spin_lock(&r8a66597->lock);
+ }
  
 -- 
 2.17.0
