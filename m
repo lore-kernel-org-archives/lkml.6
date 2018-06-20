@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD53C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEF1C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C6C20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0740820836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:23:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lr1SCMsT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C6C20836
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KkpC0Yn2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0740820836
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932931AbeFTRXV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:23:21 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:41757 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932827AbeFTRXS (ORCPT
+        id S933015AbeFTRX1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 13:23:27 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44072 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932944AbeFTRXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:23:18 -0400
-Received: by mail-lf0-f65.google.com with SMTP id d24-v6so464367lfa.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:23:17 -0700 (PDT)
+        Wed, 20 Jun 2018 13:23:24 -0400
+Received: by mail-lf0-f66.google.com with SMTP id p23-v6so447009lfh.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:23:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iMx6h1L2HIsE81Qqf9KTc/HGuq09dzGoe43tExUeSqA=;
-        b=Lr1SCMsT8ul9gy3ZiZNlhP2+8AuWwFud0Q1JuVsoxiCkAjBT3/MVx41++wpXHYtrzt
-         pIJuCC7YYAu1tt6OvJvaQR5TtdEdmaXw5ancZ1EQj+e15c59a9rvW635+5u8WDX4HYej
-         oTmXppj0RJifVpThU5DPigCvFbvwigZjpnYxo=
+        bh=vciKAZrRv7ECOl2ptqOo+/cjgmJMMGADcdSrEduU6CM=;
+        b=KkpC0Yn2jPtKbAWQ0Aa+Ji7L3B367c355N3cQVkYlkTkk2twnsvqmvJIBt0lBz95/t
+         XfvbnpxB1eMsui6wZaPKw7psnXfl3tiedOF1smCzsikembXej4uH3IllCXfihIZU95aJ
+         auciZjtR8uD/oSbJlLihwNSXeJ9jjhsBOTa70=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iMx6h1L2HIsE81Qqf9KTc/HGuq09dzGoe43tExUeSqA=;
-        b=RoX9XK/UaOA200M8P+JXUus7vsW0/Q5HO+yisoWINcO8b5ETj9nteThv4k2Z+pfz/u
-         DZa18hiG+y0ce2AuEn0gdJrjhys5oIX+0/rmeQ1Xtjq5WQ4yGrXicmsMDP1KgRdjeCis
-         MM1HoazEoy/EKe0qelzEeLem1rD/RHLDD3eIFTyr18nY1OWYJ1GPyLi7hZcWM3XF72sf
-         rwYMFuEJFXqRC66i/54muDkYEf+uZdkCrhFG50zYJRjQVMzth7m5N02LFnWD7oTZcdHV
-         Vx3dNDdPvbgUDpUz4EaiOo3BUWu2fF9RXbdz4J2mLRDU4NNJH2/kooa2S+y7Y9WvCfPM
-         2vSQ==
-X-Gm-Message-State: APt69E25KvPVD7Q7venqGrAVTBmRYY6tTLscrxR8gpoZYSfUpS73diIR
-        w/Ofeq69soeUq4yNBj5zINerbw==
-X-Google-Smtp-Source: ADUXVKJN7qF1bO1BibAbpbCkbJJtFe10TW1BGESo34tVrvg1dCk+dsk7W0EoG6BuIGK2G2S49aEd3g==
-X-Received: by 2002:a2e:1d59:: with SMTP id d86-v6mr15376470ljd.104.1529515397265;
-        Wed, 20 Jun 2018 10:23:17 -0700 (PDT)
+        bh=vciKAZrRv7ECOl2ptqOo+/cjgmJMMGADcdSrEduU6CM=;
+        b=sBnq9hAw6bViQSvPiG/lbPGXSrrc0nD9EUrlB/dZTAwKAJHd3XosAab5DkNNNugrAN
+         DdDjQMdWqNlW3vkw4Kx37EN0HLZjpt8ck6Jz3JIo7SPhYmLpJ2stHSkmyRI8VIn9MafA
+         FoA8CVKohfNxLljyc3cn1w/lJ0W8r377jstf3+lIbkD7v7yWPg2pv6Kay3kCLt9PM0GM
+         XNVqkvU3KMV8Yc40ycn50HfD9ajOzzsQW7dnuKFX0cHsxbqsR4RleTV4LxMD6fkn591y
+         LtSpSAlZI0P61mvYdA006drjbLoDgLjJ/WIKtuUBdKggaUrA8ZczyeJqaRhS2ZkVfGn8
+         2bUw==
+X-Gm-Message-State: APt69E1sbvJRf+i8zC0zgHdDQ9nR57r5XvQ5TsgF9hjtK8SU/ysYCm9/
+        S4DE0kcTsemUXGHLEi6v11ZFdQ==
+X-Google-Smtp-Source: ADUXVKLoRcYNVaAgk3ZjO+D0NDTmmrS1SX7JnugQWo+BRl11ewEOjLapCRe5ahKK5eg4vuZDor2X9w==
+X-Received: by 2002:a19:eb8c:: with SMTP id f12-v6mr7763384lfk.132.1529515402549;
+        Wed, 20 Jun 2018 10:23:22 -0700 (PDT)
 Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm514441lji.85.2018.06.20.10.23.15
+        by smtp.gmail.com with ESMTPSA id b2-v6sm514441lji.85.2018.06.20.10.23.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:23:16 -0700 (PDT)
+        Wed, 20 Jun 2018 10:23:21 -0700 (PDT)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -70,10 +70,12 @@ Cc:     Kevin Hilman <khilman@kernel.org>,
         Juri Lelli <juri.lelli@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 23/26] drivers: firmware: psci: Try to attach CPU devices to their PM domains
-Date:   Wed, 20 Jun 2018 19:22:23 +0200
-Message-Id: <20180620172226.15012-24-ulf.hansson@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Subject: [PATCH v8 26/26] arm64: dts: Convert to the hierarchical CPU topology layout for MSM8916
+Date:   Wed, 20 Jun 2018 19:22:26 +0200
+Message-Id: <20180620172226.15012-27-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180620172226.15012-1-ulf.hansson@linaro.org>
 References: <20180620172226.15012-1-ulf.hansson@linaro.org>
@@ -82,65 +84,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case the OS initiated CPU suspend mode have been enabled, the PM domain
-topology for CPUs have earlier been created by PSCI. Let's use this
-information in psci_dt_cpu_init_idle() as a condition for when it makes
-sense to try to attach the CPU to its corresponding PM domain, via calling
-of_genpd_attach_cpu().
+From: Lina Iyer <lina.iyer@linaro.org>
 
-If the CPU is attached successfully to its PM domain, idle management is
-now fully prepared to be controlled through runtime PM for the CPU.
+In the hierarchical layout, we are creating power domains around each CPU
+and describes the idle states for them inside the power domain provider
+node.  Note that, the CPU's idle states still needs to be compatible with
+"arm,idle-state".
 
+Furthermore, represent the CPU cluster as a separate master power domain,
+powering the CPU's power domains. The cluster node, contains the idle
+states for the cluster and each idle state needs to be compatible with the
+"domain-idle-state".
+
+If the running platform is using a PSCI FW that supports the OS initiated
+CPU suspend mode, which likely should be the case unless the PSCI FW is
+very old, this change makes the PSCI driver to enable it.
+
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: David Brown <david.brown@linaro.org>
 Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/firmware/psci/psci.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 53 +++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index 80c286d83369..700e0e995871 100644
---- a/drivers/firmware/psci/psci.c
-+++ b/drivers/firmware/psci/psci.c
-@@ -20,6 +20,7 @@
- #include <linux/linkage.h>
- #include <linux/of.h>
- #include <linux/pm.h>
-+#include <linux/pm_domain.h>
- #include <linux/printk.h>
- #include <linux/psci.h>
- #include <linux/reboot.h>
-@@ -91,6 +92,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 650f356f69ca..d67c51090d0c 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -113,10 +113,10 @@
+ 			reg = <0x0>;
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+-			cpu-idle-states = <&CPU_SPC>;
+ 			clocks = <&apcs 0>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
++			power-domains = <&CPU_PD0>;
+ 		};
  
- static DEFINE_PER_CPU(u32, domain_state);
- static u32 psci_cpu_suspend_feature;
-+static bool psci_osi_mode_enabled;
+ 		CPU1: cpu@1 {
+@@ -125,10 +125,10 @@
+ 			reg = <0x1>;
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+-			cpu-idle-states = <&CPU_SPC>;
+ 			clocks = <&apcs 0>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
++			power-domains = <&CPU_PD1>;
+ 		};
  
- u32 psci_get_domain_state(void)
- {
-@@ -339,6 +341,14 @@ static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
+ 		CPU2: cpu@2 {
+@@ -137,10 +137,10 @@
+ 			reg = <0x2>;
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+-			cpu-idle-states = <&CPU_SPC>;
+ 			clocks = <&apcs 0>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
++			power-domains = <&CPU_PD2>;
+ 		};
  
- 	/* Idle states parsed correctly, initialize per-cpu pointer */
- 	per_cpu(psci_power_state, cpu) = psci_states;
+ 		CPU3: cpu@3 {
+@@ -149,10 +149,10 @@
+ 			reg = <0x3>;
+ 			next-level-cache = <&L2_0>;
+ 			enable-method = "psci";
+-			cpu-idle-states = <&CPU_SPC>;
+ 			clocks = <&apcs 0>;
+ 			operating-points-v2 = <&cpu_opp_table>;
+ 			#cooling-cells = <2>;
++			power-domains = <&CPU_PD3>;
+ 		};
+ 
+ 		L2_0: l2-cache {
+@@ -169,12 +169,57 @@
+ 				min-residency-us = <2000>;
+ 				local-timer-stop;
+ 			};
 +
-+	/* If running OSI mode, attach the CPU device to its PM domain. */
-+	if (psci_osi_mode_enabled) {
-+		ret = of_genpd_attach_cpu(cpu);
-+		if (ret)
-+			goto free_mem;
-+	}
++			CLUSTER_RET: cluster-retention {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x1000010>;
++				entry-latency-us = <500>;
++				exit-latency-us = <500>;
++				min-residency-us = <2000>;
++			};
 +
- 	return 0;
++			CLUSTER_PWRDN: cluster-gdhs {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x1000030>;
++				entry-latency-us = <2000>;
++				exit-latency-us = <2000>;
++				min-residency-us = <6000>;
++			};
+ 		};
+ 	};
  
- free_mem:
-@@ -753,6 +763,7 @@ int __init psci_dt_topology_init(void)
- 		goto out;
- 	}
+ 	psci {
+ 		compatible = "arm,psci-1.0";
+ 		method = "smc";
++
++		CPU_PD0: cpu-pd0 {
++			#power-domain-cells = <0>;
++			power-domains = <&CLUSTER_PD>;
++			domain-idle-states = <&CPU_SPC>;
++		};
++
++		CPU_PD1: cpu-pd1 {
++			#power-domain-cells = <0>;
++			power-domains = <&CLUSTER_PD>;
++			domain-idle-states = <&CPU_SPC>;
++		};
++
++		CPU_PD2: cpu-pd2 {
++			#power-domain-cells = <0>;
++			power-domains = <&CLUSTER_PD>;
++			domain-idle-states = <&CPU_SPC>;
++		};
++
++		CPU_PD3: cpu-pd3 {
++			#power-domain-cells = <0>;
++			power-domains = <&CLUSTER_PD>;
++			domain-idle-states = <&CPU_SPC>;
++		};
++
++		CLUSTER_PD: cluster-pd {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CLUSTER_RET>, <&CLUSTER_PWRDN>;
++		};
+ 	};
  
-+	psci_osi_mode_enabled = true;
- 	pr_info("OSI mode enabled.\n");
- out:
- 	of_node_put(np);
+ 	pmu {
 -- 
 2.17.1
 
