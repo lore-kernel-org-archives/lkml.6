@@ -2,129 +2,122 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7E2C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D20C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EBC320846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1604D20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="LLwcwL7C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBC320846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QAinP0cU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1604D20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932856AbeFTJCn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:02:43 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:52098 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932602AbeFTJC2 (ORCPT
+        id S932813AbeFTImg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:42:36 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33665 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752595AbeFTImd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:02:28 -0400
-Received: by mail-it0-f65.google.com with SMTP id n7-v6so4394690itn.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 02:02:27 -0700 (PDT)
+        Wed, 20 Jun 2018 04:42:33 -0400
+Received: by mail-lf0-f68.google.com with SMTP id y20-v6so3718378lfy.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0w+zoAkND/JYQJnb34jIgOhCerzzset+WBWIuLe62wM=;
-        b=LLwcwL7CGN8eby2k78XQQSYNi0I8Wg0KN4nLMfLOUKC2oaBR3CwnolY1D1mpxeJHpy
-         oVA2jCuAJ/M2l7Wxl1F+J4EDdTzBiCYd9cXkmdP+ScMlmJexpjcDu0tlRX4lavrJBv0/
-         vG3RPVJTYkn7RLzeY+8NdVR63+pVIToZVB3umY6zGkTV5v2AckCKe2jy1SV7h3dXdj87
-         NIbW+0pVJS1vgjLenAPiFLND6WL6vHbf/5zDLky2d3zvBUgbmr2BuXyykDOkwJaUtcmz
-         TiOAhE/8LGesZ4EAwpaSGgPyyklL4pU38RxFPWDsXa3OWgtO77TPeuPFwxa/qaR1/Nfe
-         VNaQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=JKpvz3vtYdohxjtXmtyo5SjzMcz9c7S9E23fQ5xXab4=;
+        b=QAinP0cUkQ5zt0rvGHnPqm8C19pbEnTgsOdE7o40ZdxvOw2oQcLgAOSxwX6DLHAuuY
+         QykZ2tKUcx1FH0YkKELwREaH3E4p62NCXRQCX84610BJLQSwnfqxHsrpK1pioz3YvOm7
+         oV89YuUoBTNtuVg0sY8Ow276CNIH9u0+NeMZY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0w+zoAkND/JYQJnb34jIgOhCerzzset+WBWIuLe62wM=;
-        b=LZKR4zxU17e9kdb4kHg0L1f9ztLxl+9WV1FSaqQNnTnBtSrBvVQRqeGtFh2CI6sKaG
-         G/gx/mKEpfbODdMbMXwF5ObjjPDBi4AawBNFVlw755eongmuW8crQZqY2iJjmORLV6tD
-         RL837rEolmdOyJuZto95vztrXvYCK6n5Jxp+3KfU0MXAa8ayc5JDFRhL80hHW9xGLIPa
-         aB9D9wYBxdVcK2WVNKYA6z+Rx/g92QUVI+ZVHtS8LBUpNZqgs3zqhEhTeq8VMRrdsvMf
-         JHwFnWK5fK+BzicPMS7ncFwwT5RIZ0nSVM9M5l9V5PDwJTdyB+OQ4+jOkDhsMX88Xo0E
-         PZ3w==
-X-Gm-Message-State: APt69E3CWdj1WLqf2ro9046Blh3RFffLPQ5Z9Jh8twhLMbWGRJhw/YXp
-        HYL9lCOnlSsET51OQH2jwJo8f3figwuPX1RbdRbNbQ==
-X-Google-Smtp-Source: ADUXVKL6hPBVOyYLtzVVKc665uksdjDVhnRArAU0V+t/PIO2YFCSEdrRkZNDa325hse8bggAefHDojS+IiwwNVCrujM=
-X-Received: by 2002:a24:ddc5:: with SMTP id t188-v6mr730673itf.125.1529481418582;
- Wed, 20 Jun 2018 00:56:58 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:9c51:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 00:56:58
- -0700 (PDT)
-In-Reply-To: <db1183b9-6ed0-ed74-c461-cdac5bfc7a60@gmail.com>
-References: <20180619160950.6283-1-brgl@bgdev.pl> <20180619160950.6283-2-brgl@bgdev.pl>
- <db1183b9-6ed0-ed74-c461-cdac5bfc7a60@gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 20 Jun 2018 09:56:58 +0200
-Message-ID: <CAMRc=MdUTV3ZgBA-5vBgsCWCGTKnq_7=ZEA7_9gEsJHRmXDfhg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] net: ethernet: fix suspend/resume in davinci_emac
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Rob Herring <robh@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Andrew Lunn <andrew@lunn.ch>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=JKpvz3vtYdohxjtXmtyo5SjzMcz9c7S9E23fQ5xXab4=;
+        b=ABe9KPX+73Plgw5pCgmJgHor9VMoM+IHNhLSq/uKjHPaqD43w6sNKXZQG/nvkqAUc9
+         e0wTmHr3YYWt6V2pUmTk1RT2pQr/6W2dTbP8oj4Oj7BkJBC3lFD7y3VzGTGeJguAx38R
+         6U+2wtmJevZhklCs0iphoG8nlkJ/5QiGQSeorUjKTxZM2Ied6geHvT/27Wwjb8kOW0wG
+         /9uhmRIxJNwKlIlqQ7r0OtT1lkCr9TKWM6nK0AshZmhKHGKbnqNcfU7+RRcCrT5Bc+gs
+         b7OPWlVwyvlufkXpE3XZcOVODF4rwMqdBXbMRS8Fitmur/xOI0rGUuY4ZxtzIuISsz8/
+         QB9w==
+X-Gm-Message-State: APt69E1Pzo7a1xGHrMtIodaewP+FpUWuBl53x0XVaGUO6oFdEuDby5Xm
+        Pbo7ToCFyYhNwf5J2dUTujnU2A==
+X-Google-Smtp-Source: ADUXVKIErsU8106cF3yhAARbMNfvZR03AIjYYlG+OfmTWkM5BZCvGZkfQnP3XZecKt9E8j+VfkwfOg==
+X-Received: by 2002:a2e:7a0f:: with SMTP id v15-v6mr14038227ljc.68.1529484151743;
+        Wed, 20 Jun 2018 01:42:31 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id l25-v6sm301267ljj.30.2018.06.20.01.42.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 01:42:31 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     alagusankar@silex-india.com,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] ath10k: sdio: use same endpoint id for all packets in a bundle
+Date:   Wed, 20 Jun 2018 10:42:20 +0200
+Message-Id: <20180620084222.3521-2-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180620084222.3521-1-niklas.cassel@linaro.org>
+References: <20180620084222.3521-1-niklas.cassel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-19 18:55 GMT+02:00 Florian Fainelli <f.fainelli@gmail.com>:
-> On 06/19/2018 09:09 AM, Bartosz Golaszewski wrote:
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> This patch reverts commit 3243ff2a05ec ("net: ethernet: davinci_emac:
->> Deduplicate bus_find_device() by name matching") and adds a comment
->> which should stop anyone from reintroducing the same "fix" in the future.
->>
->> We can't use bus_find_device_by_name() here because the device name is
->> not guaranteed to be 'davinci_mdio'. On some systems it can be
->> 'davinci_mdio.0' so we need to use strncmp() against the first part of
->> the string to correctly match it.
->>
->> Fixes: 3243ff2a05ec ("net: ethernet: davinci_emac: Deduplicate bus_find_device() by name matching")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->> ---
->>  drivers/net/ethernet/ti/davinci_emac.c | 15 +++++++++++++--
->>  1 file changed, 13 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
->> index 06d7c9e4dcda..a1a6445b5a7e 100644
->> --- a/drivers/net/ethernet/ti/davinci_emac.c
->> +++ b/drivers/net/ethernet/ti/davinci_emac.c
->> @@ -1385,6 +1385,11 @@ static int emac_devioctl(struct net_device *ndev, struct ifreq *ifrq, int cmd)
->>               return -EOPNOTSUPP;
->>  }
->>
->> +static int match_first_device(struct device *dev, void *data)
->> +{
->> +     return !strncmp(dev_name(dev), "davinci_mdio", 12);
->
->         const char *bus_name = "davinci_mdio";
->
->         return !strncmp(dev_name(dev), bus_name, strlen(bus_name));
->
-> Or even better yet, if you want to make sure this really is a PHY device
-> that you are trying to match, you could try to use sscanf() with PHY_ID_FMT.
-> --
-> Florian
+All packets in a bundle should use the same endpoint id as the
+first lookahead.
 
-I don't think this is necessary. This simple function would get too
-complicated with the additional buffer for the sscanf'ed phy name etc.
+This matches how things are done is ath6kl, however,
+this patch can theoretically handle several bundles
+in ath10k_sdio_mbox_rx_process_packets().
 
-Thanks,
-Bart
+Without this patch we get lots of errors about invalid endpoint id:
+
+ath10k_sdio mmc2:0001:1: invalid endpoint in look-ahead: 224
+ath10k_sdio mmc2:0001:1: failed to get pending recv messages: -12
+ath10k_sdio mmc2:0001:1: failed to process pending SDIO interrupts: -12
+
+Signed-off-by: Alagu Sankar <alagusankar@silex-india.com>
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+ drivers/net/wireless/ath/ath10k/sdio.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/sdio.c b/drivers/net/wireless/ath/ath10k/sdio.c
+index d612ce8c9cff..d46523b0472c 100644
+--- a/drivers/net/wireless/ath/ath10k/sdio.c
++++ b/drivers/net/wireless/ath/ath10k/sdio.c
+@@ -434,12 +434,14 @@ static int ath10k_sdio_mbox_rx_process_packets(struct ath10k *ar,
+ 	enum ath10k_htc_ep_id id;
+ 	int ret, i, *n_lookahead_local;
+ 	u32 *lookaheads_local;
++	int lookahead_idx = 0;
+ 
+ 	for (i = 0; i < ar_sdio->n_rx_pkts; i++) {
+ 		lookaheads_local = lookaheads;
+ 		n_lookahead_local = n_lookahead;
+ 
+-		id = ((struct ath10k_htc_hdr *)&lookaheads[i])->eid;
++		id = ((struct ath10k_htc_hdr *)
++		      &lookaheads[lookahead_idx++])->eid;
+ 
+ 		if (id >= ATH10K_HTC_EP_COUNT) {
+ 			ath10k_warn(ar, "invalid endpoint in look-ahead: %d\n",
+@@ -462,6 +464,7 @@ static int ath10k_sdio_mbox_rx_process_packets(struct ath10k *ar,
+ 			/* Only read lookahead's from RX trailers
+ 			 * for the last packet in a bundle.
+ 			 */
++			lookahead_idx--;
+ 			lookaheads_local = NULL;
+ 			n_lookahead_local = NULL;
+ 		}
+-- 
+2.17.1
+
