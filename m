@@ -2,102 +2,272 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22A7C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EE6C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A3E620836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 04:54:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VPbU3mAp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3E620836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 2E45520846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 05:01:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E45520846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752838AbeFTEyl (ORCPT
+        id S1751469AbeFTFBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 00:54:41 -0400
-Received: from ozlabs.org ([203.11.71.1]:56517 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750827AbeFTEyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 00:54:39 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 419XYn36V9z9s4n;
-        Wed, 20 Jun 2018 14:54:37 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529470477;
-        bh=el+2GVxC/lmPgaAFdd/A2S/JwX81RzokiPb/Ieiz3aI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VPbU3mApm0zF8blqQWLzzb42lMr6GIJHPVpP7vW5lYf1ZtwktgMMweu/gLidWJYkq
-         rE64FtX1IPcF6Lb5rzbURsd3ZKagJLx9Oa70mYUK8+HMsAF6z9ypeMZVIFTDQkzIwq
-         38R/UFX6zeuKCHGAbPoB0M3sYqkrVACYtNJOhI6C6QG/+52L4cIDeh2OdsRgE+iRuN
-         PhcK+yTtmDAMyi/R1vw6x0FSSS8ZiVbmhM8s8RMRmNqUN1Xp6os0BMmsHtfZlmhZDA
-         BIrLMRPxMvcuG75B0Og52neoQs6+H8B3WKaEJLd3+iL8TftFTem0MZtu60jMPV8qYx
-         DHzrJ9ayXB0eA==
-Date:   Wed, 20 Jun 2018 14:54:36 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jitendra Bhivare <jitendra.bhivare@broadcom.com>,
-        Ketan Mukadam <ketan.mukadam@broadcom.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the scsi-mkp
- tree
-Message-ID: <20180620145436.4deb9079@canb.auug.org.au>
-In-Reply-To: <yq1y3fadxiz.fsf@oracle.com>
-References: <20180619211533.1dddf9b0@canb.auug.org.au>
-        <yq1y3fadxiz.fsf@oracle.com>
+        Wed, 20 Jun 2018 01:01:13 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44992 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750831AbeFTFBK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 01:01:10 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5K4x19G137477
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:01:09 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqae23ag2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 01:01:09 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Wed, 20 Jun 2018 01:01:08 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 20 Jun 2018 01:01:05 -0400
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5K5147W3801598
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 20 Jun 2018 05:01:04 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ABD96124054;
+        Wed, 20 Jun 2018 02:02:47 -0400 (EDT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73E6E124064;
+        Wed, 20 Jun 2018 02:02:47 -0400 (EDT)
+Received: from sofia.ibm.com (unknown [9.124.35.39])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 20 Jun 2018 02:02:47 -0400 (EDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 38D0E2E2E44; Wed, 20 Jun 2018 10:31:03 +0530 (IST)
+Date:   Wed, 20 Jun 2018 10:31:03 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        svaidy@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
+        npiggin@gmail.com, mpe@ellerman.id.au
+Subject: Re: [PATCH 3/3] powernv/cpuidle: Use parsed device tree values for
+ cpuidle_init
+Reply-To: ego@linux.vnet.ibm.com
+References: <1529384668-27548-1-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+ <1529384668-27548-4-git-send-email-akshay.adiga@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OihCY020kxEbYjQX/BKhSLj"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529384668-27548-4-git-send-email-akshay.adiga@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18062005-0068-0000-0000-0000030B99E9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009224; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01049561; UDB=6.00537803; IPR=6.00828535;
+ MB=3.00021751; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-20 05:01:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062005-0069-0000-0000-000044BEE45B
+Message-Id: <20180620050103.GC21984@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806200057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/OihCY020kxEbYjQX/BKhSLj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Akshay,
 
-Hi Martin,
+On Tue, Jun 19, 2018 at 10:34:28AM +0530, Akshay Adiga wrote:
+> Export pnv_idle_states and nr_pnv_idle_states so that its accessible to
+> cpuidle driver. Use properties from pnv_idle_states structure for powernv
+> cpuidle_init.
+> 
+> Signed-off-by: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+> ---
+>  arch/powerpc/include/asm/cpuidle.h |  2 ++
+>  drivers/cpuidle/cpuidle-powernv.c  | 49 +++++++++++++++++++++++---------------
+>  2 files changed, 32 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/cpuidle.h b/arch/powerpc/include/asm/cpuidle.h
+> index 55ee7e3..1446747 100644
+> --- a/arch/powerpc/include/asm/cpuidle.h
+> +++ b/arch/powerpc/include/asm/cpuidle.h
+> @@ -93,6 +93,8 @@ struct pnv_idle_states_t {
+>  	u32 flags;
+>  };
+> 
+> +extern struct pnv_idle_states_t *pnv_idle_states;
+> +extern int nr_pnv_idle_states;
+>  extern u32 pnv_fastsleep_workaround_at_entry[];
+>  extern u32 pnv_fastsleep_workaround_at_exit[];
+> 
+> diff --git a/drivers/cpuidle/cpuidle-powernv.c b/drivers/cpuidle/cpuidle-powernv.c
+> index d29e4f0..de8ba26 100644
+> --- a/drivers/cpuidle/cpuidle-powernv.c
+> +++ b/drivers/cpuidle/cpuidle-powernv.c
+> @@ -285,6 +285,11 @@ static int powernv_add_idle_states(void)
+>  		goto out;
+>  	}
+> 
+> +	if (nr_pnv_idle_states <= 0) {
+> +		pr_warn("opal: No idle states found\n");
 
-On Tue, 19 Jun 2018 22:03:48 -0400 "Martin K. Petersen" <martin.petersen@or=
-acle.com> wrote:
->
-> > Commit
-> >
-> >   508fbc44bbb7 ("scsi: be2iscsi: Include null char in SET_HOST_DATA")
-> >
-> > is missing a Signed-off-by from its author. =20
->=20
-> Fixed, thanks!
+We would have a warning of this type in the powernv/idle.c right ? We
+don't need to warn again. Or at least have a different warning
+something like: 
 
-Unfortunately, James had already merged your tree :-(
+      	         pr_warn("cpuidle: Only snooze state is available\n");
+> +		goto out;
+> +	}
 
---=20
-Cheers,
-Stephen Rothwell
+> +
+>  	/* Read values of any property to determine the num of idle states */
+>  	dt_idle_states = of_property_count_u32_elems(power_mgt, "ibm,cpu-idle-state-flags");
 
---Sig_/OihCY020kxEbYjQX/BKhSLj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+We don't need to get dt_idle_states from the device tree now that we
+have nr_pnv_idle_states. 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsp3gwACgkQAVBC80lX
-0GxVUgf/ShqmvO1/O/5dubWdr5Qfxu00yazSX5fp4Mc+UpyRhtX8KWmkyRzIn9nl
-1lX3l3toiXiDbDAagi6GN7KBOMiqTmsZYH6IHp4TsgNavokzbJTSXsreuPUOJoMM
-PUj9tgBB3b7ztdWeK49WgbZa8gYc1ftoz7ZvznqUbxcpRZKgBPF8kNPRqiS0xRVb
-mPNuxBxHi6g7JFZwVnifi7K6rrArLzO1kwDXDeqq36c/Mt48+bUXY7PP7NerwtRc
-0lFvFKb459NDAJ4BYKSV8NDwOfTxfKx1c3LEwWfQYN2QoZEe1DGjRdRy4soBZy/U
-pSUS4AeV+LdiCiWUnw7PNLIgjtAHjA==
-=kXQ5
------END PGP SIGNATURE-----
 
---Sig_/OihCY020kxEbYjQX/BKhSLj--
+>  	if (dt_idle_states < 0) {
+> @@ -338,7 +343,7 @@ static int powernv_add_idle_states(void)
+>  	 * If the idle states use stop instruction, probe for psscr values
+>  	 * and psscr mask which are necessary to specify required stop level.
+>  	 */
+> -	has_stop_states = (flags[0] &
+> +	has_stop_states = (pnv_idle_states[0].flags &
+>  			   (OPAL_PM_STOP_INST_FAST | OPAL_PM_STOP_INST_DEEP));
+>  	if (has_stop_states) {
+>  		count = of_property_count_u64_elems(power_mgt,
+> @@ -387,51 +392,55 @@ static int powernv_add_idle_states(void)
+>  						residency_ns, dt_idle_states);
+>  	}
+> 
+> -	for (i = 0; i < dt_idle_states; i++) {
+> +	for (i = 0; i < nr_pnv_idle_states; i++) {
+>  		unsigned int exit_latency, target_residency;
+>  		bool stops_timebase = false;
+> +		struct pnv_idle_states_t *state = &pnv_idle_states[i];
+> 
+>  		/*
+>  		 * Skip the platform idle state whose flag isn't in
+> -		 * the supported_cpuidle_states flag mask.
+> +		 * the supported_pnv_idle_states flag mask.
+>  		 */
+> -		if ((flags[i] & supported_flags) != flags[i])
+> +		if ((state->flags & supported_flags) !=
+> +				state->flags)
+>  			continue;
+>  		/*
+>  		 * If an idle state has exit latency beyond
+>  		 * POWERNV_THRESHOLD_LATENCY_NS then don't use it
+>  		 * in cpu-idle.
+>  		 */
+> -		if (latency_ns[i] > POWERNV_THRESHOLD_LATENCY_NS)
+> +		if (state->latency_ns > POWERNV_THRESHOLD_LATENCY_NS)
+>  			continue;
+>  		/*
+>  		 * Firmware passes residency and latency values in ns.
+>  		 * cpuidle expects it in us.
+>  		 */
+> -		exit_latency = DIV_ROUND_UP(latency_ns[i], 1000);
+> +		exit_latency = DIV_ROUND_UP(state->latency_ns, 1000);
+>  		if (!rc)
+> -			target_residency = DIV_ROUND_UP(residency_ns[i], 1000);
+> +			target_residency = DIV_ROUND_UP(state->residency_ns, 1000);
+>  		else
+>  			target_residency = 0;
+> 
+>  		if (has_stop_states) {
+> -			int err = validate_psscr_val_mask(&psscr_val[i],
+> -							  &psscr_mask[i],
+> -							  flags[i]);
+
+> +			int err;
+> +			err = validate_psscr_val_mask(&state->pm_ctrl_reg_val,
+> +						      &state->pm_ctrl_reg_mask,
+> +						      state->flags);
+>  			if (err) {
+> -				report_invalid_psscr_val(psscr_val[i], err);
+> +				report_invalid_psscr_val(state->pm_ctrl_reg_val,
+> +							 err);
+>  				continue;
+>  			}
+
+We have already validated the states once. We should simply use the
+result here.
+
+
+>  		}
+> 
+> -		if (flags[i] & OPAL_PM_TIMEBASE_STOP)
+> +		if (state->flags & OPAL_PM_TIMEBASE_STOP)
+>  			stops_timebase = true;
+> 
+>  		/*
+>  		 * For nap and fastsleep, use default target_residency
+>  		 * values if f/w does not expose it.
+>  		 */
+> -		if (flags[i] & OPAL_PM_NAP_ENABLED) {
+> +		if (state->flags & OPAL_PM_NAP_ENABLED) {
+>  			if (!rc)
+>  				target_residency = 100;
+>  			/* Add NAP state */
+> @@ -439,10 +448,11 @@ static int powernv_add_idle_states(void)
+>  					  CPUIDLE_FLAG_NONE, nap_loop,
+>  					  target_residency, exit_latency, 0, 0);
+>  		} else if (has_stop_states && !stops_timebase) {
+> -			add_powernv_state(nr_idle_states, names[i],
+> +			add_powernv_state(nr_idle_states, state->name,
+>  					  CPUIDLE_FLAG_NONE, stop_loop,
+>  					  target_residency, exit_latency,
+> -					  psscr_val[i], psscr_mask[i]);
+> +					  state->pm_ctrl_reg_val,
+> +					  state->pm_ctrl_reg_mask);
+>  		}
+> 
+>  		/*
+> @@ -450,8 +460,8 @@ static int powernv_add_idle_states(void)
+>  		 * within this config dependency check.
+>  		 */
+>  #ifdef CONFIG_TICK_ONESHOT
+> -		else if (flags[i] & OPAL_PM_SLEEP_ENABLED ||
+> -			 flags[i] & OPAL_PM_SLEEP_ENABLED_ER1) {
+> +		else if (state->flags & OPAL_PM_SLEEP_ENABLED ||
+> +			 state->flags & OPAL_PM_SLEEP_ENABLED_ER1) {
+>  			if (!rc)
+>  				target_residency = 300000;
+>  			/* Add FASTSLEEP state */
+> @@ -460,10 +470,11 @@ static int powernv_add_idle_states(void)
+>  					  fastsleep_loop,
+>  					  target_residency, exit_latency, 0, 0);
+>  		} else if (has_stop_states && stops_timebase) {
+> -			add_powernv_state(nr_idle_states, names[i],
+> +			add_powernv_state(nr_idle_states, state->name,
+>  					  CPUIDLE_FLAG_TIMER_STOP, stop_loop,
+>  					  target_residency, exit_latency,
+> -					  psscr_val[i], psscr_mask[i]);
+> +					  state->pm_ctrl_reg_val,
+> +					  state->pm_ctrl_reg_mask);
+>  		}
+>  #endif
+>  		else
+> -- 
+> 2.5.5
+> 
+
