@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE07C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F74C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81FA420836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EF4F20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:23:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FperrAB5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FA420836
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U8pYcg45"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EF4F20846
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932739AbeFTRXN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:23:13 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:34234 "EHLO
+        id S932838AbeFTRXS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 13:23:18 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46819 "EHLO
         mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754591AbeFTRXH (ORCPT
+        with ESMTP id S932691AbeFTRXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:23:07 -0400
-Received: by mail-lf0-f65.google.com with SMTP id e13-v6so504133lfc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:23:06 -0700 (PDT)
+        Wed, 20 Jun 2018 13:23:13 -0400
+Received: by mail-lf0-f65.google.com with SMTP id u5-v6so438743lff.13
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:23:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TjQPuSPVMZIQ7LGnNwV9hx0MvmHHDvnmuj1+IqpIlaE=;
-        b=FperrAB5E7YDSjYoP6q0jhEs2Ox1HY0CxDVeDxyDEatvk5EZ/4z2r8mMTpWW2c/L4s
-         gkPJqTo9YiUfQY1rNcGhu8tbZfXXmVL7mgsOkFqSiSEH03eiQBsLjeQ4zNQ7OebEbRfa
-         U+dUGEMYyssb5EltEDwG3oNn2SDVaeN8eJijM=
+        bh=cV7qOWslovasm3reIVu1jS3ltOLzaMhL00jKgYh6Nhw=;
+        b=U8pYcg45t8FOmO1McVT3H9JZ/G4uT7s9zkL4ps+KG/97JI/6Ql0hgjW9pAV01OKjUi
+         lyeaNcYRIuTt8+8veRE0Bzw6OJ9lpOrym7fbVoRr6D+0rpM6K+6snow/l8smcLBEdb5h
+         uXLrPEAmJMZ8jeGhQipkGtVEEJwGc4BPpQO+I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TjQPuSPVMZIQ7LGnNwV9hx0MvmHHDvnmuj1+IqpIlaE=;
-        b=K8JoltLLdiKfV+2GkYeEI9RDfepEOxFJ3+srxzayJZ91favZJCf1pGU3pAB101wzV/
-         V19kF0Zi+M8OXX+PrNP6VfNbtz5TM+ZAXE3J8LLRpLNhXvNMOmdOlLxfdINroBMruZNn
-         9AKLuXANAzABHNpsS0Ojw6l7N7lrXHdEWXqdDE85oi3xAuAw8FZvShsWy2PSU1Pwftxs
-         31/cR11FgoPLRcL+B02HuRzNvWPpj7u+NR5LP+Jc8jbMZh2g2DVuIKXxyh3W/A4Jo+cf
-         7lXNyF9YTPfH6QLO1jvuyNKdTxUlaX8peiU0vJ76c9rxdkeJRqzlU4kGmUKRCtNsn/TV
-         5q0g==
-X-Gm-Message-State: APt69E1Gz7k/5vMTmu+e/8Ay7c02Vyzjhm7qMggPT011UrEdpK/thwcN
-        LPdLf+/mdWA7EHffe9B38Je/Og==
-X-Google-Smtp-Source: ADUXVKLqDwiJhzmBIyfbizy0XbX1XsRN+liNcsyiQfmTjx25S14cNOUZ4NdRtHhfg2gbblf3geySsg==
-X-Received: by 2002:a2e:9ac4:: with SMTP id p4-v6mr14792545ljj.60.1529515386233;
-        Wed, 20 Jun 2018 10:23:06 -0700 (PDT)
+        bh=cV7qOWslovasm3reIVu1jS3ltOLzaMhL00jKgYh6Nhw=;
+        b=rIHALvBY0XYzm94zl8uEgLXMssse/m+EiMvse6k2OgX2FP564Oy7zOzyDgLKTLF61D
+         wFX3KXcfxjpWptOCn/vFDQ40hbSIDOFhk2B+/bSKlgCjxJOqf5HCRC+o/u5QNPFZ5Wsm
+         Oma4rNhFLKchGcqBPugASCBJ4bdRm/1r6PuVH0ec/zVxIpAVjMbXQGrntgUeRjRaGHln
+         UaQmhuy+XOCzy8TEYlcYdPeByj3rmKbg3zztRZLpatiXpcUVAuBWT3wAhKK70DcDw/ik
+         /STNkMWrRQTi+iIFo+giniLknZhCs9VNAL1YkNy2dXWNy5QTQyHp3uW0o4bgGl0oTyTI
+         dfTg==
+X-Gm-Message-State: APt69E1GRj27a61QQzFpkFbopQsEP+Xkfa98eycvUogDP+nuaEHDt4zr
+        ysllds2XYkRhn33FDp0edqbU9QqgR/I=
+X-Google-Smtp-Source: ADUXVKJJVNGM+2m2TzrlaYwXiNDTFLn50Pzw7JzQr2AX+vT+UeroiBIEV4hh+8y1pNT5a7XW22BNMQ==
+X-Received: by 2002:a2e:5d5d:: with SMTP id r90-v6mr14518777ljb.125.1529515391711;
+        Wed, 20 Jun 2018 10:23:11 -0700 (PDT)
 Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm514441lji.85.2018.06.20.10.23.04
+        by smtp.gmail.com with ESMTPSA id b2-v6sm514441lji.85.2018.06.20.10.23.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:23:05 -0700 (PDT)
+        Wed, 20 Jun 2018 10:23:11 -0700 (PDT)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -71,9 +71,9 @@ Cc:     Kevin Hilman <khilman@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 17/26] drivers: firmware: psci: Simplify error path of psci_dt_init()
-Date:   Wed, 20 Jun 2018 19:22:17 +0200
-Message-Id: <20180620172226.15012-18-ulf.hansson@linaro.org>
+Subject: [PATCH v8 20/26] drivers: firmware: psci: Share a few internal PSCI functions
+Date:   Wed, 20 Jun 2018 19:22:20 +0200
+Message-Id: <20180620172226.15012-21-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180620172226.15012-1-ulf.hansson@linaro.org>
 References: <20180620172226.15012-1-ulf.hansson@linaro.org>
@@ -82,89 +82,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of having each psci init function taking care of the of_node_put(),
-let's deal with that from psci_dt_init(), as this enables a bit simpler
-error path for each psci init function.
+Following changes needs to be able to call psci_get|set_domain_state() and
+psci_dt_parse_state_node(), but from a separate file. Let's make that
+possible by sharing them via a new internal PSCI header file.
 
 Cc: Lina Iyer <ilina@codeaurora.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
 ---
- drivers/firmware/psci/psci.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ drivers/firmware/psci/psci.c | 14 ++++++++------
+ drivers/firmware/psci/psci.h | 13 +++++++++++++
+ 2 files changed, 21 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/firmware/psci/psci.h
 
 diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index 256b4edbb20a..38881007584e 100644
+index 40b2b8945018..463f78cda3be 100644
 --- a/drivers/firmware/psci/psci.c
 +++ b/drivers/firmware/psci/psci.c
-@@ -608,9 +608,9 @@ static int __init psci_0_2_init(struct device_node *np)
- 	int err;
+@@ -34,6 +34,8 @@
+ #include <asm/smp_plat.h>
+ #include <asm/suspend.h>
  
- 	err = get_set_conduit_method(np);
--
- 	if (err)
--		goto out_put_node;
-+		return err;
++#include "psci.h"
 +
- 	/*
- 	 * Starting with v0.2, the PSCI specification introduced a call
- 	 * (PSCI_VERSION) that allows probing the firmware version, so
-@@ -618,11 +618,7 @@ static int __init psci_0_2_init(struct device_node *np)
- 	 * can be carried out according to the specific version reported
- 	 * by firmware
- 	 */
--	err = psci_probe();
--
--out_put_node:
--	of_node_put(np);
--	return err;
-+	return psci_probe();
- }
- 
  /*
-@@ -634,9 +630,8 @@ static int __init psci_0_1_init(struct device_node *np)
- 	int err;
+  * While a 64-bit OS can make calls with SMC32 calling conventions, for some
+  * calls it is necessary to use SMC64 to pass or return 64-bit values.
+@@ -90,12 +92,12 @@ static u32 psci_function_id[PSCI_FN_MAX];
+ static DEFINE_PER_CPU(u32, domain_state);
+ static u32 psci_cpu_suspend_feature;
  
- 	err = get_set_conduit_method(np);
+-static inline u32 psci_get_domain_state(void)
++u32 psci_get_domain_state(void)
+ {
+ 	return this_cpu_read(domain_state);
+ }
+ 
+-static inline void psci_set_domain_state(u32 state)
++void psci_set_domain_state(u32 state)
+ {
+ 	this_cpu_write(domain_state, state);
+ }
+@@ -285,10 +287,7 @@ static int __init psci_features(u32 psci_func_id)
+ 			      psci_func_id, 0, 0);
+ }
+ 
+-#ifdef CONFIG_CPU_IDLE
+-static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
 -
- 	if (err)
--		goto out_put_node;
-+		return err;
+-static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
++int psci_dt_parse_state_node(struct device_node *np, u32 *state)
+ {
+ 	int err = of_property_read_u32(np, "arm,psci-suspend-param", state);
  
- 	pr_info("Using PSCI v0.1 Function IDs from DT\n");
- 
-@@ -660,9 +655,7 @@ static int __init psci_0_1_init(struct device_node *np)
- 		psci_ops.migrate = psci_migrate;
- 	}
- 
--out_put_node:
--	of_node_put(np);
--	return err;
-+	return 0;
+@@ -305,6 +304,9 @@ static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
+ 	return 0;
  }
  
- static const struct of_device_id psci_of_match[] __initconst = {
-@@ -677,6 +670,7 @@ int __init psci_dt_init(void)
- 	struct device_node *np;
- 	const struct of_device_id *matched_np;
- 	psci_initcall_t init_fn;
-+	int ret;
- 
- 	np = of_find_matching_node_and_match(NULL, psci_of_match, &matched_np);
- 
-@@ -684,7 +678,10 @@ int __init psci_dt_init(void)
- 		return -ENODEV;
- 
- 	init_fn = (psci_initcall_t)matched_np->data;
--	return init_fn(np);
-+	ret = init_fn(np);
++#ifdef CONFIG_CPU_IDLE
++static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
 +
-+	of_node_put(np);
-+	return ret;
- }
- 
- #ifdef CONFIG_ACPI
+ static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
+ {
+ 	int i, ret = 0, count = 0;
+diff --git a/drivers/firmware/psci/psci.h b/drivers/firmware/psci/psci.h
+new file mode 100644
+index 000000000000..dc7b596daa2b
+--- /dev/null
++++ b/drivers/firmware/psci/psci.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __PSCI_H
++#define __PSCI_H
++
++struct device_node;
++
++u32 psci_get_domain_state(void);
++void psci_set_domain_state(u32 state);
++
++int psci_dt_parse_state_node(struct device_node *np, u32 *state);
++
++#endif /* __PSCI_H */
 -- 
 2.17.1
 
