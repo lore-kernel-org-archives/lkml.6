@@ -5,99 +5,137 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75A1C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BB5C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3232086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:35:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A3232086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 42807205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 02:36:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42807205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754310AbeFTCfQ (ORCPT
+        id S1754234AbeFTCg4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 22:35:16 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:58317 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754014AbeFTCfP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 22:35:15 -0400
-Received: from mipsdag02.mipstec.com (mail2.mips.com [12.201.5.32]) by mx27.ess.sfj.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Wed, 20 Jun 2018 02:35:05 +0000
-Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag02.mipstec.com
- (10.20.40.47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Tue, 19
- Jun 2018 19:35:02 -0700
-Received: from localhost (10.20.78.225) by mipsdag02.mipstec.com (10.20.40.47)
- with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Tue, 19 Jun
- 2018 19:35:02 -0700
-Date:   Tue, 19 Jun 2018 19:35:02 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC:     James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mips: generic: allow not building DTB in
-Message-ID: <20180620023502.r5e6j222qml2bb47@pburton-laptop>
-References: <20180425211607.2645-1-alexandre.belloni@bootlin.com>
- <20180425211607.2645-2-alexandre.belloni@bootlin.com>
- <20180425220149.GI4813@piout.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180425220149.GI4813@piout.net>
-User-Agent: NeoMutt/20180512
-X-BESS-ID: 1529462099-637137-2582-19112-2
-X-BESS-VER: 2018.7-r1806151722
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Envelope-From: Paul.Burton@mips.com
-X-BESS-Outbound-Spam-Score: 0.60
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194212
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-        0.60 MARKETING_SUBJECT      HEADER: Subject contains popular marketing words 
-X-BESS-Outbound-Spam-Status: SCORE=0.60 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND, MARKETING_SUBJECT
-X-BESS-Orig-Rcpt: alexandre.belloni@bootlin.com,jhogan@kernel.org,ralf@linux-mips.org,allan.nielsen@microsemi.com,thomas.petazzoni@bootlin.com,linux-mips@linux-mips.org,linux-kernel@vger.kernel.org
-X-BESS-BRTS-Status: 1
+        Tue, 19 Jun 2018 22:36:56 -0400
+Received: from mga07.intel.com ([134.134.136.100]:41554 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752951AbeFTCgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 19 Jun 2018 22:36:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2018 19:36:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,245,1526367600"; 
+   d="scan'208";a="64677556"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.145])
+  by fmsmga004.fm.intel.com with ESMTP; 19 Jun 2018 19:36:51 -0700
+Message-ID: <1529462205.2333.83.camel@intel.com>
+Subject: Re: [PATCH V2] x86/efi: Free allocated memory if remap fails
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Date:   Tue, 19 Jun 2018 19:36:45 -0700
+In-Reply-To: <CAKv+Gu-yeXwLjd1Sp0jc41-9zVFOuxSBqMiHkivTLmT-u3Upjg@mail.gmail.com>
+References: <1529350614-15555-1-git-send-email-sai.praneeth.prakhya@intel.com>
+         <CAKv+Gu-yeXwLjd1Sp0jc41-9zVFOuxSBqMiHkivTLmT-u3Upjg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
 
-On Thu, Apr 26, 2018 at 12:01:49AM +0200, Alexandre Belloni wrote:
-> > diff --git a/arch/mips/Makefile b/arch/mips/Makefile
-> > index 5e9fce076ab6..3d3554c13710 100644
-> > --- a/arch/mips/Makefile
-> > +++ b/arch/mips/Makefile
-> > @@ -404,7 +404,7 @@ endif
-> >  CLEAN_FILES += vmlinux.32 vmlinux.64
-> >  
-> >  # device-trees
-> > -core-$(CONFIG_BUILTIN_DTB) += arch/mips/boot/dts/
-> > +core-y += arch/mips/boot/dts/
-> >  
-> >  %.dtb %.dtb.S %.dtb.o: | scripts
-> >  	$(Q)$(MAKE) $(build)=arch/mips/boot/dts arch/mips/boot/dts/$@
-> > diff --git a/arch/mips/boot/dts/mscc/Makefile b/arch/mips/boot/dts/mscc/Makefile
-> > index 8982b19504a3..437ec65ec14a 100644
-> > --- a/arch/mips/boot/dts/mscc/Makefile
-> > +++ b/arch/mips/boot/dts/mscc/Makefile
-> > @@ -1,3 +1,3 @@
-> >  dtb-$(CONFIG_MSCC_OCELOT)	+= ocelot_pcb123.dtb
-> >  
-> > -obj-y				+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
-> > +obj-($CONFIG_BUILTIN_DTB)	+= $(patsubst %.dtb, %.dtb.o, $(dtb-y))
+> > 
+> Thank you Sai.
 > 
-> I made a typo here, I'll resend after waiting for a few comments.
+> But this is not really what I meant.
+> 
 
-Are you happy with this series apart from fixing up the above?
+Ya.. sorry! about that. I had a hunch that you might be suggesting something
+like below but I went ahead with this implementation as it looked very simple
+(just 3 insertions and no deletions)
 
-If so I'm happy to s/(\$/$(/ whilst applying this.
+> How about we modify efi_memmap_alloc() like this
+> 
 
-Thanks,
-    Paul
+It sounds like a good idea to me. Leaving aside the pros (which are obvious),
+the only con I could see is few extra checks and some code but I don't think
+it's an issue at all because this code is not in fast path and it dosen't
+impact performance. So, I will post a V3 with suggested changes.
+
+> @@ -39,10 +39,12 @@ static phys_addr_t __init
+> __efi_memmap_alloc_late(unsigned long size)
+>   * Returns the physical address of the allocated memory map on
+>   * success, zero on failure.
+>   */
+> -phys_addr_t __init efi_memmap_alloc(unsigned int num_entries)
+> +phys_addr_t __init efi_memmap_alloc(unsigned int num_entries, bool *late)
+>  {
+>         unsigned long size = num_entries * efi.memmap.desc_size;
+> 
+> +       if (late)
+> +               *late = slab_is_available();
+>         if (slab_is_available())
+>                 return __efi_memmap_alloc_late(size);
+> 
+> and introduce efi_memmap_free() as before, but pass it the 'late'
+> parameter you received from efi_memmap_alloc(). That way, it is the
+> caller's job to take care of this.
+> 
+
+Sure! makes sense.
+
+> Also, it seems to me that efi_arch_mem_reserve() leaks the old memory
+> map every time you create a new one, no?
+
+I think you are right. The issue I see is (please let me know if you think
+otherwise):
+1. efi_arch_mem_reserve() comes up with a new memory map and then tries to
+install it via efi_memmap_install().
+2. efi_memmap_install(), unmaps the existing memory map and installs the new
+memory map but doesn't free the memory used by the existing memory map.
+Hence, as you said, leaks the old memory map.
+
+If this you what you meant, I think, the issue is not just limited to
+efi_arch_mem_reserve() but to all the places that call efi_memmap_install().
+I think, we could solve it as below
+
+diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+index 678e85704054..50ae4ffbf058 100644
+--- a/drivers/firmware/efi/memmap.c
++++ b/drivers/firmware/efi/memmap.c
+@@ -228,6 +228,7 @@ int __init efi_memmap_install(phys_addr_t addr, unsigned
+int nr_map)
+        struct efi_memory_map_data data;
+ 
+        efi_memmap_unmap();
++       efi_memmap_free(efi.memmap.phys_map, efi.memmap.nr_map,
+efi.memmap.late);
+ 
+        data.phys_map = addr;
+        data.size = efi.memmap.desc_size * nr_map;
+
+Please let me know your thoughts on it.
+
+> That is a separate issue that
+> you may want to look into, but it affects the design of this API as
+> well.
+
+Probably, I could have misunderstood you here.. but I think the
+efi_memmap_free() API in V3 should work (without changes). Don't you think so?
+
+Regards,
+Sai
