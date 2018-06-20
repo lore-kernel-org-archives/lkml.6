@@ -2,90 +2,131 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94F2C43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0010EC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A81420846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:14:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A81420846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id ADA9420846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:15:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QgoDMk60"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADA9420846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754326AbeFTROZ (ORCPT
+        id S1754376AbeFTRPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:14:25 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:47101 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754137AbeFTROY (ORCPT
+        Wed, 20 Jun 2018 13:15:10 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37408 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754059AbeFTRPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:14:24 -0400
-Received: from mipsdag03.mipstec.com (mail3.mips.com [12.201.5.33]) by mx29.ess.sfj.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Wed, 20 Jun 2018 17:14:19 +0000
-Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag03.mipstec.com
- (10.20.40.48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Wed, 20
- Jun 2018 10:14:18 -0700
-Received: from localhost (10.20.2.29) by mipsdag02.mipstec.com (10.20.40.47)
- with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Wed, 20 Jun
- 2018 10:14:18 -0700
-Date:   Wed, 20 Jun 2018 10:14:18 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mips@linux-mips.org>
-Subject: Re: [PATCH 0/5] MIPS: Clean-up DT bus probing
-Message-ID: <20180620171418.43yveoh3md4kqzvw@pburton-laptop>
-References: <20180619214710.22066-1-robh@kernel.org>
+        Wed, 20 Jun 2018 13:15:09 -0400
+Received: by mail-lf0-f65.google.com with SMTP id g21-v6so444352lfb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:15:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=dPmNaPzhp65HlzELLdqo7kzurA1fq8VrfyzeIAXWSi0=;
+        b=QgoDMk600GjubEi+mZKdt4KP9c49WWTMMjjzfYvQGDaJa94U1BVCu0MqQGeMW2ZAj0
+         iWVrlytC2t7KVy2tiSVlJazTKtfU0g09H0cjWXdXORncmTy5Jd5cifVyu0pZXRSPTULA
+         l0EyfPktNgl3rI8+uwoKsu3elil7j/FSqaBT5QbM03bhAeYnF9gZusdZXou5D4eCOWXF
+         vApDgcH2cWQWHR4HOLgxk7Y8myUgP5LOsPcH0QY+g3Pn/UAHQyGe/ULYA6pKc1F2bPjo
+         YSwTDhi+BdggDQZA7mujanOZ0x74sYAhIqnaRazCaCofWt0zMZ8SnhOAGfu/TpEdIZJT
+         dJaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=dPmNaPzhp65HlzELLdqo7kzurA1fq8VrfyzeIAXWSi0=;
+        b=pQl7d+f0HmrVzxVCjDHMqtv+JVfA76JQs0shxiLzDhJhp4O52aeMxFQ9pfRLg8Kgzj
+         fY/5g6zRRhkjNlfUkoFKR4JhKe0Uqp12iWje/DsGZ6YJJh6hFaBiNtzYrZIBY8EeZwBc
+         DX4pGoUgZ7NHttP444932KHxrSTLsnjj5RJGY51lTxxPMRou2FRndK3Z4a9fuLT3IL8Q
+         lo5oDDSamHLTjszUzWZMn84sokL2ebTVTLIEsl3+9ppUqXdgK0wRueLWdWNA9ULgjoiQ
+         kR47aIo+iNrn+ZlvVdEsHAc/W/23368q+CdVygTlkX5dsDx7XNSzmE1mrg4VL71W/O5O
+         pbmg==
+X-Gm-Message-State: APt69E0MdY9ZdQJcZJ8+28HDOccCsOnIzEWJiNdUzkcRfYsEvz3+5AkS
+        EK1f2IHvR7CmAxZyBkwk2RzHigPSWt9ETcKAX5I=
+X-Google-Smtp-Source: ADUXVKJVcZuJoNiarWeiddXlhW+bn5qPwWxN1VK0MgE8ITYmhC++eLJGnsmnUdENPJoLfHDTRNHuvcKlh0yyQNHSOS4=
+X-Received: by 2002:a2e:3810:: with SMTP id f16-v6mr15985846lja.25.1529514907912;
+ Wed, 20 Jun 2018 10:15:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180619214710.22066-1-robh@kernel.org>
-User-Agent: NeoMutt/20180512
-X-BESS-ID: 1529514859-637139-29444-50583-1
-X-BESS-VER: 2018.7-r1806151722
-X-BESS-Apparent-Source-IP: 12.201.5.33
-X-BESS-Envelope-From: Paul.Burton@mips.com
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194226
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-Orig-Rcpt: robh@kernel.org,ralf@linux-mips.org,jhogan@kernel.org,linux-kernel@vger.kernel.org,linux-mips@linux-mips.org
-X-BESS-BRTS-Status: 1
+Received: by 2002:ab3:44ec:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 10:15:07
+ -0700 (PDT)
+In-Reply-To: <20180620164902.GW3593@linux.vnet.ibm.com>
+References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
+ <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
+ <20180620145814.GQ3593@linux.vnet.ibm.com> <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
+ <20180620164902.GW3593@linux.vnet.ibm.com>
+From:   Byungchul Park <max.byungchul.park@gmail.com>
+Date:   Thu, 21 Jun 2018 02:15:07 +0900
+Message-ID: <CANrsvRPAWv8LgSvPrGgLiXnjrtK3CmpJgdpNsuu-0LZJTYeYWQ@mail.gmail.com>
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct rcu_dynticks
+To:     Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc:     Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
+        josh@joshtriplett.org, Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        Joel Fernandes <joel@joelfernandes.org>, luto@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Thu, Jun 21, 2018 at 1:49 AM, Paul E. McKenney
+<paulmck@linux.vnet.ibm.com> wrote:
 
-On Tue, Jun 19, 2018 at 03:47:05PM -0600, Rob Herring wrote:
-> This is a series of clean-ups of DT bus probing calls. Generally, the 
-> DT core code takes care of the default case and arches/platforms only 
-> need to do their own call if they have non-default matching 
-> requirements.
-> 
-> Rob
-> 
-> Rob Herring (5):
->   MIPS: octeon: use of_platform_populate to probe devices
->   MIPS: netlogic: remove unnecessary of_platform_bus_probe call
->   MIPS: bmips: remove unnecessary call to register "simple-bus"
->   MIPS: generic: remove unnecessary of_platform_populate call
->   MIPS: lantiq: remove unnecessary of_platform_default_populate call
-> 
->  arch/mips/bmips/setup.c                   |  7 -------
->  arch/mips/cavium-octeon/octeon-platform.c |  2 +-
->  arch/mips/generic/init.c                  | 13 -------------
->  arch/mips/lantiq/prom.c                   |  8 --------
->  arch/mips/netlogic/xlp/dt.c               | 14 --------------
->  5 files changed, 1 insertion(+), 43 deletions(-)
+[...]
 
-Thanks - series applied to mips-next for 4.19.
+> Perhaps the fact that there are architectures that can enter interrupt
+> handlers and never leave them when the CPU is non-idle.  One example of
+> this is the usermode upcalls in the comment that you removed.
+>
+> Or have all the architectures been modified so that each and every call to
+> rcu_irq_enter() and to rcu_irq_exit() are now properly paired and nested?
+>
+> Proper nesting and pairing was -not- present in the past, hence the
+> special updates (AKA "crowbar") to the counters when transitioning to
+> and from idle.
 
-Paul
+Thank you very much for explaining it in detail.
+
+> If proper nesting and pairing of rcu_irq_enter() and rcu_irq_exit()
+> is now fully in force across all architectures and configurations, the
+> commit log needs to say this, preferably pointing to the corresponding
+> commits that made this change.
+
+Right.
+
+> There is a call to rcu_irq_enter() without a corresponding call to
+> rcu_irq_exit(), so that the ->dynticks_nesting counter never goes back to
+> zero so that the next time this CPU goes idle, RCU thinks that the CPU
+> is still non-idle.  This can result in excessively long grace periods
+> and needless IPIs to idle CPUs.
+
+No doubt.
+
+> But only if calls to rcu_irq_enter() and rcu_irq_exit() are now always
+> properly paired and nested, which was definitely -not- the case last
+> I looked.
+
+I missed it. Right. It's worth only in the case that calls to rcu_irq_enter()
+and rcu_irq_exit() are always properly paired and nested.
+
+> OK, so I can further consider this pair of patches only if
+> all architectures now properly pair and nest rcu_irq_enter() and
+> rcu_irq_exit().  It would be very good if they did, but actually testing
+> back in the day showed that they did not.  If that has changed, that
+> would be a very good thing, but if not, this patch injects bugs.
+
+Totally agree with you. Sorry bothering you.
+
+-- 
+Thanks,
+Byungchul
