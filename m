@@ -2,143 +2,216 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6F0C1B0F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA445C1B0F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F96720693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:26:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gnz1qF59"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F96720693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 60F3820693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 00:26:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60F3820693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754230AbeFTA0L (ORCPT
+        id S1754239AbeFTA0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 19 Jun 2018 20:26:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36384 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750929AbeFTA0G (ORCPT
+        Tue, 19 Jun 2018 20:26:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52835 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752787AbeFTA0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 19 Jun 2018 20:26:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=s1jxS5t8SlPiv2p6YQo4Zl1XKqCgEqKqDt2n4pChhHA=; b=gnz1qF59Vk9nt83esnY5uX/LJL
-        yQ+ZrigOv+Wxx9jvRZnzvz5Hex/9mvqNljgaJwaTMnAWcbY43VM+xyGy56q/6oR4txxLs5RuUGPow
-        spxgFYBx7squX0fVdoHUoRTjYfxWZdu+EG0jelePCxaI5jL00psxvBSOirKW/m0ztHiOQ5mtiPeQy
-        Sm01wmgfRkfch/WwI+LIlQVvUu+nx3WR85UiyXen7qivUhYTK9HTai0wG9pZf0phAZy0Wydz2yRLL
-        KRqIs8Pzhrftb2nAJ9r7vbQfH2FMs9jFy94N4F/6wixlahiXMJ89GgLG8OwVYnTbdQlaT4/kYC/LS
-        PneH+pyg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVQw0-0003Re-Ky; Wed, 20 Jun 2018 00:25:17 +0000
-Subject: Re: [RFC PATCH 17/23] watchdog/hardlockup/hpet: Convert the timer's
- interrupt to NMI
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Don Zickus <dzickus@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Babu Moger <babu.moger@oracle.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Christoffer Dall <cdall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        iommu@lists.linux-foundation.org
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <alpine.DEB.2.21.1806131128570.2280@nanos.tec.linutronix.de>
- <20180615020314.GA11625@voyager>
- <alpine.DEB.2.21.1806151029210.2079@nanos.tec.linutronix.de>
- <20180616005103.GC6659@voyager>
- <alpine.DEB.2.21.1806161517050.1582@nanos.tec.linutronix.de>
- <20180620001535.GA27531@voyager>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c040d4e7-f33b-9c93-6f5a-6bf960943e36@infradead.org>
-Date:   Tue, 19 Jun 2018 17:25:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 19 Jun 2018 20:26:14 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5K0Q9rW3299492
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 19 Jun 2018 17:26:09 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5K0Q9K73299489;
+        Tue, 19 Jun 2018 17:26:09 -0700
+Date:   Tue, 19 Jun 2018 17:26:09 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
+Message-ID: <tip-139a67166b274176ee804260cb2c4c6de5689535@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        reinette.chatre@intel.com, tglx@linutronix.de, hpa@zytor.com
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
+          reinette.chatre@intel.com, hpa@zytor.com, tglx@linutronix.de
+In-Reply-To: <bbf8b7d6985e7a4df508cdc141e01b2d5c92372b.1528405411.git.reinette.chatre@intel.com>
+References: <bbf8b7d6985e7a4df508cdc141e01b2d5c92372b.1528405411.git.reinette.chatre@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/intel_rdt: Enable entering of pseudo-locksetup
+ mode
+Git-Commit-ID: 139a67166b274176ee804260cb2c4c6de5689535
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180620001535.GA27531@voyager>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/19/2018 05:15 PM, Ricardo Neri wrote:
-> On Sat, Jun 16, 2018 at 03:24:49PM +0200, Thomas Gleixner wrote:
->> On Fri, 15 Jun 2018, Ricardo Neri wrote:
->>> On Fri, Jun 15, 2018 at 11:19:09AM +0200, Thomas Gleixner wrote:
->>>> On Thu, 14 Jun 2018, Ricardo Neri wrote:
->>>>> Alternatively, there could be a counter that skips reading the HPET status
->>>>> register (and the detection of hardlockups) for every X NMIs. This would
->>>>> reduce the overall frequency of HPET register reads.
->>>>
->>>> Great plan. So if the watchdog is the only NMI (because perf is off) then
->>>> you delay the watchdog detection by that count.
->>>
->>> OK. This was a bad idea. Then, is it acceptable to have an read to an HPET
->>> register per NMI just to check in the status register if the HPET timer
->>> caused the NMI?
->>
->> The status register is useless in case of MSI. MSI is edge triggered ....
->>
->> The only register which gives you proper information is the counter
->> register itself. That adds an massive overhead to each NMI, because the
->> counter register access is synchronized to the HPET clock with hardware
->> magic. Plus on larger systems, the HPET access is cross node and even
->> slower.
-> 
-> It starts to sound that the HPET is too slow to drive the hardlockup detector.
-> 
-> Would it be possible to envision a variant of this implementation? In this
-> variant, the HPET only targets a single CPU. The actual hardlockup detector
-> is implemented by this single CPU sending interprocessor interrupts to the
-> rest of the CPUs.
-> 
-> In this manner only one CPU has to deal with the slowness of the HPET; the
-> rest of the CPUs don't have to read or write any HPET registers. A sysfs
-> entry could be added to configure which CPU will have to deal with the HPET
-> timer. However, profiling could not be done accurately on such CPU.
+Commit-ID:  139a67166b274176ee804260cb2c4c6de5689535
+Gitweb:     https://git.kernel.org/tip/139a67166b274176ee804260cb2c4c6de5689535
+Author:     Reinette Chatre <reinette.chatre@intel.com>
+AuthorDate: Thu, 7 Jun 2018 14:26:44 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 20 Jun 2018 00:56:36 +0200
 
-Please forgive my simple question:
+x86/intel_rdt: Enable entering of pseudo-locksetup mode
 
-What happens when this one CPU is the one that locks up?
+The user can request entering pseudo-locksetup mode by writing
+"pseudo-locksetup" to the mode file. Act on this request as well as
+support switching from a pseudo-locksetup mode (before pseudo-locked
+mode was entered). It is not supported to modify the mode once
+pseudo-locked mode has been entered.
 
-thnx,
--- 
-~Randy
+The schemata reflects the new mode by adding "uninitialized" to all
+resources. The size resctrl file reports zero for all cache domains in
+support of the uninitialized nature. Since there are no users of this
+class of service its allocations can be ignored when searching for
+appropriate default allocations for new resource groups. For the same
+reason resource groups in pseudo-locksetup mode are not considered when
+testing if new resource groups may overlap.
+
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: tony.luck@intel.com
+Cc: vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com
+Cc: jithu.joseph@intel.com
+Cc: dave.hansen@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/bbf8b7d6985e7a4df508cdc141e01b2d5c92372b.1528405411.git.reinette.chatre@intel.com
+
+---
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 16 +++++++----
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 41 +++++++++++++++++++++++++----
+ 2 files changed, 47 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index bc79396c5dad..1ed273220ffa 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -156,7 +156,8 @@ int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+ 	}
+ 
+ 	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
+-		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE) {
++		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
++		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+ 			rdt_last_cmd_printf("overlaps with other group\n");
+ 			return -EINVAL;
+ 		}
+@@ -356,10 +357,15 @@ int rdtgroup_schemata_show(struct kernfs_open_file *of,
+ 
+ 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
+ 	if (rdtgrp) {
+-		closid = rdtgrp->closid;
+-		for_each_alloc_enabled_rdt_resource(r) {
+-			if (closid < r->num_closid)
+-				show_doms(s, r, closid);
++		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++			for_each_alloc_enabled_rdt_resource(r)
++				seq_printf(s, "%s:uninitialized\n", r->name);
++		} else {
++			closid = rdtgrp->closid;
++			for_each_alloc_enabled_rdt_resource(r) {
++				if (closid < r->num_closid)
++					show_doms(s, r, closid);
++			}
+ 		}
+ 	} else {
+ 		ret = -ENOENT;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index e27583f3823e..8f50914dc45e 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -974,9 +974,10 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+ 	ctrl = d->ctrl_val;
+ 	for (i = 0; i < r->num_closid; i++, ctrl++) {
+ 		ctrl_b = (unsigned long *)ctrl;
+-		if (closid_allocated(i) && i != closid) {
++		mode = rdtgroup_mode_by_closid(i);
++		if (closid_allocated(i) && i != closid &&
++		    mode != RDT_MODE_PSEUDO_LOCKSETUP) {
+ 			if (bitmap_intersects(cbm, ctrl_b, r->cache.cbm_len)) {
+-				mode = rdtgroup_mode_by_closid(i);
+ 				if (exclusive) {
+ 					if (mode == RDT_MODE_EXCLUSIVE)
+ 						return true;
+@@ -1046,10 +1047,24 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+ 	mode = rdtgrp->mode;
+ 
+ 	if ((!strcmp(buf, "shareable") && mode == RDT_MODE_SHAREABLE) ||
+-	    (!strcmp(buf, "exclusive") && mode == RDT_MODE_EXCLUSIVE))
++	    (!strcmp(buf, "exclusive") && mode == RDT_MODE_EXCLUSIVE) ||
++	    (!strcmp(buf, "pseudo-locksetup") &&
++	     mode == RDT_MODE_PSEUDO_LOCKSETUP) ||
++	    (!strcmp(buf, "pseudo-locked") && mode == RDT_MODE_PSEUDO_LOCKED))
+ 		goto out;
+ 
++	if (mode == RDT_MODE_PSEUDO_LOCKED) {
++		rdt_last_cmd_printf("cannot change pseudo-locked group\n");
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	if (!strcmp(buf, "shareable")) {
++		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++			ret = rdtgroup_locksetup_exit(rdtgrp);
++			if (ret)
++				goto out;
++		}
+ 		rdtgrp->mode = RDT_MODE_SHAREABLE;
+ 	} else if (!strcmp(buf, "exclusive")) {
+ 		if (!rdtgroup_mode_test_exclusive(rdtgrp)) {
+@@ -1057,7 +1072,17 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
++		if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++			ret = rdtgroup_locksetup_exit(rdtgrp);
++			if (ret)
++				goto out;
++		}
+ 		rdtgrp->mode = RDT_MODE_EXCLUSIVE;
++	} else if (!strcmp(buf, "pseudo-locksetup")) {
++		ret = rdtgroup_locksetup_enter(rdtgrp);
++		if (ret)
++			goto out;
++		rdtgrp->mode = RDT_MODE_PSEUDO_LOCKSETUP;
+ 	} else {
+ 		rdt_last_cmd_printf("unknown/unsupported mode\n");
+ 		ret = -EINVAL;
+@@ -1127,8 +1152,12 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
+ 		list_for_each_entry(d, &r->domains, list) {
+ 			if (sep)
+ 				seq_putc(s, ';');
+-			cbm = d->ctrl_val[rdtgrp->closid];
+-			size = rdtgroup_cbm_to_size(r, d, cbm);
++			if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
++				size = 0;
++			} else {
++				cbm = d->ctrl_val[rdtgrp->closid];
++				size = rdtgroup_cbm_to_size(r, d, cbm);
++			}
+ 			seq_printf(s, "%d=%u", d->id, size);
+ 			sep = true;
+ 		}
+@@ -2269,6 +2298,8 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 			for (i = 0; i < r->num_closid; i++, ctrl++) {
+ 				if (closid_allocated(i) && i != closid) {
+ 					mode = rdtgroup_mode_by_closid(i);
++					if (mode == RDT_MODE_PSEUDO_LOCKSETUP)
++						break;
+ 					used_b |= *ctrl;
+ 					if (mode == RDT_MODE_SHAREABLE)
+ 						d->new_ctrl |= *ctrl;
