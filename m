@@ -2,144 +2,114 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC36C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ABBC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D4520846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B5A720846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:06:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g3MKz/rL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D4520846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="liXoFx26"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5A720846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754077AbeFTKFm (ORCPT
+        id S1754167AbeFTKGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:05:42 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36864 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeFTKFj (ORCPT
+        Wed, 20 Jun 2018 06:06:22 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54429 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752807AbeFTKGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:05:39 -0400
-Received: by mail-pf0-f193.google.com with SMTP id y5-v6so1362570pfn.4
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 03:05:39 -0700 (PDT)
+        Wed, 20 Jun 2018 06:06:20 -0400
+Received: by mail-wm0-f68.google.com with SMTP id o13-v6so4996561wmf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 03:06:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ybZ6l0/FKbOA/dhRErV7E4i06mHDeHq7tUIEdJJDjVc=;
-        b=g3MKz/rLD3wxc1Cp1K6/6xItkcLDpBLYjUu/B+QosH71gaxpHSjwnZ1ZUjYu7NAcI/
-         obRPfSFlU+jJQO349xYAwTfPFJU4njKeefWgqxdJSADPgA1BT+pmDYntj3IFVBKq6G2V
-         PsQpndt0nAOT2Q01pzBi26OlltFekx/ssGAtIXdI+sDZuRrkTO4Gsv1MT5LxU2zixMsV
-         pBAI9yUS6j0OqHOQHjhV0SE6rUsDryDjrWgha2IPqNy3ptqSY7Gk4qiAG9z5ohT0H0yL
-         vllCLOylCpA5k849XUWHUwBZSAGUrhm0Wlzt6wMJqk8stwvVABPpgfkJ38RjvoomtaCD
-         /xjQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=UfJCxoIz0mhDDFNPbe5wyBlsnGtctJC3btPJ4F7FFrI=;
+        b=liXoFx26Kc9itPprWM1k7p6DNaNdOngkq/KJW5fywjdFrSJ1zONBdbLCMuCJIecA2f
+         sakg3Sgw5/HdN9U1QoEv8usGrB+bOhi8ZS4oi+OtcBmasLcXYO7d1AXyaY9IWSFgwwyD
+         Mmo6eozdPcGOvUVulZ7sJPMdnmf6P9G6GBkxXE6fTtR8+4wu7KcRVixjvVoDw8IAQsea
+         IV6m2ltijqeGJSe4/+eoUtTL+LNa0fP2Et4EY3h96eEJ4ppb6aH99k+BK1she8xKTr/E
+         bCtW2huA3tYOUhCJCOSqY6JGSuhcFtCDit8pr7mxk2rr7ngtjzeJnFKH6yUilCC818SI
+         T+FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ybZ6l0/FKbOA/dhRErV7E4i06mHDeHq7tUIEdJJDjVc=;
-        b=pg0KzXZ5CBlwzvTt7nj+nF+YRgV/EQoPF5ko/Ow+IOGsjTFplaWDnsspd0eeYPWTbm
-         dalswRgiKmceruuPqSrIggJLLQLeVAmLgcls5Vp7ZMy/CSnS5azp36Q6LnPgSivSSLcg
-         gM+PJnArxeJ39UeNSoh/UfoCbgrrKMr014G9ArYHX3v4JESvu1WZErnDZbeaVzWbklGZ
-         uTMk1Jq6T+pr3NMjGI7IP6z8x28FJT/ts0s8pz0WBF9/wYK450caPMdLHgYs41elErSq
-         cV2eZJ0H0Olq0Oeteu5ihtge61EvDEIsnaEDt6RS/M0kZ75owvcAlUr4t3gWDeIcl+qF
-         usLg==
-X-Gm-Message-State: APt69E3yUAccobXa/wbes0x02K5UXBLcOJGt/HYjvhw8g2+oMhZ3/1Pl
-        J3X9j9zAmDYIuYaXas9k4G06AZss
-X-Google-Smtp-Source: ADUXVKKH08tmavmryE9N17NBxodG3kt0OD9fx/al+evuNvoLfmVP9zzn3mCgH8RrNkSvjMdBw+gnuA==
-X-Received: by 2002:a65:538e:: with SMTP id x14-v6mr18053625pgq.330.1529489138600;
-        Wed, 20 Jun 2018 03:05:38 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.70.11? ([2402:f000:1:1501:200:5efe:a66f:460b])
-        by smtp.gmail.com with ESMTPSA id g4-v6sm1924943pgc.8.2018.06.20.03.05.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 03:05:38 -0700 (PDT)
-Subject: Re: [PATCH] staging: rtl8723bs: Fix two possible
- sleep-in-atomic-context bugs in translate_scan()
-To:     Dan Carpenter <dan.carpenter@oracle.com>, cocci@systeme.lip6.fr,
-        Julia Lawall <Julia.Lawall@lip6.fr>
-Cc:     gregkh@linuxfoundation.org, quytelda@tamalin.org,
-        Larry.Finger@lwfinger.net, harshasharmaiitr@gmail.com,
-        arushisinghal19971997@gmail.com, amitoj1606@gmail.com,
-        jeremy.lefaure@lse.epita.fr, teo.dacquet@gmail.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20180620095016.8484-1-baijiaju1990@gmail.com>
- <20180620095650.fga6xi7fyjgybs76@mwanda>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <dd6eaaad-413e-bd5d-d0f4-0a6d05438395@gmail.com>
-Date:   Wed, 20 Jun 2018 18:05:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180620095650.fga6xi7fyjgybs76@mwanda>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UfJCxoIz0mhDDFNPbe5wyBlsnGtctJC3btPJ4F7FFrI=;
+        b=ah4CWYqRoAlDyHRvA/isXndXPRTxbKJhmK50CE7ziNrU9wT57kTPTsPFaD+bZ0xHDW
+         JnkL2zB9mjbVP9var8Q8Nt8mvRm8nL52FlMT5kr9ZuxM2XkhzNc3n3XZLv/f7VN0DOIx
+         P9QvBJdHvtiIzLclVwrb/YzeLtMDXSmOZiAcFmGWLO66M+wZM/RRNg/vOVp+pxZBBp7H
+         cujtGyqF0LfZnmcBUQ7Rv6rYg2V3M/sgKpfQUdGO05aqjuUGpWTkYFGE7thAr0UoOCK0
+         an7PvYmrwSjKhxRfYYM3iB54jT9OFUq4i0LWb6066f73Q4On1hSixzMXQgIqQpB+oV62
+         EwRw==
+X-Gm-Message-State: APt69E1ao/wYPunL1FjeKNcGlSwSfDbZ15U+qgykmcr0mqAyh26LDKYc
+        f3Zg+KZxscjwiCebpn2kdr0YIw==
+X-Google-Smtp-Source: ADUXVKJ2BJeQVIV6WpkOM4AiRv412P5fey6soJEJHfZ2/SSVg/+DkQkZEd1OWkE6NMaNCXxgnAyoDQ==
+X-Received: by 2002:a1c:908b:: with SMTP id s133-v6mr1225764wmd.35.1529489178983;
+        Wed, 20 Jun 2018 03:06:18 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id m10-v6sm2685852wrq.56.2018.06.20.03.06.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 03:06:18 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] clk: meson: drop clk-audio-divider
+Date:   Wed, 20 Jun 2018 12:06:08 +0200
+Message-Id: <20180620100610.29010-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As explained in the commit descriptions, clk-audio-divider was a poor
+solution to make sure PLL rates would be high enough while using CCF
+rate propagation to determine audio clock rates.
 
+Stopping rate propagation before the PLLs is actually simpler and provides
+better results. It also allow to get rid of clk-audio-divider.
 
-On 2018/6/20 17:56, Dan Carpenter wrote:
-> On Wed, Jun 20, 2018 at 05:50:16PM +0800, Jia-Ju Bai wrote:
->> The driver may sleep with holding a spinlock.
->> The function call paths (from bottom to top) in Linux-4.16.7 are:
->>
->> [FUNC] kzalloc(GFP_KERNEL)
->> drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 323:
->> 		kzalloc in translate_scan
->> drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 1554:
->> 		translate_scan in rtw_wx_get_scan
->> drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 1533:
->> 		spin_lock_bh in rtw_wx_get_scan
->>
->> [FUNC] kzalloc(GFP_KERNEL)
->> drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 455:
->> 		kzalloc in translate_scan
->> drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 1554:
->> 		translate_scan in rtw_wx_get_scan
->> drivers/staging/rtl8723bs/os_dep/ioctl_linux.c, 1533:
->> 		spin_lock_bh in rtw_wx_get_scan
->>
->> To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
->>
->> These bugs are found by my static analysis tool (DSAC-2) and checked by
->> my code review.
->>
->> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->> ---
->>   drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
->> index b26533983864..7632b8974563 100644
->> --- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
->> +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
->> @@ -321,7 +321,7 @@ static char *translate_scan(struct adapter *padapter,
->>   		RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("rtw_wx_get_scan: ssid =%s\n", pnetwork->network.Ssid.Ssid));
->>   		RT_TRACE(_module_rtl871x_mlme_c_, _drv_info_, ("rtw_wx_get_scan: wpa_len =%d rsn_len =%d\n", wpa_len, rsn_len));
->>   
->> -		buf = kzalloc(MAX_WPA_IE_LEN*2, GFP_KERNEL);
->> +		buf = kzalloc(MAX_WPA_IE_LEN*2, GFP_ATOMIC);
->>   		if (!buf)
->>   			return start;
-> Thanks!  It occurs to me that another way to detect this bug is that
-> one of the allocations in this function already uses GFP_ATOMIC.  It
-> doesn't normally make sense to mix GFP_ATOMIC and GFP_KERNEL when there
-> isn't any locking in the function.
+Off tree sound cards using these clocks should add the following to the
+sound card DT to properly setup the PLLs:
 
-Yes, this pattern is interesting for bug finding :)
-But to fix the bugs of this pattern, we need to decide whether 
-GFP_ATOMIC or GFP_KERNEL should be used here.
+	assigned-clocks = <&clkc CLKID_MPLL2>,
+	                  <&clkc CLKID_MPLL0>,
+	                  <&clkc CLKID_MPLL1>;
+	assigned-clock-parents = <0>, <0>, <0>;
+	assigned-clock-rates = <294912000>,
+	                       <270950400>,
+	                       <393216000>;
 
+* MPLL2: 294912000Hz: 192Khz * 32 * 24 * 2
+  used 24, 48, 96, 192Khz
 
-Best wishes,
-Jia-Ju Bai
+* MPLL0: 270950400Hz: 176.4Khz * 32 * 24 * 2
+  used for 5.512, 10.025, 20.05, 44.1, 88.2 and 176,4Khz
+
+* MPLL1: 393216000Hz: 64Khz * 32 * 24 * 8
+  used for 8, 16, 32 and 64Khz
+
+Jerome Brunet (2):
+  clk: meson: stop rate propagation for audio clocks
+  clk: meson: remove unused clk-audio-divider driver
+
+ drivers/clk/meson/Makefile            |   2 +-
+ drivers/clk/meson/clk-audio-divider.c | 110 ----------------------------------
+ drivers/clk/meson/clkc.h              |   7 ---
+ drivers/clk/meson/gxbb.c              |  16 +++--
+ 4 files changed, 8 insertions(+), 127 deletions(-)
+ delete mode 100644 drivers/clk/meson/clk-audio-divider.c
+
+-- 
+2.14.3
+
