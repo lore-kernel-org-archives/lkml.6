@@ -2,108 +2,350 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC6AC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C324C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49AF20872
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:23:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eviaLpmr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49AF20872
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id CA28B20872
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:24:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA28B20872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeFTNWQ (ORCPT
+        id S1753952AbeFTNYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:22:16 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:38018 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbeFTNWJ (ORCPT
+        Wed, 20 Jun 2018 09:24:52 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43651 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752725AbeFTNYt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:22:09 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5KDEbMB172287;
-        Wed, 20 Jun 2018 13:22:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2017-10-26;
- bh=E6Ex6l7W5KSwQZk37j/4OkLvZY5+Z2MBczXe9EUbs+I=;
- b=eviaLpmrjQ6FeZadTyQdEZX/nXjhCwNXMJD/ZzNV/x1ZvCRKxeRdAbmK13ITK5svto8s
- SaI62KdaKghFCrwaLHGnYTfGYN2Y0Of+P8ZA5l9A4++w66l/FUfV+xsZ85j845NvoUoP
- /ayHu3HlPKsesxqOIT7vxw1oibGq86bFna+bp8MXGZ6Rnbh+mCV2ZcSyZyL5aVuGdWsA
- K01VY+aGSVDOXQvQ0C4ivjeSdXHbko/7+TI0TIGOq5FHvfmCDn8CuX+DhNuXZnApAGnr
- KqbpLMTqg60h8eWt5MrYc8SlzAxIBbxlD1o6Ptc6r7xpVuRf4rC+glhdI3jOjdeLFQMh 3g== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jmr2mmkaf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 13:22:01 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5KDM1Kr031749
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jun 2018 13:22:01 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5KDM1Q9023890;
-        Wed, 20 Jun 2018 13:22:01 GMT
-Received: from will-ThinkCentre-M910s.cn.oracle.com (/10.182.70.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 20 Jun 2018 06:22:00 -0700
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk, hch@lst.de, martin.petersen@oracle.com,
-        keith.busch@intel.com, josef@toxicpanda.com, ulf.hansson@linaro.org
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5]stop normal completion path entering a timeout req
-Date:   Wed, 20 Jun 2018 21:22:39 +0800
-Message-Id: <1529500964-28429-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8929 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=269
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806200150
+        Wed, 20 Jun 2018 09:24:49 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5KDNWLD018781;
+        Wed, 20 Jun 2018 15:24:12 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2jqqgq82fe-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 20 Jun 2018 15:24:12 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CA74F42;
+        Wed, 20 Jun 2018 13:24:08 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9951C2B6F;
+        Wed, 20 Jun 2018 13:24:08 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.45) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 20 Jun
+ 2018 15:24:07 +0200
+Subject: Re: [PATCH V2 1/3] watchdog: stm32: add pclk feature for stm32mp1
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1529481238-15277-1-git-send-email-ludovic.Barre@st.com>
+ <1529481238-15277-2-git-send-email-ludovic.Barre@st.com>
+ <6162d701-2afd-5a22-d38f-7fb9e726cff7@roeck-us.net>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <e9babb86-7588-5de6-93ab-4cdd8982e773@st.com>
+Date:   Wed, 20 Jun 2018 15:24:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <6162d701-2afd-5a22-d38f-7fb9e726cff7@roeck-us.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear all
 
-scsi timeout and error handler are based on an assumption that normal
-completion mustn't do anything on an timeout request. After 12f5b931
-(blk-mq: Remove generation seqeunce), we lost this. __blk_mq_complete
-request could ensure a request won't be completed twice, but it can
-still complete a timeout request.
-scsi (even other drivers) have been working on this assumption for many
-years, it is dangerous to discard it suddenly. This patch set is to regain this.
 
-1st patch
- - introduce blk_mq_mark_rq_complete in blk_mq_check_expired and blk_mq_complete_request
-   to avoid the race between them.
- - blk_mq_complete_request cannot complete a timeout request anymore, so have to export
-   __blk_mq_complete_request for LLDD timeout path
-2nd ~ 5th patches
-  replace the blk_mq_complete_request to __blk_mq_complete_request.
+On 06/20/2018 11:19 AM, Guenter Roeck wrote:
+> On 06/20/2018 12:53 AM, Ludovic Barre wrote:
+>> From: Ludovic Barre <ludovic.barre@st.com>
+>>
+>> This patch adds config data to manage specific properties by
+>> compatible. Adds stm32mp1 config which requires pclk clock.
+>>
+>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+>> ---
+>>   .../devicetree/bindings/watchdog/st,stm32-iwdg.txt |  21 +++-
+>>   drivers/watchdog/stm32_iwdg.c                      | 132 
+>> ++++++++++++++-------
+>>   2 files changed, 104 insertions(+), 49 deletions(-)
+>>
+>> diff --git 
+>> a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt 
+>> b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
+>> index cc13b10a..f07f6d89 100644
+>> --- a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
+>> +++ b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
+>> @@ -2,18 +2,31 @@ STM32 Independent WatchDoG (IWDG)
+>>   ---------------------------------
+>>   Required properties:
+>> -- compatible: "st,stm32-iwdg"
+>> -- reg: physical base address and length of the registers set for the 
+>> device
+>> -- clocks: must contain a single entry describing the clock input
+>> +- compatible: Should be either "st,stm32-iwdg" or "st,stm32mp1-iwdg"
+>> +- reg: Physical base address and length of the registers set for the 
+>> device
+>> +- clocks: Reference to the clock entry lsi. Additional pclk clock entry
+>> +  is required only for st,stm32mp1-iwdg.
+>> +- clock-names: Name of the clocks used.
+>> +  "lsi" for st,stm32-iwdg
+>> +  "pclk", "lsi" for st,stm32mp1-iwdg
+>>   Optional Properties:
+>>   - timeout-sec: Watchdog timeout value in seconds.
+>> -Example:
+>> +Examples:
+>>   iwdg: watchdog@40003000 {
+>>       compatible = "st,stm32-iwdg";
+>>       reg = <0x40003000 0x400>;
+>>       clocks = <&clk_lsi>;
+>> +    clock-names = "lsi";
+>> +    timeout-sec = <32>;
+>> +};
+>> +
+>> +iwdg: iwdg@5a002000 {
+>> +    compatible = "st,stm32mp1-iwdg";
+>> +    reg = <0x5a002000 0x400>;
+>> +    clocks = <&rcc IWDG2>, <&clk_lsi>;
+>> +    clock-names = "pclk", "lsi";
+>>       timeout-sec = <32>;
+>>   };
+>> diff --git a/drivers/watchdog/stm32_iwdg.c 
+>> b/drivers/watchdog/stm32_iwdg.c
+>> index c97ad56..fc96670 100644
+>> --- a/drivers/watchdog/stm32_iwdg.c
+>> +++ b/drivers/watchdog/stm32_iwdg.c
+>> @@ -11,12 +11,13 @@
+>>   #include <linux/clk.h>
+>>   #include <linux/delay.h>
+>> -#include <linux/kernel.h>
+>> -#include <linux/module.h>
+>>   #include <linux/interrupt.h>
+>>   #include <linux/io.h>
+>>   #include <linux/iopoll.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>>   #include <linux/of.h>
+>> +#include <linux/of_device.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/watchdog.h>
+>> @@ -54,11 +55,17 @@
+>>   #define TIMEOUT_US    100000
+>>   #define SLEEP_US    1000
+>> +struct stm32_iwdg_config {
+>> +    bool has_pclk;
+>> +};
+>> +
+> 
+> This data structure is unnecessary. Just assign the boolean directly to 
+> .data
+> and ...
+> 
 
-Jianchao Wang(5)
-blk-mq: prevent normal completion from entering a timeout request
-nbd: use __blk_mq_complete_request in timeout path
-null_blk: use __blk_mq_complete_request in timeout path
-mmc: use __blk_mq_complete_request in timeout path
-nvme: use __blk_mq_complete_request in timeout path
+Ok, I send a v3, with boolean directly to .data
+like:
 
- block/blk-mq.c             | 22 +++++++++++++++-------
- drivers/block/nbd.c        |  2 +-
- drivers/block/null_blk.c   |  2 +-
- drivers/mmc/core/queue.c   |  2 +-
- drivers/nvme/host/pci.c    |  8 ++++++++
- drivers/nvme/host/rdma.c   |  1 +
- drivers/nvme/target/loop.c |  1 +
- include/linux/blk-mq.h     |  1 +
- include/linux/blkdev.h     |  6 ++++++
+#define NO_PCLK		false
+#define HAS_PCLK	true
+...
+static const struct of_device_id stm32_iwdg_of_match[] = {
+	{ .compatible = "st,stm32-iwdg", .data = (void *) NO_PCLK },
+	{ .compatible = "st,stm32mp1-iwdg", .data = (void *) HAS_PCLK },
+	{ /* end node */ }
+};
 
-Thanks
-Jianchao
+Note:
+V3, because I sent my original version with V2
+(it's mistake)
+
+>>   struct stm32_iwdg {
+>> -    struct watchdog_device    wdd;
+>> -    void __iomem        *regs;
+>> -    struct clk        *clk;
+>> -    unsigned int        rate;
+>> +    struct watchdog_device        wdd;
+>> +    void __iomem            *regs;
+>> +    struct stm32_iwdg_config    *config;
+> 
+> declare bool has_pclk here.
+> 
+>> +    struct clk            *clk_lsi;
+>> +    struct clk            *clk_pclk;
+>> +    unsigned int            rate;
+>>   };
+>>   static inline u32 reg_read(void __iomem *base, u32 reg)
+>> @@ -133,6 +140,44 @@ static int stm32_iwdg_set_timeout(struct 
+>> watchdog_device *wdd,
+>>       return 0;
+>>   }
+>> +static int stm32_iwdg_clk_init(struct platform_device *pdev,
+>> +                   struct stm32_iwdg *wdt)
+>> +{
+>> +    u32 ret;
+>> +
+>> +    wdt->clk_lsi = devm_clk_get(&pdev->dev, "lsi");
+>> +    if (IS_ERR(wdt->clk_lsi)) {
+>> +        dev_err(&pdev->dev, "Unable to get lsi clock\n");
+>> +        return PTR_ERR(wdt->clk_lsi);
+>> +    }
+>> +
+>> +    /* optional peripheral clock */
+>> +    if (wdt->config->has_pclk) {
+>> +        wdt->clk_pclk = devm_clk_get(&pdev->dev, "pclk");
+>> +        if (IS_ERR(wdt->clk_pclk)) {
+>> +            dev_err(&pdev->dev, "Unable to get pclk clock\n");
+>> +            return PTR_ERR(wdt->clk_pclk);
+>> +        }
+>> +
+>> +        ret = clk_prepare_enable(wdt->clk_pclk);
+>> +        if (ret) {
+>> +            dev_err(&pdev->dev, "Unable to prepare pclk clock\n");
+>> +            return ret;
+>> +        }
+>> +    }
+>> +
+>> +    ret = clk_prepare_enable(wdt->clk_lsi);
+>> +    if (ret) {
+>> +        dev_err(&pdev->dev, "Unable to prepare lsi clock\n");
+>> +        clk_disable_unprepare(wdt->clk_pclk);
+>> +        return ret;
+>> +    }
+>> +
+>> +    wdt->rate = clk_get_rate(wdt->clk_lsi);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   static const struct watchdog_info stm32_iwdg_info = {
+>>       .options    = WDIOF_SETTIMEOUT |
+>>                 WDIOF_MAGICCLOSE |
+>> @@ -147,49 +192,50 @@ static const struct watchdog_ops stm32_iwdg_ops = {
+>>       .set_timeout    = stm32_iwdg_set_timeout,
+>>   };
+>> +static const struct stm32_iwdg_config stm32_iwdg_cfg = {
+>> +    .has_pclk = false,
+>> +};
+>> +
+>> +static const struct stm32_iwdg_config stm32mp1_iwdg_cfg = {
+>> +    .has_pclk = true,
+>> +};
+>> +
+>> +static const struct of_device_id stm32_iwdg_of_match[] = {
+>> +    { .compatible = "st,stm32-iwdg", .data = &stm32_iwdg_cfg },
+>> +    { .compatible = "st,stm32mp1-iwdg", .data = &stm32mp1_iwdg_cfg },
+>> +    { /* end node */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, stm32_iwdg_of_match);
+>> +
+>>   static int stm32_iwdg_probe(struct platform_device *pdev)
+>>   {
+>>       struct watchdog_device *wdd;
+>> +    const struct of_device_id *match;
+>>       struct stm32_iwdg *wdt;
+>>       struct resource *res;
+>> -    void __iomem *regs;
+>> -    struct clk *clk;
+>>       int ret;
+>> +    match = of_match_device(stm32_iwdg_of_match, &pdev->dev);
+>> +    if (!match || !match->data)
+>> +        return -ENODEV;
+>> +
+>> +    wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
+>> +    if (!wdt)
+>> +        return -ENOMEM;
+>> +
+>> +    wdt->config = (struct stm32_iwdg_config *)match->data;
+>> +
+>>       /* This is the timer base. */
+>>       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> -    regs = devm_ioremap_resource(&pdev->dev, res);
+>> -    if (IS_ERR(regs)) {
+>> +    wdt->regs = devm_ioremap_resource(&pdev->dev, res);
+>> +    if (IS_ERR(wdt->regs)) {
+>>           dev_err(&pdev->dev, "Could not get resource\n");
+>> -        return PTR_ERR(regs);
+>> +        return PTR_ERR(wdt->regs);
+>>       }
+>> -    clk = devm_clk_get(&pdev->dev, NULL);
+>> -    if (IS_ERR(clk)) {
+>> -        dev_err(&pdev->dev, "Unable to get clock\n");
+>> -        return PTR_ERR(clk);
+>> -    }
+>> -
+>> -    ret = clk_prepare_enable(clk);
+>> -    if (ret) {
+>> -        dev_err(&pdev->dev, "Unable to prepare clock %p\n", clk);
+>> +    ret = stm32_iwdg_clk_init(pdev, wdt);
+>> +    if (ret)
+>>           return ret;
+>> -    }
+>> -
+>> -    /*
+>> -     * Allocate our watchdog driver data, which has the
+>> -     * struct watchdog_device nested within it.
+>> -     */
+>> -    wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
+>> -    if (!wdt) {
+>> -        ret = -ENOMEM;
+>> -        goto err;
+>> -    }
+>> -
+>> -    /* Initialize struct stm32_iwdg. */
+>> -    wdt->regs = regs;
+>> -    wdt->clk = clk;
+>> -    wdt->rate = clk_get_rate(clk);
+>>       /* Initialize struct watchdog_device. */
+>>       wdd = &wdt->wdd;
+>> @@ -217,7 +263,8 @@ static int stm32_iwdg_probe(struct platform_device 
+>> *pdev)
+>>       return 0;
+>>   err:
+>> -    clk_disable_unprepare(clk);
+>> +    clk_disable_unprepare(wdt->clk_lsi);
+>> +    clk_disable_unprepare(wdt->clk_pclk);
+>>       return ret;
+>>   }
+>> @@ -227,23 +274,18 @@ static int stm32_iwdg_remove(struct 
+>> platform_device *pdev)
+>>       struct stm32_iwdg *wdt = platform_get_drvdata(pdev);
+>>       watchdog_unregister_device(&wdt->wdd);
+>> -    clk_disable_unprepare(wdt->clk);
+>> +    clk_disable_unprepare(wdt->clk_lsi);
+>> +    clk_disable_unprepare(wdt->clk_pclk);
+>>       return 0;
+>>   }
+>> -static const struct of_device_id stm32_iwdg_of_match[] = {
+>> -    { .compatible = "st,stm32-iwdg" },
+>> -    { /* end node */ }
+>> -};
+>> -MODULE_DEVICE_TABLE(of, stm32_iwdg_of_match);
+>> -
+>>   static struct platform_driver stm32_iwdg_driver = {
+>>       .probe        = stm32_iwdg_probe,
+>>       .remove        = stm32_iwdg_remove,
+>>       .driver = {
+>>           .name    = "iwdg",
+>> -        .of_match_table = stm32_iwdg_of_match,
+>> +        .of_match_table = of_match_ptr(stm32_iwdg_of_match),
+>>       },
+>>   };
+>>   module_platform_driver(stm32_iwdg_driver);
+>>
+> 
