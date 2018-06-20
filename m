@@ -6,176 +6,94 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DEBC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DD6C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCE9D20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:18:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22888208A6
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:18:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Whrgcppt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE9D20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AEqU61ph"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22888208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754682AbeFTJSA (ORCPT
+        id S1754798AbeFTJSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:18:00 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50394 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754308AbeFTJRy (ORCPT
+        Wed, 20 Jun 2018 05:18:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60474 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753594AbeFTJR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:17:54 -0400
-Received: by mail-wm0-f66.google.com with SMTP id e16-v6so4797690wmd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 02:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=sqkIlXndxs3O1MWutX6a2+i4Okp1YoZBFCnTYsNDi7A=;
-        b=Whrgcppt2PrRTrTjgnRQf2ngQEsfp6jxKvl0BL8OfmQvoU+i96po3xu8VQY6lqLwg5
-         roFtBhXi53H3Pygo8bJUsC3bHs5bdUHwj3zkj3hoRZThL9KF+bOm1UohPoOiKnZ5Sp6V
-         JvDvkY1FD1GrGubnZpiknUJw0IgBTljm25tM8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=sqkIlXndxs3O1MWutX6a2+i4Okp1YoZBFCnTYsNDi7A=;
-        b=VF0Tt85Txkpzw44WTCfdREs9nAlWwgOVtgf1xw0yHVHvoOsg1C9yo41CknJ4z12alU
-         jPVbBEWGdVDF+z13N2Ab5bZfO67u3ujA4Sp+A5IbCaP0RPejRBqiG99QuSmHumGM2jUC
-         eDw/a7fkSt7uLwT9lhjWyjgmHUT3xIcop3MnWxTFAb5zgOcEF8mA4ReaPlaryada1CNw
-         YVjtw0JZbyuGWVogilgvWnDdiHgUE4uAfnCUzKNej6sOy155q7fNHWTw2v+gYWmfS+U9
-         X7FXWuSzOY/ZIWwAVnMJDlR0HcVX+mOgXYgggYWB0sR3//rjMOntZnYZ0YudP1YxuqAa
-         xOrg==
-X-Gm-Message-State: APt69E0PAXxjwivTr112LvAYlbjF0W5B5newDtoJ6Kg3p3et3kSCxAD8
-        TR1pr+0j2g2by9XPQYNsd9+BK7xS
-X-Google-Smtp-Source: ADUXVKKF1NxRYIjn5lU6Tg5RMJeZ+ktLq/TstszHW5P/+YkWn7Bf1tY3ytkwqDE102GsXoA8+uqbWA==
-X-Received: by 2002:aa7:c486:: with SMTP id m6-v6mr17985488edq.266.1529486273154;
-        Wed, 20 Jun 2018 02:17:53 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5628:0:9802:bb08:74d1:12e1])
-        by smtp.gmail.com with ESMTPSA id 2-v6sm1058119edz.67.2018.06.20.02.17.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 02:17:52 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 11:17:50 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-media@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
-Message-ID: <20180620091750.GD7186@phenom.ffwll.local>
-Mail-Followup-To: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-media@vger.kernel.org
-References: <20180526155623.12610-1-digetx@gmail.com>
- <20180526155623.12610-2-digetx@gmail.com>
- <20180528131501.GK23723@intel.com>
- <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
- <20180529071103.GL23723@intel.com>
- <20180619174011.GJ17671@n2100.armlinux.org.uk>
+        Wed, 20 Jun 2018 05:17:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eMR7ibTmNe3ELDK64esigCjsQC4vZ1gIcPqREVgCnZk=; b=AEqU61ph9g6gnWPKf+wdsQvn2
+        72+NWq3ih/NAd75Bpruke9Ker9fOHNJOgAoXn0pLTC1qEGMJEtNcrWGEJSRIeJITCCUenAwbucHpB
+        Qs3OP4zA7KyXkHSdtsisJbGOt2Rew3WDjYKX/xd4oTpfngIIZka8ynpL7CvDsK85RZ11GSaOkfzxw
+        q1INf38HksTau737ccrhVORjIJvXOHD/dP2t0jBAk3Lq+ww/kNi0qKWmL5bN4P5tDP8H8J/Yure+j
+        UHEpqb0EQTEj0aw0+NcNVgfJar53RssQ4im5mYMz8sjBjofuMz+WuBeuiet9szkU9XodCZLNoUXb2
+        tMdsd7t1A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVZFR-00007G-Tu; Wed, 20 Jun 2018 09:17:54 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 496122029F1DD; Wed, 20 Jun 2018 11:17:52 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 11:17:52 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] locking/rwsem: Fix up_read_non_owner() warning with
+ DEBUG_RWSEMS
+Message-ID: <20180620091752.GL2476@hirez.programming.kicks-ass.net>
+References: <1527168398-4291-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180619174011.GJ17671@n2100.armlinux.org.uk>
-X-Operating-System: Linux phenom 4.15.0-3-amd64 
+In-Reply-To: <1527168398-4291-1-git-send-email-longman@redhat.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 06:40:12PM +0100, Russell King - ARM Linux wrote:
-> On Tue, May 29, 2018 at 10:11:03AM +0300, Ville Syrjälä wrote:
-> > On Tue, May 29, 2018 at 02:48:22AM +0300, Dmitry Osipenko wrote:
-> > > Though maybe "color components replacement" and "replacement with a complete
-> > > transparency" could be factored out into a specific color keying modes.
-> > 
-> > Yes. I've never seen those in any hardware. In fact I'm wondering where
-> > is the userspace for all these complex modes? Ie. should we even bother
-> > with them at this time?
+On Thu, May 24, 2018 at 09:26:38AM -0400, Waiman Long wrote:
+> It was found that the use of up_read_non_owner() in NFS was causing
+> the following warning when DEBUG_RWSEMS was configured.
 > 
-> Such hardware does exist - here's what Armada 510 supports (and is
-> supported via armada-drm):
+>   DEBUG_LOCKS_WARN_ON(sem->owner != ((struct task_struct *)(1UL << 0)))
 > 
-> Color Key Mode
-> 0 = Disable: Disable color key function.
-> 1 = EnableY: Video Y color key is enabled.
-> 2 = EnableU: Video U color key is enabled.
-> 3 = EnableRGB: Graphic RGB color key is enabled.
-> 4 = EnableV: Video V color key is enabled.
-> 5 = EnableR: Graphic R color key is enabled.
-> 6 = EnableG: Graphic G color key is enabled.
-> 7 = EnableB: Graphic B color key is enabled.
+> Looking into the rwsem.c file, it was discovered that the corresponding
+> down_read_non_owner() function was not setting the owner field properly.
+> This is fixed now, and the warning should be gone.
 > 
-> The description of how the colour keying works isn't particularly good,
-> which is rather unfortunate, but basically, there's three 32-bit
-> registers named LCD_SPU_COLORKEY_Y, LCD_SPU_COLORKEY_U and
-> LCD_SPU_COLORKEY_V.
-> 
-> When a graphic mode is selected, then:
->  LCD_SPU_COLORKEY_Y is the R or B component depending on the red/blue swap
->  LCD_SPU_COLORKEY_U is the G component
->  LCD_SPU_COLORKEY_V is the B or R component according to the swap
-> 
-> 31:24 is the high bound for the component (inclusive)
-> 23:16 is the low bound for the component (inclusive)
-> 15:8  is the replacement value for the component
->  7:0  is the alpha value - seems to only be for LCD_SPU_COLORKEY_Y and
-> 	ignored in the other registers when in RGB mode, but I've not
-> 	fully tested this.  I suspect it's used with the single-channel
-> 	colour keying modes.
-> 
-> The colour key stage provides an alpha value to the next stage - which
-> is alpha blending between the graphic (primary) plane and video
-> (overlay) plane.  Zero gives overlay only, 255 gives graphic only.
-> 
-> So, it's possible to use an 0x0101fe (RGB) colour key, and have it
-> appear as "black" on the screen if you disable the overlay plane,
-> rather than the unsightly bright blue.
-> 
-> One point to make though is about what userspace expects _today_ from
-> overlay.  VLC, for example, expects overlay to be colour keyed, so it
-> can display its full-screen controller when the user moves the mouse.
-> I don't believe it explicitly sets up colour keying, but just expects
-> it to be there and functional.  It _is_ rather necessary when you
-> consider that overlay via the Xvideo extension is supposed to be
-> "drawn" into the specified drawable, which may be a mapped window
-> partially obscured by other mapped windows.
-> 
-> Maybe if the kernel DRM components doesn't want to do that, it'd be
-> something that an Xorg DDX would have to default-enable to ensure
-> that existing applications and expected Xorg behaviour doesn't break.
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-Yes -modesetting (or whichever other driver) would need to set up the
-properties correctly for Xvideo color keying. Since default assumption for
-all other (generic) compositors is that planes won't do any color keying
-in the boot-up state.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+> ---
+>  kernel/locking/rwsem.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+> index bc1e507..776308d 100644
+> --- a/kernel/locking/rwsem.c
+> +++ b/kernel/locking/rwsem.c
+> @@ -181,6 +181,7 @@ void down_read_non_owner(struct rw_semaphore *sem)
+>  	might_sleep();
+>  
+>  	__down_read(sem);
+> +	rwsem_set_reader_owned(sem);
+>  }
+>  
+>  EXPORT_SYMBOL(down_read_non_owner);
+> -- 
+> 1.8.3.1
+> 
