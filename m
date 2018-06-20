@@ -5,151 +5,90 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EE2C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43877C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 071A620652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:11:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 071A620652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0744820846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:12:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0744820846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754845AbeFTJLy convert rfc822-to-8bit (ORCPT
+        id S1754801AbeFTJM1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:11:54 -0400
-Received: from mga09.intel.com ([134.134.136.24]:1519 "EHLO mga09.intel.com"
+        Wed, 20 Jun 2018 05:12:27 -0400
+Received: from mga09.intel.com ([134.134.136.24]:1546 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752308AbeFTJLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:11:49 -0400
+        id S1754295AbeFTJMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:12:22 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 02:11:48 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 02:12:21 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,246,1526367600"; 
-   d="scan'208";a="60738562"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga003.jf.intel.com with ESMTP; 20 Jun 2018 02:11:47 -0700
-Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 20 Jun 2018 02:11:47 -0700
-Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
- FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 20 Jun 2018 02:11:47 -0700
-Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.223]) by
- SHSMSX104.ccr.corp.intel.com ([169.254.5.87]) with mapi id 14.03.0319.002;
- Wed, 20 Jun 2018 17:11:40 +0800
-From:   "Wang, Wei W" <wei.w.wang@intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-CC:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: RE: [virtio-dev] Re: [PATCH v33 2/4] virtio-balloon:
- VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Thread-Topic: [virtio-dev] Re: [PATCH v33 2/4] virtio-balloon:
- VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Thread-Index: AQHUBGb1uIuE7GdLXUGMzLE4+zixk6RgrO+AgACbr0D//5LxAIAAh+EwgANlzICAAQ0KgIAAj48AgAEfQ4D//6O1gIABpEBg
-Date:   Wed, 20 Jun 2018 09:11:39 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F7396AE2EC@shsmsx102.ccr.corp.intel.com>
-References: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com>
- <1529037793-35521-3-git-send-email-wei.w.wang@intel.com>
- <20180615144000-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396A3D04@shsmsx102.ccr.corp.intel.com>
- <20180615171635-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396A5CB0@shsmsx102.ccr.corp.intel.com>
- <20180618051637-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396AA10C@shsmsx102.ccr.corp.intel.com>
- <20180619055449-mutt-send-email-mst@kernel.org> <5B28F371.9020308@intel.com>
- <20180619173256-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20180619173256-mutt-send-email-mst@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGYwOWMxNWUtNzNiYi00YTk3LTgzOWItNThkYzY3NjZlMmIwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZGFPNFhhY2tvWDNIV3FyK1hnVVJsb3E3TDdEVXFsSE1qZjNiMnIxaWhZcnJtQ2lYbnhmczZvRWVFZmNGSkJhdSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+   d="scan'208";a="50437870"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by orsmga007.jf.intel.com with ESMTP; 20 Jun 2018 02:12:20 -0700
+Subject: Re: [BUG] usb: xhci: Two possible sleep-in-atomic-context bugs
+To:     Peter Chen <peter.chen@nxp.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <a2f62eac-b3e1-bd1e-3993-83e2f6adef03@gmail.com>
+ <HE1PR04MB14501B0EC65D993623D96A168B770@HE1PR04MB1450.eurprd04.prod.outlook.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <8410b5bf-097c-2b53-84ff-221fb4ab03fa@linux.intel.com>
+Date:   Wed, 20 Jun 2018 12:15:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <HE1PR04MB14501B0EC65D993623D96A168B770@HE1PR04MB1450.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, June 19, 2018 10:43 PM, Michael S. Tsirk wrote:
-> On Tue, Jun 19, 2018 at 08:13:37PM +0800, Wei Wang wrote:
-> > On 06/19/2018 11:05 AM, Michael S. Tsirkin wrote:
-> > > On Tue, Jun 19, 2018 at 01:06:48AM +0000, Wang, Wei W wrote:
-> > > > On Monday, June 18, 2018 10:29 AM, Michael S. Tsirkin wrote:
-> > > > > On Sat, Jun 16, 2018 at 01:09:44AM +0000, Wang, Wei W wrote:
-> > > > > > Not necessarily, I think. We have min(4m_page_blocks / 512,
-> > > > > > 1024) above,
-> > > > > so the maximum memory that can be reported is 2TB. For larger
-> guests, e.g.
-> > > > > 4TB, the optimization can still offer 2TB free memory (better
-> > > > > than no optimization).
-> > > > >
-> > > > > Maybe it's better, maybe it isn't. It certainly muddies the waters even
-> more.
-> > > > > I'd rather we had a better plan. From that POV I like what
-> > > > > Matthew Wilcox suggested for this which is to steal the necessary # of
-> entries off the list.
-> > > > Actually what Matthew suggested doesn't make a difference here.
-> > > > That method always steal the first free page blocks, and sure can
-> > > > be changed to take more. But all these can be achieved via kmalloc
-> > > I'd do get_user_pages really. You don't want pages split, etc.
+On 20.06.2018 06:28, Peter Chen wrote:
+>   
+>>
+>> The driver may sleep with holding a spinlock.
+>> The function call paths (from bottom to top) in Linux-4.16.7 are:
+>>
+>> [FUNC] schedule
+>> drivers/base/power/runtime.c, 741: schedule in rpm_resume
+>> drivers/base/power/runtime.c, 1322: rpm_resume in pm_runtime_forbid
+>> drivers/usb/host/xhci-hub.c, 647: pm_runtime_forbid in xhci_enter_test_mode
+>> drivers/usb/host/xhci-hub.c, 632: _raw_spin_lock_irqsave in xhci_enter_test_mode
+>>
+>> [FUNC] schedule
+>> drivers/base/power/runtime.c, 570: schedule in rpm_suspend
+>> drivers/base/power/runtime.c, 434: rpm_suspend in rpm_idle
+>> drivers/base/power/runtime.c, 1343: rpm_idle in pm_runtime_allow
+>> drivers/usb/host/xhci-hub.c, 670: pm_runtime_allow in xhci_exit_test_mode
+>> drivers/usb/host/xhci-hub.c, 1387: xhci_exit_test_mode in xhci_hub_control
+>> drivers/usb/host/xhci-hub.c, 1038: _raw_spin_lock_irqsave in xhci_hub_control
+>>
+>> These bugs are found by my static analysis tool (DSAC-2) and checked by my code
+>> review.
+>>
 > 
-> Oops sorry. I meant get_free_pages .
+> I don't think runtime PM API is needed at xhci_hub_control since the controller should
+> be always active, Mathias, do you agree I delete pm_runtime_forbid and pm_runtime_allow
+> to fix this issue?
+> 
 
-Yes, we can use __get_free_pages, and the max allocation is MAX_ORDER - 1, which can report up to 2TB free memory. 
+The USB2 test mode is a bit special, it will disable all connected devices, and halt the host.
+Port should stay in test mode until feature is cleared or host reset.
+There is a risk runtime suspend will try to suspend the host as no devices seem preset.
 
-"getting two pages isn't harder", do you mean passing two arrays (two allocations by get_free_pages(,MAX_ORDER -1)) to the mm API?
+But I think pm_runtime_get_noresume() and pm_runtime_put_noidle() could be used instad,
+those should be safe.
 
-Please see if the following logic aligns to what you think:
+-Mathias
 
-        uint32_t i, max_hints, hints_per_page, hints_per_array, total_arrays;
-        unsigned long *arrays;
- 
-     /*
-         * Each array size is MAX_ORDER_NR_PAGES. If one array is not enough to
-         * store all the hints, we need to allocate multiple arrays.
-         * max_hints: the max number of 4MB free page blocks
-         * hints_per_page: the number of hints each page can store
-         * hints_per_array: the number of hints an array can store
-         * total_arrays: the number of arrays we need
-         */
-        max_hints = totalram_pages / MAX_ORDER_NR_PAGES;
-        hints_per_page = PAGE_SIZE / sizeof(__le64);
-        hints_per_array = hints_per_page * MAX_ORDER_NR_PAGES;
-        total_arrays = max_hints /  hints_per_array +
-                       !!(max_hints % hints_per_array);
-        arrays = kmalloc(total_arrays * sizeof(unsigned long), GFP_KERNEL);
-        for (i = 0; i < total_arrays; i++) {
-                arrays[i] = __get_free_pages(__GFP_ATOMIC | __GFP_NOMEMALLOC, MAX_ORDER - 1);
-
-              if (!arrays[i])
-                      goto out;
-        }
-
-
-- the mm API needs to be changed to support storing hints to multiple separated arrays offered by the caller.
-
-Best,
-Wei
