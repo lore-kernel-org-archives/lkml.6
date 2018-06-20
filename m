@@ -4,60 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABDDC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E38FC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B6E720846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C687720846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 17:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RZAjwNiP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B6E720846
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vpxHpj3N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C687720846
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754733AbeFTRrO (ORCPT
+        id S1754565AbeFTRkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 13:47:14 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37006 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754442AbeFTRkO (ORCPT
+        Wed, 20 Jun 2018 13:40:12 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36838 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754218AbeFTRkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 13:40:14 -0400
-Received: by mail-wm0-f66.google.com with SMTP id r125-v6so996835wmg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:40:14 -0700 (PDT)
+        Wed, 20 Jun 2018 13:40:08 -0400
+Received: by mail-wr0-f193.google.com with SMTP id f16-v6so380553wrm.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 10:40:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tB4UWhMaNQffoQbAPM7NOHomrrfVksNGHY9yx1VD2yU=;
-        b=RZAjwNiPmjyJp29bPlp8gxw3rG0h9l2DKYUD3bs9ne+Yn5OMNkHRuzb+/GUfGVDB04
-         N/6mPlVH2DM4bySGoit/dM64qclMS60gDhBjSlwUDXjayhHKXBoS6KlS60a70zt/TjGH
-         9hQp1Ayb5tv6Kbr9udS7AEcArs0BGAf0N6AJSC0YJIeXui2Fi4kWRDfUjrybQI2IyNMp
-         d0B14jS2FrBnFozmKgI5zfIiD28jHGTx0RzxBuIB9/JzYsaJnHdt7lQBRv1UKc2D8I1z
-         GCcdLc/YlmWoj62QWCzRyT00Hpkfc+YLQlpYqWevSPCLSc0if+oLpbRa7t4TnDk/xJHH
-         Twpg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EfDe1bIAN2fFloYdLlLUqJDS+Eyt0fXBp2+0p3tnM8s=;
+        b=vpxHpj3Nx5D3VFMPpTkOuhBePB9ha/yh442gfXMSMynhRCB7BwtCT+vNSZrL06avY/
+         Pg0onYQDep3dYmm5yIyyKUW03r80G+orbfJFRdD5t8Mmv4erq/RLpIlYLcRkiSvSOrYq
+         WuhUJDH6ApyklNdBdA3ZD5RlXjoHzmmGhvGG+t+zAna7HMw5zhKYX0GGOfC0UTHn7kfn
+         YyUwoBAIEIGfha3iRYjeTbYJYCZl6qundSgZDTnOP2nFc5B2EV1VVxLDgQ/J2GToueKA
+         X8tcxKuvdMwfs0a6SsxuqKTZ8u8uB88FIizCreuCn6z5JSiugLdeAiWsup3gT/7bdXBe
+         TT+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tB4UWhMaNQffoQbAPM7NOHomrrfVksNGHY9yx1VD2yU=;
-        b=ZZtGaf8mOMkJQ1aR1+8MmPrF+W/nsVUfWUTnZPmsW8KbhnUnQ3NMv3fF6uvd2siuSy
-         Prdw5/sdEILc7MD2rk6fOakbeo8gzKFqh8XOzw1Xh5kyhBYcStePHAfjDC1BFhLN1Phs
-         UBIGTzFihnV1cvsRyS/AkiG7xY66rfVM7bJgdAD/nxG8bTm6XJRI/GPUHCTlRea4cI2w
-         nD9dwyDh59y1ou58Kem0ME37Ju1XVHbJ6cIeAbQRNWcjqATikls4QZUcTdtC+VM/Sc2D
-         NodVZjHJtUGSJDHR4IWJHV3gGZeJ/2iLSaXUHFFrUUaKFVw8q1wHUUvDAH5fOa4oMAQy
-         gwqg==
-X-Gm-Message-State: APt69E3/RC0+7969rnnatCx+KwMJadCq3to04VIso7WctgM9BVhYd8bj
-        cEFT/W8Ku1Dnkbfw527kofv9pQ==
-X-Google-Smtp-Source: ADUXVKKc2qUfzDyQAC8oFyJzKs2oHOk+fDpwj3O8IpWEMp1rs5cMpoOeRq48d6eJGtXDJlJDu6mymw==
-X-Received: by 2002:a1c:630b:: with SMTP id x11-v6mr2578729wmb.104.1529516413222;
-        Wed, 20 Jun 2018 10:40:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EfDe1bIAN2fFloYdLlLUqJDS+Eyt0fXBp2+0p3tnM8s=;
+        b=QY9BMMjUHSGoB5MviDkWOO9ZgwlZjXmHa4UQEXNRkVoA87ZS7o31LpR8Rx8cTYCM3P
+         IV0U4rA0GNmoWKva/+kWfWwKb2Tx4cPCFlO4PzJrm/uvhMl2PNuPypBWiIgPgNdUEBkF
+         2NyLwO11+PrAUgFJVWY5Dp7FEik8kZiWAVvJ9ehcwkYZ3h2eCd7or0Obta04JlPM7K8A
+         GB0+jdMgfGSwNV0A9aJfPKGDmhucNhkCm7MpqmYluRNkIlkI/LOsPFAxzzX95u29kvKE
+         fdPuN5ScSaa9paIs7IGiDkejiS+1ACIkwcTh6uo3vbghBi8Yg2n+bxHsnJ7prtp+C0P0
+         FN6A==
+X-Gm-Message-State: APt69E27DEKFMSWg0BKgWnBJ0N7CpnQBlJ4gE2VYkQ4s655Ku+Oc25vg
+        GsvQfOoosuurtJsrhgve5kzvhA==
+X-Google-Smtp-Source: ADUXVKLsCnaV6li7jT9gBy0rsYIsn2l1bLYDNsq3njDfPxHtlWogd0B3UsYWDNRy1qxdItSCbALpHQ==
+X-Received: by 2002:adf:a60c:: with SMTP id k12-v6mr19489683wrc.200.1529516406446;
+        Wed, 20 Jun 2018 10:40:06 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id f18-v6sm4388598wro.1.2018.06.20.10.40.11
+        by smtp.gmail.com with ESMTPSA id f18-v6sm4388598wro.1.2018.06.20.10.40.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 10:40:12 -0700 (PDT)
+        Wed, 20 Jun 2018 10:40:05 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -94,67 +95,262 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Mark Brand <markbrand@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v3 04/17] khwasan, arm64: adjust shadow size for CONFIG_KASAN_HW
-Date:   Wed, 20 Jun 2018 19:39:50 +0200
-Message-Id: <44cfb47c7d8b485b03f17eb406037e3c01a52fa9.1529515183.git.andreyknvl@google.com>
+Subject: [PATCH v3 00/17] khwasan: kernel hardware assisted address sanitizer
+Date:   Wed, 20 Jun 2018 19:39:46 +0200
+Message-Id: <cover.1529515183.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-In-Reply-To: <cover.1529515183.git.andreyknvl@google.com>
-References: <cover.1529515183.git.andreyknvl@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KWHASAN uses 1 shadow byte for 16 bytes of kernel memory, so it requires
-1/16th of the kernel virtual address space for the shadow memory.
+This patchset adds a new mode to KASAN [1], which is called KHWASAN
+(Kernel HardWare assisted Address SANitizer).
 
-This commit sets KASAN_SHADOW_SCALE_SHIFT to 4 when KHWASAN is enabled.
+The plan is to implement HWASan [2] for the kernel with the incentive,
+that it's going to have comparable to KASAN performance, but in the same
+time consume much less memory, trading that off for somewhat imprecise
+bug detection and being supported only for arm64.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- arch/arm64/Makefile             |  2 +-
- arch/arm64/include/asm/memory.h | 13 +++++++++----
- 2 files changed, 10 insertions(+), 5 deletions(-)
+The overall idea of the approach used by KHWASAN is the following:
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 45272266dafb..191a649f34e7 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -93,7 +93,7 @@ endif
- # KASAN_SHADOW_OFFSET = VA_START + (1 << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
- #				 - (1 << (64 - KASAN_SHADOW_SCALE_SHIFT))
- # in 32-bit arithmetic
--KASAN_SHADOW_SCALE_SHIFT := 3
-+KASAN_SHADOW_SCALE_SHIFT := $(if $(CONFIG_KASAN_HW), 4, 3)
- KASAN_SHADOW_OFFSET := $(shell printf "0x%08x00000000\n" $$(( \
- 	(0xffffffff & (-1 << ($(CONFIG_ARM64_VA_BITS) - 32))) \
- 	+ (1 << ($(CONFIG_ARM64_VA_BITS) - 32 - $(KASAN_SHADOW_SCALE_SHIFT))) \
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index 49d99214f43c..6d084431b7f7 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -74,12 +74,17 @@
- #define KERNEL_END        _end
- 
- /*
-- * KASAN requires 1/8th of the kernel virtual address space for the shadow
-- * region. KASAN can bloat the stack significantly, so double the (minimum)
-- * stack size when KASAN is in use.
-+ * KASAN and KHWASAN require 1/8th and 1/16th of the kernel virtual address
-+ * space for the shadow region respectively. They can bloat the stack
-+ * significantly, so double the (minimum) stack size when they are in use.
-  */
--#ifdef CONFIG_KASAN
-+#ifdef CONFIG_KASAN_GENERIC
- #define KASAN_SHADOW_SCALE_SHIFT 3
-+#endif
-+#ifdef CONFIG_KASAN_HW
-+#define KASAN_SHADOW_SCALE_SHIFT 4
-+#endif
-+#ifdef CONFIG_KASAN
- #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
- #define KASAN_THREAD_SHIFT	1
- #else
+1. By using the Top Byte Ignore arm64 CPU feature, we can store pointer
+   tags in the top byte of each kernel pointer.
+
+2. Using shadow memory, we can store memory tags for each chunk of kernel
+   memory.
+
+3. On each memory allocation, we can generate a random tag, embed it into
+   the returned pointer and set the memory tags that correspond to this
+   chunk of memory to the same value.
+
+4. By using compiler instrumentation, before each memory access we can add
+   a check that the pointer tag matches the tag of the memory that is being
+   accessed.
+
+5. On a tag mismatch we report an error.
+
+[1] https://www.kernel.org/doc/html/latest/dev-tools/kasan.html
+
+[2] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
+
+
+====== Technical details
+
+KHWASAN is implemented in a very similar way to KASAN. This patchset
+essentially does the following:
+
+1. TCR_TBI1 is set to enable Top Byte Ignore.
+
+2. Shadow memory is used (with a different scale, 1:16, so each shadow
+   byte corresponds to 16 bytes of kernel memory) to store memory tags.
+
+3. All slab objects are aligned to shadow scale, which is 16 bytes.
+
+4. All pointers returned from the slab allocator are tagged with a random
+   tag and the corresponding shadow memory is poisoned with the same value.
+
+5. Compiler instrumentation is used to insert tag checks. Either by
+   calling callbacks or by inlining them (CONFIG_KASAN_OUTLINE and
+   CONFIG_KASAN_INLINE flags are reused).
+
+6. When a tag mismatch is detected in callback instrumentation mode
+   KHWASAN simply prints a bug report. In case of inline instrumentation,
+   clang inserts a brk instruction, and KHWASAN has it's own brk handler,
+   which reports the bug.
+
+7. The memory in between slab objects is marked with a reserved tag, and
+   acts as a redzone.
+
+8. When a slab object is freed it's marked with a reserved tag.
+
+Bug detection is imprecise for two reasons:
+
+1. We won't catch some small out-of-bounds accesses, that fall into the
+   same shadow cell, as the last byte of a slab object.
+
+2. We only have 1 byte to store tags, which means we have a 1/256
+   probability of a tag match for an incorrect access (actually even
+   slightly less due to reserved tag values).
+
+Despite that there's a particular type of bugs that KHWASAN can detect
+compared to KASAN: use-after-free after the object has been allocated by
+someone else.
+
+
+====== Benchmarks
+
+The following numbers were collected on Odroid C2 board. Both KASAN and
+KHWASAN were used in inline instrumentation mode.
+
+Boot time [1]:
+* ~1.7 sec for clean kernel
+* ~5.0 sec for KASAN
+* ~5.0 sec for KHWASAN
+
+Slab memory usage after boot [2]:
+* ~40 kb for clean kernel
+* ~105 kb + 1/8th shadow ~= 118 kb for KASAN
+* ~47 kb + 1/16th shadow ~= 50 kb for KHWASAN
+
+Network performance [3]:
+* 8.33 Gbits/sec for clean kernel
+* 3.17 Gbits/sec for KASAN
+* 2.85 Gbits/sec for KHWASAN
+
+Note, that KHWASAN (compared to KASAN) doesn't require quarantine.
+
+[1] Time before the ext4 driver is initialized.
+[2] Measured as `cat /proc/meminfo | grep Slab`.
+[3] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
+
+
+====== Some notes
+
+A few notes:
+
+1. The patchset can be found here:
+   https://github.com/xairy/kasan-prototype/tree/khwasan
+
+2. Building requires a recent LLVM version (r330044 or later).
+
+3. Stack instrumentation is not supported yet and will be added later.
+
+
+====== Changes
+
+Changes in v3:
+- Minor documentation fixes.
+- Fixed CFLAGS variable name in KASAN makefile.
+- Added a "SPDX-License-Identifier: GPL-2.0" line to all source files
+  under mm/kasan.
+- Rebased onto 81e97f013 (4.18-rc1+).
+
+Changes in v2:
+- Changed kmalloc_large_node_hook to return tagged pointer instead of
+  using an output argument.
+- Fix checking whether -fsanitize=hwaddress is supported by the compiler.
+- Removed duplication of -fno-builtin for KASAN and KHWASAN.
+- Removed {} block for one line for_each_possible_cpu loop.
+- Made set_track() static inline as it is used only in common.c.
+- Moved optimal_redzone() to common.c.
+- Fixed using tagged pointer for shadow calculation in
+  kasan_unpoison_shadow().
+- Restored setting cache->align in kasan_cache_create(), which was
+  accidentally lost.
+- Simplified __kasan_slab_free(), kasan_alloc_pages() and kasan_kmalloc().
+- Removed tagging from kasan_kmalloc_large().
+- Added page_kasan_tag_reset() to kasan_poison_slab() and removed
+  !PageSlab() check from page_to_virt.
+- Reset pointer tag in _virt_addr_is_linear.
+- Set page tag for each page when multiple pages are allocated or freed.
+- Added a comment as to why we ignore cma allocated pages.
+
+Changes in v1:
+- Rebased onto 4.17-rc4.
+- Updated benchmarking stats.
+- Documented compiler version requirements, memory usage and slowdown.
+- Dropped kvm patches, as clang + arm64 + kvm is completely broken [1].
+
+Changes in RFC v3:
+- Renamed CONFIG_KASAN_CLASSIC and CONFIG_KASAN_TAGS to
+  CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW respectively.
+- Switch to -fsanitize=kernel-hwaddress instead of -fsanitize=hwaddress.
+- Removed unnecessary excessive shadow initialization.
+- Removed khwasan_enabled flag (it’s not needed since KHWASAN is
+  initialized before any slab caches are used).
+- Split out kasan_report.c and khwasan_report.c from report.c.
+- Moved more common KASAN and KHWASAN functions to common.c.
+- Added tagging to pagealloc.
+- Rebased onto 4.17-rc1.
+- Temporarily dropped patch that adds kvm support (arm64 + kvm + clang
+  combo is broken right now [1]).
+
+Changes in RFC v2:
+- Removed explicit casts to u8 * for kasan_mem_to_shadow() calls.
+- Introduced KASAN_TCR_FLAGS for setting the TCR_TBI1 flag.
+- Added a comment regarding the non-atomic RMW sequence in
+  khwasan_random_tag().
+- Made all tag related functions accept const void *.
+- Untagged pointers in __kimg_to_phys, which is used by virt_to_phys.
+- Untagged pointers in show_ptr in fault handling logic.
+- Untagged pointers passed to KVM.
+- Added two reserved tag values: 0xFF and 0xFE.
+- Used the reserved tag 0xFF to disable validity checking (to resolve the
+  issue with pointer tag being lost after page_address + kmap usage).
+- Used the reserved tag 0xFE to mark redzones and freed objects.
+- Added mnemonics for esr manipulation in KHWASAN brk handler.
+- Added a comment about the -recover flag.
+- Some minor cleanups and fixes.
+- Rebased onto 3215b9d5 (4.16-rc6+).
+- Tested on real hardware (Odroid C2 board).
+- Added better benchmarks.
+
+[1] https://lkml.org/lkml/2018/4/19/775
+
+Andrey Konovalov (17):
+  khwasan, mm: change kasan hooks signatures
+  khwasan: move common kasan and khwasan code to common.c
+  khwasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW
+  khwasan, arm64: adjust shadow size for CONFIG_KASAN_HW
+  khwasan: initialize shadow to 0xff
+  khwasan, arm64: untag virt address in __kimg_to_phys and
+    _virt_addr_is_linear
+  khwasan, arm64: fix up fault handling logic
+  khwasan: add tag related helper functions
+  khwasan, arm64: enable top byte ignore for the kernel
+  khwasan, mm: perform untagged pointers comparison in krealloc
+  khwasan: split out kasan_report.c from report.c
+  khwasan: add bug reporting routines
+  khwasan: add hooks implementation
+  khwasan, arm64: add brk handler for inline instrumentation
+  khwasan, mm, arm64: tag non slab memory allocated via pagealloc
+  khwasan: update kasan documentation
+  kasan: add SPDX-License-Identifier mark to source files
+
+ Documentation/dev-tools/kasan.rst      | 213 ++++----
+ arch/arm64/Kconfig                     |   1 +
+ arch/arm64/Makefile                    |   2 +-
+ arch/arm64/include/asm/brk-imm.h       |   2 +
+ arch/arm64/include/asm/memory.h        |  41 +-
+ arch/arm64/include/asm/pgtable-hwdef.h |   1 +
+ arch/arm64/kernel/traps.c              |  69 ++-
+ arch/arm64/mm/fault.c                  |   3 +
+ arch/arm64/mm/kasan_init.c             |  18 +-
+ arch/arm64/mm/proc.S                   |   8 +-
+ include/linux/compiler-clang.h         |   5 +-
+ include/linux/compiler-gcc.h           |   4 +
+ include/linux/compiler.h               |   3 +-
+ include/linux/kasan.h                  |  84 +++-
+ include/linux/mm.h                     |  29 ++
+ include/linux/page-flags-layout.h      |  10 +
+ lib/Kconfig.kasan                      |  76 ++-
+ mm/cma.c                               |  11 +
+ mm/kasan/Makefile                      |   9 +-
+ mm/kasan/common.c                      | 659 +++++++++++++++++++++++++
+ mm/kasan/kasan.c                       | 564 +--------------------
+ mm/kasan/kasan.h                       |  87 +++-
+ mm/kasan/kasan_init.c                  |   1 +
+ mm/kasan/kasan_report.c                | 156 ++++++
+ mm/kasan/khwasan.c                     | 163 ++++++
+ mm/kasan/khwasan_report.c              |  61 +++
+ mm/kasan/quarantine.c                  |   1 +
+ mm/kasan/report.c                      | 272 +++-------
+ mm/page_alloc.c                        |   1 +
+ mm/slab.c                              |  12 +-
+ mm/slab.h                              |   2 +-
+ mm/slab_common.c                       |   6 +-
+ mm/slub.c                              |  17 +-
+ scripts/Makefile.kasan                 |  27 +-
+ 34 files changed, 1699 insertions(+), 919 deletions(-)
+ create mode 100644 mm/kasan/common.c
+ create mode 100644 mm/kasan/kasan_report.c
+ create mode 100644 mm/kasan/khwasan.c
+ create mode 100644 mm/kasan/khwasan_report.c
+
 -- 
 2.18.0.rc1.244.gcf134e6275-goog
 
