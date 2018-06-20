@@ -2,119 +2,152 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1847C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8210DC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B32A20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B32A20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B96220846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 21:14:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1YDG69qD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B96220846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933396AbeFTVNI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 17:13:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36290 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932996AbeFTVNG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 17:13:06 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5KKs2b7034855
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 17:13:06 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jqx1xs8xw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 17:13:06 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 20 Jun 2018 17:13:04 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 20 Jun 2018 17:13:02 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5KLD1E211600180
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 20 Jun 2018 21:13:01 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE8A3112064;
-        Wed, 20 Jun 2018 17:12:58 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5263112062;
-        Wed, 20 Jun 2018 17:12:58 -0400 (EDT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 20 Jun 2018 17:12:58 -0400 (EDT)
-Subject: Re: [PATCH v2 1/4] tpm: Implement tpm_chip_find() and tpm_chip_put()
- for other subsystems
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
- <20180620204236.1572523-2-stefanb@linux.vnet.ibm.com>
- <20180620205004.GG27445@ziepe.ca>
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date:   Wed, 20 Jun 2018 17:13:01 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933425AbeFTVOA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 17:14:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42666 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932929AbeFTVN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 17:13:58 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4000220846;
+        Wed, 20 Jun 2018 21:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529529237;
+        bh=TsCCgD7ToPFrADH5JqhHtFvKxXDtBs9DsT/umKmTKw0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1YDG69qDpFKxd1fCFzvw5EblsbFdwZDhMExmzBqtXgoFAx6j+Z1jGt/zSkIkAwF5/
+         I9bKqNBhqK3OlgHQRH6VBXYgboeJVs1EI6wPKneNDD4iUBrn9/7GbvA2y8JQdKPocX
+         oYAOGMBXCTcqKnwQl6jJfCJxKqfCK61Z4utBXL7Y=
+Date:   Wed, 20 Jun 2018 16:13:49 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Rafal <uzg@wp.pl>
+Cc:     linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Subject: Re: Fwd: [Bug 199879] New: Very basic the Pci device is not resumed
+ from suspend mode
+Message-ID: <20180620211349.GB108993@bhelgaas-glaptop.roam.corp.google.com>
+References: <bug-199879-41252@https.bugzilla.kernel.org/>
+ <CAErSpo5U9D5kmYix2SbcJH_mW8urpmZcgN6Zh=FbGtLch+ACuA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180620205004.GG27445@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18062021-0068-0000-0000-0000030BF239
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009229; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01049879; UDB=6.00537992; IPR=6.00828852;
- MB=3.00021765; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-20 21:13:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062021-0069-0000-0000-000044C0DBB6
-Message-Id: <5acee904-ede6-d33f-33b7-3ad94fce9850@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806200227
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAErSpo5U9D5kmYix2SbcJH_mW8urpmZcgN6Zh=FbGtLch+ACuA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 04:50 PM, Jason Gunthorpe wrote:
-> On Wed, Jun 20, 2018 at 04:42:33PM -0400, Stefan Berger wrote:
->> Implement tpm_chip_find() for other subsystems to find a TPM chip and
->> get a reference to that chip. Once done with using the chip, the reference
->> is released using tpm_chip_put().
->>
->> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->>   drivers/char/tpm/tpm-chip.c | 37 +++++++++++++++++++++++++++++++++++++
->>   include/linux/tpm.h         |  9 +++++++++
->>   2 files changed, 46 insertions(+)
->>
->> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->> index 0a62c19937b6..eaaf41ce73d8 100644
->> +++ b/drivers/char/tpm/tpm-chip.c
->> @@ -81,6 +81,43 @@ void tpm_put_ops(struct tpm_chip *chip)
->>   EXPORT_SYMBOL_GPL(tpm_put_ops);
->>   
->>   /**
->> + * tpm_chip_put() - Release a ref to the tpm_chip
->> + * @chip: Chip to put
->> + */
->> +void tpm_chip_put(struct tpm_chip *chip)
->> +{
->> +	if (chip)
->> +		put_device(&chip->dev);
-> Rarely like to see those if's inside a put function.. Does it actually
-> help anything?
-Following put_device() 'pattern' here which also checks using 'if (dev)'.
+[+to Rafal]
 
-     Stefan
+Sorry, I'm an idiot and forgot to include Rafal, the submitter, when I
+forwarded this report to the mailing lists.
 
+I suspect that the config accessors used by lspci should temporarily
+wake up devices that are asleep, instead of reporting 0xff data (or if
+that's not feasible, maybe we should add a comment in the kernel and a
+note in the lspci man page).
+
+I'm not sure yet where to go beyond that.
+
+On Wed, May 30, 2018 at 07:41:35AM -0700, Bjorn Helgaas wrote:
+> [+cc linux-pci, linux-kernel, linux-pm]
+> 
+> I'm not sure I understand the problem yet, so please correct me if I'm wrong:
+> 
+>   - Your system has both Nvidia and Intel graphics devices
+> 
+>   - When you use Intel graphics, lspci, lshw, and /proc/bus/pci for
+> the Nvidia device show invalid data (0xff) after suspend/resume
+> 
+>   - When you use Nvidia graphics, suspend/resume doesn't work (instead
+> of resuming, you just get a blank screen)
+> 
+> Can you attach the output of "sudo lspci -vv" to the bugzilla, please?
+> 
+> ---------- Forwarded message ---------
+> From: <bugzilla-daemon@bugzilla.kernel.org>
+> Date: Tue, May 29, 2018 at 1:29 PM
+> Subject: [Bug 199879] New: Very basic the Pci device is not resumed
+> from suspend mode
+> To: <bhelgaas@google.com>
+> 
+> 
+> https://bugzilla.kernel.org/show_bug.cgi?id=199879
+> 
+>             Bug ID: 199879
+>            Summary: Very basic the Pci device is not resumed from suspend
+>                     mode
+>            Product: Drivers
+>            Version: 2.5
+>     Kernel Version: kernel-4.15.17
+>           Hardware: x86-64
+>                 OS: Linux
+>               Tree: Mainline
+>             Status: NEW
+>           Severity: high
+>           Priority: P1
+>          Component: PCI
+>           Assignee: drivers_pci@kernel-bugs.osdl.org
+>           Reporter: uzg@wp.pl
+>         Regression: No
+> 
+> Hi, I have problem with very basic device. Device pci-e not resume from
+> suspend. Only sleep.
+> 
+> I have a problem with anyone interested in it, because everyone thinks it is
+> the fault of the device drivers themselves. But this is not a problem.
+> 
+> This device is a basic device. I've already installed drivers on various
+> hardware and it has always been ok, but not this time.
+> 
+> I'm an electronics technician. After diagnosing what I managed, in my opinion
+> the device remains asleep.
+> 
+> Where does my application come from?
+> I have multiuser mode and I do not use this device. After suspend lspci and
+> lshw show normal data. Normal data is in /proc/bus/pci/...
+> Next suspend and resume, and...
+> lspci see hardware, but is error
+> lshw see hardware as undefined device
+> data in /proc/bus/pci/... is only 0xFF
+> Hardware sleep, not work, not ready. This is bug.
+> 
+> But since the problem concerns the graphics card in the configuration with the
+> second default Intel card, everyone thinks that this is another driver problem
+> as always and nobody wants to take a look at it :(
+> 
+> The problem is easy to recognize. On the internet, I've seen a lot of
+> unresolved problems in which I could see exactly what I found.
+> 
+> My hardware is Lenovo with NVidia and Intel Graphics. Problem is with NVidia. I
+> tested Z710 and Z50-70. The first symptom of the problem is lspci in multiuser
+> mode (or when is XServer with intel graphics). After suspend NVidia have e.g
+> "rev. A1", after resume is "rev. FF". Next symptom lshw and /proc/bus/pci/...
+> When system started with normal NVidia driver, system not resume and halt, only
+> black screen.
+> 
+> There are many examples on the Internet with unsolved problems e.g
+> https://www.lwks.com/index.php?option=com_kunena&func=view&catid=21&id=124374&Itemid=81
+> 
+> --
+> You are receiving this mail because:
+> You are watching the assignee of the bug.
