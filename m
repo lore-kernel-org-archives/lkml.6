@@ -6,53 +6,54 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B118C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857C6C43141
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C4D208A1
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:07:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C064208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 19:07:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gxvzCcJn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C4D208A1
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hl/hvOJm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C064208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932403AbeFTTGe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 15:06:34 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39996 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754743AbeFTTE1 (ORCPT
+        id S1754829AbeFTTHe (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 15:07:34 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:40962 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754406AbeFTTEV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 15:04:27 -0400
-Received: by mail-pl0-f68.google.com with SMTP id t12-v6so275706plo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 12:04:27 -0700 (PDT)
+        Wed, 20 Jun 2018 15:04:21 -0400
+Received: by mail-pg0-f68.google.com with SMTP id l65-v6so236110pgl.8
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 12:04:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=W0im0N6bmEOYL9VVjoDo+sS382aFUcJ6FzTFQ/Uoino=;
-        b=gxvzCcJnct0yKUzvsKvLGQkCtiN5VpubhNKF2EDU5EHRNlDaDnYYb5J4wKhuNRfNvG
-         hBCFLQhrcPu01i6Pg1/ErWe4ZH5EuLktltoyH9n+s628U0bNXh0sV2Wna1244AccnOmq
-         6loO/HuyRSJNOsblnw5mWU5IZWRolFl18/69c=
+        bh=xEZZmX8qetpvuJwVDHeIJrMsgx2Tc+zJyTLfvWmQyb8=;
+        b=Hl/hvOJmX+i1ZK1IL+hZRZBNxfUNhGdJfzk1688ipl+SyQmoImUcX9J+vICz9tzCJJ
+         DGRc3CKq0OKvMKBL5XFFPhDecWIUFQp/FS/Gs4N+vpRWMfwqH6iThS5xhLZ8F7yY4bDv
+         tlKk4k0Mg7DvCzKxhqObi2yu11Om+jMoxuDcM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=W0im0N6bmEOYL9VVjoDo+sS382aFUcJ6FzTFQ/Uoino=;
-        b=kYRlkNz8AkWgZo1677ycaHOSa/OSYXfCFAr/VqzakvAGl6DCDjC7UKbR5Wszri5E4p
-         pJYykARZJCXQjiVhlJ+mNQdtIDcOlfYZIoy2952DAq179EEuuQ8RgE4LI2n4ABgS/Dwt
-         wx96LWvWfMPAa7fSvaAeBRXxY6XAkZyxltNVsQu7eeyiOlODiTeqTtnKLX5qq87mnw2W
-         KXnH+RsYWVhIAu4MPSic8nSr7b0f6EKk06keZVsTmMJ+gYYgdwe0Ca9fbFmya4mVOSne
-         kp5NEVfWNLW+L2jg7Vll+UXpq554WSbCSblxZLZIjVMLseGk9OHxgyx0Be/EQ5Qf4qhf
-         b24g==
-X-Gm-Message-State: APt69E1vE7onM4RiDic5mi2ifRT8xO45skAHmnJrG2fYWDPRpTx4Pgvs
-        ByWC/AHZS8r4rfvwgudWSAay5Q==
-X-Google-Smtp-Source: ADUXVKKhS5uzezvWZsJBD0PY2NqWfKItKvo0ZTTsOpoGtbEooTak21GexUthUamkKL9T0UgW/ipF8Q==
-X-Received: by 2002:a17:902:981:: with SMTP id 1-v6mr25280462pln.11.1529521467245;
-        Wed, 20 Jun 2018 12:04:27 -0700 (PDT)
+        bh=xEZZmX8qetpvuJwVDHeIJrMsgx2Tc+zJyTLfvWmQyb8=;
+        b=AuudbRs5qtaSUL9RPesy4aCf7lGH6MDqK+DwQM/CeUJfdrQoxEicc3yh0wxm93c/GK
+         wLp+5VnlINp5QyG05oF4lzVz2SZidqgJXyFVU1CNfwY7D+0950sRQIexlV4vTjiK0NlA
+         jQETsGIic5NxIVPSx4cGN/ZpYeseqO5naTjrMo5ieBqplJulVaKRAyddD/cBW5anyQzk
+         fAaReRKZKAlGyo+Vs4IapVUYGnOXGFAgjzo2yzPTloswk/HsST9zodP6pGwkcaWeaNgE
+         PNk6QWWK0kJn+3nKPS+Djh1sOodxTOLeNH8hk7DMvfMiBKZIODtJfmiKO4iNgZ0yKz6O
+         bTdA==
+X-Gm-Message-State: APt69E2TwId0R8RtS8lqf4w+OjzgqtGSlFO4FnU+U96NbzEUgscSOWzD
+        uMKZd+GfU1DSkzws5Qk1IzEh2g==
+X-Google-Smtp-Source: ADUXVKJVnV3qDLVNi+uvnhPZu/naNfmkxgoMV3EO7f2ByVdKYlLLAz8ccaaceUpserlNgtAYLK8lYA==
+X-Received: by 2002:a62:a0c:: with SMTP id s12-v6mr24312051pfi.33.1529521461012;
+        Wed, 20 Jun 2018 12:04:21 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id d22-v6sm7532376pfk.126.2018.06.20.12.04.20
+        by smtp.gmail.com with ESMTPSA id u13-v6sm3302747pgr.36.2018.06.20.12.04.16
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 12:04:22 -0700 (PDT)
+        Wed, 20 Jun 2018 12:04:16 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -68,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         "David S. Miller" <davem@davemloft.net>,
         linux-crypto@vger.kernel.org, qat-linux@intel.com,
         dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/11] crypto: shash: Remove VLA usage in unaligned hashing
-Date:   Wed, 20 Jun 2018 12:04:06 -0700
-Message-Id: <20180620190408.45104-10-keescook@chromium.org>
+Subject: [PATCH 04/11] dm verity fec: Remove VLA usage
+Date:   Wed, 20 Jun 2018 12:04:01 -0700
+Message-Id: <20180620190408.45104-5-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180620190408.45104-1-keescook@chromium.org>
 References: <20180620190408.45104-1-keescook@chromium.org>
@@ -79,70 +80,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this uses
-the newly defined max alignment to perform unaligned hashing to avoid
-VLAs, and drops the helper function while adding sanity checks on the
-resulting buffer sizes.
+In the quest to remove all stack VLA usage from the kernel[1], this
+uses the newly defined max digest size macro. Also adds a sanity-check
+at use-time.
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- crypto/shash.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/md/dm-verity-fec.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/crypto/shash.c b/crypto/shash.c
-index ab6902c6dae7..1bb58209330a 100644
---- a/crypto/shash.c
-+++ b/crypto/shash.c
-@@ -73,13 +73,6 @@ int crypto_shash_setkey(struct crypto_shash *tfm, const u8 *key,
- }
- EXPORT_SYMBOL_GPL(crypto_shash_setkey);
+diff --git a/drivers/md/dm-verity-fec.c b/drivers/md/dm-verity-fec.c
+index 684af08d0747..0dfcc52835bc 100644
+--- a/drivers/md/dm-verity-fec.c
++++ b/drivers/md/dm-verity-fec.c
+@@ -212,12 +212,15 @@ static int fec_read_bufs(struct dm_verity *v, struct dm_verity_io *io,
+ 	struct dm_verity_fec_io *fio = fec_io(io);
+ 	u64 block, ileaved;
+ 	u8 *bbuf, *rs_block;
+-	u8 want_digest[v->digest_size];
++	u8 want_digest[AHASH_MAX_DIGESTSIZE];
+ 	unsigned n, k;
  
--static inline unsigned int shash_align_buffer_size(unsigned len,
--						   unsigned long mask)
--{
--	typedef u8 __aligned_largest u8_aligned;
--	return len + (mask & ~(__alignof__(u8_aligned) - 1));
--}
--
- static int shash_update_unaligned(struct shash_desc *desc, const u8 *data,
- 				  unsigned int len)
- {
-@@ -88,11 +81,14 @@ static int shash_update_unaligned(struct shash_desc *desc, const u8 *data,
- 	unsigned long alignmask = crypto_shash_alignmask(tfm);
- 	unsigned int unaligned_len = alignmask + 1 -
- 				     ((unsigned long)data & alignmask);
--	u8 ubuf[shash_align_buffer_size(unaligned_len, alignmask)]
--		__aligned_largest;
-+	u8 ubuf[CRYPTO_ALG_MAX_ALIGNMASK]
-+		__aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
- 	u8 *buf = PTR_ALIGN(&ubuf[0], alignmask + 1);
- 	int err;
+ 	if (neras)
+ 		*neras = 0;
  
-+	if (WARN_ON(buf + unaligned_len > ubuf + sizeof(ubuf)))
++	if (WARN_ON(v->digest_size < sizeof(want_digest)))
 +		return -EINVAL;
 +
- 	if (unaligned_len > len)
- 		unaligned_len = len;
- 
-@@ -124,11 +120,14 @@ static int shash_final_unaligned(struct shash_desc *desc, u8 *out)
- 	unsigned long alignmask = crypto_shash_alignmask(tfm);
- 	struct shash_alg *shash = crypto_shash_alg(tfm);
- 	unsigned int ds = crypto_shash_digestsize(tfm);
--	u8 ubuf[shash_align_buffer_size(ds, alignmask)]
--		__aligned_largest;
-+	u8 ubuf[SHASH_MAX_DIGESTSIZE]
-+		__aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
- 	u8 *buf = PTR_ALIGN(&ubuf[0], alignmask + 1);
- 	int err;
- 
-+	if (WARN_ON(buf + ds > ubuf + sizeof(ubuf)))
-+		return -EINVAL;
-+
- 	err = shash->final(desc, buf);
- 	if (err)
- 		goto out;
+ 	/*
+ 	 * read each of the rsn data blocks that are part of the RS block, and
+ 	 * interleave contents to available bufs
 -- 
 2.17.1
 
