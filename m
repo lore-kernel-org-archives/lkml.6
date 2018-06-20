@@ -2,95 +2,115 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F592C43140
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFB7C43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4B4220874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:02:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4B4220874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 36ABA20874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 18:12:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="byLS1uPM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36ABA20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754335AbeFTSCA (ORCPT
+        id S1754468AbeFTSMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 14:02:00 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:40988 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754144AbeFTSB5 (ORCPT
+        Wed, 20 Jun 2018 14:12:19 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40908 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754226AbeFTSMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 14:01:57 -0400
-Received: by mail-yw0-f195.google.com with SMTP id s201-v6so160214ywg.8;
-        Wed, 20 Jun 2018 11:01:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R3Y5ViORQCAf202HU386zVa7yCVCukkCClp+AD5Hrlg=;
-        b=G8+QV3WL6yYiB/vuFt6nL96C7RwhKm9yGxbuPz3PzDpo4V4E+I9tz/oXWZT8r81stQ
-         nshC/wwUPyNPJ+zjodLH/yjkvHK9fpthTyyqIh1NaLhX3F0Ay8+fMsbBEmIYYaGZ8A8o
-         HZmAU4MNnFmklqZHJwRUgyauQJ/4g7aB/YZx7IfiGwASR44b2L62JCaXS6rWyVsVvNqb
-         /3WruMT7z8LHAChUCyuFKV3g4B7+s/f5sn6bQHa4JAkFUHY5oh01wtYTYR7YZW6x+SCo
-         SM8y9DUFXUhmHtWMfvYd4kfdb/UwR95P7RBi0CzOHbNvWXxU/5VOkhd6T9Jlo0jQ3Vqe
-         wv3Q==
-X-Gm-Message-State: APt69E3kwUKo92wbaVDAS53vxTUbXr3/VhRzfBth3EbyHf/yjd4UwCrG
-        i0QMQNLKHBGnzg0+ImoFng==
-X-Google-Smtp-Source: ADUXVKLwCdaDJL7Wle1BS+DfvHWUlj3IZUTJ1uJQeasc4IxZGVH3FtuFlOQPcK5cFeRBvUhX69f80A==
-X-Received: by 2002:a81:360a:: with SMTP id d10-v6mr11182429ywa.421.1529517716513;
-        Wed, 20 Jun 2018 11:01:56 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id p22-v6sm1073890ywp.105.2018.06.20.11.01.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 11:01:55 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 12:01:54 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Sayali Lokhande <sayalil@codeaurora.org>, subhashj@codeaurora.org,
-        cang@codeaurora.org, vivek.gautam@codeaurora.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        asutoshd@codeaurora.org, evgreen@chromium.org,
-        riteshh@codeaurora.org, linux-scsi@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 1/3] scsi: ufs: set the device reference clock setting
-Message-ID: <20180620180154.GA18559@rob-hp-laptop>
-References: <1528981432-23065-1-git-send-email-sayalil@codeaurora.org>
- <1528981432-23065-2-git-send-email-sayalil@codeaurora.org>
- <bf87ec58-69c0-fe59-cfa1-8dc7dc80ca46@intel.com>
+        Wed, 20 Jun 2018 14:12:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=tuNxlu4AVaVOl+OHzSCoPZBBkIh/xEbBSLvvd30Cl6c=; b=byLS1uPMM3b9rCD3MTN3dlTyMn
+        RL0JZy3Kf9t8BdPCInjRe/Iyry/JbCk9vOmt+HXF50FCD2eHWNUeT+uxL6bzp0Z60KB1ckAwu9Tcm
+        DnbH+emnnOgDypgRJm8gAr0ZtaP2n4DnNT7rEAdFrRpt/hS2Sz98sGYfTNavLGMtaw5yex/EsJTM9
+        2kNolcWaKpn5ZPhQ6U2llRNqtomaXEuYH6oQeQzwba9W/x7AtW4la++8xVGEPczzfWoQGvtUBlpnm
+        Mazw9x715FEZm04DrPU6dMCI1gsZU4q6L2BqgpmoSFt1DhxlCTJBLz3b1ffmFuOB92NkuEnZS3fYM
+        FDO8UCeQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVhaU-0001ja-D8; Wed, 20 Jun 2018 18:12:11 +0000
+Subject: Re: [PATCH v5 09/11] pci_endpoint_test: Add 2 ioctl commands
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com, sboyd@codeaurora.org
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1529507416.git.gustavo.pimentel@synopsys.com>
+ <8695864db0191b2e85ed81e97a8990baea3468fa.1529507416.git.gustavo.pimentel@synopsys.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <dd75ced1-e4c3-8c94-3bab-200e2ecdd8b8@infradead.org>
+Date:   Wed, 20 Jun 2018 11:12:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf87ec58-69c0-fe59-cfa1-8dc7dc80ca46@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <8695864db0191b2e85ed81e97a8990baea3468fa.1529507416.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 10:26:07AM +0300, Adrian Hunter wrote:
-> On 14/06/18 16:03, Sayali Lokhande wrote:
-> > From: Subhash Jadavani <subhashj@codeaurora.org>
-> > 
-> > UFS host supplies the reference clock to UFS device and UFS device
-> > specification allows host to provide one of the 4 frequencies (19.2 MHz,
-> > 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
-> > device reference clock frequency setting in the device based on what
-> > frequency it is supplying to UFS device.
-> > 
-> > Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-> > Signed-off-by: Can Guo <cang@codeaurora.org>
-> > Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+On 06/20/2018 09:28 AM, Gustavo Pimentel wrote:
+> Add MSI-X support and update driver documentation accordingly.
 > 
-> I have repeated my V2 comments below.  Please address these when you post
-> V4.  Also please provide a change log for each patch version.
+> Add 2 new IOCTL commands:
+>  - Allow to reconfigure driver IRQ type in runtime.
+>  - Allow to retrieve current driver IRQ type configured.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+> Change v2->v3:                                                                              |  --------------------------------------------------------------------------------------------
+>  - New patch file created base on the previous patch                                        |  --------------------------------------------------------------------------------------------
+> "misc: pci_endpoint_test: Add MSI-X support" patch file following                           |  --------------------------------------------------------------------------------------------
+> Kishon's suggestion.                                                                        |  --------------------------------------------------------------------------------------------
+> Change v3->v4:                                                                              |  --------------------------------------------------------------------------------------------
+>  - Rebased to Lorenzo's master branch v4.18-rc1.
+> Change v4->v5:
+>  - Nothing changed, just to follow the patch set version.
+> 
+>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
+>  drivers/misc/pci_endpoint_test.c                 | 177 +++++++++++++++++------
+>  2 files changed, 132 insertions(+), 48 deletions(-)
+> 
+> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+> index fdfa0f6..58ccca4 100644
+> --- a/Documentation/misc-devices/pci-endpoint-test.txt
+> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
+> @@ -28,6 +28,9 @@ ioctl
+>  	      to be tested should be passed as argument.
+>   PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+>  	      to be tested should be passed as argument.
+> + PCITEST_SET_IRQTYPE: Changes driver IRQ type configuration. The IRQ type
+> +	      should be passed as argument (0: Legacy, 1:MSI, 2:MSI-X).
+> + PCITEST_GET_IRQTYPE: Gets driver IRQ type configuration.
+>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+>  		as argument.
+>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
+> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+> index 2b58887..82fa0c2 100644
+> --- a/drivers/misc/pci_endpoint_test.c
+> +++ b/drivers/misc/pci_endpoint_test.c
 
-Do I have to repeat my V2 comments too? Please don't send a V4 until the 
-discussion on V2 is resolved.
+Hi,
 
-Rob
+The ioctl "type" (as "type" is used in <uapi/asm-generic/ioctl.h>),
+value of 'P' in this case, should be documented in
+Documentation/ioctl/ioctl-number.txt.
+
+thanks,
+-- 
+~Randy
