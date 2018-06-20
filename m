@@ -2,148 +2,126 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C6DC43141
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B86CC43140
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC7E020874
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:12:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 321DC20883
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 22:17:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dfqrv+YK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC7E020874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rCkjLU+G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321DC20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933668AbeFTWMl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 18:12:41 -0400
-Received: from mail-ot0-f172.google.com ([74.125.82.172]:33567 "EHLO
-        mail-ot0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933308AbeFTWMk (ORCPT
+        id S933651AbeFTWRI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 18:17:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45624 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933460AbeFTWRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 18:12:40 -0400
-Received: by mail-ot0-f172.google.com with SMTP id h6-v6so1310473otj.0;
-        Wed, 20 Jun 2018 15:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=n0JJgMHiZCGBAEW0VFx0cghFRnQIvnxOTMSauwV5jW0=;
-        b=Dfqrv+YK03mufQRdGFykMg1zOtc7raiL9yGU4JHbg6fyBhmNDJ3NRRN38IQ/aXQcuL
-         I6+PzIGi+ZLimKPKCu5hrI92iSiwYIREeTsvhSq+rVVPRbWMwj/y5U22PlrwARnKeG/I
-         7SB6+unqS7kjEZ/ja6ITzBuLb/9L0nlwjxo6jPGEoz8mygCenjW0KyU10EWDAQc5r7pT
-         vScKdNaAY/do8+5vVNz3+1cWQ7axY8Klr87HfuFplw/+Dd+KDWK4DOy7wyiIYsWHWSAF
-         wdylIQzOCmj6lfl8njBF2+hmkToeV6TFNqfxWZk78ZqH/KLcvP29HxNSJMrR60MPpfLk
-         /eTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=n0JJgMHiZCGBAEW0VFx0cghFRnQIvnxOTMSauwV5jW0=;
-        b=ODRLPrv7TfPKhbvBD1bE4QnPihiodSHlAideM8MEhZIoCVt8Yl+CbTNCjwdLDwS637
-         UZV5WxDD2IFFe5L42yGHDpCIRvxY/pjjsV7UXnCCuYojr99XZU3+R3MAkSw1i/J6lEze
-         Kg2917pZVP20TbN84aH7BFRDvz33zbVpepNAfMFe7hrZoYYVTen4k17C7c158JkLMTgm
-         iLBBqsrPcAQIudUUGU7lbj57T1cNkCgdVmMHFONXZTfodAQ1PmbIDlR9eximgK1AEokb
-         D0ms1aIrsKZvn++m0Hk7Bz1hdDMn+6bt68keZJsCS+V9M5rSnBLNsx+YJMNcI1SVX77V
-         sp1Q==
-X-Gm-Message-State: APt69E114FUFAwYM96iFiRKVLiQvgVc6l2HOroLNV4xAgoPJInhH6WTm
-        N2gny09AaaV6F0EVXdnPgqDX6rcMhYEzPdtl9qg=
-X-Google-Smtp-Source: ADUXVKI4o/gb3c6CscGWwEFoCTuPXznlkGuZidJu1NrZWlJyS8f+TDesMfXoAD0jPxccVAOmyzF5zZfEpe25vPwqHxs=
-X-Received: by 2002:a9d:60d2:: with SMTP id b18-v6mr13378591otk.305.1529532759334;
- Wed, 20 Jun 2018 15:12:39 -0700 (PDT)
+        Wed, 20 Jun 2018 18:17:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZTh5juJ0Ylj+WUkpLsSn4PNTtkx8QCqCceOp2aTjH9Y=; b=rCkjLU+GTi/4Z+bLFPGVELIcL
+        7328zKRE2Upv1Pn0yDLf5J2JHDg8u3IT4wp5l/aPpxXRFFS8MI4LSeC+1/YDLV+sSGgGFmgr0Fja9
+        tAEEoOgAx1Y+INRONfE7H7l/B0LwZHcn0TkESQaNSpE0UngUV7uFmOd7EenTAFwe01ustE66h6lFJ
+        yqc5AIlixtp+uU2pCx65pI9/oTmkJwSvL0rcxVoPPy1EWjj8zw7bV/7kzNLoF1U7JnOCuY7vmJgP1
+        0U4QfmaF6O6pYxvx/Ubclo/OhMkqri2B0+GPynKsy1XRvldiNE+V/2birUYcm+E3aVi2t+BpPIXvY
+        dMk/eWtqA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVlPI-0006FU-8V; Wed, 20 Jun 2018 22:16:52 +0000
+Subject: Re: [PATCH 1/3] vmalloc: Add __vmalloc_node_try_addr function
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-hardening@lists.openwall.com
+Cc:     kristen.c.accardi@intel.com, dave.hansen@intel.com,
+        arjan.van.de.ven@intel.com
+References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
+ <1529532570-21765-2-git-send-email-rick.p.edgecombe@intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <12014310-19f7-dc31-d983-9c7e00c8b446@infradead.org>
+Date:   Wed, 20 Jun 2018 15:16:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 15:12:38
- -0700 (PDT)
-In-Reply-To: <s5hr2l1ciqg.wl-tiwai@suse.de>
-References: <s5h8t7bfgnq.wl-tiwai@suse.de> <CAJZ5v0hidPav5kvTW05e0k5mouFyiUiyUW50=fDqVphbEBjQaA@mail.gmail.com>
- <s5hpo0ndvc5.wl-tiwai@suse.de> <s5hy3fac6ao.wl-tiwai@suse.de>
- <CAJZ5v0gWRfbtKG0w1UiM=KbtZYkhL2kj-W_9Q+PUP293sX35_Q@mail.gmail.com>
- <s5hbmc5oma2.wl-tiwai@suse.de> <s5hr2l1ciqg.wl-tiwai@suse.de>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 21 Jun 2018 00:12:38 +0200
-X-Google-Sender-Auth: 3anDMq_iWUTs3ndQns4JB03WSlg
-Message-ID: <CAJZ5v0iYTLjK4eDsohPdB5Yut4TeGW=hBoCrZ-K=tRzNtXt4iw@mail.gmail.com>
-Subject: Re: [REGRESSION] 4.17 failed to probe ACPI PnP
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Noah Davis <noahadvs@gmail.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1529532570-21765-2-git-send-email-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 10:20 PM, Takashi Iwai <tiwai@suse.de> wrote:
-> On Wed, 20 Jun 2018 11:11:17 +0200,
-> Takashi Iwai wrote:
->>
->> On Wed, 20 Jun 2018 09:28:40 +0200,
->> Rafael J. Wysocki wrote:
->> >
->> > On Wed, Jun 20, 2018 at 8:37 AM, Takashi Iwai <tiwai@suse.de> wrote:
->> > > On Tue, 19 Jun 2018 10:38:50 +0200,
->> > > Takashi Iwai wrote:
->> > >>
->> > >> On Tue, 19 Jun 2018 10:28:42 +0200,
->> > >> Rafael J. Wysocki wrote:
->> > >> >
->> > >> > On Tue, Jun 19, 2018 at 8:12 AM, Takashi Iwai <tiwai@suse.de> wrote:
->> > >> > > Hi,
->> > >> > >
->> > >> > > there seems a regression regarding the probe of ACPI PnP devices.
->> > >> > > The detailed logs are found in openSUSE bugzilla:
->> > >> > >   https://bugzilla.opensuse.org/show_bug.cgi?id=1098074
->> > >> >
->> > >> > But that's on this particular machine, not in general, right?
->> > >> >
->> > >> > At least I don't see this on any of the systems in my office.
->> > >>
->> > >> Yes, it looks so.  4.17 and later works on my several machines, too.
->> > >>
->> > >> >
->> > >> > > In short, since 4.17, the laptop keyboard is lost on ASUS K501UW.
->> > >> > > Comparing the kernel messages and other logs indicates that the
->> > >> > > complete lost of ACPI PnP devices:
->> > >> > >
->> > >> > > On 4.16:
->> > >> > > [    0.390244] pnp: PnP ACPI: found 9 devices
->> > >> > >
->> > >> > > On 4.17:
->> > >> > > [    0.263266] pnp: PnP ACPI: found 0 devices
->> > >> > >
->> > >> > > ... and this leads to the failure of PS/2 keyboard detection due to
->> > >> > > the missing PNP030b entry as a result.
->> > >> > >
->> > >> > > Any hints for debugging this are appreciated.
->> > >> >
->> > >> > It looks like this may be related to the ACPICA changes that went in
->> > >> > during the 4.17 cycle.
->> > >> >
->> > >> > I would try 4.18-rc1 as there is an ACPICA fix in it that may be
->> > >> > related to this in theory.  If that doesn't help, I'd focus on the
->> > >> > ACPICA changes.
->> > >>
->> > >> OK, Noah, could you test later the kernel in OBS Kernel:HEAD repo?
->> > >> Now 4.18-rc1 kernel is being built there, and hopefully will finish
->> > >> soon later.
->> > >
->> > > 4.18-rc1 was confirmed to work, so something had fixed it.
->> >
->> > Please check this commit
->> >
->> > 5088814a6e93 ACPICA: AML parser: attempt to continue loading table after error
->> >
->> > None of the other ACPICA commits that have gone in since 4.17 should
->> > affect the behavior at hand.
->>
->> OK, I'm building a test kernel with this backport.  Stay tuned.
->
-> The result looks positive, things seem working with the backport.
->
-> Care to send it to Greg for 4.17.x stable?  Thanks!
+On 06/20/2018 03:09 PM, Rick Edgecombe wrote:
+> Create __vmalloc_node_try_addr function that tries to allocate at a specific
+> address.  The implementation relies on __vmalloc_node_range for the bulk of the
+> work.  To keep this function from spamming the logs when an allocation failure
+> is fails, __vmalloc_node_range is changed to only warn when __GFP_NOWARN is not
+> set.  This behavior is consistent with this flags interpretation in
+> alloc_vmap_area.
+> 
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  include/linux/vmalloc.h |  3 +++
+>  mm/vmalloc.c            | 41 +++++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 42 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index 398e9c9..6eaa896 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -82,6 +82,9 @@ extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
+>  			unsigned long start, unsigned long end, gfp_t gfp_mask,
+>  			pgprot_t prot, unsigned long vm_flags, int node,
+>  			const void *caller);
+> +extern void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
+> +			gfp_t gfp_mask,	pgprot_t prot, unsigned long vm_flags,
+> +			int node, const void *caller);
+>  #ifndef CONFIG_MMU
+>  extern void *__vmalloc_node_flags(unsigned long size, int node, gfp_t flags);
+>  static inline void *__vmalloc_node_flags_caller(unsigned long size, int node,
 
-Will do tomorrow, thanks!
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index cfea25b..9e0820c9 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1710,6 +1710,42 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  }
+>  
+>  /**
+> + *	__vmalloc_try_addr  -  try to alloc at a specific address
+
+    *   __vmalloc_node_try_addr - try to allocate at a specific address
+
+> + *	@addr:		address to try
+> + *	@size:		size to try
+> + *	@gfp_mask:	flags for the page level allocator
+> + *	@prot:		protection mask for the allocated pages
+> + *	@vm_flags:	additional vm area flags (e.g. %VM_NO_GUARD)
+> + *	@node:		node to use for allocation or NUMA_NO_NODE
+> + *	@caller:	caller's return address
+> + *
+> + *	Try to allocate at the specific address. If it succeeds the address is
+> + *	returned. If it fails NULL is returned.  It may trigger TLB flushes.
+> + */
+> +void *__vmalloc_node_try_addr(unsigned long addr, unsigned long size,
+> +			gfp_t gfp_mask,	pgprot_t prot, unsigned long vm_flags,
+> +			int node, const void *caller)
+> +{
+
+so this isn't optional, eh?  You are going to force it on people because?
+
+thanks,
+-- 
+~Randy
