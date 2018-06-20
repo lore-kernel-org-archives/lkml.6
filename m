@@ -2,399 +2,870 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 975B8C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A724CC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1A020846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B59208B3
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:49:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AcGKxYK+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q2wcImuw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1A020846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="bBpLq9JV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B59208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932763AbeFTItG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:49:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53882 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754624AbeFTItB (ORCPT
+        id S933091AbeFTIt2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:49:28 -0400
+Received: from services.gouders.net ([141.101.32.176]:53303 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754662AbeFTItX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:49:01 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 04AB660B1A; Wed, 20 Jun 2018 08:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529484541;
-        bh=jtggRqIePLKRjBom0pKrh1eTDECvKrWGz2naPuMFxyg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AcGKxYK+ZjC/jkoS1NTGVeZTdAzcGa/HcJTNdtljHcJyo9S0C6bIjlpqOqkgH4wsO
-         i+C6aXgC9qAeJ/MGEdxftDHSpNzW4+J5gusXeR29GjjX3L+Rx8QH89sJsegBKajhDK
-         TMaWGgeQFYdXD5eRdEUJYlIWZcOxcuPfhS1oudws=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 11C0660227;
-        Wed, 20 Jun 2018 08:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529484539;
-        bh=jtggRqIePLKRjBom0pKrh1eTDECvKrWGz2naPuMFxyg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Q2wcImuwcR2WRSLL/02KOXnrhApFmZmsJlhZkGRJG5UnxBc6tD1Lcgcp4/zkVFwMh
-         tEz7VgFw2RcpuGePJWHyZPJV0HBgC6J7HDlyOXtkPmc5MqE1cwprT0ABGqd2GYb8x3
-         q64hQKsZZ9uT9i4W7sg8FE0LMMT+JB0E9E5Ef0b8=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 20 Jun 2018 14:18:59 +0530
-From:   sricharan@codeaurora.org
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@codeaurora.org,
-        linux@armlinux.org.uk, andy.gross@linaro.org,
-        david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux@arm.linux.org.uk,
-        thierry.escande@linaro.org, linux-arm-msm-owner@vger.kernel.org,
-        bjorn.andersson@linaro.org
-Subject: Re: [PATCH v10 13/14] cpufreq: Add module to register cpufreq on
- Krait CPUs
-In-Reply-To: <20180619152927.GA6139@arch>
-References: <1529415925-28915-1-git-send-email-sricharan@codeaurora.org>
- <1529415925-28915-14-git-send-email-sricharan@codeaurora.org>
- <20180619152927.GA6139@arch>
-Message-ID: <e986492417c0ca1f5784b651a614321d@codeaurora.org>
-X-Sender: sricharan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 20 Jun 2018 04:49:23 -0400
+Received: from lena.gouders.net ([193.175.198.193])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w5K8gRCd013731
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Wed, 20 Jun 2018 10:42:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1529484161; bh=stOeHvCOxulvKyOGwaSARP0U4AW5FxLXIvrP75f/A0E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=bBpLq9JVJtUpettg8hWRJM8EkXIq4nrAVyEcUzr7a+BzNh/fVqNi6kfJk/hRMCPmi
+         s7DJY6Y6Jxxkyxo7g44geHehjZPXfZwH5Jns5GFTjhKXgENIYq0NzS9zQxeFM5OjTn
+         Vgjf+zxyPtUSl74otofqmcrGwSAv+86S6xmUDj7E=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     Dirk Gouders <dirk@gouders.net>
+Subject: [RFC v8 1/1] mconf: global i-search in menu prompts
+Date:   Wed, 20 Jun 2018 10:42:17 +0200
+Message-Id: <20180620084217.8597-2-dirk@gouders.net>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180620084217.8597-1-dirk@gouders.net>
+References: <20180620084217.8597-1-dirk@gouders.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-19 20:59, Craig Tatlor wrote:
-> The pvs refuse check is incorrect... With downstream it says it isn't
-> blown and that it is 11, which also happens on upstream if I import 
-> it's
-> efuse reading code from an older revision, or comment out the check.
-> 
+Some menus in the kernel configuration are rather large and it can be
+time-consuming for a user to navigate through several menu items to
+reach the menu entry that he wants to modify -- for users with
+less than 100% healthy eyes, this process can also be challenging.
 
-  ok, atleast on my ipq8064, it works the same. let me check once.
+An i-search functionality could safe the user from a lot of reading if
+he knows a keyword that can be used for navigation and this patch
+implements an i-search navigation concept for mconf based on an idea
+by Sam Ravnborg:
 
-> Also, I'm still getting my issue about clocks above 2,147,483,647hz
-> however I think this may be related to the division in the hfpll driver
-> so I'll have a debug around there.
-> 
+* mconf now distinguishes if the focus is on the menu items or the
+  buttons below it.
 
-   hmm, atleast on ipq8064, it goes till the max frequency. As you said
-   it might be to do with the hfpll driver that runs on 8974. I will try 
-to test
-   on that hardware.
+* At startup focus is on the menu items and printable characters
+  (details see below) entered are used to form a string that is
+  searched for in the menu prompts.
 
-   That said, just realized that i missed a minor comment from Bjorn.
-   Will anyway update it.
+This patch implements a global cyclic i-search in the prompts of the
+complete menu tree.  For this, a new helper function menu_get_next()
+is used.  This function returns the successor of any node in the
+menu tree in cyclic depth-first traversal order.
 
-Regards,
-  Sricharan
+Given this function and the following tree
 
+a - c - d - f
+|       |
+b       e
 
+the successor of each node is the one in alphabetical order and the
+successor of the last node 'f' is 'a'.
 
-> On Tue, Jun 19, 2018 at 07:15:24PM +0530, Sricharan R wrote:
->> From: Stephen Boyd <sboyd@codeaurora.org>
->> 
->> Register a cpufreq-generic device whenever we detect that a
->> "qcom,krait" compatible CPU is present in DT.
->> 
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> [Sricharan: updated to use dev_pm_opp_set_prop_name and
->> 	    nvmem apis]
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> [Thierry Escande: update to add support for opp-supported-hw]
->> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
->> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> ---
->>  [v10] updated to add support for opp-supported-hw given by
->>        Thierry Escande <thierry.escande@linaro.org>
->> 
->>  drivers/cpufreq/Kconfig.arm          |  10 ++
->>  drivers/cpufreq/Makefile             |   1 +
->>  drivers/cpufreq/cpufreq-dt-platdev.c |   5 +
->>  drivers/cpufreq/qcom-cpufreq.c       | 201 
->> +++++++++++++++++++++++++++++++++++
->>  4 files changed, 217 insertions(+)
->>  create mode 100644 drivers/cpufreq/qcom-cpufreq.c
->> 
->> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->> index 7f56fe5..87e5d8d 100644
->> --- a/drivers/cpufreq/Kconfig.arm
->> +++ b/drivers/cpufreq/Kconfig.arm
->> @@ -134,6 +134,16 @@ config ARM_OMAP2PLUS_CPUFREQ
->>  	depends on ARCH_OMAP2PLUS
->>  	default ARCH_OMAP2PLUS
->> 
->> +config ARM_QCOM_CPUFREQ
->> +	bool "CPUfreq driver for the QCOM SoCs with KRAIT processors"
->> +	depends on ARCH_QCOM
->> +	select PM_OPP
->> +	help
->> +	  This enables the CPUFreq driver for Qualcomm SoCs with
->> +	  KRAIT processors.
->> +
->> +	  If in doubt, say N.
->> +
->>  config ARM_S3C_CPUFREQ
->>  	bool
->>  	help
->> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
->> index 8d24ade..c591e1e 100644
->> --- a/drivers/cpufreq/Makefile
->> +++ b/drivers/cpufreq/Makefile
->> @@ -65,6 +65,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
->>  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
->>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
->>  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
->> +obj-$(CONFIG_ARM_QCOM_CPUFREQ)		+= qcom-cpufreq.o
->>  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
->>  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
->>  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
->> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c 
->> b/drivers/cpufreq/cpufreq-dt-platdev.c
->> index 3b585e4..e2e9a99 100644
->> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
->> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
->> @@ -127,6 +127,11 @@
->>  	{ .compatible = "ti,am43", },
->>  	{ .compatible = "ti,dra7", },
->> 
->> +	{ .compatible = "qcom,ipq8064", },
->> +	{ .compatible = "qcom,apq8064", },
->> +	{ .compatible = "qcom,msm8974", },
->> +	{ .compatible = "qcom,msm8960", },
->> +
->>  	{ }
->>  };
->> 
->> diff --git a/drivers/cpufreq/qcom-cpufreq.c 
->> b/drivers/cpufreq/qcom-cpufreq.c
->> new file mode 100644
->> index 0000000..1d4ab54
->> --- /dev/null
->> +++ b/drivers/cpufreq/qcom-cpufreq.c
->> @@ -0,0 +1,201 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> +
->> +#include <linux/cpu.h>
->> +#include <linux/module.h>
->> +#include <linux/nvmem-consumer.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_opp.h>
->> +#include <linux/slab.h>
->> +
->> +static void __init get_krait_bin_format_a(int *speed, int *pvs, int 
->> *pvs_ver,
->> +					  struct nvmem_cell *pvs_nvmem, u8 *buf)
->> +{
->> +	u32 pte_efuse;
->> +
->> +	pte_efuse = *((u32 *)buf);
->> +
->> +	*speed = pte_efuse & 0xf;
->> +	if (*speed == 0xf)
->> +		*speed = (pte_efuse >> 4) & 0xf;
->> +
->> +	if (*speed == 0xf) {
->> +		*speed = 0;
->> +		pr_warn("Speed bin: Defaulting to %d\n", *speed);
->> +	} else {
->> +		pr_info("Speed bin: %d\n", *speed);
->> +	}
->> +
->> +	*pvs = (pte_efuse >> 10) & 0x7;
->> +	if (*pvs == 0x7)
->> +		*pvs = (pte_efuse >> 13) & 0x7;
->> +
->> +	if (*pvs == 0x7) {
->> +		*pvs = 0;
->> +		pr_warn("PVS bin: Defaulting to %d\n", *pvs);
->> +	} else {
->> +		pr_info("PVS bin: %d\n", *pvs);
->> +	}
->> +
->> +	kfree(buf);
->> +}
->> +
->> +static void __init get_krait_bin_format_b(int *speed, int *pvs, int 
->> *pvs_ver,
->> +					  struct nvmem_cell *pvs_nvmem, u8 *buf)
->> +{
->> +	u32 pte_efuse, redundant_sel;
->> +
->> +	pte_efuse = *((u32 *)buf);
->> +	redundant_sel = (pte_efuse >> 24) & 0x7;
->> +	*speed = pte_efuse & 0x7;
->> +
->> +	/* 4 bits of PVS are in efuse register bits 31, 8-6. */
->> +	*pvs = ((pte_efuse >> 28) & 0x8) | ((pte_efuse >> 6) & 0x7);
->> +	*pvs_ver = (pte_efuse >> 4) & 0x3;
->> +
->> +	switch (redundant_sel) {
->> +	case 1:
->> +		*speed = (pte_efuse >> 27) & 0xf;
->> +		break;
->> +	case 2:
->> +		*pvs = (pte_efuse >> 27) & 0xf;
->> +		break;
->> +	}
->> +
->> +	/* Check SPEED_BIN_BLOW_STATUS */
->> +	if (pte_efuse & BIT(3)) {
->> +		pr_info("Speed bin: %d\n", *speed);
->> +	} else {
->> +		pr_warn("Speed bin not set. Defaulting to 0!\n");
->> +		*speed = 0;
->> +	}
->> +
->> +	/* Check PVS_BLOW_STATUS */
->> +	pte_efuse = *(((u32 *)buf) + 4);
->> +	if (pte_efuse) {
->> +		pr_info("PVS bin: %d\n", *pvs);
->> +	} else {
->> +		pr_warn("PVS bin not set. Defaulting to 0!\n");
->> +		*pvs = 0;
->> +	}
->> +
->> +	pr_info("PVS version: %d\n", *pvs_ver);
->> +	kfree(buf);
->> +}
->> +
->> +static int __init qcom_cpufreq_populate_opps(struct nvmem_cell 
->> *pvs_nvmem,
->> +					     struct opp_table **tbl1,
->> +					     struct opp_table **tbl2)
->> +{
->> +	int speed = 0, pvs = 0, pvs_ver = 0, cpu, ret;
->> +	struct device *cpu_dev;
->> +	u8 *buf;
->> +	size_t len;
->> +	char pvs_name[] = "speedXX-pvsXX-vXX";
->> +	u32 hw_version;
->> +
->> +	buf = nvmem_cell_read(pvs_nvmem, &len);
->> +	if (len == 4)
->> +		get_krait_bin_format_a(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
->> +	else if (len == 8)
->> +		get_krait_bin_format_b(&speed, &pvs, &pvs_ver, pvs_nvmem, buf);
->> +	else
->> +		pr_warn("Unable to read nvmem data. Defaulting to 0!\n");
->> +
->> +	snprintf(pvs_name, sizeof(pvs_name), "speed%d-pvs%d-v%d",
->> +		 speed, pvs, pvs_ver);
->> +
->> +	hw_version = (1 << speed);
->> +
->> +	for (cpu = 0; cpu < num_possible_cpus(); cpu++) {
->> +		cpu_dev = get_cpu_device(cpu);
->> +		if (!cpu_dev)
->> +			return -ENODEV;
->> +
->> +		tbl1[cpu] = dev_pm_opp_set_prop_name(cpu_dev, pvs_name);
->> +		if (IS_ERR(tbl1[cpu])) {
->> +			ret = PTR_ERR(tbl1[cpu]);
->> +			tbl1[cpu] = 0;
->> +			pr_warn("failed to add OPP name %s\n", pvs_name);
->> +			return ret;
->> +		}
->> +
->> +		tbl2[cpu] = dev_pm_opp_set_supported_hw(cpu_dev, &hw_version,
->> +							1);
->> +		if (IS_ERR(tbl2[cpu])) {
->> +			ret = PTR_ERR(tbl2[cpu]);
->> +			tbl2[cpu] = 0;
->> +			pr_warn("failed to set supported hw version\n");
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int __init qcom_cpufreq_driver_init(void)
->> +{
->> +	struct platform_device *pdev;
->> +	struct device *cpu_dev;
->> +	struct device_node *np;
->> +	struct nvmem_cell *pvs_nvmem;
->> +	struct opp_table *tbl1[NR_CPUS] = { NULL }, *tbl2[NR_CPUS] = { NULL 
->> };
->> +	int ret, cpu = 0;
->> +
->> +	cpu_dev = get_cpu_device(0);
->> +	if (!cpu_dev)
->> +		return -ENODEV;
->> +
->> +	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
->> +	if (!np)
->> +		return -ENOENT;
->> +
->> +	if (!of_device_is_compatible(np, "operating-points-v2-krait-cpu")) {
->> +		ret = -ENOENT;
->> +		goto free_np;
->> +	}
->> +
->> +	pvs_nvmem = of_nvmem_cell_get(np, NULL);
->> +	if (IS_ERR(pvs_nvmem)) {
->> +		dev_err(cpu_dev, "Could not get nvmem cell\n");
->> +		ret = PTR_ERR(pvs_nvmem);
->> +		goto free_np;
->> +	}
->> +
->> +	ret = qcom_cpufreq_populate_opps(pvs_nvmem, tbl1, tbl2);
->> +	if (ret)
->> +		goto free_opp_name;
->> +
->> +	pdev = platform_device_register_simple("cpufreq-dt", -1, NULL, 0);
->> +	if (IS_ERR(pdev)) {
->> +		ret = PTR_ERR(pdev);
->> +		goto free_opp_name;
->> +	}
->> +
->> +	of_node_put(np);
->> +
->> +	return 0;
->> +
->> +free_opp_name:
->> +	while (tbl1[cpu]) {
->> +		dev_pm_opp_put_prop_name(tbl1[cpu]);
->> +		cpu++;
->> +	}
->> +
->> +	cpu = 0;
->> +	while (tbl2[cpu]) {
->> +		dev_pm_opp_put_supported_hw(tbl2[cpu]);
->> +		cpu++;
->> +	}
->> +
->> +free_np:
->> +	of_node_put(np);
->> +
->> +	return ret;
->> +}
->> +late_initcall(qcom_cpufreq_driver_init);
->> +
->> +MODULE_DESCRIPTION("Qualcomm CPUfreq driver");
->> +MODULE_AUTHOR("Stephen Boyd <sboyd@codeaurora.org>");
->> +MODULE_LICENSE("GPL v2");
->> --
->> 1.9.1
->> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe 
-> linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Operation
+---------
+The TAB key is reserved to toggle the focus between menu and bottons.
+Focus is on the buttons if one of the buttens (the active one) is
+hightlighted, otherwise it is on the menu.
+
+When the focus is on the buttons, mconf operates as before with the
+exception of the TAB key.
+
+When the focus is on the menu, mconf operates in i-search mode and the
+following input has special meaning:
+
+* <\> (backslash) can be used to search for other occurences of an
+  already entered string.  On empty search strings, nothing happens.
+
+* Any other printable character than backslash and '\n' is appended to
+  the current search string and a match is searched for.  If a match
+  is found, it is immediately navigated to.
+
+* BACKSPACE is used to remove the last character of the search string.
+
+* DEL clears the search string.
+
+* ENTER can be used to enter a submenu.
+
+* ESC ESC exits the current isearch and clears the search string.
+
+* Horizontal arrow keys still cycle between the buttons but also
+  switch focus to the buttons.
+
+* Vertical arroy keys navigate the menu items.
+
+At any time, at most one i-search is active and the navigation path to
+the current menu is displayed in the subtitle, the second line in the
+menu window.
+
+Navigation example:
+
+To navigate to options concerning NFS file systems, simply type 'n',
+'f' and 's'.
+
+Hint: use the 'z' key with focus on buttons to search for invisible
+      prompts.
+
+Particular changes to existing code
+-----------------------------------
+* New function menu_get_next() that returns the successor of any node
+  in the menu tree in cyclic depth-first order.
+
+* The function print_autowrap() only printed non-whitespace characters
+  and thus could not be used to overwrite existing text.  It was
+  extended by a parameter "height" and in combination with the
+  parameter "width" it now makes sure that the whole region (width x
+  height) is overwritten.
+
+* The function conf() now returns the key the user pressed so that
+  calling functions can operate depending on that key.
+
+Signed-off-by: Dirk Gouders <dirk@gouders.net>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ scripts/kconfig/lkc.h                |   1 +
+ scripts/kconfig/lxdialog/checklist.c |   2 +-
+ scripts/kconfig/lxdialog/dialog.h    |   3 +-
+ scripts/kconfig/lxdialog/inputbox.c  |   2 +-
+ scripts/kconfig/lxdialog/menubox.c   | 181 ++++++++++++++++++++++++++++++-----
+ scripts/kconfig/lxdialog/util.c      |  45 ++++++++-
+ scripts/kconfig/lxdialog/yesno.c     |   2 +-
+ scripts/kconfig/mconf.c              | 173 +++++++++++++++++++++++++++++++--
+ scripts/kconfig/menu.c               |  28 ++++++
+ 9 files changed, 398 insertions(+), 39 deletions(-)
+
+diff --git a/scripts/kconfig/lkc.h b/scripts/kconfig/lkc.h
+index ed3ff88e60ba..22b96530234d 100644
+--- a/scripts/kconfig/lkc.h
++++ b/scripts/kconfig/lkc.h
+@@ -81,6 +81,7 @@ static inline void xfwrite(const void *str, size_t len, size_t count, FILE *out)
+ }
+ 
+ /* menu.c */
++struct menu *menu_get_next(struct menu *m);
+ void _menu_init(void);
+ void menu_warn(struct menu *menu, const char *fmt, ...);
+ struct menu *menu_add_menu(void);
+diff --git a/scripts/kconfig/lxdialog/checklist.c b/scripts/kconfig/lxdialog/checklist.c
+index 2e96323ad11b..2a8bd877af72 100644
+--- a/scripts/kconfig/lxdialog/checklist.c
++++ b/scripts/kconfig/lxdialog/checklist.c
+@@ -160,7 +160,7 @@ int dialog_checklist(const char *title, const char *prompt, int height,
+ 	print_title(dialog, title, width);
+ 
+ 	wattrset(dialog, dlg.dialog.atr);
+-	print_autowrap(dialog, prompt, width - 2, 1, 3);
++	print_autowrap(dialog, prompt, width - 2, 3, 1, 3);
+ 
+ 	list_width = width - 6;
+ 	box_y = height - list_height - 5;
+diff --git a/scripts/kconfig/lxdialog/dialog.h b/scripts/kconfig/lxdialog/dialog.h
+index 0b00be5abaa6..9396ed2122f9 100644
+--- a/scripts/kconfig/lxdialog/dialog.h
++++ b/scripts/kconfig/lxdialog/dialog.h
+@@ -214,7 +214,8 @@ void set_dialog_subtitles(struct subtitle_list *subtitles);
+ void end_dialog(int x, int y);
+ void attr_clear(WINDOW * win, int height, int width, chtype attr);
+ void dialog_clear(void);
+-void print_autowrap(WINDOW * win, const char *prompt, int width, int y, int x);
++void print_autowrap(WINDOW * win, const char *prompt,
++		    int width, int height, int y, int x);
+ void print_button(WINDOW * win, const char *label, int y, int x, int selected);
+ void print_title(WINDOW *dialog, const char *title, int width);
+ void draw_box(WINDOW * win, int y, int x, int height, int width, chtype box,
+diff --git a/scripts/kconfig/lxdialog/inputbox.c b/scripts/kconfig/lxdialog/inputbox.c
+index fe82ff6d744e..121ac6b810f3 100644
+--- a/scripts/kconfig/lxdialog/inputbox.c
++++ b/scripts/kconfig/lxdialog/inputbox.c
+@@ -82,7 +82,7 @@ int dialog_inputbox(const char *title, const char *prompt, int height, int width
+ 	print_title(dialog, title, width);
+ 
+ 	wattrset(dialog, dlg.dialog.atr);
+-	print_autowrap(dialog, prompt, width - 2, 1, 3);
++	print_autowrap(dialog, prompt, width - 2, 2, 1, 3);
+ 
+ 	/* Draw the input field box */
+ 	box_width = width - 6;
+diff --git a/scripts/kconfig/lxdialog/menubox.c b/scripts/kconfig/lxdialog/menubox.c
+index d70cab36137e..b866902ef795 100644
+--- a/scripts/kconfig/lxdialog/menubox.c
++++ b/scripts/kconfig/lxdialog/menubox.c
+@@ -58,21 +58,39 @@
+ 
+ #include "dialog.h"
+ 
++#define ISEARCH_LEN 32
++char isearch_str[ISEARCH_LEN] = "";
++
+ static int menu_width, item_x;
+ 
++int focus_on_buttons;
++
++static const char isearch_instructions[] =
++	"I-search: Arrow keys navigate the menu, "
++	"<Enter> selects submenus. "
++	"Type any character to search for menu items, "
++	"press <\\> to find further matches, <TAB> switches focus to "
++        "buttons, <Esc><Esc> returns to start of i-search. "
++	"Legend: [*] built-in  [ ] excluded  <M> module  < > module capable";
+ /*
+  * Print menu item
+  */
+ static void do_print_item(WINDOW * win, const char *item, int line_y,
+ 			  int selected, int hotkey)
+ {
++	int i;
+ 	int j;
++	int isearch_match_pos;
++	char *isearch_match;
+ 	char *menu_item = malloc(menu_width + 1);
+ 
+ 	strncpy(menu_item, item, menu_width - item_x);
+ 	menu_item[menu_width - item_x] = '\0';
+ 	j = first_alpha(menu_item, "YyNnMmHh");
+ 
++	isearch_match = strcasestr(menu_item, isearch_str);
++	isearch_match_pos = isearch_match - menu_item;
++
+ 	/* Clear 'residue' of last item */
+ 	wattrset(win, dlg.menubox.atr);
+ 	wmove(win, line_y, 0);
+@@ -85,16 +103,31 @@ static void do_print_item(WINDOW * win, const char *item, int line_y,
+ #else
+ 	wclrtoeol(win);
+ #endif
+-	wattrset(win, selected ? dlg.item_selected.atr : dlg.item.atr);
++	if (focus_on_buttons)
++		wattrset(win, selected ? A_STANDOUT : dlg.item.atr);
++	else
++		wattrset(win, selected ? dlg.item_selected.atr : dlg.item.atr);
+ 	mvwaddstr(win, line_y, item_x, menu_item);
+-	if (hotkey) {
++	if (hotkey && focus_on_buttons) {
+ 		wattrset(win, selected ? dlg.tag_key_selected.atr
+ 			 : dlg.tag_key.atr);
+ 		mvwaddch(win, line_y, item_x + j, menu_item[j]);
+ 	}
+-	if (selected) {
+-		wmove(win, line_y, item_x + 1);
++
++	if (selected && !focus_on_buttons) {
++		/*
++		 * Highlight i-search matching part of selected menu item
++		 */
++		if (isearch_match) {
++			for (i = 0; i < strlen(isearch_str); i++) {
++				wattrset(win, dlg.tag_key_selected.atr);
++				mvwaddch(win, line_y, item_x + isearch_match_pos + i,
++					 menu_item[isearch_match_pos + i]);
++			}
++		}
++
+ 	}
++	wmove(win, line_y, item_x + 1);
+ 	free(menu_item);
+ 	wrefresh(win);
+ }
+@@ -106,6 +139,33 @@ do {									\
+ } while (0)
+ 
+ /*
++* Print the i-search indicator.
++*/
++static void print_isearch(WINDOW * win, int y, int x, int height)
++{
++	unsigned char i = 0;
++	int text_size = ISEARCH_LEN - 1;
++	wmove(win, y, x);
++
++	y = y + height + 1;
++	wmove(win, y, x);
++
++	if (!focus_on_buttons) {
++		wattrset(win, dlg.button_key_inactive.atr);
++		waddstr(win, "isearch: ");
++		waddstr(win, isearch_str);
++		i = strlen(isearch_str);
++	} else {
++		text_size += 9; /* also overwrite "isearch: " */
++	}
++
++	wattrset(win, dlg.menubox_border.atr);
++
++	for ( ; i < text_size; i++ )
++		waddch(win, ACS_HLINE);
++}
++
++/*
+  * Print the scroll indicators.
+  */
+ static void print_arrows(WINDOW * win, int item_no, int scroll, int y, int x,
+@@ -156,12 +216,22 @@ static void print_buttons(WINDOW * win, int height, int width, int selected)
+ {
+ 	int x = width / 2 - 28;
+ 	int y = height - 2;
++	int highlight;
++
++	/*
++	 * Don't highlight the selected button if the buttons don't have
++	 * the focus.
++	 */
++	if (!focus_on_buttons)
++		highlight = -1;
++	else
++		highlight = selected;
+ 
+-	print_button(win, "Select", y, x, selected == 0);
+-	print_button(win, " Exit ", y, x + 12, selected == 1);
+-	print_button(win, " Help ", y, x + 24, selected == 2);
+-	print_button(win, " Save ", y, x + 36, selected == 3);
+-	print_button(win, " Load ", y, x + 48, selected == 4);
++	print_button(win, "Select", y, x, highlight == 0);
++	print_button(win, " Exit ", y, x + 12, highlight == 1);
++	print_button(win, " Help ", y, x + 24, highlight == 2);
++	print_button(win, " Save ", y, x + 36, highlight == 3);
++	print_button(win, " Load ", y, x + 48, highlight == 4);
+ 
+ 	wmove(win, y, x + 1 + 12 * selected);
+ 	wrefresh(win);
+@@ -224,7 +294,9 @@ int dialog_menu(const char *title, const char *prompt,
+ 	print_title(dialog, title, width);
+ 
+ 	wattrset(dialog, dlg.dialog.atr);
+-	print_autowrap(dialog, prompt, width - 2, 1, 3);
++	print_autowrap(dialog,
++		       focus_on_buttons ? prompt : isearch_instructions,
++		       width - 2, 4, 1, 3);
+ 
+ 	menu_width = width - 6;
+ 	box_y = height - menu_height - 5;
+@@ -275,6 +347,7 @@ int dialog_menu(const char *title, const char *prompt,
+ 	print_arrows(dialog, item_count(), scroll,
+ 		     box_y, box_x + item_x + 1, menu_height);
+ 
++	print_isearch(dialog, box_y, box_x + item_x + 5, menu_height);
+ 	print_buttons(dialog, height, width, 0);
+ 	wmove(menu, choice, item_x + 1);
+ 	wrefresh(menu);
+@@ -285,22 +358,24 @@ int dialog_menu(const char *title, const char *prompt,
+ 		if (key < 256 && isalpha(key))
+ 			key = tolower(key);
+ 
+-		if (strchr("ynmh", key))
+-			i = max_choice;
+-		else {
+-			for (i = choice + 1; i < max_choice; i++) {
+-				item_set(scroll + i);
+-				j = first_alpha(item_str(), "YyNnMmHh");
+-				if (key == tolower(item_str()[j]))
+-					break;
+-			}
+-			if (i == max_choice)
+-				for (i = 0; i < max_choice; i++) {
++		if (focus_on_buttons) {
++			if (strchr("ynmh", key))
++				i = max_choice;
++			else {
++				for (i = choice + 1; i < max_choice; i++) {
+ 					item_set(scroll + i);
+ 					j = first_alpha(item_str(), "YyNnMmHh");
+ 					if (key == tolower(item_str()[j]))
+ 						break;
+ 				}
++				if (i == max_choice)
++					for (i = 0; i < max_choice; i++) {
++						item_set(scroll + i);
++						j = first_alpha(item_str(), "YyNnMmHh");
++						if (key == tolower(item_str()[j]))
++							break;
++					}
++			}
+ 		}
+ 
+ 		if (item_count() != 0 &&
+@@ -370,13 +445,73 @@ int dialog_menu(const char *title, const char *prompt,
+ 			continue;	/* wait for another key press */
+ 		}
+ 
++		if (!focus_on_buttons) {
++			/*
++			 * Handle keys for i-search
++			 */
++			if (key == KEY_BACKSPACE) {
++				if (isearch_str[0]) {
++					isearch_str[strlen(isearch_str) - 1] = '\0';
++					print_item(scroll + choice, choice, true);
++					print_isearch(dialog, box_y, box_x + item_x + 5,
++						      menu_height);
++					print_buttons(dialog, height, width, button);
++					wrefresh(menu);
++				}
++				continue;
++			}
++
++			if (key == KEY_DC) {
++				isearch_str[0] = '\0';
++				print_item(scroll + choice, choice, true);
++				print_isearch(dialog, box_y, box_x + item_x + 5,
++					      menu_height);
++				print_buttons(dialog, height, width, button);
++				wrefresh(menu);
++				continue;
++			}
++
++			if (isprint(key)) {
++				if (strlen(isearch_str) < ISEARCH_LEN - 1
++				    && key != '\\') {
++					isearch_str[i = strlen(isearch_str)] = key;
++					isearch_str[i+1] = '\0';
++					/* Remove highlight of current item */
++					print_item(scroll + choice, choice, FALSE);
++				}
++				/* save scroll info */
++				*s_scroll = scroll;
++				delwin(menu);
++				delwin(dialog);
++				item_set(scroll + choice);
++				item_set_selected(1);
++				return key;
++			}
++		}
++
+ 		switch (key) {
+ 		case KEY_LEFT:
+-		case TAB:
+ 		case KEY_RIGHT:
+ 			button = ((key == KEY_LEFT ? --button : ++button) < 0)
+ 			    ? 4 : (button > 4 ? 0 : button);
+-
++			focus_on_buttons = 0; /* see next
++					       * modification below! */
++			/* fallthrough */
++		case TAB:
++			focus_on_buttons = !focus_on_buttons;
++			/* Print the menu */
++			for (i = 0; i < max_choice; i++) {
++				print_item(scroll + i, i, false);
++			}
++			/*
++			 * Print current item again to have the cursor
++			 * positioned
++			 */
++			print_item(scroll + choice, choice, true);
++			wattrset(dialog, dlg.dialog.atr);
++			print_autowrap(dialog, focus_on_buttons ? prompt : isearch_instructions,
++				       width - 2, 4, 1, 3);
++			print_isearch(dialog, box_y, box_x + item_x + 5, menu_height);
+ 			print_buttons(dialog, height, width, button);
+ 			wrefresh(menu);
+ 			break;
+diff --git a/scripts/kconfig/lxdialog/util.c b/scripts/kconfig/lxdialog/util.c
+index f7abdeb92af0..5b3c2f86b22b 100644
+--- a/scripts/kconfig/lxdialog/util.c
++++ b/scripts/kconfig/lxdialog/util.c
+@@ -378,8 +378,12 @@ void print_title(WINDOW *dialog, const char *title, int width)
+  * next line if the string is too long to fit on one line. Newline
+  * characters '\n' are propperly processed.  We start on a new line
+  * if there is no room for at least 4 nonblanks following a double-space.
++ *
++ * This function fills all of and at most the area width x height so
++ * that it can be used to overwrite previosly displayed text.
+  */
+-void print_autowrap(WINDOW * win, const char *prompt, int width, int y, int x)
++void print_autowrap(WINDOW * win, const char *prompt, int width,
++			int height, int y, int x)
+ {
+ 	int newl, cur_x, cur_y;
+ 	int prompt_len, room, wlen;
+@@ -390,8 +394,16 @@ void print_autowrap(WINDOW * win, const char *prompt, int width, int y, int x)
+ 	prompt_len = strlen(tempstr);
+ 
+ 	if (prompt_len <= width - x * 2) {	/* If prompt is short */
++		cur_x = x;
++		cur_y = y;
++		wmove(win, cur_y, cur_x);
++		while (cur_x < (width - prompt_len) / 2) {
++			waddch(win, ' ');
++			cur_x++;
++		}
+ 		wmove(win, y, (width - prompt_len) / 2);
+ 		waddstr(win, tempstr);
++		getyx(win, cur_y, cur_x);
+ 	} else {
+ 		cur_x = x;
+ 		cur_y = y;
+@@ -415,7 +427,13 @@ void print_autowrap(WINDOW * win, const char *prompt, int width, int y, int x)
+ 			     && wlen + 1 + strlen(sp) > room
+ 			     && (!(sp2 = strpbrk(sp, "\n "))
+ 				 || wlen + 1 + (sp2 - sp) > room))) {
++				while (cur_x < width) {
++					waddch(win, ' ');
++					cur_x++;
++				}
+ 				cur_y++;
++				if (cur_y - y >= height)
++					return;
+ 				cur_x = x;
+ 			}
+ 			wmove(win, cur_y, cur_x);
+@@ -424,13 +442,24 @@ void print_autowrap(WINDOW * win, const char *prompt, int width, int y, int x)
+ 
+ 			/* Move to the next line if the word separator was a newline */
+ 			if (newline_separator) {
++				while (cur_x < width) {
++					waddch(win, ' ');
++					cur_x++;
++				}
+ 				cur_y++;
++				if (cur_y - y >= height)
++					return;
+ 				cur_x = x;
+ 				newline_separator = 0;
+-			} else
++			} else {
++				if (cur_x < width)
++					waddch(win, ' ');
+ 				cur_x++;
++			}
+ 
+ 			if (sp && *sp == ' ') {
++				if (cur_x < width)
++					waddch(win, ' ');
+ 				cur_x++;	/* double space */
+ 				while (*++sp == ' ') ;
+ 				newl = 1;
+@@ -439,6 +468,18 @@ void print_autowrap(WINDOW * win, const char *prompt, int width, int y, int x)
+ 			word = sp;
+ 		}
+ 	}
++
++	/*
++	 * Fill remaining space to overwrite possibly existing text.
++	 */
++	while (cur_y - y < height) {
++		while (cur_x < width) {
++			waddch(win, ' ');
++			cur_x++;
++		}
++		wmove(win, cur_y + 1, x);
++		getyx(win, cur_y, cur_x);
++	}
+ }
+ 
+ /*
+diff --git a/scripts/kconfig/lxdialog/yesno.c b/scripts/kconfig/lxdialog/yesno.c
+index cd1223c903d1..d2af2a04173d 100644
+--- a/scripts/kconfig/lxdialog/yesno.c
++++ b/scripts/kconfig/lxdialog/yesno.c
+@@ -71,7 +71,7 @@ int dialog_yesno(const char *title, const char *prompt, int height, int width)
+ 	print_title(dialog, title, width);
+ 
+ 	wattrset(dialog, dlg.dialog.atr);
+-	print_autowrap(dialog, prompt, width - 2, 1, 3);
++	print_autowrap(dialog, prompt, width - 2, 2, 1, 3);
+ 
+ 	print_buttons(dialog, height, width, 0);
+ 
+diff --git a/scripts/kconfig/mconf.c b/scripts/kconfig/mconf.c
+index 5294ed159b98..936ba78f4cef 100644
+--- a/scripts/kconfig/mconf.c
++++ b/scripts/kconfig/mconf.c
+@@ -21,6 +21,10 @@
+ #include "lkc.h"
+ #include "lxdialog/dialog.h"
+ 
++extern int focus_on_buttons;
++extern char isearch_str[];
++static int in_isearch;	      /* Ensure at most one instance of i-search is active */
++
+ static const char mconf_readme[] =
+ "Overview\n"
+ "--------\n"
+@@ -36,20 +40,74 @@ static const char mconf_readme[] =
+ "while *, M or whitespace inside braces means to build in, build as\n"
+ "a module or to exclude the feature respectively.\n"
+ "\n"
+-"To change any of these features, highlight it with the cursor\n"
+-"keys and press <Y> to build it in, <M> to make it a module or\n"
++"Operation modes\n"
++"---------------\n"
++"Menuconfig operates in two modes, depending on the focus that can be\n"
++"either on the menu or the buttons below it. The focus is on the\n"
++"buttons if one button (the selected one) is highlighted, otherwise it\n"
++"is on the menu.\n"
++"\n"
++"To change any of the above features, it has to be navigated to (see\n"
++"below) so that it is highlighted, focus then has to be on the buttons\n"
++"before you press <Y> to build it in, <M> to make it a module or\n"
+ "<N> to remove it.  You may also press the <Space Bar> to cycle\n"
+ "through the available options (i.e. Y->N->M->Y).\n"
+ "\n"
++"Navigation\n"
++"----------\n"
++"The following keys work independently of the current focus:\n"
++"\n"
++"o vertical arrow keys are used to navigate to menu items\n"
++"\n"
++"o horizontal arrow keys put the focus on the buttons and cycle\n"
++"  between the buttons.\n"
++"\n"
++"o <PAGE UP> and <PAGE DOWN> scroll invisible items into view.\n"
++"\n"
++"o <ENTER> visits a submenu\n"
++"  Submenus are designated by \"--->\", empty ones by \"----\".\n"
++"\n"
++"o <ESC><ESC> leaves a submenu or (in the main menu) exits menuconfig\n"
++"  and clears the current i-search string."
++"\n"
++"o <TAB> is reserved to toggle the focus between menu and buttons\n"
++"\n"
++"When menuconfig starts, the focus is on the menu and i-search mode\n"
++"is active.  I-search performs continuous cyclic searches for an entered\n"
++"string in the prompt texts of the whole menu tree.\n"
++"\n"
++"Subsequent characters can be entered to build a search-string the\n"
++"menu items are searched for and each time a character is added the\n"
++"current string is searched for starting from the current position in\n"
++"the menu tree.  If a match is found it is immediately navigated to.\n"
++"\n"
++"Keys with a special meaning are:\n"
++"\n"
++"o <BACKSPACE> removes the last character from the current search string\n"
++"\n"
++"o <DEL> clears the search string\n"
++"\n"
++"o <\\> (backslash) can be used to find further matches of a string\n"
++"\n"
++"When the focus is on the buttons the following keys can be used:\n"
++"\n"
++"o <x> can be used for exit identical to <ESC><ESC>\n"
++"\n"
++"o <y>, <n>, <m> or <SPACE> change the selected item\n"
++"\n"
++"o <+> and <-> keys navigate menu items identical to vertical arrow\n"
++"  keys\n"
++"\n"
++"o <h> or <?> display help messages\n"
++"\n"
++"o <z> toggles the display of hidden options\n"
++"\n"
+ "Some additional keyboard hints:\n"
+ "\n"
+ "Menus\n"
+ "----------\n"
+-"o  Use the Up/Down arrow keys (cursor keys) to highlight the item you\n"
+-"   wish to change or the submenu you wish to select and press <Enter>.\n"
+-"   Submenus are designated by \"--->\", empty ones by \"----\".\n"
+-"\n"
+-"   Shortcut: Press the option's highlighted letter (hotkey).\n"
++"o  Hotkeys (available with focus on buttons): Press the target option's\n"
++"             highlighted letter (hotkey).\n"
+ "             Pressing a hotkey more than once will sequence\n"
+ "             through all visible items which use that hotkey.\n"
+ "\n"
+@@ -280,7 +338,7 @@ static int show_all_options;
+ static int save_and_exit;
+ static int silent;
+ 
+-static void conf(struct menu *menu, struct menu *active_menu);
++static int conf(struct menu *menu, struct menu *active_menu);
+ static void conf_choice(struct menu *menu);
+ static void conf_string(struct menu *menu);
+ static void conf_load(void);
+@@ -641,13 +699,94 @@ static void build_conf(struct menu *menu)
+ 	indent -= doint;
+ }
+ 
+-static void conf(struct menu *menu, struct menu *active_menu)
++void menu_isearch(void);
++void menu_isearch(void)
++{
++	struct menu *submenu, *menu_start;
++	int res;
++	int isearch_match = 1;	/* Enable cyclic navigation through
++				   matches */
++	struct gstr sttext;
++	struct subtitle_part stpart;
++
++	/*
++	 * Position to current menu item to start search from there.
++	 */
++	menu_start = rootmenu.list;
++	do {
++		if (menu_start == item_data())
++			break;
++		menu_start = menu_get_next(menu_start);
++	} while (menu_start != rootmenu.list);
++
++	in_isearch = 1;
++
++	/* Extend the subtitle by i-search indicator */
++	sttext = str_new();
++	str_printf(&sttext, "i-search");
++	stpart.text = str_get(&sttext);
++	list_add_tail(&stpart.entries, &trail);
++	set_subtitle();
++
++	while (isearch_str[0] != '\0' && isearch_match) {
++		isearch_match = 0;
++		submenu = menu_start;
++		do {
++			if (!submenu->prompt ||
++			    (!show_all_options && !menu_is_visible(submenu))) {
++				submenu = menu_get_next(submenu);
++				continue;
++			}
++
++			if (submenu->prompt->type == P_COMMENT &&
++			    (!show_all_options && !menu_is_visible(submenu->parent))) {
++				submenu = menu_get_next(submenu);
++				continue;
++			}
++
++			if (strcasestr(submenu->prompt->text, isearch_str) == NULL) {
++				submenu = menu_get_next(submenu);
++				continue;
++			}
++
++			isearch_match = 1;
++
++			res = conf(submenu->parent, submenu);
++
++			/*
++			 * We are done when focus was changed to
++			 * buttons or other than a printable character
++			 * (i.e. ESC) was pressed.
++			 */
++			if (focus_on_buttons || !isprint(res)) {
++				in_isearch = 0;
++				/* Remove us from subtitle */
++				list_del(trail.prev);
++				/* ESC clears i-search string */
++				if (!isprint(res))
++					isearch_str[0] = '\0';
++				return;
++			}
++
++			if (res == '\\')
++				submenu = menu_get_next(submenu);
++		} while (submenu != menu_start);
++	}
++
++	/* i-search string is empty, we are done */
++	in_isearch = 0;
++	/* Remove us from subtitle */
++	list_del(trail.prev);
++	return;
++}
++
++static int conf(struct menu *menu, struct menu *active_menu)
+ {
+ 	struct menu *submenu;
+ 	const char *prompt = menu_get_prompt(menu);
+ 	struct subtitle_part stpart;
+ 	struct symbol *sym;
+-	int res;
++	int res = KEY_ESC;
+ 	int s_scroll = 0;
+ 
+ 	if (menu != &rootmenu)
+@@ -682,6 +821,18 @@ static void conf(struct menu *menu, struct menu *active_menu)
+ 		else
+ 			sym = NULL;
+ 
++		if (!focus_on_buttons && isprint(res)) {
++			if (in_isearch) {
++				/*
++				 * We were called from menu_isearch(),
++				 * return to there.
++				 */
++				list_del(trail.prev);
++				return res;
++			}
++			menu_isearch();
++		}
++
+ 		switch (res) {
+ 		case 0:
+ 			switch (item_tag()) {
+@@ -750,6 +901,7 @@ static void conf(struct menu *menu, struct menu *active_menu)
+ 	}
+ 
+ 	list_del(trail.prev);
++	return res;
+ }
+ 
+ static int show_textbox_ext(const char *title, char *text, int r, int c, int
+@@ -1033,6 +1185,7 @@ int main(int ac, char **av)
+ 
+ 	set_config_filename(conf_get_configname());
+ 	conf_set_message_callback(conf_message_callback);
++
+ 	do {
+ 		conf(&rootmenu, NULL);
+ 		res = handle_exit();
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index 379a119dcd1e..6d5cb040671d 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -18,6 +18,34 @@ static struct menu **last_entry_ptr;
+ struct file *file_list;
+ struct file *current_file;
+ 
++/*
++ * Return successor of m in cyclic depth-first order.
++ *
++ * Example:
++ * For any of the nodes of the below tree, the returned successor
++ * will be the node that is alphabetically next and the successor of
++ * 'f' will be 'a'.
++ *
++ * a-c-d-f
++ * |   |
++ * b   e
++ *
++ */
++struct menu *menu_get_next(struct menu *m)
++{
++	if (m->list)
++		return m->list;
++	if (m->next)
++		return m->next;
++
++	while (m->parent) {
++		if (m->parent->next)
++			return m->parent->next;
++		m = m->parent;
++	}
++	return rootmenu.list;
++}
++
+ void menu_warn(struct menu *menu, const char *fmt, ...)
+ {
+ 	va_list ap;
+-- 
+2.13.6
+
