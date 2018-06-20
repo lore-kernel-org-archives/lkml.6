@@ -2,163 +2,113 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA820C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422FEC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB5320652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:13:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q2MhU+hL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB5320652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0387120652
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:14:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0387120652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754692AbeFTJNs (ORCPT
+        id S1754807AbeFTJOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:13:48 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33464 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754113AbeFTIdt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:33:49 -0400
-Received: by mail-lf0-f66.google.com with SMTP id y20-v6so3680435lfy.0;
-        Wed, 20 Jun 2018 01:33:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=t7wTLhP/fkMnuY6/EfqISEodQam5oq1wjS1vYGEVP1s=;
-        b=q2MhU+hLC3yJish60vjdXIzLWvDw9IdKpbrgTTTwq1LaQmi2iuVQ1i6hYml6QvMbVA
-         DNMf7y7v4MohWTZcj3sE+wR4Nmfjke5LjSLJ3mZsPHg6xwhyfSsLh6551RKYV3+jUM3g
-         RruYERdvNLxxi+6d2Jr+bKk2mnbIiey/ea9lEWb+YsCQUJb6QrPZWxM+mOpFtTnvthIE
-         uB3X25gIR54yEvGi8OOOtTt1ErCmZrmfG6o/XDwpflR0ubsE62qPLTzsBU1h+MZhH+tq
-         wPOlne4qsxyWUmg+rwsvZ2L+tSHt2gvdccF+7nckyNKR7LcAS7GrvqqA5ZjiHMzczrYE
-         EpOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=t7wTLhP/fkMnuY6/EfqISEodQam5oq1wjS1vYGEVP1s=;
-        b=YRRpdBK/h1Zbgzn53pneUgGsAI0XrzFvbFyFEbhZyzFyoMeEgHrlim3ZwGQv546bCw
-         GLxLfS2ojIK6lht87Y4Jcjw8fNFmwzAAGwQjbRcw56Kp+FUhIyL/0NLyxy0yQ3qdhE2R
-         HlwP/6EWZqXXUrQLLLbxgi8Plaz925XdC8bm2zXGdhO7fggZeJRVCpbjfZJT9ua+xFZp
-         T5VvM9nd+hPd/G7lSjdBT4tfn93AV3fkXHR5EizLkeyWR+9xvmPEtj0W/BsMm60hnFBJ
-         WCjWgPEM3tLxdE7W3EOgILWV4z82CgMPpFwjlKVREGSCeK6/9h7zZLOAOTnNB8CWWKUI
-         B6jw==
-X-Gm-Message-State: APt69E1/s9aYe7taK+TUvqbLHaNbDiGsab3O1GKfvKUU6XIjfXj1aMFI
-        yIalzMRWEb2qG2+EdjzRn55CdjAD
-X-Google-Smtp-Source: ADUXVKI0gcsXFz2UNy47qsMT4ub9A3O6jPGmnXKgIAL1kOT2iCDruCGeZoNE+zPidcEO02Of5fdTeQ==
-X-Received: by 2002:a2e:9187:: with SMTP id f7-v6mr14268095ljg.98.1529480089680;
-        Wed, 20 Jun 2018 00:34:49 -0700 (PDT)
-Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
-        by smtp.gmail.com with ESMTPSA id n19-v6sm272102lja.32.2018.06.20.00.34.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 00:34:49 -0700 (PDT)
-From:   Esben Haabendal <esben.haabendal@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
-        Angelo Dureghello <angelo@sysam.it>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Sanchayan Maity <maitysanchayan@gmail.com>,
-        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
-Subject: [PATCH 02/12] spi: spi-fsl-dspi: Drop unneeded use of dataflags bits
-Date:   Wed, 20 Jun 2018 09:34:32 +0200
-Message-Id: <20180620073442.20913-3-esben.haabendal@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180620073442.20913-1-esben.haabendal@gmail.com>
-References: <20180620073442.20913-1-esben.haabendal@gmail.com>
+        Wed, 20 Jun 2018 05:14:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32906 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754175AbeFTJNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 05:13:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 3CA46AB35;
+        Wed, 20 Jun 2018 06:57:14 +0000 (UTC)
+Subject: Re: [BUG] xen: Two possible sleep-in-atomic-context bugs in
+ bind_evtchn_to_irqhandler()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <80315b22-63c1-c8cc-1035-11fa36bee83a@gmail.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
+ CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
+ zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
+ kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
+ czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
+ d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
+ 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
+ B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
+ cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
+ w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
+ pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
+ 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
+ KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
+ Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
+ AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
+ UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
+ wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
+ CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
+ HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
+ V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
+ RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
+ W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
+ pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
+ jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
+ hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
+Message-ID: <add28699-59bc-dde7-e521-f21f550c8562@suse.com>
+Date:   Wed, 20 Jun 2018 08:57:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <80315b22-63c1-c8cc-1035-11fa36bee83a@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <eha@deif.com>
+On 20/06/18 04:49, Jia-Ju Bai wrote:
+> The driver may sleep with holding a spinlock.
+> The function call paths (from bottom to top) in Linux-4.16.7 are:
+> 
+> [FUNC] mutex_lock_nested --> can sleep
+> drivers/xen/events/events_base.c, 839: mutex_lock_nested in
+> bind_evtchn_to_irq
+> drivers/xen/events/events_base.c, 1030: bind_evtchn_to_irq in
+> bind_evtchn_to_irqhandler
+> drivers/xen/pvcalls-front.c, 371: bind_evtchn_to_irqhandler in
+> create_active
+> drivers/xen/pvcalls-front.c, 417: create_active in pvcalls_front_connect
+> drivers/xen/pvcalls-front.c, 410: spin_lock in pvcalls_front_connect
+> 
+> [FUNC] request_irq --> can sleep
+> drivers/xen/events/events_base.c, 1003: request_irq in
+> bind_evtchn_to_irqhandler
+> drivers/xen/pvcalls-front.c, 371: bind_evtchn_to_irqhandler in
+> create_active
+> drivers/xen/pvcalls-front.c, 417: create_active in pvcalls_front_connect
+> drivers/xen/pvcalls-front.c, 410: spin_lock in pvcalls_front_connect
+> 
+> These bugs are found by my static analysis tool (DSAC-2) and checked by my
+> code review.
+> 
+> I do not know how to correctly fix these bugs, so I just report them.
+> Maybe create_active() should not be called with holding a spinlock.
 
-Checking directly against pointer value should be at least as fast as doing
-bitmasking and compare, so let's keep it simple.
+Right, I think calling create_active() should be done before taking the
+lock. Stefano, what do you think?
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Cc: Martin Hundebøll <martin@geanix.com>
----
- drivers/spi/spi-fsl-dspi.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 3ca9b9608801..3bf135bf8b93 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -38,8 +38,6 @@
- 
- #define DRIVER_NAME "fsl-dspi"
- 
--#define TRAN_STATE_RX_VOID		0x01
--#define TRAN_STATE_TX_VOID		0x02
- #define TRAN_STATE_WORD_ODD_NUM	0x04
- 
- #define DSPI_FIFO_SIZE			4
-@@ -232,7 +230,7 @@ static void dspi_rx_dma_callback(void *arg)
- 
- 	rx_word = is_double_byte_mode(dspi);
- 
--	if (!(dspi->dataflags & TRAN_STATE_RX_VOID)) {
-+	if (dspi->rx) {
- 		for (i = 0; i < dma->curr_xfer_len; i++) {
- 			d = dspi->dma->rx_dma_buf[i];
- 			rx_word ? (*(u16 *)dspi->rx = d) :
-@@ -538,12 +536,13 @@ static u32 dspi_data_to_pushr(struct fsl_dspi *dspi, int tx_word)
- {
- 	u16 d16;
- 
--	if (!(dspi->dataflags & TRAN_STATE_TX_VOID))
-+	if (dspi->tx) {
- 		d16 = tx_word ? *(u16 *)dspi->tx : *(u8 *)dspi->tx;
--	else
-+		dspi->tx += tx_word + 1;
-+	} else {
- 		d16 = dspi->void_write_data;
-+	}
- 
--	dspi->tx += tx_word + 1;
- 	dspi->len -= tx_word + 1;
- 
- 	return	SPI_PUSHR_TXDATA(d16) |
-@@ -560,10 +559,10 @@ static void dspi_data_from_popr(struct fsl_dspi *dspi, int rx_word)
- 	regmap_read(dspi->regmap, SPI_POPR, &val);
- 	d = SPI_POPR_RXDATA(val);
- 
--	if (!(dspi->dataflags & TRAN_STATE_RX_VOID))
-+	if (dspi->rx) {
- 		rx_word ? (*(u16 *)dspi->rx = d) : (*(u8 *)dspi->rx = d);
--
--	dspi->rx += rx_word + 1;
-+		dspi->rx += rx_word + 1;
-+	}
- }
- 
- static int dspi_eoq_write(struct fsl_dspi *dspi)
-@@ -687,12 +686,6 @@ static int dspi_transfer_one_message(struct spi_master *master,
- 		dspi->rx_end = dspi->rx + transfer->len;
- 		dspi->len = transfer->len;
- 
--		if (!dspi->rx)
--			dspi->dataflags |= TRAN_STATE_RX_VOID;
--
--		if (!dspi->tx)
--			dspi->dataflags |= TRAN_STATE_TX_VOID;
--
- 		regmap_write(dspi->regmap, SPI_MCR, dspi->cur_chip->mcr_val);
- 		regmap_update_bits(dspi->regmap, SPI_MCR,
- 				SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF,
--- 
-2.17.1
-
+Juergen
