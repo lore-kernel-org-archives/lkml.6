@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1128DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2FEC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC0620836
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC0620836
+	by mail.kernel.org (Postfix) with ESMTP id BE79D20836
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:53:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE79D20836
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754374AbeFTNxd (ORCPT
+        id S1754410AbeFTNxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:53:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37500 "EHLO
+        Wed, 20 Jun 2018 09:53:39 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37528 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754345AbeFTNx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:53:29 -0400
+        id S1754345AbeFTNxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:53:37 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F6C915B2;
-        Wed, 20 Jun 2018 06:53:29 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA38480D;
+        Wed, 20 Jun 2018 06:53:36 -0700 (PDT)
 Received: from big-swifty.cambridge.arm.com (big-swifty.cambridge.arm.com [10.1.31.224])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F2A93F578;
-        Wed, 20 Jun 2018 06:53:23 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 969333F578;
+        Wed, 20 Jun 2018 06:53:30 -0700 (PDT)
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -37,9 +37,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         MaJun <majun258@huawei.com>,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>,
         Lei Zhang <zhang.lei@jp.fujitsu.com>
-Subject: [PATCH 4/7] irqchip/gic-v3-its: Drop chunk allocation compatibility
-Date:   Wed, 20 Jun 2018 14:52:31 +0100
-Message-Id: <20180620135234.32101-5-marc.zyngier@arm.com>
+Subject: [PATCH 5/7] irqchip/gic-v3: Expose GICD_TYPER in the rdist structure
+Date:   Wed, 20 Jun 2018 14:52:32 +0100
+Message-Id: <20180620135234.32101-6-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180620135234.32101-1-marc.zyngier@arm.com>
 References: <20180620135234.32101-1-marc.zyngier@arm.com>
@@ -48,139 +48,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The chunk allocation system is now officially dead, so let's
-remove it.
+Instead of exposing the GIC distributor IntID field in the rdist
+structure that is passed to the ITS, let's replace it with a
+copy of the whole GICD_TYPER register. We are going to need
+some of this information at a later time.
+
+No functionnal change.
 
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 41 +++++++++++++-------------------
- 1 file changed, 16 insertions(+), 25 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c   | 2 +-
+ drivers/irqchip/irq-gic-v3.c       | 4 ++--
+ include/linux/irqchip/arm-gic-v3.h | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index cfe65776bb4c..554c9d040c5a 100644
+index 554c9d040c5a..8c7e8c235faf 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1424,12 +1424,6 @@ static struct irq_chip its_irq_chip = {
-  * freeing is expensive. We assumes that freeing rarely occurs.
-  */
- 
--/*
-- * Compatibility defines until we fully refactor the allocator
-- */
--#define IRQS_PER_CHUNK_SHIFT	5
--#define IRQS_PER_CHUNK		(1UL << IRQS_PER_CHUNK_SHIFT)
--
- static DEFINE_MUTEX(lpi_range_lock);
- static LIST_HEAD(lpi_range_list);
- 
-@@ -1542,30 +1536,27 @@ static int __init its_lpi_init(u32 id_bits)
- 	return err;
- }
- 
--static unsigned long *its_lpi_alloc_chunks(int nr_irqs, u32 *base, int *nr_ids)
-+static unsigned long *its_lpi_alloc(int nr_irqs, u32 *base, int *nr_ids)
+@@ -1600,7 +1600,7 @@ static int __init its_alloc_lpi_tables(void)
  {
- 	unsigned long *bitmap = NULL;
- 	int err = 0;
--	int nr_lpis;
--
--	nr_lpis = round_up(nr_irqs, IRQS_PER_CHUNK);
+ 	phys_addr_t paddr;
  
- 	do {
--		err = alloc_lpi_range(nr_lpis, base);
-+		err = alloc_lpi_range(nr_irqs, base);
- 		if (!err)
- 			break;
+-	lpi_id_bits = gic_rdists->id_bits;
++	lpi_id_bits = GICD_TYPER_ID_BITS(gic_rdists->gicd_typer);
+ 	gic_rdists->prop_page = its_allocate_prop_table(GFP_NOWAIT);
+ 	if (!gic_rdists->prop_page) {
+ 		pr_err("Failed to allocate PROPBASE\n");
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 76ea56d779a1..e214181b77b7 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -877,7 +877,7 @@ static struct irq_chip gic_eoimode1_chip = {
+ 	.flags			= IRQCHIP_SET_TYPE_MASKED,
+ };
  
--		nr_lpis -= IRQS_PER_CHUNK;
--	} while (nr_lpis > 0);
-+		nr_irqs /= 2;
-+	} while (nr_irqs > 0);
+-#define GIC_ID_NR		(1U << gic_data.rdists.id_bits)
++#define GIC_ID_NR	(1U << GICD_TYPER_ID_BITS(gic_data.rdists.gicd_typer))
  
- 	if (err)
- 		goto out;
- 
--	bitmap = kcalloc(BITS_TO_LONGS(nr_lpis), sizeof (long), GFP_ATOMIC);
-+	bitmap = kcalloc(BITS_TO_LONGS(nr_irqs), sizeof (long), GFP_ATOMIC);
- 	if (!bitmap)
- 		goto out;
- 
--	*nr_ids = nr_lpis;
-+	*nr_ids = nr_irqs;
- 
- out:
- 	if (!bitmap)
-@@ -1574,7 +1565,7 @@ static unsigned long *its_lpi_alloc_chunks(int nr_irqs, u32 *base, int *nr_ids)
- 	return bitmap;
- }
- 
--static void its_lpi_free_chunks(unsigned long *bitmap, u32 base, u32 nr_ids)
-+static void its_lpi_free(unsigned long *bitmap, u32 base, u32 nr_ids)
- {
- 	WARN_ON(free_lpi_range(base, nr_ids));
- 	kfree(bitmap);
-@@ -2192,7 +2183,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
- 	itt = kzalloc(sz, GFP_KERNEL);
- 	if (alloc_lpis) {
--		lpi_map = its_lpi_alloc_chunks(nvecs, &lpi_base, &nr_lpis);
-+		lpi_map = its_lpi_alloc(nvecs, &lpi_base, &nr_lpis);
- 		if (lpi_map)
- 			col_map = kcalloc(nr_lpis, sizeof(*col_map),
- 					  GFP_KERNEL);
-@@ -2420,9 +2411,9 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
- 	/* If all interrupts have been freed, start mopping the floor */
- 	if (bitmap_empty(its_dev->event_map.lpi_map,
- 			 its_dev->event_map.nr_lpis)) {
--		its_lpi_free_chunks(its_dev->event_map.lpi_map,
--				    its_dev->event_map.lpi_base,
--				    its_dev->event_map.nr_lpis);
-+		its_lpi_free(its_dev->event_map.lpi_map,
-+			     its_dev->event_map.lpi_base,
-+			     its_dev->event_map.nr_lpis);
- 		kfree(its_dev->event_map.col_map);
- 
- 		/* Unmap device/itt */
-@@ -2821,7 +2812,7 @@ static void its_vpe_irq_domain_free(struct irq_domain *domain,
- 	}
- 
- 	if (bitmap_empty(vm->db_bitmap, vm->nr_db_lpis)) {
--		its_lpi_free_chunks(vm->db_bitmap, vm->db_lpi_base, vm->nr_db_lpis);
-+		its_lpi_free(vm->db_bitmap, vm->db_lpi_base, vm->nr_db_lpis);
- 		its_free_prop_table(vm->vprop_page);
- 	}
- }
-@@ -2836,18 +2827,18 @@ static int its_vpe_irq_domain_alloc(struct irq_domain *domain, unsigned int virq
- 
- 	BUG_ON(!vm);
- 
--	bitmap = its_lpi_alloc_chunks(roundup_pow_of_two(nr_irqs), &base, &nr_ids);
-+	bitmap = its_lpi_alloc(roundup_pow_of_two(nr_irqs), &base, &nr_ids);
- 	if (!bitmap)
- 		return -ENOMEM;
- 
- 	if (nr_ids < nr_irqs) {
--		its_lpi_free_chunks(bitmap, base, nr_ids);
-+		its_lpi_free(bitmap, base, nr_ids);
- 		return -ENOMEM;
- 	}
- 
- 	vprop_page = its_allocate_prop_table(GFP_KERNEL);
- 	if (!vprop_page) {
--		its_lpi_free_chunks(bitmap, base, nr_ids);
-+		its_lpi_free(bitmap, base, nr_ids);
- 		return -ENOMEM;
- 	}
- 
-@@ -2874,7 +2865,7 @@ static int its_vpe_irq_domain_alloc(struct irq_domain *domain, unsigned int virq
- 		if (i > 0)
- 			its_vpe_irq_domain_free(domain, virq, i - 1);
- 
--		its_lpi_free_chunks(bitmap, base, nr_ids);
-+		its_lpi_free(bitmap, base, nr_ids);
- 		its_free_prop_table(vprop_page);
- 	}
- 
+ static int gic_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 			      irq_hw_number_t hw)
+@@ -1091,7 +1091,7 @@ static int __init gic_init_bases(void __iomem *dist_base,
+ 	 * The GIC only supports up to 1020 interrupt sources (SGI+PPI+SPI)
+ 	 */
+ 	typer = readl_relaxed(gic_data.dist_base + GICD_TYPER);
+-	gic_data.rdists.id_bits = GICD_TYPER_ID_BITS(typer);
++	gic_data.rdists.gicd_typer = typer;
+ 	gic_irqs = GICD_TYPER_IRQS(typer);
+ 	if (gic_irqs > 1020)
+ 		gic_irqs = 1020;
+diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+index cbb872c1b607..396cd99af02f 100644
+--- a/include/linux/irqchip/arm-gic-v3.h
++++ b/include/linux/irqchip/arm-gic-v3.h
+@@ -576,8 +576,8 @@ struct rdists {
+ 		phys_addr_t	phys_base;
+ 	} __percpu		*rdist;
+ 	struct page		*prop_page;
+-	int			id_bits;
+ 	u64			flags;
++	u32			gicd_typer;
+ 	bool			has_vlpis;
+ 	bool			has_direct_lpi;
+ };
 -- 
 2.17.1
 
