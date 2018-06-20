@@ -3,120 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B0DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF90C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 488DA20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B537320874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:10:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="EAkHPJsS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 488DA20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jQp64O6h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B537320874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754137AbeFTKKL (ORCPT
+        id S1754186AbeFTKKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:10:11 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:39088 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753972AbeFTKKI (ORCPT
+        Wed, 20 Jun 2018 06:10:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56072 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754138AbeFTKKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:10:08 -0400
-Received: by mail-io0-f193.google.com with SMTP id f1-v6so2957340ioh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 03:10:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=eImglvRiF9FnFfZHyh7laSkmOW27GU6cieP26Ftz27o=;
-        b=EAkHPJsSNq1Or7pBHbcLmG35m6PRrjaQs0AxZuWjJRmC8MGRMhk2flUgMDnO6hIQbU
-         wCiZGui0Nd0lS/y4xdA0kAE+A+L1WstM4ZxkWPlNh1uevCeyca4ngCJbJWy9eq9cbLM/
-         RlmLgMAmfroovy3e1SsJVQzwaYBy9qnF2DsfA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=eImglvRiF9FnFfZHyh7laSkmOW27GU6cieP26Ftz27o=;
-        b=bZDkUziN93aOX/L2hrh9hKr9on48fWF8YR3SYVgQIHXS8wmgpjEzMakopgqXkYmZwd
-         V0kCMJMbj5a5b1PhZ1Jb3WV83Ne8v3B5Ps6vkRh+TVH6/wl2Jz3ieQV3l/FkiYYpZYhg
-         mBJ1yv/ADdJeagw7lPyQ5/UO0bzbslyBWsfWnO65/E7mCBnynLMlosMNFo9z31cA/+gr
-         v5aBoCaQz37pmRqPJXZTQ3xDia5cWtLtBvv1M4RlR/A4C+xgUPp9TusMKR62PrsfcmqA
-         LGXYcpcTclNuFkjh+n0F8m6vxS8pwGVDLfMNY7pYhMhKTKKH24GMVy+mqZIQtp/A8uwL
-         ZClQ==
-X-Gm-Message-State: APt69E2sRIAgbHfwQ+kn1PIOMDWNaafXHuOXx8D4BVLIGxQXjUTLTg5F
-        oTAjyPOgTTi+PzoE0XTE6t10B7hxaLuqLM+Fft50Kg==
-X-Google-Smtp-Source: ADUXVKLTtbqPLns/dfTIVqaeg5TEo7Bo7EBArxyEK8pJwTpnCtoNTwE61jpqOsSlcl/mo1+G0r1cxu2qveXud9KhHqk=
-X-Received: by 2002:a6b:30c9:: with SMTP id w192-v6mr17789394iow.291.1529489407671;
- Wed, 20 Jun 2018 03:10:07 -0700 (PDT)
+        Wed, 20 Jun 2018 06:10:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wphsx1ie+vTTS1ccDffy8jDITyX2/OntPApbDAJa+rI=; b=jQp64O6htK4v7GaYkXTUApwU/
+        iJ0qhYXB6+ykubcjn5RvgNqK5J30xUwEdC9VNoRMhsALkpvrPmkuCqniLNd8fvxWwnrrghKP9J9VD
+        MfuVVmiSdKgBopjqqYRI+hyQbkMcsxOvKj6SBCqvxurCJIah+0tQbMGaq9T20UpYv59Yg4TaVrhZL
+        qnZsLLgI9BKDW/Xc61mrg4+YXELWHw/0qwpioB4pBOV0Fxycv3ytM9ZvTcnzbm1ZIw64GwEURL0Rc
+        VGymFj/7sEaIC4m6m+XjXGHPY3q6Qc4gC0AJ9wn/isH6aSAtd1fqQ5QKqrdfIfUQUiE6CW5FV6w1C
+        oXyvPMrsA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVa4F-0001LX-Kg; Wed, 20 Jun 2018 10:10:23 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 68F4D2029FA0A; Wed, 20 Jun 2018 12:10:21 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 12:10:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Alok Kataria <akataria@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v5 6/9] x86: prevent inline distortion by paravirt ops
+Message-ID: <20180620101021.GA2530@hirez.programming.kicks-ass.net>
+References: <20180619194854.69486-1-namit@vmware.com>
+ <20180619194854.69486-7-namit@vmware.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:e48b:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 03:10:07
- -0700 (PDT)
-X-Originating-IP: [2a02:168:5628:0:9802:bb08:74d1:12e1]
-In-Reply-To: <20180620093321.GL17671@n2100.armlinux.org.uk>
-References: <20180526155623.12610-1-digetx@gmail.com> <20180526155623.12610-2-digetx@gmail.com>
- <20180528131501.GK23723@intel.com> <efba1801-5b00-1fa1-45df-a5d3a2e3d63a@gmail.com>
- <20180529071103.GL23723@intel.com> <20180619174011.GJ17671@n2100.armlinux.org.uk>
- <20180620091750.GD7186@phenom.ffwll.local> <20180620093321.GL17671@n2100.armlinux.org.uk>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 20 Jun 2018 12:10:07 +0200
-X-Google-Sender-Auth: paeeMDB2-qB_Mcm1i0wDltspjG8
-Message-ID: <CAKMK7uGMKs2GgP+nrxDV4LbbmrqcHApLsz9pTc=mQojHtSVaUQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/2] drm: Add generic colorkey properties
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>,
-        "open list:DRM DRIVERS FOR RENESAS" 
-        <linux-renesas-soc@vger.kernel.org>, linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619194854.69486-7-namit@vmware.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 11:33 AM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
-> On Wed, Jun 20, 2018 at 11:17:50AM +0200, Daniel Vetter wrote:
->> Yes -modesetting (or whichever other driver) would need to set up the
->> properties correctly for Xvideo color keying. Since default assumption for
->> all other (generic) compositors is that planes won't do any color keying
->> in the boot-up state.
->
-> Thanks, is that documented anywhere?
+On Tue, Jun 19, 2018 at 12:48:51PM -0700, Nadav Amit wrote:
+> +#define paravirt_alt							\
+> +	"PARAVIRT_CALL type=\"%c[paravirt_typenum]\""			\
+> +	" clobber=\"%c[paravirt_clobber]\""				\
+> +	" pv_opptr=\"%c[paravirt_opptr]\""
 
-With the standardization of properties I'm also trying to get these
-expectations better documented, e.g.
+That wants to be:
 
-https://dri.freedesktop.org/docs/drm/gpu/drm-kms.html#plane-composition-properties
++     " pv_opptr=\"%c[paravirt_opptr]\";"
 
-But I think we're not doing a good job yet documenting default
-expectations. But the above would be a good place to get that fixed -
-this patch here should do that, at least for color keying.
--Daniel
+And other than that I would suggest: 's/paravirt_alt/paravirt_call/g'.
 
->
-> --
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-> According to speedtest.net: 8.21Mbps down 510kbps up
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
