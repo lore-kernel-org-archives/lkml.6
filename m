@@ -2,209 +2,183 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60578C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCAEC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0C720693
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:30:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F5EB20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:30:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o8c9Tk1D";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mly4wUE8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0C720693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jBz4RPtC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F5EB20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754651AbeFTJaF (ORCPT
+        id S1754746AbeFTJab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:30:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42786 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753989AbeFTJaA (ORCPT
+        Wed, 20 Jun 2018 05:30:31 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:47074 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754480AbeFTJa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:30:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B687E608C1; Wed, 20 Jun 2018 07:04:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529478242;
-        bh=v+Ua4n6aXmTntYWRdsuf5pKJl2Y0mPaPhSgiU0vyYvg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=o8c9Tk1DUr1o56AUtUfXWLQQVXkpLDQb8u8ChFZOlys++QmUZpcDA1X11CFTN2J2R
-         Mu7V7XatfrV+4teD8p0ZT0r6r23joNRnl6tJnIevDIkaRGKqcbPNeXG1XrdlFUlzVV
-         NuV+bv/46eTtcp2siGpf4z2NAIRPeYWImy7FYpnE=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 6CE0F60714;
-        Wed, 20 Jun 2018 07:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529478241;
-        bh=v+Ua4n6aXmTntYWRdsuf5pKJl2Y0mPaPhSgiU0vyYvg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mly4wUE8yzMCqyHVgGSyLnW0np2B1pDw6H3cL1hxVnB7Vtru/ohCmZJdOq+5Q1vQC
-         H8LLbGe9rAk4Rvpgb3u6SPOlf9d3tYZ8j9zCjSPNkdfXDLVlTKQo5twrspGrn2m5+J
-         ZIeeVZqEORH784Tv5MKvP274iz0F1nt0xH9dwTPE=
+        Wed, 20 Jun 2018 05:30:27 -0400
+Received: by mail-pf0-f194.google.com with SMTP id q1-v6so1303864pff.13
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 02:30:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=3qZoHFLP8S1sldjt68jjxNzb8sSPzxPYRpuj7nEj5tE=;
+        b=jBz4RPtCMBnmE20/EPpW9MwpjGeYiD8BJ2xL+BirmfVBZOgIUoR7RKxr1Uqsh57lUn
+         Rlb1JZhBgik9t/mpU8hFnVMwrk5O7guB0II6K/K7Z4U5hLSuobWXaL0jSlQMiVLHrclI
+         82mMjmotQp9LEJ0oHDzuDL40bB/KyhW0wfixbNdJSBJgab116bCMoEXQ9zsrIDcRSNMv
+         COSxj3MqnSP/lW6PeCZ2vC75suFuroFHEkADIcQQCtJjWzYohk4yYZ1exjKYp7pAKMHS
+         X886x8KMDWjofSTNHQEV0/nFL5GO6WRuYsWteYfYNdslsrJlLxAHbVY8tQpOJ4y7EX3y
+         EHtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3qZoHFLP8S1sldjt68jjxNzb8sSPzxPYRpuj7nEj5tE=;
+        b=edJ5WqmeowvSLFlekvYnQg6BOVGQ4WfEJZ8xvtmudbGiyuF1woHWGwfCp17/jSK6uK
+         0OdopgDyf3C85t4lKUFhe0X7pkI9kwgzo9tunGvQSVRc+sl/pgugffdMPGWeps4li+uM
+         AIN7eRKYPwoKCxkCI5yHtFrYBddK2tJY1x6+KUcE3YRqPydei/udS3DJae9dt3flqTvc
+         Og0xiAey1LpvPP/a/svUoJ9Lu4iVrU7QJ+mcWxLVsji76cNU3bzFm9CPeucJOCGTVx+Y
+         zZ8zU9VDqnGlEnqXEVdVoPtKIFGfTJVveTvgoAnHN6rJXsSFIqrMmlb0fVXeO8ZotFqU
+         n/Cg==
+X-Gm-Message-State: APt69E1bvIM1AsOdnYa7VOZxSwMH0Q4YgMP8ulH84eCo66oz4yeio/HH
+        +GDoYBgNcPkqfIAlAzB2XlN68vxXITUr5sNkfi4juA==
+X-Google-Smtp-Source: ADUXVKI/tW9e5EGqsj6G1nnTV9MZYAZI5kD8GXPHdXI5d5frCkbThtU8U8e9fmueAFgi4qWIrYLypJrpvqKaacMKw7w=
+X-Received: by 2002:a62:a38d:: with SMTP id q13-v6mr21994287pfl.49.1529487026332;
+ Wed, 20 Jun 2018 02:30:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 20 Jun 2018 12:34:01 +0530
-From:   Abhishek Sahu <absahu@codeaurora.org>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: Re: [PATCH v3 13/16] mtd: rawnand: qcom: minor code reorganization
- for bad block check
-In-Reply-To: <20180618133556.06e9a16a@xps13>
-References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
- <1527250904-21988-14-git-send-email-absahu@codeaurora.org>
- <20180526104629.74315561@xps13>
- <90ae248edf8a06a1d35e2da458f75af5@codeaurora.org>
- <20180528090352.254022ed@xps13>
- <53caff8799d30b6a81ac10f63a7c56c4@codeaurora.org>
- <20180607145326.339170fd@xps13>
- <7179eb382dbd3d49e2066178914636fd@codeaurora.org>
- <20180618133556.06e9a16a@xps13>
-Message-ID: <db708d224bbb793f057e2cbc194abbd2@codeaurora.org>
-X-Sender: absahu@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Wed, 20 Jun 2018 02:30:05
+ -0700 (PDT)
+In-Reply-To: <20180620090413.GA444@jagdpanzerIV>
+References: <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
+ <20180511095004.GA6575@jagdpanzerIV> <201805112058.AAB05258.HJQFFOMFOVtOSL@I-love.SAKURA.ne.jp>
+ <20180517112135.GB20796@jagdpanzerIV> <20180518121506.wilixxkznbtskw34@pathway.suse.cz>
+ <20180524021451.GA23443@jagdpanzerIV> <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
+ <CACT4Y+ZGSefrYL9xtQs=yPMRNFsOUumuJXsShJPhCOBSLySxuw@mail.gmail.com>
+ <20180620083126.GA477@jagdpanzerIV> <CACT4Y+YMubTm1xduj+XCbQnNwQxYFLjBT33cFKisN1HyeaBpZw@mail.gmail.com>
+ <20180620090413.GA444@jagdpanzerIV>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 20 Jun 2018 11:30:05 +0200
+Message-ID: <CACT4Y+a6nUqdpSyYGGcXKAgVbcw+uQOz2kYx8tUS+8T5-bzqkg@mail.gmail.com>
+Subject: Re: [PATCH] printk: inject caller information into the body of message
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-18 17:05, Miquel Raynal wrote:
-> Hi Abhishek,
-> 
-> Boris, one question for you below :)
-> 
->> >> >> >>   So for last CW, the 464 is BBM (i.e 2048th byte) in
->> >> >>   full page.
->> >> >> >> > >> >>  	clear_bam_transaction(nandc);
->> >> >> >> -	ret = copy_last_cw(host, page);
->> >> >> >> -	if (ret)
->> >> >> >> +	clear_read_regs(nandc);
->> >> >> >> +
->> >> >> >> +	set_address(host, host->cw_size * (ecc->steps - 1), page);
->> >> >> >> +	update_rw_regs(host, 1, true);
->> >> >> >> +
->> >> >> >> +	/*
->> >> >> >> +	 * The last codeword data will be copied from NAND device to NAND
->> >> >> >> +	 * controller internal HW buffer. Copy only required BBM size bytes
->> >> >> >> +	 * from this HW buffer to bbm_bytes_buf which is present at
->> >> >> >> +	 * bbpos offset.
->> >> >> >> +	 */
->> >> >> >> +	nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
->> >> >> >> +	config_nand_single_cw_page_read(nandc);
->> >> >> >> +	read_data_dma(nandc, FLASH_BUF_ACC + bbpos, bbm_bytes_buf,
->> >> >> >> +		      host->bbm_size, 0);
->> >> >> >> +
->> >> >> >> +	ret = submit_descs(nandc);
->> >> >> >> +	free_descs(nandc);
->> >> >> >> +	if (ret) {
->> >> >> >> +		dev_err(nandc->dev, "failed to copy bad block bytes\n");
->> >> >> >>  		goto err;
->> >> >> >> +	}
->> >> >> >> >>  	flash_status = le32_to_cpu(nandc->reg_read_buf[0]);
->> >> >> >> >> @@ -2141,12 +2127,10 @@ static int qcom_nandc_block_bad(struct >> mtd_info *mtd, loff_t ofs)
->> >> >> >>  		goto err;
->> >> >> >>  	}
->> >> >> >> >> -	bbpos = mtd->writesize - host->cw_size * (ecc->steps - 1);
->> >> >> >> -
->> >> >> >> -	bad = nandc->data_buffer[bbpos] != 0xff;
->> >> >> >> +	bad = bbm_bytes_buf[0] != 0xff;
->> >> >> > > This is suspect as it still points to the beginning of the data buffer.
->> >> >> > Can you please check you did not meant bbm_bytes_buf[bbpos]?
->> >> >> >
->> >> >>   The main thing here is
->> >> >>   nandc_set_read_loc(nandc, 0, bbpos, host->bbm_size, 1);
->> >> >> >>   After reading one complete CW from NAND, the data will be still
->> >> >>   in NAND HW buffer.
->> >> >> >>   The above register tells that we need to read data from
->> >> >>   bbpos of size host->bbm_size (which is 1 byte for 8 bus witdh
->> >> >>   and 2 byte for 16 bus width) in bbm_bytes_buf.
->> >> > > I see: idx 0 in bbm_bytes_buf is the data at offset bbpos. Then
->> >> > it's ok.
->> >> > >> >>   So bbm_bytes_buf[0] will contain the BBM first byte.
->> >> >>   and bbm_bytes_buf[1] will contain the BBM second byte.
->> >> >> >>   Regards,
->> >> >>   Abhishek
->> >> >> >> >> >>  	if (chip->options & NAND_BUSWIDTH_16)
->> >> >> >> -		bad = bad || (nandc->data_buffer[bbpos + 1] != 0xff);
->> >> >> >> +		bad = bad || (bbm_bytes_buf[1] != 0xff);
->> >> > > Sorry, my mistake, I did not see the above line.
->> >> > > However, technically, the BBM could be located in the first, second or
->> >> > last page of the block. You should check the three of them are 0xFF
->> >> > before declaring the block is not bad.
->> >> > > The more I look at the function, the more I wonder if you actually need
->> >> > it. Why does the generic nand_block_bad() implementation in the core
->> >> > do not fit?
->> >> >>   The BBM bytes can be accessed in raw mode only for QCOM NAND
->> >>   Contoller. We started with following patch for initial patches
->> >> >>   http://patchwork.ozlabs.org/patch/508565/
->> >> >>   I am also not very much sure, how can we go ahead now.
->> >>   Ideally we need to use generic function only which
->> >>   requires raw_read.
->> >> > > I see, thanks for pointing this thread.
->> > > Well for now then let's keep our driver-specific implementation.
->> > > I will just ask you to do a consistent check as requested above (you
->> > can copy code from the core) and add a comment above this function
->> > explaining why it is needed (what you just told me).
->> >
->>   Hi Miquel,
->> 
->>   I explored more regarding making custom bad block functions in this
->>   thread and it looks like, we can move to generic block_bad function
->>   by small changes in QCOM NAND driver
->>   only. The main problem was, in read page with ECC, the bad block
->>   byte was skipped.
->> 
->>   But controller is copying the bad block bytes in another register
->>   with following status bytes.
->> 
->>   BAD_BLOCK_STATUS : With every page read operation, when the 
->> controller
->>   reads a page with a bad block, it writes the bad block status data 
->> into
->>   this register.
->> 
->>   We can update the BBM bytes at start of OOB data in read_oob 
->> function
->>   with these status bytes. It will help in getting rid of 
->> driver-specific
->>   implementation for chip->block_bad.
-> 
-> If think this is acceptable.
-> 
->> 
->>   For chip->block_markbad, if we want to get rid of
->>   driver-specific implementation then we can have
->>   following logic
->> 
->>   in write_oob function check for bad block bytes in oob
->>   and do the raw write for updating BBM bytes alone in
->>   flash if BBM bytes are non 0xff.
-> 
-> Ok but this will have to be properly explained in a descriptive 
-> comment!
-> 
-> Maybe Boris can give its point of view on the subject. Is it worth
-> adding the above 'hacks' in the qcom driver and get rid of the
-> driver-specific ->is_bad()/->mark_bad() impementations?
+On Wed, Jun 20, 2018 at 11:06 AM, Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+> Hi Dmitry,
+>
+> On (06/20/18 10:45), Dmitry Vyukov wrote:
+>> Hi Sergey,
+>>
+>> What are the visible differences between this patch and Tetsuo's
+>> patch?
+>
+> I guess none, and looking at your requirements below I tend to agree
+> that Tetsuo's approach is probably what you need at the end of the day.
+>
+>> The only thing that will matter for syzkaller parsing in the
+>> end is the resulting text format as it appears on console. But you say
+>> "I'm not pushing for this particular message format", so what exactly
+>> do you want me to provide feedback on?
+>> I guess we need to handle pr_cont properly whatever approach we take.
+>
+> Mostly, was wondering about if:
+> a) you need pr_cont() handling
+> b) you need printk_safe() handling
+>
+> The reasons I left those things behind:
+>
+> a) pr_cont() is officially hated. It was never supposed to be used
+>    on SMP systems. So I wasn't sure if we need all that effort and
+>    add tricky code to handle pr_cont(). Given that syzkaller is
+>    probably the only user of that functionality.
 
-  Thanks Miquel.
+Well, if I put my syzkaller hat on, then I don't care what exactly
+happens in the kernel, the only thing I care is well-formed output on
+console that can be parsed unambiguously in all cases.
+From this point of view I guess pr_cont is actually syzkaller's worst
+enemy. If pr_const is officially hated, and it causes corrupted crash
+reports, then we can resolve it by just getting rid of more pr_cont's.
+So potentially we do not need any support for pr_cont in this patch.
+However, we also need to be practical and if there are tons of
+pr_cont's then we need some intermediate support of them, just because
+we won't be able to get rid of all of them overnight.
 
-  I will remove this patch from this patch series and will send
-  separate patch series for all bad block handling related changes
-  once things are finalized.
+But even if we attach context to pr_cont, it still causes problems for
+crash parsing, because today we see:
 
-  Regards,
-  Abhishek
+BUG: unable to handle
+... 10 lines ...
+kernel
+... 10 lines ...
+paging request
+... 10 lines ...
+at ADDR
+
+Which is not too friendly for parsing regardless of contexts.
+So I am leaning towards to getting rid of pr_cont's as the solution to
+the problem.
+
+Looking at current uses of pr_cont:
+https://elixir.bootlin.com/linux/latest/ident/pr_cont
+It does not look too bad. arch/ except for x86 and exotic drivers
+won't cause problems for syzbot today, so we can live with these uses
+for now.
+
+
+
+> b) printk_safe output is quite uncommon. And we flush per-CPU buffer
+>    from the same CPU which has caused printk_safe output [except for
+>    panic() flush] therefore logging the info available to log_store()
+>    seemed enough. IOW, once again, was a bit unsure if we want to add
+>    some complex code to already complex code, with just one potential
+>    user.
+
+
+I can't fully answer this because I don't understand what are the
+implications on actual output.
+You can use this as litmus test: can you write a simple script that
+will parse such output and make sense out of it?
+
+Well, it's not for one user. It affects each and every single user of
+Linux kernel out there. Just take a look at these, that's complete
+nonsense, it's not that syzkaller can't make sense out of it, it's
+nobody can make sense out of it:
+
+https://gist.githubusercontent.com/dvyukov/1528e86e5139f2fd1bf9902398d48298/raw/3b42148554eefed210f1e626d5befd50405c5487/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/6e08ac521f3e19534970ed97aeee1603/raw/0f0bb361902de94e7ee331ac500a3ceebf812c22/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/6e9db2313e48773ad1cd861da8020008/raw/d5b7c023fc8a38c72b1cf8bb1da85fb1c31cea5f/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/3d1bda4c690414ac027de1da45759751/raw/2c68980eabf4f6be24060e807a75f2d3570b5a42/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/9b8831e9ac73ffafa111a33ad40c5667/raw/f4097fbea8f89b25a282a6ef7e648145e10ae4b7/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/d78a3187a1b4e004820e92efcb16f9e0/raw/5530bcbf009c3fba3c581b2d24c523c673c6ef12/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/da1e42436af9ad2afc7de49f2d503510/raw/7dd4cbcc651c5b87122f066a3c689999ae8c4121/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/4571b94bd8cbd78d759412c560fa395c/raw/964c73fc993fc8a9000571e0b7618000584f3638/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/b6deac5faa958ae3733413b34dd5feed/raw/c4da219e284f7fc55da8c3c3af623a87f31bf653/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/2f54c6a2e45347ea76d9c5ce3c0ff091/raw/45f4873898ec8e0d9aa16b9c5c63a85410fd05e0/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/96cb39e29124dbbe2a65a91ec7a5639e/raw/aa8f7b2b1dfa5b8bb8cf93d8a821ca9938e8fc54/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/424da8282d5b28f8be10eab595d37444/raw/acc2fb1ececc1ea9a8215213f7e37e08b524c096/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/b07f37720c632d6d56ae67d95e5599b3/raw/8624ba47d6eb4e7d4d58e3ae1242ebe6cc46d361/gistfile1.txt
+https://gist.githubusercontent.com/dvyukov/bc24a7b92289ec04587fb29fc1085045/raw/3136e9262ee2233b5ab369a4a82e83953fc2d8a2/gistfile1.txt
