@@ -2,128 +2,106 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D088DC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD64C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B8E2208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:37:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTqgOS99"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8E2208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C01F208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 08:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C01F208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932504AbeFTIh3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 04:37:29 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38252 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932314AbeFTIhZ (ORCPT
+        id S932583AbeFTIht (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 04:37:49 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:56377 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752595AbeFTIhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 04:37:25 -0400
-Received: by mail-lf0-f66.google.com with SMTP id i83-v6so3661404lfh.5;
-        Wed, 20 Jun 2018 01:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=T9Bbom5AxDXAKMDWUsMhIH1DpC0pCiwXcclpItONub4=;
-        b=iTqgOS99gx18FQ/b+2C5TbdxRVj6b0yZowv16DTiu6BtN91yqQBpNzHRUNWqfRKL/k
-         0f0gn5xerm3lbafwIz/fuGz4fg/53jP0eHMTRgrfzGAv9eHWNO7TjaDWltxsnj4NX72P
-         F+1fxb4YPINi9wTKv22a53GXi4ySFvxJUK77Zurw4g5/ypuvV/+2CNBHw9YMF1Klo0tD
-         iUpAgEoHg0h0UKNTH1HshtMQ+a/5V03Ql7bhsY5vD5BIhVYVLIeRG0KOPDtBPe1bj3vi
-         fm6iD0reHq7QIjv6kgcrrRjztxreu7wMc20YqifSjsf5Ca7nbwm9Degsg6el3jKyCI4n
-         eKCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=T9Bbom5AxDXAKMDWUsMhIH1DpC0pCiwXcclpItONub4=;
-        b=GXtJlsTaWT1JAOw2prrsuLxgLf7Ef8txknd8hkb8WKxj2m5ySmEm4EnWtbeP0n4EF5
-         CRQSQABQaRNJLGjmu6c3hgDJnZqm9DbQe2TjjEJ8Rqkcigexdy8ZPamvXd7oN4vqy88z
-         tcTLRyQ/RlSLFfiH8FTH3uZnGehQiKtBEhGycD+iiqVIPsn5f28YGseIGa8f/YZyKA+O
-         iyiTHCy2YfaCnuEl4eTk3nFQeAl98tjm2XcAZ4t3rrzm2felWT5AoW/OvNhZXJfZMDkX
-         4a8gTDhGek7xtC+0gSI7W95cDT71rLawmP2ynGLQANXPlvVN3pFg3thaqeV6fV7C+cII
-         FeTg==
-X-Gm-Message-State: APt69E05fGgBOzKZ5GUz5I3LYLFyB2IKvi4+ZqLbPc7kArOMYl7okI1I
-        Z1CT81rntGjoH2CKh6LkOPG8Oxfr
-X-Google-Smtp-Source: ADUXVKL1JPFMuiRYS43iYpKqs04taVuID2PFRFE27UPwPx7HsVeDUeZNVRZFPolBzoG/LZGyS4KycQ==
-X-Received: by 2002:a2e:4189:: with SMTP id d9-v6mr12846354ljf.36.1529480105752;
-        Wed, 20 Jun 2018 00:35:05 -0700 (PDT)
-Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
-        by smtp.gmail.com with ESMTPSA id m186-v6sm286747lfe.16.2018.06.20.00.35.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 00:35:05 -0700 (PDT)
-From:   Esben Haabendal <esben.haabendal@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc:     Kurt Kanzenbach <kurt@linutronix.de>,
-        Angelo Dureghello <angelo@sysam.it>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Sanchayan Maity <maitysanchayan@gmail.com>,
-        Yuan Yao <yao.yuan@nxp.com>, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>
-Subject: [PATCH 09/12] spi: spi-fsl-dspi: Framesize control for XSPI mode
-Date:   Wed, 20 Jun 2018 09:34:39 +0200
-Message-Id: <20180620073442.20913-10-esben.haabendal@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180620073442.20913-1-esben.haabendal@gmail.com>
-References: <20180620073442.20913-1-esben.haabendal@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 20 Jun 2018 04:37:46 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0LuFsJ-1gEc482WUp-011fZ9; Wed, 20 Jun 2018 10:11:59 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fuse: convert last timespec use to timespec64
+Date:   Wed, 20 Jun 2018 10:11:46 +0200
+Message-Id: <20180620081158.83283-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:gVWRUHLYqRlFx41uDorRnyHIMpUa9P+ru5dJ82jgQM+niYPxT/B
+ rals0Ef9xHe79rKdeeRL4v0PRPCFq0zZj2mgtnohLqQVtHZKg1oX+Nq+B74LAYzp2JZbj9P
+ PCodzLbVUPZaKtEOtgkhDQqy5gH7ByUcUMyvlRuO1UXaIbFZS5A4k0zbki3UQ2b+rs3oE6J
+ ab+qboHWA2fmsn5jBlY4g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZFbgleFKVFo=:QMzu8/zYpwmWVVWdor10nA
+ u+NOuergvIu6j6w7fkVrfW9/vQPXx5zIydaxZHiCVaqVUK/LTmSxZ0QBUxm53ouFpPm39lUKI
+ XJH6HldrN8KSGUUX15dzLs4hIl6l3hBKEhQe6k/JjXdlIpXw3TGI7teQ+I4kADb3h95WoYwxp
+ GY9a+0su6JwvgiZAguRZ/zKHKFC1uB4j6jLI/1fAAkDzHNAckottiSzRsh1zrAWc5WgOMTG5Q
+ 2EwYxJjN6SfBooMGZqFdrLOcrhK/9w1aV6CDLAwoT5inH2opi5YJ7gjW0nHJczxdglqApjN6O
+ CId1PaW0RSfa88Or2qCDMhe4mGjNUbawQM2LhQPCbYCa506gfgN/4wxYrzOUkaFggklWQ3NSC
+ 5yHEad7rO++JAPHJDAifTji1ZSsyA3dS2gsvYU0idn8ja10jBFiR7spWSyh9ebYATGzPpO+9M
+ CrSxk47S8hnVFppwDYRjCaqIel5btY0hb073iSIvGCFTflo2BV8Sa1veLTf7O9Q1k3/Zgeub5
+ L7RpbzMpEmUo/hKpljnwQfyjCm1Mpgh6RLahDAiugWILyea0mOlCttoOr7PKCBB0jCNF3TkzP
+ /jGalzU1aF164jOb9CnInnh0RTg1PM/HbR7IeQ7N99gyym6fTrmEHUdHgUWY0gOUAtQYS9CAT
+ 8Gt65s35VwZ5wmk0H4jrN0Gy3vK+tJ/IZeDa8aX/41hLgwp4Yp1p2MzCTS0sM4Ojgy/8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <eha@deif.com>
+All of fuse uses 64-bit timestamps with the exception of the
+fuse_change_attributes(), so let's convert this one as well.
 
-Signed-off-by: Esben Haabendal <eha@deif.com>
-Cc: Martin Hundebøll <martin@geanix.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/spi/spi-fsl-dspi.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/fuse/inode.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 3e9dd645ee54..ba83ff4512c9 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -119,6 +119,9 @@
- #define SPI_FRAME_BITS_16	SPI_CTAR_FMSZ(0xf)
- #define SPI_FRAME_BITS_8	SPI_CTAR_FMSZ(0x7)
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index a24df8861b40..3c71eb062ef2 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -208,7 +208,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	bool is_wb = fc->writeback_cache;
+ 	loff_t oldsize;
+-	struct timespec old_mtime;
++	struct timespec64 old_mtime;
  
-+#define SPI_FRAME_EBITS(bits)	SPI_CTARE_FMSZE(((bits) - 1) >> 4)
-+#define SPI_FRAME_EBITS_MASK	SPI_CTARE_FMSZE(1)
-+
- /* Register offsets for regmap_pushr */
- #define PUSHR_CMD		0x0
- #define PUSHR_TX		0x2
-@@ -662,6 +665,10 @@ static int dspi_transfer_one_message(struct spi_master *master,
- 		regmap_write(dspi->regmap, SPI_CTAR(0),
- 			     dspi->cur_chip->ctar_val |
- 			     SPI_FRAME_BITS(transfer->bits_per_word));
-+		if (dspi->devtype_data->xspi_mode)
-+			regmap_write(dspi->regmap, SPI_CTARE(0),
-+				     SPI_FRAME_EBITS(transfer->bits_per_word)
-+				     | SPI_CTARE_DTCP(1));
+ 	spin_lock(&fc->lock);
+ 	if ((attr_version != 0 && fi->attr_version > attr_version) ||
+@@ -217,7 +217,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 		return;
+ 	}
  
- 		trans_mode = dspi->devtype_data->trans_mode;
- 		switch (trans_mode) {
-@@ -922,6 +929,9 @@ static void dspi_init(struct fsl_dspi *dspi)
- {
- 	regmap_write(dspi->regmap, SPI_MCR, SPI_MCR_MASTER | SPI_MCR_PCSIS);
- 	regmap_write(dspi->regmap, SPI_SR, SPI_SR_CLEAR);
-+	if (dspi->devtype_data->xspi_mode)
-+		regmap_write(dspi->regmap, SPI_CTARE(0),
-+			     SPI_CTARE_FMSZE(0) | SPI_CTARE_DTCP(1));
- }
+-	old_mtime = timespec64_to_timespec(inode->i_mtime);
++	old_mtime = inode->i_mtime;
+ 	fuse_change_attributes_common(inode, attr, attr_valid);
  
- static int dspi_probe(struct platform_device *pdev)
+ 	oldsize = inode->i_size;
+@@ -237,7 +237,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 			truncate_pagecache(inode, attr->size);
+ 			inval = true;
+ 		} else if (fc->auto_inval_data) {
+-			struct timespec new_mtime = {
++			struct timespec64 new_mtime = {
+ 				.tv_sec = attr->mtime,
+ 				.tv_nsec = attr->mtimensec,
+ 			};
+@@ -246,7 +246,7 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 			 * Auto inval mode also checks and invalidates if mtime
+ 			 * has changed.
+ 			 */
+-			if (!timespec_equal(&old_mtime, &new_mtime))
++			if (!timespec64_equal(&old_mtime, &new_mtime))
+ 				inval = true;
+ 		}
+ 
 -- 
-2.17.1
+2.9.0
 
