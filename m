@@ -2,172 +2,110 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AD1C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CC4C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFE620652
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:03:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFE620652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id A4C4420846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 09:04:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="tBP9Brr+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4C4420846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932844AbeFTJDw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 05:03:52 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:59518 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754012AbeFTJDq (ORCPT
+        id S932831AbeFTJEV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 05:04:21 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40169 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752725AbeFTJES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 05:03:46 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fVZ1h-0001ZO-5R; Wed, 20 Jun 2018 11:03:41 +0200
-Date:   Wed, 20 Jun 2018 11:03:40 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexander Dahl <ada@thorsis.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/6] clocksource/drivers: Add a new driver for the
- Atmel ARM TC blocks
-In-Reply-To: <20180619211929.22908-3-alexandre.belloni@bootlin.com>
-Message-ID: <alpine.DEB.2.21.1806201037240.10546@nanos.tec.linutronix.de>
-References: <20180619211929.22908-1-alexandre.belloni@bootlin.com> <20180619211929.22908-3-alexandre.belloni@bootlin.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Wed, 20 Jun 2018 05:04:18 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n5-v6so5336950wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 02:04:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=x5M7hdW50E1mLj0VdwmAUYUy3kxdHT/fUYGo7Zjz4m0=;
+        b=tBP9Brr+PjJ2Z8JWEwQwDmdzEzasaFGaJZftvGsOQ0dLNsWqyNh872C32ukKW4vApw
+         /rdQO5SrI7nueTDt3oSy36G4r1k8FGKV1uU8o9icGEHvSylxYHa+2sEW23wAbmFYZ82t
+         tBf1p/7BYW6iNE5AaHLj16BNMC8UwIfKnGtT0fbXD74ovOv3hovnwu61iH3pe5ogWR+M
+         1s5rhcgxSaw/j5fflNZpc3oGlbVXCtKuVPiHQUWKVBs8pQ25FzSrCqRNu33HBwpRRXw6
+         K29ZN3nKAedURHIyhcB4EYPTCCG81Re8LuxOSvKbuZV2Efncd0rthmSKWBqw74ZtTGzN
+         Wb1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=x5M7hdW50E1mLj0VdwmAUYUy3kxdHT/fUYGo7Zjz4m0=;
+        b=OLGCAoAa4sTG9QfRAE+T94khoIQXWcIe1T0W2KgzfyfD8AOl0z9anGtf/AsP/QYIXH
+         qrAgWImfeysBbH6EZWBIF60lDWJF89Hp1nr+SOJmUJIKluKnFQUBWVjObO/UvDCtF67e
+         b0GZnZDMS87OkI/SQyS0zJr3eFtUfQG4hqy6nLqIb0oDozR5PeM0zJWPOnq6H/YDRd3T
+         zb3CyAiJ4D5ppCpCij3SWWaSR5b8fPW5ZEl1zJoK84bAyEsA8LCjAGFKiOV5FAdJ3QCY
+         qzEELNF5o94Nd4L24oGeJctgtCDDsjKQ0tByO6cg8DucNdxFWOL8wJ2/zKEtIKp5yKIk
+         hj5g==
+X-Gm-Message-State: APt69E2U79u5V/U0+fFbONlRBUAQ/osowi52lIZhvpQPXu7grP76ySS+
+        mDT31ID8aiW9I7w5Hu9iq0VISd3LNz0=
+X-Google-Smtp-Source: ADUXVKLAMAVxfX3O4cBcgl+N2D+4pekwkF1btroC8jBISr5TKJFm88w4bdp/fRoDup7xgqA8ZwAiBw==
+X-Received: by 2002:a1c:ec84:: with SMTP id h4-v6mr869637wmi.154.1529481846046;
+        Wed, 20 Jun 2018 01:04:06 -0700 (PDT)
+Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-13-249.w90-86.abo.wanadoo.fr. [90.86.134.249])
+        by smtp.gmail.com with ESMTPSA id t14-v6sm2131704wrm.79.2018.06.20.01.04.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 01:04:05 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Rob Herring <robh@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 2/2] net: davinci_emac: match the mdio device against its compatible if possible
+Date:   Wed, 20 Jun 2018 10:03:56 +0200
+Message-Id: <20180620080356.11900-3-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180620080356.11900-1-brgl@bgdev.pl>
+References: <20180620080356.11900-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 19 Jun 2018, Alexandre Belloni wrote:
-> +
-> +static struct atmel_tcb_clksrc {
-> +	struct clocksource clksrc;
-> +	struct clock_event_device clkevt;
-> +	struct regmap *regmap;
-> +	void __iomem *base;
-> +	struct clk *clk[2];
-> +	char name[20];
-> +	int channels[2];
-> +	int bits;
-> +	int irq;
-> +	struct {
-> +		u32 cmr;
-> +		u32 imr;
-> +		u32 rc;
-> +		bool clken;
-> +	} cache[2];
-> +	u32 bmr_cache;
-> +	bool registered;
-> +} tc = {
-> +	.clksrc = {
-> +		.rating		= 200,
-> +		.mask		= CLOCKSOURCE_MASK(32),
-> +		.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-> +	},
-> +	.clkevt	= {
-> +		.features	= CLOCK_EVT_FEAT_ONESHOT,
-> +		/* Should be lower than at91rm9200's system timer */
-> +		.rating		= 125,
-> +	},
-> +};
-> +
-> +static struct tc_clkevt_device {
-> +	struct clock_event_device clkevt;
-> +	struct regmap *regmap;
-> +	void __iomem *base;
-> +	struct clk *slow_clk;
-> +	struct clk *clk;
-> +	char name[20];
-> +	int channel;
-> +	int irq;
-> +	struct {
-> +		u32 cmr;
-> +		u32 imr;
-> +		u32 rc;
-> +		bool clken;
-> +	} cache;
-> +	bool registered;
-> +	bool clk_enabled;
-> +} tce = {
-> +	.clkevt	= {
-> +		.features		= CLOCK_EVT_FEAT_PERIODIC |
-> +					  CLOCK_EVT_FEAT_ONESHOT,
-> +		/*
-> +		 * Should be lower than at91rm9200's system timer
-> +		 * but higher than tc.clkevt.rating
-> +		 */
-> +		.rating			= 140,
-> +	},
-> +};
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-To be honest: This stuff is horrible to read and the two structs are almost
-identical. There is really no good reason to have all this duplicated
-mess. I'm pretty sure you can consolidate stuff further when using _one_.
+Device tree based systems without of_dev_auxdata will have the mdio
+device named differently than "davinci_mdio(.0)". In this case use the
+device's parent's compatible string for matching
 
-And please define the structs separate from the define and arrange the
-struct members in tabluar fashion.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/net/ethernet/ti/davinci_emac.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> +/*
-> + * Clocksource and clockevent using the same channel(s)
-> + */
-> +static u64 tc_get_cycles(struct clocksource *cs)
-> +{
-> +	u32 lower, upper;
-> +
-> +	do {
-> +		upper = readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[1]));
-> +		lower = readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[0]));
-> +	} while (upper != readl_relaxed(tc.base + ATMEL_TC_CV(tc.channels[1])));
-> +
-> +	return (upper << 16) | lower;
-> +}
-
-For timekeeping the win of this is dubious. With a 5Mhz clock the 32bit
-part wraps around in ~859 seconds, which is plenty even for NOHZ.
-
-So I really would avoid the double read/compare/eventually repeat magic and
-just use the lower 32bits for performance sake. I assume the same is true
-for sched_clock(), but I might be wrong.
-
-> +static int tcb_clkevt_next_event(unsigned long delta,
-> +				 struct clock_event_device *d)
-> +{
-> +	u32 old, next, cur;
-> +
-> +	old = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
-> +	next = old + delta;
-> +	writel(next, tc.base + ATMEL_TC_RC(tc.channels[0]));
-> +	cur = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
-> +
-> +	/* check whether the delta elapsed while setting the register */
-> +	if ((next < old && cur < old && cur > next) ||
-> +	    (next > old && (cur < old || cur > next))) {
-> +		/*
-> +		 * Clear the CPCS bit in the status register to avoid
-> +		 * generating a spurious interrupt next time a valid
-> +		 * timer event is configured.
-> +		 */
-> +		old = readl(tc.base + ATMEL_TC_SR(tc.channels[0]));
-> +		return -ETIME;
-> +	}
-
-Aarg. Doesn;t that timer block have a simple count down and fire mode?
-These compare equal timers suck.
-
-Thanks,
-
-	tglx
-
+diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
+index a1a6445b5a7e..f270beebb428 100644
+--- a/drivers/net/ethernet/ti/davinci_emac.c
++++ b/drivers/net/ethernet/ti/davinci_emac.c
+@@ -1387,6 +1387,10 @@ static int emac_devioctl(struct net_device *ndev, struct ifreq *ifrq, int cmd)
+ 
+ static int match_first_device(struct device *dev, void *data)
+ {
++	if (dev->parent && dev->parent->of_node)
++		return of_device_is_compatible(dev->parent->of_node,
++					       "ti,davinci_mdio");
++
+ 	return !strncmp(dev_name(dev), "davinci_mdio", 12);
+ }
+ 
+-- 
+2.17.1
 
