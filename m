@@ -2,331 +2,164 @@ Return-Path: <SRS0=ENXv=JG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8AEC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D6BC1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCF3920875
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:56:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqCy976N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF3920875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2147520846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:57:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2147520846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752914AbeFTK4h (ORCPT
+        id S1752932AbeFTK5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:56:37 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35562 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750827AbeFTK4e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:56:34 -0400
-Received: by mail-pf0-f194.google.com with SMTP id c22-v6so1430834pfi.2;
-        Wed, 20 Jun 2018 03:56:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=VaKpnbtql9QwBUc3NOyXyxx1juP2KFCN6SCu4tUe7Us=;
-        b=YqCy976NUBctM1M0QTSu5NTpVLq6Jhy9MrG4IDLdMatitpSqPgFCDEPjO9BW2NXKww
-         8B3oBVfx7qY9JBPx0vaVUXBomKkD6x2ZMwKKWES+XlKtgYvQtCtTkhSH4Zv9Z9TjnWq6
-         JN9lyx9C9UCIyL2lJUgxFZIjQuMWpvqzx9087Wqxdkiz2q5654YVAknRyT0xemwCef4P
-         Kv3nTJBhH/zsDidicqqRGc2+3188E/r3U8/rMwd7wqln9BRLs4+sSn7n2BHm2bE2+JSv
-         +kjOjZOTDiBmvv43QHNx2dmIOmtS8qj4I+1r8klnJMnxROuphP8H3usDe1Cow+uLsjaI
-         5NAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=VaKpnbtql9QwBUc3NOyXyxx1juP2KFCN6SCu4tUe7Us=;
-        b=h4IIT25zvhHIjUjY4WxKvS0ugcMSUSjwgJD981slYsZE30GEoHOoOqvCdUrHcFguvt
-         thU4crFLCYRO/EI+gFzvAyWIfhk9cjzKzziekGkg9f844fahStkeI7lfILGlA7nOxHn8
-         W77V/TOxuouIRa7oNSEtyzPkOqxyDDS/kYdBPLUW8CxwuW1vcq+6scooQxt7wPsygveo
-         3lYmexSSNeICRTlYT+Q4ReaH3cFd6wYcrIQ4sMe40gJmuPkp1YCgYMERk8CQO20TpHwx
-         OdD2KAnJy2ylsmCvEYPBTrLMF2bvfyjE8RdxgKx5b3ICt5s+IjzKvDD6WFWY/N7zWL16
-         YMdg==
-X-Gm-Message-State: APt69E3jgiH9e8t7euT4XzLrBuvVTTnpunF1JE8jHFg0luHdv028aTX2
-        bUjd9DcO8XzcX1FGr5CrR4snlaNH
-X-Google-Smtp-Source: ADUXVKK8mg98x1DCuOQgbgA2NQ9RQ5RsKp2Ew4So7qhVFc3+uCxAY2DO20TAoT5/X3IFStyVDgcmdA==
-X-Received: by 2002:a65:6559:: with SMTP id a25-v6mr17822889pgw.82.1529492193956;
-        Wed, 20 Jun 2018 03:56:33 -0700 (PDT)
-Received: from randy-betty.flets-east.jp (pdf86861b.kngwnt01.ap.so-net.ne.jp. [223.134.134.27])
-        by smtp.gmail.com with ESMTPSA id j8-v6sm5907890pfe.84.2018.06.20.03.56.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 03:56:33 -0700 (PDT)
-From:   Juan Manuel Torres Palma <j.m.torrespalma@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-crypto@vger.kernel.org, davem@davemloft.net,
-        herbert@gondor.apana.org.au, j.m.torrespalma@gmail.com
-Subject: [PATCH] crypto: testmgr: add test vectors for skein
-Date:   Wed, 20 Jun 2018 19:57:14 +0900
-Message-Id: <20180620105714.18359-1-j.m.torrespalma@gmail.com>
-X-Mailer: git-send-email 2.14.4
+        Wed, 20 Jun 2018 06:57:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40322 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750793AbeFTK5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 06:57:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 3EBF2AE85;
+        Wed, 20 Jun 2018 10:57:51 +0000 (UTC)
+Subject: Re: [PATCH] thp: use mm_file_counter to determine update which rss
+ counter
+To:     Yang Shi <yang.shi@linux.alibaba.com>, hughd@google.com,
+        kirill.shutemov@linux.intel.com, akpm@linux-foundation.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Jerome Marchand <jmarchan@redhat.com>
+References: <1529442518-17398-1-git-send-email-yang.shi@linux.alibaba.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <000df63e-2f67-a1a3-42e6-c45d93d960cd@suse.cz>
+Date:   Wed, 20 Jun 2018 12:57:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1529442518-17398-1-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds test vectors specified in skein v1.3
-specification. The main code is still in staging
-directory, but this is required to eventually be
-moved to the crypto directory.
+On 06/19/2018 11:08 PM, Yang Shi wrote:
+> Since commit eca56ff906bdd0239485e8b47154a6e73dd9a2f3 ("mm, shmem: add
+> internal shmem resident memory accounting"), MM_SHMEMPAGES is added to
+> separate the shmem accounting from regular files. So, all shmem pages
+> should be accounted to MM_SHMEMPAGES instead of MM_FILEPAGES.
+> 
+> And, normal 4K shmem pages have been accounted to MM_SHMEMPAGES, so
+> shmem thp pages should be not treated differently. Accouting them to
+> MM_SHMEMPAGES via mm_counter_file() since shmem pages are swap backed
+> to keep consistent with normal 4K shmem pages.
+> 
+> This will not change the rss counter of processes since shmem pages are
+> still a part of it.
 
-Signed-off-by: Juan Manuel Torres Palma <j.m.torrespalma@gmail.com>
----
- crypto/testmgr.c |  21 ++++++
- crypto/testmgr.h | 203 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 224 insertions(+)
+<Andrew>So what are the user-visible effects of the patch then?</Andrew>
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 11e45352fd0b..9fa08cbc8852 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3453,6 +3453,27 @@ static const struct alg_test_desc alg_test_descs[] = {
- 		.suite = {
- 			.hash = __VECS(sha512_tv_template)
- 		}
-+	}, {
-+		.alg = "skein1024",
-+		.test = alg_test_hash,
-+		.fips_allowed = 1,
-+		.suite = {
-+			.hash = __VECS(skein1024_tv_template)
-+		}
-+	}, {
-+		.alg = "skein256",
-+		.test = alg_test_hash,
-+		.fips_allowed = 1,
-+		.suite = {
-+			.hash = __VECS(skein256_tv_template)
-+		}
-+	}, {
-+		.alg = "skein512",
-+		.test = alg_test_hash,
-+		.fips_allowed = 1,
-+		.suite = {
-+			.hash = __VECS(skein512_tv_template)
-+		}
- 	}, {
- 		.alg = "sm3",
- 		.test = alg_test_hash,
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index b950aa234e43..50239e84e283 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -1699,6 +1699,209 @@ static const struct hash_testvec sha3_512_tv_template[] = {
- 	},
- };
- 
-+/*
-+ * Skein test vectors from skein specification v1.3
-+ */
-+static const struct hash_testvec skein256_tv_template[] = {
-+	{
-+		.plaintext = "\xff",
-+		.psize	   = 1,
-+		.digest	   = "\x0b\x98\xdc\xd1\x98\xea\x0e\x50"
-+			     "\xa7\xa2\x44\xc4\x44\xe2\x5c\x23"
-+			     "\xda\x30\xc1\x0f\xc9\xa1\xf2\x70"
-+			     "\xa6\x63\x7f\x1f\x34\xe6\x7e\xd2",
-+	}, {
-+		.plaintext = "\xff\xfe\xfd\xfc\xfb\xfa\xf9\xf8"
-+			     "\xf7\xf6\xf5\xf4\xf3\xf2\xf1\xf0"
-+			     "\xef\xee\xed\xec\xeb\xea\xe9\xe8"
-+			     "\xe7\xe6\xe5\xe4\xe3\xe2\xe1\xe0",
-+		.psize	   = 32,
-+		.digest	   = "\x8d\x0f\xa4\xef\x77\x7f\xd7\x59"
-+			     "\xdf\xd4\x04\x4e\x6f\x6a\x5a\xc3"
-+			     "\xc7\x74\xae\xc9\x43\xdc\xfc\x07"
-+			     "\x92\x7b\x72\x3b\x5d\xbf\x40\x8b",
-+	}, {
-+		.plaintext = "\xff\xfe\xfd\xfc\xfb\xfa\xf9\xf8"
-+			     "\xf7\xf6\xf5\xf4\xf3\xf2\xf1\xf0"
-+			     "\xef\xee\xed\xec\xeb\xea\xe9\xe8"
-+			     "\xe7\xe6\xe5\xe4\xe3\xe2\xe1\xe0"
-+			     "\xdf\xde\xdd\xdc\xdb\xda\xd9\xd8"
-+			     "\xd7\xd6\xd5\xd4\xd3\xd2\xd1\xd0"
-+			     "\xcf\xce\xcd\xcc\xcb\xca\xc9\xc8"
-+			     "\xc7\xc6\xc5\xc4\xc3\xc2\xc1\xc0",
-+		.psize	   = 64,
-+		.digest	   = "\xdf\x28\xe9\x16\x63\x0d\x0b\x44"
-+			     "\xc4\xa8\x49\xdc\x9a\x02\xf0\x7a"
-+			     "\x07\xcb\x30\xf7\x32\x31\x82\x56"
-+			     "\xb1\x5d\x86\x5a\xc4\xae\x16\x2f",
-+	}
-+};
-+
-+static const struct hash_testvec skein512_tv_template[] = {
-+	{
-+		.plaintext = "\xff",
-+		.psize	   = 1,
-+		.digest	   = "\x71\xb7\xbc\xe6\xfe\x64\x52\x22"
-+			     "\x7b\x9c\xed\x60\x14\x24\x9e\x5b"
-+			     "\xf9\xa9\x75\x4c\x3a\xd6\x18\xcc"
-+			     "\xc4\xe0\xaa\xe1\x6b\x31\x6c\xc8"
-+			     "\xca\x69\x8d\x86\x43\x07\xed\x3e"
-+			     "\x80\xb6\xef\x15\x70\x81\x2a\xc5"
-+			     "\x27\x2d\xc4\x09\xb5\xa0\x12\xdf"
-+			     "\x2a\x57\x91\x02\xf3\x40\x61\x7a",
-+	}, {
-+		.plaintext = "\xff\xfe\xfd\xfc\xfb\xfa\xf9\xf8"
-+			     "\xf7\xf6\xf5\xf4\xf3\xf2\xf1\xf0"
-+			     "\xef\xee\xed\xec\xeb\xea\xe9\xe8"
-+			     "\xe7\xe6\xe5\xe4\xe3\xe2\xe1\xe0"
-+			     "\xdf\xde\xdd\xdc\xdb\xda\xd9\xd8"
-+			     "\xd7\xd6\xd5\xd4\xd3\xd2\xd1\xd0"
-+			     "\xcf\xce\xcd\xcc\xcb\xca\xc9\xc8"
-+			     "\xc7\xc6\xc5\xc4\xc3\xc2\xc1\xc0",
-+		.psize	   = 64,
-+		.digest	   = "\x45\x86\x3b\xa3\xbe\x0c\x4d\xfc"
-+			     "\x27\xe7\x5d\x35\x84\x96\xf4\xac"
-+			     "\x9a\x73\x6a\x50\x5d\x93\x13\xb4"
-+			     "\x2b\x2f\x5e\xad\xa7\x9f\xc1\x7f"
-+			     "\x63\x86\x1e\x94\x7a\xfb\x1d\x05"
-+			     "\x6a\xa1\x99\x57\x5a\xd3\xf8\xc9"
-+			     "\xa3\xcc\x17\x80\xb5\xe5\xfa\x4c"
-+			     "\xae\x05\x0e\x98\x98\x76\x62\x5b",
-+	}, {
-+		.plaintext = "\xff\xfe\xfd\xfc\xfb\xfa\xf9\xf8"
-+			     "\xf7\xf6\xf5\xf4\xf3\xf2\xf1\xf0"
-+			     "\xef\xee\xed\xec\xeb\xea\xe9\xe8"
-+			     "\xe7\xe6\xe5\xe4\xe3\xe2\xe1\xe0"
-+			     "\xdf\xde\xdd\xdc\xdb\xda\xd9\xd8"
-+			     "\xd7\xd6\xd5\xd4\xd3\xd2\xd1\xd0"
-+			     "\xcf\xce\xcd\xcc\xcb\xca\xc9\xc8"
-+			     "\xc7\xc6\xc5\xc4\xc3\xc2\xc1\xc0"
-+			     "\xbf\xbe\xbd\xbc\xbb\xba\xb9\xb8"
-+			     "\xb7\xb6\xb5\xb4\xb3\xb2\xb1\xb0"
-+			     "\xaf\xae\xad\xac\xab\xaa\xa9\xa8"
-+			     "\xa7\xa6\xa5\xa4\xa3\xa2\xa1\xa0"
-+			     "\x9f\x9e\x9d\x9c\x9b\x9a\x99\x98"
-+			     "\x97\x96\x95\x94\x93\x92\x91\x90"
-+			     "\x8f\x8e\x8d\x8c\x8b\x8a\x89\x88"
-+			     "\x87\x86\x85\x84\x83\x82\x81\x80",
-+		.psize	   = 128,
-+		.digest	   = "\x91\xcc\xa5\x10\xc2\x63\xc4\xdd"
-+			     "\xd0\x10\x53\x0a\x33\x07\x33\x09"
-+			     "\x62\x86\x31\xf3\x08\x74\x7e\x1b"
-+			     "\xcb\xaa\x90\xe4\x51\xca\xb9\x2e"
-+			     "\x51\x88\x08\x7a\xf4\x18\x87\x73"
-+			     "\xa3\x32\x30\x3e\x66\x67\xa7\xa2"
-+			     "\x10\x85\x6f\x74\x21\x39\x00\x00"
-+			     "\x71\xf4\x8e\x8b\xa2\xa5\xad\xb7",
-+	}
-+};
-+
-+static const struct hash_testvec skein1024_tv_template[] = {
-+	{
-+		.plaintext = "\xff",
-+		.psize	   = 1,
-+		.digest	   = "\xe6\x2c\x05\x80\x2e\xa0\x15\x24"
-+			     "\x07\xcd\xd8\x78\x7f\xda\x9e\x35"
-+			     "\x70\x3d\xe8\x62\xa4\xfb\xc1\x19"
-+			     "\xcf\xf8\x59\x0a\xfe\x79\x25\x0b"
-+			     "\xcc\xc8\xb3\xfa\xf1\xbd\x24\x22"
-+			     "\xab\x5c\x0d\x26\x3f\xb2\xf8\xaf"
-+			     "\xb3\xf7\x96\xf0\x48\x00\x03\x81"
-+			     "\x53\x1b\x6f\x00\xd8\x51\x61\xbc"
-+			     "\x0f\xff\x4b\xef\x24\x86\xb1\xeb"
-+			     "\xcd\x37\x73\xfa\xbf\x50\xad\x4a"
-+			     "\xd5\x63\x9a\xf9\x04\x0e\x3f\x29"
-+			     "\xc6\xc9\x31\x30\x1b\xf7\x98\x32"
-+			     "\xe9\xda\x09\x85\x7e\x83\x1e\x82"
-+			     "\xef\x8b\x46\x91\xc2\x35\x65\x65"
-+			     "\x15\xd4\x37\xd2\xbd\xa3\x3b\xce"
-+			     "\xc0\x01\xc6\x7f\xfd\xe1\x5b\xa8",
-+	}, {
-+		.plaintext = "\xff\xfe\xfd\xfc\xfb\xfa\xf9\xf8"
-+			     "\xf7\xf6\xf5\xf4\xf3\xf2\xf1\xf0"
-+			     "\xef\xee\xed\xec\xeb\xea\xe9\xe8"
-+			     "\xe7\xe6\xe5\xe4\xe3\xe2\xe1\xe0"
-+			     "\xdf\xde\xdd\xdc\xdb\xda\xd9\xd8"
-+			     "\xd7\xd6\xd5\xd4\xd3\xd2\xd1\xd0"
-+			     "\xcf\xce\xcd\xcc\xcb\xca\xc9\xc8"
-+			     "\xc7\xc6\xc5\xc4\xc3\xc2\xc1\xc0"
-+			     "\xbf\xbe\xbd\xbc\xbb\xba\xb9\xb8"
-+			     "\xb7\xb6\xb5\xb4\xb3\xb2\xb1\xb0"
-+			     "\xaf\xae\xad\xac\xab\xaa\xa9\xa8"
-+			     "\xa7\xa6\xa5\xa4\xa3\xa2\xa1\xa0"
-+			     "\x9f\x9e\x9d\x9c\x9b\x9a\x99\x98"
-+			     "\x97\x96\x95\x94\x93\x92\x91\x90"
-+			     "\x8f\x8e\x8d\x8c\x8b\x8a\x89\x88"
-+			     "\x87\x86\x85\x84\x83\x82\x81\x80",
-+		.psize	   = 128,
-+		.digest	   = "\x1f\x3e\x02\xc4\x6f\xb8\x0a\x3f"
-+			     "\xcd\x2d\xfb\xbc\x7c\x17\x38\x00"
-+			     "\xb4\x0c\x60\xc2\x35\x4a\xf5\x51"
-+			     "\x18\x9e\xbf\x43\x3c\x3d\x85\xf9"
-+			     "\xff\x18\x03\xe6\xd9\x20\x49\x31"
-+			     "\x79\xed\x7a\xe7\xfc\xe6\x9c\x35"
-+			     "\x81\xa5\xa2\xf8\x2d\x3e\x0c\x7a"
-+			     "\x29\x55\x74\xd0\xcd\x7d\x21\x7c"
-+			     "\x48\x4d\x2f\x63\x13\xd5\x9a\x77"
-+			     "\x18\xea\xd0\x7d\x07\x29\xc2\x48"
-+			     "\x51\xd7\xe7\xd2\x49\x1b\x90\x2d"
-+			     "\x48\x91\x94\xe6\xb7\xd3\x69\xdb"
-+			     "\x0a\xb7\xaa\x10\x6f\x0e\xe0\xa3"
-+			     "\x9a\x42\xef\xc5\x4f\x18\xd9\x37"
-+			     "\x76\x08\x09\x85\xf9\x07\x57\x4f"
-+			     "\x99\x5e\xc6\xa3\x71\x53\xa5\x78",
-+	}, {
-+		.plaintext = "\xff\xfe\xfd\xfc\xfb\xfa\xf9\xf8"
-+			     "\xf7\xf6\xf5\xf4\xf3\xf2\xf1\xf0"
-+			     "\xef\xee\xed\xec\xeb\xea\xe9\xe8"
-+			     "\xe7\xe6\xe5\xe4\xe3\xe2\xe1\xe0"
-+			     "\xdf\xde\xdd\xdc\xdb\xda\xd9\xd8"
-+			     "\xd7\xd6\xd5\xd4\xd3\xd2\xd1\xd0"
-+			     "\xcf\xce\xcd\xcc\xcb\xca\xc9\xc8"
-+			     "\xc7\xc6\xc5\xc4\xc3\xc2\xc1\xc0"
-+			     "\xbf\xbe\xbd\xbc\xbb\xba\xb9\xb8"
-+			     "\xb7\xb6\xb5\xb4\xb3\xb2\xb1\xb0"
-+			     "\xaf\xae\xad\xac\xab\xaa\xa9\xa8"
-+			     "\xa7\xa6\xa5\xa4\xa3\xa2\xa1\xa0"
-+			     "\x9f\x9e\x9d\x9c\x9b\x9a\x99\x98"
-+			     "\x97\x96\x95\x94\x93\x92\x91\x90"
-+			     "\x8f\x8e\x8d\x8c\x8b\x8a\x89\x88"
-+			     "\x87\x86\x85\x84\x83\x82\x81\x80"
-+			     "\x7f\x7e\x7d\x7c\x7b\x7a\x79\x78"
-+			     "\x77\x76\x75\x74\x73\x72\x71\x70"
-+			     "\x6f\x6e\x6d\x6c\x6b\x6a\x69\x68"
-+			     "\x67\x66\x65\x64\x63\x62\x61\x60"
-+			     "\x5f\x5e\x5d\x5c\x5b\x5a\x59\x58"
-+			     "\x57\x56\x55\x54\x53\x52\x51\x50"
-+			     "\x4f\x4e\x4d\x4c\x4b\x4a\x49\x48"
-+			     "\x47\x46\x45\x44\x43\x42\x41\x40"
-+			     "\x3f\x3e\x3d\x3c\x3b\x3a\x39\x38"
-+			     "\x37\x36\x35\x34\x33\x32\x31\x30"
-+			     "\x2f\x2e\x2d\x2c\x2b\x2a\x29\x28"
-+			     "\x27\x26\x25\x24\x23\x22\x21\x20"
-+			     "\x1f\x1e\x1d\x1c\x1b\x1a\x19\x18"
-+			     "\x17\x16\x15\x14\x13\x12\x11\x10"
-+			     "\x0f\x0e\x0d\x0c\x0b\x0a\x09\x08"
-+			     "\x07\x06\x05\x04\x03\x02\x01\x00",
-+		.psize	   = 256,
-+		.digest	   = "\x84\x2a\x53\xc9\x9c\x12\xb0\xcf"
-+			     "\x80\xcf\x69\x49\x1b\xe5\xe2\xf7"
-+			     "\x51\x5d\xe8\x73\x3b\x6e\xa9\x42"
-+			     "\x2d\xfd\x67\x66\x65\xb5\xfa\x42"
-+			     "\xff\xb3\xa9\xc4\x8c\x21\x77\x77"
-+			     "\x95\x08\x48\xce\xcd\xb4\x8f\x64"
-+			     "\x0f\x81\xfb\x92\xbe\xf6\xf8\x8f"
-+			     "\x7a\x85\xc1\xf7\xcd\x14\x46\xc9"
-+			     "\x16\x1c\x0a\xfe\x8f\x25\xae\x44"
-+			     "\x4f\x40\xd3\x68\x00\x81\xc3\x5a"
-+			     "\xa4\x3f\x64\x0f\xd5\xfa\x3c\x3c"
-+			     "\x03\x0b\xcc\x06\xab\xac\x01\xd0"
-+			     "\x98\xbc\xc9\x84\xeb\xd8\x32\x27"
-+			     "\x12\x92\x1e\x00\xb1\xba\x07\xd6"
-+			     "\xd0\x1f\x26\x90\x70\x50\x25\x5e"
-+			     "\xf2\xc8\xe2\x4f\x71\x6c\x52\xa5",
-+	}
-+};
- 
- /*
-  * MD5 test vectors from RFC1321
--- 
-2.14.4
+Let's add this?:
+
+The /proc/pid/status and /proc/pid/statm counters will however be more
+accurate wrt shmem usage, as originally intended.
+
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+Good catch, thanks. I guess the discrepancy happened due to the
+thp-tmpfs patchset existing externally for a long time and number of
+iterations, while commit eca56ff906bdd was merged, and nobody noticed
+that the thp case added more MM_FILEPAGES users.
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+> ---
+>  mm/huge_memory.c | 4 ++--
+>  mm/memory.c      | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 1cd7c1a..2687f7c 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1740,7 +1740,7 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>  		} else {
+>  			if (arch_needs_pgtable_deposit())
+>  				zap_deposited_table(tlb->mm, pmd);
+> -			add_mm_counter(tlb->mm, MM_FILEPAGES, -HPAGE_PMD_NR);
+> +			add_mm_counter(tlb->mm, mm_counter_file(page), -HPAGE_PMD_NR);
+>  		}
+>  
+>  		spin_unlock(ptl);
+> @@ -2088,7 +2088,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>  			SetPageReferenced(page);
+>  		page_remove_rmap(page, true);
+>  		put_page(page);
+> -		add_mm_counter(mm, MM_FILEPAGES, -HPAGE_PMD_NR);
+> +		add_mm_counter(mm, mm_counter_file(page), -HPAGE_PMD_NR);
+>  		return;
+>  	} else if (is_huge_zero_pmd(*pmd)) {
+>  		/*
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 7206a63..4a2f2a8 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3372,7 +3372,7 @@ static int do_set_pmd(struct vm_fault *vmf, struct page *page)
+>  	if (write)
+>  		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
+>  
+> -	add_mm_counter(vma->vm_mm, MM_FILEPAGES, HPAGE_PMD_NR);
+> +	add_mm_counter(vma->vm_mm, mm_counter_file(page), HPAGE_PMD_NR);
+>  	page_add_file_rmap(page, true);
+>  	/*
+>  	 * deposit and withdraw with pmd lock held
+> 
 
