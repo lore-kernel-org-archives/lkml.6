@@ -6,83 +6,79 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F66C1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0026C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B67D420846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:53:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67D420846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A40AA20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 10:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40AA20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753995AbeFTKxj (ORCPT
+        id S1754084AbeFTKxp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 06:53:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52002 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752787AbeFTKxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 06:53:38 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 753D740214E2;
-        Wed, 20 Jun 2018 10:53:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-94.rdu2.redhat.com [10.10.120.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A07CF7C25;
-        Wed, 20 Jun 2018 10:53:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180620074647.4152617-1-arnd@arndb.de>
-References: <20180620074647.4152617-1-arnd@arndb.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     dhowells@redhat.com, y2038@lists.linaro.org,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: use a consistent interpretation of time values
+        Wed, 20 Jun 2018 06:53:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49013 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752787AbeFTKxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 06:53:43 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0C3A42087B; Wed, 20 Jun 2018 12:53:41 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CE2BE20862;
+        Wed, 20 Jun 2018 12:53:30 +0200 (CEST)
+Date:   Wed, 20 Jun 2018 12:53:31 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, mathieu.poirier@linaro.org,
+        robh@kernel.org, frowand.list@gmail.com, mark.rutland@arm.com,
+        sudeep.holla@arm.com, arm@kernel.org, linux-kernel@vger.kernel.org,
+        matt.sealey@arm.com, john.horley@arm.com,
+        charles.garcia-tobin@arm.com, coresight@lists.linaro.org,
+        devicetree@vger.kernel.org, mike.leach@linaro.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: [PATCH 18/20] dts: sama5d2: Update coresight bindings for
+ hardware ports
+Message-ID: <20180620105331.GD7737@piout.net>
+References: <1528235011-30691-1-git-send-email-suzuki.poulose@arm.com>
+ <1528235011-30691-19-git-send-email-suzuki.poulose@arm.com>
+ <20180619212417.GB3128@piout.net>
+ <abf65bac-0956-f1de-127e-38b0f41a6233@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5319.1529492016.1@warthog.procyon.org.uk>
-Date:   Wed, 20 Jun 2018 11:53:36 +0100
-Message-ID: <5320.1529492016@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 20 Jun 2018 10:53:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 20 Jun 2018 10:53:37 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abf65bac-0956-f1de-127e-38b0f41a6233@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> wrote:
+On 20/06/2018 10:44:29+0100, Suzuki K Poulose wrote:
+> On 19/06/18 22:24, Alexandre Belloni wrote:
+> > On 05/06/2018 22:43:29+0100, Suzuki K Poulose wrote:
+> > > Switch to the new coresight bindings for hardware ports
+> > > 
+> > > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> > > ---
+> > >   arch/arm/boot/dts/sama5d2.dtsi | 5 ++++-
+> > >   1 file changed, 4 insertions(+), 1 deletion(-)
+> > > 
+> > Applied, thanks.
+> > 
+> 
+> Alexandre,
+> 
+> Please hold off applying this change, as we are yet to come to an
+> agreement on this. Sorry for the trouble. See [0]
+> 
 
-> which avoids the y2038 overflow
+I've removed it.
 
-No it doesn't.  The AFS protocol is limited.
-
-> +	time64_t		mtime_client;	/* last time client changed data */
-> +	time64_t		mtime_server;	/* last time server changed data */
-> ...
-> -	time_t			creation;	/* volume creation time */
-> +	time64_t		creation;	/* volume creation time */
-
-Unless you can change the AFS protocol, this is a waste of memory.  It might
-be better to change them to u32 as they are protocol values rather than system
-values.
-
-> -	inode->i_ctime.tv_sec	= get_seconds();
-> -	inode->i_ctime.tv_nsec	= 0;
-> -	inode->i_atime		= inode->i_mtime = inode->i_ctime;
-> +	inode->i_ctime = inode->i_atime = inode->i_mtime = current_time(inode);
-
-Surely, the tv_nsec should be zero since anything else cannot be represented
-in the AFS protocol.
-
-I will grant, however, I should be consistently using them as unsigned values.
-
-Note that the answers to the above may change if and when I start supporting
-the YFS protocol extensions, but for the AFS protocol, this is simply not
-there.
-
-David
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
