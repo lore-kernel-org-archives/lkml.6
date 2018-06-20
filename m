@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A38AC1B0F2
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE22C1B0F2
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023BF20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D209520874
+	for <linux-kernel@archiver.kernel.org>; Wed, 20 Jun 2018 13:48:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rT6Yn4Tx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023BF20846
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2M66UERA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D209520874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754173AbeFTNq3 (ORCPT
+        id S1754030AbeFTNr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 09:46:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37432 "EHLO mail.kernel.org"
+        Wed, 20 Jun 2018 09:47:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753960AbeFTNq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 09:46:27 -0400
+        id S1751166AbeFTNr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 09:47:57 -0400
 Received: from jouet.infradead.org (unknown [189.40.103.66])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8564220874;
-        Wed, 20 Jun 2018 13:46:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F5D120846;
+        Wed, 20 Jun 2018 13:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529502387;
-        bh=OSTgzCRXjAoXANDdFVPVAnTHSKfIsw8b4/F+8H/orDo=;
+        s=default; t=1529502477;
+        bh=8lahS97MJobEncwu+YFdU44gOgybQv8KvmUuiIAk8uM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rT6Yn4Tx0lZ/Yt8k3Mdm+l07Ol1hpLN8t8nqBY3wen73fgRuyzwGDyfXCDyJXQ5+w
-         h4QS5Oz45MdTd3ZFsRU4uCb8WdfDIqCjTZ5jJkrete2zlILX1ZDyDdsOEJae8c54/B
-         tWVl/T/eF8qVSUlmSzLz8mNAG0GaN1yu3jaYIJW4=
+        b=2M66UERA6wjr7czvSnnTQhO/a1ODTyu0aK7Vm5U8aScdpipUoSxX6yGUaaHsmNk+N
+         1xapI8VrwfU7K2FJZjY9Nv6qcfGGs9qm1KfLcX7R2M5Q7ovc3LkCZUAAOnWasF0czX
+         3IsY87oP84qzHd/pswqBsbg5V+63DH6g0vZX8UUE=
 Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id CC9851401E5; Wed, 20 Jun 2018 10:46:22 -0300 (-03)
-Date:   Wed, 20 Jun 2018 10:46:22 -0300
+        id 7415D1401E5; Wed, 20 Jun 2018 10:47:54 -0300 (-03)
+Date:   Wed, 20 Jun 2018 10:47:54 -0300
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Kim Phillips <kim.phillips@arm.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -52,15 +52,14 @@ Cc:     linux-kernel@vger.kernel.org,
         Hendrik =?iso-8859-1?Q?Br=FCckner?= 
         <brueckner@linux.vnet.ibm.com>,
         Sandipan Das <sandipan@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] perf test shell: make perf inet_pton test more
- portable
-Message-ID: <20180620134622.GM20477@kernel.org>
-References: <20180619184952.dac6a3a1e39d3b1d255e7119@arm.com>
+Subject: Re: [PATCH 1/2] perf test shell: Replace '|&' with '2>&1 |' to work
+ with more shells
+Message-ID: <20180620134754.GN20477@kernel.org>
+References: <20180619184948.a2aabe8f0159f0fd589d4008@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180619184952.dac6a3a1e39d3b1d255e7119@arm.com>
+In-Reply-To: <20180619184948.a2aabe8f0159f0fd589d4008@arm.com>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,49 +67,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jun 19, 2018 at 06:49:52PM -0500, Kim Phillips escreveu:
-> Debian based systems such as Ubuntu have dash as their default shell.
-> Even if the normal or root user's shell is bash, certain scripts still
-> call /bin/sh, which points to dash, so we fix this perf test by
-> rewriting it in a more portable way.
+Em Tue, Jun 19, 2018 at 06:49:48PM -0500, Kim Phillips escreveu:
+> Since we do not specify bash (and/or zsh) as a requirement, use the
 
-Isn't it better to just make /bin/bash a requirement for these tests?
-
-I think the alternative is cryptic :-\
-
-Thanks,
+This one is minor, so could be acceptable, but then if we make bash a
+requirement for 'perf test' due to the other patch in this series, we
+could as well keep the shorter |& form
 
 - Arnaldo
- 
+
+> standard error redirection that is more widely supported.
+> 
 > BEFORE:
 > 
-> $ sudo ./perf test -v 64
-> 64: probe libc's inet_pton & backtrace it with ping       :
+> $ sudo ./perf test -v 62
+> 62: Check open filename arg using perf trace + vfs_getname:
 > --- start ---
-> test child forked, pid 31942
-> ./tests/shell/record+probe_libc_inet_pton.sh: 18: ./tests/shell/record+probe_libc_inet_pton.sh: expected[0]=ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\): not found
-> ./tests/shell/record+probe_libc_inet_pton.sh: 19: ./tests/shell/record+probe_libc_inet_pton.sh: expected[1]=.*inet_pton\+0x[[:xdigit:]]+[[:space:]]\(/lib/x86_64-linux-gnu/libc-2.27.so|inlined\)$: not found
-> ./tests/shell/record+probe_libc_inet_pton.sh: 29: ./tests/shell/record+probe_libc_inet_pton.sh: expected[2]=getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\(/lib/x86_64-linux-gnu/libc-2.27.so\)$: not found
-> ./tests/shell/record+probe_libc_inet_pton.sh: 30: ./tests/shell/record+probe_libc_inet_pton.sh: expected[3]=.*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$: not found
-> ping 31963 [004] 83577.670613: probe_libc:inet_pton: (7fe15f87f4b0)
-> ./tests/shell/record+probe_libc_inet_pton.sh: 39: ./tests/shell/record+probe_libc_inet_pton.sh: Bad substitution
-> ./tests/shell/record+probe_libc_inet_pton.sh: 41: ./tests/shell/record+probe_libc_inet_pton.sh: Bad substitution
+> test child forked, pid 27305
+> ./tests/shell/trace+probe_vfs_getname.sh: 20: ./tests/shell/trace+probe_vfs_getname.sh: Syntax error: "&" unexpected
 > test child finished with -2
 > ---- end ----
-> probe libc's inet_pton & backtrace it with ping: Skip
+> Check open filename arg using perf trace + vfs_getname: Skip
 > 
 > AFTER:
 > 
-> 64: probe libc's inet_pton & backtrace it with ping       :
+> $ sudo ./perf test -v 64
+> 64: Check open filename arg using perf trace + vfs_getname               :
 > --- start ---
-> test child forked, pid 32277
-> ping 32295 [001] 83679.690020: probe_libc:inet_pton: (7ff244f504b0)
-> 7ff244f504b0 __GI___inet_pton+0x0 (/lib/x86_64-linux-gnu/libc-2.27.so)
-> 7ff244f14ce4 getaddrinfo+0x124 (/lib/x86_64-linux-gnu/libc-2.27.so)
-> 556ac036b57d _init+0xb75 (/bin/ping)
+> test child forked, pid 23008
+> Added new event:
+>   probe:vfs_getname    (on getname_flags:72 with pathname=result->name:string)
+> 
+> You can now use it in all perf tools, such as:
+> 
+>         perf record -e probe:vfs_getname -aR sleep 1
+> 
+>      0.361 ( 0.008 ms): touch/23032 openat(dfd: CWD, filename: /tmp/temporary_file.VEh0n, flags: CREAT|NOCTTY|NONBLOCK|WRONLY, mode: IRUGO|IWUGO) = 4
 > test child finished with 0
 > ---- end ----
-> probe libc's inet_pton & backtrace it with ping: Ok
+> Check open filename arg using perf trace + vfs_getname: Ok
+> 
+> Similar to commit 35435cd06081, with the same title.
 > 
 > Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 > Cc: Peter Zijlstra <peterz@infradead.org>
@@ -120,94 +117,23 @@ Thanks,
 > Cc: Namhyung Kim <namhyung@kernel.org>
 > Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
 > Cc: Michael Petlan <mpetlan@redhat.com>
-> Cc: "Hendrik Brückner" <brueckner@linux.vnet.ibm.com>
-> Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
 > Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 > ---
-> Fixed using fake array technique described here:
+>  tools/perf/tests/shell/trace+probe_vfs_getname.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> https://www.linuxquestions.org/questions/programming-9/basic-bash-how-to-use-eval-to-evaluate-variable-names-made-of-arbitrary-strings-775622/
-> 
-> Note that bashisms can also be found with 'checkbashisms':
-> 
-> $ checkbashisms record+probe_libc_inet_pton.sh
-> script record+probe_libc_inet_pton.sh does not appear to have a #! interpreter line;
-> you may get strange results
-> possible bashism in record+probe_libc_inet_pton.sh line 18 (bash arrays, H[0]):
-> 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
-> possible bashism in record+probe_libc_inet_pton.sh line 19 (bash arrays, H[0]):
-> 	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> possible bashism in record+probe_libc_inet_pton.sh line 23 (bash arrays, H[0]):
-> 		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> possible bashism in record+probe_libc_inet_pton.sh line 24 (bash arrays, H[0]):
-> 		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> possible bashism in record+probe_libc_inet_pton.sh line 25 (bash arrays, H[0]):
-> 		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-> possible bashism in record+probe_libc_inet_pton.sh line 29 (bash arrays, H[0]):
-> 		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
-> possible bashism in record+probe_libc_inet_pton.sh line 30 (bash arrays, H[0]):
-> 		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-> possible bashism in record+probe_libc_inet_pton.sh line 39 (bash arrays, ${name[0|*|@]}):
-> 		echo "$line" | egrep -q "${expected[$idx]}"
-> possible bashism in record+probe_libc_inet_pton.sh line 41 (bash arrays, ${name[0|*|@]}):
-> 			printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${expected[$idx]}" "$line"
-> possible bashism in record+probe_libc_inet_pton.sh line 44 (let ...):
-> 		let idx+=1
-> possible bashism in record+probe_libc_inet_pton.sh line 45 (bash arrays, ${name[0|*|@]}):
-> 		[ -z "${expected[$idx]}" ] && break
-> 
->  .../shell/record+probe_libc_inet_pton.sh      | 23 ++++++++++---------
->  1 file changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> index 263057039693..41124fa12913 100755
-> --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> @@ -15,19 +15,20 @@ nm -Dg $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+> diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+> index 55ad9793d544..4ce276efe6b4 100755
+> --- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+> +++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+> @@ -17,7 +17,7 @@ skip_if_no_perf_probe || exit 2
+>  file=$(mktemp /tmp/temporary_file.XXXXX)
 >  
->  trace_libc_inet_pton_backtrace() {
->  	idx=0
-> -	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
-> -	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> +	expected='expected'
-> +	eval ${expected}0="'ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)'"
-> +	eval ${expected}1="'.*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$'"
->  	case "$(uname -m)" in
->  	s390x)
->  		eventattr='call-graph=dwarf,max-stack=4'
-> -		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> -		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> -		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-> +		eval ${expected}2="'gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$'"
-> +		eval ${expected}3="'(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$'"
-> +		eval ${expected}4="'main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$'"
->  		;;
->  	*)
->  		eventattr='max-stack=3'
-> -		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
-> -		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-> +		eval ${expected}2="'getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$'"
-> +		eval ${expected}3="'.*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$'"
->  		;;
->  	esac
->  
-> @@ -36,13 +37,13 @@ trace_libc_inet_pton_backtrace() {
->  	perf record -e probe_libc:inet_pton/$eventattr/ -o $file ping -6 -c 1 ::1 > /dev/null 2>&1
->  	perf script -i $file | while read line ; do
->  		echo $line
-> -		echo "$line" | egrep -q "${expected[$idx]}"
-> +		echo "$line" | egrep -q "$(echo $(eval echo \$$expected${idx}))"
->  		if [ $? -ne 0 ] ; then
-> -			printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${expected[$idx]}" "$line"
-> +			printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "$(echo $(eval echo \$$expected${idx}))" "$line"
->  			exit 1
->  		fi
-> -		let idx+=1
-> -		[ -z "${expected[$idx]}" ] && break
-> +		idx=$((idx+1))
-> +		[ -z "$(echo $(eval echo \$$expected${idx}))" ] && break
->  	done
->  
->  	# If any statements are executed from this point onwards,
+>  trace_open_vfs_getname() {
+> -	evts=$(echo $(perf list syscalls:sys_enter_open* |& egrep 'open(at)? ' | sed -r 's/.*sys_enter_([a-z]+) +\[.*$/\1/') | sed 's/ /,/')
+> +	evts=$(echo $(perf list syscalls:sys_enter_open* 2>&1 | egrep 'open(at)? ' | sed -r 's/.*sys_enter_([a-z]+) +\[.*$/\1/') | sed 's/ /,/')
+>  	perf trace -e $evts touch $file 2>&1 | \
+>  	egrep " +[0-9]+\.[0-9]+ +\( +[0-9]+\.[0-9]+ ms\): +touch\/[0-9]+ open(at)?\((dfd: +CWD, +)?filename: +${file}, +flags: CREAT\|NOCTTY\|NONBLOCK\|WRONLY, +mode: +IRUGO\|IWUGO\) += +[0-9]+$"
+>  }
 > -- 
 > 2.17.1
