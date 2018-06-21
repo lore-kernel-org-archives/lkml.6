@@ -2,188 +2,170 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C29BC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 889C3C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FF5120652
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BA0D20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:10:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hf8TB+kk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF5120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c86o60AZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA0D20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeFUD7e (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 23:59:34 -0400
-Received: from mail-db5eur01on0073.outbound.protection.outlook.com ([104.47.2.73]:15847
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754184AbeFUD7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 23:59:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NW/T/u2UGuI2m6DEr26f5rQPVauD0B/+pCKxqgkbUJ8=;
- b=hf8TB+kkhtuBbu3a8bAQikr2xNo4CQvEeeIkTfK2DZzMW82c9001J9KAexM7TFxX1OtduUZUCok8pG559oKTZPU6yA6kfUgPqigMlT0vs+IhjLqQ75NAv9LVGj1YgPpzEM3nXUZzwRUHDAubs7Q/gMZ7RKV5jjcPLh7h3cbpuug=
-Received: from HE1PR0401MB2425.eurprd04.prod.outlook.com (10.168.33.22) by
- HE1PR0401MB2602.eurprd04.prod.outlook.com (10.168.148.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.20; Thu, 21 Jun 2018 03:59:27 +0000
-Received: from HE1PR0401MB2425.eurprd04.prod.outlook.com
- ([fe80::f443:9368:3f2d:6946]) by HE1PR0401MB2425.eurprd04.prod.outlook.com
- ([fe80::f443:9368:3f2d:6946%3]) with mapi id 15.20.0863.016; Thu, 21 Jun 2018
- 03:59:27 +0000
-From:   Nipun Gupta <nipun.gupta@nxp.com>
-To:     "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "hch@lst.de" <hch@lst.de>, "joro@8bytes.org" <joro@8bytes.org>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "frowand.list@gmail.com" <frowand.list@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Bharat Bhushan <bharat.bhushan@nxp.com>,
-        "stuyoder@gmail.com" <stuyoder@gmail.com>,
-        Leo Li <leoyang.li@nxp.com>
-Subject: RE: [PATCH 0/7 v5] Support for fsl-mc bus and its devices in SMMU
-Thread-Topic: [PATCH 0/7 v5] Support for fsl-mc bus and its devices in SMMU
-Thread-Index: AQHT8EF+4+/DGDZvTkihyZH/OaiobaRqQYVQ
-Date:   Thu, 21 Jun 2018 03:59:27 +0000
-Message-ID: <HE1PR0401MB24250CEFBC0B7CC919C4388AE6760@HE1PR0401MB2425.eurprd04.prod.outlook.com>
-References: <1526824191-7000-1-git-send-email-nipun.gupta@nxp.com>
-In-Reply-To: <1526824191-7000-1-git-send-email-nipun.gupta@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nipun.gupta@nxp.com; 
-x-originating-ip: [14.142.187.166]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0401MB2602;7:NsPAuadHasrolNgZlCoqVihu0hZfFLQS/eaXpUp/Ss7Gaoi7RbuKoUclAOPvH5hWo/evOCSxr9DHBWuj869jWKzYuG+GbjCEAoGN5OEemb3IRgmIK0a+BCjAJT8SebJAHL3xHBA0mCBVZPlDmvxp3nDQ94bNrIWhTygD1ucHc9hSAIC2XUh2r3ErH0IBFr++3hIO/kulOW5u12/dpq5PYuO+TqZCAvl52yafU9ZkpDLTSwISzbNmJTcrBDN2Hzhs
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4b39fbb2-f7b7-46a2-8d3d-08d5d72b624e
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB2602;
-x-ms-traffictypediagnostic: HE1PR0401MB2602:
-x-microsoft-antispam-prvs: <HE1PR0401MB26029DC8E05A85CE3A222AA3E6760@HE1PR0401MB2602.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(65623756079841)(185117386973197)(85827821059158)(258649278758335)(211936372134217)(7411616537696);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:HE1PR0401MB2602;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB2602;
-x-forefront-prvs: 07106EF9B9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(396003)(39380400002)(39860400002)(54534003)(13464003)(199004)(189003)(54906003)(68736007)(97736004)(106356001)(105586002)(33656002)(3846002)(74316002)(7736002)(6116002)(305945005)(8676002)(81156014)(81166006)(8936002)(55016002)(6306002)(99286004)(9686003)(6436002)(53936002)(478600001)(3280700002)(110136005)(5250100002)(229853002)(486006)(44832011)(2501003)(186003)(6246003)(14454004)(446003)(476003)(25786009)(966005)(39060400002)(11346002)(4326008)(55236004)(6506007)(7696005)(26005)(102836004)(53546011)(76176011)(2900100001)(2201001)(86362001)(7416002)(66066001)(5660300001)(316002)(2906002)(3660700001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB2602;H:HE1PR0401MB2425.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 2X664q3yLe9UT3bejGz/JTIC5hDw75PBJAbRG5uLEBOSLxy8t3Q9mbWMsM7VzRhIpuXn3tymEgN8A+sIum+QYeLcQu1IhSTWJx7igOOksUfh12yzkrQQcSugBfjzPzKkuEGYYH+x88IAVfyk972pHtfSzktBpy0zEdLnplseImpYs0a6Js16+qgq8/+Tr+vy6KDNQA2o2/8rT+4/gjq3g5Yke4X3pFeEyb+Ez+iMNbxbElgmClC7vfLIlIDjVuClPYCGBEtjH6QXAuwIOHRDfeUEL+VhZz1x5NFSoKuySoWzNIfyVaaYcRbiRiqS2NBjaZhSDGGaFVTd53hrzhlt/w==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S932225AbeFUEKG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 00:10:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33040 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750789AbeFUEKF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 00:10:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=H/SfwWKpoMDdi9iR/nedw+N603kOlshqKuuCn+y2WtQ=; b=c86o60AZuHa+5pB/mDwRHrtTO
+        G33pJv9t7AifaLOzMuMXjCd2Zsa4neVkqoUrzkwc2JyLNMmW+6PF1co0wf09PNw58PwvE48UI5L04
+        KNuc207U7cxDtC979EPS91W2RzirYTa17kpYdbb4bx7cXgpcI30dXgW2a0W/3SuR435UTBKPsFtqi
+        iFO6rUkgCRksJ/4xYkewoxb1Yq1HMJC6LhqBxdrG3pd+MoAdblTVK5TgP/JxjPBani1eexsvEXd/y
+        T4vbqGhBpFauN6MkUG8ugoHpZIPJmmBzHozZQ6qzyC6K+8QQpgxb9l8tT/4ciEsGFTcvaxMeXjCWv
+        Z4U6AXjgA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVqv3-0001KX-U8; Thu, 21 Jun 2018 04:10:02 +0000
+Subject: Re: [PATCH v8 4/4] vsprintf: Add command line option
+ debug_boot_weak_hash
+To:     "Tobin C. Harding" <me@tobin.cc>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20180620042046.30806-1-me@tobin.cc>
+ <20180620042046.30806-5-me@tobin.cc>
+ <e4f6bfb3-68c7-9f57-0d90-d68d0913234a@infradead.org>
+ <20180620223014.GE11671@eros>
+ <b472dca0-9bd0-caf3-efab-586b6ff32765@infradead.org>
+ <20180620232233.GH11671@eros>
+ <983177e0-8684-c7b8-4328-065be5c78e63@infradead.org>
+ <20180621031505.GA18398@eros>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <71eb048a-c414-779d-974d-20ab7d2582f0@infradead.org>
+Date:   Wed, 20 Jun 2018 21:09:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b39fbb2-f7b7-46a2-8d3d-08d5d72b624e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2018 03:59:27.4580
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB2602
+In-Reply-To: <20180621031505.GA18398@eros>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin/Greg k-h,
+On 06/20/2018 08:15 PM, Tobin C. Harding wrote:
+> On Wed, Jun 20, 2018 at 04:38:05PM -0700, Randy Dunlap wrote:
+>> On 06/20/2018 04:22 PM, Tobin C. Harding wrote:
+>>> On Wed, Jun 20, 2018 at 03:36:44PM -0700, Randy Dunlap wrote:
+>>>> On 06/20/2018 03:30 PM, Tobin C. Harding wrote:
+>>>>> On Wed, Jun 20, 2018 at 09:09:49AM -0700, Randy Dunlap wrote:
+>>>>>> On 06/19/2018 09:20 PM, Tobin C. Harding wrote:
+>>>>>>> Currently printing [hashed] pointers requires enough entropy to be
+>>>>>>> available.  Early in the boot sequence this may not be the case
+>>>>>>> resulting in a dummy string '(____ptrval____)' being printed.  This
+>>>>>>> makes debugging the early boot sequence difficult.  We can relax the
+>>>>>>> requirement to use cryptographically secure hashing during debugging.
+>>>>>>> This enables debugging while keeping development/production kernel
+>>>>>>> behaviour the same.
+>>>>>>>
+>>>>>>> If new command line option debug_boot_weak_hash is enabled use
+>>>>>>> cryptographically insecure hashing and hash pointer value immediately.
+>>>>>>>
+>>>>>>> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+>>>>>>> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>>>>>>> ---
+>>>>>>>  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
+>>>>>>>  lib/vsprintf.c                                  | 17 +++++++++++++++++
+>>>>>>>  2 files changed, 26 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>>>>>>> index 638342d0a095..a116fc0366b0 100644
+>>>>>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>>>>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>>>>>> @@ -748,6 +748,15 @@
+>>>>>>>  
+>>>>>>>  	debug		[KNL] Enable kernel debugging (events log level).
+>>>>>>>  
+>>>>>>> +	debug_boot_weak_hash
+>>>>>>> +			[KNL] Enable printing pointers early in the boot
+>>>>>>> +			sequence.  If enabled, we use a weak hash instead of
+>>>>>>> +			siphash to hash pointers.  Use this option if you need
+>>>>>>> +			to see pointer values during early boot (i.e you are
+>>>>>>
+>>>>>> maybe:
+>>>>>> 			to see hashed pointer values
+>>>>>> i.e., not raw pointers.
+>>>>>
+>>>>> You cannot see 'raw pointers' anyways?
+>>>>
+>>>> only if using %px ?
+>>>>
+>>>> Maybe it's just terminology.  I don't consider a hashed value as a pointer value.
+>>>> It's just a key or handle or some other number, but it's not a pointer.
+>>>>
+>>>>>>
+>>>>>>> +			seeing instances of '(___ptrval___)').
+>>>>>>> +			Cryptographically insecure, please do not use on
+>>>>>>> +			production kernels.
+>>>>>
+>>>>> thanks for the review, I don't quiet see how to use your suggestion to
+>>>>> make the text clearer.  If you still feel this change is needed perhaps
+>>>>> you could write so I understand i.e 'Use this option if ...'
+>>>>
+>>>>
+>>>> OK, if you are good with it, I am too.  :)
+>>>
+>>> I get you know.  I agree, how about this
+>>>
+>>> 			[KNL] Enable printing pointers early in the boot
+>>> 			sequence.  If enabled, we use a weak hash instead of
+>>> 			siphash to hash pointers.  Use this option if you need
+>>> 			to print pointers with %px during early boot
+>>> 			(i.e you are seeing instances of '(___ptrval___)').
+>>> 			Cryptographically insecure, please do not use on
+>>> 			production kernels.
+>>
+>> Sorry, I'm still confused by this paragraph.  It seems to say two different
+>> things.
+> 
+> My bad, I got totally confused myself.  After all this time you would
+> think I knew which specifier hashed and which didn't.  My apologies,
+> how about this:
+> 
+>  			[KNL] Enable printing [hashed] pointers early in
+> 			the boot sequence.  If enabled, we use a weak hash
+> 			instead of siphash to hash pointers.  Use this option if
+> 			you are seeing instances of '(___ptrval___)') and need
+> 			to see a value (hashed pointer) instead. Cryptographically
+> 			insecure, please do not use on production kernels.
+>  			 			
+> 
+> thanks for your patience,
+> Tobin.
 
-Will this patch-set be taken for the next kernel release (and via which tre=
-e)?
+Yes, that's good.  Thanks.
 
-Thanks,
-Nipun
-
-> -----Original Message-----
-> From: Nipun Gupta
-> Sent: Sunday, May 20, 2018 7:20 PM
-> To: robin.murphy@arm.com; will.deacon@arm.com; robh+dt@kernel.org;
-> robh@kernel.org; mark.rutland@arm.com; catalin.marinas@arm.com;
-> gregkh@linuxfoundation.org; Laurentiu Tudor <laurentiu.tudor@nxp.com>;
-> bhelgaas@google.com
-> Cc: hch@lst.de; joro@8bytes.org; m.szyprowski@samsung.com;
-> shawnguo@kernel.org; frowand.list@gmail.com; iommu@lists.linux-
-> foundation.org; linux-kernel@vger.kernel.org; devicetree@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org; linu=
-x-
-> pci@vger.kernel.org; Bharat Bhushan <bharat.bhushan@nxp.com>;
-> stuyoder@gmail.com; Leo Li <leoyang.li@nxp.com>; Nipun Gupta
-> <nipun.gupta@nxp.com>
-> Subject: [PATCH 0/7 v5] Support for fsl-mc bus and its devices in SMMU
->=20
-> This patchset defines IOMMU DT binding for fsl-mc bus and adds
-> support in SMMU for fsl-mc bus.
->=20
-> The patch series is based on top of dma-mapping tree (for-next branch):
-> http://git.infradead.org/users/hch/dma-mapping.git
->=20
-> These patches
->   - Define property 'iommu-map' for fsl-mc bus (patch 1)
->   - Integrates the fsl-mc bus with the SMMU using this
->     IOMMU binding (patch 2,3,4)
->   - Adds the dma configuration support for fsl-mc bus (patch 5, 6)
->   - Updates the fsl-mc device node with iommu/dma related changes (patch =
-7)
->=20
-> Changes in v2:
->   - use iommu-map property for fsl-mc bus
->   - rebase over patchset https://patchwork.kernel.org/patch/10317337/
->     and make corresponding changes for dma configuration of devices on
->     fsl-mc bus
->=20
-> Changes in v3:
->   - move of_map_rid in drivers/of/address.c
->=20
-> Changes in v4:
->   - move of_map_rid in drivers/of/base.c
->=20
-> Changes in v5:
->   - break patch 5 in two separate patches (now patch 5/7 and patch 6/7)
->   - add changelog text in patch 3/7 and patch 5/7
->   - typo fix
->=20
-> Nipun Gupta (7):
->   Docs: dt: add fsl-mc iommu-map device-tree binding
->   iommu: of: make of_pci_map_rid() available for other devices too
->   iommu: support iommu configuration for fsl-mc devices
->   iommu: arm-smmu: Add support for the fsl-mc bus
->   bus: fsl-mc: support dma configure for devices on fsl-mc bus
->   bus: fsl-mc: set coherent dma mask for devices on fsl-mc bus
->   arm64: dts: ls208xa: comply with the iommu map binding for fsl_mc
->=20
->  .../devicetree/bindings/misc/fsl,qoriq-mc.txt      |  39 ++++++++
->  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi     |   6 +-
->  drivers/bus/fsl-mc/fsl-mc-bus.c                    |  16 +++-
->  drivers/iommu/arm-smmu.c                           |   7 ++
->  drivers/iommu/iommu.c                              |  21 +++++
->  drivers/iommu/of_iommu.c                           |  25 ++++-
->  drivers/of/base.c                                  | 102 +++++++++++++++=
-++++++
->  drivers/of/irq.c                                   |   5 +-
->  drivers/pci/of.c                                   | 101 ---------------=
------
->  include/linux/fsl/mc.h                             |   8 ++
->  include/linux/iommu.h                              |   2 +
->  include/linux/of.h                                 |  11 +++
->  include/linux/of_pci.h                             |  10 --
->  13 files changed, 231 insertions(+), 122 deletions(-)
->=20
-> --
-> 1.9.1
-
+-- 
+~Randy
