@@ -2,187 +2,229 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8DAC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4A7C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C8032172D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:54:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8032172D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D9D2721745
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:59:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYv8mHM2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D2721745
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933606AbeFUQyH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:54:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52612 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933467AbeFUQyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:54:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AF781435;
-        Thu, 21 Jun 2018 09:54:05 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.207.54])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 807B23F557;
-        Thu, 21 Jun 2018 09:54:03 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 17:54:00 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Ley Foon Tan <lftan@altera.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch
- Kconfig
-Message-ID: <20180621165400.GB14519@e107981-ln.cambridge.arm.com>
-References: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
- <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
+        id S933485AbeFUQ7e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:59:34 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38052 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933392AbeFUQ7b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:59:31 -0400
+Received: by mail-pg0-f67.google.com with SMTP id c9-v6so1696394pgf.5;
+        Thu, 21 Jun 2018 09:59:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=DIEIO3LyTYJlFnbkxEi4xlz+eewGtPvgYw/pWfGW5as=;
+        b=FYv8mHM2AuQvamMB0iFDgzyg6X0ldTzcWsU1k1vm5CSKQ5isonkBfLsGA7Gtb9/I0K
+         o/y9y54iALiZUDgMVhqGPKreVCSYwIbxrG2xcSDn35Hg2zv0MS+/2yMwK1hLvw30Ym7c
+         40sUxOozE7XGVpO96sJCHi/ZADigxJCN/Fd38dF9duaHsVb4BSvEafoMxb2wAKqWkEGU
+         2ePmxyhsLevU9s5jnKBfveVLOr7vB6RFZjkrZP373jFe5JhRYmIxHipIbPtK4K4qw9Qp
+         xHG38Io3CrnJ9KHDmihDFXSRJpujTZSU4lPuLxUWaV1Vdj6qf1x3sNxBozRSwy18GPbm
+         FRVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=DIEIO3LyTYJlFnbkxEi4xlz+eewGtPvgYw/pWfGW5as=;
+        b=qxFPIagWjxXt5akZksG11MgG5SiiyJYenV4+9d9Y317hYYG5oNL7jvRtaQriZVkZun
+         q9YCsh9eyK/PbvAt+C0B19p+54ELbrKiHv40Bgzgt+GY67GesvXXIhDnpkaE5wcp7kCh
+         LVAY+wtk0gMgL3dsLmEuLa4bwgvFjDrTEGlFGMvmKGSnxLIe+J9BKtNCerIMpApIqP1e
+         PjKXKFk4fZ5h7hY54y4wVnCBUhMK6a2eBhnzjPxAiKWuqE6T6xnIKfF0ajgm2F27c0NJ
+         CWTVcKgdkz/d91ehcNdN8LR8L+np6Di3xyl1zFynF1bS8W7ruoxbwWWbLH+Bq4Mv6W0Q
+         031Q==
+X-Gm-Message-State: APt69E06IUt3gFeIo2wu/nUwcKQfMJr5+aPwM6+Dsjs2o3lY0rK0e7Dr
+        7zW5CiAM7u9k1m0GLbxwlke26chVULFfpPQCcXxGwQ==
+X-Google-Smtp-Source: ADUXVKJViKirUp1bAkWo+3DE6jDxQbLCE1RC1927YSE3j7sMSgqzc0SBDVZrU0ls29YiI/x6pVyDvqhY5xHXJmy4DJY=
+X-Received: by 2002:a62:48cd:: with SMTP id q74-v6mr27645333pfi.153.1529600371063;
+ Thu, 21 Jun 2018 09:59:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a17:90a:80cc:0:0:0:0 with HTTP; Thu, 21 Jun 2018 09:59:10
+ -0700 (PDT)
+In-Reply-To: <20180621133523.GA30313@embeddedor.com>
+References: <20180621133523.GA30313@embeddedor.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 21 Jun 2018 11:59:10 -0500
+Message-ID: <CAH2r5mur0tSLZiUkThB8b5fKbaDyguXT87f5J+V1buCv-Ep73g@mail.gmail.com>
+Subject: Re: [PATCH] CIFS: fix structurally dead code in smb311_posix_mkdir
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Aurelien Aptel <aaptel@suse.com>, Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000c41a7b056f29d63e"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 10:07:33AM +0200, Jan Kiszka wrote:
-> On 2018-06-19 13:21, Lorenzo Pieralisi wrote:
-> > Commit 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-> > added configuration options to allow PCI host controller drivers to be
-> > compile tested on all architectures.
-> > 
-> > Some host controller drivers (eg PCIE_ALTERA) config entries select
-> > the PCI_DOMAINS config option to enable PCI domains management in
-> > the kernel. Now that host controller drivers can be compiled on
-> > all architectures, this triggers build regressions on arches that
-> > do not implement the PCI_DOMAINS required API (ie pci_domain_nr()):
-> > 
-> > drivers/ata/pata_ali.c: In function 'ali_init_chipset':
-> > drivers/ata/pata_ali.c:469:38: error:
-> >         implicit declaration of function 'pci_domain_nr';
-> >                                           did you mean 'pci_iomap_wc'?
-> > 
-> > Furthemore, some software configurations (ie Jailhouse) require a
-> > PCI_DOMAINS enabled kernel to configure multiple host controllers
-> > without having an explicit dependency on the ARM platform on which
-> > they run.
-> > 
-> > Make PCI_DOMAINS a visible configuration option on ARM so that software
-> > configurations that need it can manually select it and move the
-> > PCI_DOMAINS selection from PCI controllers configuration file to ARM
-> > sub-arch config entries that currently require it, fixing the issue.
-> > 
-> > Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
-> > Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us.net
-> > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Cc: Scott Branden <scott.branden@broadcom.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: Russell King <linux@armlinux.org.uk>
-> > Cc: Jan Kiszka <jan.kiszka@siemens.com>
-> > Cc: Guenter Roeck <linux@roeck-us.net>
-> > Cc: Ley Foon Tan <lftan@altera.com>
-> > ---
-> > v1 -> v2
-> > 	- Removed ARCH_VIRT PCI_DOMAINS selection
-> > 	- Added PCI_DOMAINS visible config option
-> > 
-> > v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
-> > 
-> >  arch/arm/Kconfig               | 8 +++++++-
-> >  arch/arm/mach-bcm/Kconfig      | 1 +
-> >  arch/arm/mach-socfpga/Kconfig  | 1 +
-> >  drivers/pci/controller/Kconfig | 3 ---
-> >  4 files changed, 9 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> > index 54eeb8d00bc6..843edfd000be 100644
-> > --- a/arch/arm/Kconfig
-> > +++ b/arch/arm/Kconfig
-> > @@ -1245,8 +1245,14 @@ config PCI
-> >  	  VESA. If you have PCI, say Y, otherwise N.
-> >  
-> >  config PCI_DOMAINS
-> > -	bool
-> > +	bool "Support for multiple PCI domains"
-> >  	depends on PCI
-> > +	help
-> > +	  Enable PCI domains kernel management. Say Y if your machine
-> > +	  has a PCI bus hierarchy that requires more than one PCI
-> > +	  domain (aka segment) to be correctly managed. Say N otherwise.
-> > +
-> > +	  If you don't know what to do here, say N.
-> >  
-> >  config PCI_DOMAINS_GENERIC
-> >  	def_bool PCI_DOMAINS
-> > diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-> > index c46a728df44e..25aac6ee2ab1 100644
-> > --- a/arch/arm/mach-bcm/Kconfig
-> > +++ b/arch/arm/mach-bcm/Kconfig
-> > @@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
-> >  	select GPIOLIB
-> >  	select ARM_AMBA
-> >  	select PINCTRL
-> > +	select PCI_DOMAINS if PCI
-> >  	help
-> >  	  This enables support for systems based on Broadcom IPROC architected SoCs.
-> >  	  The IPROC complex contains one or more ARM CPUs along with common
-> > diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-socfpga/Kconfig
-> > index d0f62eacf59d..4adb901dd5eb 100644
-> > --- a/arch/arm/mach-socfpga/Kconfig
-> > +++ b/arch/arm/mach-socfpga/Kconfig
-> > @@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
-> >  	select HAVE_ARM_SCU
-> >  	select HAVE_ARM_TWD if SMP
-> >  	select MFD_SYSCON
-> > +	select PCI_DOMAINS if PCI
-> >  
-> >  if ARCH_SOCFPGA
-> >  config SOCFPGA_SUSPEND
-> > diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-> > index 18fa09b3ac8f..cc9fa02d32a0 100644
-> > --- a/drivers/pci/controller/Kconfig
-> > +++ b/drivers/pci/controller/Kconfig
-> > @@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
-> >  	depends on OF
-> >  	select PCI_HOST_COMMON
-> >  	select IRQ_DOMAIN
-> > -	select PCI_DOMAINS
-> >  	help
-> >  	  Say Y here if you want to support a simple generic PCI host
-> >  	  controller, such as the one emulated by kvmtool.
-> > @@ -138,7 +137,6 @@ config PCI_VERSATILE
-> >  
-> >  config PCIE_IPROC
-> >  	tristate
-> > -	select PCI_DOMAINS
-> >  	help
-> >  	  This enables the iProc PCIe core controller support for Broadcom's
-> >  	  iProc family of SoCs. An appropriate bus interface driver needs
-> > @@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
-> >  config PCIE_ALTERA
-> >  	bool "Altera PCIe controller"
-> >  	depends on ARM || NIOS2 || COMPILE_TEST
-> > -	select PCI_DOMAINS
-> >  	help
-> >  	  Say Y here if you want to enable PCIe controller support on Altera
-> >  	  FPGA.
-> > 
-> 
-> Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+--000000000000c41a7b056f29d63e
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks a lot. Scott, Ley Foon, does it work for you ? I would like
-to ask Bjorn to send it asap since the build on sparc is still broken.
+Folded this patch and the equivalent one from Dan in with the comments
+from Aurelien  into one patch and repushed to cifs-2.6.git for-next -
+see attached.
 
+On Thu, Jun 21, 2018 at 8:35 AM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> Code at line: 1950: rc = -EIO; is unreachable. Hence, the function
+> returns rc with a value of zero and, this is not the actual intention
+> of this particular piece of code.
+>
+> Fix this by placing the goto instruction just after the update to rc.
+>
+> Addresses-Coverity-ID: 1470124 ("Structurally dead code")
+> Fixes: 5539e9b24a38 ("CIFS: fix memory leak and remove dead code")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  fs/cifs/smb2pdu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+> index 062a2a5..c9489b1 100644
+> --- a/fs/cifs/smb2pdu.c
+> +++ b/fs/cifs/smb2pdu.c
+> @@ -1946,8 +1946,8 @@ int smb311_posix_mkdir(const unsigned int xid, struct inode *inode,
+>         if (ses && (ses->server))
+>                 server = ses->server;
+>         else {
+> -               goto err_free_path;
+>                 rc = -EIO;
+> +               goto err_free_path;
+>         }
+>
+>         /* resource #2: request */
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
 Thanks,
-Lorenzo
+
+Steve
+
+--000000000000c41a7b056f29d63e
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-CIFS-fix-memory-leak-and-remove-dead-code.patch"
+Content-Disposition: attachment; 
+	filename="0001-CIFS-fix-memory-leak-and-remove-dead-code.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jiosjx850
+
+RnJvbSBmODc3Mzg2ZDM3Mzc1M2M4M2Q3OTFkODIzMjgzNTZjZDk4ODEyZWI4IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBdXJlbGllbiBBcHRlbCA8YWFwdGVsQHN1c2UuY29tPgpEYXRl
+OiBUdWUsIDE5IEp1biAyMDE4IDE1OjE4OjQ4IC0wNzAwClN1YmplY3Q6IFtQQVRDSCAxLzJdIENJ
+RlM6IGZpeCBtZW1vcnkgbGVhayBhbmQgcmVtb3ZlIGRlYWQgY29kZQoKYWxzbyBmaXhlcyBlcnJv
+ciBjb2RlIGluIHNtYjMxMV9wb3NpeF9ta2RpcigpICh3aGVyZQp0aGUgZXJyb3IgYXNzaWdubWVu
+dCBuZWVkcyB0byBnbyBiZWZvcmUgdGhlIGdvdG8pCmEgdHlwbyB0aGF0IERhbiBDYXJwZW50ZXIg
+YW5kIFBhdWxvIHBvaW50ZWQgb3V0LgoKU2lnbmVkLW9mZi1ieTogQXVyZWxpZW4gQXB0ZWwgPGFh
+cHRlbEBzdXNlLmNvbT4KU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRl
+ckBvcmFjbGUuY29tPgpSZXZpZXdlZC1ieTogUGF1bG8gQWxjYW50YXJhIDxwYWxjYW50YXJhQHN1
+c2UuZGU+ClNpZ25lZC1vZmYtYnk6IFN0ZXZlIEZyZW5jaCA8c3RmcmVuY2hAbWljcm9zb2Z0LmNv
+bT4KLS0tCiBmcy9jaWZzL3NtYjJwZHUuYyB8IDk5ICsrKysrKysrKysrKysrKysrKysrKysrLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNDkgaW5zZXJ0aW9ucygrKSwg
+NTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvY2lmcy9zbWIycGR1LmMgYi9mcy9jaWZz
+L3NtYjJwZHUuYwppbmRleCA4MTBiODU3ODdjOTEuLmVhMTAyZGNhNWYzMyAxMDA2NDQKLS0tIGEv
+ZnMvY2lmcy9zbWIycGR1LmMKKysrIGIvZnMvY2lmcy9zbWIycGR1LmMKQEAgLTE5MzQsMjcgKzE5
+MzQsMzEgQEAgaW50IHNtYjMxMV9wb3NpeF9ta2Rpcihjb25zdCB1bnNpZ25lZCBpbnQgeGlkLCBz
+dHJ1Y3QgaW5vZGUgKmlub2RlLAogCWNoYXIgKnBjX2J1ZiA9IE5VTEw7CiAJaW50IGZsYWdzID0g
+MDsKIAl1bnNpZ25lZCBpbnQgdG90YWxfbGVuOwotCV9fbGUxNiAqcGF0aCA9IGNpZnNfY29udmVy
+dF9wYXRoX3RvX3V0ZjE2KGZ1bGxfcGF0aCwgY2lmc19zYik7Ci0KLQlpZiAoIXBhdGgpCi0JCXJl
+dHVybiAtRU5PTUVNOworCV9fbGUxNiAqdXRmMTZfcGF0aCA9IE5VTEw7CiAKIAljaWZzX2RiZyhG
+WUksICJta2RpclxuIik7CiAKKwkvKiByZXNvdXJjZSAjMTogcGF0aCBhbGxvY2F0aW9uICovCisJ
+dXRmMTZfcGF0aCA9IGNpZnNfY29udmVydF9wYXRoX3RvX3V0ZjE2KGZ1bGxfcGF0aCwgY2lmc19z
+Yik7CisJaWYgKCF1dGYxNl9wYXRoKQorCQlyZXR1cm4gLUVOT01FTTsKKwogCWlmIChzZXMgJiYg
+KHNlcy0+c2VydmVyKSkKIAkJc2VydmVyID0gc2VzLT5zZXJ2ZXI7Ci0JZWxzZQotCQlyZXR1cm4g
+LUVJTzsKKwllbHNlIHsKKwkJcmMgPSAtRUlPOworCQlnb3RvIGVycl9mcmVlX3BhdGg7CisJfQog
+CisJLyogcmVzb3VyY2UgIzI6IHJlcXVlc3QgKi8KIAlyYyA9IHNtYjJfcGxhaW5fcmVxX2luaXQo
+U01CMl9DUkVBVEUsIHRjb24sICh2b2lkICoqKSAmcmVxLCAmdG90YWxfbGVuKTsKLQogCWlmIChy
+YykKLQkJcmV0dXJuIHJjOworCQlnb3RvIGVycl9mcmVlX3BhdGg7CisKIAogCWlmIChzbWIzX2Vu
+Y3J5cHRpb25fcmVxdWlyZWQodGNvbikpCiAJCWZsYWdzIHw9IENJRlNfVFJBTlNGT1JNX1JFUTsK
+IAotCiAJcmVxLT5JbXBlcnNvbmF0aW9uTGV2ZWwgPSBJTF9JTVBFUlNPTkFUSU9OOwogCXJlcS0+
+RGVzaXJlZEFjY2VzcyA9IGNwdV90b19sZTMyKEZJTEVfV1JJVEVfQVRUUklCVVRFUyk7CiAJLyog
+RmlsZSBhdHRyaWJ1dGVzIGlnbm9yZWQgb24gb3BlbiAodXNlZCBpbiBjcmVhdGUgdGhvdWdoKSAq
+LwpAQCAtMTk4Myw1MCArMTk4Nyw0NCBAQCBpbnQgc21iMzExX3Bvc2l4X21rZGlyKGNvbnN0IHVu
+c2lnbmVkIGludCB4aWQsIHN0cnVjdCBpbm9kZSAqaW5vZGUsCiAJCXJlcS0+c3luY19oZHIuRmxh
+Z3MgfD0gU01CMl9GTEFHU19ERlNfT1BFUkFUSU9OUzsKIAkJcmMgPSBhbGxvY19wYXRoX3dpdGhf
+dHJlZV9wcmVmaXgoJmNvcHlfcGF0aCwgJmNvcHlfc2l6ZSwKIAkJCQkJCSAmbmFtZV9sZW4sCi0J
+CQkJCQkgdGNvbi0+dHJlZU5hbWUsIHBhdGgpOwotCQlpZiAocmMpIHsKLQkJCWNpZnNfc21hbGxf
+YnVmX3JlbGVhc2UocmVxKTsKLQkJCXJldHVybiByYzsKLQkJfQorCQkJCQkJIHRjb24tPnRyZWVO
+YW1lLCB1dGYxNl9wYXRoKTsKKwkJaWYgKHJjKQorCQkJZ290byBlcnJfZnJlZV9yZXE7CisKIAkJ
+cmVxLT5OYW1lTGVuZ3RoID0gY3B1X3RvX2xlMTYobmFtZV9sZW4gKiAyKTsKIAkJdW5pX3BhdGhf
+bGVuID0gY29weV9zaXplOwotCQlwYXRoID0gY29weV9wYXRoOworCQkvKiBmcmVlIGJlZm9yZSBv
+dmVyd3JpdGluZyByZXNvdXJjZSAqLworCQlrZnJlZSh1dGYxNl9wYXRoKTsKKwkJdXRmMTZfcGF0
+aCA9IGNvcHlfcGF0aDsKIAl9IGVsc2UgewotCQl1bmlfcGF0aF9sZW4gPSAoMiAqIFVuaVN0cm5s
+ZW4oKHdjaGFyX3QgKilwYXRoLCBQQVRIX01BWCkpICsgMjsKKwkJdW5pX3BhdGhfbGVuID0gKDIg
+KiBVbmlTdHJubGVuKCh3Y2hhcl90ICopdXRmMTZfcGF0aCwgUEFUSF9NQVgpKSArIDI7CiAJCS8q
+IE1VU1Qgc2V0IHBhdGggbGVuIChOYW1lTGVuZ3RoKSB0byAwIG9wZW5pbmcgcm9vdCBvZiBzaGFy
+ZSAqLwogCQlyZXEtPk5hbWVMZW5ndGggPSBjcHVfdG9fbGUxNih1bmlfcGF0aF9sZW4gLSAyKTsK
+IAkJaWYgKHVuaV9wYXRoX2xlbiAlIDggIT0gMCkgewogCQkJY29weV9zaXplID0gcm91bmR1cCh1
+bmlfcGF0aF9sZW4sIDgpOwogCQkJY29weV9wYXRoID0ga3phbGxvYyhjb3B5X3NpemUsIEdGUF9L
+RVJORUwpOwogCQkJaWYgKCFjb3B5X3BhdGgpIHsKLQkJCQljaWZzX3NtYWxsX2J1Zl9yZWxlYXNl
+KHJlcSk7Ci0JCQkJcmV0dXJuIC1FTk9NRU07CisJCQkJcmMgPSAtRU5PTUVNOworCQkJCWdvdG8g
+ZXJyX2ZyZWVfcmVxOwogCQkJfQotCQkJbWVtY3B5KChjaGFyICopY29weV9wYXRoLCAoY29uc3Qg
+Y2hhciAqKXBhdGgsCisJCQltZW1jcHkoKGNoYXIgKiljb3B5X3BhdGgsIChjb25zdCBjaGFyICop
+dXRmMTZfcGF0aCwKIAkJCSAgICAgICB1bmlfcGF0aF9sZW4pOwogCQkJdW5pX3BhdGhfbGVuID0g
+Y29weV9zaXplOwotCQkJcGF0aCA9IGNvcHlfcGF0aDsKKwkJCS8qIGZyZWUgYmVmb3JlIG92ZXJ3
+cml0aW5nIHJlc291cmNlICovCisJCQlrZnJlZSh1dGYxNl9wYXRoKTsKKwkJCXV0ZjE2X3BhdGgg
+PSBjb3B5X3BhdGg7CiAJCX0KIAl9CiAKIAlpb3ZbMV0uaW92X2xlbiA9IHVuaV9wYXRoX2xlbjsK
+LQlpb3ZbMV0uaW92X2Jhc2UgPSBwYXRoOworCWlvdlsxXS5pb3ZfYmFzZSA9IHV0ZjE2X3BhdGg7
+CiAJcmVxLT5SZXF1ZXN0ZWRPcGxvY2tMZXZlbCA9IFNNQjJfT1BMT0NLX0xFVkVMX05PTkU7CiAK
+IAlpZiAodGNvbi0+cG9zaXhfZXh0ZW5zaW9ucykgewotCQlpZiAobl9pb3YgPiAyKSB7Ci0JCQlz
+dHJ1Y3QgY3JlYXRlX2NvbnRleHQgKmNjb250ZXh0ID0KLQkJCSAgICAoc3RydWN0IGNyZWF0ZV9j
+b250ZXh0ICopaW92W25faW92LTFdLmlvdl9iYXNlOwotCQkJY2NvbnRleHQtPk5leHQgPQotCQkJ
+CWNwdV90b19sZTMyKGlvdltuX2lvdi0xXS5pb3ZfbGVuKTsKLQkJfQotCisJCS8qIHJlc291cmNl
+ICMzOiBwb3NpeCBidWYgKi8KIAkJcmMgPSBhZGRfcG9zaXhfY29udGV4dChpb3YsICZuX2lvdiwg
+bW9kZSk7Ci0JCWlmIChyYykgewotCQkJY2lmc19zbWFsbF9idWZfcmVsZWFzZShyZXEpOwotCQkJ
+a2ZyZWUoY29weV9wYXRoKTsKLQkJCXJldHVybiByYzsKLQkJfQorCQlpZiAocmMpCisJCQlnb3Rv
+IGVycl9mcmVlX3JlcTsKIAkJcGNfYnVmID0gaW92W25faW92LTFdLmlvdl9iYXNlOwogCX0KIApA
+QCAtMjAzNSwzMiArMjAzMywzMyBAQCBpbnQgc21iMzExX3Bvc2l4X21rZGlyKGNvbnN0IHVuc2ln
+bmVkIGludCB4aWQsIHN0cnVjdCBpbm9kZSAqaW5vZGUsCiAJcnFzdC5ycV9pb3YgPSBpb3Y7CiAJ
+cnFzdC5ycV9udmVjID0gbl9pb3Y7CiAKLQlyYyA9IGNpZnNfc2VuZF9yZWN2KHhpZCwgc2VzLCAm
+cnFzdCwgJnJlc3BfYnVmdHlwZSwgZmxhZ3MsCi0JCQkgICAgJnJzcF9pb3YpOwotCi0JY2lmc19z
+bWFsbF9idWZfcmVsZWFzZShyZXEpOwotCXJzcCA9IChzdHJ1Y3Qgc21iMl9jcmVhdGVfcnNwICop
+cnNwX2lvdi5pb3ZfYmFzZTsKLQotCWlmIChyYyAhPSAwKSB7CisJLyogcmVzb3VyY2UgIzQ6IHJl
+c3BvbnNlIGJ1ZmZlciAqLworCXJjID0gY2lmc19zZW5kX3JlY3YoeGlkLCBzZXMsICZycXN0LCAm
+cmVzcF9idWZ0eXBlLCBmbGFncywgJnJzcF9pb3YpOworCWlmIChyYykgewogCQljaWZzX3N0YXRz
+X2ZhaWxfaW5jKHRjb24sIFNNQjJfQ1JFQVRFX0hFKTsKIAkJdHJhY2Vfc21iM19wb3NpeF9ta2Rp
+cl9lcnIoeGlkLCB0Y29uLT50aWQsIHNlcy0+U3VpZCwKLQkJCQkgICAgQ1JFQVRFX05PVF9GSUxF
+LCBGSUxFX1dSSVRFX0FUVFJJQlVURVMsIHJjKTsKLQkJZ290byBzbWIzMTFfbWtkaXJfZXhpdDsK
+LQl9IGVsc2UKLQkJdHJhY2Vfc21iM19wb3NpeF9ta2Rpcl9kb25lKHhpZCwgcnNwLT5QZXJzaXN0
+ZW50RmlsZUlkLCB0Y29uLT50aWQsCi0JCQkJICAgICBzZXMtPlN1aWQsIENSRUFURV9OT1RfRklM
+RSwKLQkJCQkgICAgIEZJTEVfV1JJVEVfQVRUUklCVVRFUyk7CisJCQkJCSAgIENSRUFURV9OT1Rf
+RklMRSwKKwkJCQkJICAgRklMRV9XUklURV9BVFRSSUJVVEVTLCByYyk7CisJCWdvdG8gZXJyX2Zy
+ZWVfcnNwX2J1ZjsKKwl9CisKKwlyc3AgPSAoc3RydWN0IHNtYjJfY3JlYXRlX3JzcCAqKXJzcF9p
+b3YuaW92X2Jhc2U7CisJdHJhY2Vfc21iM19wb3NpeF9ta2Rpcl9kb25lKHhpZCwgcnNwLT5QZXJz
+aXN0ZW50RmlsZUlkLCB0Y29uLT50aWQsCisJCQkJICAgIHNlcy0+U3VpZCwgQ1JFQVRFX05PVF9G
+SUxFLAorCQkJCSAgICBGSUxFX1dSSVRFX0FUVFJJQlVURVMpOwogCiAJU01CMl9jbG9zZSh4aWQs
+IHRjb24sIHJzcC0+UGVyc2lzdGVudEZpbGVJZCwgcnNwLT5Wb2xhdGlsZUZpbGVJZCk7CiAKIAkv
+KiBFdmVudHVhbGx5IHNhdmUgb2ZmIHBvc2l4IHNwZWNpZmljIHJlc3BvbnNlIGluZm8gYW5kIHRp
+bWVzdGFwcyAqLwogCi1zbWIzMTFfbWtkaXJfZXhpdDoKLQlrZnJlZShjb3B5X3BhdGgpOwotCWtm
+cmVlKHBjX2J1Zik7CitlcnJfZnJlZV9yc3BfYnVmOgogCWZyZWVfcnNwX2J1ZihyZXNwX2J1ZnR5
+cGUsIHJzcCk7CisJa2ZyZWUocGNfYnVmKTsKK2Vycl9mcmVlX3JlcToKKwljaWZzX3NtYWxsX2J1
+Zl9yZWxlYXNlKHJlcSk7CitlcnJfZnJlZV9wYXRoOgorCWtmcmVlKHV0ZjE2X3BhdGgpOwogCXJl
+dHVybiByYzsKLQogfQogI2VuZGlmIC8qIFNNQjMxMSAqLwogCi0tIAoyLjE3LjEKCg==
+--000000000000c41a7b056f29d63e--
