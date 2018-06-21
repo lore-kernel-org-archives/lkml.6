@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8ABC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CDDAC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A166F2240E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE48A2240E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SF6QeT79"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A166F2240E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HZpWrHFs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE48A2240E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933734AbeFUVae (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:30:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41860 "EHLO
+        id S934090AbeFUVah (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:30:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41846 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933993AbeFUV3M (ORCPT
+        with ESMTP id S933879AbeFUV3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 17:29:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,25 +30,41 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nYeeoWQ+885jk0DIMw6lrAOaIXXaNbz0ItnLOxhvbs8=; b=SF6QeT79doMSajD0g7kJyL8o0
-        WWx/6Lz89Q/nBZOC2mAVHqsh0HPjMVkbID0DxvC9EReVwv67Ydm5cb3eqZP25lq8TsOMI3h8/lcnp
-        oDoBDqDgSAT36+4kVV8C7JV52QNOHJSrHZsYFKMkxrGuWLHJYLKgVMYHpZVySv4Ror2tIid/KMfOb
-        8MGIbS2mB6reydyR9XBoeix+RtedZzxS9Fl3q4n3VQtwa8fCZ5Ok5eJl+Um3SDZQaQkYWAdB1lAxd
-        PsZaKQ9U7fXFcGrNlXoDvRN2Gj/UL6JGFaIGFxVrCDwVu8nW44rnVowHFC313sjlT71UPecayOhsP
-        kmELAK4yw==;
+         bh=rhTeXBqlJbi6TwFnyRCNuWaY2Gfqwze39BCxvClSuWE=; b=HZpWrHFsF7vkV7R8xun6cbLiz
+        z/dBv/3J+Mx9Tf0RhI7chVsbA7KABozmq3r7qJMgsJfIt7tnHHePYgboI6kZfnMoG+APFdlSOLqfo
+        PU2KbjdOYpicBVLVjN6oJl8JGzacJR7t1Xk7rjWpKQZoA5zFrMYVWbV9TSF6TdPgzAMnGlBhiuZ2L
+        KZegVCC+xs09mlLFEdmspKLproSiGvDQZoTpaqyZNV+7emQZfHim0ntSmQ9ALBM6bN3/N4Mrrhd8n
+        8+GBLxzGhHZGOigvjEX+aiikmltv/DQAK19ZOBxStTAiVanKySfDJv5o4jDfCUcLWIISONelMkTLF
+        aXRfewZHw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78h-0001dT-NX; Thu, 21 Jun 2018 21:29:11 +0000
+        id 1fW78g-0001cU-B4; Thu, 21 Jun 2018 21:29:10 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Matthew Wilcox <willy@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris Mi <chrism@mellanox.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 26/26] ida: Change ida_get_new_above to return the id
-Date:   Thu, 21 Jun 2018 14:28:35 -0700
-Message-Id: <20180621212835.5636-27-willy@infradead.org>
+        Byungchul Park <byungchul.park@lge.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, Chris Mason <clm@fb.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 19/26] ida: Start new test_ida module
+Date:   Thu, 21 Jun 2018 14:28:28 -0700
+Message-Id: <20180621212835.5636-20-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -57,98 +73,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This calling convention makes more sense for the implementation as well
-as the callers.  It even shaves 32 bytes off the compiled code size.
+Start transitioning the IDA tests into kernel space.  Framework heavily
+cribbed from test_xarray.c.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- lib/idr.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
+ lib/Kconfig.debug                   |  3 +++
+ lib/Makefile                        |  1 +
+ lib/test_ida.c                      | 42 +++++++++++++++++++++++++++++
+ tools/testing/radix-tree/Makefile   |  1 +
+ tools/testing/radix-tree/idr-test.c | 22 ++++++++++++---
+ tools/testing/radix-tree/main.c     |  3 +--
+ tools/testing/radix-tree/test.h     |  3 +--
+ 7 files changed, 68 insertions(+), 7 deletions(-)
+ create mode 100644 lib/test_ida.c
 
-diff --git a/lib/idr.c b/lib/idr.c
-index 1dc52191acb6..fab2fd5bc326 100644
---- a/lib/idr.c
-+++ b/lib/idr.c
-@@ -363,7 +363,7 @@ EXPORT_SYMBOL(idr_replace);
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 8838d1158d19..2fff661d9070 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1827,6 +1827,9 @@ config TEST_HASH
+ 	  This is intended to help people writing architecture-specific
+ 	  optimized versions.  If unsure, say N.
  
- #define IDA_MAX (0x80000000U / IDA_BITMAP_BITS - 1)
++config TEST_IDA
++	tristate "Perform selftest on IDA functions"
++
+ config TEST_PARMAN
+ 	tristate "Perform selftest on priority array manager"
+ 	default n
+diff --git a/lib/Makefile b/lib/Makefile
+index 8153fdab287f..2ad90b716995 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -50,6 +50,7 @@ obj-$(CONFIG_TEST_BPF) += test_bpf.o
+ obj-$(CONFIG_TEST_FIRMWARE) += test_firmware.o
+ obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
+ obj-$(CONFIG_TEST_HASH) += test_hash.o test_siphash.o
++obj-$(CONFIG_TEST_IDA) += test_ida.o
+ obj-$(CONFIG_TEST_KASAN) += test_kasan.o
+ CFLAGS_test_kasan.o += -fno-builtin
+ obj-$(CONFIG_TEST_UBSAN) += test_ubsan.o
+diff --git a/lib/test_ida.c b/lib/test_ida.c
+new file mode 100644
+index 000000000000..5a5a742d5f09
+--- /dev/null
++++ b/lib/test_ida.c
+@@ -0,0 +1,42 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * test_ida.c: Test the IDA API
++ * Copyright (c) 2016-2018 Microsoft Corporation
++ * Copyright (c) 2018 Oracle Corporation
++ * Author: Matthew Wilcox <willy@infradead.org>
++ */
++
++static unsigned int tests_run;
++static unsigned int tests_passed;
++
++#ifdef __KERNEL__
++void ida_dump(struct ida *ida) { }
++#endif
++#define IDA_BUG_ON(ida, x) do {						\
++	tests_run++;							\
++	if (x) {							\
++		ida_dump(ida);						\
++		dump_stack();						\
++	} else {							\
++		tests_passed++;						\
++	}								\
++} while (0)
++
++static int ida_checks(void)
++{
++	DEFINE_IDA(ida);
++
++	IDA_BUG_ON(&ida, !ida_is_empty(&ida));
++
++	printk("IDA: %u of %u tests passed\n", tests_passed, tests_run);
++	return (tests_run != tests_passed) ? 0 : -EINVAL;
++}
++
++static void ida_exit(void)
++{
++}
++
++module_init(ida_checks);
++module_exit(ida_exit);
++MODULE_AUTHOR("Matthew Wilcox <willy@infradead.org>");
++MODULE_LICENSE("GPL");
+diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
+index db66f8a0d4be..b5a9db9e6a31 100644
+--- a/tools/testing/radix-tree/Makefile
++++ b/tools/testing/radix-tree/Makefile
+@@ -21,6 +21,7 @@ targets: generated/map-shift.h $(TARGETS)
  
--static int ida_get_new_above(struct ida *ida, int start, int *id)
-+static int ida_get_new_above(struct ida *ida, int start)
- {
- 	struct radix_tree_root *root = &ida->ida_rt;
- 	void __rcu **slot;
-@@ -402,8 +402,8 @@ static int ida_get_new_above(struct ida *ida, int start, int *id)
- 			if (ebit < BITS_PER_LONG) {
- 				tmp |= 1UL << ebit;
- 				rcu_assign_pointer(*slot, (void *)tmp);
--				*id = new + ebit - RADIX_TREE_EXCEPTIONAL_SHIFT;
--				return 0;
-+				return new + ebit -
-+					RADIX_TREE_EXCEPTIONAL_SHIFT;
- 			}
- 			bitmap = this_cpu_xchg(ida_bitmap, NULL);
- 			if (!bitmap)
-@@ -434,8 +434,7 @@ static int ida_get_new_above(struct ida *ida, int start, int *id)
- 						RADIX_TREE_EXCEPTIONAL_ENTRY);
- 				radix_tree_iter_replace(root, &iter, slot,
- 						bitmap);
--				*id = new;
--				return 0;
-+				return new;
- 			}
- 			bitmap = this_cpu_xchg(ida_bitmap, NULL);
- 			if (!bitmap)
-@@ -444,8 +443,7 @@ static int ida_get_new_above(struct ida *ida, int start, int *id)
- 			radix_tree_iter_replace(root, &iter, slot, bitmap);
- 		}
+ main:	$(OFILES)
  
--		*id = new;
--		return 0;
-+		return new;
- 	}
++idr-test.o: ../../../lib/test_ida.c
+ idr-test: idr-test.o $(CORE_OFILES)
+ 
+ multiorder: multiorder.o $(CORE_OFILES)
+diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
+index ee820fcc29b0..604b51dc9b38 100644
+--- a/tools/testing/radix-tree/idr-test.c
++++ b/tools/testing/radix-tree/idr-test.c
+@@ -309,6 +309,15 @@ void idr_checks(void)
+ 	idr_u32_test(0);
  }
  
-@@ -534,7 +532,7 @@ EXPORT_SYMBOL(ida_destroy);
- int ida_alloc_range(struct ida *ida, unsigned int min, unsigned int max,
- 			gfp_t gfp)
- {
--	int ret, id = 0;
-+	int id = 0;
- 	unsigned long flags;
- 
- 	if ((int)min < 0)
-@@ -545,24 +543,20 @@ int ida_alloc_range(struct ida *ida, unsigned int min, unsigned int max,
- 
- again:
- 	xa_lock_irqsave(&ida->ida_rt, flags);
--	ret = ida_get_new_above(ida, min, &id);
--	if (!ret) {
--		if (id > max) {
--			ida_remove(ida, id);
--			ret = -ENOSPC;
--		} else {
--			ret = id;
--		}
-+	id = ida_get_new_above(ida, min);
-+	if (id > (int)max) {
-+		ida_remove(ida, id);
-+		id = -ENOSPC;
- 	}
- 	xa_unlock_irqrestore(&ida->ida_rt, flags);
- 
--	if (unlikely(ret == -EAGAIN)) {
-+	if (unlikely(id == -EAGAIN)) {
- 		if (!ida_pre_get(ida, gfp))
- 			return -ENOMEM;
- 		goto again;
- 	}
- 
--	return ret;
-+	return id;
++#define module_init(x)
++#define module_exit(x)
++#define MODULE_AUTHOR(x)
++#define MODULE_LICENSE(x)
++#define dump_stack()    assert(0)
++void ida_dump(struct ida *);
++
++#include "../../../lib/test_ida.c"
++
+ /*
+  * Check that we get the correct error when we run out of memory doing
+  * allocations.  To ensure we run out of memory, just "forget" to preload.
+@@ -488,7 +497,7 @@ void ida_simple_get_remove_test(void)
+ 	ida_destroy(&ida);
  }
- EXPORT_SYMBOL(ida_alloc_range);
  
+-void ida_checks(void)
++void user_ida_checks(void)
+ {
+ 	DEFINE_IDA(ida);
+ 	int id;
+@@ -582,12 +591,19 @@ void ida_thread_tests(void)
+ 		pthread_join(threads[i], NULL);
+ }
+ 
++void ida_tests(void)
++{
++	user_ida_checks();
++	ida_checks();
++	ida_exit();
++	ida_thread_tests();
++}
++
+ int __weak main(void)
+ {
+ 	radix_tree_init();
+ 	idr_checks();
+-	ida_checks();
+-	ida_thread_tests();
++	ida_tests();
+ 	radix_tree_cpu_dead(1);
+ 	rcu_barrier();
+ 	if (nr_allocated)
+diff --git a/tools/testing/radix-tree/main.c b/tools/testing/radix-tree/main.c
+index 257f3f8aacaa..c69a49b825aa 100644
+--- a/tools/testing/radix-tree/main.c
++++ b/tools/testing/radix-tree/main.c
+@@ -322,7 +322,7 @@ static void single_thread_tests(bool long_run)
+ 	printv(2, "after dynamic_height_check: %d allocated, preempt %d\n",
+ 		nr_allocated, preempt_count);
+ 	idr_checks();
+-	ida_checks();
++	ida_tests();
+ 	rcu_barrier();
+ 	printv(2, "after idr_checks: %d allocated, preempt %d\n",
+ 		nr_allocated, preempt_count);
+@@ -369,7 +369,6 @@ int main(int argc, char **argv)
+ 	iteration_test(0, 10 + 90 * long_run);
+ 	iteration_test(7, 10 + 90 * long_run);
+ 	single_thread_tests(long_run);
+-	ida_thread_tests();
+ 
+ 	/* Free any remaining preallocated nodes */
+ 	radix_tree_cpu_dead(0);
+diff --git a/tools/testing/radix-tree/test.h b/tools/testing/radix-tree/test.h
+index 31f1d9b6f506..92d901eacf49 100644
+--- a/tools/testing/radix-tree/test.h
++++ b/tools/testing/radix-tree/test.h
+@@ -39,8 +39,7 @@ void multiorder_checks(void);
+ void iteration_test(unsigned order, unsigned duration);
+ void benchmark(void);
+ void idr_checks(void);
+-void ida_checks(void);
+-void ida_thread_tests(void);
++void ida_tests(void);
+ 
+ struct item *
+ item_tag_set(struct radix_tree_root *root, unsigned long index, int tag);
 -- 
 2.17.1
 
