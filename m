@@ -6,80 +6,89 @@ X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 437DAC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 352C1C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE360208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD883208A5
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qzkrMAQK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE360208A1
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqX0l6gS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD883208A5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933162AbeFUKf7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:35:59 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41644 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933120AbeFUKfu (ORCPT
+        id S1754378AbeFUK4R (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 06:56:17 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52352 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754178AbeFUK4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:35:50 -0400
-Received: by mail-wr0-f196.google.com with SMTP id h10-v6so2626059wrq.8;
-        Thu, 21 Jun 2018 03:35:50 -0700 (PDT)
+        Thu, 21 Jun 2018 06:56:14 -0400
+Received: by mail-wm0-f68.google.com with SMTP id p126-v6so4429100wmb.2;
+        Thu, 21 Jun 2018 03:56:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=2k+A32QjIQ1kl3aLWy9LQJpPlbaVB/yt7NEo3Yl+A/4=;
-        b=qzkrMAQKIfRnJCtL6QeBNAPIMgUwP+zLZF6oUWhPYipNiEODrAcanpBIuLW8raI28u
-         CZE74HcnAPNtITsf0isdy9hBH+dv9rCO3BfulT6IANNoPhzOr9yXgdrj3brGBPN48lWK
-         2NTSxhwGY6kMx4GcoiArN3aCtpkwKjmodVCxOGSJmCwJA3aWnTbZtaJsj8zXQcIp8QN1
-         /S6b6+D7+4YNnDEmFjiaUpqmidL8Yc/ldw5iDwPQX2MyqfO5DB0iLghCpOfI2Ljex1tU
-         j5vAzftpfruzYqCZ9hWV1KNVtFwd/s3pqNHN4SDYOfA5Tm7cl+qnk/cugXFLYGUId/mU
-         0IvQ==
+        bh=SCnuaOjAKMqvxAMBssQ6hQTroB43f50dPpEqurwUtrc=;
+        b=eqX0l6gSSAsYA+AjFK6vw2kExDSTq+gO2s6MNoudYGVlhLvc2Zg/GcXcPsjnSjYk18
+         rtzuQr+8rcJoVcj68F8BhABC6DziP9X92g3w28nMXVjLS4Gq89on/2aB7zaw5CiU7Zsr
+         tBfl17DrdSd3PKJipn/GbZWbfRherCkneh1YxZUPxB2TvmP6t2QKW6j8LtwVUl6XkYxr
+         vx7cEavW1o+tCxLjOmlQRMtvsTVNvbGUoF8rNNK/EnBKs65pBf5udShY01xdxws8UYP8
+         CkDWbspHzt7rVTIAulU3Y2fk0v76E+RPnbrx9xND4YXPE7Hvb+1vKgjuITD9/AtaqUcc
+         BbOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2k+A32QjIQ1kl3aLWy9LQJpPlbaVB/yt7NEo3Yl+A/4=;
-        b=bF2ASjTh2P6kJ0qjVKifWkgBUeedSy1YbxnzRCQ48CNxjHxpetavnvVlkhDxPklknf
-         Jf4ypTtvzRHgL0r8eqy1JH8nvcgGxT8RVw1NtUIoKdL4WdHjKZgzGbeu7G+DQo5jYrBk
-         nvhH9Zai/fPwy1tdO2HdSvmlvYFGZNH5eFc40QPczZTM8W+Qne51JVRvbFCaMaC4WMul
-         UDmQagUvfE+2XUhQg/MJ0hYl5/UHZpKcY5ETH8Ectq8zUIBfu03D701YyD0LNjdpBXVB
-         Ur2yWbMO+X1mpsSfyE6Susad5TXUTuBK2jpOnHsihctjUbWxooVxhyU5kytSWcEc634/
-         5kFA==
-X-Gm-Message-State: APt69E3rIM+3y0jna+6x+Oo4QHRVfwVRg5Yq/LfRGX7zd32saHCTQste
-        MNpLPwIPgxwWeccdHPRzey0=
-X-Google-Smtp-Source: ADUXVKIHf/cRManqa7VKxZqH8jK4YKvcuHghuPa/gIlJxe9Np45MyusT3igDZQ+ahvSsn6iPMTTuWA==
-X-Received: by 2002:a5d:4503:: with SMTP id s3-v6mr21379657wrq.191.1529577349441;
-        Thu, 21 Jun 2018 03:35:49 -0700 (PDT)
+        bh=SCnuaOjAKMqvxAMBssQ6hQTroB43f50dPpEqurwUtrc=;
+        b=Udxjqxl5Ky8KAWCtef8yn0kSk38EA6FZumx5KX/fnFSfAxeHpsux8maxvTLPZgYJHZ
+         K+6fREgeD7gR8M+agQxYGhG19A7gWVWD9KyKQ0nktK78IE47/Hs1InB/aA3wr3ygYyY8
+         TaTzrFRoeF3WOjl2+NztUEW0h5F6Os6ULQivoOBPiqp4u6+LJ/jGL3IR8BUhVB2lNb8n
+         tQHdNXZAapkOOh2Kb81kLhozwKblThOYptvEMdCGW674IV0T0OWC8T8fi8GEF1VVyK+O
+         /RjUASOjiuOcKixPcUaq5p19L6ymPh2XsqNvz8QMDdhyXnzSvWxRGdN3N4xLMg/pVLes
+         J33g==
+X-Gm-Message-State: APt69E2LTCfqv65Uwf+Kff2UXT47FENgP3nJ2aOGqBqcLPtmpK6ttDcX
+        FSMkoPEaWuAh6TO3UX4FnyM=
+X-Google-Smtp-Source: ADUXVKJgvBcFHHmCvFpo1u/3Vz7y0fadXVjhzVIUefU3UvccpwhVuHVZYxLzcrwPuKrP25ws6I5yeg==
+X-Received: by 2002:a1c:3504:: with SMTP id c4-v6mr4410673wma.59.1529578573346;
+        Thu, 21 Jun 2018 03:56:13 -0700 (PDT)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id v15-v6sm1732918wrq.37.2018.06.21.03.35.48
+        by smtp.gmail.com with ESMTPSA id v10-v6sm6305931wrn.97.2018.06.21.03.56.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 03:35:48 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 12:35:46 +0200
+        Thu, 21 Jun 2018 03:56:12 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 12:56:10 +0200
 From:   Ingo Molnar <mingo@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+To:     Thomas Hellstrom <thellstrom@vmware.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-arch@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH -tip v6 26/27] Documentation: kprobes: Add how to change
- the execution path
-Message-ID: <20180621103546.GA9212@gmail.com>
-References: <152942424698.15209.15245996287444292393.stgit@devbox>
- <152942500680.15209.12374262914863044775.stgit@devbox>
- <706832c5-dab4-f806-96d6-2cdc37203d9d@infradead.org>
- <20180620172637.35916da482442b6ab139c7dc@kernel.org>
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v4 0/4] locking,drm: Fix ww mutex naming / algorithm
+ inconsistency
+Message-ID: <20180621105610.GA28688@gmail.com>
+References: <20180619082445.11062-1-thellstrom@vmware.com>
+ <20180619094554.GM2458@hirez.programming.kicks-ass.net>
+ <f07c53d9-a22e-41c9-59a4-71ef6f7d96bb@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180620172637.35916da482442b6ab139c7dc@kernel.org>
+In-Reply-To: <f07c53d9-a22e-41c9-59a4-71ef6f7d96bb@vmware.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -87,43 +96,17 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Masami Hiramatsu <mhiramat@kernel.org> wrote:
+* Thomas Hellstrom <thellstrom@vmware.com> wrote:
 
-> On Tue, 19 Jun 2018 09:31:49 -0700
-> Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 06/19/2018 11:45 AM, Peter Zijlstra wrote:
+> > I suspect you want this through the DRM tree? Ingo are you OK with that?
 > 
-> > On 06/19/2018 09:16 AM, Masami Hiramatsu wrote:
-> > > Add a section that explaining how to change the execution
-> > > path with kprobes and warnings for some arch.
-> > > 
-> > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > Cc: linux-doc@vger.kernel.org
-> > > ---
-> > >  Documentation/kprobes.txt |   20 ++++++++++++++++++++
-> > >  1 file changed, 20 insertions(+)
-> > > 
-> > > diff --git a/Documentation/kprobes.txt b/Documentation/kprobes.txt
-> > > index 3e9e99ea751b..8a98eed1521b 100644
-> > > --- a/Documentation/kprobes.txt
-> > > +++ b/Documentation/kprobes.txt
-> > > @@ -80,6 +80,26 @@ After the instruction is single-stepped, Kprobes executes the
-> > >  "post_handler," if any, that is associated with the kprobe.
-> > >  Execution then continues with the instruction following the probepoint.
-> > >  
-> > 
-> > Hi,
-> > I have a few small suggestions...
 > 
-> Hi Randy,
-> 
-> Thank you for your suggestions!
-> All of those are good to me. I'll fix it:)
+> Yes, I can ask Dave to pull this. Ingo?
 
-Could you please send a delta patch on top of your v6 series, with Randy credited, 
-etc?
+Sure, no problem if it's tested and all:
 
-I've applied your series and will push it out once it passes all testing.
+  Acked-by: Ingo Molnar <mingo@kernel.org>
 
 Thanks,
 
