@@ -6,427 +6,223 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAECC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF01EC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7900820693
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:17:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7900820693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 81043208B3
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:21:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81043208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754252AbeFUBRv (ORCPT
+        id S1754210AbeFUBVZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:17:51 -0400
-Received: from mga14.intel.com ([192.55.52.115]:11399 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753987AbeFUBRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 21:17:50 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 18:17:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,249,1526367600"; 
-   d="gz'50?scan'50,208,50";a="51585865"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by orsmga006.jf.intel.com with ESMTP; 20 Jun 2018 18:17:46 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fVoEM-000Neq-3t; Thu, 21 Jun 2018 09:17:46 +0800
-Date:   Thu, 21 Jun 2018 09:17:18 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     kbuild-all@01.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, kernel-hardening@lists.openwall.com,
-        kristen.c.accardi@intel.com, dave.hansen@intel.com,
-        arjan.van.de.ven@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: Re: [PATCH 3/3] vmalloc: Add debugfs modfraginfo
-Message-ID: <201806210806.f9bCtAAM%fengguang.wu@intel.com>
-References: <1529532570-21765-4-git-send-email-rick.p.edgecombe@intel.com>
+        Wed, 20 Jun 2018 21:21:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42470 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754077AbeFUBVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 21:21:23 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DEA119F72;
+        Thu, 21 Jun 2018 01:21:22 +0000 (UTC)
+Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4DBB32026D6B;
+        Thu, 21 Jun 2018 01:21:20 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 09:21:16 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Lianbo Jiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+        iommu@lists.linux-foundation.org, dyoung@redhat.com,
+        kexec@lists.infradead.org, akpm@linux-foundation.org
+Subject: Re: [PATCH 0/4 V3] Support kdump for AMD secure memory
+ encryption(SME)
+Message-ID: <20180621012116.GF29979@MiWiFi-R3L-srv>
+References: <20180616082714.32035-1-lijiang@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="RnlQjJ0d97Da+TV1"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529532570-21765-4-git-send-email-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180616082714.32035-1-lijiang@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 01:21:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 01:21:22 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/16/18 at 04:27pm, Lianbo Jiang wrote:
+> It is convenient to remap the old memory encrypted to the second kernel by
+> calling ioremap_encrypted().
+> 
+> When sme enabled on AMD server, we also need to support kdump. Because
+> the memory is encrypted in the first kernel, we will remap the old memory
+> encrypted to the second kernel(crash kernel), and sme is also enabled in
+> the second kernel, otherwise the old memory encrypted can not be decrypted.
+> Because simply changing the value of a C-bit on a page will not
+> automatically encrypt the existing contents of a page, and any data in the
+> page prior to the C-bit modification will become unintelligible. A page of
+> memory that is marked encrypted will be automatically decrypted when read
+> from DRAM and will be automatically encrypted when written to DRAM.
+> 
+> For the kdump, it is necessary to distinguish whether the memory is
+> encrypted. Furthermore, we should also know which part of the memory is
+> encrypted or decrypted. We will appropriately remap the memory according
+> to the specific situation in order to tell cpu how to deal with the
+> data(encrypted or decrypted). For example, when sme enabled, if the old
+> memory is encrypted, we will remap the old memory in encrypted way, which
+> will automatically decrypt the old memory encrypted when we read those data
+> from the remapping address.
+> 
+>  ----------------------------------------------
+> | first-kernel | second-kernel | kdump support |
+> |      (mem_encrypt=on|off)    |   (yes|no)    |
+> |--------------+---------------+---------------|
+> |     on       |     on        |     yes       |
+> |     off      |     off       |     yes       |
+> |     on       |     off       |     no        |
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi Rick,
+> |     off      |     on        |     no        |
 
-Thank you for the patch! Yet something to improve:
+It's not clear to me here. If 1st kernel sme is off, in 2nd kernel, when
+you remap the old memory with non-sme mode, why did it fail?
 
-[auto build test ERROR on mmotm/master]
-[also build test ERROR on v4.18-rc1 next-20180620]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+And please run scripts/get_maintainer.pl and add maintainers of
+component which is affected in patch to CC list.
 
-url:    https://github.com/0day-ci/linux/commits/Rick-Edgecombe/KASLR-feature-to-randomize-each-loadable-module/20180621-061051
-base:   git://git.cmpxchg.org/linux-mmotm.git master
-config: parisc-c3000_defconfig (attached as .config)
-compiler: hppa-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        GCC_VERSION=7.2.0 make.cross ARCH=parisc 
-
-All errors (new ones prefixed by >>):
-
-   mm/vmalloc.c: In function 'modulefraginfo_debug_show':
->> mm/vmalloc.c:2821:27: error: 'MODULES_VADDR' undeclared (first use in this function); did you mean 'MODULE_AUTHOR'?
-     unsigned long last_end = MODULES_VADDR;
-                              ^~~~~~~~~~~~~
-                              MODULE_AUTHOR
-   mm/vmalloc.c:2821:27: note: each undeclared identifier is reported only once for each function it appears in
-   mm/vmalloc.c:2834:22: error: 'MODULES_END' undeclared (first use in this function); did you mean 'MODULES_VADDR'?
-       && obj->va_end <= MODULES_END) {
-                         ^~~~~~~~~~~
-                         MODULES_VADDR
-
-vim +2821 mm/vmalloc.c
-
-  2817	
-  2818	static int modulefraginfo_debug_show(struct seq_file *m, void *v)
-  2819	{
-  2820		struct list_head *i;
-> 2821		unsigned long last_end = MODULES_VADDR;
-  2822		unsigned long total_free = 0;
-  2823		unsigned long largest_free = 0;
-  2824		unsigned long backup_cnt = 0;
-  2825		unsigned long gap;
-  2826	
-  2827		spin_lock(&vmap_area_lock);
-  2828	
-  2829		list_for_each(i, &vmap_area_list) {
-  2830			struct vmap_area *obj = list_entry(i, struct vmap_area, list);
-  2831	
-  2832			if (!(obj->flags & VM_LAZY_FREE)
-  2833				&& obj->va_start >= MODULES_VADDR
-  2834				&& obj->va_end <= MODULES_END) {
-  2835	
-  2836				if (obj->va_start >= get_backup_start())
-  2837					backup_cnt++;
-  2838	
-  2839				gap = (obj->va_start - last_end);
-  2840				if (gap > largest_free)
-  2841					largest_free = gap;
-  2842				total_free += gap;
-  2843	
-  2844				last_end = obj->va_end;
-  2845			}
-  2846		}
-  2847	
-  2848		gap = (MODULES_END - last_end);
-  2849		if (gap > largest_free)
-  2850			largest_free = gap;
-  2851		total_free += gap;
-  2852	
-  2853		spin_unlock(&vmap_area_lock);
-  2854	
-  2855		seq_printf(m, "Largest free space:\t\t%lu\n", largest_free);
-  2856		if (total_free)
-  2857			seq_printf(m, "External Memory Fragementation:\t%lu%%\n",
-  2858				100-(100*largest_free/total_free));
-  2859		else
-  2860			seq_puts(m, "External Memory Fragementation:\t0%%\n");
-  2861	
-  2862		print_backup_area(m, backup_cnt);
-  2863	
-  2864		return 0;
-  2865	}
-  2866	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---RnlQjJ0d97Da+TV1
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-H4sICDXvKlsAAy5jb25maWcAlDxrb9u4st/3Vwhd4KLF2W5jJ3Wbc5EPNEXZPNYrJGU7+SK4
-idsam9g5trOPf39nqBclkQousN3YnOFwSA7nxaF//eVXj7yeD8+b8+5h8/T0j/dju98eN+ft
-o/d997T9X89PvDhRHvO5+h2Qw93+9e9PL5vj7vTgXf0++vL7xcfn55G32B732yePHvbfdz9e
-gcDusP/l11/gv1+h8fkFaB3/7f18edl8fEISH3/sXz/+eHjw3vvbb7vN3vvy+xhIjUYfik/Q
-kSZxwGd5SgSX9Oaf6jtNs3wKf1nscxI37VGUNV+kInSRz0SyklnaNIuVZFE+YzETnOYy5XGY
-0EUDryDTbNZvnK8Yn81VH0BJyKeCKJb7LCR3HS6UIJTlwEaaCKNzOlNkGrI8ZEsWyptx3edO
-Vsgyn2czpsJpII3p05zLfEaNFYEv+ZIJyZP45svF+OKixg1JPKtBdTMXt/kqEca8pxkPfcUj
-lrN1wZYsmNX7N9Mi8eSdtufXl2ZjpiJZsDhP4lxGxhrzmCvYnGVOxCwPecTVzeUYpaDkKYlS
-DgMoJpW3O3n7wxkJV71hP0hYcfzuXdPPBOQkU4ml85wsWb5gImZhPrvnBlMmZAqQsR0U3kfE
-Dlnfu3okLsBVA2jzVM/JZMicThcB2RqCr++HeyfD4CvLUvosIFmo8nkiVUwidvPu/f6w3354
-V8vpihjrC1K75CntNeBfqkJz0mki+TqPbjOWMcvAVCRS5hGLEnGXEwUnaG72ziSDw2adD8lA
-R7mkggg6LzCQIxKGlXDDYfBOr99O/5zO2+dGuKuzjWclFcmUmUyYQJ+BsgikZdxaPaCOgVMe
-K1kNqnbP2+PJNu78Pk+hV+Jzao4YJwjhfsisU9dgK2QOKisXTOZ4ukWLzUI3p9kntTn94Z2B
-JW+zf/RO58355G0eHg6v+/Nu/6PhTXHQqah+CaVJFisez0wep9LHpaIM9g8wlJUfReQC1KLq
-cyJo5sn+gsAodznAzJHgKygqWCfbdssC2ezebtLKDkxIPDbklS+KD/0WPaemOUyQQpDLOQ/U
-zWhS63PBY7XIJQlYF+eyKxGSzplfyIU5LQr2KkulfYfhDMoULIkdXFBEtahp2HHuZCBBXlPB
-KBgr34ok0IJZVnUaLqDrUmt34be1vSAREJZJJihDnV2R8jtKGBo6uhda2ioXGkxNq+FJ57uh
-V8HwJSlINr9neZAIPDrwJyIxbZ3XLpqEDzbJqXRVpVBiMDU8TnwmW4oNkED8KAOSgKDtew+u
-9U0Wg2cwA3MVhsnKEMA0aL4Ucmy4MaB1OWg5YZAEJyCCc5M3qqu1pU2zudfIRQmxzDWYkxi0
-ieGPaLVcaAmjVUu1eXaME8LCAMy5MIhMiYQVzkwWg0yxdedrnnKDSpq0pgQLRsLAN48w8GQ2
-aF1qNsg52Atj37ghMsRfcmCqXAljatBlSoTgeqUbUZkzukgTmDVqTQWzsyzeAindRQaxqiVv
-bU/dqtcFj5biy5ZkgijYNsk0d0Ib4sB+XGEOzPfbZ9k0e3gg8tr2NDaYji6uehq49OHT7fH7
-4fi82T9sPfbndg/WgIBdoGgPwGoZnrmduLaIBRDYz5cRij+1cLiMit65tiYtuUMvkShwMQ3Z
-kyGZtmQ8zOyOgAyTqe14Q3/YdTFjlXfTpgbQQDBwLyTsPZyOJLIQAWMQ8LCwfGVTUrSxm+fW
-0tfNbfdQKwatM+ZJYgk9wJfWdj5Xc8GIIeS6oyYRR7ywMzRK13Q+s40gGcU1zIED1dIljvY0
-zGY81u4ehBbvfvzrX7UeB+05J7IIZmBOilE4FuByxN2pRYlfDp4yygNuWE0AZSF4ISgQqDbw
-LPSmJguQXnrQ0LZpAdLckJIQmIDDRRcrInzZIQhOEU3mTKCE+RGBANH0WNGPAQwWAJ8cUYKg
-S6CYNWyKqnxlsTJUmQ1k2NFAS7XWhr2TNqPJ8uO3zQmi7D+KQ/dyPEC8XbhbjZ8JaCV9iygK
-BcYCtKlpnbSikXjimnCvXHuTu6IJbSFFb4XY9EeJk8UI7+5k2bUGmpTLIM3uqJTdwSOrYzmH
-6qsw+WwIjMIMito+GGxQBDyC0Pn5AhWxc5rgH8PRh6VIFlk3lgUG0TpKPjUP87SdOQinPglM
-KFhrKjnIAQQ6UrUh6EhN5czaCNFNy0DUfpdiM8HVnXWiFdY9nAe7oUAMGvmguRhmVMCsONFW
-U5tbXQyBmj2QXQZxfZOU9OU83RzPO0wFeeqfl+3JlG1gQnHtQIGFRofNKoPST2SDargAAbc1
-IzMRBGyU1+Fd4smHn9vH16eW6eJJ4THHSWJud9nqg+LFlepDaHDbNnVFlFx1GAikHT2RgYFe
-5bg37x6+/7dWyDBDN6cGcHE3bTs3FWAa3FrG5LGWDsyK6YMNwR4EuOZh0HC0SiV8CGbtuwIJ
-Zq7OJrDsXQjR8fCwPZ0OR+8MQqRj1O/bzfn12BWoLxcXF1apBtDo4iKkLuDY3e+y268GfV1f
-XBj2k4zNb6D+mWpnLiIwVjPtg1rHmlxNrdmLIv0Jf2ZMxy351aKlIHrw0WRhd4t6mJOrhc1P
-KvEkGmO2Rlel7ShFNoGF/dIOQteGBuDzgqeds5gU6rNhBxRulCrtSFgdrQK8TEIwo0TcWfra
-Mx73+ai9nw1g/PnCJAMtl46tL6jYydwAmTqeKeZnBDjQkGPMiAFG3nI5CicJXPa2+IMXMk2S
-NhWZhmB5UqXPArgq8uaq5RrTtt6L+EyQdtOSg3+ggHTWUtcLafNqK3WDLhIQQ53si5uri+tJ
-azPrvHSZngsIDzPR2tU2xDJUzEABQXCgHbBF1Iq9QgaGgICKsm5JIBKINFbEnt2gjhTpfZok
-dgfjfprZbeW9dIYsEVmXdwv6BEXTm68Xhn5Fv12fLzw1C4gS7AeRCZx8Lw3W+H1Zmk9ZTOcR
-EQsLFzqPqbek0pHT15N3eEFLe/Leg/n7zUtpRDn5zWNcwv9nkv7mwacPLfdSWjWbNp5GqMgZ
-bjrIkX0ylIOZ5nZC+W3GxaITevLCj3BSk8oR1yGQJ0snLBXcDSOS23d7nigMfhCr779A28Nh
-fz4ensB/8B6Puz8LN6JYxs3jFoNkwNoaaJjXfXk5HM8Vnr897X7sV5ujRoVAGj7INgq2s/3j
-y2G3P7eMGrDOYl8nJKzcnf7anR9+2plsr+oK/uNgkyB+c2xWOCUtj4ekZgjHkygCodU4BmUK
-kVefM/IRbYh3etk+7L7vHgymKgWX6TS3EY9BtCW5zEPq5yFrxRSpTyuwjfMGmkMYaKhAhEhV
-2h3NF/t7+/B63nx72urbTU/nOc4GW1MeB5HCOLSV5mpnufBb7mcQRVd6E03lHHyfVg6jpCWp
-4GnLgpaAiFvPH1JH4oaBYKr1BRymGcY81azi7fmvw/EPCB4rHWDentIFU22HAVtyn5OZZfQs
-5q04Fr/3cJsAK7TtyDoQhinDbxBDzZImP6KbdI7zuaGlG2U2hVgr5NQe52icwtjZbURBBBQr
-l4pTF3M5T9GKNgzhoi7YnclO2WQbrXZbzX3haZG6pUS2lhvaqwAnFwnE68JGKs3TOO10g5bc
-n1Ort1VA0W2w9RJE2I2kFp6UDwFnKNssytZW240YucrimIWdcSM9OcfFQwxSnSy44/KiILtU
-du2N0CDJhmANU/YBcKdyMnfDmLQvCS9YQ2FxCECzGGZjIafoBIIjEMv2zX8XY5jAlLWPrwa7
-DyRNYanj2VBQXePQbGoq+EqZVXAIOl+/7R7etalH/udOSqaWgeWkLRPLSSnxOh6yLzAiFXcz
-eGBzn9iNNM56MrSFk+4etmD1eW8PHPF04maLh8RJUO9PuXPPbZC99U2JmLwhEpM3ZMKE61Uv
-b7x0WOCeZOfUmSDJVW8/oS2fCJtUaXDsY+SI0Y+6S830CQLrhelsAmrNFBPeaKkdB1gjujVM
-wRubTfJwVQzzBhp41vZsAKwklsZgntzhfOP5S1WKxTXgcwStuLTqnc7v9LUVWKIo7YQBDWo3
-B1831ae3svDaZQQzD07LGVy8bpVVr3/jIJislUD4FPJ44b6j76P2ijUGcMPErppivCyMYx0Z
-uRDw4hzo+Mzu5APGgJA0rKwHRQn21j5vAC37dQk8/ffA0pu8yUR7ViBlV072U5Gs7wZRfAj+
-huC4Rk77XoCHugv2H0YHmIRFACzwWAeXEFCAhz5OuWJ/Tv7/a2bXxK01c6KUa+aEN5N2opTr
-5rIHkzdXZZoW0udaMp9Sh5MBEkmVHSZ8x80GWDQrgKjI2h6OHSNMBfdnNve2uGpEZ0OSjiLB
-JiuxZUji/OvFeHRrBfuMxo6zF4bUXgJHFAnt+mI9/mwnRVJH/mCeuIafhMkqJQ47yRjDOX12
-nCmmivIb+5SpnZcpbBTRdx9WcJKyeFnE6/aFLs6NUxFqTez0EqPU4SjjXGJpH3Iu7aKt5685
-daptwAgv8wgiI1DOQ1gxtWaSECTWmMq8y9vVItPbsBMFe+ftqV22pg32Qs1YbPoecxIJ4nN7
-aSR1iMLULj0ENMxauE5kkC+oLem64oKFHStNgxmK2qinU2vAfrt9PHnng/dt6233mMp4xDSG
-Bw6NRmjmXbVgPKwvzovsJd6sGznLFYdWu+4JFtxxN4tLeu3IwxJud/UpS+e5q3YzDhyXMxIc
-KFfRI9qNwA6zuYHViZQq10lmo/ZCJMBeUR3U1nNsiSfJmgi+08UMJYbZEXPfybJtCMo84J+7
-h63nt7OIurp691A2e0k3g5MVNTJzFqams9hqzlOi5jfvPp2+7faffh7OL0+vP941cd1SRalZ
-3VC1QLSQxe3LHUVin4SdK5lmO0QxasBFtCKCFbWUvYkGu+PzX5jufDpsHrfHZi7BSlcbmPPQ
-N0w1wVbJd42tc0XlVG3pcCyv0/ffRu7MMDp4ae0LvnTY5hKBLYXDshcIWLBekgF/IoIdtltm
-RCPyLqYVsi4ftrBd1wenGY7OKaszepjOf9TS0srjov+sq2/sWl3ZTVAS2NYM73MifM9QForh
-xaAow1IjV6ibLP3LigNbqUKchSF+seU2fZFEtj54yyClD3Pg6eV4bVdIFbJP6PXEdjVXIWR4
-l/bcbQ1bd/1mq77y0uU6N1+7cCruUpXovs8WVsTUXW+hF+MNuFx/HYQLYvfn9EqiWaP+0j4C
-OE45qqGcKbtBr4d4g0Uh2/tRWNtlxIxLjP68EW7V2gDI29pe94/wQZFF5uE4R3d4vexw6Uis
-EvsSyRleF1G716Z4EGl1YYWymIaJzEDBgeLRJ9PuEkHUEdo9COnaOPNGp/cIptnecffcFfcX
-DJRJZNwvNRxrSH59Sdf2EIZOv4wuejMuXiNs/96cPL4/nY+vz7re8/QTtPejdz5u9iccyXva
-7bfeI2zR7gU/VraLYHy38YJ0RrzvldJ/PPy1R8XvPR+w7MZ7f9z+93V33MIQY/qh6sr35+2T
-F3Hq/Y933D7pF2ede7MGBfVhYR8rmKTgZvSbl0lqaW0IzQ+nsxNIN8dH2zBO/MNLXZoizzAD
-L9rsNz+2uIbee5rI6EPX2CN/Nblm8+jcLkV4RZQLJdfd20kLRiZtxRxauXPfzMX59XVY+rTd
-nLaADk7J4UHvvY7RP+0et/jv9/PfZ+1c/tw+vXza7b8fvMPeAwLFfZ5ZT+WzfB2AssH8Y2ss
-1EMpt+l8BEqA2pKJAJr5bTozH0m1MpJ1a2qLGoxxqN9X/LoZH8dNEyxKFSIRvcK2Eg8GcOQd
-MVmLlfmgZ5TN2UQEfD9SFM0V8gPL9/Bz9wJYlcB/+vb64/vu77biq01jSBQ+ahieIRa4yiCo
-dxbExRjIvJLu9y1u/BuO9X055RBu5Ynw2yVkVbfSeRk0HJiBnoxHbzPeKTmooITRyVu+AAn5
-6PP6chgn8r9cvUGHRv7kahhFCR6EbBhnnqrLiV0BVyj/AdUhHCn5es85Hx6Hq6+jL/aEiYEy
-Hg0vjEaxXfTVVlx+/XI1+mz12Hw6voDdyZNw2H2oEWO2GnaFlquFI7VWYXAIVmf2o1jjhPT6
-gr2xB0pE42t74VeFsuTk65iu3xAbRb9O6MXF2zJeHUwsCi7dnP6Z1BXDoEFbheSEo4pTwnaZ
-jR2MojHsXozV+CGa5G11ueeg0dVRmsuSvaLq8j0Y/z9+886bl+1vHvU/grPxoa9MpKFn6VwU
-ba2IompNpPX5b03IqnSkAH0d+4ktCKyHm9mGk448mp48fMa415FN0yhhMpu5yrk0gqSYzcOw
-r+de6cVUlSt16my3THmxvb1dC+jgvudc/7/o+9xlh8h+5z5KyKfwZwBHpMM8QOCtH7C3zLKG
-KFe2W0OxcqF4vTawLevZ9LLAH0a6egtpGq/HAzhTNh4AlrJ3ucpBGaz1eXSPNE8dmXENBRrX
-Lo1SIQzuB+lWW3XAhA6zRzj9MsgAIly/gXDtsqWFrlkOziBaZtHATvmpyvnYEVLp8fFmFARn
-AEPQyJGq1nAG/I0dGRQ2I1rfgqkCB2cYJ4QPjjKlGmd4KcBXeAthPHw8IyJUejuwnlkg53RQ
-XhVPHM+F9Qixw8crbc36cnQ9GqDPHc+ZC2CMzzcG4WTkqM8uuFPM5r0UsLvo8yX9Cid23LGQ
-DQR9T6x0ZlKCci9ilwsXblUdQ2bSePbdwcIMu8aYXLkwIl312J7ILdgXTvPR+OvAbG9D8pai
-8+nl9ee/B84GcnH9xZ4S0RixTC/tfqUGr/wvo2vnmutEac8WpdEbWimNvnZcqM6sBmx3Iv1C
-jogrLWqPMCNLRGi2RcVreoj9GFWtZnyrQkSrCad30WsZteriyzb7/pbQq892txXARZUMcaTy
-AEFLp+N1WK+mvjNxP9KJfMXj/qL4kbmhgGl3Jk2MXnl3A5pmAU86BIv0un4UAecnBgdf4K+9
-OMvnfXzTh48vU2t5G4B1zrZJAEOLjEkq54nqDK3mPEbfd8nxKeLAgO5XCQDUD5cGMZiwySAu
-Jse8Q4crLEXAGw/9ew8ukt0j1UDumUhak69lp7uTVTuoFtcwDY4jU6k3sPObEa2t0jdGLmgQ
-kgVz9l0y54tH3FP39Xi5iHpjHHc60RtPKhURM6Z6CdMSGmSy9dqm+I7OvLnGVSux+c8lUN/J
-ztgN6P4OBH+Lok/MEokUaSXGmDe6vL7y3ge743YF/z7YEsUBFwxvnq2TroB5nEjbr4AUtVnl
-TVWlezhvF1J3fhIiiX18Lt8IJCb0zYmx24yE/N5xO6dLfJ21erlijjx7RChWo9hjkNQJWq5d
-ECAomZMRjCGT0CYqKmvVHcDXfKmXSf/QkeNue+m6tInDyJE7Ar+3U91SbDvexzeJ/M4TFn93
-Oh93314x+y6LpyTk+PBzd94+4APL/rsN4Avfo3ceJBRReX5J27d7y0QoR8JM3aXzpD2TPj3i
-kxQ0q0mybMKLahFwxwuzhgDYktbztP9j7EqaG8eV9H1+haNP/Q792pIlWZ6Jd4BIUILFzQQo
-UXVRuKtcXY7xUuElYurfTyZASQCZSfWhFuFLgCAAJjKBXKQZXZEnXn6lFNQo5OiB+6ZOVVRo
-6kMOqhrpswXg3yBA+9PvSvZFpmDtqiUGmKFnE03JxN7oc2+YiS/+EwMoOEiCn/PRaMReB5a4
-fELZj2gTvtUchC36gVVEl+OaKYIDDmFSztwrpSVBBOhvBRHG9CalF5/ftxr2X2pz9mgWVSHi
-ztJeTGghGo8aSCDqaFKH7wDXwFVwtQwtMIeOeUOdmYU9jUQcRpjJubdDyk6gJOBx1CWS94RI
-bFSdkdMM8k+qQ+WmLdobek6PMH1MfYTpoT7BG8rCwe8ZqE1BvyQ9GX4VYF0qD45S4w577VeK
-ZecDMHXqB8CK5Xh0OWm8vdAV7GPtxes4VPK2jBQdbLbUJVeLdZRKV5p37sVObyInDW07uVU5
-btj7+YRWVOLsZnRJL3B45HQ8O8Nb466xVJyOaetOXecx2sAPtydBPpWBw9pCjs/Ok/wSrVRJ
-LuJVMPKrknYl9yvUYisV2Zaaj6dNQ0Mge3pmjBIec1oV+OsykJCwgLmBXNIGdVC+YVxuGq4K
-AMxDJpfn5qERwYm9HjMHO5uGub+5zc48IhPVRoZRzrJNxllw6jXzHL3endnjMniKyItgVWVp
-M9lzJ4JpM+VNSQDV20E42Z7pj4qq8IR9refz6Qjq0mrbWn+Zzyc9mwG65ULLjF6+2a4KrmXx
-9+iSGdZEijQ/8/HnwrQPO+3ErojepfX8aj4+8/nBf6siLzJJvkJOv9n86iaIA5HL8fr8aOUb
-FatgR7BBkOKOQNWvWKyDdwZ6MraAtVN2zrkyX7qgLidOBIIeMC1yoHYSDSATdUaadoeMfqN3
-qbjirgPu0q7E4kHMIoCHNTLfs/XI8xq/h6AIgpwVCFp3UABsnnHXqrKzzL6Kg3euZpeTM2uq
-kih9B9vUHDRr5kILIVPQXKiaj2Y35x6W440EuU4rNPKvSEiLDHbI4K5TI//uivdETSnv6CaL
-FHQq+BMsPM0o31C+T3C6zqw6rVIbpds7tr0ZX15RN+ZBrfA+VOkb7iJA6dHNmQnVmQ7WgCxV
-xF4sAO3NaMTccCE4OceTdBGpIpcNrSRrY9luaHWdwQL/B1NX5yFPKMtdJgW9C+DykIzxKHou
-5gzXVfWZTuzyotS7MOTjNto36bLzlfbrGrmqTcAMXcmZWmENtY9K2FIFc3RiOgc4/fY2IReH
-n/tqpRiTd0RB7oApNcyJ2KHZrfqSh365rmS/nXKL7UjAhSFK4pieJpBfSaM3FIhaa/KTQGkL
-MRCQJ1O6MmUWgjn1tgSw3iM84SNDYa52GKzuubXfVeoCSg62LUQUEpHFWIfW1NtzBZ4Ao9Oy
-oJlfXvHwIsrw1nsIn18P4a3+zxJECnRpvu+tLsniMejUQ83HJQpC40HcRPPRaLiFyXwYn12z
-eKIayU+eisq01jyMus6+2YodS5LivbwZXY5GEU/TGBZrdYOzOIivPI0VswfhAtXGf0Bh+Jk4
-itwsRW499gXfk7vB6q3wMoBbeYPHQeYYfE3cA3nQgK7a0IISHmgCt1MR//AN3tdoyeINht5t
-9ktgNuMK/6bYUukFdoEfGJc+jPaChbHEQG3S54hYPODCi3BWMobAFsSrMsZdDPBChj2wxmJh
-kfUaMia4HdGpouJa6HTlVa71wvmrWY+jYGtGKBKGFuIQXIstdySMcCmXQjOxvxCvTDofTend
-64QzR0aAw259PWd0EMThD+e0i7AqV7TYtO2InQdvy/02pg7xkfx07ZA58Z/CTHArgBejfDQz
-QKecYhk2mvmnQT7knT0T6OFgk4A6J0xdqAK5PJAlC22YyHplpXQWOj8TjZ6OZyhQgubMjmkl
-2lNBCjvqYhToW7/6gB9w1y83DP2XXeyrYD5kBROZ50cLXmmdbi+2j+g3+3s/9ta/0DkXXSo+
-fhyoCGFoy90/Zg1ew3DqNUh2WtFCvb0oJVxPT/uwjuln5pugxdbL5efnB2uorPKy7kSggYJ9
-kmD8x5QLx+yI0IGb8wF3FNoGKF5nzHp0RJkwlWq6RLbv9fvD2xOGiX3EgPXf7zseZW39AsNC
-D/bjttgNE8jNObzDGbyh7TkDBzXXcrcoRBVc4B3KgF2sGZe9I0m6PkuSy61hrpKPNBiGAI8u
-6fk8kmlTbMWWsQE5UdX52U413Vfrz1lwJIkF+1LT24tDtawUoyI7AtCiU2mKmrElcUSgI0w5
-wzlHsdGgYwja+rftyS4XpZV/Or5a/XWHwbDoexFHYuOQMFFsHAG+jwaJljm0bge0E4LQO1dT
-E9pZcHX/9s26+ak/i4uuQbsN6fgc/MS/rVuxL9NYAPbFzswFMOiWAPerVYJ2I3Foe2/OLYn2
-yXqccfZrbTNVxLZRWxISWopMko6b0Y/7t/uvGAzn5OJ6EIuNlzFu421ckTMpcQHDUqsVaJ/y
-QHAqW237ZUB3KsbQk3GQvALjO96AYmh2XtvOtJktbF2lx9NZOGygs+TOlSLmzNTz4kvBHffv
-l5re2doMerRkDRzYRU4+KbNys85kf0vTD2+P909EKFLXdSmqdBf5thQtMHdRo/uFXi4l6+vm
-5qc7JJYyQZmL6r5P1Js7Hwyc9HygvXojkLza16Iy2stA5cMVpvDKZEszodsG0SeWMd1+JnKM
-x1IZTeN6JSrZRnInR8VZ17LO3UFnOb8KvzmeMRybMeP5nDnb9d+saERv/eSvL38gCiV2IVl7
-KsLCrm0IhzVVTMA6G7SWNRlrWwgN6bxCb6V0n3rLfEMtrKMoZ9TzlqJloLdGLPEN/gHpWbKK
-uUFwcMXkPmzhRKf7tDz3DJs8g9FSgcG2eazonbDM1N5lw6LlZmCf/XRAp53y6mZGiwUoV+C5
-HjHBsIe1urpnRykaVw4ifshbTQR/Sjpu+6YbsqNRabrrDIUTO8cRtVqxmBxYxnZElwz/XtFB
-wEsdnrHoAX05NyVS9LqOZV+fHl1ogv4rYKNRapP4rG2yMOaI5kiVxpzc4xEty3CTP/akzZD7
-2g/0XZoS+vn69X/7GhNGjBxN5/M2699zoEu6k3Sb2YKNIOkplfffvtmkKsCD7NPe/x2Mhsoj
-U9ECL74TF4JpS9tolcUWA1Ju6G/LoaAgMMKowzFvQEprB6stZ8+KRoMZI7hvBYYbKygnA41n
-VqdsPad1S4ZHALFekOSLTj4Bd8fx+fTx+P3z5atNacPfdGRJvI/TnOZrKxPZaPQRreSnZbRX
-jCqCGOfJis+8FfmXfZQVnFEM0qxlVjIe2whnZnZ1c83CG1ViwAROvEOSKo6uxsz9KeI6mzLO
-PmLRTC/7MUrC2jsdMQsGYYM+TldX02ZvdCRi+iO3L9LMp7QJXCWXdcp6E1XRQP/wlOuQJKO3
-eJZv9z9/PH4lOZhYUme8m6WAzXPhyfKuwG4VS0wKMvJ2ibjqi7wiKi9+F5/fHl8votdjHp1/
-0Wm6RRZfpI9/vd2//bp4e/38eHx5ONqJJ2/3zw8Xf31+/w4qTNxVYZIgI80xOBgMB6XLJ4tD
-JirPf2IBqoFx0XQ9MviTwH5WBT5YLRAV5Q6eInqAjRGwSMPoxdgSzBtm43SJw8kZBCobQNmF
-GqNZHtAYldoHGMoRIxiqHwdtmeAS2F1VVYzUAmiZ0RwEK2JqpzGX7wgIgMGk8JY0V7aDpA1l
-OAOQDu/boWT4GAirjOIRa0mEc2tNpzgUBCEWU9eMJSpOlTBVwT6zErFkOAWOj9mNxnToLYey
-r0qzbUTEhgtOgahiRy+XBSxZRTMrwNe7iubngF3FCTsCm6KIi4LmtQib+WzMvo2pVMw5buEI
-VbQ0bZct22gkqowztMAxynRU8+9Tx7Q0gMtkke2XjZlM+S8CEyLVjDyBi+lgSMgSLOZsNBqA
-7UWNXklGELIrgA1lad/9esQEdBHROrWR+jA3Cre9AEt/f32yQbp+Pt3/ahlOXxB18dSi7lFD
-UAz/pnWW4/5ySRNUxdb3cU4qkYFUn2AEKEI3JeCD7g+KWSYq5msjqlWF6UW0P0h4RvXfKy2W
-gakV/kYX3roBTp/Tn5VHAzvuiPbJ9YiitDbjMXVBZonafGotlafQF3Xun6x0fri8x2FRGWVh
-gZZ3B2sfX9YFBGRaNI6nxsk1dGw/qBbvcpEptPnJCzrsR35cgxj6Zy/8XM626WMoGa/wEGYL
-wTB/ZIiyWrrtG+NXbJtw0YV7o1Oji0vvLe2w4YJmWhPRzTWspcCfw/agf79ui7tNBahICy7E
-AnYcpCXFGHkhnplS0HdM7kXcWdNoNmXu4G0bZT3hHOwPb9tqamJDHkjZJdOZaBGP5vOb7ljA
-16m4E6YjbKUs5qAKier5nPGUP8DjYfhqAN4y502ALcz8mjkdBDQSl6NLmhtYOFNclD77QTY7
-LqaIra0n4zk/RwDPuLArCJsm4R8diyoVAyO2VPkQnIrdYHXXPBNU4tA8D7vmeRz4NHP2iyAj
-ViKGYRWvmJhNOYaNiNWS8R45wpx7yZEgvj3bAj9thyZ4Cpnr0dU1P/YO59dNks0HvvxVzCQ+
-OoD8Nwpbzuh6YNas/cm84Xt+IOAfsS6q5WjMSEV25RQpP/tpM5vMJozO4pZOw54qA5xnYyYc
-h+OGzYoJMgQoZnzD8IssnkkuyopDb/gnW5QxqHJbwoxfTjaq3QAfafEz/NmK0oXmP41NMx7z
-PdxlCZVscRX/YY8qgrsUuw6FWyzMxoR4iXZCKQgeNry9F3wH8FovupsUWo5hEk3+DazpmRgN
-fDvOsE4J5u6qpZh1ndR7FCuVcGE+7JYUxayef2iiLJjoOid8NUxhirx3cd0j2oAgy+QKsAuP
-9GqywoVLQutmWcV9pQQKA2M0FWOCDJDndiDVVzJfMgaKQMiZA9Qr8vAJm25jlx56pDFJ5f2T
-7RlxTIM1xATDAXBdwExKNW9A4iiqmh45i5acYnhEFXM3hXhdcT4gdiBlula03OFgU5T7hPYV
-RYJoJStGQXOwgl88DhJ/rNaSidhmW7Dnpjy8KyvOogxxWAHLIgcVix9BmemhN5SpjJjbPQfT
-bMJiX7jwNW6hZQvFHJVbPKn4x66KtGMyEMDw3OElt97xA1JH1heQxbciNYzOYvu9q/i0ckiA
-/hD807lLccRuxaLi14LZqnzFnN26Qckxkhtn14YkaWQ1HR6XebHhJxzHbZAX2JM8a+81QLJL
-UsGl2QGCSrpFzbdgvQiKhMmArqzQDOxzYG1aa/XhFZQzGTkdVilatEYU477wS7cUOV7upcXA
-p1HK3CYnGSAwIt3lPFMtgS+lTOxDi6fQjarIO2liO8yLzY7j5gkaGFjoVRFFgn8FLdTQMLUu
-njxeShl3/Q1CCjY6UovKFA8QuOwGytpsom8P/4acMQByCTQ+FHqAtdv4lbfFbvARRg18jsCl
-tGRSb1l8VdXauLMhnhuiELEvmZN9xw+HNohGwVplUQzHNviCaHzORgS3wwRczUaaoC/urQyQ
-EmYTaGVKiltO7OyJXCUpMbXELtmLV1asMGW4MiaV7ZVaiLeHhGEhencXHUKbimYl9H7lh+l3
-UrtH1gkSb2vmOfCICNPUbQ8pdHqjgIlFHp6e7l8eXj/f7Zj0kmRjW4f4nnjvp8KY1RZmz0UD
-ssIs99sVfNapYuLlHagWqT3W14adV6TkjCMQ29oBXYiEnnjMdBGd0sLHfcnW1p9dN5eXey5I
-LJI0ONFDBPIcQdHU49HlqhwkUrocjWbNIE0CIwctdWm6q7K7kI6l1CI6YUSihYCyPveeOkUn
-zCGKai5msyloRENE2BmbRirrbC7HyW2dB6Kn+/d3SmexHweZdM5+SZX1APLtsux6ivlXN1k/
-rnleGPnfF/a9TVHh1ee3h58PL9/eMUmIjVP71+fHxSk0/MXz/a+DPcH907vNYIfZ7B6+/c8F
-mjb5La0enn7azCPPmPkWM4+EX2tL132FtnjAxMynan2LztLFwohE8B/pgS6BDY/bJ3w6pVGl
-ZybnQAT/Fyb08DtAOo6ryxsem05p7LbOekFQfVykoo7p3donwySarNzoE65FlZ1vrtXvME4v
-kyvTpwbVfV8vZuMBj8Na0Fuher7/G/20ehb4ltHG0dyPwWTLUMpG57NwvFTJmwDZavYbjhmr
-V7uZbBnjrxbkvSWRSV6Huc+O79eJ7xgOX88J5lgt3B+Z+jJTM75XgI7pA0vLiOLaMIcfrmsb
-LfmPtVLFlP1YUrksDKpz3SXNCf52y2sXXLS7jmb8PEQ7a4HIT0XMa3l2rzKx2ksumqgdGDzY
-iWFKufC59k34F0HHkAikHtCYOXM129FiKyoYRp6CTUPmdnctXaYyDANg6oGVrzSaKSTMgRwQ
-7KA2vxLkFztuTABFOxg2wbjYyarX5+N6Ln/8en/8ev90kd7/Qn+b/oLOi9IJNpFU9NUqoksR
-LxljDkxuz3/ddVoq1hi93tI8LssYW0WZ8b5gKPbCCqKfJKII49ovVMqFOFbwd64WIqeEqcpE
-6IJ1kqOwwOa8D4tWkSn0ji48mCb89vbx9fI3nwBAA4JXWKst7NQ6dhdJOBMAxPLWEchOdYUe
-7777p0cI0k/iko+Ez7flaKFAFHdyXfrl+1rJfdfWIux1taHXKxrfY087UXnR9p4pRhtxplb5
-dP8BItNzB+v1JNaj8Zxm1x7JdERfffgkU5p7eiSz+XSfgOLEWH97lNcT+rM/kYwnl/R144FE
-m/Xo2gjaqu9AlE3m5szbI8kVYxzskUxvhkl0NhufeanF3WTOhNM8kFTlNGJuoQ4km6vLcV8k
-eH35IyrrzmLo1DzdhPQaTQz873LUbxdPFPTDCyY9PLPQvLMLtDUi3yHOBKe4A7SoE09bP1ay
-cTISxdyZiLoZ3FS5yJSqOgbQIDgMwhgQSeZ1GDzKFnOGH4daGeFLkj1+fXt9f/3+cbH69fPh
-7Y/Nxd+fD6C0Uy5lRrDpp1Zb4As5epX0nhBZXxT9+vnG+CkIlS4KKmqjKrKs9o5w/svPVG3B
-i/L+74cP676iQy+Y6uH59eMBU2OSi0NmIFMjl+11t/r5/P43WafM9GEsyTGwpnTdqPaOZ8Jz
-fte/3j8eni+Kl4vox+PPf128443f92PO7SMHFc9Pr39DsX7tMdfF2+v9t6+vzxT2+O+socrv
-Pu+foEq3jtfraG/69+DN49Pjy/9xldoQOJuoJkeixHQMG9BE6Wtp2WCkek7SKJh7PsUMe25o
-YQZT/HICULklgk1UdzZTZf+kEjTIPWbGQY+HvPrPyOsThspkn2I9ktAa1FRFyjn2JcShBkYe
-0p9/vdsV44/7IVv3QBCx/brIBYqAfKgudOsqG7Efz/MMPeYYLzSfCtujqVDxiZggGVmoS7t3
-A2kI5IP7F+AGz68vjx+vbxSzqQj9Wbx8e3t9/Bb4rORxVTBpfWJBhoL1BbTVFrMSfEWFnGR4
-tOLlYokx1gA2DTHJHlgbrFRllK9k8ghsza0B381FI18UXuBo+JzG+9CetS3aN5g3jxgEwK/6
-VbAI/dBUA3I7LUgeqLSM6m7WkhPJpN/25B+1PeHaDolkbpPrcJe/loYT0m8X8djvG/5miaE3
-mUtcFEgnUmlZAcYkDrztQQe2aQH/mABL7urC0EumOTtmSMEYzCBU5OjhtNdRxRzvIxEo5vQ4
-IsgfYi4TPeZGYGEGhidX6UDVZMzXxP6QH7VsUEToLjpX1iZ1KkpqRlB+O+R58r2g8xhPM3Zd
-3O8JvQiPeNeTLO4WKFdgI3kETQsHkCPQWytHcdMUiZ4EJu+urPMpJhgDhhleDNoEAmsHdhzx
-/uuPMIBRonvJphxs07L+GW9iy8B6/Evp4mY2uwx6elukKgxa+gXImF7WcUL1MC70n4kwf+aG
-fi5g7ts7zLGGGkHJpkuCvw83cmiHX+Jh/+TqmsJVEa0wYJT5z2+P76/z+fTmj9Fv/qSeSGuT
-0NphbnpL322Z7w+f314vvlOv1XN0sAXrMGqDLUOnVZN2CvGV8H5PwWr3x9+C0UqlcSWp9b2W
-VR64V4QHGSYrw2VnC87wMkfT27JOOka9lCZdkJwV9vQk3keVxHCKfu4P+w/Hj23eevzE8dBH
-ZkGPi0rkS8nzIhEPYAmPrQYhG8OUY6oDvVnw0ECtqBIZl/z2rhZ6xYCbhm8zUznMMcdhsoG3
-L3nsLm8mg+iMR6uhh5Z4pcPYve70hqtWcyvq/xu7tt7GcR38V4J9OgfYM2h6m8zDPsiXxJ46
-tutL0+Yl6GaCNpjtBUmKnfn3R6QsR5JJpcA5mK34RdaVlEiK1JET7EWliZobG3/fnTt/X5iL
-UJWwOwbJtDoKSPVCUC+6K0h7nDsNiey/hu2ITjQkclqiTwkYNqmEYFXGJ0Ciun/K39tD4bpp
-1G1elZaaSJV4zihhXCbs4k85QhEJfmdzE5+Z45nVmttb4sAga3mykvLEPBBatK8XdBAEG/T1
-im7PETK5OmO/MWG8+B0QrYl0QJ9o7eSatpk6IFrX6IA+03DGtuaAmD1kgz4zBNe0UtcB0Tpb
-C/Tt4hM1fWMM0E5Nnxinb5efaNOECT0IIHleg1W+Yk42ZjVjzm7uosj0DBIj6tBK92h8fuyu
-c03gx0Aj+IWiEad7zy8RjeBnVSP4TaQR/FT1w3C6M2OKW1uAK3csb4p0smISZGoyrRAEMiSX
-kLKYMUVrRBhnDaOQOkLyJm6ZaAQ9qCpEw0XY6EEPVZplJz43E/FJSBUzHjwakYZghGfCEWpM
-3qb0Vd4avlOdatrqJq3JJB4SAZcPHfjpZrN73fwzen5cQ+hgrTB+321fDz/RxvfjZbN/omwf
-6o30wKByPHTjM/msmGXxXZz1svDr8bhe17DJB4hLQ32HGZnBypJUBe8dEMBppmuPJwdw5zk5
-OCp0YQte3uXl6n+H7ctmJC+665977P9ale+oIVDNS/NpQYxAnENoVNSsGPEZDZWdos/buoGn
-LaERWhrjDeAvIRvvmXHYgWTTkvfNIY87p3AWEVYsmAB8bQ7xhqGCoMiYEzF6Vy3ymNIbqk6b
-R8dEfjKu6r4X7vTFYYMJhtN6LpxEybpfDkSNWpFnhq4EvXMXIm+64SkLFT7cHbaufNgOTJK1
-WsTiBs6iK7BJEtdBeDUB5/7KyE1kFPY3eDV9f539GlMo5eZkaH6wBXBjxljoyuy2eXnb/R5F
-m78/np7U5rNnAINe1pyGU1UJQHxwyE+kHJDak1Mcq6kK8C3kd5hCFcF3OVFMHms11xnjntiR
-G7CVtDUXnkah7uiFq4jKOiQ3XUpFDUrEXWx+C9RZ06xYEKvSJFMMLERX8FrkYXHXRX61bx5d
-PYkTNVRpomBSR9nb+ufHu+IjyePrk2N0mzZw6WnLLgQJ4xfVxSdJ2hxygde0jFnckqHojIWA
-yX7lnqJ1oBZ9dSeyNj7mAVVEYPRF2xyLa7nfu1gY1oUMiuXoMutE/UothDiPFNPwzDd89iaO
-SyrCFYzvcf+M/rN/375iHMI/Ry8fh82vjfyPzWH95cuX/w7ZdtVI3tvE91xedjW7hEXbXo6q
-iuG6EE0BwqbOZNs9H+j0yhC9RDKNbAo7kG4QarDlIgHHN36jLhaqSX1l9CTA8OOapisB7iu5
-ipQV8KhFzpcn7mjH2hRv8CDk/7vwKr7h4F4rdNwuPYWofVwOleopF09NYcIqhnBTknsPlbBV
-2NLsWhJApkz5eQHEyclDEDsrQI1vfeYY1QPJC5SoqwZCzp0SXFNSzICpnjl2dkO2iqsKM3Z8
-V6KaBHdqcC8Gkt3k4YPzqtNk39M2V6cBHAojko5NnVWiTGgMqLlh+SIRzwOmXhpZuYp+enSv
-gz2oIjyRhbAbigVq0+yaADJ4YDTFb9gmF6tP5MhIOSJlwtQHUczTA0gWcnx9gO7UqU8xCslY
-2rpw52owmZDG+PtVnQt06CemNADf4ASMCWhHyws7naguhxdUDQYwVz9guHIPl7PrBSoB4xkI
-/RwE8nazWy6BZ1HwwHTGDdJxia0Cua6TORePzlxMn0fKbkieUXoOZnOBsoP1R+1iq0MFUK/r
-NpbdRIyHAzpa47uwmovHgBCWGmgZg7LIw/WCRt6deToe5+WRZOWHSf4ruR1PVwL5+tIvGbFL
-SXwftXMueRj0ucFJ8kXnRNyNBDaMywcC8NJKBwRAepA2XPYZpLct4/iCVOp4ayMqecZNMIeH
-ZzS4F+Jqhdx4lg/YtTE+qqeHJd39aQoxR9JT26p7DqACvXomDA2fnobyaoNuwkUjT3Ns+Ag1
-23Mm/Im8s/C6C7hX5fi0C17zVC3v01ILiNtIHd/7l6ttIC8scGlJm3SJbJK4QGtYXqzy1k5k
-jgTiA2ofSwk1zcSsHko8eYHH1HY6kslm/bHbHn5TShN2DLXPj+RpcY2ec3KXMUdKr3+QJpJG
-GjwgJKKSh7w4wgUK6xPleygcC/gAxokaWBuAgXeSiimQFwYlc4/9FKGpIbCpf/3R24rQx6TQ
-Yxvufr8f3kZreI/4ths9b/553+yOzgAKLPszswIiWsXnw/JYREdtulE4hErBGUKyu2qA7ynD
-HwEPIQuH0CqfDWqWZSSw1xkOms625KYsie7D4rVcwvQ3mGwfHTmiGWNHjcOIUnZ11LnIxYwY
-xa6cag0ssZMVrqK0xjMeXiWJWmbT8fmEjsjZIZAruO2CwuHIgaX7to3bmPgQ/kNzRN3k0xDR
-NomUAHxjoZtamy0+Ds+b18N2/XjY/BjFr2vYKxAi/9/t4Xkk9vu39RZJ0ePh0WRKusUhk6e6
-Gzk/OUyE/N/5WVlkD+OLM9oQ1O+tWVpzgZ8dDC23TBAXIE4Pc1G19TUTv9rEgLbZB6rjW/uh
-mrvgE5Hm6Z2ejgDd/l/efpgPn/RgBaFpW9KlU1p9qMmMW1BP5nxcuuZ5K88q+qDUkUvZYh/9
-3v9xKfYWFZEjMHncP/dDNOgQnchc809JJcbw/kRD75xKlcJy+7TZH4azVIUX5yG5t0Pbpjwg
-N+OzKJ0S7ZuxB0o90p/YP/OIsl32xCviu/L0n4g4g399NVfz6MS+BATjwnBEnNiSEnHBRDLV
-ey0RlPH7SJVfIHopCVdMpMojgjYNazoTNl3z21k1/ub9wKJ0WqBW9vb92Xr71TMwSkjJ0hUT
-9Ukj8jZgQtlrRBV6FkkgL0bTVB5LhscYRdDORwSXEvM4y5h4Qj2mbrwrGADXfPOiuCa+PMV/
-vXwmEUvhlai1yGouiq4jyfyygAl31NOrkovb36802p1Ck0vONNCLfu8UNIti6ljBe1PvbrPf
-q5Qj7rAP0nFr8bCkvQ068oR5Ydn/2ttVSU68XGlZ28ckpY9+fP3x9jLKP17+3uzUqzidSGW4
-W+p0FZZVTimJdN+roFMQuVsCKShuhjtV0QTpbWBABnV+TyGuZgwPo8oHYrxRdwCqrVPiogfW
-3aH/U+CKsYe6OLgE+YDJYri+NrsDvOqTJ809xo7Zb59eHw8fu86xwHC0INLcaL1A2lQxPAE1
-fLj10y95Mc5DeWmdVsVcvx1wIJCEuW1S0yOxfzgWpu7zoRCyCYVyQsxZCsfXNoKS6OEqbdoV
-pfjFE4K9XmQBqX2zAVkaxsHDhPiponAbCSGiWggmqqNCBIx/TegIC5PwlWhslgbd4cgeD+bR
-N9rP/N1fyirBmSRT/utm6ZEr6a8vgVXBrRUiiBhetMtLsvx+ubJyCKi/V/eT60EZvuYrh9hU
-XF8OCkU1p8qapJ0HAwKk0x7WG4TfzanuSpkxOvZtNVumxgo2CIEknJOUbDkXJOF+yeALptwY
-CVC7ye0Uz90izExhbTMoj8wm1LNMaZ4Mv+EYzONKsZ9hwGGHBgRZK6qdzLwpt4aqL8/gBcVw
-62sduP08ooqYE3EUsZYqzJ5OTNC0yBtDPXhU58py8vEV4Ce/JobxTJWYzKeGN6aF0b9a6cUt
-twOlkqf21/8B+ps3MVzoAAA=
-
---RnlQjJ0d97Da+TV1--
+> |______________|_______________|_______________|
+> 
+> This patch is only for SME kdump, it is not support SEV kdump.
+> 
+> Test tools:
+> makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
+> commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
+> Author: Lianbo Jiang <lijiang@redhat.com>
+> Date:   Mon May 14 17:02:40 2018 +0800
+> Note: This patch can only dump vmcore in the case of SME enabled.
+> 
+> crash-7.2.1: https://github.com/crash-utility/crash.git
+> commit 1e1bd9c4c1be (Fix for the "bpf" command display on Linux 4.17-rc1)
+> Author: Dave Anderson <anderson@redhat.com>
+> Date:   Fri May 11 15:54:32 2018 -0400
+> 
+> Test environment:
+> HP ProLiant DL385Gen10 AMD EPYC 7251
+> 8-Core Processor
+> 32768 MB memory
+> 600 GB disk space
+> 
+> Linux 4.17-rc7:
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> commit b04e217704b7 ("Linux 4.17-rc7")
+> Author: Linus Torvalds <torvalds@linux-foundation.org>
+> Date:   Sun May 27 13:01:47 2018 -0700
+> 
+> Reference:
+> AMD64 Architecture Programmer's Manual
+> https://support.amd.com/TechDocs/24593.pdf
+> 
+> Some changes:
+> 1. remove the sme_active() check in __ioremap_caller().
+> 2. remove the '#ifdef' stuff throughout this patch.
+> 3. put some logic into the early_memremap_pgprot_adjust() and clean the
+> previous unnecessary changes, for example: arch/x86/include/asm/dmi.h,
+> arch/x86/kernel/acpi/boot.c, drivers/acpi/tables.c.
+> 4. add a new file and modify Makefile.
+> 5. clean compile warning in copy_device_table() and some compile error.
+> 6. split the original patch into four patches, it will be better for
+> review.
+> 
+> Some known issues:
+> 1. about SME
+> Upstream kernel doesn't work when we use kexec in the follow command. The
+> system will hang.
+> (This issue doesn't matter with the kdump patch.)
+> 
+> Reproduce steps:
+>  # kexec -l /boot/vmlinuz-4.17.0-rc7+ --initrd=/boot/initramfs-4.17.0-rc7+.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro mem_encrypt=on rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug nokaslr"
+>  # kexec -e (or reboot)
+> 
+> The system will hang:
+> [ 1248.932239] kexec_core: Starting new kernel
+> early console in extract_kernel
+> input_data: 0x000000087e91c3b4
+> input_len: 0x000000000067fcbd
+> output: 0x000000087d400000
+> output_len: 0x0000000001b6fa90
+> kernel_total_size: 0x0000000001a9d000
+> trampoline_32bit: 0x0000000000099000
+> 
+> Decompressing Linux...
+> Parsing ELF...        [-here the system will hang]
+> 
+> 2. about SEV
+> Upstream kernel(Host OS) doesn't work in host side, some drivers about
+> SEV always go wrong in host side. We can't boot SEV Guest OS to test
+> kdump patch. Maybe it is more reasonable to improve SEV in another
+> patch. When some drivers can work in host side and it can also boot
+> Virtual Machine(SEV Guest OS), it will be suitable to fix SEV for kdump.
+> 
+> [  369.426131] INFO: task systemd-udevd:865 blocked for more than 120 seconds.
+> [  369.433177]       Not tainted 4.17.0-rc5+ #60
+> [  369.437585] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  369.445783] systemd-udevd   D    0   865    813 0x80000004
+> [  369.451323] Call Trace:
+> [  369.453815]  ? __schedule+0x290/0x870
+> [  369.457523]  schedule+0x32/0x80
+> [  369.460714]  __sev_do_cmd_locked+0x1f6/0x2a0 [ccp]
+> [  369.465556]  ? cleanup_uevent_env+0x10/0x10
+> [  369.470084]  ? remove_wait_queue+0x60/0x60
+> [  369.474219]  ? 0xffffffffc0247000
+> [  369.477572]  __sev_platform_init_locked+0x2b/0x70 [ccp]
+> [  369.482843]  sev_platform_init+0x1d/0x30 [ccp]
+> [  369.487333]  psp_pci_init+0x40/0xe0 [ccp]
+> [  369.491380]  ? 0xffffffffc0247000
+> [  369.494936]  sp_mod_init+0x18/0x1000 [ccp]
+> [  369.499071]  do_one_initcall+0x4e/0x1d4
+> [  369.502944]  ? _cond_resched+0x15/0x30
+> [  369.506728]  ? kmem_cache_alloc_trace+0xae/0x1d0
+> [  369.511386]  ? do_init_module+0x22/0x220
+> [  369.515345]  do_init_module+0x5a/0x220
+> [  369.519444]  load_module+0x21cb/0x2a50
+> [  369.523227]  ? m_show+0x1c0/0x1c0
+> [  369.526571]  ? security_capable+0x3f/0x60
+> [  369.530611]  __do_sys_finit_module+0x94/0xe0
+> [  369.534915]  do_syscall_64+0x5b/0x180
+> [  369.538607]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [  369.543698] RIP: 0033:0x7f708e6311b9
+> [  369.547536] RSP: 002b:00007ffff9d32aa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+> [  369.555162] RAX: ffffffffffffffda RBX: 000055602a04c2d0 RCX: 00007f708e6311b9
+> [  369.562346] RDX: 0000000000000000 RSI: 00007f708ef52039 RDI: 0000000000000008
+> [  369.569801] RBP: 00007f708ef52039 R08: 0000000000000000 R09: 000055602a048b20
+> [  369.576988] R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000000
+> [  369.584177] R13: 000055602a075260 R14: 0000000000020000 R15: 0000000000000000
+> 
+> Lianbo Jiang (4):
+>   Add a function(ioremap_encrypted) for kdump when AMD sme enabled
+>   Allocate pages for kdump without encryption when SME is enabled
+>   Remap the device table of IOMMU in encrypted manner for kdump
+>   Help to dump the old memory encrypted into vmcore file
+> 
+>  arch/x86/include/asm/io.h            |  3 ++
+>  arch/x86/kernel/Makefile             |  1 +
+>  arch/x86/kernel/crash_dump_encrypt.c | 53 ++++++++++++++++++++++++++++++++++++
+>  arch/x86/mm/ioremap.c                | 28 +++++++++++++------
+>  drivers/iommu/amd_iommu_init.c       | 15 +++++++++-
+>  fs/proc/vmcore.c                     | 20 ++++++++++----
+>  include/linux/crash_dump.h           | 11 ++++++++
+>  kernel/kexec_core.c                  | 12 ++++++++
+>  8 files changed, 128 insertions(+), 15 deletions(-)
+>  create mode 100644 arch/x86/kernel/crash_dump_encrypt.c
+> 
+> -- 
+> 2.9.5
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
