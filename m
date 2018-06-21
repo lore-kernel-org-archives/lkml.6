@@ -3,132 +3,227 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C874CC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 719E6C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88154208B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88154208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 244F620936
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:35:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 244F620936
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933333AbeFUP3I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:29:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44742 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933114AbeFUP3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:29:06 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C8BBC8A3AE;
-        Thu, 21 Jun 2018 15:29:05 +0000 (UTC)
-Received: from hmswarspite.think-freely.org (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D3509200AA40;
-        Thu, 21 Jun 2018 15:29:04 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 11:29:03 -0400
-From:   Neil Horman <nhorman@redhat.com>
-To:     Nathaniel McCallum <npmccallum@redhat.com>
-Cc:     sean.j.christopherson@intel.com, jethro@fortanix.com,
-        luto@kernel.org, jarkko.sakkinen@linux.intel.com, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, intel-sgx-kernel-dev@lists.01.org, hpa@zytor.com,
-        dvhart@infradead.org, tglx@linutronix.de, andy@infradead.org,
-        Peter Jones <pjones@redhat.com>
-Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
- launch enclave
-Message-ID: <20180621152903.GB1324@hmswarspite.think-freely.org>
-References: <CALCETrVp1ZhrxF5bQDSaZpLucS88tErejj5JC6Jb0fB5etWRbA@mail.gmail.com>
- <20180611115255.GC22164@hmswarspite.think-freely.org>
- <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
- <20180612174535.GE19168@hmswarspite.think-freely.org>
- <CALCETrV-4D-M2ap1EFHQiQerYf_XgwLmBAx5WMvcCUefOODjOA@mail.gmail.com>
- <CAOASepN9t3jF4ajfKLG_odTZddOvXjY_DqLQhRPWhJ-imtjkgg@mail.gmail.com>
- <e3f8e5b9-aa1e-20da-37ac-3c3caafa66bc@fortanix.com>
- <b5c81504-83cd-8150-ebe4-41355026590f@fortanix.com>
- <20180620210158.GA24328@linux.intel.com>
- <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 15:29:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 15:29:05 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'nhorman@redhat.com' RCPT:''
+        id S933347AbeFUPfJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 11:35:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56982 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933262AbeFUPfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 11:35:06 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 557CE207EB; Thu, 21 Jun 2018 17:35:04 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DA7162073C;
+        Thu, 21 Jun 2018 17:35:03 +0200 (CEST)
+Message-ID: <a2e1e0a85e0cd650d27eb02dc58d438d6a750929.camel@bootlin.com>
+Subject: Re: [PATCH 7/9] media: cedrus: Move IRQ maintainance to
+ cedrus_dec_ops
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     tfiga@chromium.org, posciak@chromium.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Thu, 21 Jun 2018 17:35:03 +0200
+In-Reply-To: <20180613140714.1686-8-maxime.ripard@bootlin.com>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+         <20180613140714.1686-8-maxime.ripard@bootlin.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-CZTYWBu0xl+VuYEU4hti"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 08:32:25AM -0400, Nathaniel McCallum wrote:
-> On Wed, Jun 20, 2018 at 5:02 PM Sean Christopherson
-> <sean.j.christopherson@intel.com> wrote:
-> >
-> > On Wed, Jun 20, 2018 at 11:39:00AM -0700, Jethro Beekman wrote:
-> > > On 2018-06-20 11:16, Jethro Beekman wrote:
-> > > > > This last bit is also repeated in different words in Table 35-2 and
-> > > > > Section 42.2.2. The MSRs are *not writable* before the write-lock bit
-> > > > > itself is locked. Meaning the MSRs are either locked with Intel's key
-> > > > > hash, or not locked at all.
-> > >
-> > > Actually, this might be a documentation bug. I have some test hardware and I
-> > > was able to configure the MSRs in the BIOS and then read the MSRs after boot
-> > > like this:
-> > >
-> > > MSR 0x3a 0x0000000000040005
-> > > MSR 0x8c 0x20180620aaaaaaaa
-> > > MSR 0x8d 0x20180620bbbbbbbb
-> > > MSR 0x8e 0x20180620cccccccc
-> > > MSR 0x8f 0x20180620dddddddd
-> > >
-> > > Since this is not production hardware, it could also be a CPU bug of course.
-> > >
-> > > If it is indeed possible to configure AND lock the MSR values to non-Intel
-> > > values, I'm very much in favor of Nathaniels proposal to treat the launch
-> > > enclave like any other firmware blob.
-> >
-> > It's not a CPU or documentation bug (though the latter is arguable).
-> > SGX has an activation step that is triggered by doing a WRMSR(0x7a)
-> > with bit 0 set.  Until SGX is activated, the SGX related bits in
-> > IA32_FEATURE_CONTROL cannot be set, i.e. SGX can't be enabled.  But,
-> > the LE hash MSRs are fully writable prior to activation, e.g. to
-> > allow firmware to lock down the LE key with a non-Intel value.
-> >
-> > So yes, it's possible to lock the MSRs to a non-Intel value.  The
-> > obvious caveat is that whatever blob is used to write the MSRs would
-> > need be executed prior to activation.
-> 
-> This implies that it should be possible to create MSR activation (and
-> an embedded launch enclave?) entirely as a UEFI module. The kernel
-> would still get to manage who has access to /dev/sgx and other
-> important non-cryptographic policy details. Users would still be able
-> to control the cryptographic policy details (via BIOS Secure Boot
-> configuration that exists today). Distributions could still control
-> cryptographic policy details via signing of the UEFI module with their
-> own Secure Boot key (or using something like shim). The UEFI module
-> (and possibly the external launch enclave) could be distributed via
-> linux-firmware.
-> 
-> Andy/Neil, does this work for you?
-> 
-I need some time to digest it.  Who in your mind is writing the UEFI module.  Is
-that the firmware vendor or IHV?
 
-Neil
+--=-CZTYWBu0xl+VuYEU4hti
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > As for the SDM, it's a documentation... omission?  SGX activation
-> > is intentionally omitted from the SDM.  The intended usage model is
-> > that firmware will always do the activation (if it wants SGX enabled),
-> > i.e. post-firmware software will only ever "see" SGX as disabled or
-> > in the fully activated state, and so the SDM doesn't describe SGX
-> > behavior prior to activation.  I believe the activation process, or
-> > at least what is required from firmware, is documented in the BIOS
-> > writer's guide.
-> >
-> > > Jethro Beekman | Fortanix
-> > >
-> >
-> >
+Hi,
+
+On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> The IRQ handler up until now was hardcoding the use of the MPEG engine to
+> read the interrupt status, clear it and disable the interrupts.
+>=20
+> Obviously, that won't work really well with the introduction of new codec=
+s
+> that use a separate engine with a separate register set.
+>=20
+> In order to make this more future proof, introduce new decodec operations
+> to deal with the interrupt management. The only one missing is the one to
+> enable the interrupts in the first place, but that's taken care of by the
+> trigger hook for now.
+
+Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  .../sunxi/cedrus/sunxi_cedrus_common.h        |  9 +++++
+>  .../platform/sunxi/cedrus/sunxi_cedrus_hw.c   | 21 ++++++------
+>  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 33 +++++++++++++++++++
+>  3 files changed, 53 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h b/=
+drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> index c2e2c92d103b..a2a507eb9fc9 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> @@ -108,7 +108,16 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer(con=
+st struct vb2_buffer *p)
+>  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
+>  }
+> =20
+> +enum sunxi_cedrus_irq_status {
+> +	SUNXI_CEDRUS_IRQ_NONE,
+> +	SUNXI_CEDRUS_IRQ_ERROR,
+> +	SUNXI_CEDRUS_IRQ_OK,
+> +};
+> +
+>  struct sunxi_cedrus_dec_ops {
+> +	void (*irq_clear)(struct sunxi_cedrus_ctx *ctx);
+> +	void (*irq_disable)(struct sunxi_cedrus_ctx *ctx);
+> +	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx *ctx=
+);
+>  	void (*setup)(struct sunxi_cedrus_ctx *ctx,
+>  		      struct sunxi_cedrus_run *run);
+>  	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/driv=
+ers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> index bb46a01214e0..6b97cbd2834e 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> @@ -77,27 +77,28 @@ static irqreturn_t sunxi_cedrus_ve_irq(int irq, void =
+*dev_id)
+>  	struct sunxi_cedrus_ctx *ctx;
+>  	struct sunxi_cedrus_buffer *src_buffer, *dst_buffer;
+>  	struct vb2_v4l2_buffer *src_vb, *dst_vb;
+> +	enum sunxi_cedrus_irq_status status;
+>  	unsigned long flags;
+> -	unsigned int value, status;
+> =20
+>  	spin_lock_irqsave(&dev->irq_lock, flags);
+> =20
+> -	/* Disable MPEG interrupts and stop the MPEG engine */
+> -	value =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL);
+> -	sunxi_cedrus_write(dev, value & (~0xf), VE_MPEG_CTRL);
+> -
+> -	status =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS);
+> -	sunxi_cedrus_write(dev, 0x0000c00f, VE_MPEG_STATUS);
+> -	sunxi_cedrus_engine_disable(dev);
+> -
+>  	ctx =3D v4l2_m2m_get_curr_priv(dev->m2m_dev);
+>  	if (!ctx) {
+>  		pr_err("Instance released before the end of transaction\n");
+>  		spin_unlock_irqrestore(&dev->irq_lock, flags);
+> =20
+> -		return IRQ_HANDLED;
+> +		return IRQ_NONE;
+>  	}
+> =20
+> +	status =3D dev->dec_ops[ctx->current_codec]->irq_status(ctx);
+> +	if (status =3D=3D SUNXI_CEDRUS_IRQ_NONE) {
+> +		spin_unlock_irqrestore(&dev->irq_lock, flags);
+> +		return IRQ_NONE;
+> +	}
+> +
+> +	dev->dec_ops[ctx->current_codec]->irq_disable(ctx);
+> +	dev->dec_ops[ctx->current_codec]->irq_clear(ctx);
+> +
+>  	src_vb =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+>  	dst_vb =3D v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+> =20
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c b/d=
+rivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
+> index e25075bb5779..51fa0c0f9bf2 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
+> @@ -52,6 +52,36 @@ static const u8 mpeg_default_non_intra_quant[64] =3D {
+> =20
+>  #define m_niq(i) ((i << 8) | mpeg_default_non_intra_quant[i])
+> =20
+> +static enum sunxi_cedrus_irq_status
+> +sunxi_cedrus_mpeg2_irq_status(struct sunxi_cedrus_ctx *ctx)
+> +{
+> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
+> +	u32 reg =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS) & 0x7;
+> +
+> +	if (!reg)
+> +		return SUNXI_CEDRUS_IRQ_NONE;
+> +
+> +	if (reg & (BIT(1) | BIT(2)))
+> +		return SUNXI_CEDRUS_IRQ_ERROR;
+> +
+> +	return SUNXI_CEDRUS_IRQ_OK;
+> +}
+> +
+> +static void sunxi_cedrus_mpeg2_irq_clear(struct sunxi_cedrus_ctx *ctx)
+> +{
+> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
+> +
+> +	sunxi_cedrus_write(dev, GENMASK(2, 0), VE_MPEG_STATUS);
+> +}
+> +
+> +static void sunxi_cedrus_mpeg2_irq_disable(struct sunxi_cedrus_ctx *ctx)
+> +{
+> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
+> +	u32 reg =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL) & ~BIT(3);
+> +
+> +	sunxi_cedrus_write(dev, reg, VE_MPEG_CTRL);
+> +}
+> +
+>  static void sunxi_cedrus_mpeg2_setup(struct sunxi_cedrus_ctx *ctx,
+>  				     struct sunxi_cedrus_run *run)
+>  {
+> @@ -156,6 +186,9 @@ static void sunxi_cedrus_mpeg2_trigger(struct sunxi_c=
+edrus_ctx *ctx)
+>  }
+> =20
+>  struct sunxi_cedrus_dec_ops sunxi_cedrus_dec_ops_mpeg2 =3D {
+> +	.irq_clear	=3D sunxi_cedrus_mpeg2_irq_clear,
+> +	.irq_disable	=3D sunxi_cedrus_mpeg2_irq_disable,
+> +	.irq_status	=3D sunxi_cedrus_mpeg2_irq_status,
+>  	.setup		=3D sunxi_cedrus_mpeg2_setup,
+>  	.trigger	=3D sunxi_cedrus_mpeg2_trigger,
+>  };
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-CZTYWBu0xl+VuYEU4hti
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsrxacACgkQ3cLmz3+f
+v9GSeQf/bWMUdojpRZ0kiiqT7ZwylIwLahgsrAq4r1GTrtcJlJPsE9Dk2BN4Zu2v
+slOk4HcQkq7mj8SVoZhV1OLWJt6ldCJRblCB4h29RWmZ51gIb574KL+3no1w/1ia
+n+b91Cvjy4JMLWv492TgKoMD4A7MxlqnROgpZibi6/ynqOU/epD4aapX5eC2R9jD
+XeC1rSfCTqOghFEXrqI7Db7/0mTKt2szwasVjwOMo8Ap7KoZa0FCoy/Y6d/DzJGd
+Y3PMX8yvPdeV5tzeZhfBYIdUKl+gtRyxTsbSlhyHeyX5dlz3NULXolnu/Szss2cO
+HqLZE2QvgYJQj9EluoRxJNkCEAWWKg==
+=lRqs
+-----END PGP SIGNATURE-----
+
+--=-CZTYWBu0xl+VuYEU4hti--
+
