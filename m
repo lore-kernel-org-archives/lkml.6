@@ -2,245 +2,125 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41468C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C5CC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF722208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86670208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:19:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cTZcaNOc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF722208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlWnR2kS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86670208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933367AbeFUNRn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:17:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35184 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932747AbeFUNRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:17:41 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 840A520837;
-        Thu, 21 Jun 2018 13:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529587060;
-        bh=Mh5XPnIW9cKjMIa8ddBiqhht/6Shaw5XQ/ldw5ujX28=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cTZcaNOcADla0QVAZF0TLXvynVuIomlmnCBed07v6D/RsvznN6dWaYCOsRBTUz6Ix
-         QC/JAdnNxq7LC0bJIsCrlMOwVoo1p0qz1d42Oi1xxFVLR+xEWE7//P1Uf/9uDOShWw
-         H/DUlJuv2WMCYLiYLc+GnxSY7EFtk9VQXq4iXxNM=
-Date:   Thu, 21 Jun 2018 08:17:34 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Thomas Tai <thomas.tai@oracle.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jes Sorensen <jsorensen@fb.com>,
-        Kyle McMartin <jkkm@fb.com>, rajatxjain@gmail.com
-Subject: Re: [PATCH v5 1/5] PCI/AER: Define and allocate aer_stats structure
- for AER capable devices
-Message-ID: <20180621131734.GA14136@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180522222805.80314-1-rajatja@google.com>
- <20180620234147.48438-1-rajatja@google.com>
+        id S932891AbeFUNT1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:19:27 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52632 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932670AbeFUNT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 09:19:26 -0400
+Received: by mail-it0-f66.google.com with SMTP id m194-v6so4616442itg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 06:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qxLEDntwfK97HviszUO+jw8FleRLw9KuH/XFF0ZYA+Q=;
+        b=TlWnR2kSMhn7LA5bNjx+PY665VZV7HjDVSONM66/aiwT1tGTVm0vLJt6S5Nj77rmMs
+         O9bqQuh+FLabPk5NLi05dROagYlEhMlxdzV3CfPeXfTBDQnHsJA+Co9SLNX371W/6JfP
+         cujlCpc/3axWscNXyHslXBD/zK9WyYzoq5yNTsHsEi0Qti0okXrCiZ8o6rJtBcq9bgK2
+         +NoeP3E83ZMg10D/vq/lkGaNy1WtQYhGDexcq8SSnNnvTU9et6hB1UVVYtAsftMg6QdK
+         /kXi45icOWS9OzEjeUmqQfptTGisl6RXhi3dMPndakf6k+8h2l+u0uP4OP5WysM0/Gfe
+         jRjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qxLEDntwfK97HviszUO+jw8FleRLw9KuH/XFF0ZYA+Q=;
+        b=l/vz0g7sOaFZzGppv10h5D7B2MiE3BwLZNyLDCRyZjMJ/93ejCS3CCCidrR1M4WNXq
+         gQMa8K+VcA/6Pql/myZhfg9Z8mkg8tZN+F59jrGgpg+uvKsxg5Fjq8d0Zlagylf16szA
+         T6Ry05xMu/M6hDy0SY0mRDqHprpEzsAE/pVK9MrE/sZSCTKz4vqJztOzP1NYEXxDBy5B
+         thBSoGJnFr7NWO4sYfLbPQS4xid0kG2wI2KMSoE1ElJ4Ez0xDkjL2v8w5iJWUAamQ1D9
+         +E+Gp6TYBmtxbFvIlNXYDtAB56OJ4pCLACQgzrx/Lw9CEdPoCBZNvFD8UxV2O7tgbIN8
+         qKcg==
+X-Gm-Message-State: APt69E0ZDMzGSEqxAJKRPDO6Xof0GpwGvaGoMgvYreov8xiZeVfuZ/hj
+        5juhtetyY5cRF0fmGWwc8pZjS3TrFtM+0phqpSQ=
+X-Google-Smtp-Source: ADUXVKIiuiOTcTL96DyHhD7UQLz6vae/7FVOVMl0yjtavqrm4oyujVyIJJvCr8kYK3eAWYCjcKWPPm1c7J66BmD5X5c=
+X-Received: by 2002:a24:a501:: with SMTP id k1-v6mr5063749itf.79.1529587165425;
+ Thu, 21 Jun 2018 06:19:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180620234147.48438-1-rajatja@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180620182600.GA24297@beast>
+In-Reply-To: <20180620182600.GA24297@beast>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Thu, 21 Jun 2018 06:19:13 -0700
+Message-ID: <CAHQ1cqF9so3TSHpLRvtUDtrxogse_dhVzs_H1MB+G=bB6GfA=A@mail.gmail.com>
+Subject: Re: [PATCH] nvmem: rave-sp-eeprom: Remove VLA usage
+To:     keescook@chromium.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 04:41:43PM -0700, Rajat Jain wrote:
-> Define a structure to hold the AER statistics. There are 2 groups
-> of statistics: dev_* counters that are to be collected for all AER
-> capable devices and rootport_* counters that are collected for all
-> (AER capable) rootports only. Allocate and free this structure when
-> device is added or released (thus counters survive the lifetime of the
-> device).
-> 
-> Signed-off-by: Rajat Jain <rajatja@google.com>
+On Wed, Jun 20, 2018 at 11:26 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> uses the maximum allocation size for the stack and adds a sanity check,
+> similar to what has already be done for the regular rave-sp driver.
+>
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
+I completely forgot that I was using VLAs in this driver. Thanks for
+fixing that!
+
+Reviewed-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Tested-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+
 > ---
-> v5: Same as v4
-> v4: Same as v3
-> v3: Merge everything in aer.c
-> 
->  drivers/pci/pcie/aer.c | 60 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/pci/probe.c    |  1 +
->  include/linux/pci.h    |  3 +++
->  3 files changed, 64 insertions(+)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a2e88386af28..f9fa994b6c33 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -33,6 +33,9 @@
->  #define AER_ERROR_SOURCES_MAX		100
->  #define AER_MAX_MULTI_ERR_DEVICES	5	/* Not likely to have more */
->  
-> +#define AER_MAX_TYPEOF_CORRECTABLE_ERRS 16	/* as per PCI_ERR_COR_STATUS */
-> +#define AER_MAX_TYPEOF_UNCORRECTABLE_ERRS 26	/* as per PCI_ERR_UNCOR_STATUS*/
-> +
->  struct aer_err_info {
->  	struct pci_dev *dev[AER_MAX_MULTI_ERR_DEVICES];
->  	int error_dev_num;
-> @@ -76,6 +79,40 @@ struct aer_rpc {
->  					 */
+>  drivers/nvmem/rave-sp-eeprom.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/nvmem/rave-sp-eeprom.c b/drivers/nvmem/rave-sp-eeprom.c
+> index 50aeea6ec6cc..66699d44f73d 100644
+> --- a/drivers/nvmem/rave-sp-eeprom.c
+> +++ b/drivers/nvmem/rave-sp-eeprom.c
+> @@ -35,6 +35,7 @@ enum rave_sp_eeprom_header_size {
+>         RAVE_SP_EEPROM_HEADER_SMALL = 4U,
+>         RAVE_SP_EEPROM_HEADER_BIG   = 5U,
 >  };
->  
-> +/* AER stats for the device */
-> +struct aer_stats {
+> +#define RAVE_SP_EEPROM_HEADER_MAX      RAVE_SP_EEPROM_HEADER_BIG
+>
+>  #define        RAVE_SP_EEPROM_PAGE_SIZE        32U
+>
+> @@ -97,9 +98,12 @@ static int rave_sp_eeprom_io(struct rave_sp_eeprom *eeprom,
+>         const unsigned int rsp_size =
+>                 is_write ? sizeof(*page) - sizeof(page->data) : sizeof(*page);
+>         unsigned int offset = 0;
+> -       u8 cmd[cmd_size];
+> +       u8 cmd[RAVE_SP_EEPROM_HEADER_MAX + sizeof(page->data)];
+>         int ret;
+>
+> +       if (WARN_ON(cmd_size > sizeof(cmd)))
+> +               return -EINVAL;
 > +
-> +	/*
-> +	 * Fields for all AER capable devices. They indicate the errors
-> +	 * "as seen by this device". Note that this may mean that if an
-> +	 * end point is causing problems, the AER counters may increment
-> +	 * at its link partner (e.g. root port) because the errors will be
-> +	 * "seen" by the link partner and not the the problematic end point
-> +	 * itself (which may report all counters as 0 as it never saw any
-> +	 * problems).
-> +	 */
-> +	/* Individual counters for different type of correctable errors */
-> +	u64 dev_cor_errs[AER_MAX_TYPEOF_CORRECTABLE_ERRS];
-> +	/* Individual counters for different type of uncorrectable errors */
-> +	u64 dev_uncor_errs[AER_MAX_TYPEOF_UNCORRECTABLE_ERRS];
-> +	/* Total number of correctable errors seen by this device */
-> +	u64 dev_total_cor_errs;
-> +	/* Total number of fatal uncorrectable errors seen by this device */
-> +	u64 dev_total_fatal_errs;
-> +	/* Total number of fatal uncorrectable errors seen by this device */
-> +	u64 dev_total_nonfatal_errs;
-> +
-> +	/*
-> +	 * Fields for Root ports only, these indicate the total number of
-> +	 * ERR_COR, ERR_FATAL, and ERR_NONFATAL messages received by the
-> +	 * rootport, INCLUDING the ones that are generated internally (by
-> +	 * the rootport itself)
-
-Strictly speaking, I think these are applicable for both root ports
-and root complex event collectors, right?
-
-> +	 */
-> +	u64 rootport_total_cor_errs;
-> +	u64 rootport_total_fatal_errs;
-> +	u64 rootport_total_nonfatal_errs;
-> +};
-> +
->  #define AER_LOG_TLP_MASKS		(PCI_ERR_UNC_POISON_TLP|	\
->  					PCI_ERR_UNC_ECRC|		\
->  					PCI_ERR_UNC_UNSUP|		\
-> @@ -402,12 +439,35 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
->  	return 0;
->  }
->  
-> +static int pci_aer_stats_init(struct pci_dev *pdev)
-> +{
-> +	pdev->aer_stats = kzalloc(sizeof(struct aer_stats), GFP_KERNEL);
-> +	if (!pdev->aer_stats) {
-> +		dev_err(&pdev->dev, "No memory for aer_stats\n");
-
-pci_err(), if we need the message at all.
-
-Based on c7abb2352c29 ("PCI: Remove unnecessary messages for memory
-allocation failures"), I'd be inclined to drop the message completely.
-
-> +		return -ENOMEM;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static void pci_aer_stats_exit(struct pci_dev *pdev)
-> +{
-> +	kfree(pdev->aer_stats);
-> +	pdev->aer_stats = NULL;
-> +}
-> +
->  int pci_aer_init(struct pci_dev *dev)
->  {
->  	dev->aer_cap = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR);
-> +	if (!dev->aer_cap || pci_aer_stats_init(dev))
-> +		return -EIO;
-
-This skips pci_cleanup_aer_error_status_regs() if the kzalloc() fails.
-I think we should still do pci_cleanup_aer_error_status_regs(), even
-if the alloc fails.
-
-Nobody checks the return value of pci_aer_init(), so I think you can
-simplify this by making these functions void.
-
-Maybe even squash them together, i.e., do the kzalloc() directly in
-pci_aer_init() and the kfree() directly in pci_aer_exit()?
-
->  	return pci_cleanup_aer_error_status_regs(dev);
->  }
->  
-> +void pci_aer_exit(struct pci_dev *dev)
-> +{
-> +	pci_aer_stats_exit(dev);
-> +}
-> +
->  #define AER_AGENT_RECEIVER		0
->  #define AER_AGENT_REQUESTER		1
->  #define AER_AGENT_COMPLETER		2
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index ac876e32de4b..48edd0c9e4bc 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2064,6 +2064,7 @@ static void pci_configure_device(struct pci_dev *dev)
->  
->  static void pci_release_capabilities(struct pci_dev *dev)
->  {
-> +	pci_aer_exit(dev);
->  	pci_vpd_release(dev);
->  	pci_iov_release(dev);
->  	pci_free_cap_save_buffers(dev);
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 340029b2fb38..8d59c6c19a19 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -299,6 +299,7 @@ struct pci_dev {
->  	u8		hdr_type;	/* PCI header type (`multi' flag masked out) */
->  #ifdef CONFIG_PCIEAER
->  	u16		aer_cap;	/* AER capability offset */
-> +	struct aer_stats *aer_stats;	/* AER stats for this device */
->  #endif
->  	u8		pcie_cap;	/* PCIe capability offset */
->  	u8		msi_cap;	/* MSI capability offset */
-> @@ -1471,10 +1472,12 @@ static inline bool pcie_aspm_support_enabled(void) { return false; }
->  void pci_no_aer(void);
->  bool pci_aer_available(void);
->  int pci_aer_init(struct pci_dev *dev);
-> +void pci_aer_exit(struct pci_dev *dev);
-
-With the exception of pci_aer_available(), these are only used inside
-drivers/pci.  This might be a good opportunity to move those private
-things to drivers/pci/pci.h (in a separate patch, of course).
-
->  #else
->  static inline void pci_no_aer(void) { }
->  static inline bool pci_aer_available(void) { return false; }
->  static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
-> +static inline void pci_aer_exit(struct pci_dev *d) { }
->  #endif
->  
->  #ifdef CONFIG_PCIE_ECRC
-> -- 
-> 2.18.0.rc1.244.gcf134e6275-goog
-> 
+>         cmd[offset++] = eeprom->address;
+>         cmd[offset++] = 0;
+>         cmd[offset++] = type;
+> --
+> 2.17.1
+>
+>
+> --
+> Kees Cook
+> Pixel Security
