@@ -4,305 +4,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D631C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 032D3C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BC4C208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98F7C20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:47:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0iq+dPX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC4C208A1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jb94SRN0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F7C20883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933433AbeFUMmM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:42:12 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:40744 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932845AbeFUMmF (ORCPT
+        id S933191AbeFUMrj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:47:39 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:38149 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932858AbeFUMri (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:42:05 -0400
-Received: by mail-ua0-f195.google.com with SMTP id l11-v6so1922894uak.7;
-        Thu, 21 Jun 2018 05:42:05 -0700 (PDT)
+        Thu, 21 Jun 2018 08:47:38 -0400
+Received: by mail-io0-f195.google.com with SMTP id l19-v6so2858297ioj.5;
+        Thu, 21 Jun 2018 05:47:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+O3AC1xf55XgSTOrm8vOjaHyK9ZTiGIMMc2dLnca6M4=;
-        b=N0iq+dPXXDpM93pi3atslxC5sWEqvOOxk97Wgi7QMESeiWlmG1iYXPPwpMU/bh+UQy
-         RuufJaKT6R/DSo9lyg6b7c2++9eEpMQ4ktqKMDLW0kUKPxPvijG6ZEH+tAB4xvoteTnl
-         5+pSF65l5dSLqbp61PZX1couvfdVY8NzV4Pm6ORWnOzCxn0Az7jpgz1OXElmH2n7fRSH
-         XEocRayVvzv637LNdbdRQ6nTzGyC3zGJUVxidqLKJHme+LiB0wTnv7enlRWYPzEWgI8p
-         xwICFJPDHve1Pn/wiXAG7RQhpwWJ7lBkKXbfIFMNTqLx7KZyJ5nc7hmOv47859UJ6Krt
-         p44g==
+        bh=8hvzDsKxin4vnkbTjTGy6XIx+pGZpsF4YJVBlda2P6c=;
+        b=jb94SRN0NjnXBz/20B1f++MQfvk9lMEYDGvEXTD8OwsJmzSOGyVP82t5qAgkhNgjd1
+         SjoWOPaAXm/S1v02DJ+rzRrSRLtrPvShcdB1ITJMl8qqcWRUYjq4D9GwWX1pK0MuGgUv
+         XuhAhzLJgy7JPO2/qkE9H1EEiLqdGURQN6o7CY4D6sdZdoqyibArd6Efg5sQmGDKzJLt
+         saE5+2zmxz2SgPRldGElcorIMYJgNJvUBJYvPG114fceMZhVKCUyXnShNVwRLZsYcJFX
+         5q815yXINlDrdSvmbOW/aGdh9zEnxtGipMv3iPEmzIuV0MJCzaIyZOQjrZN+SJMxDC4C
+         t2Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+O3AC1xf55XgSTOrm8vOjaHyK9ZTiGIMMc2dLnca6M4=;
-        b=j4cNbdmRyhdO0HUBLV3CEHGEzpPOMAMMD1e1onhHw5oRPMh78trLtIBI68b5ZjJtMJ
-         ne/9CnId5sJAXoqFO0Vc0OZg/bSMVBvF/vbN+Pe6TgcTpBubRkM6/f5gJfVaQdjaWtDD
-         HDkMijhrhpu4MoAJ4SNEJSZxMw50mxDg+munxKGBCFVCkxc3TP/UjPMg+IFm+qGRWXcL
-         WdMKPmZfKukMONCHsUjKCauixYgpwGNqvRherKRT6G/ufguNQPnEUkvovu8qyuHc17ur
-         mGLZ+CvPxpvwdwAYARQB/VANz2afLQdGeXDTJg76HkEksLmDEOQZPbbSUvb5dBcAfeZX
-         IWyQ==
-X-Gm-Message-State: APt69E3teWz7bU2928/3clvGPxy1Hu9LjZ7pdEu6JF31AiAlV41LAkIr
-        2IBmPnZN7cBheLZBKUMg5sdOCjHeOh+DBWw9MjM=
-X-Google-Smtp-Source: ADUXVKKjE0ZXDX4wlUtdJrGXWrInRaKcFI8dQNQ3cZjNkZ3sRGQd2xMztXrqCEataAHR2LF1zFnpyjsmdp0zH9aUVpo=
-X-Received: by 2002:ab0:59e7:: with SMTP id k36-v6mr9062668uad.81.1529584924564;
- Thu, 21 Jun 2018 05:42:04 -0700 (PDT)
+        bh=8hvzDsKxin4vnkbTjTGy6XIx+pGZpsF4YJVBlda2P6c=;
+        b=OlEapcKtUmXbdEpKAFQR4F2tgKOwe+OY+PqqdWXEbjHgplYAncs0IXG33pxLbf8hER
+         NrVciZy+jTofBkA4ocvEoAlhJ7y3I43ztS77bYZDj9lfdApoUZcXnvNsNTHpb/VKQ1+u
+         s3jFyVy9QQ4ywbGFhlh5UHjpCp1+6F5Igi0qE+xYKbdcsLTKuWpa0KBXfCNXS7lGKzRO
+         W1xcwx49A7wevh9KnGAKN44th9VTYu9bekd+7JAP7Ez7dQu2d7TsADiMVI6Vz7y2qqnV
+         UXS2Fs1+HRTKc5+7o4eojVOznldWQLAh1VhebiryEDld5q9F0smFfADjhRkXJBEgWZFN
+         4/sQ==
+X-Gm-Message-State: APt69E3p8x8RJmEc3ItlEC0uNVsNxzk18jTsjpdUN9du51FMoEiIkggL
+        7ftpDu9zRCHV5S+/0K6zBfJFHzZWKL2AWbIW3Bw=
+X-Google-Smtp-Source: ADUXVKKAYahJBPtFC0xAuMOmp8Vq90hMHteNyIP6u+gfksgIuW1ViDRG0plSEsmI7FOiFJA4u6or0cxbnocc1diRSu0=
+X-Received: by 2002:a6b:e4a:: with SMTP id 71-v6mr19874626ioo.83.1529585257209;
+ Thu, 21 Jun 2018 05:47:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180620155101.57685-1-arnd@arndb.de> <20180620155101.57685-4-arnd@arndb.de>
-In-Reply-To: <20180620155101.57685-4-arnd@arndb.de>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Thu, 21 Jun 2018 20:41:52 +0800
-Message-ID: <CAAM7YAko88Bq0Nbh4EcYifEcnzHTJ500YvofWA-uMxrwqANzpA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] ceph: use timespec64 for r_mtime
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>, elder@kernel.org,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>, axboe@kernel.dk,
-        David Miller <davem@davemloft.net>, martin.petersen@oracle.com,
-        Jason Dillaman <dillaman@redhat.com>,
-        daniel.m.jordan@oracle.com, Jan Kara <jack@suse.cz>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
+References: <20180530173414.6121-1-andrew.smirnov@gmail.com>
+ <CAOMZO5AyAegbvUtX42by99mU8yQfi91bmhJfd9iqu1Ak0dEHiw@mail.gmail.com> <CAOMZO5DJj=oQfsB-vNP=81HCiy-69j-5U+Km9P6LxGpnLx9xzg@mail.gmail.com>
+In-Reply-To: <CAOMZO5DJj=oQfsB-vNP=81HCiy-69j-5U+Km9P6LxGpnLx9xzg@mail.gmail.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Thu, 21 Jun 2018 05:47:25 -0700
+Message-ID: <CAHQ1cqHxq+RM1nNHECY75Cojd_kxu1ERLe6+MhMLUa5kb10r8w@mail.gmail.com>
+Subject: Re: [PATCH] usb: chipidea: Fix ULPI on imx51
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Peter Chen <peter.chen@nxp.com>, linux-usb@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 11:55 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Wed, Jun 20, 2018 at 3:22 PM Fabio Estevam <festevam@gmail.com> wrote:
 >
-> The request mtime field is used all over ceph, and is currently
-> represented as a 'timespec' structure in Linux. This changes it to
-> timespec64 to allow times beyond 2038, modifying all users at the
-> same time.
+> On Wed, Jun 20, 2018 at 7:07 PM, Fabio Estevam <festevam@gmail.com> wrote:
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/block/rbd.c             |  2 +-
->  fs/ceph/addr.c                  | 12 ++++++------
->  fs/ceph/file.c                  | 11 +++++------
->  include/linux/ceph/osd_client.h |  6 +++---
->  net/ceph/osd_client.c           |  8 ++++----
->  5 files changed, 19 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index fa0729c1e776..356936333cd9 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -1452,7 +1452,7 @@ static void rbd_osd_req_format_write(struct rbd_obj_request *obj_request)
->         struct ceph_osd_request *osd_req = obj_request->osd_req;
->
->         osd_req->r_flags = CEPH_OSD_FLAG_WRITE;
-> -       ktime_get_real_ts(&osd_req->r_mtime);
-> +       ktime_get_real_ts64(&osd_req->r_mtime);
->         osd_req->r_data_offset = obj_request->ex.oe_off;
->  }
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 292b3d72d725..d44d51e69e76 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -574,7 +574,7 @@ static u64 get_writepages_data_length(struct inode *inode,
->   */
->  static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
->  {
-> -       struct timespec ts;
-> +       struct timespec64 ts;
->         struct inode *inode;
->         struct ceph_inode_info *ci;
->         struct ceph_fs_client *fsc;
-> @@ -625,7 +625,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
->                 set_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
->
->         set_page_writeback(page);
-> -       ts = timespec64_to_timespec(inode->i_mtime);
-> +       ts = inode->i_mtime;
->         err = ceph_osdc_writepages(&fsc->client->osdc, ceph_vino(inode),
->                                    &ci->i_layout, snapc, page_off, len,
->                                    ceph_wbc.truncate_seq,
-> @@ -1134,7 +1134,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->                         pages = NULL;
->                 }
->
-> -               req->r_mtime = timespec64_to_timespec(inode->i_mtime);
-> +               req->r_mtime = inode->i_mtime;
->                 rc = ceph_osdc_start_request(&fsc->client->osdc, req, true);
->                 BUG_ON(rc);
->                 req = NULL;
-> @@ -1734,7 +1734,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
->                 goto out;
->         }
->
-> -       req->r_mtime = timespec64_to_timespec(inode->i_mtime);
-> +       req->r_mtime = inode->i_mtime;
->         err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
->         if (!err)
->                 err = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> @@ -1776,7 +1776,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
->                         goto out_put;
->         }
->
-> -       req->r_mtime = timespec64_to_timespec(inode->i_mtime);
-> +       req->r_mtime = inode->i_mtime;
->         err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
->         if (!err)
->                 err = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> @@ -1937,7 +1937,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
->                                      0, false, true);
->         err = ceph_osdc_start_request(&fsc->client->osdc, rd_req, false);
->
-> -       wr_req->r_mtime = timespec64_to_timespec(ci->vfs_inode.i_mtime);
-> +       wr_req->r_mtime = ci->vfs_inode.i_mtime;
->         err2 = ceph_osdc_start_request(&fsc->client->osdc, wr_req, false);
->
->         if (!err)
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index ad0bed99b1d5..1795a8dc9a1e 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -721,7 +721,7 @@ struct ceph_aio_request {
->         struct list_head osd_reqs;
->         unsigned num_reqs;
->         atomic_t pending_reqs;
-> -       struct timespec mtime;
-> +       struct timespec64 mtime;
->         struct ceph_cap_flush *prealloc_cf;
->  };
->
-> @@ -923,7 +923,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
->         int num_pages = 0;
->         int flags;
->         int ret;
-> -       struct timespec mtime = timespec64_to_timespec(current_time(inode));
-> +       struct timespec64 mtime = current_time(inode);
->         size_t count = iov_iter_count(iter);
->         loff_t pos = iocb->ki_pos;
->         bool write = iov_iter_rw(iter) == WRITE;
-> @@ -1013,7 +1013,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
->                         truncate_inode_pages_range(inode->i_mapping, pos,
->                                         (pos+len) | (PAGE_SIZE - 1));
->
-> -                       req->r_mtime = mtime;
-> +                       req->r_mtime = current_time(inode);
-this change is not needed
+> > This patches causes a regression on a imx51-babbage running 4.18-rc1:
+> > I get a kernel hang.
+> >
+> > If I revert it on top of 4.18-rc1, then it boots fine and USB host is
+> > functional.
+> >
+> > I understand this patch fixes a kernel hang for you, so which commit
+> > is responsible for the hang you observe?
+> >
 
+I never assumed it was a regression and that USB worked on RDU1 board
+before, so I never tried to see if this was a regression. I can only
+tell you that it hangs as soon as any PORTSC registers are accessed.
 
->                 }
+> > It seems this commit fixes a hang for you and causes another hang for me :-)
+> >
+> > Any ideas?
 >
->                 osd_req_op_extent_osd_data_bvecs(req, 0, bvecs, num_pages, len);
-> @@ -1131,7 +1131,6 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
->         int flags;
->         int ret;
->         bool check_caps = false;
-> -       struct timespec mtime = timespec64_to_timespec(current_time(inode));
->         size_t count = iov_iter_count(from);
->
->         if (ceph_snap(file_inode(file)) != CEPH_NOSNAP)
-> @@ -1201,7 +1200,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
->                 osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0,
->                                                 false, true);
->
-> -               req->r_mtime = mtime;
-> +               req->r_mtime = current_time(inode);
 
-here too
+RDU1 design is based heavily on Babbage board, moreso USB1/ULPI
+portion of it is an exact copy (it does use different GPIO for PHY
+reset, but that's irrelevant), so I am surprised that it breaks in
+your case.
 
->                 ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
->                 if (!ret)
->                         ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> @@ -1663,7 +1662,7 @@ static int ceph_zero_partial_object(struct inode *inode,
->                 goto out;
->         }
+However looking at imx51-babbage.dts, I am suspicious of it's USB1
+setup. There we have usbh1phy node that references <&gpio2 5
+GPIO_ACTIVE_LOW> as reset, but corresponding pinmux, pinctrl_usbh1reg,
+is not being used anywhere. Cold that be that the problem you are
+seeing is due to USB PHY not being properly reset?
+
+> I am able to boot again if I skip passing the CI_HDRC_OVERRIDE_PHY_CONTROL flag:
 >
-> -       req->r_mtime = timespec64_to_timespec(inode->i_mtime);
-> +       req->r_mtime = inode->i_mtime;
->         ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
->         if (!ret) {
->                 ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 0d6ee04b4c41..2e6611c1e9a0 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -199,7 +199,7 @@ struct ceph_osd_request {
->         /* set by submitter */
->         u64 r_snapid;                         /* for reads, CEPH_NOSNAP o/w */
->         struct ceph_snap_context *r_snapc;    /* for writes */
-> -       struct timespec r_mtime;              /* ditto */
-> +       struct timespec64 r_mtime;            /* ditto */
->         u64 r_data_offset;                    /* ditto */
->         bool r_linger;                        /* don't resend on failure */
->
-> @@ -253,7 +253,7 @@ struct ceph_osd_linger_request {
->         struct ceph_osd_request_target t;
->         u32 map_dne_bound;
->
-> -       struct timespec mtime;
-> +       struct timespec64 mtime;
->
->         struct kref kref;
->         struct mutex lock;
-> @@ -508,7 +508,7 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
->                                 struct ceph_snap_context *sc,
->                                 u64 off, u64 len,
->                                 u32 truncate_seq, u64 truncate_size,
-> -                               struct timespec *mtime,
-> +                               struct timespec64 *mtime,
->                                 struct page **pages, int nr_pages);
->
->  /* watch/notify */
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index a00c74f1154e..a87a021ca9d0 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -1978,7 +1978,7 @@ static void encode_request_partial(struct ceph_osd_request *req,
->         p += sizeof(struct ceph_blkin_trace_info);
->
->         ceph_encode_32(&p, 0); /* client_inc, always 0 */
-> -       ceph_encode_timespec(p, &req->r_mtime);
-> +       ceph_encode_timespec64(p, &req->r_mtime);
->         p += sizeof(struct ceph_timespec);
->
->         encode_oloc(&p, end, &req->r_t.target_oloc);
-> @@ -4512,7 +4512,7 @@ ceph_osdc_watch(struct ceph_osd_client *osdc,
->         ceph_oid_copy(&lreq->t.base_oid, oid);
->         ceph_oloc_copy(&lreq->t.base_oloc, oloc);
->         lreq->t.flags = CEPH_OSD_FLAG_WRITE;
-> -       ktime_get_real_ts(&lreq->mtime);
-> +       ktime_get_real_ts64(&lreq->mtime);
->
->         lreq->reg_req = alloc_linger_request(lreq);
->         if (!lreq->reg_req) {
-> @@ -4570,7 +4570,7 @@ int ceph_osdc_unwatch(struct ceph_osd_client *osdc,
->         ceph_oid_copy(&req->r_base_oid, &lreq->t.base_oid);
->         ceph_oloc_copy(&req->r_base_oloc, &lreq->t.base_oloc);
->         req->r_flags = CEPH_OSD_FLAG_WRITE;
-> -       ktime_get_real_ts(&req->r_mtime);
-> +       ktime_get_real_ts64(&req->r_mtime);
->         osd_req_op_watch_init(req, 0, lreq->linger_id,
->                               CEPH_OSD_WATCH_OP_UNWATCH);
->
-> @@ -5136,7 +5136,7 @@ int ceph_osdc_writepages(struct ceph_osd_client *osdc, struct ceph_vino vino,
->                          struct ceph_snap_context *snapc,
->                          u64 off, u64 len,
->                          u32 truncate_seq, u64 truncate_size,
-> -                        struct timespec *mtime,
-> +                        struct timespec64 *mtime,
->                          struct page **pages, int num_pages)
->  {
->         struct ceph_osd_request *req;
-> --
-> 2.9.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Yeah, IMHO if you are dropping that flag, you may as well revert the
+whole patch :-). The path that make the kernel hang in my case would
+be taken if that flag is dropped.
+
+Thanks,
+Andrey Smirnov
