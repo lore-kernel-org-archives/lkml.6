@@ -5,125 +5,152 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E045C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7A0C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9B420883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:05:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9B420883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F02F20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:06:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F02F20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754559AbeFUIFz (ORCPT
+        id S1754618AbeFUIGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:05:55 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7415 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751691AbeFUIFv (ORCPT
+        Thu, 21 Jun 2018 04:06:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37734 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754292AbeFUIFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:05:51 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b2b5c470001>; Thu, 21 Jun 2018 01:05:27 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 21 Jun 2018 01:05:51 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 21 Jun 2018 01:05:51 -0700
-Received: from [10.26.11.123] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 21 Jun
- 2018 08:05:47 +0000
-Subject: Re: [PATCH v2 2/8] dt-bindings: serial: Add bindings for
- nvidia,tegra194-tcu
-To:     Mikko Perttunen <mperttunen@nvidia.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <jassisinghbrar@gmail.com>,
-        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180620122042.10950-1-mperttunen@nvidia.com>
- <20180620122042.10950-3-mperttunen@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <0e365f49-4188-608f-d3b2-54dbabe8282e@nvidia.com>
-Date:   Thu, 21 Jun 2018 09:05:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180620122042.10950-3-mperttunen@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 21 Jun 2018 04:05:15 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5L8517R041535
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 04:05:15 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jr4w7fbax-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 04:05:14 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Thu, 21 Jun 2018 09:05:11 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 21 Jun 2018 09:05:09 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5L858f329818996
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 21 Jun 2018 08:05:08 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96D7111C04A;
+        Thu, 21 Jun 2018 08:55:31 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D54A11C069;
+        Thu, 21 Jun 2018 08:55:31 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 21 Jun 2018 08:55:31 +0100 (BST)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH 3/4] perf json: Add s390 transaction counter definition
+Date:   Thu, 21 Jun 2018 10:04:51 +0200
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180621080452.61012-1-tmricht@linux.ibm.com>
+References: <20180621080452.61012-1-tmricht@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18062108-0012-0000-0000-00000281D0B4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062108-0013-0000-0000-000020B31410
+Message-Id: <20180621080452.61012-3-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-21_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806210091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+perf stat displays transactional counters using flag -T on x86.
+On s390 use a json file defined metric named transaction to
+achieve the same result.
 
-On 20/06/18 13:20, Mikko Perttunen wrote:
-> Add bindings for the Tegra Combined UART device used to talk to the
-> UART console on Tegra194 systems.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-> 
-> Notes:
->     v2:
->     - Added Rob's Reviewed-by.
-> 
->  .../bindings/serial/nvidia,tegra194-tcu.txt        | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt b/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
-> new file mode 100644
-> index 000000000000..a8becf6efd2a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
-> @@ -0,0 +1,35 @@
-> +NVIDIA Tegra Combined UART (TCU)
-> +
-> +The TCU is a system for sharing a hardware UART instance among multiple
-> +systems within the Tegra SoC. It is implemented through a mailbox-
-> +based protocol where each "virtual UART" has a pair of mailboxes, one
-> +for transmitting and one for receiving, that is used to communicate
-> +with the hardware implementing the TCU.
-> +
-> +Required properties:
-> +- name : Should be tcu
-> +- compatible
-> +    Array of strings
-> +    One of:
-> +    - "nvidia,tegra194-tcu"
-> +- mbox-names:
-> +    "rx" - Mailbox for receiving data from hardware UART
-> +    "tx" - Mailbox for transmitting data to hardware UART
-> +- mboxes: Mailboxes corresponding to the mbox-names. 
-> +
-> +This node is a mailbox consumer. See the following files for details of
-> +the mailbox subsystem, and the specifiers implemented by the relevant
-> +provider(s):
-> +
-> +- .../mailbox/mailbox.txt
-> +- .../mailbox/nvidia,tegra186-hsp.txt
-> +
-> +Example bindings:
-> +-----------------
-> +
-> +tcu: tcu {
-> +	compatible = "nvidia,tegra194-tcu";
-> +	mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_SM 0>,
-> +	         <&hsp_aon TEGRA_HSP_MBOX_TYPE_SM 1>;
-> +	mbox-names = "rx", "tx";
-> +};
+Output before:
+ none
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Output after:
+[root@s35lp76 perf]# ./perf stat -M transaction  -- \
+			~/mytesttx 1 >/tmp/111
 
-Cheers
-Jon
+ Performance counter stats for '/root/mytesttx 1':
 
+                 1      tx_c_tend           #     13.0 transaction
+                 1      tx_nc_tend
+                11      tx_nc_tabort
+                 0      tx_c_tabort_special
+                 0      tx_c_tabort_no_special
+
+       0.001061232 seconds time elapsed
+
+[root@s35lp76 perf]#
+
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+---
+ tools/perf/pmu-events/arch/s390/cf_z13/transaction.json   | 7 +++++++
+ tools/perf/pmu-events/arch/s390/cf_z14/transaction.json   | 7 +++++++
+ tools/perf/pmu-events/arch/s390/cf_zec12/transaction.json | 7 +++++++
+ 3 files changed, 21 insertions(+)
+ create mode 100644 tools/perf/pmu-events/arch/s390/cf_z13/transaction.json
+ create mode 100644 tools/perf/pmu-events/arch/s390/cf_z14/transaction.json
+ create mode 100644 tools/perf/pmu-events/arch/s390/cf_zec12/transaction.json
+
+diff --git a/tools/perf/pmu-events/arch/s390/cf_z13/transaction.json b/tools/perf/pmu-events/arch/s390/cf_z13/transaction.json
+new file mode 100644
+index 000000000000..1a0034f79f73
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/s390/cf_z13/transaction.json
+@@ -0,0 +1,7 @@
++[
++  {
++    "BriefDescription": "Transaction count",
++    "MetricName": "transaction",
++    "MetricExpr": "TX_C_TEND + TX_NC_TEND + TX_NC_TABORT + TX_C_TABORT_SPECIAL + TX_C_TABORT_NO_SPECIAL"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/s390/cf_z14/transaction.json b/tools/perf/pmu-events/arch/s390/cf_z14/transaction.json
+new file mode 100644
+index 000000000000..1a0034f79f73
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/s390/cf_z14/transaction.json
+@@ -0,0 +1,7 @@
++[
++  {
++    "BriefDescription": "Transaction count",
++    "MetricName": "transaction",
++    "MetricExpr": "TX_C_TEND + TX_NC_TEND + TX_NC_TABORT + TX_C_TABORT_SPECIAL + TX_C_TABORT_NO_SPECIAL"
++  }
++]
+diff --git a/tools/perf/pmu-events/arch/s390/cf_zec12/transaction.json b/tools/perf/pmu-events/arch/s390/cf_zec12/transaction.json
+new file mode 100644
+index 000000000000..1a0034f79f73
+--- /dev/null
++++ b/tools/perf/pmu-events/arch/s390/cf_zec12/transaction.json
+@@ -0,0 +1,7 @@
++[
++  {
++    "BriefDescription": "Transaction count",
++    "MetricName": "transaction",
++    "MetricExpr": "TX_C_TEND + TX_NC_TEND + TX_NC_TABORT + TX_C_TABORT_SPECIAL + TX_C_TABORT_NO_SPECIAL"
++  }
++]
 -- 
-nvpublic
+2.14.3
+
