@@ -3,65 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BC5C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46921C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F97020883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3EC620883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:31:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XijjV6qT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F97020883
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJXqdfa4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EC620883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933129AbeFUN34 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:29:56 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36816 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932755AbeFUN3z (ORCPT
+        id S933162AbeFUNbZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:31:25 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37142 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932755AbeFUNbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:29:55 -0400
-Received: by mail-oi0-f66.google.com with SMTP id 14-v6so2922427oie.3;
-        Thu, 21 Jun 2018 06:29:54 -0700 (PDT)
+        Thu, 21 Jun 2018 09:31:22 -0400
+Received: by mail-ot0-f196.google.com with SMTP id 101-v6so3571884oth.4;
+        Thu, 21 Jun 2018 06:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:from:date:message-id:subject:to:cc;
-        bh=NFo8zH4K7GSWbklXhGZXDb/o7J3SAfaUXr4dqDDEtCI=;
-        b=XijjV6qTzYbN6grrRC2CMx0xwyN2ty83BBtTOSCQXI0A02yD+TIc9pWFlSRUAUFftG
-         goME8UuIvk7Nw4sPXMvQslxAbyYce1KrZwbeW/rsd4KxVngxThY170kDD+qlc3QoIZFI
-         OYhbmpKSUFZjjsauAppTTKfboypOPAsrdpkaq0/HWl92v75RNNB4ktWenYEQKIdAUhJT
-         Mgj0Dlgd2Ws9OeKiUQh8M6ka+ayiTz03smkJAxSWfRCU6GYPuOL8qZYgADjNcRd7Akch
-         oS0rOHF6MRxPHuUzXUGw4OUKetV67q1yJlR0rqKgZWd3xYvgu/vJxv65lIfqWpgFKD3E
-         DF5g==
+        bh=g6+h3bsRvrld4Xt0Lxex0KMkIsWM1iBS/FqRYYLmxdA=;
+        b=WJXqdfa4UMN0QQHRESD0Dbla9wbxJ+FKuXn+tJn2g+YDAyZ/XS3duwpG3xKH0kDjTc
+         sziDkpnv3JZvBZZJScP3lHChfNf1Tl1Tb8YwQutpLHxIfCfcMVLSMcH/DN4/TOAcswtd
+         vgndo39RA0on0ZcbAuS5dwW/IpAvziysjaRWkF1z8OyxZQZogsiEN1j9wfTyXpR2rEUw
+         DkgO5A4srwOieLeU9sXYwWZArYZxAjbMocfbtMDkaLtBMSWPurqe4zxz46pBSCatQj8y
+         +MNbSS7vIuUsQd1rkhk5h+Kaiha5pclR+SuFgHtYx4NpFKkt//a5MWGdjWycB9fR826R
+         E2dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
          :to:cc;
-        bh=NFo8zH4K7GSWbklXhGZXDb/o7J3SAfaUXr4dqDDEtCI=;
-        b=HcixVaXydrE8UVbggYvI4z8h+foGY7d5vBO1IsqEbsyuskyXk16KHES+7J5tHujsCV
-         rlbS0/KZhK3j20z3mCn4Z/fqX4WOQtkn387OifigQgmkNq9oBxSkbY3s+5mtfwNsKWcv
-         2ORGmtI1+QEfWhi8rWScKoSdyHxmHQvG6M6qLhh0tWy6eJzfgkHIBG+6TVZu2YKFirVK
-         USWkSmqotLOykQcL0YWZ/lqy3A5CulaifV00HycpornzPPOi7PEsnyo73vj5m9rTiN6o
-         CdiCH4Pg2kz83m4k0t8gYr6sA8gnfj52tejqumrkxoNvZuJtB/cs+Dz/obWYZ1tW8eZL
-         MoAw==
-X-Gm-Message-State: APt69E02k0U08UIuE7RlVo4621b2oA1+o3rnZYYb4VAQHn3GWheN/FFY
-        lLUxGjczR9bdKZ65PZtK88MRAWwee1dahF+9NL57Cw==
-X-Google-Smtp-Source: ADUXVKIgCkBelpYWFPw7kMi+3ciANsDD6r8TNS0R69PSrSz1yTDjoCc9/r0REwlHieD5KoEj+QxMPVe8wG2EyKTjXoQ=
-X-Received: by 2002:aca:e143:: with SMTP id y64-v6mr13633445oig.282.1529587794442;
- Thu, 21 Jun 2018 06:29:54 -0700 (PDT)
+        bh=g6+h3bsRvrld4Xt0Lxex0KMkIsWM1iBS/FqRYYLmxdA=;
+        b=eC21LMNgh5wuQoBHi2H1KHNp8PKDth9g2fmEhzYJB6qgVWYZMp3YRLJ8cbQ0puM/So
+         uQFKpc4bBR+cPeDvAoXde4ZIzfhQcGs8Mtpiq9N9xjpAPpud/KvLWfhFEqbMoLi727Cb
+         TQbsxahq6qim4s1Ehzfat959bAItWH6lf+eBZM52v00CI2x0qLivEeMvr5prdQiXqcSO
+         bdMUy3rpfu/i3FkG9M9wvNnpi9g1r3+SCENKG3m3QLUsfJTjDIe27QJB0+dBbUK4g5OE
+         sI1vzMsro+lNr4AXGZlFNHNJxBYjb8ky3kD44Gkx76DsLFUif/XPgMjV0IIUxePnUISe
+         NtKA==
+X-Gm-Message-State: APt69E2Zm4SU5P0v2vy3p92svIs5IkjfhqpA1FZ5BSllBdQdFOiHC2lB
+        P/J79YFlbrSTkoqfps1MSpBfPC8+M+H3j+XrKnI=
+X-Google-Smtp-Source: ADUXVKIulhf/u+HHtm50cZz0icYduyQMZq3A6NPyMSDVYc+r62BVVS3Z00TEV/z2eSgUs+m9Zh2bjekOOu27eTk0igU=
+X-Received: by 2002:a9d:1012:: with SMTP id h18-v6mr14815504ote.364.1529587877463;
+ Thu, 21 Jun 2018 06:31:17 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 06:29:54
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 06:31:17
  -0700 (PDT)
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 21 Jun 2018 15:29:54 +0200
-X-Google-Sender-Auth: Xurlsfv-PrgCbSgamXFuri3amWQ
-Message-ID: <CAJZ5v0jL0rDAD+Urc-tD76embqNABWHkShAeiE0ErSJvNWzbgQ@mail.gmail.com>
-Subject: [GIT PULL] Power management changes for v4.18-rc2
+Date:   Thu, 21 Jun 2018 15:31:17 +0200
+X-Google-Sender-Auth: WZPkkF0HW7j9y3vxgQmZRPhiibU
+Message-ID: <CAJZ5v0iUU3WUZQ7NDR2dbxzOSGf3vrXr=7r5zQzSEwh1qokxgQ@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v4.18-rc2
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,83 +75,54 @@ Hi Linus,
 Please pull from the tag
 
  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-4.18-rc2
+ acpi-4.18-rc2
 
-with top-most commit b51e001385f1c861445af3efeab766811ee8db29
+with top-most commit e50f182c9094f95ecfd52a7f33e7e7320e85eb49
 
- Merge branch 'pm-tools'
+ Merge branches 'acpi-soc' and 'acpi-processor'
 
 on top of commit ce397d215ccd07b8ae3f71db689aedb85d56ab40
 
  Linux 4.18-rc1
 
-to receive power management changes for 4.18-rc2.
+to receive ACPI fixes for 4.18-rc2.
 
-These are mostly fixes, including some fixes for changes made
-during the recent merge window and some "stable" material, plus
-some minor extensions of the turbostat utility.
+These fix a suspend/resume regression in the ACPI driver for Intel
+SoCs (LPSS), add a new system wakeup quirk to the ACPI EC driver and
+fix an inline stub of a function in the ACPI processor driver that
+diverged from the original.
 
 Specifics:
 
- - Fix the PM core to avoid introducing a runtime PM usage counter
-   imbalance when adding device links during driver probe (Rafael
-   Wysocki).
+ - Fix a suspend/resume regression in the ACPI driver for Intel SoCs
+   (LPSS) to make it work on systems where some power management
+   quirks should only be applied for runtime PM and suspend-to-idle
+   and not for suspend-to-RAM (Rafael Wysocki).
 
- - Fix the operating performance points (OPP) framework to ensure
-   that the regulator voltage is always updated as appropriate when
-   updating clock rates (Waldemar Rymarkiewicz).
+ - Add a system wakeup quirk for Thinkpad X1 Carbon 6th to the ACPI
+   EC driver to avoid drainig battery too fast while suspended to
+   idle on those systems (Mika Westerberg).
 
- - Fix the intel_pstate driver to use correct max/min limits for
-   cores with differing maximum frequences (Srinivas Pandruvada).
-
- - Fix a typo in the intel_pstate driver documentation (Rafael
-   Wysocki).
-
- - Fix two issues with the recently added Kryo cpufreq driver (Ilia
-   Lin).
-
- - Fix two recent regressions and some other minor issues in the
-   turbostat utility and extend it to provide some more diagnostic
-   information (Len Brown, Nathan Ciobanu).
+ - Fix an inline stub of acpi_processor_ppc_has_changed() to match
+   the original function definition (Brian Norris).
 
 Thanks!
 
 
 ---------------
 
-Ilia Lin (2):
-      cpufreq: kryo: Fix possible error code dereference
-      cpufreq: kryo: Add module remove and exit
+Brian Norris (1):
+      ACPI / processor: Finish making acpi_processor_ppc_has_changed() void
 
-Len Brown (4):
-      tools/power turbostat: fix show/hide issues resulting from mis-merge
-      tools/power turbostat: decode cpuid.1.HT
-      tools/power turbostat: add optional APIC X2APIC columns
-      tools/power turbostat: version 18.06.20
+Mika Westerberg (1):
+      ACPI / EC: Use ec_no_wakeup on Thinkpad X1 Carbon 6th
 
-Nathan Ciobanu (4):
-      tools/power turbostat: fix segfault on 'no node' machines
-      tools/power turbostat: alphabetize the help output
-      tools/power turbostat: add single character tokens to help
-      tools/power turbostat: add the missing command line switches
-
-Rafael J. Wysocki (2):
-      PM / core: Fix supplier device runtime PM usage counter imbalance
-      Documentation: intel_pstate: Fix typo
-
-Srinivas Pandruvada (1):
-      cpufreq: intel_pstate: Fix scaling max/min limits with Turbo 3.0
-
-Waldemar Rymarkiewicz (1):
-      PM / OPP: Update voltage in case freq == old_freq
+Rafael J. Wysocki (1):
+      ACPI / LPSS: Avoid PM quirks on suspend and resume from S3
 
 ---------------
 
- Documentation/admin-guide/pm/intel_pstate.rst |   2 +-
- drivers/base/core.c                           |  15 +-
- drivers/cpufreq/intel_pstate.c                |  27 ++-
- drivers/cpufreq/qcom-cpufreq-kryo.c           |  25 ++-
- drivers/opp/core.c                            |   2 +-
- tools/power/x86/turbostat/turbostat.8         |   2 +-
- tools/power/x86/turbostat/turbostat.c         | 240 ++++++++++++++++++--------
- 7 files changed, 224 insertions(+), 89 deletions(-)
+ drivers/acpi/acpi_lpss.c | 18 +++++++++++-------
+ drivers/acpi/ec.c        | 20 ++++++++++++++++++++
+ include/acpi/processor.h |  3 +--
+ 3 files changed, 32 insertions(+), 9 deletions(-)
