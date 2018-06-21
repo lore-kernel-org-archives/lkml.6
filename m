@@ -2,166 +2,190 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47872C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FD6C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA60320652
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:29:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WWo/2kkx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA60320652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D1DF620883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:34:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1DF620883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932799AbeFUJ3z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:29:55 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54452 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932534AbeFUJ3x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:29:53 -0400
-Received: by mail-it0-f66.google.com with SMTP id 76-v6so3702387itx.4
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 02:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=dC8DNJaqPwhJQ7xfiFD6iJvkx6tGtJNjBiI9Ip9ri+I=;
-        b=WWo/2kkx9xCPWvRokPs29r0W3rmZnE+h3gmaIUtygN12rgto6geNYWWrKheBG3zjdn
-         9bCGbmUzW0Qc99wwmHCJR7mtCeUxKUoMRKAzXaoLSSdguF4GqBYDTF3CNlWjgV9bw486
-         aPLOcsmLTc45DkjOmydK2oM1Fh6kCd447s0/4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=dC8DNJaqPwhJQ7xfiFD6iJvkx6tGtJNjBiI9Ip9ri+I=;
-        b=jxwqm+Gy+Y0i96JQw0WZ6CsMFEJg6KYIi5xfiDJrVCNtEewhd3g7YC4SnVaHqbKX3D
-         eb/fRiTKIEtO1SzUCJp62RSlz4IddeCs6qjl0DzVFIrOKXEuxZhFNJnhvZjAaS5RK9rS
-         UO6o3mN9l2BKmgXqcXbjhwzx57hOjdZJ2bhhebC3lp+ld5JxKIgo1csIYaGcNBrrkn2K
-         RfxoLxzu4LmHcVm+v9cZP5mJ23UEKksikx2tvmsloyU7pXTsbrAhn+u0CLyjT9onjTvi
-         fqznW/e0VJ5npurKc20WHGJNpNlCe+V0jSpa6gNdpYBnaVLdXs/3zzjVUswgBGLYQcnA
-         kTEw==
-X-Gm-Message-State: APt69E2KuIxSgtwgNnOa0D8VyZt55XUX5Eg515nubGVUmY8L13h8leCY
-        X77EeYd83KNnWMkfS/Pnpkejhbhnehqs2ZMOBCqg0Q==
-X-Google-Smtp-Source: ADUXVKLN+mn858Vcau9zVAtsj/W+bE51xnNO5+kNfzGPXFSo2Izg3kgbEYBIzYPALH8LKEXYOOVkpunB/7kiwHQLBGI=
-X-Received: by 2002:a02:6001:: with SMTP id i1-v6mr20558209jac.5.1529573393042;
- Thu, 21 Jun 2018 02:29:53 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 02:29:52
- -0700 (PDT)
-In-Reply-To: <70ebe6d7-0745-5606-ae89-8a7b2fb62008@arm.com>
-References: <20180620085755.20045-1-yaojun8558363@gmail.com>
- <20180620085755.20045-2-yaojun8558363@gmail.com> <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
- <20180621025141.GB11276@toy> <CAKv+Gu_3Cfuq-qQuRHkYCB2uTPOK=KVeVh4OKmtu2MDYwfOtTA@mail.gmail.com>
- <70ebe6d7-0745-5606-ae89-8a7b2fb62008@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 21 Jun 2018 11:29:52 +0200
-Message-ID: <CAKv+Gu-t5ErL89J=sxeVRYzDNrB1Ejdj+XOggAMWk-gY7ewsOg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64/mm: move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir}
- to .rodata section
-To:     James Morse <james.morse@arm.com>
-Cc:     Jun Yao <yaojun8558363@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S932795AbeFUJd7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:33:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48481 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932534AbeFUJd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:33:57 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 141452072B; Thu, 21 Jun 2018 11:33:55 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AA758206D8;
+        Thu, 21 Jun 2018 11:33:44 +0200 (CEST)
+Message-ID: <4fcfed23bfae158699c23329f92d6f2e968dc062.camel@bootlin.com>
+Subject: Re: [PATCH 4/9] media: cedrus: make engine type more generic
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
+        acourbot@chromium.org, sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     tfiga@chromium.org, posciak@chromium.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Thu, 21 Jun 2018 11:33:44 +0200
+In-Reply-To: <20180613140714.1686-5-maxime.ripard@bootlin.com>
+References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+         <20180613140714.1686-5-maxime.ripard@bootlin.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-7wU1Tez5FhraT+rPcUE/"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 June 2018 at 10:59, James Morse <james.morse@arm.com> wrote:
-> Hi guys,
->
-> On 21/06/18 07:39, Ard Biesheuvel wrote:
->> On 21 June 2018 at 04:51, Jun Yao <yaojun8558363@gmail.com> wrote:
->>> On Wed, Jun 20, 2018 at 12:09:49PM +0200, Ard Biesheuvel wrote:
->>>> On 20 June 2018 at 10:57, Jun Yao <yaojun8558363@gmail.com> wrote:
->>>>> Move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata
->>>>> section. And update the swapper_pg_dir by fixmap.
->>>>>
->>>>
->>>> I think we may be able to get away with not mapping idmap_pg_dir and
->>>> tramp_pg_dir at all.
->>>
->>> I think we need to move tramp_pg_dir to .rodata. The attacker can write
->>> a block-mapping(AP=01) to tramp_pg_dir and then he can access kernel
->>> memory.
->
->> Why does it need to be mapped at all? When do we ever access it from the code?
->
-> (We would want to make its fixmap entry read-only too)
->
 
-It already is.
+--=-7wU1Tez5FhraT+rPcUE/
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->
->>>> As for swapper_pg_dir, it would indeed be nice if we could keep those
->>>> mappings read-only most of the time, but I'm not sure how useful this
->>>> is if we apply it to the root level only.
->>>
->>> The purpose of it is to make 'KSMA' harder, where an single arbitrary
->>> write is used to add a block mapping to the page-tables, giving the
->>> attacker full access to kernel memory. That's why we just apply it to
->>> the root level only. If the attacker can arbitrary write multiple times,
->>> I think it's hard to defend.
->>>
->>
->> So the assumption is that the root level is more easy to find?
->> Otherwise, I'm not sure I understand why being able to write a level 0
->> entry is so harmful, given that we don't have block mappings at that
->> level.
->
-> I think this thing assumes 3-level page tables with 39bit VA.
->
+Hi,
 
-The attack, you mean? Because this code is unlikely to build with that
-configuration, given that __pgd_populate() BUILD_BUG()s in that case.
+On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
+> The sunxi_cedrus_engine enum actually enumerates pretty much the codecs t=
+o
+> use (or we can easily infer the codec engine from the codec).
+>=20
+> Since we will need the codec type as well in some later refactoring, make
+> that structure more useful by just enumerating the codec, and converting
+> the existing users.
 
->
->>>>> @@ -417,12 +421,22 @@ static void __init __map_memblock(pgd_t *pgdp, phys_addr_t start,
->>>>>
->>>>>  void __init mark_linear_text_alias_ro(void)
->>>>>  {
->
->>>>> +       size = (unsigned long)__init_begin - (unsigned long)swapper_pg_end;
->>>>> +       update_mapping_prot(__pa_symbol(swapper_pg_end),
->>>>> +                           (unsigned long)lm_alias(swapper_pg_end),
->>>>> +                           size, PAGE_KERNEL_RO);
->>>>
->>>> I don't think this is necessary. Even if some pages are freed, it
->>>> doesn't harm to keep a read-only alias of them here since the new
->>>> owner won't access them via this mapping anyway. So we can keep
->>>> .rodata as a single region.
->>>
->>> To be honest, I didn't think of this issue at first. I later found a
->>> problem when testing the code on qemu:
->>
->> OK, you're right. I missed the fact that this operates on the linear
->> alias, not the kernel mapping itself.
->>
->> What I don't like is that we lose the ability to use block mappings
->> for the entire .rodata section this way. Isn't it possible to move
->> these pgdirs to the end of the .rodata segment, perhaps by using a
->> separate input section name and placing that explicitly? We could even
->> simply forget about freeing those pages, given that [on 4k pages] the
->> benefit of freeing 12 KB of space is likely to get lost in the
->> rounding noise anyway [segments are rounded up to 64 KB in size]
->
-> I assumed that to move swapper_pg_dir into the .rodata section we would need to
-> break it up. Today its ~3 levels, which we setup in head.S, then do a dance in
-> paging_init() so that swapper_pg_dir is always the top level.
->
-> We could generate all leves of the 'init_pg_dir' in the __initdata section, then
-> copy only the top level into swapper_pg_dir into the rodata section during
-> paging_init().
->
+With the comment below taken in account, this is:
 
-Is that complexity truly justified for a security sensitive piece of
-code? Can't we just drop the memblock_free() and be done with it?
+Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h | 6 ++++++
+>  drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c     | 6 +++---
+>  drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h     | 6 +-----
+>  drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c  | 2 +-
+>  4 files changed, 11 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h b/=
+drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> index b1ed1c8cb130..a5f83c452006 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+> @@ -61,6 +61,12 @@ struct sunxi_cedrus_run {
+>  	};
+>  };
+> =20
+> +enum sunxi_cedrus_codec {
+
+Feel free to rename to cedrus_codec when rebasing on top of the latest
+patchset introducing the driver.
+
+Cheers,
+
+Paul
+
+> +	SUNXI_CEDRUS_CODEC_MPEG2,
+> +
+> +	SUNXI_CEDRUS_CODEC_LAST,
+> +};
+> +
+>  struct sunxi_cedrus_ctx {
+>  	struct v4l2_fh fh;
+>  	struct sunxi_cedrus_dev	*dev;
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/driv=
+ers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> index fc688a5c1ea3..bb46a01214e0 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
+> @@ -41,7 +41,7 @@
+>  #define SYSCON_SRAM_C1_MAP_VE	0x7fffffff
+> =20
+>  int sunxi_cedrus_engine_enable(struct sunxi_cedrus_dev *dev,
+> -			       enum sunxi_cedrus_engine engine)
+> +			       enum sunxi_cedrus_codec codec)
+>  {
+>  	u32 reg =3D 0;
+> =20
+> @@ -53,8 +53,8 @@ int sunxi_cedrus_engine_enable(struct sunxi_cedrus_dev =
+*dev,
+> =20
+>  	reg |=3D VE_CTRL_CACHE_BUS_BW_128;
+> =20
+> -	switch (engine) {
+> -	case SUNXI_CEDRUS_ENGINE_MPEG:
+> +	switch (codec) {
+> +	case SUNXI_CEDRUS_CODEC_MPEG2:
+>  		reg |=3D VE_CTRL_DEC_MODE_MPEG;
+>  		break;
+> =20
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h b/driv=
+ers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h
+> index 34f3fae462a8..3236c80bfcf4 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h
+> @@ -23,12 +23,8 @@
+>  #ifndef _SUNXI_CEDRUS_HW_H_
+>  #define _SUNXI_CEDRUS_HW_H_
+> =20
+> -enum sunxi_cedrus_engine {
+> -	SUNXI_CEDRUS_ENGINE_MPEG,
+> -};
+> -
+>  int sunxi_cedrus_engine_enable(struct sunxi_cedrus_dev *dev,
+> -			       enum sunxi_cedrus_engine engine);
+> +			       enum sunxi_cedrus_codec codec);
+>  void sunxi_cedrus_engine_disable(struct sunxi_cedrus_dev *dev);
+> =20
+>  int sunxi_cedrus_hw_probe(struct sunxi_cedrus_dev *dev);
+> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c b/d=
+rivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
+> index 5be3e3b9ceef..85e6fc2fbdb2 100644
+> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
+> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
+> @@ -83,7 +83,7 @@ void sunxi_cedrus_mpeg2_setup(struct sunxi_cedrus_ctx *=
+ctx,
+>  	}
+> =20
+>  	/* Activate MPEG engine. */
+> -	sunxi_cedrus_engine_enable(dev, SUNXI_CEDRUS_ENGINE_MPEG);
+> +	sunxi_cedrus_engine_enable(dev, SUNXI_CEDRUS_CODEC_MPEG2);
+> =20
+>  	/* Set quantization matrices. */
+>  	for (i =3D 0; i < 64; i++) {
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-7wU1Tez5FhraT+rPcUE/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsrcPgACgkQ3cLmz3+f
+v9GxTwf/TJCCcwCC3Rv2+rY85tD/+4wVMDu1JncGIkjS04EpWaDeHeO3SBgPU7Dr
+9O8/rNPsujLDshuzU1dMFg0DATVfi/gC8TidPgKZRlzjzvKDijLKHpF6xbULHHQZ
+t+u47yVw6LJnsLNiMCoe4lV+cryd8VH1qWNkC+KxBXFO7pnHPwlNou0LFbQr02oI
+ZlKmqXCLOSqZxAigIfnTIWhrWdtv0Fq6d2YixXoFxlsB4idOyEtvCmT+TOXAwlTt
+oem23/JJfZ7RgbOc/DMFoOkITN8fEggA3VnVkURd/7Iv85pQ9y40qwWc1DUtaS5H
+9p0wDDf/RdeWFXvQUJP1q0eJVwrSPA==
+=5Sa5
+-----END PGP SIGNATURE-----
+
+--=-7wU1Tez5FhraT+rPcUE/--
+
