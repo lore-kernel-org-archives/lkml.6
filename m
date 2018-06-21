@@ -2,225 +2,122 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D8EC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3073DC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E33D21A84
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8C8421AA5
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:28:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gn/Zp5q9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E33D21A84
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jJu9Cewq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C8421AA5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933809AbeFUV2r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:28:47 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38334 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933537AbeFUV2d (ORCPT
+        id S933867AbeFUV2z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:28:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41714 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932899AbeFUV2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:28:33 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5LLNqvc138868;
-        Thu, 21 Jun 2018 21:25:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=MaR2nkbhFIMiVvzGC4n58/686bzlW57n/ekheBu9UEk=;
- b=Gn/Zp5q9MH4e1FoTPwyjwawSaHzdv+N+Kv1kMb3BRVMHumf47sfyG7M+s9gbW5CTlwSF
- cKgPcD6ed4VnyzRudrGnpSZP1z5wRwha7sR1/iK5kcLKRLddqBaSHWKi4BQdh8WQnCHA
- ad/uF/RKgsmD4WVyEuvBS1bD+JexBFmkFGBA6+HMToaUguzfYCxD+WxH1P9x6GJazY3V
- xMoKFy+urEI8XbLOymw+UKWiKszhCrmeeDuowLe6uUTDMweSPQodZEDy+VYImjW9BW2j
- kVc8gfwMVW52s9/JOsn0cCF+sYpgJc8w8jagkJi46B1pxkt6YA3dIpd6QlypXPum/nDV fA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2jmtgx3qdb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jun 2018 21:25:36 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5LLPZHN028348
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jun 2018 21:25:35 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5LLPZnx015209;
-        Thu, 21 Jun 2018 21:25:35 GMT
-Received: from xakep.us.oracle.com (/10.39.228.116)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Jun 2018 14:25:34 -0700
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
-        feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org
-Subject: [PATCH v12 06/11] time: replace read_boot_clock64() with read_persistent_wall_and_boot_offset()
-Date:   Thu, 21 Jun 2018 17:25:13 -0400
-Message-Id: <20180621212518.19914-7-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180621212518.19914-1-pasha.tatashin@oracle.com>
-References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8931 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=419
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806210230
+        Thu, 21 Jun 2018 17:28:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1FPq25PETmvt5KNrYdWbDZqapwumrQ4tY7zcjxRevkA=; b=jJu9CewqMUKzmiUHPM3bQce21
+        Afz3Rveyld71fsuVI4S219oGWgCkEEvQoQh9fWAiwEA7nEbiNXPbTmEs5FTH7Wk3/U8nQozeTrgje
+        3cgM7Q04TdyQvkE1FVvY34RaGYehKOKCuVdzlofY4a678ti7JlpO6isO/LIEWB8PC4W5XrNRY5PsN
+        isRw3rUVIczlh7cj5PJnKNOmtQl//U0JBDQsZkzt+6xzhOOJFfz+mtY4Nyg352av0jpLinKDp0Q85
+        OrmMUgMrrrXL6g+cax6Q//rF9t1Ygxq1zQ2hMtBhoLJ+2ubjxmn7NkIHEXV/cbJi6huSqNd93TBgR
+        w+2b15oAw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fW78O-0001Z8-8v; Thu, 21 Jun 2018 21:28:52 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 00/26] New IDA API
+Date:   Thu, 21 Jun 2018 14:28:09 -0700
+Message-Id: <20180621212835.5636-1-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If architecture does not support exact boot time, it is challenging to
-estimate boot time without having a reference to the current persistent
-clock value. Yet, we cannot read the persistent clock time again, because
-this may lead to math discrepancies with the caller of read_boot_clock64()
-who have read the persistent clock at a different time.
+As threatened a few months ago https://lwn.net/Articles/750154/, here's a
+patch series to convert all users of the non-simple IDA API to ida_alloc*.
+Basically every driver is improved by doing this.  There are a long
+list of people on the bcc for this cover letter, plus patches 2 and 3.
+All patches are being sent to linux-kernel.  The entire series is also
+available as a git tree at
+	git://git.infradead.org/users/willy/linux-dax.git ida
 
-This is why it is better to provide two values simultaneously: the
-persistent clock value, and the boot time.
+Matthew Wilcox (26):
+  radix tree test suite: fix build
+  ida: Lock the IDA in ida_destroy
+  ida: Add new API
+  mtip32xx: Convert to new IDA API
+  fs: Convert unnamed_dev_ida to new API
+  fs: Convert namespace IDAs to new API
+  devpts: Convert to new IDA API
+  sd: Convert to new IDA interface
+  osd: Convert to new IDA API
+  rsxx: Convert to new IDA API
+  cb710: Convert to new IDA API
+  Convert net_namespace to new IDA API
+  ppc: Convert mmu context allocation to new IDA API
+  media: Convert entity ID allocation to new IDA API
+  ppc: Convert vas ID allocation to new IDA API
+  dmaengine: Convert to new IDA API
+  drm/vmwgfx: Convert to new IDA API
+  target/iscsi: Allocate session IDs from an IDA
+  ida: Start new test_ida module
+  idr-test: Convert ida_check_nomem to new API
+  test_ida: Move ida_check_leaf
+  test_ida: Move ida_check_max
+  test_ida: Convert check_ida_conv to new API
+  test_ida: check_ida_destroy and check_ida_alloc
+  ida: Remove old API
+  ida: Change ida_get_new_above to return the id
 
-Thus, we replace read_boot_clock64() with:
-read_persistent_wall_and_boot_offset(wall_time, boot_offset)
+ arch/powerpc/mm/mmu_context_book3s64.c        |  44 +---
+ arch/powerpc/platforms/powernv/vas-window.c   |  26 +--
+ drivers/block/mtip32xx/mtip32xx.c             |  29 +--
+ drivers/block/rsxx/core.c                     |  21 +-
+ drivers/dma/dmaengine.c                       |  20 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_gmrid_manager.c |  41 +---
+ drivers/media/media-device.c                  |  16 +-
+ drivers/misc/cb710/core.c                     |  23 +-
+ drivers/scsi/osd/osd_uld.c                    |  22 +-
+ drivers/scsi/sd.c                             |  21 +-
+ drivers/target/iscsi/iscsi_target.c           |  10 +-
+ drivers/target/iscsi/iscsi_target.h           |   4 +-
+ drivers/target/iscsi/iscsi_target_login.c     |  20 +-
+ fs/devpts/inode.c                             |  47 ++--
+ fs/namespace.c                                |  50 +---
+ fs/super.c                                    |  63 ++----
+ include/linux/idr.h                           |  68 ++++--
+ lib/Kconfig.debug                             |   3 +
+ lib/Makefile                                  |   1 +
+ lib/idr.c                                     | 155 +++++--------
+ lib/radix-tree.c                              |   9 -
+ lib/test_ida.c                                | 173 ++++++++++++++
+ net/core/net_namespace.c                      |  16 +-
+ tools/testing/radix-tree/Makefile             |   1 +
+ tools/testing/radix-tree/idr-test.c           | 214 ++++--------------
+ tools/testing/radix-tree/linux/xarray.h       |   2 +
+ tools/testing/radix-tree/main.c               |   3 +-
+ tools/testing/radix-tree/test.h               |   3 +-
+ 28 files changed, 450 insertions(+), 655 deletions(-)
+ create mode 100644 lib/test_ida.c
+ create mode 100644 tools/testing/radix-tree/linux/xarray.h
 
-Where wall_time is returned by read_persistent_clock()
-And boot_offset is wall_time - boot time
-
-We calculate boot_offset using the current value of local_clock() so
-architectures, that do not have a dedicated boot_clock but have early
-sched_clock(), such as SPARCv9, x86, and possibly more will benefit from
-this change by getting a better and more consistent estimate of the boot
-time without need for an arch specific implementation.
-
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- include/linux/timekeeping.h |  3 +-
- kernel/time/timekeeping.c   | 61 +++++++++++++++++++------------------
- 2 files changed, 34 insertions(+), 30 deletions(-)
-
-diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-index 86bc2026efce..686bc27acef0 100644
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -243,7 +243,8 @@ extern void ktime_get_snapshot(struct system_time_snapshot *systime_snapshot);
- extern int persistent_clock_is_local;
- 
- extern void read_persistent_clock64(struct timespec64 *ts);
--extern void read_boot_clock64(struct timespec64 *ts);
-+void read_persistent_clock_and_boot_offset(struct timespec64 *wall_clock,
-+					   struct timespec64 *boot_offset);
- extern int update_persistent_clock64(struct timespec64 now);
- 
- /*
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 4786df904c22..aface5c13e7d 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -17,6 +17,7 @@
- #include <linux/nmi.h>
- #include <linux/sched.h>
- #include <linux/sched/loadavg.h>
-+#include <linux/sched/clock.h>
- #include <linux/syscore_ops.h>
- #include <linux/clocksource.h>
- #include <linux/jiffies.h>
-@@ -1496,18 +1497,23 @@ void __weak read_persistent_clock64(struct timespec64 *ts64)
- }
- 
- /**
-- * read_boot_clock64 -  Return time of the system start.
-+ * read_persistent_wall_and_boot_offset - Read persistent clock, and also offset
-+ *                                        from the boot.
-  *
-  * Weak dummy function for arches that do not yet support it.
-- * Function to read the exact time the system has been started.
-- * Returns a timespec64 with tv_sec=0 and tv_nsec=0 if unsupported.
-- *
-- *  XXX - Do be sure to remove it once all arches implement it.
-+ * wall_time	- current time as returned by persistent clock
-+ * boot_offset	- offset that is defined as wall_time - boot_time
-+ * The default function calculates offset based on the current value of
-+ * local_clock(). This way architectures that support sched_clock() but don't
-+ * support dedicated boot time clock will provide the best estimate of the
-+ * boot time.
-  */
--void __weak read_boot_clock64(struct timespec64 *ts)
-+void __weak __init
-+read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
-+				     struct timespec64 *boot_offset)
- {
--	ts->tv_sec = 0;
--	ts->tv_nsec = 0;
-+	read_persistent_clock64(wall_time);
-+	*boot_offset = ns_to_timespec64(local_clock());
- }
- 
- /* Flag for if timekeeping_resume() has injected sleeptime */
-@@ -1521,28 +1527,28 @@ static bool persistent_clock_exists;
-  */
- void __init timekeeping_init(void)
- {
-+	struct timespec64 wall_time, boot_offset, wall_to_mono;
- 	struct timekeeper *tk = &tk_core.timekeeper;
- 	struct clocksource *clock;
- 	unsigned long flags;
--	struct timespec64 now, boot, tmp;
--
--	read_persistent_clock64(&now);
--	if (!timespec64_valid_strict(&now)) {
--		pr_warn("WARNING: Persistent clock returned invalid value!\n"
--			"         Check your CMOS/BIOS settings.\n");
--		now.tv_sec = 0;
--		now.tv_nsec = 0;
--	} else if (now.tv_sec || now.tv_nsec)
--		persistent_clock_exists = true;
- 
--	read_boot_clock64(&boot);
--	if (!timespec64_valid_strict(&boot)) {
--		pr_warn("WARNING: Boot clock returned invalid value!\n"
--			"         Check your CMOS/BIOS settings.\n");
--		boot.tv_sec = 0;
--		boot.tv_nsec = 0;
-+	read_persistent_wall_and_boot_offset(&wall_time, &boot_offset);
-+	if (timespec64_valid_strict(&wall_time) &&
-+	    timespec64_to_ns(&wall_time)) {
-+		persistent_clock_exists = true;
-+	} else {
-+		pr_warn("Persistent clock returned invalid value");
-+		wall_time = (struct timespec64){0};
- 	}
- 
-+	if (timespec64_compare(&wall_time, &boot_offset) < 0)
-+		boot_offset = (struct timespec64){0};
-+
-+	/* We want set wall_to_mono, so the following is true:
-+	 * wall time + wall_to_mono = boot time
-+	 */
-+	wall_to_mono = timespec64_sub(boot_offset, wall_time);
-+
- 	raw_spin_lock_irqsave(&timekeeper_lock, flags);
- 	write_seqcount_begin(&tk_core.seq);
- 	ntp_init();
-@@ -1552,13 +1558,10 @@ void __init timekeeping_init(void)
- 		clock->enable(clock);
- 	tk_setup_internals(tk, clock);
- 
--	tk_set_xtime(tk, &now);
-+	tk_set_xtime(tk, &wall_time);
- 	tk->raw_sec = 0;
--	if (boot.tv_sec == 0 && boot.tv_nsec == 0)
--		boot = tk_xtime(tk);
- 
--	set_normalized_timespec64(&tmp, -boot.tv_sec, -boot.tv_nsec);
--	tk_set_wall_to_mono(tk, tmp);
-+	tk_set_wall_to_mono(tk, wall_to_mono);
- 
- 	timekeeping_update(tk, TK_MIRROR | TK_CLOCK_WAS_SET);
- 
 -- 
 2.17.1
 
