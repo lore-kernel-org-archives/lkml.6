@@ -3,86 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D75C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4004FC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1043B20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBC1A20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:05:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BcrTgjsf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1043B20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bkvrfFpc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC1A20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933467AbeFUNDl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:03:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38250 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933169AbeFUNDj (ORCPT
+        id S933465AbeFUNFi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:05:38 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:46543 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933091AbeFUNFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:03:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9IXDWkAXBmF71F26ka05Xhv15UCQmVpOrP73Kt2mfHk=; b=BcrTgjsfSzRN7ycJu/L75BmXq
-        cjgMs4QrXp8ygBEr6TZ3AfU+71Q2+6hmZP6wjPLEGuuH601qRAw4sim51qnPAJMXgUfXD/cr97fQ0
-        PX5TMaSXPHFbaC6S1f1QlBulVS4N57YL3hPYplDUVuU3lsrSN8wC5g+xiXVv+iuIVdmU/8Lx/7EXp
-        AMmfSQT9EMRfQ62tTpJeTVx4nUspt2UI6rGWJUom0A0BXYZTEbX66CGtSJgaBPwzKAWexcDzT80dT
-        bwhISU0jVI58EhdSdKhRR7o5FM25xb2pRz7Ile1mornUF3e3RA6Xrva10Q6P7zjq1JN7UQvXXkvFo
-        w7wv3gitQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVzFH-00049A-R0; Thu, 21 Jun 2018 13:03:27 +0000
-Date:   Thu, 21 Jun 2018 06:03:27 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
-        dgilbert@interlog.com, Al Viro <viro@zeniv.linux.org.uk>,
-        fujita.tomonori@lab.ntt.co.jp, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        security@kernel.org, Alexander Nezhinsky <alexandern@mellanox.com>,
-        Nicholas Bellinger <nab@linux-iscsi.org>, stgt@vger.kernel.org
-Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in
- release
-Message-ID: <20180621130327.GB24925@infradead.org>
-References: <20180615152335.208202-1-jannh@google.com>
- <20180615164009.GD30522@ZenIV.linux.org.uk>
- <90063ef3-68fa-e983-9b47-838e6076b0f4@interlog.com>
- <813e817b-bb2f-4a47-6225-9e39f19be278@kernel.dk>
- <20180621123431.GA558@infradead.org>
- <CAG48ez3BWeZkW5XG814K4o7p0KWXVm9Gpzh2rTthNei=4fhH-A@mail.gmail.com>
+        Thu, 21 Jun 2018 09:05:36 -0400
+Received: by mail-pf0-f196.google.com with SMTP id q1-v6so1512120pff.13;
+        Thu, 21 Jun 2018 06:05:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2uaLy1MMq803Eg063vahB8go8u53tGlbAKXX9msUqys=;
+        b=bkvrfFpctt/schzLX1OV5W/plvdmvbF7O0m50n/CZDg6ELuk4g/i2b7mvvdCoaNLAA
+         WyEMegf/1+UIYU6VnP4Vd3Y8VHWGeFIfTmy71VHWh+m9qABJvygxRENZOJpGuS+fFWHe
+         nchW8i7ZNp+/2qtG0WY0gKVZdioU6Nhc630vOZtdhh2wD2qPRq9Iei/In2L6TAZGdrgu
+         n7Kzye4eQB6fJdur1mTfyfiMRISxdXimL2uN9TSe+H7MhGqzuVhlWUZDZ4QiTgCPYopk
+         FH/VOXoenWKg1MYZrQ8YaL9UcSeyVsGTIsmfcUQ5+1TXPTwPGYME+wto79ZPf20rmafM
+         bTWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2uaLy1MMq803Eg063vahB8go8u53tGlbAKXX9msUqys=;
+        b=Gl+ocvKtwwffoMlNDecWLeZxs+hqtPJBfCDAa+7yKnHNi2okOUlwPy4HWhi57WNbpo
+         gAnO/31zW2pKOsliqqil0EJdeOEmxV2kZgNAZ3okuz8H23n87PdXAOp7Os60yNuEzps7
+         PzD8eUROMBOcBjYdevCArB3cQOhmycZ2lARHBvwJ89uM1gcqxFlXk3ARDKMoz8o7UfQX
+         owgAhHsIXcMK1gY7CflOfpvChrqn1T6j5HNM93MebaUkXeTzHhfmOYWTCIwpZXw28ePS
+         rQh6JNt6jiB1FOTv63HOneRmm0NHpDIUE5hhsww7qkjae/4ZlWWVnYImIP+OyEv/VZHQ
+         rsqQ==
+X-Gm-Message-State: APt69E28T4hL4L3UfeMRMvPKLcT/mDYbePEYkkV0oMhTmzk4aGA4JpTF
+        +KLAKd1hrSZkovT1LzJ+H94=
+X-Google-Smtp-Source: ADUXVKIYGxyNmopVzzNBr1r+Zq479UkG9+WANT6o89ZLlIcw1P0BCHaScDCqt6TL7MvR2LhTIYAbqw==
+X-Received: by 2002:a65:47cc:: with SMTP id f12-v6mr22507270pgs.173.1529586336137;
+        Thu, 21 Jun 2018 06:05:36 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id s27-v6sm11226987pfk.184.2018.06.21.06.05.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 06:05:35 -0700 (PDT)
+Subject: Re: [PATCH] staging/typec: fix tcpci_rt1711h build errors
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kbuild test robot <lkp@intel.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        kbuild-all@01.org
+References: <f344e5f3-4e92-1fd0-ef4d-7b96065466b8@infradead.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <ed3064c8-d0b3-10c4-2eaa-ef50762e7756@roeck-us.net>
+Date:   Thu, 21 Jun 2018 06:05:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez3BWeZkW5XG814K4o7p0KWXVm9Gpzh2rTthNei=4fhH-A@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <f344e5f3-4e92-1fd0-ef4d-7b96065466b8@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 02:51:16PM +0200, Jann Horn wrote:
-> In the package https://packages.debian.org/stretch/tgt:
->   https://sources.debian.org/src/tgt/1:1.0.73-1/usr/bs_sg.c/?hl=131#L131
->   https://sources.debian.org/src/tgt/1:1.0.73-1/usr/bs_sg.c/?hl=236#L236
+On 06/20/2018 05:05 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix Kconfig warning and build errors in staging/typec/rt1711h.c.
+> The driver uses I2C interfaces so it should depend on I2C.
+> 
+> WARNING: unmet direct dependencies detected for TYPEC_TCPCI
+>    Depends on [m]: STAGING [=y] && TYPEC_TCPM [=y] && I2C [=m]
+>    Selected by [y]:
+>    - TYPEC_RT1711H [=y] && STAGING [=y] && TYPEC_TCPM [=y]
+> 
+> and then:
+> drivers/staging/typec/tcpci.o: In function `tcpci_probe':
+> ../drivers/staging/typec/tcpci.c:536: undefined reference to `__devm_regmap_init_i2c'
+> drivers/staging/typec/tcpci.o: In function `tcpci_i2c_driver_init':
+> ../drivers/staging/typec/tcpci.c:593: undefined reference to `i2c_register_driver'
+> drivers/staging/typec/tcpci.o: In function `tcpci_i2c_driver_exit':
+> ../drivers/staging/typec/tcpci.c:593: undefined reference to `i2c_del_driver'
+> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_check_revision':
+> ../drivers/staging/typec/tcpci_rt1711h.c:218: undefined reference to `i2c_smbus_read_word_data'
+> ../drivers/staging/typec/tcpci_rt1711h.c:225: undefined reference to `i2c_smbus_read_word_data'
+> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_probe':
+> ../drivers/staging/typec/tcpci_rt1711h.c:251: undefined reference to `__devm_regmap_init_i2c'
+> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_i2c_driver_init':
+> ../drivers/staging/typec/tcpci_rt1711h.c:308: undefined reference to `i2c_register_driver'
+> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_i2c_driver_exit':
+> ../drivers/staging/typec/tcpci_rt1711h.c:308: undefined reference to `i2c_del_driver'
+> 
+> Fixes: ce08eaeb6388 ("staging: typec: rt1711h typec chip driver")
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: ShuFan Lee <shufan_lee@richtek.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: kbuild-all@01.org
 
-This is for real, although it is an optional case in an optional plug
-in, so I'm not sure if any one actually uses bsg read/write with it
-for real.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-The usual aspects added. (the question is if bsg read/write support
-is actually used in real life or can be removed)
+> ---
+>   drivers/staging/typec/Kconfig |    1 +
+>   1 file changed, 1 insertion(+)
+> 
+> --- lnx-418-rc1.orig/drivers/staging/typec/Kconfig
+> +++ lnx-418-rc1/drivers/staging/typec/Kconfig
+> @@ -11,6 +11,7 @@ config TYPEC_TCPCI
+>   
+>   config TYPEC_RT1711H
+>   	tristate "Richtek RT1711H Type-C chip driver"
+> +	depends on I2C
+>   	select TYPEC_TCPCI
+>   	help
+>   	  Richtek RT1711H Type-C chip driver that works with
+> 
+> 
+> 
 
-> In the package https://packages.debian.org/stretch/sg3-utils:
->   https://sources.debian.org/src/sg3-utils/1.42-2/examples/bsg_queue_tst.c/?hl=60#L60
-
-This is just example code.
