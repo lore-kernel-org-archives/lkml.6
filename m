@@ -3,109 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EB7C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C610C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A738A208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:17:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A738A208A3
+	by mail.kernel.org (Postfix) with ESMTP id E01A520846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:21:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E01A520846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933677AbeFUMRK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:17:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49256 "EHLO
+        id S933438AbeFUMVN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:21:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49540 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933451AbeFUMNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:13:36 -0400
+        id S933149AbeFUMVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 08:21:12 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD2C015AD;
-        Thu, 21 Jun 2018 05:13:35 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E23D71435;
+        Thu, 21 Jun 2018 05:21:11 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9C58D3F578;
-        Thu, 21 Jun 2018 05:13:34 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B09803F578;
+        Thu, 21 Jun 2018 05:21:10 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 13:21:03 +0100
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     mingo@kernel.org, will.deacon@arm.com, peterz@infradead.org,
         linux-kernel@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: [PATCHv4 02/18] atomics/treewide: remove redundant atomic_inc_not_zero() definitions
-Date:   Thu, 21 Jun 2018 13:13:05 +0100
-Message-Id: <20180621121321.4761-3-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180621121321.4761-1-mark.rutland@arm.com>
+Cc:     Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCHv4 08/18] atomics/generic: define
+ atomic64_fetch_add_unless()
+Message-ID: <20180621122103.7k2ozjyc64b4zdjc@lakrids.cambridge.arm.com>
 References: <20180621121321.4761-1-mark.rutland@arm.com>
+ <20180621121321.4761-9-mark.rutland@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180621121321.4761-9-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When atomic_inc_not_zero(v) isn't defined, <linux/atomic.h> will define
-it as falling back to atomic_add_unless((v), 1, 0), so there's no need
-for arch code to do so.
+On Thu, Jun 21, 2018 at 01:13:11PM +0100, Mark Rutland wrote:
+> -	if (v->counter != u) {
+> +	val = v->counter;
+> +	if (val != u)
+>  		v->counter += a;
+> -		ret = true;
+>  	}
 
-There should be no functional change as a result of this patch.
+Ugh, I thought I had fixed this up and removed the trailing brace.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Palmer Dabbelt <palmer@sifive.com>
-Reviewed-by: Will Deacon <will.deacon@arm.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
----
- arch/arc/include/asm/atomic.h     | 2 --
- arch/hexagon/include/asm/atomic.h | 2 --
- arch/riscv/include/asm/atomic.h   | 9 ---------
- 3 files changed, 13 deletions(-)
+This will break some 32-bit arches as-is.
 
-diff --git a/arch/arc/include/asm/atomic.h b/arch/arc/include/asm/atomic.h
-index 67121b5ff3a3..cecdf3403caf 100644
---- a/arch/arc/include/asm/atomic.h
-+++ b/arch/arc/include/asm/atomic.h
-@@ -336,8 +336,6 @@ ATOMIC_OPS(xor, ^=, CTOP_INST_AXOR_DI_R2_R2_R3)
- 	c;								\
- })
- 
--#define atomic_inc_not_zero(v)		atomic_add_unless((v), 1, 0)
--
- #define atomic_inc(v)			atomic_add(1, v)
- #define atomic_dec(v)			atomic_sub(1, v)
- 
-diff --git a/arch/hexagon/include/asm/atomic.h b/arch/hexagon/include/asm/atomic.h
-index 287aa9f394f3..d2feeba93c44 100644
---- a/arch/hexagon/include/asm/atomic.h
-+++ b/arch/hexagon/include/asm/atomic.h
-@@ -197,8 +197,6 @@ static inline int atomic_fetch_add_unless(atomic_t *v, int a, int u)
- 	return __oldval;
- }
- 
--#define atomic_inc_not_zero(v) atomic_add_unless((v), 1, 0)
--
- #define atomic_inc(v) atomic_add(1, (v))
- #define atomic_dec(v) atomic_sub(1, (v))
- 
-diff --git a/arch/riscv/include/asm/atomic.h b/arch/riscv/include/asm/atomic.h
-index 739e810c857e..0e27e050ba14 100644
---- a/arch/riscv/include/asm/atomic.h
-+++ b/arch/riscv/include/asm/atomic.h
-@@ -375,15 +375,6 @@ static __always_inline int atomic64_add_unless(atomic64_t *v, long a, long u)
- }
- #endif
- 
--/*
-- * The extra atomic operations that are constructed from one of the core
-- * LR/SC-based operations above.
-- */
--static __always_inline int atomic_inc_not_zero(atomic_t *v)
--{
--        return atomic_fetch_add_unless(v, 1, 0);
--}
--
- #ifndef CONFIG_GENERIC_ATOMIC64
- static __always_inline long atomic64_inc_not_zero(atomic64_t *v)
- {
--- 
-2.11.0
+Ingo, would you be hapyp to fix this up, or would you prefer that I fix
+and resend?
 
+Sorry about this.
+
+Mark.
