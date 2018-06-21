@@ -2,1311 +2,182 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C650C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65892C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D347C208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10D132075E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vR1m5MGB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D347C208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pTiU18K5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D132075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933256AbeFUNqt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:46:49 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41069 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932862AbeFUNqr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:46:47 -0400
-Received: by mail-pf0-f196.google.com with SMTP id a11-v6so1573466pff.8;
-        Thu, 21 Jun 2018 06:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lTsBcb5EHKfhYjjUx7ooizPXu3gwRCjBmnxchgtgt00=;
-        b=vR1m5MGBI6+r2DbDE3j57KG3Mp00Wk0MM5u5rFKhrPMhcI+W/tJfEroeeOKl0SKcnc
-         U1Tf3k5i1hVCJXTJ10gAwjQkdp7xp0x+sS0M+o3uVa3WBa2KyNbJrnNvGbF+bjH3635T
-         pr0w6Bqv1eTpT+S4pBD1hTqLYRW1rVnFEUAWezrhX6dnVj+nw8d33zs9H0r1EcwwXXGN
-         KPDXnAUHvGhQ+miKIxbOt4kNilGSzpiByDZzROJW+cA/8irJb2LesGoI/iFfLxbHBv+i
-         M79tUCmxiN1Xx2cga8Q+oBONJ2lTmycXSDMsgC030FTCG91uZ5+inva543QVLElYUpZU
-         xLSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lTsBcb5EHKfhYjjUx7ooizPXu3gwRCjBmnxchgtgt00=;
-        b=b6NhWrPZN9zEETCmMwieVeuZzrLxfpCO+oe8Nxf2YK0i1WDi7+cGZ9wtLogqLq1/N6
-         v0MD8Ych7eeYGYtVZZfFUeWBJsMiRrsDz5AWzK3EwufRT959rIhL4O27S3rE6Wn1ZPYs
-         zavhjF0rjORtD7NN9PKVqIyqhSGKr/SQFl9RgkIbz+w3sT+7AouoFpg6PWf6N5qUhmnS
-         Zf7rI5a+/YVpZ3XX7mpCifHaC5e7W840bi0hFuByuRzts/qKbne/aVb30N+ZRyQW1ySg
-         MNDD5rYrYhJXzQDhP+KnhB63ixmpVt5qe79rWjPI8l7aPJQDNKdBsJ3i2fqX2apz2qOB
-         DI5Q==
-X-Gm-Message-State: APt69E2j6YD8NTMy4UFK21KmvKrnGhM3tbXZq95+jPKwa8EVBDigqfA+
-        KxVcrSgiRa3k0ByNCT6Ty9c0Sw==
-X-Google-Smtp-Source: ADUXVKJrbXYFsF2t2jlmwcG9ZdWgP5X4GhiHSfyknI7bMVhd/nXt5l5QCEzZZnZ70UNnyMk4yT275Q==
-X-Received: by 2002:aa7:860e:: with SMTP id p14-v6mr27530803pfn.155.1529588806422;
-        Thu, 21 Jun 2018 06:46:46 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id k9-v6sm7141677pgs.49.2018.06.21.06.46.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 06:46:45 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] hwmon: npcm750: add NPCM7xx PWM and Fan driver
-To:     Tomer Maimon <tmaimon77@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, jdelvare@suse.com, avifishman70@gmail.com,
-        yuenn@google.com, brendanhiggins@google.com, venture@google.com,
-        joel@jms.id.au
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, openbmc@lists.ozlabs.org
-References: <20180619105352.97181-1-tmaimon77@gmail.com>
- <20180619105352.97181-3-tmaimon77@gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <94321c95-168f-1a2f-e912-beb00e794d30@roeck-us.net>
-Date:   Thu, 21 Jun 2018 06:46:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933340AbeFUNqx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:46:53 -0400
+Received: from ozlabs.org ([203.11.71.1]:38501 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933219AbeFUNqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 09:46:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41BNKM4kgBz9s19;
+        Thu, 21 Jun 2018 23:46:47 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1529588808;
+        bh=TbTl3SSzyWBcrHng5jFVCNv5aZ3aeKO9eCcxeSxRS+o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pTiU18K5byUrEXzVlVBDP2zYXAXje8uixCkl+tgz5k6kK283BTnOQqjpIOklYWwzw
+         W7lnv2GA/sN8nUggJRxJ61Szmb2vCphPknRc7fkZFPLmBBu1A5X/LoddHbCFCUZKTu
+         +gAyBg+bwLlqChCOX0hq74Z8lBwKGb9+0Tvql5RWUNpxqJvVxKFlTSMMBNmJ0VxnX7
+         undLL1Oh3lsB+iMturyNupgZe+wGXmawv2U05buDh54s2AFavXV5U7QejufI9i0sUs
+         VRY1r+ZMMN7Kr++nJCVQFfXvklzCHkbQReKclEptGG+04u5ttXpbTjTeF5F3kzwZil
+         ZJW7AsVym7/tA==
+Date:   Thu, 21 Jun 2018 23:46:46 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     mingo@kernel.org, "David S . Miller" <davem@davemloft.net>,
+        alexei.starovoitov@gmail.com, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, netdev <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Subject: Re: [GIT] Networking
+Message-ID: <20180621234646.3aed20b9@canb.auug.org.au>
+In-Reply-To: <CAGnkfhxGAYZNhJp7eyg+_j3LY31w7muFqerhQp7jGqQ02iFxkg@mail.gmail.com>
+References: <20180620.213540.214945910722071226.davem@davemloft.net>
+        <20180621084510.GA22870@gmail.com>
+        <CAGnkfhxGAYZNhJp7eyg+_j3LY31w7muFqerhQp7jGqQ02iFxkg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180619105352.97181-3-tmaimon77@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xv6CjjNrjE7bD6EFJGZCKU1"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/19/2018 03:53 AM, Tomer Maimon wrote:
-> Add Nuvoton BMC NPCM7xx Pulse Width Modulation (PWM) and Fan tacho driver.
-> 
-> The Nuvoton BMC NPCM7xx has two identical PWM controller modules,
-> each module has four PWM controller outputs and eight identical Fan
-> controller modules, each module has two Fan controller inputs.
-> 
-> The driver provides a sysfs entries through which the user can
-> configure the duty-cycle value (ranging from 0 to 100 percent)
-> and read the fan tacho rpm value.
-> 
-> The driver support cooling device creation, that could be bound
-> to a thermal zone for the thermal control.
-> 
+--Sig_/xv6CjjNrjE7bD6EFJGZCKU1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-You ignored most of my previous comments. Why should I review your code
-if you ignore most of the feedback ?
+Hi Matteo,
 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->   drivers/hwmon/Kconfig           |    7 +
->   drivers/hwmon/Makefile          |    1 +
->   drivers/hwmon/npcm750-pwm-fan.c | 1099 +++++++++++++++++++++++++++++++++++++++
->   3 files changed, 1107 insertions(+)
->   create mode 100644 drivers/hwmon/npcm750-pwm-fan.c
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index f10840ad465c..f6c2eff9bb7d 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -1888,6 +1888,13 @@ config SENSORS_XGENE
->   	  If you say yes here you get support for the temperature
->   	  and power sensors for APM X-Gene SoC.
->   
-> +config SENSORS_NPCM7XX
-> +	tristate "Nuvoton NPCM7XX PWM and Fan driver"
-> +	depends on THERMAL || THERMAL=n
-> +	help
-> +	  This driver provides support for Nuvoton NPCM7XX PWM and Fan
-> +	  controllers.
-> +
->   if ACPI
->   
->   comment "ACPI drivers"
-> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
-> index e7d52a36e6c4..004e2ec5b68f 100644
-> --- a/drivers/hwmon/Makefile
-> +++ b/drivers/hwmon/Makefile
-> @@ -174,6 +174,7 @@ obj-$(CONFIG_SENSORS_W83L786NG)	+= w83l786ng.o
->   obj-$(CONFIG_SENSORS_WM831X)	+= wm831x-hwmon.o
->   obj-$(CONFIG_SENSORS_WM8350)	+= wm8350-hwmon.o
->   obj-$(CONFIG_SENSORS_XGENE)	+= xgene-hwmon.o
-> +obj-$(CONFIG_SENSORS_NPCM7XX)	+= npcm750-pwm-fan.o
->   
->   obj-$(CONFIG_PMBUS)		+= pmbus/
->   
-> diff --git a/drivers/hwmon/npcm750-pwm-fan.c b/drivers/hwmon/npcm750-pwm-fan.c
-> new file mode 100644
-> index 000000000000..82898197686f
-> --- /dev/null
-> +++ b/drivers/hwmon/npcm750-pwm-fan.c
-> @@ -0,0 +1,1099 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (c) 2014-2018 Nuvoton Technology corporation.
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/device.h>
-> +#include <linux/clk.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/hwmon.h>
-> +#include <linux/hwmon-sysfs.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_address.h>
-> +#include <linux/thermal.h>
-> +
+On Thu, 21 Jun 2018 13:40:43 +0000 Matteo Croce <mcroce@redhat.com> wrote:
+>
+> On Thu, Jun 21, 2018 at 8:46 AM Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > * David Miller <davem@davemloft.net> wrote:
+> > =20
+> > > 1) Fix crash on bpf_prog_load() errors, from Daniel Borkmann. =20
+> > =20
+> > > Daniel Borkmann (4):
+> > >       Merge branch 'bpf-misc-fixes'
+> > >       bpf: fix panic in prog load calls cleanup
+> > >       bpf: reject any prog that failed read-only lock
+> > >       bpf, xdp, i40e: fix i40e_build_skb skb reserve and truesize =20
+> >
+> > JFYI, I'm still seeing this BPF build error upstream, on a 32-bit allye=
+sconfig I'm
+> > getting:
+> >
+> >   LD      vmlinux.o
+> >   ld: i386:x86-64 architecture of input file `net/bpfilter/bpfilter_umh=
+.o' is incompatible with i386 output
+> >   Makefile:1010: recipe for target 'vmlinux' failed
+> >   make: *** [vmlinux] Error 1
+> >
+> > A similar looking build bug was reported by sfr three weeks ago:
+> > =20
+> > > Subject: linux-next: build failure after merge of the net-next tree
+> > >
+> > > ...
+> > >
+> > > x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpf=
+ilter_umh.o'
+> > > is incompatible with i386:x86-64 output
+> > >
+> > > Caused by commit
+> > >
+> > >  d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+> > >
+> > > In my builds, the host is PowerPC 64 LE ...
+> > >
+> > > I have reverted that commit along with
+> > >
+> > >  61a552eb487f ("bpfilter: fix build dependency")
+> > >  13405468f49d ("bpfilter: don't pass O_CREAT when opening console for=
+ debug")
+> > >
+> > > for today. =20
+> >
+> > Is there a fix I could try?
+>=20
+> are you compiling a 32 bit kernel on an x86_64 host? I tried to
+> compile an i386 bit kernel on an i386 host and I have no issue,
+> running objdump by hand produces correct output:
+>=20
+> $ uname -a
+> Linux debian32 4.16.0-2-686-pae #1 SMP Debian 4.16.16-1 (2018-06-19)
+> i686 GNU/Linux
+> $ objdump -f net/bpfilter/bpfilter_umh |awk -F' |,' '/file
+> format/{print "-O",$NF} /^architecture:/{print "-B",$2}'
+> -O elf32-i386
+> -B i386
+>=20
+> then I tried to compile an i386 kernel on an x86_64 host and I get the
+> same error:
+>=20
+> $ make -j8 ARCH=3Di386
+> ...
+>   LD      vmlinux.o
+> ld: i386:x86-64 architecture of input file
+> `net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
+> make: *** [Makefile:1015: vmlinux] Error 1
+>=20
+> the problem seems to be that bpfilter_umh is compiled with host flags,
+> and so it's a 64 bit binary in my case:
+>=20
+> gcc  -static -o net/bpfilter/bpfilter_umh net/bpfilter/main.o
+> objcopy -I binary `LC_ALL=3DC objdump -f net/bpfilter/bpfilter_umh |awk
+> -F' |,' '/file format/{print "-O",$NF} /^architecture:/{print
+> "-B",$2}'` --rename-section .data=3D.init.rodata
+> net/bpfilter/bpfilter_umh net/bpfilter/bpfilter_umh.o
+> ld -m elf_i386 -r -o vmlinux.o --whole-archive built-in.a
+> --no-whole-archive --start-group lib/lib.a arch/x86/lib/lib.a
+> --end-group
+> ld: i386:x86-64 architecture of input file
+> `net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
+>=20
+> Any idea how to fix it without building it twice, for host and target?
 
-I am sure I asked for those to be in alphabetic order.
+This presumably has the same root cause that means I can't build a big
+endian PowerPC version on a little endian host ...
 
-> +/* NPCM7XX PWM registers */
-> +#define NPCM7XX_PWM_REG_BASE(base, n)    (base + ((n) * 0x1000L))
-> +
+Either I have to have CONFIG_BPFILTER turned off (or maybe just
+CONFIG_BPFILTER_UMH) or build with a compiler that cannot link user
+mode programs (which effectively does the same).
+--=20
+Cheers,
+Stephen Rothwell
 
-(base)
+--Sig_/xv6CjjNrjE7bD6EFJGZCKU1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> +#define NPCM7XX_PWM_REG_PR(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x00)
-> +#define NPCM7XX_PWM_REG_CSR(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x04)
-> +#define NPCM7XX_PWM_REG_CR(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x08)
-> +#define NPCM7XX_PWM_REG_CNRx(base, n, ch) \
-> +			(NPCM7XX_PWM_REG_BASE(base, n) + 0x0C + (12 * ch))
-> +#define NPCM7XX_PWM_REG_CMRx(base, n, ch) \
-> +			(NPCM7XX_PWM_REG_BASE(base, n) + 0x10 + (12 * ch))
-> +#define NPCM7XX_PWM_REG_PDRx(base, n, ch) \
-> +			(NPCM7XX_PWM_REG_BASE(base, n) + 0x14 + (12 * ch))
-> +#define NPCM7XX_PWM_REG_PIER(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x3C)
-> +#define NPCM7XX_PWM_REG_PIIR(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x40)
-> +#define NPCM7XX_FAN_REG_BASE(base, n)    (base + ((n) * 0x1000L))
-> +
+-----BEGIN PGP SIGNATURE-----
 
-(base)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsrrEYACgkQAVBC80lX
+0GzjQQf9F/JrmeUq3TMYazH9gCuP27sSvCKKVXegO7ryCef/zEH7Vk+DOsi2IMYD
+jfu57WtRSoH/QStFIq3UG2x2V8uhIgjyrXTukHQEsjYW0bwZdLeBMldBH7dCdOMk
+8x+9TFZQ9Ya37JeQfF3AG7++7Cob0n/74V8fzNdC7UEMd9sSmCZfhVGDpvUb7q3U
+wwZt5qvCmd2hueHLBzOrKORG1dSu1DBX/0yNyhdpC65LF2+XCLwUMwkdKWF5ODxE
+OjqT7wqVmoE1QwgexJxdhItAbbGfHbxZD5jJVokJg2W49+U+4Y++YEIRuBnF+2Vh
+OTP3ZbzdrWaTWajoLT0r4UV9b/DKYw==
+=Qfuh
+-----END PGP SIGNATURE-----
 
-> +#define NPCM7XX_PWM_CTRL_CH0_MODE_BIT		BIT(3)
-> +#define NPCM7XX_PWM_CTRL_CH1_MODE_BIT		BIT(11)
-> +#define NPCM7XX_PWM_CTRL_CH2_MODE_BIT		BIT(15)
-> +#define NPCM7XX_PWM_CTRL_CH3_MODE_BIT		BIT(19)
-> +
-> +#define NPCM7XX_PWM_CTRL_CH0_INV_BIT		BIT(2)
-> +#define NPCM7XX_PWM_CTRL_CH1_INV_BIT		BIT(10)
-> +#define NPCM7XX_PWM_CTRL_CH2_INV_BIT		BIT(14)
-> +#define NPCM7XX_PWM_CTRL_CH3_INV_BIT		BIT(18)
-> +
-> +#define NPCM7XX_PWM_CTRL_CH0_EN_BIT		BIT(0)
-> +#define NPCM7XX_PWM_CTRL_CH1_EN_BIT		BIT(8)
-> +#define NPCM7XX_PWM_CTRL_CH2_EN_BIT		BIT(12)
-> +#define NPCM7XX_PWM_CTRL_CH3_EN_BIT		BIT(16)
-> +
-> +/* Define the maximum PWM channel number */
-> +#define NPCM7XX_PWM_MAX_CHN_NUM			8
-> +#define NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE	4
-> +#define NPCM7XX_PWM_MAX_MODULES                 2
-> +
-> +/* Define the Counter Register, value = 100 for match 100% */
-> +#define NPCM7XX_PWM_COUNTER_DEFALUT_NUM		255
-> +#define NPCM7XX_PWM_COMPARATOR_DEFALUT_NUM	127
-> +
-> +#define NPCM7XX_PWM_COMPARATOR_MAX		255
-> +
-> +/* default all PWM channels PRESCALE2 = 1 */
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH0	0x4
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH1	0x40
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH2	0x400
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH3	0x4000
-> +
-> +#define PWM_OUTPUT_FREQ_25KHZ			25000
-> +#define PWN_CNT_DEFAULT				256
-> +#define MIN_PRESCALE1				2
-> +#define NPCM7XX_PWM_PRESCALE_SHIFT_CH01		8
-> +
-> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT	(NPCM7XX_PWM_PRESCALE2_DEFALUT_CH0 | \
-> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH1 | \
-> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH2 | \
-> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH3)
-> +
-> +#define NPCM7XX_PWM_CTRL_MODE_DEFALUT	(NPCM7XX_PWM_CTRL_CH0_MODE_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH1_MODE_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH2_MODE_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH3_MODE_BIT)
-> +
-> +#define NPCM7XX_PWM_CTRL_EN_DEFALUT	(NPCM7XX_PWM_CTRL_CH0_EN_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH1_EN_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH2_EN_BIT | \
-> +					NPCM7XX_PWM_CTRL_CH3_EN_BIT)
-> +
-
-:1,$s/DEFALUT/DEFAULT/g
-
-Are those defines used anywhere ?
-
-> +/* NPCM7XX FAN Tacho registers */
-> +#define NPCM7XX_FAN_REG_BASE(base, n)    (base + ((n) * 0x1000L))
-> +
-
-(base)
-
-> +#define NPCM7XX_FAN_REG_TCNT1(base, n)    (NPCM7XX_FAN_REG_BASE(base, n) + 0x00)
-> +#define NPCM7XX_FAN_REG_TCRA(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x02)
-> +#define NPCM7XX_FAN_REG_TCRB(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x04)
-> +#define NPCM7XX_FAN_REG_TCNT2(base, n)    (NPCM7XX_FAN_REG_BASE(base, n) + 0x06)
-> +#define NPCM7XX_FAN_REG_TPRSC(base, n)    (NPCM7XX_FAN_REG_BASE(base, n) + 0x08)
-> +#define NPCM7XX_FAN_REG_TCKC(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x0A)
-> +#define NPCM7XX_FAN_REG_TMCTRL(base, n)   (NPCM7XX_FAN_REG_BASE(base, n) + 0x0C)
-> +#define NPCM7XX_FAN_REG_TICTRL(base, n)   (NPCM7XX_FAN_REG_BASE(base, n) + 0x0E)
-> +#define NPCM7XX_FAN_REG_TICLR(base, n)    (NPCM7XX_FAN_REG_BASE(base, n) + 0x10)
-> +#define NPCM7XX_FAN_REG_TIEN(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x12)
-> +#define NPCM7XX_FAN_REG_TCPA(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x14)
-> +#define NPCM7XX_FAN_REG_TCPB(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x16)
-> +#define NPCM7XX_FAN_REG_TCPCFG(base, n)   (NPCM7XX_FAN_REG_BASE(base, n) + 0x18)
-> +#define NPCM7XX_FAN_REG_TINASEL(base, n)  (NPCM7XX_FAN_REG_BASE(base, n) + 0x1A)
-> +#define NPCM7XX_FAN_REG_TINBSEL(base, n)  (NPCM7XX_FAN_REG_BASE(base, n) + 0x1C)
-> +
-> +#define NPCM7XX_FAN_TCKC_CLKX_NONE	0
-> +#define NPCM7XX_FAN_TCKC_CLK1_APB	BIT(0)
-> +#define NPCM7XX_FAN_TCKC_CLK2_APB	BIT(3)
-> +
-> +#define NPCM7XX_FAN_TMCTRL_TBEN		BIT(6)
-> +#define NPCM7XX_FAN_TMCTRL_TAEN		BIT(5)
-> +#define NPCM7XX_FAN_TMCTRL_TBEDG	BIT(4)
-> +#define NPCM7XX_FAN_TMCTRL_TAEDG	BIT(3)
-> +#define NPCM7XX_FAN_TMCTRL_MODE_5	BIT(2)
-> +
-> +#define NPCM7XX_FAN_TICLR_CLEAR_ALL	GENMASK(5, 0)
-> +#define NPCM7XX_FAN_TICLR_TFCLR		BIT(5)
-> +#define NPCM7XX_FAN_TICLR_TECLR		BIT(4)
-> +#define NPCM7XX_FAN_TICLR_TDCLR		BIT(3)
-> +#define NPCM7XX_FAN_TICLR_TCCLR		BIT(2)
-> +#define NPCM7XX_FAN_TICLR_TBCLR		BIT(1)
-> +#define NPCM7XX_FAN_TICLR_TACLR		BIT(0)
-> +
-> +#define NPCM7XX_FAN_TIEN_ENABLE_ALL	GENMASK(5, 0)
-> +#define NPCM7XX_FAN_TIEN_TFIEN		BIT(5)
-> +#define NPCM7XX_FAN_TIEN_TEIEN		BIT(4)
-> +#define NPCM7XX_FAN_TIEN_TDIEN		BIT(3)
-> +#define NPCM7XX_FAN_TIEN_TCIEN		BIT(2)
-> +#define NPCM7XX_FAN_TIEN_TBIEN		BIT(1)
-> +#define NPCM7XX_FAN_TIEN_TAIEN		BIT(0)
-> +
-> +#define NPCM7XX_FAN_TICTRL_TFPND	BIT(5)
-> +#define NPCM7XX_FAN_TICTRL_TEPND	BIT(4)
-> +#define NPCM7XX_FAN_TICTRL_TDPND	BIT(3)
-> +#define NPCM7XX_FAN_TICTRL_TCPND	BIT(2)
-> +#define NPCM7XX_FAN_TICTRL_TBPND	BIT(1)
-> +#define NPCM7XX_FAN_TICTRL_TAPND	BIT(0)
-> +
-> +#define NPCM7XX_FAN_TCPCFG_HIBEN	BIT(7)
-> +#define NPCM7XX_FAN_TCPCFG_EQBEN	BIT(6)
-> +#define NPCM7XX_FAN_TCPCFG_LOBEN	BIT(5)
-> +#define NPCM7XX_FAN_TCPCFG_CPBSEL	BIT(4)
-> +#define NPCM7XX_FAN_TCPCFG_HIAEN	BIT(3)
-> +#define NPCM7XX_FAN_TCPCFG_EQAEN	BIT(2)
-> +#define NPCM7XX_FAN_TCPCFG_LOAEN	BIT(1)
-> +#define NPCM7XX_FAN_TCPCFG_CPASEL	BIT(0)
-> +
-> +/* FAN General Defintion */
-> +/* Define the maximum FAN channel number */
-> +#define NPCM7XX_FAN_MAX_MODULE			8
-> +#define NPCM7XX_FAN_MAX_CHN_NUM_IN_A_MODULE	2
-> +#define NPCM7XX_FAN_MAX_CHN_NUM			16
-> +
-> +/*
-> + * Get Fan Tach Timeout (base on clock 214843.75Hz, 1 cnt = 4.654us)
-> + * Timeout 94ms ~= 0x5000
-> + * (The minimum FAN speed could to support ~640RPM/pulse 1,
-> + * 320RPM/pulse 2, ...-- 10.6Hz)
-> + */
-> +#define NPCM7XX_FAN_TIMEOUT	0x5000
-> +#define NPCM7XX_FAN_TCNT	0xFFFF
-> +#define NPCM7XX_FAN_TCPA	(NPCM7XX_FAN_TCNT - NPCM7XX_FAN_TIMEOUT)
-> +#define NPCM7XX_FAN_TCPB	(NPCM7XX_FAN_TCNT - NPCM7XX_FAN_TIMEOUT)
-> +
-> +#define NPCM7XX_FAN_POLL_TIMER_200MS			200
-> +#define NPCM7XX_FAN_DEFAULT_PULSE_PER_REVOLUTION	2
-> +#define NPCM7XX_FAN_TINASEL_FANIN_DEFAULT		0
-> +#define NPCM7XX_FAN_CLK_PRESCALE			255
-> +
-> +#define NPCM7XX_FAN_CMPA				0
-> +#define NPCM7XX_FAN_CMPB				1
-> +
-> +/* Obtain the fan number */
-> +#define NPCM7XX_FAN_INPUT(fan, cmp)		((fan << 1) + (cmp))
-> +
-
-(fan)
-
-If you want to be intelligent about () in macros, please at least add () where
-a parameter is used in an expression.
-
-> +/* fan sample status */
-> +#define FAN_DISABLE				0xFF
-> +#define FAN_INIT				0x00
-> +#define FAN_PREPARE_TO_GET_FIRST_CAPTURE	0x01
-> +#define FAN_ENOUGH_SAMPLE			0x02
-> +
-> +struct Fan_Dev {
-> +	u8 FanStFlag;
-> +	u8 FanPlsPerRev;
-> +	u16 FanCnt;
-> +	u32 FanCntTemp;
-> +};
-> +
-> +struct npcm7xx_cooling_device {
-> +	char name[THERMAL_NAME_LENGTH];
-> +	struct npcm7xx_pwm_fan_data *data;
-> +	struct thermal_cooling_device *tcdev;
-> +	int pwm_port;
-> +	u8 *cooling_levels;
-> +	u8 max_state;
-> +	u8 cur_state;
-> +};
-> +
-> +struct npcm7xx_pwm_fan_data {
-> +	void __iomem *pwm_base, *fan_base;
-> +	unsigned long pwm_clk_freq, fan_clk_freq;
-> +	struct clk *pwm_clk, *fan_clk;
-> +	struct mutex npcm7xx_pwm_lock[NPCM7XX_PWM_MAX_MODULES];
-> +	spinlock_t npcm7xx_fan_lock[NPCM7XX_FAN_MAX_MODULE];
-> +	int fan_irq[NPCM7XX_FAN_MAX_MODULE];
-> +	bool pwm_present[NPCM7XX_PWM_MAX_CHN_NUM],
-> +		fan_present[NPCM7XX_FAN_MAX_CHN_NUM];
-
-I am sure I asked to split the declarations.
-
-> +	u32 InputClkFreq;
-> +	struct timer_list npcm7xx_fan_timer;
-> +	struct Fan_Dev npcm7xx_fan[NPCM7XX_FAN_MAX_CHN_NUM];
-> +	struct npcm7xx_cooling_device *cdev[NPCM7XX_PWM_MAX_CHN_NUM];
-> +	u8 npcm7xx_fan_select;
-> +};
-> +
-> +static int npcm7xx_pwm_config_set(struct npcm7xx_pwm_fan_data *data,
-> +				  int channel, u16 val)
-> +{
-> +	u32 PWMCh = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
-> +	u32 module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
-> +	u32 u32TmpBuf = 0, ctrl_en_bit, env_bit;
-> +
-
-I am sure I asked you to drop the u32 from this variable name, and I am sure
-I asked not to use capital letters in variable names.
-
-> +	/*
-> +	 * Config PWM Comparator register for setting duty cycle
-> +	 */
-> +	if (val < 0 || val > NPCM7XX_PWM_COMPARATOR_MAX)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&data->npcm7xx_pwm_lock[module]);
-> +
-> +	/* write new CMR value  */
-> +	iowrite32(val, NPCM7XX_PWM_REG_CMRx(data->pwm_base, module, PWMCh));
-> +	u32TmpBuf = ioread32(NPCM7XX_PWM_REG_CR(data->pwm_base, module));
-> +
-> +	switch (PWMCh) {
-> +	case 0:
-> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH0_EN_BIT;
-> +		env_bit = NPCM7XX_PWM_CTRL_CH0_INV_BIT;
-> +		break;
-> +	case 1:
-> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH1_EN_BIT;
-> +		env_bit = NPCM7XX_PWM_CTRL_CH1_INV_BIT;
-> +		break;
-> +	case 2:
-> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH2_EN_BIT;
-> +		env_bit = NPCM7XX_PWM_CTRL_CH2_INV_BIT;
-> +		break;
-> +	case 3:
-> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH3_EN_BIT;
-> +		env_bit = NPCM7XX_PWM_CTRL_CH3_INV_BIT;
-> +		break;
-> +	default:
-> +		return -ENODEV;
-> +	}
-> +
-> +	if (val == 0) {
-> +		/* Disable PWM */
-> +		u32TmpBuf &= ~(ctrl_en_bit);
-> +		u32TmpBuf |= env_bit;
-> +	} else {
-> +		/* Enable PWM */
-> +		u32TmpBuf |= ctrl_en_bit;
-> +		u32TmpBuf &= ~(env_bit);
-> +	}
-> +
-> +	iowrite32(u32TmpBuf, NPCM7XX_PWM_REG_CR(data->pwm_base, module));
-> +	mutex_unlock(&data->npcm7xx_pwm_lock[module]);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void npcm7xx_fan_start_capture(struct npcm7xx_pwm_fan_data *data,
-> +						 u8 fan, u8 cmp)
-> +{
-> +	u8 fan_id = 0;
-> +	u8 reg_mode = 0;
-> +	u8 reg_int = 0;
-
-Those initializations are unnecessary.
-
-> +	unsigned long flags;
-> +
-> +	fan_id = NPCM7XX_FAN_INPUT(fan, cmp);
-> +
-> +	/* to check whether any fan tach is enable */
-> +	if (data->npcm7xx_fan[fan_id].FanStFlag != FAN_DISABLE) {
-> +		/* reset status */
-> +		spin_lock_irqsave(&data->npcm7xx_fan_lock[fan], flags);
-> +
-> +		data->npcm7xx_fan[fan_id].FanStFlag = FAN_INIT;
-> +		reg_int = ioread8(NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
-> +
-
-If the flag bits don't need to be cleared, state that here in a comment.
-
-> +		if (cmp == NPCM7XX_FAN_CMPA) {
-> +			/* enable interrupt */
-> +			iowrite8((u8) (reg_int | (NPCM7XX_FAN_TIEN_TAIEN |
-> +						  NPCM7XX_FAN_TIEN_TEIEN)),
-
-s/(u8)//
-
-> +				 NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
-> +
-> +			reg_mode = NPCM7XX_FAN_TCKC_CLK1_APB
-> +				| ioread8(NPCM7XX_FAN_REG_TCKC(data->fan_base,
-> +							       fan));
-> +
-> +			/* start to Capture */
-> +			iowrite8(reg_mode, NPCM7XX_FAN_REG_TCKC(data->fan_base,
-> +								fan));
-> +		} else {
-> +			/* enable interrupt */
-> +			iowrite8((u8) (reg_int | (NPCM7XX_FAN_TIEN_TBIEN |
-> +						  NPCM7XX_FAN_TIEN_TFIEN)),
-> +				 NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
-> +
-> +			reg_mode =
-> +				NPCM7XX_FAN_TCKC_CLK2_APB
-> +				| ioread8(NPCM7XX_FAN_REG_TCKC(data->fan_base,
-> +							       fan));
-> +
-> +			/* start to Capture */
-> +			iowrite8(reg_mode,
-> +				 NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
-> +		}
-> +
-> +		spin_unlock_irqrestore(&data->npcm7xx_fan_lock[fan], flags);
-> +	}
-> +}
-> +
-> +/*
-> + * Enable a background timer to poll fan tach value, (200ms * 4)
-> + * to polling all fan
-> + */
-> +static void npcm7xx_fan_polling(struct timer_list *t)
-> +{
-> +	struct npcm7xx_pwm_fan_data *data;
-> +	unsigned long flags;
-> +	int i;
-> +
-> +	data = from_timer(data, t, npcm7xx_fan_timer);
-> +
-> +	/*
-> +	 * Polling two module per one round,
-> +	 * FAN01 & FAN89 / FAN23 & FAN1011 / FAN45 & FAN1213 / FAN67 & FAN1415
-> +	 */
-> +	for (i = data->npcm7xx_fan_select; i < NPCM7XX_FAN_MAX_MODULE;
-> +	      i = i+4) {
-> +		/* clear the flag and reset the counter (TCNT) */
-> +		spin_lock_irqsave(&data->npcm7xx_fan_lock[i], flags);
-> +		iowrite8((u8) NPCM7XX_FAN_TICLR_CLEAR_ALL,
-> +			 NPCM7XX_FAN_REG_TICLR(data->fan_base, i));
-> +		spin_unlock_irqrestore(&data->npcm7xx_fan_lock[i], flags);
-> +
-> +		if (data->fan_present[i*2] == true) {
-> +			spin_lock_irqsave(&data->npcm7xx_fan_lock[i], flags);
-> +			iowrite16(NPCM7XX_FAN_TCNT,
-> +				  NPCM7XX_FAN_REG_TCNT1(data->fan_base, i));
-> +			spin_unlock_irqrestore(&data->npcm7xx_fan_lock[i],
-> +					       flags);
-> +			npcm7xx_fan_start_capture(data, i, NPCM7XX_FAN_CMPA);
-> +		}
-> +		if (data->fan_present[(i*2)+1] == true) {
-> +			spin_lock_irqsave(&data->npcm7xx_fan_lock[i], flags);
-> +			iowrite16(NPCM7XX_FAN_TCNT,
-> +				  NPCM7XX_FAN_REG_TCNT2(data->fan_base, i));
-> +			spin_unlock_irqrestore(&data->npcm7xx_fan_lock[i],
-> +					       flags);
-> +			npcm7xx_fan_start_capture(data, i, NPCM7XX_FAN_CMPB);
-> +		}
-> +	}
-> +
-> +	data->npcm7xx_fan_select++;
-> +	data->npcm7xx_fan_select &= 0x3;
-> +
-> +	/* reset the timer interval */
-> +	data->npcm7xx_fan_timer.expires = jiffies +
-> +		msecs_to_jiffies(NPCM7XX_FAN_POLL_TIMER_200MS);
-> +	add_timer(&data->npcm7xx_fan_timer);
-> +}
-> +
-> +static inline void npcm7xx_fan_compute(struct npcm7xx_pwm_fan_data *data,
-> +					   u8 fan, u8 cmp, u8 fan_id,
-> +					   u8 flag_int, u8 flag_mode,
-> +					   u8 flag_clear)
-> +{
-> +	u8  reg_int  = 0;
-> +	u8  reg_mode = 0;
-> +	u16 fan_cap  = 0;
-> +
-> +	if (cmp == NPCM7XX_FAN_CMPA)
-> +		fan_cap = ioread16(NPCM7XX_FAN_REG_TCRA(data->fan_base, fan));
-> +	else
-> +		fan_cap = ioread16(NPCM7XX_FAN_REG_TCRB(data->fan_base, fan));
-> +
-> +	/* clear capature flag, H/W will auto reset the NPCM7XX_FAN_TCNTx */
-> +	iowrite8((u8) flag_clear, NPCM7XX_FAN_REG_TICLR(data->fan_base, fan));
-> +
-> +	if (data->npcm7xx_fan[fan_id].FanStFlag == FAN_INIT) {
-> +		/* First capture, drop it */
-> +		data->npcm7xx_fan[fan_id].FanStFlag =
-> +			FAN_PREPARE_TO_GET_FIRST_CAPTURE;
-> +
-> +		/* reset counter */
-> +		data->npcm7xx_fan[fan_id].FanCntTemp = 0;
-> +	} else if (data->npcm7xx_fan[fan_id].FanStFlag <
-> +		   FAN_ENOUGH_SAMPLE) {
-> +		/*
-> +		 * collect the enough sample,
-> +		 * (ex: 2 pulse fan need to get 2 sample)
-> +		 */
-> +		data->npcm7xx_fan[fan_id].FanCntTemp +=
-> +			(NPCM7XX_FAN_TCNT - fan_cap);
-> +
-> +		data->npcm7xx_fan[fan_id].FanStFlag++;
-> +	} else {
-> +		/* get enough sample or fan disable */
-> +		if (data->npcm7xx_fan[fan_id].FanStFlag == FAN_ENOUGH_SAMPLE) {
-> +			data->npcm7xx_fan[fan_id].FanCntTemp +=
-> +				(NPCM7XX_FAN_TCNT - fan_cap);
-> +
-> +			/* compute finial average cnt per pulse */
-> +			data->npcm7xx_fan[fan_id].FanCnt
-> +				= data->npcm7xx_fan[fan_id].FanCntTemp /
-> +				FAN_ENOUGH_SAMPLE;
-> +
-> +			data->npcm7xx_fan[fan_id].FanStFlag = FAN_INIT;
-> +		}
-> +
-> +		reg_int =  ioread8(NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
-> +
-> +		/* disable interrupt */
-> +		iowrite8((u8) (reg_int & ~flag_int),
-> +			 NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
-> +		reg_mode =  ioread8(NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
-> +
-> +		/* stop capturing */
-> +		iowrite8((u8) (reg_mode & ~flag_mode),
-> +			 NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
-> +
-> +	}
-> +}
-> +
-> +static inline void npcm7xx_check_cmp(struct npcm7xx_pwm_fan_data *data,
-> +				     u8 fan, u8 cmp, u8 flag)
-> +{
-> +	u8 reg_int = 0;
-> +	u8 reg_mode = 0;
-> +	u8 flag_timeout;
-> +	u8 flag_cap;
-> +	u8 flag_clear;
-> +	u8 flag_int;
-> +	u8 flag_mode;
-> +	u8 fan_id;
-> +
-> +	fan_id = NPCM7XX_FAN_INPUT(fan, cmp);
-> +
-> +	if (cmp == NPCM7XX_FAN_CMPA) {
-> +		flag_cap = NPCM7XX_FAN_TICTRL_TAPND;
-> +		flag_timeout = NPCM7XX_FAN_TICTRL_TEPND;
-> +		flag_int = NPCM7XX_FAN_TIEN_TAIEN | NPCM7XX_FAN_TIEN_TEIEN;
-> +		flag_mode = NPCM7XX_FAN_TCKC_CLK1_APB;
-> +		flag_clear = NPCM7XX_FAN_TICLR_TACLR | NPCM7XX_FAN_TICLR_TECLR;
-> +	} else {
-> +		flag_cap = NPCM7XX_FAN_TICTRL_TBPND;
-> +		flag_timeout = NPCM7XX_FAN_TICTRL_TFPND;
-> +		flag_int = NPCM7XX_FAN_TIEN_TBIEN | NPCM7XX_FAN_TIEN_TFIEN;
-> +		flag_mode = NPCM7XX_FAN_TCKC_CLK2_APB;
-> +		flag_clear = NPCM7XX_FAN_TICLR_TBCLR | NPCM7XX_FAN_TICLR_TFCLR;
-> +	}
-> +
-> +
-> +	if (flag & flag_timeout) {
-> +
-> +		reg_int =  ioread8(NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
-> +
-> +		/* disable interrupt */
-> +		iowrite8((u8) (reg_int & ~flag_int),
-> +			 NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
-> +
-
-s/(u8)//
-
-> +		/* clear interrup flag */
-> +		iowrite8((u8) flag_clear, NPCM7XX_FAN_REG_TICLR(data->fan_base,
-> +								fan));
-> +
-> +		reg_mode =  ioread8(NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
-> +
-> +		/* stop capturing */
-> +		iowrite8((u8) (reg_mode & ~flag_mode),
-> +			 NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
-
-s/(u8)//
-
-> +
-> +		/*
-> +		 *  If timeout occurs (NPCM7XX_FAN_TIMEOUT), the fan doesn't
-> +		 *  connect or speed is lower than 10.6Hz (320RPM/pulse2).
-> +		 *  In these situation, the RPM output should be zero.
-> +		 */
-> +		data->npcm7xx_fan[fan_id].FanCnt = 0;
-> +		//DEBUG_MSG("%s : it is timeout fan_id %d\n", __func__, fan_id);
-
-No commented out code please.
-
-> +	} else {
-> +	    /* input capture is occurred */
-> +		if (flag & flag_cap)
-> +			npcm7xx_fan_compute(data, fan, cmp, fan_id, flag_int,
-> +					    flag_mode, flag_clear);
-> +	}
-> +}
-> +
-> +static irqreturn_t npcm7xx_fan_isr(int irq, void *dev_id)
-> +{
-> +	struct npcm7xx_pwm_fan_data *data = dev_id;
-> +	u8 flag = 0;
-> +	int module;
-> +	unsigned long flags;
-> +
-> +	module = irq - data->fan_irq[0];
-> +	spin_lock_irqsave(&data->npcm7xx_fan_lock[module], flags);
-> +
-> +	flag = ioread8(NPCM7XX_FAN_REG_TICTRL(data->fan_base, module));
-> +	if (flag > 0) {
-> +		npcm7xx_check_cmp(data, module, NPCM7XX_FAN_CMPA, flag);
-> +		npcm7xx_check_cmp(data, module, NPCM7XX_FAN_CMPB, flag);
-> +		spin_unlock_irqrestore(&data->npcm7xx_fan_lock[module], flags);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	spin_unlock_irqrestore(&data->npcm7xx_fan_lock[module], flags);
-> +
-> +	return IRQ_NONE;
-> +}
-> +
-> +static int npcm7xx_read_pwm(struct device *dev, u32 attr, int channel,
-> +			     long *val)
-> +{
-> +	struct npcm7xx_pwm_fan_data *data = dev_get_drvdata(dev);
-> +	u32 PWMCh = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
-> +	u32 module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
-> +
-> +	if (IS_ERR(data))
-> +		return PTR_ERR(data);
-> +
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		mutex_lock(&data->npcm7xx_pwm_lock[module]);
-> +		*val = (long)ioread32(
-> +		    NPCM7XX_PWM_REG_CMRx(data->pwm_base, module, PWMCh));
-
-s/(long)//
-
-I don't think you will ever see a negative pwm value. If anything, I would
-expect a mask here if the register can have upper bits set.
-
-> +		mutex_unlock(&data->npcm7xx_pwm_lock[module]);
-> +		return 0;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static int npcm7xx_write_pwm(struct device *dev, u32 attr, int channel,
-> +			      long val)
-> +{
-> +	struct npcm7xx_pwm_fan_data *data = dev_get_drvdata(dev);
-> +	int err = 0;
-> +
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		err = npcm7xx_pwm_config_set(data, channel, (u16)val);
-> +		break;
-> +	default:
-> +		err = -EOPNOTSUPP;
-> +		break;
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static umode_t npcm7xx_pwm_is_visible(const void *_data, u32 attr, int channel)
-> +{
-> +	const struct npcm7xx_pwm_fan_data *data = _data;
-> +
-> +	if (!data->pwm_present[channel])
-> +		return 0;
-> +
-> +	switch (attr) {
-> +	case hwmon_pwm_input:
-> +		return 0644;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static int npcm7xx_read_fan(struct device *dev, u32 attr, int channel,
-> +			     long *val)
-> +{
-> +	struct npcm7xx_pwm_fan_data *data = dev_get_drvdata(dev);
-> +
-> +	switch (attr) {
-> +	case hwmon_fan_input:
-> +		*val = 0;
-> +		if (data->npcm7xx_fan[channel].FanCnt <= 0)
-> +			return data->npcm7xx_fan[channel].FanCnt;
-> +
-> +		/* Convert the raw reading to RPM */
-> +		if ((data->npcm7xx_fan[channel].FanCnt > 0) &&
-> +		    data->npcm7xx_fan[channel].FanPlsPerRev > 0)
-> +			*val = (long)((data->InputClkFreq * 60)/
-> +				    (data->npcm7xx_fan[channel].FanCnt *
-> +				     data->npcm7xx_fan[channel].FanPlsPerRev));
-
-I see you really like typecasts. I don't. Please clean up all of them, and please
-drop all commented out code.
-
-> +		return 0;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static umode_t npcm7xx_fan_is_visible(const void *_data, u32 attr, int channel)
-> +{
-> +	const struct npcm7xx_pwm_fan_data *data = _data;
-> +
-> +	if (!data->fan_present[channel])
-> +		return 0;
-> +
-> +	switch (attr) {
-> +	case hwmon_fan_input:
-> +		return 0444;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static int npcm7xx_read(struct device *dev, enum hwmon_sensor_types type,
-> +			 u32 attr, int channel, long *val)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return npcm7xx_read_pwm(dev, attr, channel, val);
-> +	case hwmon_fan:
-> +		return npcm7xx_read_fan(dev, attr, channel, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static int npcm7xx_write(struct device *dev, enum hwmon_sensor_types type,
-> +			  u32 attr, int channel, long val)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return npcm7xx_write_pwm(dev, attr, channel, val);
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static umode_t npcm7xx_is_visible(const void *data,
-> +				   enum hwmon_sensor_types type,
-> +				   u32 attr, int channel)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		return npcm7xx_pwm_is_visible(data, attr, channel);
-> +	case hwmon_fan:
-> +		return npcm7xx_fan_is_visible(data, attr, channel);
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static const u32 npcm7xx_pwm_config[] = {
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	HWMON_PWM_INPUT,
-> +	0
-> +};
-> +
-> +static const struct hwmon_channel_info npcm7xx_pwm = {
-> +	.type = hwmon_pwm,
-> +	.config = npcm7xx_pwm_config,
-> +};
-> +
-> +static const u32 npcm7xx_fan_config[] = {
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	HWMON_F_INPUT,
-> +	0
-> +};
-> +
-> +static const struct hwmon_channel_info npcm7xx_fan = {
-> +	.type = hwmon_fan,
-> +	.config = npcm7xx_fan_config,
-> +};
-> +
-> +static const struct hwmon_channel_info *npcm7xx_info[] = {
-> +	&npcm7xx_pwm,
-> +	&npcm7xx_fan,
-> +	NULL
-> +};
-> +
-> +static const struct hwmon_ops npcm7xx_hwmon_ops = {
-> +	.is_visible = npcm7xx_is_visible,
-> +	.read = npcm7xx_read,
-> +	.write = npcm7xx_write,
-> +};
-> +
-> +static const struct hwmon_chip_info npcm7xx_chip_info = {
-> +	.ops = &npcm7xx_hwmon_ops,
-> +	.info = npcm7xx_info,
-> +};
-> +
-> +static u32 npcm7xx_pwm_init(struct npcm7xx_pwm_fan_data *data)
-> +{
-> +	int m, ch;
-> +	u32 Prescale_val, output_freq;
-> +
-> +	data->pwm_clk_freq = clk_get_rate(data->pwm_clk);
-> +
-> +	/* Adjust NPCM7xx PWMs output frequency to ~25Khz */
-> +	output_freq = data->pwm_clk_freq / PWN_CNT_DEFAULT;
-> +	Prescale_val = DIV_ROUND_CLOSEST(output_freq, PWM_OUTPUT_FREQ_25KHZ);
-> +
-> +	/* If Prescale_val = 0, then the prescale output clock is stopped */
-> +	if (Prescale_val < MIN_PRESCALE1)
-> +		Prescale_val = MIN_PRESCALE1;
-> +	/*
-> +	 * Prescale_val need to decrement in one because in the PWM Prescale
-> +	 * register the Prescale value increment by one
-> +	 */
-> +	Prescale_val--;
-> +
-> +	/* Setting PWM Prescale Register value register to both modules */
-> +	Prescale_val |= (Prescale_val << NPCM7XX_PWM_PRESCALE_SHIFT_CH01);
-> +
-> +	for (m = 0; m < NPCM7XX_PWM_MAX_MODULES  ; m++) {
-> +		iowrite32(Prescale_val, NPCM7XX_PWM_REG_PR(data->pwm_base, m));
-> +		iowrite32(NPCM7XX_PWM_PRESCALE2_DEFALUT,
-> +			  NPCM7XX_PWM_REG_CSR(data->pwm_base, m));
-> +		iowrite32(NPCM7XX_PWM_CTRL_MODE_DEFALUT,
-> +			  NPCM7XX_PWM_REG_CR(data->pwm_base, m));
-> +
-> +		for (ch = 0; ch < NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE; ch++) {
-> +			iowrite32(NPCM7XX_PWM_COUNTER_DEFALUT_NUM,
-> +				  NPCM7XX_PWM_REG_CNRx(data->pwm_base, m, ch));
-> +		}
-> +	}
-> +
-> +	return output_freq / ((Prescale_val & 0xf) + 1);
-> +}
-> +
-> +static void npcm7xx_fan_init(struct npcm7xx_pwm_fan_data *data)
-> +{
-> +	int md;
-> +	int ch;
-> +	int i;
-> +	u32 apb_clk_freq;
-> +
-> +	for (md = 0; md < NPCM7XX_FAN_MAX_MODULE; md++) {
-> +
-> +		/* stop FAN0~7 clock */
-> +		iowrite8((u8)NPCM7XX_FAN_TCKC_CLKX_NONE,
-> +			 NPCM7XX_FAN_REG_TCKC(data->fan_base, md));
-> +
-> +		/* disable all interrupt */
-> +		iowrite8((u8) 0x00, NPCM7XX_FAN_REG_TIEN(data->fan_base, md));
-> +
-> +		/* clear all interrupt */
-> +		iowrite8((u8) NPCM7XX_FAN_TICLR_CLEAR_ALL,
-> +			 NPCM7XX_FAN_REG_TICLR(data->fan_base, md));
-> +
-> +		/* set FAN0~7 clock prescaler */
-> +		iowrite8((u8) NPCM7XX_FAN_CLK_PRESCALE,
-> +			 NPCM7XX_FAN_REG_TPRSC(data->fan_base, md));
-> +
-> +		/* set FAN0~7 mode (high-to-low transition) */
-> +		iowrite8(
-> +			(u8) (
-> +			      NPCM7XX_FAN_TMCTRL_MODE_5 |
-> +			      NPCM7XX_FAN_TMCTRL_TBEN |
-> +			      NPCM7XX_FAN_TMCTRL_TAEN
-> +			      ),
-> +			NPCM7XX_FAN_REG_TMCTRL(data->fan_base, md)
-> +			);
-> +
-> +		/* set FAN0~7 Initial Count/Cap */
-> +		iowrite16(NPCM7XX_FAN_TCNT,
-> +			  NPCM7XX_FAN_REG_TCNT1(data->fan_base, md));
-> +		iowrite16(NPCM7XX_FAN_TCNT,
-> +			  NPCM7XX_FAN_REG_TCNT2(data->fan_base, md));
-> +
-> +		/* set FAN0~7 compare (equal to count) */
-> +		iowrite8((u8)(NPCM7XX_FAN_TCPCFG_EQAEN |
-> +			      NPCM7XX_FAN_TCPCFG_EQBEN),
-> +			  NPCM7XX_FAN_REG_TCPCFG(data->fan_base, md));
-> +
-> +		/* set FAN0~7 compare value */
-> +		iowrite16(NPCM7XX_FAN_TCPA,
-> +			  NPCM7XX_FAN_REG_TCPA(data->fan_base, md));
-> +		iowrite16(NPCM7XX_FAN_TCPB,
-> +			  NPCM7XX_FAN_REG_TCPB(data->fan_base, md));
-> +
-> +		/* set FAN0~7 fan input FANIN 0~15 */
-> +		iowrite8((u8) NPCM7XX_FAN_TINASEL_FANIN_DEFAULT,
-> +			 NPCM7XX_FAN_REG_TINASEL(data->fan_base, md));
-> +		iowrite8((u8) NPCM7XX_FAN_TINASEL_FANIN_DEFAULT,
-> +			 NPCM7XX_FAN_REG_TINBSEL(data->fan_base, md));
-> +
-> +		for (i = 0; i < NPCM7XX_FAN_MAX_CHN_NUM_IN_A_MODULE; i++) {
-> +			ch = md * NPCM7XX_FAN_MAX_CHN_NUM_IN_A_MODULE + i;
-> +			data->npcm7xx_fan[ch].FanStFlag = FAN_DISABLE;
-> +			data->npcm7xx_fan[ch].FanPlsPerRev =
-> +				NPCM7XX_FAN_DEFAULT_PULSE_PER_REVOLUTION;
-> +			data->npcm7xx_fan[ch].FanCnt = 0;
-> +		}
-> +	}
-> +
-> +	apb_clk_freq = clk_get_rate(data->fan_clk);
-> +
-> +	/* Fan tach input clock = APB clock / prescalar, default is 255. */
-> +	data->InputClkFreq = apb_clk_freq / (NPCM7XX_FAN_CLK_PRESCALE + 1);
-> +}
-> +
-> +static int
-> +npcm7xx_pwm_cz_get_max_state(struct thermal_cooling_device *tcdev,
-> +			    unsigned long *state)
-> +{
-> +	struct npcm7xx_cooling_device *cdev = tcdev->devdata;
-> +
-> +	*state = cdev->max_state;
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +npcm7xx_pwm_cz_get_cur_state(struct thermal_cooling_device *tcdev,
-> +			    unsigned long *state)
-> +{
-> +	struct npcm7xx_cooling_device *cdev = tcdev->devdata;
-> +
-> +	*state = cdev->cur_state;
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +npcm7xx_pwm_cz_set_cur_state(struct thermal_cooling_device *tcdev,
-> +			    unsigned long state)
-> +{
-> +	struct npcm7xx_cooling_device *cdev = tcdev->devdata;
-> +	int ret;
-> +
-> +	if (state > cdev->max_state)
-> +		return -EINVAL;
-> +
-> +	cdev->cur_state = state;
-> +	ret = npcm7xx_pwm_config_set(cdev->data, cdev->pwm_port,
-> +				     cdev->cooling_levels[cdev->cur_state]);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct thermal_cooling_device_ops npcm7xx_pwm_cool_ops = {
-> +	.get_max_state = npcm7xx_pwm_cz_get_max_state,
-> +	.get_cur_state = npcm7xx_pwm_cz_get_cur_state,
-> +	.set_cur_state = npcm7xx_pwm_cz_set_cur_state,
-> +};
-> +
-> +static int npcm7xx_create_pwm_cooling(struct device *dev,
-> +				      struct device_node *child,
-> +				      struct npcm7xx_pwm_fan_data *data,
-> +				      u32 pwm_port, u8 num_levels)
-> +{
-> +	int ret;
-> +	struct npcm7xx_cooling_device *cdev;
-> +
-> +	cdev = devm_kzalloc(dev, sizeof(*cdev), GFP_KERNEL);
-> +	if (!cdev)
-> +		return -ENOMEM;
-> +
-> +	cdev->cooling_levels = devm_kzalloc(dev, num_levels, GFP_KERNEL);
-> +	if (!cdev->cooling_levels)
-> +		return -ENOMEM;
-> +
-> +	cdev->max_state = num_levels - 1;
-> +	ret = of_property_read_u8_array(child, "cooling-levels",
-> +					cdev->cooling_levels,
-> +					num_levels);
-> +	if (ret) {
-> +		dev_err(dev, "Property 'cooling-levels' cannot be read.\n");
-> +		return ret;
-> +	}
-> +	snprintf(cdev->name, THERMAL_NAME_LENGTH, "%s%d", child->name,
-> +		 pwm_port);
-> +
-> +	cdev->tcdev = thermal_of_cooling_device_register(child,
-> +							 cdev->name,
-> +							 cdev,
-> +							 &npcm7xx_pwm_cool_ops);
-> +	if (IS_ERR(cdev->tcdev))
-> +		return PTR_ERR(cdev->tcdev);
-> +
-> +	cdev->data = data;
-> +	cdev->pwm_port = pwm_port;
-> +
-> +	data->cdev[pwm_port] = cdev;
-> +
-> +	return 0;
-> +}
-> +
-> +static int npcm7xx_en_pwm_fan(struct device *dev,
-> +			      struct device_node *child,
-> +			      struct npcm7xx_pwm_fan_data *data)
-> +{
-> +	u8 *fan_ch;
-> +	u8 pwm_port;
-> +	int ret, fan_cnt;
-> +	u8 index, ch;
-> +
-> +	ret = of_property_read_u8(child, "pwm-ch", &pwm_port);
-> +	if (ret)
-> +		return ret;
-> +
-> +	data->pwm_present[pwm_port] = true;
-> +	ret = npcm7xx_pwm_config_set(data, pwm_port,
-> +				     NPCM7XX_PWM_COMPARATOR_DEFALUT_NUM);
-> +
-> +	ret = of_property_count_u8_elems(child, "cooling-levels");
-> +	if (ret > 0) {
-> +		ret = npcm7xx_create_pwm_cooling(dev, child, data, pwm_port,
-> +						ret);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	fan_cnt = of_property_count_u8_elems(child, "fan-ch");
-> +	if (fan_cnt < 1)
-> +		return -EINVAL;
-> +
-> +	fan_ch = devm_kzalloc(dev, sizeof(*fan_ch) * fan_cnt, GFP_KERNEL);
-> +	if (!fan_ch)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_u8_array(child, "fan-ch", fan_ch, fan_cnt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (ch = 0; ch < fan_cnt; ch++) {
-> +		index = fan_ch[ch];
-> +		data->fan_present[index] = true;
-> +		data->npcm7xx_fan[index].FanStFlag = FAN_INIT;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int npcm7xx_pwm_fan_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np, *child;
-> +	struct npcm7xx_pwm_fan_data *data;
-> +	struct resource *res;
-> +	struct device *hwmon;
-> +	char name[20];
-> +	int ret, cnt;
-> +	u32 output_freq;
-> +	u32 i;
-> +
-> +	np = dev->of_node;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pwm_base");
-> +	if (res == NULL) {
-> +		pr_err("PWM of_address_to_resource fail ret %d\n", ret);
-> +		return -ENODEV;
-> +	}
-> +
-> +	data->pwm_base = devm_ioremap_resource(dev, res);
-> +	pr_debug("pwm base is 0x%08X, res.start 0x%08X , size 0x%08X\n",
-> +		 (u32)data->pwm_base, res->start, resource_size(res));
-
-I am sure I asked to use %pR. I am also sure I asked to replace the pr_ functions
-with dev_ functions.
-
-> +	if (!data->pwm_base) {
-> +		pr_err("pwm probe failed: can't read pwm base address\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	data->pwm_clk = devm_clk_get(dev, "clk_apb3");
-> +	if (IS_ERR(data->pwm_clk)) {
-> +		pr_err(" pwm probe failed: can't read clk.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "fan_base");
-> +	if (ret) {
-> +		pr_err("fan of_address_to_resource fail ret %d\n", ret);
-> +		return -ENODEV;
-> +	}
-> +
-> +	data->fan_base = devm_ioremap_resource(dev, res);
-> +	pr_debug("fan base is 0x%08X, res.start 0x%08X , size 0x%08X\n",
-> +		 (u32)data->fan_base, res->start, resource_size(res));
-> +
-
-%pR again.
-
-> +	if (!data->fan_base) {
-> +		pr_err("fan probe failed: can't read fan base address.\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	data->fan_clk = devm_clk_get(dev, "clk_apb4");
-> +	if (IS_ERR(data->fan_clk)) {
-> +		pr_err(" FAN probe failed: can't read clk.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	output_freq = npcm7xx_pwm_init(data);
-> +	npcm7xx_fan_init(data);
-> +
-> +	for (cnt = 0; cnt < NPCM7XX_PWM_MAX_MODULES  ; cnt++)
-> +		mutex_init(&data->npcm7xx_pwm_lock[cnt]);
-> +
-> +	for (i = 0; i < NPCM7XX_FAN_MAX_MODULE; i++) {
-> +		spin_lock_init(&data->npcm7xx_fan_lock[i]);
-> +
-> +		data->fan_irq[i] = platform_get_irq(pdev, i);
-> +		if (!data->fan_irq[i]) {
-> +			pr_err("%s - failed to map irq %d\n", __func__, i);
-> +			ret = -EAGAIN;
-> +			goto err_irq;
-> +		}
-> +
-> +		sprintf(name, "NPCM7XX-FAN-MD%d", i);
-> +
-> +		if (request_irq(data->fan_irq[i], npcm7xx_fan_isr, 0, name,
-> +				(void *)data)) {
-> +			pr_err("NPCM7XX: register irq FAN%d failed\n", i);
-> +			ret = -EAGAIN;
-> +			goto err_irq;
-> +		}
-> +	}
-> +
-> +	for_each_child_of_node(np, child) {
-> +		ret = npcm7xx_en_pwm_fan(dev, child, data);
-> +		if (ret) {
-> +			pr_err("npcm7xx_en_pwm_fan failed ret %d\n", ret);
-> +			of_node_put(child);
-> +			goto err_irq;
-> +		}
-> +	}
-> +
-> +	hwmon = devm_hwmon_device_register_with_info(dev, "npcm7xx_pwm_fan",
-> +						     data, &npcm7xx_chip_info,
-> +						     NULL);
-> +	if (IS_ERR(hwmon)) {
-> +		pr_err("PWM Driver failed - devm_hwmon_device_register_with_groups failed\n");
-> +		ret =  PTR_ERR(hwmon);
-> +		goto err_irq;
-> +	}
-> +
-> +	for (i = 0; i < NPCM7XX_FAN_MAX_CHN_NUM; i++) {
-> +		if (data->fan_present[i] == true) {
-> +			/* fan timer initialization */
-> +			data->npcm7xx_fan_select = 0;
-> +			data->npcm7xx_fan_timer.expires = jiffies +
-> +				msecs_to_jiffies(NPCM7XX_FAN_POLL_TIMER_200MS);
-> +			timer_setup(&data->npcm7xx_fan_timer,
-> +				    npcm7xx_fan_polling, 0);
-> +			add_timer(&data->npcm7xx_fan_timer);
-> +			break;
-> +		}
-> +	}
-> +
-> +	pr_info("NPCM7XX PWM-FAN Driver probed, output Freq %dHz[PWM], input Freq %dHz[FAN]\n",
-> +		output_freq, data->InputClkFreq);
-> +
-> +	return 0;
-> +
-> +err_irq:
-> +	for (; i > 0; i--)
-> +		free_irq(data->fan_irq[i-1], (void *)data);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id of_pwm_fan_match_table[] = {
-> +	{ .compatible = "nuvoton,npcm750-pwm-fan", },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, of_pwm_fan_match_table);
-> +
-> +static struct platform_driver npcm7xx_pwm_fan_driver = {
-> +	.probe		= npcm7xx_pwm_fan_probe,
-> +	.driver		= {
-> +		.name	= "npcm7xx_pwm_fan",
-> +		.of_match_table = of_pwm_fan_match_table,
-> +	},
-> +};
-> +
-> +module_platform_driver(npcm7xx_pwm_fan_driver);
-> +
-> +MODULE_DESCRIPTION("Nuvoton NPCM7XX PWM and Fan Tacho driver");
-> +MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
-> +MODULE_LICENSE("GPL v2");
-> 
-
+--Sig_/xv6CjjNrjE7bD6EFJGZCKU1--
