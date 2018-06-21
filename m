@@ -2,100 +2,106 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3020C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4974C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57D972254B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3F962254B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:34:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hMaZXZwJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D972254B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o/2Vql15"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F962254B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932950AbeFUXec (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 19:34:32 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:46934 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932686AbeFUXea (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 19:34:30 -0400
-Received: by mail-oi0-f65.google.com with SMTP id h79-v6so4510324oig.13
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0oBq3QGclfaOlKxFfvw2X1QxVWGTvFKxFI+SyLJsL78=;
-        b=hMaZXZwJpGE3gLnoWQte1firukqRMXIEGnU3esNF0WlfWUsBR6nAay85jNpPZDxzyu
-         0g+Gz6jINOB2daHyVYxf7/GPB7jJ/nMlYHD3CIs9YVKJkB4y6TAirXSOuUfTSqJKb4Xx
-         vOgKDMjPR/e8Xx+UUXN9xcMUTn2LLcd79J9nu3fKS46tBLdraI7L2+vUT/HdCUrCceZF
-         Wj8bZMDtP8oj9EVruR9KPTxtvLAkvgyQdyjTJzS0zyLlu+TzdIA+mleukDduXg+WZlDe
-         mbaD9d6p4eg0f5LsA0+er1RoUz8phbeSykULDbXPu6+286SDRcb9WQmIJDDYzjUnGKZ+
-         x7aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0oBq3QGclfaOlKxFfvw2X1QxVWGTvFKxFI+SyLJsL78=;
-        b=NA7rq9wN+Vm8yM6ufotTpBfmqY6Q3hMPvCgomoBRcc90/qzGtnmFhTpqAU2wo6KeMd
-         q8F81Zks3albt18wsMfRgLs0THAwCYDVIGGfOOggbUbr32RRFw7vXi99VSKagoj0RjBA
-         FMBIsqvAcsFBk3/bow6gibv6rmn+ldxp2hfjh+eZM7lB2vIMxCTSXDhDCpCA95pHptmG
-         qw8xYz768nSJwNgzA6c0ca+0g7WgqtzD/NWoC/xBYpH25pyFGkTQxUqd0iDnY87cLYCz
-         4hvSQlVcTcUC4w1Zv+hSzd2m6Oc5SQtN72gw6gktPpNHiG+jQS5/MTNsgEcyyoEjwpO6
-         Sbkw==
-X-Gm-Message-State: APt69E1tv15kw3TQQY25RbS5yiU7ogpADQOaV4mg4OH/XTnE0k/4KgK2
-        v3hTeblEUsp/E8XirQ7GqLGfsJGIhu0LVvwLdPiBVg==
-X-Google-Smtp-Source: ADUXVKJJEtdqq9XNeCILcOQrSkw3INZPmWuAsenXd8XHiKcvehAKnso/z6dbOdpRrVw0EMTvz9n4vi8vYIhbetIIyQA=
-X-Received: by 2002:aca:5bd5:: with SMTP id p204-v6mr16228542oib.91.1529624069452;
- Thu, 21 Jun 2018 16:34:29 -0700 (PDT)
+        id S933200AbeFUXeq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 19:34:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:59583 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932686AbeFUXeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 19:34:44 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41BdMk28SLz9s4V;
+        Fri, 22 Jun 2018 09:34:42 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1529624082;
+        bh=jhABNufG27D6r5hawukYpGbiBTxK1qvFykgEYYjKgd4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=o/2Vql150WvvgIJR+ERxdeV5HLSje4UjaGDELVrcAq/BB9bULEo1G3KL5nIoVAACD
+         HzRt4LmLu/rg3zIAyf8y9RMZS/MwDEWAScHPwTY9QoD3wKHJDbRkuCoM8dhBSN0ImI
+         EBmayuz4QaQcO31pMlxElMoOzxS9nhjrP+WqvYPJFE99PW5wAB4SAmKwW4cXKsDW3M
+         zi1VgVQnZdeJ1fP23NFnkpYrE9ClN1N82SFXvh3au/NdE7S5KDRQ14FpOO7iY7fPDJ
+         g/gkimP5FWxE4RCZKyYATt52WKDOrv9WQLeilCd8PFJqHvQkWMglgKzLeNNoBc+TNA
+         lS6etUMjhaT0w==
+Date:   Fri, 22 Jun 2018 09:34:21 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tony Luck <tony.luck@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>, <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/memblock: add missing include <linux/bootmem.h>
+Message-ID: <20180622093421.6b060710@canb.auug.org.au>
+In-Reply-To: <20180621180638.ahxpgzwrztopve55@pburton-laptop>
+References: <20180606194144.16990-1-malat@debian.org>
+        <CA+8MBbKj4A5kh=hE0vcadzD+=cEAFY7OCWFCzvubu6cWULCJ0A@mail.gmail.com>
+        <20180615121716.37fb93385825b0b2f59240cc@linux-foundation.org>
+        <20180621180638.ahxpgzwrztopve55@pburton-laptop>
 MIME-Version: 1.0
-References: <20180621220416.5412-1-tycho@tycho.ws> <20180621220416.5412-5-tycho@tycho.ws>
-In-Reply-To: <20180621220416.5412-5-tycho@tycho.ws>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 22 Jun 2018 01:34:18 +0200
-Message-ID: <CAG48ez0d+tRsfvstU3Kd7T=kkdKbbfpNS+19NLTchhSL1fUyNg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] seccomp: add support for passing fds via USER_NOTIF
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        suda.akihiro@lab.ntt.co.jp, "Tobin C. Harding" <me@tobin.cc>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WC=h_N3UJqTfkjWbdcO478n"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 12:05 AM Tycho Andersen <tycho@tycho.ws> wrote:
->
-> The idea here is that the userspace handler should be able to pass an fd
-> back to the trapped task, for example so it can be returned from socket().
-[...]
-> +Userspace can also return file descriptors. For example, one may decide to
-> +intercept ``socket()`` syscalls, and return some file descriptor from those
-> +based on some policy. To return a file descriptor, the ``return_fd`` member
-> +should be non-zero, the ``fd`` argument should be the fd in the listener's
-> +table to send to the tracee (similar to how ``SCM_RIGHTS`` works), and
-> +``fd_flags`` should be the flags that the fd in the tracee's table is opened
-> +with (e.g. ``O_EXCL`` or similar).
+--Sig_/WC=h_N3UJqTfkjWbdcO478n
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-fd_flags only contains file descriptor flags (meaning only O_CLOEXEC).
-O_EXCL is a file creation flag, so setting it here wouldn't make sense.
-Setting file status flags like O_APPEND does make sense, but those are
-stored in the `struct file` and don't need to be passed separately;
-the caller can e.g. set them via fcntl(fd, F_SETFD, flags) or on
-open().
-(The fcntl.2 manpage explains these.)
+Hi Paul,
+
+On Thu, 21 Jun 2018 11:06:38 -0700 Paul Burton <paul.burton@mips.com> wrote:
+>
+> I was expecting to see the original commit, then the revert, then
+> perhaps a re-application of it but instead it looks like the commits
+> from master are missing entirely after 25cf23d7a957 ("mm/memblock: print
+> memblock_remove"). Maybe I'm missing something about the way the merges
+> for linux-next are done..?
+
+Andrew produces his mmotm quilt series and exports it to ozlabs.org
+from where I fetch it and create the akpm-current and akpm branches in
+linux-next (and merge them, obviously :-)).  The mmotm quilt series has
+not changed since Jun 15, I assume Andrew is still finalising it.
+
+> In any case, could we get the problematic patch removed from linux-next?
+
+I have removed it from my copy of mmotm for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WC=h_N3UJqTfkjWbdcO478n
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlssNf0ACgkQAVBC80lX
+0GwqnQgAlpelxvvi6Yhl4qtdIeKBlovkV5kAuzpaae6QMIv0SQi/aiu8PhM8HfRY
+pZrhXMQl281ZpfKW9pfECeyFbBSXMLrQmlBw2rtFHbIJy25t+AdrToPPDSIiqnWJ
+JJ6kPJxLzaJ8j4NGL1qdbOh5R3Ast4z1+SxspWAa80aXbZxAokbtuBln5pcLvKWG
+RpigTqwdlugHIPWYhRixQC3jqc1YbDt3uNq/pvimTNo5y5Aks57oA2dkCLPKTAfi
+qXhx+67AvvUenF6ajZ51pM8f4agmksmAUg3e2dL0J3xvsLjTJbl/5BQKHj32LZpo
+VD9hM1JFqNvAja/EiAJ3xwD2E2V4KQ==
+=NXVc
+-----END PGP SIGNATURE-----
+
+--Sig_/WC=h_N3UJqTfkjWbdcO478n--
