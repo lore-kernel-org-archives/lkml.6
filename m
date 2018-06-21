@@ -6,121 +6,145 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2DDC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFAFC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C6F3208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:34:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C6F3208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 932B620837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:37:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932B620837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933259AbeFUIeR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:34:17 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50607 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932534AbeFUIdx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:33:53 -0400
-Received: by mail-wm0-f65.google.com with SMTP id e16-v6so3707259wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 01:33:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ggu6XTOWV1am8HGIqVvDEC2PINXd6g/D3PZtPRZLoUI=;
-        b=q+Nv0VKZ3hRjUwi7vQ57q5yunFBvUnDDRbSNOuNSwa+Z4XD1dU0rX7b1dL5PuArYs6
-         Nb+P1es99HVH0c1GSPUNg/kkx3OrmrpL2Ij5HVFB4uRMI6qNYuWNPqunuxpK16nO8nwm
-         2YZ2Nct5AxmxH/njyDKD5msXj+5aw5USno17RiV7dtHaoAwfRskcOHtTU7OiefLmPXQX
-         rBaj6BBBbxGVjP9l/P9ULt8a94oOe2SC/9ZyQqaMUWkyae6F4xgBnzxYrWRXQWbYhayl
-         Hj7mC5G69C42fTeJLwnEQvmrYCIPXCBWO1HEbqx4sE3zXHsYKgPglx+m7rPs55+rsH7Y
-         tXdA==
-X-Gm-Message-State: APt69E3h1ZxUCT4qGxEZa0LisKyB5fsMO3Sfq6tLjxBmo4v3830HeVXP
-        yxify5sYTRcdpAtdo+tYVTDDDQ==
-X-Google-Smtp-Source: ADUXVKL3cTZXrKdxNlIiNVrYNynI0AYIL2jxGzFUBGnAVlL2rhi+tlNcSL3QEPM7rNiVlxcQokKYOw==
-X-Received: by 2002:a1c:6545:: with SMTP id z66-v6mr3945860wmb.86.1529570032220;
-        Thu, 21 Jun 2018 01:33:52 -0700 (PDT)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id h77-v6sm7773766wmd.9.2018.06.21.01.33.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 01:33:51 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org, linux-audit@redhat.com,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH -next] cred: conditionally declare groups-related functions
-Date:   Thu, 21 Jun 2018 10:33:16 +0200
-Message-Id: <20180621083316.8765-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
-References: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
+        id S1754173AbeFUIg5 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:36:57 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:49746 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751159AbeFUIgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 04:36:54 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id c1rO207jt-lP; Thu, 21 Jun 2018 10:36:52 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BD18C00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8c00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 774AD1EC00E4;
+        Thu, 21 Jun 2018 10:36:52 +0200 (CEST)
+Date:   Thu, 21 Jun 2018 10:36:49 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/9] x86/microcode/AMD: Integrate verify_patch_size()
+ into verify_patch()
+Message-ID: <20180621083649.GC12742@zn.tnic>
+References: <cover.1529424596.git.mail@maciej.szmigiero.name>
+ <39d0efb50538e4a1a06da693559bb13b060ad676.1529424596.git.mail@maciej.szmigiero.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <39d0efb50538e4a1a06da693559bb13b060ad676.1529424596.git.mail@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The groups-related functions declared in include/linux/cred.h are
-defined in kernel/groups.c, which is compiled only when
-CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
-CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-CONFIG_MULTIUSER might be disabled.
+On Tue, Jun 19, 2018 at 08:47:33PM +0200, Maciej S. Szmigiero wrote:
+> Integrating verify_patch_size() into verify_patch() allows us to check
+> whether the indicated patch size makes sense for its indicated CPU family -
+> for all CPU families known to the driver.
+> 
+> If we spot a patch that is longer than expected for its family we'll
+> carefully skip over only the expected length to make sure we don't miss
+> good patches in case the indicated patch size was something nonsensically
+> huge.
+> 
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> ---
+>  arch/x86/kernel/cpu/microcode/amd.c | 131 ++++++++++++----------------
+>  1 file changed, 57 insertions(+), 74 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+> index 120778771909..67147e784c0e 100644
+> --- a/arch/x86/kernel/cpu/microcode/amd.c
+> +++ b/arch/x86/kernel/cpu/microcode/amd.c
+> @@ -176,9 +176,6 @@ static bool verify_patch_section(const u8 *buf, size_t buf_size, bool early)
+>  	return true;
+>  }
+>  
+> -static unsigned int verify_patch_size(u8 family, u32 patch_size,
+> -				      unsigned int size);
+> -
+>  /*
+>   * Check whether there is a valid, non-truncated microcode patch of the
+>   * right size for a particular family @family at the beginning of a passed
+> @@ -192,7 +189,7 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
+>  			 unsigned int *crnt_size, bool early)
+>  {
+>  	const u32 *hdr;
+> -	u32 patch_size;
+> +	u32 patch_size, max_size;
+>  	const struct microcode_header_amd *mc_hdr;
+>  	u8 patch_fam;
+>  
+> @@ -204,48 +201,79 @@ static bool verify_patch(u8 family, const u8 *buf, size_t buf_size,
+>  	hdr = (const u32 *)buf;
+>  	patch_size = hdr[1];
+>  
+> -	if (buf_size - SECTION_HDR_SIZE < patch_size) {
+> +	if (buf_size - SECTION_HDR_SIZE < sizeof(*mc_hdr)) {
+>  		if (!early)
+> -			pr_err("Patch of size %u truncated.\n", patch_size);
+> +			pr_err("Truncated patch header.\n");
+>  
+>  		*crnt_size = buf_size;
+>  		return false;
+>  	}
+>  
+> +	mc_hdr = (const struct microcode_header_amd *)(buf + SECTION_HDR_SIZE);
+> +	patch_fam = 0xf + (mc_hdr->processor_rev_id >> 12);
+> +
+>  	/*
+> -	 * Set a patch length limit of slightly less than U32_MAX to
+> -	 * prevent overflowing 32-bit variables holding the whole
+> -	 * patch section size.
+> +	 * Check whether patch_size isn't something nonsensically huge so
+> +	 * we don't skip over good patches by mistake.
+>  	 */
+> -	if (patch_size > U32_MAX - SECTION_HDR_SIZE) {
+> -		if (!early)
+> -			pr_err("Patch of size %u too large.\n", patch_size);
+> +#define F1XH_MPB_MAX_SIZE 2048
+> +#define F14H_MPB_MAX_SIZE 1824
+> +#define F15H_MPB_MAX_SIZE 4096
+> +#define F16H_MPB_MAX_SIZE 3458
+> +#define F17H_MPB_MAX_SIZE 3200
+>  
+> -		*crnt_size = SECTION_HDR_SIZE + PATCH_MAX_SIZE;
+> -		return false;
+> +	switch (patch_fam) {
+> +	case 0x10 ... 0x13:
 
-This patch also adds a fallback for groups_search(). Currently this
-function is only called from kernel/groups.c itself and
-keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
-audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
-function in -next, so the fallback will be needed to avoid compilation
-errors or ugly workarounds.
+This is not how you integrate a function into another one.
 
-See also:
-https://lkml.org/lkml/2018/6/20/670
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
+In the first patch, you move the code verbatim to the place where you
+want it to be, without adding any other changes whatsoever. The diff
+needs to show code movement only.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- include/linux/cred.h | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+In follow-on patches you do the other changes you've done and you
+explain why.
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 631286535d0f..8917768453cc 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
- 
- extern int in_group_p(kgid_t);
- extern int in_egroup_p(kgid_t);
-+
-+extern int set_current_groups(struct group_info *);
-+extern void set_groups(struct cred *, struct group_info *);
-+extern int groups_search(const struct group_info *, kgid_t);
-+extern bool may_setgroups(void);
-+extern void groups_sort(struct group_info *);
- #else
- static inline void groups_free(struct group_info *group_info)
- {
-@@ -78,12 +84,12 @@ static inline int in_egroup_p(kgid_t grp)
- {
-         return 1;
- }
-+
-+static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-+{
-+	return 0;
-+}
- #endif
--extern int set_current_groups(struct group_info *);
--extern void set_groups(struct cred *, struct group_info *);
--extern int groups_search(const struct group_info *, kgid_t);
--extern bool may_setgroups(void);
--extern void groups_sort(struct group_info *);
- 
- /*
-  * The security context of a task
+But no need to resend the whole series - just split this patch as
+suggested and send the new ones as a reply to this subthread.
+
+Thanks.
+
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
