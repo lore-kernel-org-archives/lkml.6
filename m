@@ -7,92 +7,120 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B47C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD51C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E820720875
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A8520693
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:32:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uYmsgk+z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E820720875
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJUMC71V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A8520693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754322AbeFUDVa (ORCPT
+        id S1754290AbeFUDc4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 23:21:30 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45901 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754172AbeFUDV3 (ORCPT
+        Wed, 20 Jun 2018 23:32:56 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:40536 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754071AbeFUDcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 23:21:29 -0400
-Received: by mail-pf0-f194.google.com with SMTP id a22-v6so773652pfo.12
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 20:21:29 -0700 (PDT)
+        Wed, 20 Jun 2018 23:32:54 -0400
+Received: by mail-pg0-f66.google.com with SMTP id w8-v6so740983pgp.7;
+        Wed, 20 Jun 2018 20:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=7kY3i7BmDLb/n8wyrsOFnJPe4bMBBoW1BMNv5XmrVgU=;
-        b=uYmsgk+zFxu6ZztWlLzEFzIzLsYj9by17nw0SgDs9z8SivohAPktrv2XNMS6P/9wB7
-         R3NikJeF0IUhthrDLHUvLyLRMYEvieKMwSwtydz2oI1J+9ZuRf+Gz3UDPS8lik5bH5La
-         DIMIlwGIL3bs1mmSsv7WnM13kG20S1PLOyBP4rHNMsGEND3DUN23Yj+I6GvLhVaiXP2w
-         LUjYpBXiQOjbIUxvqbAomj6w9x96VbRy72e2LuPCHs7EZYncGh3GQBQU8RmWNWpAr4Cq
-         nc91YAkRIrMWXVwin8k+Vsrn5GpBNGU7sW9kpr3Vwq154mvqs0PtWyqwGlG3Yc1AjeaY
-         27lg==
+        h=from:to:cc:subject:date:message-id;
+        bh=VTMjmXWbd8FJYzPPYIiiGX92oEn31IRxL3XHJIyvM28=;
+        b=IJUMC71V47oeq67T7EuHJmGJagX8h6koDAhL3cQFO8FTZ5CfDUgXqN0RXFP8gvhLlG
+         e9fHAyJWUiC1rt/Jwsq5yOvjlSrK6+4SGiHGo+cJQpVrW4rb7uYIj5SmdppoYItIrOu/
+         vONolksA12tx6I56IgL21raJbimzcUcqVEr1e29tRMwkZzg/p8CoUtnjllTkyc2/r/uk
+         G0Ed7ofWsAv9M+KcFJri/ovOxTifLzCyMfrKWSS5PTnKDhWSKXK0yQcHgyJ9nCafJkqw
+         JdD2Bjca3d1HHRU2/Ur6st8uDyMmKCE+R99nv9DvB6lXX7myRg7RdRm1FiyVs6LZOYc6
+         DKug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=7kY3i7BmDLb/n8wyrsOFnJPe4bMBBoW1BMNv5XmrVgU=;
-        b=eYRSsk44K5EbYoj9jTcg6wF3TDLGxIeVtdJ3uIUaN3BapROvJf5364DRE6Ec3ybFqD
-         I6bKd0LivFhSBUuk7ufyOiv0P1gvUI+giefylXILZ6DUvJmszQyqtKR9g7fYyt7FzwCI
-         y45IX6CvoKX1X6Ozl1WAlxcHk/lTHKpJuiSSO0VVSZavqG+8YL3puYc4u3cdFkhmaBQT
-         rvvabN6sjZK7T87bVWqPbof82qbWJ5MMAJOLfEQamFviU83IckEpkL8s4lOq0Jbjemvu
-         yy8BBE+2kGmwGyvQxrHkzJnr4qwymu0CxTIAAB/5cL5LRqogzD+Gkikt/+SPrSTa8TMn
-         A0ag==
-X-Gm-Message-State: APt69E28WFZEUTY6upmNY5guxk1eHmUAXsCWunDcuuc7gfFIWsiyj9Y/
-        vlJKVGFmjVIcUXebLOHblMR6mEnD
-X-Google-Smtp-Source: ADUXVKKXUDKYgGzsO0+T1r55/i3p3lJ5GkMQ6K2XYUL6twej5rj0jQX0P32xD+eKxbp2yVAMmrp6GQ==
-X-Received: by 2002:a62:234a:: with SMTP id j71-v6mr24921607pfj.221.1529551288674;
-        Wed, 20 Jun 2018 20:21:28 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.70.11? ([2402:f000:1:1501:200:5efe:a66f:460b])
-        by smtp.gmail.com with ESMTPSA id b4-v6sm4357200pgq.51.2018.06.20.20.21.26
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=VTMjmXWbd8FJYzPPYIiiGX92oEn31IRxL3XHJIyvM28=;
+        b=Li+No2iI2YFPc0WFiNVobw0DOfiyX7E1YAxDD4MKKn1+0faLjaquCd4VVI4JB2QaPp
+         cuAbVBsI5jP7zW9SOFCmPqI7SZpNLVzzXhO97168XzGLN523ZgoWh0Dzgr+JIC02y+ir
+         amr/+WIqbRBTuYjjsNsOUUqlvxmgEAtGnfNHp1/XUK5mJhEHLI1ufU2Rlx+W/g1+FC41
+         g/ul32IjjrHYB78+7QxpC3m9NH9c+0mS+FFXzrx+ubFpO3PRfEbF6BecSl7ve3+uwXN9
+         vFC7t2S/4EArXlloJi1BVKxdDf3xnXpUD0fW0I0+8/J7tK9rZW7fZIW6V9AJ53oXhDps
+         sE+A==
+X-Gm-Message-State: APt69E2mDr2qhkjSMVnStd67ALq2qYdhr3g5/cUAnIYJ+rhCDGeP6ATh
+        kvkpl8cR9gisuN9Q4hZv1DU=
+X-Google-Smtp-Source: ADUXVKKPwyG1yKlpp6mlX4rl6haLTMCd9NLDvWF6Go/mllIo7D246jJy6mT3H4/K2xGWmAaLCzsQ3w==
+X-Received: by 2002:a62:3f4f:: with SMTP id m76-v6mr25593201pfa.109.1529551974002;
+        Wed, 20 Jun 2018 20:32:54 -0700 (PDT)
+Received: from oslab.tsinghua.edu.cn ([2402:f000:1:4413:35c0:9e91:c7fc:672])
+        by smtp.gmail.com with ESMTPSA id s68-v6sm8642335pfi.85.2018.06.20.20.32.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 20:21:28 -0700 (PDT)
-To:     akpm@linux-foundation.org, dvyukov@google.com,
-        Greg KH <gregkh@linuxfoundation.org>, tchibo@google.com,
-        aryabinin@virtuozzo.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Wed, 20 Jun 2018 20:32:53 -0700 (PDT)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] kernel: kcov: a possible sleep-in-atomic-context bug in
- kcov_ioctl()
-Message-ID: <ca2e4f0b-dd08-8d66-51e3-05cc69e15d65@gmail.com>
-Date:   Thu, 21 Jun 2018 11:20:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+To:     paul@paul-moore.com, eparis@redhat.com, jack@suse.cz,
+        amir73il@gmail.com
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] kernel: audit_tree: Fix a sleep-in-atomic-context bug
+Date:   Thu, 21 Jun 2018 11:32:45 +0800
+Message-Id: <20180621033245.10754-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The kernel may sleep with holding a spinlock.
-The function call path (from bottom to top) in Linux-4.16.7 is:
+The function call paths (from bottom to top) in Linux-4.16.7 are:
 
-[FUNC] vfree --> can sleep
-kernel/kcov.c, 237: vfree in kcov_put
-kernel/kcov.c, 396: kcov_put in kcov_ioctl_locked
-kernel/kcov.c, 410: kcov_ioctl_locked in kcov_ioctl
-kernel/kcov.c, 409: spin_lock in kcov_ioctl
+[FUNC] kmem_cache_alloc(GFP_KERNEL)
+fs/notify/mark.c, 439: 
+		kmem_cache_alloc in fsnotify_attach_connector_to_object
+fs/notify/mark.c, 520: 
+		fsnotify_attach_connector_to_object in fsnotify_add_mark_list
+fs/notify/mark.c, 590: 
+		fsnotify_add_mark_list in fsnotify_add_mark_locked
+kernel/audit_tree.c, 437: 
+		fsnotify_add_mark_locked in tag_chunk
+kernel/audit_tree.c, 423: 
+		spin_lock in tag_chunk
+
+[FUNC] kmem_cache_alloc(GFP_KERNEL)
+fs/notify/mark.c, 439: 
+		kmem_cache_alloc in fsnotify_attach_connector_to_object
+fs/notify/mark.c, 520: 
+		fsnotify_attach_connector_to_object in fsnotify_add_mark_list
+fs/notify/mark.c, 590: 
+		fsnotify_add_mark_list in fsnotify_add_mark_locked
+kernel/audit_tree.c, 291: 
+		fsnotify_add_mark_locked in untag_chunk
+kernel/audit_tree.c, 258: 
+		spin_lock in untag_chunk
+
+To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
 
 This bug is found by my static analysis tool (DSAC-2) and checked by my
 code review.
 
-I do not know how to correctly fix this bug, so I just report them.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ fs/notify/mark.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+index e9191b416434..c664853b8585 100644
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -436,7 +436,7 @@ static int fsnotify_attach_connector_to_object(
+ {
+ 	struct fsnotify_mark_connector *conn;
+ 
+-	conn = kmem_cache_alloc(fsnotify_mark_connector_cachep, GFP_KERNEL);
++	conn = kmem_cache_alloc(fsnotify_mark_connector_cachep, GFP_ATOMIC);
+ 	if (!conn)
+ 		return -ENOMEM;
+ 	spin_lock_init(&conn->lock);
+-- 
+2.17.0
 
-Best wishes,
-Jia-Ju Bai
