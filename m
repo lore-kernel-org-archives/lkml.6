@@ -6,74 +6,74 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7C0C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C4AC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50BF321837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EA3721898
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="m2dCUBQl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50BF321837
+	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="v0PVP2J9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA3721898
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932938AbeFUR3S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 13:29:18 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42033 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932721AbeFUR3Q (ORCPT
+        id S932891AbeFURcv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 13:32:51 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:32843 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932508AbeFURct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 13:29:16 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w17-v6so2033979pll.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:29:16 -0700 (PDT)
+        Thu, 21 Jun 2018 13:32:49 -0400
+Received: by mail-pg0-f66.google.com with SMTP id e11-v6so1738958pgq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dilger-ca.20150623.gappssmtp.com; s=20150623;
         h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
          :references;
-        bh=YwmjdZLJlue5CrG4m2X3boWseUmIkUembVOvZunnj18=;
-        b=m2dCUBQl4AL6ScyovUDgTXOEhWLDIc95xwIxsNkGzjFB+p1LfS5kRcmGDv+7a4ppoj
-         HEplO9icvLsubgltjjRZb4b2WCboDjL60HPmgBs4Evr0t4ePL+fVe+jw8b20h666DOpk
-         Iq7Il95C7QxFdjoVNLWHL5dU+bLfHZr2Z/RLOS3Mu5cLgHaipQt+iChko9vqZ4xtf/PD
-         P0RDk+1J98HeWlulEZiHzBAuug1avkHqYe0FIkUbRaRkpxkJKkM42mg42EQLi1tQZHc5
-         bcjK+lbX2N4a7kFDfrrZ6OVz65viq5k6s9H8Iy0B9r7knpVbZ7w1Plg/z2BRdWsSCXNy
-         hmVg==
+        bh=t0c+txA2MJcPHgXDD8eVBCUVdZJd66Tp71+/6tWDqGM=;
+        b=v0PVP2J9Z80WJ2yvooCUvc7qU2tsn9PwYcbKqbM2GWgmCPg9qOIP88BxDEp7kmmYNy
+         rxkV3tto93DRRoTZmhSazzo5FqcAqcoobsMZTh/0A8uiuby45Nodp2EprRW1YbNkj+k6
+         rWgcRnvdD0ydgqQ7EYhd3nORLX9Zag8pZH6tSBpgWyJsriShIIDLFCVJQ9Tf4CWEv6AN
+         LdpEp+R1BCb7vFVtd7UssnQxqxbUQqCLaDSM9lLFXcBHmrtlqG0vu1VWwMz8wSvkJglq
+         2fpgMYvDmDwhBOhHt7mFSLxO7ZKb4L/06pTm6TQTPN2ftC5I/bjrM3+26f/W3Adb9Xb9
+         wYoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:message-id:mime-version:subject:date
          :in-reply-to:cc:to:references;
-        bh=YwmjdZLJlue5CrG4m2X3boWseUmIkUembVOvZunnj18=;
-        b=QpqJg/JN2Su4nXYX+SmOEZjohbKDlSapPhsdV6En+2e+Gcz1H9TtWI4SJeM50gbXqR
-         f8ui+UYfFHBucI3Vh8sToBaSCfurIb2v3M72DLmncyNRV4QTd3By4odmrmG+Fi9z6hun
-         AiLHID5M7ecpj79GN9D/xY/pp7fU60u8IRZWPxliRW1AIecN9oUw10EKDklRhLKyzLcJ
-         C7nm275W/fPupTTAweS5lbUHwnNamKcbIYqhUy1RueN5GhHoslTiW0RQuCAiWY7nYJbi
-         vd4HpD2nI1tRLRNjPrLyiczYCWH3WKLqnCJDZpMj9RHfXUn4cYP+iUOV+Wi/wiNWEIrU
-         8Q8w==
-X-Gm-Message-State: APt69E0At3dT6gy4l+hqRDugPiyvPHfAJpt19H6HVlqALvq2nYoYbEFw
-        qmP8ib2ISCSVTQ65uQEtTc/R1A==
-X-Google-Smtp-Source: ADUXVKJYNx8RPPfvd+G1h5qTHgiLCpzH7BZ1WBYAvn5zUBsAxSuqmau8xE/9IAr5+zfNbOxRK1l03A==
-X-Received: by 2002:a17:902:4c:: with SMTP id 70-v6mr29401052pla.178.1529602156441;
-        Thu, 21 Jun 2018 10:29:16 -0700 (PDT)
+        bh=t0c+txA2MJcPHgXDD8eVBCUVdZJd66Tp71+/6tWDqGM=;
+        b=HMXyXfT3acSLhSProo3vUbdwOl/DN1fC59TNzfEyT6CM7z3m9lnOgJTWAsQA5C0QyX
+         5LHW20CpZymkG22hQRIFU7AA77EvnfJ2YJpjmKXZHp63x40kmPGkDxfrGygybNtQ1BSm
+         BW/gH4UES+uQVKP33H9bt1uB/EhIKL6lt2SxoTSeMZcC1aN0QjWuP6s/FUEPcpdClC6+
+         4Vl/zfjXNBsJdZgW3qb0jSX+DrLnZ65fQawlS8eYMXIoochHPZVsV815Ojgqzs7PTt2Z
+         Lok8/dKn9RTc5Cf/EwrvIlRGgMzX77JUq0mdhyCkM22CnNV9ejtbDHnUaOPP/S1YGxMk
+         SbDg==
+X-Gm-Message-State: APt69E17IrfJgSNjiHUm0sotvk7bExHOTFE5vFlPBZJaUI/q+aE09vS8
+        qU4zrhu+uBNsj+LuFHfMgedWQA==
+X-Google-Smtp-Source: ADUXVKIN6/kE57hXjN/q38/jfyKK9Sjk2IzTojM2bwYqN6uIFYaTVoddVou09TIWEdUkjCSMU2chfQ==
+X-Received: by 2002:a63:9543:: with SMTP id t3-v6mr22935409pgn.77.1529602369347;
+        Thu, 21 Jun 2018 10:32:49 -0700 (PDT)
 Received: from cabot-100.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id y18-v6sm7956701pfl.122.2018.06.21.10.29.15
+        by smtp.gmail.com with ESMTPSA id o72-v6sm10030036pfk.76.2018.06.21.10.32.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 10:29:15 -0700 (PDT)
+        Thu, 21 Jun 2018 10:32:48 -0700 (PDT)
 From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <9ED1876B-995B-490D-9173-467880FDEA7F@dilger.ca>
+Message-Id: <E233989D-59D7-4257-A50B-F2AFCB2ED8DF@dilger.ca>
 Content-Type: multipart/signed;
- boundary="Apple-Mail=_C6057F87-5433-49E0-BFE3-D2F243952E2F";
+ boundary="Apple-Mail=_74D6BF15-6A25-4C67-B5F7-BA0FDB36915D";
  protocol="application/pgp-signature"; micalg=pgp-sha256
 Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 4/6] ext4: use timespec64 for all inode times
-Date:   Thu, 21 Jun 2018 11:29:13 -0600
-In-Reply-To: <20180620153322.54221-4-arnd@arndb.de>
+Subject: Re: [PATCH 5/6] jbd2: replace current_kernel_time64 with ktime
+ equivalent
+Date:   Thu, 21 Jun 2018 11:32:47 -0600
+In-Reply-To: <20180620153322.54221-5-arnd@arndb.de>
 Cc:     Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
         y2038@lists.linaro.org,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>
 References: <20180620153322.54221-1-arnd@arndb.de>
- <20180620153322.54221-4-arnd@arndb.de>
+ <20180620153322.54221-5-arnd@arndb.de>
 X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -81,127 +81,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Apple-Mail=_C6057F87-5433-49E0-BFE3-D2F243952E2F
+--Apple-Mail=_74D6BF15-6A25-4C67-B5F7-BA0FDB36915D
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain;
 	charset=us-ascii
 
-On Jun 20, 2018, at 9:33 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+
+> On Jun 20, 2018, at 9:33 AM, Arnd Bergmann <arnd@arndb.de> wrote:
 >=20
-> This is the last missing piece for the inode times on 32-bit systems:
-> now that VFS interfaces use timespec64, we just need to stop =
-truncating
-> the tv_sec values for y2038 compatibililty.
+> jbd2 is one of the few callers of current_kernel_time64(), which
+> is a wrapper around ktime_get_coarse_real_ts64(). This calls the
+> latter directly for consistency with the rest of the kernel that
+> is moving to the ktime_get_ family of time accessors.
 >=20
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
 > ---
-> fs/ext4/ext4.h   | 18 +++++++-----------
-> fs/ext4/ialloc.c |  2 +-
-> 2 files changed, 8 insertions(+), 12 deletions(-)
+> fs/jbd2/commit.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 0b127853c584..6b4f4369a08c 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -789,17 +789,16 @@ struct move_extent {
->  * affected filesystem before 2242.
->  */
+> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+> index 8de0e7723316..150cc030b4d7 100644
+> --- a/fs/jbd2/commit.c
+> +++ b/fs/jbd2/commit.c
+> @@ -121,7 +121,7 @@ static int journal_submit_commit_record(journal_t =
+*journal,
+> 	struct commit_header *tmp;
+> 	struct buffer_head *bh;
+> 	int ret;
+> -	struct timespec64 now =3D current_kernel_time64();
+> +	struct timespec64 now;
 >=20
-> -static inline __le32 ext4_encode_extra_time(struct timespec *time)
-> +static inline __le32 ext4_encode_extra_time(struct timespec64 *time)
-> {
-> 	u32 extra =3D sizeof(time->tv_sec) > 4 ?
-> 		((time->tv_sec - (s32)time->tv_sec) >> 32) & =
-EXT4_EPOCH_MASK : 0;
-> 	return cpu_to_le32(extra | (time->tv_nsec << EXT4_EPOCH_BITS));
-> }
+> 	*cbh =3D NULL;
 >=20
-> -static inline void ext4_decode_extra_time(struct timespec *time, =
-__le32 extra)
-> +static inline void ext4_decode_extra_time(struct timespec64 *time, =
-__le32 extra)
-> {
-> -	if (unlikely(sizeof(time->tv_sec) > 4 &&
-> -			(extra & cpu_to_le32(EXT4_EPOCH_MASK)))) {
-> +	if (unlikely(extra & cpu_to_le32(EXT4_EPOCH_MASK))) {
+> @@ -134,6 +134,7 @@ static int journal_submit_commit_record(journal_t =
+*journal,
+> 		return 1;
 >=20
-> #if 1
-> 		/* Handle legacy encoding of pre-1970 dates with epoch
-> @@ -821,9 +820,8 @@ static inline void ext4_decode_extra_time(struct =
-timespec *time, __le32 extra)
-> do {										=
-\
-> 	(raw_inode)->xtime =3D cpu_to_le32((inode)->xtime.tv_sec);		=
-\
-> 	if (EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), xtime ## =
-_extra))     {\
-> -		struct timespec ts =3D =
-timespec64_to_timespec((inode)->xtime);	\
-> 		(raw_inode)->xtime ## _extra =3D				=
-	\
-> -				ext4_encode_extra_time(&ts);			=
-\
-> +				ext4_encode_extra_time(&(inode)->xtime);	=
-\
-> 		}								=
-\
-> } while (0)
+> 	tmp =3D (struct commit_header *)bh->b_data;
+> +	ktime_get_coarse_real_ts64(&now);
+> 	tmp->h_commit_sec =3D cpu_to_be64(now.tv_sec);
+> 	tmp->h_commit_nsec =3D cpu_to_be32(now.tv_nsec);
 >=20
-> @@ -840,10 +838,8 @@ do {							=
-		       \
-> do {										=
-\
-> 	(inode)->xtime.tv_sec =3D =
-(signed)le32_to_cpu((raw_inode)->xtime);	\
-> 	if (EXT4_FITS_IN_INODE(raw_inode, EXT4_I(inode), xtime ## =
-_extra)) {	\
-> -		struct timespec ts =3D =
-timespec64_to_timespec((inode)->xtime);	\
-> -		ext4_decode_extra_time(&ts,					=
-\
-> +		ext4_decode_extra_time(&(inode)->xtime,				=
-\
-> 				       raw_inode->xtime ## _extra);		=
-\
-> -		(inode)->xtime =3D timespec_to_timespec64(ts);			=
-\
-> 		}								=
-\
-> 	else									=
-\
-> 		(inode)->xtime.tv_nsec =3D 0;					=
-\
-> @@ -993,9 +989,9 @@ struct ext4_inode_info {
->=20
-> 	/*
-> 	 * File creation time. Its function is same as that of
-> -	 * struct timespec i_{a,c,m}time in the generic inode.
-> +	 * struct timespec64 i_{a,c,m}time in the generic inode.
-> 	 */
-> -	struct timespec i_crtime;
-> +	struct timespec64 i_crtime;
->=20
-> 	/* mballoc */
-> 	struct list_head i_prealloc_list;
-> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> index f525f909b559..8c00c871f5dc 100644
-> --- a/fs/ext4/ialloc.c
-> +++ b/fs/ext4/ialloc.c
-> @@ -1073,7 +1073,7 @@ struct inode *__ext4_new_inode(handle_t *handle, =
-struct inode *dir,
-> 	/* This is the optimal IO size (for stat), not the fs block size =
-*/
-> 	inode->i_blocks =3D 0;
-> 	inode->i_mtime =3D inode->i_atime =3D inode->i_ctime =3D =
-current_time(inode);
-> -	ei->i_crtime =3D timespec64_to_timespec(inode->i_mtime);
-> +	ei->i_crtime =3D inode->i_mtime;
->=20
-> 	memset(ei->i_data, 0, sizeof(ei->i_data));
-> 	ei->i_dir_start_lookup =3D 0;
 > --
 > 2.9.0
 >=20
@@ -214,7 +137,7 @@ Cheers, Andreas
 
 
 
---Apple-Mail=_C6057F87-5433-49E0-BFE3-D2F243952E2F
+--Apple-Mail=_74D6BF15-6A25-4C67-B5F7-BA0FDB36915D
 Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment;
 	filename=signature.asc
@@ -225,19 +148,19 @@ Content-Description: Message signed with OpenPGP
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - http://gpgtools.org
 
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlsr4GoACgkQcqXauRfM
-H+BdIg/+K/BV2pNCUWpP2L7KBRhDU371lHoZogBut1IhnL/h129JtZPZ+B2+bSga
-4W6ujs75roeLfC6HrkYdmTR3R4hNAft3uJF2UVX93jLgOc7QF+5gMRyAVYDA0Lh/
-sbR0ZYih0j3U0Y+gWarjIwjpRIqfL7M9m0WdlsqSHzV4C0rkAL1Jky7k2MOZE5/C
-tQkRuFXlldFHjDePnK7cTIZKdR7ffV0zd/pt0ydsroUPhy7JPrVZaS4v2u6L+kH/
-QY33xuCVXxLsFJhBAYKc4RgkFdM8m008w5N9xQ/39Im9Aj1P1D6uLB9EwTlUGSqv
-FsOb8m5nF57a+ouRcPAkShkO2Rv732GOEo4HFHpdLiwFCxB04FYoJtB/axCn5JBt
-HGzIgHw6NUqkasa/TT+Examp8EaAv35HawrG8qM3TYFjK9lVNArVWe4iFSGqNHWg
-h5WkxczfRRA8SCsiZn662/1FDgCDEvTWsfzCmFSNNBP4G8z7eHGRQeDeNT6haVRK
-bAJVE4GFNu4bgWbNKkAE+4/U+bPB2SebRikJmpwcRqNt/xju2TNxOreITjRqJXTX
-RLKtKj/QbsA8hhGH4FybNqimt3PuC8ynXfP/U5ui0dkc4b++F3d4z1MzpXS5PEMS
-U+/2RLfNI1EEcn+BhGTmNy4QCGaKNFl6y+7WWQwQEScb5h+LWxY=
-=Q/Vk
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlsr4T8ACgkQcqXauRfM
+H+BYWQ/+LeQR/KV88BsBceuGWGyY53EJk5DDCyuJddZUjQFBAZenTBtPQ642zu7B
+qUHcVsk4sxSyBZK7HypEs+mpiaUKAVRHZdTKCXGIXJjCmywnLbJXYB0woRNu9kQi
+by9hSk49F5MR2lUOV1WALNAtvrm1dA0/w0NnbRSUJF+e65ybsN8KkWTMe6hLgc7V
+JHq8cwPEdSHkQiiG+JWphPD38eB3z5PJCHLlZSieMxlyR8MGqO2eBVkTUMeVHGlI
+bBcUgIFxlGp2ylj7zcTvqoFoOT6WD/7pQBv90v8TDIK5tFs1+VuNGbqT9/B6a7xW
+fKKYyPgVneiaOGoKL4icvGehM5i/Kw+R9vuYdIK081ebN+oHM2oLyQkWJVwTxoBl
+c0lSqB+BuzeU/B2HL7KR5NnG7xfi1UGsi2/KYCi4CWRkyLs/0JYdfu9RL9EgBobd
+BnHZW34mo9Ec2zD2uxgsC76qYJWeDQpboMA5OFTmsV6E9iYW6O/cJYBVHe2nKC/4
+WdykhsBddgokF0GTqRdAb4TZoF5ZslK8jyJhOx8N0J5WbhNDQtHv2fYOFT+mSH2w
+SKX+0zK0jdJXUoh9ZNN4EvkaZ5fs16Wey2ruQW8iTZeiNCqU2OFYOCi7Zo4j3xhY
+hAysShMtNy58H09UbA6NwLO6ChOdOjuWfO05l+vBmLee6u3wBFU=
+=DUnz
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_C6057F87-5433-49E0-BFE3-D2F243952E2F--
+--Apple-Mail=_74D6BF15-6A25-4C67-B5F7-BA0FDB36915D--
