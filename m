@@ -2,197 +2,187 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BBBC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4548C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDC5223D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:19:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BDC5223D9
+	by mail.kernel.org (Postfix) with ESMTP id 69165223E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:21:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69165223E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933626AbeFUVT4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:19:56 -0400
-Received: from mga14.intel.com ([192.55.52.115]:27241 "EHLO mga14.intel.com"
+        id S933447AbeFUVU6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:20:58 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5240 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754012AbeFUVSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:18:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S933015AbeFUVU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 17:20:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 14:18:02 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 14:20:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,253,1526367600"; 
-   d="scan'208";a="48912108"
-Received: from hanvin-mobl2.amr.corp.intel.com ([10.254.42.214])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Jun 2018 14:18:02 -0700
-From:   "H. Peter Anvin, Intel" <h.peter.anvin@intel.com>
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     "H. Peter Anvin" <hpa@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        "Markus T . Metzger" <markus.t.metzger@intel.com>
-Subject: [PATCH v3 1/7] x86/ldt: refresh %fs and %gs in refresh_ldt_segments()
-Date:   Thu, 21 Jun 2018 14:17:48 -0700
-Message-Id: <20180621211754.12757-2-h.peter.anvin@intel.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180621211754.12757-1-h.peter.anvin@intel.com>
-References: <20180621211754.12757-1-h.peter.anvin@intel.com>
+   d="scan'208";a="234554007"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.135])
+  by orsmga005.jf.intel.com with ESMTP; 21 Jun 2018 14:20:45 -0700
+Date:   Thu, 21 Jun 2018 14:20:45 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Nathaniel McCallum <npmccallum@redhat.com>
+Cc:     Neil Horman <nhorman@redhat.com>, jethro@fortanix.com,
+        luto@kernel.org, jarkko.sakkinen@linux.intel.com, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, intel-sgx-kernel-dev@lists.01.org, hpa@zytor.com,
+        dvhart@infradead.org, tglx@linutronix.de, andy@infradead.org,
+        Peter Jones <pjones@redhat.com>
+Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
+ launch enclave
+Message-ID: <20180621212044.GA26021@linux.intel.com>
+References: <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
+ <20180612174535.GE19168@hmswarspite.think-freely.org>
+ <CALCETrV-4D-M2ap1EFHQiQerYf_XgwLmBAx5WMvcCUefOODjOA@mail.gmail.com>
+ <CAOASepN9t3jF4ajfKLG_odTZddOvXjY_DqLQhRPWhJ-imtjkgg@mail.gmail.com>
+ <e3f8e5b9-aa1e-20da-37ac-3c3caafa66bc@fortanix.com>
+ <b5c81504-83cd-8150-ebe4-41355026590f@fortanix.com>
+ <20180620210158.GA24328@linux.intel.com>
+ <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
+ <20180621152903.GB1324@hmswarspite.think-freely.org>
+ <CAOASepOPxte6aDHQB2dsd+VMPqWOuZZH4j8OKoqaHZ2cBsc38g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOASepOPxte6aDHQB2dsd+VMPqWOuZZH4j8OKoqaHZ2cBsc38g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "H. Peter Anvin" <hpa@linux.intel.com>
+On Thu, Jun 21, 2018 at 03:11:18PM -0400, Nathaniel McCallum wrote:
+> If this is acceptable for everyone, my hope is the following:
+> 
+> 1. Intel would split the existing code into one of the following
+> schemas (I don't care which):
+>   A. three parts: UEFI module, FLC-only kernel driver and user-space
+> launch enclave
+>   B. two parts: UEFI module (including launch enclave) and FLC-only
+> kernel driver
 
-It is not only %ds and %es which contain cached user descriptor
-information, %fs and %gs do as well.
+To make sure I understand correctly...
 
-To make sure we don't do something stupid that will affect processes
-which wouldn't want this requalification, be more restrictive about
-which selector numbers will be requalified: they need to be LDT
-selectors (which by definition are never null), have an RPL of 3
-(always the case in user space unless null), and match the updated
-descriptor.
+The UEFI module would lock the LE MSRs with a public key hardcoded
+into both the UEFI module and the kernel at build time?
 
-The infrastructure is set up to allow a range of descriptors; this
-will be used in a subsequent patch.
+And for the kernel, it would only load its SGX driver if FLC is
+supported and the MSRs are locked to the expected key?
 
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Markus T. Metzger <markus.t.metzger@intel.com>
----
- arch/x86/kernel/ldt.c | 70 +++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 54 insertions(+), 16 deletions(-)
+IIUC, this approach will cause problems for virtualization.  Running
+VMs with different LE keys would require the bare metal firmware to
+configure the LE MSRs to be unlocked, which would effectively make
+using SGX in the host OS mutually exlusive with exposing SGX to KVM
+guests.  Theoretically it would be possible for KVM to emulate the
+guest's LE and use the host's LE to generate EINIT tokens, but
+emulating an enclave would likely require a massive amount of code
+and/or complexity.
 
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index c9b14020f4dd..18e9f4c0633d 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -29,36 +29,68 @@
- #include <asm/mmu_context.h>
- #include <asm/syscalls.h>
- 
--static void refresh_ldt_segments(void)
--{
-+struct flush_ldt_info {
-+	struct mm_struct *mm;
-+	unsigned short first_desc;
-+	unsigned short last_desc;
-+};
-+
- #ifdef CONFIG_X86_64
-+
-+static inline bool
-+need_requalify(unsigned short sel, const struct flush_ldt_info *info)
-+{
-+	/* Must be an LDT segment descriptor with an RPL of 3 */
-+	if ((sel & (SEGMENT_TI_MASK|SEGMENT_RPL_MASK)) != (SEGMENT_LDT|3))
-+		return false;
-+
-+	return sel >= info->first_desc && sel <= info->last_desc;
-+}
-+
-+static void refresh_ldt_segments(const struct flush_ldt_info *info)
-+{
- 	unsigned short sel;
- 
- 	/*
--	 * Make sure that the cached DS and ES descriptors match the updated
--	 * LDT.
-+	 * Make sure that the cached DS/ES/FS/GS descriptors
-+	 * match the updated LDT, if the specific selectors point
-+	 * to LDT entries that have changed.
- 	 */
- 	savesegment(ds, sel);
--	if ((sel & SEGMENT_TI_MASK) == SEGMENT_LDT)
-+	if (need_requalify(sel, info))
- 		loadsegment(ds, sel);
- 
- 	savesegment(es, sel);
--	if ((sel & SEGMENT_TI_MASK) == SEGMENT_LDT)
-+	if (need_requalify(sel, info))
- 		loadsegment(es, sel);
--#endif
-+
-+	savesegment(fs, sel);
-+	if (need_requalify(sel, info))
-+		loadsegment(fs, sel);
-+
-+	savesegment(gs, sel);
-+	if (need_requalify(sel, info))
-+		load_gs_index(sel);
- }
- 
-+#else
-+/* On 32 bits, entry_32.S takes care of this on kernel exit */
-+static void refresh_ldt_segments(const struct flush_ldt_info *info)
-+{
-+	(void)info;
-+}
-+#endif
-+
- /* context.lock is held by the task which issued the smp function call */
--static void flush_ldt(void *__mm)
-+static void flush_ldt(void *_info)
- {
--	struct mm_struct *mm = __mm;
-+	const struct flush_ldt_info *info = _info;
- 
--	if (this_cpu_read(cpu_tlbstate.loaded_mm) != mm)
-+	if (this_cpu_read(cpu_tlbstate.loaded_mm) != info->mm)
- 		return;
- 
--	load_mm_ldt(mm);
--
--	refresh_ldt_segments();
-+	load_mm_ldt(info->mm);
-+	refresh_ldt_segments(info);
- }
- 
- /* The caller must call finalize_ldt_struct on the result. LDT starts zeroed. */
-@@ -223,15 +255,21 @@ static void finalize_ldt_struct(struct ldt_struct *ldt)
- 	paravirt_alloc_ldt(ldt->entries, ldt->nr_entries);
- }
- 
--static void install_ldt(struct mm_struct *mm, struct ldt_struct *ldt)
-+static void install_ldt(struct mm_struct *mm, struct ldt_struct *ldt,
-+			unsigned short first_index, unsigned short last_index)
- {
-+	struct flush_ldt_info info;
-+
- 	mutex_lock(&mm->context.lock);
- 
- 	/* Synchronizes with READ_ONCE in load_mm_ldt. */
- 	smp_store_release(&mm->context.ldt, ldt);
- 
- 	/* Activate the LDT for all CPUs using currents mm. */
--	on_each_cpu_mask(mm_cpumask(mm), flush_ldt, mm, true);
-+	info.mm = mm;
-+	info.first_desc = (first_index << 3)|SEGMENT_LDT|3;
-+	info.last_desc  = (last_index << 3)|SEGMENT_LDT|3;
-+	on_each_cpu_mask(mm_cpumask(mm), flush_ldt, &info, true);
- 
- 	mutex_unlock(&mm->context.lock);
- }
-@@ -436,7 +474,7 @@ static int write_ldt(void __user *ptr, unsigned long bytecount, int oldmode)
- 		goto out_unlock;
- 	}
- 
--	install_ldt(mm, new_ldt);
-+	install_ldt(mm, new_ldt, ldt_info.entry_number, ldt_info.entry_number);
- 	free_ldt_struct(old_ldt);
- 	error = 0;
- 
--- 
-2.14.4
+> 2. Intel would release a reproducible build of the GPL UEFI module
+> sources signed with a SecureBoot trusted key and provide an
+> acceptable[0] binary redistribution license.
+> 
+> 3. The kernel community would agree to merge the kernel driver given
+> the above criteria (and, obviously, acceptable kernel code).
+> 
+> The question of how to distribute the UEFI module and possible launch
+> enclave remains open. I see two options: independent distribution and
+> bundling it in linux-firmware. The former may be a better
+> technological fit since the UEFI module will likely need to be run
+> before the kernel (and the boot loader; and shim). However, the latter
+> has the benefit of already being a well-known entity to our downstream
+> distributors. I could go either way on this.
 
+Writing and locks the LE MSRs effectively needs to be done before
+running the bootloader/kernel/etc...  Delaying activation would
+require, at a minimum, leaving IA32_FEATURE_CONTROL unlocked since
+IA32_FEATURE_CONTROL's SGX bits can't be set until SGX is activated.
+
+> I know this plan is more work for everyone involved, but I think it
+> manages to actually maximize both security and freedom.
+> 
+> [0]: details here -
+> https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/README#n19
+> On Thu, Jun 21, 2018 at 11:29 AM Neil Horman <nhorman@redhat.com> wrote:
+> >
+> > On Thu, Jun 21, 2018 at 08:32:25AM -0400, Nathaniel McCallum wrote:
+> > > On Wed, Jun 20, 2018 at 5:02 PM Sean Christopherson
+> > > <sean.j.christopherson@intel.com> wrote:
+> > > >
+> > > > On Wed, Jun 20, 2018 at 11:39:00AM -0700, Jethro Beekman wrote:
+> > > > > On 2018-06-20 11:16, Jethro Beekman wrote:
+> > > > > > > This last bit is also repeated in different words in Table 35-2 and
+> > > > > > > Section 42.2.2. The MSRs are *not writable* before the write-lock bit
+> > > > > > > itself is locked. Meaning the MSRs are either locked with Intel's key
+> > > > > > > hash, or not locked at all.
+> > > > >
+> > > > > Actually, this might be a documentation bug. I have some test hardware and I
+> > > > > was able to configure the MSRs in the BIOS and then read the MSRs after boot
+> > > > > like this:
+> > > > >
+> > > > > MSR 0x3a 0x0000000000040005
+> > > > > MSR 0x8c 0x20180620aaaaaaaa
+> > > > > MSR 0x8d 0x20180620bbbbbbbb
+> > > > > MSR 0x8e 0x20180620cccccccc
+> > > > > MSR 0x8f 0x20180620dddddddd
+> > > > >
+> > > > > Since this is not production hardware, it could also be a CPU bug of course.
+> > > > >
+> > > > > If it is indeed possible to configure AND lock the MSR values to non-Intel
+> > > > > values, I'm very much in favor of Nathaniels proposal to treat the launch
+> > > > > enclave like any other firmware blob.
+> > > >
+> > > > It's not a CPU or documentation bug (though the latter is arguable).
+> > > > SGX has an activation step that is triggered by doing a WRMSR(0x7a)
+> > > > with bit 0 set.  Until SGX is activated, the SGX related bits in
+> > > > IA32_FEATURE_CONTROL cannot be set, i.e. SGX can't be enabled.  But,
+> > > > the LE hash MSRs are fully writable prior to activation, e.g. to
+> > > > allow firmware to lock down the LE key with a non-Intel value.
+> > > >
+> > > > So yes, it's possible to lock the MSRs to a non-Intel value.  The
+> > > > obvious caveat is that whatever blob is used to write the MSRs would
+> > > > need be executed prior to activation.
+> > >
+> > > This implies that it should be possible to create MSR activation (and
+> > > an embedded launch enclave?) entirely as a UEFI module. The kernel
+> > > would still get to manage who has access to /dev/sgx and other
+> > > important non-cryptographic policy details. Users would still be able
+> > > to control the cryptographic policy details (via BIOS Secure Boot
+> > > configuration that exists today). Distributions could still control
+> > > cryptographic policy details via signing of the UEFI module with their
+> > > own Secure Boot key (or using something like shim). The UEFI module
+> > > (and possibly the external launch enclave) could be distributed via
+> > > linux-firmware.
+> > >
+> > > Andy/Neil, does this work for you?
+> > >
+> > I need some time to digest it.  Who in your mind is writing the UEFI module.  Is
+> > that the firmware vendor or IHV?
+> >
+> > Neil
+> >
+> > > > As for the SDM, it's a documentation... omission?  SGX activation
+> > > > is intentionally omitted from the SDM.  The intended usage model is
+> > > > that firmware will always do the activation (if it wants SGX enabled),
+> > > > i.e. post-firmware software will only ever "see" SGX as disabled or
+> > > > in the fully activated state, and so the SDM doesn't describe SGX
+> > > > behavior prior to activation.  I believe the activation process, or
+> > > > at least what is required from firmware, is documented in the BIOS
+> > > > writer's guide.
+> > > >
+> > > > > Jethro Beekman | Fortanix
+> > > > >
+> > > >
+> > > >
