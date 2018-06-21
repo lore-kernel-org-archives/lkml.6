@@ -2,216 +2,104 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F45C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CA6C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A344D20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:13:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB6920837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:13:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KOhpSd8A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A344D20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="m07y7dDu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB6920837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933189AbeFUNNF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:13:05 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44934 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933115AbeFUNNB (ORCPT
+        id S933222AbeFUNNc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:13:32 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:34596 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932743AbeFUNNa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:13:01 -0400
-Received: by mail-wr0-f193.google.com with SMTP id p12-v6so1535720wrn.11
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 06:13:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0G+sEfmmi8L25Ifa4zPf0c+E6j+i2vE9du906bSSO44=;
-        b=KOhpSd8AQQNkWzsFyOANKLbdvRiyXkV07Nqs1PeydxV+lwH5LC7Swsp/lwhQCW4c+j
-         /lFnCKDsuWHlQeAqIAb2Ua9qV/53o/KRf3I7yvArWOM+KoUDcm3fLPs5L9GDn50acu38
-         KhMNBD9x8sq+QPo+VM7gn5dM+ZhNk028/DAO8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0G+sEfmmi8L25Ifa4zPf0c+E6j+i2vE9du906bSSO44=;
-        b=QnZUKJ2vC9/PzgAFsrqvt4e2lhlg9gN3P5u84eMhNbvgNAYpEjBRs+R80PMp4m+x0S
-         OtgR+E7aRiMMXB4wpkJao0ckCd2mtAFI9QadfwKrmyAi2w8wvHajCv3q97LLDNPi+LQE
-         gQVWbR0Fow7/wYIM7lVtNfDixFUZhSm0hfOyQ1Ox1HHBmAzWeEI4JW9tQZRDrGqPpIux
-         5BfE6Shh1AOAtZJNMd8VqWQToMH32FSo5GyvcbpoogCTb8h6Nq9xz5kn51K9OpgbgdKS
-         2BK2KrnTCs5JKQ/BeBHpm4jeMNmZpgqIh4VS4Dgk9pMcjFoj3AaoN1vOjBCzrd+xPh5p
-         LOHw==
-X-Gm-Message-State: APt69E19cEguU6q3kmFbm+sYLI8mUiVMDpGPmHVreJ0sizKw8Y1iV9aA
-        iCQrUubC7+PnzIzOdl8NcTXRQg==
-X-Google-Smtp-Source: ADUXVKJeF0q1G26eQW54Mtg+VRfyR+0KZpmnUV+dRGpvQErN2STWxYKJ5AjjkTetblhJMulg+I2ZLw==
-X-Received: by 2002:adf:ad2f:: with SMTP id p44-v6mr22304436wrc.164.1529586780370;
-        Thu, 21 Jun 2018 06:13:00 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id l15-v6sm6677621wrs.95.2018.06.21.06.12.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 06:12:59 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 14:12:57 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Kiran Gunda <kgunda@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
-        lee.jones@linaro.org, b.zolnierkie@samsung.com,
-        dri-devel@lists.freedesktop.org,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V3 2/7] backlight: qcom-wled: restructure the qcom-wled
- bindings
-Message-ID: <20180621131257.bql555n5vgwamtlu@holly.lan>
-References: <1529406822-15379-1-git-send-email-kgunda@codeaurora.org>
- <1529406822-15379-3-git-send-email-kgunda@codeaurora.org>
+        Thu, 21 Jun 2018 09:13:30 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5LD96ln145881;
+        Thu, 21 Jun 2018 13:13:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=/KCwabEDvxG5JoMliUG82xtRoiEJbg1WvmkjL1wUi0k=;
+ b=m07y7dDuyjqCqo9DMzoQiAgsgywqX6VCbLhzqAiHN2H5JfGlu8/mRHImABiveLqgbdNt
+ /7XECVlIlxFX9JjpV6PJj5s72/tXHtNyPFarZ4uhaqJoL9tVRajcojs2Z2HcAKT9a5CF
+ SCQJskygLJUEHBXp93MUtDbI8cU92hbfcYaBB/qenl09hUdLbyMUXD56G+1fFeFFJ0gY
+ OcrZ/ZHS6K+qx5r6iAX+pduMa2A7PHnLH6AZxCgkPM/f+lxWO5HXALqY2Cx24HbuT24n
+ QB/BUK/GPjn3Pqzkd+SVOyyR/aj8n0nu6K6ZE9pKQ2MmCJQ4YkEkrRWUFV3s3OGKHDf+ 5Q== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jmr2mrura-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jun 2018 13:13:23 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5LDDMNn009185
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jun 2018 13:13:22 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5LDDLiI026037;
+        Thu, 21 Jun 2018 13:13:21 GMT
+Received: from [10.191.15.192] (/10.191.15.192)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Jun 2018 06:13:20 -0700
+Subject: Re: [PATCH 0/5]stop normal completion path entering a timeout req
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Keith Busch <keith.busch@intel.com>, axboe@kernel.dk,
+        martin.petersen@oracle.com, josef@toxicpanda.com,
+        ulf.hansson@linaro.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1529500964-28429-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180620181601.GA24145@localhost.localdomain>
+ <e87f5946-bb21-942e-2dcc-b24cee1ad23c@oracle.com>
+ <20180621081900.GA5183@lst.de>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <df1633e8-7df4-976b-a7d5-77679c92843a@oracle.com>
+Date:   Thu, 21 Jun 2018 21:13:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529406822-15379-3-git-send-email-kgunda@codeaurora.org>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <20180621081900.GA5183@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806210146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 04:43:37PM +0530, Kiran Gunda wrote:
-> Restructure the qcom-wled bindings for the better readability.
-> 
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+Hi Christoph
 
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+On 06/21/2018 04:19 PM, Christoph Hellwig wrote:
+> On Thu, Jun 21, 2018 at 09:43:26AM +0800, jianchao.wang wrote:
+>> So we have to preserve the ability of block layer that it could prevent
+>> IO completion path from entering a timeout request.
+>>
+>> With scsi-debug module, I tried to simulate a scenario where timeout and IO
+>> completion path could occur concurrently, the system ran into crash easily.
+> 
+> Trace, please.  With the latest kernel.  I'm not saying that there
+> is nothing to fix, but the mode of never completing once timeout
+> requests as currently done is SCSI is clearly broken.
+> 
 
-> ---
->  .../bindings/leds/backlight/qcom-wled.txt          | 110 ++++++++++++++++-----
->  1 file changed, 85 insertions(+), 25 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
-> index fb39e32..14f28f2 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
-> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
-> @@ -1,30 +1,90 @@
->  Binding for Qualcomm Technologies, Inc. WLED driver
->  
-> -Required properties:
-> -- compatible: should be "qcom,pm8941-wled"
-> -- reg: slave address
-> -
-> -Optional properties:
-> -- default-brightness: brightness value on boot, value from: 0-4095
-> -	default: 2048
-> -- label: The name of the backlight device
-> -- qcom,cs-out: bool; enable current sink output
-> -- qcom,cabc: bool; enable content adaptive backlight control
-> -- qcom,ext-gen: bool; use externally generated modulator signal to dim
-> -- qcom,current-limit: mA; per-string current limit; value from 0 to 25
-> -	default: 20mA
-> -- qcom,current-boost-limit: mA; boost current limit; one of:
-> -	105, 385, 525, 805, 980, 1260, 1400, 1680
-> -	default: 805mA
-> -- qcom,switching-freq: kHz; switching frequency; one of:
-> -	600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371,
-> -	1600, 1920, 2400, 3200, 4800, 9600,
-> -	default: 1600kHz
-> -- qcom,ovp: V; Over-voltage protection limit; one of:
-> -	27, 29, 32, 35
-> -	default: 29V
-> -- qcom,num-strings: #; number of led strings attached; value from 1 to 3
-> -	default: 2
-> +WLED (White Light Emitting Diode) driver is used for controlling display
-> +backlight that is part of PMIC on Qualcomm Technologies, Inc. reference
-> +platforms. The PMIC is connected to the host processor via SPMI bus.
-> +
-> +- compatible
-> +	Usage:        required
-> +	Value type:   <string>
-> +	Definition:   should be one of:
-> +			"qcom,pm8941-wled"
-> +			"qcom,pmi8998-wled"
-> +			"qcom,pm660l-wled"
-> +
-> +- reg
-> +	Usage:        required
-> +	Value type:   <prop encoded array>
-> +	Definition:   Base address of the WLED modules.
-> +
-> +- default-brightness
-> +	Usage:        optional
-> +	Value type:   <u32>
-> +	Definition:   brightness value on boot, value from: 0-4095
-> +		      Default: 2048
-> +
-> +- label
-> +	Usage:        required
-> +	Value type:   <string>
-> +	Definition:   The name of the backlight device
-> +
-> +- qcom,cs-out
-> +	Usage:        optional
-> +	Value type:   <bool>
-> +	Definition:   enable current sink output.
-> +		      This property is supported only for PM8941.
-> +
-> +- qcom,cabc
-> +	Usage:        optional
-> +	Value type:   <bool>
-> +	Definition:   enable content adaptive backlight control.
-> +
-> +- qcom,ext-gen
-> +	Usage:        optional
-> +	Value type:   <bool>
-> +	Definition:   use externally generated modulator signal to dim.
-> +		      This property is supported only for PM8941.
-> +
-> +- qcom,current-limit
-> +	Usage:        optional
-> +	Value type:   <u32>
-> +	Definition:   mA; per-string current limit
-> +		      value: For pm8941: from 0 to 25 with 5 mA step
-> +			     Default 20 mA.
-> +			     For pmi8998: from 0 to 30 with 5 mA step
-> +			     Default 25 mA.
-> +
-> +- qcom,current-boost-limit
-> +	Usage:        optional
-> +	Value type:   <u32>
-> +	Definition:   mA; boost current limit.
-> +		      For pm8941: one of: 105, 385, 525, 805, 980, 1260, 1400,
-> +		      1680. Default: 805 mA
-> +		      For pmi8998: one of: 105, 280, 450, 620, 970, 1150, 1300,
-> +		      1500. Default: 970 mA
-> +
-> +- qcom,switching-freq
-> +	Usage:        optional
-> +	Value type:   <u32>
-> +	 Definition:   kHz; switching frequency; one of: 600, 640, 685, 738,
-> +		       800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200,
-> +		       4800, 9600.
-> +		       Default: for pm8941: 1600 kHz
-> +				for pmi8998: 800 kHz
-> +
-> +- qcom,ovp
-> +	Usage:        optional
-> +	Value type:   <u32>
-> +	Definition:   V; Over-voltage protection limit; one of:
-> +		      27, 29, 32, 35. default: 29V
-> +		      This property is supported only for PM8941.
-> +
-> +- qcom,num-strings
-> +	Usage:        optional
-> +	Value type:   <u32>
-> +	Definition:   #; number of led strings attached;
-> +		      value from 1 to 3. default: 2
-> +		      This property is supported only for PM8941.
->  
->  Example:
->  
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->  a Linux Foundation Collaborative Project
-> 
+Sorry, I don't quite get your point.
+Do you mean we should do the modification in the scsi layer ?
+Actually, I used to look at the code to try to stop io completion on timeout request
+in scsi-mid layer, but it looks like difficult, especially, scsi eh would try
+to borrow the command to issue admin command such as get sense, test unit,etc.
+
+Thanks
+Jianchao
