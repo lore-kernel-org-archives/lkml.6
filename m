@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691D1C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BE7C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA3422415
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:31:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F9672241A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:31:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pwA4IRM2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EA3422415
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M8Nf1Vzz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F9672241A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933835AbeFUVbo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:31:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41828 "EHLO
+        id S933786AbeFUVbm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:31:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41832 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933980AbeFUV3L (ORCPT
+        with ESMTP id S933985AbeFUV3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 17:29:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,21 +30,21 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HNmaM8ejrAD4rksJ/dN/SH3rhwSSjX8xB4d6SnU8CqA=; b=pwA4IRM22wm/ctNTG2OhLT88V
-        xArq7pYvXUgpI90BtkyYs0rp12IPxBEvNQ1RFydC1nLCpYXCxCHUNjA2IgOSF+ldQbZMs4k+weuGU
-        32wP0SqcACk0QP+Apy4YtfdYbEj9DMCI58kkHllXgjpIh5SPl7uhlcgb5YGmWw833lE+SgZBrcgGN
-        pW1eASQl2O/2ogeyadUtw4L5ySOe/KcrcYXyRNZnRJ8FmfO2KQj/9WeCdo9BfITgINp3MOISE3i9d
-        GGTkKMl4KzIBBjDFWGtPN0R/i0HJmJfH34JLS5Dj+m5jMlFgMXf/8tfa6tLxvp6vMRZEYoTExpcrc
-        BFLkLA+2A==;
+         bh=X/ZfGE4t/ViC2dt0XRJZtzHKlZ8A2qq/KH35UIDUT2I=; b=M8Nf1VzzzTpqztBCC5w2QORcy
+        uYvbUxAtiltJOuUdn5VtZxLAdVFL+K/6PoMliC6XmKvqtWK+O4N04S4Yp0PPFVeZZxhLYQ+qUog8X
+        t2bVFAqOV+fqgz7rYwE1/4t6IB2NEZgUzC8U1ugms7dMAruNmtSH5CCCTgFmZzjFDhK4vAZGd5vtH
+        F9jFKCsQ8nWkvTA7yen+fCeX5f8YMec3H8NOGxagmNEyMBI9xLoSvZJOkbPnUmab9S0IJT6bQsPmD
+        qD6EVvywJmPEWq7Bo3NuCMZVOZU7R/iw3UcVJON8yJXKgwTbxV4XilOJdxwy/SpOTLRZlkqN/9BD3
+        oeoSc/bKQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78h-0001d3-4x; Thu, 21 Jun 2018 21:29:11 +0000
+        id 1fW78h-0001dD-Bz; Thu, 21 Jun 2018 21:29:11 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 23/26] test_ida: Convert check_ida_conv to new API
-Date:   Thu, 21 Jun 2018 14:28:32 -0700
-Message-Id: <20180621212835.5636-24-willy@infradead.org>
+Subject: [PATCH 24/26] test_ida: check_ida_destroy and check_ida_alloc
+Date:   Thu, 21 Jun 2018 14:28:33 -0700
+Message-Id: <20180621212835.5636-25-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -53,147 +53,194 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move as much as possible to kernel space; leave the parts in user space
-that rely on checking memory allocation failures to detect the
-transition between an exceptional entry and a bitmap.
+Move these tests from the userspace test-suite to the kernel test-suite.
+Also convert check_ida_random to the new API.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- lib/test_ida.c                      | 31 ++++++++++++++++
- tools/testing/radix-tree/idr-test.c | 56 ++++++-----------------------
- 2 files changed, 41 insertions(+), 46 deletions(-)
+ lib/test_ida.c                      | 55 ++++++++++++++++++++++-
+ tools/testing/radix-tree/idr-test.c | 70 ++---------------------------
+ 2 files changed, 58 insertions(+), 67 deletions(-)
 
 diff --git a/lib/test_ida.c b/lib/test_ida.c
-index e8ab544032f9..15e013800171 100644
+index 15e013800171..433cb8a69732 100644
 --- a/lib/test_ida.c
 +++ b/lib/test_ida.c
-@@ -65,6 +65,36 @@ static void ida_check_max(struct ida *ida)
- 	}
- }
+@@ -22,6 +22,58 @@ void ida_dump(struct ida *ida) { }
+ 	}								\
+ } while (0)
  
 +/*
-+ * Check handling of conversions between exceptional entries and full bitmaps.
++ * Straightforward checks that allocating and freeing IDs work.
 + */
-+static void ida_check_conv(struct ida *ida)
++static void ida_check_alloc(struct ida *ida)
 +{
-+	unsigned long i;
-+	int id;
++	int i, id;
 +
-+	for (i = 0; i < IDA_BITMAP_BITS * 2; i += IDA_BITMAP_BITS) {
-+		IDA_BUG_ON(ida, ida_alloc_min(ida, i + 1, GFP_KERNEL) != i + 1);
-+		IDA_BUG_ON(ida, ida_alloc_min(ida, i + BITS_PER_LONG,
-+					GFP_KERNEL) != i + BITS_PER_LONG);
-+		ida_free(ida, i + 1);
-+		ida_free(ida, i + BITS_PER_LONG);
-+		IDA_BUG_ON(ida, !ida_is_empty(ida));
++	for (i = 0; i < 10000; i++)
++		IDA_BUG_ON(ida, ida_alloc(ida, GFP_KERNEL) != i);
++
++	ida_free(ida, 20);
++	ida_free(ida, 21);
++	for (i = 0; i < 3; i++) {
++		id = ida_alloc(ida, GFP_KERNEL);
++		IDA_BUG_ON(ida, id < 0);
++		if (i == 2)
++			IDA_BUG_ON(ida, id != 10000);
 +	}
 +
-+	for (i = 0; i < IDA_BITMAP_BITS * 2; i++)
-+		IDA_BUG_ON(ida, ida_alloc(ida, GFP_KERNEL) != i);
-+	for (i = IDA_BITMAP_BITS * 2; i > 0; i--)
-+		ida_free(ida, i - 1);
-+	IDA_BUG_ON(ida, !ida_is_empty(ida));
++	for (i = 0; i < 5000; i++)
++		ida_free(ida, i);
 +
-+	for (i = 0; i < IDA_BITMAP_BITS + BITS_PER_LONG - 4; i++)
-+		IDA_BUG_ON(ida, ida_alloc(ida, GFP_KERNEL) != i);
-+	for (i = IDA_BITMAP_BITS + BITS_PER_LONG - 4; i > 0; i--)
-+		ida_free(ida, i - 1);
++	IDA_BUG_ON(ida, ida_alloc_min(ida, 5000, GFP_KERNEL) != 10001);
++	ida_destroy(ida);
++
 +	IDA_BUG_ON(ida, !ida_is_empty(ida));
 +}
 +
- static int ida_checks(void)
++/* Destroy an IDA with a single entry at @base */
++static void ida_check_destroy_1(struct ida *ida, unsigned int base)
++{
++	IDA_BUG_ON(ida, ida_alloc_min(ida, base, GFP_KERNEL) != base);
++	IDA_BUG_ON(ida, ida_is_empty(ida));
++	ida_destroy(ida);
++	IDA_BUG_ON(ida, !ida_is_empty(ida));
++}
++
++/* Check that ida_destroy and ida_is_empty work */
++static void ida_check_destroy(struct ida *ida)
++{
++	/* Destroy an already-empty IDA */
++	IDA_BUG_ON(ida, !ida_is_empty(ida));
++	ida_destroy(ida);
++	IDA_BUG_ON(ida, !ida_is_empty(ida));
++
++	ida_check_destroy_1(ida, 0);
++	ida_check_destroy_1(ida, 1);
++	ida_check_destroy_1(ida, 1023);
++	ida_check_destroy_1(ida, 1024);
++	ida_check_destroy_1(ida, 12345678);
++}
++
+ /*
+  * Check what happens when we fill a leaf and then delete it.  This may
+  * discover mishandling of IDR_FREE.
+@@ -71,7 +123,6 @@ static void ida_check_max(struct ida *ida)
+ static void ida_check_conv(struct ida *ida)
  {
+ 	unsigned long i;
+-	int id;
+ 
+ 	for (i = 0; i < IDA_BITMAP_BITS * 2; i += IDA_BITMAP_BITS) {
+ 		IDA_BUG_ON(ida, ida_alloc_min(ida, i + 1, GFP_KERNEL) != i + 1);
+@@ -100,6 +151,8 @@ static int ida_checks(void)
  	DEFINE_IDA(ida);
-@@ -74,6 +104,7 @@ static int ida_checks(void)
+ 
+ 	IDA_BUG_ON(&ida, !ida_is_empty(&ida));
++	ida_check_alloc(&ida);
++	ida_check_destroy(&ida);
+ 	ida_check_leaf(&ida, 0);
  	ida_check_leaf(&ida, 1024);
  	ida_check_leaf(&ida, 1024 * 64);
- 	ida_check_max(&ida);
-+	ida_check_conv(&ida);
- 
- 	printk("IDA: %u of %u tests passed\n", tests_passed, tests_run);
- 	return (tests_run != tests_passed) ? 0 : -EINVAL;
 diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
-index bd9699327f95..f948e38b9a6b 100644
+index f948e38b9a6b..052c0c4cc0f3 100644
 --- a/tools/testing/radix-tree/idr-test.c
 +++ b/tools/testing/radix-tree/idr-test.c
-@@ -339,59 +339,23 @@ void ida_check_nomem(void)
- /*
-  * Check handling of conversions between exceptional entries and full bitmaps.
-  */
--void ida_check_conv(void)
-+void ida_check_conv_user(void)
+@@ -364,7 +364,6 @@ void ida_check_random(void)
  {
  	DEFINE_IDA(ida);
--	int id;
- 	unsigned long i;
+ 	DECLARE_BITMAP(bitmap, 2048);
+-	int id, err;
+ 	unsigned int i;
+ 	time_t s = time(NULL);
  
--	for (i = 0; i < IDA_BITMAP_BITS * 2; i += IDA_BITMAP_BITS) {
--		assert(ida_pre_get(&ida, GFP_KERNEL));
--		assert(!ida_get_new_above(&ida, i + 1, &id));
--		assert(id == i + 1);
--		assert(!ida_get_new_above(&ida, i + BITS_PER_LONG, &id));
--		assert(id == i + BITS_PER_LONG);
--		ida_remove(&ida, i + 1);
--		ida_remove(&ida, i + BITS_PER_LONG);
--		assert(ida_is_empty(&ida));
--	}
--
--	assert(ida_pre_get(&ida, GFP_KERNEL));
--
--	for (i = 0; i < IDA_BITMAP_BITS * 2; i++) {
--		assert(ida_pre_get(&ida, GFP_KERNEL));
--		assert(!ida_get_new(&ida, &id));
--		assert(id == i);
--	}
--
--	for (i = IDA_BITMAP_BITS * 2; i > 0; i--) {
--		ida_remove(&ida, i - 1);
--	}
--	assert(ida_is_empty(&ida));
--
--	for (i = 0; i < IDA_BITMAP_BITS + BITS_PER_LONG - 4; i++) {
--		assert(ida_pre_get(&ida, GFP_KERNEL));
--		assert(!ida_get_new(&ida, &id));
--		assert(id == i);
--	}
--
--	for (i = IDA_BITMAP_BITS + BITS_PER_LONG - 4; i > 0; i--) {
--		ida_remove(&ida, i - 1);
--	}
--	assert(ida_is_empty(&ida));
--
- 	radix_tree_cpu_dead(1);
- 	for (i = 0; i < 1000000; i++) {
--		int err = ida_get_new(&ida, &id);
--		if (err == -EAGAIN) {
--			assert((i % IDA_BITMAP_BITS) == (BITS_PER_LONG - 2));
--			assert(ida_pre_get(&ida, GFP_KERNEL));
--			err = ida_get_new(&ida, &id);
-+		int id = ida_alloc(&ida, GFP_NOWAIT);
-+		if (id == -ENOMEM) {
-+			IDA_BUG_ON(&ida, (i % IDA_BITMAP_BITS) !=
-+					(BITS_PER_LONG - 2));
-+			id = ida_alloc(&ida, GFP_KERNEL);
+@@ -375,15 +374,11 @@ void ida_check_random(void)
+ 		int bit = i & 2047;
+ 		if (test_bit(bit, bitmap)) {
+ 			__clear_bit(bit, bitmap);
+-			ida_remove(&ida, bit);
++			ida_free(&ida, bit);
  		} else {
--			assert((i % IDA_BITMAP_BITS) != (BITS_PER_LONG - 2));
-+			IDA_BUG_ON(&ida, (i % IDA_BITMAP_BITS) ==
-+					(BITS_PER_LONG - 2));
+ 			__set_bit(bit, bitmap);
+-			do {
+-				ida_pre_get(&ida, GFP_KERNEL);
+-				err = ida_get_new_above(&ida, bit, &id);
+-			} while (err == -EAGAIN);
+-			assert(!err);
+-			assert(id == bit);
++			IDA_BUG_ON(&ida, ida_alloc_min(&ida, bit, GFP_KERNEL)
++					!= bit);
  		}
--		assert(!err);
--		assert(id == i);
-+		IDA_BUG_ON(&ida, id != i);
  	}
  	ida_destroy(&ida);
- }
-@@ -507,7 +471,7 @@ void user_ida_checks(void)
- 	ida_destroy(&ida);
- 	assert(ida_is_empty(&ida));
+@@ -411,66 +406,9 @@ void ida_simple_get_remove_test(void)
  
--	ida_check_conv();
-+	ida_check_conv_user();
+ void user_ida_checks(void)
+ {
+-	DEFINE_IDA(ida);
+-	int id;
+-	unsigned long i;
+-
+ 	radix_tree_cpu_dead(1);
+-	ida_check_nomem();
+-
+-	for (i = 0; i < 10000; i++) {
+-		assert(ida_pre_get(&ida, GFP_KERNEL));
+-		assert(!ida_get_new(&ida, &id));
+-		assert(id == i);
+-	}
+-
+-	ida_remove(&ida, 20);
+-	ida_remove(&ida, 21);
+-	for (i = 0; i < 3; i++) {
+-		assert(ida_pre_get(&ida, GFP_KERNEL));
+-		assert(!ida_get_new(&ida, &id));
+-		if (i == 2)
+-			assert(id == 10000);
+-	}
+-
+-	for (i = 0; i < 5000; i++)
+-		ida_remove(&ida, i);
+-
+-	assert(ida_pre_get(&ida, GFP_KERNEL));
+-	assert(!ida_get_new_above(&ida, 5000, &id));
+-	assert(id == 10001);
+-
+-	ida_destroy(&ida);
+-
+-	assert(ida_is_empty(&ida));
+-
+-	assert(ida_pre_get(&ida, GFP_KERNEL));
+-	assert(!ida_get_new_above(&ida, 1, &id));
+-	assert(id == 1);
+-
+-	ida_remove(&ida, id);
+-	assert(ida_is_empty(&ida));
+-	ida_destroy(&ida);
+-	assert(ida_is_empty(&ida));
+-
+-	assert(ida_pre_get(&ida, GFP_KERNEL));
+-	assert(!ida_get_new_above(&ida, 1, &id));
+-	ida_destroy(&ida);
+-	assert(ida_is_empty(&ida));
+-
+-	assert(ida_pre_get(&ida, GFP_KERNEL));
+-	assert(!ida_get_new_above(&ida, 1, &id));
+-	assert(id == 1);
+-	assert(ida_pre_get(&ida, GFP_KERNEL));
+-	assert(!ida_get_new_above(&ida, 1025, &id));
+-	assert(id == 1025);
+-	assert(ida_pre_get(&ida, GFP_KERNEL));
+-	assert(!ida_get_new_above(&ida, 10000, &id));
+-	assert(id == 10000);
+-	ida_remove(&ida, 1025);
+-	ida_destroy(&ida);
+-	assert(ida_is_empty(&ida));
+ 
++	ida_check_nomem();
+ 	ida_check_conv_user();
  	ida_check_random();
  	ida_simple_get_remove_test();
- 
 -- 
 2.17.1
 
