@@ -6,101 +6,96 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C70C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7494C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80A38204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:01:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80A38204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6EE6720883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:03:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE6720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754296AbeFUJBs (ORCPT
+        id S1754345AbeFUJDI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:01:48 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49058 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754065AbeFUJBp (ORCPT
+        Thu, 21 Jun 2018 05:03:08 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:27415 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754085AbeFUJDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:01:45 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id E178B80555; Thu, 21 Jun 2018 11:01:43 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 11:01:42 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Chen Yu <yu.c.chen@intel.com>, tytso@mit.edu
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Denis Kenzior <denkenz@gmail.com>
-Subject: Re: [PATCH 3/3][RFC] tools: create power/crypto utility
-Message-ID: <20180621090142.GB21807@amd>
-References: <cover.1529486870.git.yu.c.chen@intel.com>
- <78af30838d0bac69bdd6e138b659bcbb8464fd13.1529486870.git.yu.c.chen@intel.com>
+        Thu, 21 Jun 2018 05:03:05 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5L8wfl7022359;
+        Thu, 21 Jun 2018 11:02:31 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2jqq71v8v2-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 21 Jun 2018 11:02:31 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6C8DA38;
+        Thu, 21 Jun 2018 09:02:30 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 32C84266B;
+        Thu, 21 Jun 2018 09:02:30 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.94) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 21 Jun
+ 2018 11:02:30 +0200
+Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
+ (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 21 Jun
+ 2018 11:02:29 +0200
+From:   Ludovic Barre <ludovic.Barre@st.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Ludovic Barre <ludovic.barre@st.com>
+Subject: [PATCH V4 3/4] ARM: dts: stm32: add iwdg2 support for stm32mp157c
+Date:   Thu, 21 Jun 2018 11:02:16 +0200
+Message-ID: <1529571737-3552-4-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529571737-3552-1-git-send-email-ludovic.Barre@st.com>
+References: <1529571737-3552-1-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
-Content-Disposition: inline
-In-Reply-To: <78af30838d0bac69bdd6e138b659bcbb8464fd13.1529486870.git.yu.c.chen@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-21_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Ludovic Barre <ludovic.barre@st.com>
 
---s2ZSL+KKDSLx8OML
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch adds independent watchdog support for stm32mp157c.
 
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 7d17538..95cc166 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -784,6 +784,14 @@
+ 			status = "disabled";
+ 		};
+ 
++		iwdg2: watchdog@5a002000 {
++			compatible = "st,stm32mp1-iwdg";
++			reg = <0x5a002000 0x400>;
++			clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
++			clock-names = "pclk", "lsi";
++			status = "disabled";
++		};
++
+ 		usbphyc: usbphyc@5a006000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-- 
+2.7.4
 
-On Wed 2018-06-20 17:40:51, Chen Yu wrote:
-> crypto_hibernate is a user-space utility to generate
-> 512bits AES key and pass it to the kernel via ioctl
-> for hibernation encryption.(We can also add the key
-> into kernel via keyctl if necessary, but currently
-> using ioctl seems to be more straightforward as we
-> need both the key and salt transit).
-
-Ah, here you go:
-
-https://en.wikipedia.org/wiki/Uswsusp
-
-It can already do encryption. If you see problems there, patches will
-be gladly accepted to fix them.
-
-If you want to maintain uswsusp in kernel tree, I guess that would be
-an option, too.
-
-If you want to just help swsusp, I have some patches that reduce
-duplicities between x86-32 and x86-64. It would be cool to clean them
-up and get them merged.
-
-> Suggested-by: "Theodore Ts'o" <tytso@mit.edu>
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---s2ZSL+KKDSLx8OML
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsraXYACgkQMOfwapXb+vLpTACgoPaUypOAaz3Rq6lnFosS6iG0
-uRYAmgPEWp/kWz9PDcNapGWIb3SAWlul
-=SwCy
------END PGP SIGNATURE-----
-
---s2ZSL+KKDSLx8OML--
