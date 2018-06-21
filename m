@@ -2,122 +2,176 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D13C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0F5C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8994B21718
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:52:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="qgi5Ghpc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8994B21718
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=hammerspace.com
+	by mail.kernel.org (Postfix) with ESMTP id 20B2321727
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:53:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B2321727
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933581AbeFUQwX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:52:23 -0400
-Received: from mail-sn1nam01on0109.outbound.protection.outlook.com ([104.47.32.109]:30240
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933409AbeFUQwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:52:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dOUvLMtSPOcyu/V6YpeGvRjtViOcUpm/RnWhRk05VCI=;
- b=qgi5GhpcB+ZZAUXApEcybTVBbuJynxK3v/0ceroZoKBPDhwp3pSaJjetwzY2NdjqsDq7E7avZe5Xo3BOTbpNstDZPZNCzqe805T+ZFpON4QslT9vTQs+L+SdQOk1cENAnI0hIUMwyHdokaa/f5P0bn9B67DH2xptzUnuF/GQysA=
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
- SN6PR13MB2383.namprd13.prod.outlook.com (52.135.94.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.16; Thu, 21 Jun 2018 16:52:17 +0000
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::ec6d:477b:8073:fbb0]) by SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::ec6d:477b:8073:fbb0%6]) with mapi id 15.20.0906.013; Thu, 21 Jun 2018
- 16:52:17 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: [GIT PULL] Please pull NFS client bugfixes for 4.18
-Thread-Topic: [GIT PULL] Please pull NFS client bugfixes for 4.18
-Thread-Index: AQHUCYA2zgOMTYbCSUmja63qJkET6g==
-Date:   Thu, 21 Jun 2018 16:52:17 +0000
-Message-ID: <8d9108335a1528f8609bce75bd5c18874a382b1b.camel@hammerspace.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-originating-ip: [50.124.245.47]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR13MB2383;7:miu8z+eo6mC0qGwa/yHkrCVMGiiPPZXvgrCwp+OFTcWUaeqs6b+X9XrHR6DtFz4y88wk27IW45DsG/Uls87b5kqgPrTPRNvPf7TPD+PD4vBqCvLgBIyt66a3YDefLLv88DKv5Unc9xaBMPZJ798TlyqBalcdlt9wmvBftRUtamEGbAswnJyDjvjYSTkqV6oJFtmzbgJM88Se4zwjckipUvHGt3spWjBAx2YUXp/LDrdUozdI8B2XMqJ0+ZFlGlPz
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3132813a-90fd-4b02-b15e-08d5d7975902
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2383;
-x-ms-traffictypediagnostic: SN6PR13MB2383:
-x-microsoft-antispam-prvs: <SN6PR13MB23836FCD17543929FD22CED3B8760@SN6PR13MB2383.namprd13.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(5213294742642);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(20161123562045)(2016111802025)(20161123558120)(20161123560045)(20161123564045)(6043046)(6072148)(201708071742011)(7699016);SRVR:SN6PR13MB2383;BCL:0;PCL:0;RULEID:;SRVR:SN6PR13MB2383;
-x-forefront-prvs: 07106EF9B9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39830400003)(346002)(39380400002)(376002)(396003)(199004)(189003)(66066001)(97736004)(3846002)(2501003)(2906002)(5660300001)(186003)(6116002)(5250100002)(118296001)(99286004)(486006)(6916009)(305945005)(102836004)(8936002)(7736002)(2900100001)(2616005)(2351001)(316002)(476003)(26005)(4326008)(478600001)(1730700003)(81156014)(8676002)(81166006)(105586002)(36756003)(6486002)(6436002)(53936002)(5640700003)(6512007)(86362001)(3660700001)(54906003)(68736007)(3280700002)(106356001)(6506007)(25786009)(14454004)(575784001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2383;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: h0tgJMFWl3vCg7aRVuLN2T7yJIm3bOiEdGgq0aIncJ9j2NaTA7PZg6guF7S/URIwYylJj6X0wPckMdTxWJiTKYu/rUgn12bUJ9kgn97bEGSqMYade7G5Hr12E4lH4gNveTYi7KHN/deQkdZ/oc+iAA0TYG+Ecmedl9L2pFGd8W4Q7ctqAZx8FkmBBFIcptV5AB86LIBthlqCZUz04kGFtiuQIgdYELlhBSsfPmSAWr6hG7ZwaYESw42cfQU/fQEvM0Uaw5ylm+djzy0ZzcvqENQl804YBbtf1STPGXj6LB4j1fr4IIWI762UpqjtlegyRX68q9odFBXmzzpXo5kHcA==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5B2CD105F4C38C4080F83E262A043590@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S933548AbeFUQxR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:53:17 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:57404 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933409AbeFUQxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:53:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id F08C02041D7;
+        Thu, 21 Jun 2018 18:53:12 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GM2+fYoLa2d0; Thu, 21 Jun 2018 18:53:12 +0200 (CEST)
+Received: from [82.134.31.185] (unknown [82.134.31.185])
+        by smtp.infotech.no (Postfix) with ESMTPA id C5D31204188;
+        Thu, 21 Jun 2018 18:53:12 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH v2] sg: mitigate read/write abuse
+To:     Jann Horn <jannh@google.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
+        kernel-hardening@lists.openwall.com, security@kernel.org,
+        Benjamin Block <bblock@linux.vnet.ibm.com>
+References: <20180621151809.10921-1-jannh@google.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <eafae3a5-346b-5361-4551-7dc5a146e1da@interlog.com>
+Date:   Thu, 21 Jun 2018 18:53:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3132813a-90fd-4b02-b15e-08d5d7975902
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2018 16:52:17.4904
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2383
+In-Reply-To: <20180621151809.10921-1-jannh@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGludXMsDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgOTNiN2Y3YWQy
-MDE4ZDIwMzc1NTliMWQwODkyNDE3ODY0Yzc4YjM3MToNCg0KICBza2lwIExBWU9VVFJFVFVSTiBp
-ZiBsYXlvdXQgaXMgaW52YWxpZCAoMjAxOC0wNi0xMiAwODo0ODowNCAtMDQwMCkNCg0KYXJlIGF2
-YWlsYWJsZSBpbiB0aGUgR2l0IHJlcG9zaXRvcnkgYXQ6DQoNCiAgZ2l0Oi8vZ2l0LmxpbnV4LW5m
-cy5vcmcvcHJvamVjdHMvdHJvbmRteS9saW51eC1uZnMuZ2l0IHRhZ3MvbmZzLWZvci00LjE4LTIN
-Cg0KZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIDdiMGRmOTJhYzEyMTQ4MDk4MzkxYmY1
-M2YzNDk0YWYxNzgxMmYyNjQ6DQoNCiAgcE5GUy9mbGV4ZmlsZXM6IFByb2Nlc3Mgd3JpdGViYWNr
-IHJlc2VuZHMgZnJvbSBuZnNpb2QgY29udGV4dCBhcyB3ZWxsICgyMDE4LTA2LTE5IDA5OjI1OjI3
-IC0wNDAwKQ0KDQpDaGVlcnMsDQogIFRyb25kDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCk5GUyBjbGllbnQgYnVnZml4
-ZXMgZm9yIExpbnV4IDQuMTgNCg0KSGlnaHRsaWdodHMgaW5jbHVkZToNCg0KQnVnZml4ZXM6DQot
-IEZpeCBhbiByY3UgZGVhZGxvY2sgaW4gbmZzX2RlbGVnYXRpb25fZmluZF9pbm9kZSgpDQotIEZp
-eCBORlN2NCBkZWFkbG9ja3MgZHVlIHRvIG5vdCBmcmVlaW5nIHRoZSBzZXNzaW9uIHNsb3QgaW4g
-bGF5b3V0Z2V0DQotIERvbid0IHNlbmQgbGF5b3V0cmV0dXJuIGlmIHRoZSBsYXlvdXQgaXMgYWxy
-ZWFkeSBpbnZhbGlkDQotIFByZXZlbnQgZHVwbGljYXRlIFhJRCBhbGxvY2F0aW9uDQotIGZsZXhm
-aWxlczogRG9uJ3QgdGllIHVwIGFsbCB0aGUgcnBjaW9kIHRocmVhZHMgaW4gcmVzZW5kcw0KDQot
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tDQpBbm5hIFNjaHVtYWtlciAoMSk6DQogICAgICBORlM6IEZpeCBhbiByY3UgZGVhZGxv
-Y2sgaW4gbmZzX2RlbGVnYXRpb25fZmluZF9pbm9kZSgpDQoNCkNodWNrIExldmVyICgxKToNCiAg
-ICAgIHN1bnJwYzogUHJldmVudCBkdXBsaWNhdGUgWElEIGFsbG9jYXRpb24NCg0KVHJvbmQgTXlr
-bGVidXN0ICg0KToNCiAgICAgIHBORlM6IEFsd2F5cyBmcmVlIHRoZSBzZXNzaW9uIHNsb3Qgb24g
-ZXJyb3IgaW4gbmZzNF9sYXlvdXRnZXRfaGFuZGxlX2V4Y2VwdGlvbg0KICAgICAgcE5GUzogRG9u
-J3Qgc2VuZCBsYXlvdXRyZXR1cm4gaWYgdGhlIGxheW91dCBpcyBhbHJlYWR5IGludmFsaWQNCiAg
-ICAgIHBORlMvZmxleGZpbGVzOiBEb24ndCB0aWUgdXAgYWxsIHRoZSBycGNpb2QgdGhyZWFkcyBp
-biByZXNlbmRzDQogICAgICBwTkZTL2ZsZXhmaWxlczogUHJvY2VzcyB3cml0ZWJhY2sgcmVzZW5k
-cyBmcm9tIG5mc2lvZCBjb250ZXh0IGFzIHdlbGwNCg0KIGZzL25mcy9kZWxlZ2F0aW9uLmMgICAg
-ICAgICAgICAgICAgICAgIHwgIDQgKysrLQ0KIGZzL25mcy9mbGV4ZmlsZWxheW91dC9mbGV4Zmls
-ZWxheW91dC5jIHwgMjEgKysrKysrKysrKysrKysrKy0tLS0tDQogZnMvbmZzL25mczRwcm9jLmMg
-ICAgICAgICAgICAgICAgICAgICAgfCAzMyArKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0t
-LS0NCiBmcy9uZnMvcG5mcy5oICAgICAgICAgICAgICAgICAgICAgICAgICB8ICA1ICsrKysrDQog
-aW5jbHVkZS9saW51eC9uZnNfeGRyLmggICAgICAgICAgICAgICAgfCAgMiArKw0KIG5ldC9zdW5y
-cGMveHBydC5jICAgICAgICAgICAgICAgICAgICAgIHwgMTAgKysrKysrKy0tLQ0KIDYgZmlsZXMg
-Y2hhbmdlZCwgNTkgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25zKC0pDQotLSANClRyb25kIE15
-a2xlYnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQu
-bXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQo=
+On 2018-06-21 05:18 PM, Jann Horn wrote:
+> As Al Viro noted in commit 128394eff343 ("sg_write()/bsg_write() is not fit
+> to be called under KERNEL_DS"), sg improperly accesses userspace memory
+> outside the provided buffer, permitting kernel memory corruption via
+> splice().
+> But it doesn't just do it on ->write(), also on ->read().
+> 
+> As a band-aid, make sure that the ->read() and ->write() handlers can not
+> be called in weird contexts (kernel context or credentials different from
+> file opener), like for ib_safe_file_access().
+> 
+> If someone needs to use these interfaces from different security contexts,
+> a new interface should be written that goes through the ->ioctl() handler.
+> 
+> I've mostly copypasted ib_safe_file_access() over as sg_safe_file_access()
+> because I couldn't find a good common header - please tell me if you know a
+> better way.
+> The duplicate pr_err_once() calls are so that each of them fires once;
+> otherwise, this would probably have to be a macro.
+> 
+> changed in v2:
+>   - remove the bsg parts per Christoph Hellwig's request
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>   drivers/scsi/sg.c | 29 ++++++++++++++++++++++++++++-
+>   1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+> index 53ae52dbff84..51b685192646 100644
+> --- a/drivers/scsi/sg.c
+> +++ b/drivers/scsi/sg.c
+> @@ -51,6 +51,7 @@ static int sg_version_num = 30536;	/* 2 digits for each component */
+>   #include <linux/atomic.h>
+>   #include <linux/ratelimit.h>
+>   #include <linux/uio.h>
+> +#include <linux/cred.h> /* for sg_safe_file_access() */
+>   
+>   #include "scsi.h"
+>   #include <scsi/scsi_dbg.h>
+> @@ -209,6 +210,23 @@ static void sg_device_destroy(struct kref *kref);
+>   	sdev_prefix_printk(prefix, (sdp)->device,		\
+>   			   (sdp)->disk->disk_name, fmt, ##a)
+>   
+> +/*
+> + * The SCSI interfaces that use read() and write() as an asynchronous variant of
+> + * ioctl(..., SG_IO, ...) are fundamentally unsafe, since there are lots of ways
+> + * to trigger read() and write() calls from various contexts with elevated
+> + * privileges. This can lead to kernel memory corruption (e.g. if these
+> + * interfaces are called through splice()) and privilege escalation inside
+> + * userspace (e.g. if a process with access to such a device passes a file
+> + * descriptor to a SUID binary as stdin/stdout/stderr).
+> + *
+> + * This function provides protection for the legacy API by restricting the
+> + * calling context.
+> + */
+> +static inline bool sg_safe_file_access(struct file *filp)
+> +{
+> +	return filp->f_cred == current_cred() && !uaccess_kernel();
+> +}
+> +
+>   static int sg_allow_access(struct file *filp, unsigned char *cmd)
+>   {
+>   	struct sg_fd *sfp = filp->private_data;
+> @@ -393,6 +411,12 @@ sg_read(struct file *filp, char __user *buf, size_t count, loff_t * ppos)
+>   	struct sg_header *old_hdr = NULL;
+>   	int retval = 0;
+>   
+> +	if (!sg_safe_file_access(filp)) {
+> +		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
+> +			__func__, task_tgid_vnr(current), current->comm);
+> +		return -EINVAL;
+
+The error message and returned code apply to the
+(filp->f_cred == current_cred()) case, not so much to !uaccess_kernel().
+While on the error path could you not break out the !uaccess_kernel()
+with an appropriate error message and a return code of -EACCES ? Perhaps
+a message is unneeded since EACCES is clear.
+
+Not that wild about EINVAL either since it suggests (to me) a "front end"
+error (e.g. associated with a badly formed request). How about EPERM for
+the changing credentials case.
+
+And could I suggest a comment in the code along these lines:
+
+/*
+  * This could cause a response to be stranded. Close the associated
+  * file descriptor to free up any resources being held.
+  */
+
+> +	}
+> +
+>   	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
+>   		return -ENXIO;
+>   	SCSI_LOG_TIMEOUT(3, sg_printk(KERN_INFO, sdp,
+> @@ -581,8 +605,11 @@ sg_write(struct file *filp, const char __user *buf, size_t count, loff_t * ppos)
+>   	sg_io_hdr_t *hp;
+>   	unsigned char cmnd[SG_MAX_CDB_SIZE];
+>   
+> -	if (unlikely(uaccess_kernel()))
+> +	if (!sg_safe_file_access(filp)) {
+> +		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
+> +			__func__, task_tgid_vnr(current), current->comm);
+>   		return -EINVAL;
+
+Same comments as above.
+
+
+Doug Gilbert
+
+> +	}
+>   
+>   	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
+>   		return -ENXIO;
+> 
+
