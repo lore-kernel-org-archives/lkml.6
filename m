@@ -6,350 +6,110 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8A5C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40FDDC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 779E3208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 779E3208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 047EF208B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:51:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047EF208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932863AbeFUJuP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:50:15 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48919 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932677AbeFUJuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:50:13 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9E33620714; Thu, 21 Jun 2018 11:50:11 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B10F220CFE;
-        Thu, 21 Jun 2018 11:49:54 +0200 (CEST)
-Message-ID: <939381a854760b1d54984ae0f534ec03312ec8e0.camel@bootlin.com>
-Subject: Re: [PATCH 6/9] media: cedrus: Add ops structure
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
-        acourbot@chromium.org, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     tfiga@chromium.org, posciak@chromium.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Thu, 21 Jun 2018 11:49:54 +0200
-In-Reply-To: <20180613140714.1686-7-maxime.ripard@bootlin.com>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-         <20180613140714.1686-7-maxime.ripard@bootlin.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-6KNc3m/0MdpjtCFVHVXX"
-X-Mailer: Evolution 3.28.2 
-Mime-Version: 1.0
+        id S932902AbeFUJvP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:51:15 -0400
+Received: from outbound-smtp13.blacknight.com ([46.22.139.230]:58387 "EHLO
+        outbound-smtp13.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932677AbeFUJvO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:51:14 -0400
+Received: from mail.blacknight.com (unknown [81.17.254.26])
+        by outbound-smtp13.blacknight.com (Postfix) with ESMTPS id 834721C29BA
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:51:12 +0100 (IST)
+Received: (qmail 8697 invoked from network); 21 Jun 2018 09:51:12 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.171])
+  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 21 Jun 2018 09:51:12 -0000
+Date:   Thu, 21 Jun 2018 10:51:12 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 13/19] mm/migrate: Use xchg instead of spinlock
+Message-ID: <20180621095111.md7m5jhxxoswnykf@techsingularity.net>
+References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1529514181-9842-14-git-send-email-srikar@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <1529514181-9842-14-git-send-email-srikar@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 20, 2018 at 10:32:54PM +0530, Srikar Dronamraju wrote:
+> Currently resetting the migrate rate limit is under a spinlock.
+> The spinlock will only serialize the migrate rate limiting and something
+> similar can actually be achieved by a simpler xchg.
+> 
+> Running SPECjbb2005 on a 4 node machine and comparing bops/JVM
+> JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
+> 16    25804.1     25355.9     -1.73
+> 1     73413       72812       -0.81
+> 
+> Running SPECjbb2005 on a 16 node machine and comparing bops/JVM
+> JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
+> 8     101748      110199      8.30
+> 1     170818      176303      3.21
+> 
+> (numbers from v1 based on v4.17-rc5)
+> Testcase       Time:         Min         Max         Avg      StdDev
+> numa01.sh      Real:      435.67      707.28      527.49       97.85
+> numa01.sh       Sys:       76.41      231.19      162.49       56.13
+> numa01.sh      User:    38247.36    59033.52    45129.31     7642.69
+> numa02.sh      Real:       60.35       62.09       61.09        0.69
+> numa02.sh       Sys:       15.01       30.20       20.64        5.56
+> numa02.sh      User:     5195.93     5294.82     5240.99       40.55
+> numa03.sh      Real:      752.04      919.89      836.81       63.29
+> numa03.sh       Sys:      115.10      133.35      125.46        7.78
+> numa03.sh      User:    58736.44    70084.26    65103.67     4416.10
+> numa04.sh      Real:      418.43      709.69      512.53      104.17
+> numa04.sh       Sys:      242.99      370.47      297.39       42.20
+> numa04.sh      User:    34916.14    48429.54    38955.65     4928.05
+> numa05.sh      Real:      379.27      434.05      403.70       17.79
+> numa05.sh       Sys:      145.94      344.50      268.72       68.53
+> numa05.sh      User:    32679.32    35449.75    33989.10      913.19
+> 
+> Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
+> numa01.sh      Real:      490.04      774.86      596.26       96.46 	 -11.5%
+> numa01.sh       Sys:      151.52      242.88      184.82       31.71 	 -12.0%
+> numa01.sh      User:    41418.41    60844.59    48776.09     6564.27 	 -7.47%
+> numa02.sh      Real:       60.14       62.94       60.98        1.00 	 0.180%
+> numa02.sh       Sys:       16.11       30.77       21.20        5.28 	 -2.64%
+> numa02.sh      User:     5184.33     5311.09     5228.50       44.24 	 0.238%
+> numa03.sh      Real:      790.95      856.35      826.41       24.11 	 1.258%
+> numa03.sh       Sys:      114.93      118.85      117.05        1.63 	 7.184%
+> numa03.sh      User:    60990.99    64959.28    63470.43     1415.44 	 2.573%
+> numa04.sh      Real:      434.37      597.92      504.87       59.70 	 1.517%
+> numa04.sh       Sys:      237.63      397.40      289.74       55.98 	 2.640%
+> numa04.sh      User:    34854.87    41121.83    38572.52     2615.84 	 0.993%
+> numa05.sh      Real:      386.77      448.90      417.22       22.79 	 -3.24%
+> numa05.sh       Sys:      149.23      379.95      303.04       79.55 	 -11.3%
+> numa05.sh      User:    32951.76    35959.58    34562.18     1034.05 	 -1.65%
+> 
+> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
---=-6KNc3m/0MdpjtCFVHVXX
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
 
-Hi,
+However, I'm actively considering removing rate limiting entirely. It
+has been reported elsewhere that it was a limiting factor for some
+workloads. When it was introduced, it was to avoid worst-case migration
+storms but I believe that those ping-pong style problems should now be
+ok.
 
-On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> In order to increase the number of codecs supported, we need to decouple
-> the MPEG2 only code that was there up until now and turn it into somethin=
-g
-> a bit more generic.
->=20
-> Do that by introducing an intermediate ops structure that would need to b=
-e
-> filled by each supported codec. Start by implementing in that structure t=
-he
-> setup and trigger hooks that are currently the only functions being
-> implemented by codecs support.
->=20
-> To do so, we need to store the current codec in use, which we do at
-> start_streaming time.
-
-With the comments below taken in account, this is:
-
-Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  .../platform/sunxi/cedrus/sunxi_cedrus.c      |  2 ++
->  .../sunxi/cedrus/sunxi_cedrus_common.h        | 11 +++++++
->  .../platform/sunxi/cedrus/sunxi_cedrus_dec.c  | 10 +++---
->  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 11 +++++--
->  .../sunxi/cedrus/sunxi_cedrus_mpeg2.h         | 33 -------------------
->  .../sunxi/cedrus/sunxi_cedrus_video.c         | 17 +++++++++-
->  6 files changed, 42 insertions(+), 42 deletions(-)
->  delete mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg=
-2.h
->=20
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c b/drivers=
-/media/platform/sunxi/cedrus/sunxi_cedrus.c
-> index ccd41d9a3e41..bc80480f5dfd 100644
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c
-> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c
-> @@ -244,6 +244,8 @@ static int sunxi_cedrus_probe(struct platform_device =
-*pdev)
->  	if (ret)
->  		return ret;
-> =20
-> +	dev->dec_ops[SUNXI_CEDRUS_CODEC_MPEG2] =3D &sunxi_cedrus_dec_ops_mpeg2;
-> +
->  	ret =3D v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
->  	if (ret)
->  		goto unreg_media;
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h b/=
-drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> index a5f83c452006..c2e2c92d103b 100644
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> @@ -75,6 +75,7 @@ struct sunxi_cedrus_ctx {
->  	struct v4l2_pix_format_mplane src_fmt;
->  	struct sunxi_cedrus_fmt *vpu_dst_fmt;
->  	struct v4l2_pix_format_mplane dst_fmt;
-> +	enum sunxi_cedrus_codec current_codec;
-
-Nit: for consistency with the way things are named, "codec_current"
-probably makes more sense.
-
-IMO using the natural English order is fine for temporary variables, but
- less so for variables used in common parts like structures. This allows
-seeing "_" as a logical hierarchical delimiter that automatically makes
-us end up with consistent prefixes that can easily be grepped for and
-derived.
-
-But that's just my 2 cents, it's really not a big deal, especially in
-this case!
-
->  	struct v4l2_ctrl_handler hdl;
->  	struct v4l2_ctrl *ctrls[SUNXI_CEDRUS_CTRL_MAX];
-> @@ -107,6 +108,14 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer(con=
-st struct vb2_buffer *p)
->  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
->  }
-> =20
-> +struct sunxi_cedrus_dec_ops {
-> +	void (*setup)(struct sunxi_cedrus_ctx *ctx,
-> +		      struct sunxi_cedrus_run *run);
-> +	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
-
-By the way, are we sure that these functions won't ever fail?
-I think this is the case for MPEG2 (there is virtually nothing to check
-for errors) but perhaps it's different for H264.
-
-> +};
-> +
-> +extern struct sunxi_cedrus_dec_ops sunxi_cedrus_dec_ops_mpeg2;
-> +
->  struct sunxi_cedrus_dev {
->  	struct v4l2_device v4l2_dev;
->  	struct video_device vfd;
-> @@ -130,6 +139,8 @@ struct sunxi_cedrus_dev {
->  	struct reset_control *rstc;
-> =20
->  	struct regmap *syscon;
-> +
-> +	struct sunxi_cedrus_dec_ops	*dec_ops[SUNXI_CEDRUS_CODEC_LAST];
->  };
-> =20
->  static inline void sunxi_cedrus_write(struct sunxi_cedrus_dev *dev,
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c b/dri=
-vers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c
-> index f274408ab5a7..5e552fa05274 100644
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c
-> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c
-> @@ -28,7 +28,6 @@
->  #include <media/v4l2-mem2mem.h>
-> =20
->  #include "sunxi_cedrus_common.h"
-> -#include "sunxi_cedrus_mpeg2.h"
->  #include "sunxi_cedrus_dec.h"
->  #include "sunxi_cedrus_hw.h"
-> =20
-> @@ -77,6 +76,7 @@ void sunxi_cedrus_device_work(struct work_struct *work)
->  void sunxi_cedrus_device_run(void *priv)
->  {
->  	struct sunxi_cedrus_ctx *ctx =3D priv;
-> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
->  	struct sunxi_cedrus_run run =3D { 0 };
->  	struct media_request *src_req, *dst_req;
->  	unsigned long flags;
-> @@ -120,8 +120,6 @@ void sunxi_cedrus_device_run(void *priv)
->  	case V4L2_PIX_FMT_MPEG2_FRAME:
->  		CHECK_CONTROL(ctx, SUNXI_CEDRUS_CTRL_DEC_MPEG2_FRAME_HDR);
->  		run.mpeg2.hdr =3D get_ctrl_ptr(ctx, SUNXI_CEDRUS_CTRL_DEC_MPEG2_FRAME_=
-HDR);
-> -		sunxi_cedrus_mpeg2_setup(ctx, &run);
-> -
->  		break;
-> =20
->  	default:
-> @@ -129,6 +127,9 @@ void sunxi_cedrus_device_run(void *priv)
->  	}
->  #undef CHECK_CONTROL
-> =20
-> +	if (!ctx->job_abort)
-> +		dev->dec_ops[ctx->current_codec]->setup(ctx, &run);
-> +
->  unlock_complete:
->  	spin_unlock_irqrestore(&ctx->dev->irq_lock, flags);
-> =20
-> @@ -143,8 +144,7 @@ void sunxi_cedrus_device_run(void *priv)
->  	spin_lock_irqsave(&ctx->dev->irq_lock, flags);
-> =20
->  	if (!ctx->job_abort) {
-> -		if (ctx->vpu_src_fmt->fourcc =3D=3D V4L2_PIX_FMT_MPEG2_FRAME)
-> -			sunxi_cedrus_mpeg2_trigger(ctx);
-> +		dev->dec_ops[ctx->current_codec]->trigger(ctx);
->  	} else {
->  		v4l2_m2m_buf_done(run.src, VB2_BUF_STATE_ERROR);
->  		v4l2_m2m_buf_done(run.dst, VB2_BUF_STATE_ERROR);
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c b/d=
-rivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-> index d1d7a3cfce0d..e25075bb5779 100644
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-> @@ -52,8 +52,8 @@ static const u8 mpeg_default_non_intra_quant[64] =3D {
-> =20
->  #define m_niq(i) ((i << 8) | mpeg_default_non_intra_quant[i])
-> =20
-> -void sunxi_cedrus_mpeg2_setup(struct sunxi_cedrus_ctx *ctx,
-> -			      struct sunxi_cedrus_run *run)
-> +static void sunxi_cedrus_mpeg2_setup(struct sunxi_cedrus_ctx *ctx,
-> +				     struct sunxi_cedrus_run *run)
->  {
->  	struct sunxi_cedrus_dev *dev =3D ctx->dev;
->  	const struct v4l2_ctrl_mpeg2_frame_hdr *frame_hdr =3D run->mpeg2.hdr;
-> @@ -148,9 +148,14 @@ void sunxi_cedrus_mpeg2_setup(struct sunxi_cedrus_ct=
-x *ctx,
->  	sunxi_cedrus_write(dev, src_buf_addr + VBV_SIZE - 1, VE_MPEG_VLD_END);
->  }
-> =20
-> -void sunxi_cedrus_mpeg2_trigger(struct sunxi_cedrus_ctx *ctx)
-> +static void sunxi_cedrus_mpeg2_trigger(struct sunxi_cedrus_ctx *ctx)
->  {
->  	struct sunxi_cedrus_dev *dev =3D ctx->dev;
-> =20
->  	sunxi_cedrus_write(dev, VE_TRIG_MPEG2, VE_MPEG_TRIGGER);
->  }
-> +
-> +struct sunxi_cedrus_dec_ops sunxi_cedrus_dec_ops_mpeg2 =3D {
-> +	.setup		=3D sunxi_cedrus_mpeg2_setup,
-> +	.trigger	=3D sunxi_cedrus_mpeg2_trigger,
-> +};
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.h b/d=
-rivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.h
-> deleted file mode 100644
-> index 4c380becfa1a..000000000000
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.h
-> +++ /dev/null
-> @@ -1,33 +0,0 @@
-> -/*
-> - * Sunxi-Cedrus VPU driver
-> - *
-> - * Copyright (C) 2018 Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> - * Copyright (C) 2016 Florent Revest <florent.revest@free-electrons.com>
-> - *
-> - * Based on the vim2m driver, that is:
-> - *
-> - * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
-> - * Pawel Osciak, <pawel@osciak.com>
-> - * Marek Szyprowski, <m.szyprowski@samsung.com>
-> - *
-> - * This software is licensed under the terms of the GNU General Public
-> - * License version 2, as published by the Free Software Foundation, and
-> - * may be copied, distributed, and modified under those terms.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> -
-> -#ifndef _SUNXI_CEDRUS_MPEG2_H_
-> -#define _SUNXI_CEDRUS_MPEG2_H_
-> -
-> -struct sunxi_cedrus_ctx;
-> -struct sunxi_cedrus_run;
-> -
-> -void sunxi_cedrus_mpeg2_setup(struct sunxi_cedrus_ctx *ctx,
-> -			      struct sunxi_cedrus_run *run);
-> -void sunxi_cedrus_mpeg2_trigger(struct sunxi_cedrus_ctx *ctx);
-> -
-> -#endif
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c b/d=
-rivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
-> index 089abfe6bfeb..fb7b081a5bb7 100644
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
-> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
-> @@ -28,7 +28,6 @@
->  #include <media/v4l2-mem2mem.h>
-> =20
->  #include "sunxi_cedrus_common.h"
-> -#include "sunxi_cedrus_mpeg2.h"
->  #include "sunxi_cedrus_dec.h"
->  #include "sunxi_cedrus_hw.h"
-> =20
-> @@ -414,6 +413,21 @@ static int sunxi_cedrus_buf_prepare(struct vb2_buffe=
-r *vb)
->  	return 0;
->  }
-> =20
-> +static int sunxi_cedrus_start_streaming(struct vb2_queue *q, unsigned in=
-t count)
-> +{
-> +	struct sunxi_cedrus_ctx *ctx =3D vb2_get_drv_priv(q);
-> +
-> +	switch (ctx->vpu_src_fmt->fourcc) {
-> +	case V4L2_PIX_FMT_MPEG2_FRAME:
-> +		ctx->current_codec =3D SUNXI_CEDRUS_CODEC_MPEG2;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void sunxi_cedrus_stop_streaming(struct vb2_queue *q)
->  {
->  	struct sunxi_cedrus_ctx *ctx =3D vb2_get_drv_priv(q);
-> @@ -462,6 +476,7 @@ static struct vb2_ops sunxi_cedrus_qops =3D {
->  	.buf_cleanup		=3D sunxi_cedrus_buf_cleanup,
->  	.buf_queue		=3D sunxi_cedrus_buf_queue,
->  	.buf_request_complete	=3D sunxi_cedrus_buf_request_complete,
-> +	.start_streaming	=3D sunxi_cedrus_start_streaming,
->  	.stop_streaming		=3D sunxi_cedrus_stop_streaming,
->  	.wait_prepare		=3D vb2_ops_wait_prepare,
->  	.wait_finish		=3D vb2_ops_wait_finish,
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-6KNc3m/0MdpjtCFVHVXX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsrdMIACgkQ3cLmz3+f
-v9EUpwf8DbkpESzqfpCMqWGZPq5WV0aMEFU7tQ6wqFGVxwTWzt4iqNj5//vUhvP8
-siezcg0A3HWxJ6WawOqoqWn7QzwBF9aE9lZsLOTrmUdHmYJPRMLRGDZ0Nn9zCXdy
-dfjxgh9a6rnUAZAg5AvI6BsPhrPDH2o4X759/u02Z6DIR6ZBN4PlyBOsUhzYpf9l
-/Sh1m233O8XLzNyiMVF+ANQL1LWr8dmkwrIXzTmknXnhm+/tQkMSPJ8zM7FBH9xU
-RCr9xcJhZ6H+jvhyAQzbRiH9gFrRxyv31VXENCJIaRpf+lHnlxlSfOW0q96AV/pu
-J0pA+EU6lC1T46+T8JNrrPeTKDXgng==
-=BxNG
------END PGP SIGNATURE-----
-
---=-6KNc3m/0MdpjtCFVHVXX--
-
+-- 
+Mel Gorman
+SUSE Labs
