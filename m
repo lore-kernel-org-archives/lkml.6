@@ -6,140 +6,96 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6D3C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BCDC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B5920846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:33:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B5920846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 24783208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24783208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754204AbeFUHdi (ORCPT
+        id S1754292AbeFUHdt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 03:33:38 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41564 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751022AbeFUHdg (ORCPT
+        Thu, 21 Jun 2018 03:33:49 -0400
+Received: from mail-ot0-f169.google.com ([74.125.82.169]:46379 "EHLO
+        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751211AbeFUHdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 03:33:36 -0400
-Received: by mail-wr0-f193.google.com with SMTP id h10-v6so2004699wrq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 00:33:36 -0700 (PDT)
+        Thu, 21 Jun 2018 03:33:37 -0400
+Received: by mail-ot0-f169.google.com with SMTP id v24-v6so2461659otk.13
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 00:33:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tgzv4dn2xzs2jO6Ym1jqErwLPovKyBxVvzxa74qL+ck=;
-        b=jxLYS0u7kQ1q43zPQ/9Zo/UdKdi33s+24S2q72mKEodLLq76v/4wPXIUBfEXPUpQKF
-         FOM3W4J3vRlxCNWqQAp1PPOdLGsnIg2dmL1zON16raS/+NI4CAvGWReeH4QqZbBrxwfA
-         cQCbs2QvaPldoMabqaITWRAiZHS6IfPOhe0vCHoFdgcdN7id5pCC+4TJUO9d5iQRYT9o
-         SxCs5dieIiJUQvjkNTsZoG4dg5phs6JFsnba6wlBIprhFB38B/CEZ8srPBMVroVIwVeo
-         FzCnipX/VcxADTR+RHAQwUzz2XC8osI49jV++d9yWerK2pNmHJJH1+xicjW7Xo0mRxoh
-         ofyg==
-X-Gm-Message-State: APt69E0uaUX+MiXBVZFfrB83HUAIc2BkEltUlvnOpPjVyCDkDDOKtDLP
-        k2zKY3iNwtaFLd5CQXnJ/0A=
-X-Google-Smtp-Source: ADUXVKKGVO8YnksJ9LfvInX1v62RVHRpJvSCEUqvTOPiewKoSdMEOAWtesvJB6B3yxcECE+0Hje0ZA==
-X-Received: by 2002:adf:a6b8:: with SMTP id t53-v6mr21819421wrc.45.1529566415826;
-        Thu, 21 Jun 2018 00:33:35 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id v10-v6sm5559477wrn.97.2018.06.21.00.33.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 00:33:35 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 70FA11236FF; Thu, 21 Jun 2018 09:33:34 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 09:33:34 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, osalvador@suse.de
-Subject: Re: [PATCH 1/4] mm/memory_hotplug: Make add_memory_resource use
- __try_online_node
-Message-ID: <20180621073334.GA11407@techadventures.net>
-References: <20180601125321.30652-1-osalvador@techadventures.net>
- <20180601125321.30652-2-osalvador@techadventures.net>
- <20180620151819.3f39226998bd80f7161fcea5@linux-foundation.org>
- <CAGM2reYgrpBrfhcw0O7K+sMU-qE-U_+2MzJWsG=7gSbU8n-=kA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ew75zXD0itTdvAC2QSHY7/SL8M4HJs8Vrxdxc3yoyTM=;
+        b=M5wXPrxikWUwkltBirr01L9kwYQdpS3gXSYyqslm6rS2HYFLtqWfFiG/EB6rRj7aY3
+         ym3zwvzOe9s4BYYc3BS+wUim1tSH2kdYXwxO0gqcHlHSZg7QQ9xZgfuEq9pNu1Ux4ni9
+         ycEjxVt7Z7CQJOGWX0DpUyJ4UtNQY0Sb01O627HJmEvGvn6KiXBsmlOOP7jNG5tpa9Pa
+         4ciyya7B8z95WavIA2bA9/ZrHh4Ly4PuXxjWBtUB2GCrlWzN9jAUPtZzVuN1HqOKyJsS
+         3D4RR98CNJmmYyb+V4iq6bLg5uZ3Pi32z4P/CUJZqnCqS9IkJ9hO8IIeOR548rehmwns
+         oOYg==
+X-Gm-Message-State: APt69E26/OVonqGpKWBdrL4nevZaswxHVr5LIc+l61FlG5czKmyQTUuY
+        CNx2HHw9lbn7tnS+G18U9mIkcwIFBABkNykWZIz1zqYz
+X-Google-Smtp-Source: ADUXVKLkw7lHBYR9TI6qZMPJ5KZIO8eR1BopJIgjiqKLEbHJYltrq7gTyWT2SAU1fa75crkrEcVZGbLgT7aL1ExaV/Q=
+X-Received: by 2002:a9d:251d:: with SMTP id k29-v6mr2696504otb.149.1529566416884;
+ Thu, 21 Jun 2018 00:33:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGM2reYgrpBrfhcw0O7K+sMU-qE-U_+2MzJWsG=7gSbU8n-=kA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180620144227.18bab881@canb.auug.org.au> <8e17ad17-db3b-7588-b04e-3bd8b54060c0@infradead.org>
+ <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Thu, 21 Jun 2018 09:33:26 +0200
+Message-ID: <CAFqZXNsw8iWB74jDof39Z8KM29EDvnpvQ_AvxPbvdM9hZ1cXAQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jun 20 (kernel/auditsc.c)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     rdunlap@infradead.org, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Eric Paris <eparis@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 09:41:35PM -0400, Pavel Tatashin wrote:
-> > I don't think __try_online_node() will ever return a value greater than
-> > zero.  I assume what was meant was
-> 
-> Hi Andrew and Oscar,
-> 
-> Actually, the new __try_online_node()  returns:
-> 1 -> a new node was allocated
-> 0 -> node is already online
-> -error -> an error encountered.
-> 
-> The function simply missing the return comment at the beginning.
-> 
-> Oscar, please check it via ./scripts/checkpatch.pl
-> 
-> Add comment explaining the return values.
-> 
-> And change:
->         ret = __try_online_node (nid, start, false);
->         new_node = !!(ret > 0);
->         if (ret < 0)
->                 goto error;
-> To:
->         ret = __try_online_node (nid, start, false);
->         if (ret < 0)
->                 goto error;
->         new_node = ret;
-> 
-> Other than that the patch looks good to me, it simplifies the code.
-> So, if the above is addressed:
-> 
-> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-
-Hi Pavel,
-
-I'll do so, thanks!
-
-> 
-> Thank you,
-> Pavel
-> 
+st 20. 6. 2018 o 22:00 Paul Moore <paul@paul-moore.com> napísal(a):
+>
+> On Wed, Jun 20, 2018 at 11:48 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 > >
-> >         new_node = !!(ret >= 0);
-> >
-> > which may as well be
-> >
-> >         new_node = (ret >= 0);
-> >
-> > since both sides have bool type.
-> >
-> > The fact that testing didn't detect this is worrisome....
-> >
-> > > +     if (ret < 0)
-> > > +             goto error;
-> > > +
+> > On 06/19/2018 09:42 PM, Stephen Rothwell wrote:
+> > > Hi all,
 > > >
-> > >       /* call arch's memory hotadd */
-> > >       ret = arch_add_memory(nid, start, size, NULL, true);
-> > > -
-> > >       if (ret < 0)
-> > >               goto error;
-> > >
-> > >
-> > > ...
+> > > Changes since 20180619:
 > > >
 > >
-> 
+> > on x86_64:
+> >
+> > kernel/auditsc.o: In function `audit_filter_rules.isra.20':
+> > auditsc.c:(.text+0x8c5): undefined reference to `groups_search'
+> > auditsc.c:(.text+0x909): undefined reference to `groups_search'
+> >
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> >
+> > Full randconfig file is attached.
+>
+> Thanks Randy.
+>
+> I believe the issue is that when CONFIG_MULTIUSER is not enabled
+> groups.{c.o} is not included.  Ondrej, please look into this and
+> submit a fix as soon as possible, thank you.
 
--- 
-Oscar Salvador
-SUSE L3
+I'm working on it, stay tuned... It should be an easy fix, but it will
+(likely) need changes outside the audit code. We could work around it
+locally, of course, but since this is just in -next, I believe it's
+worth to fix it properly.
+
+Cheers,
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
