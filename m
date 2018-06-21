@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30585C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF86C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D72CF2241A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:32:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D59522421
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:32:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I7ToufNF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72CF2241A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mZEJRUnB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D59522421
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934011AbeFUVcK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:32:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41818 "EHLO
+        id S934033AbeFUVcL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:32:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41814 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933973AbeFUV3L (ORCPT
+        with ESMTP id S933971AbeFUV3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 17:29:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,25 +30,21 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PPrchwmaNlTnEQhhgn+AO0lue+wNtufAdQcEveCghxQ=; b=I7ToufNFSsvJkHIjYXIo+EP9U
-        KMpmQp1w251Wyzr5RorOE7EfyEdYEH3SnsFb62QpLiJz+WFEJuU2rPt8NOeUmIeVQhg+h1YuNBH8w
-        rJKH2bU3AncP0IkagOdd5ENYxO3UzL49gYUAVICReelkIi/lZhn8AmXejQLjNucNSbc+iJx2FoTwd
-        6ckR426C2vOvVJL5tIjeI1ThwFCYQCQtwb1C5Mykl0GSvHeH4Pb1zz8zC8rOiLS5+n8wco+ugYy3F
-        28Gx31zbEFSu1mWwGiecu5PccwX1plIoCkcUzAwawvl58UIUVSj/4vSdkw8LRGqLgs+tWoHYHWv9/
-        LkAl18yjA==;
+         bh=9SEwNvigDV/5jpbl7n9wxNcQyUvd2+z/RP3TzKYnH8w=; b=mZEJRUnBGEkwyV8agi7Witixf
+        BtXeY75l6O6YCT0Q9loUzoEg5ZfsEsat4fsLE896zmhGJc7vm/x2aUmb3ivDOdiz4h59ZYyy4CMoF
+        ytzHAo4KfiaqSKb6GwtD+X2xvcO1b1JVEtnP4/yva366X3eUcRu8KZShkNs0bfdChz9NKz2UbyLTc
+        ZAbuxtCCJU3tdv2JiweIxrrmjk19StYzbk7SarGDIdR3oJC/JzXCbkRNSgH7LtLeYvdNUHmAeXauD
+        knpODlfOe2mJDwjiZAn7yfHzyvVQgVQtapECEV1dXMvA8Omv/l89Pl9w+kT0cmoK7WsPJ2juJApdq
+        SQDSQVrsQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78f-0001cD-Up; Thu, 21 Jun 2018 21:29:09 +0000
+        id 1fW78g-0001cf-Nw; Thu, 21 Jun 2018 21:29:10 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Matthew Wilcox <willy@infradead.org>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH 17/26] drm/vmwgfx: Convert to new IDA API
-Date:   Thu, 21 Jun 2018 14:28:26 -0700
-Message-Id: <20180621212835.5636-18-willy@infradead.org>
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 21/26] test_ida: Move ida_check_leaf
+Date:   Thu, 21 Jun 2018 14:28:30 -0700
+Message-Id: <20180621212835.5636-22-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -57,92 +53,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reorder allocation to avoid an awkward lock/unlock/lock sequence.
-Simpler code due to being able to use ida_alloc_max(), even if we can't
-eliminate the driver's spinlock.
+Convert to new API and move to kernel space.  Take the opportunity to
+test the situation a little more thoroughly (ie at different offsets).
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_gmrid_manager.c | 41 ++++++-------------
- 1 file changed, 12 insertions(+), 29 deletions(-)
+ lib/test_ida.c                      | 24 ++++++++++++++++++++++++
+ tools/testing/radix-tree/idr-test.c | 27 ---------------------------
+ 2 files changed, 24 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_gmrid_manager.c b/drivers/gpu/drm/vmwgfx/vmwgfx_gmrid_manager.c
-index f2f9d88131f2..2d6291373efb 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_gmrid_manager.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_gmrid_manager.c
-@@ -51,51 +51,34 @@ static int vmw_gmrid_man_get_node(struct ttm_mem_type_manager *man,
- {
- 	struct vmwgfx_gmrid_man *gman =
- 		(struct vmwgfx_gmrid_man *)man->priv;
--	int ret = 0;
- 	int id;
+diff --git a/lib/test_ida.c b/lib/test_ida.c
+index 5a5a742d5f09..50dce991be6b 100644
+--- a/lib/test_ida.c
++++ b/lib/test_ida.c
+@@ -22,11 +22,35 @@ void ida_dump(struct ida *ida) { }
+ 	}								\
+ } while (0)
  
- 	mem->mm_node = NULL;
- 
-+	id = ida_alloc_max(&gman->gmr_ida, gman->max_gmr_ids - 1, GFP_KERNEL);
-+	if (id < 0)
-+		return id;
++/*
++ * Check what happens when we fill a leaf and then delete it.  This may
++ * discover mishandling of IDR_FREE.
++ */
++static void ida_check_leaf(struct ida *ida, unsigned int base)
++{
++	unsigned long i;
 +
- 	spin_lock(&gman->lock);
++	for (i = 0; i < IDA_BITMAP_BITS; i++) {
++		IDA_BUG_ON(ida, ida_alloc_min(ida, base, GFP_KERNEL) !=
++				base + i);
++	}
++
++	ida_destroy(ida);
++	assert(ida_is_empty(ida));
++
++	IDA_BUG_ON(ida, ida_alloc(ida, GFP_KERNEL) != 0);
++	ida_free(ida, 0);
++	IDA_BUG_ON(ida, !ida_is_empty(ida));
++}
++
+ static int ida_checks(void)
+ {
+ 	DEFINE_IDA(ida);
  
- 	if (gman->max_gmr_pages > 0) {
- 		gman->used_gmr_pages += bo->num_pages;
- 		if (unlikely(gman->used_gmr_pages > gman->max_gmr_pages))
--			goto out_err_locked;
-+			goto nospace;
- 	}
+ 	IDA_BUG_ON(&ida, !ida_is_empty(&ida));
++	ida_check_leaf(&ida, 0);
++	ida_check_leaf(&ida, 1024);
++	ida_check_leaf(&ida, 1024 * 64);
  
--	do {
--		spin_unlock(&gman->lock);
--		if (unlikely(ida_pre_get(&gman->gmr_ida, GFP_KERNEL) == 0)) {
--			ret = -ENOMEM;
--			goto out_err;
--		}
--		spin_lock(&gman->lock);
--
--		ret = ida_get_new(&gman->gmr_ida, &id);
--		if (unlikely(ret == 0 && id >= gman->max_gmr_ids)) {
--			ida_remove(&gman->gmr_ida, id);
--			ret = 0;
--			goto out_err_locked;
--		}
--	} while (ret == -EAGAIN);
--
--	if (likely(ret == 0)) {
--		mem->mm_node = gman;
--		mem->start = id;
--		mem->num_pages = bo->num_pages;
--	} else
--		goto out_err_locked;
-+	mem->mm_node = gman;
-+	mem->start = id;
-+	mem->num_pages = bo->num_pages;
- 
- 	spin_unlock(&gman->lock);
- 	return 0;
- 
--out_err:
--	spin_lock(&gman->lock);
--out_err_locked:
-+nospace:
- 	gman->used_gmr_pages -= bo->num_pages;
- 	spin_unlock(&gman->lock);
--	return ret;
-+	ida_free(&gman->gmr_ida, id);
-+	return 0;
+ 	printk("IDA: %u of %u tests passed\n", tests_passed, tests_run);
+ 	return (tests_run != tests_passed) ? 0 : -EINVAL;
+diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
+index 0f557784327d..fef1f45b927b 100644
+--- a/tools/testing/radix-tree/idr-test.c
++++ b/tools/testing/radix-tree/idr-test.c
+@@ -336,32 +336,6 @@ void ida_check_nomem(void)
+ 	IDA_BUG_ON(&ida, !ida_is_empty(&ida));
  }
  
- static void vmw_gmrid_man_put_node(struct ttm_mem_type_manager *man,
-@@ -105,8 +88,8 @@ static void vmw_gmrid_man_put_node(struct ttm_mem_type_manager *man,
- 		(struct vmwgfx_gmrid_man *)man->priv;
+-/*
+- * Check what happens when we fill a leaf and then delete it.  This may
+- * discover mishandling of IDR_FREE.
+- */
+-void ida_check_leaf(void)
+-{
+-	DEFINE_IDA(ida);
+-	int id;
+-	unsigned long i;
+-
+-	for (i = 0; i < IDA_BITMAP_BITS; i++) {
+-		assert(ida_pre_get(&ida, GFP_KERNEL));
+-		assert(!ida_get_new(&ida, &id));
+-		assert(id == i);
+-	}
+-
+-	ida_destroy(&ida);
+-	assert(ida_is_empty(&ida));
+-
+-	assert(ida_pre_get(&ida, GFP_KERNEL));
+-	assert(!ida_get_new(&ida, &id));
+-	assert(id == 0);
+-	ida_destroy(&ida);
+-	assert(ida_is_empty(&ida));
+-}
+-
+ /*
+  * Check handling of conversions between exceptional entries and full bitmaps.
+  */
+@@ -560,7 +534,6 @@ void user_ida_checks(void)
+ 	ida_destroy(&ida);
+ 	assert(ida_is_empty(&ida));
  
- 	if (mem->mm_node) {
-+		ida_free(&gman->gmr_ida, mem->start);
- 		spin_lock(&gman->lock);
--		ida_remove(&gman->gmr_ida, mem->start);
- 		gman->used_gmr_pages -= mem->num_pages;
- 		spin_unlock(&gman->lock);
- 		mem->mm_node = NULL;
+-	ida_check_leaf();
+ 	ida_check_max();
+ 	ida_check_conv();
+ 	ida_check_random();
 -- 
 2.17.1
 
