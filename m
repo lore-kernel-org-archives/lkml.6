@@ -3,140 +3,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1CFC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19846C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48EE721A68
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:00:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48EE721A68
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CBD5E21A6C
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:00:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD5E21A6C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933194AbeFUTAD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:00:03 -0400
-Received: from mga05.intel.com ([192.55.52.43]:41942 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932795AbeFUTAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:00:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 12:00:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,253,1526367600"; 
-   d="scan'208";a="61163254"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by orsmga003.jf.intel.com with ESMTP; 21 Jun 2018 12:00:01 -0700
-Received: from orsmsx152.amr.corp.intel.com (10.22.226.39) by
- ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Thu, 21 Jun 2018 12:00:01 -0700
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.228]) by
- ORSMSX152.amr.corp.intel.com ([10.22.226.39]) with mapi id 14.03.0319.002;
- Thu, 21 Jun 2018 12:00:00 -0700
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "jannh@google.com" <jannh@google.com>,
-        "keescook@chromium.org" <keescook@chromium.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH 0/3] KASLR feature to randomize each loadable module
-Thread-Topic: [PATCH 0/3] KASLR feature to randomize each loadable module
-Thread-Index: AQHUCONeyLbHxTjLAESY6iRZ+j5QhqRqMQ8AgAD8hoCAAFoqgA==
-Date:   Thu, 21 Jun 2018 18:59:59 +0000
-Message-ID: <1529607615.29548.202.camel@intel.com>
-References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
-         <CAGXu5jLt8Zv-p=9J590WFppc3O6LWrAVdi-xtU7r_8f4j0XeRg@mail.gmail.com>
-         <CAG48ez2uuQkSS9DLz6j5HbpuxaHMyAVYGMM+xoZEo51N=sHmdg@mail.gmail.com>
-In-Reply-To: <CAG48ez2uuQkSS9DLz6j5HbpuxaHMyAVYGMM+xoZEo51N=sHmdg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.7.197.56]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <872ADC6A6EF5B044B71DB96FBDE5FF8E@intel.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S933370AbeFUTAU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 15:00:20 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:58578 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932795AbeFUTAT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 15:00:19 -0400
+Received: from ayla.of.borg ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id 1X0H1y00e3XaVaC01X0Hh8; Thu, 21 Jun 2018 21:00:18 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ayla.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fW4ob-0005CZ-Ts; Thu, 21 Jun 2018 21:00:17 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fW4ob-0004am-Ra; Thu, 21 Jun 2018 21:00:17 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] misc: ti-st: Allow compile test of GPIO consumers if !GPIOLIB
+Date:   Thu, 21 Jun 2018 21:00:16 +0200
+Message-Id: <20180621190016.17611-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTA2LTIxIGF0IDE1OjM3ICswMjAwLCBKYW5uIEhvcm4gd3JvdGU6DQo+IE9u
-IFRodSwgSnVuIDIxLCAyMDE4IGF0IDEyOjM0IEFNIEtlZXMgQ29vayA8a2Vlc2Nvb2tAY2hyb21p
-dW0ub3JnPg0KPiB3cm90ZToNCj4gPiBBbmQgbW9zdCBzeXN0ZW1zIGhhdmUgPDIwMCBtb2R1bGVz
-LCByZWFsbHkuIEkgaGF2ZSAxMTMgb24gYSBkZXNrdG9wDQo+ID4gcmlnaHQgbm93LCA2MyBvbiBh
-IHNlcnZlci4gU28gdGhpcyBsb29rcyBsaWtlIGEgdHJpdmlhbCB3aW4uDQo+IEJ1dCBub3RlIHRo
-YXQgdGhlIGVCUEYgSklUIGFsc28gdXNlcyBtb2R1bGVfYWxsb2MoKS4gRXZlcnkgdGltZSBhIEJQ
-Rg0KPiBwcm9ncmFtICh0aGlzIGluY2x1ZGVzIHNlY2NvbXAgZmlsdGVycyEpIGlzIEpJVC1jb21w
-aWxlZCBieSB0aGUNCj4ga2VybmVsLCBhbm90aGVyIG1vZHVsZV9hbGxvYygpIGFsbG9jYXRpb24g
-aXMgbWFkZS4gRm9yIGV4YW1wbGUsIG9uIG15DQo+IGRlc2t0b3AgbWFjaGluZSwgSSBoYXZlIGEg
-YnVuY2ggb2Ygc2VjY29tcC1zYW5kYm94ZWQgcHJvY2Vzc2VzIHRoYW5rcw0KPiB0byBDaHJvbWUu
-IElmIEkgZW5hYmxlIHRoZSBuZXQuY29yZS5icGZfaml0X2VuYWJsZSBzeXNjdGwgYW5kIG9wZW4g
-YQ0KPiBmZXcgQ2hyb21lIHRhYnMsIEJQRiBKSVQgYWxsb2NhdGlvbnMgc3RhcnQgc2hvd2luZyB1
-cCBiZXR3ZWVuDQo+IG1vZHVsZXM6DQo+IA0KPiAjIGdyZXAgLUMxIGJwZl9qaXRfYmluYXJ5X2Fs
-bG9jIC9wcm9jL3ZtYWxsb2NpbmZvIHwgY3V0IC1kJyAnIC1mIDItDQo+IMKgIDIwNDgwIGxvYWRf
-bW9kdWxlKzB4MTMyNi8weDJhYjAgcGFnZXM9NCB2bWFsbG9jIE4wPTQNCj4gwqAgMTIyODggYnBm
-X2ppdF9iaW5hcnlfYWxsb2MrMHgzMi8weDkwIHBhZ2VzPTIgdm1hbGxvYyBOMD0yDQo+IMKgIDIw
-NDgwIGxvYWRfbW9kdWxlKzB4MTMyNi8weDJhYjAgcGFnZXM9NCB2bWFsbG9jIE4wPTQNCj4gLS0N
-Cj4gwqAgMjA0ODAgbG9hZF9tb2R1bGUrMHgxMzI2LzB4MmFiMCBwYWdlcz00IHZtYWxsb2MgTjA9
-NA0KPiDCoCAxMjI4OCBicGZfaml0X2JpbmFyeV9hbGxvYysweDMyLzB4OTAgcGFnZXM9MiB2bWFs
-bG9jIE4wPTINCj4gwqAgMzY4NjQgbG9hZF9tb2R1bGUrMHgxMzI2LzB4MmFiMCBwYWdlcz04IHZt
-YWxsb2MgTjA9OA0KPiAtLQ0KPiDCoCAyMDQ4MCBsb2FkX21vZHVsZSsweDEzMjYvMHgyYWIwIHBh
-Z2VzPTQgdm1hbGxvYyBOMD00DQo+IMKgIDEyMjg4IGJwZl9qaXRfYmluYXJ5X2FsbG9jKzB4MzIv
-MHg5MCBwYWdlcz0yIHZtYWxsb2MgTjA9Mg0KPiDCoCA0MDk2MCBsb2FkX21vZHVsZSsweDEzMjYv
-MHgyYWIwIHBhZ2VzPTkgdm1hbGxvYyBOMD05DQo+IC0tDQo+IMKgIDIwNDgwIGxvYWRfbW9kdWxl
-KzB4MTMyNi8weDJhYjAgcGFnZXM9NCB2bWFsbG9jIE4wPTQNCj4gwqAgMTIyODggYnBmX2ppdF9i
-aW5hcnlfYWxsb2MrMHgzMi8weDkwIHBhZ2VzPTIgdm1hbGxvYyBOMD0yDQo+IMKgMjUzOTUyIGxv
-YWRfbW9kdWxlKzB4MTMyNi8weDJhYjAgcGFnZXM9NjEgdm1hbGxvYyBOMD02MQ0KPiANCj4gSWYg
-eW91IHVzZSBDaHJvbWUgd2l0aCBTaXRlIElzb2xhdGlvbiwgeW91IGhhdmUgYSBmZXcgZG96ZW4g
-b3Blbg0KPiB0YWJzLA0KPiBhbmQgdGhlIEJQRiBKSVQgaXMgZW5hYmxlZCwgcmVhY2hpbmcgYSBm
-ZXcgaHVuZHJlZCBhbGxvY2F0aW9ucyBtaWdodA0KPiBub3QgYmUgdGhhdCBoYXJkLg0KPiANCj4g
-QWxzbzogV2hhdCdzIHRoZSBpbXBhY3Qgb24gbWVtb3J5IHVzYWdlPyBJcyB0aGlzIGdvaW5nIHRv
-IGluY3JlYXNlDQo+IHRoZQ0KPiBudW1iZXIgb2YgcGFnZXRhYmxlcyB0aGF0IG5lZWQgdG8gYmUg
-YWxsb2NhdGVkIGJ5IHRoZSBrZXJuZWwgcGVyDQo+IG1vZHVsZV9hbGxvYygpIGJ5IDRLIG9yIDhL
-IG9yIHNvPw0KVGhhbmtzLCBpdCBzZWVtcyBpdCBtaWdodCByZXF1aXJlIHNvbWUgZXh0cmEgbWVt
-b3J5LsKgwqBJJ2xsIGxvb2sgaW50byBpdA0KdG8gZmluZCBvdXQgZXhhY3RseSBob3cgbXVjaC4N
-Cg0KSSBkaWRuJ3QgaW5jbHVkZSBlQkZQIG1vZHVsZXMgaW4gdGhlIHJhbmRvbWl6YXRpb24gZXN0
-aW1hdGVzLCBidXQgaXQNCmxvb2tzIGxpa2UgdGhleSBhcmUgdXN1YWxseSBzbWFsbGVyIHRoYW4g
-YSBwYWdlLiDCoFNvIHdpdGggdGhlIHNsaWdodA0KbGVhcCB0aGF0IHRoZSBsYXJnZXIgbm9ybWFs
-IG1vZHVsZXMgYmFzZWQgZXN0aW1hdGXCoGlzIHRoZSB3b3JzdCBjYXNlLA0KeW91IHNob3VsZCBz
-dGlsbCBnZXQgfjgwMCBtb2R1bGVzIGF0IDE4IGJpdHMuIEFmdGVyIHRoYXQgaXQgd2lsbCBzdGFy
-dA0KdG8gZ28gZG93biB0byAxMCBiaXRzIGFuZCBzbyBpbiBlaXRoZXIgY2FzZSBpdCBhdCBsZWFz
-dCB3b24ndCByZWdyZXNzDQp0aGUgcmFuZG9tbmVzcyBvZiB0aGUgZXhpc3RpbmcgYWxnb3JpdGht
-Lg0KDQo+ID4gDQo+ID4gPiANCj4gPiA+IEFzIGZvciBmcmFnbWVudGF0aW9uLCB0aGlzIGFsZ29y
-aXRobSByZWR1Y2VzIHRoZSBhdmVyYWdlIG51bWJlcg0KPiA+ID4gb2YgbW9kdWxlcyB0aGF0DQo+
-ID4gPiBjYW4gYmUgbG9hZGVkIHdpdGhvdXQgYW4gYWxsb2NhdGlvbiBmYWlsdXJlIGJ5IGFib3V0
-IDYlICh+MTcwMDANCj4gPiA+IHRvIH4xNjAwMCkNCj4gPiA+IChwPDAuMDUpLiBJdCBjYW4gYWxz
-byByZWR1Y2UgdGhlIGxhcmdlc3QgbW9kdWxlIGV4ZWN1dGFibGUNCj4gPiA+IHNlY3Rpb24gdGhh
-dCBjYW4gYmUNCj4gPiA+IGxvYWRlZCBieSBoYWxmIHRvIH41MDBNQiBpbiB0aGUgd29yc3QgY2Fz
-ZS4NCj4gPiBHaXZlbiB0aGF0IHdlIG9ubHkgaGF2ZSA4MzEyIHRyaXN0YXRlIEtjb25maWcgaXRl
-bXMsIEkgdGhpbmsgMTYwMDANCj4gPiB3aWxsIHJlbWFpbiBqdXN0IGZpbmUuIEFuZCBldmVuIGxh
-cmdlIG1vZHVsZXMgKGk5MTUpIGFyZSB1bmRlcg0KPiA+IDJNQi4uLg0KPiA+IA0KPiA+ID4gDQo+
-ID4gPiBUaGUgbmV3IF9fdm1hbGxvY19ub2RlX3RyeV9hZGRyIGZ1bmN0aW9uIHVzZXMgdGhlIGV4
-aXN0aW5nDQo+ID4gPiBmdW5jdGlvbg0KPiA+ID4gX192bWFsbG9jX25vZGVfcmFuZ2UsIGluIG9y
-ZGVyIHRvIGludHJvZHVjZSB0aGlzIGFsZ29yaXRobSB3aXRoDQo+ID4gPiB0aGUgbGVhc3QNCj4g
-PiA+IGludmFzaXZlIGNoYW5nZS4gVGhlIHNpZGUgZWZmZWN0IGlzIHRoYXQgZWFjaCB0aW1lIHRo
-ZXJlIGlzIGENCj4gPiA+IGNvbGxpc2lvbiB3aGVuDQo+ID4gPiB0cnlpbmcgdG8gYWxsb2NhdGUg
-aW4gdGhlIHJhbmRvbSBhcmVhIGEgVExCIGZsdXNoIHdpbGwgYmUNCj4gPiA+IHRyaWdnZXJlZC4g
-VGhlcmUgaXMNCj4gPiA+IGEgbW9yZSBjb21wbGV4LCBtb3JlIGVmZmljaWVudCBpbXBsZW1lbnRh
-dGlvbiB0aGF0IGNhbiBiZSB1c2VkDQo+ID4gPiBpbnN0ZWFkIGlmDQo+ID4gPiB0aGVyZSBpcyBp
-bnRlcmVzdCBpbiBpbXByb3ZpbmcgcGVyZm9ybWFuY2UuDQo+ID4gVGhlIG9ubHkgdGltZSB3aGVu
-IG1vZHVsZSBsb2FkaW5nIHNwZWVkIGlzIG5vdGljZWFibGUsIEkgd291bGQNCj4gPiB0aGluaywN
-Cj4gPiB3b3VsZCBiZSBib290IHRpbWUuIEhhdmUgeW91IGRvbmUgYW55IGJvb3QgdGltZSBkZWx0
-YSBhbmFseXNpcz8gSQ0KPiA+IHdvdWxkbid0IGV4cGVjdCBpdCB0byBjaGFuZ2UgaGFyZGx5IGF0
-IGFsbCwgYnV0IGl0J3MgcHJvYmFibHkgYQ0KPiA+IGdvb2QNCj4gPiBpZGVhIHRvIGFjdHVhbGx5
-IHRlc3QgaXQuIDopDQo+IElmIHlvdSBoYXZlIGEgZm9ya2luZyBzZXJ2ZXIgdGhhdCBhcHBsaWVz
-IHNlY2NvbXAgZmlsdGVycyBvbiBlYWNoDQo+IGZvcmssIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQs
-IHlvdSBtaWdodCBjYXJlIGFib3V0IHRob3NlIFRMQiBmbHVzaGVzLg0KPiANCg0KSSBjYW4gdGVz
-dCB0aGlzIGFzIHdlbGwu
+The GPIO subsystem provides dummy GPIO consumer functions if GPIOLIB is
+not enabled. Hence drivers that depend on GPIOLIB, but use GPIO consumer
+functionality only, can still be compiled if GPIOLIB is not enabled.
+
+Relax the dependency on GPIOLIB if COMPILE_TEST is enabled, where
+appropriate.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+v3:
+  - Rebased,
+
+v2:
+  - Add Acked-by.
+---
+ drivers/misc/ti-st/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/misc/ti-st/Kconfig b/drivers/misc/ti-st/Kconfig
+index f34dcc51473052cf..5bb92698bc80f450 100644
+--- a/drivers/misc/ti-st/Kconfig
++++ b/drivers/misc/ti-st/Kconfig
+@@ -5,7 +5,8 @@
+ menu "Texas Instruments shared transport line discipline"
+ config TI_ST
+ 	tristate "Shared transport core driver"
+-	depends on NET && GPIOLIB && TTY
++	depends on NET && TTY
++	depends on GPIOLIB || COMPILE_TEST
+ 	select FW_LOADER
+ 	help
+ 	  This enables the shared transport core driver for TI
+-- 
+2.17.1
+
