@@ -2,99 +2,128 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F817C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95ABC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 160E822407
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F1872240E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:31:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="FGB5WFAW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160E822407
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ntTpH7BD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1872240E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934111AbeFUVaq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:30:46 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:8140 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933835AbeFUVam (ORCPT
+        id S933858AbeFUVaf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:30:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41854 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933991AbeFUV3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:30:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1529616643; x=1561152643;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=Nb1XFb6TkFOeT0je+OzTptD4wrvNNkf78Hovi2nidbc=;
-  b=FGB5WFAWdz1IWZ0FzeRz5bPvD9uXimZZVW8kxTEig2SiFTaKjgAHjnAu
-   lpYyXl/DEhjAq8wesiei7QChoyPXDODsxoFCqucVsdLyP59N8Mj4CMj7y
-   S+MzhF3UTbj+WdlAgOzbMd+FU2Fe4hKeViNkxLh3gSlzuAGlaHupxrRAR
-   ysd0rQIqQgVgoASxJASwF6tIZO+Wvd54lAJD4j+u1ytCu+ca1Ju1LnNHd
-   X7YKa2VzgAzJ8gS4U41OkprNguR925jYdwjK+HaRQXAfyj/aMYaHLTNVv
-   qFjTGuXj5zUasfY/Ferq2mVLS6kO9xComJyEFi0UtCggMReKIaZqynFYm
-   g==;
-X-IronPort-AV: E=Sophos;i="5.51,253,1526313600"; 
-   d="scan'208";a="83607287"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Jun 2018 05:30:42 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 21 Jun 2018 14:20:29 -0700
-Received: from thinkpad-bart.sdcorp.global.sandisk.com (HELO [10.111.67.248]) ([10.111.67.248])
-  by uls-op-cesaip01.wdc.com with ESMTP; 21 Jun 2018 14:30:40 -0700
-Subject: Re: [PATCH 0/5]stop normal completion path entering a timeout req
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-References: <1529500964-28429-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180620181601.GA24145@localhost.localdomain>
- <e87f5946-bb21-942e-2dcc-b24cee1ad23c@oracle.com>
- <20180621081900.GA5183@lst.de>
- <84a5b54c318b130f47775747d37dc139c27ebda7.camel@wdc.com>
- <20180621211529.GA27589@localhost.localdomain>
-From:   Bart Van Assche <bart.vanassche@wdc.com>
-Message-ID: <fb52d9c5-b392-96eb-c6db-99c603be80d1@wdc.com>
-Date:   Thu, 21 Jun 2018 14:30:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180621211529.GA27589@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 21 Jun 2018 17:29:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=omgzzMx1J+Hfd5X9RmHLAvs+yg1SHAbIpfDV56GPEcg=; b=ntTpH7BDuL2OvKVRfR94gA+US
+        R0JctUW2u1KaaAaSyarybunGB6kHfpWoKKdrBoVtOfFFduLp0gFsPT2BoeGLy9LhozfQ+moatqs+m
+        mmuFfasrHO1D/wt0+EUyY3kT3HA/IJ665vkj1HjD3LUgUPEilc56+tyU5h3qHJP9meP2WOrueqS7V
+        4BVx22DachMOv5VgpeAfOybTgnyqfRsLATQjT13023bpyoRPjQALCy713geBT8uElKuvlwNwVBhvf
+        gKUSYlzrGB/wDDBgVbAQlkQIksx+GHfd8rQ/RjgFw8RqOo+Dmhw2jtU/oKH+VI2dTE+yAriBTKkNW
+        vv+gjUy6A==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fW78e-0001bd-SZ; Thu, 21 Jun 2018 21:29:08 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 11/26] cb710: Convert to new IDA API
+Date:   Thu, 21 Jun 2018 14:28:20 -0700
+Message-Id: <20180621212835.5636-12-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
+References: <20180621212835.5636-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21/18 14:12, Keith Busch wrote:
-> On Thu, Jun 21, 2018 at 06:21:09PM +0000, Bart Van Assche wrote:
->> That's not how the SCSI core works.
-> 
-> How does it work? Jianchao is advocating for holes in software
-> to ignore reacting to hardware events and force unnecessary error
-> escalation. Putting holes in kernel software can't possibly be our
-> only recourse.
+Eliminates the custom spinlock and the call to ida_pre_get.
 
-Why were the patch "blk-mq: Remove generation seqeunce" and related 
-patches rushed upstream without having given anyone a chance to review 
-these patches? The approach of these patches is inferior to at least one 
-alternative that was available. The code that is currently upstream
-spreads the request state over multiple (three) variables while an 
-alternative approach was presented that stores the request state in a 
-single variable. I think the number of fix-up patches that is needed for 
-the approach that is currently upstream shows that the upstream approach 
-is inferior. I'm referring to "[PATCH v14] blk-mq: Rework blk-mq timeout 
-handling again" (https://marc.info/?l=linux-block&m=152703042412228).
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+---
+ drivers/misc/cb710/core.c | 23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
 
-Bart.
+diff --git a/drivers/misc/cb710/core.c b/drivers/misc/cb710/core.c
+index 4d4acf763b65..2c43fd09d602 100644
+--- a/drivers/misc/cb710/core.c
++++ b/drivers/misc/cb710/core.c
+@@ -16,7 +16,6 @@
+ #include <linux/gfp.h>
+ 
+ static DEFINE_IDA(cb710_ida);
+-static DEFINE_SPINLOCK(cb710_ida_lock);
+ 
+ void cb710_pci_update_config_reg(struct pci_dev *pdev,
+ 	int reg, uint32_t mask, uint32_t xor)
+@@ -205,7 +204,6 @@ static int cb710_probe(struct pci_dev *pdev,
+ 	const struct pci_device_id *ent)
+ {
+ 	struct cb710_chip *chip;
+-	unsigned long flags;
+ 	u32 val;
+ 	int err;
+ 	int n = 0;
+@@ -256,18 +254,10 @@ static int cb710_probe(struct pci_dev *pdev,
+ 	if (err)
+ 		return err;
+ 
+-	do {
+-		if (!ida_pre_get(&cb710_ida, GFP_KERNEL))
+-			return -ENOMEM;
+-
+-		spin_lock_irqsave(&cb710_ida_lock, flags);
+-		err = ida_get_new(&cb710_ida, &chip->platform_id);
+-		spin_unlock_irqrestore(&cb710_ida_lock, flags);
+-
+-		if (err && err != -EAGAIN)
+-			return err;
+-	} while (err);
+-
++	err = ida_alloc(&cb710_ida, GFP_KERNEL);
++	if (err < 0)
++		return err;
++	chip->platform_id = err;
+ 
+ 	dev_info(&pdev->dev, "id %d, IO 0x%p, IRQ %d\n",
+ 		chip->platform_id, chip->iobase, pdev->irq);
+@@ -308,7 +298,6 @@ static int cb710_probe(struct pci_dev *pdev,
+ static void cb710_remove_one(struct pci_dev *pdev)
+ {
+ 	struct cb710_chip *chip = pci_get_drvdata(pdev);
+-	unsigned long flags;
+ 
+ 	cb710_unregister_slot(chip, CB710_SLOT_SM);
+ 	cb710_unregister_slot(chip, CB710_SLOT_MS);
+@@ -317,9 +306,7 @@ static void cb710_remove_one(struct pci_dev *pdev)
+ 	BUG_ON(atomic_read(&chip->slot_refs_count) != 0);
+ #endif
+ 
+-	spin_lock_irqsave(&cb710_ida_lock, flags);
+-	ida_remove(&cb710_ida, chip->platform_id);
+-	spin_unlock_irqrestore(&cb710_ida_lock, flags);
++	ida_free(&cb710_ida, chip->platform_id);
+ }
+ 
+ static const struct pci_device_id cb710_pci_tbl[] = {
+-- 
+2.17.1
+
