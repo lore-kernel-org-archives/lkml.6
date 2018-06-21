@@ -2,93 +2,72 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC3EC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E17C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC16208A5
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:09:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bh2Eu9TA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC16208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1CBD4208B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:11:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CBD4208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933222AbeFUPJw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:09:52 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34847 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932808AbeFUPJu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:09:50 -0400
-Received: by mail-wm0-f68.google.com with SMTP id j15-v6so6866724wme.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 08:09:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Q5bP6U6pvxDda8fTrAC+SHwb5ZJxZ0Ofoclufdvz0Zw=;
-        b=bh2Eu9TA1X0rsTRiMfJwSymWl4fAkjtxBiFc6z6qsMrIcw2xTOmKmEx/VRaRxhRlcu
-         nHpjHFhzsSfzLIIJkwAP8Ni0QPf8b5UUOEiX22aSsk/3RuDVZJkdDH7LLMi+X//VdQok
-         V1Y++RRg1DDmcMzNCha2DeVxu5h0jiu6NgJ/Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Q5bP6U6pvxDda8fTrAC+SHwb5ZJxZ0Ofoclufdvz0Zw=;
-        b=fDzsMCWeAjKRjXRjJAd/+eMoZK63EwkkDdHF/o4KiyR+Lu+ZkK4F14Gv5WW4EIV+b5
-         p20bCXzyxEmAcpUdgYbVY4MnCdbjBD3cc/xF0FM8MCaKqox8d7DeiQ/TypbIHprAHGEo
-         VwTwimFsocpJqDyetGVqNiWP5lti3pqEgTB1xZ0TyiyhYhT+I037twoXrMt+6PGYTfgR
-         CFGmk3hWzTO3ULuwoHllo10N+ASNPdnG6UgwHMfBd3MiTznFLT228Kb3IFXB39WMActD
-         2nTUg5l9ra/Ze7Xv+PRYOu8bBiwNLs0aNHQARVgZPM8gGJAnngRsaVp8sBkJg8F8aiU+
-         gxUw==
-X-Gm-Message-State: APt69E1S6mtHZbtoIII6RgF5gDy5Toyc7ZWZHmVYx2xH07ra1RahkYT9
-        YjZveBVpGiPdQqWm3Iu8iE/JxYOGlbc=
-X-Google-Smtp-Source: ADUXVKJqeIDRoZ4Aa90/00UvikYTMTSwuk2iWXU0vpoPYTEHF/3uolzf107M3X5n9sX00gG4SY0E+g==
-X-Received: by 2002:a1c:4743:: with SMTP id u64-v6mr5390029wma.49.1529593788841;
-        Thu, 21 Jun 2018 08:09:48 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id y18-v6sm5773319wrl.53.2018.06.21.08.09.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 08:09:48 -0700 (PDT)
-Subject: Re: [alsa-devel] [PATCH v2 2/2] ASoC: qcom: add sdm845 sound card
- support
-To:     Vinod <vkoul@kernel.org>, Rohit kumar <rohitkr@codeaurora.org>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, plai@codeaurora.org, bgoswami@codeaurora.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1529578399-3633-1-git-send-email-rohitkr@codeaurora.org>
- <1529578399-3633-3-git-send-email-rohitkr@codeaurora.org>
- <20180621123503.GD27187@vkoul-mobl>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <46f1a6af-a180-2568-d203-87323379c2fd@linaro.org>
-Date:   Thu, 21 Jun 2018 16:09:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S933310AbeFUPLf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 11:11:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54260 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933178AbeFUPLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 11:11:33 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 18E0B3082141;
+        Thu, 21 Jun 2018 15:11:33 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 065F0200824F;
+        Thu, 21 Jun 2018 15:11:33 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id DEEFB1800531;
+        Thu, 21 Jun 2018 15:11:32 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 11:11:32 -0400 (EDT)
+From:   Bob Peterson <rpeterso@redhat.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>, y2038@lists.linaro.org,
+        Abhi Das <adas@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+Message-ID: <1526735430.44722790.1529593892692.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180620142857.33297-1-arnd@arndb.de>
+References: <20180620142857.33297-1-arnd@arndb.de>
+Subject: Re: [PATCH] gfs2: call ktime_get_coarse_real_ts64() directly
 MIME-Version: 1.0
-In-Reply-To: <20180621123503.GD27187@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.116.54, 10.4.195.26]
+Thread-Topic: gfs2: call ktime_get_coarse_real_ts64() directly
+Thread-Index: WHwBhQ6GTCt8Mf0nGXPw/a7k2HKDxg==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 21 Jun 2018 15:11:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+----- Original Message -----
+> current_kernel_time64() is now just a deprecated wrapper around
+> ktime_get_coarse_real_ts64(), so let's just call that directly.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+Hi,
 
+Thanks. This is now pushed to the for-next branch of the linux-gfs2 tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git/commit/fs/gfs2?h=for-next&id=ee9c7f9ae3d4fb9fb5c9cacbe3880d5dd66feb16
 
-On 21/06/18 13:35, Vinod wrote:
-> And this one is generic DT parsing and seems quite similar to one in apq8096.c
-> Can we move these into a lib and use them instead of duplicating.
-I totally agree with Vinod, We should probably come up with a library 
-functions something like common.c so that we do not duplicate code.
-This code is going be exactly same for most of the SoCs using qdsp.
+Regards,
 
-thanks,
-srini
-
+Bob Peterson
+Red Hat File Systems
