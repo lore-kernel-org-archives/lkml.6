@@ -2,121 +2,98 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D98C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 055DAC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0791321711
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:50:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0791321711
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B160B21718
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:51:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="scfv7gkt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B160B21718
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933580AbeFUQux (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:50:53 -0400
-Received: from mga14.intel.com ([192.55.52.115]:15233 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933429AbeFUQuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:50:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 09:50:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,252,1526367600"; 
-   d="scan'208";a="66558617"
-Received: from lmrad-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.46])
-  by orsmga001.jf.intel.com with ESMTP; 21 Jun 2018 09:50:46 -0700
-Date:   Thu, 21 Jun 2018 19:50:47 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-        zohar@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] tpm: Introduce a kref for the tpm_chip
-Message-ID: <20180621165047.GG11859@linux.intel.com>
-References: <20180620161948.1464255-1-stefanb@linux.vnet.ibm.com>
- <20180620161948.1464255-2-stefanb@linux.vnet.ibm.com>
- <20180620183854.GC27445@ziepe.ca>
- <0d37dbe0-d0f4-da13-ffa4-4f00d3542390@linux.vnet.ibm.com>
+        id S933578AbeFUQvk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:51:40 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52260 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933429AbeFUQvj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:51:39 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5LGo28g178248
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:51:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=JlBZAgNmkno0j16DEKxn9yBN1wOPn0NDUhmaOfx7U3k=;
+ b=scfv7gktbJYckZRzqqfhq0f+P+IpYjPdnNkBHDENjBCr0LKj+mDcx85M4U8P6RjVwerX
+ p5BwG6Xc//P4b8H5UZZk5wRreK3JiZoXhA/79wCLLtxI5W2c7wvpLr8WlZ37qyEXRde9
+ SujvvxTJk0VETZYgsdpczLt061Luw+6gfU1LtlFrS6fs/nEvCDRNzB4x0xkifajHPPCi
+ +i8c2esWqSYho+78wRgJ7xM8rx/qgt+IORZN03p6/Jcg4VYM1+E+EAwr7YO4W2S9gQYG
+ 44WdDA6PjLTdy6GePd7iGhoBkuHMe3UMsQI9Ttcb639eBejr9/IEJZoTx88vteU5hGDX Hg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2jmt01sn6q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:51:39 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5LGpbvf018721
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:51:38 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5LGpbiY015410
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:51:37 GMT
+Received: from mail-ot0-f173.google.com (/74.125.82.173)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Jun 2018 09:51:37 -0700
+Received: by mail-ot0-f173.google.com with SMTP id r18-v6so4367485otk.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 09:51:37 -0700 (PDT)
+X-Gm-Message-State: APt69E1aXUzDlRhuJ4ZuaGfei+Ygq5Yhf7p/AbRAl/fOP/M0ttxeM33t
+        B3zR6lhMct7csKkSlJM7DPBKrudexF/YCEHEnMs=
+X-Google-Smtp-Source: ADUXVKLVkhc71Rs1HjiTfT+8+SYi+UIcA8Y726yc77hD3n46EyIdLhGc3Wm+/h9RvSihHviHRdqfaO2SG/3btA3pEQ8=
+X-Received: by 2002:a9d:72dd:: with SMTP id d29-v6mr17197825otk.345.1529599896563;
+ Thu, 21 Jun 2018 09:51:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d37dbe0-d0f4-da13-ffa4-4f00d3542390@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180620212700.29178-1-pasha.tatashin@oracle.com>
+ <20180620212700.29178-4-pasha.tatashin@oracle.com> <alpine.DEB.2.21.1806211811060.1591@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1806211811060.1591@nanos.tec.linutronix.de>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 21 Jun 2018 12:51:00 -0400
+X-Gmail-Original-Message-ID: <CAGM2reaGwtgvc=CBDvF2K3zQKieeL82zLy0155yWYs7VU6tL9w@mail.gmail.com>
+Message-ID: <CAGM2reaGwtgvc=CBDvF2K3zQKieeL82zLy0155yWYs7VU6tL9w@mail.gmail.com>
+Subject: Re: [PATCH v11 3/6] time: replace read_boot_clock64() with read_persistent_wall_and_boot_offset()
+To:     tglx@linutronix.de
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, hpa@zytor.com, douly.fnst@cn.fujitsu.com,
+        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8931 signatures=668703
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=533
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806210183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 03:34:36PM -0400, Stefan Berger wrote:
-> On 06/20/2018 02:38 PM, Jason Gunthorpe wrote:
-> > On Wed, Jun 20, 2018 at 12:19:43PM -0400, Stefan Berger wrote:
-> > > Introduce a kref for the tpm_chip that we initialize when the tpm_chip has
-> > > been allocated and release before the tpm_chip is to be freed.
-> > > 
-> > > Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > >   drivers/char/tpm/tpm-chip.c | 24 +++++++++++++++++++-----
-> > >   drivers/char/tpm/tpm.h      |  1 +
-> > >   2 files changed, 20 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> > > index 0a62c19937b6..a933676194a4 100644
-> > > +++ b/drivers/char/tpm/tpm-chip.c
-> > > @@ -119,8 +119,24 @@ struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
-> > >   	return res;
-> > >   }
-> > > +static void tpm_chip_free(struct kref *kref)
-> > > +{
-> > > +	struct tpm_chip *chip = container_of(kref, struct tpm_chip, kref);
-> > > +
-> > > +	kfree(chip->log.bios_event_log);
-> > > +	kfree(chip->work_space.context_buf);
-> > > +	kfree(chip->work_space.session_buf);
-> > > +	kfree(chip);
-> > > +}
-> > > +
-> > > +static void tpm_chip_put(struct tpm_chip *chip)
-> > > +{
-> > > +	if (chip)
-> > > +		kref_put(&chip->kref, tpm_chip_free);
-> > > +}
-> > > +
-> > >   /**
-> > > - * tpm_dev_release() - free chip memory and the device number
-> > > + * tpm_dev_release() - free the device number and release reference to chip
-> > >    * @dev: the character device for the TPM chip
-> > >    *
-> > >    * This is used as the release function for the character device.
-> > > @@ -133,10 +149,7 @@ static void tpm_dev_release(struct device *dev)
-> > >   	idr_remove(&dev_nums_idr, chip->dev_num);
-> > >   	mutex_unlock(&idr_lock);
-> > > -	kfree(chip->log.bios_event_log);
-> > > -	kfree(chip->work_space.context_buf);
-> > > -	kfree(chip->work_space.session_buf);
-> > > -	kfree(chip);
-> > > +	tpm_chip_put(chip);
-> > >   }
-> > >   static void tpm_devs_release(struct device *dev)
-> > > @@ -195,6 +208,7 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
-> > >   	mutex_init(&chip->tpm_mutex);
-> > >   	init_rwsem(&chip->ops_sem);
-> > > +	kref_init(&chip->kref);
-> > >   	chip->ops = ops;
-> > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> > > index 7f2d0f489e9c..098d7dcc04a4 100644
-> > > +++ b/drivers/char/tpm/tpm.h
-> > > @@ -211,6 +211,7 @@ struct tpm_chip {
-> > >   	struct cdev cdev;
-> > >   	struct cdev cdevs;
-> > > +	struct kref kref;
-> > NAK, there is already a kref in struct device, that one must be used.
-> 
-> Right. Should make it simpler...
+> Please don't make that a wholesale patch. I surely indicated the steps
+> which are required and the steps can be done as separate patches easily,
 
-I'll review the next version.
+Hi Thomas,
 
-/Jarkko
+I will split it into several patches in the next version.
+
+Thank you,
+Pavel
