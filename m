@@ -2,248 +2,97 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDDFC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B47C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D834420837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:19:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D834420837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E820720875
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:21:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uYmsgk+z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E820720875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754449AbeFUDTI (ORCPT
+        id S1754322AbeFUDVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 23:19:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44034 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754104AbeFUDTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 23:19:06 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 67C9581663D5;
-        Thu, 21 Jun 2018 03:19:06 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-127.pek2.redhat.com [10.72.12.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8CC522156880;
-        Thu, 21 Jun 2018 03:19:02 +0000 (UTC)
-Subject: Re: [PATCH 0/4 V3] Support kdump for AMD secure memory
- encryption(SME)
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
-        iommu@lists.linux-foundation.org, dyoung@redhat.com,
-        kexec@lists.infradead.org, akpm@linux-foundation.org
-References: <20180616082714.32035-1-lijiang@redhat.com>
- <20180621012116.GF29979@MiWiFi-R3L-srv>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <c9531007-4452-a8e1-a96a-3ec7dfb0cba0@redhat.com>
-Date:   Thu, 21 Jun 2018 11:18:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Wed, 20 Jun 2018 23:21:30 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:45901 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754172AbeFUDV3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 23:21:29 -0400
+Received: by mail-pf0-f194.google.com with SMTP id a22-v6so773652pfo.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 20:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=7kY3i7BmDLb/n8wyrsOFnJPe4bMBBoW1BMNv5XmrVgU=;
+        b=uYmsgk+zFxu6ZztWlLzEFzIzLsYj9by17nw0SgDs9z8SivohAPktrv2XNMS6P/9wB7
+         R3NikJeF0IUhthrDLHUvLyLRMYEvieKMwSwtydz2oI1J+9ZuRf+Gz3UDPS8lik5bH5La
+         DIMIlwGIL3bs1mmSsv7WnM13kG20S1PLOyBP4rHNMsGEND3DUN23Yj+I6GvLhVaiXP2w
+         LUjYpBXiQOjbIUxvqbAomj6w9x96VbRy72e2LuPCHs7EZYncGh3GQBQU8RmWNWpAr4Cq
+         nc91YAkRIrMWXVwin8k+Vsrn5GpBNGU7sW9kpr3Vwq154mvqs0PtWyqwGlG3Yc1AjeaY
+         27lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=7kY3i7BmDLb/n8wyrsOFnJPe4bMBBoW1BMNv5XmrVgU=;
+        b=eYRSsk44K5EbYoj9jTcg6wF3TDLGxIeVtdJ3uIUaN3BapROvJf5364DRE6Ec3ybFqD
+         I6bKd0LivFhSBUuk7ufyOiv0P1gvUI+giefylXILZ6DUvJmszQyqtKR9g7fYyt7FzwCI
+         y45IX6CvoKX1X6Ozl1WAlxcHk/lTHKpJuiSSO0VVSZavqG+8YL3puYc4u3cdFkhmaBQT
+         rvvabN6sjZK7T87bVWqPbof82qbWJ5MMAJOLfEQamFviU83IckEpkL8s4lOq0Jbjemvu
+         yy8BBE+2kGmwGyvQxrHkzJnr4qwymu0CxTIAAB/5cL5LRqogzD+Gkikt/+SPrSTa8TMn
+         A0ag==
+X-Gm-Message-State: APt69E28WFZEUTY6upmNY5guxk1eHmUAXsCWunDcuuc7gfFIWsiyj9Y/
+        vlJKVGFmjVIcUXebLOHblMR6mEnD
+X-Google-Smtp-Source: ADUXVKKXUDKYgGzsO0+T1r55/i3p3lJ5GkMQ6K2XYUL6twej5rj0jQX0P32xD+eKxbp2yVAMmrp6GQ==
+X-Received: by 2002:a62:234a:: with SMTP id j71-v6mr24921607pfj.221.1529551288674;
+        Wed, 20 Jun 2018 20:21:28 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.70.11? ([2402:f000:1:1501:200:5efe:a66f:460b])
+        by smtp.gmail.com with ESMTPSA id b4-v6sm4357200pgq.51.2018.06.20.20.21.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 20:21:28 -0700 (PDT)
+To:     akpm@linux-foundation.org, dvyukov@google.com,
+        Greg KH <gregkh@linuxfoundation.org>, tchibo@google.com,
+        aryabinin@virtuozzo.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] kernel: kcov: a possible sleep-in-atomic-context bug in
+ kcov_ioctl()
+Message-ID: <ca2e4f0b-dd08-8d66-51e3-05cc69e15d65@gmail.com>
+Date:   Thu, 21 Jun 2018 11:20:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180621012116.GF29979@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 21 Jun 2018 03:19:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 21 Jun 2018 03:19:06 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年06月21日 09:21, Baoquan He 写道:
-> On 06/16/18 at 04:27pm, Lianbo Jiang wrote:
->> It is convenient to remap the old memory encrypted to the second kernel by
->> calling ioremap_encrypted().
->>
->> When sme enabled on AMD server, we also need to support kdump. Because
->> the memory is encrypted in the first kernel, we will remap the old memory
->> encrypted to the second kernel(crash kernel), and sme is also enabled in
->> the second kernel, otherwise the old memory encrypted can not be decrypted.
->> Because simply changing the value of a C-bit on a page will not
->> automatically encrypt the existing contents of a page, and any data in the
->> page prior to the C-bit modification will become unintelligible. A page of
->> memory that is marked encrypted will be automatically decrypted when read
->> from DRAM and will be automatically encrypted when written to DRAM.
->>
->> For the kdump, it is necessary to distinguish whether the memory is
->> encrypted. Furthermore, we should also know which part of the memory is
->> encrypted or decrypted. We will appropriately remap the memory according
->> to the specific situation in order to tell cpu how to deal with the
->> data(encrypted or decrypted). For example, when sme enabled, if the old
->> memory is encrypted, we will remap the old memory in encrypted way, which
->> will automatically decrypt the old memory encrypted when we read those data
->> from the remapping address.
->>
->>  ----------------------------------------------
->> | first-kernel | second-kernel | kdump support |
->> |      (mem_encrypt=on|off)    |   (yes|no)    |
->> |--------------+---------------+---------------|
->> |     on       |     on        |     yes       |
->> |     off      |     off       |     yes       |
->> |     on       |     off       |     no        |
-> 
-> 
->> |     off      |     on        |     no        |
-> 
-> It's not clear to me here. If 1st kernel sme is off, in 2nd kernel, when
-> you remap the old memory with non-sme mode, why did it fail?
-> 
-Thank you, Baoquan.
-For kdump, there are two cases that doesn't need to support:
+The kernel may sleep with holding a spinlock.
+The function call path (from bottom to top) in Linux-4.16.7 is:
 
-1. SME on(first kernel), but SME off(second kernel).
-Because the old memory is encrypted, we can't decrypt the old memory if SME is off
-in the second kernel(in kdump mode).
+[FUNC] vfree --> can sleep
+kernel/kcov.c, 237: vfree in kcov_put
+kernel/kcov.c, 396: kcov_put in kcov_ioctl_locked
+kernel/kcov.c, 410: kcov_ioctl_locked in kcov_ioctl
+kernel/kcov.c, 409: spin_lock in kcov_ioctl
 
-2. SME off(first kernel), but SME on(second kernel)
-Maybe this situation doesn't have significance in actual deployment, furthermore, it
-will also increase the complexity of the code. It's just for testing, maybe it is
-unnecessary to support it, because the old memory is unencrypted.
+This bug is found by my static analysis tool (DSAC-2) and checked by my
+code review.
 
-Thanks.
-Lianbo
-> And please run scripts/get_maintainer.pl and add maintainers of
-> component which is affected in patch to CC list.
-Great! I forgot CC maintainers, thanks for your reminder.
+I do not know how to correctly fix this bug, so I just report them.
 
-Lianbo
-> 
->> |______________|_______________|_______________|
->>
->> This patch is only for SME kdump, it is not support SEV kdump.
->>
->> Test tools:
->> makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
->> commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
->> Author: Lianbo Jiang <lijiang@redhat.com>
->> Date:   Mon May 14 17:02:40 2018 +0800
->> Note: This patch can only dump vmcore in the case of SME enabled.
->>
->> crash-7.2.1: https://github.com/crash-utility/crash.git
->> commit 1e1bd9c4c1be (Fix for the "bpf" command display on Linux 4.17-rc1)
->> Author: Dave Anderson <anderson@redhat.com>
->> Date:   Fri May 11 15:54:32 2018 -0400
->>
->> Test environment:
->> HP ProLiant DL385Gen10 AMD EPYC 7251
->> 8-Core Processor
->> 32768 MB memory
->> 600 GB disk space
->>
->> Linux 4.17-rc7:
->> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->> commit b04e217704b7 ("Linux 4.17-rc7")
->> Author: Linus Torvalds <torvalds@linux-foundation.org>
->> Date:   Sun May 27 13:01:47 2018 -0700
->>
->> Reference:
->> AMD64 Architecture Programmer's Manual
->> https://support.amd.com/TechDocs/24593.pdf
->>
->> Some changes:
->> 1. remove the sme_active() check in __ioremap_caller().
->> 2. remove the '#ifdef' stuff throughout this patch.
->> 3. put some logic into the early_memremap_pgprot_adjust() and clean the
->> previous unnecessary changes, for example: arch/x86/include/asm/dmi.h,
->> arch/x86/kernel/acpi/boot.c, drivers/acpi/tables.c.
->> 4. add a new file and modify Makefile.
->> 5. clean compile warning in copy_device_table() and some compile error.
->> 6. split the original patch into four patches, it will be better for
->> review.
->>
->> Some known issues:
->> 1. about SME
->> Upstream kernel doesn't work when we use kexec in the follow command. The
->> system will hang.
->> (This issue doesn't matter with the kdump patch.)
->>
->> Reproduce steps:
->>  # kexec -l /boot/vmlinuz-4.17.0-rc7+ --initrd=/boot/initramfs-4.17.0-rc7+.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro mem_encrypt=on rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug nokaslr"
->>  # kexec -e (or reboot)
->>
->> The system will hang:
->> [ 1248.932239] kexec_core: Starting new kernel
->> early console in extract_kernel
->> input_data: 0x000000087e91c3b4
->> input_len: 0x000000000067fcbd
->> output: 0x000000087d400000
->> output_len: 0x0000000001b6fa90
->> kernel_total_size: 0x0000000001a9d000
->> trampoline_32bit: 0x0000000000099000
->>
->> Decompressing Linux...
->> Parsing ELF...        [-here the system will hang]
->>
->> 2. about SEV
->> Upstream kernel(Host OS) doesn't work in host side, some drivers about
->> SEV always go wrong in host side. We can't boot SEV Guest OS to test
->> kdump patch. Maybe it is more reasonable to improve SEV in another
->> patch. When some drivers can work in host side and it can also boot
->> Virtual Machine(SEV Guest OS), it will be suitable to fix SEV for kdump.
->>
->> [  369.426131] INFO: task systemd-udevd:865 blocked for more than 120 seconds.
->> [  369.433177]       Not tainted 4.17.0-rc5+ #60
->> [  369.437585] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> [  369.445783] systemd-udevd   D    0   865    813 0x80000004
->> [  369.451323] Call Trace:
->> [  369.453815]  ? __schedule+0x290/0x870
->> [  369.457523]  schedule+0x32/0x80
->> [  369.460714]  __sev_do_cmd_locked+0x1f6/0x2a0 [ccp]
->> [  369.465556]  ? cleanup_uevent_env+0x10/0x10
->> [  369.470084]  ? remove_wait_queue+0x60/0x60
->> [  369.474219]  ? 0xffffffffc0247000
->> [  369.477572]  __sev_platform_init_locked+0x2b/0x70 [ccp]
->> [  369.482843]  sev_platform_init+0x1d/0x30 [ccp]
->> [  369.487333]  psp_pci_init+0x40/0xe0 [ccp]
->> [  369.491380]  ? 0xffffffffc0247000
->> [  369.494936]  sp_mod_init+0x18/0x1000 [ccp]
->> [  369.499071]  do_one_initcall+0x4e/0x1d4
->> [  369.502944]  ? _cond_resched+0x15/0x30
->> [  369.506728]  ? kmem_cache_alloc_trace+0xae/0x1d0
->> [  369.511386]  ? do_init_module+0x22/0x220
->> [  369.515345]  do_init_module+0x5a/0x220
->> [  369.519444]  load_module+0x21cb/0x2a50
->> [  369.523227]  ? m_show+0x1c0/0x1c0
->> [  369.526571]  ? security_capable+0x3f/0x60
->> [  369.530611]  __do_sys_finit_module+0x94/0xe0
->> [  369.534915]  do_syscall_64+0x5b/0x180
->> [  369.538607]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->> [  369.543698] RIP: 0033:0x7f708e6311b9
->> [  369.547536] RSP: 002b:00007ffff9d32aa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
->> [  369.555162] RAX: ffffffffffffffda RBX: 000055602a04c2d0 RCX: 00007f708e6311b9
->> [  369.562346] RDX: 0000000000000000 RSI: 00007f708ef52039 RDI: 0000000000000008
->> [  369.569801] RBP: 00007f708ef52039 R08: 0000000000000000 R09: 000055602a048b20
->> [  369.576988] R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000000
->> [  369.584177] R13: 000055602a075260 R14: 0000000000020000 R15: 0000000000000000
->>
->> Lianbo Jiang (4):
->>   Add a function(ioremap_encrypted) for kdump when AMD sme enabled
->>   Allocate pages for kdump without encryption when SME is enabled
->>   Remap the device table of IOMMU in encrypted manner for kdump
->>   Help to dump the old memory encrypted into vmcore file
->>
->>  arch/x86/include/asm/io.h            |  3 ++
->>  arch/x86/kernel/Makefile             |  1 +
->>  arch/x86/kernel/crash_dump_encrypt.c | 53 ++++++++++++++++++++++++++++++++++++
->>  arch/x86/mm/ioremap.c                | 28 +++++++++++++------
->>  drivers/iommu/amd_iommu_init.c       | 15 +++++++++-
->>  fs/proc/vmcore.c                     | 20 ++++++++++----
->>  include/linux/crash_dump.h           | 11 ++++++++
->>  kernel/kexec_core.c                  | 12 ++++++++
->>  8 files changed, 128 insertions(+), 15 deletions(-)
->>  create mode 100644 arch/x86/kernel/crash_dump_encrypt.c
->>
->> -- 
->> 2.9.5
->>
->>
->> _______________________________________________
->> kexec mailing list
->> kexec@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/kexec
+
+Best wishes,
+Jia-Ju Bai
