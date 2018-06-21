@@ -2,106 +2,79 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6206EC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B86C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C3B520837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:27:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEraksgY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C3B520837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 961D720837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 961D720837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933066AbeFUL1T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 07:27:19 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51072 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932855AbeFUL1Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 07:27:16 -0400
-Received: by mail-wm0-f68.google.com with SMTP id e16-v6so4574643wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 04:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+VQne2lbyafF92iYBoIRJ7IVFdARW2GwqUKGPlRXjgQ=;
-        b=hEraksgYhcD41bTRHTHQd6Io1b3GYq/CRE2TkJGBptBB+FRMepxz4lMWMTun3D64H5
-         gpR4UhsfKZgXqf84+2YiTbSOQXiPkII4U5IcH0NExwPv1JmyvmYrOIK+LKSj9OldHibe
-         6QNt1/teRsaS8m5RrSfw5GV04G8FutdzNhBmQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+VQne2lbyafF92iYBoIRJ7IVFdARW2GwqUKGPlRXjgQ=;
-        b=EF6u/aOn8AzCWRiyffLpuniNseRJ35A9eyky4865pBMHEFV0KUxyh8gyC3kucYX3xn
-         VPavseQqefhT3MSpulImItvWNntEQzzNHjYuVDBSLQypuAhyok9qrmW2OW6uLxjcI1PB
-         SUcPY8gvt9HZbpb5z5eLWZ/dePRO6HytUFCItdDMIHWmpxqcnvCXFzVX7jeKhKt6he7+
-         JUsYNhcIzprAkFmpSrVNXvNW0PAVkaZbK7ecpcESNQ7S5K73HXSDogtoSnC7bmLEKdcU
-         HobqJVsA3HVtbebNCt5wXAGOfz4V34fht35cvcmfFrUQ/S6XbZOrmtZQ8FLJGALIG6X6
-         hIbA==
-X-Gm-Message-State: APt69E0AoBcHJTynS0I5w4MFhAjC1jNI1bs7OfRJxNxcaUwAnzVmCuML
-        8uIR6uBDn2KaykumWbnl29MpAw==
-X-Google-Smtp-Source: ADUXVKL/UTwqNDIOauLpbEz+qrA6sKj4gofp/NVulkex+EshZJKbvIXIeDrf0x91b54mGWSdpAKGfw==
-X-Received: by 2002:a1c:2807:: with SMTP id o7-v6mr4537038wmo.11.1529580434879;
-        Thu, 21 Jun 2018 04:27:14 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id n71-v6sm7177568wmi.14.2018.06.21.04.27.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 04:27:13 -0700 (PDT)
-Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Vinod Koul <vinod.koul@linaro.org>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-References: <20180618141259.23141-1-vkoul@kernel.org>
- <20180618141259.23141-4-vkoul@kernel.org>
- <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
- <966e9cd4-70a3-8d54-df0f-16df3df45fb5@linaro.org>
- <20180621101506.rnklbtapvfdev4xb@gondor.apana.org.au>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <e39deb02-8fa4-84ac-b33e-d692402189a1@linaro.org>
-Date:   Thu, 21 Jun 2018 14:27:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933149AbeFUL1Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 07:27:25 -0400
+Received: from ozlabs.org ([203.11.71.1]:47963 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932936AbeFUL1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 07:27:21 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41BKDR2cmsz9s19;
+        Thu, 21 Jun 2018 21:27:19 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Mathieu Malaterre <malat@debian.org>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] powerpc/32: Remove left over function prototypes
+In-Reply-To: <20180620190038.3250-1-malat@debian.org>
+References: <20180408194821.19682-1-malat@debian.org> <20180620190038.3250-1-malat@debian.org>
+Date:   Thu, 21 Jun 2018 21:27:18 +1000
+Message-ID: <87602cfkh5.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20180621101506.rnklbtapvfdev4xb@gondor.apana.org.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Herbert,
+Mathieu Malaterre <malat@debian.org> writes:
 
-On 06/21/2018 01:15 PM, Herbert Xu wrote:
-> On Thu, Jun 21, 2018 at 12:56:34PM +0300, Stanimir Varbanov wrote:
->>
->>> Is this really a pseudo-RNG? If so it needs to be moved over to
->>> the algif_rng interface.
->>
->> Despite the register name (PRNG_ registers prefix) the IP is using FIPS
->> approved algorithm and we can claim that this is true hardware entropy
->> generator.
-> 
-> Whether your RNG is a PRNG or not has nothing to do with the
-> algorithm you use.  No algorithm can generate entropy out of thin
-> air.
+> In commit 4aea909eeba3 ("powerpc: Add missing prototypes in setup_32.c")
 
-OK, I just wanted to say that it is _not_ PRNG and the register names
-gives us wrong impression.
+I don't have that commit ^ ?
 
--- 
-regards,
-Stan
+That might be because I squashed some of your fixes together or something?
+
+> diff --git a/arch/powerpc/kernel/setup.h b/arch/powerpc/kernel/setup.h
+> index 35ca309848d7..829ed66f0a40 100644
+> --- a/arch/powerpc/kernel/setup.h
+> +++ b/arch/powerpc/kernel/setup.h
+> @@ -19,9 +19,6 @@ void irqstack_early_init(void);
+>  void setup_power_save(void);
+>  unsigned long __init early_init(unsigned long dt_ptr);
+>  void __init machine_init(u64 dt_ptr);
+> -int __init ppc_setup_l2cr(char *str);
+> -int __init ppc_setup_l3cr(char *str);
+> -int __init ppc_init(void);
+>  #else
+>  static inline void setup_power_save(void) { };
+>  #endif
+
+I have:
+
+#ifdef CONFIG_PPC32
+void setup_power_save(void);
+#else
+static inline void setup_power_save(void) { };
+#endif
+
+
+cheers
