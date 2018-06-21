@@ -4,227 +4,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4A7C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23227C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D2721745
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B759421746
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:00:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYv8mHM2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D2721745
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDATeKRW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B759421746
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933485AbeFUQ7e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:59:34 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38052 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933392AbeFUQ7b (ORCPT
+        id S933563AbeFURAo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 13:00:44 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44505 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933438AbeFURAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:59:31 -0400
-Received: by mail-pg0-f67.google.com with SMTP id c9-v6so1696394pgf.5;
-        Thu, 21 Jun 2018 09:59:31 -0700 (PDT)
+        Thu, 21 Jun 2018 13:00:43 -0400
+Received: by mail-pf0-f194.google.com with SMTP id h12-v6so1822414pfk.11;
+        Thu, 21 Jun 2018 10:00:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DIEIO3LyTYJlFnbkxEi4xlz+eewGtPvgYw/pWfGW5as=;
-        b=FYv8mHM2AuQvamMB0iFDgzyg6X0ldTzcWsU1k1vm5CSKQ5isonkBfLsGA7Gtb9/I0K
-         o/y9y54iALiZUDgMVhqGPKreVCSYwIbxrG2xcSDn35Hg2zv0MS+/2yMwK1hLvw30Ym7c
-         40sUxOozE7XGVpO96sJCHi/ZADigxJCN/Fd38dF9duaHsVb4BSvEafoMxb2wAKqWkEGU
-         2ePmxyhsLevU9s5jnKBfveVLOr7vB6RFZjkrZP373jFe5JhRYmIxHipIbPtK4K4qw9Qp
-         xHG38Io3CrnJ9KHDmihDFXSRJpujTZSU4lPuLxUWaV1Vdj6qf1x3sNxBozRSwy18GPbm
-         FRVA==
+        h=from:to:cc:subject:date:message-id;
+        bh=IJ3aT0MdDAiuGvRCjSjjEY3q2fim+Hm+RnUZWux4p1g=;
+        b=TDATeKRWGrE/z23bCdFi//soLQ6AwtYLUqNvooobhDV+4lqo5fgDdFpsStGn9HHmBz
+         teRGGmG5EcaISC8PF6tC+dw65zElbN3+xlAl7Q/34jP5HenJDPAstJr3iazayDVHTpHq
+         7iDov0x65wwdY1NeVxPd08ywgXVSdR5F90b7GMLPxo48iD/9TK2DTeVUNhrrQPQ8Wd0N
+         A4wDY3pDsJMsnExjqFv3vjLyTVD4ULI0JDwhXmGtgx3Hb9aorOGIZHBsnrSVveyFqws8
+         TZ+qteuvxUWzpEUY2H0AmWSeD7OAGyEVuvJAm+OWPVxWE/2fJlBKSq2/iibumhn4cQi0
+         nWMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DIEIO3LyTYJlFnbkxEi4xlz+eewGtPvgYw/pWfGW5as=;
-        b=qxFPIagWjxXt5akZksG11MgG5SiiyJYenV4+9d9Y317hYYG5oNL7jvRtaQriZVkZun
-         q9YCsh9eyK/PbvAt+C0B19p+54ELbrKiHv40Bgzgt+GY67GesvXXIhDnpkaE5wcp7kCh
-         LVAY+wtk0gMgL3dsLmEuLa4bwgvFjDrTEGlFGMvmKGSnxLIe+J9BKtNCerIMpApIqP1e
-         PjKXKFk4fZ5h7hY54y4wVnCBUhMK6a2eBhnzjPxAiKWuqE6T6xnIKfF0ajgm2F27c0NJ
-         CWTVcKgdkz/d91ehcNdN8LR8L+np6Di3xyl1zFynF1bS8W7ruoxbwWWbLH+Bq4Mv6W0Q
-         031Q==
-X-Gm-Message-State: APt69E06IUt3gFeIo2wu/nUwcKQfMJr5+aPwM6+Dsjs2o3lY0rK0e7Dr
-        7zW5CiAM7u9k1m0GLbxwlke26chVULFfpPQCcXxGwQ==
-X-Google-Smtp-Source: ADUXVKJViKirUp1bAkWo+3DE6jDxQbLCE1RC1927YSE3j7sMSgqzc0SBDVZrU0ls29YiI/x6pVyDvqhY5xHXJmy4DJY=
-X-Received: by 2002:a62:48cd:: with SMTP id q74-v6mr27645333pfi.153.1529600371063;
- Thu, 21 Jun 2018 09:59:31 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:80cc:0:0:0:0 with HTTP; Thu, 21 Jun 2018 09:59:10
- -0700 (PDT)
-In-Reply-To: <20180621133523.GA30313@embeddedor.com>
-References: <20180621133523.GA30313@embeddedor.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 21 Jun 2018 11:59:10 -0500
-Message-ID: <CAH2r5mur0tSLZiUkThB8b5fKbaDyguXT87f5J+V1buCv-Ep73g@mail.gmail.com>
-Subject: Re: [PATCH] CIFS: fix structurally dead code in smb311_posix_mkdir
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Aurelien Aptel <aaptel@suse.com>, Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000c41a7b056f29d63e"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IJ3aT0MdDAiuGvRCjSjjEY3q2fim+Hm+RnUZWux4p1g=;
+        b=CzgB6nlKsJzlHseIjTmrHT617uSfzmO284lmyMmIcp/EVOs9Gd2okD+DeOco17nA3G
+         Yz38UETGNCJpepoE1K0ZHzpAsUq66LmoS8AgPfr6Z7YFUHU6jpDW+Fch/LoF4jPJn6z7
+         Vv0H2wuwNHF2cbFV197jk/D7bygtboJBX7DujJ5E9EwdDSrjStUMMJXnt/UQgAbt5KDD
+         F9XQRfEpQJUefnXRhZYOrWWvvvbql/7UYXaTs0Q25JTBxwqe4sf8aepSJ26yVoHyaM83
+         MdohODdPZY4dYDjquH8vS+ZUT82Wo3b3791Cj6Lj5aksXzOAjhViRaZPEEn/TLSzPHM8
+         T44w==
+X-Gm-Message-State: APt69E2EqUeSsC2pcQ+raSjQBzweI6tNSc/mD77TkHzNae+s3+N5gjA2
+        amYfavcJfu5Pbtb5tMqcZ98H5QCC3ac=
+X-Google-Smtp-Source: ADUXVKIOpYuvcHuG6zaPzNuvWkxUpHD5m+8HgyUjMgrkDwJvLoSWICVc3/7VTVwivwO9wlLVajjcSg==
+X-Received: by 2002:a65:5cc8:: with SMTP id b8-v6mr23241183pgt.85.1529600442604;
+        Thu, 21 Jun 2018 10:00:42 -0700 (PDT)
+Received: from localhost.localdomain ([122.174.189.32])
+        by smtp.gmail.com with ESMTPSA id z18-v6sm7233182pgc.0.2018.06.21.10.00.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 10:00:42 -0700 (PDT)
+From:   Jeffrin Jose T <ahiliation@gmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Jeffrin Jose T <ahiliation@gmail.com>
+Subject: [PATCH] selftests: bpf: notification about privilege required to run test_kmod.sh testing script
+Date:   Thu, 21 Jun 2018 22:30:20 +0530
+Message-Id: <20180621170020.9073-1-ahiliation@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000c41a7b056f29d63e
-Content-Type: text/plain; charset="UTF-8"
+The test_kmod.sh script require root privilege for the successful
+execution of the test.
 
-Folded this patch and the equivalent one from Dan in with the comments
-from Aurelien  into one patch and repushed to cifs-2.6.git for-next -
-see attached.
+This patch is to notify the user about the privilege the script
+demands for the successful execution of the test.
 
-On Thu, Jun 21, 2018 at 8:35 AM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> Code at line: 1950: rc = -EIO; is unreachable. Hence, the function
-> returns rc with a value of zero and, this is not the actual intention
-> of this particular piece of code.
->
-> Fix this by placing the goto instruction just after the update to rc.
->
-> Addresses-Coverity-ID: 1470124 ("Structurally dead code")
-> Fixes: 5539e9b24a38 ("CIFS: fix memory leak and remove dead code")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  fs/cifs/smb2pdu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index 062a2a5..c9489b1 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -1946,8 +1946,8 @@ int smb311_posix_mkdir(const unsigned int xid, struct inode *inode,
->         if (ses && (ses->server))
->                 server = ses->server;
->         else {
-> -               goto err_free_path;
->                 rc = -EIO;
-> +               goto err_free_path;
->         }
->
->         /* resource #2: request */
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Jeffrin Jose T (Rajagiri SET) <ahiliation@gmail.com>
+---
+ tools/testing/selftests/bpf/test_kmod.sh | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-
-
+diff --git a/tools/testing/selftests/bpf/test_kmod.sh b/tools/testing/selftests/bpf/test_kmod.sh
+index 35669ccd4d23..378ccc512ad3 100755
+--- a/tools/testing/selftests/bpf/test_kmod.sh
++++ b/tools/testing/selftests/bpf/test_kmod.sh
+@@ -1,6 +1,15 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0
+ 
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++msg="skip all tests:"
++if [ "$(id -u)" != "0" ]; then
++    echo $msg please run this as root >&2
++    exit $ksft_skip
++fi
++
+ SRC_TREE=../../../../
+ 
+ test_run()
 -- 
-Thanks,
+2.17.0
 
-Steve
-
---000000000000c41a7b056f29d63e
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-CIFS-fix-memory-leak-and-remove-dead-code.patch"
-Content-Disposition: attachment; 
-	filename="0001-CIFS-fix-memory-leak-and-remove-dead-code.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jiosjx850
-
-RnJvbSBmODc3Mzg2ZDM3Mzc1M2M4M2Q3OTFkODIzMjgzNTZjZDk4ODEyZWI4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBBdXJlbGllbiBBcHRlbCA8YWFwdGVsQHN1c2UuY29tPgpEYXRl
-OiBUdWUsIDE5IEp1biAyMDE4IDE1OjE4OjQ4IC0wNzAwClN1YmplY3Q6IFtQQVRDSCAxLzJdIENJ
-RlM6IGZpeCBtZW1vcnkgbGVhayBhbmQgcmVtb3ZlIGRlYWQgY29kZQoKYWxzbyBmaXhlcyBlcnJv
-ciBjb2RlIGluIHNtYjMxMV9wb3NpeF9ta2RpcigpICh3aGVyZQp0aGUgZXJyb3IgYXNzaWdubWVu
-dCBuZWVkcyB0byBnbyBiZWZvcmUgdGhlIGdvdG8pCmEgdHlwbyB0aGF0IERhbiBDYXJwZW50ZXIg
-YW5kIFBhdWxvIHBvaW50ZWQgb3V0LgoKU2lnbmVkLW9mZi1ieTogQXVyZWxpZW4gQXB0ZWwgPGFh
-cHRlbEBzdXNlLmNvbT4KU2lnbmVkLW9mZi1ieTogRGFuIENhcnBlbnRlciA8ZGFuLmNhcnBlbnRl
-ckBvcmFjbGUuY29tPgpSZXZpZXdlZC1ieTogUGF1bG8gQWxjYW50YXJhIDxwYWxjYW50YXJhQHN1
-c2UuZGU+ClNpZ25lZC1vZmYtYnk6IFN0ZXZlIEZyZW5jaCA8c3RmcmVuY2hAbWljcm9zb2Z0LmNv
-bT4KLS0tCiBmcy9jaWZzL3NtYjJwZHUuYyB8IDk5ICsrKysrKysrKysrKysrKysrKysrKysrLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgNDkgaW5zZXJ0aW9ucygrKSwg
-NTAgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvY2lmcy9zbWIycGR1LmMgYi9mcy9jaWZz
-L3NtYjJwZHUuYwppbmRleCA4MTBiODU3ODdjOTEuLmVhMTAyZGNhNWYzMyAxMDA2NDQKLS0tIGEv
-ZnMvY2lmcy9zbWIycGR1LmMKKysrIGIvZnMvY2lmcy9zbWIycGR1LmMKQEAgLTE5MzQsMjcgKzE5
-MzQsMzEgQEAgaW50IHNtYjMxMV9wb3NpeF9ta2Rpcihjb25zdCB1bnNpZ25lZCBpbnQgeGlkLCBz
-dHJ1Y3QgaW5vZGUgKmlub2RlLAogCWNoYXIgKnBjX2J1ZiA9IE5VTEw7CiAJaW50IGZsYWdzID0g
-MDsKIAl1bnNpZ25lZCBpbnQgdG90YWxfbGVuOwotCV9fbGUxNiAqcGF0aCA9IGNpZnNfY29udmVy
-dF9wYXRoX3RvX3V0ZjE2KGZ1bGxfcGF0aCwgY2lmc19zYik7Ci0KLQlpZiAoIXBhdGgpCi0JCXJl
-dHVybiAtRU5PTUVNOworCV9fbGUxNiAqdXRmMTZfcGF0aCA9IE5VTEw7CiAKIAljaWZzX2RiZyhG
-WUksICJta2RpclxuIik7CiAKKwkvKiByZXNvdXJjZSAjMTogcGF0aCBhbGxvY2F0aW9uICovCisJ
-dXRmMTZfcGF0aCA9IGNpZnNfY29udmVydF9wYXRoX3RvX3V0ZjE2KGZ1bGxfcGF0aCwgY2lmc19z
-Yik7CisJaWYgKCF1dGYxNl9wYXRoKQorCQlyZXR1cm4gLUVOT01FTTsKKwogCWlmIChzZXMgJiYg
-KHNlcy0+c2VydmVyKSkKIAkJc2VydmVyID0gc2VzLT5zZXJ2ZXI7Ci0JZWxzZQotCQlyZXR1cm4g
-LUVJTzsKKwllbHNlIHsKKwkJcmMgPSAtRUlPOworCQlnb3RvIGVycl9mcmVlX3BhdGg7CisJfQog
-CisJLyogcmVzb3VyY2UgIzI6IHJlcXVlc3QgKi8KIAlyYyA9IHNtYjJfcGxhaW5fcmVxX2luaXQo
-U01CMl9DUkVBVEUsIHRjb24sICh2b2lkICoqKSAmcmVxLCAmdG90YWxfbGVuKTsKLQogCWlmIChy
-YykKLQkJcmV0dXJuIHJjOworCQlnb3RvIGVycl9mcmVlX3BhdGg7CisKIAogCWlmIChzbWIzX2Vu
-Y3J5cHRpb25fcmVxdWlyZWQodGNvbikpCiAJCWZsYWdzIHw9IENJRlNfVFJBTlNGT1JNX1JFUTsK
-IAotCiAJcmVxLT5JbXBlcnNvbmF0aW9uTGV2ZWwgPSBJTF9JTVBFUlNPTkFUSU9OOwogCXJlcS0+
-RGVzaXJlZEFjY2VzcyA9IGNwdV90b19sZTMyKEZJTEVfV1JJVEVfQVRUUklCVVRFUyk7CiAJLyog
-RmlsZSBhdHRyaWJ1dGVzIGlnbm9yZWQgb24gb3BlbiAodXNlZCBpbiBjcmVhdGUgdGhvdWdoKSAq
-LwpAQCAtMTk4Myw1MCArMTk4Nyw0NCBAQCBpbnQgc21iMzExX3Bvc2l4X21rZGlyKGNvbnN0IHVu
-c2lnbmVkIGludCB4aWQsIHN0cnVjdCBpbm9kZSAqaW5vZGUsCiAJCXJlcS0+c3luY19oZHIuRmxh
-Z3MgfD0gU01CMl9GTEFHU19ERlNfT1BFUkFUSU9OUzsKIAkJcmMgPSBhbGxvY19wYXRoX3dpdGhf
-dHJlZV9wcmVmaXgoJmNvcHlfcGF0aCwgJmNvcHlfc2l6ZSwKIAkJCQkJCSAmbmFtZV9sZW4sCi0J
-CQkJCQkgdGNvbi0+dHJlZU5hbWUsIHBhdGgpOwotCQlpZiAocmMpIHsKLQkJCWNpZnNfc21hbGxf
-YnVmX3JlbGVhc2UocmVxKTsKLQkJCXJldHVybiByYzsKLQkJfQorCQkJCQkJIHRjb24tPnRyZWVO
-YW1lLCB1dGYxNl9wYXRoKTsKKwkJaWYgKHJjKQorCQkJZ290byBlcnJfZnJlZV9yZXE7CisKIAkJ
-cmVxLT5OYW1lTGVuZ3RoID0gY3B1X3RvX2xlMTYobmFtZV9sZW4gKiAyKTsKIAkJdW5pX3BhdGhf
-bGVuID0gY29weV9zaXplOwotCQlwYXRoID0gY29weV9wYXRoOworCQkvKiBmcmVlIGJlZm9yZSBv
-dmVyd3JpdGluZyByZXNvdXJjZSAqLworCQlrZnJlZSh1dGYxNl9wYXRoKTsKKwkJdXRmMTZfcGF0
-aCA9IGNvcHlfcGF0aDsKIAl9IGVsc2UgewotCQl1bmlfcGF0aF9sZW4gPSAoMiAqIFVuaVN0cm5s
-ZW4oKHdjaGFyX3QgKilwYXRoLCBQQVRIX01BWCkpICsgMjsKKwkJdW5pX3BhdGhfbGVuID0gKDIg
-KiBVbmlTdHJubGVuKCh3Y2hhcl90ICopdXRmMTZfcGF0aCwgUEFUSF9NQVgpKSArIDI7CiAJCS8q
-IE1VU1Qgc2V0IHBhdGggbGVuIChOYW1lTGVuZ3RoKSB0byAwIG9wZW5pbmcgcm9vdCBvZiBzaGFy
-ZSAqLwogCQlyZXEtPk5hbWVMZW5ndGggPSBjcHVfdG9fbGUxNih1bmlfcGF0aF9sZW4gLSAyKTsK
-IAkJaWYgKHVuaV9wYXRoX2xlbiAlIDggIT0gMCkgewogCQkJY29weV9zaXplID0gcm91bmR1cCh1
-bmlfcGF0aF9sZW4sIDgpOwogCQkJY29weV9wYXRoID0ga3phbGxvYyhjb3B5X3NpemUsIEdGUF9L
-RVJORUwpOwogCQkJaWYgKCFjb3B5X3BhdGgpIHsKLQkJCQljaWZzX3NtYWxsX2J1Zl9yZWxlYXNl
-KHJlcSk7Ci0JCQkJcmV0dXJuIC1FTk9NRU07CisJCQkJcmMgPSAtRU5PTUVNOworCQkJCWdvdG8g
-ZXJyX2ZyZWVfcmVxOwogCQkJfQotCQkJbWVtY3B5KChjaGFyICopY29weV9wYXRoLCAoY29uc3Qg
-Y2hhciAqKXBhdGgsCisJCQltZW1jcHkoKGNoYXIgKiljb3B5X3BhdGgsIChjb25zdCBjaGFyICop
-dXRmMTZfcGF0aCwKIAkJCSAgICAgICB1bmlfcGF0aF9sZW4pOwogCQkJdW5pX3BhdGhfbGVuID0g
-Y29weV9zaXplOwotCQkJcGF0aCA9IGNvcHlfcGF0aDsKKwkJCS8qIGZyZWUgYmVmb3JlIG92ZXJ3
-cml0aW5nIHJlc291cmNlICovCisJCQlrZnJlZSh1dGYxNl9wYXRoKTsKKwkJCXV0ZjE2X3BhdGgg
-PSBjb3B5X3BhdGg7CiAJCX0KIAl9CiAKIAlpb3ZbMV0uaW92X2xlbiA9IHVuaV9wYXRoX2xlbjsK
-LQlpb3ZbMV0uaW92X2Jhc2UgPSBwYXRoOworCWlvdlsxXS5pb3ZfYmFzZSA9IHV0ZjE2X3BhdGg7
-CiAJcmVxLT5SZXF1ZXN0ZWRPcGxvY2tMZXZlbCA9IFNNQjJfT1BMT0NLX0xFVkVMX05PTkU7CiAK
-IAlpZiAodGNvbi0+cG9zaXhfZXh0ZW5zaW9ucykgewotCQlpZiAobl9pb3YgPiAyKSB7Ci0JCQlz
-dHJ1Y3QgY3JlYXRlX2NvbnRleHQgKmNjb250ZXh0ID0KLQkJCSAgICAoc3RydWN0IGNyZWF0ZV9j
-b250ZXh0ICopaW92W25faW92LTFdLmlvdl9iYXNlOwotCQkJY2NvbnRleHQtPk5leHQgPQotCQkJ
-CWNwdV90b19sZTMyKGlvdltuX2lvdi0xXS5pb3ZfbGVuKTsKLQkJfQotCisJCS8qIHJlc291cmNl
-ICMzOiBwb3NpeCBidWYgKi8KIAkJcmMgPSBhZGRfcG9zaXhfY29udGV4dChpb3YsICZuX2lvdiwg
-bW9kZSk7Ci0JCWlmIChyYykgewotCQkJY2lmc19zbWFsbF9idWZfcmVsZWFzZShyZXEpOwotCQkJ
-a2ZyZWUoY29weV9wYXRoKTsKLQkJCXJldHVybiByYzsKLQkJfQorCQlpZiAocmMpCisJCQlnb3Rv
-IGVycl9mcmVlX3JlcTsKIAkJcGNfYnVmID0gaW92W25faW92LTFdLmlvdl9iYXNlOwogCX0KIApA
-QCAtMjAzNSwzMiArMjAzMywzMyBAQCBpbnQgc21iMzExX3Bvc2l4X21rZGlyKGNvbnN0IHVuc2ln
-bmVkIGludCB4aWQsIHN0cnVjdCBpbm9kZSAqaW5vZGUsCiAJcnFzdC5ycV9pb3YgPSBpb3Y7CiAJ
-cnFzdC5ycV9udmVjID0gbl9pb3Y7CiAKLQlyYyA9IGNpZnNfc2VuZF9yZWN2KHhpZCwgc2VzLCAm
-cnFzdCwgJnJlc3BfYnVmdHlwZSwgZmxhZ3MsCi0JCQkgICAgJnJzcF9pb3YpOwotCi0JY2lmc19z
-bWFsbF9idWZfcmVsZWFzZShyZXEpOwotCXJzcCA9IChzdHJ1Y3Qgc21iMl9jcmVhdGVfcnNwICop
-cnNwX2lvdi5pb3ZfYmFzZTsKLQotCWlmIChyYyAhPSAwKSB7CisJLyogcmVzb3VyY2UgIzQ6IHJl
-c3BvbnNlIGJ1ZmZlciAqLworCXJjID0gY2lmc19zZW5kX3JlY3YoeGlkLCBzZXMsICZycXN0LCAm
-cmVzcF9idWZ0eXBlLCBmbGFncywgJnJzcF9pb3YpOworCWlmIChyYykgewogCQljaWZzX3N0YXRz
-X2ZhaWxfaW5jKHRjb24sIFNNQjJfQ1JFQVRFX0hFKTsKIAkJdHJhY2Vfc21iM19wb3NpeF9ta2Rp
-cl9lcnIoeGlkLCB0Y29uLT50aWQsIHNlcy0+U3VpZCwKLQkJCQkgICAgQ1JFQVRFX05PVF9GSUxF
-LCBGSUxFX1dSSVRFX0FUVFJJQlVURVMsIHJjKTsKLQkJZ290byBzbWIzMTFfbWtkaXJfZXhpdDsK
-LQl9IGVsc2UKLQkJdHJhY2Vfc21iM19wb3NpeF9ta2Rpcl9kb25lKHhpZCwgcnNwLT5QZXJzaXN0
-ZW50RmlsZUlkLCB0Y29uLT50aWQsCi0JCQkJICAgICBzZXMtPlN1aWQsIENSRUFURV9OT1RfRklM
-RSwKLQkJCQkgICAgIEZJTEVfV1JJVEVfQVRUUklCVVRFUyk7CisJCQkJCSAgIENSRUFURV9OT1Rf
-RklMRSwKKwkJCQkJICAgRklMRV9XUklURV9BVFRSSUJVVEVTLCByYyk7CisJCWdvdG8gZXJyX2Zy
-ZWVfcnNwX2J1ZjsKKwl9CisKKwlyc3AgPSAoc3RydWN0IHNtYjJfY3JlYXRlX3JzcCAqKXJzcF9p
-b3YuaW92X2Jhc2U7CisJdHJhY2Vfc21iM19wb3NpeF9ta2Rpcl9kb25lKHhpZCwgcnNwLT5QZXJz
-aXN0ZW50RmlsZUlkLCB0Y29uLT50aWQsCisJCQkJICAgIHNlcy0+U3VpZCwgQ1JFQVRFX05PVF9G
-SUxFLAorCQkJCSAgICBGSUxFX1dSSVRFX0FUVFJJQlVURVMpOwogCiAJU01CMl9jbG9zZSh4aWQs
-IHRjb24sIHJzcC0+UGVyc2lzdGVudEZpbGVJZCwgcnNwLT5Wb2xhdGlsZUZpbGVJZCk7CiAKIAkv
-KiBFdmVudHVhbGx5IHNhdmUgb2ZmIHBvc2l4IHNwZWNpZmljIHJlc3BvbnNlIGluZm8gYW5kIHRp
-bWVzdGFwcyAqLwogCi1zbWIzMTFfbWtkaXJfZXhpdDoKLQlrZnJlZShjb3B5X3BhdGgpOwotCWtm
-cmVlKHBjX2J1Zik7CitlcnJfZnJlZV9yc3BfYnVmOgogCWZyZWVfcnNwX2J1ZihyZXNwX2J1ZnR5
-cGUsIHJzcCk7CisJa2ZyZWUocGNfYnVmKTsKK2Vycl9mcmVlX3JlcToKKwljaWZzX3NtYWxsX2J1
-Zl9yZWxlYXNlKHJlcSk7CitlcnJfZnJlZV9wYXRoOgorCWtmcmVlKHV0ZjE2X3BhdGgpOwogCXJl
-dHVybiByYzsKLQogfQogI2VuZGlmIC8qIFNNQjMxMSAqLwogCi0tIAoyLjE3LjEKCg==
---000000000000c41a7b056f29d63e--
