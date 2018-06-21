@@ -2,113 +2,97 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 003D8C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85937C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C71E2159D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:28:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Amj/ftND"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C71E2159D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 41E8F21537
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:30:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E8F21537
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933467AbeFUQ2M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:28:12 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:57373 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933369AbeFUQ2K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:28:10 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 46F2F1E04F7;
-        Thu, 21 Jun 2018 18:28:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529598489; bh=jDqZQZQrb0pYu2UCl6VV1fYwvvZL4rzmxub0PwvYy5g=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=Amj/ftNDx42mjaw0SdHNlul37QkAU404YiqjMYjYErfM0eOqBpzaUUirqQoaii9IF
-         p4pcsV0Rjn4HLz6VoiKm08OgsZbmpVTKWjgJBjPkbKPxfDTUmlg2PJqvkGM9dkWzaQ
-         DPxOGzn0e3cQC04TZ4W1Xn5+nZYdEC3mxj7NF3SA05L94p0L4S3pphgZVz1jqrNdF8
-         wKrx1C4p8IzBTLXml+I0N7p15dXMFbAn4WfuAwkIhyIA5veMWwWwP81QZ/VlfLE5hb
-         Z9rtiZPKkX4iL1C/I+Em/cbwpsZG3oHfFXCcbCa7L/t07MF3Qc89MSHBDjH68ihc4n
-         Iak6wJ7qxBLlQ==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9807939C0;
-        Thu, 21 Jun 2018 09:28:08 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 21 Jun 2018 09:28:08 -0700
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 21 Jun 2018 18:28:06 +0200
-Received: from [10.107.25.102] (10.107.25.102) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 21 Jun 2018 18:28:06 +0200
-Subject: Re: [PATCH v2] ARC: Add PCIe support for ARC HSDK platform
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "eugeniy.paltsev@synopsys.com" <eugeniy.paltsev@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "joao.pinto@synopsys.com" <joao.pinto@synopsys.com>
-CC:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-References: <e1d274a5ed756f86ced3df50538ef8c7e67ef4b6.1529589452.git.gustavo.pimentel@synopsys.com>
- <f845c9f6-a020-5a4c-3a66-52e36c9f3d72@synopsys.com>
-From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
-Message-ID: <69393589-e549-29f0-6272-b263539b82e8@synopsys.com>
-Date:   Thu, 21 Jun 2018 17:26:04 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933482AbeFUQao (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:30:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47100 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933297AbeFUQam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:30:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E87C1ACFA;
+        Thu, 21 Jun 2018 16:30:37 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 159351E325D; Thu, 21 Jun 2018 18:30:36 +0200 (CEST)
+Date:   Thu, 21 Jun 2018 18:30:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180621163036.jvdbsv3t2lu34pdl@quack2.suse.cz>
+References: <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
+ <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
+ <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
+ <0e6053b3-b78c-c8be-4fab-e8555810c732@nvidia.com>
+ <20180619082949.wzoe42wpxsahuitu@quack2.suse.cz>
+ <20180619090255.GA25522@bombadil.infradead.org>
+ <20180619104142.lpilc6esz7w3a54i@quack2.suse.cz>
+ <70001987-3938-d33e-11e0-de5b19ca3bdf@nvidia.com>
+ <20180620120824.bghoklv7qu2z5wgy@quack2.suse.cz>
+ <151edbf3-66ff-df0c-c1cc-5998de50111e@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <f845c9f6-a020-5a4c-3a66-52e36c9f3d72@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.102]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <151edbf3-66ff-df0c-c1cc-5998de50111e@nvidia.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/06/2018 17:07, Vineet Gupta wrote:
-> On 06/21/2018 07:06 AM, Gustavo Pimentel wrote:
->> Add PCI support to the ARC HSDK platform allowing to use the generic PCI
->> setup functions.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
+On Wed 20-06-18 15:55:41, John Hubbard wrote:
+> On 06/20/2018 05:08 AM, Jan Kara wrote:
+> > On Tue 19-06-18 11:11:48, John Hubbard wrote:
+> >> On 06/19/2018 03:41 AM, Jan Kara wrote:
+> >>> On Tue 19-06-18 02:02:55, Matthew Wilcox wrote:
+> >>>> On Tue, Jun 19, 2018 at 10:29:49AM +0200, Jan Kara wrote:
+> [...]
+> >>> I'm also still pondering the idea of inserting a "virtual" VMA into vma
+> >>> interval tree in the inode - as the GUP references are IMHO closest to an
+> >>> mlocked mapping - and that would achieve all the functionality we need as
+> >>> well. I just didn't have time to experiment with it.
+> >>
+> >> How would this work? Would it have the same virtual address range? And how
+> >> does it avoid the problems we've been discussing? Sorry to be a bit slow
+> >> here. :)
+> > 
+> > The range covered by the virtual mapping would be the one sent to
+> > get_user_pages() to get page references. And then we would need to teach
+> > page_mkclean() to check for these virtual VMAs and block / skip / report
+> > (different situations would need different behavior) such page. But this
+> > second part is the same regardless how we identify a page that is pinned by
+> > get_user_pages().
 > 
-> Queued to #for-curr after minor fixed up to commit msg subject "ARC: [plat-hsdk]"
 > 
-> Curious, how exactly are you going to use PCI on hsdk ? What is the use case.
+> OK. That neatly avoids the need a new page flag, I think. But of course it is 
+> somewhat more extensive to implement. Sounds like something to keep in mind,
+> in case it has better tradeoffs than the direction I'm heading so far.
 
-The ARC HSDK board is mounted on top of a HAPS DX7 or HAPS-80 using the HT3
-connectors. The HAPS DX7 or HAPS-80 provides the PCIe Root Complex using the
-Synopsys DesignWare PCIe IP.
+Yes, the changes needed are somewhat more intrusive. I'm looking into this
+approach now to see how the result will look like...
 
-Basically I'm migrating the existing use case from ARC AXS101 to ARC HSDK.
-
-> 
->> ---
->>  arch/arc/plat-hsdk/Kconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arc/plat-hsdk/Kconfig b/arch/arc/plat-hsdk/Kconfig
->> index 19ab3cf..556bc5e 100644
->> --- a/arch/arc/plat-hsdk/Kconfig
->> +++ b/arch/arc/plat-hsdk/Kconfig
->> @@ -9,3 +9,4 @@ menuconfig ARC_SOC_HSDK
->>  	bool "ARC HS Development Kit SOC"
->>  	select CLK_HSDK
->>  	select RESET_HSDK
->> +	select MIGHT_HAVE_PCI
-> 
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
