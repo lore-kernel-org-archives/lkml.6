@@ -2,233 +2,307 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9A0C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D631C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850DF20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BC4C208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:42:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="M+wwfHKp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850DF20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0iq+dPX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC4C208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933411AbeFUMlq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:41:46 -0400
-Received: from mail-sn1nam01on0058.outbound.protection.outlook.com ([104.47.32.58]:11472
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932845AbeFUMln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:41:43 -0400
+        id S933433AbeFUMmM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:42:12 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:40744 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932845AbeFUMmF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 08:42:05 -0400
+Received: by mail-ua0-f195.google.com with SMTP id l11-v6so1922894uak.7;
+        Thu, 21 Jun 2018 05:42:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wHiGNLKpnQ5fK1JojuzREvJIw7IV3JpPHhkvM5CIc6E=;
- b=M+wwfHKps9kzYVUNbqrJzNco+6YxmXPpZ1FIleeB78ydpC/OpicCSPw1ZqgBhLUmtWobmqX+4A2DNfP3odQZOCuYtlLXGehpDDRB4+O9PGXXM6z/8DHpRCGwHrpldFe+0np0whQ0rtnLlS3RIkIg7x2QCMHcs2S6es0NNq2sBGc=
-Received: from SN6PR02MB4959.namprd02.prod.outlook.com (52.135.116.89) by
- SN6PR02MB4911.namprd02.prod.outlook.com (52.135.116.77) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.20; Thu, 21 Jun 2018 12:41:37 +0000
-Received: from SN6PR02MB4959.namprd02.prod.outlook.com
- ([fe80::5ce3:b22c:d455:b4b3]) by SN6PR02MB4959.namprd02.prod.outlook.com
- ([fe80::5ce3:b22c:d455:b4b3%3]) with mapi id 15.20.0863.021; Thu, 21 Jun 2018
- 12:41:37 +0000
-From:   Manish Narani <MNARANI@xilinx.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mdf@kernel.org" <mdf@kernel.org>,
-        "stefan.krsmanovic@aggios.com" <stefan.krsmanovic@aggios.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
-Subject: RE: [RFC PATCH 2/3] dt: bindings: Add SD tap value properties details
-Thread-Topic: [RFC PATCH 2/3] dt: bindings: Add SD tap value properties
- details
-Thread-Index: AQHT/ljCOWMm6mea1E24HkqfE8N0sKRUvsKAgBX8p0A=
-Date:   Thu, 21 Jun 2018 12:41:37 +0000
-Message-ID: <SN6PR02MB49591B89BEB8DB28710023ABC1760@SN6PR02MB4959.namprd02.prod.outlook.com>
-References: <1528373500-24663-1-git-send-email-manish.narani@xilinx.com>
- <1528373500-24663-2-git-send-email-manish.narani@xilinx.com>
- <20180607124743.fqo7f7nxonn2k3b5@lakrids.cambridge.arm.com>
-In-Reply-To: <20180607124743.fqo7f7nxonn2k3b5@lakrids.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=MNARANI@xilinx.com; 
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR02MB4911;7:XM5e1JGstLowr0OumInbf4Nb6thK7kmSeYEE451cLNAePgjF/9ig4twKaL/zMaM9eTNI5njYLbZy/xTOv6TSIXnIMmeZxLTyAmXHsGb7fPzTsDdcqLMcR1p0wwlbwY+oMWH+OtYmqyJO3M5xKqcExRaHZKuy/bev4A7258rKLM6XYNSKGIzncjjURyCWDy8P/YAztnnTEo7vxYYUIGZZyuNRzF33UqGTMnqovTgY8ahc2cH4SHyjuVdOWtbIa5/h
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: 53c5cda0-530e-4342-e3d8-08d5d774543f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:SN6PR02MB4911;
-x-ms-traffictypediagnostic: SN6PR02MB4911:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <SN6PR02MB4911B6E4B247C137DC6F9DDCC1760@SN6PR02MB4911.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:SN6PR02MB4911;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB4911;
-x-forefront-prvs: 07106EF9B9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(376002)(39860400002)(39380400002)(189003)(13464003)(199004)(3280700002)(7736002)(33656002)(6506007)(3660700001)(186003)(8676002)(81156014)(53936002)(59450400001)(76176011)(6916009)(102836004)(97736004)(7696005)(6116002)(3846002)(72206003)(478600001)(2900100001)(105586002)(106356001)(4326008)(26005)(9686003)(53546011)(55236004)(25786009)(6246003)(2906002)(68736007)(305945005)(6436002)(14454004)(5250100002)(55016002)(8936002)(446003)(11346002)(66066001)(99286004)(476003)(486006)(54906003)(81166006)(316002)(5660300001)(7416002)(86362001)(229853002)(74316002)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4911;H:SN6PR02MB4959.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 0cIjwH/okCX49B9uecuXV2KDz/VRuy4+F1NW1f1HZuaIq2h8roF1f1yy0fjK0XwTG2+J6hKH2A9ky/rbv4wRt9ATFXFSosaxG+MKwbxgJcVKN3gQhQAkww5NUqYk1GRjaxRoUPvasg7ZHnsPgm+ZweNa1orj/PXvTZItkPD88wRWLgPVjwOAQQ4HYmpwHX9Wg7zSbvmkEOdCQoLgQO7v8moS+UeLJb0tLVXXM0FveMW/b/1YmeaqtdYWePWHqWBrgRxmzM364aw/vNq2ch3CUH1mdm6MwjrPTWs6inyuV5fuQud0YbqPd/hu9CIJfCXhwN8lrNJH3dDD7xyIsSjMBA==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+O3AC1xf55XgSTOrm8vOjaHyK9ZTiGIMMc2dLnca6M4=;
+        b=N0iq+dPXXDpM93pi3atslxC5sWEqvOOxk97Wgi7QMESeiWlmG1iYXPPwpMU/bh+UQy
+         RuufJaKT6R/DSo9lyg6b7c2++9eEpMQ4ktqKMDLW0kUKPxPvijG6ZEH+tAB4xvoteTnl
+         5+pSF65l5dSLqbp61PZX1couvfdVY8NzV4Pm6ORWnOzCxn0Az7jpgz1OXElmH2n7fRSH
+         XEocRayVvzv637LNdbdRQ6nTzGyC3zGJUVxidqLKJHme+LiB0wTnv7enlRWYPzEWgI8p
+         xwICFJPDHve1Pn/wiXAG7RQhpwWJ7lBkKXbfIFMNTqLx7KZyJ5nc7hmOv47859UJ6Krt
+         p44g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+O3AC1xf55XgSTOrm8vOjaHyK9ZTiGIMMc2dLnca6M4=;
+        b=j4cNbdmRyhdO0HUBLV3CEHGEzpPOMAMMD1e1onhHw5oRPMh78trLtIBI68b5ZjJtMJ
+         ne/9CnId5sJAXoqFO0Vc0OZg/bSMVBvF/vbN+Pe6TgcTpBubRkM6/f5gJfVaQdjaWtDD
+         HDkMijhrhpu4MoAJ4SNEJSZxMw50mxDg+munxKGBCFVCkxc3TP/UjPMg+IFm+qGRWXcL
+         WdMKPmZfKukMONCHsUjKCauixYgpwGNqvRherKRT6G/ufguNQPnEUkvovu8qyuHc17ur
+         mGLZ+CvPxpvwdwAYARQB/VANz2afLQdGeXDTJg76HkEksLmDEOQZPbbSUvb5dBcAfeZX
+         IWyQ==
+X-Gm-Message-State: APt69E3teWz7bU2928/3clvGPxy1Hu9LjZ7pdEu6JF31AiAlV41LAkIr
+        2IBmPnZN7cBheLZBKUMg5sdOCjHeOh+DBWw9MjM=
+X-Google-Smtp-Source: ADUXVKKjE0ZXDX4wlUtdJrGXWrInRaKcFI8dQNQ3cZjNkZ3sRGQd2xMztXrqCEataAHR2LF1zFnpyjsmdp0zH9aUVpo=
+X-Received: by 2002:ab0:59e7:: with SMTP id k36-v6mr9062668uad.81.1529584924564;
+ Thu, 21 Jun 2018 05:42:04 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53c5cda0-530e-4342-e3d8-08d5d774543f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2018 12:41:37.1323
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4911
+References: <20180620155101.57685-1-arnd@arndb.de> <20180620155101.57685-4-arnd@arndb.de>
+In-Reply-To: <20180620155101.57685-4-arnd@arndb.de>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Thu, 21 Jun 2018 20:41:52 +0800
+Message-ID: <CAAM7YAko88Bq0Nbh4EcYifEcnzHTJ500YvofWA-uMxrwqANzpA@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ceph: use timespec64 for r_mtime
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, elder@kernel.org,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>, axboe@kernel.dk,
+        David Miller <davem@davemloft.net>, martin.petersen@oracle.com,
+        Jason Dillaman <dillaman@redhat.com>,
+        daniel.m.jordan@oracle.com, Jan Kara <jack@suse.cz>,
+        linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Wed, Jun 20, 2018 at 11:55 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> The request mtime field is used all over ceph, and is currently
+> represented as a 'timespec' structure in Linux. This changes it to
+> timespec64 to allow times beyond 2038, modifying all users at the
+> same time.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/block/rbd.c             |  2 +-
+>  fs/ceph/addr.c                  | 12 ++++++------
+>  fs/ceph/file.c                  | 11 +++++------
+>  include/linux/ceph/osd_client.h |  6 +++---
+>  net/ceph/osd_client.c           |  8 ++++----
+>  5 files changed, 19 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index fa0729c1e776..356936333cd9 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -1452,7 +1452,7 @@ static void rbd_osd_req_format_write(struct rbd_obj_request *obj_request)
+>         struct ceph_osd_request *osd_req = obj_request->osd_req;
+>
+>         osd_req->r_flags = CEPH_OSD_FLAG_WRITE;
+> -       ktime_get_real_ts(&osd_req->r_mtime);
+> +       ktime_get_real_ts64(&osd_req->r_mtime);
+>         osd_req->r_data_offset = obj_request->ex.oe_off;
+>  }
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 292b3d72d725..d44d51e69e76 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -574,7 +574,7 @@ static u64 get_writepages_data_length(struct inode *inode,
+>   */
+>  static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+>  {
+> -       struct timespec ts;
+> +       struct timespec64 ts;
+>         struct inode *inode;
+>         struct ceph_inode_info *ci;
+>         struct ceph_fs_client *fsc;
+> @@ -625,7 +625,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+>                 set_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
+>
+>         set_page_writeback(page);
+> -       ts = timespec64_to_timespec(inode->i_mtime);
+> +       ts = inode->i_mtime;
+>         err = ceph_osdc_writepages(&fsc->client->osdc, ceph_vino(inode),
+>                                    &ci->i_layout, snapc, page_off, len,
+>                                    ceph_wbc.truncate_seq,
+> @@ -1134,7 +1134,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+>                         pages = NULL;
+>                 }
+>
+> -               req->r_mtime = timespec64_to_timespec(inode->i_mtime);
+> +               req->r_mtime = inode->i_mtime;
+>                 rc = ceph_osdc_start_request(&fsc->client->osdc, req, true);
+>                 BUG_ON(rc);
+>                 req = NULL;
+> @@ -1734,7 +1734,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+>                 goto out;
+>         }
+>
+> -       req->r_mtime = timespec64_to_timespec(inode->i_mtime);
+> +       req->r_mtime = inode->i_mtime;
+>         err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+>         if (!err)
+>                 err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> @@ -1776,7 +1776,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+>                         goto out_put;
+>         }
+>
+> -       req->r_mtime = timespec64_to_timespec(inode->i_mtime);
+> +       req->r_mtime = inode->i_mtime;
+>         err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+>         if (!err)
+>                 err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> @@ -1937,7 +1937,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
+>                                      0, false, true);
+>         err = ceph_osdc_start_request(&fsc->client->osdc, rd_req, false);
+>
+> -       wr_req->r_mtime = timespec64_to_timespec(ci->vfs_inode.i_mtime);
+> +       wr_req->r_mtime = ci->vfs_inode.i_mtime;
+>         err2 = ceph_osdc_start_request(&fsc->client->osdc, wr_req, false);
+>
+>         if (!err)
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index ad0bed99b1d5..1795a8dc9a1e 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -721,7 +721,7 @@ struct ceph_aio_request {
+>         struct list_head osd_reqs;
+>         unsigned num_reqs;
+>         atomic_t pending_reqs;
+> -       struct timespec mtime;
+> +       struct timespec64 mtime;
+>         struct ceph_cap_flush *prealloc_cf;
+>  };
+>
+> @@ -923,7 +923,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
+>         int num_pages = 0;
+>         int flags;
+>         int ret;
+> -       struct timespec mtime = timespec64_to_timespec(current_time(inode));
+> +       struct timespec64 mtime = current_time(inode);
+>         size_t count = iov_iter_count(iter);
+>         loff_t pos = iocb->ki_pos;
+>         bool write = iov_iter_rw(iter) == WRITE;
+> @@ -1013,7 +1013,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
+>                         truncate_inode_pages_range(inode->i_mapping, pos,
+>                                         (pos+len) | (PAGE_SIZE - 1));
+>
+> -                       req->r_mtime = mtime;
+> +                       req->r_mtime = current_time(inode);
+this change is not needed
 
-> -----Original Message-----
-> From: Mark Rutland [mailto:mark.rutland@arm.com]
-> Sent: Thursday, June 7, 2018 6:18 PM
-> To: Manish Narani <MNARANI@xilinx.com>
-> Cc: robh+dt@kernel.org; catalin.marinas@arm.com; will.deacon@arm.com;
-> mdf@kernel.org; stefan.krsmanovic@aggios.com; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> mmc@vger.kernel.org; devicetree@vger.kernel.org; adrian.hunter@intel.com;
-> michal.simek@xilinx.com; ulf.hansson@linaro.org
-> Subject: Re: [RFC PATCH 2/3] dt: bindings: Add SD tap value properties de=
-tails
->=20
-> On Thu, Jun 07, 2018 at 05:41:39PM +0530, Manish Narani wrote:
-> > This patch adds details of SD tap value properties in device tree.
-> >
-> > Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> > ---
-> >  .../devicetree/bindings/mmc/arasan,sdhci.txt       | 26
-> ++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> > b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> > index 60481bf..0e08877 100644
-> > --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> > +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> > @@ -15,6 +15,8 @@ Required Properties:
-> >      - "arasan,sdhci-5.1": generic Arasan SDHCI 5.1 PHY
-> >      - "rockchip,rk3399-sdhci-5.1", "arasan,sdhci-5.1": rk3399 eMMC PHY
-> >        For this device it is strongly suggested to include arasan,soc-c=
-tl-syscon.
-> > +    - "xlnx,zynqmp-8.9a": Xilinx ZynqMP Arasan SDHCI 8.9a PHY
-> > +      For this device it is strongly suggested to include arasan,soc-c=
-tl-syscon.
-> >    - reg: From mmc bindings: Register location and length.
-> >    - clocks: From clock bindings: Handles to clock inputs.
-> >    - clock-names: From clock bindings: Tuple including "clk_xin" and "c=
-lk_ahb"
-> > @@ -26,6 +28,30 @@ Required Properties for "arasan,sdhci-5.1":
-> >    - phys: From PHY bindings: Phandle for the Generic PHY for arasan.
-> >    - phy-names:  MUST be "phy_arasan".
-> >
-> > +Required Properties for "xlnx,zynqmp-8.9a":
-> > +  - xlnx,mio_bank: The value will be 0/1/2 depending on MIO bank selec=
-tion.
->=20
-> For all of these properties, please s/_/-/, folowing the usual property n=
-ame
-> conventions.
-I will correct this in the next version.
->=20
-> It's not clear to me why you need this property. The code in patch 3 only=
- seems
-> to use this to determine which properties to read, choosing between <prop=
->_b0
-> or <prop>_b2. I don't see why you dont have the base <prop> alone...
-The property 'xlnx,mio_bank' will be different for various ZynqMP varients.=
- So different ZynqMP dts files may have different values for 'xlnx,mio_bank=
-'. That's why I am maintaining _b0 and _b2 as different values
->=20
-> Is this a HW detail, or configuration that you prefer?
-These are SD tap values which are generally used for configuring taps in SD=
-. Keeping it in device tree makes it User Configurable without changing the=
- driver code.
->=20
-> > +  - xlnx,device_id: Unique Id of the device, value will be 0/1.
->=20
-> What's this used for?
-This used to identify the controller ID between two SD controllers present =
-on ZynqMP.
->=20
-> > +  - xlnx,itap_delay_sd_hsd: Input Tap Delay for SD HS.
->=20
-> What unit at hese delays in?
-The tap values don't have specific units. They are generally a fraction of =
-the clock cycle.
-For the SD frequency of -
-200 MHz: 30 Input taps are available
-100 MHz: 60 Input taps are available
-50 MHz: 120 Input taps are available
-200 MHz: 8 Output taps are available
-100 MHz: 15 Output taps are available
-50 MHz: 30 Output taps are available
 
-Thanks,
-Manish
->=20
-> Please follow the conventions in
-> Documentation/devicetree/bindings/property-units.txt.
->=20
-> > +  - xlnx,itap_delay_sdr25: Input Tap Delay for SDR25.
-> > +  - xlnx,itap_delay_sdr50: Input Tap Delay for SDR50.
-> > +  - xlnx,itap_delay_sdr104_b0: Input Tap Delay for SDR104.
-> > +  - xlnx,itap_delay_sdr104_b2: Input Tap Delay for SDR104.
->=20
-> As above, Given you have to specify the bank, I don't see why you need mu=
-ltiple
-> properties.
->=20
-> Thanks,
-> Mark.
->=20
-> > +  - xlnx,itap_delay_sd_ddr50: Input Tap Delay for SD DDR50.
-> > +  - xlnx,itap_delay_mmc_hsd: Input Tap Delay for MMC HS.
-> > +  - xlnx,itap_delay_mmc_ddr50: Input Tap Delay for MMC DDR50.
-> > +  - xlnx,itap_delay_mmc_hs200_b0: Input Tap Delay for MMC HS200.
-> > +  - xlnx,itap_delay_mmc_hs200_b2: Input Tap Delay for MMC HS200.
-> > +  - xlnx,otap_delay_sd_hsd: Output Tap Delay for SD HS.
-> > +  - xlnx,otap_delay_sdr25: Output Tap Delay for SDR25.
-> > +  - xlnx,otap_delay_sdr50: Output Tap Delay for SDR50.
-> > +  - xlnx,otap_delay_sdr104_b0: Output Tap Delay for SDR104.
-> > +  - xlnx,otap_delay_sdr104_b2: Output Tap Delay for SDR104.
-> > +  - xlnx,otap_delay_sd_ddr50: Output Tap Delay for DDR50.
-> > +  - xlnx,otap_delay_mmc_hsd: Output Tap Delay for MMC HS.
-> > +  - xlnx,otap_delay_mmc_ddr50: Output Tap Delay for MMC DDR50.
-> > +  - xlnx,otap_delay_mmc_hs200_b0: Output Tap Delay for MMC HS200.
-> > +  - xlnx,otap_delay_mmc_hs200_b2: Output Tap Delay for MMC HS200.
-> > +
-> >  Optional Properties:
-> >    - arasan,soc-ctl-syscon: A phandle to a syscon device (see ../mfd/sy=
-scon.txt)
-> >      used to access core corecfg registers.  Offsets of registers in
-> > this
-> > --
-> > 2.7.4
+>                 }
+>
+>                 osd_req_op_extent_osd_data_bvecs(req, 0, bvecs, num_pages, len);
+> @@ -1131,7 +1131,6 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+>         int flags;
+>         int ret;
+>         bool check_caps = false;
+> -       struct timespec mtime = timespec64_to_timespec(current_time(inode));
+>         size_t count = iov_iter_count(from);
+>
+>         if (ceph_snap(file_inode(file)) != CEPH_NOSNAP)
+> @@ -1201,7 +1200,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+>                 osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0,
+>                                                 false, true);
+>
+> -               req->r_mtime = mtime;
+> +               req->r_mtime = current_time(inode);
 
+here too
+
+>                 ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+>                 if (!ret)
+>                         ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> @@ -1663,7 +1662,7 @@ static int ceph_zero_partial_object(struct inode *inode,
+>                 goto out;
+>         }
+>
+> -       req->r_mtime = timespec64_to_timespec(inode->i_mtime);
+> +       req->r_mtime = inode->i_mtime;
+>         ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+>         if (!ret) {
+>                 ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+> index 0d6ee04b4c41..2e6611c1e9a0 100644
+> --- a/include/linux/ceph/osd_client.h
+> +++ b/include/linux/ceph/osd_client.h
+> @@ -199,7 +199,7 @@ struct ceph_osd_request {
+>         /* set by submitter */
+>         u64 r_snapid;                         /* for reads, CEPH_NOSNAP o/w */
+>         struct ceph_snap_context *r_snapc;    /* for writes */
+> -       struct timespec r_mtime;              /* ditto */
+> +       struct timespec64 r_mtime;            /* ditto */
+>         u64 r_data_offset;                    /* ditto */
+>         bool r_linger;                        /* don't resend on failure */
+>
+> @@ -253,7 +253,7 @@ struct ceph_osd_linger_request {
+>         struct ceph_osd_request_target t;
+>         u32 map_dne_bound;
+>
+> -       struct timespec mtime;
+> +       struct timespec64 mtime;
+>
+>         struct kref kref;
+>         struct mutex lock;
+> @@ -508,7 +508,7 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
+>                                 struct ceph_snap_context *sc,
+>                                 u64 off, u64 len,
+>                                 u32 truncate_seq, u64 truncate_size,
+> -                               struct timespec *mtime,
+> +                               struct timespec64 *mtime,
+>                                 struct page **pages, int nr_pages);
+>
+>  /* watch/notify */
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index a00c74f1154e..a87a021ca9d0 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -1978,7 +1978,7 @@ static void encode_request_partial(struct ceph_osd_request *req,
+>         p += sizeof(struct ceph_blkin_trace_info);
+>
+>         ceph_encode_32(&p, 0); /* client_inc, always 0 */
+> -       ceph_encode_timespec(p, &req->r_mtime);
+> +       ceph_encode_timespec64(p, &req->r_mtime);
+>         p += sizeof(struct ceph_timespec);
+>
+>         encode_oloc(&p, end, &req->r_t.target_oloc);
+> @@ -4512,7 +4512,7 @@ ceph_osdc_watch(struct ceph_osd_client *osdc,
+>         ceph_oid_copy(&lreq->t.base_oid, oid);
+>         ceph_oloc_copy(&lreq->t.base_oloc, oloc);
+>         lreq->t.flags = CEPH_OSD_FLAG_WRITE;
+> -       ktime_get_real_ts(&lreq->mtime);
+> +       ktime_get_real_ts64(&lreq->mtime);
+>
+>         lreq->reg_req = alloc_linger_request(lreq);
+>         if (!lreq->reg_req) {
+> @@ -4570,7 +4570,7 @@ int ceph_osdc_unwatch(struct ceph_osd_client *osdc,
+>         ceph_oid_copy(&req->r_base_oid, &lreq->t.base_oid);
+>         ceph_oloc_copy(&req->r_base_oloc, &lreq->t.base_oloc);
+>         req->r_flags = CEPH_OSD_FLAG_WRITE;
+> -       ktime_get_real_ts(&req->r_mtime);
+> +       ktime_get_real_ts64(&req->r_mtime);
+>         osd_req_op_watch_init(req, 0, lreq->linger_id,
+>                               CEPH_OSD_WATCH_OP_UNWATCH);
+>
+> @@ -5136,7 +5136,7 @@ int ceph_osdc_writepages(struct ceph_osd_client *osdc, struct ceph_vino vino,
+>                          struct ceph_snap_context *snapc,
+>                          u64 off, u64 len,
+>                          u32 truncate_seq, u64 truncate_size,
+> -                        struct timespec *mtime,
+> +                        struct timespec64 *mtime,
+>                          struct page **pages, int num_pages)
+>  {
+>         struct ceph_osd_request *req;
+> --
+> 2.9.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
