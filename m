@@ -3,128 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A80F8C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3A7C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1DC20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1DC20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E08FB20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08FB20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754712AbeFUBxl (ORCPT
+        id S1754694AbeFUBxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:53:41 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38322 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754625AbeFUBxM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 21:53:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50740 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754626AbeFUBxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 20 Jun 2018 21:53:12 -0400
-Received: by mail-pf0-f195.google.com with SMTP id b74-v6so687068pfl.5
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:53:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=eNU51yjQ+sbmP/gaQ7xE6DCoKhrY5SF7m+blOGUlUtA=;
-        b=Y4CLRb4RVESdYLRdhxxqczpk4Gz6b13ZFlUn7m/gg/V9ujZ6MLbKNdofAlkGqGtmcz
-         6CCBbkgHiXiVJd3feikuHLR/ZpCpWI94BtzoQfAcWV/R46UJqpVpl7KqdP0BhDfIhMNe
-         H21vFEz4EmqYv2jM1BeTNtQ8bcLZK0LTYZ2xTatMR6dJqitfqw4yNwjqrDp7i7Vo8l1G
-         1ndQP9DrYOK9eWP1gn3xmu2fJ629g8VZAfqHE/es+BXcfgNDzmTFhHil4KelFfxuyInL
-         Pah0khO4e1SNORxouYi/7WBYcoTrruSoSbkElPeiQH52vdGW+H3/Kx2F/zymoNRYEeX6
-         /XeA==
-X-Gm-Message-State: APt69E1VJjN2E00inVuCE8VO6AK3MdaMMPaKkIgTxSIWjHSjZBZ12U58
-        kUNd+Lido2dN4orrprmlvsayZQ==
-X-Google-Smtp-Source: ADUXVKLq8W+PyONR2JwsWMZfNSqXD8+Xul6LUSPgcIkQ1QBQEy4znZYd7AIEUqmfLH0buGz9yAymhQ==
-X-Received: by 2002:a65:6141:: with SMTP id o1-v6mr20520172pgv.409.1529545991617;
-        Wed, 20 Jun 2018 18:53:11 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id p12-v6sm6585877pfi.175.2018.06.20.18.53.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 18:53:10 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 12/12] mfd: cros_ec: Add throttler sub-device
-Date:   Wed, 20 Jun 2018 18:52:37 -0700
-Message-Id: <20180621015237.100100-13-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-In-Reply-To: <20180621015237.100100-1-mka@chromium.org>
-References: <20180621015237.100100-1-mka@chromium.org>
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 47788401EF17;
+        Thu, 21 Jun 2018 01:53:12 +0000 (UTC)
+Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D376E2A0C;
+        Thu, 21 Jun 2018 01:53:09 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 09:53:06 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Lianbo Jiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+        iommu@lists.linux-foundation.org, dyoung@redhat.com,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH 2/4 V3] Allocate pages for kdump without encryption when
+ SME is enabled
+Message-ID: <20180621015306.GG29979@MiWiFi-R3L-srv>
+References: <20180616082714.32035-1-lijiang@redhat.com>
+ <20180616082714.32035-3-lijiang@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180616082714.32035-3-lijiang@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 21 Jun 2018 01:53:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 21 Jun 2018 01:53:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instantiate the CrOS EC throttler if it is enabled in the kernel
-configuration.
+On 06/16/18 at 04:27pm, Lianbo Jiang wrote:
+> When SME is enabled in the first kernel, we will allocate pages
+> for kdump without encryption in order to be able to boot the
+> second kernel in the same manner as kexec, which helps to keep
+> the same code style.
+> 
+> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+> ---
+>  kernel/kexec_core.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index 20fef1a..3c22a9b 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+>  		}
+>  	}
+>  
+> +	if (pages) {
+> +		unsigned int count, i;
+> +
+> +		pages->mapping = NULL;
+> +		set_page_private(pages, order);
+> +		count = 1 << order;
+> +		for (i = 0; i < count; i++)
+> +			SetPageReserved(pages + i);
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Changes in v4:
-- register throttler in cros_ec_dev.c instead of cros_ec.c
+I guess you might imitate the kexec case, however kexec get pages from
+buddy. Crash pages are reserved in memblock, these codes might make no sense.
 
-Changes in v3:
-- patch added to series
----
- drivers/mfd/cros_ec_dev.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index eafd06f62a3a..9e56c2793075 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -383,6 +383,22 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
- 	kfree(msg);
- }
- 
-+static const struct mfd_cell ec_throttler_cells[] = {
-+	{ .name = "cros-ec-throttler" }
-+};
-+
-+static void cros_ec_throttler_register(struct cros_ec_dev *ec)
-+{
-+	int ret;
-+
-+	ret = mfd_add_devices(ec->dev, 0, ec_throttler_cells,
-+			      ARRAY_SIZE(ec_throttler_cells),
-+			      NULL, 0, NULL);
-+	if (ret)
-+		dev_err(ec->dev,
-+			"failed to add cros-ec-throttler device: %d\n", ret);
-+}
-+
- static int ec_device_probe(struct platform_device *pdev)
- {
- 	int retval = -ENOMEM;
-@@ -422,6 +438,9 @@ static int ec_device_probe(struct platform_device *pdev)
- 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
- 		cros_ec_sensors_register(ec);
- 
-+	if (IS_ENABLED(CONFIG_CROS_EC_THROTTLER))
-+		cros_ec_throttler_register(ec);
-+
- 	/* Take control of the lightbar from the EC. */
- 	lb_manual_suspend_ctrl(ec, 1);
- 
--- 
-2.18.0.rc2.346.g013aa6912e-goog
-
+> +		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
+> +	}
+>  	return pages;
+>  }
+>  
+> @@ -865,6 +875,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>  			result  = -ENOMEM;
+>  			goto out;
+>  		}
+> +		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+>  		ptr = kmap(page);
+>  		ptr += maddr & ~PAGE_MASK;
+>  		mchunk = min_t(size_t, mbytes,
+> @@ -882,6 +893,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>  			result = copy_from_user(ptr, buf, uchunk);
+>  		kexec_flush_icache_page(page);
+>  		kunmap(page);
+> +		arch_kexec_pre_free_pages(page_address(page), 1);
+>  		if (result) {
+>  			result = -EFAULT;
+>  			goto out;
+> -- 
+> 2.9.5
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
