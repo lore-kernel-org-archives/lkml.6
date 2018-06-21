@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE166C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB4EC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A110A20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8468920846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:37:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ZJHJj8ie"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A110A20846
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="hNTUnNAY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8468920846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754545AbeFUHhX (ORCPT
+        id S1754529AbeFUHhV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 03:37:23 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34308 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754308AbeFUHhR (ORCPT
+        Thu, 21 Jun 2018 03:37:21 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38846 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754434AbeFUHhQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 03:37:17 -0400
-Received: by mail-wr0-f194.google.com with SMTP id a12-v6so2048643wro.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 00:37:16 -0700 (PDT)
+        Thu, 21 Jun 2018 03:37:16 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so3967918wmf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 00:37:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vbMoxrYqiT5PHCCztYs5UuxfSxJ8o6V2VTsEdyjF2EI=;
-        b=ZJHJj8ienokrj+iGcpNw5ekkDQct8esF3RmWYxD1XC8uROA3ssQR5CqW2tc1qRvvNW
-         O22n4+6ALDQ17JwxPOeW+yFoYavdWSbqX23H/3byG0dTrO4kZTcUdiYY3WAZd659GFZ7
-         ckV8vyFOIhRqApRnkV6pvDAiMMQyM1Y6FUPRQ56pkzAyDwD4BVdnwAQheDbRZRTok4WI
-         cXePt7L2Ra/iBkLO2WdSVqOcQmO0f//AmwRS872cSBksf6kOQ9EpRmIuA13v/2G6kzVr
-         BbmAYzVFVO8jXF5bBwgwbWnN03O4zerlIT8WuaF8eHZc29NBQxHmfiOvtoqxN6iLEgTf
-         uMfA==
+        bh=EJfqI7MXPfwK/Lkh5EsCdmacNmrknbn9kBUss39RD7I=;
+        b=hNTUnNAYvCVo2R3SFK83NXt3nsETEohIBLc1JYiqEqNMex/YAQqP2mpt9pwgPfidv5
+         tO0dqa+5ytH8p/kdyZYWUpV16ow4b0kZXDbKp0YPGEm3HBFWMfAAqUcUctYM6r9YoK2Z
+         JmqPw83dpyWsucVz6ciTw+kmJgqrNUjnwP4yD+pHapRQT6SwYyocyPZGHGENY6uPgNVJ
+         rJ6Z2er8/DbQz0AlJBnWguARp2ib00ZKtabft7jRPRWN30uS8jTkgnVyWFz7NNU6Jprp
+         g+TXsjsKwPABAMmKd9rs9tLDVdCUMnLDmsMbe+IkKZl0OFv8hPwmE2XbLLPrWU+UwBGQ
+         ztBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=vbMoxrYqiT5PHCCztYs5UuxfSxJ8o6V2VTsEdyjF2EI=;
-        b=myg3IxUSgc80vBkaxVTKUjm6aj8LX423S3KAuzSueH0+3y2RgpPBHZK4PR7Nu/wWz6
-         froWCgVsZS/iLqF9DkyYIL8XprZcQRw6F9ZOShXVb7U7QbpCESnBcHF+D4NlWyygRACT
-         m0mBNDh8pJ6zAsCa6Mt+i/NH5IQzXjjpcg53Wlzl1kOQVq7lm2YzRdhGCtudUHp3BIpq
-         v61IX0S4rWVbsO8ObDIFICDY2ldMfrSKdzbMmcb9ZNDYJvcaublouybyGKNG5LfGu7sr
-         sIloZ87mLedgQtvAKs4Dg/NGjfEnTPKL49B1KIe25ZuY8ahjeiK1qqt3MkaLXdY7gEQ0
-         tkNw==
-X-Gm-Message-State: APt69E1gnUwpiheZ2gtWhr2GkiBp7LqO1fmuWBzxbxwG2blw3cCejReY
-        Cf5BfOT/ZyPdc0fPRaktZ4fyYw==
-X-Google-Smtp-Source: ADUXVKI7RjD9BmYQ15ZiJmT+Rp5/lizaSEm0VZVTpVEqkmtmIpuyFYavJdW98ayQq+YjyNZ0NOS4pQ==
-X-Received: by 2002:adf:8b01:: with SMTP id n1-v6mr21306563wra.282.1529566636323;
-        Thu, 21 Jun 2018 00:37:16 -0700 (PDT)
-Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id l7-v6sm767635wmh.1.2018.06.21.00.37.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=EJfqI7MXPfwK/Lkh5EsCdmacNmrknbn9kBUss39RD7I=;
+        b=F2yrvypbDouLiFMM99UmY8uC6nHy+scu9dTuVmDM6OOHP9jZlMuTbddZVvyqu6C23X
+         7x0NLsLY0hvJ+NjFwt2xeAPl9lp3i5dLosH2HQd4gEfkzuxD4CJpH34Xw94X0+HLYMZ2
+         VmObvXbCsrYfqe/lHdYeZOofBLT4apwkuSBW9FceWXfEG/uUP/5htdlW76ddSpqtEY+4
+         EwI1wI9beBCTn255r9xjlL7FRw/Vb12Ktv5E0FffbjpjPot/PR8CbzhLwOpjKLZ/wuhr
+         DIRCDK+ZTxGE1OL5WUU9LRYs6uAhM5Zeman+cBeJAeukZGnjH7YgPMZcj28csPP3b4yF
+         tCxA==
+X-Gm-Message-State: APt69E36NJ+yehg8R2YaygKsABGmaQSb1+ufrce+fk+uuLpcMr9T5JaH
+        +2WuhGQPTJeYFMTq2c3TQMO06Q==
+X-Google-Smtp-Source: ADUXVKKaZFdBkgmgZAgitWY575R0u7K3jGZFSdHZzn5a2J5I2mnHTY2hApqBdlbHez/Q6rZVZtt/QQ==
+X-Received: by 2002:a1c:b80a:: with SMTP id i10-v6mr4354203wmf.123.1529566635100;
         Thu, 21 Jun 2018 00:37:15 -0700 (PDT)
+Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
+        by smtp.gmail.com with ESMTPSA id l7-v6sm767635wmh.1.2018.06.21.00.37.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 00:37:14 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -71,9 +71,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v7 3/4] ARM: davinci: dts: make psc0 a reset provider
-Date:   Thu, 21 Jun 2018 09:37:05 +0200
-Message-Id: <20180621073706.22812-4-brgl@bgdev.pl>
+Subject: [PATCH v7 2/4] clk: davinci: kill davinci_clk_reset_assert/deassert()
+Date:   Thu, 21 Jun 2018 09:37:04 +0200
+Message-Id: <20180621073706.22812-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180621073706.22812-1-brgl@bgdev.pl>
 References: <20180621073706.22812-1-brgl@bgdev.pl>
@@ -84,27 +84,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The psc driver registers with the reset framework as a provider. Add
-the #reset-cells property to the psc0 node.
+This code is no longer used. Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: David Lechner <david@lechnology.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
+ drivers/clk/davinci/psc.c                  | 18 ------------------
+ 2 files changed, 39 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index 3fc8b8fd816e..1bc0e4bc0697 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -132,6 +132,7 @@
- 			compatible = "ti,da850-psc0";
- 			reg = <0x10000 0x1000>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
- 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
- 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
+deleted file mode 100644
+index 42ed4f2f5ce4..000000000000
+--- a/arch/arm/mach-davinci/include/mach/clock.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/*
+- * arch/arm/mach-davinci/include/mach/clock.h
+- *
+- * Clock control driver for DaVinci - header file
+- *
+- * Authors: Vladimir Barinov <source@mvista.com>
+- *
+- * 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
+- */
+-#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
+-#define __ASM_ARCH_DAVINCI_CLOCK_H
+-
+-struct clk;
+-
+-int davinci_clk_reset_assert(struct clk *c);
+-int davinci_clk_reset_deassert(struct clk *c);
+-
+-#endif
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index fffbed5e263b..5b69e24a224f 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -303,24 +303,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
+ 	return 0;
+ }
+ 
+-/*
+- * REVISIT: These exported functions can be removed after a non-DT lookup is
+- * added to the reset controller framework and the davinci-rproc driver is
+- * updated to use the generic reset controller framework.
+- */
+-
+-int davinci_clk_reset_assert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, true);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_assert);
+-
+-int davinci_clk_reset_deassert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, false);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_deassert);
+-
+ static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
+ 				    unsigned long id)
+ {
 -- 
 2.17.1
 
