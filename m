@@ -2,137 +2,144 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56461C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB544C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1293321A73
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:04:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1293321A73
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 654ED21A6F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:06:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="llpBIIQV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654ED21A6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754240AbeFUTE5 (ORCPT
+        id S1754269AbeFUTG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:04:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752650AbeFUTEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:04:55 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77EE821A6F;
-        Thu, 21 Jun 2018 19:04:54 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 15:04:52 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
-        raistlin@linux.it, linux-kernel@vger.kernel.org,
-        juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com,
-        joel@joelfernandes.org
-Subject: Re: [RESEND PATCH v5 2/2] sched/deadline: Set cp->elements[0].cpu
- to -1 when the heap is empty
-Message-ID: <20180621150452.4480c33f@gandalf.local.home>
-In-Reply-To: <1529297905-24703-2-git-send-email-byungchul.park@lge.com>
-References: <1529297905-24703-1-git-send-email-byungchul.park@lge.com>
-        <1529297905-24703-2-git-send-email-byungchul.park@lge.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 21 Jun 2018 15:06:28 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38539 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754065AbeFUTG0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 15:06:26 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so8055422wmf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 12:06:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1D91HEkEL7ItFtVWmy2vtnB10Y1driE1hTKVMXkjfrE=;
+        b=llpBIIQVSfJGrIQ4upSC+Saezilm4QZyYKak+NgZW80TOlcvEV8nDBz2VaIwbkQVoB
+         zLSk3hG11Q7GFUUVb4m34W2Jf4XHARgxRhepWKUNlZkxiVXN5z+tpJzt4kLQfj7plDvh
+         kvjs36WgmKzij3Ll5lgDKIrAqowZ85y3wn/ulMLrEv7F1VMHGdg7enBr+cCubUDjTMZR
+         8gJLzitEVDZijLTEkJhDUikRcknnyV6YUlq40yuZzqkI/i1tzH2zr3fdjGwaDri6RqUl
+         DpTyrVpnNlH8gA2AMaYVjQbMAum7dsBdx0S2HIQ8PtqxTGyB7uLaCs0NU9uJaW8exRgs
+         f4uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1D91HEkEL7ItFtVWmy2vtnB10Y1driE1hTKVMXkjfrE=;
+        b=sIXi5VpwahSkI++v/cDp5sNN6oxRK8QkSVciFEkZgdaoAjl3f7BDEhxRAY2e+WIuq2
+         8rG6AR4UCw5lJniqfa1tVaH3I9xmaNsEwMeRKS3D4AeFPsBxZJ8J1DyfWh/ftrU3+z0B
+         x/ba24qhq3jzlMfPO2v9Gv4JAG4XvKxl69uBfionrLpVaJe0DgaevBZpc9FYKbSaFYXa
+         TE27jubvN/liPS0mF5QLcuMQ4q22JFX5H41zaAgyVvDSg6g+otbm0rvIb1OgAM0jDaG3
+         t0K0utC5Yeq5+1kxJ59nn7miM2EK31LJIuf1c8SGgrt4h/kw28eo+jNmXBg/JH+Try3K
+         lsMg==
+X-Gm-Message-State: APt69E1eUxmUCfCphuYbptkmSXkv9WOMi2hnQAEfE5NpCAlPRu7BJbFY
+        Rau9p2SxI5aAc16hkSJP60kKTA==
+X-Google-Smtp-Source: ADUXVKLdGwBzDPSa1LqxIBOFsiaN+pZ61pW7Ot11AE5gkqb+UtnK3Et1qIc0JEqlMXUjS7kaQpJnyQ==
+X-Received: by 2002:a1c:f513:: with SMTP id t19-v6mr6494394wmh.50.1529607984932;
+        Thu, 21 Jun 2018 12:06:24 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id r10-v6sm10608884wrm.66.2018.06.21.12.06.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 12:06:24 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fW4uS-0002bn-Iu; Thu, 21 Jun 2018 13:06:20 -0600
+Date:   Thu, 21 Jun 2018 13:06:20 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] tpm: Implement tpm_chip_find() and tpm_chip_put()
+ for other subsystems
+Message-ID: <20180621190620.GE19270@ziepe.ca>
+References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
+ <20180620204236.1572523-2-stefanb@linux.vnet.ibm.com>
+ <20180621171518.GI11859@linux.intel.com>
+ <95b2970f-b71b-4cfc-c188-7ae7e8cb94c5@linux.vnet.ibm.com>
+ <20180621175601.GC19270@ziepe.ca>
+ <743f606f-b3eb-6917-33bb-5b080f76fe3f@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <743f606f-b3eb-6917-33bb-5b080f76fe3f@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Jun 2018 13:58:25 +0900
-Byungchul Park <byungchul.park@lge.com> wrote:
-
-> Hello Steven and Daniel,
+On Thu, Jun 21, 2018 at 02:19:44PM -0400, Stefan Berger wrote:
+> On 06/21/2018 01:56 PM, Jason Gunthorpe wrote:
+> >On Thu, Jun 21, 2018 at 01:45:03PM -0400, Stefan Berger wrote:
+> >>On 06/21/2018 01:15 PM, Jarkko Sakkinen wrote:
+> >>>On Wed, Jun 20, 2018 at 04:42:33PM -0400, Stefan Berger wrote:
+> >>>>Implement tpm_chip_find() for other subsystems to find a TPM chip and
+> >>>>get a reference to that chip. Once done with using the chip, the reference
+> >>>>is released using tpm_chip_put().
+> >>>>
+> >>>>Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> >>>You should sort this out in a way that we don't end up with duplicate
+> >>>functions.
+> >>Do you want me to create a function *like* tpm_chip_find_get() that takes an
+> >>additional parameter whether to get the ops semaphore and have that function
+> >>called by the existing tpm_chip_find_get() and the new tpm_chip_find(). The
+> >>latter would then not get the ops semphore. I didn't want to do this since
+> >>one time the function returns with a lock held and the other time not.
+> >Another option, and I haven't looked, is to revise the callers of
+> >tpm_chip_find_get to not require it to hold the ops semaphore for
+> >them.
 > 
-> I've changed the 2nd patch a little bit to consider cpudl_clear()
-> additionally. Can I keep your Acked-by on?
-
-Actually, I think this should be a separate patch. It handles a
-different issue.
-
+> We have tpm_chip_unregister calling tpm_del_char_device to set the ops to
+> NULL once a chip is unregistered. All existing callers, if they pass in a
+> tpm_chip != NULL, currently fail if the ops are NULL. (If they pass in
+> tpm_chip = NULL, they shouldn't find a chip once ops are null and it has
+> been removed from the IDR). I wouldn't change that since IMA will call in
+> with a tpm_chip != NULL and we want to protect the ops. All existing code
+> within the tpm subsystem does seem to call tpm_chip_find_get() with a NULL
+> pointer, though. Also trusted keys seems to pass in a NULL pointer every
+> time.
 > 
-> (I temporarily removed the Acked-by you gave me.)
+> >
+> >Either by giving them an API to do it, or revising the TPM entry
+> >points to do it.
+> >
+> >I didn't look, but how did the ops semaphore get grabbed in your
+> >revised patches? They do grab it, right?
 > 
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+> The revised patches do not touch the existing code much but will call
+> tpm_chip_find_get() and get that semaphore every time before the ops are
+> used. IMA is the only caller of tpm_chip_find() that now gets an additional
+> reference to the tpm_chip and these APIs get called like this from IMA:
 > 
-> -----8<-----
-> >From 1e368d276186c22f9da298206c718b33e805828d Mon Sep 17 00:00:00 2001  
-> From: Byungchul Park <byungchul.park@lge.com>
-> Date: Mon, 4 Jun 2018 15:05:08 +0900
-> Subject: [RESEND PATCH v5 2/2] sched/deadline: Set cp->elements[0].cpu to -1 when the
->  heap is empty
+> ima init: chip = tpm_chip_find()
 > 
-> Currently, migrating tasks to cpu0 unconditionally happens when the
-> heap is empty, since cp->elements[0].cpu is initialized to 0(=cpu0).
-> We have to distinguish between the empty case and cpu0 to avoid the
-> unnecessary migrations. Therefore, it has to return an invalid value
-> e.i. -1 in the case the heap is empty.
+> ima::tpm: tpm_chip_find_get(chip) ... tpm_put_ops(chip)
 > 
-> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> Suggested-by: Joel Fernandes <joelaf@google.com>
-> ---
->  kernel/sched/cpudeadline.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> ima::tpm: tpm_chip_find_get(chip) ... tpm_put_ops(chip)
 > 
-> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
-> index ae4fbdc..a200b36 100644
-> --- a/kernel/sched/cpudeadline.c
-> +++ b/kernel/sched/cpudeadline.c
-> @@ -136,6 +136,10 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
->  
->  		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
->  
-> +		/* The heap tree is empty, just return. */
-> +		if (best_cpu == -1)
-> +			return 0;
-> +
+> [repeat]
+> 
+> ima shutdown: tpm_chip_put(chip)
 
-Actually, why not put the if before the WARN_ON, and then we can
-simplify the WARN_ON:
+Maybe just change tpm_chip_find_get() into tpm_get_ops(chip) and
+convert all callers?
 
-	if (best_cpu == -1)
-		return 0;
-
-	WARN_ON(!cpu_present(best_cpu));
-
--- Steve
-
->  		if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
->  		    dl_time_before(dl_se->deadline, cpudl_maximum_dl(cp))) {
->  			if (later_mask)
-> @@ -172,6 +176,13 @@ void cpudl_clear(struct cpudl *cp, int cpu)
->  		 * This could happen if a rq_offline_dl is
->  		 * called for a CPU without -dl tasks running.
->  		 */
-> +	} else if (cp->size == 1){
-> +		/* Only one element in the heap, clear it. */
-> +		cp->elements[0].cpu = -1;
-> +		cp->elements[cpu].idx = IDX_INVALID;
-> +		cp->size = 0;
-> +
-> +		cpumask_set_cpu(cpu, cp->free_cpus);
->  	} else {
->  		new_cpu = cp->elements[cp->size - 1].cpu;
->  		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
-> @@ -267,6 +278,9 @@ int cpudl_init(struct cpudl *cp)
->  	for_each_possible_cpu(i)
->  		cp->elements[i].idx = IDX_INVALID;
->  
-> +	/* Mark heap as initially empty. */
-> +	cp->elements[0].cpu = -1;
-> +
->  	return 0;
->  }
->  
-
+Jason
