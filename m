@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 936A9C43144
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AFDC43149
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C148216F7
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:32:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDFDF216FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:32:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="wP+klr9u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C148216F7
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="rBqM5mW4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFDF216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933564AbeFUUcR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 16:32:17 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:38674 "EHLO
+        id S933581AbeFUUcc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 16:32:32 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:38664 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932938AbeFUUbw (ORCPT
+        with ESMTP id S933402AbeFUUbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 16:31:52 -0400
+        Thu, 21 Jun 2018 16:31:51 -0400
 Received: from localhost.localdomain (unknown [IPv6:2a02:169:34d6:10::3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 56B045C1808;
-        Thu, 21 Jun 2018 22:31:50 +0200 (CEST)
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id AE7ED5C1807;
+        Thu, 21 Jun 2018 22:31:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
         t=1529613110;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fP18QCZoINCD0+5QTOIHOngHEWl6S2FfQsiBdaa4euE=;
-        b=wP+klr9u26RdcgiHFrfEgmF/iEuhkEsX4F9UOfXD1u2rkK++z++yeQzX6D9xIkU5ww1dNd
-        e6/CsNd4SRDvUOHUwsQes8VO+xLXTCl1Z64PE6a4noo7AyYHDkR6lTu3iDgR6B4S8f0kuk
-        RQ5uyhqpGMdfozGGpav9FPbFIQ1kSwI=
+        bh=oofkGP10r8IjuLpXcj0c4x/aJYaNe8KtYGXmfTFU5sU=;
+        b=rBqM5mW4mlJOOVBU8RleDVp0ih+XRekkVQPSN1mGPSiqZWWc79rOP+A9TuBDctV2kGg6Ix
+        LCL7N/Rrq/2gLExJqRWTI83KKnebxEbF4yvXIcqLzjoGzspMpr2T3AHODEnZ4yxA63zctn
+        vNYUa30hZnLovtkkY+duRi5QzAE8TnQ=
 From:   Stefan Agner <stefan@agner.ch>
 To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
         computersforpeace@gmail.com, marek.vasut@gmail.com,
@@ -47,9 +47,9 @@ Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
         gaireg@gaireg.de, linux-mtd@lists.infradead.org,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v6 6/6] ARM: dts: tegra: enable NAND flash on Colibri T20
-Date:   Thu, 21 Jun 2018 22:31:45 +0200
-Message-Id: <20180621203145.7628-7-stefan@agner.ch>
+Subject: [PATCH v6 5/6] ARM: dts: tegra: add Tegra20 NAND flash controller node
+Date:   Thu, 21 Jun 2018 22:31:44 +0200
+Message-Id: <20180621203145.7628-6-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180621203145.7628-1-stefan@agner.ch>
 References: <20180621203145.7628-1-stefan@agner.ch>
@@ -73,41 +73,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables the on-module ONFI conformant NAND flash.
+From: Lucas Stach <dev@lynxeye.de>
+
+Add basic controller device tree node to be extended by
+individual boards. Use the assigned-clocks mechanism to set
+NDFLASH clock to a sensible default rate of 150MHz.
 
 Signed-off-by: Lucas Stach <dev@lynxeye.de>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/arm/boot/dts/tegra20-colibri-512.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/tegra20.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index 5c202b3e3bb1d..0c283fb772148 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -462,6 +462,22 @@
- 		};
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 983dd5c147945..a75fe7fec7912 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -425,6 +425,21 @@
+ 		status = "disabled";
  	};
  
 +	nand-controller@70008000 {
-+		status = "okay";
-+
-+		nand@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			nand-bus-width = <8>;
-+			nand-on-flash-bbt;
-+			nand-ecc-algo = "bch";
-+			nand-is-boot-medium;
-+			nand-ecc-maximize;
-+			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+		};
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++		assigned-clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		assigned-clock-rates = <150000000>;
++		status = "disabled";
 +	};
 +
- 	usb@c5004000 {
- 		status = "okay";
- 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
 -- 
 2.17.1
 
