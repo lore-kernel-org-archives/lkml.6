@@ -2,120 +2,95 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FD6C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D28C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2619720837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:24:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7227D20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:25:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qM3CkoXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2619720837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="b5sQFNBD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7227D20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933563AbeFUMYr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:24:47 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37699 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933186AbeFUMYq (ORCPT
+        id S933477AbeFUMZx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:25:53 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:32812 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933186AbeFUMZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:24:46 -0400
-Received: by mail-pg0-f67.google.com with SMTP id r21-v6so1365360pgv.4
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 05:24:46 -0700 (PDT)
+        Thu, 21 Jun 2018 08:25:51 -0400
+Received: by mail-ua0-f196.google.com with SMTP id m21-v6so1905262uan.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 05:25:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oQbUkjCsw+O4Rjuxbdst4jHMEvMxiP4RWuC8y/i2vpw=;
-        b=qM3CkoXIt8Kc9nVughH9y4LI71S0afGMHhnrSP5GHF/4l8PnNNLDlE6T03QVtTD3S+
-         rltSq8u83TEy/stMjVahikLvgI33U8q1Ai0iaMDeivMvY19qZq6MIehCP1VFE/xf3Qmh
-         XOB3U2cx/6C6FlTejYMUIvsN3e/AcEkxw/2gKE6dXWpYz5RFkXrvf1tOQa9/26Jq+Dv3
-         K8eVw0c7/AhC/G6GM571Xa16rlaN+2PA+0K3agA/dFNe7nJlyS3nLQoAnWS3GB57fYDM
-         P+16IDEC2GeFLHZmLH5UzclwVp15f/+1A++U4bsgZooaFgldnlCBPG0puRmnaDOz8V8k
-         FZ5g==
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FeGaMAdD9a/9voXGk5Mi+oRN+npJtPtlCPyvWiIMt5Y=;
+        b=b5sQFNBD+atQ2AIiD9bAzzXo1ZnMlY6Bklr6Bv+9hU2Ga+AxB/CF9W2+Mmv+MixBoB
+         +2R08dxUVgtQhEBPkKhn+8y9wJBV0/EsiFLQHwBcXTfNucli4Wzdh+deYbhKw3QO6sci
+         Zl9n4y6NvNN/VsGc5h6Cyd8WtHQECJ55KlylIe2MDr33jfajQkNtCctPHhF7Ud7tmck1
+         0Titt+DP22eK9BlDBabJ/6XmSkt/G2/5c3oEbPtx+06nJ4QP5rxZbWzpx7ezwKPFQWE2
+         qCAd0/o0nNj9DIGLPT2JPEHSznagztjWN6b/cB/6CwdRV6X58Da6Qcz16Qf1tXb12GuC
+         CeSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=oQbUkjCsw+O4Rjuxbdst4jHMEvMxiP4RWuC8y/i2vpw=;
-        b=fFXclBwsuDGx8f6oijZLKt82lDZY+cQDqokrpWGn5T2pdQrcElThbXLRTyFXEFkY2m
-         +XplxrDYQ7nz3N9401j5plbIEX8qFjM8XcUobgFWwxLDNq3rwdZLUMjtyqkD5ngj9cDg
-         Neun0BFtiqI4JK3MOxHOLPx/PLRhnsA8nCCsSt84JI+NleUMiteVObPOCAD1ceELgNAX
-         8We1HcMzlmDLV/LytHH2BhZVOHdmJLZTGXT7vm1M/np9dznbLXrFJpTNjDfHQRlGBWmI
-         TniSZIIqPBF6AW/Rw50t1qNfIAXHxsy8hvVJAOt7xAxcwZFCxPAirQDOvArbKomHxjlL
-         wyjQ==
-X-Gm-Message-State: APt69E1HgqFbhLM6Ixu1weAPlDaHknGtJ04XtXiqBt/SnVprxon+8Zov
-        4pcj8usJW1o7hVE1f5IOeW8=
-X-Google-Smtp-Source: ADUXVKL2zjNDq4s2+iTDcRXLXUHiyOHJowgcRvh4AO1sfRymd3g6ubcUmFDFGo2tI9rcLHsvg8P82w==
-X-Received: by 2002:a62:4e07:: with SMTP id c7-v6mr27340433pfb.149.1529583885768;
-        Thu, 21 Jun 2018 05:24:45 -0700 (PDT)
-Received: from toy ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id w7-v6sm5885374pgr.82.2018.06.21.05.24.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 05:24:45 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 20:24:36 +0800
-From:   Jun Yao <yaojun8558363@gmail.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH 1/1] arm64/mm: move
- {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata section
-Message-ID: <20180621122436.GA19014@toy>
-Mail-Followup-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-References: <20180620085755.20045-1-yaojun8558363@gmail.com>
- <20180620085755.20045-2-yaojun8558363@gmail.com>
- <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
- <20180621025141.GB11276@toy>
- <CAKv+Gu_3Cfuq-qQuRHkYCB2uTPOK=KVeVh4OKmtu2MDYwfOtTA@mail.gmail.com>
- <70ebe6d7-0745-5606-ae89-8a7b2fb62008@arm.com>
- <CAKv+Gu-t5ErL89J=sxeVRYzDNrB1Ejdj+XOggAMWk-gY7ewsOg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FeGaMAdD9a/9voXGk5Mi+oRN+npJtPtlCPyvWiIMt5Y=;
+        b=jD92bwpH6oqcoogeiEmn2O7JcR7lgY6u/wGHUfwEHvja1JksqHv2eUxx/Uxx28+Alq
+         uA7yDAea0iqFm1b0q1nKwVxR+vsKjXsJEJDLrV+FHLzpVHWZbGQjNrYfy1ezy/HuO8lu
+         JgymxfZHSVPptF5UAAIOT+RfRYbTvFpcDnrQk8cktFaHvFrbeieP6tDLyGbECdpbfw37
+         yJlbBRldzCNlP/re7wt1HFmxxPnxIPFyoALnkjejGPNTbnI71VZZJzEbtE8yvAjRKBUI
+         gl5KI8VrOu4fxlnRv9OmNXd1HG/a3xFTHdVtqPANmV+OUf+8dX2TysbWLjkLeg89ucAV
+         OD6A==
+X-Gm-Message-State: APt69E2cg8HAKfQrxPA2zLyU8LQayLo/7sQfqKD1zCe/zXCWxOucb/21
+        rt6hYvIV1So+A8QqUWmNc0eoowss3tSoWL7rWJYDVQ==
+X-Google-Smtp-Source: ADUXVKISG+YnedINKOxDrAGziH5/1jWVsR4a1Qrb04R7fGTDZK5h7vMG66F0vCRK2P7WUDdSZbytmiJJOJW4txiBGIw=
+X-Received: by 2002:ab0:50f0:: with SMTP id d45-v6mr16082551uaa.45.1529583950476;
+ Thu, 21 Jun 2018 05:25:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-t5ErL89J=sxeVRYzDNrB1Ejdj+XOggAMWk-gY7ewsOg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:ab0:3c4:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 05:25:50 -0700 (PDT)
+X-Originating-IP: [217.140.96.140]
+In-Reply-To: <1529581652-31294-1-git-send-email-hadar.gat@arm.com>
+References: <1529581652-31294-1-git-send-email-hadar.gat@arm.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Thu, 21 Jun 2018 15:25:50 +0300
+Message-ID: <CAOtvUMc0j+5+uYZH9=kwV=Ptx_df=qSRceGsuouf-FuV7Mkw0w@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccree: fix finup
+To:     Hadar Gat <hadar.gat@arm.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Ofir Drang <ofir.drang@arm.com>,
+        Gilad Ben-Yossef <gilad.BenYossef@arm.com>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 11:29:52AM +0200, Ard Biesheuvel wrote:
-> On 21 June 2018 at 10:59, James Morse <james.morse@arm.com> wrote:
-> > On 21/06/18 07:39, Ard Biesheuvel wrote:
-> >> On 21 June 2018 at 04:51, Jun Yao <yaojun8558363@gmail.com> wrote:
-> >>> On Wed, Jun 20, 2018 at 12:09:49PM +0200, Ard Biesheuvel wrote:
-> >>>> On 20 June 2018 at 10:57, Jun Yao <yaojun8558363@gmail.com> wrote:
-> >>>> As for swapper_pg_dir, it would indeed be nice if we could keep those
-> >>>> mappings read-only most of the time, but I'm not sure how useful this
-> >>>> is if we apply it to the root level only.
-> >>>
-> >>> The purpose of it is to make 'KSMA' harder, where an single arbitrary
-> >>> write is used to add a block mapping to the page-tables, giving the
-> >>> attacker full access to kernel memory. That's why we just apply it to
-> >>> the root level only. If the attacker can arbitrary write multiple times,
-> >>> I think it's hard to defend.
-> >>>
-> >>
-> >> So the assumption is that the root level is more easy to find?
-> >> Otherwise, I'm not sure I understand why being able to write a level 0
-> >> entry is so harmful, given that we don't have block mappings at that
-> >> level.
-> >
-> > I think this thing assumes 3-level page tables with 39bit VA.
-> >
-> 
-> The attack, you mean? Because this code is unlikely to build with that
-> configuration, given that __pgd_populate() BUILD_BUG()s in that case.
+On Thu, Jun 21, 2018 at 2:47 PM, Hadar Gat <hadar.gat@arm.com> wrote:
+> finup() operation was incorrect, padding was missing.
+> Fix by setting the ccree HW to enable padding.
+>
+> Signed-off-by: Hadar Gat <hadar.gat@arm.com>
+> Cc: stable@vger.kernel.org
 
-I think this configuration may be ok. I find that the kernel on Google
-pixel 2 XL is built with 3-level page tables with 39-bit VA.
+Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+
+Gilad
+
+
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+values of =CE=B2 will give rise to dom!
