@@ -2,91 +2,448 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD83CC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A58C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F9B220652
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:20:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L35dYrdR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F9B220652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id AC84120652
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:20:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC84120652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932838AbeFUJUb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:20:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46862 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932591AbeFUJU2 (ORCPT
+        id S932892AbeFUJUl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:20:41 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4619 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932659AbeFUJUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:20:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=clYijeDdCIi1ndl/s6LkWqPSsod6X7UFEYG/DR5QN18=; b=L35dYrdRofas/fU/r57FjG1Ob
-        mhozuLtakh+eaIcfFquS9u1mc76DKd8s8iPWA6qPV9PHD1VSgGBk+RvotN8NMZjh6fuV4UfGX5A9s
-        nSeySgxTeXZbA37BvbxyKc1UgmuvL/u6y9mb17g0vcehp/qhsDilEDM0VBwP50uW3BbKEgV/X9zzL
-        28t2NSe3SMb7kz48nL3lxEL/MuC5an1TXO4xv3sb2yomEC5p1CSqgdixW++csskaWvLOqEfpif/8Y
-        hFlQp8qk3WPubAgdfSayNnA/C1jaYm1acRUYvlesjXDWnTwwOxGXPg+JVF1zJMJATMrDjsHFfF3wU
-        jYCkGbaag==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVvlI-0006jm-94; Thu, 21 Jun 2018 09:20:16 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EC0652029F1DB; Thu, 21 Jun 2018 11:20:13 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 11:20:13 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v10 2/9] cpuset: Add new v2 cpuset.sched.domain_root flag
-Message-ID: <20180621092013.GU2494@hirez.programming.kicks-ass.net>
-References: <1529295249-5207-1-git-send-email-longman@redhat.com>
- <1529295249-5207-3-git-send-email-longman@redhat.com>
- <20180620142735.GM2494@hirez.programming.kicks-ass.net>
- <b44b0748-9fec-6bb0-7665-435487e5d8b3@redhat.com>
+        Thu, 21 Jun 2018 05:20:37 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b2b6de50002>; Thu, 21 Jun 2018 02:20:37 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 21 Jun 2018 02:20:36 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 21 Jun 2018 02:20:36 -0700
+Received: from [10.26.11.123] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 21 Jun
+ 2018 09:20:32 +0000
+Subject: Re: [PATCH v2 6/8] serial: Add Tegra Combined UART driver
+To:     Mikko Perttunen <mperttunen@nvidia.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <jassisinghbrar@gmail.com>,
+        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180620122042.10950-1-mperttunen@nvidia.com>
+ <20180620122042.10950-7-mperttunen@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <48fb4800-5cf2-37dc-ca19-51356e5a679c@nvidia.com>
+Date:   Thu, 21 Jun 2018 10:20:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b44b0748-9fec-6bb0-7665-435487e5d8b3@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180620122042.10950-7-mperttunen@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 03:58:06PM +0800, Waiman Long wrote:
 
-> As for the inconsistency between the real root and the container root,
-> this is true for almost all the controllers. So it is a generic problem.
-> One possible solution is to create a kind a pseudo root cgroup for the
-> container that looks and feels like a real root. But is there really a
-> need to do that?
+On 20/06/18 13:20, Mikko Perttunen wrote:
+> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+> multiplexing multiple "virtual UARTs" into a single hardware serial
+> port. The TCU is the primary serial port on Tegra194 devices.
+> 
+> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+> are part of Tegra HSP blocks that are already controlled by the Tegra
+> HSP mailbox driver.
+> 
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> ---
+> 
+> Notes:
+>     v2:
+>     - Removed (void) casts for unused variables.
+>     - Changed the uart_set_options() call to be on one line, even if its
+>       over 80 characters.
+>     - Added defines for magic numbers.
+>     - Style fixes.
+>     - Changed Kconfig entry to depend on the Tegra HSP driver instead of
+>       just the mailbox framework.
+> 
+>  drivers/tty/serial/Kconfig       |   9 ++
+>  drivers/tty/serial/Makefile      |   1 +
+>  drivers/tty/serial/tegra-tcu.c   | 289 +++++++++++++++++++++++++++++++++++++++
+>  include/uapi/linux/serial_core.h |   3 +
+>  4 files changed, 302 insertions(+)
+>  create mode 100644 drivers/tty/serial/tegra-tcu.c
+> 
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index df8bd0c7b97d..5fdd336e8937 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -322,6 +322,15 @@ config SERIAL_TEGRA
+>  	  are enabled). This driver uses the APB DMA to achieve higher baudrate
+>  	  and better performance.
+>  
+> +config SERIAL_TEGRA_TCU
+> +	tristate "NVIDIA Tegra Combined UART"
+> +	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
+> +	select SERIAL_CORE
+> +	help
+> +	  Support for the mailbox-based TCU (Tegra Combined UART) serial port.
+> +	  TCU is a virtual serial port that allows multiplexing multiple data
+> +	  streams into a single hardware serial port.
+> +
+>  config SERIAL_MAX3100
+>  	tristate "MAX3100 support"
+>  	depends on SPI
+> diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
+> index daac675612df..4ad82231ff8a 100644
+> --- a/drivers/tty/serial/Makefile
+> +++ b/drivers/tty/serial/Makefile
+> @@ -76,6 +76,7 @@ obj-$(CONFIG_SERIAL_LANTIQ)	+= lantiq.o
+>  obj-$(CONFIG_SERIAL_XILINX_PS_UART) += xilinx_uartps.o
+>  obj-$(CONFIG_SERIAL_SIRFSOC) += sirfsoc_uart.o
+>  obj-$(CONFIG_SERIAL_TEGRA) += serial-tegra.o
+> +obj-$(CONFIG_SERIAL_TEGRA_TCU) += tegra-tcu.o
+>  obj-$(CONFIG_SERIAL_AR933X)   += ar933x_uart.o
+>  obj-$(CONFIG_SERIAL_EFM32_UART) += efm32-uart.o
+>  obj-$(CONFIG_SERIAL_ARC)	+= arc_uart.o
+> diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
+> new file mode 100644
+> index 000000000000..b54ebe2ad917
+> --- /dev/null
+> +++ b/drivers/tty/serial/tegra-tcu.c
+> @@ -0,0 +1,289 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> + */
+> +
+> +#include <linux/console.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/serial.h>
+> +#include <linux/serial_core.h>
+> +#include <linux/slab.h>
+> +#include <linux/tty.h>
+> +#include <linux/tty_flip.h>
+> +
+> +#define TCU_MBOX_BYTE(i, x)			((x) << (i*8))
+> +#define TCU_MBOX_BYTE_V(x, i)			(((x) >> (i*8)) & 0xff)
+> +#define TCU_MBOX_NUM_BYTES(x)			((x) << 24)
+> +#define TCU_MBOX_NUM_BYTES_V(x)			(((x) >> 24) & 0x3)
+> +#define TCU_MBOX_FLUSH				BIT(26)
+> +
+> +static struct uart_driver tegra_tcu_uart_driver;
+> +static struct uart_port tegra_tcu_uart_port;
+> +
+> +struct tegra_tcu {
+> +	struct mbox_client tx_client, rx_client;
+> +	struct mbox_chan *tx, *rx;
+> +};
+> +
+> +static unsigned int tegra_tcu_uart_tx_empty(struct uart_port *port)
+> +{
+> +	return TIOCSER_TEMT;
+> +}
+> +
+> +static void tegra_tcu_uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
+> +{
+> +}
+> +
+> +static unsigned int tegra_tcu_uart_get_mctrl(struct uart_port *port)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void tegra_tcu_uart_stop_tx(struct uart_port *port)
+> +{
+> +}
+> +
+> +static void tegra_tcu_write(const char *s, unsigned int count)
+> +{
+> +	struct tegra_tcu *tcu = tegra_tcu_uart_port.private_data;
+> +	unsigned int written = 0, i = 0;
+> +	bool insert_nl = false;
+> +	uint32_t value = 0;
+> +
+> +	while (i < count) {
+> +		if (insert_nl) {
+> +			value |= TCU_MBOX_BYTE(written++, '\n');
+> +			insert_nl = false;
+> +			i++;
+> +		} else if (s[i] == '\n') {
+> +			value |= TCU_MBOX_BYTE(written++, '\r');
+> +			insert_nl = true;
+> +		} else {
+> +			value |= TCU_MBOX_BYTE(written++, s[i++]);
+> +		}
+> +
+> +		if (written == 3) {
+> +			value |= TCU_MBOX_NUM_BYTES(3) | TCU_MBOX_FLUSH;
+> +			mbox_send_message(tcu->tx, &value);
+> +			value = 0;
+> +			written = 0;
+> +		}
+> +	}
+> +
+> +	if (written) {
+> +		value |= TCU_MBOX_NUM_BYTES(written) | TCU_MBOX_FLUSH;
+> +		mbox_send_message(tcu->tx, &value);
+> +	}
+> +}
+> +
+> +static void tegra_tcu_uart_start_tx(struct uart_port *port)
+> +{
+> +	struct circ_buf *xmit = &port->state->xmit;
+> +	unsigned long count;
+> +
+> +	for (;;) {
+> +		count = CIRC_CNT_TO_END(xmit->head, xmit->tail, UART_XMIT_SIZE);
+> +		if (!count)
+> +			break;
+> +
+> +		tegra_tcu_write(&xmit->buf[xmit->tail], count);
+> +		xmit->tail = (xmit->tail + count) & (UART_XMIT_SIZE - 1);
+> +	}
+> +
+> +	uart_write_wakeup(port);
+> +}
+> +
+> +static void tegra_tcu_uart_stop_rx(struct uart_port *port)
+> +{
+> +}
+> +
+> +static void tegra_tcu_uart_break_ctl(struct uart_port *port, int ctl)
+> +{
+> +}
+> +
+> +static int tegra_tcu_uart_startup(struct uart_port *port)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void tegra_tcu_uart_shutdown(struct uart_port *port)
+> +{
+> +}
+> +
+> +static void tegra_tcu_uart_set_termios(struct uart_port *port,
+> +				       struct ktermios *new,
+> +				       struct ktermios *old)
+> +{
+> +}
+> +
+> +static const struct uart_ops tegra_tcu_uart_ops = {
+> +	.tx_empty = tegra_tcu_uart_tx_empty,
+> +	.set_mctrl = tegra_tcu_uart_set_mctrl,
+> +	.get_mctrl = tegra_tcu_uart_get_mctrl,
+> +	.stop_tx = tegra_tcu_uart_stop_tx,
+> +	.start_tx = tegra_tcu_uart_start_tx,
+> +	.stop_rx = tegra_tcu_uart_stop_rx,
+> +	.break_ctl = tegra_tcu_uart_break_ctl,
+> +	.startup = tegra_tcu_uart_startup,
+> +	.shutdown = tegra_tcu_uart_shutdown,
+> +	.set_termios = tegra_tcu_uart_set_termios,
+> +};
+> +
+> +static void tegra_tcu_console_write(struct console *cons, const char *s,
+> +				    unsigned int count)
+> +{
+> +	tegra_tcu_write(s, count);
+> +}
+> +
+> +static int tegra_tcu_console_setup(struct console *cons, char *options)
+> +{
+> +	if (!tegra_tcu_uart_port.private_data)
+> +		return -ENODEV;
+> +
+> +	return uart_set_options(&tegra_tcu_uart_port, cons, 115200, 'n', 8, 'n');
+> +}
 
-I don't really know. I thought the idea was to make containers
-indistinguishable from a real system. Now I know we're really rather far
-away from that in reality, and I really have no clue how important all
-that is.
+I am curious if we actually need to call uart_set_options() here? Given that
+set_termios does nothing, is this actually needed?
 
-It all depends on how exactly this works; is it like I assumed, that
-this file is owned by the parent instead of the current directory? And
-that if you namespace this, you have an effective read-only file?
+> +
+> +static struct console tegra_tcu_console = {
+> +	.name = "ttyTCU",
+> +	.device = uart_console_device,
+> +	.flags = CON_PRINTBUFFER | CON_ANYTIME,
+> +	.index = -1,
+> +	.write = tegra_tcu_console_write,
+> +	.setup = tegra_tcu_console_setup,
+> +	.data = &tegra_tcu_uart_driver,
+> +};
+> +
+> +static struct uart_driver tegra_tcu_uart_driver = {
+> +	.owner = THIS_MODULE,
+> +	.driver_name = "tegra-tcu",
+> +	.dev_name = "ttyTCU",
+> +	.cons = &tegra_tcu_console,
+> +	.nr = 1,
+> +};
+> +
+> +static void tegra_tcu_receive(struct mbox_client *client, void *msg_p)
+> +{
+> +	struct tty_port *port = &tegra_tcu_uart_port.state->port;
+> +	uint32_t msg = *(uint32_t *)msg_p;
+> +	unsigned int num_bytes;
+> +	int i;
+> +
+> +	num_bytes = TCU_MBOX_NUM_BYTES_V(msg);
+> +	for (i = 0; i < num_bytes; i++)
+> +		tty_insert_flip_char(port, TCU_MBOX_BYTE_V(msg, i), TTY_NORMAL);
+> +
+> +	tty_flip_buffer_push(port);
+> +}
+> +
+> +static int tegra_tcu_probe(struct platform_device *pdev)
+> +{
+> +	struct uart_port *port = &tegra_tcu_uart_port;
+> +	struct tegra_tcu *tcu;
+> +	int err;
+> +
+> +	tcu = devm_kzalloc(&pdev->dev, sizeof(*tcu), GFP_KERNEL);
+> +	if (!tcu)
+> +		return -ENOMEM;
+> +
+> +	tcu->tx_client.dev = &pdev->dev;
+> +	tcu->rx_client.dev = &pdev->dev;
+> +	tcu->rx_client.rx_callback = tegra_tcu_receive;
+> +
+> +	tcu->tx = mbox_request_channel_byname(&tcu->tx_client, "tx");
+> +	if (IS_ERR(tcu->tx)) {
+> +		err = PTR_ERR(tcu->tx);
+> +		dev_err(&pdev->dev, "failed to get tx mailbox: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	tcu->rx = mbox_request_channel_byname(&tcu->rx_client, "rx");
+> +	if (IS_ERR(tcu->rx)) {
+> +		err = PTR_ERR(tcu->rx);
+> +		dev_err(&pdev->dev, "failed to get rx mailbox: %d\n", err);
+> +		goto free_tx;
+> +	}
+> +
+> +	err = uart_register_driver(&tegra_tcu_uart_driver);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "failed to register UART driver: %d\n",
+> +			err);
+> +		goto free_rx;
+> +	}
+> +
+> +	spin_lock_init(&port->lock);
+> +	port->dev = &pdev->dev;
+> +	port->type = PORT_TEGRA_TCU;
+> +	port->ops = &tegra_tcu_uart_ops;
+> +	port->fifosize = 1;
+> +	port->iotype = UPIO_MEM;
+> +	port->flags = UPF_BOOT_AUTOCONF;
+> +	port->private_data = tcu;
+> +
+> +	err = uart_add_one_port(&tegra_tcu_uart_driver, port);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "failed to add UART port: %d\n", err);
+> +		goto unregister_uart;
+> +	}
+> +
+> +	return 0;
+> +
+> +unregister_uart:
+> +	uart_unregister_driver(&tegra_tcu_uart_driver);
+> +free_rx:
+> +	mbox_free_channel(tcu->rx);
+> +free_tx:
+> +	mbox_free_channel(tcu->tx);
+> +
+> +	return err;
+> +}
+> +
+> +static int tegra_tcu_remove(struct platform_device *pdev)
+> +{
+> +	uart_remove_one_port(&tegra_tcu_uart_driver, &tegra_tcu_uart_port);
+> +	uart_unregister_driver(&tegra_tcu_uart_driver);
 
-Then fixing the inconsistency is trivial; simply provide a read-only
-file for the actual root cgroup too.
+mbox_free_channel()?
 
-And if the solution is trivial, I don't see a good reason not to do it.
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id tegra_tcu_match[] = {
+> +	{ .compatible = "nvidia,tegra194-tcu" },
+> +	{ }
+> +};
+> +
+> +static struct platform_driver tegra_tcu_driver = {
+> +	.driver = {
+> +		.name = "tegra-tcu",
+> +		.of_match_table = tegra_tcu_match,
+> +	},
+> +	.probe = tegra_tcu_probe,
+> +	.remove = tegra_tcu_remove,
+> +};
+> +
+> +static int __init tegra_tcu_init(void)
+> +{
+> +	int err;
+> +
+> +	err = platform_driver_register(&tegra_tcu_driver);
+> +	if (err)
+> +		return err;
+> +
+> +	register_console(&tegra_tcu_console);
+> +
+> +	return 0;
+> +}
+> +module_init(tegra_tcu_init);
+> +
+> +static void __exit tegra_tcu_exit(void)
+> +{
+> +	unregister_console(&tegra_tcu_console);
+> +	platform_driver_unregister(&tegra_tcu_driver);
+> +}
+> +module_exit(tegra_tcu_exit);
+> +
+> +MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("NVIDIA Tegra Combined UART driver");
+> diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
+> index dce5f9dae121..69883c32cb98 100644
+> --- a/include/uapi/linux/serial_core.h
+> +++ b/include/uapi/linux/serial_core.h
+> @@ -79,6 +79,9 @@
+>  /* Nuvoton UART */
+>  #define PORT_NPCM	40
+>  
+> +/* NVIDIA Tegra Combined UART */
+> +#define PORT_TEGRA_TCU	41
+> +
+>  /* Intel EG20 */
+>  #define PORT_PCH_8LINE	44
+>  #define PORT_PCH_2LINE	45
+> 
+
+Otherwise looks good to me.
+
+Cheers
+Jon
+
+-- 
+nvpublic
