@@ -2,151 +2,115 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FBAC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E774C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86EBF208B3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CB2C20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Djf+HQt8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EBF208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="PTQdH5eA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB2C20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754537AbeFUBYk (ORCPT
+        id S1754562AbeFUBYt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:24:40 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33458 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754101AbeFUBYe (ORCPT
+        Wed, 20 Jun 2018 21:24:49 -0400
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:57857 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754474AbeFUBYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 21:24:34 -0400
-Received: by mail-pl0-f67.google.com with SMTP id 6-v6so728022plb.0;
-        Wed, 20 Jun 2018 18:24:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=124nx/Bf6urjW7NWwZUHKIblzUEVgqs8s6fX/vjUI10=;
-        b=Djf+HQt8FKQKNeAh4/aKUefUqjuuus6pbqRr5+gns/Kp5JDkh/jqxvBn6QJx1t/vbD
-         8pxNxmGPgWH6wZf1LKkKa3YPJ37YGkpM0Gjg0B8aG+oCgdYVnjKEY9gaI89ufaEN6Aun
-         5Bj5/p53PkDXza7a5rAh9qvYHLos48HgkwnSH4fswKwKfi+mI4D2IoIuTrCoBeF0/8rE
-         TA+qDo8u4Pj8pjScGG9lOD5zQgb9XlN+jxtVMNocDod4KnEEG5CQAUa9NPtrWRKyKcBc
-         hvJryjrqC9Hg3jxZvANHGQJQWQawI/94ucuWj6Shs+ncmAjtgga/x5kgvncYDJjLNgos
-         zF2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=124nx/Bf6urjW7NWwZUHKIblzUEVgqs8s6fX/vjUI10=;
-        b=HlSV8tkroAucbvvuiWMsilQkBZzrw10YBpeqZXt7DNsOE4SFhWTWnd2k7Ptg+ZC5se
-         RWIvcV0as+5rI7YO9zguDOeF5TZ+fuvYQXH2NiIo6JeAOxJLpaWTgSS6hyWXkaYoBklJ
-         SbUxUHkyFt3APRxHFkszEd2ng+vpmgOy7wJwdNTBHmyNxc8NVFJxIckHDViZ8o2Rgvjb
-         FXrp54fOllHTSNeJEGO6pGjl6ygwFk2LSCfd1/usr35b/rN8Mj3Bv4zhMeLjERgjVJj7
-         fKFE2nwZ5t250HuJXbHs08zcInkq+PjMGZkxVzDexPN/2LLyHR3vS5GDjDat+PSdXYRy
-         p4tQ==
-X-Gm-Message-State: APt69E0Aay4fCNXjTYcearY5mBmzHcVqgLWHcuAoRz0hTqPOAypOt8/B
-        hbXjkuqd3+Ud6cDFWp6uqCU=
-X-Google-Smtp-Source: ADUXVKKy1ZXzkP3c+N50H0Q6/JNxuZ7u+24bZ11peNORDobi8ySvT0fT/r46BrY/EqJ9WEuO+QKY+A==
-X-Received: by 2002:a17:902:7e08:: with SMTP id b8-v6mr374202plm.230.1529544273714;
-        Wed, 20 Jun 2018 18:24:33 -0700 (PDT)
-Received: from [192.168.1.5] (c-73-157-163-165.hsd1.or.comcast.net. [73.157.163.165])
-        by smtp.gmail.com with ESMTPSA id x24-v6sm6683537pfj.104.2018.06.20.18.24.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 18:24:32 -0700 (PDT)
-Subject: Re: [PATCH v3 0/2] tpm: add support for nonblocking operation
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, philip.b.tricca@intel.com,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>
-References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
- <20180619131046.GC5609@linux.intel.com>
- <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
- <1529539176.4163.2.camel@HansenPartnership.com>
-From:   Tadeusz Struk <tstruk@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tstruk@gmail.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8An1osDQI/sA5cqrgj
- cvV2+TsxcukjAKCGFEQxLUxHDJs2KpQW2mJa5DGeCw==
-Message-ID: <0e46c2e9-af2b-550f-2b3d-98cbc1840bc1@gmail.com>
-Date:   Wed, 20 Jun 2018 18:24:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1529539176.4163.2.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
+        Wed, 20 Jun 2018 21:24:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1529544147; x=1561080147;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=A2thaCKaIkvqr9j7NvAgRA6GGsnXJy+VlTO/L4NgHL0=;
+  b=PTQdH5eAgBpTo03S/JTHjvqjbEBxHvNIhWeYiQ4H4thEFNmOyF5O0cun
+   2weeG+b2C0xt3qzfiyA1i04T6Ebb1e2eh20xuwMVIWns9CY7FP0rhodQE
+   1T+pYxCkYjEHl3MVHFslW5AkyB1ap3aL7cNIsQ9nRlcw3mWGgux7QZrnI
+   E=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HyAAA4/SpbmMuZ6ERcGQEBAQEBAQEBA?=
+ =?us-ascii?q?QEBAQcBAQEBAYQdDn8oCoNvlEKCApZ5CyMLhD4CF4JhITgUAQIBAQEBAQECAQE?=
+ =?us-ascii?q?CEAEBAQEBCAsLBikjDII1IhFLXAEBAQEBASMCDWMBAQEEIxFFDAQCAQgRBAEBA?=
+ =?us-ascii?q?QICIwMCAgJEAQgIAgQBDQUIgx0BgX8Pqy2CHIhGaAWBC4dJghOBD4JeLoUBM4J?=
+ =?us-ascii?q?HglUCmSQHAoV9iQuNSYodh0KBWIF0cIM3gi+IYoU+b45LgRoBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2HyAAA4/SpbmMuZ6ERcGQEBAQEBAQEBAQEBAQcBAQEBAYQ?=
+ =?us-ascii?q?dDn8oCoNvlEKCApZ5CyMLhD4CF4JhITgUAQIBAQEBAQECAQECEAEBAQEBCAsLB?=
+ =?us-ascii?q?ikjDII1IhFLXAEBAQEBASMCDWMBAQEEIxFFDAQCAQgRBAEBAQICIwMCAgJEAQg?=
+ =?us-ascii?q?IAgQBDQUIgx0BgX8Pqy2CHIhGaAWBC4dJghOBD4JeLoUBM4JHglUCmSQHAoV9i?=
+ =?us-ascii?q?QuNSYodh0KBWIF0cIM3gi+IYoU+b45LgRoBAQ?=
+Received: from esa5.dell-outbound2.iphmx.com ([68.232.153.203])
+  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2018 20:22:27 -0500
+From:   <Mario.Limonciello@dell.com>
+Received: from ausxipps306.us.dell.com ([143.166.148.156])
+  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 07:15:22 +0600
+X-LoopCount0: from 10.166.132.152
+X-IronPort-AV: E=Sophos;i="5.51,249,1526360400"; 
+   d="scan'208";a="215023759"
+X-DLP:  DLP_GlobalPCIDSS
+To:     <dvhart@infradead.org>, <keescook@chromium.org>
+CC:     <linux-kernel@vger.kernel.org>, <andy@infradead.org>,
+        <platform-driver-x86@vger.kernel.org>, <mihai.dontu@gmail.com>
+Subject: RE: [PATCH] platform/x86: wmi: Do not mix pages and kmalloc
+Thread-Topic: [PATCH] platform/x86: wmi: Do not mix pages and kmalloc
+Thread-Index: AQHUCN4YY2liD6RijkeGi9YUJab2eaRqIWsAgAABkwCAAAmIgP//vrog
+Date:   Thu, 21 Jun 2018 01:24:34 +0000
+Message-ID: <3974cbadd027497982b5a52c765fb698@ausx13mpc120.AMER.DELL.COM>
+References: <20180620213141.GA8957@beast> <20180620233736.GA3250@fury>
+ <CAGXu5jL4V9sL7Ai1SVTNkg8OE70c6kLJBdqNtj9Z06MOb4zG0g@mail.gmail.com>
+ <20180621001721.GB3250@fury>
+In-Reply-To: <20180621001721.GB3250@fury>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 04:59 PM, James Bottomley wrote:
-> I'm slightly surprised by this statement.  I thought IoT Node.js
-> runtimes (of which there are far too many, so I haven't looked at all
-> of them) use libuv or one of the forks:
-> 
-> http://libuv.org/
-> 
-> As the basis for their I/O handling?  While libuv can do polling for
-> event driven interfaces it also support the worker thread model just as
-> easily:
-> 
-> http://docs.libuv.org/en/v1.x/threadpool.html
-
-Yes, it does polling:
-http://docs.libuv.org/en/v1.x/design.html#the-i-o-loop
-
-> 
->> Similarly embedded applications, which are basically just a single
->> threaded event loop, quite often don't use threads because of
->> resources constrains.
-> It's hard for me, as a kernel developer, to imagine any embedded
-> scenario using the Linux kernel that would not allow threads unless the
-> writers simply didn't bother with synchronization: The kernel schedules
-> at the threads level and can't be configured not to use them plus
-> threads are inherently more lightweight than processes so they're a
-> natural fit for resource constrained scenarios.
-> 
-> That's still not to say we shouldn't do this, but I've got to say I
-> think the only consumers would be old fashioned C code: the code we
-> used to write before we had thread libraries that did use signals and
-> poll() for a single threaded event driven monolith (think green
-> threads), because all the new webby languages use threading either
-> explicitly or at the core of their operation.
-
-Regardless of how it actually might be used, I'm happy that we agree on
-that this *is* the right thing to do.
-Thanks,
-Tadeusz
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBEYXJyZW4gSGFydCBbbWFpbHRv
+OmR2aGFydEBpbmZyYWRlYWQub3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIEp1bmUgMjAsIDIwMTgg
+NzoxNyBQTQ0KPiBUbzogS2VlcyBDb29rDQo+IENjOiBMS01MOyBBbmR5IFNoZXZjaGVua287IFBs
+YXRmb3JtIERyaXZlcjsgTWloYWkgRG9uyJt1OyBMaW1vbmNpZWxsbywgTWFyaW8NCj4gU3ViamVj
+dDogUmU6IFtQQVRDSF0gcGxhdGZvcm0veDg2OiB3bWk6IERvIG5vdCBtaXggcGFnZXMgYW5kIGtt
+YWxsb2MNCj4gDQo+IE9uIFdlZCwgSnVuIDIwLCAyMDE4IGF0IDA0OjQzOjE0UE0gLTA3MDAsIEtl
+ZXMgQ29vayB3cm90ZToNCj4gPiBPbiBXZWQsIEp1biAyMCwgMjAxOCBhdCA0OjM3IFBNLCBEYXJy
+ZW4gSGFydCA8ZHZoYXJ0QGluZnJhZGVhZC5vcmc+IHdyb3RlOg0KPiA+ID4gT24gV2VkLCBKdW4g
+MjAsIDIwMTggYXQgMDI6MzE6NDFQTSAtMDcwMCwgS2VlcyBDb29rIHdyb3RlOg0KPiA+ID4+IFRo
+ZSBwcm9iZSBoYW5kbGVyX2RhdGEgd2FzIGJlaW5nIGFsbG9jYXRlZCB3aXRoIF9fZ2V0X2ZyZWVf
+cGFnZXMoKQ0KPiA+ID4+IGZvciBubyByZWFzb24gSSBjb3VsZCBmaW5kLiBUaGUgZXJyb3IgcGF0
+aCB3YXMgdXNpbmcga2ZyZWUoKS4gU2luY2UNCj4gPiA+DQo+ID4gPiB2NCBvZiBNYXJpbydzIHNl
+cmllcyB1c2VkIGttYWxsb2M6DQo+ID4gPiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Bh
+dGNoLzk5ODU4MjcvDQo+ID4gPg0KPiA+ID4gVGhpcyB3YXMgY2hhbmdlZCBpbiB2MTAgdG8gdXNl
+IF9fZ2V0X2ZyZWVfcGFnZXM6DQo+ID4gPiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Bh
+dGNoLzEwMDE4MDIzLw0KPiA+ID4NCj4gPiA+IEJ1dC4uLiBJJ20gbm90IGZpbmRpbmcgdGhlIGRp
+c2N1c3Npb24gdGhhdCBsZWQgdG8gdGhpcyBjaGFuZ2UuLi4uIE1hcmlvLA0KPiA+ID4gZG8geW91
+IHJlY2FsbD8gU29tZXRoaW5nIGFib3V0IGNvbnRpZ3VvdXMgbWVtb3J5PyBXZSBoYWQgYSBzaW1p
+bGFyDQo+ID4gPiBkaXNjdXNzaW9uIG9uIGFuIGVhcmxpZXIgc2VyaWVzOg0KPiA+ID4NCj4gPiA+
+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcGF0Y2gvOTk3NTI3Ny8NCj4gPg0KPiA+IEZX
+SVcsIGttYWxsb2MgZ2V0cyB5b3UgY29udGlndW91cyBtZW1vcnkuLi4NCj4gDQo+IFllYWgsIEkn
+bSBub3QgZmluZGluZyBhIHZhbGlkIHJlYXNvbiB0byB1c2UgX19nZXRfZnJlZV9wYWdlcyBvdmVy
+IGttYWxsb2MgaW4NCj4gdGhpcyBjYXNlLiBJJ2xsIGdpdmUgTWFyaW8gYSBjaGFuY2UgdG8gcmVz
+cG9uZCBpbiBjYXNlIEknbSBqdXN0IG1pc3NpbmcNCj4gc29tZXRoaW5nLCBidXQgb3RoZXJ3aXNl
+IHdpbGwgcGxhbiB0byBhcHBseSB0aGlzIHBhdGNoLg0KDQpJIHRoaW5rIGl0IHdhcyBmb3IgY29u
+dGlndW91cyBtZW1vcnksIHNvIGlmIGttYWxsb2MgaXMgZ2l2aW5nIHRoYXQgSSBhZ3JlZQ0Kbm8g
+bmVlZCB0byBrZWVwIF9fZ2V0X2ZyZWVfcGFnZXMgaW5zdGVhZC4NCg0KQWNrZWQtYnk6IE1hcmlv
+IExpbW9uY2llbGxvIDxNYXJpby5saW1vbmNpZWxsb0BkZWxsLmNvbT4NCg0KVGhhbmtzLA0KDQo+
+IA0KPiA+DQo+ID4gQnV0IGlmIHRoZSByZWFzb24gaXMgZm91bmQgYW5kIG5lZWRzIHRvIHN0YXks
+IHRoZSBwcm9iZSBlcnJvciBwYXRoJ3MNCj4gPiBrZnJlZSgpIG5lZWRzIHRvIGJlIGZpeGVkLCBh
+bmQgX19HRlBfQ09NUCBuZWVkcyB0byBiZSBhZGRlZCB0byB0aGUNCj4gPiBmcmVlIHBhZ2UgZmxh
+Z3MuDQo+IA0KPiBHb3QgaXQsIHRoYW5rcyBLZWVzLg0KPiANCj4gLS0NCj4gRGFycmVuIEhhcnQN
+Cj4gVk13YXJlIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyDQo=
