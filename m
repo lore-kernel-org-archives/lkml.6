@@ -2,155 +2,67 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B12C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C2EC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E5720883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:26:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E5720883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CCE5208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:28:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="i5LnC4zX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CCE5208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754344AbeFUH0C (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 03:26:02 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:38326 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754166AbeFUH0A (ORCPT
+        id S932482AbeFUH2g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 03:28:36 -0400
+Received: from forward105p.mail.yandex.net ([77.88.28.108]:46594 "EHLO
+        forward105p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754101AbeFUH2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 03:26:00 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5L7O2lL027081;
-        Thu, 21 Jun 2018 09:25:23 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2jqqgqbpv5-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 21 Jun 2018 09:25:23 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BCC8C34;
-        Thu, 21 Jun 2018 07:25:19 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9737E1647;
-        Thu, 21 Jun 2018 07:25:19 +0000 (GMT)
-Received: from [10.48.0.237] (10.75.127.46) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 21 Jun
- 2018 09:25:18 +0200
-Subject: Re: [PATCH V3 1/3] watchdog: stm32: add pclk feature for stm32mp1
-To:     Rob Herring <robh@kernel.org>
-CC:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-watchdog@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1529502698-13263-1-git-send-email-ludovic.Barre@st.com>
- <1529502698-13263-2-git-send-email-ludovic.Barre@st.com>
- <20180620191409.GA29934@rob-hp-laptop>
-From:   Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <618bcde6-0a41-9341-c55c-6e1d0ee8e51d@st.com>
-Date:   Thu, 21 Jun 2018 09:25:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 21 Jun 2018 03:28:35 -0400
+X-Greylist: delayed 436 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Jun 2018 03:28:34 EDT
+Received: from mxback11g.mail.yandex.net (mxback11g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:90])
+        by forward105p.mail.yandex.net (Yandex) with ESMTP id 427F1408156D
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:21:17 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback11g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id sUs05zwisK-LGNuG0SK;
+        Thu, 21 Jun 2018 10:21:16 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1529565676;
+        bh=QDXjV6zr1stEbnLrTfBFZQqwdhRESG/s2qqiRQ5dU7c=;
+        h=From:To:Subject:Date:Message-Id;
+        b=i5LnC4zXGnHHDqtjh08PMdGJ0uY1Mqa7EHFP85qDRprDT05WZiyj4q1D8zTmGC3lp
+         04hy002ZOC3o9HcBwfDyLqgGKa+so/jnBCcq492DmrAcJmhLbL/slVjk6sxbRmnM6W
+         5RJtasRmg6OwL7oZcEGz14qf/a0t9wCDs53pWj7c=
+Authentication-Results: mxback11g.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by web41o.yandex.ru with HTTP;
+        Thu, 21 Jun 2018 10:21:16 +0300
+From:   Andrey Ponomarenko <andrewponomarenko@yandex.ru>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: List of devices with poor Linux compatibility
 MIME-Version: 1.0
-In-Reply-To: <20180620191409.GA29934@rob-hp-laptop>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Thu, 21 Jun 2018 10:21:16 +0300
+Message-Id: <2047231529565676@web41o.yandex.ru>
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-21_02:,,
- signatures=0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+A new open project has been created to collect the list of computer hardware devices with poor Linux compatibility based on the Linux-Hardware.org data: https://github.com/linuxhw/HWInfo
 
-On 06/20/2018 09:14 PM, Rob Herring wrote:
-> On Wed, Jun 20, 2018 at 03:51:36PM +0200, Ludovic Barre wrote:
->> From: Ludovic Barre <ludovic.barre@st.com>
->>
->> This patch adds config data to manage specific properties by
->> compatible. Adds stm32mp1 config which requires pclk clock.
->>
->> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
->> ---
->>   .../devicetree/bindings/watchdog/st,stm32-iwdg.txt |  21 +++-
-> 
-> Please split bindings to separate patch.
+There are about 29 thousands of depersonalized hwinfo reports (https://github.com/openSUSE/hwinfo) in the repository from Linux-powered computers in various configurations. The device is included into the list of poorly supported devices if there is at least one user probe in which the driver for this device was not found. The column 'Missed' indicates the percentage of such probes. If the number is small, it means that the driver was added in newer versions of the kernel. In this case we show minimal version of the Linux kernel in which the driver was present.
 
-OK
+Devices are divided into categories. For each category we calculate the ratio of poorly supported devices to the total number of devices tested in this category.
 
-> 
->>   drivers/watchdog/stm32_iwdg.c                      | 116 +++++++++++++--------
->>   2 files changed, 91 insertions(+), 46 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
->> index cc13b10a..f07f6d89 100644
->> --- a/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
->> +++ b/Documentation/devicetree/bindings/watchdog/st,stm32-iwdg.txt
->> @@ -2,18 +2,31 @@ STM32 Independent WatchDoG (IWDG)
->>   ---------------------------------
->>   
->>   Required properties:
->> -- compatible: "st,stm32-iwdg"
->> -- reg: physical base address and length of the registers set for the device
->> -- clocks: must contain a single entry describing the clock input
->> +- compatible: Should be either "st,stm32-iwdg" or "st,stm32mp1-iwdg"
-> 
-> Please format one per line.
+Everyone can contribute to this repository by uploading probes of their computers by the hw-probe tool: https://github.com/linuxhw/hw-probe
 
-OK
-
-> 
->> +- reg: Physical base address and length of the registers set for the device
->> +- clocks: Reference to the clock entry lsi. Additional pclk clock entry
->> +  is required only for st,stm32mp1-iwdg.
->> +- clock-names: Name of the clocks used.
->> +  "lsi" for st,stm32-iwdg
->> +  "pclk", "lsi" for st,stm32mp1-iwdg
-> 
-> Put lsi 1st so it is always index 0.
-
-OK
-
-> 
->>   
->>   Optional Properties:
->>   - timeout-sec: Watchdog timeout value in seconds.
->>   
->> -Example:
->> +Examples:
->>   
->>   iwdg: watchdog@40003000 {
->>   	compatible = "st,stm32-iwdg";
->>   	reg = <0x40003000 0x400>;
->>   	clocks = <&clk_lsi>;
->> +	clock-names = "lsi";
->> +	timeout-sec = <32>;
->> +};
->> +
->> +iwdg: iwdg@5a002000 {
-> 
-> watchdog@...
-
-sorry, I forget this occurrence.
-
-> 
-> Do we really need 2 example just to show 2 clocks?
-
-No, I could keep only one
-
-> 
->> +	compatible = "st,stm32mp1-iwdg";
->> +	reg = <0x5a002000 0x400>;
->> +	clocks = <&rcc IWDG2>, <&clk_lsi>;
->> +	clock-names = "pclk", "lsi";
->>   	timeout-sec = <32>;
->>   };
+Thanks to all for attention and new computer probes!
