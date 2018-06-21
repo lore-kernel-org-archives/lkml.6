@@ -2,108 +2,128 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3094C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C402C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A834F20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:26:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A834F20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id BAEEE20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:29:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PcCBzHr1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAEEE20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933592AbeFUM0B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:26:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58945 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933186AbeFUMZ7 (ORCPT
+        id S933485AbeFUM3m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:29:42 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:42657 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933262AbeFUM3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:25:59 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5LCOm9j3880232
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 21 Jun 2018 05:24:48 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5LCOlcC3880229;
-        Thu, 21 Jun 2018 05:24:47 -0700
-Date:   Thu, 21 Jun 2018 05:24:47 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Kosina <tipbot@zytor.com>
-Message-ID: <tip-6cb2b08ff92460290979de4be91363e5d1b6cec1@git.kernel.org>
-Cc:     mlatimer@suse.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        mingo@kernel.org, jgross@suse.com, tglx@linutronix.de,
-        jkosina@suse.cz, bp@suse.de
-Reply-To: bp@suse.de, jkosina@suse.cz, tglx@linutronix.de,
-          mingo@kernel.org, jgross@suse.com, hpa@zytor.com,
-          mlatimer@suse.com, linux-kernel@vger.kernel.org
-In-Reply-To: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/pti: Don't report XenPV as vulnerable
-Git-Commit-ID: 6cb2b08ff92460290979de4be91363e5d1b6cec1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 21 Jun 2018 08:29:41 -0400
+Received: by mail-vk0-f68.google.com with SMTP id s187-v6so1742847vke.9;
+        Thu, 21 Jun 2018 05:29:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UBMwDzvdm6O0X3xnjKFRC/2Ebq4ydfYpWmZ3EctP80g=;
+        b=PcCBzHr130IvUyNMP6C1S/fIPQjaIJFs2I0TuvMgt0sZXb24Btsr9wAebgzQ6PUSMl
+         /gbkd0NO1RvSH1S5hREpDcaSjJ3kqLCe9YoD30JMz5ueqdIncBgml5ny66EPGg7CZDh4
+         QyOJ7zZa53LCLjbzDKwv+0ElNL7WfDQUgoTKpo4qk21QP1xYoS+650q4iBe3h1kqvWzY
+         VibF2xki2oz0CmXaCoN3B9QfRpGgyzdnucImw752t2DjFKHcI4a+49cLZEEbkzCmllRG
+         gDDSbvxRvmCEDmIgr1gn6tNsAehECaIqWuYnq9vAoLadQGi9qlYzIwm1Zgq3uuxGtSwd
+         Qxmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UBMwDzvdm6O0X3xnjKFRC/2Ebq4ydfYpWmZ3EctP80g=;
+        b=ub3QVmp2NmGMOtXbWBX1n3rZdX919/LYJm+lKlnIXJC8zroGfuav5b3oFAt2E+iix1
+         lKCT39HE78XbBi1mJprIxz3b2kvMCey4vG+C727ORJQqMizdK0vjaGIRpo/GtV7x7ZD/
+         gScrMv14u4eQG8V2QCXtnTBpTU/1vnutMnoR04fW3EtJ7vut4xds8She7KO5sFq8r8mw
+         wE9s2xrld4MxzqZtG6AbRAKsO+M8u6yuBN0X7CQfW3HJNXs0mbEm13BTn3YHd7T0lUeB
+         eLnz5T327aiRB7AfSWpqYz7jcDX380hAfHJTpj2jKxowDP2mpuKuZ4erGfE/WjrN0sZN
+         h59g==
+X-Gm-Message-State: APt69E3zYI6Er2LAju0M0yfyUgFVyqaJnEZvMv3vkXTKYIC5eCYvdd7b
+        x7nqVplmaUFWIbbQvZE3lcUlU/N1/eEGaDytrZE=
+X-Google-Smtp-Source: ADUXVKJXkfoLBD+ZEaNs6P6ld9O9hoMJeG9anCZcBkrKSf4UEukq7/s/NbQp/PAP7enMt+wT+meNqBcg1escvHZg+uo=
+X-Received: by 2002:a1f:62c4:: with SMTP id w187-v6mr14833236vkb.112.1529584180374;
+ Thu, 21 Jun 2018 05:29:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180620155101.57685-1-arnd@arndb.de> <20180620155101.57685-2-arnd@arndb.de>
+In-Reply-To: <20180620155101.57685-2-arnd@arndb.de>
+From:   "Yan, Zheng" <ukernel@gmail.com>
+Date:   Thu, 21 Jun 2018 20:29:28 +0800
+Message-ID: <CAAM7YAk1WB_aVUbOdEMhNUYRNAVT-eq9vE3x2H5yr-hjja7qEg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] ceph: stop using current_kernel_time()
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Chengguang Xu <cgxu519@gmx.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6cb2b08ff92460290979de4be91363e5d1b6cec1
-Gitweb:     https://git.kernel.org/tip/6cb2b08ff92460290979de4be91363e5d1b6cec1
-Author:     Jiri Kosina <jkosina@suse.cz>
-AuthorDate: Mon, 18 Jun 2018 09:59:54 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 21 Jun 2018 14:14:52 +0200
+On Wed, Jun 20, 2018 at 11:52 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> ceph_mdsc_create_request() is one of the last callers of the
+> deprecated current_kernel_time() as well as timespec_trunc().
+>
+> This changes it to use the timespec64 based interfaces instead,
+> though we still need to convert the result until we are ready to
+> change over req->r_stamp.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  fs/ceph/mds_client.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index dc8bc664a871..69c839316a7a 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -1779,6 +1779,7 @@ struct ceph_mds_request *
+>  ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+>  {
+>         struct ceph_mds_request *req = kzalloc(sizeof(*req), GFP_NOFS);
+> +       struct timespec64 ts;
+>
+>         if (!req)
+>                 return ERR_PTR(-ENOMEM);
+> @@ -1797,7 +1798,9 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
+>         init_completion(&req->r_safe_completion);
+>         INIT_LIST_HEAD(&req->r_unsafe_item);
+>
+> -       req->r_stamp = timespec_trunc(current_kernel_time(), mdsc->fsc->sb->s_time_gran);
+> +       ktime_get_coarse_real_ts64(&ts);
+> +       req->r_stamp = timespec64_to_timespec(timespec64_trunc(ts,
+> +                                               mdsc->fsc->sb->s_time_gran));
+>
 
-x86/pti: Don't report XenPV as vulnerable
+does current_time() internally uses ktime_get_coarse_real_ts64()?  If
+not,  granularity difference may cause problem. see commit
+56199016e8672feb7b903eda003a863d5bf2b8c4 for more information
 
-Xen PV domain kernel is not by design affected by meltdown as it's
-enforcing split CR3 itself. Let's not report such systems as "Vulnerable"
-in sysfs (we're also already forcing PTI to off in X86_HYPER_XEN_PV cases);
-the security of the system ultimately depends on presence of mitigation in
-the Hypervisor, which can't be easily detected from DomU; let's report
-that.
+Regards
+Yan, Zheng
 
-Reported-and-tested-by: Mike Latimer <mlatimer@suse.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Juergen Gross <jgross@suse.com>
-Cc: Borislav Petkov <bp@suse.de>
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm
-[ Merge the user-visible string into a single line. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/cpu/bugs.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index cd0fda1fff6d..404df26b7de8 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -27,6 +27,7 @@
- #include <asm/pgtable.h>
- #include <asm/set_memory.h>
- #include <asm/intel-family.h>
-+#include <asm/hypervisor.h>
- 
- static void __init spectre_v2_select_mitigation(void);
- static void __init ssb_select_mitigation(void);
-@@ -664,6 +665,9 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		if (boot_cpu_has(X86_FEATURE_PTI))
- 			return sprintf(buf, "Mitigation: PTI\n");
- 
-+		if (hypervisor_is_type(X86_HYPER_XEN_PV))
-+			return sprintf(buf, "Unknown (XEN PV detected, hypervisor mitigation required)\n");
-+
- 		break;
- 
- 	case X86_BUG_SPECTRE_V1:
+>         req->r_op = op;
+>         req->r_direct_mode = mode;
+> --
+> 2.9.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
