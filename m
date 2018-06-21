@@ -2,188 +2,303 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C148C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E620BC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F967208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D2F820837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:35:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="AYuZybFG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F967208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fv9nq6EZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2F820837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754207AbeFUKfB (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:35:01 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:52128 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932972AbeFUKdn (ORCPT
+        id S933115AbeFUKfn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 06:35:43 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37263 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754324AbeFUKfg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:33:43 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6D0FE8365A;
-        Thu, 21 Jun 2018 22:33:41 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1529577221;
-        bh=1FHpdOz1S8wmGyZiSv8ykuwHpjR2OIkWG10yzzFVs/0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=AYuZybFGf5roX8thZOGugi8oZzC1IFLaoTIaS9cvuayXw8pTAUfyF0yb/oicfHPYy
-         SlA66Fp+p/MSPaL2yUqoPYUHL7UxP5d9qZYpj8poYNM4532yU/xDEUnAg/uocFP/7T
-         Oypy1JSrc1CbF4Rj9tFyG7SnwMNs/sp1JcRsd1XA=
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b2b7f050000>; Thu, 21 Jun 2018 22:33:41 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 8FBF213EFC4;
-        Thu, 21 Jun 2018 22:33:40 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 5BDC71E2626; Thu, 21 Jun 2018 22:33:37 +1200 (NZST)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: [PATCH v4 5/6] mtd: rawnand: micron: support 8/512 on-die ECC
-Date:   Thu, 21 Jun 2018 22:33:27 +1200
-Message-Id: <20180621103328.28206-6-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180621103328.28206-1-chris.packham@alliedtelesis.co.nz>
-References: <20180621103328.28206-1-chris.packham@alliedtelesis.co.nz>
+        Thu, 21 Jun 2018 06:35:36 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180621103533euoutp027bcb22c3898c0e55b141d9fba7162a73~6Jnsss8uX0072200722euoutp02Y;
+        Thu, 21 Jun 2018 10:35:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180621103533euoutp027bcb22c3898c0e55b141d9fba7162a73~6Jnsss8uX0072200722euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1529577333;
+        bh=jrVVyH0zfivUqR6ZU74Ue3Bw8+4wiggPuR0tXjDf+UI=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=fv9nq6EZ9H6RwUJyRtvm48VeXKVR+CsdUo9njKKvrXff+V6z78szsancxs33NJ+ck
+         g308YVXMj9K6yErvWS873zor9y0kfT/d1fbiUM1rMPIzbj20o1+T+To9SciQAJ5949
+         idgYU+dBCYCHqSc76QZjN+Xf+A9PSOPHJlm4CSG0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180621103532eucas1p2c929d2d95b47af2d65efbdbca0a709b4~6Jnrmtvtv1182111821eucas1p2a;
+        Thu, 21 Jun 2018 10:35:32 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3F.C4.10409.47F7B2B5; Thu, 21
+        Jun 2018 11:35:32 +0100 (BST)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20180621103531eucas1p15ccaf3a2069fe5a188daaeb8e2a29a93~6JnqbJLh71576515765eucas1p1H;
+        Thu, 21 Jun 2018 10:35:31 +0000 (GMT)
+X-AuditID: cbfec7f5-f95739c0000028a9-78-5b2b7f749b80
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 84.15.04183.37F7B2B5; Thu, 21
+        Jun 2018 11:35:31 +0100 (BST)
+Received: from amdc3058.localnet ([106.120.53.102]) by eusync1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PAO0008H5F77Y30@eusync1.samsung.com>; Thu, 21 Jun
+        2018 11:35:31 +0100 (BST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH v2] ARM: dts: exynos: remove no longer needed samsung
+ thermal properties
+Date:   Thu, 21 Jun 2018 12:35:30 +0200
+Message-id: <8551504.8D13YNfR1X@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsWy7djPc7ol9drRBpP/s1tsnLGe1WLeZ1mL
+        +VeusVr0P37NbHH+/AZ2i8u75rBZfO49wmgx4/w+JosnD/vYHDg9ds66y+6xeM9LJo9NqzrZ
+        PO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBkzth5nLnhtUXFwwUTmBsa5+l2MnBwS
+        AiYSt362s4DYQgIrGCXu/8zqYuQCsj8zSuzdOokVpuje60NMEIlljBJ/li1jhnB+M0oc+niP
+        DaSKTcBKYmL7KkYQW0RAU+L63++sIEXMAhOZJG5sbGQHSQgLREnM2PATrIhFQFVi1uF+oCIO
+        Dl6ghrX9EiBhUQEviS372plAbF4BQYkfk++BnccsIC+xb/9UVghbR+LssXWMIPMlBHawSXz9
+        0c8IcaqLxPOr/9khbGGJV8e3QNkyEpcnd7NANExnlHjzaymUs55RYs2ZY0wQVdYSh49fhFrB
+        JzFp23RmkOskBHglOtqEIEwPiWXTXEBMIYFYid3rWSYwSs9CcuosJKfOQnLqAkbmVYziqaXF
+        uempxcZ5qeV6xYm5xaV56XrJ+bmbGIEJ4fS/4193MO77k3SIUYCDUYmH90aYVrQQa2JZcWXu
+        IUYJDmYlEd5zJtrRQrwpiZVVqUX58UWlOanFhxilOViUxHnjNOqihATSE0tSs1NTC1KLYLJM
+        HJxSDYwimZWL0gxbg57nyk2cZBv57qKYukTItcabexebvNbb82fxW+2Y1yt6rkg4TNu5YbXe
+        4+tTWqpWLN8e/HN3orrgdi7nfasij33LehjolrH3DEueOceDlNpj/4OLTpxMl/XYemL7z/WS
+        WQ+77p+bsdBTzFDo3SR3/8oPh3kn7V102eNIwJ39eawrlViKMxINtZiLihMBvBYIDAQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsVy+t/xy7rF9drRBs+fSlhsnLGe1WLeZ1mL
+        +VeusVr0P37NbHH+/AZ2i8u75rBZfO49wmgx4/w+JosnD/vYHDg9ds66y+6xeM9LJo9NqzrZ
+        PO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBkzth5nLnhtUXFwwUTmBsa5+l2MnBwS
+        AiYS914fYgKxhQSWMEpM/S/UxcgFZP9llPj37TQLSIJNwEpiYvsqRhBbREBT4vrf76wgRcwC
+        E5kkmrqmMncxcnAIC0RJ3J6gCFLDIqAqMetwPytImBeofm2/BEhYVMBLYsu+drBdvAKCEj8m
+        3wMbzywgL7Fv/1RWCFtLYv3O40wTGHlnISmbhaRsFpKyBYzMqxhFUkuLc9Nzi430ihNzi0vz
+        0vWS83M3MQKDdtuxn1t2MHa9Cz7EKMDBqMTDeyNMK1qINbGsuDL3EKMEB7OSCO85E+1oId6U
+        xMqq1KL8+KLSnNTiQ4zSHCxK4rznDSqjhATSE0tSs1NTC1KLYLJMHJxSDYwcfFuUei4nqm3l
+        38uhubA2L9J6YaDcx34dpklKzF8e1a8S9Vjn8nHpw+M7+Bd/ubJDyWVehsSHV0JZkyb9/sC4
+        yP9/R2ra2kfK6c7lnf6hswvWMeU5SLbdEvu19dABzmmpH16/3DC7bV2K9rHOyIT/CfvOe9kU
+        77eruLz0eO+nYq1jB5osZL8psRRnJBpqMRcVJwIADGFqNVYCAAA=
+X-CMS-MailID: 20180621103531eucas1p15ccaf3a2069fe5a188daaeb8e2a29a93
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180621103531eucas1p15ccaf3a2069fe5a188daaeb8e2a29a93
+References: <CGME20180621103531eucas1p15ccaf3a2069fe5a188daaeb8e2a29a93@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Micron MT29F1G08ABAFAWP-ITE:F supports an on-die ECC with 8 bits
-per 512 bytes. Add support for this combination.
+Remove no longer needed samsung thermal properties.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+There should be no functional changes caused by this patch.
+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
-Changes in v2:
-- New
-Changes in v3:
-- Handle reporting of corrected errors that don't require a rewrite, expand
-  comment for the ECC status bits.
-Changes in v4:
-- Use a switch statement for handling ECC status
-- Update ecc_stats.corrected
+v2:
+- rebased against current -next kernel
 
- drivers/mtd/nand/raw/nand_micron.c | 68 ++++++++++++++++++++----------
- 1 file changed, 46 insertions(+), 22 deletions(-)
+ arch/arm/boot/dts/exynos3250.dtsi                 |    2 +-
+ arch/arm/boot/dts/exynos4.dtsi                    |    2 +-
+ arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi |   20 --------------------
+ arch/arm/boot/dts/exynos5250.dtsi                 |    2 +-
+ arch/arm/boot/dts/exynos5410.dtsi                 |    8 ++++----
+ arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi |   21 ---------------------
+ arch/arm/boot/dts/exynos5420.dtsi                 |   10 +++++-----
+ 7 files changed, 12 insertions(+), 53 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
-index d30bd4df9b12..f1ecd4986b50 100644
---- a/drivers/mtd/nand/raw/nand_micron.c
-+++ b/drivers/mtd/nand/raw/nand_micron.c
-@@ -18,10 +18,28 @@
- #include <linux/mtd/rawnand.h>
+Index: b/arch/arm/boot/dts/exynos3250.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos3250.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos3250.dtsi	2018-06-21 12:17:32.091322153 +0200
+@@ -242,7 +242,7 @@
+ 			interrupts = <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cmu CLK_TMU_APBIF>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 			status = "disabled";
+ 		};
  
- /*
-- * Special Micron status bit that indicates when the block has been
-- * corrected by on-die ECC and should be rewritten
-+ * Special Micron status bit 3 indicates that the block has been
-+ * corrected by on-die ECC and should be rewritten.
-+ *
-+ * On chips with 8-bit ECC and additional bit can be used to distinguish
-+ * cases where a errors were corrected without needing a rewrite
-+ *
-+ * Bit 4 Bit 3 Bit 0 Description
-+ * ----- ----- ----- -----------
-+ * 0     0     0     No Errors
-+ * 0     0     1     Multiple uncorrected errors
-+ * 0     1     0     4 - 6 errors corrected, recommend rewrite
-+ * 0     1     1     Reserved
-+ * 1     0     0     1 - 3 errors corrected
-+ * 1     0     1     Reserved
-+ * 1     1     0     7 - 8 errors corrected, recommend rewrite
-  */
--#define NAND_STATUS_WRITE_RECOMMENDED	BIT(3)
-+#define NAND_STATUS_MASK		(BIT(4) | BIT(3) | BIT(0))
-+#define NAND_STATUS_NO_ERRORS		0
-+#define NAND_STATUS_UNCORRECTABLE	BIT(0)
-+#define NAND_STATUS_4_6_CORRECTED	BIT(3)
-+#define NAND_STATUS_1_3_CORRECTED	BIT(4)
-+#define NAND_STATUS_7_8_CORRECTED	(BIT(4) | BIT(3))
+Index: b/arch/arm/boot/dts/exynos4.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos4.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos4.dtsi	2018-06-21 12:17:32.091322153 +0200
+@@ -735,7 +735,7 @@
+ 			reg = <0x100C0000 0x100>;
+ 			interrupts = <2 4>;
+ 			status = "disabled";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
  
- struct nand_onfi_vendor_micron {
- 	u8 two_plane_read;
-@@ -137,18 +155,31 @@ micron_nand_read_page_on_die_ecc(struct mtd_info *mtd, struct nand_chip *chip,
- 	if (ret)
- 		goto out;
- 
--	if (status & NAND_STATUS_FAIL) {
-+	/*
-+	 * The internal ECC doesn't tell us the number of bitflips
-+	 * that have been corrected, but tells us if it recommends to
-+	 * rewrite the block. If it's the case, then we pretend we had
-+	 * a number of bitflips equal to the ECC strength, which will
-+	 * hint the NAND core to rewrite the block.
-+	 */
-+	switch (status & NAND_STATUS_MASK) {
-+	case NAND_STATUS_UNCORRECTABLE:
- 		mtd->ecc_stats.failed++;
--	} else if (status & NAND_STATUS_WRITE_RECOMMENDED) {
--		/*
--		 * The internal ECC doesn't tell us the number of bitflips
--		 * that have been corrected, but tells us if it recommends to
--		 * rewrite the block. If it's the case, then we pretend we had
--		 * a number of bitflips equal to the ECC strength, which will
--		 * hint the NAND core to rewrite the block.
--		 */
--		mtd->ecc_stats.corrected += chip->ecc.strength;
-+		break;
-+	case NAND_STATUS_1_3_CORRECTED:
-+		mtd->ecc_stats.corrected++;
-+		max_bitflips = 1;
-+		break;
-+	case NAND_STATUS_4_6_CORRECTED:
-+		mtd->ecc_stats.corrected += 4;
-+		/* rewrite recommended */
-+		max_bitflips = chip->ecc.strength;
-+		break;
-+	case NAND_STATUS_7_8_CORRECTED:
-+		mtd->ecc_stats.corrected += 7;
-+		/* rewrite recommended */
- 		max_bitflips = chip->ecc.strength;
-+		break;
- 	}
- 
- 	ret = nand_read_data_op(chip, buf, mtd->writesize, false);
-@@ -239,13 +270,6 @@ static int micron_supports_on_die_ecc(struct nand_chip *chip)
- 	if (feature[0] & ONFI_FEATURE_ON_DIE_ECC_EN)
- 		return MICRON_ON_DIE_MANDATORY;
- 
--	/*
--	 * Some Micron NANDs have an on-die ECC of 4/512, some other
--	 * 8/512. We only support the former.
--	 */
--	if (chip->ecc_strength_ds != 4)
--		return MICRON_ON_DIE_UNSUPPORTED;
+ 		jpeg_codec: jpeg-codec@11840000 {
+Index: b/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,20 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Device tree sources for Exynos4412 TMU sensor configuration
+- *
+- * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
+- */
 -
- 	return MICRON_ON_DIE_SUPPORTED;
- }
+-#include <dt-bindings/thermal/thermal_exynos.h>
+-
+-#thermal-sensor-cells = <0>;
+-samsung,tmu_gain = <8>;
+-samsung,tmu_reference_voltage = <16>;
+-samsung,tmu_noise_cancel_mode = <4>;
+-samsung,tmu_efuse_value = <55>;
+-samsung,tmu_min_efuse_value = <40>;
+-samsung,tmu_max_efuse_value = <100>;
+-samsung,tmu_first_point_trim = <25>;
+-samsung,tmu_second_point_trim = <85>;
+-samsung,tmu_default_temp_offset = <50>;
+-samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
+Index: b/arch/arm/boot/dts/exynos5250.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5250.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos5250.dtsi	2018-06-21 12:17:32.091322153 +0200
+@@ -301,7 +301,7 @@
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
  
-@@ -275,9 +299,9 @@ static int micron_nand_init(struct nand_chip *chip)
- 			return -EINVAL;
- 		}
+ 		sata: sata@122f0000 {
+Index: b/arch/arm/boot/dts/exynos5410.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5410.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos5410.dtsi	2018-06-21 12:17:32.091322153 +0200
+@@ -93,7 +93,7 @@
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
  
--		chip->ecc.bytes = 8;
-+		chip->ecc.bytes = chip->ecc_strength_ds * 2;
- 		chip->ecc.size = 512;
--		chip->ecc.strength = 4;
-+		chip->ecc.strength = chip->ecc_strength_ds;
- 		chip->ecc.algo = NAND_ECC_BCH;
- 		chip->ecc.read_page = micron_nand_read_page_on_die_ecc;
- 		chip->ecc.write_page = micron_nand_write_page_on_die_ecc;
--- 
-2.17.1
+ 		tmu_cpu1: tmu@10064000 {
+@@ -102,7 +102,7 @@
+ 			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu2: tmu@10068000 {
+@@ -111,7 +111,7 @@
+ 			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu3: tmu@1006c000 {
+@@ -120,7 +120,7 @@
+ 			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos4412-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		mmc_0: mmc@12200000 {
+Index: b/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,21 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Device tree sources for Exynos5420 TMU sensor configuration
+- *
+- * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
+- * Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
+- */
+-
+-#include <dt-bindings/thermal/thermal_exynos.h>
+-
+-#thermal-sensor-cells = <0>;
+-samsung,tmu_gain = <8>;
+-samsung,tmu_reference_voltage = <16>;
+-samsung,tmu_noise_cancel_mode = <4>;
+-samsung,tmu_efuse_value = <55>;
+-samsung,tmu_min_efuse_value = <0>;
+-samsung,tmu_max_efuse_value = <100>;
+-samsung,tmu_first_point_trim = <25>;
+-samsung,tmu_second_point_trim = <85>;
+-samsung,tmu_default_temp_offset = <50>;
+-samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
+Index: b/arch/arm/boot/dts/exynos5420.dtsi
+===================================================================
+--- a/arch/arm/boot/dts/exynos5420.dtsi	2018-06-21 12:17:32.107322153 +0200
++++ b/arch/arm/boot/dts/exynos5420.dtsi	2018-06-21 12:17:32.095322153 +0200
+@@ -738,7 +738,7 @@
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu1: tmu@10064000 {
+@@ -747,7 +747,7 @@
+ 			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu2: tmu@10068000 {
+@@ -756,7 +756,7 @@
+ 			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>, <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_cpu3: tmu@1006c000 {
+@@ -765,7 +765,7 @@
+ 			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU>, <&clock CLK_TMU_GPU>;
+ 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		tmu_gpu: tmu@100a0000 {
+@@ -774,7 +774,7 @@
+ 			interrupts = <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
+ 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+-			#include "exynos5420-tmu-sensor-conf.dtsi"
++			#thermal-sensor-cells = <0>;
+ 		};
+ 
+ 		sysmmu_g2dr: sysmmu@10a60000 {
 
