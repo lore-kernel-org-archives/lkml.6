@@ -2,105 +2,97 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDE7C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC932C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B5E921898
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:36:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B5E921898
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 59AE8218D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:41:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Q28CDlCn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59AE8218D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932965AbeFURgc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 13:36:32 -0400
-Received: from mga18.intel.com ([134.134.136.126]:31255 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932621AbeFURga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 13:36:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 10:36:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,252,1526367600"; 
-   d="scan'208";a="234499741"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.162])
-  by orsmga005.jf.intel.com with ESMTP; 21 Jun 2018 10:36:20 -0700
-Subject: Re: [PATCH v3 0/2] tpm: add support for nonblocking operation
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, philip.b.tricca@intel.com,
-        James.Bottomley@HansenPartnership.com,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>
-References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
- <20180619131046.GC5609@linux.intel.com>
- <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
- <20180621171746.GJ11859@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <fff9a2ae-6f18-2401-f65b-d53f1506bbdf@intel.com>
-Date:   Thu, 21 Jun 2018 10:36:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180621171746.GJ11859@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S933134AbeFURly (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 13:41:54 -0400
+Received: from mail-lf0-f46.google.com ([209.85.215.46]:45993 "EHLO
+        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932844AbeFURlw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 13:41:52 -0400
+Received: by mail-lf0-f46.google.com with SMTP id a13-v6so5501686lfk.12
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:41:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=byrYUmfqYiOquk3eutC146KO+EOprd25//eeGcksEpo=;
+        b=Q28CDlCneHsXKSBTxt2aD0K7Re39O7uLzu22LLa5ylr9OgkkLfnj/Hhy0iCPZGDCVD
+         iuCfl4Lr+C8Za7b2C6/HJAAVzePoA9CDslhFKyghJtCJ94eba+RPMekDi0aq/lpiydbk
+         3dQeao873OaJ/BY/n6oiZisaWR7J9nSXUQyQQTvCDJvGMWNNiegjZae1TFPDHffYtkf5
+         mbc/AIzD1GN9cdnSyOStbteFH/mhnmndENE7vdN1U4OL6dt+eXkN37C8keOSafgzcYYC
+         fhS/rAvm0xSa4MLecdH1c3g462BcbpNcrXd1U91MySlLMb667QppmIT7Xri8RVN+QPRa
+         F7Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=byrYUmfqYiOquk3eutC146KO+EOprd25//eeGcksEpo=;
+        b=oklz0pZzaDXmQduidWXiqGiiYRPFuIDop0Fe1Xz5uEBno3PcGz36wqM5irgMrr32O3
+         1FTvFU+S/jrrbeNzRgkUCzbTI89MVMcbda1bNI6N5INQtZiGJyW5tjh9ypRi7PHFMNR0
+         s188iFW9bF88681jDismVCQ2J5Mv+B5+Maq74xo7QQK3B7Fqp+0CGUj1zugLM6UREcz7
+         auXxIaDRCL/r0JYp2y6JgMggRhwFJ4BDkyMhXGRyRWdAElGavOcCLa4doMbl5MhFu6Pw
+         xjtt+5Kgw6RTHUE/fhXWEeSWyNfDYPPBQLdRM2V4pE7+GGy5YENFIS6csOhwiVdjO6jZ
+         MSlg==
+X-Gm-Message-State: APt69E3Yax6BPLZJE6wm3cNMJqfHD1X8NqSkNvN5MnP0J30QoMnHUICu
+        +SRnZTRboGHMh2498PBRylf9YQ==
+X-Google-Smtp-Source: ADUXVKIJbsZ47TNr0Xeu9BglUgwIbtvBHHOuS3s6cpzlnq/R0K6p8l/QiqkXcs/sQOwxQ+8awabxGA==
+X-Received: by 2002:a2e:980f:: with SMTP id a15-v6mr17595335ljj.143.1529602910866;
+        Thu, 21 Jun 2018 10:41:50 -0700 (PDT)
+Received: from localhost.localdomain (178-16-155-142.obit.ru. [178.16.155.142])
+        by smtp.gmail.com with ESMTPSA id s5-v6sm951756ljj.93.2018.06.21.10.41.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 10:41:49 -0700 (PDT)
+From:   Andrey Gusakov <andrey.gusakov@cogentembedded.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, cphealy@gmail.com,
+        andrew.smirnov@gmail.com, l.stach@pengutronix.de
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andrey.gusakov@cogentembedded.com
+Subject: [PATCH 0/3] ARM: dts: imx: add two ZII boards
+Date:   Thu, 21 Jun 2018 20:44:57 +0300
+Message-Id: <1529603100-31958-1-git-send-email-andrey.gusakov@cogentembedded.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21/2018 10:17 AM, Jarkko Sakkinen wrote:
-> On Tue, Jun 19, 2018 at 05:45:35PM -0700, Tadeusz Struk wrote:
->> Hi Jarkko,
->> Thanks for reviewing the patch.
->> There are applications/frameworks where a worker thread is not an option.
->> Take for example the IoT use-cases and frameworks like IoT.js, or "Node.js for IoT".
->> They are all single threaded, event-driven frameworks, using non-blocking I/O as the base of their processing model.
->> Similarly embedded applications, which are basically just a single threaded event loop, quite often don't use threads because of resources constrains.
->>
->> If your concern is that user space will not adopt to this, I can say that TSS library [1] is currently blocked on this feature, and we can not enable some of the use-cases mentioned above because of this.
->>
->> Thanks,
->> Tadeusz
->>
->> [1] https://github.com/tpm2-software/tpm2-tss
-> 
-> I put this into "mathematical" terms. TPM is by nature is blocking. It
-> does not scale this way so you are essentially just simulating
-> non-blocking behaviour.
-> 
+Common part of dts was moved to imx51-zii-common.dtsi
+for future reuse.
 
-That is correct, and this is exactly why we need this.
-Thanks,
+Andrey Gusakov (3):
+  ARM: dts: imx51-zii-common: create common include dtsi
+  ARM: dts: imx: add ZII SCU2 ESB board
+  ARM: dts: imx: add ZII SCU2 Mezz board
+
+ arch/arm/boot/dts/Makefile                |   4 +-
+ arch/arm/boot/dts/imx51-zii-common.dtsi   | 317 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/imx51-zii-rdu1.dts      | 330 +++---------------------------
+ arch/arm/boot/dts/imx51-zii-scu2-esb.dts  | 178 ++++++++++++++++
+ arch/arm/boot/dts/imx51-zii-scu2-mezz.dts | 190 +++++++++++++++++
+ 5 files changed, 718 insertions(+), 301 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx51-zii-common.dtsi
+ create mode 100644 arch/arm/boot/dts/imx51-zii-scu2-esb.dts
+ create mode 100644 arch/arm/boot/dts/imx51-zii-scu2-mezz.dts
+
 -- 
-Tadeusz
+1.9.1
+
