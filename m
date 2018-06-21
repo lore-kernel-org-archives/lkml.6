@@ -7,59 +7,59 @@ X-Spam-Status: No, score=1.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FB2C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07782C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABCF520875
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:32:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2C1420874
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:47:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ct5O4bE+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCF520875
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pmzkCKIH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C1420874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754313AbeFUAcg (ORCPT
+        id S1754439AbeFUArU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 20:32:36 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45615 "EHLO
+        Wed, 20 Jun 2018 20:47:20 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33254 "EHLO
         mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753906AbeFUAce (ORCPT
+        with ESMTP id S1754099AbeFUArS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 20:32:34 -0400
-Received: by mail-pl0-f67.google.com with SMTP id c23-v6so650460plz.12;
-        Wed, 20 Jun 2018 17:32:34 -0700 (PDT)
+        Wed, 20 Jun 2018 20:47:18 -0400
+Received: by mail-pl0-f67.google.com with SMTP id 6-v6so683893plb.0;
+        Wed, 20 Jun 2018 17:47:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=WvNoawx1CFWSP21l+HpEFte/tn9EAJUIDuk3zx2XpGU=;
-        b=ct5O4bE+ZLe3igMSe+c7fa8wP32YmLnnaakXN+EkkcL0pGTlFQG6j7MBtkqt4zDFs4
-         o3q/V9H6GNcpmgXxhvkjThIrVpX3UUwRyT/qRUk9KoJsXPelqLZaGHNVcnpIOknA6vbz
-         F27neCy4bnL43OCKF3T1DwabDS/yYmIUI6liQx+LCgiZ1HGwrbMudw2gXnEy9tgGaZQE
-         8p5dXAZBk6WbpsHa5jpsfY8N8I3C3pF6RM1BfcAkqJOLSg88+K+OMQmnRJ0cHQY3Fp4x
-         fmq8vLPtd0wt3yDUOkt2yfgAAUP3LI6jXE0NzSQ1W9bHL7QsMcd5zag4ZSN9o3jEugg/
-         htWw==
+        bh=YmfUs0oMycm2fIrTWEN593Jb7ubVDybFOSbgfOjOK6M=;
+        b=pmzkCKIHUJTxFiN3vOb4YPXISo1Xe1Rjj8wS8nyFcygXiplc9w8J+DxlhVvUVUw67+
+         U3IOLJGvtyvgx0kQ8CmAEBXuOAopdTTp4qOV9PFZ3d/IsmsHyX4fXBpHf5psW3NxgBLe
+         01WFy6w4LW75NraArPjZ131UVxvqcqIU5ldPMyvH47MbgEy5MvxRnaKruD7neu4vLKtj
+         4zvKUHnlqst6akjCcgednSjOlDQNR3gpKjHOyHyNVb6e2b3x59lME5OItfBYPP5YCY5D
+         rtPD2/cABb7i8NobZYCl/QXLJOTijARqCq5VFwRAhE9r3tjdBuZB3UssFjPu0n4RJL/l
+         Y17A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WvNoawx1CFWSP21l+HpEFte/tn9EAJUIDuk3zx2XpGU=;
-        b=iwNrEITagrYprqJiJ8v4/AJ8wI+DLzWpe3xt6lKoy/9Qs7/7QbU6fU77Ml3rnLnGE5
-         Y3llzc1Ay7+fGBG3LzER/YfNA1LCQeC/yUc9h38pRFc2pHoN5a+E5AmmpmaaQ1u/BxmK
-         IRErE5PhdUrj7cOcR3t5sypl8H5yFUzIVo/rcK3hzPgOllQVnZJIfWTsGbDUa9FZnZVM
-         IfVsAHABLj5ovayIlU4rBkgYrOM8720KWPFKB9HCot3aT35jWE8FVGLHsOQp3YafmEr0
-         AyV6L8Z5aoE2aAw/WEz2neEgEi9U2mIAWF6MU3URfTvvJud1QTQS5LkVhtFTnlfApiNJ
-         7lzA==
-X-Gm-Message-State: APt69E1EczDQXXm+5R9n/E8D7BK/cRZqXhQsdMR107MRgIsG/MLAWmZW
-        /lr0PKq6tsx3tP8azBqXUPU=
-X-Google-Smtp-Source: ADUXVKL78sVrNL7/XKHYiBqo76bEwBJOVoi6to6Ow9sPa4TiCM6W8PtVW0fa23XCH3Mth9ZtCtVs3w==
-X-Received: by 2002:a17:902:b48f:: with SMTP id y15-v6mr26135920plr.261.1529541153836;
-        Wed, 20 Jun 2018 17:32:33 -0700 (PDT)
+        bh=YmfUs0oMycm2fIrTWEN593Jb7ubVDybFOSbgfOjOK6M=;
+        b=edwaEX0LjiwM5g6s2uwv/xgKT46K5XyG13sqav5EUdnrFXf9pjiwbofPYyHjFTsqvA
+         aU/wEspgvDQDzx7WkaVYBcijPeRVffinQau0FW0bY3kU/NNYRr5P7RrEVF7Sfiw4VZv8
+         qBQwWduMdsLt9aao0CojCwEVpx3gG9mjFBO/bYJiR4GCnmPoB+Subu6yEQxj/NgbLCyJ
+         oL90NDEA11Hw6h1K0kQPrbGLv3+WE5gDRKj+lrbsRbtotrMMbv4kJNFYStSkDkz2NX0K
+         JT9xdvzh/Sx6X7VtGFyKKpoMQSUq9rPlSwuIt91tIzlFllHfR8IxBMnSL7xsbVG2+DaQ
+         oRcQ==
+X-Gm-Message-State: APt69E1/QnFIZ51QPFE8z14/l7sDdtYtdclqSfqnjHmkajrI5TsSQWkz
+        ojsZAAOMWmpT8z+2VRRV3do=
+X-Google-Smtp-Source: ADUXVKLOKTce+MQjIqQ+W3jqm4K2psPYFgOOCzaML57f9rnfxWj7JU4OpbsTyPQ75XbC5LDo5dqDBg==
+X-Received: by 2002:a17:902:778e:: with SMTP id o14-v6mr25820016pll.214.1529542038034;
+        Wed, 20 Jun 2018 17:47:18 -0700 (PDT)
 Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id c67-v6sm6423662pfj.173.2018.06.20.17.32.32
+        by smtp.gmail.com with ESMTPSA id j8-v6sm9507083pfe.84.2018.06.20.17.47.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 20 Jun 2018 17:32:33 -0700 (PDT)
-Date:   Wed, 20 Jun 2018 17:32:31 -0700
+        Wed, 20 Jun 2018 17:47:17 -0700 (PDT)
+Date:   Wed, 20 Jun 2018 17:47:15 -0700
 From:   Eric Biggers <ebiggers3@gmail.com>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
@@ -75,145 +75,66 @@ Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
         Alasdair Kergon <agk@redhat.com>,
         Rabin Vincent <rabinv@axis.com>
-Subject: Re: [dm-devel] [PATCH 05/11] crypto alg: Introduce max blocksize and
- alignmask
-Message-ID: <20180621003231.GH111712@gmail.com>
+Subject: Re: [dm-devel] [PATCH 07/11] crypto: xcbc: Remove VLA usage
+Message-ID: <20180621004715.GI111712@gmail.com>
 References: <20180620190408.45104-1-keescook@chromium.org>
- <20180620190408.45104-6-keescook@chromium.org>
- <20180620234031.GC111712@gmail.com>
- <CAGXu5j++uGCnAOiQd=JM139B6g7oUGTquhgniX-Fwsj8qofU9w@mail.gmail.com>
+ <20180620190408.45104-8-keescook@chromium.org>
+ <20180620234623.GE111712@gmail.com>
+ <CAGXu5jJ30eGUoik5+fWgdSHcO7NrAi87LXWWA5=RX6zwK0ueVg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5j++uGCnAOiQd=JM139B6g7oUGTquhgniX-Fwsj8qofU9w@mail.gmail.com>
+In-Reply-To: <CAGXu5jJ30eGUoik5+fWgdSHcO7NrAi87LXWWA5=RX6zwK0ueVg@mail.gmail.com>
 User-Agent: Mutt/1.10+28 (db52f11e) (2018-06-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 05:04:08PM -0700, Kees Cook wrote:
-> On Wed, Jun 20, 2018 at 4:40 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> > On Wed, Jun 20, 2018 at 12:04:02PM -0700, Kees Cook wrote:
-> >> In the quest to remove all stack VLA usage from the kernel[1], this
-> >> exposes the existing upper bound on crypto block sizes for VLA removal,
-> >> and introduces a new check for alignmask (current maximum in the kernel
-> >> is 63 from manual inspection of all cra_alignmask settings).
+On Wed, Jun 20, 2018 at 05:10:04PM -0700, Kees Cook wrote:
+> On Wed, Jun 20, 2018 at 4:46 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> > On Wed, Jun 20, 2018 at 12:04:04PM -0700, Kees Cook wrote:
+> >> In the quest to remove all stack VLA usage from the kernel[1], this uses
+> >> the maximum blocksize and adds a sanity check.
 > >>
 > >> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 > >>
 > >> Signed-off-by: Kees Cook <keescook@chromium.org>
 > >> ---
-> >>  crypto/algapi.c        | 5 ++++-
-> >>  include/linux/crypto.h | 4 ++++
-> >>  2 files changed, 8 insertions(+), 1 deletion(-)
+> >>  crypto/xcbc.c | 5 ++++-
+> >>  1 file changed, 4 insertions(+), 1 deletion(-)
 > >>
-> >> diff --git a/crypto/algapi.c b/crypto/algapi.c
-> >> index c0755cf4f53f..760a412b059c 100644
-> >> --- a/crypto/algapi.c
-> >> +++ b/crypto/algapi.c
-> >> @@ -57,7 +57,10 @@ static int crypto_check_alg(struct crypto_alg *alg)
-> >>       if (alg->cra_alignmask & (alg->cra_alignmask + 1))
-> >>               return -EINVAL;
-> >>
-> >> -     if (alg->cra_blocksize > PAGE_SIZE / 8)
-> >> +     if (alg->cra_blocksize > CRYPTO_ALG_MAX_BLOCKSIZE)
+> >> diff --git a/crypto/xcbc.c b/crypto/xcbc.c
+> >> index 25c75af50d3f..016481b1f3ba 100644
+> >> --- a/crypto/xcbc.c
+> >> +++ b/crypto/xcbc.c
+> >> @@ -65,7 +65,10 @@ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
+> >>       int bs = crypto_shash_blocksize(parent);
+> >>       u8 *consts = PTR_ALIGN(&ctx->ctx[0], alignmask + 1);
+> >>       int err = 0;
+> >> -     u8 key1[bs];
+> >> +     u8 key1[CRYPTO_ALG_MAX_BLOCKSIZE];
+> >> +
+> >> +     if (WARN_ON(bs > sizeof(key1)))
 > >> +             return -EINVAL;
-> >> +
-> >> +     if (alg->cra_alignmask > CRYPTO_ALG_MAX_ALIGNMASK)
-> >>               return -EINVAL;
-> >>
-> >>       if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
-> >> diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-> >> index 6eb06101089f..e76ffcbd5aa6 100644
-> >> --- a/include/linux/crypto.h
-> >> +++ b/include/linux/crypto.h
-> >> @@ -134,6 +134,10 @@
-> >>   */
-> >>  #define CRYPTO_MAX_ALG_NAME          128
-> >>
-> >> +/* Maximum values for registered algorithms. */
-> >> +#define CRYPTO_ALG_MAX_BLOCKSIZE    (PAGE_SIZE / 8)
-> >> +#define CRYPTO_ALG_MAX_ALIGNMASK    63
-> >> +
 > >
-> > How do these differ from MAX_CIPHER_BLOCKSIZE and MAX_CIPHER_ALIGNMASK, and why
-> > are they declared in different places?
+> > Similarly, why not MAX_CIPHER_BLOCKSIZE?
+> >
+> > Also, xcbc_create() only allows a 16-byte block size, and you made the API
+> > enforce the maximum for algorithms anyway.  So I think the extra check here
+> > isn't very worthwhile.
 > 
-> This is what I get for staring at crypto code for so long. I entirely
-> missed these checks... even though they're 8 line away:
-> 
->         if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
->                                CRYPTO_ALG_TYPE_CIPHER) {
->                 if (alg->cra_alignmask > MAX_CIPHER_ALIGNMASK)
->                         return -EINVAL;
-> 
->                 if (alg->cra_blocksize > MAX_CIPHER_BLOCKSIZE)
->                         return -EINVAL;
->         }
-> 
-> However, this is only checking CRYPTO_ALG_TYPE_CIPHER, and
-> cra_blocksize can be used for all kinds of things.
-> 
+> Is the "parent" argument in crypto_xcbc_digest_setkey() always going
+> to be the "alg" from xcbc_create()? I couldn't convince myself that
+> was true. If it is, then yes, this VLA can trivially made to be 16,
+> but it seemed like they were separate instances...
 
-It's overloaded for different purposes, depending on the type of algorithm.
-It's poorly documented, but the uses I see are:
+Yes, it's guaranteed to be an instance of "xcbc" which was created by
+xcbc_create(), so it will have 'cra_blocksize == 16'.
 
-(1) Block size for "ciphers", i.e. what the rest of the world calls "block ciphers".
-(2) Minimum input size for "skciphers" -- usually either 1 or the block size of
-    the underlying block cipher, in the case that the skcipher is something like
-    "cbc(aes)", where a block cipher is wrapped in a mode of operation.
-(3) Block size for hash functions that use an internal compression function,
-    e.g. SHA-1 has a block size of 64 bytes.
-
-I'm not sure it makes sense to have a single limit for all these uses.  All the
-block ciphers supported by Linux have a block size of 16 bytes or less, while
-hash functions usually have larger "block sizes".
-
-> include/crypto/algapi.h:#define MAX_CIPHER_ALIGNMASK            15
-> ...
-> drivers/crypto/mxs-dcp.c:                       .cra_flags
->  = CRYPTO_ALG_ASYNC,
-> drivers/crypto/mxs-dcp.c:                       .cra_alignmask          = 63,
-> 
-> Is this one broken? It has no CRYPTO_ALG_TYPE_... ?
-> 
-> For my CRYPTO_ALG_MAX_BLOCKSIZE, there is:
-> 
-> crypto/xcbc.c:  u8 key1[CRYPTO_ALG_MAX_BLOCKSIZE];
-> drivers/crypto/qat/qat_common/qat_algs.c:       char
-> ipad[CRYPTO_ALG_MAX_BLOCKSIZE];
-> drivers/crypto/qat/qat_common/qat_algs.c:       char
-> opad[CRYPTO_ALG_MAX_BLOCKSIZE];
-> 
-> It looks like both xcbc and qat are used with shash, so that needs a
-> separate max blocksize.
-
-Actually, xcbc is a 'shash' template (CRYPTO_ALG_TYPE_SHASH) that wraps a block
-cipher (CRYPTO_ALG_TYPE_CIPHER) and sets its own cra_blocksize to the block
-cipher's block size.  So the same block size can be gotten from either
-'crypto_shash_blocksize(parent)' or 'crypto_cipher_blocksize(ctx->child)'.
-It can only be 16 bytes, currently, since xcbc_create() only allows
-instantiating the template if that's the block size.
-
-But in the case of qat_alg_do_precomputes(), yes it appears to need the hash
-block size.
-
-> 
-> For my CRYPTO_ALG_MAX_ALIGNMASK, there is:
-> 
-> crypto/shash.c: u8 ubuf[CRYPTO_ALG_MAX_ALIGNMASK]
-> crypto/shash.c:         __aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
-> crypto/shash.c:         __aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
-> 
-> which is also shash.
-> 
-> How should I rename these and best apply the registration-time sanity checks?
-
-I'm not sure, but it may make sense to enforce a smaller limit for algorithm
-types like CRYPTO_ALG_TYPE_CIPHER and maybe even CRYPTO_ALG_TYPE_SHASH that
-can't be implemented in a hardware driver, as their APIs are not asynchronous
-and don't operate on scatterlists.  Only hardware drivers can need very large
-alignmasks like 64 bytes, I believe.
+So until someone actually tests and enables support in the "xcbc" template for
+other block sizes (if the XCBC specification allows them), it would also be fine
+to just '#define XCBC_BLOCK_SIZE 16' at the top of the file and use that
+everywhere that references the block size.
 
 Eric
