@@ -2,115 +2,97 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C70D3C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 18:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D600C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 18:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86B3C218F9
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 18:08:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="IFNJd+1K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B3C218F9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	by mail.kernel.org (Postfix) with ESMTP id 18E7E219CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 18:10:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18E7E219CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shmanahar.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeFUSIz (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 14:08:55 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40694 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752650AbeFUSI2 (ORCPT
+        id S932845AbeFUSKO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 14:10:14 -0400
+Received: from avasout06.plus.net ([212.159.14.18]:35478 "EHLO
+        avasout06.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754177AbeFUSKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 14:08:28 -0400
-Received: by mail-wm0-f66.google.com with SMTP id n5-v6so7754081wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 11:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yZ1KaYr4sfx8XmylPrWjdKgJKJeTRgokO6NMECwmgKI=;
-        b=IFNJd+1KarYurqC1sH9Lm/Rc3hSZcO0Is0WEYzdvZqpCLM/LoYIKIJ7xB2H19ydEOT
-         yT7wJ2pEnpKhZp+UABaWBPderEoNZh0/kdAFnLiezFherpMNb8fLIHbMNu5YWTAgQTjf
-         zedmCXtMFSj04ydbgyT50HZNL29TlO2cFSyDZBtIemh/rVFcoyPtlAHRzIDV37G+Rc6F
-         SeX5nn2UyC6tFrxhgsNYOls1VJDYC+Rd2B14ozY3xzTQ8c/uhGnkYcuMs9M8rnBkcPlI
-         ZOrQeAv2zkSPUq1WIKPRBFY/gARvflp92P7fm91K0mxROShYxgxtYTxcJJvXseYja8gV
-         O2Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yZ1KaYr4sfx8XmylPrWjdKgJKJeTRgokO6NMECwmgKI=;
-        b=OREVFg9hIXGrUenDKINTvJa68OFZ8DmqOvMp9AxYbEF7OUU/jDUkNCO7bBJSUd4l19
-         f+QrPOpXdJz5UMcVVkkbKRRjvbT/UMyvjPZpcQs8mm+XTL8wXwN+VrTsHkziIaRWgHjv
-         KU/LGg2yVU9nR/eaFU10dbK8ShE2ytZuTvm0dfouw9A1gDueXeC91zqAImOKT/QYRaAh
-         eI5cXwE3ceZNmpUTa8+qU1cP6Rlh7INATGHI6d6P6b4i6jCG7aOryQYmpULyTkuOu7rV
-         iGzG785fJ6QgRX81ooO4C8fNQ+vIG7Z+s0+FpxpNQkr+2ou5CgPwCZVKF1bc15h5Vz7m
-         +1tQ==
-X-Gm-Message-State: APt69E0d8wo7z0DP0oH3Cmsd71PeUpb/R54AKC5Vrb5JVtW5b1cHwfVf
-        5pu7eU3kkiUuOcPN0mdywBkzxgx/WW8=
-X-Google-Smtp-Source: ADUXVKIynBQvK7jIFTJCTMZWh7RyIXaxhYZu7jEPbvoEnhLwE20uV25cPgR3yxWxh5Zu0uQ1bO92Lw==
-X-Received: by 2002:a1c:454f:: with SMTP id s76-v6mr5827258wma.16.1529604506936;
-        Thu, 21 Jun 2018 11:08:26 -0700 (PDT)
-Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id 127-v6sm9165927wmk.45.2018.06.21.11.08.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 11:08:26 -0700 (PDT)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <dima@arista.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>
-Subject: [RFC 2/3] iommu/iova: Make free_iova() atomic
-Date:   Thu, 21 Jun 2018 19:08:22 +0100
-Message-Id: <20180621180823.805-3-dima@arista.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180621180823.805-1-dima@arista.com>
-References: <20180621180823.805-1-dima@arista.com>
+        Thu, 21 Jun 2018 14:10:12 -0400
+Received: from hairyalien ([80.229.148.18])
+        by smtp with SMTP
+        id W423fVooqWLW2W424foSFC; Thu, 21 Jun 2018 19:10:10 +0100
+X-CM-Score: 0.00
+X-CNFS-Analysis: v=2.3 cv=fJUXI6Se c=1 sm=1 tr=0
+ a=o7Djd4SkmPXITDn8qH+ssQ==:117 a=o7Djd4SkmPXITDn8qH+ssQ==:17
+ a=7mUfYlMuFuIA:10 a=beXlt2xKAAAA:8 a=VwQbUJbxAAAA:8 a=8AirrxEcAAAA:8
+ a=pGLkceISAAAA:8 a=F3uLQHj-DGfmKU-asAgA:9 a=gcY2M4Ci8LIz02MwfSIM:22
+ a=AjGcO6oz07-iQ99wixmX:22 a=ST-jHhOKWsTCqRlWije3:22
+Received: by hairyalien (sSMTP sendmail emulation); Thu, 21 Jun 2018 19:10:07 +0100
+From:   Nick Dyer <nick@shmanahar.org>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Nick Dyer <nick@shmanahar.org>, stable@vger.kernel.org
+Subject: [PATCH v5] ARM: dts: imx51-zii-rdu1: fix touchscreen pinctrl
+Date:   Thu, 21 Jun 2018 19:10:00 +0100
+Message-Id: <20180621181000.12687-1-nick@shmanahar.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <CAFXsbZr-HJE54c0BC5=d1tStByA5ytGhSSZMirNKE03JzGCDXQ@mail.gmail.com>
+References: <CAFXsbZr-HJE54c0BC5=d1tStByA5ytGhSSZMirNKE03JzGCDXQ@mail.gmail.com>
+X-CMAE-Envelope: MS4wfLxqLVa4lMNZHMyDkgzJ/RaDw71eEd5Fkd8XqShTahJEbBxwD6/2QFS5uN39mhZmeQj5imbx8T2lLbb2Gh/WcGOwImzcknk5d2FtwCCM6yLE5sotrsTq
+ Rp7tUYIpEFaEM8kP1WyTzfQy1aZeQvpzuL4XCpBB4saP8mXM6/6pNg0QxztG0FcNNNRr9l5gKNHgsw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-find_iova() grabs rbtree's spinlock only for the search time.
-Nothing guaranties that returned iova still exist for __free_iova().
-Prevent potential use-after-free and double-free by holding the spinlock
-all the time iova is being searched and freed.
+The pinctrl settings were incorrect for the touchscreen interrupt line, causing
+an interrupt storm. This change has been tested with both the atmel_mxt_ts and
+RMI4 drivers on the RDU1 units.
 
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux-foundation.org
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+The value 0x4 comes from the value of register IOMUXC_SW_PAD_CTL_PAD_CSI1_D8
+from the old vendor kernel.
+
+Signed-off-by: Nick Dyer <nick@shmanahar.org>
+Fixes: ceef0396f367 ("ARM: dts: imx: add ZII RDU1 board")
+Cc: <stable@vger.kernel.org> # 4.15+
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Tested-by: Chris Healy <cphealy@gmail.com>
 ---
- drivers/iommu/iova.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Changes in v5:
+- Add tested by Chris Healy
+Changes in v4:
+- Add reviewed by Fabio
+Changes in v3:
+- Update commit message to add source of 0x4 value, fixes tag and CC stable
+Changes in v2:
+- Use hex, only alter IRQ line config
 
-diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index 4b38eb507670..4c63d92afaf7 100644
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -382,11 +382,14 @@ EXPORT_SYMBOL_GPL(__free_iova);
- void
- free_iova(struct iova_domain *iovad, unsigned long pfn)
- {
--	struct iova *iova = find_iova(iovad, pfn);
-+	unsigned long flags;
-+	struct iova *iova;
+ arch/arm/boot/dts/imx51-zii-rdu1.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+index df9eca94d812..8a878687197b 100644
+--- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
++++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+@@ -770,7 +770,7 @@
  
-+	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
-+	iova = private_find_iova(iovad, pfn);
- 	if (iova)
--		__free_iova(iovad, iova);
--
-+		private_free_iova(iovad, iova);
-+	spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
- }
- EXPORT_SYMBOL_GPL(free_iova);
- 
+ 	pinctrl_ts: tsgrp {
+ 		fsl,pins = <
+-			MX51_PAD_CSI1_D8__GPIO3_12		0x85
++			MX51_PAD_CSI1_D8__GPIO3_12		0x04
+ 			MX51_PAD_CSI1_D9__GPIO3_13		0x85
+ 		>;
+ 	};
 -- 
-2.13.6
+2.17.1
 
