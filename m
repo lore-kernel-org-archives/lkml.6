@@ -2,119 +2,123 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F14C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 05:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1EFC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 05:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 528B920883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 05:01:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/wpomLi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 528B920883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 969BC20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 05:06:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969BC20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932755AbeFUFBS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 01:01:18 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34303 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932419AbeFUFBR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 01:01:17 -0400
-Received: by mail-pl0-f65.google.com with SMTP id g20-v6so993738plq.1;
-        Wed, 20 Jun 2018 22:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Gu8DbW5B02kQSSNKxifD7WrdyoROIRWOpIwG5auqgJc=;
-        b=A/wpomLixEXOo77lBg8SOqjSMgfhez14qEU9F2J8gRt/31m/drqV/M7DVqe8REncDB
-         DwDGs5G9inpLBnuL/Ww5J7wAjWDCtB35h84VMUn6Uh2mwJyCKupX0Vi3bFIgpUs122zy
-         2cj4y+OrSrkXBbEeTGafvsiGvcvjr6BAwCcfrxxu2KNhvcqPwkaoyM0Rqdi53ijy2xbO
-         5Y29QN1Y+Q5phs72pCAZmv7u3xmIzmzQBacH/tr5/V5LcWZJCoyVF+iyJsFjMQKaby9p
-         yVwm92OwHrNDE+tfTgZMj6lKPnxEwWSBJ5KqFHj1Qha5mLegqb45a2knBmRTEJZJLwO6
-         ADTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Gu8DbW5B02kQSSNKxifD7WrdyoROIRWOpIwG5auqgJc=;
-        b=YDu4X4QZmYbh1lI7YJnrR6/Zn2UKe2md3O5IfadEnuwBYj0odjs0wg+NDabbw341KK
-         +g4KVx0vdeVOgtRa+22tj0BV/DusW9gyjM2Bu70D+64lcShDlebP2LXHCUYUuRgMwaHR
-         SH97KLbIVuwAPzed2LVTyrik30LBAf9JLggb6i6BoZ93FmUSG4wp6qYJHrlM0CvQudZI
-         /FeCTiNu26O1QiPspvrUcSX9wDUeRun4z8h7Fttlqb/oC2aozUxH3YT7Mce/lEg4IXDK
-         0C8n2wYFBq9jhom+7Fm2YG3bPGGD+3wnNDgULyIvCaxHiTpyvD/2KXtSX/PwKuJ83cAX
-         K7Gg==
-X-Gm-Message-State: APt69E2lzJ5VL6Rbg4xXPXFUilib+06XiIfBIB9R7A3ZoJfEHLXjRD11
-        JqacR/iGU/ueuxYa7WNcrY8=
-X-Google-Smtp-Source: ADUXVKJ2xNgXno68Dr900rG2qUmtgaJZRVM6wThgtXdt9kvdN8QMlWrWGTo5S3QxM2r+Bv2hUd5ubg==
-X-Received: by 2002:a17:902:aa83:: with SMTP id d3-v6mr26626201plr.323.1529557276523;
-        Wed, 20 Jun 2018 22:01:16 -0700 (PDT)
-Received: from [192.168.43.97] ([1.1.125.71])
-        by smtp.gmail.com with ESMTPSA id z26-v6sm8035536pfd.60.2018.06.20.22.01.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 22:01:15 -0700 (PDT)
-Subject: Re: [PATCH] arm: dts: socfpga: denali needs nand_x_clk too
-To:     Richard Weinberger <richard@nod.at>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, dinguyen@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        computersforpeace@gmail.com, dwmw2@infradead.org,
-        miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
-        yamada.masahiro@socionext.com,
-        "See, Chin Liang" <chin.liang.see@intel.com>
-References: <20180619120719.26921-1-richard@nod.at>
- <ba7b5ee8-c9f0-45a1-67ec-3d1f510f6c24@gmail.com>
- <1846662.BtIxBD6EoV@blindfold>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <cc717803-97c7-6afd-8cf1-2b4a95fa94e6@gmail.com>
-Date:   Thu, 21 Jun 2018 06:41:30 +0200
+        id S932508AbeFUFGN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 01:06:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56184 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932231AbeFUFGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 01:06:12 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 139F8400225D;
+        Thu, 21 Jun 2018 05:06:12 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-127.pek2.redhat.com [10.72.12.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0C5352156880;
+        Thu, 21 Jun 2018 05:06:08 +0000 (UTC)
+Subject: Re: [PATCH 2/4 V3] Allocate pages for kdump without encryption when
+ SME is enabled
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+        iommu@lists.linux-foundation.org, dyoung@redhat.com,
+        kexec@lists.infradead.org
+References: <20180616082714.32035-1-lijiang@redhat.com>
+ <20180616082714.32035-3-lijiang@redhat.com>
+ <20180621015306.GG29979@MiWiFi-R3L-srv>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <e74e94b6-97dc-23d9-6262-44a7ae8d63bd@redhat.com>
+Date:   Thu, 21 Jun 2018 13:06:05 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <1846662.BtIxBD6EoV@blindfold>
+In-Reply-To: <20180621015306.GG29979@MiWiFi-R3L-srv>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 21 Jun 2018 05:06:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 21 Jun 2018 05:06:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 07:27 AM, Richard Weinberger wrote:
-> Marek,
-> 
-> Am Mittwoch, 20. Juni 2018, 06:52:09 CEST schrieb Marek Vasut:
->> On 06/19/2018 02:07 PM, Richard Weinberger wrote:
->>> The denali NAND flash controller needs at least two clocks to operate,
->>> nand_clk and nand_x_clk.
->>> Since 1bb88666775e ("mtd: nand: denali: handle timing parameters by
->>> setup_data_interface()") nand_x_clk is used to derive timing settings.
->>>
->>> Signed-off-by: Richard Weinberger <richard@nod.at>
->>> ---
->>> Strictly speaking denali needs a ecc_clk too, but AFAIK such a clock
->>> is not present on this SoC.
->>> But my SoCFPGA knowledge is very limited.
->>>
->>> Thanks,
->>> //richard
+在 2018年06月21日 09:53, Baoquan He 写道:
+> On 06/16/18 at 04:27pm, Lianbo Jiang wrote:
+>> When SME is enabled in the first kernel, we will allocate pages
+>> for kdump without encryption in order to be able to boot the
+>> second kernel in the same manner as kexec, which helps to keep
+>> the same code style.
 >>
->> It looks sane, but I cannot test it right now, since I'm on vacation.
->> I hope Dinh/Chin can jump in.
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>>  kernel/kexec_core.c | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+>> index 20fef1a..3c22a9b 100644
+>> --- a/kernel/kexec_core.c
+>> +++ b/kernel/kexec_core.c
+>> @@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+>>  		}
+>>  	}
+>>  
+>> +	if (pages) {
+>> +		unsigned int count, i;
+>> +
+>> +		pages->mapping = NULL;
+>> +		set_page_private(pages, order);
+>> +		count = 1 << order;
+>> +		for (i = 0; i < count; i++)
+>> +			SetPageReserved(pages + i);
 > 
-> The patch was tested by me. So, at least it is not completely untested.
-> BTW: I forgot to mention that it depends on Masahiro's Denali fixes.
+> I guess you might imitate the kexec case, however kexec get pages from
+> buddy. Crash pages are reserved in memblock, these codes might make no sense.
+> 
+Thanks for your comments.
+We have changed the attribute of pages, so the original attribute of pages will be
+restored when they free.
 
-Then that's perfect.
-
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
-
--- 
-Best regards,
-Marek Vasut
+Thanks.
+Lianbo
+>> +		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
+>> +	}
+>>  	return pages;
+>>  }
+>>  
+>> @@ -865,6 +875,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>>  			result  = -ENOMEM;
+>>  			goto out;
+>>  		}
+>> +		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+>>  		ptr = kmap(page);
+>>  		ptr += maddr & ~PAGE_MASK;
+>>  		mchunk = min_t(size_t, mbytes,
+>> @@ -882,6 +893,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>>  			result = copy_from_user(ptr, buf, uchunk);
+>>  		kexec_flush_icache_page(page);
+>>  		kunmap(page);
+>> +		arch_kexec_pre_free_pages(page_address(page), 1);
+>>  		if (result) {
+>>  			result = -EFAULT;
+>>  			goto out;
+>> -- 
+>> 2.9.5
+>>
+>>
+>> _______________________________________________
+>> kexec mailing list
+>> kexec@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/kexec
