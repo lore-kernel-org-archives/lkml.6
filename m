@@ -6,111 +6,131 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8777C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 009E6C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D79B21A70
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:14:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D79B21A70
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id AB23221A85
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:17:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB23221A85
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754280AbeFUTOq (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:14:46 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39498 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754071AbeFUTOp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:14:45 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id E9FEC805A3; Thu, 21 Jun 2018 21:14:43 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 21:14:43 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3][RFC] Introduce the in-kernel hibernation encryption
-Message-ID: <20180621191443.GB14623@amd>
-References: <cover.1529486870.git.yu.c.chen@intel.com>
- <20180621085332.GA21807@amd>
- <CAJZ5v0izS8CNzhsd_bjB40xTkZxaxh13NtHsJi9LYXEr84MoMA@mail.gmail.com>
+        id S933227AbeFUTRR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 15:17:17 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43576 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932902AbeFUTRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 15:17:15 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id T0OwyuyZvPIO; Thu, 21 Jun 2018 21:17:14 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BD18C00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8c00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4C0701EC019F;
+        Thu, 21 Jun 2018 21:17:14 +0200 (CEST)
+Date:   Thu, 21 Jun 2018 21:17:11 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/mce: Do not overwrite MCi_STATUS in mce_no_way_out()
+Message-ID: <20180621191710.GI12742@zn.tnic>
+References: <20180621124020.6244-1-bp@alien8.de>
+ <20180621181808.GA20097@agluck-desk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0izS8CNzhsd_bjB40xTkZxaxh13NtHsJi9LYXEr84MoMA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180621181808.GA20097@agluck-desk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 21, 2018 at 11:18:09AM -0700, Luck, Tony wrote:
+> Counter proposal.  We don't need the temp mci_status because we exit the
+> loop early.  Nor the "ret" variable.
+> 
+> 
+> How does this look?
 
---uQr8t48UFsdbeI+V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yap, better. I'll test it later or tomorrow:
 
-On Thu 2018-06-21 14:08:40, Rafael J. Wysocki wrote:
-> On Thu, Jun 21, 2018 at 10:53 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> > Hi!
-> >
-> >> As security becomes more and more important, we add the in-kernel
-> >> encryption support for hibernation.
-> > ...
-> >> There was a discussion on the mailing list on whether this key should
-> >> be derived in kernel or in user space. And it turns out to be generati=
-ng
-> >> the key by user space is more acceptable[1]. So this patch set is divi=
-ded
-> >> into two parts:
-> >> 1. The hibernation snapshot encryption in kernel space,
-> >> 2. the key derivation implementation in user space.
-> >
-> > uswsusp was created so that this kind of stuff could be kept in
-> > userspace. You get graphical progress bar (etc) too. As you already
-> > have userspace component for key derivation, I see no advantages to
-> > uswsusp.
-> >
-> > If you have some, please explain.
->=20
-> Not having to transfer plain text kernel memory to user space is one
-> IMO.
+---
+From: Borislav Petkov <bp@suse.de>
+Date: Thu, 21 Jun 2018 14:18:47 +0200
+Subject: [PATCH] x86/mce: Do not overwrite MCi_STATUS in mce_no_way_out()
 
-Well, AFAICT in this case userland has the key and encrypted data are
-on disk. That does not seem to be improvement.
+mce_no_way_out() does a quick check during #MC to see whether some of
+the MCEs logged would require the kernel to panic immediately. And it
+passes a struct mce where MCi_STATUS gets written.
 
-> Besides, the user space part of what you are calling uswsusp has not
-> been actively maintained for years now and honestly I don't know how
-> many users of it there are.
+However, after having saved a valid status value, the next iteration
+of the loop which goes over the MCA banks on the CPU, overwrites the
+valid status value because we're using struct mce as storage instead of
+a temporary variable.
 
-I'd assume distros want progress bars so they still use it?
+Which leads to MCE records with an empty status value:
 
-Anyway, there's solution for encrypted hibernation. If Intel wants to
-invent different solution for that, and put it into kernel, they
-should explain what the advantages are, relative to existing solution.
+  mce: [Hardware Error]: CPU 0: Machine Check Exception: 6 Bank 0: 0000000000000000
+  mce: [Hardware Error]: RIP 10:<ffffffffbd42fbd7> {trigger_mce+0x7/0x10}
 
-Best regards,
+In order to prevent the loss of the status register value, return
+immediately when severity is a panic one so that we can panic
+immediately with the first fatal MCE logged. This is also the intention
+of this function and not to noodle over the banks while a fatal MCE is
+already logged.
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: <stable@vger.kernel.org>
+---
+ arch/x86/kernel/cpu/mcheck/mce.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
---uQr8t48UFsdbeI+V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index 5c38d1f861f2..e75418096ec6 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -772,23 +772,24 @@ EXPORT_SYMBOL_GPL(machine_check_poll);
+ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
+ 			  struct pt_regs *regs)
+ {
+-	int i, ret = 0;
+ 	char *tmp;
++	int i;
+ 
+ 	for (i = 0; i < mca_cfg.banks; i++) {
+ 		m->status = mce_rdmsrl(msr_ops.status(i));
+-		if (m->status & MCI_STATUS_VAL) {
+-			__set_bit(i, validp);
+-			if (quirk_no_way_out)
+-				quirk_no_way_out(i, m, regs);
+-		}
++		if (!(m->status & MCI_STATUS_VAL))
++			continue;
++
++		__set_bit(i, validp);
++		if (quirk_no_way_out)
++			quirk_no_way_out(i, m, regs);
+ 
+ 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
+ 			*msg = tmp;
+-			ret = 1;
++			return 1;
+ 		}
+ 	}
+-	return ret;
++	return 0;
+ }
+ 
+ /*
+-- 
+2.17.0.582.gccdcbd54c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+-- 
+Regards/Gruss,
+    Boris.
 
-iEYEARECAAYFAlsr+SMACgkQMOfwapXb+vKDngCfXJJv3RBXD2AhfIHRs03Y2uhR
-osYAoJ6Irtf8oJPZDOtvLwfAcgsM1EMA
-=yyF8
------END PGP SIGNATURE-----
-
---uQr8t48UFsdbeI+V--
+Good mailing practices for 400: avoid top-posting and trim the reply.
