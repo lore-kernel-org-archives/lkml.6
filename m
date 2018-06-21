@@ -4,46 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7194CC43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BB0C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2927222434
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE6D622434
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:35:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sTsAWKBz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2927222434
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DhsEveRO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE6D622434
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933923AbeFUV3H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:29:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41722 "EHLO
+        id S933975AbeFUVfI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:35:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41736 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933883AbeFUV3A (ORCPT
+        with ESMTP id S933916AbeFUV3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:29:00 -0400
+        Thu, 21 Jun 2018 17:29:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KA7I3lyTaAWE3lEhD4aIwohmIUjTSstkt8bvM8SVfWI=; b=sTsAWKBzRlb6Fu4GhWV3JZPSh
-        Eq/Ca82ma+LDT6gLuvI4wQyxT9MpjpBrfy/4SQHYhlVTkBzS1MDcHJf+6lE/uloycMCqci0CfJ37Y
-        pEw/WmbNSn+OPkXmuPPwDQNEjJGz1i+KEp2Cxhzpvn3HbUcO4U4A38PG+v1/OT6yZHOGIKKV5TORn
-        zv8diVkx8HBDgMWffZNMy9L5/ZyZmPKUJNdGun5TQzbT8IkccyqWNksNe41s4xQzH4PpAh9lLCZEw
-        O5Vxo2Z9erz9ICobd8/iXJ6iliIiWkWGPlxToJFu4j+Y1gdx4yiHDCE3WP8mJzOGFWgwNrEHSZOmw
-        O0EaLK0vw==;
+         bh=Oc67Ns0UqOibrElXxRnwBGD88abnMwJHxmq49BxxDuY=; b=DhsEveROzIB5k0YbN+7cyrnh5
+        TIOl1yNPU4f8giWVOUKmlgu4QLB7DqynCbBoT5ACrzOY114reXYajxl7aY18uXKBrU8HFUf0PjXqQ
+        +qj0+V1RiKqDcS32JE8UPyj7wDXZtjRTlxJAc0U24yZHoYzb2sihqSuF+d2p+F9E0N/jkgNO57JM9
+        GyLyrALTLUNNRKaLR1HZljPWowalsmQUe02kGe1ggQvL6kc6Vu1guBrV1dnIGXNa19kdghIrAZarH
+        AJjUUxyxPosJRw37ok2hprpqy2KlKIzOnpXOpWOAReAMPXyuD2/5ZykhbePwQR0SCmTIiAYn7LXQc
+        yJeaTr3kw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78W-0001Zw-2b; Thu, 21 Jun 2018 21:29:00 +0000
+        id 1fW78a-0001ae-O8; Thu, 21 Jun 2018 21:29:04 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 02/26] ida: Lock the IDA in ida_destroy
-Date:   Thu, 21 Jun 2018 14:28:11 -0700
-Message-Id: <20180621212835.5636-3-willy@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Hannes Reinecke <hare@suse.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Christos Gkekas <chris.gekas@gmail.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Joe Perches <joe@perches.com>, linux-block@vger.kernel.org
+Subject: [PATCH 04/26] mtip32xx: Convert to new IDA API
+Date:   Thu, 21 Jun 2018 14:28:13 -0700
+Message-Id: <20180621212835.5636-5-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -52,56 +60,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The user has no need to handle locking between ida_simple_get() and
-ida_simple_remove().  They shouldn't be forced to think about whether
-ida_destroy() might be called at the same time as any of their other
-IDA manipulation calls.  Improve the documnetation while I'm in here.
+Removes a use of ida_pre_get() and a personalised spinlock.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- lib/idr.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ drivers/block/mtip32xx/mtip32xx.c | 29 ++++++-----------------------
+ 1 file changed, 6 insertions(+), 23 deletions(-)
 
-diff --git a/lib/idr.c b/lib/idr.c
-index ed9c169c12bd..352c6160e2e0 100644
---- a/lib/idr.c
-+++ b/lib/idr.c
-@@ -523,25 +523,30 @@ void ida_remove(struct ida *ida, int id)
- EXPORT_SYMBOL(ida_remove);
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index c73626decb46..2b6d6bce76df 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -118,7 +118,6 @@ static struct dentry *dfs_device_status;
  
- /**
-- * ida_destroy - Free the contents of an ida
-- * @ida: ida handle
-+ * ida_destroy() - Free all IDs.
-+ * @ida: IDA handle.
-+ *
-+ * Calling this function frees all IDs and releases all resources used
-+ * by an IDA.  When this call returns, the IDA is empty and can be reused
-+ * or freed.  If the IDA is already empty, there is no need to call this
-+ * function.
-  *
-- * Calling this function releases all resources associated with an IDA.  When
-- * this call returns, the IDA is empty and can be reused or freed.  The caller
-- * should not allow ida_remove() or ida_get_new_above() to be called at the
-- * same time.
-+ * Context: Any context.
-  */
- void ida_destroy(struct ida *ida)
- {
-+	unsigned long flags;
- 	struct radix_tree_iter iter;
- 	void __rcu **slot;
+ static u32 cpu_use[NR_CPUS];
  
-+	xa_lock_irqsave(&ida->ida_rt, flags);
- 	radix_tree_for_each_slot(slot, &ida->ida_rt, &iter, 0) {
- 		struct ida_bitmap *bitmap = rcu_dereference_raw(*slot);
- 		if (!radix_tree_exception(bitmap))
- 			kfree(bitmap);
- 		radix_tree_iter_delete(&ida->ida_rt, &iter, slot);
+-static DEFINE_SPINLOCK(rssd_index_lock);
+ static DEFINE_IDA(rssd_index_ida);
+ 
+ static int mtip_block_initialize(struct driver_data *dd);
+@@ -3768,20 +3767,10 @@ static int mtip_block_initialize(struct driver_data *dd)
+ 		goto alloc_disk_error;
  	}
-+	xa_unlock_irqrestore(&ida->ida_rt, flags);
+ 
+-	/* Generate the disk name, implemented same as in sd.c */
+-	do {
+-		if (!ida_pre_get(&rssd_index_ida, GFP_KERNEL)) {
+-			rv = -ENOMEM;
+-			goto ida_get_error;
+-		}
+-
+-		spin_lock(&rssd_index_lock);
+-		rv = ida_get_new(&rssd_index_ida, &index);
+-		spin_unlock(&rssd_index_lock);
+-	} while (rv == -EAGAIN);
+-
+-	if (rv)
++	rv = ida_alloc(&rssd_index_ida, GFP_KERNEL);
++	if (rv < 0)
+ 		goto ida_get_error;
++	index = rv;
+ 
+ 	rv = rssd_disk_name_format("rssd",
+ 				index,
+@@ -3923,9 +3912,7 @@ static int mtip_block_initialize(struct driver_data *dd)
+ block_queue_alloc_tag_error:
+ 	mtip_hw_debugfs_exit(dd);
+ disk_index_error:
+-	spin_lock(&rssd_index_lock);
+-	ida_remove(&rssd_index_ida, index);
+-	spin_unlock(&rssd_index_lock);
++	ida_free(&rssd_index_ida, index);
+ 
+ ida_get_error:
+ 	put_disk(dd->disk);
+@@ -4013,9 +4000,7 @@ static int mtip_block_remove(struct driver_data *dd)
+ 	}
+ 	dd->disk  = NULL;
+ 
+-	spin_lock(&rssd_index_lock);
+-	ida_remove(&rssd_index_ida, dd->index);
+-	spin_unlock(&rssd_index_lock);
++	ida_free(&rssd_index_ida, dd->index);
+ 
+ 	/* De-initialize the protocol layer. */
+ 	mtip_hw_exit(dd);
+@@ -4055,9 +4040,7 @@ static int mtip_block_shutdown(struct driver_data *dd)
+ 		dd->queue = NULL;
+ 	}
+ 
+-	spin_lock(&rssd_index_lock);
+-	ida_remove(&rssd_index_ida, dd->index);
+-	spin_unlock(&rssd_index_lock);
++	ida_free(&rssd_index_ida, dd->index);
+ 	return 0;
  }
- EXPORT_SYMBOL(ida_destroy);
  
 -- 
 2.17.1
