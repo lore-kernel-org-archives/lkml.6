@@ -2,128 +2,93 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8204DC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 18:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9825CC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 18:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42523219C1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 18:06:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42523219C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 53AA4219C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 18:08:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="OeYrg3uK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53AA4219C5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754201AbeFUSGw convert rfc822-to-8bit (ORCPT
+        id S1754186AbeFUSI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 14:06:52 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:36457 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752650AbeFUSGv (ORCPT
+        Thu, 21 Jun 2018 14:08:27 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51660 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752650AbeFUSI0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 14:06:51 -0400
-Received: from mipsdag01.mipstec.com (mail1.mips.com [12.201.5.31]) by mx28.ess.sfj.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Thu, 21 Jun 2018 18:06:38 +0000
-Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag01.mipstec.com
- (10.20.40.46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Thu, 21
- Jun 2018 11:06:38 -0700
-Received: from localhost (10.20.2.29) by mipsdag02.mipstec.com (10.20.40.47)
- with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Thu, 21 Jun
- 2018 11:06:38 -0700
-Date:   Thu, 21 Jun 2018 11:06:38 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Tony Luck <tony.luck@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>, <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm/memblock: add missing include <linux/bootmem.h>
-Message-ID: <20180621180638.ahxpgzwrztopve55@pburton-laptop>
-References: <20180606194144.16990-1-malat@debian.org>
- <CA+8MBbKj4A5kh=hE0vcadzD+=cEAFY7OCWFCzvubu6cWULCJ0A@mail.gmail.com>
- <20180615121716.37fb93385825b0b2f59240cc@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180615121716.37fb93385825b0b2f59240cc@linux-foundation.org>
-User-Agent: NeoMutt/20180512
-X-BESS-ID: 1529604398-637138-3828-103276-1
-X-BESS-VER: 2018.7-r1806151722
-X-BESS-Apparent-Source-IP: 12.201.5.31
-X-BESS-Envelope-From: Paul.Burton@mips.com
-X-BESS-Outbound-Spam-Score: 0.50
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194292
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.50 BSF_RULE7568M          META: Custom Rule 7568M 
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
-X-BESS-Orig-Rcpt: akpm@linux-foundation.org,sfr@canb.auug.org.au,tony.luck@gmail.com,malat@debian.org,linux-mm@kvack.org,linux-kernel@vger.kernel.org
-X-BESS-BRTS-Status: 1
+        Thu, 21 Jun 2018 14:08:26 -0400
+Received: by mail-wm0-f66.google.com with SMTP id r15-v6so6575956wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 11:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id;
+        bh=787i5ne8xOGmRrDvt2UBjOT4szY03r5HD4JmyT5Q9Q8=;
+        b=OeYrg3uKJWBCcFNZCJBF6sU4jzYFHIvvcBVv0PcgJuFzCbIF2CR/gEF/ry9HDq6/Ok
+         qdMGebGEWgkNyr+nzfsc0s/LrN19oneTK7l0RTiK7upiVgtsxHVUl9VFdgnCvgLuiFtl
+         ctWMcmPeFsiHVICHN8ycBGqu22Tvd6gHrM9qHHIr40ILSfhxBrUcJLS4sS0flcon/4jB
+         OsXfQ07DnjkoDD+wNt5zrhHUCqXFAd3M5l58n/ki4dlYDyKaoG7JI19N0t98OO5Nw3EH
+         hZluXyjMbZ6iV/1TtNWVWODf4H0ZqbWNb9AQzpM3SPlRTaxzvWTcZQUlKABFlB2h3C7M
+         4AWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=787i5ne8xOGmRrDvt2UBjOT4szY03r5HD4JmyT5Q9Q8=;
+        b=KT+NmPmYQXHlqcw/CowaEbpitHaqSQoqD+LPZMjXJTKgoxHsnUBSwLgMxZmxlwKCLY
+         6EplBOCzlX2X8g80Xe1PC5bZv3F+nS4sf1/IRLT0n71jmn6lho+nC/3FTxPLcc48LERL
+         rX/Ar2oBPxsqR3uyMH/1DYHrJ5hqL7lOqniRftru6yhn4xqTkuxTLwED2GUQvEfvRd2b
+         VC1LyLi2yxJF9O0pNVxdOavFVpACvihJjZQXbyLCwzOINu9QEIR7Q53gU4EWbrwzDMmI
+         r/xcGBDqsYe/Va2JU4OKIcRWIx3c5PaYKwYcVz9jdPzHiF4SmqjVBjJPVD30YVfZtis/
+         Z1VQ==
+X-Gm-Message-State: APt69E3eJX1OcD1oqfFQ1SRMYx3x99VV0hSNV8bnNSH3qweO0cmok6dW
+        X+jKlU8ZgZi8Taw08FCSq6RwjS5o5LY=
+X-Google-Smtp-Source: ADUXVKKExCs30ybjtuWOrTuRtCWIP4UUmojf/c2lcu6g5dxw48AxC1cusm2oDMnh2Ak2b63njS//Yg==
+X-Received: by 2002:a1c:1d1:: with SMTP id 200-v6mr5806590wmb.145.1529604504672;
+        Thu, 21 Jun 2018 11:08:24 -0700 (PDT)
+Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id 127-v6sm9165927wmk.45.2018.06.21.11.08.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 11:08:24 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <dima@arista.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>
+Subject: [RFC 0/3] iommu/iova: Unsafe locking in find_iova()
+Date:   Thu, 21 Jun 2018 19:08:20 +0100
+Message-Id: <20180621180823.805-1-dima@arista.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew & Stephen,
+find_iova() looks to be using a bad locking practice: it locks the
+returned iova only for the search time.
+And looking in code, the element can be removed from the tree and freed
+under rbtree lock. That happens during memory hot-unplug and cleanup on
+module removal.
+Here I cleanup users of the function and delete it.
 
-On Fri, Jun 15, 2018 at 12:17:16PM -0700, Andrew Morton wrote:
-> > Sadly that breaks ia64 build:
-> > 
-> >   CC      mm/memblock.o
-> > mm/memblock.c:1340: error: redefinition of ‘memblock_virt_alloc_try_nid_raw’
-> > ./include/linux/bootmem.h:335: error: previous definition of
-> > ‘memblock_virt_alloc_try_nid_raw’ was here
-> > mm/memblock.c:1377: error: redefinition of ‘memblock_virt_alloc_try_nid_nopanic’
-> > ./include/linux/bootmem.h:343: error: previous definition of
-> > ‘memblock_virt_alloc_try_nid_nopanic’ was here
-> > mm/memblock.c:1413: error: redefinition of ‘memblock_virt_alloc_try_nid’
-> > ./include/linux/bootmem.h:327: error: previous definition of
-> > ‘memblock_virt_alloc_try_nid’ was here
-> > make[1]: *** [mm/memblock.o] Error 1
-> > make: *** [mm/memblock.o] Error 2
-> 
-> Huh.  How did that ever work.  I guess it's either this:
-<snip>
-> and I'm not sure which.  I think I'll just revert $subject for now.
+Dmitry Safonov (3):
+  iommu/iova: Find and split iova under rbtree's lock
+  iommu/iova: Make free_iova() atomic
+  iommu/iova: Remove find_iova()
 
-This is fine now in master after Andrew's revert, but the problematic
-patch is still being picked up in linux-next somehow. This breaks MIPS
-builds from linux-next, and presumably the ia64 build too.
+ drivers/iommu/intel-iommu.c | 14 +++----------
+ drivers/iommu/iova.c        | 48 +++++++++++++++++----------------------------
+ include/linux/iova.h        | 17 ++++------------
+ 3 files changed, 25 insertions(+), 54 deletions(-)
 
-I'm not sure I understand how it's picked up - next-20180621 appears to
-based atop 1abd8a8f39cd:
+-- 
+2.13.6
 
-  $ git show next-20180621:Next/SHA1s | grep -E '^origin\s'
-  origin          1abd8a8f39cd9a2925149000056494523c85643a
-
-There we have the Andrew's revert:
-
-  $ git log --pretty=oneline -n5 1abd8a8f39cd mm/memblock.c
-  6cc22dc08a247b7b4a173e4561e39705a557d300 revert "mm/memblock: add missing include <linux/bootmem.h>"
-  0825a6f98689d847ab8058c51b3a55f0abcc6563 mm: use octal not symbolic permissions
-  69b5086b12cda645d95f00575c25f1dfd1e929ad mm/memblock: add missing include <linux/bootmem.h>
-  25cf23d7a95716fc6eb165208b5eb2e3b2e86f82 mm/memblock: print memblock_remove
-  1c4bc43ddfd52cbe5a08bb86ae636f55d2799424 mm/memblock: introduce PHYS_ADDR_MAX
-
-Yet the revert doesn't show up at all in next-20180621..?
-
-  $ git log --pretty=oneline -n5 next-20180621 mm/memblock.c
-  a95f41a659344e221e8ad39e8fbba2e0f419c096 mm: use octal not symbolic permissions
-  0b558dea04a405800505c7f56eb1638ae761b5d4 mm/memblock: add missing include <linux/bootmem.h>
-  25cf23d7a95716fc6eb165208b5eb2e3b2e86f82 mm/memblock: print memblock_remove
-  1c4bc43ddfd52cbe5a08bb86ae636f55d2799424 mm/memblock: introduce PHYS_ADDR_MAX
-  49a695ba723224875df50e327bd7b0b65dd9a56b Merge tag 'powerpc-4.17-1' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
-
-I was expecting to see the original commit, then the revert, then
-perhaps a re-application of it but instead it looks like the commits
-from master are missing entirely after 25cf23d7a957 ("mm/memblock: print
-memblock_remove"). Maybe I'm missing something about the way the merges
-for linux-next are done..?
-
-In any case, could we get the problematic patch removed from linux-next?
-
-Thanks,
-    Paul
