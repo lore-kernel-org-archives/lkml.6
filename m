@@ -2,158 +2,216 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA83C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7A0C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85B7E21870
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:26:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85B7E21870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 911D721884
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:27:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jUqPU68R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911D721884
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932845AbeFUR0v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 13:26:51 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:36776 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S932508AbeFUR0u (ORCPT
+        id S932978AbeFUR1E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 13:27:04 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40878 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932508AbeFUR1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 13:26:50 -0400
-Received: (qmail 4461 invoked by uid 2102); 21 Jun 2018 13:26:49 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 21 Jun 2018 13:26:49 -0400
-Date:   Thu, 21 Jun 2018 13:26:49 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-cc:     Kernel development list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/2] tools/memory-model: Change rel-rfi-acq ordering to
- (rel-rf-acq-po & int)
-Message-ID: <Pine.LNX.4.44L0.1806211315550.2381-100000@iolanthe.rowland.org>
+        Thu, 21 Jun 2018 13:27:03 -0400
+Received: by mail-it0-f68.google.com with SMTP id 188-v6so5857286ita.5
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=M/sCkxHonakF/UgrZBysvMaz1vTxvoog09hsyyFMiSQ=;
+        b=jUqPU68R7/BS+/LfDE/CqjhHHnUSzKeVvdCHOXnTkFbJsR5LAlrU/xx7s3fOLTSXT1
+         SUQFjBy/LKq2DC6AJzX2sdjBLeMtHUph2n/jnhNhctMV/OHqM6djFrptHNUKM19ph3Uk
+         E12j4sdknUQf1gxsKuckO5B+duQY2Tcgjo5zA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=M/sCkxHonakF/UgrZBysvMaz1vTxvoog09hsyyFMiSQ=;
+        b=L9j22GtU7dlpBKaxGVHt7dIx1TwFrLTN05DPz1R+TVQsExiqbEkL+l/1W1MZmkypMO
+         H5uhJC4mwLe/XX98jWzv6T51QVv4hIeOnXAAvEH0RpbHdijNchq9n/cbj9dHqA0nOwfY
+         OnTsfqbndu9IcDIsl11WpmIO1Jzwswo+jYhJ8Z764FEalf1cWmKr4e/DotUDH9iRyUYo
+         9XTVgNz8YfCfuklVE7oCjwu/Om8kczqb8Z18fWbRTqjz0QHbYDu+FxbA/csgrAR6y1jJ
+         xoTf5zkAtqPUSr/dFQP6WDrCEnzcfK8ydG95BxshSSxNFA5IeLqHp1BjZu+NjHa1Mm8E
+         WiwA==
+X-Gm-Message-State: APt69E2sNJbSfC/U4zjZvZhr+Rcmt+9IVhrnuwFqZAorOZ1GKYWaMFO4
+        BcHAaqLpHswFyoPDTOYYuNn+C3dPgMfJg0fPCy0a0jgf
+X-Google-Smtp-Source: ADUXVKJ64NijROyB/hqe1NAfabRK+BPN2ysPJ9KfLlkJh5ShlHuxGVbsCmLYwyF5t/qMVxaUrej+tpF8mX3Btpvhxq4=
+X-Received: by 2002:a24:e105:: with SMTP id n5-v6mr6013588ith.68.1529602022335;
+ Thu, 21 Jun 2018 10:27:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 10:27:01
+ -0700 (PDT)
+In-Reply-To: <67a238a8-e4db-6bf1-6da5-62ca9536191f@arm.com>
+References: <20180620085755.20045-1-yaojun8558363@gmail.com>
+ <20180620085755.20045-2-yaojun8558363@gmail.com> <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
+ <20180621025141.GB11276@toy> <CAKv+Gu_3Cfuq-qQuRHkYCB2uTPOK=KVeVh4OKmtu2MDYwfOtTA@mail.gmail.com>
+ <70ebe6d7-0745-5606-ae89-8a7b2fb62008@arm.com> <CAKv+Gu-t5ErL89J=sxeVRYzDNrB1Ejdj+XOggAMWk-gY7ewsOg@mail.gmail.com>
+ <67a238a8-e4db-6bf1-6da5-62ca9536191f@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 21 Jun 2018 19:27:01 +0200
+Message-ID: <CAKv+Gu8=jxY0qfMk53L8p5+x8HoE1DRy7W_p42ji9omGBc6QSA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] arm64/mm: move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir}
+ to .rodata section
+To:     James Morse <james.morse@arm.com>
+Cc:     Jun Yao <yaojun8558363@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes the LKMM rule which says that an acquire which
-reads from an earlier release must be executed after that release (in
-other words, the release cannot be forwarded to the acquire).  This is
-not true on PowerPC, for example.
+On 21 June 2018 at 19:04, James Morse <james.morse@arm.com> wrote:
+> Hi Ard,
+>
+> On 21/06/18 10:29, Ard Biesheuvel wrote:
+>> On 21 June 2018 at 10:59, James Morse <james.morse@arm.com> wrote:
+>>> On 21/06/18 07:39, Ard Biesheuvel wrote:
+>>>> On 21 June 2018 at 04:51, Jun Yao <yaojun8558363@gmail.com> wrote:
+>>>>> On Wed, Jun 20, 2018 at 12:09:49PM +0200, Ard Biesheuvel wrote:
+>>>>>> On 20 June 2018 at 10:57, Jun Yao <yaojun8558363@gmail.com> wrote:
+>>>>>>> Move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata
+>>>>>>> section. And update the swapper_pg_dir by fixmap.
+>>>>>>
+>>>>>> I think we may be able to get away with not mapping idmap_pg_dir and
+>>>>>> tramp_pg_dir at all.
+>>>>>
+>>>>> I think we need to move tramp_pg_dir to .rodata. The attacker can write
+>>>>> a block-mapping(AP=01) to tramp_pg_dir and then he can access kernel
+>>>>> memory.
+>>>
+>>>> Why does it need to be mapped at all? When do we ever access it from the code?
+>>>
+>>> (We would want to make its fixmap entry read-only too)
+>>
+>> It already is.
+>
+> Sorry, I missed that,
+>
+>
+>>>>>> As for swapper_pg_dir, it would indeed be nice if we could keep those
+>>>>>> mappings read-only most of the time, but I'm not sure how useful this
+>>>>>> is if we apply it to the root level only.
+>>>>>
+>>>>> The purpose of it is to make 'KSMA' harder, where an single arbitrary
+>>>>> write is used to add a block mapping to the page-tables, giving the
+>>>>> attacker full access to kernel memory. That's why we just apply it to
+>>>>> the root level only. If the attacker can arbitrary write multiple times,
+>>>>> I think it's hard to defend.
+>>>>
+>>>> So the assumption is that the root level is more easy to find?
+>>>> Otherwise, I'm not sure I understand why being able to write a level 0
+>>>> entry is so harmful, given that we don't have block mappings at that
+>>>> level.
+>>>
+>>> I think this thing assumes 3-level page tables with 39bit VA.
+>
+>> The attack, you mean? Because this code is unlikely to build with that
+>> configuration, given that __pgd_populate() BUILD_BUG()s in that case.
+>
+> Yes, the attack. (I struggle to think of it as an 'attack' because you already
+> have arbitrary write...)
+>
 
-What is true instead is that any instruction following the acquire
-must be executed after the release.  On some architectures this is
-because a write-release cannot be forwarded to a read-acquire; on
-others (including PowerPC) it is because the implementation of
-smp_load_acquire() places a memory barrier immediately after the
-load.
+OK, so in that case, you can abuse your single arbitrary write to map
+an entire 1 GB block of memory with arbitrary permissions, allowing
+userland to take control of the contents, right? And if you know the
+virtual and physical addresses of swapper_pg_dir, you can make sure
+this block covers the entire kernel, allowing the attacker to
+manipulate all core kernel code and statically allocated data
+structures.
 
-This change to the model does not cause any change to the model's
-predictions.  This is because any link starting from a load must be an
-instance of either po or fr.  In the po case, the new rule will still
-provide ordering.  In the fr case, we also have ordering because there
-must be a co link to the same destination starting from the
-write-release.
+What I don't understand about this patch is how it is sufficient to
+only remap swapper_pg_dir r/w for updates on kernels that use 4 level
+paging.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+>
+>>>>>> @@ -417,12 +421,22 @@ static void __init __map_memblock(pgd_t *pgdp, phys_addr_t start,
+>>>>>>>
+>>>>>>>  void __init mark_linear_text_alias_ro(void)
+>>>>>>>  {
+>>>
+>>>>>>> +       size = (unsigned long)__init_begin - (unsigned long)swapper_pg_end;
+>>>>>>> +       update_mapping_prot(__pa_symbol(swapper_pg_end),
+>>>>>>> +                           (unsigned long)lm_alias(swapper_pg_end),
+>>>>>>> +                           size, PAGE_KERNEL_RO);
+>>>>>>
+>>>>>> I don't think this is necessary. Even if some pages are freed, it
+>>>>>> doesn't harm to keep a read-only alias of them here since the new
+>>>>>> owner won't access them via this mapping anyway. So we can keep
+>>>>>> .rodata as a single region.
+>>>>>
+>>>>> To be honest, I didn't think of this issue at first. I later found a
+>>>>> problem when testing the code on qemu:
+>>>>
+>>>> OK, you're right. I missed the fact that this operates on the linear
+>>>> alias, not the kernel mapping itself.
+>>>>
+>>>> What I don't like is that we lose the ability to use block mappings
+>>>> for the entire .rodata section this way. Isn't it possible to move
+>>>> these pgdirs to the end of the .rodata segment, perhaps by using a
+>>>> separate input section name and placing that explicitly? We could even
+>>>> simply forget about freeing those pages, given that [on 4k pages] the
+>>>> benefit of freeing 12 KB of space is likely to get lost in the
+>>>> rounding noise anyway [segments are rounded up to 64 KB in size]
+>>>
+>>> I assumed that to move swapper_pg_dir into the .rodata section we would need to
+>>> break it up. Today its ~3 levels, which we setup in head.S, then do a dance in
+>>> paging_init() so that swapper_pg_dir is always the top level.
+>>>
+>>> We could generate all leves of the 'init_pg_dir' in the __initdata section, then
+>>> copy only the top level into swapper_pg_dir into the rodata section during
+>>> paging_init().
+>
+>> Is that complexity truly justified for a security sensitive piece of
+>> code?
+>
+> Wouldn't this be less complex? (I've probably explained it badly.)
+>
+> Today head.S builds the initial page tables in ~3 levels of swapper_pg_dir, then
+> during paging_init() build new tables with a temporary top level.
+> We switch to the temporary top level, then copy over the first level of
+> swapper_pg_dir, then switch back to swapper_pg_dir. Finally we free the
+> no-longer-used levels of swapper_pg_dir.
+>
+> This looks like re-inventing __initdata for the bits of page table we eventually
+> free.
+>
+> What I tried to describe is building the head.S/initial-page-tables in a
+> reserved area of the the __initdata section. We no longer need a temporary
+> top-level, we can build the final page tables directly in swapper_pg_dir, which
+> means one fewer rounds of cpu_replace_ttbr1().
+>
 
----
+Ah fair enough. So either the initial page tables are never referred
+to via swapper_pg_dir in the first place, or we copy the first level
+over from __initdata after setting it up (which is probably easier
+than teaching the asm code about non-consecutive page ranges).
 
+So indeed, that would be an improvement in its own right.
 
-[as1870]
+>
+>> Can't we just drop the memblock_free() and be done with it?
+>
+> That works, I assumed it would be at least frowned on!
+>
 
+I think I prefer your suggestion above.
 
- tools/memory-model/Documentation/explanation.txt |   35 ++++++++++++-----------
- tools/memory-model/linux-kernel.cat              |    6 +--
- 2 files changed, 22 insertions(+), 19 deletions(-)
-
-Index: usb-4.x/tools/memory-model/linux-kernel.cat
-===================================================================
---- usb-4.x.orig/tools/memory-model/linux-kernel.cat
-+++ usb-4.x/tools/memory-model/linux-kernel.cat
-@@ -38,7 +38,7 @@ let strong-fence = mb | gp
- (* Release Acquire *)
- let acq-po = [Acquire] ; po ; [M]
- let po-rel = [M] ; po ; [Release]
--let rfi-rel-acq = [Release] ; rfi ; [Acquire]
-+let rel-rf-acq-po = [Release] ; rf ; [Acquire] ; po
- 
- (**********************************)
- (* Fundamental coherence ordering *)
-@@ -60,9 +60,9 @@ let dep = addr | data
- let rwdep = (dep | ctrl) ; [W]
- let overwrite = co | fr
- let to-w = rwdep | (overwrite & int)
--let to-r = addr | (dep ; rfi) | rfi-rel-acq
-+let to-r = addr | (dep ; rfi)
- let fence = strong-fence | wmb | po-rel | rmb | acq-po
--let ppo = to-r | to-w | fence
-+let ppo = to-r | to-w | fence | (rel-rf-acq-po & int)
- 
- (* Propagation: Ordering from release operations and strong fences. *)
- let A-cumul(r) = rfe? ; r
-Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
-===================================================================
---- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
-+++ usb-4.x/tools/memory-model/Documentation/explanation.txt
-@@ -1067,27 +1067,30 @@ allowing out-of-order writes like this t
- violating the write-write coherence rule by requiring the CPU not to
- send the W write to the memory subsystem at all!)
- 
--There is one last example of preserved program order in the LKMM: when
--a load-acquire reads from an earlier store-release.  For example:
-+There is one last example of preserved program order in the LKMM; it
-+applies to instructions po-after a load-acquire which reads from an
-+earlier store-release.  For example:
- 
- 	smp_store_release(&x, 123);
- 	r1 = smp_load_acquire(&x);
-+	WRITE_ONCE(&y, 246);
- 
- If the smp_load_acquire() ends up obtaining the 123 value that was
--stored by the smp_store_release(), the LKMM says that the load must be
--executed after the store; the store cannot be forwarded to the load.
--This requirement does not arise from the operational model, but it
--yields correct predictions on all architectures supported by the Linux
--kernel, although for differing reasons.
--
--On some architectures, including x86 and ARMv8, it is true that the
--store cannot be forwarded to the load.  On others, including PowerPC
--and ARMv7, smp_store_release() generates object code that starts with
--a fence and smp_load_acquire() generates object code that ends with a
--fence.  The upshot is that even though the store may be forwarded to
--the load, it is still true that any instruction preceding the store
--will be executed before the load or any following instructions, and
--the store will be executed before any instruction following the load.
-+written by the smp_store_release(), the LKMM says that the store to y
-+must be executed after the store to x.  In fact, the only way this
-+could fail would be if the store-release was forwarded to the
-+load-acquire; the LKMM says it holds even in that case.  This
-+requirement does not arise from the operational model, but it yields
-+correct predictions on all architectures supported by the Linux
-+kernel, although for differing reasons:
-+
-+On some architectures, including x86 and ARMv8, a store-release cannot
-+be forwarded to a load-acquire.  On others, including PowerPC and
-+ARMv7, smp_load_acquire() generates object code that ends with a
-+fence.  The result is that even though the store-release may be
-+forwarded to the load-acquire, it is still true that the store-release
-+(and all preceding instructions) will be executed before any
-+instruction following the load-acquire.
- 
- 
- AND THEN THERE WAS ALPHA
-
+But we do need to teach this code to deal with folded page table levels.
