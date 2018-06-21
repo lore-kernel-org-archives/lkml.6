@@ -3,120 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACC2C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56887C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2F920874
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:09:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A2F920874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C8D620875
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:09:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8D620875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932366AbeFUDJI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 23:09:08 -0400
-Received: from mx.socionext.com ([202.248.49.38]:40843 "EHLO mx.socionext.com"
+        id S932469AbeFUDJd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 23:09:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37576 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754071AbeFUDJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 23:09:07 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 21 Jun 2018 12:09:06 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 04EB2180237;
-        Thu, 21 Jun 2018 12:09:06 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 21 Jun 2018 12:09:06 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 6491940361;
-        Thu, 21 Jun 2018 12:09:05 +0900 (JST)
-Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 3233912013E;
-        Thu, 21 Jun 2018 12:09:05 +0900 (JST)
-From:   "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To:     "Abylay Ospan" <aospan@netup.ru>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        <linux-media@vger.kernel.org>
-Cc:     "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        =?iso-2022-jp?B?U3V6dWtpLCBLYXRzdWhpcm8vGyRCTmtMWhsoQiAbJEI+IUduGyhC?= 
-        <suzuki.katsuhiro@socionext.com>
-References: <20180529010920.20320-1-suzuki.katsuhiro@socionext.com>
-In-Reply-To: <20180529010920.20320-1-suzuki.katsuhiro@socionext.com>
-Subject: Re: [RESEND PATCH] media: helene: fix xtal frequency setting at power on
-Date:   Thu, 21 Jun 2018 12:09:01 +0900
-Message-ID: <001f01d4090d$34a04310$9de0c930$@socionext.com>
+        id S932385AbeFUDJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 23:09:31 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 92E2EC03DFE7;
+        Thu, 21 Jun 2018 03:09:30 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-116-138.phx2.redhat.com [10.3.116.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E401E2010D5A;
+        Thu, 21 Jun 2018 03:09:23 +0000 (UTC)
+Subject: Re: [PATCH v10 5/9] cpuset: Make sure that domain roots work properly
+ with CPU hotplug
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1529295249-5207-1-git-send-email-longman@redhat.com>
+ <1529295249-5207-6-git-send-email-longman@redhat.com>
+ <20180620141538.GJ2494@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <b22149a1-61dc-82d1-6529-b70575e405c7@redhat.com>
+Date:   Thu, 21 Jun 2018 11:09:22 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-2022-jp"
+In-Reply-To: <20180620141538.GJ2494@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHT9umtSSa4XH16V0CMcjXSHW020qRqK2tg
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 21 Jun 2018 03:09:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mauro,
+On 06/20/2018 10:15 PM, Peter Zijlstra wrote:
+> On Mon, Jun 18, 2018 at 12:14:04PM +0800, Waiman Long wrote:
+>> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+>> index 5ee5e77..6ef3516 100644
+>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>> @@ -1626,6 +1626,13 @@ Cpuset Interface Files
+>>  	2) No CPU that has been distributed to child scheduling domain
+>>  	   roots is deleted.
+>>  
+>> +	When all the CPUs allocated to a scheduling domain are offlined,
+>> +	that scheduling domain will be temporaily gone and all the
+>> +	tasks in that scheduling domain will migrate to another one that
+>> +	belongs to the parent of the scheduling domain root.  When any
+>> +	of those offlined CPUs is onlined again, a new scheduling domain
+>> +	will be re-created and the tasks will be migrated back.
+>> +
+> You should mention that this is a destructive operation. If any of the
+> tasks had an affinity smaller than the original cgroup, that will be
+> gone.
 
-Ping...
+Thanks for the information. Will update the documentation to mention that.
 
-If I got some mistake, please comment it...
-
-Regards,
---
-Katsuhiro Suzuki
-
-
-> -----Original Message-----
-> From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> Sent: Tuesday, May 29, 2018 10:09 AM
-> To: Abylay Ospan <aospan@netup.ru>; Mauro Carvalho Chehab
-> <mchehab+samsung@kernel.org>; linux-media@vger.kernel.org
-> Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>; Jassi Brar
-> <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org; Suzuki, Katsuhiro/鈴木 勝博
-> <suzuki.katsuhiro@socionext.com>
-> Subject: [RESEND PATCH] media: helene: fix xtal frequency setting at power on
-> 
-> This patch fixes crystal frequency setting when power on this device.
-> 
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> Acked-by: Abylay Ospan <aospan@netup.ru>
-> 
-> ---
-> 
-> Changes from before:
->   - Add Abylay's Ack
-> 
-> ---
->  drivers/media/dvb-frontends/helene.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/dvb-frontends/helene.c
-> b/drivers/media/dvb-frontends/helene.c
-> index 0a4f312c4368..8fcf7a00782a 100644
-> --- a/drivers/media/dvb-frontends/helene.c
-> +++ b/drivers/media/dvb-frontends/helene.c
-> @@ -924,7 +924,10 @@ static int helene_x_pon(struct helene_priv *priv)
->  	helene_write_regs(priv, 0x99, cdata, sizeof(cdata));
-> 
->  	/* 0x81 - 0x94 */
-> -	data[0] = 0x18; /* xtal 24 MHz */
-> +	if (priv->xtal == SONY_HELENE_XTAL_16000)
-> +		data[0] = 0x10; /* xtal 16 MHz */
-> +	else
-> +		data[0] = 0x18; /* xtal 24 MHz */
->  	data[1] = (uint8_t)(0x80 | (0x04 & 0x1F)); /* 4 x 25 = 100uA */
->  	data[2] = (uint8_t)(0x80 | (0x26 & 0x7F)); /* 38 x 0.25 = 9.5pF */
->  	data[3] = 0x80; /* REFOUT signal output 500mVpp */
-> --
-> 2.17.0
-
-
+Cheers,
+Longman
 
