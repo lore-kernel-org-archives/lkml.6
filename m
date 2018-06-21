@@ -2,124 +2,104 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175AAC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 02:13:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7728CC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 02:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC13420875
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 02:13:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuWxKvHD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC13420875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F0B320875
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 02:14:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F0B320875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754505AbeFUCNo (ORCPT
+        id S1754585AbeFUCO4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 22:13:44 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:44271 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754245AbeFUCNl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 22:13:41 -0400
-Received: by mail-ua0-f194.google.com with SMTP id f30-v6so1009233uab.11;
-        Wed, 20 Jun 2018 19:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8/BbNkeTQGJYJ7zwuZwhEAr+TWj53ZmWFG9LfxVnadY=;
-        b=TuWxKvHDdccSovocCOOBr3Wj2k+sPa/PLbXPeiPGTyTeuhXBFKL5eM0P1s57f4upgD
-         B49oIVtxaSCA+VzQnhTJ4wZu802AwY931Ct5AHjaUhMIs+Nm1roHrKzuWJPNiGHnpo4q
-         zAuzABVU6mDJaHBoiKtZ19olJ6CjEI8i5MNlI6GvphIjfTNUSM3pw5ot3ciL0hT8gino
-         wZhwOZ1lOLuxrgePLP+/pFAJ6GrAkFvWcEcBANow2zKGg+eDHMymUAyPzhus5alIwNK9
-         znZh5IodJyD4Ij2jzMBoup2LYTf4o42GF7Rl19f6W6hSk7e3BcZvLGVO18H/71xbhv9b
-         NjgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8/BbNkeTQGJYJ7zwuZwhEAr+TWj53ZmWFG9LfxVnadY=;
-        b=aFVgfAhEs+N+416Joiz9Zqz+MRw2C5v7ib+hAnV80ZoMMUA7o2f5SVtZNynj61lwxx
-         0dUFGTS2cHuAP9fUpKOYv3GHF5JI5CHip4M4Jg498leVD+ByOgNBpJBA2RPzw/8ti0X0
-         OV4h4XPApZA1UNT1WzVqXCE+P8q4lTC6lBZiAYkpBCx0HeCmbBA2pKaDCIeajbd0ezrI
-         g2zQcDXaY30WT6OG5eF5Y7oYTwdj9pXBG1NBMTbb05Xx7nDRpNB3dEwbfrstDpIi+pyD
-         KJTvQ6UAwwYwqZkb6xCtY2Xp2rI1Wz4WeM6zu7CSmKnJ70Et33Svk3Cx9PM2QOZcLnhB
-         CMgg==
-X-Gm-Message-State: APt69E1mAKXGgVAvk19qmkOoJea3QNk63Bx0H2UpCNMC/KqB1B9RKfYx
-        2QAqqGQe/CSKFyhOUVCi7Ke9j1BH7dmSviiZc8w=
-X-Google-Smtp-Source: ADUXVKL0OFMsQNVwPeNg7Ar7xqcaeeDL8OTKTGUnOL6eMTM7lEuil7XIsvIZ6Hspw8sUwHE4+fzXs48YeeGCIUBPdeU=
-X-Received: by 2002:ab0:15ad:: with SMTP id i42-v6mr14757516uae.199.1529547220033;
- Wed, 20 Jun 2018 19:13:40 -0700 (PDT)
+        Wed, 20 Jun 2018 22:14:56 -0400
+Received: from mout.gmx.net ([212.227.17.20]:55973 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754295AbeFUCOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 22:14:54 -0400
+Received: from [10.1.25.155] ([101.68.79.179]) by mail.gmx.com (mrgmx103
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 0MBnPX-1fNKwf2rYd-00AnrM; Thu, 21
+ Jun 2018 04:14:51 +0200
+Subject: Re: [PATCH 1/2] fs/exofs: fix potential memory leak in mount option
+ parsing
+To:     ooo@electrozaur.com
+Cc:     linux-kernel@vger.kernel.org, cgxu519@gmx.com
+References: <1528862714-78150-1-git-send-email-cgxu519@gmx.com>
+From:   cgxu519 <cgxu519@gmx.com>
+Message-ID: <38b17aef-db48-0258-3086-206659d2da85@gmx.com>
+Date:   Thu, 21 Jun 2018 10:14:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 19:13:39
- -0700 (PDT)
-In-Reply-To: <20180618161056.e52efd0e8bd36211e60705a2@linux-foundation.org>
-References: <20180618131003.88110-1-andriy.shevchenko@linux.intel.com>
- <20180618131003.88110-4-andriy.shevchenko@linux.intel.com>
- <20180618141404.68124daab97bd0f3a3051544@linux-foundation.org>
- <CAKdAkRTHOORds7aEauv4rp3_=PnGi=Nv-VS3-nAb9MztJPKG=Q@mail.gmail.com> <20180618161056.e52efd0e8bd36211e60705a2@linux-foundation.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 21 Jun 2018 05:13:39 +0300
-Message-ID: <CAHp75Vei2_V7h4oKAU+uoCG2gUJH6uXtg9zVqQ_vnyr5KEmNYw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        agk@redhat.com, Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        shli@kernel.org, linux-raid@vger.kernel.org,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1528862714-78150-1-git-send-email-cgxu519@gmx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:2ZkswmcmnJN3rdEtHSljyfk97m51QW3U2I3v9c/9TLUHxBha07p
+ AYCh95AJWu0Dfynlb0fc1WauwmNISghtGM3fwShpgj3ipNqlB6E81ypRGC/Ka6b5ElfxSD8
+ UI+VmcUkRRDuNA008/trouOQ8mUdi8OmXaGW95NBKaAOAHb8WQILWszh6hRfVuH2ZfiQGHu
+ 3rzWYz1S5pGqZpDXkEIIg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9TNgLDbq8z4=:iDl3UUQalxxIVsGTxmdLwm
+ GYoTjVwHcq1vPbV1maSOWETTsBsuH4UoHP055zBXPxDXizGLzFappamZLcIq0kjcJtv8O6kwq
+ lca2PZkQWh9k8y1tptoNrOErAvZS8OsAKSzpI7i8dKkYu2EPirQ46dVkfVwsrtmyJk+KXSLuQ
+ wHVQ4rL1wzy6TE8cxxnH2GtyJkTcig6TVIRi210bR/FB5TBlQRiQVlY+sYz2F3XXR/jNPNRSW
+ qGsEkRaIuA5kfN70CN0qC2bGJMGA0yGI8VVG6dgiPdHuzQ77VkQ+kTo2BKOFA7A/7ItecgWa6
+ PyC1KjyG6scVnsHV+nZc7+MgieprxAkS9WT0+jjT/NLNlZTFiEMcJPuuahqIuv9SkQwWxuRtM
+ 0UMEuO3U/QxVWPBFMwCpo3H1V38koOeSYh13s29eyNChJaXiaX0XDV5/vikMn9Ajm3PPbvMYA
+ gPN/s6EZ6B1R3IJTGq/KtFwttMpEExkuAOIcI9w4GAdv//ZmSgAvxlJBOeiCIh24+KS1XtDiE
+ nivt50R9OKBsI3lgNXso5R8DZCjNGvRHAhcjF1Al44Ms/wIg27H7KFrV2rECyXje+HryvueQn
+ 8Sd8bGLCwXm7qr0pUJ6LMrfA+AGVcaV/HSnZ+zCgZCBWrQ7Rfa35KfAzP8wEybNPvH3zwFgVU
+ lEtXY6i5uxjdhouvmmjnbfSJPCkqUtRi4hJMXlq3/Ecf9vTGff1j1Xgvn1zUamt0G02tWIZH9
+ 3+iGa/fJWUsIl9ipYDmz8Nf2FLzA2M4Qs6Sn3dTAivoVTKdC5GofKjxSh2phc6VVRclkq8ZSP
+ Zrw46yz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 2:10 AM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Mon, 18 Jun 2018 15:01:43 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+Hi Boaz,
 
->> We can't as we end up including bitmap.h (by the way of cpumask.h)
->> form slab.h, so we gen circular dependency.
+Could you have a look at this trivial patch?
+
+Thanks,
+Chengguang.
+
+On 06/13/2018 12:05 PM, Chengguang Xu wrote:
+> There are some cases can cause memory leak when parsing
+> option 'osdname'.
 >
-
-It's not just so easy. See below.
-
-> That info should have been in the changelog, and probably a code
-> comment.
+> Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+> ---
+>   fs/exofs/super.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
 >
->> Maybe if we removed memcg
->> stuff from slab.h so we do not need to include workqueue.h...
->
-> Or move the basic slab API stuff out of slab.h into a new header.  Or
-> create a new, standalone work_struct.h - that looks pretty simple.
+> diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+> index 719a315..f3e17a9 100644
+> --- a/fs/exofs/super.c
+> +++ b/fs/exofs/super.c
+> @@ -101,6 +101,7 @@ static int parse_options(char *options, struct exofs_mountopt *opts)
+>   		token = match_token(p, tokens, args);
+>   		switch (token) {
+>   		case Opt_name:
+> +			kfree(opts->dev_name);
+>   			opts->dev_name = match_strdup(&args[0]);
+>   			if (unlikely(!opts->dev_name)) {
+>   				EXOFS_ERR("Error allocating dev_name");
+> @@ -867,8 +868,10 @@ static struct dentry *exofs_mount(struct file_system_type *type,
+>   	int ret;
+>   
+>   	ret = parse_options(data, &opts);
+> -	if (ret)
+> +	if (ret) {
+> +		kfree(opts.dev_name);
+>   		return ERR_PTR(ret);
+> +	}
+>   
+>   	if (!opts.dev_name)
+>   		opts.dev_name = dev_name;
 
-I tried to move out work_struct, it didn't help. There are actually
-several circular dependencies that ends in bitmap.h either way or
-another.
-
-First one is
-
-slab.h -> gfp.h -> mmzone.h -> nodemask.h -> bitmap.h
-
-And so on...
-
-Splitting out kXalloc stuff to a separate header won't help, I think,
-because of the above.
-Splitting out struct work_struct is just a tip of an iceberg.
-Splitting out memcg stuff won't help in the similar way.
-
-I'm all ears for (a better) solution.
-
--- 
-With Best Regards,
-Andy Shevchenko
