@@ -7,87 +7,195 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF44C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C79C8C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 385C820693
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7207020883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:37:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzK6H40x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 385C820693
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXu4ioLb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7207020883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754333AbeFUAeN (ORCPT
+        id S1754291AbeFUAhu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 20:34:13 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:41923 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754011AbeFUAeM (ORCPT
+        Wed, 20 Jun 2018 20:37:50 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37374 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753960AbeFUAhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 20:34:12 -0400
-Received: by mail-vk0-f66.google.com with SMTP id 128-v6so836983vkf.8
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 17:34:11 -0700 (PDT)
+        Wed, 20 Jun 2018 20:37:48 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 31-v6so669064plc.4;
+        Wed, 20 Jun 2018 17:37:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZBpCkL23W3kv3cyJGByxVsUCsnkF9MWwGbEV4Xivf44=;
-        b=tzK6H40xgyVtW6X1a7EwMOqN8zZfJ6lnW/+XEP3Q1I4QuOa9oYlrVhxytJdKBEsIne
-         yJuCXpS5r3R3YMVfDO9o2zCLmatxF+qvpzd8uKzK46kaZJdgh/pruXRynglOZ2uaslMm
-         Xbx1OPgcp2/WxDhRGSMsZC4nKHdii2udPoKlfTV0EbvZYmkjHvUZuO29iEhGLVaQ8bJ1
-         OuVCQOSJnZOlIcFuF5Ec6meXc0VveDxx1kRPOXxalcVDwQ2WxsZTyK7p9ZPEJ1Z/uMhD
-         sVa40/q0GiC7GPY0qlkGnqXF7hx3L3gxzUQlF/fuzcl/3IGlo+FOVMIfpmp6INaRHu3B
-         sE5w==
+        h=from:to:cc:subject:date:message-id;
+        bh=uWG/pZtGMnaY67gWRK39S9A8lkWNJYOcT6WMlvv3+BI=;
+        b=nXu4ioLbIHks8alI2/LWEvhcn6vvWaRJ7MSap9qkoM1MFTJKsA6e2m06mMrBztFaqv
+         mZZWHTpZzpo4czgeeN5EufEzeHx56KpHD2n9204myx6UNAqazKMNTYV3NVnznih0GsR5
+         RUJT7X/mc/hIoOAbZ76OfODnqXmCRSeCza5kyVOBHAZ1jHwOquiHGopG+9l3hbpNM+FO
+         6njOYFipn2z1OahpWDsRFkiJX3BbNa7sZ0DanNMBJGBKy9ujxz041o0A8awDPwOuRx6/
+         IqRr4so9K+BJInAZ1JUgsCOuAK22vDeGQNcMigWfiVzJqjrDaTCLjS0Lgt7491XZs8b+
+         F3Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZBpCkL23W3kv3cyJGByxVsUCsnkF9MWwGbEV4Xivf44=;
-        b=m2qI00pWZKoaIdTsgjp5yCUaklUK8iKYccElYiKXHnNeT63hAgG2Uu4vIcE451OL9w
-         nS4mc6mUzvv04BS00IqaxrECkLLuv+qDhxsmgxYUZ+g4Mnu+b+GukZElefXUD2/IKHTE
-         Aq1sJ+tsiTO6ogamWGTA6jOhk1U6AtDqyhlHawowbamk/DSjQ1TfrBtDOy1LrKiP9/ox
-         Mq20mTZOWxWusrp5iHgEu6QwoDNzctc12CFOieXJCO2iGZx+JaGZveFJ0TQvGxcK842B
-         dr1WFc4Nh7ma/a6aJerB0slCCxy+V7VBkq30GElIQJt0+js1gWbQVGBP/LpqmVX6cjwt
-         bcYA==
-X-Gm-Message-State: APt69E3dYYqcnxd/zXj4+w+iWE92LMlwLr4kyqXgS6TluwQFezqEUWiw
-        uJw19gw+3gUwsIHmbTb7AaY5SGftNNzOLpUOXJ8=
-X-Google-Smtp-Source: ADUXVKKnudeK6eh1YcURT2JLnDesIR6SSGJQ+cCgQZF+mMaSW4OADgPFpQJbD7jw2MrIykbMG5Qy7NMlmctrf9iT+WE=
-X-Received: by 2002:a1f:1e10:: with SMTP id e16-v6mr13908579vke.176.1529541251358;
- Wed, 20 Jun 2018 17:34:11 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 17:34:10
- -0700 (PDT)
-In-Reply-To: <CAA9xbM7_vrn-f_m67eowzLzWjoJP=9Hkgyxfc=yu=aDtmk=Qvw@mail.gmail.com>
-References: <1528704248-33818-1-git-send-email-jiazhouyang09@gmail.com>
- <520e80a8b8de0f532e8dd3ee15af9efbc748dd9a.camel@linux.intel.com>
- <s5hmuw1bgmd.wl-tiwai@suse.de> <CAA9xbM7_vrn-f_m67eowzLzWjoJP=9Hkgyxfc=yu=aDtmk=Qvw@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 21 Jun 2018 03:34:10 +0300
-Message-ID: <CAHp75Veew3LCEKa64V+YFZZMtzvNc5dkJfXE4DGQ1noDQMhOXg@mail.gmail.com>
-Subject: Re: [PATCH] ALSA: fm801: add error handling for snd_ctl_add
-To:     =?UTF-8?Q?=C3=89meric_MASCHINO?= <emeric.maschino@gmail.com>
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        BhumikaGoyal <bhumirks@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uWG/pZtGMnaY67gWRK39S9A8lkWNJYOcT6WMlvv3+BI=;
+        b=rdFKdQoSHCDutXqSFreGVO79drpg37Hat3TxbeG16Kh4ZM7x3DaqjgIDI/RLU4k4JU
+         JHyLZMq4OW7dl84iIA2GL2FgNU2zeVcH7IGtCqDfQGrJH4bt1RD40t7rfUSmJXQjwY2v
+         fGjqxjywB+jKEFL3VfVzjueLH39fNhGcnvfiMsQAZi0NxtODJZpWeyuCZNLDCL9YYw4l
+         02eJQksbaUrYxGd344ee2tpiGRUFsBcExdXl6p+OUILgvf/KVzZ1LW7ViXwFti6dkNjC
+         l7Ltf85Z2pijgBOCFw1loelsss+rtCFghVjWlSdvrmMdQOskvK1n08dXyKRQFSNmpJlH
+         v1sA==
+X-Gm-Message-State: APt69E05ySXbIZA3Xjl0xeo4e0p2hgoMlTQeEsGH45xxDWLJGCj//bpL
+        HOl2NCBhjJfqlFhpLgCPngw=
+X-Google-Smtp-Source: ADUXVKKnCy+uJrZ2JxnPLjuaNOHNfBtloTZV0SDyFwSwc2UNqw2K99ZozFfOpJhtsexIYGKrSfDCOA==
+X-Received: by 2002:a17:902:d90f:: with SMTP id c15-v6mr25740458plz.65.1529541467362;
+        Wed, 20 Jun 2018 17:37:47 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:1600:17a6:2407:f707:f7f9])
+        by smtp.gmail.com with ESMTPSA id d22-v6sm10447106pfl.10.2018.06.20.17.37.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 17:37:46 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH v2] drivers: base: initcall_debug logs for driver probe times
+Date:   Wed, 20 Jun 2018 17:35:56 -0700
+Message-Id: <20180621003556.65578-1-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 10:39 PM, =C3=89meric MASCHINO
-<emeric.maschino@gmail.com> wrote:
-> Patch tested on my ia64 workstation. Works flawlessly.
->
+From: Todd Poynor <toddpoynor@google.com>
 
-Thanks, =C3=89meric!
+Add initcall_debug logs for each driver device probe call, for example:
 
---=20
-With Best Regards,
-Andy Shevchenko
+   probe of a3800000.ramoops returned 1 after 3007 usecs
+
+This replaces the previous code added to report times for deferred
+probes.  It also reports OF platform bus device creates that were
+formerly lumped together in a single entry for function
+of_platform_default_populate_init, as well as helping to annotate other
+initcalls that involve device probing.
+
+Remove restriction on printing probe times only during initcalls, since
+initcall_debug now continues to show driver timing info past the boot
+phase.
+
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
+---
+ drivers/base/dd.c | 50 +++++++++++++++++++++--------------------------
+ 1 file changed, 22 insertions(+), 28 deletions(-)
+
+Changes from v1:
+* unsigned long long -> s64
+* use ktime_to_us() instead of ktime_to_ns with shift
+* print probe return value
+* drop code that stopped output on end of initcall processing
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 1435d7281c66..6ea9c5cece71 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -53,7 +53,6 @@ static DEFINE_MUTEX(deferred_probe_mutex);
+ static LIST_HEAD(deferred_probe_pending_list);
+ static LIST_HEAD(deferred_probe_active_list);
+ static atomic_t deferred_trigger_count = ATOMIC_INIT(0);
+-static bool initcalls_done;
+ 
+ /*
+  * In some cases, like suspend to RAM or hibernation, It might be reasonable
+@@ -62,26 +61,6 @@ static bool initcalls_done;
+  */
+ static bool defer_all_probes;
+ 
+-/*
+- * For initcall_debug, show the deferred probes executed in late_initcall
+- * processing.
+- */
+-static void deferred_probe_debug(struct device *dev)
+-{
+-	ktime_t calltime, delta, rettime;
+-	unsigned long long duration;
+-
+-	printk(KERN_DEBUG "deferred probe %s @ %i\n", dev_name(dev),
+-	       task_pid_nr(current));
+-	calltime = ktime_get();
+-	bus_probe_device(dev);
+-	rettime = ktime_get();
+-	delta = ktime_sub(rettime, calltime);
+-	duration = (unsigned long long) ktime_to_ns(delta) >> 10;
+-	printk(KERN_DEBUG "deferred probe %s returned after %lld usecs\n",
+-	       dev_name(dev), duration);
+-}
+-
+ /*
+  * deferred_probe_work_func() - Retry probing devices in the active list.
+  */
+@@ -125,11 +104,7 @@ static void deferred_probe_work_func(struct work_struct *work)
+ 		device_pm_move_to_tail(dev);
+ 
+ 		dev_dbg(dev, "Retrying from deferred list\n");
+-		if (initcall_debug && !initcalls_done)
+-			deferred_probe_debug(dev);
+-		else
+-			bus_probe_device(dev);
+-
++		bus_probe_device(dev);
+ 		mutex_lock(&deferred_probe_mutex);
+ 
+ 		put_device(dev);
+@@ -237,7 +212,6 @@ static int deferred_probe_initcall(void)
+ 	driver_deferred_probe_trigger();
+ 	/* Sort as many dependencies as possible before exiting initcalls */
+ 	flush_work(&deferred_probe_work);
+-	initcalls_done = true;
+ 	return 0;
+ }
+ late_initcall(deferred_probe_initcall);
+@@ -527,6 +501,23 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	return ret;
+ }
+ 
++/*
++ * For initcall_debug, show the driver probe time.
++ */
++static int really_probe_debug(struct device *dev, struct device_driver *drv)
++{
++	ktime_t calltime, delta, rettime;
++	int ret;
++
++	calltime = ktime_get();
++	ret = really_probe(dev, drv);
++	rettime = ktime_get();
++	delta = ktime_sub(rettime, calltime);
++	printk(KERN_DEBUG "probe of %s returned %d after %lld usecs\n",
++	       dev_name(dev), ret, (s64) ktime_to_us(delta));
++	return ret;
++}
++
+ /**
+  * driver_probe_done
+  * Determine if the probe sequence is finished or not.
+@@ -585,7 +576,10 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
+ 		pm_runtime_get_sync(dev->parent);
+ 
+ 	pm_runtime_barrier(dev);
+-	ret = really_probe(dev, drv);
++	if (initcall_debug)
++		ret = really_probe_debug(dev, drv);
++	else
++		ret = really_probe(dev, drv);
+ 	pm_request_idle(dev);
+ 
+ 	if (dev->parent)
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
+
