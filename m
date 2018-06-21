@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C84C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5B6C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B7D22432
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:34:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DB1022433
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:34:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XVRIEm1B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B7D22432
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tT/wMuG5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB1022433
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934044AbeFUVcy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:32:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41808 "EHLO
+        id S933796AbeFUVej (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:34:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41782 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933968AbeFUV3K (ORCPT
+        with ESMTP id S933957AbeFUV3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 17:29:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,21 +30,22 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=he4LchhH0ZhNYXo30SJP2NvkEmGGjaOKw+GZ4cMdmL8=; b=XVRIEm1B2Wkjk8vJ5JjSNvLyB
-        LCcqYs7RQk5OigRzP6cdY40qaUpvXupabrU0SvwmCQ82Ad4A6C5yuiy3rjTW/QtclCovATwl0IaTT
-        tyuU1PeuyHfulaxH9JHoPbWdXUryn6qtplBQlYLvJUkabfzWI/nLhrD8nO+sBzf8TUi2WCGcL6Ewe
-        rT83JmW/g4BFURcBJNwirrSvo9mGQuweQBupmW1zfHSm/go7/Znqx7+iLc2z6+nPG2aHB9+T5uw1y
-        FhS+XeyGtK49arxt3anwJIOcj/jMJwUHeMMbQpuQYklXTem08pW3vSFvp+f4G74aE/PW7DXibmosg
-        5RQ70FqXA==;
+         bh=wesYzO7sUKPy+4+U70aatZEC6CUjHr8ewqO8wP2zFc8=; b=tT/wMuG5svtem8e/qZCdh8FWt
+        Sxyj2L92E1KbH4bmdJ14fzGiphA9Si/v0ev1+nR9Q0PGgyg8xvz25WHQ448Hwu9M8hXf7Ln/DSyRI
+        EyTqrFwJ1F+jU9ThbuBd2r811nP1VeSRWYirJw3k05ht/DKDis9w2Fw1r52RiC2bUh9BA+8gHxUwy
+        NvYkPByLU2KOZOmUwwypzREAZeMrP9ywUoROtMida23AzDGEdoFso9SNBpk0P6d012s98sX0tUJlr
+        qzoPxqTOboWdSArQnUmcGXXpKTp+rZBU7+1dLsI4VsbZvsm/MlJYBVgdqEceRs0Gqi+83a0S1iBoR
+        R9QbBirNg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78g-0001cb-HD; Thu, 21 Jun 2018 21:29:10 +0000
+        id 1fW78f-0001c6-Or; Thu, 21 Jun 2018 21:29:09 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 20/26] idr-test: Convert ida_check_nomem to new API
-Date:   Thu, 21 Jun 2018 14:28:29 -0700
-Message-Id: <20180621212835.5636-21-willy@infradead.org>
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Subject: [PATCH 16/26] dmaengine: Convert to new IDA API
+Date:   Thu, 21 Jun 2018 14:28:25 -0700
+Message-Id: <20180621212835.5636-17-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -53,46 +54,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can't move this test to kernel space because there's no way to
-force kmalloc to fail.  But we can use the new API and check this
-works when the test is in userspace.
+Simpler and shorter code.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- tools/testing/radix-tree/idr-test.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/dma/dmaengine.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
-index 604b51dc9b38..0f557784327d 100644
---- a/tools/testing/radix-tree/idr-test.c
-+++ b/tools/testing/radix-tree/idr-test.c
-@@ -320,19 +320,20 @@ void ida_dump(struct ida *);
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index 08ba8473a284..1e9bdadfc312 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -161,9 +161,7 @@ static void chan_dev_release(struct device *dev)
  
- /*
-  * Check that we get the correct error when we run out of memory doing
-- * allocations.  To ensure we run out of memory, just "forget" to preload.
-+ * allocations.  In userspace, GFP_NOWAIT will always fail an allocation.
-  * The first test is for not having a bitmap available, and the second test
-  * is for not being able to allocate a level of the radix tree.
-  */
- void ida_check_nomem(void)
+ 	chan_dev = container_of(dev, typeof(*chan_dev), device);
+ 	if (atomic_dec_and_test(chan_dev->idr_ref)) {
+-		mutex_lock(&dma_list_mutex);
+-		ida_remove(&dma_ida, chan_dev->dev_id);
+-		mutex_unlock(&dma_list_mutex);
++		ida_free(&dma_ida, chan_dev->dev_id);
+ 		kfree(chan_dev->idr_ref);
+ 	}
+ 	kfree(chan_dev);
+@@ -896,16 +894,10 @@ static bool device_has_all_tx_types(struct dma_device *device)
+ 
+ static int get_dma_id(struct dma_device *device)
  {
- 	DEFINE_IDA(ida);
--	int id, err;
-+	int id;
+-	int rc;
+-
+-	do {
+-		if (!ida_pre_get(&dma_ida, GFP_KERNEL))
+-			return -ENOMEM;
+-		mutex_lock(&dma_list_mutex);
+-		rc = ida_get_new(&dma_ida, &device->dev_id);
+-		mutex_unlock(&dma_list_mutex);
+-	} while (rc == -EAGAIN);
++	int rc = ida_alloc(&dma_ida, GFP_KERNEL);
  
--	err = ida_get_new_above(&ida, 256, &id);
--	assert(err == -EAGAIN);
--	err = ida_get_new_above(&ida, 1UL << 30, &id);
--	assert(err == -EAGAIN);
-+	id = ida_alloc_min(&ida, 256, GFP_NOWAIT);
-+	IDA_BUG_ON(&ida, id != -ENOMEM);
-+	id = ida_alloc_min(&ida, 1UL << 30, GFP_NOWAIT);
-+	IDA_BUG_ON(&ida, id != -ENOMEM);
-+	IDA_BUG_ON(&ida, !ida_is_empty(&ida));
++	if (rc >= 0)
++		device->dev_id = rc;
+ 	return rc;
  }
  
- /*
+@@ -1090,9 +1082,7 @@ int dma_async_device_register(struct dma_device *device)
+ err_out:
+ 	/* if we never registered a channel just release the idr */
+ 	if (atomic_read(idr_ref) == 0) {
+-		mutex_lock(&dma_list_mutex);
+-		ida_remove(&dma_ida, device->dev_id);
+-		mutex_unlock(&dma_list_mutex);
++		ida_free(&dma_ida, device->dev_id);
+ 		kfree(idr_ref);
+ 		return rc;
+ 	}
 -- 
 2.17.1
 
