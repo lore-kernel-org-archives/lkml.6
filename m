@@ -2,62 +2,68 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-11.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5689C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0596DC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CC0F224E6
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9909E224EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:36:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="v/8DItKs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC0F224E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vRK5zBi7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9909E224EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934070AbeFUWfH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 18:35:07 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41545 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933662AbeFUWd1 (ORCPT
+        id S933929AbeFUWgw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 18:36:52 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44396 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933734AbeFUWgu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 18:33:27 -0400
-Received: by mail-pg0-f67.google.com with SMTP id l65-v6so2046310pgl.8
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 15:33:27 -0700 (PDT)
+        Thu, 21 Jun 2018 18:36:50 -0400
+Received: by mail-pg0-f65.google.com with SMTP id g26-v6so2042955pgn.11
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 15:36:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0y0Y6HhK02jQ+sXqM8QUkLbOeY++kM/KqedsahzGKIA=;
-        b=v/8DItKsXV1wW/9gmu/fAunqc2r/YfLSr6Bjp6zekC4WMfrSxdkvlOsLk7wIe+Qwsc
-         MP5GOeSSjturX7QIy03de5gl5EN/SBNGHXni+RatgiO3LnJ3iOrKVBLyWNhnYhNUqXF0
-         K3t5XubQ6r4KNtI+25WviVRgrvhAv60lTlc08=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oOwfsnfdGEy+0Zi8MBTxiZIiiqfuLjViesbmC0Apsaw=;
+        b=vRK5zBi7y98CJqh7EbIDF6xL+FFZz8JzSd9QebpK9GrOF+5sd/g78bt5/e6mLdnPUd
+         dNl7wLxAPa4IERH70gKKJmyxeyf2tPUbIEx1C8Sa1LiV1gtG3CW54C8zw+erONnxZ9Tc
+         VXvXhdjZQMk0LL9OoeGPonMlQF4Js9y27Es4lkm60Pc/7H0xCzpWOBStPRVVyFsuX0Cm
+         /f1mJpMyPMiJXUkcY4AY6kE3e0Kmmve2bKtJswFBF/CND555lZ9zue0mpUnmu9xuTEVO
+         Rb0T+jnEq0wJDv+f8tFPQQkzCwyMeIKhs9k43+b1xIjJq4eVNwoPa5ZZ+MUPj6MY3KPw
+         V7UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0y0Y6HhK02jQ+sXqM8QUkLbOeY++kM/KqedsahzGKIA=;
-        b=YgOibZzYJxQMy3Xc5duDqVO33ey28ulEFH6Ec8Jwal1a3fylDk5U5JZ+OAv2HayYRu
-         HHDZ6lBMp0EAlfTECdUTmeR47lEadWdekypr1ivxL3s5pumQo9L4bbC84xEgqdkqBrM2
-         VcZzuY4/exC61BC5WzYXL2fQIfzl4Jw5w9Ie/SU721//+6FJ1J8pF6MSm9+L9kFDaTnP
-         75qKAvfSDfbRmz6eULr2yXzrQ89pMQGf6qmpkiz5lNzHAhWjwoFD15s+nBxxpgBr6FcL
-         IL4y7d0FErdknX3z/vnLgU5mqjwR/ksb/M3FAE6e162oVg0vR3cSvjloPNawIjiNNQeH
-         IKJg==
-X-Gm-Message-State: APt69E2ZeMxcAzd6lFX7ql8ksyIYSn4Wy1mz3QUtBsh/MGK2yHDlhbvk
-        Ha79RSSZk+9ck+42k7rB0RRRGcn52e8=
-X-Google-Smtp-Source: ADUXVKIKruIAgTPFb95500ts74p2UehqH73ZRU1FSHV7Nmch0sb+FKNVy4npyBJSq2RKGWjF6l/G+A==
-X-Received: by 2002:a62:221a:: with SMTP id i26-v6mr29535847pfi.240.1529620406596;
-        Thu, 21 Jun 2018 15:33:26 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id x19-v6sm11060824pfi.5.2018.06.21.15.33.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 15:33:26 -0700 (PDT)
-From:   Joel Fernandes <joel@joelfernandes.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oOwfsnfdGEy+0Zi8MBTxiZIiiqfuLjViesbmC0Apsaw=;
+        b=OGTqY1Kh/yKy4n8C68WsV23LFoeOAmNuejU4WoU6q7dkZPg7JGA90hmeyufsyi1hfq
+         pftMGUNTPTZBQfNJqOWXIfztUL438rjkHNx2HkM/AHu3G9q58wKPdFA2aBz0ni4kiAH7
+         AH+Uuj8o83oZwW5U2KfcYC/YVaMRMd9dZNJw2mhRFtbjBo0sbIxbRh0EgsQvXR4/JZHp
+         YjlXYX2Wy0xZRQokOqYgIZO8rdPZOCdiwtcu1LfgPBEGff/jaQTFUmi3tWoVubgnglir
+         qjTKIfOJY8wRRHpqmVb86kECJMbKdBEtqGpionv9GT+5NB6nG0D1NISQ+6Lg2Ynkyr1G
+         v5Ww==
+X-Gm-Message-State: APt69E3QQfc+2sNtjDbqPBbxLK45HAxjqMcN6BrBSQNCXHN5Cg3rE5TY
+        9W6rxKOYz36p9DrvNksFKy1N3DiyBP8=
+X-Google-Smtp-Source: ADUXVKJdPMec4dtslopAYLtv+S96+DKyD2EPnXTEw4b+ccHPNTUFbGEzPKNOniiCTfzlLPcOIgMC8g==
+X-Received: by 2002:a62:fc8d:: with SMTP id e135-v6mr29303816pfh.208.1529620608788;
+        Thu, 21 Jun 2018 15:36:48 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id l11-v6sm8638758pff.50.2018.06.21.15.36.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 15:36:48 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 15:36:47 -0700
+From:   Joel Fernandes <joelaf@google.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@android.com,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Boqun Feng <boqun.feng@gmail.com>,
         Byungchul Park <byungchul.park@lge.com>,
         Erick Reyes <erickreyes@google.com>,
@@ -67,6 +73,7 @@ Cc:     kernel-team@android.com,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Shuah Khan <shuah@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
@@ -74,69 +81,184 @@ Cc:     kernel-team@android.com,
         Todd Kjos <tkjos@google.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v9 1/7] srcu: Add notrace variants of srcu_read_{lock,unlock}
-Date:   Thu, 21 Jun 2018 15:32:30 -0700
-Message-Id: <20180621223236.211495-2-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-In-Reply-To: <20180621223236.211495-1-joel@joelfernandes.org>
+Subject: [PATCH v9 6/7] lib: Add module to simulate atomic sections for
+ testing preemptoff tracers
+Message-ID: <20180621223647.GA212425@joelaf.mtv.corp.google.com>
 References: <20180621223236.211495-1-joel@joelfernandes.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180621223236.211495-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul McKenney <paulmck@linux.vnet.ibm.com>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-This is needed for a future tracepoint patch that uses srcu, and to make
-sure it doesn't call into lockdep.
+In this patch we introduce a test module for simulating a long atomic
+section in the kernel which the preemptoff or irqsoff tracers can
+detect. This module is to be used only for test purposes and is default
+disabled.
 
-tracepoint code already calls notrace variants for rcu_read_lock_sched
-so this patch does the same for srcu which will be used in a later
-patch. Keeps it consistent with rcu-sched.
+Following is the expected output (only briefly shown) that can be parsed
+to verify that the tracers are working correctly. We will use this from
+the kselftests in future patches.
 
-[Joel: Added commit message]
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Paul McKenney <paulmck@linux.vnet.ibm.com>
+For the preemptoff tracer:
+
+echo preemptoff > /d/tracing/current_tracer
+sleep 1
+insmod ./test_atomic_sections.ko atomic_mode=preempt atomic_time=500000
+sleep 1
+bash-4.3# cat /d/tracing/trace
+preempt -1066    2...2    0us@: atomic_sect_run <-atomic_sect_run
+preempt -1066    2...2 500002us : atomic_sect_run <-atomic_sect_run
+preempt -1066    2...2 500004us : tracer_preempt_on <-atomic_sect_run
+preempt -1066    2...2 500012us : <stack trace>
+ => kthread
+ => ret_from_fork
+
+For the irqsoff tracer:
+
+echo irqsoff > /d/tracing/current_tracer
+sleep 1
+insmod ./test_atomic_sections.ko atomic_mode=irq atomic_time=500000
+sleep 1
+bash-4.3# cat /d/tracing/trace
+irq dis -1069    1d..1    0us@: atomic_sect_run
+irq dis -1069    1d..1 500001us : atomic_sect_run
+irq dis -1069    1d..1 500002us : tracer_hardirqs_on <-atomic_sect_run
+irq dis -1069    1d..1 500005us : <stack trace>
+ => ret_from_fork
+
+Co-developed-by: Erick Reyes <erickreyes@google.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- include/linux/srcu.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ lib/Kconfig.debug          |  8 ++++
+ lib/Makefile               |  1 +
+ lib/test_atomic_sections.c | 77 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 86 insertions(+)
+ create mode 100644 lib/test_atomic_sections.c
 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 91494d7e8e41..3e72a291c401 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -195,6 +195,16 @@ static inline int srcu_read_lock(struct srcu_struct *sp) __acquires(sp)
- 	return retval;
- }
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 8838d1158d19..622c90e1e066 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1956,6 +1956,14 @@ config TEST_KMOD
  
-+/* Used by tracing, cannot be traced and cannot invoke lockdep. */
-+static inline notrace int
-+srcu_read_lock_notrace(struct srcu_struct *sp) __acquires(sp)
-+{
-+	int retval;
+ 	  If unsure, say N.
+ 
++config TEST_ATOMIC_SECTIONS
++	tristate "Simulate atomic sections for tracers to detect"
++	depends on m
++	help
++	  Select this option to build a test module that can help test atomic
++	  sections by simulating them with a duration supplied as a module
++	  parameter. Preempt disable and irq disable modes can be requested.
 +
-+	retval = __srcu_read_lock(sp);
-+	return retval;
+ config TEST_DEBUG_VIRTUAL
+ 	tristate "Test CONFIG_DEBUG_VIRTUAL feature"
+ 	depends on DEBUG_VIRTUAL
+diff --git a/lib/Makefile b/lib/Makefile
+index 8153fdab287f..0c155c2d5db9 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -44,6 +44,7 @@ obj-y += string_helpers.o
+ obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
+ obj-y += hexdump.o
+ obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
++obj-$(CONFIG_TEST_ATOMIC_SECTIONS) += test_atomic_sections.o
+ obj-y += kstrtox.o
+ obj-$(CONFIG_FIND_BIT_BENCHMARK) += find_bit_benchmark.o
+ obj-$(CONFIG_TEST_BPF) += test_bpf.o
+diff --git a/lib/test_atomic_sections.c b/lib/test_atomic_sections.c
+new file mode 100644
+index 000000000000..1eef518f0974
+--- /dev/null
++++ b/lib/test_atomic_sections.c
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Atomic section emulation test module
++ *
++ * Emulates atomic sections by disabling IRQs or preemption
++ * and doing a busy wait for a specified amount of time.
++ * This can be used for testing of different atomic section
++ * tracers such as irqsoff tracers.
++ *
++ * (c) 2018. Google LLC
++ */
++
++#include <linux/delay.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/kernel.h>
++#include <linux/kthread.h>
++#include <linux/ktime.h>
++#include <linux/module.h>
++#include <linux/printk.h>
++#include <linux/string.h>
++
++static ulong atomic_time = 100;
++static char atomic_mode[10] = "irq";
++
++module_param_named(atomic_time, atomic_time, ulong, S_IRUGO);
++module_param_string(atomic_mode, atomic_mode, 10, S_IRUGO);
++MODULE_PARM_DESC(atomic_time, "Period in microseconds (100 uS default)");
++MODULE_PARM_DESC(atomic_mode, "Mode of the test such as preempt or irq (default irq)");
++
++static void busy_wait(ulong time)
++{
++	ktime_t start, end;
++	start = ktime_get();
++	do {
++		end = ktime_get();
++		if (kthread_should_stop())
++			break;
++	} while (ktime_to_ns(ktime_sub(end, start)) < (time * 1000));
 +}
 +
- /**
-  * srcu_read_unlock - unregister a old reader from an SRCU-protected structure.
-  * @sp: srcu_struct in which to unregister the old reader.
-@@ -209,6 +219,13 @@ static inline void srcu_read_unlock(struct srcu_struct *sp, int idx)
- 	__srcu_read_unlock(sp, idx);
- }
- 
-+/* Used by tracing, cannot be traced and cannot call lockdep. */
-+static inline notrace void
-+srcu_read_unlock_notrace(struct srcu_struct *sp, int idx) __releases(sp)
++int atomic_sect_run(void *data)
 +{
-+	__srcu_read_unlock(sp, idx);
++	unsigned long flags;
++
++	if (!strcmp(atomic_mode, "irq")) {
++		local_irq_save(flags);
++		busy_wait(atomic_time);
++		local_irq_restore(flags);
++	} else if (!strcmp(atomic_mode, "preempt")) {
++		preempt_disable();
++		busy_wait(atomic_time);
++		preempt_enable();
++	}
++
++	return 0;
 +}
 +
- /**
-  * smp_mb__after_srcu_read_unlock - ensure full ordering after srcu_read_unlock
-  *
++static int __init atomic_sect_init(void)
++{
++	char task_name[50];
++	struct task_struct *test_task;
++
++	snprintf(task_name, sizeof(task_name), "%s_test", atomic_mode);
++
++	test_task = kthread_run(atomic_sect_run, NULL, task_name);
++	return PTR_ERR_OR_ZERO(test_task);
++}
++
++static void __exit atomic_sect_exit(void)
++{
++	return;
++}
++
++module_init(atomic_sect_init)
++module_exit(atomic_sect_exit)
++MODULE_LICENSE("GPL v2");
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
