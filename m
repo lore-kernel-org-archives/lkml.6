@@ -6,57 +6,59 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FB6C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D702EC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC11120883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F0B420883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kczQ+RmA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC11120883
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GDU6yLTY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0B420883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932808AbeFUILO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:11:14 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:56836 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932528AbeFUILM (ORCPT
+        id S932856AbeFUILT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:11:19 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:37136 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932528AbeFUILP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:11:12 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelnx194.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5L8B8EV005718;
-        Thu, 21 Jun 2018 03:11:08 -0500
+        Thu, 21 Jun 2018 04:11:15 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5L8BBWm013212;
+        Thu, 21 Jun 2018 03:11:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529568668;
-        bh=D+XJdwKstcK+TcLkNKoGXdn8DDPyuAZcCfVh+LiwT/s=;
-        h=From:To:CC:Subject:Date;
-        b=kczQ+RmA8DKFtVsOI1lMH+Zz1fp6PZsdjcCmjomeF2T+1TBeX0tc6wkA5dIA6JSF2
-         nDrmVTrzkdx/zPeeUz9RJ/FC3VPe7WTRklWPLsn4FpXHjph2Y46cDQcmh51GYibe6o
-         GdLsI5IGXgWtAgvK5gMN3dzoQ9jo0PKqUdJWMaeY=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8B8Ku030174;
-        Thu, 21 Jun 2018 03:11:08 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+        s=ti-com-17Q1; t=1529568671;
+        bh=7+dBmx3ZNMF0bWiqpFdFHnq4km/4emHSVO4TaLZl1GU=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=GDU6yLTYoBmqt7zr8fBLC7stPgY7CHMPL6CogI/i5ZUv1fL7GZZUvu9w3UAytkCk5
+         9U78t47NJdhN9O+Ugy5Atw0cWekzdwjLBe0Iy3mnxNtI2Pr7T/MLIIy3vwhx1f6jlv
+         7Qk7qP6u4N+fCrDvxyliQo0WA5eqWWsN2QD2rwcA=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8BBVw019842;
+        Thu, 21 Jun 2018 03:11:11 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 21
- Jun 2018 03:11:08 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ Jun 2018 03:11:11 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 21 Jun 2018 03:11:08 -0500
+ Thu, 21 Jun 2018 03:11:11 -0500
 Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8B5aU024513;
-        Thu, 21 Jun 2018 03:11:06 -0500
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8B5aV024513;
+        Thu, 21 Jun 2018 03:11:08 -0500
 From:   Keerthy <j-keerthy@ti.com>
 To:     <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
 CC:     <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
         <linux-omap@vger.kernel.org.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>
-Subject: [PATCH v2 0/4] clk: clk: Add functions to save/restore clock context en-masse
-Date:   Thu, 21 Jun 2018 13:40:16 +0530
-Message-ID: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
+        <j-keerthy@ti.com>, Russ Dill <Russ.Dill@ti.com>
+Subject: [PATCH v2 1/4] clk: clk: Add functions to save/restore clock context en-masse
+Date:   Thu, 21 Jun 2018 13:40:17 +0530
+Message-ID: <1529568620-19765-2-git-send-email-j-keerthy@ti.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
+References: <1529568620-19765-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -65,42 +67,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Russ Dill <Russ.Dill@ti.com>
+
 Deep enough power saving mode can result into losing context of the clock
 registers also, and they need to be restored once coming back from the power
 saving mode. Hence add functions to save/restore clock context.
 
-Tested for DS0 on am437x-gp-evm
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Russ Dill <Russ.Dill@ti.com>
+---
 
-Based on top of linux-next
+No Changes in v2
 
-Changes in v2:
+ drivers/clk/clk.c            | 74 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  7 +++++
+ include/linux/clk.h          | 25 +++++++++++++++
+ 3 files changed, 106 insertions(+)
 
-        * Renamed clk_dflt_restore to clk_gate_restore_context
-
-Keerthy (2):
-  clk: clk: Add clk_gate_restore_context function
-  soc: ti: pm33xx: Save/restore clk context based on enable_off_mode
-    setting
-
-Russ Dill (2):
-  clk: clk: Add functions to save/restore clock context en-masse
-  clk: ti: Add functions to save/restore clk context
-
- arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
- drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
- drivers/clk/ti/clock.h               |   2 +
- drivers/clk/ti/divider.c             |  36 ++++++++++
- drivers/clk/ti/dpll.c                |   6 ++
- drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
- drivers/clk/ti/gate.c                |   3 +
- drivers/clk/ti/mux.c                 |  29 ++++++++
- drivers/soc/ti/pm33xx.c              |  13 ++++
- include/linux/clk-provider.h         |   9 +++
- include/linux/clk.h                  |  25 +++++++
- include/linux/clk/ti.h               |   6 ++
- include/linux/platform_data/pm33xx.h |   1 +
- 13 files changed, 362 insertions(+)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index a24a6af..7347e06 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -910,6 +910,80 @@ static int clk_core_enable_lock(struct clk_core *core)
+ 	return ret;
+ }
+ 
++static int _clk_save_context(struct clk_core *clk)
++{
++	struct clk_core *child;
++	int ret = 0;
++
++	hlist_for_each_entry(child, &clk->children, child_node) {
++		ret = _clk_save_context(child);
++		if (ret < 0)
++			return ret;
++	}
++
++	if (clk->ops && clk->ops->save_context)
++		ret = clk->ops->save_context(clk->hw);
++
++	return ret;
++}
++
++static void _clk_restore_context(struct clk_core *clk)
++{
++	struct clk_core *child;
++
++	if (clk->ops && clk->ops->restore_context)
++		clk->ops->restore_context(clk->hw);
++
++	hlist_for_each_entry(child, &clk->children, child_node)
++		_clk_restore_context(child);
++}
++
++/**
++ * clk_save_context - save clock context for poweroff
++ *
++ * Saves the context of the clock register for powerstates in which the
++ * contents of the registers will be lost. Occurs deep within the suspend
++ * code.  Returns 0 on success.
++ */
++int clk_save_context(void)
++{
++	struct clk_core *clk;
++	int ret;
++
++	hlist_for_each_entry(clk, &clk_root_list, child_node) {
++		ret = _clk_save_context(clk);
++		if (ret < 0)
++			return ret;
++	}
++
++	hlist_for_each_entry(clk, &clk_orphan_list, child_node) {
++		ret = _clk_save_context(clk);
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(clk_save_context);
++
++/**
++ * clk_restore_context - restore clock context after poweroff
++ *
++ * Restore the saved clock context upon resume.
++ *
++ */
++void clk_restore_context(void)
++{
++	struct clk_core *clk;
++
++	hlist_for_each_entry(clk, &clk_root_list, child_node)
++		_clk_restore_context(clk);
++
++	hlist_for_each_entry(clk, &clk_orphan_list, child_node)
++		_clk_restore_context(clk);
++}
++EXPORT_SYMBOL_GPL(clk_restore_context);
++
+ /**
+  * clk_enable - ungate a clock
+  * @clk: the clk being ungated
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index b7cfa03..7f30d62 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -106,6 +106,11 @@ struct clk_rate_request {
+  *		Called with enable_lock held.  This function must not
+  *		sleep.
+  *
++ * @save_context: Save the context of the clock in prepration for poweroff.
++ *
++ * @restore_context: Restore the context of the clock after a restoration
++ *		of power.
++ *
+  * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
+  *		parent rate is an input parameter.  It is up to the caller to
+  *		ensure that the prepare_mutex is held across this call.
+@@ -201,6 +206,8 @@ struct clk_ops {
+ 	void		(*disable)(struct clk_hw *hw);
+ 	int		(*is_enabled)(struct clk_hw *hw);
+ 	void		(*disable_unused)(struct clk_hw *hw);
++	int		(*save_context)(struct clk_hw *hw);
++	void		(*restore_context)(struct clk_hw *hw);
+ 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
+ 					unsigned long parent_rate);
+ 	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 0dbd088..70a2662 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -596,6 +596,23 @@ int __must_check clk_bulk_enable(int num_clks,
+  */
+ struct clk *clk_get_sys(const char *dev_id, const char *con_id);
+ 
++/**
++ * clk_save_context - save clock context for poweroff
++ *
++ * Saves the context of the clock register for powerstates in which the
++ * contents of the registers will be lost. Occurs deep within the suspend
++ * code so locking is not necessary.
++ */
++int clk_save_context(void);
++
++/**
++ * clk_restore_context - restore clock context after poweroff
++ *
++ * This occurs with all clocks enabled. Occurs deep within the resume code
++ * so locking is not necessary.
++ */
++void clk_restore_context(void);
++
+ #else /* !CONFIG_HAVE_CLK */
+ 
+ static inline struct clk *clk_get(struct device *dev, const char *id)
+@@ -695,6 +712,14 @@ static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ {
+ 	return NULL;
+ }
++
++static inline int clk_save_context(void)
++{
++	return 0;
++}
++
++static inline void clk_restore_context(void) {}
++
+ #endif
+ 
+ /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
 -- 
 1.9.1
 
