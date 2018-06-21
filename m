@@ -4,37 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AD3C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A56FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5EE21834
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:33:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4E1F21A07
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:33:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="HUWEui/j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5EE21834
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="U0KlIOA0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E1F21A07
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933444AbeFUUbv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 16:31:51 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:38544 "EHLO
+        id S933525AbeFUUdc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 16:33:32 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:38624 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932938AbeFUUbs (ORCPT
+        with ESMTP id S933179AbeFUUbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 16:31:48 -0400
+        Thu, 21 Jun 2018 16:31:50 -0400
 Received: from localhost.localdomain (unknown [IPv6:2a02:169:34d6:10::3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 210F65C00F8;
-        Thu, 21 Jun 2018 22:31:47 +0200 (CEST)
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 652635C17EF;
+        Thu, 21 Jun 2018 22:31:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529613107;
+        t=1529613108;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=ZOiYGDLVpilqVUtPIp8cqq2ysItxXlIbvATOK+3It7A=;
-        b=HUWEui/jHhq6JH4xPQCmCPoLtl73ZXRnAsdolPE1tobOVzscTJ3mURasIqIvQHrdc3u36v
-        e1XYoUceJMhtcUpTN15WmvWxkGLuBHNAY48Xzry20lv+HKoD3+JGRm4uzTzzBoemmt2HNR
-        W9HNJU4yvW+P1LQBiqtVgN11n5C6rqM=
+         in-reply-to:in-reply-to:references:references;
+        bh=bt9OXWD9awlzOzrT4ScG14b67Yoi4Jiyx30D5CWU1CQ=;
+        b=U0KlIOA0eXFcEZYLD3VifuJH9iJu0jD/09xk99XvyYygTSwrTya7A7sqcs6PekRnunSeUZ
+        8ou3/lQ+cEhmo9seSGVxU4fHooqqgZEkSIoZ67x1KWGMvvYec897VxkrjmwW4M3TUG3s8V
+        iJL8CoD0/cLMuQbubhMXOwFZQsnKANg=
 From:   Stefan Agner <stefan@agner.ch>
 To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
         computersforpeace@gmail.com, marek.vasut@gmail.com,
@@ -46,10 +47,12 @@ Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
         gaireg@gaireg.de, linux-mtd@lists.infradead.org,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v6 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
-Date:   Thu, 21 Jun 2018 22:31:39 +0200
-Message-Id: <20180621203145.7628-1-stefan@agner.ch>
+Subject: [PATCH v6 3/6] mtd: rawnand: tegra: add devicetree binding
+Date:   Thu, 21 Jun 2018 22:31:42 +0200
+Message-Id: <20180621203145.7628-4-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180621203145.7628-1-stefan@agner.ch>
+References: <20180621203145.7628-1-stefan@agner.ch>
 X-Spamd-Result: default: False [-2.10 / 15.00];
          TO_MATCH_ENVRCPT_ALL(0.00)[];
          RCPT_COUNT_TWELVE(0.00)[24];
@@ -70,86 +73,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This sixth revision only removes extra OOB byte support when using
-HW ECC. The previous implementation did place the ECC bytes at a
-different location depending on whether extra OOB bytes were written.
-This does not work well with the MTD subsystem. Since UBI/UBIFS does
-not require extra OOB bytes I descided to not provide extra OOB
-support for now.
+This adds the devicetree binding for the Tegra 2 NAND flash
+controller.
 
---
-Stefan
-
-Changes since v1:
-- Split controller and NAND chip structure
-- Add BCH support
-- Allow to select algorithm and strength using device tree
-- Improve HW ECC error reporting and use DEC_STATUS_BUF only
-- Use SPDX license identifier
-- Use per algorithm mtd_ooblayout_ops
-- Use setup_data_interface callback for NAND timing configuration
-
-Changes since v2:
-- Set clock rate using assigned-clocks
-- Use BIT() macro
-- Fix and improve timing calculation
-- Improve ECC error handling
-- Store OOB layout for tag area in Tegra chip structure
-- Update/fix bindings
-- Use more specific variable names (replace "value")
-- Introduce nand-is-boot-medium
-- Choose sensible ECC strenght automatically
-- Use wait_for_completion_timeout
-- Print register dump on completion timeout
-- Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
-
-Changes since v3:
-- Implement tegra_nand_(read|write)_raw using DMA
-- Implement tegra_nand_(read|write)_oob using DMA
-- Name registers according to Tegra 2 Technical Reference Manual (v02p)
-- Use wait_for_completion_io_timeout to account for IO
-- Get chip select id from device tree reg property
-- Clear interrupts and reinit wait queues in case command/DMA times out
-- Set default MTD name after nand_set_flash_node
-- Move MODULE_DEVICE_TABLE after declaration of tegra_nand_of_match
-- Make (rs|bch)_strength static
-
-Changes since v4:
-- Pass OOB area to nand_check_erased_ecc_chunk
-- Pass algorithm specific bits_per_step to tegra_nand_get_strength
-- Store ECC layout in chip structure
-- Fix pointer assignment (use NULL)
-- Removed obsolete header delay.h
-- Fixed newlines
-- Use non-_io variant of wait_for_completion_timeout
-
-Changes since v5:
-- Drop extra OOB bytes support
-
-Lucas Stach (1):
-  ARM: dts: tegra: add Tegra20 NAND flash controller node
-
-Stefan Agner (5):
-  mtd: rawnand: add Reed-Solomon error correction algorithm
-  mtd: rawnand: add an option to specify NAND chip as a boot device
-  mtd: rawnand: tegra: add devicetree binding
-  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
-  ARM: dts: tegra: enable NAND flash on Colibri T20
-
- .../devicetree/bindings/mtd/nand.txt          |    6 +-
- .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
- MAINTAINERS                                   |    7 +
- arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
- arch/arm/boot/dts/tegra20.dtsi                |   15 +
- drivers/mtd/nand/raw/Kconfig                  |    6 +
- drivers/mtd/nand/raw/Makefile                 |    1 +
- drivers/mtd/nand/raw/nand_base.c              |    4 +
- drivers/mtd/nand/raw/tegra_nand.c             | 1225 +++++++++++++++++
- include/linux/mtd/rawnand.h                   |    7 +
- 10 files changed, 1350 insertions(+), 1 deletion(-)
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
- create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
 
+diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+new file mode 100644
+index 0000000000000..1c351362f3a96
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+@@ -0,0 +1,64 @@
++NVIDIA Tegra NAND Flash controller
++
++Required properties:
++- compatible: Must be one of:
++  - "nvidia,tegra20-nand"
++- reg: MMIO address range
++- interrupts: interrupt output of the NFC controller
++- clocks: Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++  - nand
++- resets: Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - nand
++
++Optional children nodes:
++Individual NAND chips are children of the NAND controller node. Currently
++only one NAND chip supported.
++
++Required children node properties:
++- reg: An integer ranging from 1 to 6 representing the CS line to use.
++
++Optional children node properties:
++- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
++		 "hw" is supported.
++- nand-ecc-algo: string, algorithm of NAND ECC.
++		 Supported values with "hw" ECC mode are: "rs", "bch".
++- nand-bus-width : See nand.txt
++- nand-on-flash-bbt: See nand.txt
++- nand-ecc-strength: integer representing the number of bits to correct
++		     per ECC step (always 512). Supported strength using HW ECC
++		     modes are:
++		     - RS: 4, 6, 8
++		     - BCH: 4, 8, 14, 16
++- nand-ecc-maximize: See nand.txt
++- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
++		       are choosen.
++- wp-gpios: GPIO specifier for the write protect pin.
++
++Optional child node of NAND chip nodes:
++Partitions: see partition.txt
++
++  Example:
++	nand-controller@70008000 {
++		compatible = "nvidia,tegra20-nand";
++		reg = <0x70008000 0x100>;
++		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
++		clock-names = "nand";
++		resets = <&tegra_car 13>;
++		reset-names = "nand";
++
++		nand@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			nand-bus-width = <8>;
++			nand-on-flash-bbt;
++			nand-ecc-algo = "bch";
++			nand-ecc-strength = <8>;
++			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
++		};
++	};
 -- 
 2.17.1
 
