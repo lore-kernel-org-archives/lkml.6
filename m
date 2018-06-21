@@ -2,114 +2,95 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27212C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 988FCC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E285A20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E285A20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 46ECA20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:40:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SzlT5Lz/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46ECA20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932848AbeFUJju (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:39:50 -0400
-Received: from mga11.intel.com ([192.55.52.93]:11164 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932620AbeFUJjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:39:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 02:39:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,251,1526367600"; 
-   d="scan'208";a="66018408"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 21 Jun 2018 02:39:44 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Jun 2018 12:39:43 +0300
-Date:   Thu, 21 Jun 2018 12:39:43 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     USB list <linux-usb@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        kbuild test robot <lkp@intel.com>,
-        ShuFan Lee <shufan_lee@richtek.com>,
-        Guenter Roeck <linux@roeck-us.net>, kbuild-all@01.org
-Subject: Re: [PATCH] staging/typec: fix tcpci_rt1711h build errors
-Message-ID: <20180621093943.GE2847@kuha.fi.intel.com>
-References: <f344e5f3-4e92-1fd0-ef4d-7b96065466b8@infradead.org>
+        id S932883AbeFUJkh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:40:37 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44573 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932620AbeFUJkf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:40:35 -0400
+Received: by mail-wr0-f193.google.com with SMTP id p12-v6so825471wrn.11;
+        Thu, 21 Jun 2018 02:40:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=2sByfOT2bN+73FAkfIoqTkf3DwGyCvZ8B2ldjgyT0Tc=;
+        b=SzlT5Lz/8oWE7qiR4Q+4t7/g5C8n2ivdIe8/A5MsUh504vNqStvm3cicWZgMSxwLZR
+         +OYuqnMkg9RQL/MeI9Lk+WmSO7goytGRwVLXHN/btvXAMHuiTPJS7TvJ+aYwxBOOxQXR
+         Zop3Gr00jbJbw4s355AHpcD6RRs0b5eRy0DCEFGoT3Pody1FIkDjLZrgXmhWuNapnaKc
+         b+E6fApyvE7OOqv4iUyJRE54Lr7SC7rWl6IgGYbX5OtQbG3T7ldJIDuUhWq8fkVHKsGy
+         bBPjmsleSbUWSiYL4DR1kC2w0LP7ApGtW+i4Ts/qtoSquctdzop/NLYC5Je05ht2H31m
+         Jagw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=2sByfOT2bN+73FAkfIoqTkf3DwGyCvZ8B2ldjgyT0Tc=;
+        b=qK0emHZ0/nOvZNJ29Qxm0sOatMmfnm0AFH72VCCyFZqKFHIlZW+7mVohiN0RLtERMU
+         CL6jdWW504dkmV3ocGmjjK5SnWNbWTDsasQHg0syB/9uDnwt1cznkKPwIu6gX9zYSEiM
+         f7OuyWkUeRi3p2g/9l7r46RnGxFtJD3lEBAgVHSLZwY1SkJ2iDn37ml9D8ItE8pBkczY
+         vsFoXq9MmyBCuMJ22L9JfHhqaEVoRH7OmwuROUEKEeGFRteVyoXXQgGVomi9UUhtyQkd
+         L7FBKA5oFYLNdcdtuye4xSlkcI44hcYv4yGZPw/686+F9KIwI8cep1cjNRA1pmxqlavj
+         NaqQ==
+X-Gm-Message-State: APt69E2NB/BigTtTBRMkJ/h4KBjLpvjxdYrh8SKbo6Fyi1N/PPYcbXj9
+        MbqsdGNmFnHFGT/6MlqqE+valh2R/Q==
+X-Google-Smtp-Source: ADUXVKILrs13h5folIqIgJvNGG2j2WXODGyPihwJbFRWSxM89Sjxzdi3717AUYjGJTCNHl0IZIBlUg==
+X-Received: by 2002:adf:c844:: with SMTP id e4-v6mr20704265wrh.236.1529574034428;
+        Thu, 21 Jun 2018 02:40:34 -0700 (PDT)
+Received: from sesnaco ([196.43.135.103])
+        by smtp.gmail.com with ESMTPSA id k17-v6sm6879984wmc.23.2018.06.21.02.40.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 02:40:33 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 12:40:19 +0300
+From:   Mawanda Henry <mawandahenrynaco@gmail.com>
+To:     mawanda111@gmail.com
+Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/i2c:  Include SPDX-license-identifier
+Message-ID: <20180621094019.GA5348@sesnaco>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f344e5f3-4e92-1fd0-ef4d-7b96065466b8@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 05:05:42PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix Kconfig warning and build errors in staging/typec/rt1711h.c.
-> The driver uses I2C interfaces so it should depend on I2C.
-> 
-> WARNING: unmet direct dependencies detected for TYPEC_TCPCI
->   Depends on [m]: STAGING [=y] && TYPEC_TCPM [=y] && I2C [=m]
->   Selected by [y]:
->   - TYPEC_RT1711H [=y] && STAGING [=y] && TYPEC_TCPM [=y]
-> 
-> and then:
-> drivers/staging/typec/tcpci.o: In function `tcpci_probe':
-> ../drivers/staging/typec/tcpci.c:536: undefined reference to `__devm_regmap_init_i2c'
-> drivers/staging/typec/tcpci.o: In function `tcpci_i2c_driver_init':
-> ../drivers/staging/typec/tcpci.c:593: undefined reference to `i2c_register_driver'
-> drivers/staging/typec/tcpci.o: In function `tcpci_i2c_driver_exit':
-> ../drivers/staging/typec/tcpci.c:593: undefined reference to `i2c_del_driver'
-> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_check_revision':
-> ../drivers/staging/typec/tcpci_rt1711h.c:218: undefined reference to `i2c_smbus_read_word_data'
-> ../drivers/staging/typec/tcpci_rt1711h.c:225: undefined reference to `i2c_smbus_read_word_data'
-> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_probe':
-> ../drivers/staging/typec/tcpci_rt1711h.c:251: undefined reference to `__devm_regmap_init_i2c'
-> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_i2c_driver_init':
-> ../drivers/staging/typec/tcpci_rt1711h.c:308: undefined reference to `i2c_register_driver'
-> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_i2c_driver_exit':
-> ../drivers/staging/typec/tcpci_rt1711h.c:308: undefined reference to `i2c_del_driver'
-> 
-> Fixes: ce08eaeb6388 ("staging: typec: rt1711h typec chip driver")
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: ShuFan Lee <shufan_lee@richtek.com>
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: kbuild-all@01.org
+including the SPDX license identifier header  makes it easy for
+developers and machines to know the lecense that is governing the file
 
-Revieved-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Mawanda Henry <mawandahenrynaco@gmail.com>
+---
+ drivers/i2c/i2c-core-slave.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> ---
->  drivers/staging/typec/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- lnx-418-rc1.orig/drivers/staging/typec/Kconfig
-> +++ lnx-418-rc1/drivers/staging/typec/Kconfig
-> @@ -11,6 +11,7 @@ config TYPEC_TCPCI
->  
->  config TYPEC_RT1711H
->  	tristate "Richtek RT1711H Type-C chip driver"
-> +	depends on I2C
->  	select TYPEC_TCPCI
->  	help
->  	  Richtek RT1711H Type-C chip driver that works with
-> 
-
-Thanks,
-
+diff --git a/drivers/i2c/i2c-core-slave.c b/drivers/i2c/i2c-core-slave.c
+index 4a78c65..883ca836 100644
+--- a/drivers/i2c/i2c-core-slave.c
++++ b/drivers/i2c/i2c-core-slave.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Linux I2C core slave support code
+  *
 -- 
-heikki
+2.7.4
+
