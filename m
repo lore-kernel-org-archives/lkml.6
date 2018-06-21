@@ -2,214 +2,130 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BECC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 363B9C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC3B820883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3E0F20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:39:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L9rRyPqv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3B820883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LemMK+Ek"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3E0F20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754088AbeFUGjK (ORCPT
+        id S1754206AbeFUGjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 02:39:10 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:39229 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751057AbeFUGjJ (ORCPT
+        Thu, 21 Jun 2018 02:39:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34578 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754093AbeFUGjm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 02:39:09 -0400
-Received: by mail-io0-f193.google.com with SMTP id f1-v6so2001470ioh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 23:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
-        bh=2XU5zPrsvjF1KYRUy2sI5P/Spwlp/Q9oFz8wyxDLcb4=;
-        b=L9rRyPqvDQekEYrKrlcBV9nO59vqqZ1MlGBcPD3DW8q5dxMiYFUsw/MMYrozFZ9yBn
-         Zi0f7W80heRq+L11+p4TjsApXxg0Bf3ZbNofz+vnwitc4uXA1dJuihqzyyCWReZY7t/n
-         TDPun01wOOSDmprsQpcSGpxUuXOYlA0pCIJTQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to;
-        bh=2XU5zPrsvjF1KYRUy2sI5P/Spwlp/Q9oFz8wyxDLcb4=;
-        b=sUqPHpmmhAFHkxZZO0C5uGiiINXIMdrRNtgAN/d6BZwrQeYRdFkhoTjnNDNRAlpquN
-         3GuCA33fVQlYBHuqi0TQ7kACMFlbau+8J+mBTYzL4pZvtHOTDuFRLfFTBieSj6ivXPYg
-         Dm/iqrmHLhmm0Qkz1k+x8T5AJd/N3WKQ11N65vNKl0GSww/dGX6KMKMMk+qQ3BqxjHN6
-         Umu6vNz7ej77dWXj+4o2KY+vteV0SP41GwvQRXTrxm7U0jrj6vl8Jx8VBZhq2BhQfD6l
-         ttd3HXPtmFdacc2C2EoDU+f0f0i3+uu6F1phhnUMBut8cq6BRSZRigeO6dq0HLo6iqij
-         E0mw==
-X-Gm-Message-State: APt69E2g9LqBiIcnl+YtKaQLI1liPg5ZN1eEw3uM0WBdEpQ/yS5jIKNZ
-        moewFXKLJaOwEdee+fNg5kFu7F1GtjXgW5IgQg6cCA==
-X-Google-Smtp-Source: ADUXVKLFj/MwoPfLaBxpg4BL/TMdCgp4LQZktNDT8CFv9iCyzEK43WQ7lrtytWq70qNnotwU3nIiJEMN85r+mo1M5ng=
-X-Received: by 2002:a6b:dd0b:: with SMTP id f11-v6mr19373871ioc.173.1529563148845;
- Wed, 20 Jun 2018 23:39:08 -0700 (PDT)
+        Thu, 21 Jun 2018 02:39:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6UH3oU4c80d9ugL0Q2ed05L3TLL9PTD7C9HTLQVyXzY=; b=LemMK+EkN5XASQFMjwTtXGqSn
+        15jtZcgCeyBkWaBc2by5zMPjwJFN2wBr2zQZztOpmPN0n/0XL68kcWAZdDqHiHaGA4z97bBUqnCdy
+        22qYIClcG7grO2aIbdHggKNXEJT8iZ74VXN/OnywJHcxsdQmVIQiD/Au6lgfilc4X2Ax4MJVopRdr
+        Ew+YxluXJCCrG/AW4DbNz870l84nQn12sqqJXzpEiqJ3ly2TXlSMbukOcMDuWZLjFwUAtzzyXkE23
+        ugbWqmQsshbqlI7BGLNsdEFmYEIZnYZ7lu3+ieyEQYfR2gVk5ENhMuCGaU+ADhZm7VUATAPzHl2fT
+        nCnFd54ig==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVtFr-0002TQ-5U; Thu, 21 Jun 2018 06:39:39 +0000
+Date:   Wed, 20 Jun 2018 23:39:38 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Alan Kao <alankao@andestech.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Zong Li <zong@andestech.com>,
+        Greentime Hu <greentime@andestech.com>
+Subject: Re: [PATCH] riscv: Add support to no-FPU systems
+Message-ID: <20180621063938.GB19319@infradead.org>
+References: <1529544276-28103-1-git-send-email-alankao@andestech.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 23:39:08
- -0700 (PDT)
-In-Reply-To: <20180621025141.GB11276@toy>
-References: <20180620085755.20045-1-yaojun8558363@gmail.com>
- <20180620085755.20045-2-yaojun8558363@gmail.com> <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
- <20180621025141.GB11276@toy>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 21 Jun 2018 08:39:08 +0200
-Message-ID: <CAKv+Gu_3Cfuq-qQuRHkYCB2uTPOK=KVeVh4OKmtu2MDYwfOtTA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arm64/mm: move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir}
- to .rodata section
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529544276-28103-1-git-send-email-alankao@andestech.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 June 2018 at 04:51, Jun Yao <yaojun8558363@gmail.com> wrote:
-> Hi Ard,
->
-> On Wed, Jun 20, 2018 at 12:09:49PM +0200, Ard Biesheuvel wrote:
->> On 20 June 2018 at 10:57, Jun Yao <yaojun8558363@gmail.com> wrote:
->> > Move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata
->> > section. And update the swapper_pg_dir by fixmap.
->> >
->>
->> I think we may be able to get away with not mapping idmap_pg_dir and
->> tramp_pg_dir at all.
->
-> I think we need to move tramp_pg_dir to .rodata. The attacker can write
-> a block-mapping(AP=01) to tramp_pg_dir and then he can access kernel
-> memory.
->
+> +ifeq ($(CONFIG_FPU),y)
+>  KBUILD_AFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)fd$(KBUILD_ARCH_C)
+> +else
+> +KBUILD_AFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)$(KBUILD_ARCH_C)
+> +endif
 
-Why does it need to be mapped at all? When do we ever access it from the code?
+Can we refactor that KBUILD_ARCH code into something like
 
+riscv-march-y				:=
+riscv-march-$(CONFIG_ARCH_RV32I)	+= rv32im
+riscv-march-$(CONFIG_ARCH_RV64I)	+= rv64im
+riscv-march-$(CONFIG_RISCV_ISA_A)	+= a
+riscv-march-$(CONFIG_FPU)		+= fd
+riscv-march-$(CONFIG_RISCV_ISA_C)	+= c
 
->> As for swapper_pg_dir, it would indeed be nice if we could keep those
->> mappings read-only most of the time, but I'm not sure how useful this
->> is if we apply it to the root level only.
->
-> The purpose of it is to make 'KSMA' harder, where an single arbitrary
-> write is used to add a block mapping to the page-tables, giving the
-> attacker full access to kernel memory. That's why we just apply it to
-> the root level only. If the attacker can arbitrary write multiple times,
-> I think it's hard to defend.
->
+KBUILD_CFLAGS += -march=$(riscv-march-y)
 
-So the assumption is that the root level is more easy to find?
-Otherwise, I'm not sure I understand why being able to write a level 0
-entry is so harmful, given that we don't have block mappings at that
-level.
+> +#ifdef CONFIG_FPU
+>  	regs->sstatus = SR_SPIE /* User mode, irqs on */ | SR_FS_INITIAL;
+> +#else
+> +	regs->sstatus = SR_SPIE | SR_FS_OFF;
+> +#endif
 
->> > @@ -417,12 +421,22 @@ static void __init __map_memblock(pgd_t *pgdp, phys_addr_t start,
->> >
->> >  void __init mark_linear_text_alias_ro(void)
->> >  {
->> > +       unsigned long size;
->> > +
->> >         /*
->> >          * Remove the write permissions from the linear alias of .text/.rodata
->> > +        *
->> > +        * We free some pages in .rodata at paging_init(), which generates a
->> > +        * hole. And the hole splits .rodata into two pieces.
->> >          */
->> > +       size = (unsigned long)swapper_pg_dir + PAGE_SIZE - (unsigned long)_text;
->> >         update_mapping_prot(__pa_symbol(_text), (unsigned long)lm_alias(_text),
->> > -                           (unsigned long)__init_begin - (unsigned long)_text,
->> > -                           PAGE_KERNEL_RO);
->> > +                           size, PAGE_KERNEL_RO);
->> > +
->> > +       size = (unsigned long)__init_begin - (unsigned long)swapper_pg_end;
->> > +       update_mapping_prot(__pa_symbol(swapper_pg_end),
->> > +                           (unsigned long)lm_alias(swapper_pg_end),
->> > +                           size, PAGE_KERNEL_RO);
->>
->> I don't think this is necessary. Even if some pages are freed, it
->> doesn't harm to keep a read-only alias of them here since the new
->> owner won't access them via this mapping anyway. So we can keep
->> .rodata as a single region.
->
-> To be honest, I didn't think of this issue at first. I later found a
-> problem when testing the code on qemu:
->
+Having the comment in one branch, but not the other is odd.  I'd be
+tempted to just remove t entirely, but if not it should be move up
+or duplicated.
 
-OK, you're right. I missed the fact that this operates on the linear
-alias, not the kernel mapping itself.
+>  int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+>  {
+> +#ifdef CONFIG_FPU
+>  	fstate_save(src, task_pt_regs(src));
+> +#endif
 
-What I don't like is that we lose the ability to use block mappings
-for the entire .rodata section this way. Isn't it possible to move
-these pgdirs to the end of the .rodata segment, perhaps by using a
-separate input section name and placing that explicitly? We could even
-simply forget about freeing those pages, given that [on 4k pages] the
-benefit of freeing 12 KB of space is likely to get lost in the
-rounding noise anyway [segments are rounded up to 64 KB in size]
+Please provide a !CONFIG_FPU stub for fstate_save, please.
 
+>  }
+> +#endif
+>  
+>  static long restore_sigcontext(struct pt_regs *regs,
+>  	struct sigcontext __user *sc)
+> @@ -63,6 +65,7 @@ static long restore_sigcontext(struct pt_regs *regs,
+>  	err = __copy_from_user(regs, &sc->sc_regs, sizeof(sc->sc_regs));
+>  	if (unlikely(err))
+>  		return err;
+> +#ifdef CONFIG_FPU
+>  	/* Restore the floating-point state. */
+>  	err = restore_d_state(regs, &sc->sc_fpregs.d);
+>  	if (unlikely(err))
+> @@ -76,6 +79,7 @@ static long restore_sigcontext(struct pt_regs *regs,
+>  		if (value != 0)
+>  			return -EINVAL;
+>  	}
+> +#endif
 
-> [    7.027935] Unable to handle kernel write to read-only memory at virtual address ffff800000f42c00
-> [    7.028388] Mem abort info:
-> [    7.028495]   ESR = 0x9600004f
-> [    7.028602]   Exception class = DABT (current EL), IL = 32 bits
-> [    7.028749]   SET = 0, FnV = 0
-> [    7.028837]   EA = 0, S1PTW = 0
-> [    7.028930] Data abort info:
-> [    7.029017]   ISV = 0, ISS = 0x0000004f
-> [    7.029120]   CM = 0, WnR = 1
-> [    7.029253] swapper pgtable: 4k pages, 48-bit VAs, pgdp =         (ptrval)
-> [    7.029418] [ffff800000f42c00] pgd=00000000beff6803, pud=00000000beff5803, pmd=00000000beff3803, pte=00e0000040f42f93
-> [    7.029807] Internal error: Oops: 9600004f [#1] PREEMPT SMP
-> [    7.030027] Modules linked in:
-> [    7.030256] CPU: 0 PID: 1321 Comm: jbd2/vda-8 Not tainted 4.17.0-rc4-02908-g0fe42512b2f0-dirty #71
-> [    7.030486] Hardware name: linux,dummy-virt (DT)
-> [    7.030708] pstate: 40400005 (nZcv daif +PAN -UAO)
-> [    7.030880] pc : __memset+0x16c/0x1c0
-> [    7.030993] lr : jbd2_journal_get_descriptor_buffer+0x7c/0xfc
-> [    7.031134] sp : ffff00000a8ebbe0
-> [    7.031264] x29: ffff00000a8ebbe0 x28: ffff80007c104800
-> [    7.031430] x27: ffff00000a8ebd98 x26: ffff80007c4410d0
-> [    7.031567] x25: ffff80007c441118 x24: 00000000ffffffff
-> [    7.031704] x23: ffff80007c41b000 x22: ffff0000090d9000
-> [    7.031838] x21: 0000000002000000 x20: ffff80007bcee800
-> [    7.031973] x19: ffff80007c4413a8 x18: 0000000000000727
-> [    7.032107] x17: 0000ffff89eba028 x16: ffff0000080e2c38
-> [    7.032286] x15: ffff7e0000000000 x14: 0000000000048018
-> [    7.032424] x13: 0000000048018c00 x12: ffff80007bc65788
-> [    7.032558] x11: ffff00000a8eba68 x10: 0000000000000040
-> [    7.032709] x9 : 0000000000000000 x8 : ffff800000f42c00
-> [    7.032849] x7 : 0000000000000000 x6 : 000000000000003f
-> [    7.032984] x5 : 0000000000000040 x4 : 0000000000000000
-> [    7.033119] x3 : 0000000000000004 x2 : 00000000000003c0
-> [    7.033254] x1 : 0000000000000000 x0 : ffff800000f42c00
-> [    7.033414] Process jbd2/vda-8 (pid: 1321, stack limit = 0x        (ptrval))
-> [    7.033633] Call trace:
-> [    7.033757]  __memset+0x16c/0x1c0
-> [    7.033858]  journal_submit_commit_record+0x60/0x174
-> [    7.033985]  jbd2_journal_commit_transaction+0xf38/0x1330
-> [    7.034115]  kjournald2+0xcc/0x250
-> [    7.034207]  kthread+0xfc/0x128
-> [    7.034295]  ret_from_fork+0x10/0x18
-> [    7.034718] Code: 91010108 54ffff4a 8b040108 cb050042 (d50b7428)
-> [    7.035104] ---[ end trace 26d65a14ae983167 ]---
->
-> /sys/kernel/debug/kernel_page_tables shows that:
->
-> ---[ Linear Mapping ]---
-> 0xffff800000000000-0xffff800000080000         512K PTE       RW NX SHD AF NG CON     UXN MEM/NORMAL
-> 0xffff800000080000-0xffff800000200000        1536K PTE       ro NX SHD AF NG         UXN MEM/NORMAL
-> 0xffff800000200000-0xffff800000e00000          12M PMD       RW NX SHD AF NG     BLK UXN MEM/NORMAL
-> 0xffff800000e00000-0xffff800000fb0000        1728K PTE       ro NX SHD AF NG         UXN MEM/NORMAL
->
-> So I split it into pieces.
->
-> Thanks,
->
-> Jun
+Same here.
+
+> @@ -127,11 +131,13 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
+>  	size_t i;
+>  	/* sc_regs is structured the same as the start of pt_regs */
+>  	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
+> +#ifdef CONFIG_FPU
+>  	/* Save the floating-point state. */
+>  	err |= save_d_state(regs, &sc->sc_fpregs.d);
+>  	/* We support no other extension state at this time. */
+>  	for (i = 0; i < ARRAY_SIZE(sc->sc_fpregs.q.reserved); i++)
+>  		err |= __put_user(0, &sc->sc_fpregs.q.reserved[i]);
+> +#endif
+
+Same here.
