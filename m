@@ -2,79 +2,107 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6699C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5B6C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84F92208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:14:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F92208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4417E20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:15:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ayVN1cd8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4417E20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933014AbeFUIOX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:14:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47144 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932583AbeFUIOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:14:20 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 66D0430820D8;
-        Thu, 21 Jun 2018 08:14:20 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-116-35.phx2.redhat.com [10.3.116.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5D8EC6F7E7;
-        Thu, 21 Jun 2018 08:14:08 +0000 (UTC)
-Subject: Re: [PATCH v10 6/9] cpuset: Make generate_sched_domains() recognize
- reserved_cpus
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1529295249-5207-1-git-send-email-longman@redhat.com>
- <1529295249-5207-8-git-send-email-longman@redhat.com>
- <20180620141730.GK2494@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <df4e36b1-f386-88e9-8179-fce7530f4554@redhat.com>
-Date:   Thu, 21 Jun 2018 16:14:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S932828AbeFUIPX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:15:23 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:37300 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932466AbeFUIPU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 04:15:20 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5L8FG69013979;
+        Thu, 21 Jun 2018 03:15:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1529568916;
+        bh=rR1EsUiDbm+rwMYxfjbfLce9ys00IXyiYggPeMNKxbI=;
+        h=From:To:CC:Subject:Date;
+        b=ayVN1cd8PW94cuKLswtq7e5ShS9DYF2U3VUkp4pC3kHxzV0J6aUu8jbVlARs4pDoT
+         7x9jnYquadO3BwlgxHN8md2ZaKZPMwt/UXoG2JFrPlDssLlP89QiC1oABm9P4ZUN+9
+         R2mp2q2SKMI98TUNhnqf5VmFyw52pmh9MQ76oiSo=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8FG8k006421;
+        Thu, 21 Jun 2018 03:15:16 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 21
+ Jun 2018 03:15:15 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 21 Jun 2018 03:15:15 -0500
+Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8FCTd025379;
+        Thu, 21 Jun 2018 03:15:13 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC:     <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <j-keerthy@ti.com>
+Subject: [PATCH v3 0/4] clk: clk: Add functions to save/restore clock context en-masse
+Date:   Thu, 21 Jun 2018 13:45:03 +0530
+Message-ID: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180620141730.GK2494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 21 Jun 2018 08:14:20 +0000 (UTC)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 10:17 PM, Peter Zijlstra wrote:
-> On Mon, Jun 18, 2018 at 12:14:06PM +0800, Waiman Long wrote:
->> The generate_sched_domains() function is modified to make it work
->> correctly with the newly introduced reserved_cpus mask for schedule
->> domains generation.
-> Why isn't this (and the previous) patch part of the patch that
-> introduces reserved_cpus? It seems weird to have this broken
-> intermediate state.
+Deep enough power saving mode can result into losing context of the clock
+registers also, and they need to be restored once coming back from the power
+saving mode. Hence add functions to save/restore clock context.
 
-I was trying to break the reserved cpu patch into smaller meaningful
-pieces that will be easier to review. The individual patches can be
-compiled cleanly one-by-one, though I didn't check if they are
-functional if not all of them are applied.
+Tested for DS0 on am437x-gp-evm
 
-Cheers,
-Longman
+Based on top of linux-next
+
+Changes in v2:
+
+        * Renamed clk_dflt_restore to clk_gate_restore_context
+
+Changes in v3: Corrected the e-mail address of linux-omap list
+
+Keerthy (2):
+  clk: clk: Add clk_gate_restore_context function
+  soc: ti: pm33xx: Save/restore clk context based on enable_off_mode
+    setting
+
+Russ Dill (2):
+  clk: clk: Add functions to save/restore clock context en-masse
+  clk: ti: Add functions to save/restore clk context
+
+ arch/arm/mach-omap2/pm33xx-core.c    |  15 +++++
+ drivers/clk/clk.c                    |  93 ++++++++++++++++++++++++++
+ drivers/clk/ti/clock.h               |   2 +
+ drivers/clk/ti/divider.c             |  36 ++++++++++
+ drivers/clk/ti/dpll.c                |   6 ++
+ drivers/clk/ti/dpll3xxx.c            | 124 +++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/gate.c                |   3 +
+ drivers/clk/ti/mux.c                 |  29 ++++++++
+ drivers/soc/ti/pm33xx.c              |  13 ++++
+ include/linux/clk-provider.h         |   9 +++
+ include/linux/clk.h                  |  25 +++++++
+ include/linux/clk/ti.h               |   6 ++
+ include/linux/platform_data/pm33xx.h |   1 +
+ 13 files changed, 362 insertions(+)
+
+-- 
+1.9.1
 
