@@ -5,29 +5,29 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2BDC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EBBC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 293A020837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:31:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 293A020837
+	by mail.kernel.org (Postfix) with ESMTP id 82D8E20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:31:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D8E20846
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933713AbeFUMbL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:31:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35722 "EHLO mx1.redhat.com"
+        id S933740AbeFUMb3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:31:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35704 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933630AbeFUMbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:31:04 -0400
+        id S933663AbeFUMbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 08:31:01 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 553ED8A3AE;
-        Thu, 21 Jun 2018 12:31:03 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 606022026D6B;
+        by mx1.redhat.com (Postfix) with ESMTPS id 29BEC8577C;
         Thu, 21 Jun 2018 12:31:01 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 341642026D6B;
+        Thu, 21 Jun 2018 12:30:59 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -41,256 +41,219 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
         Jim Mattson <jmattson@google.com>,
         Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v2 6/6] KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
-Date:   Thu, 21 Jun 2018 14:30:46 +0200
-Message-Id: <20180621123046.29606-7-vkuznets@redhat.com>
+Subject: [PATCH v2 5/6] KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
+Date:   Thu, 21 Jun 2018 14:30:45 +0200
+Message-Id: <20180621123046.29606-6-vkuznets@redhat.com>
 In-Reply-To: <20180621123046.29606-1-vkuznets@redhat.com>
 References: <20180621123046.29606-1-vkuznets@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 12:31:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 12:31:03 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 12:31:01 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 12:31:01 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Enlightened VMCS is in use by L1 hypervisor we can avoid vmwriting
-VMCS fields which did not change.
+Per Hyper-V TLFS 5.0b:
 
-Our first goal is to achieve minimal impact on traditional VMCS case so
-we're not wrapping each vmwrite() with an if-changed checker. We also can't
-utilize static keys as Enlightened VMCS usage is per-guest.
+"The L1 hypervisor may choose to use enlightened VMCSs by writing 1 to
+the corresponding field in the VP assist page (see section 7.8.7).
+Another field in the VP assist page controls the currently active
+enlightened VMCS. Each enlightened VMCS is exactly one page (4 KB) in
+size and must be initially zeroed. No VMPTRLD instruction must be
+executed to make an enlightened VMCS active or current.
 
-This patch implements the simpliest solution: checking fields in groups.
-We skip single vmwrite() statements as doing the check will cost us
-something even in non-evmcs case and the win is tiny. Unfortunately, this
-makes prepare_vmcs02_full{,_full}() code Enlightened VMCS-dependent (and
-a bit ugly).
+After the L1 hypervisor performs a VM entry with an enlightened VMCS,
+the VMCS is considered active on the processor. An enlightened VMCS
+can only be active on a single processor at the same time. The L1
+hypervisor can execute a VMCLEAR instruction to transition an
+enlightened VMCS from the active to the non-active state. Any VMREAD
+or VMWRITE instructions while an enlightened VMCS is active is
+unsupported and can result in unexpected behavior."
 
+Keep Enlightened VMCS structure for the current L2 guest permanently mapped
+from struct nested_vmx instead of mapping it every time.
+
+Suggested-by: Ladi Prosek <lprosek@redhat.com>
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
 ---
-Changes since v1:
-- Convert evmcs_needs_write() to inline function [Liran Alon]
----
- arch/x86/kvm/vmx.c | 158 +++++++++++++++++++++++++++++++----------------------
- 1 file changed, 94 insertions(+), 64 deletions(-)
+ arch/x86/kvm/vmx.c | 98 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 91 insertions(+), 7 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index ea6c651ed477..857fa86c6918 100644
+index 47c34c2c3ba7..ea6c651ed477 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -11634,47 +11634,82 @@ static int nested_vmx_load_cr3(struct kvm_vcpu *vcpu, unsigned long cr3, bool ne
- 	return 0;
+@@ -20,6 +20,7 @@
+ #include "mmu.h"
+ #include "cpuid.h"
+ #include "lapic.h"
++#include "hyperv.h"
+ 
+ #include <linux/kvm_host.h>
+ #include <linux/module.h>
+@@ -690,6 +691,8 @@ struct nested_vmx {
+ 		bool guest_mode;
+ 	} smm;
+ 
++	gpa_t hv_evmcs_vmptr;
++	struct page *hv_evmcs_page;
+ 	struct hv_enlightened_vmcs *hv_evmcs;
+ };
+ 
+@@ -7700,7 +7703,9 @@ static void nested_vmx_failInvalid(struct kvm_vcpu *vcpu)
+ static void nested_vmx_failValid(struct kvm_vcpu *vcpu,
+ 					u32 vm_instruction_error)
+ {
+-	if (to_vmx(vcpu)->nested.current_vmptr == -1ull) {
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++
++	if (vmx->nested.current_vmptr == -1ull && !vmx->nested.hv_evmcs) {
+ 		/*
+ 		 * failValid writes the error number to the current VMCS, which
+ 		 * can't be done there isn't a current VMCS.
+@@ -8008,6 +8013,18 @@ static void vmx_disable_shadow_vmcs(struct vcpu_vmx *vmx)
+ 	vmcs_write64(VMCS_LINK_POINTER, -1ull);
+ }
+ 
++static inline void nested_release_evmcs(struct vcpu_vmx *vmx)
++{
++	if (!vmx->nested.hv_evmcs)
++		return;
++
++	kunmap(vmx->nested.hv_evmcs_page);
++	kvm_release_page_dirty(vmx->nested.hv_evmcs_page);
++	vmx->nested.hv_evmcs_vmptr = -1ull;
++	vmx->nested.hv_evmcs_page = NULL;
++	vmx->nested.hv_evmcs = NULL;
++}
++
+ static inline void nested_release_vmcs12(struct vcpu_vmx *vmx)
+ {
+ 	if (vmx->nested.current_vmptr == -1ull)
+@@ -8067,6 +8084,8 @@ static void free_nested(struct vcpu_vmx *vmx)
+ 		vmx->nested.pi_desc = NULL;
+ 	}
+ 
++	nested_release_evmcs(vmx);
++
+ 	free_loaded_vmcs(&vmx->nested.vmcs02);
+ }
+ 
+@@ -8103,12 +8122,18 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
+ 		return kvm_skip_emulated_instruction(vcpu);
+ 	}
+ 
+-	if (vmptr == vmx->nested.current_vmptr)
+-		nested_release_vmcs12(vmx);
++	if (vmx->nested.hv_evmcs_page) {
++		if (vmptr == vmx->nested.hv_evmcs_vmptr)
++			nested_release_evmcs(vmx);
++	} else {
++		if (vmptr == vmx->nested.current_vmptr)
++			nested_release_vmcs12(vmx);
+ 
+-	kvm_vcpu_write_guest(vcpu,
+-			vmptr + offsetof(struct vmcs12, launch_state),
+-			&zero, sizeof(zero));
++		kvm_vcpu_write_guest(vcpu,
++				     vmptr + offsetof(struct vmcs12,
++						      launch_state),
++				     &zero, sizeof(zero));
++	}
+ 
+ 	nested_vmx_succeed(vcpu);
+ 	return kvm_skip_emulated_instruction(vcpu);
+@@ -8819,6 +8844,10 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 		return kvm_skip_emulated_instruction(vcpu);
+ 	}
+ 
++	/* Forbid normal VMPTRLD if Enlightened version was used */
++	if (vmx->nested.hv_evmcs)
++		return 1;
++
+ 	if (vmx->nested.current_vmptr != vmptr) {
+ 		struct vmcs12 *new_vmcs12;
+ 		struct page *page;
+@@ -8852,6 +8881,55 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 	return kvm_skip_emulated_instruction(vcpu);
  }
  
 +/*
-+ * Check if L1 hypervisor changed the particular field in Enlightened
-+ * VMCS and avoid redundant vmwrite if it didn't. Can only be used when
-+ * the value we're about to write is unchanged vmcs12->field.
++ * This is an equivalent of the nested hypervisor executing the vmptrld
++ * instruction.
 + */
-+static __always_inline bool evmcs_needs_write(struct vcpu_vmx *vmx,
-+					      u16 clean_field)
++static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu)
 +{
-+	if (vmx->nested.dirty_vmcs12)
-+		return true;
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct hv_vp_assist_page assist_page;
 +
-+	return !(vmx->nested.hv_evmcs->hv_clean_fields & clean_field);
++	if (likely(!vmx->nested.enlightened_vmcs_enabled))
++		return 1;
++
++	if (unlikely(!kvm_hv_get_assist_page(vcpu, &assist_page)))
++		return 1;
++
++	if (unlikely(!assist_page.enlighten_vmentry))
++		return 1;
++
++	if (unlikely(assist_page.current_nested_vmcs !=
++		     vmx->nested.hv_evmcs_vmptr)) {
++
++		if (!vmx->nested.hv_evmcs)
++			vmx->nested.current_vmptr = -1ull;
++
++		nested_release_evmcs(vmx);
++
++		vmx->nested.hv_evmcs_page = kvm_vcpu_gpa_to_page(
++			vcpu, assist_page.current_nested_vmcs);
++
++		if (unlikely(is_error_page(vmx->nested.hv_evmcs_page)))
++			return 0;
++
++		vmx->nested.hv_evmcs = kmap(vmx->nested.hv_evmcs_page);
++		vmx->nested.dirty_vmcs12 = true;
++		vmx->nested.hv_evmcs_vmptr = assist_page.current_nested_vmcs;
++
++		/*
++		 * Unlike normal vmcs12, enlightened vmcs12 is not fully
++		 * reloaded from guest's memory (read only fields, fields not
++		 * present in struct hv_enlightened_vmcs, ...). Make sure there
++		 * are no leftovers.
++		 */
++		memset(vmx->nested.cached_vmcs12, 0,
++		       sizeof(*vmx->nested.cached_vmcs12));
++
++	}
++	return 1;
 +}
 +
- static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
+ /* Emulate the VMPTRST instruction */
+ static int handle_vmptrst(struct kvm_vcpu *vcpu)
  {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-+	struct hv_enlightened_vmcs *hv_evmcs = vmx->nested.hv_evmcs;
+@@ -8863,6 +8941,9 @@ static int handle_vmptrst(struct kvm_vcpu *vcpu)
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+ 
++	if (unlikely(to_vmx(vcpu)->nested.hv_evmcs))
++		return 1;
 +
-+	if (!hv_evmcs ||
-+	    evmcs_needs_write(vmx, HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2)) {
-+		vmcs_write16(GUEST_ES_SELECTOR, vmcs12->guest_es_selector);
-+		vmcs_write16(GUEST_SS_SELECTOR, vmcs12->guest_ss_selector);
-+		vmcs_write16(GUEST_DS_SELECTOR, vmcs12->guest_ds_selector);
-+		vmcs_write16(GUEST_FS_SELECTOR, vmcs12->guest_fs_selector);
-+		vmcs_write16(GUEST_GS_SELECTOR, vmcs12->guest_gs_selector);
-+		vmcs_write16(GUEST_LDTR_SELECTOR, vmcs12->guest_ldtr_selector);
-+		vmcs_write16(GUEST_TR_SELECTOR, vmcs12->guest_tr_selector);
-+		vmcs_write32(GUEST_ES_LIMIT, vmcs12->guest_es_limit);
-+		vmcs_write32(GUEST_SS_LIMIT, vmcs12->guest_ss_limit);
-+		vmcs_write32(GUEST_DS_LIMIT, vmcs12->guest_ds_limit);
-+		vmcs_write32(GUEST_FS_LIMIT, vmcs12->guest_fs_limit);
-+		vmcs_write32(GUEST_GS_LIMIT, vmcs12->guest_gs_limit);
-+		vmcs_write32(GUEST_LDTR_LIMIT, vmcs12->guest_ldtr_limit);
-+		vmcs_write32(GUEST_TR_LIMIT, vmcs12->guest_tr_limit);
-+		vmcs_write32(GUEST_GDTR_LIMIT, vmcs12->guest_gdtr_limit);
-+		vmcs_write32(GUEST_IDTR_LIMIT, vmcs12->guest_idtr_limit);
-+		vmcs_write32(GUEST_ES_AR_BYTES, vmcs12->guest_es_ar_bytes);
-+		vmcs_write32(GUEST_SS_AR_BYTES, vmcs12->guest_ss_ar_bytes);
-+		vmcs_write32(GUEST_DS_AR_BYTES, vmcs12->guest_ds_ar_bytes);
-+		vmcs_write32(GUEST_FS_AR_BYTES, vmcs12->guest_fs_ar_bytes);
-+		vmcs_write32(GUEST_GS_AR_BYTES, vmcs12->guest_gs_ar_bytes);
-+		vmcs_write32(GUEST_LDTR_AR_BYTES, vmcs12->guest_ldtr_ar_bytes);
-+		vmcs_write32(GUEST_TR_AR_BYTES, vmcs12->guest_tr_ar_bytes);
-+		vmcs_writel(GUEST_SS_BASE, vmcs12->guest_ss_base);
-+		vmcs_writel(GUEST_DS_BASE, vmcs12->guest_ds_base);
-+		vmcs_writel(GUEST_FS_BASE, vmcs12->guest_fs_base);
-+		vmcs_writel(GUEST_GS_BASE, vmcs12->guest_gs_base);
-+		vmcs_writel(GUEST_LDTR_BASE, vmcs12->guest_ldtr_base);
-+		vmcs_writel(GUEST_TR_BASE, vmcs12->guest_tr_base);
-+		vmcs_writel(GUEST_GDTR_BASE, vmcs12->guest_gdtr_base);
-+		vmcs_writel(GUEST_IDTR_BASE, vmcs12->guest_idtr_base);
-+	}
+ 	if (get_vmx_mem_address(vcpu, exit_qualification,
+ 			vmx_instruction_info, true, &vmcs_gva))
+ 		return 1;
+@@ -12163,7 +12244,10 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+ 
+-	if (!nested_vmx_check_vmcs12(vcpu))
++	if (!nested_vmx_handle_enlightened_vmptrld(vcpu))
++		return 1;
 +
-+	if (!hv_evmcs ||
-+	    evmcs_needs_write(vmx, HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1)) {
-+		vmcs_write32(GUEST_SYSENTER_CS, vmcs12->guest_sysenter_cs);
-+		vmcs_writel(GUEST_PENDING_DBG_EXCEPTIONS,
-+			    vmcs12->guest_pending_dbg_exceptions);
-+		vmcs_writel(GUEST_SYSENTER_ESP, vmcs12->guest_sysenter_esp);
-+		vmcs_writel(GUEST_SYSENTER_EIP, vmcs12->guest_sysenter_eip);
-+
-+		if (vmx_mpx_supported())
-+			vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
++	if (!vmx->nested.hv_evmcs && !nested_vmx_check_vmcs12(vcpu))
+ 		goto out;
  
--	vmcs_write16(GUEST_ES_SELECTOR, vmcs12->guest_es_selector);
--	vmcs_write16(GUEST_SS_SELECTOR, vmcs12->guest_ss_selector);
--	vmcs_write16(GUEST_DS_SELECTOR, vmcs12->guest_ds_selector);
--	vmcs_write16(GUEST_FS_SELECTOR, vmcs12->guest_fs_selector);
--	vmcs_write16(GUEST_GS_SELECTOR, vmcs12->guest_gs_selector);
--	vmcs_write16(GUEST_LDTR_SELECTOR, vmcs12->guest_ldtr_selector);
--	vmcs_write16(GUEST_TR_SELECTOR, vmcs12->guest_tr_selector);
--	vmcs_write32(GUEST_ES_LIMIT, vmcs12->guest_es_limit);
--	vmcs_write32(GUEST_SS_LIMIT, vmcs12->guest_ss_limit);
--	vmcs_write32(GUEST_DS_LIMIT, vmcs12->guest_ds_limit);
--	vmcs_write32(GUEST_FS_LIMIT, vmcs12->guest_fs_limit);
--	vmcs_write32(GUEST_GS_LIMIT, vmcs12->guest_gs_limit);
--	vmcs_write32(GUEST_LDTR_LIMIT, vmcs12->guest_ldtr_limit);
--	vmcs_write32(GUEST_TR_LIMIT, vmcs12->guest_tr_limit);
--	vmcs_write32(GUEST_GDTR_LIMIT, vmcs12->guest_gdtr_limit);
--	vmcs_write32(GUEST_IDTR_LIMIT, vmcs12->guest_idtr_limit);
--	vmcs_write32(GUEST_ES_AR_BYTES, vmcs12->guest_es_ar_bytes);
--	vmcs_write32(GUEST_SS_AR_BYTES, vmcs12->guest_ss_ar_bytes);
--	vmcs_write32(GUEST_DS_AR_BYTES, vmcs12->guest_ds_ar_bytes);
--	vmcs_write32(GUEST_FS_AR_BYTES, vmcs12->guest_fs_ar_bytes);
--	vmcs_write32(GUEST_GS_AR_BYTES, vmcs12->guest_gs_ar_bytes);
--	vmcs_write32(GUEST_LDTR_AR_BYTES, vmcs12->guest_ldtr_ar_bytes);
--	vmcs_write32(GUEST_TR_AR_BYTES, vmcs12->guest_tr_ar_bytes);
--	vmcs_writel(GUEST_SS_BASE, vmcs12->guest_ss_base);
--	vmcs_writel(GUEST_DS_BASE, vmcs12->guest_ds_base);
--	vmcs_writel(GUEST_FS_BASE, vmcs12->guest_fs_base);
--	vmcs_writel(GUEST_GS_BASE, vmcs12->guest_gs_base);
--	vmcs_writel(GUEST_LDTR_BASE, vmcs12->guest_ldtr_base);
--	vmcs_writel(GUEST_TR_BASE, vmcs12->guest_tr_base);
--	vmcs_writel(GUEST_GDTR_BASE, vmcs12->guest_gdtr_base);
--	vmcs_writel(GUEST_IDTR_BASE, vmcs12->guest_idtr_base);
--
--	vmcs_write32(GUEST_SYSENTER_CS, vmcs12->guest_sysenter_cs);
--	vmcs_writel(GUEST_PENDING_DBG_EXCEPTIONS,
--		vmcs12->guest_pending_dbg_exceptions);
--	vmcs_writel(GUEST_SYSENTER_ESP, vmcs12->guest_sysenter_esp);
--	vmcs_writel(GUEST_SYSENTER_EIP, vmcs12->guest_sysenter_eip);
-+		/*
-+		 * L1 may access the L2's PDPTR, so save them to construct
-+		 * vmcs12
-+		 */
-+		if (enable_ept) {
-+			vmcs_write64(GUEST_PDPTR0, vmcs12->guest_pdptr0);
-+			vmcs_write64(GUEST_PDPTR1, vmcs12->guest_pdptr1);
-+			vmcs_write64(GUEST_PDPTR2, vmcs12->guest_pdptr2);
-+			vmcs_write64(GUEST_PDPTR3, vmcs12->guest_pdptr3);
-+		}
-+	}
- 
- 	if (nested_cpu_has_xsaves(vmcs12))
- 		vmcs_write64(XSS_EXIT_BITMAP, vmcs12->xss_exit_bitmap);
-@@ -11732,9 +11767,6 @@ static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
- 
- 	set_cr4_guest_host_mask(vmx);
- 
--	if (vmx_mpx_supported())
--		vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
--
- 	if (enable_vpid) {
- 		if (nested_cpu_has_vpid(vmcs12) && vmx->nested.vpid02)
- 			vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->nested.vpid02);
-@@ -11742,16 +11774,6 @@ static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
- 			vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->vpid);
- 	}
- 
--	/*
--	 * L1 may access the L2's PDPTR, so save them to construct vmcs12
--	 */
--	if (enable_ept) {
--		vmcs_write64(GUEST_PDPTR0, vmcs12->guest_pdptr0);
--		vmcs_write64(GUEST_PDPTR1, vmcs12->guest_pdptr1);
--		vmcs_write64(GUEST_PDPTR2, vmcs12->guest_pdptr2);
--		vmcs_write64(GUEST_PDPTR3, vmcs12->guest_pdptr3);
--	}
--
- 	if (cpu_has_vmx_msr_bitmap())
- 		vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
- }
-@@ -11772,22 +11794,24 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
- 	u32 exec_control, vmcs12_exec_ctrl;
-+	struct hv_enlightened_vmcs *hv_evmcs = vmx->nested.hv_evmcs;
- 
--	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs) {
-+	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs)
- 		prepare_vmcs02_full(vcpu, vmcs12);
--		vmx->nested.dirty_vmcs12 = false;
--	}
- 
- 	/*
- 	 * First, the fields that are shadowed.  This must be kept in sync
- 	 * with vmx_shadow_fields.h.
- 	 */
- 
--	vmcs_write16(GUEST_CS_SELECTOR, vmcs12->guest_cs_selector);
--	vmcs_write32(GUEST_CS_LIMIT, vmcs12->guest_cs_limit);
--	vmcs_write32(GUEST_CS_AR_BYTES, vmcs12->guest_cs_ar_bytes);
--	vmcs_writel(GUEST_ES_BASE, vmcs12->guest_es_base);
--	vmcs_writel(GUEST_CS_BASE, vmcs12->guest_cs_base);
-+	if (!hv_evmcs ||
-+	    evmcs_needs_write(vmx, HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2)) {
-+		vmcs_write16(GUEST_CS_SELECTOR, vmcs12->guest_cs_selector);
-+		vmcs_write32(GUEST_CS_LIMIT, vmcs12->guest_cs_limit);
-+		vmcs_write32(GUEST_CS_AR_BYTES, vmcs12->guest_cs_ar_bytes);
-+		vmcs_writel(GUEST_ES_BASE, vmcs12->guest_es_base);
-+		vmcs_writel(GUEST_CS_BASE, vmcs12->guest_cs_base);
-+	}
- 
- 	/*
- 	 * Not in vmcs02: GUEST_PML_INDEX, HOST_FS_SELECTOR, HOST_GS_SELECTOR,
-@@ -11803,12 +11827,15 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- 		vmcs_write64(GUEST_IA32_DEBUGCTL, vmx->nested.vmcs01_debugctl);
- 	}
- 	if (vmx->nested.nested_run_pending) {
--		vmcs_write32(VM_ENTRY_INTR_INFO_FIELD,
--			     vmcs12->vm_entry_intr_info_field);
--		vmcs_write32(VM_ENTRY_EXCEPTION_ERROR_CODE,
--			     vmcs12->vm_entry_exception_error_code);
--		vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
--			     vmcs12->vm_entry_instruction_len);
-+		if (!hv_evmcs || evmcs_needs_write(vmx,
-+			   HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EVENT)) {
-+			vmcs_write32(VM_ENTRY_INTR_INFO_FIELD,
-+				     vmcs12->vm_entry_intr_info_field);
-+			vmcs_write32(VM_ENTRY_EXCEPTION_ERROR_CODE,
-+				     vmcs12->vm_entry_exception_error_code);
-+			vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
-+				     vmcs12->vm_entry_instruction_len);
-+		}
- 		vmcs_write32(GUEST_INTERRUPTIBILITY_INFO,
- 			     vmcs12->guest_interruptibility_info);
- 		vmx->loaded_vmcs->nmi_known_unmasked =
-@@ -12032,6 +12059,9 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- 
- 	kvm_register_write(vcpu, VCPU_REGS_RSP, vmcs12->guest_rsp);
- 	kvm_register_write(vcpu, VCPU_REGS_RIP, vmcs12->guest_rip);
-+
-+	vmx->nested.dirty_vmcs12 = false;
-+
- 	return 0;
- }
- 
+ 	vmcs12 = get_vmcs12(vcpu);
 -- 
 2.14.4
 
