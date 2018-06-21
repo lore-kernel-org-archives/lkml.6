@@ -3,72 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF81C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2B8C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A5E216FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:49:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A5E216FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A7F502170F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:50:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F502170F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933663AbeFUQta (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:49:30 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20004 "EHLO mga01.intel.com"
+        id S933551AbeFUQu3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:50:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933360AbeFUQt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:49:29 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 09:49:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,252,1526367600"; 
-   d="scan'208";a="66558347"
-Received: from lmrad-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.46])
-  by orsmga001.jf.intel.com with ESMTP; 21 Jun 2018 09:49:24 -0700
-Date:   Thu, 21 Jun 2018 19:49:25 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH v3] tpm: Return the actual size when receiving an
- unsupported command
-Message-ID: <20180621164925.GF11859@linux.intel.com>
-References: <20180620143823.14718-1-Ricardo.Schwarzmeier@infineon.com>
+        id S933429AbeFUQu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:50:28 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4412E21708;
+        Thu, 21 Jun 2018 16:50:27 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 12:50:25 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Stefan Agner <stefan@agner.ch>, abelvesa@linux.com,
+        Abhishek Sagar <sagar.abhishek@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] ARM: ftrace: Only set kernel memory back to read-only
+ after boot
+Message-ID: <20180621125025.25b70bb9@gandalf.local.home>
+In-Reply-To: <20180621124710.453ee0ae@gandalf.local.home>
+References: <20180621124710.453ee0ae@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180620143823.14718-1-Ricardo.Schwarzmeier@infineon.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 04:38:23PM +0200, Ricardo Schwarzmeier wrote:
-> The userpace expects to read the number of bytes stated in the header.
-> Returning the size of the buffer instead would be unexpected.
+On Thu, 21 Jun 2018 12:47:10 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > 
-> Fixes: 095531f891e6 ("tpm: return a TPM_RC_COMMAND_CODE response if command is not implemented")
+> Dynamic ftrace requires modifying the code segments that are usually
+> set to read-only. To do this, a per arch function is called both before
+> and after the ftrace modifications are performed. The "before" function
+> will set kernel code text to read-write to allow for ftrace to make the
+> modifications, and the "after" function will set the kernel code text
+> back to "read-only" to keep the kernel code text protected.
 > 
-
-No empty line here.
-
-> Signed-off-by: Ricardo Schwarzmeier <Ricardo.Schwarzmeier@infineon.com>
+> The issue happens when dynamic ftrace is tested at boot up. The test is
+> done before the kernel code text has been set to read-only. But the
+> "before" and "after" calls are still performed. The "after" call will
+> change the kernel code text to read-only prematurely, and other boot
+> code that expects this code to be read-write will fail.
+> 
+> The solution is to add a variable that is set when the kernel code text
+> is expected to be converted to read-only, and make the ftrace "before"
+> and "after" calls do nothing if that variable is not yet set. This is
+> similar to the x86 solution from commit 162396309745 ("ftrace, x86:
+> make kernel text writable only for conversions").
+> 
+> Reported-by: Stefan Agner <stefan@agner.ch>
+> Tested-by: Stefan Agner <stefan@agner.ch>
+> Link: http://lkml.kernel.org/r/20180620212906.24b7b66e@vmware.local.home
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > ---
-> Changes since v2:
->  * Made commit message more clear
->  * Avoided endianness problems
-> ---
 
-The change log hould be here in order not to be included as part of
-the commit message.
+Perhaps I should have Cc'd stable too?
 
-/Jarkko
+-- Steve
