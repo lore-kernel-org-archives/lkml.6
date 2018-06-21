@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EACF2C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC09C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:08:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BCEE2247F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7113B2247F
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:08:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gnANT/Dn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BCEE2247F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oKUmEv8W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7113B2247F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933871AbeFUWH2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 18:07:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58764 "EHLO
+        id S933839AbeFUWIu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 18:08:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58828 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933622AbeFUWH1 (ORCPT
+        with ESMTP id S933484AbeFUWIt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 18:07:27 -0400
+        Thu, 21 Jun 2018 18:08:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eb8oqYm9s9FpXa+k2wUJbOlD0ATgdiZu7+7Efq4uLrc=; b=gnANT/Dnhp4PtXwh0RWJNumP2
-        poMTaW3nosE2KeDWW71J/h/JEdNchOJM8+5n5iDtRHrNcLBEnDg7v6x/GP3DLSpB0bodGkfTFXt46
-        iV3YHtXrUaiD1trkVo6XTxcl98Ez1S2TlC/Of7ycl9VWExdExqTyYHFdlsQ/44c4DD4oodkmMPuyH
-        4mZ2F3KXxQyuWNPR0M2bhQATfX9OiS+q2AXebm5EL5TdjZ1BJ1y/af4Reo1bYkPLGR5fCGpDUrMtA
-        GDuN3lSwZE8iJ6XQ5CgeY5TCNWMj1PVw29N7DlCdV6161OFOTVijpa6uOpJNEY2l3l5UICvHaV32c
-        wGod9XijA==;
+         bh=qe0fTeR3lnON376VY4hJj17rHGWgIHOG9eC6TgxYdBM=; b=oKUmEv8W3d3Xk7gSntrZubkxG
+        mcX/VHnyRe5MjPPh4glWrrS50rqtNM0k/oSa1F/9kL8IVd39OGyH6HKOM8vyB445ot28Kf0QXkT+t
+        21VaLFkHy6cP00UXoPao3y+aOyajVJISzQ6RIVWlEqkUEZAGxwpXkz/M4pDTpL7dAy5qLpT6CyyBC
+        RoHoVeosRrRB5N07AyfZ2h0b3Zfd8m1peqdT9owIMWQTJIk/LrfeHEnLEaUDHLs4Zoz3MXf0UVDLV
+        XnNyRbUIXOQtcPH9plawK9AuojaKDQi2ksYBFScGevznSqE+U8BhZEwetZ8p917howvAHUKfoGIco
+        Z+bTAvvBw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW7jf-0008TE-Dg; Thu, 21 Jun 2018 22:07:23 +0000
+        id 1fW7l0-00006e-BQ; Thu, 21 Jun 2018 22:08:46 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3661D2029F1D7; Fri, 22 Jun 2018 00:07:21 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 00:07:21 +0200
+        id A3C0F2029F1D7; Fri, 22 Jun 2018 00:08:44 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 00:08:44 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Fenghua Yu <fenghua.yu@intel.com>
 Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
@@ -56,7 +56,7 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
         linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
 Subject: Re: [RFC PATCH 00/16] x86/split_lock: Enable #AC exception for split
  locked accesses
-Message-ID: <20180621220721.GA2494@hirez.programming.kicks-ass.net>
+Message-ID: <20180621220844.GB2494@hirez.programming.kicks-ass.net>
 References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
  <20180621193738.GA13636@worktop.programming.kicks-ass.net>
  <20180621201851.GC114883@romley-ivt3.sc.intel.com>
@@ -73,9 +73,9 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Jun 21, 2018 at 03:00:03PM -0700, Fenghua Yu wrote:
-> And perf cannot count split lock events in firmware. In real time, even
-> split lock in firmware (reboot, run time services, etc) may not be tolerant
-> and need to be detected and prevented.
+> The control knob for kernel is to choose re-executing the faulting
+> instruction (default) or kernel panic. Kernel panic may be useful in hard
+> real time which has less tolerant to bad performance.
 
-And yet you want to allow firmware to use them by excluding it in these
-here patches. Make up your mind.
+The kernel should never trigger this, ever. Any #AC is a plain bug and
+should be fixed. So unconditional WARN+disable is suffient.
