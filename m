@@ -2,190 +2,233 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0734AC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1667C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7A0B2075E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:43:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A0B2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soulik.info
+	by mail.kernel.org (Postfix) with ESMTP id 49C632075E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="opyQKywO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C632075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933578AbeFUNnT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:43:19 -0400
-Received: from kozue.soulik.info ([108.61.200.231]:40802 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932964AbeFUNnP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:43:15 -0400
-Received: from misaki.sumomo.pri (unknown [IPv6:2001:470:b30d:2:ec4:7aff:fe92:7ff4])
-        by kozue.soulik.info (Postfix) with ESMTPA id 4A6C81025B1;
-        Thu, 21 Jun 2018 22:43:56 +0900 (JST)
-From:   Randy Li <ayaka@soulik.info>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Randy Li <ayaka@soulik.info>, hjc@rock-chips.com, heiko@sntech.de,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        nicolas.dufresne@collabora.com, gustavo@padovan.org,
-        seanpaul@chromium.org, airlied@linux.ie
-Subject: [PATCH v2 2/2] drm/rockchip: Support 10 bits yuv format in vop
-Date:   Thu, 21 Jun 2018 21:42:43 +0800
-Message-Id: <20180621134243.9557-3-ayaka@soulik.info>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180621134243.9557-1-ayaka@soulik.info>
-References: <20180621134243.9557-1-ayaka@soulik.info>
+        id S933129AbeFUNqS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:46:18 -0400
+Received: from mail-by2nam01on0076.outbound.protection.outlook.com ([104.47.34.76]:13536
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932862AbeFUNqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 09:46:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DEnS2qBzn8qFsmdu/8ZbrexsPX63Uj4xdE/XgdflJ+Q=;
+ b=opyQKywO/UZmECsv6ctcPMhSw4O0DB1v4W+yPvefKAzJ1ZSgZfAxxqN9cj+r7cg1kjNkgiZ9TA48ALzdQGuqgw947phF0t5hIcGyLx/Cukn9xmQTbgzQJF+kOxVwONQGRTCzIzF91NZBGfhKmC0FiUg5KZ8H0M7PvSjuYKMZar0=
+Received: from DM6PR02MB4361.namprd02.prod.outlook.com (20.176.105.26) by
+ DM6PR02MB4393.namprd02.prod.outlook.com (20.176.105.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.20; Thu, 21 Jun 2018 13:46:14 +0000
+Received: from DM6PR02MB4361.namprd02.prod.outlook.com
+ ([fe80::9cf9:1a80:115a:f9fa]) by DM6PR02MB4361.namprd02.prod.outlook.com
+ ([fe80::9cf9:1a80:115a:f9fa%2]) with mapi id 15.20.0863.021; Thu, 21 Jun 2018
+ 13:46:13 +0000
+From:   Radhey Shyam Pandey <radheys@xilinx.com>
+To:     "andrea.merello@gmail.com" <andrea.merello@gmail.com>
+CC:     "vkoul@kernel.org" <vkoul@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Michal Simek <michals@xilinx.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is not
+ invoked for each DMA operation
+Thread-Topic: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is
+ not invoked for each DMA operation
+Thread-Index: AQHUCHIQrPud7LE+Xk2xdT54xDVLUqRpD8yQgAAViQCAAY+wgA==
+Date:   Thu, 21 Jun 2018 13:46:12 +0000
+Message-ID: <DM6PR02MB43610F17B71F96903B17F312C7760@DM6PR02MB4361.namprd02.prod.outlook.com>
+References: <20180620083653.17010-1-andrea.merello@gmail.com>
+ <20180620083653.17010-2-andrea.merello@gmail.com>
+ <DM6PR02MB43615ED0221189B6B8D9017EC7770@DM6PR02MB4361.namprd02.prod.outlook.com>
+ <CAN8YU5O35du2RpTV78sJMx+MpGdOKf2LCQu8FqO1og6FO-JBOQ@mail.gmail.com>
+In-Reply-To: <CAN8YU5O35du2RpTV78sJMx+MpGdOKf2LCQu8FqO1og6FO-JBOQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=radheys@xilinx.com; 
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM6PR02MB4393;7:W1QaiqHnPbIC5R+GApNtJ4uyfo+Tn0EfpwL8TjdJz9AWC41d2JtojOTRCtZDR0gawUvFnntKsMNc7YtG+wEudhHQImO7eNJ1jg4cTrYtLf4GLiHYYRRwyjP98T+xL0NtQMYfDQFucB+/TvnZdm4TNT3yVnAWJNJrVquplv2UvHj1jzCRqzDRIyDwrYrL8IX5MkBB+MNYPLJv3POjC2YnVoIELyB7bd4tylZhICWQ3url+AIIaITtjj6X1u9fZGcx
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(346002)(376002)(366004)(396003)(13464003)(189003)(199004)(966005)(97736004)(476003)(93886005)(478600001)(86362001)(66066001)(3846002)(6116002)(486006)(53936002)(6306002)(9686003)(55016002)(5640700003)(54906003)(2351001)(7696005)(2906002)(1361003)(11346002)(446003)(14454004)(2501003)(3280700002)(2900100001)(5250100002)(81166006)(8936002)(81156014)(8676002)(3660700001)(99286004)(25786009)(186003)(105586002)(68736007)(316002)(59450400001)(4326008)(6246003)(305945005)(39060400002)(6506007)(102836004)(26005)(106356001)(6916009)(53546011)(76176011)(55236004)(229853002)(74316002)(5660300001)(7736002)(33656002)(6436002)(422495003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4393;H:DM6PR02MB4361.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 474512ba-9505-402b-c663-08d5d77d5a67
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DM6PR02MB4393;
+x-ms-traffictypediagnostic: DM6PR02MB4393:
+x-microsoft-antispam-prvs: <DM6PR02MB4393CB453E0409899F148031C7760@DM6PR02MB4393.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(258649278758335)(192813158149592)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DM6PR02MB4393;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4393;
+x-forefront-prvs: 07106EF9B9
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: IkyUnHyAzRi3/cxcisVuFmX4RD6v3vNSZ3RBsCE1HOo+jL1SqkdFDoDsFVfoK/6bs3AjIVy/F1RXswvOoBIzsfqIBJuwMbDHeZINj0ND/urO/SkAf19sRHc9d46DrVFBQcw9JFA0M78jC2JEG7uIN2r1p5hbFyyiEYWM0sMiZXYBmBPZ4oMzlrs+DyNNK3fIUHByojFw/e8mQOhD0bvYAEglh6Uxrgb1sWp2/Q2PDVCh3gRPlPEBDYpB5FVp6vBAr9U9fggxC6/MGoeX+WaA+nDc+c2zwlFH2+SV02ZpMAc8/ilP2abGtR59dQvdc4/sTqJ6JxLaBwkhpd3s0KH9Nw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 474512ba-9505-402b-c663-08d5d77d5a67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2018 13:46:12.9333
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4393
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rockchip use fully packed pixel format variants
-for YUV 10bits.
-
-This patch only make the VOP accept this pixel format,
-but it doesn't add the converting data path for
-the color gamuts that the target display are supported.
-
-Signed-off-by: Randy Li <ayaka@soulik.info>
----
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 27 +++++++++++++++++++++++++--
- drivers/gpu/drm/rockchip/rockchip_drm_vop.h |  1 +
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c |  2 ++
- include/uapi/drm/drm_fourcc.h               |  6 +++++-
- 4 files changed, 33 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 2121345a61af..6a54b20501ac 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -232,6 +232,7 @@ static enum vop_data_format vop_convert_format(uint32_t format)
- 	case DRM_FORMAT_BGR565:
- 		return VOP_FMT_RGB565;
- 	case DRM_FORMAT_NV12:
-+	case DRM_FORMAT_NV12_10LE40:
- 		return VOP_FMT_YUV420SP;
- 	case DRM_FORMAT_NV16:
- 		return VOP_FMT_YUV422SP;
-@@ -249,6 +250,17 @@ static bool is_yuv_support(uint32_t format)
- 	case DRM_FORMAT_NV12:
- 	case DRM_FORMAT_NV16:
- 	case DRM_FORMAT_NV24:
-+	case DRM_FORMAT_NV12_10LE40:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool is_yuv_10bit(uint32_t format)
-+{
-+	switch (format) {
-+	case DRM_FORMAT_NV12_10LE40:
- 		return true;
- 	default:
- 		return false;
-@@ -711,6 +723,7 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 	dma_addr_t dma_addr;
- 	uint32_t val;
- 	bool rb_swap;
-+	bool is_10_bits = false;
- 	int win_index = VOP_WIN_TO_INDEX(vop_win);
- 	int format;
- 
-@@ -728,6 +741,8 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 		return;
- 	}
- 
-+	is_10_bits = is_yuv_10bit(fb->format->format);
-+
- 	obj = rockchip_fb_get_gem_obj(fb, 0);
- 	rk_obj = to_rockchip_obj(obj);
- 
-@@ -742,7 +757,11 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 	dsp_sty = dest->y1 + crtc->mode.vtotal - crtc->mode.vsync_start;
- 	dsp_st = dsp_sty << 16 | (dsp_stx & 0xffff);
- 
--	offset = (src->x1 >> 16) * fb->format->cpp[0];
-+	if (is_10_bits)
-+		offset = (src->x1 >> 16) * (fb->format->cpp[0] * 5 / 4);
-+	else
-+		offset = (src->x1 >> 16) * fb->format->cpp[0];
-+
- 	offset += (src->y1 >> 16) * fb->pitches[0];
- 	dma_addr = rk_obj->dma_addr + offset + fb->offsets[0];
- 
-@@ -753,6 +772,7 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 	VOP_WIN_SET(vop, win, format, format);
- 	VOP_WIN_SET(vop, win, yrgb_vir, DIV_ROUND_UP(fb->pitches[0], 4));
- 	VOP_WIN_SET(vop, win, yrgb_mst, dma_addr);
-+	VOP_WIN_SET(vop, win, fmt_10, is_10_bits);
- 	if (is_yuv_support(fb->format->format)) {
- 		int hsub = drm_format_horz_chroma_subsampling(fb->format->format);
- 		int vsub = drm_format_vert_chroma_subsampling(fb->format->format);
-@@ -761,7 +781,10 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 		uv_obj = rockchip_fb_get_gem_obj(fb, 1);
- 		rk_uv_obj = to_rockchip_obj(uv_obj);
- 
--		offset = (src->x1 >> 16) * bpp / hsub;
-+		if (is_10_bits)
-+			offset = (src->x1 >> 16) * (bpp * 5 / 4) / hsub;
-+		else
-+			offset = (src->x1 >> 16) * bpp / hsub;
- 		offset += (src->y1 >> 16) * fb->pitches[1] / vsub;
- 
- 		dma_addr = rk_uv_obj->dma_addr + offset + fb->offsets[1];
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-index 084acdd0019a..d9ec993f420a 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-@@ -131,6 +131,7 @@ struct vop_win_phy {
- 	struct vop_reg enable;
- 	struct vop_reg gate;
- 	struct vop_reg format;
-+	struct vop_reg fmt_10;
- 	struct vop_reg rb_swap;
- 	struct vop_reg act_info;
- 	struct vop_reg dsp_info;
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-index 08023d3ecb76..5393886ddd95 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-@@ -50,6 +50,7 @@ static const uint32_t formats_win_full[] = {
- 	DRM_FORMAT_NV12,
- 	DRM_FORMAT_NV16,
- 	DRM_FORMAT_NV24,
-+	DRM_FORMAT_NV12_10LE40,
- };
- 
- static const uint32_t formats_win_lite[] = {
-@@ -215,6 +216,7 @@ static const struct vop_win_phy rk3288_win01_data = {
- 	.nformats = ARRAY_SIZE(formats_win_full),
- 	.enable = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 0),
- 	.format = VOP_REG(RK3288_WIN0_CTRL0, 0x7, 1),
-+	.fmt_10 = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 4),
- 	.rb_swap = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 12),
- 	.act_info = VOP_REG(RK3288_WIN0_ACT_INFO, 0x1fff1fff, 0),
- 	.dsp_info = VOP_REG(RK3288_WIN0_DSP_INFO, 0x0fff0fff, 0),
-diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-index 8eabf01e966f..fc4cc0a6c9c0 100644
---- a/include/uapi/drm/drm_fourcc.h
-+++ b/include/uapi/drm/drm_fourcc.h
-@@ -140,7 +140,11 @@ extern "C" {
- #define DRM_FORMAT_NV61		fourcc_code('N', 'V', '6', '1') /* 2x1 subsampled Cb:Cr plane */
- #define DRM_FORMAT_NV24		fourcc_code('N', 'V', '2', '4') /* non-subsampled Cr:Cb plane */
- #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
--/* A fully packed variant of NV12_10LE32 */
-+/*
-+ * A fully packed variant of NV12_10LE32
-+ * Y1 0-9, Y2 10-19, Y3 20-29, Y4 20-39
-+ * U1V1: 0-19, U2V2: 20-39
-+ */
- #define DRM_FORMAT_NV12_10LE40	fourcc_code('R', 'K', '2', '0') /* 2x2 subsampled Cr:Cb plane */
- 
- 
--- 
-2.14.4
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbmRyZWEgTWVyZWxsbyBbbWFp
+bHRvOmFuZHJlYS5tZXJlbGxvQGdtYWlsLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBKdW5lIDIw
+LCAyMDE4IDc6MDIgUE0NCj4gVG86IFJhZGhleSBTaHlhbSBQYW5kZXkgPHJhZGhleXNAeGlsaW54
+LmNvbT4NCj4gQ2M6IHZrb3VsQGtlcm5lbC5vcmc7IGRhbi5qLndpbGxpYW1zQGludGVsLmNvbTsg
+TWljaGFsIFNpbWVrDQo+IDxtaWNoYWxzQHhpbGlueC5jb20+OyBBcHBhbmEgRHVyZ2EgS2VkYXJl
+c3dhcmEgUmFvDQo+IDxhcHBhbmFkQHhpbGlueC5jb20+OyBkbWFlbmdpbmVAdmdlci5rZXJuZWwu
+b3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJu
+ZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi82XSBkbWFlbmdpbmU6
+IHhpbGlueF9kbWE6IGZpeCBjb21wbGV0aW9uIGNhbGxiYWNrIGlzIG5vdA0KPiBpbnZva2VkIGZv
+ciBlYWNoIERNQSBvcGVyYXRpb24NCj4gDQo+IE9uIFdlZCwgSnVuIDIwLCAyMDE4IGF0IDI6MzYg
+UE0sIFJhZGhleSBTaHlhbSBQYW5kZXkNCj4gPHJhZGhleXNAeGlsaW54LmNvbT4gd3JvdGU6DQo+
+ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZyb206IGRtYWVuZ2luZS1vd25l
+ckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpkbWFlbmdpbmUtDQo+ID4+IG93bmVyQHZnZXIua2Vy
+bmVsLm9yZ10gT24gQmVoYWxmIE9mIEFuZHJlYSBNZXJlbGxvDQo+ID4+IFNlbnQ6IFdlZG5lc2Rh
+eSwgSnVuZSAyMCwgMjAxOCAyOjA3IFBNDQo+ID4+IFRvOiB2a291bEBrZXJuZWwub3JnOyBkYW4u
+ai53aWxsaWFtc0BpbnRlbC5jb207IE1pY2hhbCBTaW1law0KPiA+PiA8bWljaGFsc0B4aWxpbngu
+Y29tPjsgQXBwYW5hIER1cmdhIEtlZGFyZXN3YXJhIFJhbw0KPiA+PiA8YXBwYW5hZEB4aWxpbngu
+Y29tPjsgZG1hZW5naW5lQHZnZXIua2VybmVsLm9yZw0KPiA+PiBDYzogbGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiA+
+PiBBbmRyZWEgTWVyZWxsbyA8YW5kcmVhLm1lcmVsbG9AZ21haWwuY29tPg0KPiA+PiBTdWJqZWN0
+OiBbUEFUQ0ggMi82XSBkbWFlbmdpbmU6IHhpbGlueF9kbWE6IGZpeCBjb21wbGV0aW9uIGNhbGxi
+YWNrIGlzIG5vdA0KPiA+PiBpbnZva2VkIGZvciBlYWNoIERNQSBvcGVyYXRpb24NCj4gPj4NCj4g
+Pj4gQVBJIHNwZWNpZmljYXRpb24gc2F5czogIk9uIGNvbXBsZXRpb24gb2YgZWFjaCBETUEgb3Bl
+cmF0aW9uLCB0aGUgbmV4dCBpbg0KPiA+PiBxdWV1ZSBpcyBzdGFydGVkIGFuZCBhIHRhc2tsZXQg
+dHJpZ2dlcmVkLiBUaGUgdGFza2xldCB3aWxsIHRoZW4gY2FsbCB0aGUNCj4gPj4gY2xpZW50IGRy
+aXZlciBjb21wbGV0aW9uIGNhbGxiYWNrIHJvdXRpbmUgZm9yIG5vdGlmaWNhdGlvbiwgaWYgc2V0
+LiINCj4gPj4NCj4gPj4gQ3VycmVudGx5IHRoZSBkcml2ZXIga2VlcHMgYSAiZGVzY19wZW5kaW5n
+Y291bnQiIGNvdW50ZXIgb2YgdGhlIHRvdGFsDQo+ID4+IGRlc2NyaXB0b3IgcGVuZGluZywgYW5k
+IGl0IHVzZXMgYXMgSVJRIGNvYWxlc2NlIHRocmVzaG9sZCwgYXMgcmVzdWx0IGl0DQo+ID4+IG9u
+bHkgY2FsbHMgdGhlIENCcyBhZnRlciBBTEwgcGVuZGluZyBvcGVyYXRpb25zIGFyZSBjb21wbGV0
+ZWQsIHdoaWNoIGlzDQo+ID4+IHdyb25nLg0KPiA+IEkgdGhpbmsgSVJRIGNvYWxlc2NpbmcgZW5h
+YmxlL2Rpc2FibGUgc2hvdWxkIGJlIGNvbmZpZ3VyYWJsZS4NCj4gPiBQZXJmb3JtYW5jZSByZWxh
+dGVkIHVzZWNhc2VzIHdpbGwgbmVlZCB0aGlzIHN1cHBvcnQuDQo+IA0KPiBJIGRpZG4ndCBpbnRl
+bmQgdGhpcyAob25seSkgd3J0IHBlcmZvcm1hbmNlczsgbXkgY29uY2VybiB3YXMgbW9zdGx5DQo+
+IHdydCBjb3JyZWN0bmVzcy4gSWYgbXkgcG9pbnQgb2YgdmlldyBpcyB3cm9uZyB0aGVuIEknbGwg
+ZHJvcCB0aGlzDQo+IHBhdGNoIGZyb20gdGhlIHNlcmllcy4NCj4gDQpJZiBjb2FsZXNjaW5nIGlz
+IGVuYWJsZWQgZHJpdmVyIHdpbGwga25vdyBETUEgY29tcGxldGlvbiB3aGVuDQphbGwgcGFja2V0
+IGNvdW50cyBhcmUgcHJvY2Vzc2VkLiBTbyBJIHRoaW5rIGl0J3MgY29ycmVjdCBpbXBsZW1lbnRh
+dGlvbi4NCk1ha2luZyBpbnRlcnJ1cHQgY29hbGVzY2luZyBjb25maWd1cmFibGUgd2lsbCBhZGRy
+ZXNzIGFsbCB1c2VjYXNlcy4NCg0KPiAoLi4gSSBtaWdodCByZXNwaW4gaXQgYWdhaW4gaW4gZnV0
+dXJlOiBJIGhhZCBhIHBhdGNoIHdydCBhbiBvbGQgZHJpdmVyDQo+IHZlcnNpb24gdGhhdCBhbGxv
+d2VkIHN1Ym1pdHRpbmcgbmV3IGRlc2NyaXB0b3JzIHRvIHRoZSBIVyB3aGlsZSB0aGUNCj4gRE1B
+IGlzIHJ1bm5pbmcsIGFuZCBpbiB0aGlzIGNhc2UgZGlzYWJsaW5nIGNvYWxlc2NlIGlzIG5lZWRl
+ZCBpLmUuIGluDQo+IG9yZGVyIHRvIHN1Ym1pdCBhIG5ldyBlbXB0eSBidWZmZXIgd2hlbmV2ZXIg
+dGhlIERNQSBmaW5pc2hlcyBhDQo+IHRyYW5zZmVyIHdpdGhvdXQgd2FpdGluZyB0aGUgRE1BIHRv
+IHN0b3ApLg0KPiANCj4gQlRXLCBpcyB0aGVyZSBhbnkgZG1hZW5naW5lIEFQSSBzdWl0YWJsZSBm
+b3Igc2V0dGluZyBpbnRlcnJ1cHQgY29hbGVzY2U/DQo+IA0KPiA+Pg0KPiA+PiBUaGlzIHBhdGNo
+IHVzZXMgZGlzYWJsZSBJUlEgY29hbGVzY2UgYW5kIGNoZWNrcyBmb3IgdGhlIGNvbXBsZXRpb24g
+ZmxhZw0KPiA+PiBmb3IgdGhlIGRlc2NyaXB0b3JzICh3aGljaCBpcyBmdXJ0aGVyIGRpdmlkZWQg
+aW4gc2VnbWVudHMpLg0KPiA+Pg0KPiA+PiBQb3NzaWJseSBhIGJldHRlciBvcHRpbWl6YXRpb24g
+Y291bGQgYmUgdXNpbmcgcHJvcGVyIElSUSBjb2FsZXNjZQ0KPiA+PiB0aHJlc2hvbGQgdG8gZ2V0
+IGFuIElSUSBhZnRlciBhbGwgc2VnbWVudHMgb2YgdGhlIGRlc2NyaXB0b3JzIGFyZSBkb25lLg0K
+PiA+PiBCdXQgd2UgZG9uJ3QgZG8gdGhhdCB5ZXQuLg0KPiA+Pg0KPiA+PiBOT1RFOiBmb3Igbm93
+IHdlIGRvIHRoaXMgb25seSBmb3IgQVhJIERNQSwgb3RoZXIgRE1BIGZsYXZvcnMgYXJlDQo+ID4+
+IHVudGVzdGVkL3VudG91Y2hlZC4NCj4gPj4gVGhpcyBpcyBsb29zZWx5IGJhc2VkIG9uDQo+ID4+
+IGNvbW1pdCA2NWRmODFhNmRjNzQgKCJ4aWxpbnhfZG1hOiBJcnFUaHJlc2hvbGQgc2V0IGluY29y
+cmVjdGx5LA0KPiB1bnJlbGlhYmxlLiIpDQo+ID4+IGluIG15IGxpbnV4LTQuNi16eW5xIHRyZWUN
+Cj4gPiBOT1RFIGRlc2NyaXB0aW9uIGRvZXNuJ3QgaGVscCBtdWNoLg0KPiA+DQo+ID4+DQo+ID4+
+IEZyb206IEplcmVteSBUcmltYmxlIFtvcmlnaW5hbCBwYXRjaF0NCj4gPj4gU2lnbmVkLW9mZi1i
+eTogQW5kcmVhIE1lcmVsbG8gPGFuZHJlYS5tZXJlbGxvQGdtYWlsLmNvbT4NCj4gPj4gLS0tDQo+
+ID4+ICBkcml2ZXJzL2RtYS94aWxpbngveGlsaW54X2RtYS5jIHwgMzkgKysrKysrKysrKysrKysr
+KysrKysrLS0tLS0tLS0tLS0tDQo+ID4+ICAxIGZpbGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygr
+KSwgMTQgZGVsZXRpb25zKC0pDQo+ID4+DQo+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RtYS94
+aWxpbngveGlsaW54X2RtYS5jDQo+IGIvZHJpdmVycy9kbWEveGlsaW54L3hpbGlueF9kbWEuYw0K
+PiA+PiBpbmRleCBhNTE2ZTdmZmVmMjEuLmNmMTJmNzE0N2YwNyAxMDA2NDQNCj4gPj4gLS0tIGEv
+ZHJpdmVycy9kbWEveGlsaW54L3hpbGlueF9kbWEuYw0KPiA+PiArKysgYi9kcml2ZXJzL2RtYS94
+aWxpbngveGlsaW54X2RtYS5jDQo+ID4+IEBAIC0xNjQsNiArMTY0LDcgQEANCj4gPj4gICNkZWZp
+bmUgWElMSU5YX0RNQV9DUl9DT0FMRVNDRV9TSElGVCAxNg0KPiA+PiAgI2RlZmluZSBYSUxJTlhf
+RE1BX0JEX1NPUCAgICAgICAgICAgIEJJVCgyNykNCj4gPj4gICNkZWZpbmUgWElMSU5YX0RNQV9C
+RF9FT1AgICAgICAgICAgICBCSVQoMjYpDQo+ID4+ICsjZGVmaW5lIFhJTElOWF9ETUFfQkRfQ01Q
+TFQgICAgICAgICAgQklUKDMxKQ0KPiA+PiAgI2RlZmluZSBYSUxJTlhfRE1BX0NPQUxFU0NFX01B
+WCAgICAgICAgICAgICAgMjU1DQo+ID4+ICAjZGVmaW5lIFhJTElOWF9ETUFfTlVNX0RFU0NTICAg
+ICAgICAgMjU1DQo+ID4+ICAjZGVmaW5lIFhJTElOWF9ETUFfTlVNX0FQUF9XT1JEUyAgICAgNQ0K
+PiA+PiBAQCAtMTI3NCwxMiArMTI3NSw5IEBAIHN0YXRpYyB2b2lkIHhpbGlueF9kbWFfc3RhcnRf
+dHJhbnNmZXIoc3RydWN0DQo+ID4+IHhpbGlueF9kbWFfY2hhbiAqY2hhbikNCj4gPj4NCj4gPj4g
+ICAgICAgcmVnID0gZG1hX2N0cmxfcmVhZChjaGFuLCBYSUxJTlhfRE1BX1JFR19ETUFDUik7DQo+
+ID4+DQo+ID4+IC0gICAgIGlmIChjaGFuLT5kZXNjX3BlbmRpbmdjb3VudCA8PSBYSUxJTlhfRE1B
+X0NPQUxFU0NFX01BWCkgew0KPiA+PiAtICAgICAgICAgICAgIHJlZyAmPSB+WElMSU5YX0RNQV9D
+Ul9DT0FMRVNDRV9NQVg7DQo+ID4+IC0gICAgICAgICAgICAgcmVnIHw9IGNoYW4tPmRlc2NfcGVu
+ZGluZ2NvdW50IDw8DQo+ID4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgWElMSU5Y
+X0RNQV9DUl9DT0FMRVNDRV9TSElGVDsNCj4gPj4gLSAgICAgICAgICAgICBkbWFfY3RybF93cml0
+ZShjaGFuLCBYSUxJTlhfRE1BX1JFR19ETUFDUiwgcmVnKTsNCj4gPj4gLSAgICAgfQ0KPiA+PiAr
+ICAgICByZWcgJj0gflhJTElOWF9ETUFfQ1JfQ09BTEVTQ0VfTUFYOw0KPiA+PiArICAgICByZWcg
+fD0gMSA8PCBYSUxJTlhfRE1BX0NSX0NPQUxFU0NFX1NISUZUOw0KPiA+PiArICAgICBkbWFfY3Ry
+bF93cml0ZShjaGFuLCBYSUxJTlhfRE1BX1JFR19ETUFDUiwgcmVnKTsNCj4gPj4NCj4gPj4gICAg
+ICAgaWYgKGNoYW4tPmhhc19zZyAmJiAhY2hhbi0+eGRldi0+bWNkbWEpDQo+ID4+ICAgICAgICAg
+ICAgICAgeGlsaW54X3dyaXRlKGNoYW4sIFhJTElOWF9ETUFfUkVHX0NVUkRFU0MsDQo+ID4+IEBA
+IC0xMzc4LDYgKzEzNzYsMjAgQEAgc3RhdGljIHZvaWQNCj4geGlsaW54X2RtYV9jb21wbGV0ZV9k
+ZXNjcmlwdG9yKHN0cnVjdA0KPiA+PiB4aWxpbnhfZG1hX2NoYW4gKmNoYW4pDQo+ID4+ICAgICAg
+ICAgICAgICAgcmV0dXJuOw0KPiA+Pg0KPiA+PiAgICAgICBsaXN0X2Zvcl9lYWNoX2VudHJ5X3Nh
+ZmUoZGVzYywgbmV4dCwgJmNoYW4tPmFjdGl2ZV9saXN0LCBub2RlKSB7DQo+ID4+ICsgICAgICAg
+ICAgICAgaWYgKGNoYW4tPnhkZXYtPmRtYV9jb25maWctPmRtYXR5cGUgPT0NCj4gPj4gWERNQV9U
+WVBFX0FYSURNQSkgew0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgLyoNCj4gPj4gKyAgICAg
+ICAgICAgICAgICAgICAgICAqIENoZWNrIHdoZXRoZXIgdGhlIGxhc3Qgc2VnbWVudCBpbiB0aGlz
+IGRlc2NyaXB0b3INCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAqIGhhcyBiZWVuIGNvbXBs
+ZXRlZC4NCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAqLw0KPiA+PiArICAgICAgICAgICAg
+ICAgICAgICAgY29uc3Qgc3RydWN0IHhpbGlueF9heGlkbWFfdHhfc2VnbWVudCAqY29uc3QgdGFp
+bF9zZWcNCj4gPj4gPQ0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsaXN0X2xh
+c3RfZW50cnkoJmRlc2MtPnNlZ21lbnRzLA0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgc3RydWN0DQo+ID4+IHhpbGlueF9heGlkbWFfdHhfc2VnbWVu
+dCwNCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5v
+ZGUpOw0KPiA+PiArDQo+ID4+ICsgICAgICAgICAgICAgICAgICAgICAvKiB3ZSd2ZSBwcm9jZXNz
+ZWQgYWxsIHRoZSBjb21wbGV0ZWQgZGVzY3JpcHRvcnMgKi8NCj4gPj4gKyAgICAgICAgICAgICAg
+ICAgICAgIGlmICghKHRhaWxfc2VnLT5ody5zdGF0dXMgJiBYSUxJTlhfRE1BX0JEX0NNUExUKSkN
+Cj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4+ICsgICAgICAg
+ICAgICAgfQ0KPiA+PiAgICAgICAgICAgICAgIGxpc3RfZGVsKCZkZXNjLT5ub2RlKTsNCj4gPj4g
+ICAgICAgICAgICAgICBpZiAoIWRlc2MtPmN5Y2xpYykNCj4gPj4gICAgICAgICAgICAgICAgICAg
+ICAgIGRtYV9jb29raWVfY29tcGxldGUoJmRlc2MtPmFzeW5jX3R4KTsNCj4gPj4gQEAgLTE4MjYs
+MTQgKzE4MzgsMTMgQEAgc3RhdGljIHN0cnVjdCBkbWFfYXN5bmNfdHhfZGVzY3JpcHRvcg0KPiA+
+PiAqeGlsaW54X2RtYV9wcmVwX3NsYXZlX3NnKA0KPiA+PiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBzdHJ1Y3QgeGlsaW54X2F4aWRtYV90eF9zZWdtZW50LCBub2RlKTsNCj4gPj4g
+ICAgICAgZGVzYy0+YXN5bmNfdHgucGh5cyA9IHNlZ21lbnQtPnBoeXM7DQo+ID4+DQo+ID4+IC0g
+ICAgIC8qIEZvciB0aGUgbGFzdCBETUFfTUVNX1RPX0RFViB0cmFuc2Zlciwgc2V0IEVPUCAqLw0K
+PiA+PiAtICAgICBpZiAoY2hhbi0+ZGlyZWN0aW9uID09IERNQV9NRU1fVE9fREVWKSB7DQo+ID4+
+IC0gICAgICAgICAgICAgc2VnbWVudC0+aHcuY29udHJvbCB8PSBYSUxJTlhfRE1BX0JEX1NPUDsN
+Cj4gPj4gLSAgICAgICAgICAgICBzZWdtZW50ID0gbGlzdF9sYXN0X2VudHJ5KCZkZXNjLT5zZWdt
+ZW50cywNCj4gPj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVj
+dCB4aWxpbnhfYXhpZG1hX3R4X3NlZ21lbnQsDQo+ID4+IC0gICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBub2RlKTsNCj4gPj4gLSAgICAgICAgICAgICBzZWdtZW50LT5ody5j
+b250cm9sIHw9IFhJTElOWF9ETUFfQkRfRU9QOw0KPiA+PiAtICAgICB9DQo+ID4+ICsgICAgIC8q
+IEZvciB0aGUgZmlyc3QgdHJhbnNmZXIsIHNldCBTT1AgKi8NCj4gPj4gKyAgICAgc2VnbWVudC0+
+aHcuY29udHJvbCB8PSBYSUxJTlhfRE1BX0JEX1NPUDsNCj4gPj4gKyAgICAgLyogRm9yIHRoZSBs
+YXN0IHRyYW5zZmVyLCBzZXQgRU9QICovDQo+ID4+ICsgICAgIHNlZ21lbnQgPSBsaXN0X2xhc3Rf
+ZW50cnkoJmRlc2MtPnNlZ21lbnRzLA0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHN0cnVjdCB4aWxpbnhfYXhpZG1hX3R4X3NlZ21lbnQsDQo+ID4+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgbm9kZSk7DQo+ID4+ICsgICAgIHNlZ21lbnQtPmh3LmNvbnRyb2wg
+fD0gWElMSU5YX0RNQV9CRF9FT1A7DQo+ID4+DQo+ID4+ICAgICAgIHJldHVybiAmZGVzYy0+YXN5
+bmNfdHg7DQo+ID4+DQo+ID4+IC0tDQo+ID4+IDIuMTcuMQ0KPiA+Pg0KPiA+PiAtLQ0KPiA+PiBU
+byB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUg
+ZG1hZW5naW5lIiBpbg0KPiA+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZn
+ZXIua2VybmVsLm9yZw0KPiA+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5r
+ZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwNCg==
