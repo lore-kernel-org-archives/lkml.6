@@ -2,78 +2,104 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CE9C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759BAC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A31821D64
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:58:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TzfayQ17"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A31821D64
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 37C2021D66
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:00:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C2021D66
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754104AbeFUT6c (ORCPT
+        id S1754240AbeFUUAF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:58:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55182 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753906AbeFUT6a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:58:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NCfZJbCeE/T6TScOracemGkfHW/3YQjTxG86YlEGMCg=; b=TzfayQ177UCZ5LGCfGbel8jP5
-        k+m7bEY7ahxAa0wFZr20Trlj1DlyC6QZYh3umNX6jOg2YAEjVEm6CMwaSaT/IwVyfJ1HempoRJWJ4
-        vhjD45oggFXztCQU/4yVdNx1/6cqWrAYdJcWHS1JdvUca64AjxeBaogQQzpStbN+CV9FOBle1JizX
-        knHXl2zwqm7LtjBFagpfwIEYkML/dG0GOr/tcJAGdF9Nzcml/hJPUyc9pv3TlYJ8uWuHUK19wiIq0
-        o+8yGt807Y6Qste/b2bpN7BhEMGO3OGTgzpfYGpJ3CP6e/HfPUhfawzJoKSE1s11D+jWntxG5lVWA
-        Aw4ZF4+Rw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW5is-000111-64; Thu, 21 Jun 2018 19:58:26 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id E6A876E093E; Thu, 21 Jun 2018 21:58:23 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 21:58:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 06/16] x86/split_lock: Save #AC setting for split
- lock in firmware in boot time and restore the setting in reboot
-Message-ID: <20180621195823.GD13636@worktop.programming.kicks-ass.net>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <1527435965-202085-7-git-send-email-fenghua.yu@intel.com>
+        Thu, 21 Jun 2018 16:00:05 -0400
+Received: from mga07.intel.com ([134.134.136.100]:51390 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753906AbeFUUAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 16:00:04 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 13:00:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,253,1526367600"; 
+   d="scan'208";a="61176979"
+Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
+  by orsmga003.jf.intel.com with ESMTP; 21 Jun 2018 13:00:03 -0700
+Date:   Thu, 21 Jun 2018 13:00:03 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/mce: Do not overwrite MCi_STATUS in mce_no_way_out()
+Message-ID: <20180621200003.GA22562@agluck-desk>
+References: <20180621124020.6244-1-bp@alien8.de>
+ <20180621181808.GA20097@agluck-desk>
+ <20180621191710.GI12742@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527435965-202085-7-git-send-email-fenghua.yu@intel.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+In-Reply-To: <20180621191710.GI12742@zn.tnic>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 27, 2018 at 08:45:55AM -0700, Fenghua Yu wrote:
-> Firmware may contain split locked instructions.
+On Thu, Jun 21, 2018 at 09:17:11PM +0200, Borislav Petkov wrote:
+> On Thu, Jun 21, 2018 at 11:18:09AM -0700, Luck, Tony wrote:
+> > Counter proposal.  We don't need the temp mci_status because we exit the
+> > loop early.  Nor the "ret" variable.
+> > 
+> > 
+> > How does this look?
+> 
+> Yap, better. I'll test it later or tomorrow:
+> 
 
-I think that's the wrong attitude. You should mandate in your BIOS
-development guide that Firmware _MUST_NOT_ contain unaligned LOCK
-prefixed instructions.
+Or even better. Just adds the "mce_read_aux()" to check ADDRV and MISCV
+and populate more of the struct mce.
 
+-Tony
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index e4cf6ff1c2e1..5e64e973c02b 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -772,23 +772,24 @@ EXPORT_SYMBOL_GPL(machine_check_poll);
+ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
+ 			  struct pt_regs *regs)
+ {
+-	int i, ret = 0;
++	int i;
+ 	char *tmp;
+ 
+ 	for (i = 0; i < mca_cfg.banks; i++) {
+ 		m->status = mce_rdmsrl(msr_ops.status(i));
+-		if (m->status & MCI_STATUS_VAL) {
+-			__set_bit(i, validp);
+-			if (quirk_no_way_out)
+-				quirk_no_way_out(i, m, regs);
+-		}
++		if (!(m->status & MCI_STATUS_VAL))
++			continue;
++		__set_bit(i, validp);
++		if (quirk_no_way_out)
++			quirk_no_way_out(i, m, regs);
+ 
+ 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
++			mce_read_aux(m, i);
+ 			*msg = tmp;
+-			ret = 1;
++			return 1;
+ 		}
+ 	}
+-	return ret;
++	return 0;
+ }
+ 
+ /*
