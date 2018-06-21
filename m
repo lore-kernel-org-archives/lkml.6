@@ -2,151 +2,134 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B9CC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DD2C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D5F208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:41:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D5F208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E1DDE208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:42:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QqIeFL6q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1DDE208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933389AbeFUNlW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:41:22 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41683 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932918AbeFUNlU (ORCPT
+        id S933421AbeFUNm0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:42:26 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35581 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933002AbeFUNmW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:41:20 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v12-v6so269018ljj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 06:41:20 -0700 (PDT)
+        Thu, 21 Jun 2018 09:42:22 -0400
+Received: by mail-wr0-f194.google.com with SMTP id l8-v6so3274377wrr.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 06:42:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=NfSv0nj1BuZ8P+/FSyMM6pwFQ6CZ25SaeF+dN18JqeM=;
+        b=QqIeFL6qusIPLPBq9J6LZ7b/zfeb+s6727NxUovL5K0ZyLthP+qkVqjM9LVjJhkYu4
+         E3MvornFPUC7xVxBAKGQ8EuwrbX9BNCECl9bdW/KHCF/VQWlULkzCCISaSqWF1GfgKbT
+         mirXVVEfkA34fJY2o8eqstMtfPPQ+GdTi7AaM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/E6pIjXYo0X7FrBgWrDJ1hiO9AfD9QApx8/CmEai3Tk=;
-        b=JNyww6y1ewoDCWqprip645Tehv+PDT3qeWwIhOG1HUnxc20zpu+/Px0ydowJbZ09Up
-         TYWQzfJO7xtrJB3C0j6DE4wbRajRcI8OAXXM4ouvgDfyxdWqdyisKQ5vjg83qMCYZoJi
-         NCYn2a27TR+AK4o84Zqcr+tzkQAWVuNxwaqDVVXTePURfal6WjQ2VQRFF/3LjO/tBx+M
-         7DAAlLH7wvSrhO1Nlu/+Nm+Rt35ZLJaj8laTeZyQJvxnq7cDnxfsnX3btfVONnLGoQEw
-         9mfTE4clAbJ622eMQIyRqwWu/baULqTH1B9tXLoKWSiDCPPyM8Ebc1qx8dduve1tOZ+Y
-         HZPQ==
-X-Gm-Message-State: APt69E2b86oAPScyEti5oXkq18k0/SU4A89bTiq1VTAbWFaJPBmIFe3R
-        gnl34GYOg6Le/8HZHATCy3YKkArMei7iQUcT+ThV50ZEerU=
-X-Google-Smtp-Source: ADUXVKJPiRqLvPQaqZ8wN4r8lcTfEFo2BpeEoM2gEI3kZPlKiy/6hSyXVTusj5NYahXwwtXSK8T0Lwi6R4cE/ttWyYk=
-X-Received: by 2002:a2e:4189:: with SMTP id d9-v6mr16626375ljf.36.1529588479489;
- Thu, 21 Jun 2018 06:41:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180620.213540.214945910722071226.davem@davemloft.net> <20180621084510.GA22870@gmail.com>
-In-Reply-To: <20180621084510.GA22870@gmail.com>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Thu, 21 Jun 2018 13:40:43 +0000
-Message-ID: <CAGnkfhxGAYZNhJp7eyg+_j3LY31w7muFqerhQp7jGqQ02iFxkg@mail.gmail.com>
-Subject: Re: [GIT] Networking
-To:     mingo@kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        alexei.starovoitov@gmail.com, sfr@canb.auug.org.au,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NfSv0nj1BuZ8P+/FSyMM6pwFQ6CZ25SaeF+dN18JqeM=;
+        b=AGeR2hfYm4KytZvb1hB4XlUGl0vet4oMlMC13Pa6/o5oVQ9IqC+LJ2CgLiflnLb7eJ
+         D53JsOi7WseUk4WYEVT9Rhu4fgYw+4cJGWWVeRurAsbcLYTGq+EqiFyBzuZHWbFznCor
+         84AOkPQp/nmTVztKHGLUP5iprCwxzzg0b/gVhNjfANJW6KSa0AwFC8N7uYJcUy2z4BTe
+         qahwSFMHMefYds+BbNWIkUTUSfQWiblxR9SZmb6tcNIdrnQZoLmBKwNvvZwuYT3JzxcC
+         omgiIqzAwKKr39iegym6tZovOWPLEJvUFHm4yMZDgH3+xfbU4Xp0h4eecZ3tNP90yCew
+         sUiw==
+X-Gm-Message-State: APt69E1ao8j+LaleDBiGoRDDIBAFo2p81beLRrd4bQ1fXfLQ4QlkcKJY
+        qVijwsYRF9QwmS7Imorm6GN5Sg==
+X-Google-Smtp-Source: ADUXVKJ2YQzAInsqC8tTpRMc6jca1yx+Db8QPEAEqtdWbJHPPUuffE4OBBU9TgYGjZgjywgb5T8yqQ==
+X-Received: by 2002:adf:9b01:: with SMTP id b1-v6mr5185155wrc.181.1529588541654;
+        Thu, 21 Jun 2018 06:42:21 -0700 (PDT)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id r2-v6sm4797513wrq.55.2018.06.21.06.42.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 21 Jun 2018 06:42:20 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org, broonie@kernel.org
+Cc:     sdharia@quicinc.com, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+        ctatlor97@gmail.com, vkoul@kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/2] slimbus: Add Stream Support
+Date:   Thu, 21 Jun 2018 14:40:07 +0100
+Message-Id: <20180621134009.27116-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 8:46 AM Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * David Miller <davem@davemloft.net> wrote:
->
-> > 1) Fix crash on bpf_prog_load() errors, from Daniel Borkmann.
->
-> > Daniel Borkmann (4):
-> >       Merge branch 'bpf-misc-fixes'
-> >       bpf: fix panic in prog load calls cleanup
-> >       bpf: reject any prog that failed read-only lock
-> >       bpf, xdp, i40e: fix i40e_build_skb skb reserve and truesize
->
-> JFYI, I'm still seeing this BPF build error upstream, on a 32-bit allyesconfig I'm
-> getting:
->
->   LD      vmlinux.o
->   ld: i386:x86-64 architecture of input file `net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
->   Makefile:1010: recipe for target 'vmlinux' failed
->   make: *** [vmlinux] Error 1
->
-> A similar looking build bug was reported by sfr three weeks ago:
->
-> > Subject: linux-next: build failure after merge of the net-next tree
-> >
-> > ...
-> >
-> > x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfilter_umh.o'
-> > is incompatible with i386:x86-64 output
-> >
-> > Caused by commit
-> >
-> >  d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
-> >
-> > In my builds, the host is PowerPC 64 LE ...
-> >
-> > I have reverted that commit along with
-> >
-> >  61a552eb487f ("bpfilter: fix build dependency")
-> >  13405468f49d ("bpfilter: don't pass O_CREAT when opening console for debug")
-> >
-> > for today.
->
-> Is there a fix I could try?
->
-> Thanks,
->
->         Ingo
+This patchset adds basic stream support for SLIMbus devices and
+controllers. Mostly inspired by soundwire stream patches. But slimbus
+stream is much simpler compared to soundwire
 
-Hi Ingo,
+From slim_device side, we have below 6 new apis.
+slim_stream_allocate() - allocating runtime slim stream
+slim_stream_prepare() - to configure runtime stream with config
+slim_stream_enable() - enable channels/ports for data
+slim_stream_disable() - disable channels/ports.
+slim_stream_unprepare() - un configure runtime stream
+slim_stream_free() - free all associated memory.
 
-are you compiling a 32 bit kernel on an x86_64 host? I tried to
-compile an i386 bit kernel on an i386 host and I have no issue,
-running objdump by hand produces correct output:
+From Controller side:
+Data channel Management and reconfiguration messages are applicable for
+all the controllers which are inline with SLIMbus specs. However light
+weight controller like NGD which have user specific implementation of
+some messages need to be invoked instead of standard message commands.
+For usecases like this simple enable/disable stream apis are provided.
 
-$ uname -a
-Linux debian32 4.16.0-2-686-pae #1 SMP Debian 4.16.16-1 (2018-06-19)
-i686 GNU/Linux
-$ objdump -f net/bpfilter/bpfilter_umh |awk -F' |,' '/file
-format/{print "-O",$NF} /^architecture:/{print "-B",$2}'
--O elf32-i386
--B i386
+Assumptions:
+1> Current design assumes that the channel and ports are statically allocated
+to the device during SoC integration, which is the case with all the
+Qualcomm SoCs.
+2> One-to-One mapping between Port and Channel, SLIMBus versions earlier
+than 2.0 has only one endpoint per port. Current patchset can be extended
+to support more than one endpoints per port.
+3> Only audio usecase, This patchset only supports Isochronous and Push/Pull
+transport protocols, which are sufficient for audio use cases.
+4> DSP does all the data handling for the allocated channels. Which is true
+for Qcom SoCs.
 
-then I tried to compile an i386 kernel on an x86_64 host and I get the
-same error:
+TODO:
+	Bandwidth management.
 
-$ make -j8 ARCH=i386
-...
-  LD      vmlinux.o
-ld: i386:x86-64 architecture of input file
-`net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
-make: *** [Makefile:1015: vmlinux] Error 1
+Dependency:
+	This patchset has dependency on the NGD driver
+	https://patchwork.kernel.org/patch/10474959/
 
-the problem seems to be that bpfilter_umh is compiled with host flags,
-and so it's a 64 bit binary in my case:
+Tested this patchset with WCD9335 codec playback on DB820c on
+top of 4.18-rc1 with qdsp6.
 
-gcc  -static -o net/bpfilter/bpfilter_umh net/bpfilter/main.o
-objcopy -I binary `LC_ALL=C objdump -f net/bpfilter/bpfilter_umh |awk
--F' |,' '/file format/{print "-O",$NF} /^architecture:/{print
-"-B",$2}'` --rename-section .data=.init.rodata
-net/bpfilter/bpfilter_umh net/bpfilter/bpfilter_umh.o
-ld -m elf_i386 -r -o vmlinux.o --whole-archive built-in.a
---no-whole-archive --start-group lib/lib.a arch/x86/lib/lib.a
---end-group
-ld: i386:x86-64 architecture of input file
-`net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
+I have pushed my working branch to [1] incase someone want to try.
 
-Any idea how to fix it without building it twice, for host and target?
+[1]:https://git.linaro.org/people/srinivas.kandagatla/linux.git/log/?h=slimbus-ngd
+
+
+Thanks,
+srini
+
+Srinivas Kandagatla (2):
+  slimbus: stream: add stream support
+  slimbus: ngd: add stream support
+
+ Documentation/driver-api/slimbus.rst |   5 +
+ drivers/slimbus/Makefile             |   2 +-
+ drivers/slimbus/core.c               |   2 +
+ drivers/slimbus/qcom-ngd-ctrl.c      | 144 +++++++++-
+ drivers/slimbus/slimbus.h            | 206 +++++++++++++++
+ drivers/slimbus/stream.c             | 493 +++++++++++++++++++++++++++++++++++
+ include/linux/slimbus.h              |  56 ++++
+ 7 files changed, 905 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/slimbus/stream.c
+
 -- 
-Matteo Croce
-per aspera ad upstream
+2.16.2
+
