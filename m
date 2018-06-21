@@ -3,38 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B6FEC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28573C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 027A621CCF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:43:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027A621CCF
+	by mail.kernel.org (Postfix) with ESMTP id CF71521D5B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:45:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF71521D5B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933160AbeFUTnu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:43:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47670 "EHLO mx2.suse.de"
+        id S933187AbeFUTpt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 15:45:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47798 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932899AbeFUTnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:43:49 -0400
+        id S932710AbeFUTps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 15:45:48 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id AE6A3ACA1;
-        Thu, 21 Jun 2018 19:43:47 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 21:43:46 +0200
-Message-ID: <s5hbmc4c4ct.wl-tiwai@suse.de>
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 09455ACA1;
+        Thu, 21 Jun 2018 19:45:47 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 21:45:46 +0200
+Message-ID: <s5ha7rnditx.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Colin King" <colin.king@canonical.com>
-Cc:     <alsa-devel@alsa-project.org>,
-        "Takashi Sakamoto" <o-takashi@sakamocchi.jp>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: hda/ca0132: make array ca0132_alt_chmaps static
-In-Reply-To: <20180621183457.31008-1-colin.king@canonical.com>
-References: <20180621183457.31008-1-colin.king@canonical.com>
+To:     "Robert Jarzmik" <robert.jarzmik@free.fr>
+Cc:     "Mark Rutland" <mark.rutland@arm.com>,
+        "Liam Girdwood" <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Jaroslav Kysela" <perex@perex.cz>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] ALSA: ac97: add codecs devicetree binding
+In-Reply-To: <20180621154356.5438-2-robert.jarzmik@free.fr>
+References: <20180621154356.5438-1-robert.jarzmik@free.fr>
+        <20180621154356.5438-2-robert.jarzmik@free.fr>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -45,21 +48,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Jun 2018 20:34:57 +0200,
-Colin King wrote:
+On Thu, 21 Jun 2018 17:43:56 +0200,
+Robert Jarzmik wrote:
 > 
-> From: Colin Ian King <colin.king@canonical.com>
+> Add a devicetree binding for codecs. This is especially useful if the
+> AC97 bitclk clock is provided by the codec, as it has to be described in
+> the devicetree description for the ac97 bus code to aquire it.
 > 
-> The array ca0132_alt_chmaps is local to the source and does not
-> need to be in global scope, so make it static.
-> 
-> Cleans up sparse warning:
-> warning: symbol 'ca0132_alt_chmaps' was not declared. Should it be
-> static?
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
+> Special review query: review the "return of_node_get(node)", which
+> assumes that upon device removal, of_put_node(dev.of_node) will be
+> called...
 
-Applied, thanks.
+Is it really done automagically?  I couldn't spot it.
 
+
+thanks,
 
 Takashi
