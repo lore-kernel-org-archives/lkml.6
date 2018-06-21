@@ -2,118 +2,87 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90C2C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5AE5C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CE8C20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:33:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ewsPSSHU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE8C20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	by mail.kernel.org (Postfix) with ESMTP id 8CF9620837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:34:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF9620837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933157AbeFUKdt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:33:49 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:52134 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932978AbeFUKdn (ORCPT
+        id S933180AbeFUKeI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 06:34:08 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43758 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932883AbeFUKeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:33:43 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 909AD84484;
-        Thu, 21 Jun 2018 22:33:41 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1529577221;
-        bh=QViISlwt80vHC50lmZqU3LyNRHSbr6A9e4qRXWrctpI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ewsPSSHUTNBjAtgRNN+M869U0+8cGyw9SXliBVunyPmtTt09SgY4Zx/4Fi8S+oaZk
-         oKZ39tPEUq/Js00JMXpdRFN4bkblkb0XgJQTeA8VwSP8Gx5bezV8Kiu/62nATCEbol
-         O46oSPtJtQsIr2yJ0jYKfGiVtZ5+SQSf+byqo8JM=
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b2b7f010002>; Thu, 21 Jun 2018 22:33:42 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 38EA013EF5C;
-        Thu, 21 Jun 2018 22:33:40 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 037EE1E2626; Thu, 21 Jun 2018 22:33:36 +1200 (NZST)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        linux-mtd@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Richard Weinberger <richard@nod.at>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: [PATCH v4 2/6] mtd: rawnand: add manufacturer fixup for ONFI parameter page
-Date:   Thu, 21 Jun 2018 22:33:24 +1200
-Message-Id: <20180621103328.28206-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180621103328.28206-1-chris.packham@alliedtelesis.co.nz>
-References: <20180621103328.28206-1-chris.packham@alliedtelesis.co.nz>
+        Thu, 21 Jun 2018 06:34:05 -0400
+Received: by mail-lf0-f65.google.com with SMTP id x13-v6so3980022lff.10;
+        Thu, 21 Jun 2018 03:34:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2pKfnzW6JyKamYNYcCL3J0AFAYbziQZ/A5vmPFDVbaI=;
+        b=sJsz5HtjiA16dS+dk+PlJk3mDhhiBMAoYJqI8FaUenFWTIJ/FYGC63rkfkNiyob1ps
+         c8KGzCx5gd6bPjjUJ5yNyoqe7e5p0U2WDIP6ymOdTJ6C44Y8s1uMrOr9/wnbyNOVTuS/
+         TV1L3tk1JsLBD8WTIiITkPJhUCE6/rzkm+/UqaMHYr8Jcvc3PuDwSqG34g5V9HV6/PRk
+         PGgp0PbvDPijtv6/HopZ4P56gAWc41Nc+ilRCvIXKEVLdFOuoshAeH7PsDNMIYt+OSqG
+         U/HEbMAJTWWxR9rJkNxG1806W3FXONwkX7fHSmabA7pBGwt+zFS1WSUHNsf9RxC17Sk9
+         ew3A==
+X-Gm-Message-State: APt69E0gKytAtL/1FLAtQRxoaz3HM4SILcQaLpxcpVEWb/QOMe08JTgO
+        X02XIrr+PHHcOcq+vuSV5t8=
+X-Google-Smtp-Source: ADUXVKKsEKBIrZdrqXqmLsatqlkhvtL2mLsAZk0xnn8ZlWV4WcbgeTiuSVxSLvkSKO3QmFuVwgOZqA==
+X-Received: by 2002:a19:d405:: with SMTP id l5-v6mr13621063lfg.28.1529577243652;
+        Thu, 21 Jun 2018 03:34:03 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.34])
+        by smtp.gmail.com with ESMTPSA id w1-v6sm873852lfk.59.2018.06.21.03.34.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 03:34:03 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 13:34:00 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, mazziesaccount@gmail.com, arnd@arndb.de,
+        dmitry.torokhov@gmail.com, sre@kernel.org, chenjh@rock-chips.com,
+        andrew.smirnov@gmail.com, linus.walleij@linaro.org,
+        kstewart@linuxfoundation.org, heiko@sntech.de,
+        gregkh@linuxfoundation.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [PATCH v7 0/4] mfd/regulator/clk/input: bd71837: ROHM BD71837
+ PMIC driver
+Message-ID: <20180621103400.GB6076@localhost.localdomain>
+References: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1529404894.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is called after the ONFI parameter page checksum is verified
-and allows us to override the contents of the parameter page.
+On Tue, Jun 19, 2018 at 01:55:31PM +0300, Matti Vaittinen wrote:
+> Patch series adding support for ROHM BD71837 PMIC.
+> 
+What is the preferred way when I send updated patches:
 
-Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
----
-Changes in v2:
-- New
-Changes in v3:
-- Add doc comment and review from Boris
-Changes in v4:
-- None
+1. always resend _all_ unapplied patches even if there is no changes to
+   some of them. (patch-vN mail thread contains _all_ unapplied patches)
+2. only resend changed patches (patch-vN mail thread contains only
+   patches that were changed from patch-vN-1)
 
- drivers/mtd/nand/raw/nand_base.c | 4 ++++
- include/linux/mtd/rawnand.h      | 3 +++
- 2 files changed, 7 insertions(+)
+I have currently used approach 1 - so that no patches would be
+accidentally forgotten - but downside is that people need to check if
+they have already reviewed some of the patches. I'd rather not caused
+any extra work. What is the most convenient way for you guys?
 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 0cd3e216b95c..65250308c82d 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5172,6 +5172,10 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
- 		}
- 	}
- 
-+	if (chip->manufacturer.desc && chip->manufacturer.desc->ops &&
-+	    chip->manufacturer.desc->ops->fixup_onfi_param_page)
-+		chip->manufacturer.desc->ops->fixup_onfi_param_page(chip, p);
-+
- 	/* Check version */
- 	val = le16_to_cpu(p->revision);
- 	if (val & (1 << 5))
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 3e8ec3b8a39c..ef7e3b4e91ea 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -778,11 +778,14 @@ nand_get_sdr_timings(const struct nand_data_interface *conf)
-  *	  implementation) if any.
-  * @cleanup: the ->init() function may have allocated resources, ->cleanup()
-  *	     is here to let vendor specific code release those resources.
-+ * @fixup_onfi_param_page: apply vendor specific fixups to the ONFI
-+ *	parameter page. This is called after the checksum is verified.
-  */
- struct nand_manufacturer_ops {
- 	void (*detect)(struct nand_chip *chip);
- 	int (*init)(struct nand_chip *chip);
- 	void (*cleanup)(struct nand_chip *chip);
-+	void (*fixup_onfi_param_page)(struct nand_chip *chip, struct nand_onfi_params *p);
- };
- 
- /**
--- 
-2.17.1
-
+Br,
+    Matti Vaittinen
