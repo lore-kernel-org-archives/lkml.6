@@ -6,102 +6,110 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4974C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD082C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F962254B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8370F22535
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o/2Vql15"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F962254B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=cumulusnetworks.com header.i=@cumulusnetworks.com header.b="BXmkXzAz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8370F22535
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cumulusnetworks.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933200AbeFUXeq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 19:34:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:59583 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932686AbeFUXeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 19:34:44 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41BdMk28SLz9s4V;
-        Fri, 22 Jun 2018 09:34:42 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529624082;
-        bh=jhABNufG27D6r5hawukYpGbiBTxK1qvFykgEYYjKgd4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=o/2Vql150WvvgIJR+ERxdeV5HLSje4UjaGDELVrcAq/BB9bULEo1G3KL5nIoVAACD
-         HzRt4LmLu/rg3zIAyf8y9RMZS/MwDEWAScHPwTY9QoD3wKHJDbRkuCoM8dhBSN0ImI
-         EBmayuz4QaQcO31pMlxElMoOzxS9nhjrP+WqvYPJFE99PW5wAB4SAmKwW4cXKsDW3M
-         zi1VgVQnZdeJ1fP23NFnkpYrE9ClN1N82SFXvh3au/NdE7S5KDRQ14FpOO7iY7fPDJ
-         g/gkimP5FWxE4RCZKyYATt52WKDOrv9WQLeilCd8PFJqHvQkWMglgKzLeNNoBc+TNA
-         lS6etUMjhaT0w==
-Date:   Fri, 22 Jun 2018 09:34:21 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tony Luck <tony.luck@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>, <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm/memblock: add missing include <linux/bootmem.h>
-Message-ID: <20180622093421.6b060710@canb.auug.org.au>
-In-Reply-To: <20180621180638.ahxpgzwrztopve55@pburton-laptop>
-References: <20180606194144.16990-1-malat@debian.org>
-        <CA+8MBbKj4A5kh=hE0vcadzD+=cEAFY7OCWFCzvubu6cWULCJ0A@mail.gmail.com>
-        <20180615121716.37fb93385825b0b2f59240cc@linux-foundation.org>
-        <20180621180638.ahxpgzwrztopve55@pburton-laptop>
+        id S933508AbeFUXfg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 19:35:36 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35230 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932686AbeFUXfe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 19:35:34 -0400
+Received: by mail-wm0-f66.google.com with SMTP id j15-v6so419864wme.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cumulusnetworks.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GzXTZN2s6naNL26BfTVBl1E41kNnvnYHrab5sokz8+M=;
+        b=BXmkXzAzNPcXJbRd957IIlm3XIl8OpDPx6dDCjyj7OXo21lKhTOhVWVl5mN4aA/UaN
+         fgCvqt0L1OQ0FyRNNLmOhXxsEUKu7c1MjSpNIhGI1Mzf63SSnVumuHW6XDIR8t2BSoNo
+         DRj7qwmYaT7PVXk1jPDkNkZAAe/k8xnUcQUko=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GzXTZN2s6naNL26BfTVBl1E41kNnvnYHrab5sokz8+M=;
+        b=XALP4EG8LwZ753gztoRbPnE1cddOdELmWsQjlHuKXYiiKKvPi4GNb7ikS5+Zka8tTV
+         KRyG/1pU87tYXfBUATPEXGrCN5Q3ChxywhhcH76a2c8D26vPhpfI8ogwNByiMv/TJdN+
+         F3oPGCnLGPyN8DNNcYfu5JBfdhSFuBv1bvuBVaCgMCy9TadBcWFop1q1dyRRPqA0V0xN
+         W0NsvPessyesxW56oNMAsYLCI46xVhrz0D2P2UztEckbg9SEPzDej4z0sZaJuLAObQ7G
+         jHkHVA7gSRTPYhaztbfAnOpg4C42V6qO5goxFNQNsXbDjsBn2Ja4qbo+KQKpa5XV+1kg
+         V86Q==
+X-Gm-Message-State: APt69E2DzObfZY0WiZTJOgLobYf2UXxzviFaiKsisj1YAFP5pGp/QyBW
+        /d/OWcMXUDmIBatLqFT+HAVQbTSW
+X-Google-Smtp-Source: ADUXVKL99DGbcfOItYLKtnk5ZsLV63zU2NWmSFe2uZzec5h9H5pa9agjRQ6BL0Bg7io4ouAM1XbVhw==
+X-Received: by 2002:a1c:a8a:: with SMTP id 132-v6mr6979163wmk.44.1529624133096;
+        Thu, 21 Jun 2018 16:35:33 -0700 (PDT)
+Received: from [192.168.0.108] (46-10-48-153.ip.btc-net.bg. [46.10.48.153])
+        by smtp.googlemail.com with ESMTPSA id w13-v6sm963480wrl.20.2018.06.21.16.35.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 16:35:32 -0700 (PDT)
+Subject: Re: [PATCH] net: bridge: fix potential null pointer dereference on
+ return from br_port_get_rtnl()
+To:     David Miller <davem@davemloft.net>, garrmcnu@gmail.com
+Cc:     netdev@vger.kernel.org, stephen@networkplumber.org,
+        jiri@resnulli.us, bridge@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+References: <20180621201427.4961-1-garrmcnu@gmail.com>
+ <20180622.072056.1223319763674661318.davem@davemloft.net>
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Message-ID: <e4fb2883-1643-a921-a138-d1255831a9bd@cumulusnetworks.com>
+Date:   Fri, 22 Jun 2018 02:35:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WC=h_N3UJqTfkjWbdcO478n"; protocol="application/pgp-signature"
+In-Reply-To: <20180622.072056.1223319763674661318.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WC=h_N3UJqTfkjWbdcO478n
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 06/22/2018 01:20 AM, David Miller wrote:
+> From: Garry McNulty <garrmcnu@gmail.com>
+> Date: Thu, 21 Jun 2018 21:14:27 +0100
+> 
+>> br_port_get_rtnl() can return NULL if the network device is not a bridge
+>> port (IFF_BRIDGE_PORT flag not set). br_port_slave_changelink() and
+>> br_port_fill_slave_info() callbacks dereference this pointer without
+>> checking. Currently this is not a problem because slave devices always
+>> set this flag. Add null check in case these conditions ever changye.
+>>
+>> Detected by CoverityScan, CID 1339613 ("Dereference null return value")
+>>
+>> Signed-off-by: Garry McNulty <garrmcnu@gmail.com>
+> 
+> I don't think this is reasonable.
+> 
+> The bridge code will never, ever, install a slave that doesn't have
+> that bit set.  It's the most fundamental aspect of how these objects
+> are managed.
+> 
++1
 
-Hi Paul,
+This keeps coming up, here's the previous one:
+https://patchwork.ozlabs.org/patch/896046/
 
-On Thu, 21 Jun 2018 11:06:38 -0700 Paul Burton <paul.burton@mips.com> wrote:
->
-> I was expecting to see the original commit, then the revert, then
-> perhaps a re-application of it but instead it looks like the commits
-> from master are missing entirely after 25cf23d7a957 ("mm/memblock: print
-> memblock_remove"). Maybe I'm missing something about the way the merges
-> for linux-next are done..?
+Please do a more thorough check if these conditions can actually occur.
+In this case, as Dave said, they cannot.
 
-Andrew produces his mmotm quilt series and exports it to ozlabs.org
-from where I fetch it and create the akpm-current and akpm branches in
-linux-next (and merge them, obviously :-)).  The mmotm quilt series has
-not changed since Jun 15, I assume Andrew is still finalising it.
+To be explicit as with the patch I mentioned above:
+Nacked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-> In any case, could we get the problematic patch removed from linux-next?
+You can find more info in my reply to the patch above.
 
-I have removed it from my copy of mmotm for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WC=h_N3UJqTfkjWbdcO478n
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlssNf0ACgkQAVBC80lX
-0GwqnQgAlpelxvvi6Yhl4qtdIeKBlovkV5kAuzpaae6QMIv0SQi/aiu8PhM8HfRY
-pZrhXMQl281ZpfKW9pfECeyFbBSXMLrQmlBw2rtFHbIJy25t+AdrToPPDSIiqnWJ
-JJ6kPJxLzaJ8j4NGL1qdbOh5R3Ast4z1+SxspWAa80aXbZxAokbtuBln5pcLvKWG
-RpigTqwdlugHIPWYhRixQC3jqc1YbDt3uNq/pvimTNo5y5Aks57oA2dkCLPKTAfi
-qXhx+67AvvUenF6ajZ51pM8f4agmksmAUg3e2dL0J3xvsLjTJbl/5BQKHj32LZpo
-VD9hM1JFqNvAja/EiAJ3xwD2E2V4KQ==
-=NXVc
------END PGP SIGNATURE-----
-
---Sig_/WC=h_N3UJqTfkjWbdcO478n--
+Thanks,
+ Nik
