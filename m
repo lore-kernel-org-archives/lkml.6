@@ -2,103 +2,107 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E044BC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50649C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72B6E2075E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:38:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="jBdtvX++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B6E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id EB52A2168D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB52A2168D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933454AbeFUQid (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:38:33 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:50548 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933297AbeFUQib (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:38:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
-        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Akt8sTdtxhWD51na/Xw+RURO9049zr72RiMQ40/1W+o=; b=jBdtvX++Ler4UxjqzfA7lO9KXS
-        v9FGYNd47g7Am3Vmilv1H5QUwyMMxOyaRFdD/6DRkX/Y39xnnsQlrgDd/jbgEO5xw4ewP6xoayEH0
-        eygKudildnwv2FtpgpN5jHaqX/rDYq1Nw/3TNgHY7Xw/tO+oIg95Eq27C8l3RzcAr4nK2/TPg2rAh
-        DEtimzmKzg61pLzl+V0qmFoMBbw5+cZOkZApJyFMVvGV6XqcVe5R+j7VK7PYRTdUtqdPA+NoGZmWO
-        ed7yRXHG0/3qKOh1asLpLEUJHHKpMmDYbXJpynDkPw7bvOGlLms68iWW7Pq3jnZfNq4E/yIM3Ngq/
-        q0mmVtgw==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:35444 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fW2bP-00302N-Du; Thu, 21 Jun 2018 16:38:31 +0000
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hwmon fixes for v4.18-rc2
-Date:   Thu, 21 Jun 2018 09:38:30 -0700
-Message-Id: <1529599110-4073-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S933493AbeFUQrO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:47:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933409AbeFUQrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:47:13 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C93B82168C;
+        Thu, 21 Jun 2018 16:47:11 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 12:47:10 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Stefan Agner <stefan@agner.ch>, abelvesa@linux.com,
+        Abhishek Sagar <sagar.abhishek@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] ARM: ftrace: Only set kernel memory back to read-only after
+ boot
+Message-ID: <20180621124710.453ee0ae@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Please pull hwmon fixes for Linux v4.18-rc2 from signed tag:
+Dynamic ftrace requires modifying the code segments that are usually
+set to read-only. To do this, a per arch function is called both before
+and after the ftrace modifications are performed. The "before" function
+will set kernel code text to read-write to allow for ftrace to make the
+modifications, and the "after" function will set the kernel code text
+back to "read-only" to keep the kernel code text protected.
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-linus-v4.18-rc2
+The issue happens when dynamic ftrace is tested at boot up. The test is
+done before the kernel code text has been set to read-only. But the
+"before" and "after" calls are still performed. The "after" call will
+change the kernel code text to read-only prematurely, and other boot
+code that expects this code to be read-write will fail.
 
-Thanks,
-Guenter
-------
+The solution is to add a variable that is set when the kernel code text
+is expected to be converted to read-only, and make the ftrace "before"
+and "after" calls do nothing if that variable is not yet set. This is
+similar to the x86 solution from commit 162396309745 ("ftrace, x86:
+make kernel text writable only for conversions").
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-linus-v4.18-rc2
-
-for you to fetch changes up to 91bb8f45f73f19a0150c233c0f11cdeb6d71d1e9:
-
-  hwmon: (nct6775) Fix loop limit (2018-06-16 16:40:36 -0700)
-
-----------------------------------------------------------------
-hwmon fixes for v4.18-rc2
-
-- Fix a loop limit in nct6775 driver
-- Disable fan support for Dell XPS13 9333
-
-----------------------------------------------------------------
-Guenter Roeck (1):
-      hwmon: (nct6775) Fix loop limit
-
-Helge Eichelberg (1):
-      hwmon: (dell-smm) Disable fan support for Dell XPS13 9333
-
- drivers/hwmon/dell-smm-hwmon.c | 7 +++++++
- drivers/hwmon/nct6775.c        | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+Reported-by: Stefan Agner <stefan@agner.ch>
+Tested-by: Stefan Agner <stefan@agner.ch>
+Link: http://lkml.kernel.org/r/20180620212906.24b7b66e@vmware.local.home
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index c186474422f3..0cc8e04295a4 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -736,20 +736,29 @@ static int __mark_rodata_ro(void *unused)
+ 	return 0;
+ }
+ 
++static int kernel_set_to_readonly __read_mostly;
++
+ void mark_rodata_ro(void)
+ {
++	kernel_set_to_readonly = 1;
+ 	stop_machine(__mark_rodata_ro, NULL, NULL);
+ 	debug_checkwx();
+ }
+ 
+ void set_kernel_text_rw(void)
+ {
++	if (!kernel_set_to_readonly)
++		return;
++
+ 	set_section_perms(ro_perms, ARRAY_SIZE(ro_perms), false,
+ 				current->active_mm);
+ }
+ 
+ void set_kernel_text_ro(void)
+ {
++	if (!kernel_set_to_readonly)
++		return;
++
+ 	set_section_perms(ro_perms, ARRAY_SIZE(ro_perms), true,
+ 				current->active_mm);
+ }
