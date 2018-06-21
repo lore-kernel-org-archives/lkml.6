@@ -3,106 +3,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50649C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A72C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB52A2168D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB52A2168D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 370AC216C1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 370AC216C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933493AbeFUQrO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:47:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59168 "EHLO mail.kernel.org"
+        id S933496AbeFUQrm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:47:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:52430 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933409AbeFUQrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:47:13 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C93B82168C;
-        Thu, 21 Jun 2018 16:47:11 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 12:47:10 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Stefan Agner <stefan@agner.ch>, abelvesa@linux.com,
-        Abhishek Sagar <sagar.abhishek@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH] ARM: ftrace: Only set kernel memory back to read-only after
- boot
-Message-ID: <20180621124710.453ee0ae@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933391AbeFUQrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:47:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C1571435;
+        Thu, 21 Jun 2018 09:47:40 -0700 (PDT)
+Received: from approximate.cambridge.arm.com (approximate.cambridge.arm.com [10.1.206.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DA8F3F5BC;
+        Thu, 21 Jun 2018 09:47:39 -0700 (PDT)
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: shpchp: Fix probing logic inversion
+Date:   Thu, 21 Jun 2018 17:47:15 +0100
+Message-Id: <20180621164715.28160-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Until recently, shpc_probe() would bail out pretty early in the
+absence of the SHPC capability. A logic change in the way the
+driver now checks that capability makes it go and probe the
+firmware anyway, with ugly consequences if the system is not
+ACPI based (my arm64 ThunderX is DT driven, and explodes in
+a spectacular way after getting a NULL root bridge from the
+non-existent ACPI tables...).
 
-Dynamic ftrace requires modifying the code segments that are usually
-set to read-only. To do this, a per arch function is called both before
-and after the ftrace modifications are performed. The "before" function
-will set kernel code text to read-write to allow for ftrace to make the
-modifications, and the "after" function will set the kernel code text
-back to "read-only" to keep the kernel code text protected.
+Take this opportunity to move the call to shpchp_is_native()
+back into shpc_probe(), making it clear that a non-ACPI system
+is not expected to use this driver.
 
-The issue happens when dynamic ftrace is tested at boot up. The test is
-done before the kernel code text has been set to read-only. But the
-"before" and "after" calls are still performed. The "after" call will
-change the kernel code text to read-only prematurely, and other boot
-code that expects this code to be read-write will fail.
-
-The solution is to add a variable that is set when the kernel code text
-is expected to be converted to read-only, and make the ftrace "before"
-and "after" calls do nothing if that variable is not yet set. This is
-similar to the x86 solution from commit 162396309745 ("ftrace, x86:
-make kernel text writable only for conversions").
-
-Reported-by: Stefan Agner <stefan@agner.ch>
-Tested-by: Stefan Agner <stefan@agner.ch>
-Link: http://lkml.kernel.org/r/20180620212906.24b7b66e@vmware.local.home
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 90cc0c3cc709 ("PCI: shpchp: Add shpchp_is_native()")
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index c186474422f3..0cc8e04295a4 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -736,20 +736,29 @@ static int __mark_rodata_ro(void *unused)
- 	return 0;
- }
+ drivers/pci/hotplug/acpi_pcihp.c  | 3 ---
+ drivers/pci/hotplug/shpchp_core.c | 3 ++-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
+index 3979f89b250a..b57f29753a08 100644
+--- a/drivers/pci/hotplug/acpi_pcihp.c
++++ b/drivers/pci/hotplug/acpi_pcihp.c
+@@ -83,9 +83,6 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
+ 	 * OSHP within the scope of the hotplug controller and its parents,
+ 	 * up to the host bridge under which this controller exists.
+ 	 */
+-	if (shpchp_is_native(pdev))
+-		return 0;
+-
+ 	/* If _OSC exists, we should not evaluate OSHP */
+ 	host = pci_find_host_bridge(pdev->bus);
+ 	root = acpi_pci_find_root(ACPI_HANDLE(&host->dev));
+diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
+index e91be287f292..8902fe18a636 100644
+--- a/drivers/pci/hotplug/shpchp_core.c
++++ b/drivers/pci/hotplug/shpchp_core.c
+@@ -275,7 +275,8 @@ static int shpc_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	int rc;
+ 	struct controller *ctrl;
  
-+static int kernel_set_to_readonly __read_mostly;
-+
- void mark_rodata_ro(void)
- {
-+	kernel_set_to_readonly = 1;
- 	stop_machine(__mark_rodata_ro, NULL, NULL);
- 	debug_checkwx();
- }
+-	if (acpi_get_hp_hw_control_from_firmware(pdev))
++	if (!shpchp_is_native(pdev) ||
++	    acpi_get_hp_hw_control_from_firmware(pdev))
+ 		return -ENODEV;
  
- void set_kernel_text_rw(void)
- {
-+	if (!kernel_set_to_readonly)
-+		return;
-+
- 	set_section_perms(ro_perms, ARRAY_SIZE(ro_perms), false,
- 				current->active_mm);
- }
- 
- void set_kernel_text_ro(void)
- {
-+	if (!kernel_set_to_readonly)
-+		return;
-+
- 	set_section_perms(ro_perms, ARRAY_SIZE(ro_perms), true,
- 				current->active_mm);
- }
+ 	ctrl = kzalloc(sizeof(*ctrl), GFP_KERNEL);
+-- 
+2.17.1
+
