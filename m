@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC2AC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D76C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04BAE22532
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D77EE22533
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="XN9VxaSq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CMLtXRSV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04BAE22532
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="MgpgiVyr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WabPF2TC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77EE22533
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934014AbeFUXP6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 19:15:58 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:43037 "EHLO
+        id S934052AbeFUXQB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 19:16:01 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:40601 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933729AbeFUXPz (ORCPT
+        by vger.kernel.org with ESMTP id S933996AbeFUXP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 19:15:55 -0400
+        Thu, 21 Jun 2018 19:15:58 -0400
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 149F821B32;
-        Thu, 21 Jun 2018 19:15:54 -0400 (EDT)
+        by mailout.nyi.internal (Postfix) with ESMTP id DC80222092;
+        Thu, 21 Jun 2018 19:15:57 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 21 Jun 2018 19:15:54 -0400
+  by compute5.internal (MEProxy); Thu, 21 Jun 2018 19:15:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
         :date:from:in-reply-to:message-id:references:subject:to
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=loZHnWsjHYT/D6T7p
-        gB8aGTq3jdPdKKvTW+EUwiREOo=; b=XN9VxaSqIkNADxzOWBjDIHX5NjGW4AGAt
-        07iziCPm2U7W3LoCEi9n9QpNUJh2I27nDW7Tr3maWx8Ucp3LQceTWeZgfsJC6hyW
-        TTPD7Hy7TjOcnHLdHqiEFsN5uA1opRzmT5fxCdq2dYuFd2ttcuQX5YTzphVyZdtQ
-        JqsmNc/RvTLsoT4NLclmQ51rCsVnyPaA5ZfRkSjNwcoc+VhyEL5eexRyWJQ4zrs4
-        t4qnyCUsDAiL1I5XSu3aoU3aerTd3WoPOGaAV5DTNutoo3tvr5EVryR9CDd6vBZs
-        1BtGOEqfV3QE94RmsLF3nQYEXfevis120tnBSgsR+tPd2ygcRlLWQ==
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=X9f16w5jbDY0AGj12
+        bqazCA5F6tTBBebSjDlgQzs9Zg=; b=MgpgiVyrliBq3y7rqh9LELO2A5piwJJu9
+        Lss/oMS7oNrSJdKRmYfwMju2tnemS2RjcfjegeOJOQukbDLSupjKv6/EH6AnPSGP
+        ha08ByaRBSCi9LleDe2rjLA6xoEwBiynNPJ0jQallqco0CoX6Rw1aJ2DaiuNOiKh
+        LdsXTP2omYihFOctKvAapKsxA/FBSaw8l5xSsOuRRCO/lPoz4YILhIZhGSkshc1+
+        fHrswBNVETPTsvA4YgtnMJH/Cr9xMgLKasZl51uKCq/9q9nm6BRkpyWuEVnvPjnV
+        +IV/71ozcxhDKyj0v5uT0Ye7vSM84ZBxAxpM42XPpAvkUgAgIspDQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:date:from:in-reply-to:message-id
         :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=loZHnWsjHYT/D6T7pgB8aGTq3jdPdKKvTW+EUwiREOo=; b=CMLtXRSV
-        lK2oCQOKVWX+1GJKXeXvuh9LgwdKBvaRVW8s6ndf4acOlotuYFWpU9wl1/Z9csr2
-        OtZCbpN4UwrEMdX8sVYakWPvx0leXUW4GpTz9y8B1YIupwgKXIgAxEXgwQndUbTf
-        ahJREZs46z1rOQvghL5Io2251UbVpRfZdr7AsiVMisbbg5izS1wuyzdNkd80NFKq
-        wTgVXG8LTMd6/9bRvF3efv7TDUKSmssgPOj55pLJ5An44ILeYY+W101U1gIHUS3B
-        5PyKTn8Ejbwrre77fcf1LWMDa4tACIrHN+fuBfvM2DCmaqbwwCBwxmF4PH1C6sjH
-        hgL2Ha36pdRXcg==
-X-ME-Proxy: <xmx:qTEsW6P21gInDe9uivl3HOhRgMyASIZ8dB_h4o07R2OB42PLwEbzeA>
-    <xmx:qTEsW7vBqzdLzGgsrcYriPtg_yCHYVCfxTXMAv8JplFbUSaI3ZY8ZA>
-    <xmx:qjEsW-IZ8FmBrh4hGE2HcD_QJaKnCaQldfGYjdgubIfa8xSnsGovmA>
-    <xmx:qjEsWyPC0tfpAZPbKfSrP4Eye_xH-KJG_tw7SUsWcPdQzZS9xshyTA>
-    <xmx:qjEsW6AQ2-oVOUUraeL_UqoIesBq5xhtews8AtEgQIB0GxHP-Hw0LQ>
-    <xmx:qjEsW-eptBMcEe3ORiGlMQAu2rRM8KesibgZuvNgGyw7n6ET9zN78w>
-X-ME-Sender: <xms:qTEsW57ZXRZVEKyhDjTHf9tVPbo_NLCblVEFp6gB_z6WSAI5ceizBA>
+        fm3; bh=X9f16w5jbDY0AGj12bqazCA5F6tTBBebSjDlgQzs9Zg=; b=WabPF2TC
+        Lh6Xpqawt07K2YL7H5HibeAMYhM9douvk8Waa5wEMNXNlrTAzpOrYrCl6s6BE8zp
+        W5LRKylEsIBWqbZEGImvNk6KbEtGXqbRY5ICYhDeH8Zee9egZYfljAd7PooOhoXR
+        GFqnrYjVcqNHxiuJznJnRcSJKNcbogGF7b5E2bBbpSlMNctImIVGl+8w2qIKiYxl
+        YVd1nEYe+FlmLi2WWteGg8ki5aR82QlqTyOWZXTXw5g0m5ciWnPb/9NNsn1jPHqd
+        1ehG9H4yHZygOiAOEUP2zluLG3RmXp6FQTR9nh2kuVtT+BrdhA7+abjnBk3U3M2q
+        +ZhTEIq5f4sdcw==
+X-ME-Proxy: <xmx:rTEsW9X45l94zfGwRgiEMvjIOPzIUmvmDJj6z_VVepzngDj-FIcPoA>
+    <xmx:rTEsW2bAVsqTFF1s4CAQhjbwPyRNXYv3l8lGg7vB_vUX7hoYtY6DWA>
+    <xmx:rTEsWwVKqOuzffRd-kRENivC7xN61ztAox46_hkzVcupK4PE7ngEyg>
+    <xmx:rTEsW543N-YAq2lBNjOnff4aCc7NP8PaJz-7IAAUg2vouTtcK3-38A>
+    <xmx:rTEsWwea8EdLMAUP0CVQErUoV5p9wW0ba3pVz4ddCnqBwyUcgpYjnQ>
+    <xmx:rTEsWw1zMKQul3NHMc_7BdjxSEJL9rrhIUHBT931lcbd_u7YSJe2Og>
+X-ME-Sender: <xms:rTEsW5_1vFigSGsUMsYIZdRl69A8KZM7cDAPaGrBEbUQBsMJwagnkQ>
 Received: from localhost (124-169-15-204.dyn.iinet.net.au [124.169.15.204])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3DF6210293;
-        Thu, 21 Jun 2018 19:15:52 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1AB9810252;
+        Thu, 21 Jun 2018 19:15:56 -0400 (EDT)
 From:   "Tobin C. Harding" <me@tobin.cc>
 To:     Theodore Ts'o <tytso@mit.edu>
 Cc:     "Tobin C. Harding" <me@tobin.cc>,
@@ -72,9 +72,9 @@ Cc:     "Tobin C. Harding" <me@tobin.cc>,
         Arnd Bergmann <arnd@arndb.de>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v9 2/4] random: Return nbytes filled from hw RNG
-Date:   Fri, 22 Jun 2018 09:15:32 +1000
-Message-Id: <20180621231534.32278-3-me@tobin.cc>
+Subject: [PATCH v9 3/4] vsprintf: Use hw RNG for ptr_key
+Date:   Fri, 22 Jun 2018 09:15:33 +1000
+Message-Id: <20180621231534.32278-4-me@tobin.cc>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180621231534.32278-1-me@tobin.cc>
 References: <20180621231534.32278-1-me@tobin.cc>
@@ -83,77 +83,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the function get_random_bytes_arch() has return value 'void'.
-If the hw RNG fails we currently fall back to using get_random_bytes().
-This defeats the purpose of requesting random material from the hw RNG
-in the first place.
+Currently we must wait for enough entropy to become available before
+hashed pointers can be printed.  We can remove this wait by using the
+hw RNG if available.
 
-There are currently no intree users of get_random_bytes_arch().
+Use hw RNG to get keying material.
 
-Only get random bytes from the hw RNG, make function return the number
-of bytes retrieved from the hw RNG.
-
-Acked-by: Theodore Ts'o <tytso@mit.edu>
 Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Suggested-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Tobin C. Harding <me@tobin.cc>
 ---
- drivers/char/random.c  | 16 +++++++++-------
- include/linux/random.h |  2 +-
- 2 files changed, 10 insertions(+), 8 deletions(-)
+ lib/vsprintf.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index ed679099afba..e98fa03cdb91 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1724,26 +1724,28 @@ EXPORT_SYMBOL(del_random_ready_callback);
-  * key known by the NSA).  So it's useful if we need the speed, but
-  * only if we're willing to trust the hardware manufacturer not to
-  * have put in a back door.
-+ *
-+ * Return number of bytes filled in.
-  */
--void get_random_bytes_arch(void *buf, int nbytes)
-+int __must_check get_random_bytes_arch(void *buf, int nbytes)
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index a48aaa79d352..6c1fb395bddf 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1675,8 +1675,16 @@ static struct random_ready_callback random_ready = {
+ 
+ static int __init initialize_ptr_random(void)
  {
-+	int left = nbytes;
- 	char *p = buf;
+-	int ret = add_random_ready_callback(&random_ready);
++	int key_size = sizeof(ptr_key);
++	int ret;
++
++	/* Use hw RNG if available. */
++	if (get_random_bytes_arch(&ptr_key, key_size) == key_size) {
++		static_branch_disable(&not_filled_random_ptr_key);
++		return 0;
++	}
  
--	trace_get_random_bytes_arch(nbytes, _RET_IP_);
--	while (nbytes) {
-+	trace_get_random_bytes_arch(left, _RET_IP_);
-+	while (left) {
- 		unsigned long v;
--		int chunk = min(nbytes, (int)sizeof(unsigned long));
-+		int chunk = min_t(int, left, sizeof(unsigned long));
- 
- 		if (!arch_get_random_long(&v))
- 			break;
- 
- 		memcpy(p, &v, chunk);
- 		p += chunk;
--		nbytes -= chunk;
-+		left -= chunk;
- 	}
- 
--	if (nbytes)
--		get_random_bytes(p, nbytes);
-+	return nbytes - left;
- }
- EXPORT_SYMBOL(get_random_bytes_arch);
- 
-diff --git a/include/linux/random.h b/include/linux/random.h
-index 2ddf13b4281e..f1c9bc5cd231 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -38,7 +38,7 @@ extern void get_random_bytes(void *buf, int nbytes);
- extern int wait_for_random_bytes(void);
- extern int add_random_ready_callback(struct random_ready_callback *rdy);
- extern void del_random_ready_callback(struct random_ready_callback *rdy);
--extern void get_random_bytes_arch(void *buf, int nbytes);
-+extern int __must_check get_random_bytes_arch(void *buf, int nbytes);
- 
- #ifndef MODULE
- extern const struct file_operations random_fops, urandom_fops;
++	ret = add_random_ready_callback(&random_ready);
+ 	if (!ret) {
+ 		return 0;
+ 	} else if (ret == -EALREADY) {
 -- 
 2.17.1
 
