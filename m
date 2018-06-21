@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457BAC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C9BC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BA2E20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:00:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BA2E20846
+	by mail.kernel.org (Postfix) with ESMTP id 01CEF20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:01:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01CEF20846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933356AbeFUNAk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:00:40 -0400
+        id S933433AbeFUNBI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:01:08 -0400
 Received: from smtp03.citrix.com ([162.221.156.55]:63762 "EHLO
         SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933221AbeFUNAg (ORCPT
+        with ESMTP id S932972AbeFUNAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 09:00:36 -0400
 X-IronPort-AV: E=Sophos;i="5.51,251,1526342400"; 
-   d="scan'208";a="58220315"
+   d="scan'208";a="58220301"
 From:   Ross Lagerwall <ross.lagerwall@citrix.com>
 To:     <netdev@vger.kernel.org>
 CC:     Ross Lagerwall <ross.lagerwall@citrix.com>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Juergen Gross <jgross@suse.com>,
         "David S. Miller" <davem@davemloft.net>,
-        <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
-        Liam Shepherd <liam@dancer.es>
-Subject: [PATCH 2/2] xen-netfront: Update features after registering netdev
-Date:   Thu, 21 Jun 2018 14:00:21 +0100
-Message-ID: <20180621130021.27029-3-ross.lagerwall@citrix.com>
+        <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] xen-netfront: Fix mismatched rtnl_unlock
+Date:   Thu, 21 Jun 2018 14:00:20 +0100
+Message-ID: <20180621130021.27029-2-ross.lagerwall@citrix.com>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180621130021.27029-1-ross.lagerwall@citrix.com>
 References: <20180621130021.27029-1-ross.lagerwall@citrix.com>
@@ -45,45 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the features after calling register_netdev() otherwise the
-device features are not set up correctly and it not possible to change
-the MTU of the device. After this change, the features reported by
-ethtool match the device's features before the commit which introduced
-the issue and it is possible to change the device's MTU.
-
 Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
-Reported-by: Liam Shepherd <liam@dancer.es>
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
 ---
- drivers/net/xen-netfront.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/xen-netfront.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index ee4cb6c..a57daec 100644
+index 922ce0a..ee4cb6c 100644
 --- a/drivers/net/xen-netfront.c
 +++ b/drivers/net/xen-netfront.c
-@@ -1951,10 +1951,6 @@ static int xennet_connect(struct net_device *dev)
- 	/* talk_to_netback() sets the correct number of queues */
- 	num_queues = dev->real_num_tx_queues;
- 
--	rtnl_lock();
--	netdev_update_features(dev);
--	rtnl_unlock();
--
- 	if (dev->reg_state == NETREG_UNINITIALIZED) {
- 		err = register_netdev(dev);
- 		if (err) {
-@@ -1964,6 +1960,10 @@ static int xennet_connect(struct net_device *dev)
- 		}
+@@ -1810,7 +1810,7 @@ static int talk_to_netback(struct xenbus_device *dev,
+ 	err = xen_net_read_mac(dev, info->netdev->dev_addr);
+ 	if (err) {
+ 		xenbus_dev_fatal(dev, err, "parsing %s/mac", dev->nodename);
+-		goto out;
++		goto out_unlocked;
  	}
  
-+	rtnl_lock();
-+	netdev_update_features(dev);
-+	rtnl_unlock();
-+
- 	/*
- 	 * All public and private state should now be sane.  Get
- 	 * ready to start sending and receiving packets and give the driver
+ 	rtnl_lock();
+@@ -1925,6 +1925,7 @@ static int talk_to_netback(struct xenbus_device *dev,
+ 	xennet_destroy_queues(info);
+  out:
+ 	rtnl_unlock();
++out_unlocked:
+ 	device_unregister(&dev->dev);
+ 	return err;
+ }
 -- 
 2.9.5
 
