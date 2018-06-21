@@ -2,73 +2,70 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4866C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE406C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA92223E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:29:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ai7V+7zL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA92223E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 7375D21E9A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:29:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7375D21E9A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933878AbeFUV26 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:28:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41716 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933731AbeFUV24 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:28:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/q2pwDos/ZqUD2M28EO7v4xmpqRARdWtpvnvzmCb13s=; b=Ai7V+7zLpKx7ds5UWAmjNQkw7
-        3LnGtraUUzYkADPHAfuCjY97xok4uM8BiSLkPGY1z7U/+yjH0ijoLnly2niImlYOYcwf+9G9wEDmb
-        TTfWQYrTTNhzMLvJrCQLlKv5nhspuPlnOWMg702RFWsjZLmsmZ46C/Ys4vj3XW+vsaN0ptD+1ubfv
-        kO2VkUBtP4WJih0ZMFcfJlNVAfmUWrOz51QUJLYbHnXsw+sK8zN40NMIV18AdkAS7jsCGirlQvWwo
-        MiJUP0ZMC7ARCt3qcRO9EwI2L7cILFyglDEIYCAG28BvsWRoix08Kv0EFefx3wcuWq7B5ZWYKmw6E
-        sX5F1khRg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78S-0001ZI-BI; Thu, 21 Jun 2018 21:28:56 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 01/26] radix tree test suite: fix build
-Date:   Thu, 21 Jun 2018 14:28:10 -0700
-Message-Id: <20180621212835.5636-2-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
-References: <20180621212835.5636-1-willy@infradead.org>
+        id S933943AbeFUV3I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:29:08 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:38446 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933879AbeFUV3A (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 21 Jun 2018 17:29:00 -0400
+Received: from linux-r8p5.suse.cz (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Thu, 21 Jun 2018 15:28:49 -0600
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     akpm@linux-foundation.org, torvalds@linux-foundation.org
+Cc:     tgraf@suug.ch, herbert@gondor.apana.org.au,
+        manfred@colorfullife.com, mhocko@kernel.org,
+        guillaume.knispel@supersonicimagine.com, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dave@stgolabs.net,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 1/4] lib/rhashtable: simplify bucket_table_alloc()
+Date:   Thu, 21 Jun 2018 14:28:22 -0700
+Message-Id: <20180621212825.3059-2-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180621212825.3059-1-dave@stgolabs.net>
+References: <20180621212825.3059-1-dave@stgolabs.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that idr.c includes xarray.h, we need to have an xarray.h to include
-in the test suite.
+As of ce91f6ee5 (mm: kvmalloc does not fallback to vmalloc for incompatible gfp flag),
+we can simplify the caller and trust kvzalloc() to just do the right thing.
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- tools/testing/radix-tree/linux/xarray.h | 2 ++
- 1 file changed, 2 insertions(+)
- create mode 100644 tools/testing/radix-tree/linux/xarray.h
+ lib/rhashtable.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/tools/testing/radix-tree/linux/xarray.h b/tools/testing/radix-tree/linux/xarray.h
-new file mode 100644
-index 000000000000..df3812cda376
---- /dev/null
-+++ b/tools/testing/radix-tree/linux/xarray.h
-@@ -0,0 +1,2 @@
-+#include "generated/map-shift.h"
-+#include "../../../../include/linux/xarray.h"
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 9427b5766134..26c9cd8a985a 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -175,10 +175,7 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
+ 	int i;
+ 
+ 	size = sizeof(*tbl) + nbuckets * sizeof(tbl->buckets[0]);
+-	if (gfp != GFP_KERNEL)
+-		tbl = kzalloc(size, gfp | __GFP_NOWARN | __GFP_NORETRY);
+-	else
+-		tbl = kvzalloc(size, gfp);
++	tbl = kvzalloc(size, gfp);
+ 
+ 	size = nbuckets;
+ 
 -- 
-2.17.1
+2.16.4
 
