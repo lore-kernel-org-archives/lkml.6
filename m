@@ -6,109 +6,110 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3358C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:38:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27212C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2ABB20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:38:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2ABB20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id E285A20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:39:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E285A20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932827AbeFUJix (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:38:53 -0400
-Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:52977 "EHLO
-        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932620AbeFUJiw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:38:52 -0400
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp27.blacknight.com (Postfix) with ESMTPS id 26575B89AC
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:38:51 +0100 (IST)
-Received: (qmail 12912 invoked from network); 21 Jun 2018 09:38:51 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.171])
-  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 21 Jun 2018 09:38:51 -0000
-Date:   Thu, 21 Jun 2018 10:38:50 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S932848AbeFUJju (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:39:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:11164 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932620AbeFUJjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:39:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 02:39:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,251,1526367600"; 
+   d="scan'208";a="66018408"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 21 Jun 2018 02:39:44 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 21 Jun 2018 12:39:43 +0300
+Date:   Thu, 21 Jun 2018 12:39:43 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     USB list <linux-usb@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 05/19] sched/numa: Use task faults only if numa_group
- is not yet setup
-Message-ID: <20180621093850.h772wj5ww4uprbp7@techsingularity.net>
-References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1529514181-9842-6-git-send-email-srikar@linux.vnet.ibm.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kbuild test robot <lkp@intel.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Guenter Roeck <linux@roeck-us.net>, kbuild-all@01.org
+Subject: Re: [PATCH] staging/typec: fix tcpci_rt1711h build errors
+Message-ID: <20180621093943.GE2847@kuha.fi.intel.com>
+References: <f344e5f3-4e92-1fd0-ef4d-7b96065466b8@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529514181-9842-6-git-send-email-srikar@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <f344e5f3-4e92-1fd0-ef4d-7b96065466b8@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 10:32:46PM +0530, Srikar Dronamraju wrote:
-> When numa_group faults are available, task_numa_placement only uses
-> numa_group faults to evaluate preferred node. However it still accounts
-> task faults and even evaluates the preferred node just based on task
-> faults just to discard it in favour of preferred node chosen on the
-> basis of numa_group.
+On Wed, Jun 20, 2018 at 05:05:42PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> Instead use task faults only if numa_group is not set.
+> Fix Kconfig warning and build errors in staging/typec/rt1711h.c.
+> The driver uses I2C interfaces so it should depend on I2C.
 > 
-> Running SPECjbb2005 on a 4 node machine and comparing bops/JVM
-> JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
-> 16    25549.6     25215.7     -1.30
-> 1     73190       72107       -1.47
+> WARNING: unmet direct dependencies detected for TYPEC_TCPCI
+>   Depends on [m]: STAGING [=y] && TYPEC_TCPM [=y] && I2C [=m]
+>   Selected by [y]:
+>   - TYPEC_RT1711H [=y] && STAGING [=y] && TYPEC_TCPM [=y]
 > 
-> Running SPECjbb2005 on a 16 node machine and comparing bops/JVM
-> JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
-> 8     113437      113372      -0.05
-> 1     196130      177403      -9.54
+> and then:
+> drivers/staging/typec/tcpci.o: In function `tcpci_probe':
+> ../drivers/staging/typec/tcpci.c:536: undefined reference to `__devm_regmap_init_i2c'
+> drivers/staging/typec/tcpci.o: In function `tcpci_i2c_driver_init':
+> ../drivers/staging/typec/tcpci.c:593: undefined reference to `i2c_register_driver'
+> drivers/staging/typec/tcpci.o: In function `tcpci_i2c_driver_exit':
+> ../drivers/staging/typec/tcpci.c:593: undefined reference to `i2c_del_driver'
+> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_check_revision':
+> ../drivers/staging/typec/tcpci_rt1711h.c:218: undefined reference to `i2c_smbus_read_word_data'
+> ../drivers/staging/typec/tcpci_rt1711h.c:225: undefined reference to `i2c_smbus_read_word_data'
+> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_probe':
+> ../drivers/staging/typec/tcpci_rt1711h.c:251: undefined reference to `__devm_regmap_init_i2c'
+> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_i2c_driver_init':
+> ../drivers/staging/typec/tcpci_rt1711h.c:308: undefined reference to `i2c_register_driver'
+> drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_i2c_driver_exit':
+> ../drivers/staging/typec/tcpci_rt1711h.c:308: undefined reference to `i2c_del_driver'
 > 
-> (numbers from v1 based on v4.17-rc5)
-> Testcase       Time:         Min         Max         Avg      StdDev
-> numa01.sh      Real:      506.35      794.46      599.06      104.26
-> numa01.sh       Sys:      150.37      223.56      195.99       24.94
-> numa01.sh      User:    43450.69    61752.04    49281.50     6635.33
-> numa02.sh      Real:       60.33       62.40       61.31        0.90
-> numa02.sh       Sys:       18.12       31.66       24.28        5.89
-> numa02.sh      User:     5203.91     5325.32     5260.29       49.98
-> numa03.sh      Real:      696.47      853.62      745.80       57.28
-> numa03.sh       Sys:       85.68      123.71       97.89       13.48
-> numa03.sh      User:    55978.45    66418.63    59254.94     3737.97
-> numa04.sh      Real:      444.05      514.83      497.06       26.85
-> numa04.sh       Sys:      230.39      375.79      316.23       48.58
-> numa04.sh      User:    35403.12    41004.10    39720.80     2163.08
-> numa05.sh      Real:      423.09      460.41      439.57       13.92
-> numa05.sh       Sys:      287.38      480.15      369.37       68.52
-> numa05.sh      User:    34732.12    38016.80    36255.85     1070.51
+> Fixes: ce08eaeb6388 ("staging: typec: rt1711h typec chip driver")
 > 
-> Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-> numa01.sh      Real:      478.45      565.90      515.11       30.87 	 16.29%
-> numa01.sh       Sys:      207.79      271.04      232.94       21.33 	 -15.8%
-> numa01.sh      User:    39763.93    47303.12    43210.73     2644.86 	 14.04%
-> numa02.sh      Real:       60.00       61.46       60.78        0.49 	 0.871%
-> numa02.sh       Sys:       15.71       25.31       20.69        3.42 	 17.35%
-> numa02.sh      User:     5175.92     5265.86     5235.97       32.82 	 0.464%
-> numa03.sh      Real:      776.42      834.85      806.01       23.22 	 -7.47%
-> numa03.sh       Sys:      114.43      128.75      121.65        5.49 	 -19.5%
-> numa03.sh      User:    60773.93    64855.25    62616.91     1576.39 	 -5.36%
-> numa04.sh      Real:      456.93      511.95      482.91       20.88 	 2.930%
-> numa04.sh       Sys:      178.09      460.89      356.86       94.58 	 -11.3%
-> numa04.sh      User:    36312.09    42553.24    39623.21     2247.96 	 0.246%
-> numa05.sh      Real:      393.98      493.48      436.61       35.59 	 0.677%
-> numa05.sh       Sys:      164.49      329.15      265.87       61.78 	 38.92%
-> numa05.sh      User:    33182.65    36654.53    35074.51     1187.71 	 3.368%
-> 
-> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: ShuFan Lee <shufan_lee@richtek.com>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: kbuild-all@01.org
 
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Revieved-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+> ---
+>  drivers/staging/typec/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- lnx-418-rc1.orig/drivers/staging/typec/Kconfig
+> +++ lnx-418-rc1/drivers/staging/typec/Kconfig
+> @@ -11,6 +11,7 @@ config TYPEC_TCPCI
+>  
+>  config TYPEC_RT1711H
+>  	tristate "Richtek RT1711H Type-C chip driver"
+> +	depends on I2C
+>  	select TYPEC_TCPCI
+>  	help
+>  	  Richtek RT1711H Type-C chip driver that works with
+> 
+
+Thanks,
 
 -- 
-Mel Gorman
-SUSE Labs
+heikki
