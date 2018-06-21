@@ -5,36 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2289C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DE2C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87850208A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:40:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87850208A4
+	by mail.kernel.org (Postfix) with ESMTP id 7F9CD208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:40:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F9CD208A1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933015AbeFUMkN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:40:13 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:58720 "EHLO mail.skyhub.de"
+        id S933179AbeFUMk2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:40:28 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:58744 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932764AbeFUMkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:40:12 -0400
+        id S932764AbeFUMk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 08:40:27 -0400
 X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
 Received: from mail.skyhub.de ([127.0.0.1])
         by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id E-5FPjbChy6Y; Thu, 21 Jun 2018 14:40:11 +0200 (CEST)
+        with ESMTP id EcKpSMtqWsyj; Thu, 21 Jun 2018 14:40:26 +0200 (CEST)
 Received: from zn.tnic (p200300EC2BD18C00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd1:8c00:329c:23ff:fea6:a903])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D1B661EC0077;
-        Thu, 21 Jun 2018 14:40:10 +0200 (CEST)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 14CC31EC0077;
+        Thu, 21 Jun 2018 14:40:26 +0200 (CEST)
 From:   Borislav Petkov <bp@alien8.de>
 To:     Tony Luck <tony.luck@intel.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>
 Subject: [PATCH] x86/mce: Do not overwrite MCi_STATUS in mce_no_way_out()
-Date:   Thu, 21 Jun 2018 14:40:00 +0200
-Message-Id: <20180621124000.6163-1-bp@alien8.de>
+Date:   Thu, 21 Jun 2018 14:40:20 +0200
+Message-Id: <20180621124020.6244-1-bp@alien8.de>
 X-Mailer: git-send-email 2.17.0.582.gccdcbd54c
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
