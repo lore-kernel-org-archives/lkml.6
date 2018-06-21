@@ -2,143 +2,97 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759EFC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B4FC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26FF521A75
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:08:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26FF521A75
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 2804D21A68
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:08:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q2Uq8jOm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2804D21A68
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754253AbeFUTI3 (ORCPT
+        id S1754296AbeFUTIm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:08:29 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:47932 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754079AbeFUTI1 (ORCPT
+        Thu, 21 Jun 2018 15:08:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47670 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753970AbeFUTIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:08:27 -0400
-Received: from mipsdag02.mipstec.com (mail2.mips.com [12.201.5.32]) by mx1403.ess.rzc.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Thu, 21 Jun 2018 19:07:22 +0000
-Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag02.mipstec.com
- (10.20.40.47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Thu, 21
- Jun 2018 12:07:21 -0700
-Received: from localhost (10.20.2.29) by mipsdag02.mipstec.com (10.20.40.47)
- with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Thu, 21 Jun
- 2018 12:07:21 -0700
-Date:   Thu, 21 Jun 2018 12:07:21 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     Daniel Vacek <neelx@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH] Revert "mm: page_alloc: skip over regions of invalid
- pfns where possible"
-Message-ID: <20180621190721.bdr42xmp6f2uba7x@pburton-laptop>
-References: <20180316143855.29838-1-neelx@redhat.com>
+        Thu, 21 Jun 2018 15:08:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SBnbcaSmmWqvz09WaNXyTe0vpdHSzS0j+dCXrsxsdXA=; b=Q2Uq8jOmbFMEjLe+dg/19Qx4R
+        TSFDv12x1HVXm0bVtTiVA6z9fhWpFnFJykiRTbBL5ICxO4n+CnkEYe5WoIhBBMrfD2mhQ8dnX6ibi
+        Nd6QKQJLj/QmxA7wvu0NjNzz3NH16qmD5hdked3tIzzmyEp1l5a8bJz6IroPiipQjzGXhrPAvElUW
+        vr8RMIqCxsqNTyhJQuF/jdbxED/4SrFzXpNavgTnM/QBfcmJJoc5H5MAEcmY0OilmKrATKqQ6GG6k
+        AP0ADGo5vWv00DFXL4zFJA67q43qiwmfPTJp/pyKbltkVeK69TfbLZTFJFGCZwBjfQrojnLAXoRe6
+        xI0cc7XjA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fW4wh-0004oT-Db; Thu, 21 Jun 2018 19:08:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7FFE82029FA0A; Thu, 21 Jun 2018 21:08:32 +0200 (CEST)
+Date:   Thu, 21 Jun 2018 21:08:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/util_est: fix util_est_dequeue() for throttled cfs
+ rq
+Message-ID: <20180621190832.GD27616@hirez.programming.kicks-ass.net>
+References: <1528972380-16268-1-git-send-email-vincent.guittot@linaro.org>
+ <20180614113232.GG32302@e110439-lin>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180316143855.29838-1-neelx@redhat.com>
-User-Agent: NeoMutt/20180512
-X-BESS-ID: 1529608042-321459-32393-17165-1
-X-BESS-VER: 2018.7-r1806151722
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Envelope-From: Paul.Burton@mips.com
-X-BESS-Outbound-Spam-Score: 0.50
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194295
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.50 BSF_RULE7568M          META: Custom Rule 7568M 
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
-X-BESS-Orig-Rcpt: neelx@redhat.com,linux-kernel@vger.kernel.org,linux-mm@kvack.org,ard.biesheuvel@linaro.org,akpm@linux-foundation.org,mhocko@suse.com,vbabka@suse.cz,mgorman@techsingularity.net,pasha.tatashin@oracle.com,stable@vger.kernel.org
-X-BESS-BRTS-Status: 1
+In-Reply-To: <20180614113232.GG32302@e110439-lin>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On Thu, Jun 14, 2018 at 12:32:32PM +0100, Patrick Bellasi wrote:
+> On 14-Jun 12:33, Vincent Guittot wrote:
+> > When a cfs_rq is throttled, parent cfs_rq->nr_running is decreased and
+> > everything happens at cfs_rq level. Currently util_est stays unchanged
+> > in such case and it keeps accounting the utilization of throttled tasks.
+> > This can somewhat make sense as we don't dequeue tasks but only throttled
+> > cfs_rq.
 
-Hmm... I only just noticed this because you CC'd an email address that
-is no longer functional. I presume you're not using .mailmap, which
-would have given you my current email address.
+> > If a task of another group is enqueued/dequeued and root cfs_rq becomes
+> > idle during the dequeue, util_est will be cleared whereas it was
+> > accounting util_est of throttled tasks before.
 
-On Fri, Mar 16, 2018 at 03:38:55PM +0100, Daniel Vacek wrote:
-> This reverts commit b92df1de5d289c0b5d653e72414bf0850b8511e0. The commit
-> is meant to be a boot init speed up skipping the loop in memmap_init_zone()
-> for invalid pfns. But given some specific memory mapping on x86_64 (or more
-> generally theoretically anywhere but on arm with CONFIG_HAVE_ARCH_PFN_VALID)
+> > So the behavior of util_est
+> > is not always the same regarding throttled tasks and depends of side
+> > activity. Furthermore, util_est will not be updated when the cfs_rq is
+> > unthrottled
 
-My patch definitely wasn't ARM-specific & I have never tested it on ARM.
-It was motivated by a MIPS platform with an extremely sparse memory map.
-Could you explain why you think it depends on ARM or
-CONFIG_HAVE_ARCH_PFN_VALID?
+> > as everything happens at cfs rq level. Main results is that
+> > util_est will stay null whereas we now have running tasks. We have to wait
+> > for the next dequeue/enqueue of the previously throttled tasks to get an
+> > up to date util_est.
+> > 
+> > Remove the assumption that cfs_rq's estimated utilization of a CPU is 0
+> > if there is no running task so the util_est of a task remains until the
+> > latter is dequeued even if its cfs_rq has been throttled.
 
-> the implementation also skips valid pfns which is plain wrong and causes
-> 'kernel BUG at mm/page_alloc.c:1389!'
+> > Fixes: 7f65ea42eb00 ("sched/fair: Add util_est on top of PELT")
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Which VM_BUG_ON is that? I don't see one on line 1389 as of commit
-b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns where
-possible") or any mainline final release since.
-
-> crash> log | grep -e BUG -e RIP -e Call.Trace -e move_freepages_block -e rmqueue -e freelist -A1
-> kernel BUG at mm/page_alloc.c:1389!
-> invalid opcode: 0000 [#1] SMP
-> --
-> RIP: 0010:[<ffffffff8118833e>]  [<ffffffff8118833e>] move_freepages+0x15e/0x160
-> RSP: 0018:ffff88054d727688  EFLAGS: 00010087
-> --
-> Call Trace:
->  [<ffffffff811883b3>] move_freepages_block+0x73/0x80
->  [<ffffffff81189e63>] __rmqueue+0x263/0x460
->  [<ffffffff8118c781>] get_page_from_freelist+0x7e1/0x9e0
->  [<ffffffff8118caf6>] __alloc_pages_nodemask+0x176/0x420
-> --
-> RIP  [<ffffffff8118833e>] move_freepages+0x15e/0x160
->  RSP <ffff88054d727688>
+> LGTM:
 > 
-> crash> page_init_bug -v | grep RAM
-> <struct resource 0xffff88067fffd2f8>          1000 -        9bfff       System RAM (620.00 KiB)
-> <struct resource 0xffff88067fffd3a0>        100000 -     430bffff       System RAM (  1.05 GiB = 1071.75 MiB = 1097472.00 KiB)
-> <struct resource 0xffff88067fffd410>      4b0c8000 -     4bf9cfff       System RAM ( 14.83 MiB = 15188.00 KiB)
-> <struct resource 0xffff88067fffd480>      4bfac000 -     646b1fff       System RAM (391.02 MiB = 400408.00 KiB)
-> <struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff       System RAM (480.00 KiB)
-> <struct resource 0xffff88067fffd640>     100000000 -    67fffffff       System RAM ( 22.00 GiB)
-> 
-> crash> page_init_bug | head -6
-> <struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff       System RAM (480.00 KiB)
-> <struct page 0xffffea0001ede200>   1fffff00000000  0 <struct pglist_data 0xffff88047ffd9000> 1 <struct zone 0xffff88047ffd9800> DMA32          4096    1048575
-> <struct page 0xffffea0001ede200> 505736 505344 <struct page 0xffffea0001ed8000> 505855 <struct page 0xffffea0001edffc0>
-> <struct page 0xffffea0001ed8000>                0  0 <struct pglist_data 0xffff88047ffd9000> 0 <struct zone 0xffff88047ffd9000> DMA               1       4095
-> <struct page 0xffffea0001edffc0>   1fffff00000400  0 <struct pglist_data 0xffff88047ffd9000> 1 <struct zone 0xffff88047ffd9800> DMA32          4096    1048575
-> BUG, zones differ!
-> 
-> crash> kmem -p 77fff000 78000000 7b5ff000 7b600000 7b787000 7b788000
->       PAGE        PHYSICAL      MAPPING       INDEX CNT FLAGS
-> ffffea0001e00000  78000000                0        0  0 0
-> ffffea0001ed7fc0  7b5ff000                0        0  0 0
-> ffffea0001ed8000  7b600000                0        0  0 0       <<<<
-> ffffea0001ede1c0  7b787000                0        0  0 0
-> ffffea0001ede200  7b788000                0        0  1 1fffff00000000
+> Reviewed-by: Patrick Bellasi <patrick.bellasi@arm.com>
 
-I'm not really sure what I'm looking at here. I presume you're saying
-that memmap_init_zone() didn't initialize the struct page for
-phys=0x7b788000?
-
-Could you describe the memblock region list, and what ranges
-memmap_init_zone() skipped over?
-
-Thanks,
-    Paul
+Thanks guys!
