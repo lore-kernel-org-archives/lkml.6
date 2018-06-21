@@ -2,165 +2,105 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C4AC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDE7C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA3721898
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:32:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="v0PVP2J9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA3721898
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
+	by mail.kernel.org (Postfix) with ESMTP id 3B5E921898
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:36:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B5E921898
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932891AbeFURcv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 13:32:51 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:32843 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932508AbeFURct (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 13:32:49 -0400
-Received: by mail-pg0-f66.google.com with SMTP id e11-v6so1738958pgq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:32:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=t0c+txA2MJcPHgXDD8eVBCUVdZJd66Tp71+/6tWDqGM=;
-        b=v0PVP2J9Z80WJ2yvooCUvc7qU2tsn9PwYcbKqbM2GWgmCPg9qOIP88BxDEp7kmmYNy
-         rxkV3tto93DRRoTZmhSazzo5FqcAqcoobsMZTh/0A8uiuby45Nodp2EprRW1YbNkj+k6
-         rWgcRnvdD0ydgqQ7EYhd3nORLX9Zag8pZH6tSBpgWyJsriShIIDLFCVJQ9Tf4CWEv6AN
-         LdpEp+R1BCb7vFVtd7UssnQxqxbUQqCLaDSM9lLFXcBHmrtlqG0vu1VWwMz8wSvkJglq
-         2fpgMYvDmDwhBOhHt7mFSLxO7ZKb4L/06pTm6TQTPN2ftC5I/bjrM3+26f/W3Adb9Xb9
-         wYoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=t0c+txA2MJcPHgXDD8eVBCUVdZJd66Tp71+/6tWDqGM=;
-        b=HMXyXfT3acSLhSProo3vUbdwOl/DN1fC59TNzfEyT6CM7z3m9lnOgJTWAsQA5C0QyX
-         5LHW20CpZymkG22hQRIFU7AA77EvnfJ2YJpjmKXZHp63x40kmPGkDxfrGygybNtQ1BSm
-         BW/gH4UES+uQVKP33H9bt1uB/EhIKL6lt2SxoTSeMZcC1aN0QjWuP6s/FUEPcpdClC6+
-         4Vl/zfjXNBsJdZgW3qb0jSX+DrLnZ65fQawlS8eYMXIoochHPZVsV815Ojgqzs7PTt2Z
-         Lok8/dKn9RTc5Cf/EwrvIlRGgMzX77JUq0mdhyCkM22CnNV9ejtbDHnUaOPP/S1YGxMk
-         SbDg==
-X-Gm-Message-State: APt69E17IrfJgSNjiHUm0sotvk7bExHOTFE5vFlPBZJaUI/q+aE09vS8
-        qU4zrhu+uBNsj+LuFHfMgedWQA==
-X-Google-Smtp-Source: ADUXVKIN6/kE57hXjN/q38/jfyKK9Sjk2IzTojM2bwYqN6uIFYaTVoddVou09TIWEdUkjCSMU2chfQ==
-X-Received: by 2002:a63:9543:: with SMTP id t3-v6mr22935409pgn.77.1529602369347;
-        Thu, 21 Jun 2018 10:32:49 -0700 (PDT)
-Received: from cabot-100.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id o72-v6sm10030036pfk.76.2018.06.21.10.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 10:32:48 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <E233989D-59D7-4257-A50B-F2AFCB2ED8DF@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_74D6BF15-6A25-4C67-B5F7-BA0FDB36915D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 5/6] jbd2: replace current_kernel_time64 with ktime
- equivalent
-Date:   Thu, 21 Jun 2018 11:32:47 -0600
-In-Reply-To: <20180620153322.54221-5-arnd@arndb.de>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
-        y2038@lists.linaro.org,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-References: <20180620153322.54221-1-arnd@arndb.de>
- <20180620153322.54221-5-arnd@arndb.de>
-X-Mailer: Apple Mail (2.3273)
+        id S932965AbeFURgc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 13:36:32 -0400
+Received: from mga18.intel.com ([134.134.136.126]:31255 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932621AbeFURga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 13:36:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 10:36:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,252,1526367600"; 
+   d="scan'208";a="234499741"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.162])
+  by orsmga005.jf.intel.com with ESMTP; 21 Jun 2018 10:36:20 -0700
+Subject: Re: [PATCH v3 0/2] tpm: add support for nonblocking operation
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, philip.b.tricca@intel.com,
+        James.Bottomley@HansenPartnership.com,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
+References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+ <20180619131046.GC5609@linux.intel.com>
+ <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
+ <20180621171746.GJ11859@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <fff9a2ae-6f18-2401-f65b-d53f1506bbdf@intel.com>
+Date:   Thu, 21 Jun 2018 10:36:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180621171746.GJ11859@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/21/2018 10:17 AM, Jarkko Sakkinen wrote:
+> On Tue, Jun 19, 2018 at 05:45:35PM -0700, Tadeusz Struk wrote:
+>> Hi Jarkko,
+>> Thanks for reviewing the patch.
+>> There are applications/frameworks where a worker thread is not an option.
+>> Take for example the IoT use-cases and frameworks like IoT.js, or "Node.js for IoT".
+>> They are all single threaded, event-driven frameworks, using non-blocking I/O as the base of their processing model.
+>> Similarly embedded applications, which are basically just a single threaded event loop, quite often don't use threads because of resources constrains.
+>>
+>> If your concern is that user space will not adopt to this, I can say that TSS library [1] is currently blocked on this feature, and we can not enable some of the use-cases mentioned above because of this.
+>>
+>> Thanks,
+>> Tadeusz
+>>
+>> [1] https://github.com/tpm2-software/tpm2-tss
+> 
+> I put this into "mathematical" terms. TPM is by nature is blocking. It
+> does not scale this way so you are essentially just simulating
+> non-blocking behaviour.
+> 
 
---Apple-Mail=_74D6BF15-6A25-4C67-B5F7-BA0FDB36915D
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
-
-
-> On Jun 20, 2018, at 9:33 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->=20
-> jbd2 is one of the few callers of current_kernel_time64(), which
-> is a wrapper around ktime_get_coarse_real_ts64(). This calls the
-> latter directly for consistency with the rest of the kernel that
-> is moving to the ktime_get_ family of time accessors.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-
-> ---
-> fs/jbd2/commit.c | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> index 8de0e7723316..150cc030b4d7 100644
-> --- a/fs/jbd2/commit.c
-> +++ b/fs/jbd2/commit.c
-> @@ -121,7 +121,7 @@ static int journal_submit_commit_record(journal_t =
-*journal,
-> 	struct commit_header *tmp;
-> 	struct buffer_head *bh;
-> 	int ret;
-> -	struct timespec64 now =3D current_kernel_time64();
-> +	struct timespec64 now;
->=20
-> 	*cbh =3D NULL;
->=20
-> @@ -134,6 +134,7 @@ static int journal_submit_commit_record(journal_t =
-*journal,
-> 		return 1;
->=20
-> 	tmp =3D (struct commit_header *)bh->b_data;
-> +	ktime_get_coarse_real_ts64(&now);
-> 	tmp->h_commit_sec =3D cpu_to_be64(now.tv_sec);
-> 	tmp->h_commit_nsec =3D cpu_to_be32(now.tv_nsec);
->=20
-> --
-> 2.9.0
->=20
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_74D6BF15-6A25-4C67-B5F7-BA0FDB36915D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlsr4T8ACgkQcqXauRfM
-H+BYWQ/+LeQR/KV88BsBceuGWGyY53EJk5DDCyuJddZUjQFBAZenTBtPQ642zu7B
-qUHcVsk4sxSyBZK7HypEs+mpiaUKAVRHZdTKCXGIXJjCmywnLbJXYB0woRNu9kQi
-by9hSk49F5MR2lUOV1WALNAtvrm1dA0/w0NnbRSUJF+e65ybsN8KkWTMe6hLgc7V
-JHq8cwPEdSHkQiiG+JWphPD38eB3z5PJCHLlZSieMxlyR8MGqO2eBVkTUMeVHGlI
-bBcUgIFxlGp2ylj7zcTvqoFoOT6WD/7pQBv90v8TDIK5tFs1+VuNGbqT9/B6a7xW
-fKKYyPgVneiaOGoKL4icvGehM5i/Kw+R9vuYdIK081ebN+oHM2oLyQkWJVwTxoBl
-c0lSqB+BuzeU/B2HL7KR5NnG7xfi1UGsi2/KYCi4CWRkyLs/0JYdfu9RL9EgBobd
-BnHZW34mo9Ec2zD2uxgsC76qYJWeDQpboMA5OFTmsV6E9iYW6O/cJYBVHe2nKC/4
-WdykhsBddgokF0GTqRdAb4TZoF5ZslK8jyJhOx8N0J5WbhNDQtHv2fYOFT+mSH2w
-SKX+0zK0jdJXUoh9ZNN4EvkaZ5fs16Wey2ruQW8iTZeiNCqU2OFYOCi7Zo4j3xhY
-hAysShMtNy58H09UbA6NwLO6ChOdOjuWfO05l+vBmLee6u3wBFU=
-=DUnz
------END PGP SIGNATURE-----
-
---Apple-Mail=_74D6BF15-6A25-4C67-B5F7-BA0FDB36915D--
+That is correct, and this is exactly why we need this.
+Thanks,
+-- 
+Tadeusz
