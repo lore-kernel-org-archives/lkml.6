@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E59C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72195C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F8B2223FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:27:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F60B223FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:27:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FMiyvCWr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8B2223FD
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iME45sG+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F60B223FE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933729AbeFUV0f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:26:35 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:46328 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933653AbeFUV0a (ORCPT
+        id S933862AbeFUV10 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:27:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37392 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933684AbeFUV0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:26:30 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5LLO7DD012494;
-        Thu, 21 Jun 2018 21:25:32 GMT
+        Thu, 21 Jun 2018 17:26:33 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5LLNo0p138854;
+        Thu, 21 Jun 2018 21:25:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=hGUhu2AEO7AgSk9PxSWoxxGoNlwnWKxWwY8X7xbL5mM=;
- b=FMiyvCWrwGTEvUnceBMrXjWNJiP5I+zKoS17AhSV29HftT3M7mwKtM2ICHn+lOaqyhe+
- EYymQF4OMa7jiOAALu0rwqfBVSli+GzDQi9BHc56xgWWwrhqr4rLSWGAR1GpRH5PL+XS
- U4w+aH8qpphnkmvGlDFBtjfl8w0CIviQq1Pn7PyqNZ6/gmZ9OPdAzZexN+BDRPQgfgHC
- bqZPdD2/uw8XhnYIndFJkQ3w1uBE45fTRUVHCGro0/iTxcD1JInQVoKHPSkCdKRy3lrB
- rRHOFVCO4DFsM5mNF7qiVjIxZEqsZsxD8Z8GZghVMoWjPDGA5OmrlcdSY2xrZVf+M1y0 Eg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jmr2muvfe-1
+ bh=wtlSBHSu1oQpaifIje23a5dLOI4v6DYyXQpzcHVaYZg=;
+ b=iME45sG+ZOyu8nBlb95tLoHm+zYV24ie36zKyYAfknwhmQU0WKdDfyeI7578gcFUN34I
+ /HIcIa5z/5EfB4GM6yIMVfe2FHADC5pU/l5gCc9gQxxzjR0Ovl5+/8OPX7EAQ2vNIBzb
+ NrzfZW0jkFq/0D5DUc814NHqNC2qxv6UADxtVOsHFKkFQciMxpBS/u3dgJS2cxrVMJEN
+ Rdcn9ZOBwCRUmDQgdgcKzTOwX29k7o/Yih5vdMpwXvPM90YZfdU+U7mSgmGXWY708PEt
+ mNzKGQ5m8ejMF3spXoNF/4BfrEOVXmz/mnrnnS2i5jBuGTEaV8ko/r9IMLhl6sRxlJvw Jg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2jmtgx3qd7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jun 2018 21:25:31 +0000
+        Thu, 21 Jun 2018 21:25:33 +0000
 Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5LLPUxb030684
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5LLPWKf003121
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jun 2018 21:25:30 GMT
+        Thu, 21 Jun 2018 21:25:33 GMT
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5LLPRG5015026;
-        Thu, 21 Jun 2018 21:25:27 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5LLPWNU015113;
+        Thu, 21 Jun 2018 21:25:32 GMT
 Received: from xakep.us.oracle.com (/10.39.228.116)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Jun 2018 14:25:27 -0700
+        with ESMTP ; Thu, 21 Jun 2018 14:25:31 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -59,14 +59,14 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org
-Subject: [PATCH v12 01/11] x86: text_poke() may access uninitialized struct pages
-Date:   Thu, 21 Jun 2018 17:25:08 -0400
-Message-Id: <20180621212518.19914-2-pasha.tatashin@oracle.com>
+Subject: [PATCH v12 04/11] kvm/x86: remove kvm memblock dependency
+Date:   Thu, 21 Jun 2018 17:25:11 -0400
+Message-Id: <20180621212518.19914-5-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180621212518.19914-1-pasha.tatashin@oracle.com>
 References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8931 signatures=668703
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1805220000 definitions=main-1806210230
@@ -75,107 +75,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It supposed to be safe to modify static branches after jump_label_init().
-But, because static key modifying code eventually calls text_poke() we
-may end up with accessing struct page that have not been initialized.
+KVM clock is initialized later compared to other hypervisor because it has
+dependency on memblock allocator.
 
-Here is how to quickly reproduce the problem. Insert code like this
-into init/main.c:
+Lets bring it inline with other hypervisors by removing this dependency by
+using memory from BSS instead of allocating it.
 
-| +static DEFINE_STATIC_KEY_FALSE(__test);
-| asmlinkage __visible void __init start_kernel(void)
-| {
-|        char *command_line;
-|@@ -587,6 +609,10 @@ asmlinkage __visible void __init start_kernel(void)
-|        vfs_caches_init_early();
-|        sort_main_extable();
-|        trap_init();
-|+       {
-|+       static_branch_enable(&__test);
-|+       WARN_ON(!static_branch_likely(&__test));
-|+       }
-|        mm_init();
-
-The following warnings show-up:
-WARNING: CPU: 0 PID: 0 at arch/x86/kernel/alternative.c:701 text_poke+0x20d/0x230
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc1_pt_t1 #30
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.11.0-20171110_100015-anatol 04/01/2014
-RIP: 0010:text_poke+0x20d/0x230
-Code: 0f 0b 4c 89 e2 4c 89 ee 4c 89 f7 e8 7d 4b 9b 00 31 d2 31 f6 bf 86 02
-00 00 48 8b 05 95 8e 24 01 e8 78 18 d8 00 e9 55 ff ff ff <0f> 0b e9 54 fe
-ff ff 48 8b 05 75 a8 38 01 e9 64 fe ff ff 48 8b 1d
-RSP: 0000:ffffffff94e03e30 EFLAGS: 00010046
-RAX: 0100000000000000 RBX: fffff7b2c011f300 RCX: ffffffff94fcccf4
-RDX: 0000000000000001 RSI: ffffffff94e03e77 RDI: ffffffff94fcccef
-RBP: ffffffff94fcccef R08: 00000000fffffe00 R09: 00000000000000a0
-R10: 0000000000000000 R11: 0000000000000040 R12: 0000000000000001
-R13: ffffffff94e03e77 R14: ffffffff94fcdcef R15: fffff7b2c0000000
-FS:  0000000000000000(0000) GS:ffff9adc87c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff9adc8499d000 CR3: 000000000460a001 CR4: 00000000000606b0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- ? start_kernel+0x23e/0x4c8
- ? start_kernel+0x23f/0x4c8
- ? text_poke_bp+0x50/0xda
- ? arch_jump_label_transform+0x89/0xe0
- ? __jump_label_update+0x78/0xb0
- ? static_key_enable_cpuslocked+0x4d/0x80
- ? static_key_enable+0x11/0x20
- ? start_kernel+0x23e/0x4c8
- ? secondary_startup_64+0xa5/0xb0
----[ end trace abdc99c031b8a90a ]---
-
-If the code above is moved after mm_init(), no warning is shown, as struct
-pages are initialized during handover from memblock.
+The benefits:
+- remove ifdef from common code
+- earlier availability of TSC.
+- remove dependency on memblock, and reduce code
+- earlier kvm sched_clock()
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/x86/include/asm/text-patching.h |  1 +
- arch/x86/kernel/alternative.c        | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ arch/x86/kernel/kvm.c      |  1 +
+ arch/x86/kernel/kvmclock.c | 64 ++++++--------------------------------
+ arch/x86/kernel/setup.c    |  7 ++---
+ 3 files changed, 12 insertions(+), 60 deletions(-)
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index 2ecd34e2d46c..e85ff65c43c3 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -37,5 +37,6 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
- extern void *text_poke(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
-+extern int after_bootmem;
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 5b2300b818af..c65c232d3ddd 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -628,6 +628,7 @@ const __initconst struct hypervisor_x86 x86_hyper_kvm = {
+ 	.name			= "KVM",
+ 	.detect			= kvm_detect,
+ 	.type			= X86_HYPER_KVM,
++	.init.init_platform	= kvmclock_init,
+ 	.init.guest_late_init	= kvm_guest_init,
+ 	.init.x2apic_available	= kvm_para_available,
+ };
+diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+index bf8d1eb7fca3..01558d41ec2c 100644
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -23,9 +23,9 @@
+ #include <asm/apic.h>
+ #include <linux/percpu.h>
+ #include <linux/hardirq.h>
+-#include <linux/memblock.h>
+ #include <linux/sched.h>
+ #include <linux/sched/clock.h>
++#include <linux/mm.h>
  
- #endif /* _ASM_X86_TEXT_PATCHING_H */
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index a481763a3776..0230dbc3c599 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -686,13 +686,21 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
-  *
-  * Note: Must be called under text_mutex.
-  */
--void *text_poke(void *addr, const void *opcode, size_t len)
-+void __ref *text_poke(void *addr, const void *opcode, size_t len)
+ #include <asm/mem_encrypt.h>
+ #include <asm/x86_init.h>
+@@ -44,6 +44,11 @@ static int parse_no_kvmclock(char *arg)
+ }
+ early_param("no-kvmclock", parse_no_kvmclock);
+ 
++/* Aligned to page sizes to match whats mapped via vsyscalls to userspace */
++#define HV_CLOCK_SIZE	(sizeof(struct pvclock_vsyscall_time_info) * NR_CPUS)
++#define WALL_CLOCK_SIZE	(sizeof(struct pvclock_wall_clock))
++static u8 hv_clock_mem[PAGE_ALIGN(HV_CLOCK_SIZE)] __aligned(PAGE_SIZE);
++static u8 wall_clock_mem[PAGE_ALIGN(WALL_CLOCK_SIZE)] __aligned(PAGE_SIZE);
+ /* The hypervisor will put information about time periodically here */
+ static struct pvclock_vsyscall_time_info *hv_clock;
+ static struct pvclock_wall_clock *wall_clock;
+@@ -244,43 +249,12 @@ static void kvm_shutdown(void)
+ 	native_machine_shutdown();
+ }
+ 
+-static phys_addr_t __init kvm_memblock_alloc(phys_addr_t size,
+-					     phys_addr_t align)
+-{
+-	phys_addr_t mem;
+-
+-	mem = memblock_alloc(size, align);
+-	if (!mem)
+-		return 0;
+-
+-	if (sev_active()) {
+-		if (early_set_memory_decrypted((unsigned long)__va(mem), size))
+-			goto e_free;
+-	}
+-
+-	return mem;
+-e_free:
+-	memblock_free(mem, size);
+-	return 0;
+-}
+-
+-static void __init kvm_memblock_free(phys_addr_t addr, phys_addr_t size)
+-{
+-	if (sev_active())
+-		early_set_memory_encrypted((unsigned long)__va(addr), size);
+-
+-	memblock_free(addr, size);
+-}
+-
+ void __init kvmclock_init(void)
  {
- 	unsigned long flags;
- 	char *vaddr;
- 	struct page *pages[2];
- 	int i;
+ 	struct pvclock_vcpu_time_info *vcpu_time;
+-	unsigned long mem, mem_wall_clock;
+-	int size, cpu, wall_clock_size;
++	int cpu;
+ 	u8 flags;
  
-+	/* While boot memory allocator is runnig we cannot use struct
-+	 * pages as they are not yet initialized. However, we also know
-+	 * that this is early in boot, and it is safe to fallback to
-+	 * text_poke_early.
-+	 */
-+	if (unlikely(!after_bootmem))
-+		return text_poke_early(addr, opcode, len);
+-	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-
+ 	if (!kvm_para_available())
+ 		return;
+ 
+@@ -290,28 +264,11 @@ void __init kvmclock_init(void)
+ 	} else if (!(kvmclock && kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE)))
+ 		return;
+ 
+-	wall_clock_size = PAGE_ALIGN(sizeof(struct pvclock_wall_clock));
+-	mem_wall_clock = kvm_memblock_alloc(wall_clock_size, PAGE_SIZE);
+-	if (!mem_wall_clock)
+-		return;
+-
+-	wall_clock = __va(mem_wall_clock);
+-	memset(wall_clock, 0, wall_clock_size);
+-
+-	mem = kvm_memblock_alloc(size, PAGE_SIZE);
+-	if (!mem) {
+-		kvm_memblock_free(mem_wall_clock, wall_clock_size);
+-		wall_clock = NULL;
+-		return;
+-	}
+-
+-	hv_clock = __va(mem);
+-	memset(hv_clock, 0, size);
++	wall_clock = (struct pvclock_wall_clock *)wall_clock_mem;
++	hv_clock = (struct pvclock_vsyscall_time_info *)hv_clock_mem;
+ 
+ 	if (kvm_register_clock("primary cpu clock")) {
+ 		hv_clock = NULL;
+-		kvm_memblock_free(mem, size);
+-		kvm_memblock_free(mem_wall_clock, wall_clock_size);
+ 		wall_clock = NULL;
+ 		return;
+ 	}
+@@ -354,13 +311,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
+ 	int cpu;
+ 	u8 flags;
+ 	struct pvclock_vcpu_time_info *vcpu_time;
+-	unsigned int size;
+ 
+ 	if (!hv_clock)
+ 		return 0;
+ 
+-	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-
+ 	cpu = get_cpu();
+ 
+ 	vcpu_time = &hv_clock[cpu].pvti;
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 403b2d2c31d2..01fcc8bf7c8f 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1014,6 +1014,8 @@ void __init setup_arch(char **cmdline_p)
+ 	 */
+ 	init_hypervisor_platform();
+ 
++	tsc_early_delay_calibrate();
 +
- 	if (!core_kernel_text((unsigned long)addr)) {
- 		pages[0] = vmalloc_to_page(addr);
- 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+ 	x86_init.resources.probe_roms();
+ 
+ 	/* after parse_early_param, so could debug it */
+@@ -1199,11 +1201,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	memblock_find_dma_reserve();
+ 
+-#ifdef CONFIG_KVM_GUEST
+-	kvmclock_init();
+-#endif
+-
+-	tsc_early_delay_calibrate();
+ 	if (!early_xdbc_setup_hardware())
+ 		early_xdbc_register_console();
+ 
 -- 
 2.17.1
 
