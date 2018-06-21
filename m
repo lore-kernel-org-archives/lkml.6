@@ -2,95 +2,142 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 988FCC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F65C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46ECA20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:40:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SzlT5Lz/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46ECA20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4520320883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:46:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4520320883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932883AbeFUJkh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:40:37 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44573 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932620AbeFUJkf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:40:35 -0400
-Received: by mail-wr0-f193.google.com with SMTP id p12-v6so825471wrn.11;
-        Thu, 21 Jun 2018 02:40:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=2sByfOT2bN+73FAkfIoqTkf3DwGyCvZ8B2ldjgyT0Tc=;
-        b=SzlT5Lz/8oWE7qiR4Q+4t7/g5C8n2ivdIe8/A5MsUh504vNqStvm3cicWZgMSxwLZR
-         +OYuqnMkg9RQL/MeI9Lk+WmSO7goytGRwVLXHN/btvXAMHuiTPJS7TvJ+aYwxBOOxQXR
-         Zop3Gr00jbJbw4s355AHpcD6RRs0b5eRy0DCEFGoT3Pody1FIkDjLZrgXmhWuNapnaKc
-         b+E6fApyvE7OOqv4iUyJRE54Lr7SC7rWl6IgGYbX5OtQbG3T7ldJIDuUhWq8fkVHKsGy
-         bBPjmsleSbUWSiYL4DR1kC2w0LP7ApGtW+i4Ts/qtoSquctdzop/NLYC5Je05ht2H31m
-         Jagw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=2sByfOT2bN+73FAkfIoqTkf3DwGyCvZ8B2ldjgyT0Tc=;
-        b=qK0emHZ0/nOvZNJ29Qxm0sOatMmfnm0AFH72VCCyFZqKFHIlZW+7mVohiN0RLtERMU
-         CL6jdWW504dkmV3ocGmjjK5SnWNbWTDsasQHg0syB/9uDnwt1cznkKPwIu6gX9zYSEiM
-         f7OuyWkUeRi3p2g/9l7r46RnGxFtJD3lEBAgVHSLZwY1SkJ2iDn37ml9D8ItE8pBkczY
-         vsFoXq9MmyBCuMJ22L9JfHhqaEVoRH7OmwuROUEKEeGFRteVyoXXQgGVomi9UUhtyQkd
-         L7FBKA5oFYLNdcdtuye4xSlkcI44hcYv4yGZPw/686+F9KIwI8cep1cjNRA1pmxqlavj
-         NaqQ==
-X-Gm-Message-State: APt69E2NB/BigTtTBRMkJ/h4KBjLpvjxdYrh8SKbo6Fyi1N/PPYcbXj9
-        MbqsdGNmFnHFGT/6MlqqE+valh2R/Q==
-X-Google-Smtp-Source: ADUXVKILrs13h5folIqIgJvNGG2j2WXODGyPihwJbFRWSxM89Sjxzdi3717AUYjGJTCNHl0IZIBlUg==
-X-Received: by 2002:adf:c844:: with SMTP id e4-v6mr20704265wrh.236.1529574034428;
-        Thu, 21 Jun 2018 02:40:34 -0700 (PDT)
-Received: from sesnaco ([196.43.135.103])
-        by smtp.gmail.com with ESMTPSA id k17-v6sm6879984wmc.23.2018.06.21.02.40.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 02:40:33 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 12:40:19 +0300
-From:   Mawanda Henry <mawandahenrynaco@gmail.com>
-To:     mawanda111@gmail.com
-Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/i2c:  Include SPDX-license-identifier
-Message-ID: <20180621094019.GA5348@sesnaco>
+        id S932806AbeFUJqC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:46:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58406 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932620AbeFUJqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:46:00 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6AF48448DD;
+        Thu, 21 Jun 2018 09:45:59 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-127.pek2.redhat.com [10.72.12.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A3361117626;
+        Thu, 21 Jun 2018 09:45:53 +0000 (UTC)
+Subject: Re: [PATCH 3/4 V3] Remap the device table of IOMMU in encrypted
+ manner for kdump
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        linux-kernel@vger.kernel.org, dyoung@redhat.com,
+        iommu@lists.linux-foundation.org, kexec@lists.infradead.org
+References: <20180616082714.32035-1-lijiang@redhat.com>
+ <20180616082714.32035-4-lijiang@redhat.com>
+ <60c6f00e-0eb3-d39c-6a1e-8a1dc1e095af@amd.com>
+ <c591dec2-2135-2e96-8ace-87cbf4b055bf@redhat.com>
+ <20180621083915.GE3815@MiWiFi-R3L-srv>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <af3e0e99-3688-5801-27d2-3848dd0ad043@redhat.com>
+Date:   Thu, 21 Jun 2018 17:45:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180621083915.GE3815@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 09:45:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 09:45:59 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-including the SPDX license identifier header  makes it easy for
-developers and machines to know the lecense that is governing the file
+在 2018年06月21日 16:39, Baoquan He 写道:
+> On 06/21/18 at 01:42pm, lijiang wrote:
+>> 在 2018年06月21日 00:42, Tom Lendacky 写道:
+>>> On 6/16/2018 3:27 AM, Lianbo Jiang wrote:
+>>>> In kdump mode, it will copy the device table of IOMMU from the old
+>>>> device table, which is encrypted when SME is enabled in the first
+>>>> kernel. So we must remap it in encrypted manner in order to be
+>>>> automatically decrypted when we read.
+>>>>
+>>>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>>>> ---
+>>>> Some changes:
+>>>> 1. add some comments
+>>>> 2. clean compile warning.
+>>>>
+>>>>  drivers/iommu/amd_iommu_init.c | 15 ++++++++++++++-
+>>>>  1 file changed, 14 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+>>>> index 904c575..a20af4c 100644
+>>>> --- a/drivers/iommu/amd_iommu_init.c
+>>>> +++ b/drivers/iommu/amd_iommu_init.c
+>>>> @@ -889,11 +889,24 @@ static bool copy_device_table(void)
+>>>>  	}
+>>>>  
+>>>>  	old_devtb_phys = entry & PAGE_MASK;
+>>>> +
+>>>> +	/*
+>>>> +	 *  When sme enable in the first kernel, old_devtb_phys includes the
+>>>> +	 *  memory encryption mask(sme_me_mask), we must remove the memory
+>>>> +	 *  encryption mask to obtain the true physical address in kdump mode.
+>>>> +	 */
+>>>> +	if (mem_encrypt_active() && is_kdump_kernel())
+>>>> +		old_devtb_phys = __sme_clr(old_devtb_phys);
+>>>> +
+>>>
+>>> You can probably just use "if (is_kdump_kernel())" here, since memory
+>>> encryption is either on in both the first and second kernel or off in
+>>> both the first and second kernel.  At which point __sme_clr() will do
+>>> the proper thing.
+>>>
+>>> Actually, this needs to be done no matter what.  When doing either the
+>>> ioremap_encrypted() or the memremap(), the physical address should not
+>>> include the encryption bit/mask.
+>>>
+>>> Thanks,
+>>> Tom
+>>>
+>> Thanks for your comments. If we don't remove the memory encryption mask, it will
+>> return false because the 'old_devtb_phys >= 0x100000000ULL' may become true.
+> 
+> Lianbo, you may not get what Tom suggested. Tom means no matter what it
+> is, encrypted or not in 1st kernel, we need get pure physicall address,
+> and using below code is always right for both cases.
+> 
+> 	if (is_kdump_kernel())
+> 		old_devtb_phys = __sme_clr(old_devtb_phys);
+> 
+Thank you, Baoquan. I understood what Tom said. I just want to explain why removing
+the memory encryption mask is necessary before the 'old_devtb_phys >= 0x100000000ULL'.
 
-Signed-off-by: Mawanda Henry <mawandahenrynaco@gmail.com>
----
- drivers/i2c/i2c-core-slave.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/i2c/i2c-core-slave.c b/drivers/i2c/i2c-core-slave.c
-index 4a78c65..883ca836 100644
---- a/drivers/i2c/i2c-core-slave.c
-+++ b/drivers/i2c/i2c-core-slave.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Linux I2C core slave support code
-  *
--- 
-2.7.4
-
+Lianbo
+> And this is simpler. You even can add one line of code comment to say
+> like "Physical address w/o encryption mask is needed here."
+>>
+>> Lianbo
+>>>>  	if (old_devtb_phys >= 0x100000000ULL) {
+>>>>  		pr_err("The address of old device table is above 4G, not trustworthy!\n");
+>>>>  		return false;
+>>>>  	}
+>>>> -	old_devtb = memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);
+>>>> +	old_devtb = (mem_encrypt_active() && is_kdump_kernel())
+>>>> +		    ? (__force void *)ioremap_encrypted(old_devtb_phys,
+>>>> +							dev_table_size)
+>>>> +		    : memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);> +
+>>>>  	if (!old_devtb)
+>>>>  		return false;
+>>>>  
+>>>>
+>>
+>> _______________________________________________
+>> kexec mailing list
+>> kexec@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/kexec
