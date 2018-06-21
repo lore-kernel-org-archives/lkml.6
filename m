@@ -2,185 +2,145 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 652CAC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015CBC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1220D20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:52:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBRBwy+7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1220D20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B9AF9208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:53:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9AF9208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754423AbeFUKwP (ORCPT
+        id S1754333AbeFUKxb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:52:15 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:38016 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752650AbeFUKwM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:52:12 -0400
-Received: by mail-lf0-f67.google.com with SMTP id i83-v6so4089656lfh.5;
-        Thu, 21 Jun 2018 03:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=vB+m2EfDSHdw5ax2bMpPS8oPlk/j6fnisyWJFH3rwvs=;
-        b=GBRBwy+7hJ6pwGOqKf/ZxUecQW2ebQVsKiC7tLKt4HHZyisCeMSlzkO1htw+l+cU0u
-         +jJfAegKS1ZxrphrEdfoasE3BzFlrVUa7ADFYm1rRs4VJadxcvoXlQdId5VKV32I8zmX
-         hR0qer+lJQXPEqVVwHnc2WIyvQyMJ90UtwZgPvDHT+FNWEo+g1OSSJ16RTsKMufmtG5B
-         cVGsj4I78nykJ6W/DYnTnfl76ePBXrDyBhAYrghm9hpI7eRKmAO4KkyeD2LDOPMPfQiw
-         dzgjNnTF4/5YNouJB5s6sCIvwN1mZVNVqJ2ASPN6f8v3K8V4MCApl5Omoj/xrbrNJQAt
-         PxDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=vB+m2EfDSHdw5ax2bMpPS8oPlk/j6fnisyWJFH3rwvs=;
-        b=EwRDEM1mfWBGLg8fY6pdudswSzJ30j2ZCQtroCI7LLRV7StnfMlOe0OzJZ0CCkTs3f
-         6ECMUDKNFSLAcJjxSDZ9Um/2tXZUFCRBZ3XIiDNdpDDVFlJe5GkUQmiUFTi/9ZrHYEts
-         vKBQ5H6az0OHdxjG/DVow3TEgYU9ubxvAeQ2P9zASLmRPIItLBsa/U38DLftCODXxLy1
-         RA3+lAN1X/helu4Hgy6C+1dKy1+IfJhL/6/UKbXBIdDTmJKc3jFtuFGd/cX4GSLXIiDE
-         1AAMcnYAfchh1TBrKFx7kg026maATaA+uymvvL7BbRHHNbIfhBkUWhbQd8ceqe1667Fk
-         aEiQ==
-X-Gm-Message-State: APt69E3zTTdPZFfxicYLFCKHspU3nTg3E/M3IjAoDcPp+o8dwTm1/i/5
-        rcZL0NBOBpN+qtdKTr1JsCHX4ZA=
-X-Google-Smtp-Source: ADUXVKIIBE7ZgZd6ePq5Ni8j/Az5/yYSFPgkSr7BSnbFaNMtpuL4DCOGMyuk4YBXrhUYLHvQJhontw==
-X-Received: by 2002:a2e:8990:: with SMTP id c16-v6mr1231039lji.123.1529578330502;
-        Thu, 21 Jun 2018 03:52:10 -0700 (PDT)
-Received: from [192.168.0.4] (89-64-25-103.dynamic.chello.pl. [89.64.25.103])
-        by smtp.gmail.com with ESMTPSA id i78-v6sm882011lfg.73.2018.06.21.03.52.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 03:52:09 -0700 (PDT)
-From:   Piotr Bugalski <bugalski.piotr@gmail.com>
-X-Google-Original-From: Piotr Bugalski <elvis@carbonite>
-Date:   Thu, 21 Jun 2018 12:52:07 +0200 (CEST)
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-cc:     Piotr Bugalski <bugalski.piotr@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: Re: [RFC PATCH 0/2] New QuadSPI driver for Atmel SAMA5D2
-In-Reply-To: <20180620165438.39608554@bbrezillon>
-Message-ID: <alpine.DEB.2.20.1806211239590.28763@carbonite>
-References: <20180618162124.21749-1-bugalski.piotr@gmail.com> <20180620165438.39608554@bbrezillon>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 21 Jun 2018 06:53:31 -0400
+Received: from foss.arm.com ([217.140.101.70]:48342 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754018AbeFUKxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 06:53:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83C241435;
+        Thu, 21 Jun 2018 03:53:29 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 52D8D3F246;
+        Thu, 21 Jun 2018 03:53:29 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 6A2CC1AE2E48; Thu, 21 Jun 2018 11:54:05 +0100 (BST)
+Date:   Thu, 21 Jun 2018 11:54:05 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Wei Xu <xuwei5@hisilicon.com>
+Cc:     James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        suzuki.poulose@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
+        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, xiexiuqi@huawei.com,
+        huangdaode <huangdaode@hisilicon.com>,
+        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        jonathan.cameron@huawei.com,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        libeijian@hisilicon.com
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+Message-ID: <20180621105404.GB22505@arm.com>
+References: <5B2A6218.3030201@hisilicon.com>
+ <20180620144257.GB27776@arm.com>
+ <5B2A7832.4010502@hisilicon.com>
+ <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
+ <5B2A7FE1.5040607@hisilicon.com>
+ <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
+ <20180621091850.GA22505@arm.com>
+ <5B2B7A84.8090309@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B2B7A84.8090309@hisilicon.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Wei,
 
-Hi Boris,
+On Thu, Jun 21, 2018 at 11:14:28AM +0100, Wei Xu wrote:
+> On 2018/6/21 10:18, Will Deacon wrote:
+> > On Thu, Jun 21, 2018 at 09:38:53AM +0100, James Morse wrote:
+> >> On 20/06/18 17:25, Wei Xu wrote:
+> >>>     [    0.042421] Insufficient stack space to handle exception!
+> >>>     [    0.042423] ESR: 0x96000046 -- DABT (current EL)
+> >>>     [    0.043730] FAR: 0xffff0000093a80e0
+> >>>     [    0.044714] Task stack: [0xffff0000093a8000..0xffff0000093ac000]
+> >>
+> >> This was a level 2 translation fault on a write, to an address that is within
+> >> the stack....
+> >>
+> >>
+> >>>     [    0.051113] IRQ stack: [0xffff000008000000..0xffff000008004000]
+> >>>     [    0.057610] Overflow stack: [0xffff80003efce2f0..0xffff80003efcf2f0]
+> >>>     [    0.064003] CPU: 0 PID: 12 Comm: migration/0 Not tainted
+> >>> 4.17.0-45865-g2b31fe7-dirty #10
+> >>>     [    0.072201] Hardware name: linux,dummy-virt (DT)
+> >>
+> >>>     [    0.076797] pstate: 604003c5 (nZCv DAIF +PAN -UAO)
+> >>>     [    0.081727] pc : el1_sync+0x0/0xb0
+> >>
+> >> ... from the vectors.
+> >>
+> >>
+> >>>     [    0.085217] lr : kpti_install_ng_mappings+0x120/0x214
+> >>
+> >> What I think is happening is: we come out of the kpti idmap with the stack
+> >> unmapped. Shortly after we access the stack, which faults. el1_sync faults as
+> >> well when it tries to push the registers to the stack, and we keep going until
+> >> we overflow the stack.
+> >>
+> >> I can't reproduce this with kvmtool or qemu in the model.
+> > 
+> > Hmm, one thing that occurs to me is that the kpti_install_ng_mappings()
+> > code leaves the nG bit set in table entries, which is actually IGNORED in
+> > the architecture.
+> > 
+> > Wei -- does the diff below help at all? Make sure you disable CONFIG_KASAN,
+> > otherwise your kernel will take an age to boot.
+> 
+> Yes, amazing! This patch resolved the issue.
 
-Thank you very much for quick response.
+Great...
 
-On Wed, 20 Jun 2018, Boris Brezillon wrote:
+> I have tested 50 times and can not reproduce the issue any more.
+> Could you please tell more why this patch works?
 
-> Hi Piotr,
->
-> On Mon, 18 Jun 2018 18:21:22 +0200
-> Piotr Bugalski <bugalski.piotr@gmail.com> wrote:
->
->> Hello,
->>
->> Atmel SAMA5D2 is equipped with two QSPI interfaces. These interfaces can
->> work as in SPI-compatible mode or use two / four lines to improve
->> communication speed. At the moment there is QSPI driver strongly tied to
->> NOR-flash memory and MTD subsystem.
->> Intention of this change is to provide new driver which will not be tied
->> to MTD and allows using QSPI with NAND-flash memory or other peripherals
->> New spi-mem API provides abstraction layer which can disconnect QSPI
->> from MTD. This driver doesn't support regular SPI interface, it should
->> be used with spi-mem interface only.
->
-> Glad to see that people are starting to convert their SPI NOR
-> controller drivers to the SPI mem approach.
->
->> Unfortunately SAMA5D2 hardware by default supports only NOR-flash
->> memory. It allows 24- and 32-bit addressing while NAND-flash requires
->> 16-bit long. To workaround hardware limitation driver is a bit more
->> complicated.
->>
->> Request to spi-mem contains three fiels: opcode (command), address,
->> dummy bytes. SAMA5D2 QSPI hardware supports opcode, address, dummy and
->> option byte where address field can only be 24- or 32- bytes long.
->> Handling 8-bits long addresses is done using option field. For 16-bits
->> address behaviour depends of number of requested dummy bits. If there
->> are 8 or more dummy cycles, address is shifted and sent with first dummy
->> byte. Otherwise opcode is disabled and first byte of address contains
->> command opcode (works only if opcode and address use the same buswidth).
->> The limitation is when 16-bit address is used without enough dummy
->> cycles and opcode is using different buswidth than address. Other modes
->> are supported with described workaround.
->>
->> It looks like hardware has some limitation in performance. The same issue
->> exists in current QSPI driver (MTD/nor-flash) and soft-pack (bare-metal
->> library from Atmel). Without using DMA read speed is much worse than
->> maximum bandwidth (efficiency 30-40%). Any help with performance
->> improvement is highly welcome, especially for NAND-flash memories which
->> offers higher capacity than NOR-flash used with previous driver.
->>
->> Best Regards,
->> Piotr
->>
->> Piotr Bugalski (2):
->>   spi: Add QuadSPI driver for Atmel SAMA5D2
->>   dt-bindings: spi: QuadSPI driver for Atmel SAMA5D2 documentation
->>
->>  .../devicetree/bindings/spi/spi_atmel-qspi.txt     |  41 ++
->>  drivers/spi/Kconfig                                |   9 +
->>  drivers/spi/Makefile                               |   1 +
->>  drivers/spi/spi-atmel-qspi.c                       | 480 +++++++++++++++++++++
->
-> I'd like a solution where we remove the old driver. I definitely don't
-> want to have both in parallel. Did you test the new driver with a SPI
-> NOR to check if it still works correctly? If you did, then I'd suggest
-> that you add a patch updating defconfigs where the SPI_ATMEL_QUADSPI is
-> selected and another patch removing the old driver.
->
+You might need to ask your CPU design team ;)
 
-I misunderstood a bit your idea. My main concern was NAND-flash with
-QSPI interface and I expected original nor-flash driver to stay
-untouched - at least now. However idea of replacement older driver
-with spi-mem approach makes a lot of sense to me.
-I'll test nor-flash with new driver first, it should work but I prefer
-to be sure. In next version I'll follow your suggestion and replace
-old nor-flash driver.
+Without this patch, the code in idmap_kpti_install_ng_mappings() sets
+bit 11 in table descriptors so that we can keep track of which parts of
+the page table we've visited. With this patch, we don't bother tracking
+and potentially rewalk parts of the page table (which takes a very long
+time if KASAN is enabled).
 
->>  4 files changed, 531 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/spi/spi_atmel-qspi.txt
->
-> This should be a simple mv from
-> Documentation/devicetree/bindings/mtd/atmel-quadspi.txt to
-> Documentation/devicetree/bindings/spi/spi-atmel-qspi.txt
->
->>  create mode 100644 drivers/spi/spi-atmel-qspi.c
->>
->
-> Thanks,
->
-> Boris
->
+The architecture documents I've looked at are clear that bit 11 is IGNORED
+by the CPU, which:
 
-Thank you for comments,
-Piotr
+  "Indicates that the architecture guarantees that the bit or field is not
+   interpreted or modified by hardware."
+
+Please can you double-check that your CPU is indeed ignoring bit 11 in
+non-leaf (table) descriptors?
+
+Thanks,
+
+Will
