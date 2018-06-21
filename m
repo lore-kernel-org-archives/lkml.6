@@ -1,638 +1,185 @@
 Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC13C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2361EC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2077C20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C37EB20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eVVBOEB3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CPDFNtYZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2077C20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VV1eWXs6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37EB20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933162AbeFUKx7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:53:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48408 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933115AbeFUKx5 (ORCPT
+        id S933196AbeFUKyT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 06:54:19 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42164 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754359AbeFUKxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:53:57 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D8CA260B1A; Thu, 21 Jun 2018 10:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529578436;
-        bh=PmRckxADgON3VeQbEzepSeve8vOclU6oRXZrIoEab/M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eVVBOEB329HQ5VbjrW64eYyuS+D5k1JwzT3TICN151U0gX7Wz+s28EAEr7lF1TG6D
-         DbGnD4CsXM/t89X3qmwqpZzfQETswprs7/p4kj+zyFFJED+5A0z8JuwsqyQ+EEoL/m
-         P31m459Iy9NhpDn2dGroKcI6TIeW16ZWipu8Libw=
-Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E557160B72;
-        Thu, 21 Jun 2018 10:53:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529578433;
-        bh=PmRckxADgON3VeQbEzepSeve8vOclU6oRXZrIoEab/M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CPDFNtYZmjXcP5ea4q6zmonLmU74t21EBFMxH352aZDLwhZhBU3kpKu8jAYPrqqjh
-         PWpVonJoOukAUyJitWbMqYTl9rFgNC0fpNAfTI2ol1nwW9SrKaEmWzDvDD28CoEISY
-         0FplyxXo8agHBphsBv27PcGGXq0lZPxLIBTxyQXs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E557160B72
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-From:   Rohit kumar <rohitkr@codeaurora.org>
-To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, plai@codeaurora.org, bgoswami@codeaurora.org,
-        perex@perex.cz, srinivas.kandagatla@linaro.org, tiwai@suse.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        Thu, 21 Jun 2018 06:53:36 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180621105333euoutp02ece74ff1653d85a91c262b958d45fe68~6J3aEDSdH0695306953euoutp02k
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:53:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180621105333euoutp02ece74ff1653d85a91c262b958d45fe68~6J3aEDSdH0695306953euoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1529578413;
+        bh=5kBzIvkTsPEw+hEp0zS+PUTi/qysHZz8EhyYoblemiQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=VV1eWXs6mrs95R9p7eseRa/FoSqXQ8v2+Guue890JSMTwf2fPopo041I1+cyfK3Gl
+         kFOLS90qqQ4KwMPXeD3u1z0sHUHWg0tG4VAtIzhobYgsEZVPmSX7qh8L5PX0RPThoF
+         IQZbmsRj2d0i2vnNxXZWp/gnmZ57NzTBbf58fHT8=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180621105331eucas1p2459727bc27eecb7ac318cba998afb179~6J3YdJYR83238332383eucas1p2Q;
+        Thu, 21 Jun 2018 10:53:31 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 0E.47.05700.AA38B2B5; Thu, 21
+        Jun 2018 11:53:30 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20180621105329eucas1p2b6eeacae41ec8a3468c5126214dde228~6J3WB-Iyl0596805968eucas1p2C;
+        Thu, 21 Jun 2018 10:53:29 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180621105328eusmtrp1d9a6b0ce7336959c2716d518a3a431e0~6J3VBkGi01737117371eusmtrp11;
+        Thu, 21 Jun 2018 10:53:28 +0000 (GMT)
+X-AuditID: cbfec7f2-5ffe19c000011644-5e-5b2b83aadcaf
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5E.77.04183.7A38B2B5; Thu, 21
+        Jun 2018 11:53:27 +0100 (BST)
+Received: from [106.120.43.17] (unknown [106.120.43.17]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180621105327eusmtip28afa8020005a0e3bd5d72556ad99c3ec~6J3UohhJ80573605736eusmtip2n;
+        Thu, 21 Jun 2018 10:53:27 +0000 (GMT)
+Subject: Re: [PATCH] drm/bridge/sii8620: fix display of packed pixel modes
+ in MHL2
+To:     Maciej Purski <m.purski@samsung.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         linux-kernel@vger.kernel.org
-Cc:     Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH v2 2/2] ASoC: qcom: add sdm845 sound card support
-Date:   Thu, 21 Jun 2018 16:23:19 +0530
-Message-Id: <1529578399-3633-3-git-send-email-rohitkr@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529578399-3633-1-git-send-email-rohitkr@codeaurora.org>
-References: <1529578399-3633-1-git-send-email-rohitkr@codeaurora.org>
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Date:   Thu, 21 Jun 2018 12:53:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1516706239-9104-1-git-send-email-m.purski@samsung.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7djPc7qrmrWjDS5fVLDoPXeSyaKp4y2r
+        xcYZ61ktrnx9z2bROXEJu8XlXXPYLBa8vMVisfbIXXYHDo/Lfb1MHrM7ZrJ6bP/2gNXjfvdx
+        Jo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DKOPrlA2NBN3/F6oMaDYztPF2MnBwSAiYSH+9M
+        Z+5i5OIQEljBKPH6xW8mkISQwBdGia07tCESn4ESix+wwXQ0XHvEApFYzihx5m0DlPOWUeLj
+        3jnsIFXCAiESt1vXsHYxcnCICHhKnDxVDhJmFuhgklj9sw7EZhPQlPi7+SbYUBYBVYkrD76w
+        gNiiAhESGyd8YgaxeQUEJU7OfAIW5xRwkWjbfZIZYo68xPa3c6BscYlbT+YzgdwgIbCPXWLb
+        p4lsEM1lElu2dLJDXO0isXTpa6gPhCVeHd8CFZeROD25hwXCrpdomnmFGWJQB6PEicXLoRqs
+        JQ4fvwj2DDPQ1et36YOYEgKOEitmskGYfBI33gpCnMMnMWkbKERBwrwSHW1CEDMUJe6f3coM
+        YYtLLL3wlW0Co9IsJE/OQvLYLCSPzUJYu4CRZRWjeGppcW56arFhXmq5XnFibnFpXrpecn7u
+        JkZgQjr97/inHYxfLyUdYhTgYFTi4b0RphUtxJpYVlyZe4hRgoNZSYT3nIl2tBBvSmJlVWpR
+        fnxRaU5q8SFGaQ4WJXHeOI26KCGB9MSS1OzU1ILUIpgsEwenVAOjRNk81kC37Xq3t7lE1T0y
+        ZzBi3xux1nB2V9u+b81Z4j9s/mvY7Chf+jT76dUELZaun7O/OfUUbv9TeCjcjNPhvkL+v7TX
+        pw0ZfFhkFQP0o/rq7pW87i78k6s1a6EV30ofvoIjbotPn1jfkOzFkPio4PCzNT2+c2N6NjeE
+        2D/J3v8tSq/iVJ8SS3FGoqEWc1FxIgAbEjOyRAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t/xe7rLm7WjDdZPsbToPXeSyaKp4y2r
+        xcYZ61ktrnx9z2bROXEJu8XlXXPYLBa8vMVisfbIXXYHDo/Lfb1MHrM7ZrJ6bP/2gNXjfvdx
+        Jo++LasYPT5vkgtgi9KzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnN
+        ySxLLdK3S9DLOPrlA2NBN3/F6oMaDYztPF2MnBwSAiYSDdcesYDYQgJLGSUuPcuFiItL7J7/
+        lhnCFpb4c62LrYuRC6jmNaPEjx0b2EASwgIhEvtWzmXsYuTgEBHwlDh5qhykhlmgi0li7+t3
+        7BAN0xklnu49zgjSwCagKfF3802wZl4BO4mmS4vANrAIqEpcefAF7ApRgQiJpnlr2CFqBCVO
+        znwCFucUcJFo230SrJ5ZQF3iz7xLULa8xPa3c6BscYlbT+YzTWAUmoWkfRaSlllIWmYhaVnA
+        yLKKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMA63Hfu5ZQdj17vgQ4wCHIxKPLw3wrSihVgT
+        y4orcw8xSnAwK4nwnjPRjhbiTUmsrEotyo8vKs1JLT7EaAr03ERmKdHkfGCKyCuJNzQ1NLew
+        NDQ3Njc2s1AS5z1vUBklJJCeWJKanZpakFoE08fEwSnVwNibypkcNmmR0I6m7LZ5Sdc2xZyb
+        vmNWau3KsnRWK67zPVKT1h/ztHX8qnhaRHvXubPnE3lzUiNE1/3b2SE7uTPS1itt9sV/nlYy
+        r1v7HRfte68da/JG0Hry51DHIt/ZHes4frtXXL3qI3uEc9+7RrX9hlI7hT99ZtEIK8yezLpk
+        3mpTtsVvFJRYijMSDbWYi4oTAZUmJmrZAgAA
+Message-Id: <20180621105329eucas1p2b6eeacae41ec8a3468c5126214dde228~6J3WB-Iyl0596805968eucas1p2C@eucas1p2.samsung.com>
+X-CMS-MailID: 20180621105329eucas1p2b6eeacae41ec8a3468c5126214dde228
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180123111735eucas1p167f4aef33d1aea781a892f5245ac1567
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180123111735eucas1p167f4aef33d1aea781a892f5245ac1567
+References: <CGME20180123111735eucas1p167f4aef33d1aea781a892f5245ac1567@eucas1p1.samsung.com>
+        <1516706239-9104-1-git-send-email-m.purski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds sdm845 audio machine driver support.
+On 23.01.2018 12:17, Maciej Purski wrote:
+> Currently packed pixel modes in MHL2 can't be displayed. The device
+> automatically recognizes output format, so setting format other than
+> RGB causes failure. Fix it by writing proper values to registers.
+>
+> Tested on MHL1 and MHL2 using various vendors' dongles both in
+> DVI and HDMI mode.
+>
+> Signed-off-by: Maciej Purski <m.purski@samsung.com>
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
----
- sound/soc/qcom/Kconfig  |   9 +
- sound/soc/qcom/Makefile |   2 +
- sound/soc/qcom/sdm845.c | 514 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 525 insertions(+)
- create mode 100644 sound/soc/qcom/sdm845.c
+Another missed one, queued to drm-misc-fixes.
 
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 87838fa..09de50d 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -90,3 +90,12 @@ config SND_SOC_MSM8996
-           Support for Qualcomm Technologies LPASS audio block in
-           APQ8096 SoC-based systems.
-           Say Y if you want to use audio device on this SoCs
-+
-+config SND_SOC_SDM845
-+	tristate "SoC Machine driver for SDM845 boards"
-+	depends on QCOM_APR
-+	select SND_SOC_QDSP6
-+	help
-+	  To add support for audio on Qualcomm Technologies Inc.
-+	  SDM845 SoC-based systems.
-+          Say Y if you want to use audio device on this SoCs
-diff --git a/sound/soc/qcom/Makefile b/sound/soc/qcom/Makefile
-index 206945b..07f097a 100644
---- a/sound/soc/qcom/Makefile
-+++ b/sound/soc/qcom/Makefile
-@@ -14,10 +14,12 @@ obj-$(CONFIG_SND_SOC_LPASS_APQ8016) += snd-soc-lpass-apq8016.o
- snd-soc-storm-objs := storm.o
- snd-soc-apq8016-sbc-objs := apq8016_sbc.o
- snd-soc-apq8096-objs := apq8096.o
-+snd-soc-sdm845-objs := sdm845.o
- 
- obj-$(CONFIG_SND_SOC_STORM) += snd-soc-storm.o
- obj-$(CONFIG_SND_SOC_APQ8016_SBC) += snd-soc-apq8016-sbc.o
- obj-$(CONFIG_SND_SOC_MSM8996) += snd-soc-apq8096.o
-+obj-$(CONFIG_SND_SOC_SDM845) += snd-soc-sdm845.o
- 
- #DSP lib
- obj-$(CONFIG_SND_SOC_QDSP6) += qdsp6/
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-new file mode 100644
-index 0000000..531af82
---- /dev/null
-+++ b/sound/soc/qcom/sdm845.c
-@@ -0,0 +1,514 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/component.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/atomic.h>
-+#include <linux/of_device.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+#include <linux/soc/qcom/apr.h>
-+#include "qdsp6/q6afe.h"
-+
-+#define DEFAULT_SAMPLE_RATE_48K		48000
-+#define DEFAULT_MCLK_RATE		24576000
-+#define DEFAULT_BCLK_RATE		1536000
-+
-+struct sdm845_snd_data {
-+	struct snd_soc_card *card;
-+	struct regulator *vdd_supply;
-+	uint32_t pri_mi2s_clk_count;
-+	uint32_t quat_tdm_clk_count;
-+	struct snd_soc_dai_link dai_link[];
-+};
-+
-+
-+static unsigned int tdm_slot_offset[8] = {0, 4, 8, 12, 16, 20, 24, 28};
-+
-+static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
-+					struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	int ret = 0;
-+	int channels, slot_width;
-+
-+	switch (params_format(params)) {
-+	case SNDRV_PCM_FORMAT_S32_LE:
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+	case SNDRV_PCM_FORMAT_S16_LE:
-+		slot_width = 32;
-+		break;
-+	default:
-+		dev_err(rtd->dev, "%s: invalid param format 0x%x\n",
-+				__func__, params_format(params));
-+		return -EINVAL;
-+	}
-+
-+	channels = params_channels(params);
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-+		ret = snd_soc_dai_set_tdm_slot(cpu_dai, 0, 0x3,
-+				channels, slot_width);
-+		if (ret < 0) {
-+			dev_err(rtd->dev, "%s: failed to set tdm slot, err:%d\n",
-+					__func__, ret);
-+			goto end;
-+		}
-+
-+		ret = snd_soc_dai_set_channel_map(cpu_dai, 0, NULL,
-+				channels, tdm_slot_offset);
-+		if (ret < 0) {
-+			dev_err(rtd->dev, "%s: failed to set channel map, err:%d\n",
-+					__func__, ret);
-+			goto end;
-+		}
-+	} else {
-+		ret = snd_soc_dai_set_tdm_slot(cpu_dai, 0xf, 0,
-+				channels, slot_width);
-+		if (ret < 0) {
-+			dev_err(rtd->dev, "%s: failed to set tdm slot, err:%d\n",
-+					__func__, ret);
-+			goto end;
-+		}
-+
-+		ret = snd_soc_dai_set_channel_map(cpu_dai, channels,
-+				tdm_slot_offset, 0, NULL);
-+		if (ret < 0) {
-+			dev_err(rtd->dev, "%s: failed to set channel map, err:%d\n",
-+					__func__, ret);
-+			goto end;
-+		}
-+	}
-+end:
-+	return ret;
-+}
-+
-+static int sdm845_snd_hw_params(struct snd_pcm_substream *substream,
-+					struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	int ret = 0;
-+
-+	switch (cpu_dai->id) {
-+	case QUATERNARY_TDM_RX_0:
-+	case QUATERNARY_TDM_TX_0:
-+		ret = sdm845_tdm_snd_hw_params(substream, params);
-+		break;
-+	default:
-+		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
-+		break;
-+	}
-+	return ret;
-+}
-+
-+static int sdm845_snd_startup(struct snd_pcm_substream *substream)
-+{
-+	unsigned int fmt = SND_SOC_DAIFMT_CBS_CFS;
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_card *card = rtd->card;
-+	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+
-+	switch (cpu_dai->id) {
-+	case PRIMARY_MI2S_RX:
-+	case PRIMARY_MI2S_TX:
-+		if (++(data->pri_mi2s_clk_count) == 1) {
-+			snd_soc_dai_set_sysclk(cpu_dai,
-+				Q6AFE_LPASS_CLK_ID_MCLK_1,
-+				DEFAULT_MCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
-+			snd_soc_dai_set_sysclk(cpu_dai,
-+				Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT,
-+				DEFAULT_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
-+		}
-+		snd_soc_dai_set_fmt(cpu_dai, fmt);
-+		break;
-+
-+	case QUATERNARY_TDM_RX_0:
-+	case QUATERNARY_TDM_TX_0:
-+		if (++(data->quat_tdm_clk_count) == 1) {
-+			snd_soc_dai_set_sysclk(cpu_dai,
-+				Q6AFE_LPASS_CLK_ID_QUAD_TDM_IBIT,
-+				DEFAULT_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
-+		}
-+		break;
-+
-+	default:
-+		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
-+		break;
-+	}
-+	return 0;
-+}
-+
-+static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_card *card = rtd->card;
-+	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+
-+	switch (cpu_dai->id) {
-+	case PRIMARY_MI2S_RX:
-+	case PRIMARY_MI2S_TX:
-+		if (--(data->pri_mi2s_clk_count) == 0) {
-+			snd_soc_dai_set_sysclk(cpu_dai,
-+				Q6AFE_LPASS_CLK_ID_MCLK_1,
-+				0, SNDRV_PCM_STREAM_PLAYBACK);
-+			snd_soc_dai_set_sysclk(cpu_dai,
-+				Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT,
-+				0, SNDRV_PCM_STREAM_PLAYBACK);
-+		};
-+		break;
-+
-+	case QUATERNARY_TDM_RX_0:
-+	case QUATERNARY_TDM_TX_0:
-+		if (--(data->quat_tdm_clk_count) == 0) {
-+			snd_soc_dai_set_sysclk(cpu_dai,
-+				Q6AFE_LPASS_CLK_ID_QUAD_TDM_IBIT,
-+				0, SNDRV_PCM_STREAM_PLAYBACK);
-+		}
-+		break;
-+
-+	default:
-+		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
-+		break;
-+	}
-+}
-+
-+static struct snd_soc_ops sdm845_be_ops = {
-+	.hw_params = sdm845_snd_hw_params,
-+	.startup = sdm845_snd_startup,
-+	.shutdown = sdm845_snd_shutdown,
-+};
-+
-+static int sdm845_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
-+				struct snd_pcm_hw_params *params)
-+{
-+	struct snd_interval *rate = hw_param_interval(params,
-+					SNDRV_PCM_HW_PARAM_RATE);
-+	struct snd_interval *channels = hw_param_interval(params,
-+					SNDRV_PCM_HW_PARAM_CHANNELS);
-+
-+	rate->min = rate->max = DEFAULT_SAMPLE_RATE_48K;
-+	channels->min = channels->max = 2;
-+
-+	return 0;
-+}
-+
-+static struct sdm845_snd_data *sdm845_sbc_parse_of(struct snd_soc_card *card)
-+{
-+	struct device *dev = card->dev;
-+	struct snd_soc_dai_link *link;
-+	struct device_node *np, *codec, *platform, *cpu, *node;
-+	int ret, num_links;
-+	struct sdm845_snd_data *data;
-+
-+	ret = snd_soc_of_parse_card_name(card, "qcom,model");
-+	if (ret) {
-+		dev_err(dev, "Error parsing card name: %d\n", ret);
-+		return ERR_PTR(ret);
-+	}
-+
-+	node = dev->of_node;
-+
-+	/* DAPM routes */
-+	if (of_property_read_bool(node, "qcom,audio-routing")) {
-+		ret = snd_soc_of_parse_audio_routing(card,
-+					"qcom,audio-routing");
-+		if (ret)
-+			return ERR_PTR(ret);
-+	}
-+
-+	/* Populate links */
-+	num_links = of_get_child_count(node);
-+
-+	/* Allocate the private data and the DAI link array */
-+	data = kzalloc(sizeof(*data) + sizeof(*link) * num_links,
-+			GFP_KERNEL);
-+	if (!data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	card->dai_link = &data->dai_link[0];
-+	card->num_links = num_links;
-+
-+	link = data->dai_link;
-+	data->card = card;
-+
-+	for_each_child_of_node(node, np) {
-+		cpu = of_get_child_by_name(np, "cpu");
-+		if (!cpu) {
-+			dev_err(dev, "Can't find cpu DT node\n");
-+			ret = -EINVAL;
-+			goto fail;
-+		}
-+
-+		link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
-+		if (!link->cpu_of_node) {
-+			dev_err(card->dev, "error getting cpu phandle\n");
-+			ret = -EINVAL;
-+			goto fail;
-+		}
-+
-+		ret = snd_soc_of_get_dai_name(cpu, &link->cpu_dai_name);
-+		if (ret) {
-+			dev_err(card->dev, "error getting cpu dai name\n");
-+			goto fail;
-+		}
-+
-+		platform = of_get_child_by_name(np, "platform");
-+		codec = of_get_child_by_name(np, "codec");
-+		if (codec && platform) {
-+			link->platform_of_node = of_parse_phandle(platform,
-+					"sound-dai", 0);
-+			if (!link->platform_of_node) {
-+				dev_err(card->dev, "error getting platform phandle\n");
-+				ret = -EINVAL;
-+				goto fail;
-+			}
-+
-+			ret = snd_soc_of_get_dai_link_codecs(dev, codec, link);
-+			if (ret < 0) {
-+				dev_err(card->dev, "error getting codec dai name\n");
-+				goto fail;
-+			}
-+			link->no_pcm = 1;
-+			link->ignore_pmdown_time = 1;
-+			link->ops = &sdm845_be_ops;
-+			link->be_hw_params_fixup = sdm845_be_hw_params_fixup;
-+		} else {
-+			link->platform_of_node = link->cpu_of_node;
-+			link->codec_dai_name = "snd-soc-dummy-dai";
-+			link->codec_name = "snd-soc-dummy";
-+			link->dynamic = 1;
-+		}
-+
-+		link->ignore_suspend = 1;
-+		ret = of_property_read_string(np, "link-name", &link->name);
-+		if (ret) {
-+			dev_err(card->dev,
-+				"error getting codec dai_link name\n");
-+			goto fail;
-+		}
-+
-+		link->dpcm_playback = 1;
-+		link->dpcm_capture = 1;
-+		link->stream_name = link->name;
-+		link++;
-+	}
-+	dev_set_drvdata(dev, card);
-+	snd_soc_card_set_drvdata(card, data);
-+
-+	return data;
-+fail:
-+	kfree(data);
-+	return ERR_PTR(ret);
-+}
-+
-+static void sdm845_init_supplies(struct device *dev)
-+{
-+	struct snd_soc_card *card = dev_get_drvdata(dev);
-+	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
-+
-+	data->vdd_supply = regulator_get(dev, "cdc-vdd");
-+	if (IS_ERR(data->vdd_supply)) {
-+		dev_err(dev, "Unable to get regulator supplies\n");
-+		data->vdd_supply = NULL;
-+		return;
-+	}
-+
-+	if (regulator_enable(data->vdd_supply))
-+		dev_err(dev, "Unable to enable vdd supply\n");
-+}
-+
-+static void sdm845_deinit_supplies(struct device *dev)
-+{
-+	struct snd_soc_card *card = dev_get_drvdata(dev);
-+	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
-+
-+	if (!data->vdd_supply)
-+		return;
-+
-+	regulator_disable(data->vdd_supply);
-+	regulator_put(data->vdd_supply);
-+}
-+
-+static int sdm845_bind(struct device *dev)
-+{
-+	struct snd_soc_card *card;
-+	struct sdm845_snd_data *data;
-+	int ret;
-+
-+	card = kzalloc(sizeof(*card), GFP_KERNEL);
-+	if (!card)
-+		return -ENOMEM;
-+
-+	ret = component_bind_all(dev, card);
-+	if (ret) {
-+		dev_err(dev, "Audio components bind failed: %d\n", ret);
-+		goto bind_fail;
-+	}
-+
-+	card->dev = dev;
-+	data = sdm845_sbc_parse_of(card);
-+	if (IS_ERR_OR_NULL(data)) {
-+		dev_err(dev, "Error parsing OF data\n");
-+		goto parse_dt_fail;
-+	}
-+	sdm845_init_supplies(dev);
-+
-+	ret = snd_soc_register_card(card);
-+	if (ret) {
-+		dev_err(dev, "Sound card registration failed\n");
-+		goto register_card_fail;
-+	}
-+	return ret;
-+
-+register_card_fail:
-+	sdm845_deinit_supplies(dev);
-+	kfree(data);
-+parse_dt_fail:
-+	component_unbind_all(dev, card);
-+bind_fail:
-+	kfree(card);
-+	return ret;
-+}
-+
-+static void sdm845_unbind(struct device *dev)
-+{
-+	struct snd_soc_card *card = dev_get_drvdata(dev);
-+	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
-+
-+	if (data->vdd_supply)
-+		regulator_put(data->vdd_supply);
-+	component_unbind_all(dev, card);
-+	snd_soc_unregister_card(card);
-+	kfree(data);
-+	kfree(card);
-+}
-+
-+static const struct component_master_ops sdm845_ops = {
-+	.bind = sdm845_bind,
-+	.unbind = sdm845_unbind,
-+};
-+
-+static int sdm845_runtime_resume(struct device *dev)
-+{
-+	struct snd_soc_card *card = dev_get_drvdata(dev);
-+	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
-+
-+	if (!data->vdd_supply) {
-+		dev_dbg(dev, "no supplies defined\n");
-+		return 0;
-+	}
-+
-+	if (regulator_enable(data->vdd_supply))
-+		dev_err(dev, "Enable regulator supply failed\n");
-+
-+	return 0;
-+}
-+
-+static int sdm845_runtime_suspend(struct device *dev)
-+{
-+	struct snd_soc_card *card = dev_get_drvdata(dev);
-+	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
-+
-+	if (!data->vdd_supply) {
-+		dev_dbg(dev, "no supplies defined\n");
-+		return 0;
-+	}
-+
-+	if (regulator_disable(data->vdd_supply))
-+		dev_err(dev, "Disable regulator supply failed\n");
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops sdm845_pm_ops = {
-+	SET_RUNTIME_PM_OPS(sdm845_runtime_suspend,
-+			sdm845_runtime_resume, NULL)
-+};
-+
-+static int sdm845_compare_of(struct device *dev, void *data)
-+{
-+	return dev->of_node == data;
-+}
-+
-+static void sdm845_release_of(struct device *dev, void *data)
-+{
-+	of_node_put(data);
-+}
-+
-+static int add_audio_components(struct device *dev,
-+				struct component_match **matchptr)
-+{
-+	struct device_node *np, *platform, *cpu, *node, *dai_node;
-+
-+	node = dev->of_node;
-+
-+	for_each_child_of_node(node, np) {
-+		cpu = of_get_child_by_name(np, "cpu");
-+		if (cpu) {
-+			dai_node = of_parse_phandle(cpu, "sound-dai", 0);
-+			of_node_get(dai_node);
-+			component_match_add_release(dev, matchptr,
-+					sdm845_release_of,
-+					sdm845_compare_of,
-+					dai_node);
-+		}
-+
-+		platform = of_get_child_by_name(np, "platform");
-+		if (platform) {
-+			dai_node = of_parse_phandle(platform, "sound-dai", 0);
-+			component_match_add_release(dev, matchptr,
-+					sdm845_release_of,
-+					sdm845_compare_of,
-+					dai_node);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int sdm845_snd_platform_probe(struct platform_device *pdev)
-+{
-+	struct component_match *match = NULL;
-+	int ret;
-+
-+	ret = add_audio_components(&pdev->dev, &match);
-+	if (ret)
-+		return ret;
-+
-+	return component_master_add_with_match(&pdev->dev, &sdm845_ops, match);
-+}
-+
-+static int sdm845_snd_platform_remove(struct platform_device *pdev)
-+{
-+	component_master_del(&pdev->dev, &sdm845_ops);
-+	return 0;
-+}
-+
-+static const struct of_device_id sdm845_snd_device_id[]  = {
-+	{ .compatible = "qcom,sdm845-sndcard" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, sdm845_snd_device_id);
-+
-+static struct platform_driver sdm845_snd_driver = {
-+	.probe = sdm845_snd_platform_probe,
-+	.remove = sdm845_snd_platform_remove,
-+	.driver = {
-+		.name = "msm-snd-sdm845",
-+		.pm = &sdm845_pm_ops,
-+		.owner = THIS_MODULE,
-+		.of_match_table = sdm845_snd_device_id,
-+	},
-+};
-+module_platform_driver(sdm845_snd_driver);
-+
-+MODULE_DESCRIPTION("sdm845 ASoC Machine Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+--
+Regards
+Andrzej
+
+> ---
+>  drivers/gpu/drm/bridge/sil-sii8620.c | 17 +----------------
+>  1 file changed, 1 insertion(+), 16 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
+> index 1718c2e..e13708d 100644
+> --- a/drivers/gpu/drm/bridge/sil-sii8620.c
+> +++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+> @@ -1005,20 +1005,11 @@ static void sii8620_stop_video(struct sii8620 *ctx)
+>  
+>  static void sii8620_set_format(struct sii8620 *ctx)
+>  {
+> -	u8 out_fmt;
+> -
+>  	if (sii8620_is_mhl3(ctx)) {
+>  		sii8620_setbits(ctx, REG_M3_P0CTRL,
+>  				BIT_M3_P0CTRL_MHL3_P0_PIXEL_MODE_PACKED,
+>  				ctx->use_packed_pixel ? ~0 : 0);
+>  	} else {
+> -		if (ctx->use_packed_pixel)
+> -			sii8620_write_seq_static(ctx,
+> -				REG_VID_MODE, BIT_VID_MODE_M1080P,
+> -				REG_MHL_TOP_CTL, BIT_MHL_TOP_CTL_MHL_PP_SEL | 1,
+> -				REG_MHLTX_CTL6, 0x60
+> -			);
+> -		else
+>  			sii8620_write_seq_static(ctx,
+>  				REG_VID_MODE, 0,
+>  				REG_MHL_TOP_CTL, 1,
+> @@ -1026,15 +1017,9 @@ static void sii8620_set_format(struct sii8620 *ctx)
+>  			);
+>  	}
+>  
+> -	if (ctx->use_packed_pixel)
+> -		out_fmt = VAL_TPI_FORMAT(YCBCR422, FULL) |
+> -			BIT_TPI_OUTPUT_CSCMODE709;
+> -	else
+> -		out_fmt = VAL_TPI_FORMAT(RGB, FULL);
+> -
+>  	sii8620_write_seq(ctx,
+>  		REG_TPI_INPUT, VAL_TPI_FORMAT(RGB, FULL),
+> -		REG_TPI_OUTPUT, out_fmt,
+> +		REG_TPI_OUTPUT, VAL_TPI_FORMAT(RGB, FULL),
+>  	);
+>  }
+>  
+
 
