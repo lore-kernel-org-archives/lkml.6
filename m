@@ -4,59 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2496FC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22430C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0DF420836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:23:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7CAD20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:23:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m19o5M/p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DF420836
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t3zuQvQz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7CAD20989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933414AbeFUQXc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:23:32 -0400
-Received: from mail-yb0-f202.google.com ([209.85.213.202]:34159 "EHLO
-        mail-yb0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933357AbeFUQXa (ORCPT
+        id S933477AbeFUQXk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:23:40 -0400
+Received: from mail-qt0-f201.google.com ([209.85.216.201]:35382 "EHLO
+        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933417AbeFUQXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:23:30 -0400
-Received: by mail-yb0-f202.google.com with SMTP id w128-v6so2100622ybe.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 09:23:30 -0700 (PDT)
+        Thu, 21 Jun 2018 12:23:35 -0400
+Received: by mail-qt0-f201.google.com with SMTP id a10-v6so2932783qtp.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 09:23:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=wSqpAvMK4bLXSGTihP+dScsLTs1sgucIQXGx8TyntWw=;
-        b=m19o5M/p1gBxmq6kprjIQN6gkIRApGNKTOojPMaxF8g/TI/vwdDeqrHIiKaQ/j3vqY
-         rSfsPpiw/rgCKo/k6DiPwlZVEazKLRR8ZFvaEa5AeG5lIkLi9QjlbT+TzpiMKCTET2Us
-         7+j1B+qZLAQUjrfxMDz7O9CXLH66bjWRb2+7RJkGlW7AQJAzh4VLfLcAN/WAD/+5il1j
-         3m8/ujBSqmGNDMTL4ofEBBM/lCdBkh21tZQhHPUKvdqF+XEG5nEANUbkgr6LKLejccEq
-         /O+NuOPzjUciIN51pBqV9JcO9FQM2+vUfpH7P0o8DHcTYDAqobUsFoIu3mof5MvIfljM
-         Ebxg==
+        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
+         :cc;
+        bh=/vQmHl8cd2NT8hl07OE94mYUyQt2yjyU18WcKiSTNXc=;
+        b=t3zuQvQz0nhoKtkxb/zaSWjV1xb+x/+sou3GorvnWq06x7zhVhUqbt/zHauWLLqS9A
+         up7wDGzzZ9tVW0cydrETItaN4dGoA+320bX3bm1qaJMG6CPGTzj4NIJpQPe5gtumSuBM
+         8kDGCBDAn/SvRMKDh9T7Qz5zx0Tt10jQgqP41OHAREugwAciZwhXTzRzWUyRQxMR/NmR
+         vuzICd6iuvf8eeT/Jjc8vx3u8I7pRaBxr6b/6GiZL1+LD0+Ii9LHeJWBtCgC/UW9lYTU
+         hfcjn+OXuSX1D8MOqaEZ6HBMmo2rXVOxMBrkQH0zC3K5PK91+PCi/8jat1awbRHjnrdI
+         46lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=wSqpAvMK4bLXSGTihP+dScsLTs1sgucIQXGx8TyntWw=;
-        b=OQf4O4wNkbqmfeFMqBU2HIBknz58m+djia0pH7+YjU/qFReOLluBLj8ocnYt4j+g19
-         18MWgcAjaDyvY1CwrqUTwnhdRT3lRwOZ0pBjziqkquhdn0J6PQqfLdOqu5AmmhNNv0C4
-         HP8rOEa2WE02ob3GNVvlTBP++VP73E+6ONA/YYZa9sHNpJ1gAGrVWwoaTcwP2W0/M/0S
-         dDIMKKHBuMqO/5/Tlv3zkaXJU76J3w4kk5f9GjdEF2cSWqmR8ie++Iy1gHy1YL8j0Odf
-         UfB/4UkNtKA7F0Vt+xM3AIgjhg4WBpR3e/UaWZfnJYDVY1lvXN1CWdYgyFiFUtV6YJfF
-         zrTg==
-X-Gm-Message-State: APt69E0ZxjefuIiFv49njC06npccnRcXXHaTYa3Q/zG7pg6hSk/9z8Hm
-        VQBNY+UbFTJOL/u2LLsWTRMmI+xViyNWcbgL5O4=
-X-Google-Smtp-Source: ADUXVKKt1xlIWI8OMNmkkjtA95KoRmgG2veb5dsrnYTT+7Za8jOSNXsC+We2nmgwDXlg0/WYeKkZ3z4mh9otQBiD1gE=
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
+         :references:subject:from:to:cc;
+        bh=/vQmHl8cd2NT8hl07OE94mYUyQt2yjyU18WcKiSTNXc=;
+        b=jnpIw+JZn5yrgVHLxfMPjXXc5kJcaHQ7TEsxwpWyd6jRUQp++CFocbReMh3R+UgGvG
+         w8kuiJ3tlhDl0sqgt0Qu4RxdOjw3FhWW6JuC6nS+Z6PoZNqPszbYayxkzOIzcOy2aSb0
+         HIw/aThKVwgdLwvmYi+Q6SawXhVA8IYTY2X4XkwU7usk8dcO5AlyYArc+uEcoATzJLwx
+         OY5AHIEkp7/yHPMTdSAWXJEMcEm7cy3Y2JMyzMeiRHCkbri55TflX3SBDLJ6JKFC5ih/
+         wXB/Lk23viQYg5glD1tUSeGQQlAoMuShYfHytmiGJzs7czViIHXxKGhFpx+cmqFMZ5k0
+         n04g==
+X-Gm-Message-State: APt69E2SafciaaOoQAJK9qUDYHXn6yFEGPdhxi2LYw/LBacfM8u1I++O
+        zShl0NEjoZ1LZWJPmDzjVxyQKEzUvOGPKqcUjOk=
+X-Google-Smtp-Source: ADUXVKJSWC1eDCch2QV7phR6Iez+/IhWRJhSdLMrAZ0OsF6ErYJXMNegfe6cDog0v/FHE6YH5UeGnYq7GVnIprhHldk=
 MIME-Version: 1.0
-X-Received: by 2002:a81:c541:: with SMTP id o1-v6mr8179946ywj.7.1529598209579;
- Thu, 21 Jun 2018 09:23:29 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 09:23:21 -0700
-Message-Id: <20180621162324.36656-1-ndesaulniers@google.com>
+X-Received: by 2002:ac8:4508:: with SMTP id q8-v6mr14100098qtn.39.1529598214186;
+ Thu, 21 Jun 2018 09:23:34 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 09:23:22 -0700
+In-Reply-To: <20180621162324.36656-1-ndesaulniers@google.com>
+Message-Id: <20180621162324.36656-2-ndesaulniers@google.com>
+References: <20180621162324.36656-1-ndesaulniers@google.com>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v6 0/3] extern inline native_save_fl for paravirt
+Subject: [PATCH v6 1/3] compiler-gcc.h: add gnu_inline to all inline declarations
 From:   Nick Desaulniers <ndesaulniers@google.com>
 To:     mingo@redhat.com, tglx@linutronix.de
 Cc:     akpm@linux-foundation.org, hpa@zytor.com,
@@ -84,63 +88,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-paravirt depends on a custom calling convention (callee saved), but
-expects this from a static inline function that it then forces to be
-outlined. This is problematic because different compilers or flags can
-then add a stack guard that violates the calling conventions.
+Functions marked extern inline do not emit an externally visible
+function when the gnu89 C standard is used. Some KBUILD Makefiles
+overwrite KBUILD_CFLAGS. This is an issue for GCC 5.1+ users as without
+an explicit C standard specified, the default is gnu11. Since c99, the
+semantics of extern inline have changed such that an externally visible
+function is always emitted. This can lead to multiple definition errors
+of extern inline functions at link time of compilation units whose build
+files have removed an explicit C standard compiler flag for users of GCC
+5.1+ or Clang.
 
-Uses extern inline with the out-of-line definition in assembly to
-prevent compilers from adding stack guards to the outlined version.
+Acked-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Suggested-by: Joe Perches <joe@perches.com>
+---
+ include/linux/compiler-gcc.h | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
-Other parts of the codebase overwrite KBUILD_CFLAGS, which is *extremely
-problematic* for extern inline, as the sematics are completely the
-opposite depending on what C standard is used.
-http://blahg.josefsipek.net/?p=529
-
-Changes since v5:
-  Reworded commits to include Juergen's ack and switch a Suggested-by
-  for Reviewed-by tag. No code changes.
-
-Changes since v4:
-  Take Arnd's and hpa's suggestions properly feature detect gnu_inline
-  attribute to support gcc 4.1.
-
-Changes since v3:
-  Take Joe's suggestion to hoist __inline__ and __inline out of
-  conditional block.
-
-Changes since v2:
-  Take hpa's _ASM_ARG patch into the set in order to simplify cross
-  32b/64b x86 assembly and rebase my final patch to use it.  Apply
-  Sedat's typo fix to commit message and sign off on it. Take Joe's
-  suggestion to simplify __inline__ and __inline. Add Arnd to list of
-  folks who made helpful suggestions.
-
-Changes since v1:
-  Prefer gnu_inline function attribute instead of explicitly setting C
-  standard compiler flag in problematic Makefiles. We should instead
-  carefully evaluate if those Makefiles should be overwriting
-  KBUILD_CFLAGS at all. Dropped the previous first two patches and added
-  a new first patch.
-
-
-*** BLURB HERE ***
-
-H. Peter Anvin (1):
-  x86/asm: add _ASM_ARG* constants for argument registers to <asm/asm.h>
-
-Nick Desaulniers (2):
-  compiler-gcc.h: add gnu_inline to all inline declarations
-  x86: paravirt: make native_save_fl extern inline
-
- arch/x86/include/asm/asm.h      | 59 +++++++++++++++++++++++++++++++++
- arch/x86/include/asm/irqflags.h |  2 +-
- arch/x86/kernel/Makefile        |  1 +
- arch/x86/kernel/irqflags.S      | 26 +++++++++++++++
- include/linux/compiler-gcc.h    | 29 ++++++++++++----
- 5 files changed, 109 insertions(+), 8 deletions(-)
- create mode 100644 arch/x86/kernel/irqflags.S
-
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index b4bf73f5e38f..c7cfca4ba02b 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -65,6 +65,18 @@
+ #define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+ #endif
+ 
++/*
++ * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
++ * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
++ * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
++ * defined so the gnu89 semantics are the default.
++ */
++#ifdef __GNUC_STDC_INLINE__
++#define __gnu_inline	__attribute__((gnu_inline))
++#else
++#define __gnu_inline
++#endif
++
+ /*
+  * Force always-inline if the user requests it so via the .config,
+  * or if gcc is too old.
+@@ -72,19 +84,22 @@
+  * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+  * directives.  Suppress the warning in clang as well by using "unused"
+  * function attribute, which is redundant but not harmful for gcc.
++ * Prefer gnu_inline, so that extern inline functions do not emit an
++ * externally visible function. This makes extern inline behave as per gnu89
++ * semantics rather than c99. This prevents multiple symbol definition errors
++ * of extern inline functions at link time.
++ * A lot of inline functions can cause havoc with function tracing.
+  */
+ #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) ||		\
+     !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
+-#define inline inline		__attribute__((always_inline,unused)) notrace
+-#define __inline__ __inline__	__attribute__((always_inline,unused)) notrace
+-#define __inline __inline	__attribute__((always_inline,unused)) notrace
++#define inline \
++	inline __attribute__((always_inline, unused)) notrace __gnu_inline
+ #else
+-/* A lot of inline functions can cause havoc with function tracing */
+-#define inline inline		__attribute__((unused)) notrace
+-#define __inline__ __inline__	__attribute__((unused)) notrace
+-#define __inline __inline	__attribute__((unused)) notrace
++#define inline inline		__attribute__((unused)) notrace __gnu_inline
+ #endif
+ 
++#define __inline__ inline
++#define __inline inline
+ #define __always_inline	inline __attribute__((always_inline))
+ #define  noinline	__attribute__((noinline))
+ 
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
