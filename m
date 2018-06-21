@@ -2,103 +2,95 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB61C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A133EC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF6A820836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42B16208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:44:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMyhIros"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6A820836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lab.ntt.co.jp
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gY6zE3ff"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B16208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932501AbeFUElD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 00:41:03 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45693 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932231AbeFUElC (ORCPT
+        id S1750991AbeFUEo0 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 00:44:26 -0400
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:38801 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750789AbeFUEoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 00:41:02 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a22-v6so863666pfo.12;
-        Wed, 20 Jun 2018 21:41:01 -0700 (PDT)
+        Thu, 21 Jun 2018 00:44:24 -0400
+Received: by mail-wm0-f42.google.com with SMTP id 69-v6so3235363wmf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 21:44:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:lines;
-        bh=vVNt+6pS5w5n9GwgcCx79Wlx39OgH+NrkmlTct5ZOgs=;
-        b=RMyhIrosgP9Cwp5L3Ei9MPKpl79RbWhRYAZcZUVYb8Ac/l+HgwvJFmTHqtV1OJorct
-         copN+rZNBJyBixQJDl1skVZyJA95PLG36W8yKRfwB/GV0QykSll8iFwrHmjVageMxn8h
-         Q+SsTAkCt4yoE+9O7YNdMcWaaJ2Q5F+bHSxUHZdMOGIQ63Q9SYfuzZ/Y5RTJt8euaTcH
-         obNatJVDg3E6JgmAet9GNMDZBBUYKbDmdc1dkkKfIq+fguVvHFYdtlvcf1cA+tZ1CWKp
-         7aoOF4l0bXDGOy0kmHNAPbYMXTvw8eT+kDmu0S1hWSYB7vkUYr6u8MJ6Au2zvPL60kJH
-         Fz+A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KKo+u+m+Y+uqc6SH92cvLHrLIuIF014bxPhzQ0q+dfE=;
+        b=gY6zE3ffsBzak9Qk+EmE0X+Gj31x6QUSsgK55YWCBBOsMJenY4qUOY6tAvzzVt7WW+
+         BaoceNY6avUpg9HLo5DraXS8bt5y+VjNXYOG4fTQ8PH5DIaJ30Y1xz71F0Bax2Ww3X4T
+         lE/EZU++HpzY0MBncRp5hKWl19cgxWAA3milelniy6H9NxkgRSvU30Xp9aJSAiEMSL63
+         zJx5dM2fP88j7Pq2cEYfRKXj5XU9sJ5UDf4bA87h8+ZAkNesfCz7wp0Y01rL1miSNB68
+         AQnWFpLPRi+3IBqC0uqOBDlypYdyDlixqhZ+yZ27+OsYg25QA9SSvfK9BoBVpCtkAuNC
+         IHFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id:lines;
-        bh=vVNt+6pS5w5n9GwgcCx79Wlx39OgH+NrkmlTct5ZOgs=;
-        b=atF8psHSg+TicHrt2EvpK3/WJx989TYD07/izu6TEYCaMhCtLpcey06iWp5fMWXpWN
-         b1KyeBEOEU/3uPedGVI8eZhPHPI+/GTBVzkZuVmN0qtKKvXMMPJrtvpxYgflvMRmjA/v
-         wtEo0moUzyEtgMjWfAWj4WJYwZ34e7WJUXPsd1YoEWIzrfsAjP0N3s41UeSyF7F6nIYe
-         otfFzEDVxPKbsoqyWcCwpph1nvOHCZLEWgWuzB/MtvA6RHr5mkgAOL4WCup7ZHhID4Sa
-         yBk8q3iiTO0T1oX4PXPhCwBWVu8BmtUWhWKZfgLoYe8qxoW4+SLZcEmnFp8W96J/hs/V
-         yrkQ==
-X-Gm-Message-State: APt69E2sSgMj72xpKZlzcQVwRZS2gm8+omxzVyWUaAb2VYYrnGG3eu5H
-        Rnky0vuVSuS9qc+a3X+nSo0=
-X-Google-Smtp-Source: ADUXVKIBSroURAG8FkvpgOabi+US3+TA6L17dT78K12OB3X1C5HC7m3SkX5Njdr195c8b5R0HjyuDg==
-X-Received: by 2002:a62:81c5:: with SMTP id t188-v6mr25693398pfd.146.1529556061373;
-        Wed, 20 Jun 2018 21:41:01 -0700 (PDT)
-Received: from mx.localdomain (114.69.239.49.rev.vmobile.jp. [49.239.69.114])
-        by smtp.gmail.com with ESMTPSA id n25-v6sm5726915pff.119.2018.06.20.21.40.59
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KKo+u+m+Y+uqc6SH92cvLHrLIuIF014bxPhzQ0q+dfE=;
+        b=BvW4l5E63+s/wyLD5QvBUe1xkSd/JI+qLsu+V5DY4CJTUZ15qnEl0hWvHmUtSdYUsV
+         ApPio71bCkCN4/1Wk1ufnbUEBDMkDVwi41dNOlutTdN8pCwxsFxf5sSAJMxdmELgYBm/
+         J/iPdNqUtDVdM+6gfMNmlDG9U9LgPMrPSH+7TABrfTQnCPgQ7asGkn8V9g30p8LXPMii
+         3pIg2wtSejsfKmn90ImzP0NQVoUAtz4LU3QjU3xT8ejFIyLriEUFo6bK27SbcCVkaHBb
+         A4Ext73Q6zht75bkoYUi1sHB3VzNVuJdrpxhCrqKRLbmMNK+sG4KF2oT0AqCVc1o+v42
+         /EzQ==
+X-Gm-Message-State: APt69E03yBearkcCcq32J6Dff3iTHwAG6+52iIB1tkBqBmiv17LO/Ec2
+        cTrMf8bcQcX6X4ucQY5IJgE=
+X-Google-Smtp-Source: ADUXVKJSeF9y0DddjaDBy2P2IALvydULtdq28vb0c3jCHbD1nXLf+PZqyn6IffwP+oHUgCHidileSw==
+X-Received: by 2002:a1c:7192:: with SMTP id d18-v6mr3565734wmi.115.1529556263586;
+        Wed, 20 Jun 2018 21:44:23 -0700 (PDT)
+Received: from localhost (8ta-151-217-222.telkomadsl.co.za. [41.151.217.222])
+        by smtp.gmail.com with ESMTPSA id y3-v6sm4001686wro.21.2018.06.20.21.44.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 21:40:59 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.localdomain (Postfix) with ESMTP id 5A04083CDDA8;
-        Thu, 21 Jun 2018 13:40:57 +0900 (JST)
-From:   Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-nilfs <linux-nilfs@vger.kernel.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
-Subject: [PATCH] fs: nilfs2: Adding new return type vm_fault_t
-Date:   Thu, 21 Jun 2018 13:38:48 +0900
-Message-Id: <1529555928-2411-1-git-send-email-konishi.ryusuke@lab.ntt.co.jp>
-X-Mailer: git-send-email 1.8.3.1
-X-Dispatcher: imput version 20110525(IM151)
+        Wed, 20 Jun 2018 21:44:23 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 06:42:52 +0200
+From:   Chris Opperman <eklikeroomys@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] staging: wlan-ng: improved readability of function
+ prism2_add_key
+Message-ID: <20180621044252.GA19583@kerdev>
+References: <1529514635-17948-1-git-send-email-eklikeroomys@gmail.com>
+ <20180620200829.qm2zxeyyl5kqh6gu@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620200829.qm2zxeyyl5kqh6gu@mwanda>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Souptick Joarder <jrdr.linux@gmail.com>
+Hi Dan,
 
-Use new return type vm_fault_t for page_mkwrite
-handler.
+I agree completely. I was concerned whether the preprocessor definitions in
+p80211metadef.h were named according to some convention as there are
+many definitions named similarly there. 
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
----
- fs/nilfs2/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I am considering renaming this specific definition to "p80211_dot11_keyid", 
+would that be more acceptable?
 
-diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
-index c5fa3de..7da0fac 100644
---- a/fs/nilfs2/file.c
-+++ b/fs/nilfs2/file.c
-@@ -51,7 +51,7 @@ int nilfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 	return err;
- }
- 
--static int nilfs_page_mkwrite(struct vm_fault *vmf)
-+static vm_fault_t nilfs_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct page *page = vmf->page;
--- 
-1.8.3.1
-
+Kind Regards,
+Chris Opperman
