@@ -2,102 +2,112 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876E7C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0851FC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40DE721829
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:22:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40DE721829
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 98D7F21837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:22:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mp2Fbrwj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D7F21837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933018AbeFURWk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 13:22:40 -0400
-Received: from mga14.intel.com ([192.55.52.115]:17187 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932508AbeFURWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 13:22:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 10:22:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,252,1526367600"; 
-   d="scan'208";a="51191657"
-Received: from lmrad-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.46])
-  by orsmga008.jf.intel.com with ESMTP; 21 Jun 2018 10:22:27 -0700
-Date:   Thu, 21 Jun 2018 20:22:29 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, Haim Cohen <haim.cohen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>,
-        "open list:INTEL SGX" <intel-sgx-kernel-dev@lists.01.org>
-Subject: Re: [PATCH v11 04/13] x86, sgx: add SGX definitions to msr-index.h
-Message-ID: <20180621172229.GB12562@linux.intel.com>
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
- <20180608171216.26521-5-jarkko.sakkinen@linux.intel.com>
- <a51c11da-650a-1828-4173-e424a5340565@intel.com>
- <20180619131828.GD5609@linux.intel.com>
- <4a92d6d2-30d9-eeaf-1afc-cfa35cae004e@intel.com>
+        id S933209AbeFURWq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 13:22:46 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:49055 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932856AbeFURWj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 13:22:39 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllnx209.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5LHMXnA016563;
+        Thu, 21 Jun 2018 12:22:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1529601753;
+        bh=Q375M+zkA37glW67dQzcyQgiyNYJp94IuMxWQGYZKeg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=mp2FbrwjqmG0DI6dKpo/EvhXlXJx2gZNDXgH6MmRA8ENeXsVC2OikgwQPGSTZzykx
+         dML+Z+QpMGX37weK6KLGvvAqiwXe19g2x2r7Ckd87SwmtoqlE08VrPulIS83lEfqzQ
+         fbqhAhJCDFsHMFkIWF7XwphIiX73AuGInj8MrSBE=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5LHMXdH010428;
+        Thu, 21 Jun 2018 12:22:33 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 21
+ Jun 2018 12:22:32 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 21 Jun 2018 12:22:32 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5LHMW9n021940;
+        Thu, 21 Jun 2018 12:22:32 -0500
+Subject: Re: [PATCH] net: ethernet: ti: davinci_cpdma: make function
+ cpdma_desc_pool_create static
+To:     Colin King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180621171645.29734-1-colin.king@canonical.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <187d0436-0b04-dd9e-98bd-3cb812fa8bd6@ti.com>
+Date:   Thu, 21 Jun 2018 12:22:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a92d6d2-30d9-eeaf-1afc-cfa35cae004e@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180621171645.29734-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 07:01:57AM -0700, Dave Hansen wrote:
-> On 06/19/2018 06:18 AM, Jarkko Sakkinen wrote:
-> > On Fri, Jun 08, 2018 at 10:25:29AM -0700, Dave Hansen wrote:
-> >> On 06/08/2018 10:09 AM, Jarkko Sakkinen wrote:
-> >>> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> >>> Signed-off-by: Haim Cohen <haim.cohen@intel.com>
-> >>> Tested-by: Serge Ayoun <serge.ayoun@intel.com>
-> >>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >>> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >>> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >>
-> >> These are a mess.  If you're signing off on it, a review of some kind is
-> >> pretty implied.
-> >>
-> >> Also, how did Sean write this, send it to Haim to sign off on it, and
-> >> then send it to you?  That seems unlikely.
-> > 
-> > They've both done something to this. How should I change it then?
-> 
-> Who added their Signed-off-by?
-> 
-> I would probably add a single "Co-developed-by:" for each of them and a
-> single Signed-off-by, like commit 12c89130a56ae:
-> 
->     Co-developed-by: Tony Luck <tony.luck@intel.com>
->     Reported-by: Mika Penttilä <mika.penttila@nextfour.com>
->     Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->     Cc: Al Viro <viro@zeniv.linux.org.uk>
->     Cc: Andrew Morton <akpm@linux-foundation.org>
->     Cc: Andy Lutomirski <luto@amacapital.net>
->     ...
+Please, add netdev@vger.kernel.org for the future
 
-Thanks, I was not aware of that tag.
+On 06/21/2018 12:16 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The function cpdma_desc_pool_create is local to the source and does not
+> need to be in global scope, so make it static.
+> 
+> Cleans up sparse warning:
+> warning: symbol 'cpdma_desc_pool_create' was not declared. Should it
+> be static?
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/net/ethernet/ti/davinci_cpdma.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
+> index cdbddf16dd29..4f1267477aa4 100644
+> --- a/drivers/net/ethernet/ti/davinci_cpdma.c
+> +++ b/drivers/net/ethernet/ti/davinci_cpdma.c
+> @@ -205,7 +205,7 @@ static void cpdma_desc_pool_destroy(struct cpdma_ctlr *ctlr)
+>    * devices (e.g. cpsw switches) use plain old memory.  Descriptor pools
+>    * abstract out these details
+>    */
+> -int cpdma_desc_pool_create(struct cpdma_ctlr *ctlr)
+> +static int cpdma_desc_pool_create(struct cpdma_ctlr *ctlr)
+>   {
+>   	struct cpdma_params *cpdma_params = &ctlr->params;
+>   	struct cpdma_desc_pool *pool;
+> 
 
-/Jarkko
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+
+-- 
+regards,
+-grygorii
