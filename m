@@ -2,228 +2,265 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719E6C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3465BC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 244F620936
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 244F620936
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D654820A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D654820A8B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933347AbeFUPfJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:35:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56982 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933262AbeFUPfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:35:06 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 557CE207EB; Thu, 21 Jun 2018 17:35:04 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DA7162073C;
-        Thu, 21 Jun 2018 17:35:03 +0200 (CEST)
-Message-ID: <a2e1e0a85e0cd650d27eb02dc58d438d6a750929.camel@bootlin.com>
-Subject: Re: [PATCH 7/9] media: cedrus: Move IRQ maintainance to
- cedrus_dec_ops
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>, hans.verkuil@cisco.com,
-        acourbot@chromium.org, sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     tfiga@chromium.org, posciak@chromium.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Thu, 21 Jun 2018 17:35:03 +0200
-In-Reply-To: <20180613140714.1686-8-maxime.ripard@bootlin.com>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-         <20180613140714.1686-8-maxime.ripard@bootlin.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-CZTYWBu0xl+VuYEU4hti"
-X-Mailer: Evolution 3.28.2 
-Mime-Version: 1.0
+        id S933298AbeFUPhI convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 11:37:08 -0400
+Received: from mailoutvs49.siol.net ([185.57.226.240]:40179 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933188AbeFUPhG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 11:37:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 1BFBA522CAC;
+        Thu, 21 Jun 2018 17:37:03 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id QQQzZnbMlH4R; Thu, 21 Jun 2018 17:37:02 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 0DAE7522C99;
+        Thu, 21 Jun 2018 17:37:02 +0200 (CEST)
+Received: from jernej-laptop.localnet (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id B64DB522C2A;
+        Thu, 21 Jun 2018 17:36:58 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support for tcon-top gate
+Date:   Thu, 21 Jun 2018 17:35:45 +0200
+Message-ID: <2366311.u3CXHO0a4d@jernej-laptop>
+In-Reply-To: <CAGb2v64iB8FP1Nf+vZM2wd6wzNLxWYrCP78D-rOUg881RPNpEA@mail.gmail.com>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net> <2581098.bNJirayF9O@jernej-laptop> <CAGb2v64iB8FP1Nf+vZM2wd6wzNLxWYrCP78D-rOUg881RPNpEA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dne četrtek, 21. junij 2018 ob 03:23:27 CEST je Chen-Yu Tsai napisal(a):
+> On Thu, Jun 21, 2018 at 3:37 AM, Jernej Škrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Dne sobota, 16. junij 2018 ob 07:48:38 CEST je Chen-Yu Tsai napisal(a):
+> >> On Sat, Jun 16, 2018 at 1:33 AM, Jernej Škrabec <jernej.skrabec@siol.net>
+> > 
+> > wrote:
+> >> > Dne petek, 15. junij 2018 ob 19:13:17 CEST je Chen-Yu Tsai napisal(a):
+> >> >> On Sat, Jun 16, 2018 at 12:41 AM, Jernej Škrabec
+> >> >> 
+> >> >> <jernej.skrabec@siol.net> wrote:
+> >> >> > Hi,
+> >> >> > 
+> >> >> > Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard 
+napisal(a):
+> >> >> >> Hi,
+> >> >> >> 
+> >> >> >> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
+> >> >> >> > TV TCONs connected to TCON TOP have to enable additional gate in
+> >> >> >> > order
+> >> >> >> > to work.
+> >> >> >> > 
+> >> >> >> > Add support for such TCONs.
+> >> >> >> > 
+> >> >> >> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> >> >> >> > ---
+> >> >> >> > 
+> >> >> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
+> >> >> >> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
+> >> >> >> >  2 files changed, 15 insertions(+)
+> >> >> >> > 
+> >> >> >> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> >> >> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index
+> >> >> >> > 08747fc3ee71..0afb5a94a414
+> >> >> >> > 100644
+> >> >> >> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> >> >> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> >> >> >> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct
+> >> >> >> > device
+> >> >> >> > *dev,
+> >> >> >> > 
+> >> >> >> >             dev_err(dev, "Couldn't get the TCON bus clock\n");
+> >> >> >> >             return PTR_ERR(tcon->clk);
+> >> >> >> >     
+> >> >> >> >     }
+> >> >> >> > 
+> >> >> >> > +
+> >> >> >> > +   if (tcon->quirks->has_tcon_top_gate) {
+> >> >> >> > +           tcon->top_clk = devm_clk_get(dev, "tcon-top");
+> >> >> >> > +           if (IS_ERR(tcon->top_clk)) {
+> >> >> >> > +                   dev_err(dev, "Couldn't get the TCON TOP bus
+> >> >> >> > clock\n");
+> >> >> >> > +                   return PTR_ERR(tcon->top_clk);
+> >> >> >> > +           }
+> >> >> >> > +           clk_prepare_enable(tcon->top_clk);
+> >> >> >> > +   }
+> >> >> >> > +
+> >> >> >> 
+> >> >> >> Is it required for the TCON itself to operate, or does the TCON
+> >> >> >> requires the TCON TOP, which in turn requires that clock to be
+> >> >> >> functional?
+> >> >> >> 
+> >> >> >> I find it quite odd to have a clock that isn't meant for a
+> >> >> >> particular
+> >> >> >> device to actually be wired to another device. I'm not saying this
+> >> >> >> isn't the case, but it would be a first.
+> >> >> > 
+> >> >> > Documentation doesn't say much about that gate. I did few tests and
+> >> >> > TCON
+> >> >> > registers can be read and written even if TCON TOP TV TCON gate is
+> >> >> > disabled. However, there is no image, as expected.
+> >> >> 
+> >> >> The R40 manual does include it in the diagram, on page 504. There's
+> >> >> also
+> >> >> a
+> >> >> mux to select whether the clock comes directly from the CCU or the TV
+> >> >> encoder (a feedback mode?). I assume this is the gate you are
+> >> >> referring
+> >> >> to
+> >> >> here, in which case it is not a bus clock, but rather the TCON module
+> >> >> or
+> >> >> channel clock, strangely routed.
+> >> >> 
+> >> >> > More interestingly, I enabled test pattern directly in TCON to
+> >> >> > eliminate
+> >> >> > influence of the mixer. As soon as I disabled that gate, test
+> >> >> > pattern
+> >> >> > on
+> >> >> > HDMI screen was gone, which suggest that this gate influences
+> >> >> > something
+> >> >> > inside TCON.
+> >> >> > 
+> >> >> > Another test I did was that I moved enable/disable gate code to
+> >> >> > sun4i_tcon_channel_set_status() and it worked just as well.
+> >> >> > 
+> >> >> > I'll ask AW engineer what that gate actually does, but from what I
+> >> >> > saw,
+> >> >> > I
+> >> >> > would say that most appropriate location to enable/disable TCON TOP
+> >> >> > TV
+> >> >> > TCON
+> >> >> > gate is TCON driver. Alternatively, TCON TOP driver could check if
+> >> >> > any
+> >> >> > TV
+> >> >> > TCON is in use and enable appropriate gate. However, that doesn't
+> >> >> > sound
+> >> >> > right to me for some reason.
+> >> >> 
+> >> >> If what I said above it true, then yes, the appropriate location to
+> >> >> enable
+> >> >> it is the TCON driver, but moreover, the representation of the clock
+> >> >> tree
+> >> >> should be fixed such that the TCON takes the clock from the TCON TOP
+> >> >> as
+> >> >> its
+> >> >> channel/ module clock instead. That way you don't need this patch, but
+> >> >> you'd add another for all the clock routing.
+> >> > 
+> >> > Can you be more specific? I not sure what you mean here.
+> >> 
+> >> For clock related properties in the device tree:
+> >> 
+> >> &tcon_top {
+> >> 
+> >>     clocks = <&ccu CLK_BUS_TCON_TOP>,
+> >>     
+> >>              <&ccu CLK_TCON_TV0>,
+> >>              <&tve0>,
+> >>              <&ccu CLK_TCON_TV1>,
+> >>              <&tve1>;
+> >>     
+> >>     clock-names = "bus", "tcon-tv0", "tve0", "tcon-tv1", "tve1";
+> >>     clock-output-names = "tcon-top-tv0", "tcon-top-tv1";
+> >> 
+> >> };
+> >> 
+> >> &tcon_tv0 {
+> >> 
+> >>     clocks = <&ccu CLK_BUS_TCON_TV0>, <&tcon_top 0>'
+> >>     clock-names = "ahb", "tcon-ch1";
+> >> 
+> >> };
+> >> 
+> >> A diagram would look like:
+> >>                    | This part is TCON TOP |
+> >>                    
+> >>                    v                       v
+> >> 
+> >> CCU CLK_TCON_TV0 --|----\                  |
+> >> 
+> >>                    |     mux ---- gate ----|-- TCON_TV0
+> >> 
+> >> TVE0 --------------|----/                  |
+> >> 
+> >> And the same goes for TCON_TV1 and TVE1.
+> >> 
+> >> The user manual is a bit lacking on how TVE outputs a clock though.
+> > 
+> > I didn't yet received any response on HW details from AW till now, but I
+> > would like to post new version of patches soon.
+> > 
+> > While chaining like you described could be implemented easily, I don't
+> > think it really represents HW as it is. Tests showed that these two
+> > clocks are independent, otherwise register writes/reads wouldn't be
+> > possible with tcon- top gate disabled. I chose tcon-top bus clock as a
+> > parent becase if it is not enabled, it simply won't work.
+> 
+> AFAIK with the TCONs, even when the TCON channel clock (not the bus clock)
+> is disabled, register accesses still work.
 
---=-CZTYWBu0xl+VuYEU4hti
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+You're right, I just tested that.
 
-Hi,
+> I'm saying that the TCON TOP
+> gate is downstream from the TCON channel clock in the CCU. These are not
+> related to the TCON bus clock in the CCU, which affects register access.
+> 
+> Did Allwinner provide any information regarding the hierarchy of the clocks?
 
-On Wed, 2018-06-13 at 16:07 +0200, Maxime Ripard wrote:
-> The IRQ handler up until now was hardcoding the use of the MPEG engine to
-> read the interrupt status, clear it and disable the interrupts.
->=20
-> Obviously, that won't work really well with the introduction of new codec=
-s
-> that use a separate engine with a separate register set.
->=20
-> In order to make this more future proof, introduce new decodec operations
-> to deal with the interrupt management. The only one missing is the one to
-> enable the interrupts in the first place, but that's taken care of by the
-> trigger hook for now.
+No reponse for now.
 
-Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > However, if everyone feels chaining is the best way to implement it, I'll
+> > do it.
+> 
+> I would like to get it right and match actual hardware. My proposal is
+> based on my understanding from the diagrams in the user manual.
 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  .../sunxi/cedrus/sunxi_cedrus_common.h        |  9 +++++
->  .../platform/sunxi/cedrus/sunxi_cedrus_hw.c   | 21 ++++++------
->  .../sunxi/cedrus/sunxi_cedrus_mpeg2.c         | 33 +++++++++++++++++++
->  3 files changed, 53 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h b/=
-drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> index c2e2c92d103b..a2a507eb9fc9 100644
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-> @@ -108,7 +108,16 @@ struct sunxi_cedrus_buffer *vb2_to_cedrus_buffer(con=
-st struct vb2_buffer *p)
->  	return vb2_v4l2_to_cedrus_buffer(to_vb2_v4l2_buffer(p));
->  }
-> =20
-> +enum sunxi_cedrus_irq_status {
-> +	SUNXI_CEDRUS_IRQ_NONE,
-> +	SUNXI_CEDRUS_IRQ_ERROR,
-> +	SUNXI_CEDRUS_IRQ_OK,
-> +};
-> +
->  struct sunxi_cedrus_dec_ops {
-> +	void (*irq_clear)(struct sunxi_cedrus_ctx *ctx);
-> +	void (*irq_disable)(struct sunxi_cedrus_ctx *ctx);
-> +	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx *ctx=
-);
->  	void (*setup)(struct sunxi_cedrus_ctx *ctx,
->  		      struct sunxi_cedrus_run *run);
->  	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/driv=
-ers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-> index bb46a01214e0..6b97cbd2834e 100644
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-> @@ -77,27 +77,28 @@ static irqreturn_t sunxi_cedrus_ve_irq(int irq, void =
-*dev_id)
->  	struct sunxi_cedrus_ctx *ctx;
->  	struct sunxi_cedrus_buffer *src_buffer, *dst_buffer;
->  	struct vb2_v4l2_buffer *src_vb, *dst_vb;
-> +	enum sunxi_cedrus_irq_status status;
->  	unsigned long flags;
-> -	unsigned int value, status;
-> =20
->  	spin_lock_irqsave(&dev->irq_lock, flags);
-> =20
-> -	/* Disable MPEG interrupts and stop the MPEG engine */
-> -	value =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL);
-> -	sunxi_cedrus_write(dev, value & (~0xf), VE_MPEG_CTRL);
-> -
-> -	status =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS);
-> -	sunxi_cedrus_write(dev, 0x0000c00f, VE_MPEG_STATUS);
-> -	sunxi_cedrus_engine_disable(dev);
-> -
->  	ctx =3D v4l2_m2m_get_curr_priv(dev->m2m_dev);
->  	if (!ctx) {
->  		pr_err("Instance released before the end of transaction\n");
->  		spin_unlock_irqrestore(&dev->irq_lock, flags);
-> =20
-> -		return IRQ_HANDLED;
-> +		return IRQ_NONE;
->  	}
-> =20
-> +	status =3D dev->dec_ops[ctx->current_codec]->irq_status(ctx);
-> +	if (status =3D=3D SUNXI_CEDRUS_IRQ_NONE) {
-> +		spin_unlock_irqrestore(&dev->irq_lock, flags);
-> +		return IRQ_NONE;
-> +	}
-> +
-> +	dev->dec_ops[ctx->current_codec]->irq_disable(ctx);
-> +	dev->dec_ops[ctx->current_codec]->irq_clear(ctx);
-> +
->  	src_vb =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
->  	dst_vb =3D v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
-> =20
-> diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c b/d=
-rivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-> index e25075bb5779..51fa0c0f9bf2 100644
-> --- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-> +++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-> @@ -52,6 +52,36 @@ static const u8 mpeg_default_non_intra_quant[64] =3D {
-> =20
->  #define m_niq(i) ((i << 8) | mpeg_default_non_intra_quant[i])
-> =20
-> +static enum sunxi_cedrus_irq_status
-> +sunxi_cedrus_mpeg2_irq_status(struct sunxi_cedrus_ctx *ctx)
-> +{
-> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
-> +	u32 reg =3D sunxi_cedrus_read(dev, VE_MPEG_STATUS) & 0x7;
-> +
-> +	if (!reg)
-> +		return SUNXI_CEDRUS_IRQ_NONE;
-> +
-> +	if (reg & (BIT(1) | BIT(2)))
-> +		return SUNXI_CEDRUS_IRQ_ERROR;
-> +
-> +	return SUNXI_CEDRUS_IRQ_OK;
-> +}
-> +
-> +static void sunxi_cedrus_mpeg2_irq_clear(struct sunxi_cedrus_ctx *ctx)
-> +{
-> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
-> +
-> +	sunxi_cedrus_write(dev, GENMASK(2, 0), VE_MPEG_STATUS);
-> +}
-> +
-> +static void sunxi_cedrus_mpeg2_irq_disable(struct sunxi_cedrus_ctx *ctx)
-> +{
-> +	struct sunxi_cedrus_dev *dev =3D ctx->dev;
-> +	u32 reg =3D sunxi_cedrus_read(dev, VE_MPEG_CTRL) & ~BIT(3);
-> +
-> +	sunxi_cedrus_write(dev, reg, VE_MPEG_CTRL);
-> +}
-> +
->  static void sunxi_cedrus_mpeg2_setup(struct sunxi_cedrus_ctx *ctx,
->  				     struct sunxi_cedrus_run *run)
->  {
-> @@ -156,6 +186,9 @@ static void sunxi_cedrus_mpeg2_trigger(struct sunxi_c=
-edrus_ctx *ctx)
->  }
-> =20
->  struct sunxi_cedrus_dec_ops sunxi_cedrus_dec_ops_mpeg2 =3D {
-> +	.irq_clear	=3D sunxi_cedrus_mpeg2_irq_clear,
-> +	.irq_disable	=3D sunxi_cedrus_mpeg2_irq_disable,
-> +	.irq_status	=3D sunxi_cedrus_mpeg2_irq_status,
->  	.setup		=3D sunxi_cedrus_mpeg2_setup,
->  	.trigger	=3D sunxi_cedrus_mpeg2_trigger,
->  };
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-CZTYWBu0xl+VuYEU4hti
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+So for now, your explanation is the most reasonable. Should we go ahead and 
+implement your idea?
 
------BEGIN PGP SIGNATURE-----
+Please note that H6 has TCON-TOP too, but it has only one LCD TCON and one TV 
+TCON instead of two of each kind. That means we will have hole in indices 
+(tcon_lcd0 is 1, tcon_tv0 is 3, which is aligned with R40) and different TCON-
+TOP binding (no tcon_tv1 channel clock), but setup is exactly the same.
 
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsrxacACgkQ3cLmz3+f
-v9GSeQf/bWMUdojpRZ0kiiqT7ZwylIwLahgsrAq4r1GTrtcJlJPsE9Dk2BN4Zu2v
-slOk4HcQkq7mj8SVoZhV1OLWJt6ldCJRblCB4h29RWmZ51gIb574KL+3no1w/1ia
-n+b91Cvjy4JMLWv492TgKoMD4A7MxlqnROgpZibi6/ynqOU/epD4aapX5eC2R9jD
-XeC1rSfCTqOghFEXrqI7Db7/0mTKt2szwasVjwOMo8Ap7KoZa0FCoy/Y6d/DzJGd
-Y3PMX8yvPdeV5tzeZhfBYIdUKl+gtRyxTsbSlhyHeyX5dlz3NULXolnu/Szss2cO
-HqLZE2QvgYJQj9EluoRxJNkCEAWWKg==
-=lRqs
------END PGP SIGNATURE-----
+Best regard,
+Jernej
 
---=-CZTYWBu0xl+VuYEU4hti--
+
 
