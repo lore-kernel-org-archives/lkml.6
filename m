@@ -6,86 +6,72 @@ X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C522AC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2631C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DFDF2075E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C13120837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:50:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hB+0JN/N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DFDF2075E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdJfUHgL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C13120837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933277AbeFUNhu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:37:50 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42521 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932806AbeFUNhp (ORCPT
+        id S933095AbeFUNuT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:50:19 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43682 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932862AbeFUNuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:37:45 -0400
-Received: by mail-wr0-f193.google.com with SMTP id w10-v6so3237626wrk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 06:37:44 -0700 (PDT)
+        Thu, 21 Jun 2018 09:50:18 -0400
+Received: by mail-wr0-f195.google.com with SMTP id d2-v6so3274427wrm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 06:50:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=FriD1zN5rha1eGba+f03oFkIXLFDodaRIhinPiyv2ME=;
-        b=hB+0JN/NIXEzKNfqRlExmKpn4FxV8PJrWp+GxLTyps6d1K9NkaUwrAqc1PuI9Qs+em
-         twcGeXB5s6BlcY33J0+KWs/KMtA5DvTM5vIuvAgLtcntBitlwwuXn+sJ+AU0Wtg1AmkF
-         DONAgziWWEccrfPU1YPIXeaYkKS4akFOa2jdgesQUmLHCRVY55u5ubSpeE3boHmCc6lk
-         2uEZ9JW2eDq35/+zokp7XoAamQIohMcpwidoyM+RM2S4ZBbpIuuBqRDtMT9r+hk798fY
-         E1cve40sjdSrWH+N+XBRbe507D+l5/Q8MzUPt4zl3y61kz50ocPItmS7ey2/eF+r9IZq
-         2qmA==
+        bh=OSO0HRDh27lKhYNPW3XoEdh56bJ4D1szLLRwTXoEfLM=;
+        b=jdJfUHgL4uYwncsmTnXHmXCVQCW+fxv1SlG+/qA3T3Eo3Zm6bZ4dZ/lRhM0c/FhKFV
+         W3uHCM7SxW+QKNUN3TFqsT5LJdSw/vORcGz1kV0NyPEBtYTdVVLlJuC7R/BDXVXwIQz8
+         wbpKnfUlI4Mn1f+Uqs1/afK/YD24R1u2Pyau2hLM866vxX/azydZwvwq/lgTNI1VE021
+         P0MuuoXRhBC62qayO9JdmDklUPiEPHlh/oFtcSjf9l3xlXicafcS78CUHIHr5FqYgdZz
+         Bs4AGAPV4AA93H8WahpGYGDsbfxC7ZgD+vNAkWaIKPHW5gluFXm3fJ2n5t6yZZ+jWohq
+         jdKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FriD1zN5rha1eGba+f03oFkIXLFDodaRIhinPiyv2ME=;
-        b=gOlGg9uyllKKrCi6e4GH9usJ3CDWBKKtDbxVPbUV5HG8T5vxZmCg4BdXcpyOJMwEIp
-         zc05F1AukvzA5XR6zij+qCh/Aaac+MZraFArW3WqckVZ76vYCy19fpodfUSAYNOBXp8B
-         g/KHJk5tKbuvaNavL4XDyex5TtoCVhIeRrIRi+Wf3QTZ15gwgX1vydZMDMnfUkj1S701
-         rGkWO5K06DBqZL4f4OgWhLZI/d2n9r97hUKESu/12NbC7+t0plsEflOea2uEI7tUIrlg
-         Kto7WV1uwTFVAkDbtk6EtDAM/u2nKVl+YcLwzHFNhEjPmPVIbX4KwxiEAuWT21q2tlb7
-         W3wQ==
-X-Gm-Message-State: APt69E2L2wFiy83gjB4B/aDZsII9DGpTSyNPYDFf1hvyRna+qR6uBfzz
-        mNxToUg068XD94A3xSJMViM=
-X-Google-Smtp-Source: ADUXVKIy4faEbrw99R4kZziXsqgwHXOGlIrPvOKeo0MAkvng2NWbnBaLaWrRSvcgJs53uvPSbcabQw==
-X-Received: by 2002:adf:8142:: with SMTP id 60-v6mr21015766wrm.192.1529588264208;
-        Thu, 21 Jun 2018 06:37:44 -0700 (PDT)
+        bh=OSO0HRDh27lKhYNPW3XoEdh56bJ4D1szLLRwTXoEfLM=;
+        b=IQv+9VCJzdFO4HKRXo8MLGhrDhunUpLSylBm0tH3e0VrwLaHzPnkeTOavPt86eve93
+         n3i8Fnt63Yfhj/yQBQajomjIXbqxH8C1A6YxU7nAk0zaNHOaWyEFpvp91n0Y6XPs8hI8
+         AdVVRji0oXfxmjze8mfoQAhJAb1i1elIBOh4t7tw20gaJwuQ2rkEuk9g33MOMYrLKu7V
+         UjeM32xh5y2HcWYe8Gdpv/U81p/+TgMXwrisZLh6jBZ6KQijmAJm4J2qRFOc/vEXouiI
+         1E29bPlmoDZkPvhHROLYkVjEgZiIYaWU5yfsL4ztqaJl20iYcKCg8vXPXU9qQbayHosk
+         ojEA==
+X-Gm-Message-State: APt69E0lDtpjzYtUDB5AubF83b8kyla8hBpS1J9Ppn5YCCAwYIl8AZiO
+        h6o2bHsRiz+u+scdBenxBCRC2Q==
+X-Google-Smtp-Source: ADUXVKJ/gskjpBKreARJwT8K2nj8S8gcE1fV4LnzeXNjtCTSAH41xMBAXG8fkvd7hxPzk6LTHjxj/w==
+X-Received: by 2002:adf:afe3:: with SMTP id y35-v6mr23809353wrd.176.1529589017046;
+        Thu, 21 Jun 2018 06:50:17 -0700 (PDT)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j10-v6sm7190645wrr.47.2018.06.21.06.37.42
+        by smtp.gmail.com with ESMTPSA id r11-v6sm5632303wrn.34.2018.06.21.06.50.15
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 06:37:43 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 15:37:41 +0200
+        Thu, 21 Jun 2018 06:50:16 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 15:50:14 +0200
 From:   Ingo Molnar <mingo@kernel.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Joel Fernandes <joel.opensrc@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Rich Felker <dalias@libc.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [GIT PULL] breakpoint: Rework arch validation v3
-Message-ID: <20180621133741.GA24944@gmail.com>
-References: <1527863526-32677-1-git-send-email-frederic@kernel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Matthew Wilcox <matthew@wil.cx>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] semaphore: use raw_spin_lock_irq instead of
+ raw_spin_lock_irqsave
+Message-ID: <20180621135014.GA31371@gmail.com>
+References: <alpine.LRH.2.02.1805301120180.3104@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527863526-32677-1-git-send-email-frederic@kernel.org>
+In-Reply-To: <alpine.LRH.2.02.1805301120180.3104@file01.intranet.prod.int.rdu2.redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -93,74 +79,25 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Frederic Weisbecker <frederic@kernel.org> wrote:
+* Mikulas Patocka <mpatocka@redhat.com> wrote:
 
-> Ingo,
+> The sleeping functions down, down_interruptible, down_killable and
+> down_timeout can't be called with interrupts disabled, so we don't have to
+> save and restore interrupt flag.
 > 
-> Please pull the perf/breakpoint-v3 branch that can be found at:
+> This patch avoids the costly pushf and popf instructions on the semaphore
+> path.
 > 
-> git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
-> 	perf/breakpoint-v3
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 > 
-> HEAD: 3c0681cc01b39e7fac6eb810e82380165c9b56f1
-> 
-> Changes since v2:
-> 
-> * Constify the struct perf_event_attr passed in hw_breakpoint_parse()
-> * Add acks
-> 	
 > ---
-> When we modify a hardware breakpoint, the architecture code fills up
-> the architecture data as the validation of generic attributes progresses.
-> If something goes wrong in the middle, the architecture data changes
-> aren't rolled back and we are left with a halfway fiddled breakpoint.
-> 
-> This set fixes the various misdesigns that back this bad behaviour.
-> 
-> Thanks,
-> 	Frederic
-> ---
-> 
-> Frederic Weisbecker (12):
->       perf/breakpoint: Split attribute parse and commit
->       perf/breakpoint: Pass arch breakpoint struct to arch_check_bp_in_kernelspace()
->       x86: Implement hw_breakpoint_arch_parse()
->       powerpc: Implement hw_breakpoint_arch_parse()
->       arm: Implement hw_breakpoint_arch_parse()
->       arm64: Implement hw_breakpoint_arch_parse()
->       sh: Remove "struct arch_hw_breakpoint::name" unused field
->       sh: Implement hw_breakpoint_arch_parse()
->       xtensa: Implement hw_breakpoint_arch_parse()
->       perf/breakpoint: Remove default hw_breakpoint_arch_parse()
->       perf/breakpoint: Pass new breakpoint type to modify_breakpoint_slot()
->       perf/breakpoint: Clean up and consolidate modify_user_hw_breakpoint_check()
-> 
-> 
->  arch/arm/include/asm/hw_breakpoint.h     |   7 +-
->  arch/arm/kernel/hw_breakpoint.c          |  78 +++++++++---------
->  arch/arm64/include/asm/hw_breakpoint.h   |   7 +-
->  arch/arm64/kernel/hw_breakpoint.c        |  86 ++++++++++----------
->  arch/powerpc/include/asm/hw_breakpoint.h |   7 +-
->  arch/powerpc/kernel/hw_breakpoint.c      |  47 ++++++-----
->  arch/sh/include/asm/hw_breakpoint.h      |   8 +-
->  arch/sh/kernel/hw_breakpoint.c           |  53 ++++++-------
->  arch/x86/include/asm/hw_breakpoint.h     |   7 +-
->  arch/x86/kernel/hw_breakpoint.c          | 131 ++++++++++++++++---------------
->  arch/xtensa/include/asm/hw_breakpoint.h  |   7 +-
->  arch/xtensa/kernel/hw_breakpoint.c       |  40 ++++------
->  kernel/events/hw_breakpoint.c            |  92 +++++++++++++---------
->  13 files changed, 294 insertions(+), 276 deletions(-)
+>  kernel/locking/semaphore.c |   21 ++++++++-------------
+>  1 file changed, 8 insertions(+), 13 deletions(-)
 
-Ok, this looks pretty good.
+I've applied this to the locking tree, I suspect we can do this on the condition 
+that it doesn't explode in early boot code (which has irqs disabled) and doesn't 
+generate early boot lockdep splats either.
 
-I was trying to apply this series today, but got a few conflicts due to new 
-changes in the merge window, in:
-
-	arch/sh/kernel/hw_breakpoint.c
-	arch/powerpc/kernel/hw_breakpoint.c
-
-Could you please resolve those conflicts and resend the series?
-
-Thanks!
+Thanks,
 
 	Ingo
