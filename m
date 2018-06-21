@@ -2,89 +2,102 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A1AC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 14:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68A6C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 14:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E79C4208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 14:56:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79C4208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A0FB020837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 14:57:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7cAtvh5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0FB020837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933167AbeFUO4l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 10:56:41 -0400
-Received: from foss.arm.com ([217.140.101.70]:51044 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932752AbeFUO4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 10:56:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87AC580D;
-        Thu, 21 Jun 2018 07:56:40 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 56A803F246;
-        Thu, 21 Jun 2018 07:56:40 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 84BD61AE2E48; Thu, 21 Jun 2018 15:57:16 +0100 (BST)
-Date:   Thu, 21 Jun 2018 15:57:16 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v2] rseq: Avoid infinite recursion when delivering SIGSEGV
-Message-ID: <20180621145715.GF22505@arm.com>
-References: <1529582080-31430-1-git-send-email-will.deacon@arm.com>
- <92378910.863.1529592277773.JavaMail.zimbra@efficios.com>
+        id S933279AbeFUO5V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 10:57:21 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42947 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932963AbeFUO5S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 10:57:18 -0400
+Received: by mail-lf0-f67.google.com with SMTP id z207-v6so4817630lff.9;
+        Thu, 21 Jun 2018 07:57:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=JjJDpYrp1ZqrftXZ9az+npr+RsGHDvUIftSG0wiHdZU=;
+        b=U7cAtvh5D1uxobXzDrfgEpE/+lIJV2vKPoc1kPPjBp1ytkY8mL3RJnDlUTHstK59nw
+         XxQjiMqK9/BhG8Ct/vNBqXjAVKPaKTnIHky7gxBdD7MbpbR6xF9T0Pb+W3B0o7VOvvNR
+         zSc8oFz/UyKKdzKNrMVDwrt7dC+Kh1yJ2EC+C8P8AyTlPUTuGY7RonPGu4azwSCP+IMl
+         hF1oyKAig1D0nVXUcpO+87i/Bpq+Mz2LY5l0dOruldIK5KebjBPb+1EwHbEPqJ5iUX0G
+         ArIwI/X/S0QiWqc1V1eCB81LTtOUnfnLTdN582jqz6F72BxjvKACep+FfWckks8Jq7E6
+         NbMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=JjJDpYrp1ZqrftXZ9az+npr+RsGHDvUIftSG0wiHdZU=;
+        b=J74CYWfqGZrdZrQDC7tUfrzLU7iWwkE9DmJtwqYSvlO/HIK1qQrZn5Y71TC8ngEBWw
+         /tVelFUoDKG2we0G77d7tzsEa/O8KQLyngtlCLVBixVDDBYr6IytW+V/uvy79kOKUYcE
+         XeuZ4FlwTusj895ldiGhKYSPeFmzUeWaa91OyYdJg4TTbw1+HZlTYvK2xiBTDKghv7Ni
+         5oEjH0JG122QdrrO4YygclaORLXBaSMRJPO9iP0ohGGahNiTRr0wyn7bRDR7vgg4avyl
+         Kyb7Jyi+gfnfF1BrJ189xG8nfq69kX2xrJ+itPJctjBQdkxQ7M/hKfatb6+poOo1QbhK
+         tJlg==
+X-Gm-Message-State: APt69E2qgjd71lpbmvgl/OoFKTXB3OBvhitZnyq3VXLfnSbBxTviminH
+        6XOa/R7k1QrSfvILShSnR7zEK3mUzpwqBkdjTRw=
+X-Google-Smtp-Source: ADUXVKL2k32LpWzoDUfw+bAE2yP5nNnUQvlUxuS/wnDRjRSsFNFsVhkMgFpmdxIWCWStZT1zbgVU934qGzqBqZ64yrQ=
+X-Received: by 2002:a19:d5c7:: with SMTP id m190-v6mr6435699lfg.12.1529593036963;
+ Thu, 21 Jun 2018 07:57:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92378910.863.1529592277773.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 07:57:16
+ -0700 (PDT)
+In-Reply-To: <CAAM7YAko88Bq0Nbh4EcYifEcnzHTJ500YvofWA-uMxrwqANzpA@mail.gmail.com>
+References: <20180620155101.57685-1-arnd@arndb.de> <20180620155101.57685-4-arnd@arndb.de>
+ <CAAM7YAko88Bq0Nbh4EcYifEcnzHTJ500YvofWA-uMxrwqANzpA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 21 Jun 2018 16:57:16 +0200
+X-Google-Sender-Auth: ks_wwwxcYO7y8GxgRJW5Wo2dAA4
+Message-ID: <CAK8P3a2sq8_S94n8KczWTL6ZGJvR7Zw3bP2Cihyr5bmxFTjCQg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ceph: use timespec64 for r_mtime
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     Zheng Yan <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alex Elder <elder@kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Miller <davem@davemloft.net>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jason Dillaman <dillaman@redhat.com>,
+        daniel.m.jordan@oracle.com, Jan Kara <jack@suse.cz>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 10:44:37AM -0400, Mathieu Desnoyers wrote:
-> ----- On Jun 21, 2018, at 7:54 AM, Will Deacon will.deacon@arm.com wrote:
-> 
-> > When delivering a signal to a task that is using rseq, we call into
-> > __rseq_handle_notify_resume() so that the registers pushed in the
-> > sigframe are updated to reflect the state of the restartable sequence
-> > (for example, ensuring that the signal returns to the abort handler if
-> > necessary).
-> > 
-> > However, if the rseq management fails due to an unrecoverable fault when
-> > accessing userspace or certain combinations of RSEQ_CS_* flags, then we
-> > will attempt to deliver a SIGSEGV. This has the potential for infinite
-> > recursion if the rseq code continuously fails on signal delivery.
-> > 
-> > Avoid this problem by using force_sigsegv() instead of force_sig(), which
-> > is explicitly designed to reset the SEGV handler to SIG_DFL in the case
-> > of a recursive fault. In doing so, remove rseq_signal_deliver() from the
-> > internal rseq API and have an optional struct ksignal * parameter to
-> > rseq_handle_notify_resume() instead.
-> > 
-> > Signed-off-by: Will Deacon <will.deacon@arm.com>
-> > ---
-> > 
-> > RFC v1 -> v2: Kill rseq_signal_deliver()
-> 
-> I actually meant to kill _rseq_handle_notify_resume introduced by
-> your patch, not rseq_signal_deliver().
-> 
-> Please keep rseq_signal_deliver() as a static inline, and just remove
-> the _rseq_handle_notify_resume() by changing the signature of
-> rseq_handle_notify_resume to take an extra sig argument (which can
-> be NULL).
+On Thu, Jun 21, 2018 at 2:41 PM, Yan, Zheng <ukernel@gmail.com> wrote:
+> On Wed, Jun 20, 2018 at 11:55 PM Arnd Bergmann <arnd@arndb.de> wrote:
 
-Sorry, I misunderstood what you were asking for. I'll spin a v3 in a bit
-with rseq_signal_deliver() reintroduced.
+>> @@ -1013,7 +1013,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
+>>                         truncate_inode_pages_range(inode->i_mapping, pos,
+>>                                         (pos+len) | (PAGE_SIZE - 1));
+>>
+>> -                       req->r_mtime = mtime;
+>> +                       req->r_mtime = current_time(inode);
+> this change is not needed
 
-Will
+Good catch, no idea how those two changes ended up in here, I'll
+resend without them.
+
+Thanks,
+
+      Arnd
