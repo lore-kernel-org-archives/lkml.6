@@ -2,421 +2,150 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A811DC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E8AC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC68204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:17:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cHRw81+b";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qzexztfz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC68204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 98408204EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:18:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98408204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932883AbeFUJRu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:17:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33344 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932534AbeFUJRp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:17:45 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A69226060A; Thu, 21 Jun 2018 09:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529572664;
-        bh=MQY4LXF2/6zKvzdzfpuQm+uPaMloU2dhFrsf7Ip96GE=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=cHRw81+bvdkpqnqCX39wSmXvTSOpvxKFkt+C2lG+MnNSehxpNQgEK1Gk8oOuIZtjP
-         UsRFsy5wjogax0ouU4d8hvYLGprPUosV0UBf+VH2QbG3D/kw1E7leTZl/7+6LNb81c
-         nF2wAip8EzOtUeTNJ1GU31jb/BOHeVU6HLlVFOrU=
-Received: from SAYALIL (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 934DA6021A;
-        Thu, 21 Jun 2018 09:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529572663;
-        bh=MQY4LXF2/6zKvzdzfpuQm+uPaMloU2dhFrsf7Ip96GE=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=QzexztfzkIVSAXdmlqUPT7sPPRq2Upz1yf8mP9b4JXq4UZWAGRXh/T9/aTP92zziJ
-         S7GrXQVVhDIZPomfkSalfCl4l152XXXf3fAJa3GIIBSdyWOWT8+0sj/zq1saxxsORT
-         cnwj9Nz3W12HvuV5r4ihTRqXUDXZkXgf+IK8hUW8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 934DA6021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   "sayali" <sayalil@codeaurora.org>
-To:     "'Kyuho Choi'" <chlrbgh0@gmail.com>
-Cc:     <subhashj@codeaurora.org>, <cang@codeaurora.org>,
-        <vivek.gautam@codeaurora.org>, <rnayak@codeaurora.org>,
-        <vinholikatti@gmail.com>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>, <asutoshd@codeaurora.org>,
-        <evgreen@chromium.org>, <riteshh@codeaurora.org>,
-        <linux-scsi@vger.kernel.org>,
-        "'open list'" <linux-kernel@vger.kernel.org>
-References: <1528981432-23065-1-git-send-email-sayalil@codeaurora.org> <1528981432-23065-3-git-send-email-sayalil@codeaurora.org> <CAP2JTQKHsJrX4BewyfRPL0LpxTYFhW2RMpOkJCRgS1Uns2Qw+A@mail.gmail.com>
-In-Reply-To: <CAP2JTQKHsJrX4BewyfRPL0LpxTYFhW2RMpOkJCRgS1Uns2Qw+A@mail.gmail.com>
-Subject: RE: [PATCH V3 2/3] scsi: ufs: Add ufs provisioning support
-Date:   Thu, 21 Jun 2018 14:47:36 +0530
-Message-ID: <002c01d40940$b5a91120$20fb3360$@codeaurora.org>
+        id S932993AbeFUJSZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:18:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47554 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932940AbeFUJSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:18:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54C5180D;
+        Thu, 21 Jun 2018 02:18:15 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 235CA3F246;
+        Thu, 21 Jun 2018 02:18:15 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 3F25F1AE101A; Thu, 21 Jun 2018 10:18:51 +0100 (BST)
+Date:   Thu, 21 Jun 2018 10:18:51 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     James Morse <james.morse@arm.com>
+Cc:     Wei Xu <xuwei5@hisilicon.com>, catalin.marinas@arm.com,
+        suzuki.poulose@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
+        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, xiexiuqi@huawei.com,
+        huangdaode <huangdaode@hisilicon.com>,
+        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        jonathan.cameron@huawei.com,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        libeijian@hisilicon.com
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+Message-ID: <20180621091850.GA22505@arm.com>
+References: <5B2A6218.3030201@hisilicon.com>
+ <20180620144257.GB27776@arm.com>
+ <5B2A7832.4010502@hisilicon.com>
+ <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
+ <5B2A7FE1.5040607@hisilicon.com>
+ <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQHqrwfiTmcauPZKO5758rWQ5wPzzwH9kfIcAm+N5IukGbmhgA==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kyuho,
+On Thu, Jun 21, 2018 at 09:38:53AM +0100, James Morse wrote:
+> On 20/06/18 17:25, Wei Xu wrote:
+> >     [    0.042421] Insufficient stack space to handle exception!
+> >     [    0.042423] ESR: 0x96000046 -- DABT (current EL)
+> >     [    0.043730] FAR: 0xffff0000093a80e0
+> >     [    0.044714] Task stack: [0xffff0000093a8000..0xffff0000093ac000]
+> 
+> This was a level 2 translation fault on a write, to an address that is within
+> the stack....
+> 
+> 
+> >     [    0.051113] IRQ stack: [0xffff000008000000..0xffff000008004000]
+> >     [    0.057610] Overflow stack: [0xffff80003efce2f0..0xffff80003efcf2f0]
+> >     [    0.064003] CPU: 0 PID: 12 Comm: migration/0 Not tainted
+> > 4.17.0-45865-g2b31fe7-dirty #10
+> >     [    0.072201] Hardware name: linux,dummy-virt (DT)
+> 
+> >     [    0.076797] pstate: 604003c5 (nZCv DAIF +PAN -UAO)
+> >     [    0.081727] pc : el1_sync+0x0/0xb0
+> 
+> ... from the vectors.
+> 
+> 
+> >     [    0.085217] lr : kpti_install_ng_mappings+0x120/0x214
+> 
+> What I think is happening is: we come out of the kpti idmap with the stack
+> unmapped. Shortly after we access the stack, which faults. el1_sync faults as
+> well when it tries to push the registers to the stack, and we keep going until
+> we overflow the stack.
+> 
+> I can't reproduce this with kvmtool or qemu in the model.
 
-Comment inline.
+Hmm, one thing that occurs to me is that the kpti_install_ng_mappings()
+code leaves the nG bit set in table entries, which is actually IGNORED in
+the architecture.
 
-Thanks,
-Sayali
------Original Message-----
-From: Kyuho Choi [mailto:chlrbgh0@gmail.com]=20
-Sent: Friday, June 15, 2018 8:28 AM
-To: Sayali Lokhande <sayalil@codeaurora.org>
-Cc: subhashj@codeaurora.org; cang@codeaurora.org; =
-vivek.gautam@codeaurora.org; rnayak@codeaurora.org; =
-vinholikatti@gmail.com; jejb@linux.vnet.ibm.com; =
-martin.petersen@oracle.com; asutoshd@codeaurora.org; =
-evgreen@chromium.org; riteshh@codeaurora.org; =
-linux-scsi@vger.kernel.org; open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 2/3] scsi: ufs: Add ufs provisioning support
+Wei -- does the diff below help at all? Make sure you disable CONFIG_KASAN,
+otherwise your kernel will take an age to boot.
 
-Hi,
+Will
 
-On 6/14/18, Sayali Lokhande <sayalil@codeaurora.org> wrote:
-> A new api ufshcd_do_config_device() is added in driver to support UFS=20
-> provisioning at runtime. Configfs support is added to trigger=20
-> provisioning.
-> Device and Unit configurable parameters are parsed from vendor=20
-> specific provisioning data or file and passed via configfs node at=20
-> runtime to provision ufs device.
->
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufs.h    |  28 ++++++++
->  drivers/scsi/ufs/ufshcd.c | 180
-> ++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.h |   2 +
->  3 files changed, 210 insertions(+)
->
-> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h index=20
-> e15deb0..1f99904 100644
-> --- a/drivers/scsi/ufs/ufs.h
-> +++ b/drivers/scsi/ufs/ufs.h
-> @@ -333,6 +333,7 @@ enum {
->  	UFSHCD_AMP		=3D 3,
->  };
->
-> +#define UFS_BLOCK_SIZE	4096
->  #define POWER_DESC_MAX_SIZE			0x62
->  #define POWER_DESC_MAX_ACTV_ICC_LVLS		16
->
-> @@ -425,6 +426,33 @@ enum {
->  	MASK_TM_SERVICE_RESP		=3D 0xFF,
->  };
->
-> +struct ufs_unit_desc {
-> +	u8     bLUEnable;              /* 1 for enabled LU */
-> +	u8     bBootLunID;             /* 0 for using this LU for boot */
-> +	u8     bLUWriteProtect;        /* 1 =3D power on WP, 2 =3D permanent =
-WP */
-> +	u8     bMemoryType;            /* 0 for enhanced memory type */
-> +	u32    dNumAllocUnits;         /* Number of alloc unit for this LU =
-*/
-> +	u8     bDataReliability;       /* 0 for reliable write support */
-> +	u8     bLogicalBlockSize;      /* See section 13.2.3 of UFS standard =
-*/
-> +	u8     bProvisioningType;      /* 0 for thin provisioning */
-> +	u16    wContextCapabilities;   /* refer Unit Descriptor Description =
-*/
-> +};
-> +
-> +struct ufs_config_descr {
-> +	u8     bNumberLU;              /* Total number of active LUs */
-> +	u8     bBootEnable;            /* enabling device for partial init =
-*/
-> +	u8     bDescrAccessEn;         /* desc access during partial init */
-> +	u8     bInitPowerMode;         /* Initial device power mode */
-> +	u8     bHighPriorityLUN;       /* LUN of the high priority LU */
-> +	u8     bSecureRemovalType;     /* Erase config for data removal */
-> +	u8     bInitActiveICCLevel;    /* ICC level after reset */
-> +	u16    wPeriodicRTCUpdate;     /* 0 to set a priodic RTC update rate =
-*/
-> +	u32     bConfigDescrLock;      /* 1 to lock Configation Descriptor =
-*/
-> +	u32    qVendorConfigCode;      /* Vendor specific configuration code =
-*/
-> +	struct ufs_unit_desc unit[8];
-> +	u8	lun_to_grow;
-> +};
-> +
->  /* Task management service response */  enum {
->  	UPIU_TASK_MANAGEMENT_FUNC_COMPL		=3D 0x00,
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c=20
-> index 4abc7ae..c0235a4 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -42,6 +42,7 @@
->  #include <linux/nls.h>
->  #include <linux/of.h>
->  #include <linux/bitfield.h>
-> +#include <asm/unaligned.h>
->  #include "ufshcd.h"
->  #include "ufs_quirks.h"
->  #include "unipro.h"
-> @@ -3063,6 +3064,14 @@ static inline int ufshcd_read_power_desc(struct =
+--->8
 
-> ufs_hba *hba,
->  	return ufshcd_read_desc(hba, QUERY_DESC_IDN_POWER, 0, buf, size);  }
->
-> +static inline int ufshcd_read_geometry_desc(struct ufs_hba *hba,
-> +					 u8 *buf,
-> +					 u32 size)
-> +{
-> +	return ufshcd_read_desc(hba, QUERY_DESC_IDN_GEOMETRY, 0, buf, size); =
-
-> +}
-> +
-> +
->  static int ufshcd_read_device_desc(struct ufs_hba *hba, u8 *buf, u32=20
-> size)  {
->  	return ufshcd_read_desc(hba, QUERY_DESC_IDN_DEVICE, 0, buf, size);=20
-> @@ -6344,6 +6353,177 @@ static int ufshcd_set_dev_ref_clk(struct=20
-> ufs_hba
-> *hba)
->  }
->
->  /**
-> + * ufshcd_do_config_device - API function for UFS provisioning
-> + * hba: per-adapter instance
-> + * Returns 0 for success, non-zero in case of failure.
-> + */
-> +int ufshcd_do_config_device(struct ufs_hba *hba) {
-> +	struct ufs_config_descr *cfg =3D &hba->cfgs;
-> +	int buff_len =3D QUERY_DESC_CONFIGURATION_DEF_SIZE;
-> +	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] =3D {0};
-> +	int i, ret =3D 0;
-> +	int lun_to_grow =3D -1;
-> +	u64 qTotalRawDeviceCapacity;
-> +	u16 wEnhanced1CapAdjFac, wEnhanced2CapAdjFac;
-> +	u32 dEnhanced1MaxNAllocU, dEnhanced2MaxNAllocU;
-> +	size_t alloc_units, units_to_create =3D 0;
-> +	size_t capacity_to_alloc_factor;
-> +	size_t enhanced1_units =3D 0, enhanced2_units =3D 0;
-> +	size_t conversion_ratio =3D 1;
-> +	u8 *pt;
-> +	u32 blocks_per_alloc_unit =3D 1024;
-> +	int geo_len =3D hba->desc_size.geom_desc;
-> +	u8 geo_buf[hba->desc_size.geom_desc];
-> +	unsigned int max_partitions =3D 8;
-> +
-> +	WARN_ON(!hba || !cfg);
-> +
-> +	ret =3D ufshcd_read_geometry_desc(hba, geo_buf, geo_len);
-> +	if (ret) {
-> +		dev_err(hba->dev, "%s: Failed getting geometry_desc %d\n",
-> +			__func__, ret);
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Get Geomtric parameters like total configurable memory
-> +	 * quantity (Offset 0x04 to 0x0b), Capacity Adjustment
-> +	 * Factors (Offset 0x30, 0x31, 0x36, 0x37), Max allocation
-> +	 * units (Offset 0x2c to 0x2f, 0x32 to 0x35) used to configure
-> +	 * the device logical units.
-> +	 */
-> +	qTotalRawDeviceCapacity =3D get_unaligned_be64(&geo_buf[0x04]);
-> +	wEnhanced1CapAdjFac =3D get_unaligned_be16(&geo_buf[0x30]);
-> +	wEnhanced2CapAdjFac =3D get_unaligned_be16(&geo_buf[0x36]);
-> +	dEnhanced1MaxNAllocU =3D get_unaligned_be32(&geo_buf[0x2c]);
-> +	dEnhanced2MaxNAllocU =3D get_unaligned_be32(&geo_buf[0x32]);
-> +
-> +	capacity_to_alloc_factor =3D
-> +		(blocks_per_alloc_unit * UFS_BLOCK_SIZE) / 512;
-> +
-> +	if (qTotalRawDeviceCapacity % capacity_to_alloc_factor !=3D 0) {
-> +		dev_err(hba->dev,
-> +			"%s: Raw capacity(%llu) not multiple of alloc factor(%zu)\n",
-> +			__func__, qTotalRawDeviceCapacity,
-> +			capacity_to_alloc_factor);
-> +		return -EINVAL;
-> +	}
-> +	alloc_units =3D (qTotalRawDeviceCapacity / =
-capacity_to_alloc_factor);
-> +	units_to_create =3D 0;
-> +	enhanced1_units =3D enhanced2_units =3D 0;
-> +
-> +	/*
-> +	 * Calculate number of allocation units to be assigned to a logical =
-unit
-> +	 * considering the capacity adjustment factor of respective memory =
-type.
-> +	 */
-> +	for (i =3D 0; i < (max_partitions - 1) &&
-> +		units_to_create <=3D alloc_units; i++) {
-> +		if ((cfg->unit[i].dNumAllocUnits % blocks_per_alloc_unit) =3D=3D 0)
-> +			cfg->unit[i].dNumAllocUnits /=3D blocks_per_alloc_unit;
-> +		else
-> +			cfg->unit[i].dNumAllocUnits =3D
-> +			cfg->unit[i].dNumAllocUnits / blocks_per_alloc_unit + 1;
-> +
-> +		if (cfg->unit[i].bMemoryType =3D=3D 0)
-> +			units_to_create +=3D cfg->unit[i].dNumAllocUnits;
-> +		else if (cfg->unit[i].bMemoryType =3D=3D 3) {
-> +			enhanced1_units +=3D cfg->unit[i].dNumAllocUnits;
-> +			cfg->unit[i].dNumAllocUnits *=3D
-> +				(wEnhanced1CapAdjFac / 0x100);
-> +			units_to_create +=3D cfg->unit[i].dNumAllocUnits;
-> +		} else if (cfg->unit[i].bMemoryType =3D=3D 4) {
-> +			enhanced2_units +=3D cfg->unit[i].dNumAllocUnits;
-> +			cfg->unit[i].dNumAllocUnits *=3D
-> +				(wEnhanced1CapAdjFac / 0x100);
-> +			units_to_create +=3D cfg->unit[i].dNumAllocUnits;
-> +		} else {
-> +			dev_err(hba->dev, "%s: Unsupported memory type %d\n",
-> +				__func__, cfg->unit[i].bMemoryType);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +	if (enhanced1_units > dEnhanced1MaxNAllocU) {
-> +		dev_err(hba->dev, "%s: size %zu exceeds max enhanced1 area size =
-%u\n",
-> +			__func__, enhanced1_units, dEnhanced1MaxNAllocU);
-> +		return -ERANGE;
-> +	}
-> +	if (enhanced2_units > dEnhanced2MaxNAllocU) {
-> +		dev_err(hba->dev, "%s: size %zu exceeds max enhanced2 area size =
-%u\n",
-> +			__func__, enhanced2_units, dEnhanced2MaxNAllocU);
-> +		return -ERANGE;
-> +	}
-> +	if (units_to_create > alloc_units) {
-> +		dev_err(hba->dev, "%s: Specified size %zu exceeds device size =
-%zu\n",
-> +			__func__, units_to_create, alloc_units);
-> +		return -ERANGE;
-> +	}
-> +	lun_to_grow =3D cfg->lun_to_grow;
-> +	if (lun_to_grow !=3D -1) {
-> +		if (cfg->unit[i].bMemoryType =3D=3D 0)
-> +			conversion_ratio =3D 1;
-> +		else if (cfg->unit[i].bMemoryType =3D=3D 3)
-> +			conversion_ratio =3D (wEnhanced1CapAdjFac / 0x100);
-> +		else if (cfg->unit[i].bMemoryType =3D=3D 4)
-> +			conversion_ratio =3D (wEnhanced2CapAdjFac / 0x100);
-> +
-> +		cfg->unit[lun_to_grow].dNumAllocUnits +=3D
-> +		((alloc_units - units_to_create) / conversion_ratio);
-> +		dev_dbg(hba->dev, "%s: conversion_ratio %zu for lun %d\n",
-> +			__func__, conversion_ratio, i);
-> +	}
-> +
-> +	/* Fill in the buffer with configuration data */
-> +	pt =3D desc_buf;
-> +	*pt++ =3D 0x90;        // bLength
-> +	*pt++ =3D 0x01;        // bDescriptorType
-> +	*pt++ =3D 0;           // Reserved in UFS2.0 and onward
-> +	*pt++ =3D cfg->bBootEnable;
-> +	*pt++ =3D cfg->bDescrAccessEn;
-> +	*pt++ =3D cfg->bInitPowerMode;
-> +	*pt++ =3D cfg->bHighPriorityLUN;
-> +	*pt++ =3D cfg->bSecureRemovalType;
-> +	*pt++ =3D cfg->bInitActiveICCLevel;
-> +	put_unaligned_be16(cfg->wPeriodicRTCUpdate, pt);
-> +	pt =3D pt + 7; // Reserved fields set to 0
-> +
-> +	/* Fill in the buffer with per logical unit data */
-> +	for (i =3D 0; i < UFS_UPIU_MAX_GENERAL_LUN; i++) {
-> +		*pt++ =3D cfg->unit[i].bLUEnable;
-> +		*pt++ =3D cfg->unit[i].bBootLunID;
-> +		*pt++ =3D cfg->unit[i].bLUWriteProtect;
-> +		*pt++ =3D cfg->unit[i].bMemoryType;
-> +		put_unaligned_be32(cfg->unit[i].dNumAllocUnits, pt);
-> +		pt =3D pt + 4;
-> +		*pt++ =3D cfg->unit[i].bDataReliability;
-> +		*pt++ =3D cfg->unit[i].bLogicalBlockSize;
-> +		*pt++ =3D cfg->unit[i].bProvisioningType;
-> +		put_unaligned_be16(cfg->unit[i].wContextCapabilities, pt);
-> +		pt =3D pt + 5; // Reserved fields set to 0
-> +	}
-> +
-> +	ret =3D ufshcd_query_descriptor_retry(hba, =
-UPIU_QUERY_OPCODE_WRITE_DESC,
-> +		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-> +
-> +	if (ret) {
-> +		dev_err(hba->dev, "%s: Failed writing descriptor. desc_idn %d,=20
-> +opcode %x
-> ret %d\n",
-> +		__func__, QUERY_DESC_IDN_CONFIGURATION,
-> +		UPIU_QUERY_OPCODE_WRITE_DESC, ret);
-> +		return ret;
-> +	}
-
-To support stable operation and prevent race condition, how about adding =
-some functions during in runtime provisioning?.
-pm_runtime_get/put_sync and scsi_block/unblock_requests.
-How you thought?.
-[Sayali] Agreed. Will check and update in next patch set.
-
-> +
-> +	if (cfg->bConfigDescrLock =3D=3D 1) {
-> +		ret =3D ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-> +		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
-> +		if (ret)
-> +			dev_err(hba->dev, "%s: Failed writing bConfigDescrLock %d\n",
-> +				__func__, ret);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/**
->   * ufshcd_probe_hba - probe hba to detect device and initialize
->   * @hba: per-adapter instance
->   *
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h=20
-> index b026ad8..816b674 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -549,6 +549,7 @@ struct ufs_hba {
->  	unsigned int irq;
->  	bool is_irq_enabled;
->  	u32 dev_ref_clk_freq;
-> +	struct ufs_config_descr cfgs;
->
->  	/* Interrupt aggregation support is broken */
->  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
-> @@ -866,6 +867,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba,=20
-> int desc_index,
->
->  int ufshcd_hold(struct ufs_hba *hba, bool async);  void=20
-> ufshcd_release(struct ufs_hba *hba);
-> +int ufshcd_do_config_device(struct ufs_hba *hba);
->
->  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn=20
-> desc_id,
->  	int *desc_length);
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora=20
-> Forum, a Linux Foundation Collaborative Project
->
->
-
-BR,
-Kyuho Choi
-
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index 5f9a73a4452c..70d9e98467ca 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -272,8 +272,8 @@ ENTRY(idmap_kpti_install_ng_mappings)
+ 	add	end_pgdp, cur_pgdp, #(PTRS_PER_PGD * 8)
+ do_pgd:	__idmap_kpti_get_pgtable_ent	pgd
+ 	tbnz	pgd, #1, walk_puds
+-next_pgd:
+ 	__idmap_kpti_put_pgtable_ent_ng	pgd
++next_pgd:
+ skip_pgd:
+ 	add	cur_pgdp, cur_pgdp, #8
+ 	cmp	cur_pgdp, end_pgdp
+@@ -302,8 +302,8 @@ walk_puds:
+ 	add	end_pudp, cur_pudp, #(PTRS_PER_PUD * 8)
+ do_pud:	__idmap_kpti_get_pgtable_ent	pud
+ 	tbnz	pud, #1, walk_pmds
+-next_pud:
+ 	__idmap_kpti_put_pgtable_ent_ng	pud
++next_pud:
+ skip_pud:
+ 	add	cur_pudp, cur_pudp, 8
+ 	cmp	cur_pudp, end_pudp
+@@ -323,8 +323,8 @@ walk_pmds:
+ 	add	end_pmdp, cur_pmdp, #(PTRS_PER_PMD * 8)
+ do_pmd:	__idmap_kpti_get_pgtable_ent	pmd
+ 	tbnz	pmd, #1, walk_ptes
+-next_pmd:
+ 	__idmap_kpti_put_pgtable_ent_ng	pmd
++next_pmd:
+ skip_pmd:
+ 	add	cur_pmdp, cur_pmdp, #8
+ 	cmp	cur_pmdp, end_pmdp
