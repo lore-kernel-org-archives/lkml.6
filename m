@@ -6,66 +6,126 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 365C5C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2D3C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDC9F20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:21:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC9F20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id A40C820883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:23:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40C820883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754104AbeFUKVY (ORCPT
+        id S1754236AbeFUKX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:21:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53325 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751691AbeFUKVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:21:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A031EACEE;
-        Thu, 21 Jun 2018 10:21:21 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Zong Li <zong@andestech.com>, palmer@sifive.com,
-        aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, greentime@adnestech.com
-Subject: Re: [PATCH 5/5] RISC-V: Use fixed width integer types for 32-bit compatible
-References: <cover.1529506497.git.zong@andestech.com>
-        <37a6523947397cd72320676030b96926e373d05a.1529506497.git.zong@andestech.com>
-        <20180621064322.GE19319@infradead.org>
-X-Yow:  Do you need any MOUTH-TO-MOUTH resuscitation?
-Date:   Thu, 21 Jun 2018 12:21:19 +0200
-In-Reply-To: <20180621064322.GE19319@infradead.org> (Christoph Hellwig's
-        message of "Wed, 20 Jun 2018 23:43:22 -0700")
-Message-ID: <mvmwousjv8g.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 21 Jun 2018 06:23:28 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35778 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752926AbeFUKX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 06:23:27 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E19C24021FC9;
+        Thu, 21 Jun 2018 10:23:26 +0000 (UTC)
+Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 29E561117637;
+        Thu, 21 Jun 2018 10:23:23 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 18:23:21 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     lijiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+        iommu@lists.linux-foundation.org, dyoung@redhat.com,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH 2/4 V3] Allocate pages for kdump without encryption when
+ SME is enabled
+Message-ID: <20180621102321.GK29979@MiWiFi-R3L-srv>
+References: <20180616082714.32035-1-lijiang@redhat.com>
+ <20180616082714.32035-3-lijiang@redhat.com>
+ <20180621015306.GG29979@MiWiFi-R3L-srv>
+ <e74e94b6-97dc-23d9-6262-44a7ae8d63bd@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e74e94b6-97dc-23d9-6262-44a7ae8d63bd@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 21 Jun 2018 10:23:26 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 21 Jun 2018 10:23:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Jun 20 2018, Christoph Hellwig <hch@infradead.org> wrote:
+On 06/21/18 at 01:06pm, lijiang wrote:
+> 在 2018年06月21日 09:53, Baoquan He 写道:
+> > On 06/16/18 at 04:27pm, Lianbo Jiang wrote:
+> >> When SME is enabled in the first kernel, we will allocate pages
+> >> for kdump without encryption in order to be able to boot the
+> >> second kernel in the same manner as kexec, which helps to keep
+> >> the same code style.
+> >>
+> >> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+> >> ---
+> >>  kernel/kexec_core.c | 12 ++++++++++++
+> >>  1 file changed, 12 insertions(+)
+> >>
+> >> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> >> index 20fef1a..3c22a9b 100644
+> >> --- a/kernel/kexec_core.c
+> >> +++ b/kernel/kexec_core.c
+> >> @@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+> >>  		}
+> >>  	}
+> >>  
+> >> +	if (pages) {
+> >> +		unsigned int count, i;
+> >> +
+> >> +		pages->mapping = NULL;
+> >> +		set_page_private(pages, order);
+> >> +		count = 1 << order;
+> >> +		for (i = 0; i < count; i++)
+> >> +			SetPageReserved(pages + i);
+> > 
+> > I guess you might imitate the kexec case, however kexec get pages from
+> > buddy. Crash pages are reserved in memblock, these codes might make no sense.
+> > 
+> Thanks for your comments.
+> We have changed the attribute of pages, so the original attribute of pages will be
+> restored when they free.
 
->>  static int apply_r_riscv_32_rela(struct module *me, u32 *location, Elf_Addr v)
->>  {
->>  	if (v != (u32)v) {
->> -		pr_err("%s: value %016llx out of range for 32-bit field\n",
->> +		pr_err("%s: value %016" PRIxX "out of range for 32-bit field\n",
->>  		       me->name, v);
->>  		return -EINVAL;
->
-> But in general Linux uXX and sXX values are always the same underlying
-> fundamental C type.  What is the mismatch here?
+Hmm, you can check what kimage_free() is doing, and where
+kimage->control_pages, dest_pages, unusable_pages is assigned. Do you
+know where these original attribute of pages comes from and they are
+used/needed in CRASH case, if you care about them?
 
-The mismatch is that v is Elf_Addr, not u32.
-
-Andreas.
-
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+> 
+> >> +		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
+> >> +	}
+> >>  	return pages;
+> >>  }
+> >>  
+> >> @@ -865,6 +875,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+> >>  			result  = -ENOMEM;
+> >>  			goto out;
+> >>  		}
+> >> +		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+> >>  		ptr = kmap(page);
+> >>  		ptr += maddr & ~PAGE_MASK;
+> >>  		mchunk = min_t(size_t, mbytes,
+> >> @@ -882,6 +893,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+> >>  			result = copy_from_user(ptr, buf, uchunk);
+> >>  		kexec_flush_icache_page(page);
+> >>  		kunmap(page);
+> >> +		arch_kexec_pre_free_pages(page_address(page), 1);
+> >>  		if (result) {
+> >>  			result = -EFAULT;
+> >>  			goto out;
+> >> -- 
+> >> 2.9.5
+> >>
+> >>
+> >> _______________________________________________
+> >> kexec mailing list
+> >> kexec@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/kexec
