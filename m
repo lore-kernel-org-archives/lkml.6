@@ -2,116 +2,112 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FE1C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8FBC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 086FC2198F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CAED21946
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:56:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="OZ9N2LG5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 086FC2198F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="OQropncG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CAED21946
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932931AbeFURyN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 13:54:13 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:36914 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753725AbeFURyM (ORCPT
+        id S932940AbeFUR4J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 13:56:09 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54469 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932519AbeFUR4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 13:54:12 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 453E75C019E;
-        Thu, 21 Jun 2018 19:54:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529603651;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=50HStILxW46beYBu9MTv1byQnvUb3xFG5UYQIqyzMuI=;
-        b=OZ9N2LG5FhGsPWCpc9VZuIxNTGA26jQOaOmlOAkRTHezfqsvvu5I94EwyEi6xn49NiBMt3
-        5zmzILTCZ5ILklhDEQ1y7C9YlQHfXf5pWN/ND33VpfxLvAZihzlxQzxOB8EE2lp+hM+3Us
-        B2TfUBOE2UTsn3pzoiP0czkzIEht8iI=
+        Thu, 21 Jun 2018 13:56:07 -0400
+Received: by mail-wm0-f66.google.com with SMTP id o13-v6so6476397wmf.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DuO1Ofdlbp8EJhcL9UUhMWN0HhbNewTkGhy44D3euDg=;
+        b=OQropncGzOsr2y6dgSFtZWaC913Q6ggvgF8Ez4kCwUaVAmFq1MBFTdLaGDjHH7xzAd
+         mALWV9qRPmgvMRG/rHb775KGig6Jd7LLyTp9x+WMIVjUVSVUaOw/szywHny2WFfOsBYD
+         aQWGxlWlhA2r28Sizfa9ptm4KvfvuJbsMTFhkVcQCGSXESZNevR3GlUI1fqS3ADHd7dL
+         S5QjQ60zcE0NI8kSz3T6e69wZsnwXfpZpGaKiEBSRJCq+HZlWRLJQPiAyjFWbe99rwYo
+         aLgY4tiev5UAy8dfdCmNeDcYW4MWpsQWn4lBwbsQxQ3MlTw66SXFdcIRnSyzWupvL1cr
+         ZVKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DuO1Ofdlbp8EJhcL9UUhMWN0HhbNewTkGhy44D3euDg=;
+        b=g9zyBu5QyjKdg52f5ICZnJKX/w1JYk1EfSm0x+vAmH18TR0qbOsP8+iwfOpeGfQAor
+         eA7BwCVPnEDxoaHt5ek2NNODi0YNTxVGpGyIsDmdV+261O+L95xKfXA+tzyMtzNUGy9n
+         QivHOh1Hv760LjIjmr4zoTCtUEZHvjqHEsD+MBLh8NSDtIksT+wohhFO4wFsxWAm+rtI
+         q5LxkoNJaewsM2PJd8YeBqM5OxY5psk69mQTsqcsQhCR/HOqaAONcrcSclvv29kh2+wv
+         QpmEeSvA05xgumRpdkGhjWDXqLWr+PXHD9kNdBdF0eFb+9d36kItCgD2xsN2sReFUTul
+         BTNg==
+X-Gm-Message-State: APt69E1zdNc+RpBSC/fW/qoawfV3/p2DR0vip8fddcGSSPBKxy5wYSws
+        +vtZU5LVPSOlGMOhkGp1NkVrpA==
+X-Google-Smtp-Source: ADUXVKKlL6GBBZTOaly4EJArMQ6N/oKCUQfvYFfmHiLpc6niZWx8NcyCoC1OaMVq193g+1sfEvYt/A==
+X-Received: by 2002:a1c:6d02:: with SMTP id i2-v6mr5578499wmc.62.1529603766175;
+        Thu, 21 Jun 2018 10:56:06 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id n14-v6sm6088163wrm.23.2018.06.21.10.56.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 10:56:05 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fW3oP-00018T-NO; Thu, 21 Jun 2018 11:56:01 -0600
+Date:   Thu, 21 Jun 2018 11:56:01 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] tpm: Implement tpm_chip_find() and tpm_chip_put()
+ for other subsystems
+Message-ID: <20180621175601.GC19270@ziepe.ca>
+References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
+ <20180620204236.1572523-2-stefanb@linux.vnet.ibm.com>
+ <20180621171518.GI11859@linux.intel.com>
+ <95b2970f-b71b-4cfc-c188-7ae7e8cb94c5@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 21 Jun 2018 19:54:10 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        abelvesa@linux.com, Abhishek Sagar <sagar.abhishek@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] ARM: ftrace: Only set kernel memory back to read-only
- after boot
-In-Reply-To: <20180621125025.25b70bb9@gandalf.local.home>
-References: <20180621124710.453ee0ae@gandalf.local.home>
- <20180621125025.25b70bb9@gandalf.local.home>
-Message-ID: <704c501ac97ff4ca0d469183b293e0b5@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-2.55 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-2.45)[97.51%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95b2970f-b71b-4cfc-c188-7ae7e8cb94c5@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.06.2018 18:50, Steven Rostedt wrote:
-> On Thu, 21 Jun 2018 12:47:10 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, Jun 21, 2018 at 01:45:03PM -0400, Stefan Berger wrote:
+> On 06/21/2018 01:15 PM, Jarkko Sakkinen wrote:
+> >On Wed, Jun 20, 2018 at 04:42:33PM -0400, Stefan Berger wrote:
+> >>Implement tpm_chip_find() for other subsystems to find a TPM chip and
+> >>get a reference to that chip. Once done with using the chip, the reference
+> >>is released using tpm_chip_put().
+> >>
+> >>Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> >You should sort this out in a way that we don't end up with duplicate
+> >functions.
 > 
->> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
->>
->> Dynamic ftrace requires modifying the code segments that are usually
->> set to read-only. To do this, a per arch function is called both before
->> and after the ftrace modifications are performed. The "before" function
->> will set kernel code text to read-write to allow for ftrace to make the
->> modifications, and the "after" function will set the kernel code text
->> back to "read-only" to keep the kernel code text protected.
->>
->> The issue happens when dynamic ftrace is tested at boot up. The test is
->> done before the kernel code text has been set to read-only. But the
->> "before" and "after" calls are still performed. The "after" call will
->> change the kernel code text to read-only prematurely, and other boot
->> code that expects this code to be read-write will fail.
->>
->> The solution is to add a variable that is set when the kernel code text
->> is expected to be converted to read-only, and make the ftrace "before"
->> and "after" calls do nothing if that variable is not yet set. This is
->> similar to the x86 solution from commit 162396309745 ("ftrace, x86:
->> make kernel text writable only for conversions").
->>
->> Reported-by: Stefan Agner <stefan@agner.ch>
->> Tested-by: Stefan Agner <stefan@agner.ch>
->> Link: http://lkml.kernel.org/r/20180620212906.24b7b66e@vmware.local.home
->> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
->> ---
-> 
-> Perhaps I should have Cc'd stable too?
-> 
+> Do you want me to create a function *like* tpm_chip_find_get() that takes an
+> additional parameter whether to get the ops semaphore and have that function
+> called by the existing tpm_chip_find_get() and the new tpm_chip_find(). The
+> latter would then not get the ops semphore. I didn't want to do this since
+> one time the function returns with a lock held and the other time not.
 
-As it is self tests only which are broken probably not super important.
-But then, the fix is also rather clean and safe IMHO, so why not.
+Another option, and I haven't looked, is to revise the callers of
+tpm_chip_find_get to not require it to hold the ops semaphore for
+them.
 
---
-Stefan
+Either by giving them an API to do it, or revising the TPM entry
+points to do it.
+
+I didn't look, but how did the ops semaphore get grabbed in your
+revised patches? They do grab it, right?
+
+Jason
