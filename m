@@ -3,76 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83438C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD15C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 327F120875
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8B8920652
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:15:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="m89V8WRb";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BYx/hmpW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 327F120875
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="N9i6oRkp";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E5Y0Z7dB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8B8920652
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932998AbeFUAKH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 20:10:07 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:44834 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932552AbeFUAKF (ORCPT
+        id S933120AbeFUAPI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 20:15:08 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:44933 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932552AbeFUAPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 20:10:05 -0400
-Received: by mail-yw0-f194.google.com with SMTP id k18-v6so495329ywm.11
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 17:10:05 -0700 (PDT)
+        Wed, 20 Jun 2018 20:15:07 -0400
+Received: by mail-yb0-f193.google.com with SMTP id w74-v6so525837ybe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 17:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=rTCv3g3UtGvlJAde7ejfrhgmUJJ/4xCMXvOZxzmjTFA=;
-        b=m89V8WRbu0tiWzQU1OFfH5z7J1d2BOgsAlaN+DzYq63tWLqW+gy9cLzi5qCU7KDRke
-         JVZyYO+WQSThH8BI7QQwWVeBcntc5K7QekLqp6I8UwO5TbLiiVScfz1tNmiiEc/k8T3x
-         Ty9MCrYv+7nrsI/OLX10MgN1hW6R1LLKCRRXim3Ql6TogMcokud006rwUuL5FCm2MlRJ
-         RdU4RgF0sz0adjSWSToRkgbtjgJIeHWjy0HDEHoUQ7vEtwhgquEHFjHT/kisgIEUF4nl
-         f5tuke814NS26NJtPv136mf0fAzVNz2agCSCW4GORlQIQJzwadpb48Vs1jH4kJZ8wWjc
-         LJQw==
+        bh=MPEb6HaVG+FCnZtxTALeJjvKiOS6SVXuhO4vjhjOumw=;
+        b=N9i6oRkpO/Jt63soS/kemWoXBSPilX9Una637S3fTnQUuXxNHnybubuh9DbnAmZxoh
+         NhaVgS4p6P02OaB7Th51fBXu98BXPmCOi19Eegi9zfMAQ/sxUFnE7f8sPdXAaNNefSV+
+         TYSRbEYfTAxmWhDB0Ra0aDdJTGB2VqEtRfJ3GcURVAUtqOjSPYy+tHc+Rf0LJ/vM5WFC
+         ug7rm6VNcq/2GVJyUNwghj9fZ80WgZvCslP5mPqeAua25q/adWg5B42k3Fs4FIEWsvU8
+         H0bSh7BnipzYWBfRNNfUe7R+bs/sE8oaJqFgHabNK0pigA+YsjtlAtNBlADqM8v/8GWg
+         HPug==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=rTCv3g3UtGvlJAde7ejfrhgmUJJ/4xCMXvOZxzmjTFA=;
-        b=BYx/hmpWbiG3ZIT8DU3NNQkh87ibNRyHhvkCo6NmXnXsyulYC4tKySFrom5R6h2xJG
-         8TTmnuT7tNcOiU6cE7MWdUnNYT3OmbTz+dMlSIUEwtIGqJMYB9DXu+J9qNMg3tfga2xu
-         0dCy5NMG5vqVm/OUxKUsSr8gyZ2s6N6cWqeUU=
+        bh=MPEb6HaVG+FCnZtxTALeJjvKiOS6SVXuhO4vjhjOumw=;
+        b=E5Y0Z7dBpsQkTgwDPCqvMc6SobIqZLn7t+p04vlCJhccoy7jIzTq8F3JPPJFGuHlgI
+         xGlRylRJWJOsvUIeUaBHUCXQNDb6X35MO+0iJELDeqjR4bqNY+UZhnxcoQq+PCE5G2Ua
+         3DDcD53gGkx5Am3Ldprj3zKr93GKH7rL4n3As=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=rTCv3g3UtGvlJAde7ejfrhgmUJJ/4xCMXvOZxzmjTFA=;
-        b=n3Og/FaKuHZc738UjkMW5FH/tl29lWyyt/gpnO/c5qJQeQevDBgwiSh/ZEcHz7R89e
-         AN+FFB1FdroU+32yHOFa7RPCuSW6ZkfsDXX6sZy+6MK/hsUYtyTZbVa+4SyAC7Rqx/7+
-         yk7AOuErq5ZGm0sHVJfkZ2Zp44jljX0WJrj06ndv3yeL5CsgII9CbAXvUjFWwOyr86Jd
-         bhryJn6V04Y6ICWO8cw25XjtbvxI48ZzMIRD6eQeKHqgWadtARgCNDJPGeVOfDL8J5RA
-         ZELOwsOLNQzdyEUHzTsVs7MRQByK4k8Myk5VtRziiJ//2cJfH12EZNfxHEA4BgD7gxCx
-         84Bw==
-X-Gm-Message-State: APt69E3VShuSdq8L1HClreXgEqSBAgjvMqLbDAfzgGIzvTryXvNgi9ra
-        Gi5pdRXe52pCSN3CF3xKvgOub2aTTYiOGRexfnjQtQ==
-X-Google-Smtp-Source: ADUXVKKYD6BbsCyCwa2WAN1rVIxn5cySCoQCjRQnVL8ZFFEuNGI5pT4NvUMG5WmCPskrBJAoiTMGpflDV4Lf+xCJbZ8=
-X-Received: by 2002:a81:2506:: with SMTP id l6-v6mr25848ywl.88.1529539805063;
- Wed, 20 Jun 2018 17:10:05 -0700 (PDT)
+        bh=MPEb6HaVG+FCnZtxTALeJjvKiOS6SVXuhO4vjhjOumw=;
+        b=ufbftGExlxVO0HQrp8vcznIMOj70DWZQ99J8JyU5p4y0BlW7jMWYVjzbe1qmrj1Pbm
+         CVXJjVr0a/Ycwe3DEj/H/oICrKhE7Xayr+tzCPCRARQCnKoZ7YG4BQQ4ggIiEnqODEdF
+         Akqha8aNoGKS2nTsScPwpC2N/bZKPg8qzmLL6aMIRzzWU4dwW5FYC2KFuu/kDFUYHe11
+         k+9HcAjfTlgtdLSZIiqDYzhqG4sE6RkMoMbfSKixMVr6BFxkxeTYa4zM6ST0s7f4yJcX
+         chNaQrPatzywYSSmmLN99P4P8w5D1kYEtL/kEt5WK8GGC7NyaFZDPyAH3lypYGs/oF9B
+         VQCQ==
+X-Gm-Message-State: APt69E2iXUvkJIdOUTyB9aOqrelKYv2Q8uvmTXxvpi1EM1Q2hd+sFktt
+        KN4lYgvf6SNt9Cif/Wc2YdjirILGU4bcc6+xXWkEig==
+X-Google-Smtp-Source: ADUXVKLHmDnpQK/Vo/VHZLTjadW5peKzMRR4lSfFmJ4l0oMm2Cakvr2Kont7C+rCq9L5/mEKimOhsvBhkyzkuuo0hiA=
+X-Received: by 2002:a25:f81e:: with SMTP id u30-v6mr9675674ybd.343.1529540106255;
+ Wed, 20 Jun 2018 17:15:06 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 17:10:04
+Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 17:15:05
  -0700 (PDT)
-In-Reply-To: <20180620234623.GE111712@gmail.com>
-References: <20180620190408.45104-1-keescook@chromium.org> <20180620190408.45104-8-keescook@chromium.org>
- <20180620234623.GE111712@gmail.com>
+In-Reply-To: <20180620235721.GF111712@gmail.com>
+References: <20180620190408.45104-1-keescook@chromium.org> <20180620190408.45104-10-keescook@chromium.org>
+ <20180620235721.GF111712@gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 20 Jun 2018 17:10:04 -0700
-X-Google-Sender-Auth: zNfS-8q1KEZSjlycZeH-0vf8m0c
-Message-ID: <CAGXu5jJ30eGUoik5+fWgdSHcO7NrAi87LXWWA5=RX6zwK0ueVg@mail.gmail.com>
-Subject: Re: [dm-devel] [PATCH 07/11] crypto: xcbc: Remove VLA usage
+Date:   Wed, 20 Jun 2018 17:15:05 -0700
+X-Google-Sender-Auth: 8qHeARa-UcDUYGQH-J82OWex_bQ
+Message-ID: <CAGXu5jJJXM3pCE7y3akkmh_0RzLaO5g39hueZNKPoE4E9yaJfQ@mail.gmail.com>
+Subject: Re: [PATCH 09/11] crypto: shash: Remove VLA usage in unaligned hashing
 To:     Eric Biggers <ebiggers3@gmail.com>
 Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
         Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
@@ -93,42 +93,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 4:46 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Wed, Jun 20, 2018 at 12:04:04PM -0700, Kees Cook wrote:
+On Wed, Jun 20, 2018 at 4:57 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> On Wed, Jun 20, 2018 at 12:04:06PM -0700, Kees Cook wrote:
 >> In the quest to remove all stack VLA usage from the kernel[1], this uses
->> the maximum blocksize and adds a sanity check.
+>> the newly defined max alignment to perform unaligned hashing to avoid
+>> VLAs, and drops the helper function while adding sanity checks on the
+>> resulting buffer sizes.
 >>
 >> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 >>
 >> Signed-off-by: Kees Cook <keescook@chromium.org>
 >> ---
->>  crypto/xcbc.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>  crypto/shash.c | 21 ++++++++++-----------
+>>  1 file changed, 10 insertions(+), 11 deletions(-)
 >>
->> diff --git a/crypto/xcbc.c b/crypto/xcbc.c
->> index 25c75af50d3f..016481b1f3ba 100644
->> --- a/crypto/xcbc.c
->> +++ b/crypto/xcbc.c
->> @@ -65,7 +65,10 @@ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
->>       int bs = crypto_shash_blocksize(parent);
->>       u8 *consts = PTR_ALIGN(&ctx->ctx[0], alignmask + 1);
->>       int err = 0;
->> -     u8 key1[bs];
->> +     u8 key1[CRYPTO_ALG_MAX_BLOCKSIZE];
->> +
->> +     if (WARN_ON(bs > sizeof(key1)))
->> +             return -EINVAL;
+>> diff --git a/crypto/shash.c b/crypto/shash.c
+>> index ab6902c6dae7..1bb58209330a 100644
+>> --- a/crypto/shash.c
+>> +++ b/crypto/shash.c
+>> @@ -73,13 +73,6 @@ int crypto_shash_setkey(struct crypto_shash *tfm, const u8 *key,
+>>  }
+>>  EXPORT_SYMBOL_GPL(crypto_shash_setkey);
+>>
+>> -static inline unsigned int shash_align_buffer_size(unsigned len,
+>> -                                                unsigned long mask)
+>> -{
+>> -     typedef u8 __aligned_largest u8_aligned;
+>> -     return len + (mask & ~(__alignof__(u8_aligned) - 1));
+>> -}
+>> -
+>>  static int shash_update_unaligned(struct shash_desc *desc, const u8 *data,
+>>                                 unsigned int len)
+>>  {
+>> @@ -88,11 +81,14 @@ static int shash_update_unaligned(struct shash_desc *desc, const u8 *data,
+>>       unsigned long alignmask = crypto_shash_alignmask(tfm);
+>>       unsigned int unaligned_len = alignmask + 1 -
+>>                                    ((unsigned long)data & alignmask);
+>> -     u8 ubuf[shash_align_buffer_size(unaligned_len, alignmask)]
+>> -             __aligned_largest;
+>> +     u8 ubuf[CRYPTO_ALG_MAX_ALIGNMASK]
+>> +             __aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
+>>       u8 *buf = PTR_ALIGN(&ubuf[0], alignmask + 1);
+>>       int err;
 >
-> Similarly, why not MAX_CIPHER_BLOCKSIZE?
+> Are you sure that __attribute__((aligned(64))) works correctly on stack
+> variables on all architectures?
 >
-> Also, xcbc_create() only allows a 16-byte block size, and you made the API
-> enforce the maximum for algorithms anyway.  So I think the extra check here
-> isn't very worthwhile.
+> And if it is expected to work, then why is the buffer still aligned by hand on
+> the very next line?
 
-Is the "parent" argument in crypto_xcbc_digest_setkey() always going
-to be the "alg" from xcbc_create()? I couldn't convince myself that
-was true. If it is, then yes, this VLA can trivially made to be 16,
-but it seemed like they were separate instances...
+I really don't know -- the existing code was doing both the __align
+bit and the manual alignment, so I was trying to simplify it while
+removing the VLA. I'm totally open to suggestions here.
+
+BTW, these are also the only users of __aligned_largest() in the
+kernel, and the only use of unsized __attribute__((aligned))
 
 -Kees
 
