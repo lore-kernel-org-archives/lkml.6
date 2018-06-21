@@ -2,129 +2,95 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535E4C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02456C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7FE208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1132208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:16:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eOL15uWB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B7FE208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IAtrvfp0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1132208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933066AbeFUIQM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:16:12 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:37307 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932770AbeFUIPb (ORCPT
+        id S933114AbeFUIQg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:16:36 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38356 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932528AbeFUIPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:15:31 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5L8FSi4014011;
-        Thu, 21 Jun 2018 03:15:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529568929;
-        bh=tynIC0y2K32HtUMhcjRxoKjNQtYEVRVi09NZg/+mfNc=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=eOL15uWBVtMT8S60UjTCKdCk18G99jpWOb6JYf2B2ITzeDsA8omEu6Pr0fuXtG1c+
-         1GdQ0aX+XqPADxfKCW7j/KhGv2dkexCcWdREU8cuP+MzH8PFWizY2ptMPTlZhVgEOX
-         ebN9BlNE/r8UJKAAvMqPwY5kTlCsv0O2xs0irSU0=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8FSfc028693;
-        Thu, 21 Jun 2018 03:15:28 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 21
- Jun 2018 03:15:28 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 21 Jun 2018 03:15:28 -0500
-Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8FCTf025379;
-        Thu, 21 Jun 2018 03:15:26 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC:     <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>
-Subject: [PATCH v3 2/4] clk: clk: Add clk_gate_restore_context function
-Date:   Thu, 21 Jun 2018 13:45:05 +0530
-Message-ID: <1529568907-19930-3-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
-References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
+        Thu, 21 Jun 2018 04:15:21 -0400
+Received: by mail-it0-f68.google.com with SMTP id v83-v6so3543393itc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 01:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MPYff/pYZSFNhhQyfQx4STm/AKPvaIYbpQq5B+hPb1c=;
+        b=IAtrvfp0nNlBYfmyZAz4N69nfQ4vgKg28zHTmBDxGSBWaSKnokcnbcRcU8YK8QcPI3
+         c1qBetIgHRYb20ojueQ+IFiRvaULum15CMwiiE55pCwwUrOcK6dL8m9CxbbJm0VqJbdz
+         THbKHZ4atbQQCre4pdUTBSVFMJJ03Y2ApRT8g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MPYff/pYZSFNhhQyfQx4STm/AKPvaIYbpQq5B+hPb1c=;
+        b=k/R/r8CrL+EryLDqMf3IHWLw5YGPDVc86pISHO3xXRtvKFA4USYjBAsjG1/ha4TXKE
+         5TZjRBPwJ37DuBEbEMryzR5OqfURJ7/gnq6qn6qXxthptH+jgZR0Z7pCcM9tG/lq6d8v
+         /LpGA+MYBa7Cl6q8xOUKNubSpKVwXnfPTZqtn7bDnYuvcBbD0k/p1tw5oE9GYApYj43w
+         NQAa5+qnUaA6+QrRdP2N0o78KmzZZddSyWMIGV2s3csmq2e6OSpWbHf4YcmCwBmF27tx
+         pIfF0b1mYxJdXkRTPCT44kQKHwVjlLYeSSfr5cJOqwkuuofwFiSLq4waKnIuLpMDuL7B
+         a4ug==
+X-Gm-Message-State: APt69E0nRoZ3fCU2j9orPvgQ7DBiByOzVi26yE5F8kZLGR/7Vkp+hSjH
+        9oshtCYVuh5n0xpYBkykHcqHdYWS8dmPm82pXpw=
+X-Google-Smtp-Source: ADUXVKIWCyDV2JOoKjWtBp3g10BpGGJEHFVyPrk0LZoOJO+ByDtsSskTIGyVBvsTXzE6drBfsVaVe7v+68RPB3VM12U=
+X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr4251656itd.16.1529568921120;
+ Thu, 21 Jun 2018 01:15:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20180621080624.GO11011@yexl-desktop>
+In-Reply-To: <20180621080624.GO11011@yexl-desktop>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 21 Jun 2018 17:15:09 +0900
+Message-ID: <CA+55aFxXCD8qLfHcnshLR2_Feb=RLkOFfCeqPF_sShy7rK2cAw@mail.gmail.com>
+Subject: Re: [lkp-robot] [Kbuild] 050e9baa9d: netperf.Throughput_total_tps
+ -5.6% regression (FYI)
+To:     kernel test robot <xiaolong.ye@intel.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LKP <lkp@01.org>, Huang Ying <ying.huang@intel.com>,
+        Aaron Lu <aaron.lu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clock gate restore context function enables or disables
-the gate clocks based on the enable_count. This is done in cases
-where the clock context is lost and based on the enable_count
-the clock either needs to be enabled/disabled.
+On Thu, Jun 21, 2018 at 5:10 PM kernel test robot <xiaolong.ye@intel.com> wrote:
+>
+> FYI, we noticed a -5.6% regression of netperf.Throughput_total_tps due to commit 050e9b ("Kbuild: rename CC_STACKPROTECTOR[_STRONG] config variables")
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
----
+That's perhaps a surprisingly large cost to stack protector, but you
+did move from "no stack protector at all":
 
-Changes in v2:
+> $ grep STACKPROTECTOR config-4.17.0-11782-gbe779f0
+> CONFIG_HAVE_CC_STACKPROTECTOR=y
+> CONFIG_CC_HAS_STACKPROTECTOR_NONE=y
+> # CONFIG_CC_STACKPROTECTOR is not set
+> CONFIG_CC_HAS_SANE_STACKPROTECTOR=y
 
-	* Renamed clk_dflt_restore to clk_gate_restore_context
+To having the *strong* stack protector enabled:
 
- drivers/clk/clk.c            | 19 +++++++++++++++++++
- include/linux/clk-provider.h |  2 ++
- 2 files changed, 21 insertions(+)
+> $ grep STACKPROTECTOR config-4.17.0-11783-g050e9baa
+> CONFIG_HAVE_CC_STACKPROTECTOR=y
+> CONFIG_CC_HAS_STACKPROTECTOR_NONE=y
+> CONFIG_STACKPROTECTOR=y
+> CONFIG_STACKPROTECTOR_STRONG=y
+> CONFIG_CC_HAS_SANE_STACKPROTECTOR=y
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 7347e06..c201b8b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -910,6 +910,25 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
- 
-+/**
-+ * clk_gate_restore_context - restore context for poweroff
-+ * @hw: the clk_hw pointer of clock whose state is to be restored
-+ *
-+ * The clock gate restore context function enables or disables
-+ * the gate clocks based on the enable_count. This is done in cases
-+ * where the clock context is lost and based on the enable_count
-+ * the clock either needs to be enabled/disabled. This
-+ * helps restore the state of gate clocks.
-+ */
-+void clk_gate_restore_context(struct clk_hw *hw)
-+{
-+	if (hw->clk->core->enable_count)
-+		hw->clk->core->ops->enable(hw);
-+	else
-+		hw->clk->core->ops->disable(hw);
-+}
-+EXPORT_SYMBOL_GPL(clk_gate_restore_context);
-+
- static int _clk_save_context(struct clk_core *clk)
- {
- 	struct clk_core *child;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 7f30d62..3e0c61a 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -992,5 +992,7 @@ static inline void clk_writel(u32 val, u32 __iomem *reg)
- 
- #endif	/* platform dependent I/O accessors */
- 
-+void clk_gate_restore_context(struct clk_hw *hw);
-+
- #endif /* CONFIG_COMMON_CLK */
- #endif /* CLK_PROVIDER_H */
--- 
-1.9.1
+so you're testing the "no overhead" case to the "worst overhead" case.
 
+                Linus
