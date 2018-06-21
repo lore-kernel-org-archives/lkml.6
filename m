@@ -2,253 +2,201 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFC9C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 02:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F09C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 02:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78CCF20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 02:47:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78CCF20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C5E6520875
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 02:51:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qL4E2Y2N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5E6520875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754559AbeFUCrU (ORCPT
+        id S1754542AbeFUCvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 22:47:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53484 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754192AbeFUCrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 22:47:18 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F296887AAC;
-        Thu, 21 Jun 2018 02:47:17 +0000 (UTC)
-Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B50672156880;
-        Thu, 21 Jun 2018 02:47:16 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 10:47:13 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Lianbo Jiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
-        iommu@lists.linux-foundation.org, dyoung@redhat.com,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH 4/4 V3] Help to dump the old memory encrypted into vmcore
- file
-Message-ID: <20180621024713.GI29979@MiWiFi-R3L-srv>
-References: <20180616082714.32035-1-lijiang@redhat.com>
- <20180616082714.32035-5-lijiang@redhat.com>
+        Wed, 20 Jun 2018 22:51:53 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:45573 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754192AbeFUCvv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 22:51:51 -0400
+Received: by mail-pg0-f68.google.com with SMTP id z1-v6so692682pgv.12
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 19:51:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZbZ4iG8NrUveF14o3ldVqKVNDeoM3gpFyZrvnVrJiZM=;
+        b=qL4E2Y2N3TpN2LhuhYuZIkZBt2kfrpP6l3bb/EO0W0fBmwfike+QmyESPA/1s+C17d
+         CQNZDkUjK5Ml6zMPrKimOJsot4F2olSRBRGoN/Z1REE+ya9h0xBXgQcz+lkV2e1ItX10
+         9pxk3Tm77nCUznB/jmiCW26BU5SQJMuU5Dn54HE5npBS6/S82kCOJZX1mr6+Csfuul4A
+         ZA/7RnL6F5fti77S6BIeJZiXQhrlfNHN0jg5zY6UXKkIx6tLlp69emUvRcnsYXYUGjwf
+         SO9kAvm63VIfINANBaplArpOZQUgQb2RFlvvV/oMJO67+t+0sryjESi8EyDY/kTzIrt4
+         jy4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=ZbZ4iG8NrUveF14o3ldVqKVNDeoM3gpFyZrvnVrJiZM=;
+        b=NLDCMq1eiQc6MY0ZjY03GsvqjUcsMnD9KXzsvhIJWEfnSTv+SSVQP5Mh2Tn2uYLsGN
+         R6UBS01ar8fM1yCUBDOhxh2/GkTW+UvpnIAMHkqvGbgCmwwvpOPnv0/X8I7j06CO7y1B
+         B6OK1c5uyz65Lj2FbtNXOD7Rw2MI+/gfgqPVSNruT4b8KDBFQmECXMcnwlIM3hJz+SGw
+         WOnbOB0+UyS66ozEQ0f3j+4gMjAvo9lS64C95jzDyABfyALzxMszCDB8WvS+fRnWLRGC
+         L4g0u3+wgal0XZA07wAmqdIy2qcR999yqhs1Pp8BP9RHiWtguZZaAtnCODxafFpB3xbF
+         VSKg==
+X-Gm-Message-State: APt69E2cJ9a4z+7H8xQqoFBfZIaok29DhweOo1UUpEEyvjytCoqH+Xht
+        M/B580cVE90uInXHvarA6f5rHA==
+X-Google-Smtp-Source: ADUXVKKdwy0AiWNIcBrzocEST8Zf4rCHq6G7j8oXM2BVvKDLxaET7QlCAQC046DME8JbLl7JjWj9ww==
+X-Received: by 2002:a65:5c84:: with SMTP id a4-v6mr681101pgt.431.1529549511016;
+        Wed, 20 Jun 2018 19:51:51 -0700 (PDT)
+Received: from toy ([104.192.108.10])
+        by smtp.gmail.com with ESMTPSA id z28-v6sm6814362pfl.169.2018.06.20.19.51.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 19:51:50 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 10:51:41 +0800
+From:   Jun Yao <yaojun8558363@gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, james.morse@arm.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH 1/1] arm64/mm: move
+ {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata section
+Message-ID: <20180621025141.GB11276@toy>
+Mail-Followup-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, james.morse@arm.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <20180620085755.20045-1-yaojun8558363@gmail.com>
+ <20180620085755.20045-2-yaojun8558363@gmail.com>
+ <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180616082714.32035-5-lijiang@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 21 Jun 2018 02:47:18 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 21 Jun 2018 02:47:18 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+In-Reply-To: <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/16/18 at 04:27pm, Lianbo Jiang wrote:
-> In kdump mode, we need to dump the old memory into vmcore file,
-> if SME is enabled in the first kernel, we must remap the old
-> memory in encrypted manner, which will be automatically decrypted
-> when we read from DRAM. It helps to parse the vmcore for some tools.
+Hi Ard,
 
-It implies 2nd kernel is sme enabled, right?
+On Wed, Jun 20, 2018 at 12:09:49PM +0200, Ard Biesheuvel wrote:
+> On 20 June 2018 at 10:57, Jun Yao <yaojun8558363@gmail.com> wrote:
+> > Move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata
+> > section. And update the swapper_pg_dir by fixmap.
+> >
+> 
+> I think we may be able to get away with not mapping idmap_pg_dir and
+> tramp_pg_dir at all.
 
-Then what if 1st kernel has no sme enabled?
+I think we need to move tramp_pg_dir to .rodata. The attacker can write
+a block-mapping(AP=01) to tramp_pg_dir and then he can access kernel
+memory.
 
+> As for swapper_pg_dir, it would indeed be nice if we could keep those
+> mappings read-only most of the time, but I'm not sure how useful this
+> is if we apply it to the root level only.
+
+The purpose of it is to make 'KSMA' harder, where an single arbitrary
+write is used to add a block mapping to the page-tables, giving the
+attacker full access to kernel memory. That's why we just apply it to
+the root level only. If the attacker can arbitrary write multiple times,
+I think it's hard to defend.
+
+> > @@ -417,12 +421,22 @@ static void __init __map_memblock(pgd_t *pgdp, phys_addr_t start,
+> >
+> >  void __init mark_linear_text_alias_ro(void)
+> >  {
+> > +       unsigned long size;
+> > +
+> >         /*
+> >          * Remove the write permissions from the linear alias of .text/.rodata
+> > +        *
+> > +        * We free some pages in .rodata at paging_init(), which generates a
+> > +        * hole. And the hole splits .rodata into two pieces.
+> >          */
+> > +       size = (unsigned long)swapper_pg_dir + PAGE_SIZE - (unsigned long)_text;
+> >         update_mapping_prot(__pa_symbol(_text), (unsigned long)lm_alias(_text),
+> > -                           (unsigned long)__init_begin - (unsigned long)_text,
+> > -                           PAGE_KERNEL_RO);
+> > +                           size, PAGE_KERNEL_RO);
+> > +
+> > +       size = (unsigned long)__init_begin - (unsigned long)swapper_pg_end;
+> > +       update_mapping_prot(__pa_symbol(swapper_pg_end),
+> > +                           (unsigned long)lm_alias(swapper_pg_end),
+> > +                           size, PAGE_KERNEL_RO);
 > 
-> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-> ---
-> Some changes:
-> 1. add a new file and modify Makefile.
-> 2. remove some code in sev_active().
-> 
->  arch/x86/kernel/Makefile             |  1 +
->  arch/x86/kernel/crash_dump_encrypt.c | 53 ++++++++++++++++++++++++++++++++++++
->  fs/proc/vmcore.c                     | 20 ++++++++++----
->  include/linux/crash_dump.h           | 11 ++++++++
->  4 files changed, 79 insertions(+), 6 deletions(-)
->  create mode 100644 arch/x86/kernel/crash_dump_encrypt.c
-> 
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 02d6f5c..afb5bad 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -96,6 +96,7 @@ obj-$(CONFIG_KEXEC_CORE)	+= machine_kexec_$(BITS).o
->  obj-$(CONFIG_KEXEC_CORE)	+= relocate_kernel_$(BITS).o crash.o
->  obj-$(CONFIG_KEXEC_FILE)	+= kexec-bzimage64.o
->  obj-$(CONFIG_CRASH_DUMP)	+= crash_dump_$(BITS).o
-> +obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= crash_dump_encrypt.o
->  obj-y				+= kprobes/
->  obj-$(CONFIG_MODULES)		+= module.o
->  obj-$(CONFIG_DOUBLEFAULT)	+= doublefault.o
-> diff --git a/arch/x86/kernel/crash_dump_encrypt.c b/arch/x86/kernel/crash_dump_encrypt.c
-> new file mode 100644
-> index 0000000..e44ef33
-> --- /dev/null
-> +++ b/arch/x86/kernel/crash_dump_encrypt.c
-> @@ -0,0 +1,53 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + *	Memory preserving reboot related code.
-> + *
-> + *	Created by: Lianbo Jiang (lijiang@redhat.com)
-> + *	Copyright (C) RedHat Corporation, 2018. All rights reserved
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/crash_dump.h>
-> +#include <linux/uaccess.h>
-> +#include <linux/io.h>
-> +
-> +/**
-> + * copy_oldmem_page_encrypted - copy one page from "oldmem encrypted"
-> + * @pfn: page frame number to be copied
-> + * @buf: target memory address for the copy; this can be in kernel address
-> + *	space or user address space (see @userbuf)
-> + * @csize: number of bytes to copy
-> + * @offset: offset in bytes into the page (based on pfn) to begin the copy
-> + * @userbuf: if set, @buf is in user address space, use copy_to_user(),
-> + *	otherwise @buf is in kernel address space, use memcpy().
-> + *
-> + * Copy a page from "oldmem encrypted". For this page, there is no pte
-> + * mapped in the current kernel. We stitch up a pte, similar to
-> + * kmap_atomic.
-> + */
-> +
-> +ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-> +		size_t csize, unsigned long offset, int userbuf)
-> +{
-> +	void  *vaddr;
-> +
-> +	if (!csize)
-> +		return 0;
-> +
-> +	vaddr = (__force void *)ioremap_encrypted(pfn << PAGE_SHIFT,
-> +						  PAGE_SIZE);
-> +	if (!vaddr)
-> +		return -ENOMEM;
-> +
-> +	if (userbuf) {
-> +		if (copy_to_user((void __user *)buf, vaddr + offset, csize)) {
-> +			iounmap((void __iomem *)vaddr);
-> +			return -EFAULT;
-> +		}
-> +	} else
-> +		memcpy(buf, vaddr + offset, csize);
-> +
-> +	set_iounmap_nonlazy();
-> +	iounmap((void __iomem *)vaddr);
-> +	return csize;
-> +}
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index a45f0af..5200266 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -25,6 +25,8 @@
->  #include <linux/uaccess.h>
->  #include <asm/io.h>
->  #include "internal.h"
-> +#include <linux/mem_encrypt.h>
-> +#include <asm/pgtable.h>
->  
->  /* List representing chunks of contiguous memory areas and their offsets in
->   * vmcore file.
-> @@ -86,7 +88,8 @@ static int pfn_is_ram(unsigned long pfn)
->  
->  /* Reads a page from the oldmem device from given offset. */
->  static ssize_t read_from_oldmem(char *buf, size_t count,
-> -				u64 *ppos, int userbuf)
-> +				u64 *ppos, int userbuf,
-> +				bool encrypted)
->  {
->  	unsigned long pfn, offset;
->  	size_t nr_bytes;
-> @@ -108,8 +111,11 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
->  		if (pfn_is_ram(pfn) == 0)
->  			memset(buf, 0, nr_bytes);
->  		else {
-> -			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
-> -						offset, userbuf);
-> +			tmp = encrypted ? copy_oldmem_page_encrypted(pfn,
-> +					    buf, nr_bytes, offset, userbuf)
-> +					: copy_oldmem_page(pfn, buf, nr_bytes,
-> +							   offset, userbuf);
-> +
->  			if (tmp < 0)
->  				return tmp;
->  		}
-> @@ -143,7 +149,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
->   */
->  ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
->  {
-> -	return read_from_oldmem(buf, count, ppos, 0);
-> +	return read_from_oldmem(buf, count, ppos, 0, false);
->  }
->  
->  /*
-> @@ -151,7 +157,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
->   */
->  ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
->  {
-> -	return read_from_oldmem(buf, count, ppos, 0);
-> +	return read_from_oldmem(buf, count, ppos, 0, sme_active());
->  }
->  
->  /*
-> @@ -161,6 +167,7 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
->  				  unsigned long from, unsigned long pfn,
->  				  unsigned long size, pgprot_t prot)
->  {
-> +	prot = pgprot_encrypted(prot);
->  	return remap_pfn_range(vma, from, pfn, size, prot);
->  }
->  
-> @@ -235,7 +242,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
->  					    m->offset + m->size - *fpos,
->  					    buflen);
->  			start = m->paddr + *fpos - m->offset;
-> -			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
-> +			tmp = read_from_oldmem(buffer, tsz, &start, userbuf,
-> +						sme_active());
->  			if (tmp < 0)
->  				return tmp;
->  			buflen -= tsz;
-> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-> index f7ac2aa..f3414ff 100644
-> --- a/include/linux/crash_dump.h
-> +++ b/include/linux/crash_dump.h
-> @@ -25,6 +25,17 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
->  
->  extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
->  						unsigned long, int);
-> +#ifdef CONFIG_AMD_MEM_ENCRYPT
-> +extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-> +					   size_t csize, unsigned long offset,
-> +					   int userbuf);
-> +#else
-> +static inline ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-> +					size_t csize, unsigned long offset,
-> +					int userbuf) {
-> +	return csize;
-> +}
-> +#endif
->  void vmcore_cleanup(void);
->  
->  /* Architecture code defines this if there are other possible ELF
-> -- 
-> 2.9.5
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+> I don't think this is necessary. Even if some pages are freed, it
+> doesn't harm to keep a read-only alias of them here since the new
+> owner won't access them via this mapping anyway. So we can keep
+> .rodata as a single region.
+
+To be honest, I didn't think of this issue at first. I later found a
+problem when testing the code on qemu:
+
+[    7.027935] Unable to handle kernel write to read-only memory at virtual address ffff800000f42c00
+[    7.028388] Mem abort info:
+[    7.028495]   ESR = 0x9600004f
+[    7.028602]   Exception class = DABT (current EL), IL = 32 bits
+[    7.028749]   SET = 0, FnV = 0
+[    7.028837]   EA = 0, S1PTW = 0
+[    7.028930] Data abort info:
+[    7.029017]   ISV = 0, ISS = 0x0000004f
+[    7.029120]   CM = 0, WnR = 1
+[    7.029253] swapper pgtable: 4k pages, 48-bit VAs, pgdp =         (ptrval)
+[    7.029418] [ffff800000f42c00] pgd=00000000beff6803, pud=00000000beff5803, pmd=00000000beff3803, pte=00e0000040f42f93
+[    7.029807] Internal error: Oops: 9600004f [#1] PREEMPT SMP
+[    7.030027] Modules linked in:
+[    7.030256] CPU: 0 PID: 1321 Comm: jbd2/vda-8 Not tainted 4.17.0-rc4-02908-g0fe42512b2f0-dirty #71
+[    7.030486] Hardware name: linux,dummy-virt (DT)
+[    7.030708] pstate: 40400005 (nZcv daif +PAN -UAO)
+[    7.030880] pc : __memset+0x16c/0x1c0
+[    7.030993] lr : jbd2_journal_get_descriptor_buffer+0x7c/0xfc
+[    7.031134] sp : ffff00000a8ebbe0
+[    7.031264] x29: ffff00000a8ebbe0 x28: ffff80007c104800
+[    7.031430] x27: ffff00000a8ebd98 x26: ffff80007c4410d0
+[    7.031567] x25: ffff80007c441118 x24: 00000000ffffffff
+[    7.031704] x23: ffff80007c41b000 x22: ffff0000090d9000
+[    7.031838] x21: 0000000002000000 x20: ffff80007bcee800
+[    7.031973] x19: ffff80007c4413a8 x18: 0000000000000727
+[    7.032107] x17: 0000ffff89eba028 x16: ffff0000080e2c38
+[    7.032286] x15: ffff7e0000000000 x14: 0000000000048018
+[    7.032424] x13: 0000000048018c00 x12: ffff80007bc65788
+[    7.032558] x11: ffff00000a8eba68 x10: 0000000000000040
+[    7.032709] x9 : 0000000000000000 x8 : ffff800000f42c00
+[    7.032849] x7 : 0000000000000000 x6 : 000000000000003f
+[    7.032984] x5 : 0000000000000040 x4 : 0000000000000000
+[    7.033119] x3 : 0000000000000004 x2 : 00000000000003c0
+[    7.033254] x1 : 0000000000000000 x0 : ffff800000f42c00
+[    7.033414] Process jbd2/vda-8 (pid: 1321, stack limit = 0x        (ptrval))
+[    7.033633] Call trace:
+[    7.033757]  __memset+0x16c/0x1c0
+[    7.033858]  journal_submit_commit_record+0x60/0x174
+[    7.033985]  jbd2_journal_commit_transaction+0xf38/0x1330
+[    7.034115]  kjournald2+0xcc/0x250
+[    7.034207]  kthread+0xfc/0x128
+[    7.034295]  ret_from_fork+0x10/0x18
+[    7.034718] Code: 91010108 54ffff4a 8b040108 cb050042 (d50b7428)
+[    7.035104] ---[ end trace 26d65a14ae983167 ]---
+
+/sys/kernel/debug/kernel_page_tables shows that:
+
+---[ Linear Mapping ]---
+0xffff800000000000-0xffff800000080000         512K PTE       RW NX SHD AF NG CON     UXN MEM/NORMAL
+0xffff800000080000-0xffff800000200000        1536K PTE       ro NX SHD AF NG         UXN MEM/NORMAL
+0xffff800000200000-0xffff800000e00000          12M PMD       RW NX SHD AF NG     BLK UXN MEM/NORMAL
+0xffff800000e00000-0xffff800000fb0000        1728K PTE       ro NX SHD AF NG         UXN MEM/NORMAL
+
+So I split it into pieces.
+
+Thanks,
+
+Jun
