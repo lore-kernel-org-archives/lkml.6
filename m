@@ -2,135 +2,101 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4032C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37DBC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA5C208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D5D7208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:25:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sup4Dmz+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA5C208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bcO4EJt7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5D7208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754326AbeFUHVL (ORCPT
+        id S1754284AbeFUHZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 03:21:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753960AbeFUHVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 03:21:09 -0400
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7726E208A4;
-        Thu, 21 Jun 2018 07:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529565668;
-        bh=22rHz4xJb4286BJZrlnFXA/tzS4CAeI+NPaH04eGwvY=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=sup4Dmz+l/WEVku6eGAuWwnSLhL8HP+FYxmcCbz7Bp0MbXtcfS+64Cb5UfiCjfREK
-         uHtsoZgNYn+WZewu/lY5m3QHdHPe8C5XIbs71/jt00HSzTlCT++/vn1NMl5Ev0vhO/
-         yMnkko37ErafB1v4BfqOe3lw5pUO0Q8FgxT0tBJM=
-Received: by mail-wm0-f53.google.com with SMTP id 69-v6so3878250wmf.3;
-        Thu, 21 Jun 2018 00:21:08 -0700 (PDT)
-X-Gm-Message-State: APt69E2w7pI0S0a6zwSr/xrg/PxMh5PfTYomRrWb1ULmbf5Jkrnytb16
-        dU722kmQP+5ZvGsleZ5elotwzIsbwxqZiJYXwYs=
-X-Google-Smtp-Source: ADUXVKJnhdq09v8enlYWu773sRS87mzyeCOiPD53Az0xW1qHE0eMfRN7h/hnexImgR54SKxHZFoGKDGnhB9ljzm6K0A=
-X-Received: by 2002:a1c:1815:: with SMTP id 21-v6mr4187334wmy.72.1529565666942;
- Thu, 21 Jun 2018 00:21:06 -0700 (PDT)
+        Thu, 21 Jun 2018 03:25:10 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:37376 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754142AbeFUHZI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 03:25:08 -0400
+Received: by mail-ot0-f193.google.com with SMTP id 101-v6so2459584oth.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 00:25:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=HvCqXMXS9xfPROGLPf4r+Hh6qflJ98BnlgsX5ZLv/DY=;
+        b=bcO4EJt7703afzm0q4fwt+dEJERgtfoJFo5w69EPS6kJfsP3IrpyQrJtr52UKZPatR
+         BBw7rcdtqJ1h2lgJM1sbdTjzeMdIsKdHlaXYdfIJCidLHuF7GJz2zaBXzn5YG9lvttNi
+         HyKUDshcKKp4q17/pT8MFQHr44P2BuRTFGRzg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=HvCqXMXS9xfPROGLPf4r+Hh6qflJ98BnlgsX5ZLv/DY=;
+        b=YX7/gIxGBRxBjiV2Dtv63T1CNfomoYDhyuAv6q9XfRkrDxBeEFOMySnPzs1+H/Wmnc
+         j4Sa1pcnk4M5E0lRHKKgsmrPvXzaQFauEfay+XXufOoshjlorHJJIrgYoeaiuT4PD1VY
+         ELnlM3edWyrWmD0mZpaU6iLeEeVTfKWXSXcINDx/CpeJ7VaoPZ7lO5Czlf8JGLXmC/zy
+         7jys9T0uY/u6d63/1Z4UaAjPJuvVmWxvIqYURHmRp/y2Pkoj79a3Gqz2eekum1tmakCU
+         k+zw/wE/dHlFJ76so012j479NfcXfIB8+puziRV15iyDFrlGRav1rQN71j0JEwaHzI/d
+         dJ/w==
+X-Gm-Message-State: APt69E2bYiaz8RJQtQ+Dg3WpinvpWCcLtiAd2SLE0gq31ZecqoyCpYLX
+        p2iXVeTW1NzL2CQjlfzhDcB3OH9gd9qLBi+8mHEu/A==
+X-Google-Smtp-Source: ADUXVKLHjICoOP6n/L5omfeewyJCyd1ek81zWZc4rhNU8cJwlGPsxjVcTx5IvBKmEv4nmjdgdKy9uRlWuIBKdUMnVMI=
+X-Received: by 2002:a9d:40d2:: with SMTP id t18-v6mr15205271oti.249.1529565908266;
+ Thu, 21 Jun 2018 00:25:08 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 00:21:06
+Received: by 2002:a9d:2d44:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 00:25:07
  -0700 (PDT)
-In-Reply-To: <20180621055923eucas1p190f716475dcd44f72b24abfa4d948c82~6F2j2EPNk0295402954eucas1p1v@eucas1p1.samsung.com>
-References: <20180618174216.24801-1-krzk@kernel.org> <CGME20180618174316epcas1p397b66c8e4e8479fce8655941a4d4279f@epcas1p3.samsung.com>
- <20180618174216.24801-2-krzk@kernel.org> <20180619072652eucas1p1943deb1b158eda52980448e41f83e5e9~5fwX6lI2o2633926339eucas1p1Q@eucas1p1.samsung.com>
- <CAJKOXPeCT3CkqqNowEZaeTw7goJd6=Nbd2S61QzTFW-nGr5AKg@mail.gmail.com>
- <20180620193407.gk5e5ecolo5bel3c@kozik-lap> <20180621055923eucas1p190f716475dcd44f72b24abfa4d948c82~6F2j2EPNk0295402954eucas1p1v@eucas1p1.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 21 Jun 2018 09:21:06 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeCnRCR6q_QPAxxEA7Ej7qPfEm+n-SD6+81okhomj4MuA@mail.gmail.com>
-Message-ID: <CAJKOXPeCnRCR6q_QPAxxEA7Ej7qPfEm+n-SD6+81okhomj4MuA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: exynos: Remove unneeded DSI and DECON
- address/size cells in Exynos5433
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
+In-Reply-To: <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd> <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
+ <20180510113749.GG6977@amd> <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
+ <20180512083559.GB8944@amd> <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 21 Jun 2018 15:25:07 +0800
+Message-ID: <CAMz4kuJh+H_5XkeO=FpmHXdusMqPu9=NUfr1YOgumMh2mPsoJA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+        Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org,
+        DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 June 2018 at 07:59, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> On 20.06.2018 21:34, Krzysztof Kozlowski wrote:
->> On Tue, Jun 19, 2018 at 09:59:04AM +0200, Krzysztof Kozlowski wrote:
->>> On 19 June 2018 at 09:26, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>>> Hi Krzysztof,
->>>>
->>>> On 2018-06-18 19:42, Krzysztof Kozlowski wrote:
->>>>> The decon, decon_tv and dsi nodes have only one child port so
->>>>> address/size mappings are not necessary.  This fixes DTC warnings like:
->>>>>
->>>>>      Warning (graph_child_address): /soc/decon@13800000/ports:
->>>>>          graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
->>>>>
->>>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>> Works fine with current Exynos DRM Decon/MIC/DSI drivers.
->>>>
->>>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Thanks for review and testing!
->> I have second thoughs whether this patch is correct. AFAIU, the drivers
->> get the remote endpoints by reg==0 (for example the
->> of_graph_get_remote_node() in exynos_dsi_parse_dt()). If the port shall
->> be ignored, then reg==-1 should be passed.
+Hi Jacek and Bjorn,
+
+> OK, I've revised the discussion under Qualcomm LPG patch set and
+> it seems that we have almost ready solution in [0], except the
+> pattern_repeat file you mention in [1]. So probably Baolin could
+> address your remarks from [1] and add pattern_repeat file to the
+> patch that begins thread [0].
 >
-> All this is about purity, DECON bindings says explicitly that there
-> should be a port with reg=0.
+> [0] https://lkml.org/lkml/2017/11/15/27
+> [1] https://lkml.org/lkml/2017/12/8/470
 
-The warnings themself are indeed about purity.... but not having
-warnings is quite useful. When you have already warnings either in C
-code or in DTC, it is quite easy to skip new ones.
+I did not see Bjorn's patch introducing the 'pattern' and
+'pattern_repeat' interfaces was resend, but we have some requirements
+depend on this patch for Spreadtrum LED controller.
 
-We successfully get rid of all DTC warnings from ARM part. It would be
-nice to have the same for ARM64... but not with a cost of making bogus
-changes.
+Bjorn, will you resend your patchset? and I will help to test it. Or
+can I help to resend the patch with keeping your authorization?
+Thanks.
 
-> So your patch and DTC warnings are incorrect from bindings PoV.
-
-Good point so this patch should come along with changing of bindings
-(and maybe the code as well to use -1 as port/reg).
-
-> On the other side graph bindings are too bloated ( so many lines to
-> describe one connection ) so I am happy if there are shrinking attempts :)
-> Functionally nothing changes, of graph helpers assume reg=0 if it is not
-> present in port/endpoint node.
->
-> And regarding real issues, DECON could have more ports, possible candidates:
-> - GSCALER0/1/2,
-> - GSD/DSD - interconnect between GSCALERs and DECONs,
-> - SMIES - image enhancer (not implemented),
-> - MIC0/1 - image enhancers,
-> - DSIM0/1 - DSI encoders,
-> - HDMI - HDMI encoder.
->
-> But since all these connections can be configured dynamically, and more
-> importantly are inside specific SoC I dont think they need of_graphs. In
-> fact I think current of graph is also not necessary, but this is
-> different story, removal is on my long TODO list :)
-
-I keep my fingers crossed for this :)
-
-Best regards,
-Krzysztof
+-- 
+Baolin.wang
+Best Regards
