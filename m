@@ -2,173 +2,164 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 213DDC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2D0C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFC6422527
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B61522528
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:08:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="kUADdREI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC6422527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="izqS/vHy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B61522528
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934049AbeFUXH0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 19:07:26 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:47038 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933537AbeFUXHY (ORCPT
+        id S934088AbeFUXIB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 19:08:01 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:37185 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933537AbeFUXIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 19:07:24 -0400
-Received: by mail-qt0-f196.google.com with SMTP id h5-v6so4420374qtm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:07:24 -0700 (PDT)
+        Thu, 21 Jun 2018 19:08:00 -0400
+Received: by mail-qt0-f193.google.com with SMTP id a18-v6so4452605qtj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:07:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=mNokjm2Uhy7NbXBsn5iKpe8gH1WVeDXFBL6F/Jjpal4=;
-        b=kUADdREIm92cH2doZ+dBYMCK3rh/8F1b84ZZhteIgMSeJb0TlmoIXPXCG/O/KteaTF
-         qJEQwB3ihcDjA4ArX/Vu8Y1zcYzTn409wLQ4TPcU9p9NLQo/ljYkjBXrmztgi34nxn8a
-         e+58eSszjXEeR72TiW6CGptiqGfwLvXAY47vxUoLCxUS816QG0oFmNJrwhk20pFmdhfr
-         5W7fLGaa8N/VCWVqsC78K49Vv8EL9YpnhjH3/JgQDGpy4tDn4GJpLPzxA/cVg4zRdfi4
-         DwAPpaAmDrINf4yuPpUsoxFjQZ3/Yl2F6LILbA+1UeRr3IoZ/ZsOIKQhqswffK/jmx8Y
-         wMLg==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MKQ7+lpzCTyohELNY0ocjlghXCzY4OPguzrKK4Zl/+g=;
+        b=izqS/vHyK6+JHOhaubJgoQnd9l0E4r9VSgYS5mnZTLXLr/e7rr1UVpz6Lj1hQ5YAqI
+         lFW842R983KG453UaknBuKzNLQFGfchNDyGjpxI3B1geH/Xfv1aXPNTqjkS5zNGbVGoP
+         autDXPu66sLN7Z1zExxAPwZkMqtsH9/3u9dVrAiyyidLx3y/FJPemsiZyGqztDEQVREJ
+         yHvRz0loVMqchmSGzurh8BVZuGlwf2h9USvPNXwnEp5KUjBlY4BVjZMwC5o/uyo4YFY0
+         mbxl5G19aXY+v/94GKok4STGI9riGNssuSkwpHGrFxgrvUbPcQqJRm5sUJhyFQibFOCa
+         fbFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=mNokjm2Uhy7NbXBsn5iKpe8gH1WVeDXFBL6F/Jjpal4=;
-        b=qaNQRW8ZvTSOblMGitcO/xI19/megMJuxsTUUYxckOJnxGiHP1Y3iYaud7jo14CP8c
-         ArdTB+RTv9pIiIybu6RrLDdeo72TwjDdywGX2slvplkKRbeg2zwKtOAuggHDtg2l0qpu
-         hAqKl38Y7DdF9eugJExsA2Oz3hEmcQXJF5dXk5tFn8gNoNr4gerDnFeeDxbrQT3P4g7D
-         68UTNgOxDrX/48ZAr/VqjNlLBqtGHrRrV0d0ITSUMrGmLdzHsQVrmrrPvJFKaPymf77u
-         bCCpAwiSe5aRgSIYmTuTHQpQ8K3lMEpjLkJ3ldqQeHqy1KpUp1Ljs1HaBa4U9WqmJkbT
-         Q6Dw==
-X-Gm-Message-State: APt69E2BMIxpWkDPSF5czPwMcbumJuRWF82vSu11nBHktswfyzoQR01G
-        i0WCdZy60+r873pAefli+p1NJA==
-X-Google-Smtp-Source: AAOMgpdogVAe0JQ4BZVZjGS9+2iQISnMbCb73OgtNetWrKgXEwOAwoXYK+1tEForCSEir4B5fwFA1A==
-X-Received: by 2002:ac8:c8:: with SMTP id d8-v6mr1514950qtg.202.1529622443695;
-        Thu, 21 Jun 2018 16:07:23 -0700 (PDT)
-Received: from cakuba.netronome.com ([75.53.12.129])
-        by smtp.gmail.com with ESMTPSA id k30-v6sm5439268qtc.31.2018.06.21.16.07.22
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MKQ7+lpzCTyohELNY0ocjlghXCzY4OPguzrKK4Zl/+g=;
+        b=VNYFup4THWVSUQST+H4WxtolUXz/Pmhg/ItrshHDNFHePOitg15a5R/TfgF7FLsNP7
+         B9QdUn5a9z2E7dxgHEheuZBAE24RwLaL0TIBsByNBbPE2pgZKli3aLlie5B+3v+VUAPM
+         eLW+flsWZv9Aqz0H9UDBcvy2QUGru56QngWfiujAre/79pjKqwmqlnIYQAdPXRtpRRJf
+         Vz5xp2yAo1BATcBLns7A0Kr4HsXQ6yLmYz2nAXrQGfKgnK1BWAj6O6UfvUnlbbMFNk5R
+         Tt6NV0/3tGLPgJFAH85Vnoq4XCTdhvaiTUk+RJyb7zuvmhCu+23cAalnyu82N57IvfsN
+         2Zpg==
+X-Gm-Message-State: APt69E3x3Bw3gDi6jSmGWdTVvoWoP+e3uuzVVrin1iKcUv+N7H/musFG
+        5D3agFOiiKWFCL8BNRir+k2hYg==
+X-Google-Smtp-Source: ADUXVKL1H5EMTfgnw0WM+RCZQk892sf1cOb63A/tNLwttJIPjzpNOo55/v9o1PqmDGb/YtWcKOfi8Q==
+X-Received: by 2002:a0c:870a:: with SMTP id 10-v6mr25069909qvh.169.1529622479190;
+        Thu, 21 Jun 2018 16:07:59 -0700 (PDT)
+Received: from cisco ([173.38.117.67])
+        by smtp.gmail.com with ESMTPSA id s39-v6sm4844571qts.42.2018.06.21.16.07.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 16:07:23 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 16:07:19 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Martin KaFai Lau <kafai@fb.com>
-Cc:     Okash Khawaja <osk@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
-        "Alexei Starovoitov" <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next 2/3] bpf: btf: add btf json print functionality
-Message-ID: <20180621160719.2cfb4b58@cakuba.netronome.com>
-In-Reply-To: <20180621225117.dhrkrtmkfbeihbe4@kafai-mbp.dhcp.thefacebook.com>
-References: <20180620203051.223156973@fb.com>
-        <20180620203703.101156292@fb.com>
-        <20180621145935.41ff8974@cakuba.netronome.com>
-        <20180621225117.dhrkrtmkfbeihbe4@kafai-mbp.dhcp.thefacebook.com>
-Organization: Netronome Systems, Ltd.
+        Thu, 21 Jun 2018 16:07:58 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 17:07:55 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        suda.akihiro@lab.ntt.co.jp, "Tobin C. Harding" <me@tobin.cc>
+Subject: Re: [PATCH v4 3/4] seccomp: add a way to get a listener fd from
+ ptrace
+Message-ID: <20180621230755.GI3992@cisco>
+References: <20180621220416.5412-1-tycho@tycho.ws>
+ <20180621220416.5412-4-tycho@tycho.ws>
+ <CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Jun 2018 15:51:17 -0700, Martin KaFai Lau wrote:
-> On Thu, Jun 21, 2018 at 02:59:35PM -0700, Jakub Kicinski wrote:
-> > On Wed, 20 Jun 2018 13:30:53 -0700, Okash Khawaja wrote:  
-> > > $ sudo bpftool map dump -p id 14
-> > > [{
-> > >         "key": 0
-> > >     },{
-> > >         "value": {
-> > >             "m": 1,
-> > >             "n": 2,
-> > >             "o": "c",
-> > >             "p": [15,16,17,18,15,16,17,18
-> > >             ],
-> > >             "q": [[25,26,27,28,25,26,27,28
-> > >                 ],[35,36,37,38,35,36,37,38
-> > >                 ],[45,46,47,48,45,46,47,48
-> > >                 ],[55,56,57,58,55,56,57,58
-> > >                 ]
-> > >             ],
-> > >             "r": 1,
-> > >             "s": 0x7ffff6f70568,
-> > >             "t": {
-> > >                 "x": 5,
-> > >                 "y": 10
-> > >             },
-> > >             "u": 100,
-> > >             "v": 20,
-> > >             "w1": 0x7,
-> > >             "w2": 0x3
-> > >         }
-> > >     }
-> > > ]  
-> > 
-> > I don't think this format is okay, JSON output is an API you shouldn't
-> > break.  You can change the non-JSON output whatever way you like, but
-> > JSON must remain backwards compatible.
-> > 
-> > The dump today has object per entry, e.g.:
-> > 
-> > {
-> >         "key":["0x00","0x00","0x00","0x00",
-> >         ],
-> >         "value": ["0x02","0x00","0x00","0x00","0x00","0x00","0x00","0x00"
-> >         ]
-> > }
-> > 
-> > This format must remain, you may only augment it with new fields.  E.g.:
-> > 
-> > {
-> >         "key":["0x00","0x00","0x00","0x00",
-> >         ],
-> > 	"key_struct":{
-> > 		"index":0
-> > 	},
-> >         "value": ["0x02","0x00","0x00","0x00","0x00","0x00","0x00","0x00"
-> >         ],
-> > 	"value_struct":{
-> > 		"src_ip":2,
-> > 		"dst_ip:0
-> > 	}
-> > }  
-> I am not sure how useful to have both "key|value" and "(key|value)_struct"
-> while most people would prefer "key_struct"/"value_struct" if it is
-> available.
+Hi Jann,
 
-Agreed, it's not that useful, especially with the string-hex debacle :(
-It's just about the backwards compat.
-
-> How about introducing a new option, like "-b", to print the
-> map with BTF (if available) such that it won't break the existing
-> one (-j or -p) while the "-b" output can keep using the "key"
-> and "value".
+On Fri, Jun 22, 2018 at 12:48:09AM +0200, Jann Horn wrote:
+> On Fri, Jun 22, 2018 at 12:04 AM Tycho Andersen <tycho@tycho.ws> wrote:
+> > As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
+> > version which can acquire filters is useful. There are at least two reasons
+> > this is preferable, even though it uses ptrace:
+> >
+> > 1. You can control tasks that aren't cooperating with you
+> > 2. You can control tasks whose filters block sendmsg() and socket(); if the
+> >    task installs a filter which blocks these calls, there's no way with
+> >    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
+> [...]
+> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > index bbc24938c51d..b68a5d4a15cd 100644
+> > --- a/kernel/seccomp.c
+> > +++ b/kernel/seccomp.c
+> > @@ -1743,6 +1743,34 @@ static struct file *init_listener(struct task_struct *task,
+> >
+> >         return ret;
+> >  }
+> > +
+> > +long seccomp_new_listener(struct task_struct *task,
+> > +                         unsigned long filter_off)
+> > +{
+> > +       struct seccomp_filter *filter;
+> > +       struct file *listener;
+> > +       int fd;
+> > +
+> > +       filter = get_nth_filter(task, filter_off);
+> > +       if (IS_ERR(filter))
+> > +               return PTR_ERR(filter);
+> > +
+> > +       fd = get_unused_fd_flags(0);
+> > +       if (fd < 0) {
+> > +               __put_seccomp_filter(filter);
+> > +               return fd;
+> > +       }
+> > +
+> > +       listener = init_listener(task, task->seccomp.filter);
+> > +       __put_seccomp_filter(filter);
+> > +       if (IS_ERR(listener)) {
+> > +               put_unused_fd(fd);
+> > +               return PTR_ERR(listener);
+> > +       }
+> > +
+> > +       fd_install(fd, listener);
+> > +       return fd;
+> > +}
 > 
-> The existing json can be kept as is.
+> I think there's a security problem here. Imagine the following scenario:
+> 
+> 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
+> 2. task A forks off a child B
+> 3. task B uses setuid(1) to drop its privileges
+> 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
+> or via execve()
+> 5. task C (the attacker, uid==1) attaches to task B via ptrace
+> 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
+> 7. because the seccomp filter is shared by task A and task B, task C
+> is now able to influence syscall results for syscalls performed by
+> task A
+> 
+> Unless I'm missing something, you might have to add some extra
+> security check here: Either a check to ensure that no other task is
+> using the same seccomp filter, or (as a last resort) a check for
+> capable(CAP_SYS_ADMIN).
 
-That was my knee jerk reaction too, but on reflection it doesn't sound
-that great.  We expect people with new-enough bpftool to use btf, so it
-should be available in the default output, without hiding it behind a
-switch.  We could add a switch to hide the old output, but that doesn't
-give us back the names...  What about Key and Value or k and v?  Or
-key_fields and value_fields?
+I guess my first thought is "don't do that". But I am also not opposed
+to adding a check for capable(CAP_SYS_ADMIN) to prevent the footgun,
+so I can do that for v5. I think checking whether other tasks are
+using a filter would be hard without adding some additional counter
+logic or something, and at least for the use cases I know of,
+capable(CAP_SYS_ADMIN) is fine.
 
-> > The name XYZ_struct may not be the best, perhaps you can come up with a
-> > better one?  
-> > 
-> > Does that make sense?  Am I missing what you're doing here?
-> > 
-> > One process note - please make sure you run checkpatch.pl --strict on
-> > bpftool patches before posting.
-> > 
-> > Thanks for working on this!  
+Tycho
