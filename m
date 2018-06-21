@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A450C43145
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E71C43146
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6EEE2156E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ED6E2156E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:32:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="sAyK4A6e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6EEE2156E
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="iTJxF/TJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ED6E2156E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933542AbeFUUbz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 16:31:55 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:38602 "EHLO
+        id S933504AbeFUUbx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 16:31:53 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:38578 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933022AbeFUUbt (ORCPT
+        with ESMTP id S933018AbeFUUbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 16:31:49 -0400
 Received: from localhost.localdomain (unknown [IPv6:2a02:169:34d6:10::3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id BD1BC5C17EE;
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 414D35C16B5;
         Thu, 21 Jun 2018 22:31:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529613108;
+        t=1529613107;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=S63NkXwQVl33idNQHAtaRdcC+s/xskq6Tn0rTZ69+lM=;
-        b=sAyK4A6eCYovhaHnAamYSVv3lelMkul6veY6D3w0vx0riSGmv4etfmig5XgeK+5rWT+PBN
-        SPM6avnrLx0mo1B728dUWx4XVg9VyZt+ztBMb/SfEpf+S4hIgk9wHy86GtVQKWc+OG6SCE
-        i6ujNOWZkwizObA12I2Q5fsiNPQXlpk=
+        bh=Sam56dJzffh/HgwJOXi79xAsu0HRMYX5+/Q/e7SsbuA=;
+        b=iTJxF/TJbCWiT8FJs29rdokiXlOgGSY6D3LRkurAqb/URt9HDWVbvvgahbmlt8m7Cu5HSO
+        ahprc3mUG/ZyngrZXd9gSeiSH60H24FhwpgK4SbvuRT5I+TZudSexcoxo5R+JVRHZvSAzy
+        v5KUkhhYNFlsrTqptiluwvzrEc4z+to=
 From:   Stefan Agner <stefan@agner.ch>
 To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
         computersforpeace@gmail.com, marek.vasut@gmail.com,
@@ -47,9 +47,9 @@ Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
         gaireg@gaireg.de, linux-mtd@lists.infradead.org,
         linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v6 2/6] mtd: rawnand: add an option to specify NAND chip as a boot device
-Date:   Thu, 21 Jun 2018 22:31:41 +0200
-Message-Id: <20180621203145.7628-3-stefan@agner.ch>
+Subject: [PATCH v6 1/6] mtd: rawnand: add Reed-Solomon error correction algorithm
+Date:   Thu, 21 Jun 2018 22:31:40 +0200
+Message-Id: <20180621203145.7628-2-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180621203145.7628-1-stefan@agner.ch>
 References: <20180621203145.7628-1-stefan@agner.ch>
@@ -73,64 +73,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow to define a NAND chip as a boot device. This can be helpful
-for the selection of the ECC algorithm and strength in case the boot
-ROM supports only a subset of controller provided options.
+Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/mtd/nand.txt | 4 ++++
- drivers/mtd/nand/raw/nand_base.c               | 3 +++
- include/linux/mtd/rawnand.h                    | 6 ++++++
- 3 files changed, 13 insertions(+)
+ Documentation/devicetree/bindings/mtd/nand.txt | 2 +-
+ drivers/mtd/nand/raw/nand_base.c               | 1 +
+ include/linux/mtd/rawnand.h                    | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-index eaef8c657aa5c..e949c778e9837 100644
+index 8bb11d809429d..eaef8c657aa5c 100644
 --- a/Documentation/devicetree/bindings/mtd/nand.txt
 +++ b/Documentation/devicetree/bindings/mtd/nand.txt
-@@ -43,6 +43,10 @@ Optional NAND chip properties:
- 		     This is particularly useful when only the in-band area is
- 		     used by the upper layers, and you want to make your NAND
- 		     as reliable as possible.
-+- nand-is-boot-medium: Whether the NAND chip is a boot medium. Drivers might use
-+		       this information to select ECC algorithms supported by
-+		       the boot ROM or similar restrictions.
-+
- - nand-rb: shall contain the native Ready/Busy ids.
+@@ -25,7 +25,7 @@ Optional NAND chip properties:
+ 		  Deprecated values:
+ 		  "soft_bch": use "soft" and nand-ecc-algo instead
+ - nand-ecc-algo: string, algorithm of NAND ECC.
+-		 Supported values are: "hamming", "bch".
++		 Valid values are: "hamming", "bch", "rs".
+ - nand-bus-width : 8 or 16 bus width if not present 8
+ - nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
  
- The ECC strength and ECC step size properties define the correction capability
 diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 47e9cb9063da4..e70bf328c64e4 100644
+index 10c4f9919850c..47e9cb9063da4 100644
 --- a/drivers/mtd/nand/raw/nand_base.c
 +++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -5859,6 +5859,9 @@ static int nand_dt_init(struct nand_chip *chip)
- 	if (of_get_nand_bus_width(dn) == 16)
- 		chip->options |= NAND_BUSWIDTH_16;
+@@ -5777,6 +5777,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
+ static const char * const nand_ecc_algos[] = {
+ 	[NAND_ECC_HAMMING]	= "hamming",
+ 	[NAND_ECC_BCH]		= "bch",
++	[NAND_ECC_RS]		= "rs",
+ };
  
-+	if (of_property_read_bool(dn, "nand-is-boot-medium"))
-+		chip->options |= NAND_IS_BOOT_MEDIUM;
-+
- 	if (of_get_nand_on_flash_bbt(dn))
- 		chip->bbt_options |= NAND_BBT_USE_FLASH;
- 
+ static int of_get_nand_ecc_algo(struct device_node *np)
 diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 2d9cb7acbc3d8..80aeeca03f36b 100644
+index 3e8ec3b8a39c7..2d9cb7acbc3d8 100644
 --- a/include/linux/mtd/rawnand.h
 +++ b/include/linux/mtd/rawnand.h
-@@ -219,6 +219,12 @@ enum nand_ecc_algo {
-  */
- #define NAND_WAIT_TCCS		0x00200000
+@@ -121,6 +121,7 @@ enum nand_ecc_algo {
+ 	NAND_ECC_UNKNOWN,
+ 	NAND_ECC_HAMMING,
+ 	NAND_ECC_BCH,
++	NAND_ECC_RS,
+ };
  
-+/*
-+ * Whether the NAND chip is a boot medium. Drivers might use this information
-+ * to select ECC algorithms supported by the boot ROM or similar restrictions.
-+ */
-+#define NAND_IS_BOOT_MEDIUM	0x00400000
-+
- /* Options set by nand scan */
- /* Nand scan has allocated controller struct */
- #define NAND_CONTROLLER_ALLOC	0x80000000
+ /*
 -- 
 2.17.1
 
