@@ -2,167 +2,88 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 441C9C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806BAC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC4120837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:13:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC4120837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 308FB20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:15:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Hm6Iem3f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 308FB20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932278AbeFUBNc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:13:32 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:34831 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752983AbeFUBNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 21:13:30 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EB55273BD7276;
-        Thu, 21 Jun 2018 09:13:26 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.40) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.382.0; Thu, 21 Jun 2018
- 09:13:20 +0800
-Subject: Re: [PATCH v3 21/21] sparc64: use match_string() helper
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <1527765086-19873-1-git-send-email-xieyisheng1@huawei.com>
- <1527765086-19873-22-git-send-email-xieyisheng1@huawei.com>
- <80339b72-902f-a74e-6ad2-28744c7760cb@huawei.com>
- <CAHp75VdvpxZCuGmFV0r9nUdO1u7=eurDFZur7Q=ZO0kMC6D0rw@mail.gmail.com>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        <sparclinux@vger.kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>
-From:   Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <a5d3f025-6f55-5bd4-a949-c8833380b00e@huawei.com>
-Date:   Thu, 21 Jun 2018 09:13:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S1754134AbeFUBPd (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 21:15:33 -0400
+Received: from a9-112.smtp-out.amazonses.com ([54.240.9.112]:50862 "EHLO
+        a9-112.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752983AbeFUBPb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 21:15:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1529543730;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=tDMCHpXs4aAfoFmX/Dj6MYiopWJT0Kumn/E0Fpazef0=;
+        b=Hm6Iem3fK3/RdTpn40e0UXcN7X1bLBmENQaZyjqU4+OgLXsO1NBFpeAIsuKuVj7a
+        1DYC4L6uvMvjee6NoUSgUjYT5v51pcXaHtXyjWRXyMIfarAYWP2YMcnyDXhoe/VWcDb
+        /Z998R9aytQJhbKmio4VuXr5gO+o4hunL0i+K06U=
+Date:   Thu, 21 Jun 2018 01:15:30 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Shakeel Butt <shakeelb@google.com>
+cc:     "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        David Rientjes <rientjes@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] slub: track number of slabs irrespective of
+ CONFIG_SLUB_DEBUG
+In-Reply-To: <20180620224147.23777-1-shakeelb@google.com>
+Message-ID: <010001641fe92599-9006a895-d1ea-4881-a63c-f3749ff9b7b3-000000@email.amazonses.com>
+References: <20180620224147.23777-1-shakeelb@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VdvpxZCuGmFV0r9nUdO1u7=eurDFZur7Q=ZO0kMC6D0rw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.06.21-54.240.9.112
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On Wed, 20 Jun 2018, Shakeel Butt wrote:
 
-Sorry for late response. I will take your suggestion in next version.
+> For !CONFIG_SLUB_DEBUG, SLUB does not maintain the number of slabs
+> allocated per node for a kmem_cache. Thus, slabs_node() in
+> __kmem_cache_empty(), __kmem_cache_shrink() and __kmem_cache_destroy()
+> will always return 0 for such config. This is wrong and can cause issues
+> for all users of these functions.
 
-Thanks
-Yisheng
 
-On 2018/6/6 13:01, Andy Shevchenko wrote:
-> On Wed, Jun 6, 2018 at 5:19 AM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
->> match_string() returns the index of an array for a matching string,
->> which can be used instead of open coded variant.
->>
-> 
-> Thanks for an update.
-> My comments below.
-> 
-> I think you need to mentioned the string literal change in the commit message.
-> 
->> Cc: "David S. Miller" <davem@davemloft.net>
->> Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
->> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
->> Cc: sparclinux@vger.kernel.org
->> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
->> ---
->> v3:
->>  - add string literal instead of NULL for array hwcaps to make it
->>    can use match_string() too.  - per Andy
->> v2
->>  - new add for use match_string() helper patchset.
->>
->>  arch/sparc/kernel/setup_64.c | 23 +++++++++--------------
->>  1 file changed, 9 insertions(+), 14 deletions(-)
->>
->> diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
->> index 7944b3c..4f0ec0c 100644
->> --- a/arch/sparc/kernel/setup_64.c
->> +++ b/arch/sparc/kernel/setup_64.c
->> @@ -401,7 +401,7 @@ void __init start_early_boot(void)
->>          */
->>         "mul32", "div32", "fsmuld", "v8plus", "popc", "vis", "vis2",
->>         "ASIBlkInit", "fmaf", "vis3", "hpc", "random", "trans", "fjfmau",
->> -       "ima", "cspare", "pause", "cbcond", NULL /*reserved for crypto */,
->> +       "ima", "cspare", "pause", "cbcond", "resv" /*reserved for crypto */,
->>         "adp",
-> 
-> Why not to spell "crypto" explicitly and remove comment?
-> 
->>  };
->>
->> @@ -418,7 +418,7 @@ void cpucap_info(struct seq_file *m)
->>         seq_puts(m, "cpucaps\t\t: ");
->>         for (i = 0; i < ARRAY_SIZE(hwcaps); i++) {
->>                 unsigned long bit = 1UL << i;
->> -               if (hwcaps[i] && (caps & bit)) {
->> +               if (bit != HWCAP_SPARC_CRYPTO && (caps & bit)) {
-> 
-> I would rather swap the order of subsonditions to check if caps has a
-> bit first, and then exclude CRYPTO.
-> 
->>                         seq_printf(m, "%s%s",
->>                                    printed ? "," : "", hwcaps[i]);
->>                         printed++;
->> @@ -472,7 +472,7 @@ static void __init report_hwcaps(unsigned long caps)
->>
->>         for (i = 0; i < ARRAY_SIZE(hwcaps); i++) {
->>                 unsigned long bit = 1UL << i;
->> -               if (hwcaps[i] && (caps & bit))
->> +               if (bit != HWCAP_SPARC_CRYPTO && (caps & bit))
->>                         report_one_hwcap(&printed, hwcaps[i]);
-> 
-> Ditto.
-> 
->>         }
->>         if (caps & HWCAP_SPARC_CRYPTO)
->> @@ -504,18 +504,13 @@ static unsigned long __init mdesc_cpu_hwcap_list(void)
->>         while (len) {
->>                 int i, plen;
->>
->> -               for (i = 0; i < ARRAY_SIZE(hwcaps); i++) {
->> -                       unsigned long bit = 1UL << i;
->> +               i = match_string(hwcaps, ARRAY_SIZE(hwcaps), prop);
->> +               if (i >= 0)
->> +                       caps |= (1UL << i);
-> 
-> Parens are redundant (and actually didn't present in the original code above).
-> 
->>
->> -                       if (hwcaps[i] && !strcmp(prop, hwcaps[i])) {
->> -                               caps |= bit;
->> -                               break;
->> -                       }
->> -               }
->> -               for (i = 0; i < ARRAY_SIZE(crypto_hwcaps); i++) {
->> -                       if (!strcmp(prop, crypto_hwcaps[i]))
->> -                               caps |= HWCAP_SPARC_CRYPTO;
->> -               }
->> +               i = match_string(crypto_hwcaps, ARRAY_SIZE(crypto_hwcaps), prop);
->> +               if (i >= 0)
->> +                       caps |= HWCAP_SPARC_CRYPTO;
->>
->>                 plen = strlen(prop) + 1;
->>                 prop += plen;
->> --
->> 1.7.12.4
->>
->>
->>
-> 
-> 
-> 
+CONFIG_SLUB_DEBUG is set by default on almost all builds. The only case
+where CONFIG_SLUB_DEBUG is switched off is when we absolutely need to use
+the minimum amount of memory (embedded or some such thing).
+
+> The right solution is to make slabs_node() work even for
+> !CONFIG_SLUB_DEBUG. The commit 0f389ec63077 ("slub: No need for per node
+> slab counters if !SLUB_DEBUG") had put the per node slab counter under
+> CONFIG_SLUB_DEBUG because it was only read through sysfs API and the
+> sysfs API was disabled on !CONFIG_SLUB_DEBUG. However the users of the
+> per node slab counter assumed that it will work in the absence of
+> CONFIG_SLUB_DEBUG. So, make the counter work for !CONFIG_SLUB_DEBUG.
+
+Please do not do this. Find a way to avoid these checks. The
+objective of a !CONFIG_SLUB_DEBUG configuration is to not compile in
+debuggin checks etc etc in order to reduce the code/data footprint to the
+minimum necessary while sacrificing debuggability etc etc.
+
+Maybe make it impossible to disable CONFIG_SLUB_DEBUG if CGROUPs are in
+use?
 
