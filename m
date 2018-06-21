@@ -6,53 +6,57 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A58C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A88A1C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC84120652
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:20:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC84120652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 61DBC20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:21:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61DBC20837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932892AbeFUJUl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:20:41 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4619 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932659AbeFUJUh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:20:37 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b2b6de50002>; Thu, 21 Jun 2018 02:20:37 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 21 Jun 2018 02:20:36 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 21 Jun 2018 02:20:36 -0700
-Received: from [10.26.11.123] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 21 Jun
- 2018 09:20:32 +0000
-Subject: Re: [PATCH v2 6/8] serial: Add Tegra Combined UART driver
-To:     Mikko Perttunen <mperttunen@nvidia.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <jassisinghbrar@gmail.com>,
-        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180620122042.10950-1-mperttunen@nvidia.com>
- <20180620122042.10950-7-mperttunen@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <48fb4800-5cf2-37dc-ca19-51356e5a679c@nvidia.com>
-Date:   Thu, 21 Jun 2018 10:20:30 +0100
+        id S932937AbeFUJVH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:21:07 -0400
+Received: from mga09.intel.com ([134.134.136.24]:30322 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932659AbeFUJVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:21:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 02:21:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,251,1526367600"; 
+   d="scan'208";a="49428023"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Jun 2018 02:21:00 -0700
+Subject: Re: [PATCH V3 1/3] scsi: ufs: set the device reference clock setting
+To:     sayali <sayalil@codeaurora.org>, subhashj@codeaurora.org,
+        cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, evgreen@chromium.org,
+        riteshh@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org, 'Rob Herring' <robh+dt@kernel.org>,
+        'Mark Rutland' <mark.rutland@arm.com>,
+        'Mathieu Malaterre' <malat@debian.org>,
+        "'open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS'" 
+        <devicetree@vger.kernel.org>,
+        'open list' <linux-kernel@vger.kernel.org>
+References: <1528981432-23065-1-git-send-email-sayalil@codeaurora.org>
+ <1528981432-23065-2-git-send-email-sayalil@codeaurora.org>
+ <bf87ec58-69c0-fe59-cfa1-8dc7dc80ca46@intel.com>
+ <002a01d4093f$d6f33640$84d9a2c0$@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <f0ef9356-25ba-04dc-2580-fdaba3e04ca1@intel.com>
+Date:   Thu, 21 Jun 2018 12:19:37 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180620122042.10950-7-mperttunen@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <002a01d4093f$d6f33640$84d9a2c0$@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,390 +64,232 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 20/06/18 13:20, Mikko Perttunen wrote:
-> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
-> multiplexing multiple "virtual UARTs" into a single hardware serial
-> port. The TCU is the primary serial port on Tegra194 devices.
+On 21/06/18 12:11, sayali wrote:
+> Hi Adrian,
 > 
-> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
-> are part of Tegra HSP blocks that are already controlled by the Tegra
-> HSP mailbox driver.
+> Please check my comment inline.
 > 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
+> Thanks,
+> Sayali
+> -----Original Message-----
+> From: Adrian Hunter [mailto:adrian.hunter@intel.com] 
+> Sent: Wednesday, June 20, 2018 12:56 PM
+> To: Sayali Lokhande <sayalil@codeaurora.org>; subhashj@codeaurora.org; cang@codeaurora.org; vivek.gautam@codeaurora.org; rnayak@codeaurora.org; vinholikatti@gmail.com; jejb@linux.vnet.ibm.com; martin.petersen@oracle.com; asutoshd@codeaurora.org; evgreen@chromium.org; riteshh@codeaurora.org
+> Cc: linux-scsi@vger.kernel.org; Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Mathieu Malaterre <malat@debian.org>; open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS <devicetree@vger.kernel.org>; open list <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH V3 1/3] scsi: ufs: set the device reference clock setting
 > 
-> Notes:
->     v2:
->     - Removed (void) casts for unused variables.
->     - Changed the uart_set_options() call to be on one line, even if its
->       over 80 characters.
->     - Added defines for magic numbers.
->     - Style fixes.
->     - Changed Kconfig entry to depend on the Tegra HSP driver instead of
->       just the mailbox framework.
+> On 14/06/18 16:03, Sayali Lokhande wrote:
+>> From: Subhash Jadavani <subhashj@codeaurora.org>
+>>
+>> UFS host supplies the reference clock to UFS device and UFS device 
+>> specification allows host to provide one of the 4 frequencies (19.2 
+>> MHz,
+>> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the 
+>> device reference clock frequency setting in the device based on what 
+>> frequency it is supplying to UFS device.
+>>
+>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 > 
->  drivers/tty/serial/Kconfig       |   9 ++
->  drivers/tty/serial/Makefile      |   1 +
->  drivers/tty/serial/tegra-tcu.c   | 289 +++++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/serial_core.h |   3 +
->  4 files changed, 302 insertions(+)
->  create mode 100644 drivers/tty/serial/tegra-tcu.c
+> I have repeated my V2 comments below.  Please address these when you post V4.  Also please provide a change log for each patch version.
 > 
-> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-> index df8bd0c7b97d..5fdd336e8937 100644
-> --- a/drivers/tty/serial/Kconfig
-> +++ b/drivers/tty/serial/Kconfig
-> @@ -322,6 +322,15 @@ config SERIAL_TEGRA
->  	  are enabled). This driver uses the APB DMA to achieve higher baudrate
->  	  and better performance.
->  
-> +config SERIAL_TEGRA_TCU
-> +	tristate "NVIDIA Tegra Combined UART"
-> +	depends on ARCH_TEGRA && TEGRA_HSP_MBOX
-> +	select SERIAL_CORE
-> +	help
-> +	  Support for the mailbox-based TCU (Tegra Combined UART) serial port.
-> +	  TCU is a virtual serial port that allows multiplexing multiple data
-> +	  streams into a single hardware serial port.
-> +
->  config SERIAL_MAX3100
->  	tristate "MAX3100 support"
->  	depends on SPI
-> diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
-> index daac675612df..4ad82231ff8a 100644
-> --- a/drivers/tty/serial/Makefile
-> +++ b/drivers/tty/serial/Makefile
-> @@ -76,6 +76,7 @@ obj-$(CONFIG_SERIAL_LANTIQ)	+= lantiq.o
->  obj-$(CONFIG_SERIAL_XILINX_PS_UART) += xilinx_uartps.o
->  obj-$(CONFIG_SERIAL_SIRFSOC) += sirfsoc_uart.o
->  obj-$(CONFIG_SERIAL_TEGRA) += serial-tegra.o
-> +obj-$(CONFIG_SERIAL_TEGRA_TCU) += tegra-tcu.o
->  obj-$(CONFIG_SERIAL_AR933X)   += ar933x_uart.o
->  obj-$(CONFIG_SERIAL_EFM32_UART) += efm32-uart.o
->  obj-$(CONFIG_SERIAL_ARC)	+= arc_uart.o
-> diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
-> new file mode 100644
-> index 000000000000..b54ebe2ad917
-> --- /dev/null
-> +++ b/drivers/tty/serial/tegra-tcu.c
-> @@ -0,0 +1,289 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#include <linux/console.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/serial.h>
-> +#include <linux/serial_core.h>
-> +#include <linux/slab.h>
-> +#include <linux/tty.h>
-> +#include <linux/tty_flip.h>
-> +
-> +#define TCU_MBOX_BYTE(i, x)			((x) << (i*8))
-> +#define TCU_MBOX_BYTE_V(x, i)			(((x) >> (i*8)) & 0xff)
-> +#define TCU_MBOX_NUM_BYTES(x)			((x) << 24)
-> +#define TCU_MBOX_NUM_BYTES_V(x)			(((x) >> 24) & 0x3)
-> +#define TCU_MBOX_FLUSH				BIT(26)
-> +
-> +static struct uart_driver tegra_tcu_uart_driver;
-> +static struct uart_port tegra_tcu_uart_port;
-> +
-> +struct tegra_tcu {
-> +	struct mbox_client tx_client, rx_client;
-> +	struct mbox_chan *tx, *rx;
-> +};
-> +
-> +static unsigned int tegra_tcu_uart_tx_empty(struct uart_port *port)
-> +{
-> +	return TIOCSER_TEMT;
-> +}
-> +
-> +static void tegra_tcu_uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
-> +{
-> +}
-> +
-> +static unsigned int tegra_tcu_uart_get_mctrl(struct uart_port *port)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void tegra_tcu_uart_stop_tx(struct uart_port *port)
-> +{
-> +}
-> +
-> +static void tegra_tcu_write(const char *s, unsigned int count)
-> +{
-> +	struct tegra_tcu *tcu = tegra_tcu_uart_port.private_data;
-> +	unsigned int written = 0, i = 0;
-> +	bool insert_nl = false;
-> +	uint32_t value = 0;
-> +
-> +	while (i < count) {
-> +		if (insert_nl) {
-> +			value |= TCU_MBOX_BYTE(written++, '\n');
-> +			insert_nl = false;
-> +			i++;
-> +		} else if (s[i] == '\n') {
-> +			value |= TCU_MBOX_BYTE(written++, '\r');
-> +			insert_nl = true;
-> +		} else {
-> +			value |= TCU_MBOX_BYTE(written++, s[i++]);
-> +		}
-> +
-> +		if (written == 3) {
-> +			value |= TCU_MBOX_NUM_BYTES(3) | TCU_MBOX_FLUSH;
-> +			mbox_send_message(tcu->tx, &value);
-> +			value = 0;
-> +			written = 0;
-> +		}
-> +	}
-> +
-> +	if (written) {
-> +		value |= TCU_MBOX_NUM_BYTES(written) | TCU_MBOX_FLUSH;
-> +		mbox_send_message(tcu->tx, &value);
-> +	}
-> +}
-> +
-> +static void tegra_tcu_uart_start_tx(struct uart_port *port)
-> +{
-> +	struct circ_buf *xmit = &port->state->xmit;
-> +	unsigned long count;
-> +
-> +	for (;;) {
-> +		count = CIRC_CNT_TO_END(xmit->head, xmit->tail, UART_XMIT_SIZE);
-> +		if (!count)
-> +			break;
-> +
-> +		tegra_tcu_write(&xmit->buf[xmit->tail], count);
-> +		xmit->tail = (xmit->tail + count) & (UART_XMIT_SIZE - 1);
-> +	}
-> +
-> +	uart_write_wakeup(port);
-> +}
-> +
-> +static void tegra_tcu_uart_stop_rx(struct uart_port *port)
-> +{
-> +}
-> +
-> +static void tegra_tcu_uart_break_ctl(struct uart_port *port, int ctl)
-> +{
-> +}
-> +
-> +static int tegra_tcu_uart_startup(struct uart_port *port)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void tegra_tcu_uart_shutdown(struct uart_port *port)
-> +{
-> +}
-> +
-> +static void tegra_tcu_uart_set_termios(struct uart_port *port,
-> +				       struct ktermios *new,
-> +				       struct ktermios *old)
-> +{
-> +}
-> +
-> +static const struct uart_ops tegra_tcu_uart_ops = {
-> +	.tx_empty = tegra_tcu_uart_tx_empty,
-> +	.set_mctrl = tegra_tcu_uart_set_mctrl,
-> +	.get_mctrl = tegra_tcu_uart_get_mctrl,
-> +	.stop_tx = tegra_tcu_uart_stop_tx,
-> +	.start_tx = tegra_tcu_uart_start_tx,
-> +	.stop_rx = tegra_tcu_uart_stop_rx,
-> +	.break_ctl = tegra_tcu_uart_break_ctl,
-> +	.startup = tegra_tcu_uart_startup,
-> +	.shutdown = tegra_tcu_uart_shutdown,
-> +	.set_termios = tegra_tcu_uart_set_termios,
-> +};
-> +
-> +static void tegra_tcu_console_write(struct console *cons, const char *s,
-> +				    unsigned int count)
-> +{
-> +	tegra_tcu_write(s, count);
-> +}
-> +
-> +static int tegra_tcu_console_setup(struct console *cons, char *options)
-> +{
-> +	if (!tegra_tcu_uart_port.private_data)
-> +		return -ENODEV;
-> +
-> +	return uart_set_options(&tegra_tcu_uart_port, cons, 115200, 'n', 8, 'n');
-> +}
+>> ---
+>>  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  7 +++
+>>  drivers/scsi/ufs/ufs.h                             |  9 ++++
+>>  drivers/scsi/ufs/ufshcd-pltfrm.c                   | 24 ++++++++++
+>>  drivers/scsi/ufs/ufshcd.c                          | 52 ++++++++++++++++++++++
+>>  drivers/scsi/ufs/ufshcd.h                          |  1 +
+>>  5 files changed, 93 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt 
+>> b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+>> index c39dfef..4522434 100644
+>> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+>> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+>> @@ -41,6 +41,12 @@ Optional properties:
+>>  -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
+>>  			  Note that it is assume same number of lanes is used both
+>>  			  directions at once. If not specified, default is 2 lanes per direction.
+>> +- dev-ref-clk-freq	: Specify the device reference clock frequency, must be one of the following:
+>> +			  0: 19.2 MHz
+>> +			  1: 26 MHz
+>> +			  2: 38.4 MHz
+>> +			  3: 52 MHz
+>> +			  Defaults to 26 MHz if not specified.
+>>  
+>>  Note: If above properties are not defined it can be assumed that the 
+>> supply  regulators or clocks are always on.
+>> @@ -66,4 +72,5 @@ Example:
+>>  		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
+>>  		phys = <&ufsphy1>;
+>>  		phy-names = "ufsphy";
+>> +		dev-ref-clk-freq = <0>; /* reference clock freq: 19.2 MHz */
+>>  	};
+>> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h index 
+>> 14e5bf7..e15deb0 100644
+>> --- a/drivers/scsi/ufs/ufs.h
+>> +++ b/drivers/scsi/ufs/ufs.h
+>> @@ -378,6 +378,15 @@ enum query_opcode {
+>>  	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+>>  };
+>>  
+>> +/* bRefClkFreq attribute values */
+>> +enum ref_clk_freq {
+>> +	REF_CLK_FREQ_19_2_MHZ	= 0x0,
+>> +	REF_CLK_FREQ_26_MHZ	= 0x1,
+>> +	REF_CLK_FREQ_38_4_MHZ	= 0x2,
+>> +	REF_CLK_FREQ_52_MHZ	= 0x3,
+>> +	REF_CLK_FREQ_MAX	= REF_CLK_FREQ_52_MHZ,
+>> +};
+>> +
+>>  /* Query response result code */
+>>  enum {
+>>  	QUERY_RESULT_SUCCESS                    = 0x00,
+>> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c 
+>> b/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> index e82bde0..6c877f3 100644
+>> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+>> @@ -221,6 +221,28 @@ static int ufshcd_parse_regulator_info(struct ufs_hba *hba)
+>>  	return err;
+>>  }
+>>  
+>> +static void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba) {
+>> +	struct device *dev = hba->dev;
+>> +	struct device_node *np = dev->of_node;
+>> +	int ret;
+>> +
+>> +	if (!np)
+>> +		return;
+>> +
+>> +	ret = of_property_read_u32(np, "dev-ref-clk-freq",
+>> +				   &hba->dev_ref_clk_freq);
+> 
+> This setting is useful for any UFSHC driver.  Please move it to ufshcd.c and use device_property_read_u32().
+> [Sayali]: Ok. Will update this in next patch set.
+> 
+>> +	if (ret ||
+>> +	    (hba->dev_ref_clk_freq < 0) ||
+> 
+> u32 cannot be < 0
+> [Sayali]: Will remove this check.
+> 
+>> +	    (hba->dev_ref_clk_freq > REF_CLK_FREQ_52_MHZ)) {
+>> +		dev_err(hba->dev,
+>> +		"%s: invalid ref_clk setting = %d, set to default\n",
+>> +		__func__, hba->dev_ref_clk_freq);
+>> +		/* default setting */
+>> +		hba->dev_ref_clk_freq = REF_CLK_FREQ_26_MHZ;
+> 
+> No, the default must be to leave the value unchanged.
+> [Sayali]: As per UFS device specification , bRefClkFreq attribute's default value corresponds to 26 MHz (Manufacturer Default Value). Thus we should set it to default (26MHz) if it's not already set.
 
-I am curious if we actually need to call uart_set_options() here? Given that
-set_termios does nothing, is this actually needed?
+No, bRefClkFreq is not volatile and a different value may have already been
+programmed to the device.  You must not overwrite it if there is no
+property.  Also writing 26MHz when the property value is invalid makes no sense.
 
-> +
-> +static struct console tegra_tcu_console = {
-> +	.name = "ttyTCU",
-> +	.device = uart_console_device,
-> +	.flags = CON_PRINTBUFFER | CON_ANYTIME,
-> +	.index = -1,
-> +	.write = tegra_tcu_console_write,
-> +	.setup = tegra_tcu_console_setup,
-> +	.data = &tegra_tcu_uart_driver,
-> +};
-> +
-> +static struct uart_driver tegra_tcu_uart_driver = {
-> +	.owner = THIS_MODULE,
-> +	.driver_name = "tegra-tcu",
-> +	.dev_name = "ttyTCU",
-> +	.cons = &tegra_tcu_console,
-> +	.nr = 1,
-> +};
-> +
-> +static void tegra_tcu_receive(struct mbox_client *client, void *msg_p)
-> +{
-> +	struct tty_port *port = &tegra_tcu_uart_port.state->port;
-> +	uint32_t msg = *(uint32_t *)msg_p;
-> +	unsigned int num_bytes;
-> +	int i;
-> +
-> +	num_bytes = TCU_MBOX_NUM_BYTES_V(msg);
-> +	for (i = 0; i < num_bytes; i++)
-> +		tty_insert_flip_char(port, TCU_MBOX_BYTE_V(msg, i), TTY_NORMAL);
-> +
-> +	tty_flip_buffer_push(port);
-> +}
-> +
-> +static int tegra_tcu_probe(struct platform_device *pdev)
-> +{
-> +	struct uart_port *port = &tegra_tcu_uart_port;
-> +	struct tegra_tcu *tcu;
-> +	int err;
-> +
-> +	tcu = devm_kzalloc(&pdev->dev, sizeof(*tcu), GFP_KERNEL);
-> +	if (!tcu)
-> +		return -ENOMEM;
-> +
-> +	tcu->tx_client.dev = &pdev->dev;
-> +	tcu->rx_client.dev = &pdev->dev;
-> +	tcu->rx_client.rx_callback = tegra_tcu_receive;
-> +
-> +	tcu->tx = mbox_request_channel_byname(&tcu->tx_client, "tx");
-> +	if (IS_ERR(tcu->tx)) {
-> +		err = PTR_ERR(tcu->tx);
-> +		dev_err(&pdev->dev, "failed to get tx mailbox: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	tcu->rx = mbox_request_channel_byname(&tcu->rx_client, "rx");
-> +	if (IS_ERR(tcu->rx)) {
-> +		err = PTR_ERR(tcu->rx);
-> +		dev_err(&pdev->dev, "failed to get rx mailbox: %d\n", err);
-> +		goto free_tx;
-> +	}
-> +
-> +	err = uart_register_driver(&tegra_tcu_uart_driver);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "failed to register UART driver: %d\n",
-> +			err);
-> +		goto free_rx;
-> +	}
-> +
-> +	spin_lock_init(&port->lock);
-> +	port->dev = &pdev->dev;
-> +	port->type = PORT_TEGRA_TCU;
-> +	port->ops = &tegra_tcu_uart_ops;
-> +	port->fifosize = 1;
-> +	port->iotype = UPIO_MEM;
-> +	port->flags = UPF_BOOT_AUTOCONF;
-> +	port->private_data = tcu;
-> +
-> +	err = uart_add_one_port(&tegra_tcu_uart_driver, port);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "failed to add UART port: %d\n", err);
-> +		goto unregister_uart;
-> +	}
-> +
-> +	return 0;
-> +
-> +unregister_uart:
-> +	uart_unregister_driver(&tegra_tcu_uart_driver);
-> +free_rx:
-> +	mbox_free_channel(tcu->rx);
-> +free_tx:
-> +	mbox_free_channel(tcu->tx);
-> +
-> +	return err;
-> +}
-> +
-> +static int tegra_tcu_remove(struct platform_device *pdev)
-> +{
-> +	uart_remove_one_port(&tegra_tcu_uart_driver, &tegra_tcu_uart_port);
-> +	uart_unregister_driver(&tegra_tcu_uart_driver);
-
-mbox_free_channel()?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id tegra_tcu_match[] = {
-> +	{ .compatible = "nvidia,tegra194-tcu" },
-> +	{ }
-> +};
-> +
-> +static struct platform_driver tegra_tcu_driver = {
-> +	.driver = {
-> +		.name = "tegra-tcu",
-> +		.of_match_table = tegra_tcu_match,
-> +	},
-> +	.probe = tegra_tcu_probe,
-> +	.remove = tegra_tcu_remove,
-> +};
-> +
-> +static int __init tegra_tcu_init(void)
-> +{
-> +	int err;
-> +
-> +	err = platform_driver_register(&tegra_tcu_driver);
-> +	if (err)
-> +		return err;
-> +
-> +	register_console(&tegra_tcu_console);
-> +
-> +	return 0;
-> +}
-> +module_init(tegra_tcu_init);
-> +
-> +static void __exit tegra_tcu_exit(void)
-> +{
-> +	unregister_console(&tegra_tcu_console);
-> +	platform_driver_unregister(&tegra_tcu_driver);
-> +}
-> +module_exit(tegra_tcu_exit);
-> +
-> +MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("NVIDIA Tegra Combined UART driver");
-> diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
-> index dce5f9dae121..69883c32cb98 100644
-> --- a/include/uapi/linux/serial_core.h
-> +++ b/include/uapi/linux/serial_core.h
-> @@ -79,6 +79,9 @@
->  /* Nuvoton UART */
->  #define PORT_NPCM	40
->  
-> +/* NVIDIA Tegra Combined UART */
-> +#define PORT_TEGRA_TCU	41
-> +
->  /* Intel EG20 */
->  #define PORT_PCH_8LINE	44
->  #define PORT_PCH_2LINE	45
+> 
+>> +	}
+>> +}
+>> +
+>>  #ifdef CONFIG_PM
+>>  /**
+>>   * ufshcd_pltfrm_suspend - suspend power management function @@ 
+>> -343,6 +365,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+>>  	pm_runtime_set_active(&pdev->dev);
+>>  	pm_runtime_enable(&pdev->dev);
+>>  
+>> +	ufshcd_parse_dev_ref_clk_freq(hba);
+>> +
+>>  	ufshcd_init_lanes_per_dir(hba);
+>>  
+>>  	err = ufshcd_init(hba, mmio_base, irq); diff --git 
+>> a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index 
+>> c5b1bf1..4abc7ae 100644
+>> --- a/drivers/scsi/ufs/ufshcd.c
+>> +++ b/drivers/scsi/ufs/ufshcd.c
+>> @@ -6297,6 +6297,53 @@ static void ufshcd_def_desc_sizes(struct 
+>> ufs_hba *hba)  }
+>>  
+>>  /**
+>> + * ufshcd_set_dev_ref_clk - set the device bRefClkFreq
+>> + * @hba: per-adapter instance
+>> + *
+>> + * Read the current value of the bRefClkFreq attribute from device 
+>> +and update it
+>> + * if host is supplying different reference clock frequency than one 
+>> +mentioned
+>> + * in bRefClkFreq attribute.
+>> + *
+>> + * Returns zero on success, non-zero error value on failure.
+>> + */
+>> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba) {
+>> +	int err = 0;
+>> +	int ref_clk = -1;
+>> +	static const char * const ref_clk_freqs[] = {"19.2 MHz", "26 MHz",
+>> +						     "38.4 MHz", "52 MHz"};
+>> +
+>> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+>> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
+>> +
+>> +	if (err) {
+>> +		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
+>> +			 __func__, err);
+>> +		goto out;
+>> +	}
+>> +
+>> +	if (ref_clk == hba->dev_ref_clk_freq)
+>> +		goto out; /* nothing to update */
+>> +
+>> +	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+>> +			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0,
+>> +			&hba->dev_ref_clk_freq);
+>> +
+>> +	if (err)
+>> +		dev_err(hba->dev, "%s: bRefClkFreq setting to %s failed\n",
+>> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
+>> +	/*
+>> +	 * It is good to print this out here to debug any later failures
+>> +	 * related to gear switch.
+>> +	 */
+>> +	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %s succeeded\n",
+>> +			__func__, ref_clk_freqs[hba->dev_ref_clk_freq]);
+>> +
+>> +out:
+>> +	return err;
+>> +}
+>> +
+>> +/**
+>>   * ufshcd_probe_hba - probe hba to detect device and initialize
+>>   * @hba: per-adapter instance
+>>   *
+>> @@ -6361,6 +6408,11 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+>>  			"%s: Failed getting max supported power mode\n",
+>>  			__func__);
+>>  	} else {
+>> +		/*
+>> +		 * Set the right value to bRefClkFreq before attempting to
+>> +		 * switch to HS gears.
+>> +		 */
+>> +		ufshcd_set_dev_ref_clk(hba);
+>>  		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+>>  		if (ret) {
+>>  			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n", 
+>> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h 
+>> index 8110dcd..b026ad8 100644
+>> --- a/drivers/scsi/ufs/ufshcd.h
+>> +++ b/drivers/scsi/ufs/ufshcd.h
+>> @@ -548,6 +548,7 @@ struct ufs_hba {
+>>  	void *priv;
+>>  	unsigned int irq;
+>>  	bool is_irq_enabled;
+>> +	u32 dev_ref_clk_freq;
+>>  
+>>  	/* Interrupt aggregation support is broken */
+>>  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+>>
+> 
+> 
 > 
 
-Otherwise looks good to me.
-
-Cheers
-Jon
-
--- 
-nvpublic
