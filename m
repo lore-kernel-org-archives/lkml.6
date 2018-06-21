@@ -2,233 +2,1311 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1667C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C650C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C632075E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D347C208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:46:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="opyQKywO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C632075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vR1m5MGB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D347C208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933129AbeFUNqS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:46:18 -0400
-Received: from mail-by2nam01on0076.outbound.protection.outlook.com ([104.47.34.76]:13536
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932862AbeFUNqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:46:16 -0400
+        id S933256AbeFUNqt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:46:49 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41069 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932862AbeFUNqr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 09:46:47 -0400
+Received: by mail-pf0-f196.google.com with SMTP id a11-v6so1573466pff.8;
+        Thu, 21 Jun 2018 06:46:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DEnS2qBzn8qFsmdu/8ZbrexsPX63Uj4xdE/XgdflJ+Q=;
- b=opyQKywO/UZmECsv6ctcPMhSw4O0DB1v4W+yPvefKAzJ1ZSgZfAxxqN9cj+r7cg1kjNkgiZ9TA48ALzdQGuqgw947phF0t5hIcGyLx/Cukn9xmQTbgzQJF+kOxVwONQGRTCzIzF91NZBGfhKmC0FiUg5KZ8H0M7PvSjuYKMZar0=
-Received: from DM6PR02MB4361.namprd02.prod.outlook.com (20.176.105.26) by
- DM6PR02MB4393.namprd02.prod.outlook.com (20.176.105.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.20; Thu, 21 Jun 2018 13:46:14 +0000
-Received: from DM6PR02MB4361.namprd02.prod.outlook.com
- ([fe80::9cf9:1a80:115a:f9fa]) by DM6PR02MB4361.namprd02.prod.outlook.com
- ([fe80::9cf9:1a80:115a:f9fa%2]) with mapi id 15.20.0863.021; Thu, 21 Jun 2018
- 13:46:13 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     "andrea.merello@gmail.com" <andrea.merello@gmail.com>
-CC:     "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is not
- invoked for each DMA operation
-Thread-Topic: [PATCH 2/6] dmaengine: xilinx_dma: fix completion callback is
- not invoked for each DMA operation
-Thread-Index: AQHUCHIQrPud7LE+Xk2xdT54xDVLUqRpD8yQgAAViQCAAY+wgA==
-Date:   Thu, 21 Jun 2018 13:46:12 +0000
-Message-ID: <DM6PR02MB43610F17B71F96903B17F312C7760@DM6PR02MB4361.namprd02.prod.outlook.com>
-References: <20180620083653.17010-1-andrea.merello@gmail.com>
- <20180620083653.17010-2-andrea.merello@gmail.com>
- <DM6PR02MB43615ED0221189B6B8D9017EC7770@DM6PR02MB4361.namprd02.prod.outlook.com>
- <CAN8YU5O35du2RpTV78sJMx+MpGdOKf2LCQu8FqO1og6FO-JBOQ@mail.gmail.com>
-In-Reply-To: <CAN8YU5O35du2RpTV78sJMx+MpGdOKf2LCQu8FqO1og6FO-JBOQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR02MB4393;7:W1QaiqHnPbIC5R+GApNtJ4uyfo+Tn0EfpwL8TjdJz9AWC41d2JtojOTRCtZDR0gawUvFnntKsMNc7YtG+wEudhHQImO7eNJ1jg4cTrYtLf4GLiHYYRRwyjP98T+xL0NtQMYfDQFucB+/TvnZdm4TNT3yVnAWJNJrVquplv2UvHj1jzCRqzDRIyDwrYrL8IX5MkBB+MNYPLJv3POjC2YnVoIELyB7bd4tylZhICWQ3url+AIIaITtjj6X1u9fZGcx
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(346002)(376002)(366004)(396003)(13464003)(189003)(199004)(966005)(97736004)(476003)(93886005)(478600001)(86362001)(66066001)(3846002)(6116002)(486006)(53936002)(6306002)(9686003)(55016002)(5640700003)(54906003)(2351001)(7696005)(2906002)(1361003)(11346002)(446003)(14454004)(2501003)(3280700002)(2900100001)(5250100002)(81166006)(8936002)(81156014)(8676002)(3660700001)(99286004)(25786009)(186003)(105586002)(68736007)(316002)(59450400001)(4326008)(6246003)(305945005)(39060400002)(6506007)(102836004)(26005)(106356001)(6916009)(53546011)(76176011)(55236004)(229853002)(74316002)(5660300001)(7736002)(33656002)(6436002)(422495003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4393;H:DM6PR02MB4361.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 474512ba-9505-402b-c663-08d5d77d5a67
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DM6PR02MB4393;
-x-ms-traffictypediagnostic: DM6PR02MB4393:
-x-microsoft-antispam-prvs: <DM6PR02MB4393CB453E0409899F148031C7760@DM6PR02MB4393.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(258649278758335)(192813158149592)(228905959029699);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DM6PR02MB4393;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4393;
-x-forefront-prvs: 07106EF9B9
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: IkyUnHyAzRi3/cxcisVuFmX4RD6v3vNSZ3RBsCE1HOo+jL1SqkdFDoDsFVfoK/6bs3AjIVy/F1RXswvOoBIzsfqIBJuwMbDHeZINj0ND/urO/SkAf19sRHc9d46DrVFBQcw9JFA0M78jC2JEG7uIN2r1p5hbFyyiEYWM0sMiZXYBmBPZ4oMzlrs+DyNNK3fIUHByojFw/e8mQOhD0bvYAEglh6Uxrgb1sWp2/Q2PDVCh3gRPlPEBDYpB5FVp6vBAr9U9fggxC6/MGoeX+WaA+nDc+c2zwlFH2+SV02ZpMAc8/ilP2abGtR59dQvdc4/sTqJ6JxLaBwkhpd3s0KH9Nw==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lTsBcb5EHKfhYjjUx7ooizPXu3gwRCjBmnxchgtgt00=;
+        b=vR1m5MGBI6+r2DbDE3j57KG3Mp00Wk0MM5u5rFKhrPMhcI+W/tJfEroeeOKl0SKcnc
+         U1Tf3k5i1hVCJXTJ10gAwjQkdp7xp0x+sS0M+o3uVa3WBa2KyNbJrnNvGbF+bjH3635T
+         pr0w6Bqv1eTpT+S4pBD1hTqLYRW1rVnFEUAWezrhX6dnVj+nw8d33zs9H0r1EcwwXXGN
+         KPDXnAUHvGhQ+miKIxbOt4kNilGSzpiByDZzROJW+cA/8irJb2LesGoI/iFfLxbHBv+i
+         M79tUCmxiN1Xx2cga8Q+oBONJ2lTmycXSDMsgC030FTCG91uZ5+inva543QVLElYUpZU
+         xLSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lTsBcb5EHKfhYjjUx7ooizPXu3gwRCjBmnxchgtgt00=;
+        b=b6NhWrPZN9zEETCmMwieVeuZzrLxfpCO+oe8Nxf2YK0i1WDi7+cGZ9wtLogqLq1/N6
+         v0MD8Ych7eeYGYtVZZfFUeWBJsMiRrsDz5AWzK3EwufRT959rIhL4O27S3rE6Wn1ZPYs
+         zavhjF0rjORtD7NN9PKVqIyqhSGKr/SQFl9RgkIbz+w3sT+7AouoFpg6PWf6N5qUhmnS
+         Zf7rI5a+/YVpZ3XX7mpCifHaC5e7W840bi0hFuByuRzts/qKbne/aVb30N+ZRyQW1ySg
+         MNDD5rYrYhJXzQDhP+KnhB63ixmpVt5qe79rWjPI8l7aPJQDNKdBsJ3i2fqX2apz2qOB
+         DI5Q==
+X-Gm-Message-State: APt69E2j6YD8NTMy4UFK21KmvKrnGhM3tbXZq95+jPKwa8EVBDigqfA+
+        KxVcrSgiRa3k0ByNCT6Ty9c0Sw==
+X-Google-Smtp-Source: ADUXVKJrbXYFsF2t2jlmwcG9ZdWgP5X4GhiHSfyknI7bMVhd/nXt5l5QCEzZZnZ70UNnyMk4yT275Q==
+X-Received: by 2002:aa7:860e:: with SMTP id p14-v6mr27530803pfn.155.1529588806422;
+        Thu, 21 Jun 2018 06:46:46 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id k9-v6sm7141677pgs.49.2018.06.21.06.46.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 06:46:45 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] hwmon: npcm750: add NPCM7xx PWM and Fan driver
+To:     Tomer Maimon <tmaimon77@gmail.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, jdelvare@suse.com, avifishman70@gmail.com,
+        yuenn@google.com, brendanhiggins@google.com, venture@google.com,
+        joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, openbmc@lists.ozlabs.org
+References: <20180619105352.97181-1-tmaimon77@gmail.com>
+ <20180619105352.97181-3-tmaimon77@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <94321c95-168f-1a2f-e912-beb00e794d30@roeck-us.net>
+Date:   Thu, 21 Jun 2018 06:46:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 474512ba-9505-402b-c663-08d5d77d5a67
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2018 13:46:12.9333
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4393
+In-Reply-To: <20180619105352.97181-3-tmaimon77@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbmRyZWEgTWVyZWxsbyBbbWFp
-bHRvOmFuZHJlYS5tZXJlbGxvQGdtYWlsLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBKdW5lIDIw
-LCAyMDE4IDc6MDIgUE0NCj4gVG86IFJhZGhleSBTaHlhbSBQYW5kZXkgPHJhZGhleXNAeGlsaW54
-LmNvbT4NCj4gQ2M6IHZrb3VsQGtlcm5lbC5vcmc7IGRhbi5qLndpbGxpYW1zQGludGVsLmNvbTsg
-TWljaGFsIFNpbWVrDQo+IDxtaWNoYWxzQHhpbGlueC5jb20+OyBBcHBhbmEgRHVyZ2EgS2VkYXJl
-c3dhcmEgUmFvDQo+IDxhcHBhbmFkQHhpbGlueC5jb20+OyBkbWFlbmdpbmVAdmdlci5rZXJuZWwu
-b3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJu
-ZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi82XSBkbWFlbmdpbmU6
-IHhpbGlueF9kbWE6IGZpeCBjb21wbGV0aW9uIGNhbGxiYWNrIGlzIG5vdA0KPiBpbnZva2VkIGZv
-ciBlYWNoIERNQSBvcGVyYXRpb24NCj4gDQo+IE9uIFdlZCwgSnVuIDIwLCAyMDE4IGF0IDI6MzYg
-UE0sIFJhZGhleSBTaHlhbSBQYW5kZXkNCj4gPHJhZGhleXNAeGlsaW54LmNvbT4gd3JvdGU6DQo+
-ID4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+IEZyb206IGRtYWVuZ2luZS1vd25l
-ckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpkbWFlbmdpbmUtDQo+ID4+IG93bmVyQHZnZXIua2Vy
-bmVsLm9yZ10gT24gQmVoYWxmIE9mIEFuZHJlYSBNZXJlbGxvDQo+ID4+IFNlbnQ6IFdlZG5lc2Rh
-eSwgSnVuZSAyMCwgMjAxOCAyOjA3IFBNDQo+ID4+IFRvOiB2a291bEBrZXJuZWwub3JnOyBkYW4u
-ai53aWxsaWFtc0BpbnRlbC5jb207IE1pY2hhbCBTaW1law0KPiA+PiA8bWljaGFsc0B4aWxpbngu
-Y29tPjsgQXBwYW5hIER1cmdhIEtlZGFyZXN3YXJhIFJhbw0KPiA+PiA8YXBwYW5hZEB4aWxpbngu
-Y29tPjsgZG1hZW5naW5lQHZnZXIua2VybmVsLm9yZw0KPiA+PiBDYzogbGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiA+
-PiBBbmRyZWEgTWVyZWxsbyA8YW5kcmVhLm1lcmVsbG9AZ21haWwuY29tPg0KPiA+PiBTdWJqZWN0
-OiBbUEFUQ0ggMi82XSBkbWFlbmdpbmU6IHhpbGlueF9kbWE6IGZpeCBjb21wbGV0aW9uIGNhbGxi
-YWNrIGlzIG5vdA0KPiA+PiBpbnZva2VkIGZvciBlYWNoIERNQSBvcGVyYXRpb24NCj4gPj4NCj4g
-Pj4gQVBJIHNwZWNpZmljYXRpb24gc2F5czogIk9uIGNvbXBsZXRpb24gb2YgZWFjaCBETUEgb3Bl
-cmF0aW9uLCB0aGUgbmV4dCBpbg0KPiA+PiBxdWV1ZSBpcyBzdGFydGVkIGFuZCBhIHRhc2tsZXQg
-dHJpZ2dlcmVkLiBUaGUgdGFza2xldCB3aWxsIHRoZW4gY2FsbCB0aGUNCj4gPj4gY2xpZW50IGRy
-aXZlciBjb21wbGV0aW9uIGNhbGxiYWNrIHJvdXRpbmUgZm9yIG5vdGlmaWNhdGlvbiwgaWYgc2V0
-LiINCj4gPj4NCj4gPj4gQ3VycmVudGx5IHRoZSBkcml2ZXIga2VlcHMgYSAiZGVzY19wZW5kaW5n
-Y291bnQiIGNvdW50ZXIgb2YgdGhlIHRvdGFsDQo+ID4+IGRlc2NyaXB0b3IgcGVuZGluZywgYW5k
-IGl0IHVzZXMgYXMgSVJRIGNvYWxlc2NlIHRocmVzaG9sZCwgYXMgcmVzdWx0IGl0DQo+ID4+IG9u
-bHkgY2FsbHMgdGhlIENCcyBhZnRlciBBTEwgcGVuZGluZyBvcGVyYXRpb25zIGFyZSBjb21wbGV0
-ZWQsIHdoaWNoIGlzDQo+ID4+IHdyb25nLg0KPiA+IEkgdGhpbmsgSVJRIGNvYWxlc2NpbmcgZW5h
-YmxlL2Rpc2FibGUgc2hvdWxkIGJlIGNvbmZpZ3VyYWJsZS4NCj4gPiBQZXJmb3JtYW5jZSByZWxh
-dGVkIHVzZWNhc2VzIHdpbGwgbmVlZCB0aGlzIHN1cHBvcnQuDQo+IA0KPiBJIGRpZG4ndCBpbnRl
-bmQgdGhpcyAob25seSkgd3J0IHBlcmZvcm1hbmNlczsgbXkgY29uY2VybiB3YXMgbW9zdGx5DQo+
-IHdydCBjb3JyZWN0bmVzcy4gSWYgbXkgcG9pbnQgb2YgdmlldyBpcyB3cm9uZyB0aGVuIEknbGwg
-ZHJvcCB0aGlzDQo+IHBhdGNoIGZyb20gdGhlIHNlcmllcy4NCj4gDQpJZiBjb2FsZXNjaW5nIGlz
-IGVuYWJsZWQgZHJpdmVyIHdpbGwga25vdyBETUEgY29tcGxldGlvbiB3aGVuDQphbGwgcGFja2V0
-IGNvdW50cyBhcmUgcHJvY2Vzc2VkLiBTbyBJIHRoaW5rIGl0J3MgY29ycmVjdCBpbXBsZW1lbnRh
-dGlvbi4NCk1ha2luZyBpbnRlcnJ1cHQgY29hbGVzY2luZyBjb25maWd1cmFibGUgd2lsbCBhZGRy
-ZXNzIGFsbCB1c2VjYXNlcy4NCg0KPiAoLi4gSSBtaWdodCByZXNwaW4gaXQgYWdhaW4gaW4gZnV0
-dXJlOiBJIGhhZCBhIHBhdGNoIHdydCBhbiBvbGQgZHJpdmVyDQo+IHZlcnNpb24gdGhhdCBhbGxv
-d2VkIHN1Ym1pdHRpbmcgbmV3IGRlc2NyaXB0b3JzIHRvIHRoZSBIVyB3aGlsZSB0aGUNCj4gRE1B
-IGlzIHJ1bm5pbmcsIGFuZCBpbiB0aGlzIGNhc2UgZGlzYWJsaW5nIGNvYWxlc2NlIGlzIG5lZWRl
-ZCBpLmUuIGluDQo+IG9yZGVyIHRvIHN1Ym1pdCBhIG5ldyBlbXB0eSBidWZmZXIgd2hlbmV2ZXIg
-dGhlIERNQSBmaW5pc2hlcyBhDQo+IHRyYW5zZmVyIHdpdGhvdXQgd2FpdGluZyB0aGUgRE1BIHRv
-IHN0b3ApLg0KPiANCj4gQlRXLCBpcyB0aGVyZSBhbnkgZG1hZW5naW5lIEFQSSBzdWl0YWJsZSBm
-b3Igc2V0dGluZyBpbnRlcnJ1cHQgY29hbGVzY2U/DQo+IA0KPiA+Pg0KPiA+PiBUaGlzIHBhdGNo
-IHVzZXMgZGlzYWJsZSBJUlEgY29hbGVzY2UgYW5kIGNoZWNrcyBmb3IgdGhlIGNvbXBsZXRpb24g
-ZmxhZw0KPiA+PiBmb3IgdGhlIGRlc2NyaXB0b3JzICh3aGljaCBpcyBmdXJ0aGVyIGRpdmlkZWQg
-aW4gc2VnbWVudHMpLg0KPiA+Pg0KPiA+PiBQb3NzaWJseSBhIGJldHRlciBvcHRpbWl6YXRpb24g
-Y291bGQgYmUgdXNpbmcgcHJvcGVyIElSUSBjb2FsZXNjZQ0KPiA+PiB0aHJlc2hvbGQgdG8gZ2V0
-IGFuIElSUSBhZnRlciBhbGwgc2VnbWVudHMgb2YgdGhlIGRlc2NyaXB0b3JzIGFyZSBkb25lLg0K
-PiA+PiBCdXQgd2UgZG9uJ3QgZG8gdGhhdCB5ZXQuLg0KPiA+Pg0KPiA+PiBOT1RFOiBmb3Igbm93
-IHdlIGRvIHRoaXMgb25seSBmb3IgQVhJIERNQSwgb3RoZXIgRE1BIGZsYXZvcnMgYXJlDQo+ID4+
-IHVudGVzdGVkL3VudG91Y2hlZC4NCj4gPj4gVGhpcyBpcyBsb29zZWx5IGJhc2VkIG9uDQo+ID4+
-IGNvbW1pdCA2NWRmODFhNmRjNzQgKCJ4aWxpbnhfZG1hOiBJcnFUaHJlc2hvbGQgc2V0IGluY29y
-cmVjdGx5LA0KPiB1bnJlbGlhYmxlLiIpDQo+ID4+IGluIG15IGxpbnV4LTQuNi16eW5xIHRyZWUN
-Cj4gPiBOT1RFIGRlc2NyaXB0aW9uIGRvZXNuJ3QgaGVscCBtdWNoLg0KPiA+DQo+ID4+DQo+ID4+
-IEZyb206IEplcmVteSBUcmltYmxlIFtvcmlnaW5hbCBwYXRjaF0NCj4gPj4gU2lnbmVkLW9mZi1i
-eTogQW5kcmVhIE1lcmVsbG8gPGFuZHJlYS5tZXJlbGxvQGdtYWlsLmNvbT4NCj4gPj4gLS0tDQo+
-ID4+ICBkcml2ZXJzL2RtYS94aWxpbngveGlsaW54X2RtYS5jIHwgMzkgKysrKysrKysrKysrKysr
-KysrKysrLS0tLS0tLS0tLS0tDQo+ID4+ICAxIGZpbGUgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygr
-KSwgMTQgZGVsZXRpb25zKC0pDQo+ID4+DQo+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RtYS94
-aWxpbngveGlsaW54X2RtYS5jDQo+IGIvZHJpdmVycy9kbWEveGlsaW54L3hpbGlueF9kbWEuYw0K
-PiA+PiBpbmRleCBhNTE2ZTdmZmVmMjEuLmNmMTJmNzE0N2YwNyAxMDA2NDQNCj4gPj4gLS0tIGEv
-ZHJpdmVycy9kbWEveGlsaW54L3hpbGlueF9kbWEuYw0KPiA+PiArKysgYi9kcml2ZXJzL2RtYS94
-aWxpbngveGlsaW54X2RtYS5jDQo+ID4+IEBAIC0xNjQsNiArMTY0LDcgQEANCj4gPj4gICNkZWZp
-bmUgWElMSU5YX0RNQV9DUl9DT0FMRVNDRV9TSElGVCAxNg0KPiA+PiAgI2RlZmluZSBYSUxJTlhf
-RE1BX0JEX1NPUCAgICAgICAgICAgIEJJVCgyNykNCj4gPj4gICNkZWZpbmUgWElMSU5YX0RNQV9C
-RF9FT1AgICAgICAgICAgICBCSVQoMjYpDQo+ID4+ICsjZGVmaW5lIFhJTElOWF9ETUFfQkRfQ01Q
-TFQgICAgICAgICAgQklUKDMxKQ0KPiA+PiAgI2RlZmluZSBYSUxJTlhfRE1BX0NPQUxFU0NFX01B
-WCAgICAgICAgICAgICAgMjU1DQo+ID4+ICAjZGVmaW5lIFhJTElOWF9ETUFfTlVNX0RFU0NTICAg
-ICAgICAgMjU1DQo+ID4+ICAjZGVmaW5lIFhJTElOWF9ETUFfTlVNX0FQUF9XT1JEUyAgICAgNQ0K
-PiA+PiBAQCAtMTI3NCwxMiArMTI3NSw5IEBAIHN0YXRpYyB2b2lkIHhpbGlueF9kbWFfc3RhcnRf
-dHJhbnNmZXIoc3RydWN0DQo+ID4+IHhpbGlueF9kbWFfY2hhbiAqY2hhbikNCj4gPj4NCj4gPj4g
-ICAgICAgcmVnID0gZG1hX2N0cmxfcmVhZChjaGFuLCBYSUxJTlhfRE1BX1JFR19ETUFDUik7DQo+
-ID4+DQo+ID4+IC0gICAgIGlmIChjaGFuLT5kZXNjX3BlbmRpbmdjb3VudCA8PSBYSUxJTlhfRE1B
-X0NPQUxFU0NFX01BWCkgew0KPiA+PiAtICAgICAgICAgICAgIHJlZyAmPSB+WElMSU5YX0RNQV9D
-Ul9DT0FMRVNDRV9NQVg7DQo+ID4+IC0gICAgICAgICAgICAgcmVnIHw9IGNoYW4tPmRlc2NfcGVu
-ZGluZ2NvdW50IDw8DQo+ID4+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgWElMSU5Y
-X0RNQV9DUl9DT0FMRVNDRV9TSElGVDsNCj4gPj4gLSAgICAgICAgICAgICBkbWFfY3RybF93cml0
-ZShjaGFuLCBYSUxJTlhfRE1BX1JFR19ETUFDUiwgcmVnKTsNCj4gPj4gLSAgICAgfQ0KPiA+PiAr
-ICAgICByZWcgJj0gflhJTElOWF9ETUFfQ1JfQ09BTEVTQ0VfTUFYOw0KPiA+PiArICAgICByZWcg
-fD0gMSA8PCBYSUxJTlhfRE1BX0NSX0NPQUxFU0NFX1NISUZUOw0KPiA+PiArICAgICBkbWFfY3Ry
-bF93cml0ZShjaGFuLCBYSUxJTlhfRE1BX1JFR19ETUFDUiwgcmVnKTsNCj4gPj4NCj4gPj4gICAg
-ICAgaWYgKGNoYW4tPmhhc19zZyAmJiAhY2hhbi0+eGRldi0+bWNkbWEpDQo+ID4+ICAgICAgICAg
-ICAgICAgeGlsaW54X3dyaXRlKGNoYW4sIFhJTElOWF9ETUFfUkVHX0NVUkRFU0MsDQo+ID4+IEBA
-IC0xMzc4LDYgKzEzNzYsMjAgQEAgc3RhdGljIHZvaWQNCj4geGlsaW54X2RtYV9jb21wbGV0ZV9k
-ZXNjcmlwdG9yKHN0cnVjdA0KPiA+PiB4aWxpbnhfZG1hX2NoYW4gKmNoYW4pDQo+ID4+ICAgICAg
-ICAgICAgICAgcmV0dXJuOw0KPiA+Pg0KPiA+PiAgICAgICBsaXN0X2Zvcl9lYWNoX2VudHJ5X3Nh
-ZmUoZGVzYywgbmV4dCwgJmNoYW4tPmFjdGl2ZV9saXN0LCBub2RlKSB7DQo+ID4+ICsgICAgICAg
-ICAgICAgaWYgKGNoYW4tPnhkZXYtPmRtYV9jb25maWctPmRtYXR5cGUgPT0NCj4gPj4gWERNQV9U
-WVBFX0FYSURNQSkgew0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgLyoNCj4gPj4gKyAgICAg
-ICAgICAgICAgICAgICAgICAqIENoZWNrIHdoZXRoZXIgdGhlIGxhc3Qgc2VnbWVudCBpbiB0aGlz
-IGRlc2NyaXB0b3INCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAqIGhhcyBiZWVuIGNvbXBs
-ZXRlZC4NCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAqLw0KPiA+PiArICAgICAgICAgICAg
-ICAgICAgICAgY29uc3Qgc3RydWN0IHhpbGlueF9heGlkbWFfdHhfc2VnbWVudCAqY29uc3QgdGFp
-bF9zZWcNCj4gPj4gPQ0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsaXN0X2xh
-c3RfZW50cnkoJmRlc2MtPnNlZ21lbnRzLA0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgc3RydWN0DQo+ID4+IHhpbGlueF9heGlkbWFfdHhfc2VnbWVu
-dCwNCj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5v
-ZGUpOw0KPiA+PiArDQo+ID4+ICsgICAgICAgICAgICAgICAgICAgICAvKiB3ZSd2ZSBwcm9jZXNz
-ZWQgYWxsIHRoZSBjb21wbGV0ZWQgZGVzY3JpcHRvcnMgKi8NCj4gPj4gKyAgICAgICAgICAgICAg
-ICAgICAgIGlmICghKHRhaWxfc2VnLT5ody5zdGF0dXMgJiBYSUxJTlhfRE1BX0JEX0NNUExUKSkN
-Cj4gPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4+ICsgICAgICAg
-ICAgICAgfQ0KPiA+PiAgICAgICAgICAgICAgIGxpc3RfZGVsKCZkZXNjLT5ub2RlKTsNCj4gPj4g
-ICAgICAgICAgICAgICBpZiAoIWRlc2MtPmN5Y2xpYykNCj4gPj4gICAgICAgICAgICAgICAgICAg
-ICAgIGRtYV9jb29raWVfY29tcGxldGUoJmRlc2MtPmFzeW5jX3R4KTsNCj4gPj4gQEAgLTE4MjYs
-MTQgKzE4MzgsMTMgQEAgc3RhdGljIHN0cnVjdCBkbWFfYXN5bmNfdHhfZGVzY3JpcHRvcg0KPiA+
-PiAqeGlsaW54X2RtYV9wcmVwX3NsYXZlX3NnKA0KPiA+PiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBzdHJ1Y3QgeGlsaW54X2F4aWRtYV90eF9zZWdtZW50LCBub2RlKTsNCj4gPj4g
-ICAgICAgZGVzYy0+YXN5bmNfdHgucGh5cyA9IHNlZ21lbnQtPnBoeXM7DQo+ID4+DQo+ID4+IC0g
-ICAgIC8qIEZvciB0aGUgbGFzdCBETUFfTUVNX1RPX0RFViB0cmFuc2Zlciwgc2V0IEVPUCAqLw0K
-PiA+PiAtICAgICBpZiAoY2hhbi0+ZGlyZWN0aW9uID09IERNQV9NRU1fVE9fREVWKSB7DQo+ID4+
-IC0gICAgICAgICAgICAgc2VnbWVudC0+aHcuY29udHJvbCB8PSBYSUxJTlhfRE1BX0JEX1NPUDsN
-Cj4gPj4gLSAgICAgICAgICAgICBzZWdtZW50ID0gbGlzdF9sYXN0X2VudHJ5KCZkZXNjLT5zZWdt
-ZW50cywNCj4gPj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVj
-dCB4aWxpbnhfYXhpZG1hX3R4X3NlZ21lbnQsDQo+ID4+IC0gICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBub2RlKTsNCj4gPj4gLSAgICAgICAgICAgICBzZWdtZW50LT5ody5j
-b250cm9sIHw9IFhJTElOWF9ETUFfQkRfRU9QOw0KPiA+PiAtICAgICB9DQo+ID4+ICsgICAgIC8q
-IEZvciB0aGUgZmlyc3QgdHJhbnNmZXIsIHNldCBTT1AgKi8NCj4gPj4gKyAgICAgc2VnbWVudC0+
-aHcuY29udHJvbCB8PSBYSUxJTlhfRE1BX0JEX1NPUDsNCj4gPj4gKyAgICAgLyogRm9yIHRoZSBs
-YXN0IHRyYW5zZmVyLCBzZXQgRU9QICovDQo+ID4+ICsgICAgIHNlZ21lbnQgPSBsaXN0X2xhc3Rf
-ZW50cnkoJmRlc2MtPnNlZ21lbnRzLA0KPiA+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHN0cnVjdCB4aWxpbnhfYXhpZG1hX3R4X3NlZ21lbnQsDQo+ID4+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgbm9kZSk7DQo+ID4+ICsgICAgIHNlZ21lbnQtPmh3LmNvbnRyb2wg
-fD0gWElMSU5YX0RNQV9CRF9FT1A7DQo+ID4+DQo+ID4+ICAgICAgIHJldHVybiAmZGVzYy0+YXN5
-bmNfdHg7DQo+ID4+DQo+ID4+IC0tDQo+ID4+IDIuMTcuMQ0KPiA+Pg0KPiA+PiAtLQ0KPiA+PiBU
-byB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUg
-ZG1hZW5naW5lIiBpbg0KPiA+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZn
-ZXIua2VybmVsLm9yZw0KPiA+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5r
-ZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwNCg==
+On 06/19/2018 03:53 AM, Tomer Maimon wrote:
+> Add Nuvoton BMC NPCM7xx Pulse Width Modulation (PWM) and Fan tacho driver.
+> 
+> The Nuvoton BMC NPCM7xx has two identical PWM controller modules,
+> each module has four PWM controller outputs and eight identical Fan
+> controller modules, each module has two Fan controller inputs.
+> 
+> The driver provides a sysfs entries through which the user can
+> configure the duty-cycle value (ranging from 0 to 100 percent)
+> and read the fan tacho rpm value.
+> 
+> The driver support cooling device creation, that could be bound
+> to a thermal zone for the thermal control.
+> 
+
+You ignored most of my previous comments. Why should I review your code
+if you ignore most of the feedback ?
+
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>   drivers/hwmon/Kconfig           |    7 +
+>   drivers/hwmon/Makefile          |    1 +
+>   drivers/hwmon/npcm750-pwm-fan.c | 1099 +++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 1107 insertions(+)
+>   create mode 100644 drivers/hwmon/npcm750-pwm-fan.c
+> 
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index f10840ad465c..f6c2eff9bb7d 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -1888,6 +1888,13 @@ config SENSORS_XGENE
+>   	  If you say yes here you get support for the temperature
+>   	  and power sensors for APM X-Gene SoC.
+>   
+> +config SENSORS_NPCM7XX
+> +	tristate "Nuvoton NPCM7XX PWM and Fan driver"
+> +	depends on THERMAL || THERMAL=n
+> +	help
+> +	  This driver provides support for Nuvoton NPCM7XX PWM and Fan
+> +	  controllers.
+> +
+>   if ACPI
+>   
+>   comment "ACPI drivers"
+> diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+> index e7d52a36e6c4..004e2ec5b68f 100644
+> --- a/drivers/hwmon/Makefile
+> +++ b/drivers/hwmon/Makefile
+> @@ -174,6 +174,7 @@ obj-$(CONFIG_SENSORS_W83L786NG)	+= w83l786ng.o
+>   obj-$(CONFIG_SENSORS_WM831X)	+= wm831x-hwmon.o
+>   obj-$(CONFIG_SENSORS_WM8350)	+= wm8350-hwmon.o
+>   obj-$(CONFIG_SENSORS_XGENE)	+= xgene-hwmon.o
+> +obj-$(CONFIG_SENSORS_NPCM7XX)	+= npcm750-pwm-fan.o
+>   
+>   obj-$(CONFIG_PMBUS)		+= pmbus/
+>   
+> diff --git a/drivers/hwmon/npcm750-pwm-fan.c b/drivers/hwmon/npcm750-pwm-fan.c
+> new file mode 100644
+> index 000000000000..82898197686f
+> --- /dev/null
+> +++ b/drivers/hwmon/npcm750-pwm-fan.c
+> @@ -0,0 +1,1099 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2014-2018 Nuvoton Technology corporation.
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/device.h>
+> +#include <linux/clk.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/hwmon.h>
+> +#include <linux/hwmon-sysfs.h>
+> +#include <linux/sysfs.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_address.h>
+> +#include <linux/thermal.h>
+> +
+
+I am sure I asked for those to be in alphabetic order.
+
+> +/* NPCM7XX PWM registers */
+> +#define NPCM7XX_PWM_REG_BASE(base, n)    (base + ((n) * 0x1000L))
+> +
+
+(base)
+
+> +#define NPCM7XX_PWM_REG_PR(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x00)
+> +#define NPCM7XX_PWM_REG_CSR(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x04)
+> +#define NPCM7XX_PWM_REG_CR(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x08)
+> +#define NPCM7XX_PWM_REG_CNRx(base, n, ch) \
+> +			(NPCM7XX_PWM_REG_BASE(base, n) + 0x0C + (12 * ch))
+> +#define NPCM7XX_PWM_REG_CMRx(base, n, ch) \
+> +			(NPCM7XX_PWM_REG_BASE(base, n) + 0x10 + (12 * ch))
+> +#define NPCM7XX_PWM_REG_PDRx(base, n, ch) \
+> +			(NPCM7XX_PWM_REG_BASE(base, n) + 0x14 + (12 * ch))
+> +#define NPCM7XX_PWM_REG_PIER(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x3C)
+> +#define NPCM7XX_PWM_REG_PIIR(base, n)	(NPCM7XX_PWM_REG_BASE(base, n) + 0x40)
+> +#define NPCM7XX_FAN_REG_BASE(base, n)    (base + ((n) * 0x1000L))
+> +
+
+(base)
+
+> +#define NPCM7XX_PWM_CTRL_CH0_MODE_BIT		BIT(3)
+> +#define NPCM7XX_PWM_CTRL_CH1_MODE_BIT		BIT(11)
+> +#define NPCM7XX_PWM_CTRL_CH2_MODE_BIT		BIT(15)
+> +#define NPCM7XX_PWM_CTRL_CH3_MODE_BIT		BIT(19)
+> +
+> +#define NPCM7XX_PWM_CTRL_CH0_INV_BIT		BIT(2)
+> +#define NPCM7XX_PWM_CTRL_CH1_INV_BIT		BIT(10)
+> +#define NPCM7XX_PWM_CTRL_CH2_INV_BIT		BIT(14)
+> +#define NPCM7XX_PWM_CTRL_CH3_INV_BIT		BIT(18)
+> +
+> +#define NPCM7XX_PWM_CTRL_CH0_EN_BIT		BIT(0)
+> +#define NPCM7XX_PWM_CTRL_CH1_EN_BIT		BIT(8)
+> +#define NPCM7XX_PWM_CTRL_CH2_EN_BIT		BIT(12)
+> +#define NPCM7XX_PWM_CTRL_CH3_EN_BIT		BIT(16)
+> +
+> +/* Define the maximum PWM channel number */
+> +#define NPCM7XX_PWM_MAX_CHN_NUM			8
+> +#define NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE	4
+> +#define NPCM7XX_PWM_MAX_MODULES                 2
+> +
+> +/* Define the Counter Register, value = 100 for match 100% */
+> +#define NPCM7XX_PWM_COUNTER_DEFALUT_NUM		255
+> +#define NPCM7XX_PWM_COMPARATOR_DEFALUT_NUM	127
+> +
+> +#define NPCM7XX_PWM_COMPARATOR_MAX		255
+> +
+> +/* default all PWM channels PRESCALE2 = 1 */
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH0	0x4
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH1	0x40
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH2	0x400
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT_CH3	0x4000
+> +
+> +#define PWM_OUTPUT_FREQ_25KHZ			25000
+> +#define PWN_CNT_DEFAULT				256
+> +#define MIN_PRESCALE1				2
+> +#define NPCM7XX_PWM_PRESCALE_SHIFT_CH01		8
+> +
+> +#define NPCM7XX_PWM_PRESCALE2_DEFALUT	(NPCM7XX_PWM_PRESCALE2_DEFALUT_CH0 | \
+> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH1 | \
+> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH2 | \
+> +					NPCM7XX_PWM_PRESCALE2_DEFALUT_CH3)
+> +
+> +#define NPCM7XX_PWM_CTRL_MODE_DEFALUT	(NPCM7XX_PWM_CTRL_CH0_MODE_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH1_MODE_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH2_MODE_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH3_MODE_BIT)
+> +
+> +#define NPCM7XX_PWM_CTRL_EN_DEFALUT	(NPCM7XX_PWM_CTRL_CH0_EN_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH1_EN_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH2_EN_BIT | \
+> +					NPCM7XX_PWM_CTRL_CH3_EN_BIT)
+> +
+
+:1,$s/DEFALUT/DEFAULT/g
+
+Are those defines used anywhere ?
+
+> +/* NPCM7XX FAN Tacho registers */
+> +#define NPCM7XX_FAN_REG_BASE(base, n)    (base + ((n) * 0x1000L))
+> +
+
+(base)
+
+> +#define NPCM7XX_FAN_REG_TCNT1(base, n)    (NPCM7XX_FAN_REG_BASE(base, n) + 0x00)
+> +#define NPCM7XX_FAN_REG_TCRA(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x02)
+> +#define NPCM7XX_FAN_REG_TCRB(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x04)
+> +#define NPCM7XX_FAN_REG_TCNT2(base, n)    (NPCM7XX_FAN_REG_BASE(base, n) + 0x06)
+> +#define NPCM7XX_FAN_REG_TPRSC(base, n)    (NPCM7XX_FAN_REG_BASE(base, n) + 0x08)
+> +#define NPCM7XX_FAN_REG_TCKC(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x0A)
+> +#define NPCM7XX_FAN_REG_TMCTRL(base, n)   (NPCM7XX_FAN_REG_BASE(base, n) + 0x0C)
+> +#define NPCM7XX_FAN_REG_TICTRL(base, n)   (NPCM7XX_FAN_REG_BASE(base, n) + 0x0E)
+> +#define NPCM7XX_FAN_REG_TICLR(base, n)    (NPCM7XX_FAN_REG_BASE(base, n) + 0x10)
+> +#define NPCM7XX_FAN_REG_TIEN(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x12)
+> +#define NPCM7XX_FAN_REG_TCPA(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x14)
+> +#define NPCM7XX_FAN_REG_TCPB(base, n)     (NPCM7XX_FAN_REG_BASE(base, n) + 0x16)
+> +#define NPCM7XX_FAN_REG_TCPCFG(base, n)   (NPCM7XX_FAN_REG_BASE(base, n) + 0x18)
+> +#define NPCM7XX_FAN_REG_TINASEL(base, n)  (NPCM7XX_FAN_REG_BASE(base, n) + 0x1A)
+> +#define NPCM7XX_FAN_REG_TINBSEL(base, n)  (NPCM7XX_FAN_REG_BASE(base, n) + 0x1C)
+> +
+> +#define NPCM7XX_FAN_TCKC_CLKX_NONE	0
+> +#define NPCM7XX_FAN_TCKC_CLK1_APB	BIT(0)
+> +#define NPCM7XX_FAN_TCKC_CLK2_APB	BIT(3)
+> +
+> +#define NPCM7XX_FAN_TMCTRL_TBEN		BIT(6)
+> +#define NPCM7XX_FAN_TMCTRL_TAEN		BIT(5)
+> +#define NPCM7XX_FAN_TMCTRL_TBEDG	BIT(4)
+> +#define NPCM7XX_FAN_TMCTRL_TAEDG	BIT(3)
+> +#define NPCM7XX_FAN_TMCTRL_MODE_5	BIT(2)
+> +
+> +#define NPCM7XX_FAN_TICLR_CLEAR_ALL	GENMASK(5, 0)
+> +#define NPCM7XX_FAN_TICLR_TFCLR		BIT(5)
+> +#define NPCM7XX_FAN_TICLR_TECLR		BIT(4)
+> +#define NPCM7XX_FAN_TICLR_TDCLR		BIT(3)
+> +#define NPCM7XX_FAN_TICLR_TCCLR		BIT(2)
+> +#define NPCM7XX_FAN_TICLR_TBCLR		BIT(1)
+> +#define NPCM7XX_FAN_TICLR_TACLR		BIT(0)
+> +
+> +#define NPCM7XX_FAN_TIEN_ENABLE_ALL	GENMASK(5, 0)
+> +#define NPCM7XX_FAN_TIEN_TFIEN		BIT(5)
+> +#define NPCM7XX_FAN_TIEN_TEIEN		BIT(4)
+> +#define NPCM7XX_FAN_TIEN_TDIEN		BIT(3)
+> +#define NPCM7XX_FAN_TIEN_TCIEN		BIT(2)
+> +#define NPCM7XX_FAN_TIEN_TBIEN		BIT(1)
+> +#define NPCM7XX_FAN_TIEN_TAIEN		BIT(0)
+> +
+> +#define NPCM7XX_FAN_TICTRL_TFPND	BIT(5)
+> +#define NPCM7XX_FAN_TICTRL_TEPND	BIT(4)
+> +#define NPCM7XX_FAN_TICTRL_TDPND	BIT(3)
+> +#define NPCM7XX_FAN_TICTRL_TCPND	BIT(2)
+> +#define NPCM7XX_FAN_TICTRL_TBPND	BIT(1)
+> +#define NPCM7XX_FAN_TICTRL_TAPND	BIT(0)
+> +
+> +#define NPCM7XX_FAN_TCPCFG_HIBEN	BIT(7)
+> +#define NPCM7XX_FAN_TCPCFG_EQBEN	BIT(6)
+> +#define NPCM7XX_FAN_TCPCFG_LOBEN	BIT(5)
+> +#define NPCM7XX_FAN_TCPCFG_CPBSEL	BIT(4)
+> +#define NPCM7XX_FAN_TCPCFG_HIAEN	BIT(3)
+> +#define NPCM7XX_FAN_TCPCFG_EQAEN	BIT(2)
+> +#define NPCM7XX_FAN_TCPCFG_LOAEN	BIT(1)
+> +#define NPCM7XX_FAN_TCPCFG_CPASEL	BIT(0)
+> +
+> +/* FAN General Defintion */
+> +/* Define the maximum FAN channel number */
+> +#define NPCM7XX_FAN_MAX_MODULE			8
+> +#define NPCM7XX_FAN_MAX_CHN_NUM_IN_A_MODULE	2
+> +#define NPCM7XX_FAN_MAX_CHN_NUM			16
+> +
+> +/*
+> + * Get Fan Tach Timeout (base on clock 214843.75Hz, 1 cnt = 4.654us)
+> + * Timeout 94ms ~= 0x5000
+> + * (The minimum FAN speed could to support ~640RPM/pulse 1,
+> + * 320RPM/pulse 2, ...-- 10.6Hz)
+> + */
+> +#define NPCM7XX_FAN_TIMEOUT	0x5000
+> +#define NPCM7XX_FAN_TCNT	0xFFFF
+> +#define NPCM7XX_FAN_TCPA	(NPCM7XX_FAN_TCNT - NPCM7XX_FAN_TIMEOUT)
+> +#define NPCM7XX_FAN_TCPB	(NPCM7XX_FAN_TCNT - NPCM7XX_FAN_TIMEOUT)
+> +
+> +#define NPCM7XX_FAN_POLL_TIMER_200MS			200
+> +#define NPCM7XX_FAN_DEFAULT_PULSE_PER_REVOLUTION	2
+> +#define NPCM7XX_FAN_TINASEL_FANIN_DEFAULT		0
+> +#define NPCM7XX_FAN_CLK_PRESCALE			255
+> +
+> +#define NPCM7XX_FAN_CMPA				0
+> +#define NPCM7XX_FAN_CMPB				1
+> +
+> +/* Obtain the fan number */
+> +#define NPCM7XX_FAN_INPUT(fan, cmp)		((fan << 1) + (cmp))
+> +
+
+(fan)
+
+If you want to be intelligent about () in macros, please at least add () where
+a parameter is used in an expression.
+
+> +/* fan sample status */
+> +#define FAN_DISABLE				0xFF
+> +#define FAN_INIT				0x00
+> +#define FAN_PREPARE_TO_GET_FIRST_CAPTURE	0x01
+> +#define FAN_ENOUGH_SAMPLE			0x02
+> +
+> +struct Fan_Dev {
+> +	u8 FanStFlag;
+> +	u8 FanPlsPerRev;
+> +	u16 FanCnt;
+> +	u32 FanCntTemp;
+> +};
+> +
+> +struct npcm7xx_cooling_device {
+> +	char name[THERMAL_NAME_LENGTH];
+> +	struct npcm7xx_pwm_fan_data *data;
+> +	struct thermal_cooling_device *tcdev;
+> +	int pwm_port;
+> +	u8 *cooling_levels;
+> +	u8 max_state;
+> +	u8 cur_state;
+> +};
+> +
+> +struct npcm7xx_pwm_fan_data {
+> +	void __iomem *pwm_base, *fan_base;
+> +	unsigned long pwm_clk_freq, fan_clk_freq;
+> +	struct clk *pwm_clk, *fan_clk;
+> +	struct mutex npcm7xx_pwm_lock[NPCM7XX_PWM_MAX_MODULES];
+> +	spinlock_t npcm7xx_fan_lock[NPCM7XX_FAN_MAX_MODULE];
+> +	int fan_irq[NPCM7XX_FAN_MAX_MODULE];
+> +	bool pwm_present[NPCM7XX_PWM_MAX_CHN_NUM],
+> +		fan_present[NPCM7XX_FAN_MAX_CHN_NUM];
+
+I am sure I asked to split the declarations.
+
+> +	u32 InputClkFreq;
+> +	struct timer_list npcm7xx_fan_timer;
+> +	struct Fan_Dev npcm7xx_fan[NPCM7XX_FAN_MAX_CHN_NUM];
+> +	struct npcm7xx_cooling_device *cdev[NPCM7XX_PWM_MAX_CHN_NUM];
+> +	u8 npcm7xx_fan_select;
+> +};
+> +
+> +static int npcm7xx_pwm_config_set(struct npcm7xx_pwm_fan_data *data,
+> +				  int channel, u16 val)
+> +{
+> +	u32 PWMCh = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+> +	u32 module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+> +	u32 u32TmpBuf = 0, ctrl_en_bit, env_bit;
+> +
+
+I am sure I asked you to drop the u32 from this variable name, and I am sure
+I asked not to use capital letters in variable names.
+
+> +	/*
+> +	 * Config PWM Comparator register for setting duty cycle
+> +	 */
+> +	if (val < 0 || val > NPCM7XX_PWM_COMPARATOR_MAX)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&data->npcm7xx_pwm_lock[module]);
+> +
+> +	/* write new CMR value  */
+> +	iowrite32(val, NPCM7XX_PWM_REG_CMRx(data->pwm_base, module, PWMCh));
+> +	u32TmpBuf = ioread32(NPCM7XX_PWM_REG_CR(data->pwm_base, module));
+> +
+> +	switch (PWMCh) {
+> +	case 0:
+> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH0_EN_BIT;
+> +		env_bit = NPCM7XX_PWM_CTRL_CH0_INV_BIT;
+> +		break;
+> +	case 1:
+> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH1_EN_BIT;
+> +		env_bit = NPCM7XX_PWM_CTRL_CH1_INV_BIT;
+> +		break;
+> +	case 2:
+> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH2_EN_BIT;
+> +		env_bit = NPCM7XX_PWM_CTRL_CH2_INV_BIT;
+> +		break;
+> +	case 3:
+> +		ctrl_en_bit = NPCM7XX_PWM_CTRL_CH3_EN_BIT;
+> +		env_bit = NPCM7XX_PWM_CTRL_CH3_INV_BIT;
+> +		break;
+> +	default:
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (val == 0) {
+> +		/* Disable PWM */
+> +		u32TmpBuf &= ~(ctrl_en_bit);
+> +		u32TmpBuf |= env_bit;
+> +	} else {
+> +		/* Enable PWM */
+> +		u32TmpBuf |= ctrl_en_bit;
+> +		u32TmpBuf &= ~(env_bit);
+> +	}
+> +
+> +	iowrite32(u32TmpBuf, NPCM7XX_PWM_REG_CR(data->pwm_base, module));
+> +	mutex_unlock(&data->npcm7xx_pwm_lock[module]);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void npcm7xx_fan_start_capture(struct npcm7xx_pwm_fan_data *data,
+> +						 u8 fan, u8 cmp)
+> +{
+> +	u8 fan_id = 0;
+> +	u8 reg_mode = 0;
+> +	u8 reg_int = 0;
+
+Those initializations are unnecessary.
+
+> +	unsigned long flags;
+> +
+> +	fan_id = NPCM7XX_FAN_INPUT(fan, cmp);
+> +
+> +	/* to check whether any fan tach is enable */
+> +	if (data->npcm7xx_fan[fan_id].FanStFlag != FAN_DISABLE) {
+> +		/* reset status */
+> +		spin_lock_irqsave(&data->npcm7xx_fan_lock[fan], flags);
+> +
+> +		data->npcm7xx_fan[fan_id].FanStFlag = FAN_INIT;
+> +		reg_int = ioread8(NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
+> +
+
+If the flag bits don't need to be cleared, state that here in a comment.
+
+> +		if (cmp == NPCM7XX_FAN_CMPA) {
+> +			/* enable interrupt */
+> +			iowrite8((u8) (reg_int | (NPCM7XX_FAN_TIEN_TAIEN |
+> +						  NPCM7XX_FAN_TIEN_TEIEN)),
+
+s/(u8)//
+
+> +				 NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
+> +
+> +			reg_mode = NPCM7XX_FAN_TCKC_CLK1_APB
+> +				| ioread8(NPCM7XX_FAN_REG_TCKC(data->fan_base,
+> +							       fan));
+> +
+> +			/* start to Capture */
+> +			iowrite8(reg_mode, NPCM7XX_FAN_REG_TCKC(data->fan_base,
+> +								fan));
+> +		} else {
+> +			/* enable interrupt */
+> +			iowrite8((u8) (reg_int | (NPCM7XX_FAN_TIEN_TBIEN |
+> +						  NPCM7XX_FAN_TIEN_TFIEN)),
+> +				 NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
+> +
+> +			reg_mode =
+> +				NPCM7XX_FAN_TCKC_CLK2_APB
+> +				| ioread8(NPCM7XX_FAN_REG_TCKC(data->fan_base,
+> +							       fan));
+> +
+> +			/* start to Capture */
+> +			iowrite8(reg_mode,
+> +				 NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
+> +		}
+> +
+> +		spin_unlock_irqrestore(&data->npcm7xx_fan_lock[fan], flags);
+> +	}
+> +}
+> +
+> +/*
+> + * Enable a background timer to poll fan tach value, (200ms * 4)
+> + * to polling all fan
+> + */
+> +static void npcm7xx_fan_polling(struct timer_list *t)
+> +{
+> +	struct npcm7xx_pwm_fan_data *data;
+> +	unsigned long flags;
+> +	int i;
+> +
+> +	data = from_timer(data, t, npcm7xx_fan_timer);
+> +
+> +	/*
+> +	 * Polling two module per one round,
+> +	 * FAN01 & FAN89 / FAN23 & FAN1011 / FAN45 & FAN1213 / FAN67 & FAN1415
+> +	 */
+> +	for (i = data->npcm7xx_fan_select; i < NPCM7XX_FAN_MAX_MODULE;
+> +	      i = i+4) {
+> +		/* clear the flag and reset the counter (TCNT) */
+> +		spin_lock_irqsave(&data->npcm7xx_fan_lock[i], flags);
+> +		iowrite8((u8) NPCM7XX_FAN_TICLR_CLEAR_ALL,
+> +			 NPCM7XX_FAN_REG_TICLR(data->fan_base, i));
+> +		spin_unlock_irqrestore(&data->npcm7xx_fan_lock[i], flags);
+> +
+> +		if (data->fan_present[i*2] == true) {
+> +			spin_lock_irqsave(&data->npcm7xx_fan_lock[i], flags);
+> +			iowrite16(NPCM7XX_FAN_TCNT,
+> +				  NPCM7XX_FAN_REG_TCNT1(data->fan_base, i));
+> +			spin_unlock_irqrestore(&data->npcm7xx_fan_lock[i],
+> +					       flags);
+> +			npcm7xx_fan_start_capture(data, i, NPCM7XX_FAN_CMPA);
+> +		}
+> +		if (data->fan_present[(i*2)+1] == true) {
+> +			spin_lock_irqsave(&data->npcm7xx_fan_lock[i], flags);
+> +			iowrite16(NPCM7XX_FAN_TCNT,
+> +				  NPCM7XX_FAN_REG_TCNT2(data->fan_base, i));
+> +			spin_unlock_irqrestore(&data->npcm7xx_fan_lock[i],
+> +					       flags);
+> +			npcm7xx_fan_start_capture(data, i, NPCM7XX_FAN_CMPB);
+> +		}
+> +	}
+> +
+> +	data->npcm7xx_fan_select++;
+> +	data->npcm7xx_fan_select &= 0x3;
+> +
+> +	/* reset the timer interval */
+> +	data->npcm7xx_fan_timer.expires = jiffies +
+> +		msecs_to_jiffies(NPCM7XX_FAN_POLL_TIMER_200MS);
+> +	add_timer(&data->npcm7xx_fan_timer);
+> +}
+> +
+> +static inline void npcm7xx_fan_compute(struct npcm7xx_pwm_fan_data *data,
+> +					   u8 fan, u8 cmp, u8 fan_id,
+> +					   u8 flag_int, u8 flag_mode,
+> +					   u8 flag_clear)
+> +{
+> +	u8  reg_int  = 0;
+> +	u8  reg_mode = 0;
+> +	u16 fan_cap  = 0;
+> +
+> +	if (cmp == NPCM7XX_FAN_CMPA)
+> +		fan_cap = ioread16(NPCM7XX_FAN_REG_TCRA(data->fan_base, fan));
+> +	else
+> +		fan_cap = ioread16(NPCM7XX_FAN_REG_TCRB(data->fan_base, fan));
+> +
+> +	/* clear capature flag, H/W will auto reset the NPCM7XX_FAN_TCNTx */
+> +	iowrite8((u8) flag_clear, NPCM7XX_FAN_REG_TICLR(data->fan_base, fan));
+> +
+> +	if (data->npcm7xx_fan[fan_id].FanStFlag == FAN_INIT) {
+> +		/* First capture, drop it */
+> +		data->npcm7xx_fan[fan_id].FanStFlag =
+> +			FAN_PREPARE_TO_GET_FIRST_CAPTURE;
+> +
+> +		/* reset counter */
+> +		data->npcm7xx_fan[fan_id].FanCntTemp = 0;
+> +	} else if (data->npcm7xx_fan[fan_id].FanStFlag <
+> +		   FAN_ENOUGH_SAMPLE) {
+> +		/*
+> +		 * collect the enough sample,
+> +		 * (ex: 2 pulse fan need to get 2 sample)
+> +		 */
+> +		data->npcm7xx_fan[fan_id].FanCntTemp +=
+> +			(NPCM7XX_FAN_TCNT - fan_cap);
+> +
+> +		data->npcm7xx_fan[fan_id].FanStFlag++;
+> +	} else {
+> +		/* get enough sample or fan disable */
+> +		if (data->npcm7xx_fan[fan_id].FanStFlag == FAN_ENOUGH_SAMPLE) {
+> +			data->npcm7xx_fan[fan_id].FanCntTemp +=
+> +				(NPCM7XX_FAN_TCNT - fan_cap);
+> +
+> +			/* compute finial average cnt per pulse */
+> +			data->npcm7xx_fan[fan_id].FanCnt
+> +				= data->npcm7xx_fan[fan_id].FanCntTemp /
+> +				FAN_ENOUGH_SAMPLE;
+> +
+> +			data->npcm7xx_fan[fan_id].FanStFlag = FAN_INIT;
+> +		}
+> +
+> +		reg_int =  ioread8(NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
+> +
+> +		/* disable interrupt */
+> +		iowrite8((u8) (reg_int & ~flag_int),
+> +			 NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
+> +		reg_mode =  ioread8(NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
+> +
+> +		/* stop capturing */
+> +		iowrite8((u8) (reg_mode & ~flag_mode),
+> +			 NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
+> +
+> +	}
+> +}
+> +
+> +static inline void npcm7xx_check_cmp(struct npcm7xx_pwm_fan_data *data,
+> +				     u8 fan, u8 cmp, u8 flag)
+> +{
+> +	u8 reg_int = 0;
+> +	u8 reg_mode = 0;
+> +	u8 flag_timeout;
+> +	u8 flag_cap;
+> +	u8 flag_clear;
+> +	u8 flag_int;
+> +	u8 flag_mode;
+> +	u8 fan_id;
+> +
+> +	fan_id = NPCM7XX_FAN_INPUT(fan, cmp);
+> +
+> +	if (cmp == NPCM7XX_FAN_CMPA) {
+> +		flag_cap = NPCM7XX_FAN_TICTRL_TAPND;
+> +		flag_timeout = NPCM7XX_FAN_TICTRL_TEPND;
+> +		flag_int = NPCM7XX_FAN_TIEN_TAIEN | NPCM7XX_FAN_TIEN_TEIEN;
+> +		flag_mode = NPCM7XX_FAN_TCKC_CLK1_APB;
+> +		flag_clear = NPCM7XX_FAN_TICLR_TACLR | NPCM7XX_FAN_TICLR_TECLR;
+> +	} else {
+> +		flag_cap = NPCM7XX_FAN_TICTRL_TBPND;
+> +		flag_timeout = NPCM7XX_FAN_TICTRL_TFPND;
+> +		flag_int = NPCM7XX_FAN_TIEN_TBIEN | NPCM7XX_FAN_TIEN_TFIEN;
+> +		flag_mode = NPCM7XX_FAN_TCKC_CLK2_APB;
+> +		flag_clear = NPCM7XX_FAN_TICLR_TBCLR | NPCM7XX_FAN_TICLR_TFCLR;
+> +	}
+> +
+> +
+> +	if (flag & flag_timeout) {
+> +
+> +		reg_int =  ioread8(NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
+> +
+> +		/* disable interrupt */
+> +		iowrite8((u8) (reg_int & ~flag_int),
+> +			 NPCM7XX_FAN_REG_TIEN(data->fan_base, fan));
+> +
+
+s/(u8)//
+
+> +		/* clear interrup flag */
+> +		iowrite8((u8) flag_clear, NPCM7XX_FAN_REG_TICLR(data->fan_base,
+> +								fan));
+> +
+> +		reg_mode =  ioread8(NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
+> +
+> +		/* stop capturing */
+> +		iowrite8((u8) (reg_mode & ~flag_mode),
+> +			 NPCM7XX_FAN_REG_TCKC(data->fan_base, fan));
+
+s/(u8)//
+
+> +
+> +		/*
+> +		 *  If timeout occurs (NPCM7XX_FAN_TIMEOUT), the fan doesn't
+> +		 *  connect or speed is lower than 10.6Hz (320RPM/pulse2).
+> +		 *  In these situation, the RPM output should be zero.
+> +		 */
+> +		data->npcm7xx_fan[fan_id].FanCnt = 0;
+> +		//DEBUG_MSG("%s : it is timeout fan_id %d\n", __func__, fan_id);
+
+No commented out code please.
+
+> +	} else {
+> +	    /* input capture is occurred */
+> +		if (flag & flag_cap)
+> +			npcm7xx_fan_compute(data, fan, cmp, fan_id, flag_int,
+> +					    flag_mode, flag_clear);
+> +	}
+> +}
+> +
+> +static irqreturn_t npcm7xx_fan_isr(int irq, void *dev_id)
+> +{
+> +	struct npcm7xx_pwm_fan_data *data = dev_id;
+> +	u8 flag = 0;
+> +	int module;
+> +	unsigned long flags;
+> +
+> +	module = irq - data->fan_irq[0];
+> +	spin_lock_irqsave(&data->npcm7xx_fan_lock[module], flags);
+> +
+> +	flag = ioread8(NPCM7XX_FAN_REG_TICTRL(data->fan_base, module));
+> +	if (flag > 0) {
+> +		npcm7xx_check_cmp(data, module, NPCM7XX_FAN_CMPA, flag);
+> +		npcm7xx_check_cmp(data, module, NPCM7XX_FAN_CMPB, flag);
+> +		spin_unlock_irqrestore(&data->npcm7xx_fan_lock[module], flags);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	spin_unlock_irqrestore(&data->npcm7xx_fan_lock[module], flags);
+> +
+> +	return IRQ_NONE;
+> +}
+> +
+> +static int npcm7xx_read_pwm(struct device *dev, u32 attr, int channel,
+> +			     long *val)
+> +{
+> +	struct npcm7xx_pwm_fan_data *data = dev_get_drvdata(dev);
+> +	u32 PWMCh = (channel % NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+> +	u32 module = (channel / NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE);
+> +
+> +	if (IS_ERR(data))
+> +		return PTR_ERR(data);
+> +
+> +	switch (attr) {
+> +	case hwmon_pwm_input:
+> +		mutex_lock(&data->npcm7xx_pwm_lock[module]);
+> +		*val = (long)ioread32(
+> +		    NPCM7XX_PWM_REG_CMRx(data->pwm_base, module, PWMCh));
+
+s/(long)//
+
+I don't think you will ever see a negative pwm value. If anything, I would
+expect a mask here if the register can have upper bits set.
+
+> +		mutex_unlock(&data->npcm7xx_pwm_lock[module]);
+> +		return 0;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static int npcm7xx_write_pwm(struct device *dev, u32 attr, int channel,
+> +			      long val)
+> +{
+> +	struct npcm7xx_pwm_fan_data *data = dev_get_drvdata(dev);
+> +	int err = 0;
+> +
+> +	switch (attr) {
+> +	case hwmon_pwm_input:
+> +		err = npcm7xx_pwm_config_set(data, channel, (u16)val);
+> +		break;
+> +	default:
+> +		err = -EOPNOTSUPP;
+> +		break;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static umode_t npcm7xx_pwm_is_visible(const void *_data, u32 attr, int channel)
+> +{
+> +	const struct npcm7xx_pwm_fan_data *data = _data;
+> +
+> +	if (!data->pwm_present[channel])
+> +		return 0;
+> +
+> +	switch (attr) {
+> +	case hwmon_pwm_input:
+> +		return 0644;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static int npcm7xx_read_fan(struct device *dev, u32 attr, int channel,
+> +			     long *val)
+> +{
+> +	struct npcm7xx_pwm_fan_data *data = dev_get_drvdata(dev);
+> +
+> +	switch (attr) {
+> +	case hwmon_fan_input:
+> +		*val = 0;
+> +		if (data->npcm7xx_fan[channel].FanCnt <= 0)
+> +			return data->npcm7xx_fan[channel].FanCnt;
+> +
+> +		/* Convert the raw reading to RPM */
+> +		if ((data->npcm7xx_fan[channel].FanCnt > 0) &&
+> +		    data->npcm7xx_fan[channel].FanPlsPerRev > 0)
+> +			*val = (long)((data->InputClkFreq * 60)/
+> +				    (data->npcm7xx_fan[channel].FanCnt *
+> +				     data->npcm7xx_fan[channel].FanPlsPerRev));
+
+I see you really like typecasts. I don't. Please clean up all of them, and please
+drop all commented out code.
+
+> +		return 0;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static umode_t npcm7xx_fan_is_visible(const void *_data, u32 attr, int channel)
+> +{
+> +	const struct npcm7xx_pwm_fan_data *data = _data;
+> +
+> +	if (!data->fan_present[channel])
+> +		return 0;
+> +
+> +	switch (attr) {
+> +	case hwmon_fan_input:
+> +		return 0444;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static int npcm7xx_read(struct device *dev, enum hwmon_sensor_types type,
+> +			 u32 attr, int channel, long *val)
+> +{
+> +	switch (type) {
+> +	case hwmon_pwm:
+> +		return npcm7xx_read_pwm(dev, attr, channel, val);
+> +	case hwmon_fan:
+> +		return npcm7xx_read_fan(dev, attr, channel, val);
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static int npcm7xx_write(struct device *dev, enum hwmon_sensor_types type,
+> +			  u32 attr, int channel, long val)
+> +{
+> +	switch (type) {
+> +	case hwmon_pwm:
+> +		return npcm7xx_write_pwm(dev, attr, channel, val);
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+> +static umode_t npcm7xx_is_visible(const void *data,
+> +				   enum hwmon_sensor_types type,
+> +				   u32 attr, int channel)
+> +{
+> +	switch (type) {
+> +	case hwmon_pwm:
+> +		return npcm7xx_pwm_is_visible(data, attr, channel);
+> +	case hwmon_fan:
+> +		return npcm7xx_fan_is_visible(data, attr, channel);
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static const u32 npcm7xx_pwm_config[] = {
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	HWMON_PWM_INPUT,
+> +	0
+> +};
+> +
+> +static const struct hwmon_channel_info npcm7xx_pwm = {
+> +	.type = hwmon_pwm,
+> +	.config = npcm7xx_pwm_config,
+> +};
+> +
+> +static const u32 npcm7xx_fan_config[] = {
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	HWMON_F_INPUT,
+> +	0
+> +};
+> +
+> +static const struct hwmon_channel_info npcm7xx_fan = {
+> +	.type = hwmon_fan,
+> +	.config = npcm7xx_fan_config,
+> +};
+> +
+> +static const struct hwmon_channel_info *npcm7xx_info[] = {
+> +	&npcm7xx_pwm,
+> +	&npcm7xx_fan,
+> +	NULL
+> +};
+> +
+> +static const struct hwmon_ops npcm7xx_hwmon_ops = {
+> +	.is_visible = npcm7xx_is_visible,
+> +	.read = npcm7xx_read,
+> +	.write = npcm7xx_write,
+> +};
+> +
+> +static const struct hwmon_chip_info npcm7xx_chip_info = {
+> +	.ops = &npcm7xx_hwmon_ops,
+> +	.info = npcm7xx_info,
+> +};
+> +
+> +static u32 npcm7xx_pwm_init(struct npcm7xx_pwm_fan_data *data)
+> +{
+> +	int m, ch;
+> +	u32 Prescale_val, output_freq;
+> +
+> +	data->pwm_clk_freq = clk_get_rate(data->pwm_clk);
+> +
+> +	/* Adjust NPCM7xx PWMs output frequency to ~25Khz */
+> +	output_freq = data->pwm_clk_freq / PWN_CNT_DEFAULT;
+> +	Prescale_val = DIV_ROUND_CLOSEST(output_freq, PWM_OUTPUT_FREQ_25KHZ);
+> +
+> +	/* If Prescale_val = 0, then the prescale output clock is stopped */
+> +	if (Prescale_val < MIN_PRESCALE1)
+> +		Prescale_val = MIN_PRESCALE1;
+> +	/*
+> +	 * Prescale_val need to decrement in one because in the PWM Prescale
+> +	 * register the Prescale value increment by one
+> +	 */
+> +	Prescale_val--;
+> +
+> +	/* Setting PWM Prescale Register value register to both modules */
+> +	Prescale_val |= (Prescale_val << NPCM7XX_PWM_PRESCALE_SHIFT_CH01);
+> +
+> +	for (m = 0; m < NPCM7XX_PWM_MAX_MODULES  ; m++) {
+> +		iowrite32(Prescale_val, NPCM7XX_PWM_REG_PR(data->pwm_base, m));
+> +		iowrite32(NPCM7XX_PWM_PRESCALE2_DEFALUT,
+> +			  NPCM7XX_PWM_REG_CSR(data->pwm_base, m));
+> +		iowrite32(NPCM7XX_PWM_CTRL_MODE_DEFALUT,
+> +			  NPCM7XX_PWM_REG_CR(data->pwm_base, m));
+> +
+> +		for (ch = 0; ch < NPCM7XX_PWM_MAX_CHN_NUM_IN_A_MODULE; ch++) {
+> +			iowrite32(NPCM7XX_PWM_COUNTER_DEFALUT_NUM,
+> +				  NPCM7XX_PWM_REG_CNRx(data->pwm_base, m, ch));
+> +		}
+> +	}
+> +
+> +	return output_freq / ((Prescale_val & 0xf) + 1);
+> +}
+> +
+> +static void npcm7xx_fan_init(struct npcm7xx_pwm_fan_data *data)
+> +{
+> +	int md;
+> +	int ch;
+> +	int i;
+> +	u32 apb_clk_freq;
+> +
+> +	for (md = 0; md < NPCM7XX_FAN_MAX_MODULE; md++) {
+> +
+> +		/* stop FAN0~7 clock */
+> +		iowrite8((u8)NPCM7XX_FAN_TCKC_CLKX_NONE,
+> +			 NPCM7XX_FAN_REG_TCKC(data->fan_base, md));
+> +
+> +		/* disable all interrupt */
+> +		iowrite8((u8) 0x00, NPCM7XX_FAN_REG_TIEN(data->fan_base, md));
+> +
+> +		/* clear all interrupt */
+> +		iowrite8((u8) NPCM7XX_FAN_TICLR_CLEAR_ALL,
+> +			 NPCM7XX_FAN_REG_TICLR(data->fan_base, md));
+> +
+> +		/* set FAN0~7 clock prescaler */
+> +		iowrite8((u8) NPCM7XX_FAN_CLK_PRESCALE,
+> +			 NPCM7XX_FAN_REG_TPRSC(data->fan_base, md));
+> +
+> +		/* set FAN0~7 mode (high-to-low transition) */
+> +		iowrite8(
+> +			(u8) (
+> +			      NPCM7XX_FAN_TMCTRL_MODE_5 |
+> +			      NPCM7XX_FAN_TMCTRL_TBEN |
+> +			      NPCM7XX_FAN_TMCTRL_TAEN
+> +			      ),
+> +			NPCM7XX_FAN_REG_TMCTRL(data->fan_base, md)
+> +			);
+> +
+> +		/* set FAN0~7 Initial Count/Cap */
+> +		iowrite16(NPCM7XX_FAN_TCNT,
+> +			  NPCM7XX_FAN_REG_TCNT1(data->fan_base, md));
+> +		iowrite16(NPCM7XX_FAN_TCNT,
+> +			  NPCM7XX_FAN_REG_TCNT2(data->fan_base, md));
+> +
+> +		/* set FAN0~7 compare (equal to count) */
+> +		iowrite8((u8)(NPCM7XX_FAN_TCPCFG_EQAEN |
+> +			      NPCM7XX_FAN_TCPCFG_EQBEN),
+> +			  NPCM7XX_FAN_REG_TCPCFG(data->fan_base, md));
+> +
+> +		/* set FAN0~7 compare value */
+> +		iowrite16(NPCM7XX_FAN_TCPA,
+> +			  NPCM7XX_FAN_REG_TCPA(data->fan_base, md));
+> +		iowrite16(NPCM7XX_FAN_TCPB,
+> +			  NPCM7XX_FAN_REG_TCPB(data->fan_base, md));
+> +
+> +		/* set FAN0~7 fan input FANIN 0~15 */
+> +		iowrite8((u8) NPCM7XX_FAN_TINASEL_FANIN_DEFAULT,
+> +			 NPCM7XX_FAN_REG_TINASEL(data->fan_base, md));
+> +		iowrite8((u8) NPCM7XX_FAN_TINASEL_FANIN_DEFAULT,
+> +			 NPCM7XX_FAN_REG_TINBSEL(data->fan_base, md));
+> +
+> +		for (i = 0; i < NPCM7XX_FAN_MAX_CHN_NUM_IN_A_MODULE; i++) {
+> +			ch = md * NPCM7XX_FAN_MAX_CHN_NUM_IN_A_MODULE + i;
+> +			data->npcm7xx_fan[ch].FanStFlag = FAN_DISABLE;
+> +			data->npcm7xx_fan[ch].FanPlsPerRev =
+> +				NPCM7XX_FAN_DEFAULT_PULSE_PER_REVOLUTION;
+> +			data->npcm7xx_fan[ch].FanCnt = 0;
+> +		}
+> +	}
+> +
+> +	apb_clk_freq = clk_get_rate(data->fan_clk);
+> +
+> +	/* Fan tach input clock = APB clock / prescalar, default is 255. */
+> +	data->InputClkFreq = apb_clk_freq / (NPCM7XX_FAN_CLK_PRESCALE + 1);
+> +}
+> +
+> +static int
+> +npcm7xx_pwm_cz_get_max_state(struct thermal_cooling_device *tcdev,
+> +			    unsigned long *state)
+> +{
+> +	struct npcm7xx_cooling_device *cdev = tcdev->devdata;
+> +
+> +	*state = cdev->max_state;
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +npcm7xx_pwm_cz_get_cur_state(struct thermal_cooling_device *tcdev,
+> +			    unsigned long *state)
+> +{
+> +	struct npcm7xx_cooling_device *cdev = tcdev->devdata;
+> +
+> +	*state = cdev->cur_state;
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +npcm7xx_pwm_cz_set_cur_state(struct thermal_cooling_device *tcdev,
+> +			    unsigned long state)
+> +{
+> +	struct npcm7xx_cooling_device *cdev = tcdev->devdata;
+> +	int ret;
+> +
+> +	if (state > cdev->max_state)
+> +		return -EINVAL;
+> +
+> +	cdev->cur_state = state;
+> +	ret = npcm7xx_pwm_config_set(cdev->data, cdev->pwm_port,
+> +				     cdev->cooling_levels[cdev->cur_state]);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct thermal_cooling_device_ops npcm7xx_pwm_cool_ops = {
+> +	.get_max_state = npcm7xx_pwm_cz_get_max_state,
+> +	.get_cur_state = npcm7xx_pwm_cz_get_cur_state,
+> +	.set_cur_state = npcm7xx_pwm_cz_set_cur_state,
+> +};
+> +
+> +static int npcm7xx_create_pwm_cooling(struct device *dev,
+> +				      struct device_node *child,
+> +				      struct npcm7xx_pwm_fan_data *data,
+> +				      u32 pwm_port, u8 num_levels)
+> +{
+> +	int ret;
+> +	struct npcm7xx_cooling_device *cdev;
+> +
+> +	cdev = devm_kzalloc(dev, sizeof(*cdev), GFP_KERNEL);
+> +	if (!cdev)
+> +		return -ENOMEM;
+> +
+> +	cdev->cooling_levels = devm_kzalloc(dev, num_levels, GFP_KERNEL);
+> +	if (!cdev->cooling_levels)
+> +		return -ENOMEM;
+> +
+> +	cdev->max_state = num_levels - 1;
+> +	ret = of_property_read_u8_array(child, "cooling-levels",
+> +					cdev->cooling_levels,
+> +					num_levels);
+> +	if (ret) {
+> +		dev_err(dev, "Property 'cooling-levels' cannot be read.\n");
+> +		return ret;
+> +	}
+> +	snprintf(cdev->name, THERMAL_NAME_LENGTH, "%s%d", child->name,
+> +		 pwm_port);
+> +
+> +	cdev->tcdev = thermal_of_cooling_device_register(child,
+> +							 cdev->name,
+> +							 cdev,
+> +							 &npcm7xx_pwm_cool_ops);
+> +	if (IS_ERR(cdev->tcdev))
+> +		return PTR_ERR(cdev->tcdev);
+> +
+> +	cdev->data = data;
+> +	cdev->pwm_port = pwm_port;
+> +
+> +	data->cdev[pwm_port] = cdev;
+> +
+> +	return 0;
+> +}
+> +
+> +static int npcm7xx_en_pwm_fan(struct device *dev,
+> +			      struct device_node *child,
+> +			      struct npcm7xx_pwm_fan_data *data)
+> +{
+> +	u8 *fan_ch;
+> +	u8 pwm_port;
+> +	int ret, fan_cnt;
+> +	u8 index, ch;
+> +
+> +	ret = of_property_read_u8(child, "pwm-ch", &pwm_port);
+> +	if (ret)
+> +		return ret;
+> +
+> +	data->pwm_present[pwm_port] = true;
+> +	ret = npcm7xx_pwm_config_set(data, pwm_port,
+> +				     NPCM7XX_PWM_COMPARATOR_DEFALUT_NUM);
+> +
+> +	ret = of_property_count_u8_elems(child, "cooling-levels");
+> +	if (ret > 0) {
+> +		ret = npcm7xx_create_pwm_cooling(dev, child, data, pwm_port,
+> +						ret);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	fan_cnt = of_property_count_u8_elems(child, "fan-ch");
+> +	if (fan_cnt < 1)
+> +		return -EINVAL;
+> +
+> +	fan_ch = devm_kzalloc(dev, sizeof(*fan_ch) * fan_cnt, GFP_KERNEL);
+> +	if (!fan_ch)
+> +		return -ENOMEM;
+> +
+> +	ret = of_property_read_u8_array(child, "fan-ch", fan_ch, fan_cnt);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (ch = 0; ch < fan_cnt; ch++) {
+> +		index = fan_ch[ch];
+> +		data->fan_present[index] = true;
+> +		data->npcm7xx_fan[index].FanStFlag = FAN_INIT;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int npcm7xx_pwm_fan_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np, *child;
+> +	struct npcm7xx_pwm_fan_data *data;
+> +	struct resource *res;
+> +	struct device *hwmon;
+> +	char name[20];
+> +	int ret, cnt;
+> +	u32 output_freq;
+> +	u32 i;
+> +
+> +	np = dev->of_node;
+> +
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pwm_base");
+> +	if (res == NULL) {
+> +		pr_err("PWM of_address_to_resource fail ret %d\n", ret);
+> +		return -ENODEV;
+> +	}
+> +
+> +	data->pwm_base = devm_ioremap_resource(dev, res);
+> +	pr_debug("pwm base is 0x%08X, res.start 0x%08X , size 0x%08X\n",
+> +		 (u32)data->pwm_base, res->start, resource_size(res));
+
+I am sure I asked to use %pR. I am also sure I asked to replace the pr_ functions
+with dev_ functions.
+
+> +	if (!data->pwm_base) {
+> +		pr_err("pwm probe failed: can't read pwm base address\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	data->pwm_clk = devm_clk_get(dev, "clk_apb3");
+> +	if (IS_ERR(data->pwm_clk)) {
+> +		pr_err(" pwm probe failed: can't read clk.\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "fan_base");
+> +	if (ret) {
+> +		pr_err("fan of_address_to_resource fail ret %d\n", ret);
+> +		return -ENODEV;
+> +	}
+> +
+> +	data->fan_base = devm_ioremap_resource(dev, res);
+> +	pr_debug("fan base is 0x%08X, res.start 0x%08X , size 0x%08X\n",
+> +		 (u32)data->fan_base, res->start, resource_size(res));
+> +
+
+%pR again.
+
+> +	if (!data->fan_base) {
+> +		pr_err("fan probe failed: can't read fan base address.\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	data->fan_clk = devm_clk_get(dev, "clk_apb4");
+> +	if (IS_ERR(data->fan_clk)) {
+> +		pr_err(" FAN probe failed: can't read clk.\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	output_freq = npcm7xx_pwm_init(data);
+> +	npcm7xx_fan_init(data);
+> +
+> +	for (cnt = 0; cnt < NPCM7XX_PWM_MAX_MODULES  ; cnt++)
+> +		mutex_init(&data->npcm7xx_pwm_lock[cnt]);
+> +
+> +	for (i = 0; i < NPCM7XX_FAN_MAX_MODULE; i++) {
+> +		spin_lock_init(&data->npcm7xx_fan_lock[i]);
+> +
+> +		data->fan_irq[i] = platform_get_irq(pdev, i);
+> +		if (!data->fan_irq[i]) {
+> +			pr_err("%s - failed to map irq %d\n", __func__, i);
+> +			ret = -EAGAIN;
+> +			goto err_irq;
+> +		}
+> +
+> +		sprintf(name, "NPCM7XX-FAN-MD%d", i);
+> +
+> +		if (request_irq(data->fan_irq[i], npcm7xx_fan_isr, 0, name,
+> +				(void *)data)) {
+> +			pr_err("NPCM7XX: register irq FAN%d failed\n", i);
+> +			ret = -EAGAIN;
+> +			goto err_irq;
+> +		}
+> +	}
+> +
+> +	for_each_child_of_node(np, child) {
+> +		ret = npcm7xx_en_pwm_fan(dev, child, data);
+> +		if (ret) {
+> +			pr_err("npcm7xx_en_pwm_fan failed ret %d\n", ret);
+> +			of_node_put(child);
+> +			goto err_irq;
+> +		}
+> +	}
+> +
+> +	hwmon = devm_hwmon_device_register_with_info(dev, "npcm7xx_pwm_fan",
+> +						     data, &npcm7xx_chip_info,
+> +						     NULL);
+> +	if (IS_ERR(hwmon)) {
+> +		pr_err("PWM Driver failed - devm_hwmon_device_register_with_groups failed\n");
+> +		ret =  PTR_ERR(hwmon);
+> +		goto err_irq;
+> +	}
+> +
+> +	for (i = 0; i < NPCM7XX_FAN_MAX_CHN_NUM; i++) {
+> +		if (data->fan_present[i] == true) {
+> +			/* fan timer initialization */
+> +			data->npcm7xx_fan_select = 0;
+> +			data->npcm7xx_fan_timer.expires = jiffies +
+> +				msecs_to_jiffies(NPCM7XX_FAN_POLL_TIMER_200MS);
+> +			timer_setup(&data->npcm7xx_fan_timer,
+> +				    npcm7xx_fan_polling, 0);
+> +			add_timer(&data->npcm7xx_fan_timer);
+> +			break;
+> +		}
+> +	}
+> +
+> +	pr_info("NPCM7XX PWM-FAN Driver probed, output Freq %dHz[PWM], input Freq %dHz[FAN]\n",
+> +		output_freq, data->InputClkFreq);
+> +
+> +	return 0;
+> +
+> +err_irq:
+> +	for (; i > 0; i--)
+> +		free_irq(data->fan_irq[i-1], (void *)data);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id of_pwm_fan_match_table[] = {
+> +	{ .compatible = "nuvoton,npcm750-pwm-fan", },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, of_pwm_fan_match_table);
+> +
+> +static struct platform_driver npcm7xx_pwm_fan_driver = {
+> +	.probe		= npcm7xx_pwm_fan_probe,
+> +	.driver		= {
+> +		.name	= "npcm7xx_pwm_fan",
+> +		.of_match_table = of_pwm_fan_match_table,
+> +	},
+> +};
+> +
+> +module_platform_driver(npcm7xx_pwm_fan_driver);
+> +
+> +MODULE_DESCRIPTION("Nuvoton NPCM7XX PWM and Fan Tacho driver");
+> +MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
+> +MODULE_LICENSE("GPL v2");
+> 
+
