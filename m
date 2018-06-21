@@ -2,260 +2,168 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B12C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B54C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15DDA208A5
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89B3220846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:18:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNQq5zpc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15DDA208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ac+b5mBz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B3220846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933351AbeFUPSG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:18:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34428 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933277AbeFUPSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:18:03 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51C90208B3;
-        Thu, 21 Jun 2018 15:18:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529594282;
-        bh=dcueS+kf0phV7Sm/ORsErYMKTpTAeh5PBLkPmVHx/aI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qNQq5zpc9xsc2o6NGSOFA0LnV7GiNfiPJsbzY9mNhudRJNIDtdMsryM2LZmVK4h2p
-         1sUTS6359nuvmg1cQ2E3qHmXTCQOQuwMRYq6tgDICAScQBWEx1nnQ5sqMuaMaheDvk
-         V9rWNRKbmLAbUF2daurU9J1B4SzVRLzloq6Rcw/E=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 48BEA1401E5; Thu, 21 Jun 2018 12:18:00 -0300 (-03)
-Date:   Thu, 21 Jun 2018 12:18:00 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Kim Phillips <kim.phillips@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Hendrik =?iso-8859-1?Q?Br=FCckner?= 
-        <brueckner@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] perf test shell: make perf inet_pton test more
- portable
-Message-ID: <20180621151800.GU20477@kernel.org>
-References: <20180619184952.dac6a3a1e39d3b1d255e7119@arm.com>
- <20180620134622.GM20477@kernel.org>
- <20180620194546.364cc109430ac51c5a288739@arm.com>
- <20180621141915.GS20477@kernel.org>
+        id S933399AbeFUPSX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 11:18:23 -0400
+Received: from mail-vk0-f74.google.com ([209.85.213.74]:35477 "EHLO
+        mail-vk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933277AbeFUPSV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 11:18:21 -0400
+Received: by mail-vk0-f74.google.com with SMTP id d134-v6so1409901vkf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 08:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=fd3RD7cjuYUZNJRvBnWqOKvcW146LuGjoL139TL5knc=;
+        b=Ac+b5mBziZ0hF5aseIufrVN6o000IIp6EKbsw67gK/cqA6tp8brPRX9gj3BwYlIsTJ
+         NhHXyqplDUkk5nJkndpaF4amylxcaQfQVC7YJgCTlwSto9PGL2oZlooHMeVhcLg0nGam
+         Z1zBTrfUyf1yYgXnckQhWOxIoYYZcSdEoS6jC3/Wf+tJuc4ukfMPZvFqnUofa2glK8NA
+         0GW8c+t/0+mXYErHvHj3Kuhqqd4iFQxCSKR6TzPPwwjIg8iBgJPJkQy2g3VKRMYJhU/8
+         UW2xywD7tYrYPIx/41dgmQZWjCQ0UkNAALZezqb+w6lPxlCJTEDtYHC5A84rDlTRJyUw
+         f94Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=fd3RD7cjuYUZNJRvBnWqOKvcW146LuGjoL139TL5knc=;
+        b=e9RYDlfD9QmRcaZiJ2AWoBC7ecchlpkgmTOM1CihnE7g5GjnGeEPHwhWd7NfHW134W
+         hXbhbzPJqRgH2TSjJUA6oEtgV9wz+qN7ENxd46pG9G8vjLzGCIaLCuyx4CiimgFITSPU
+         MEPOzaVEW0SVC1qz3a3Dfz2dWoPfWUuOxpWoFgSiAaVflZdmmwcrPglOlWr7IB47A/jh
+         f27xS8xJ/RfEmgt98+wqTFGEEQXz43GOT+SH41iYvYzzagmk+8O9O8h2CtkAqEkT2S0F
+         EKTe6wZYvnFMRvXK3bCHI2q3+fCpWyRf/vFJhOqx38gGZgrM0v/x897r8eAmDTQn2x96
+         Y9Dg==
+X-Gm-Message-State: APt69E0TjqBnPJE/MMzNNxdxcQOZoVILNdYo9TuNMPQrfgCYAzHTIjKh
+        4iwDAiY3Wy7YSXN2xwM16wiPz0OT4Q==
+X-Google-Smtp-Source: ADUXVKLR2X1gg4YQJOx9op/hi1ilmoDRk5F1BnlWsGi1ZnPKd0R0DntIaZcv7splwOKyDkCEgeIOvQcWdQ==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621141915.GS20477@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Received: by 2002:a1f:44e:: with SMTP id 75-v6mr11727726vke.121.1529594300030;
+ Thu, 21 Jun 2018 08:18:20 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 17:18:09 +0200
+Message-Id: <20180621151809.10921-1-jannh@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+Subject: [PATCH v2] sg: mitigate read/write abuse
+From:   Jann Horn <jannh@google.com>
+To:     Doug Gilbert <dgilbert@interlog.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, jannh@google.com
+Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
+        kernel-hardening@lists.openwall.com, security@kernel.org,
+        Benjamin Block <bblock@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jun 21, 2018 at 11:19:15AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Wed, Jun 20, 2018 at 07:45:46PM -0500, Kim Phillips escreveu:
-> > On Wed, 20 Jun 2018 10:46:22 -0300
-> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > 
-> > > Em Tue, Jun 19, 2018 at 06:49:52PM -0500, Kim Phillips escreveu:
-> > > > Debian based systems such as Ubuntu have dash as their default shell.
-> > > > Even if the normal or root user's shell is bash, certain scripts still
-> > > > call /bin/sh, which points to dash, so we fix this perf test by
-> > > > rewriting it in a more portable way.
-> > > 
-> > > Isn't it better to just make /bin/bash a requirement for these tests?
-> > 
-> > Perf is more bug-prone in distributions other than its main developers'
-> > distributions, and when its own built-in tests start depending on those
-> > same (primary) distributions' preferences, tests start to get skipped
-> > on the secondary ones, which start to get subsequently ignored and
-> 
-> That is a valid concern, I test build it on many, many distros, running
-> 'perf test' in all of them was always in the backlog, I guess this is
-> the time for me to try and have it running on them all, running
-> privileged containers so that all the tests can run there, perhaps some
-> will need to be tweaked to skip when running on a container environment,
-> hopefully not.
-> 
-> For reference, before pushing upstream all these environments are test
-> built, many with all the devel libraries to exercise building with all
-> the features present in the codebase, both with and without libelf, with
-> gcc and when available, with clang as well:
-> 
->    1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
->    2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
->    3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
->    4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
->    5 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
->    6 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11)
->    7 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
->    8 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
->    9 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
->   10 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
->   11 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
->   12 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
->   13 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
->   14 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
->   15 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
->   16 debian:experimental           : Ok   gcc (Debian 7.3.0-15) 7.3.0
->   17 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 7.3.0-15) 7.3.0
->   18 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 7.3.0-19) 7.3.0
->   19 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 7.3.0-18) 7.3.0
->   20 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 7.3.0-20) 7.3.0
->   21 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
->   22 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
->   23 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
->   24 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
->   25 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
->   26 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
->   27 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
->   28 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
->   29 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
->   30 fedora:28                     : Ok   gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
->   31 fedora:rawhide                : Ok   gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
->   32 gentoo-stage3-amd64:latest    : Ok   gcc (Gentoo 6.4.0-r1 p1.3) 6.4.0
->   33 mageia:5                      : Ok   gcc (GCC) 4.9.2
->   34 mageia:6                      : Ok   gcc (Mageia 5.5.0-1.mga6) 5.5.0
->   35 opensuse:42.1                 : Ok   gcc (SUSE Linux) 4.8.5
->   36 opensuse:42.2                 : Ok   gcc (SUSE Linux) 4.8.5
->   37 opensuse:42.3                 : Ok   gcc (SUSE Linux) 4.8.5
->   38 opensuse:tumbleweed           : Ok   gcc (SUSE Linux) 7.3.1 20180323 [gcc-7-branch revision 258812]
->   39 oraclelinux:6                 : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18.0.7)
->   40 oraclelinux:7                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28.0.1)
->   41 ubuntu:12.04.5                : Ok   gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
->   42 ubuntu:14.04.4                : Ok   gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
->   43 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.4-2017.05) 5.4.1 20170404
->   44 ubuntu:15.04                  : Ok   gcc (Ubuntu 4.9.2-10ubuntu13) 4.9.2
->   45 ubuntu:16.04                  : Ok   gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
->   46 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
->   47 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
->   48 ubuntu:16.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
->   49 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
->   50 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
->   51 ubuntu:16.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
->   52 ubuntu:16.10                  : Ok   gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
->   53 ubuntu:17.04                  : Ok   gcc (Ubuntu 6.3.0-12ubuntu2) 6.3.0 20170406
->   54 ubuntu:17.10                  : Ok   gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
->   55 ubuntu:18.04                  : Ok   gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
-> 
-> So I'll try running it on the non-cross-builds (x-something) containers,
-> because so far I'm just running these on x86_64 as the host machine.
-> 
-> > become acceptable to testers, which is a whole pattern I'd like to
-> > avoid if at all possible.  I'd eventually like to see the real perf run
-> 
-> Agreed.
-> 
-> > on Android, for example, and adding bash to Android is nontrivial,
-> > AFAICT.
-> 
-> Fair enough.
->  
-> > > I think the alternative is cryptic :-\
-> > 
-> > I think that's because of the fake array stuff, which technically isn't
-> > needed by design.  How about something like the following?
-> 
-> Thanks for trying to address my concern, looking...
->  
-> > diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> > index 263057039693..d5cceaeba42d 100755
-> > --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> > +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-> > @@ -14,20 +14,21 @@ libc=$(grep -w libc /proc/self/maps | head -1 | sed -r 's/.*[[:space:]](\/.*)/\1
-> >  nm -Dg $libc 2>/dev/null | fgrep -q inet_pton || exit 254
-> >  
-> >  trace_libc_inet_pton_backtrace() {
-> > +       newline='\n'
-> >         idx=0
-> > -       expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
-> > -       expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> > +       expected="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
-> > +       expected="${expected}${newline}.*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+As Al Viro noted in commit 128394eff343 ("sg_write()/bsg_write() is not fit
+to be called under KERNEL_DS"), sg improperly accesses userspace memory
+outside the provided buffer, permitting kernel memory corruption via
+splice().
+But it doesn't just do it on ->write(), also on ->read().
 
-Ok, seems to be the common ground, unfortunately expected+="${newline}..."
-is not present in dash :-\
+As a band-aid, make sure that the ->read() and ->write() handlers can not
+be called in weird contexts (kernel context or credentials different from
+file opener), like for ib_safe_file_access().
 
-[root@jouet ~]# a="AA "
-[root@jouet ~]# a+="BB "
-[root@jouet ~]# echo $a
-AA BB
-[root@jouet ~]# dash
-# a="AA "
-# a+="BB "
-dash: 2: a+=BB : not found
-# let a+="BB "
-dash: 3: let: not found
-# a="AA "
-# a="${a} BB "
-# echo $a
-AA BB
-# 
+If someone needs to use these interfaces from different security contexts,
+a new interface should be written that goes through the ->ioctl() handler.
 
-Would be good if we had some utility that given a two files, one with
-regexps, could tell if, line by line, those expressions matched, better,
-one that is present in all these OSes...
+I've mostly copypasted ib_safe_file_access() over as sg_safe_file_access()
+because I couldn't find a good common header - please tell me if you know a
+better way.
+The duplicate pr_err_once() calls are so that each of them fires once;
+otherwise, this would probably have to be a macro.
 
-- Arnaldo
+changed in v2:
+ - remove the bsg parts per Christoph Hellwig's request
 
-> >         case "$(uname -m)" in
-> >         s390x)
-> >                 eventattr='call-graph=dwarf,max-stack=4'
-> > -               expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> > -               expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> > -               expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-> > +               expected="${expected}${newline}gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> > +               expected="${expected}${newline}(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-> > +               expected="${expected}${newline}main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-> >                 ;;
-> >         *)
-> >                 eventattr='max-stack=3'
-> > -               expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
-> > -               expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-> > +               expected="${expected}${newline}getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
-> > +               expected="${expected}${newline}.*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-> >                 ;;
-> >         esac
-> >  
-> > @@ -35,14 +36,16 @@ trace_libc_inet_pton_backtrace() {
-> >  
-> >         perf record -e probe_libc:inet_pton/$eventattr/ -o $file ping -6 -c 1 ::1 > /dev/null 2>&1
-> >         perf script -i $file | while read line ; do
-> > +               [ -z "${line}" ] && break
-> >                 echo $line
-> > -               echo "$line" | egrep -q "${expected[$idx]}"
-> > +               idx=$((idx + 1))
-> > +               first="$(echo ${expected} | head -$idx | tail -1)"
-> > +               [ -z "${first}" ] && break
-> > +               echo "$line" | egrep -q "$first"
-> >                 if [ $? -ne 0 ] ; then
-> > -                       printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${expected[$idx]}" "$line"
-> > +                       printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${first}" "$line"
-> >                         exit 1
-> >                 fi
-> > -               let idx+=1
-> > -               [ -z "${expected[$idx]}" ] && break
-> >         done
-> >  
-> >         # If any statements are executed from this point onwards,
-> > 
-> > Thanks,
-> > 
-> > Kim
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ drivers/scsi/sg.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index 53ae52dbff84..51b685192646 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -51,6 +51,7 @@ static int sg_version_num = 30536;	/* 2 digits for each component */
+ #include <linux/atomic.h>
+ #include <linux/ratelimit.h>
+ #include <linux/uio.h>
++#include <linux/cred.h> /* for sg_safe_file_access() */
+ 
+ #include "scsi.h"
+ #include <scsi/scsi_dbg.h>
+@@ -209,6 +210,23 @@ static void sg_device_destroy(struct kref *kref);
+ 	sdev_prefix_printk(prefix, (sdp)->device,		\
+ 			   (sdp)->disk->disk_name, fmt, ##a)
+ 
++/*
++ * The SCSI interfaces that use read() and write() as an asynchronous variant of
++ * ioctl(..., SG_IO, ...) are fundamentally unsafe, since there are lots of ways
++ * to trigger read() and write() calls from various contexts with elevated
++ * privileges. This can lead to kernel memory corruption (e.g. if these
++ * interfaces are called through splice()) and privilege escalation inside
++ * userspace (e.g. if a process with access to such a device passes a file
++ * descriptor to a SUID binary as stdin/stdout/stderr).
++ *
++ * This function provides protection for the legacy API by restricting the
++ * calling context.
++ */
++static inline bool sg_safe_file_access(struct file *filp)
++{
++	return filp->f_cred == current_cred() && !uaccess_kernel();
++}
++
+ static int sg_allow_access(struct file *filp, unsigned char *cmd)
+ {
+ 	struct sg_fd *sfp = filp->private_data;
+@@ -393,6 +411,12 @@ sg_read(struct file *filp, char __user *buf, size_t count, loff_t * ppos)
+ 	struct sg_header *old_hdr = NULL;
+ 	int retval = 0;
+ 
++	if (!sg_safe_file_access(filp)) {
++		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
++			__func__, task_tgid_vnr(current), current->comm);
++		return -EINVAL;
++	}
++
+ 	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+ 	SCSI_LOG_TIMEOUT(3, sg_printk(KERN_INFO, sdp,
+@@ -581,8 +605,11 @@ sg_write(struct file *filp, const char __user *buf, size_t count, loff_t * ppos)
+ 	sg_io_hdr_t *hp;
+ 	unsigned char cmnd[SG_MAX_CDB_SIZE];
+ 
+-	if (unlikely(uaccess_kernel()))
++	if (!sg_safe_file_access(filp)) {
++		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
++			__func__, task_tgid_vnr(current), current->comm);
+ 		return -EINVAL;
++	}
+ 
+ 	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
+ 		return -ENXIO;
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
+
