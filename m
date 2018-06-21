@@ -6,108 +6,133 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4306C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56461C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E84321A72
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E84321A72
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1293321A73
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:04:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1293321A73
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754206AbeFUTEF (ORCPT
+        id S1754240AbeFUTE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:04:05 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39258 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752650AbeFUTED (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:04:03 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 3E800805A4; Thu, 21 Jun 2018 21:04:02 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 21:04:01 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Chen Yu <yu.c.chen@intel.com>, Ted Ts'o <tytso@mit.edu>,
-        Len Brown <len.brown@intel.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Denis Kenzior <denkenz@gmail.com>
-Subject: Re: [PATCH 3/3][RFC] tools: create power/crypto utility
-Message-ID: <20180621190401.GA14623@amd>
-References: <cover.1529486870.git.yu.c.chen@intel.com>
- <78af30838d0bac69bdd6e138b659bcbb8464fd13.1529486870.git.yu.c.chen@intel.com>
- <20180621090142.GB21807@amd>
- <CAJZ5v0hDhsxwU4X6_dCqc7P5GaTtpBeMUeJTHo9YJ8QtWinYfg@mail.gmail.com>
+        Thu, 21 Jun 2018 15:04:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49150 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752650AbeFUTEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 15:04:55 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77EE821A6F;
+        Thu, 21 Jun 2018 19:04:54 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 15:04:52 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
+        raistlin@linux.it, linux-kernel@vger.kernel.org,
+        juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com,
+        joel@joelfernandes.org
+Subject: Re: [RESEND PATCH v5 2/2] sched/deadline: Set cp->elements[0].cpu
+ to -1 when the heap is empty
+Message-ID: <20180621150452.4480c33f@gandalf.local.home>
+In-Reply-To: <1529297905-24703-2-git-send-email-byungchul.park@lge.com>
+References: <1529297905-24703-1-git-send-email-byungchul.park@lge.com>
+        <1529297905-24703-2-git-send-email-byungchul.park@lge.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hDhsxwU4X6_dCqc7P5GaTtpBeMUeJTHo9YJ8QtWinYfg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 18 Jun 2018 13:58:25 +0900
+Byungchul Park <byungchul.park@lge.com> wrote:
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hello Steven and Daniel,
+> 
+> I've changed the 2nd patch a little bit to consider cpudl_clear()
+> additionally. Can I keep your Acked-by on?
 
-On Thu 2018-06-21 14:10:06, Rafael J. Wysocki wrote:
-> On Thu, Jun 21, 2018 at 11:01 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> >
-> >
-> > On Wed 2018-06-20 17:40:51, Chen Yu wrote:
-> >> crypto_hibernate is a user-space utility to generate
-> >> 512bits AES key and pass it to the kernel via ioctl
-> >> for hibernation encryption.(We can also add the key
-> >> into kernel via keyctl if necessary, but currently
-> >> using ioctl seems to be more straightforward as we
-> >> need both the key and salt transit).
-> >
-> > Ah, here you go:
-> >
-> > https://en.wikipedia.org/wiki/Uswsusp
->=20
-> No, not really.
->=20
-> > It can already do encryption. If you see problems there, patches will
-> > be gladly accepted to fix them.
->=20
-> By whom?
+Actually, I think this should be a separate patch. It handles a
+different issue.
 
-By me.
+> 
+> (I temporarily removed the Acked-by you gave me.)
+> 
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+> 
+> -----8<-----
+> >From 1e368d276186c22f9da298206c718b33e805828d Mon Sep 17 00:00:00 2001  
+> From: Byungchul Park <byungchul.park@lge.com>
+> Date: Mon, 4 Jun 2018 15:05:08 +0900
+> Subject: [RESEND PATCH v5 2/2] sched/deadline: Set cp->elements[0].cpu to -1 when the
+>  heap is empty
+> 
+> Currently, migrating tasks to cpu0 unconditionally happens when the
+> heap is empty, since cp->elements[0].cpu is initialized to 0(=cpu0).
+> We have to distinguish between the empty case and cpu0 to avoid the
+> unnecessary migrations. Therefore, it has to return an invalid value
+> e.i. -1 in the case the heap is empty.
+> 
+> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> Suggested-by: Joel Fernandes <joelaf@google.com>
+> ---
+>  kernel/sched/cpudeadline.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
+> index ae4fbdc..a200b36 100644
+> --- a/kernel/sched/cpudeadline.c
+> +++ b/kernel/sched/cpudeadline.c
+> @@ -136,6 +136,10 @@ int cpudl_find(struct cpudl *cp, struct task_struct *p,
+>  
+>  		WARN_ON(best_cpu != -1 && !cpu_present(best_cpu));
+>  
+> +		/* The heap tree is empty, just return. */
+> +		if (best_cpu == -1)
+> +			return 0;
+> +
 
-> > If you want to maintain uswsusp in kernel tree, I guess that would be
-> > an option, too.
->=20
-> No, it isn't an option due to the dependencies on crypto libraries.
+Actually, why not put the if before the WARN_ON, and then we can
+simplify the WARN_ON:
 
-Why not?
+	if (best_cpu == -1)
+		return 0;
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+	WARN_ON(!cpu_present(best_cpu));
 
---ZPt4rx8FFjLCG7dd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+-- Steve
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+>  		if (cpumask_test_cpu(best_cpu, &p->cpus_allowed) &&
+>  		    dl_time_before(dl_se->deadline, cpudl_maximum_dl(cp))) {
+>  			if (later_mask)
+> @@ -172,6 +176,13 @@ void cpudl_clear(struct cpudl *cp, int cpu)
+>  		 * This could happen if a rq_offline_dl is
+>  		 * called for a CPU without -dl tasks running.
+>  		 */
+> +	} else if (cp->size == 1){
+> +		/* Only one element in the heap, clear it. */
+> +		cp->elements[0].cpu = -1;
+> +		cp->elements[cpu].idx = IDX_INVALID;
+> +		cp->size = 0;
+> +
+> +		cpumask_set_cpu(cpu, cp->free_cpus);
+>  	} else {
+>  		new_cpu = cp->elements[cp->size - 1].cpu;
+>  		cp->elements[old_idx].dl = cp->elements[cp->size - 1].dl;
+> @@ -267,6 +278,9 @@ int cpudl_init(struct cpudl *cp)
+>  	for_each_possible_cpu(i)
+>  		cp->elements[i].idx = IDX_INVALID;
+>  
+> +	/* Mark heap as initially empty. */
+> +	cp->elements[0].cpu = -1;
+> +
+>  	return 0;
+>  }
+>  
 
-iEYEARECAAYFAlsr9qEACgkQMOfwapXb+vLiMgCfTsxaT+klE7ncAIKDZJ94dkAT
-ClQAn07ioHsAuzcmn+a1TOL8S6lYDxhY
-=XdVo
------END PGP SIGNATURE-----
-
---ZPt4rx8FFjLCG7dd--
