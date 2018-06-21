@@ -2,122 +2,115 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.9 required=3.0 tests=BODY_8BITS,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0178C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F05FC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A31120837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5245420837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:06:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="FeCNOynF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A31120837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PPm1699j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5245420837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754206AbeFUHEL (ORCPT
+        id S1754104AbeFUHGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 03:04:11 -0400
-Received: from services.gouders.net ([141.101.32.176]:55745 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754104AbeFUHEJ (ORCPT
+        Thu, 21 Jun 2018 03:06:25 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36462 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751132AbeFUHGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 03:04:09 -0400
-Received: from localhost ([193.175.198.193])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w5L6vKep009097
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jun 2018 08:57:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1529564242; bh=pd0O7KjufViIkZ6dzFz7LpDrwA7x7lGcgg/R21Gy7hY=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date;
-        b=FeCNOynFkOyaUoMps5k10yUg01ponW8asm5RVYToSk6glAgi7PkARWoiKxj8EbV8K
-         NtjPnIFOZbLKAZ5x+ydZKQreV9oql4UffFFWc/bdOown2V7KY7Gbds5l7B8AV0akaO
-         tXr+RSWKZ1pOcXiZK7N4JN0HgT51A9dq/I96DBqI=
-From:   Dirk Gouders <dirk@gouders.net>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [RFC v8 1/1] mconf: global i-search in menu prompts
-In-Reply-To: <126839db-5cc1-7dad-5a1f-21899dc6236e@infradead.org> (Randy
-        Dunlap's message of "Wed, 20 Jun 2018 13:02:03 -0700")
-References: <20180620084217.8597-1-dirk@gouders.net>
-        <20180620084217.8597-2-dirk@gouders.net>
-        <f02cc7c6-d92e-24f3-b0ad-df9e6bf7630a@infradead.org>
-        <ghpo0l2spo.fsf@lena.gouders.net>
-        <126839db-5cc1-7dad-5a1f-21899dc6236e@infradead.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-Date:   Thu, 21 Jun 2018 08:57:12 +0200
-Message-ID: <ghin6clj93.fsf@lena.gouders.net>
+        Thu, 21 Jun 2018 03:06:24 -0400
+Received: by mail-it0-f67.google.com with SMTP id j135-v6so3328471itj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 00:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+o0a8qJY2/Pt0SHKMnMfm3AlumEW1LhlaH66K/cCqk0=;
+        b=PPm1699jRAP8WyFEDs4GtDX3JqwX8Hy4Use+oVBr8ZrvvDkXwd8aCI/THl1+QKIkKh
+         aAAdnm++BG37Kfa5C1plcagbImEAqvYwU+xnnsyvj0G1ZBT11zL9xYPji+oy31Orh0W2
+         RZLmhXNjVHj10O3p+JTghzKq1LRiD3jIinwNswrc/6rMaYxgw/52fb6rZDlvd6JW5Mc/
+         V4jyUmMS3ZSaOrBdvq5l2KtoWAMB+Vcb6C+7dJQ4h/kgG/gIGJTqkG5VOqrwlCiQrECK
+         EkhhNQ9E2F3r5Zf+yoni7GAr7xLGz1gi1wcgDobpO3v04LpmJ2I1yemVXNYzgC0ysQjh
+         OzNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+o0a8qJY2/Pt0SHKMnMfm3AlumEW1LhlaH66K/cCqk0=;
+        b=MIO8a+YbBH6dmBXcG28sC4P07XMVdmv3hbEbt9Nqa87s7q5hwH7kqFkt0H2l4WaFB2
+         wXShHfHpLROKwtQlzniUH5YaHReQmyj53doeORsiepr/Q1sc1YqeP+k2GxqsG2CQbnTV
+         8Vs1vxWIoQBpPc8KbmMTKAPAHnTr1KtX11+P4PeeqMcVz8TySh0O3D2ok0P41Ut32lwn
+         mI7CE/YIb+WkQWAv79L464GQzuHrvqCjZXuc408sj00MQifgaRNfY0srbJaIqkOngpRY
+         aQS96A8zvezrh0EHXI5w+ZjTAJY1gpoJIBy/QwlN4gwSZp0zdTwRteaPgl/Yr+1YaCnb
+         74aA==
+X-Gm-Message-State: APt69E3YzycLhhaJm57iadNJCiF3RKkg2BEPGpk+l72CHpEK1MoX2EJA
+        rhPtxIyvftLEgZJaEQ+e/Mp7Y1dv/JX4EDCtRM0=
+X-Google-Smtp-Source: ADUXVKI2GaC+hhmnWYywZFct+YGntB7ZqFVPW99I8Nr/jieFlZPGcBOz7hKa2izDGKbqYRvUwnXxQZsDTQSWIOJXgbE=
+X-Received: by 2002:a02:94e7:: with SMTP id x94-v6mr20211182jah.49.1529564783409;
+ Thu, 21 Jun 2018 00:06:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+References: <cover.1529506497.git.zong@andestech.com> <79dba59ab02752b260cb31f557a09df786fd80d7.1529506497.git.zong@andestech.com>
+ <20180621064043.GC19319@infradead.org>
+In-Reply-To: <20180621064043.GC19319@infradead.org>
+From:   Zong Li <zongbox@gmail.com>
+Date:   Thu, 21 Jun 2018 15:06:12 +0800
+Message-ID: <CA+ZOyahrur6+9xw6mTpMGEe2Y6S=V0f_63kzqOgAdbdTpOvqCA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] RISC-V: Add conditional macro for zone of DMA32
+To:     hch@infradead.org
+Cc:     Zong Li <zong@andestech.com>, linux-riscv@lists.infradead.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        aou@eecs.berkeley.edu, greentime@adnestech.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> writes:
-
-> On 06/20/2018 11:55 AM, Dirk Gouders wrote:
->> Randy Dunlap <rdunlap@infradead.org> writes:
->> 
->>> Hi,
->>>
->>> On 06/20/2018 01:42 AM, Dirk Gouders wrote:
->>>>
->>>> Operation
->>>> ---------
->>>> The TAB key is reserved to toggle the focus between menu and bottons.
->>>> Focus is on the buttons if one of the buttens (the active one) is
->>>> hightlighted, otherwise it is on the menu.
->>>>
->>>> When the focus is on the buttons, mconf operates as before with the
->>>> exception of the TAB key.
->>>>
->>>> When the focus is on the menu, mconf operates in i-search mode and the
->>>> following input has special meaning:
->>>>
->>>> * <\> (backslash) can be used to search for other occurences of an
->>>>   already entered string.  On empty search strings, nothing happens.
->>>>
->>>> * Any other printable character than backslash and '\n' is appended to
->>>>   the current search string and a match is searched for.  If a match
->>>>   is found, it is immediately navigated to.
->>>
->>> About that paragraph above:  I tried to search for "fs-cache", as in:
->>>
->>> config FSCACHE_DEBUG
->>> 	bool "Debug FS-Cache"
->>>
->>> but i-search does not allow me to enter a '-' character.  Seems odd to me.
->> 
->> Hi Randy,
->> 
->> thanks for all your testing.
->> 
->> '-' and '+' previously had the same meaning as <KEY_UP>, <KEY_DOWN>,
->> respectively.  If you are on the top menu item and press '-' there is
->> nothing to scroll up so it appears as if the pressed key wasn't
->> processed.
->> 
->> I-search should add those characters to the pattern but I broke that two
->> or three versions before when I fixed another issue.
->> 
->> I will add this to my list of test cases so this won't happen again.
->> 
->> Dirk
->> 
->> 
->>> Still doing other testing...
+Christoph Hellwig <hch@infradead.org> =E6=96=BC 2018=E5=B9=B46=E6=9C=8821=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=882:40=E5=AF=AB=E9=81=93=EF=BC=
+=9A
 >
-> I haven't hit any other issues.
+> On Thu, Jun 21, 2018 at 09:41:41AM +0800, Zong Li wrote:
+> > The DMA32 is for 64-bit usage.
+> >
+> > Signed-off-by: Zong Li <zong@andestech.com>
+> > ---
+> >  arch/riscv/mm/init.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> > index c77df8142be2..91a5852e28fd 100644
+> > --- a/arch/riscv/mm/init.c
+> > +++ b/arch/riscv/mm/init.c
+> > @@ -28,8 +28,11 @@ static void __init zone_sizes_init(void)
+> >  {
+> >       unsigned long max_zone_pfns[MAX_NR_ZONES] =3D { 0, };
+> >
+> > +#ifdef CONFIG_ZONE_DMA32
+> >       max_zone_pfns[ZONE_DMA32] =3D PFN_DOWN(min(4UL * SZ_1G, max_low_p=
+fn));
+> > +#else
+> >       max_zone_pfns[ZONE_NORMAL] =3D max_low_pfn;
+> > +#endif
+>
+> This breaks the 64-bit setup.  The second line needs to be kept for
+> the CONFIG_ZONE_DMA32 case.
 
-Thank you for testing!
-The issue concerning '-' and '+' I will fix.
 
-Dirk
+Yes, it should be
+
+#ifdef CONFIG_ZONE_DMA32
+    max_zone_pfns[ZONE_DMA32] =3D PFN_DOWN(min(4UL * SZ_1G, max_low_pfn));
+#endif
+    max_zone_pfns[ZONE_NORMAL] =3D max_low_pfn;
+
+Thanks!
