@@ -2,667 +2,210 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4611C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074F6C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E42208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B821A208A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:35:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CXHWJUJe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E42208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1zNEncCu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B821A208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933556AbeFUMe7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:34:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54658 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933388AbeFUMe5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:34:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=z+G+3CkjgcwMPNFqRc+4aFYJuOhQiXyQC/fbDJ8VYPA=; b=CXHWJUJe8GTLo7kp3XU4/zQi8
-        3mYY4XO3RKFh/TJp2MJWPCOygSQVus+DRpvZPBuAo5S+EOJ8+61T5ERNUpvbFVaVaAa+t8LbI4qVr
-        K7EJfHviwMyYbbEk0f9a8XEXS9o6QtmT9cISaUoJwTb+Vz0SFdhAIHi4YMxYZcSguZ2Lzu0dDBzn1
-        TNzIap3yiwB21JjS27Y5VwQ2lMJ7cpB+L9oi4n+KdS36aJ2yD98AixOlJKhCFFRysIJh54GPhjap0
-        cwwE1eIl8Zj9r56GkM7L0buCo8+xO+7OwgXmeTatNVrOtxtvKSBLRsIHlASHqn1w9m0XKqUZ01lk+
-        /hEuuofTQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVynH-0000DR-Ej; Thu, 21 Jun 2018 12:34:31 +0000
-Date:   Thu, 21 Jun 2018 05:34:31 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     dgilbert@interlog.com, Al Viro <viro@ZenIV.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        security@kernel.org
-Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in
- release
-Message-ID: <20180621123431.GA558@infradead.org>
-References: <20180615152335.208202-1-jannh@google.com>
- <20180615164009.GD30522@ZenIV.linux.org.uk>
- <90063ef3-68fa-e983-9b47-838e6076b0f4@interlog.com>
- <813e817b-bb2f-4a47-6225-9e39f19be278@kernel.dk>
+        id S933612AbeFUMfO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:35:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933388AbeFUMfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 08:35:12 -0400
+Received: from localhost (unknown [106.200.222.147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36CB520883;
+        Thu, 21 Jun 2018 12:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529584512;
+        bh=lQah/djH4Cx0KRpFvMkY3SlE9GggRmJ4lwS9+Rx24RA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1zNEncCuDmcb4GE1D609rQ2JwgOTKT0XYd7NVk9YDbEsIjvy673qRwIin8O4pF6g2
+         6Y7Hz9h2TJOfcYShtx2BRJeLrrryK0UfvSXnH0vyVK1LVvv2i7U011BbudENUJJKjE
+         3sxIPDN6UQBIUAbQKLofXzYNnQoUsiJYXkwo50rk=
+Date:   Thu, 21 Jun 2018 18:05:03 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Rohit kumar <rohitkr@codeaurora.org>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, plai@codeaurora.org, bgoswami@codeaurora.org,
+        perex@perex.cz, srinivas.kandagatla@linaro.org, tiwai@suse.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v2 2/2] ASoC: qcom: add sdm845 sound card
+ support
+Message-ID: <20180621123503.GD27187@vkoul-mobl>
+References: <1529578399-3633-1-git-send-email-rohitkr@codeaurora.org>
+ <1529578399-3633-3-git-send-email-rohitkr@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <813e817b-bb2f-4a47-6225-9e39f19be278@kernel.dk>
+In-Reply-To: <1529578399-3633-3-git-send-email-rohitkr@codeaurora.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 09:37:01AM -0600, Jens Axboe wrote:
-> It was born with that mode, but I don't think anyone ever really used it.
-> So it might feasible to simply yank it. That said, just doing a prune
-> mode at ->release() time doesn't seem like such a hard task.
+Hi Rohit,
 
-Let's try to kill it.  It is a significant amount of code, which does
-fishy things and is probably entirely unused:
+On 21-06-18, 16:23, Rohit kumar wrote:
 
----
-From baec733be1b400d73d0fa2bfc07684598c4172e7 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 21 Jun 2018 14:31:32 +0200
-Subject: bsg: remove read/write support
+> +static struct sdm845_snd_data *sdm845_sbc_parse_of(struct snd_soc_card *card)
+> +{
+> +	struct device *dev = card->dev;
+> +	struct snd_soc_dai_link *link;
+> +	struct device_node *np, *codec, *platform, *cpu, *node;
+> +	int ret, num_links;
+> +	struct sdm845_snd_data *data;
+> +
+> +	ret = snd_soc_of_parse_card_name(card, "qcom,model");
+> +	if (ret) {
+> +		dev_err(dev, "Error parsing card name: %d\n", ret);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	node = dev->of_node;
+> +
+> +	/* DAPM routes */
+> +	if (of_property_read_bool(node, "qcom,audio-routing")) {
+> +		ret = snd_soc_of_parse_audio_routing(card,
+> +					"qcom,audio-routing");
+> +		if (ret)
+> +			return ERR_PTR(ret);
+> +	}
+> +
+> +	/* Populate links */
+> +	num_links = of_get_child_count(node);
+> +
+> +	/* Allocate the private data and the DAI link array */
+> +	data = kzalloc(sizeof(*data) + sizeof(*link) * num_links,
+> +			GFP_KERNEL);
+> +	if (!data)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	card->dai_link = &data->dai_link[0];
+> +	card->num_links = num_links;
+> +
+> +	link = data->dai_link;
+> +	data->card = card;
+> +
+> +	for_each_child_of_node(node, np) {
+> +		cpu = of_get_child_by_name(np, "cpu");
+> +		if (!cpu) {
+> +			dev_err(dev, "Can't find cpu DT node\n");
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +
+> +		link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
+> +		if (!link->cpu_of_node) {
+> +			dev_err(card->dev, "error getting cpu phandle\n");
+> +			ret = -EINVAL;
+> +			goto fail;
+> +		}
+> +
+> +		ret = snd_soc_of_get_dai_name(cpu, &link->cpu_dai_name);
+> +		if (ret) {
+> +			dev_err(card->dev, "error getting cpu dai name\n");
+> +			goto fail;
+> +		}
+> +
+> +		platform = of_get_child_by_name(np, "platform");
+> +		codec = of_get_child_by_name(np, "codec");
+> +		if (codec && platform) {
+> +			link->platform_of_node = of_parse_phandle(platform,
+> +					"sound-dai", 0);
+> +			if (!link->platform_of_node) {
+> +				dev_err(card->dev, "error getting platform phandle\n");
+> +				ret = -EINVAL;
+> +				goto fail;
+> +			}
+> +
+> +			ret = snd_soc_of_get_dai_link_codecs(dev, codec, link);
+> +			if (ret < 0) {
+> +				dev_err(card->dev, "error getting codec dai name\n");
+> +				goto fail;
+> +			}
+> +			link->no_pcm = 1;
+> +			link->ignore_pmdown_time = 1;
+> +			link->ops = &sdm845_be_ops;
+> +			link->be_hw_params_fixup = sdm845_be_hw_params_fixup;
+> +		} else {
+> +			link->platform_of_node = link->cpu_of_node;
+> +			link->codec_dai_name = "snd-soc-dummy-dai";
+> +			link->codec_name = "snd-soc-dummy";
+> +			link->dynamic = 1;
+> +		}
+> +
+> +		link->ignore_suspend = 1;
+> +		ret = of_property_read_string(np, "link-name", &link->name);
+> +		if (ret) {
+> +			dev_err(card->dev,
+> +				"error getting codec dai_link name\n");
+> +			goto fail;
+> +		}
+> +
+> +		link->dpcm_playback = 1;
+> +		link->dpcm_capture = 1;
+> +		link->stream_name = link->name;
+> +		link++;
+> +	}
+> +	dev_set_drvdata(dev, card);
+> +	snd_soc_card_set_drvdata(card, data);
+> +
+> +	return data;
+> +fail:
+> +	kfree(data);
+> +	return ERR_PTR(ret);
+> +}
 
-The code poses a security risk due to user memory access in ->release
-and had an API that can't be used reliably.  As far as we know it was
-never used for real, but if that turns out wrong we'll have to revert
-this commit and come up with a band aid.
+this routine...
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/bsg.c | 460 +---------------------------------------------------
- 1 file changed, 6 insertions(+), 454 deletions(-)
+> +static int add_audio_components(struct device *dev,
+> +				struct component_match **matchptr)
+> +{
+> +	struct device_node *np, *platform, *cpu, *node, *dai_node;
+> +
+> +	node = dev->of_node;
+> +
+> +	for_each_child_of_node(node, np) {
+> +		cpu = of_get_child_by_name(np, "cpu");
+> +		if (cpu) {
+> +			dai_node = of_parse_phandle(cpu, "sound-dai", 0);
+> +			of_node_get(dai_node);
+> +			component_match_add_release(dev, matchptr,
+> +					sdm845_release_of,
+> +					sdm845_compare_of,
+> +					dai_node);
+> +		}
+> +
+> +		platform = of_get_child_by_name(np, "platform");
+> +		if (platform) {
+> +			dai_node = of_parse_phandle(platform, "sound-dai", 0);
+> +			component_match_add_release(dev, matchptr,
+> +					sdm845_release_of,
+> +					sdm845_compare_of,
+> +					dai_node);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
 
-diff --git a/block/bsg.c b/block/bsg.c
-index 66602c489956..0d2e9bf6208b 100644
---- a/block/bsg.c
-+++ b/block/bsg.c
-@@ -13,11 +13,9 @@
- #include <linux/init.h>
- #include <linux/file.h>
- #include <linux/blkdev.h>
--#include <linux/poll.h>
- #include <linux/cdev.h>
- #include <linux/jiffies.h>
- #include <linux/percpu.h>
--#include <linux/uio.h>
- #include <linux/idr.h>
- #include <linux/bsg.h>
- #include <linux/slab.h>
-@@ -38,21 +36,10 @@
- struct bsg_device {
- 	struct request_queue *queue;
- 	spinlock_t lock;
--	struct list_head busy_list;
--	struct list_head done_list;
- 	struct hlist_node dev_list;
- 	atomic_t ref_count;
--	int queued_cmds;
--	int done_cmds;
--	wait_queue_head_t wq_done;
--	wait_queue_head_t wq_free;
- 	char name[20];
- 	int max_queue;
--	unsigned long flags;
--};
--
--enum {
--	BSG_F_BLOCK		= 1,
- };
- 
- #define BSG_DEFAULT_CMDS	64
-@@ -67,64 +54,6 @@ static struct hlist_head bsg_device_list[BSG_LIST_ARRAY_SIZE];
- static struct class *bsg_class;
- static int bsg_major;
- 
--static struct kmem_cache *bsg_cmd_cachep;
--
--/*
-- * our internal command type
-- */
--struct bsg_command {
--	struct bsg_device *bd;
--	struct list_head list;
--	struct request *rq;
--	struct bio *bio;
--	struct bio *bidi_bio;
--	int err;
--	struct sg_io_v4 hdr;
--};
--
--static void bsg_free_command(struct bsg_command *bc)
--{
--	struct bsg_device *bd = bc->bd;
--	unsigned long flags;
--
--	kmem_cache_free(bsg_cmd_cachep, bc);
--
--	spin_lock_irqsave(&bd->lock, flags);
--	bd->queued_cmds--;
--	spin_unlock_irqrestore(&bd->lock, flags);
--
--	wake_up(&bd->wq_free);
--}
--
--static struct bsg_command *bsg_alloc_command(struct bsg_device *bd)
--{
--	struct bsg_command *bc = ERR_PTR(-EINVAL);
--
--	spin_lock_irq(&bd->lock);
--
--	if (bd->queued_cmds >= bd->max_queue)
--		goto out;
--
--	bd->queued_cmds++;
--	spin_unlock_irq(&bd->lock);
--
--	bc = kmem_cache_zalloc(bsg_cmd_cachep, GFP_KERNEL);
--	if (unlikely(!bc)) {
--		spin_lock_irq(&bd->lock);
--		bd->queued_cmds--;
--		bc = ERR_PTR(-ENOMEM);
--		goto out;
--	}
--
--	bc->bd = bd;
--	INIT_LIST_HEAD(&bc->list);
--	bsg_dbg(bd, "returning free cmd %p\n", bc);
--	return bc;
--out:
--	spin_unlock_irq(&bd->lock);
--	return bc;
--}
--
- static inline struct hlist_head *bsg_dev_idx_hash(int index)
- {
- 	return &bsg_device_list[index & (BSG_LIST_ARRAY_SIZE - 1)];
-@@ -287,101 +216,6 @@ bsg_map_hdr(struct request_queue *q, struct sg_io_v4 *hdr, fmode_t mode)
- 	return ERR_PTR(ret);
- }
- 
--/*
-- * async completion call-back from the block layer, when scsi/ide/whatever
-- * calls end_that_request_last() on a request
-- */
--static void bsg_rq_end_io(struct request *rq, blk_status_t status)
--{
--	struct bsg_command *bc = rq->end_io_data;
--	struct bsg_device *bd = bc->bd;
--	unsigned long flags;
--
--	bsg_dbg(bd, "finished rq %p bc %p, bio %p\n",
--		rq, bc, bc->bio);
--
--	bc->hdr.duration = jiffies_to_msecs(jiffies - bc->hdr.duration);
--
--	spin_lock_irqsave(&bd->lock, flags);
--	list_move_tail(&bc->list, &bd->done_list);
--	bd->done_cmds++;
--	spin_unlock_irqrestore(&bd->lock, flags);
--
--	wake_up(&bd->wq_done);
--}
--
--/*
-- * do final setup of a 'bc' and submit the matching 'rq' to the block
-- * layer for io
-- */
--static void bsg_add_command(struct bsg_device *bd, struct request_queue *q,
--			    struct bsg_command *bc, struct request *rq)
--{
--	int at_head = (0 == (bc->hdr.flags & BSG_FLAG_Q_AT_TAIL));
--
--	/*
--	 * add bc command to busy queue and submit rq for io
--	 */
--	bc->rq = rq;
--	bc->bio = rq->bio;
--	if (rq->next_rq)
--		bc->bidi_bio = rq->next_rq->bio;
--	bc->hdr.duration = jiffies;
--	spin_lock_irq(&bd->lock);
--	list_add_tail(&bc->list, &bd->busy_list);
--	spin_unlock_irq(&bd->lock);
--
--	bsg_dbg(bd, "queueing rq %p, bc %p\n", rq, bc);
--
--	rq->end_io_data = bc;
--	blk_execute_rq_nowait(q, NULL, rq, at_head, bsg_rq_end_io);
--}
--
--static struct bsg_command *bsg_next_done_cmd(struct bsg_device *bd)
--{
--	struct bsg_command *bc = NULL;
--
--	spin_lock_irq(&bd->lock);
--	if (bd->done_cmds) {
--		bc = list_first_entry(&bd->done_list, struct bsg_command, list);
--		list_del(&bc->list);
--		bd->done_cmds--;
--	}
--	spin_unlock_irq(&bd->lock);
--
--	return bc;
--}
--
--/*
-- * Get a finished command from the done list
-- */
--static struct bsg_command *bsg_get_done_cmd(struct bsg_device *bd)
--{
--	struct bsg_command *bc;
--	int ret;
--
--	do {
--		bc = bsg_next_done_cmd(bd);
--		if (bc)
--			break;
--
--		if (!test_bit(BSG_F_BLOCK, &bd->flags)) {
--			bc = ERR_PTR(-EAGAIN);
--			break;
--		}
--
--		ret = wait_event_interruptible(bd->wq_done, bd->done_cmds);
--		if (ret) {
--			bc = ERR_PTR(-ERESTARTSYS);
--			break;
--		}
--	} while (1);
--
--	bsg_dbg(bd, "returning done %p\n", bc);
--
--	return bc;
--}
--
- static int blk_complete_sgv4_hdr_rq(struct request *rq, struct sg_io_v4 *hdr,
- 				    struct bio *bio, struct bio *bidi_bio)
- {
-@@ -400,234 +234,6 @@ static int blk_complete_sgv4_hdr_rq(struct request *rq, struct sg_io_v4 *hdr,
- 	return ret;
- }
- 
--static bool bsg_complete(struct bsg_device *bd)
--{
--	bool ret = false;
--	bool spin;
--
--	do {
--		spin_lock_irq(&bd->lock);
--
--		BUG_ON(bd->done_cmds > bd->queued_cmds);
--
--		/*
--		 * All commands consumed.
--		 */
--		if (bd->done_cmds == bd->queued_cmds)
--			ret = true;
--
--		spin = !test_bit(BSG_F_BLOCK, &bd->flags);
--
--		spin_unlock_irq(&bd->lock);
--	} while (!ret && spin);
--
--	return ret;
--}
--
--static int bsg_complete_all_commands(struct bsg_device *bd)
--{
--	struct bsg_command *bc;
--	int ret, tret;
--
--	bsg_dbg(bd, "entered\n");
--
--	/*
--	 * wait for all commands to complete
--	 */
--	io_wait_event(bd->wq_done, bsg_complete(bd));
--
--	/*
--	 * discard done commands
--	 */
--	ret = 0;
--	do {
--		spin_lock_irq(&bd->lock);
--		if (!bd->queued_cmds) {
--			spin_unlock_irq(&bd->lock);
--			break;
--		}
--		spin_unlock_irq(&bd->lock);
--
--		bc = bsg_get_done_cmd(bd);
--		if (IS_ERR(bc))
--			break;
--
--		tret = blk_complete_sgv4_hdr_rq(bc->rq, &bc->hdr, bc->bio,
--						bc->bidi_bio);
--		if (!ret)
--			ret = tret;
--
--		bsg_free_command(bc);
--	} while (1);
--
--	return ret;
--}
--
--static int
--__bsg_read(char __user *buf, size_t count, struct bsg_device *bd,
--	   const struct iovec *iov, ssize_t *bytes_read)
--{
--	struct bsg_command *bc;
--	int nr_commands, ret;
--
--	if (count % sizeof(struct sg_io_v4))
--		return -EINVAL;
--
--	ret = 0;
--	nr_commands = count / sizeof(struct sg_io_v4);
--	while (nr_commands) {
--		bc = bsg_get_done_cmd(bd);
--		if (IS_ERR(bc)) {
--			ret = PTR_ERR(bc);
--			break;
--		}
--
--		/*
--		 * this is the only case where we need to copy data back
--		 * after completing the request. so do that here,
--		 * bsg_complete_work() cannot do that for us
--		 */
--		ret = blk_complete_sgv4_hdr_rq(bc->rq, &bc->hdr, bc->bio,
--					       bc->bidi_bio);
--
--		if (copy_to_user(buf, &bc->hdr, sizeof(bc->hdr)))
--			ret = -EFAULT;
--
--		bsg_free_command(bc);
--
--		if (ret)
--			break;
--
--		buf += sizeof(struct sg_io_v4);
--		*bytes_read += sizeof(struct sg_io_v4);
--		nr_commands--;
--	}
--
--	return ret;
--}
--
--static inline void bsg_set_block(struct bsg_device *bd, struct file *file)
--{
--	if (file->f_flags & O_NONBLOCK)
--		clear_bit(BSG_F_BLOCK, &bd->flags);
--	else
--		set_bit(BSG_F_BLOCK, &bd->flags);
--}
--
--/*
-- * Check if the error is a "real" error that we should return.
-- */
--static inline int err_block_err(int ret)
--{
--	if (ret && ret != -ENOSPC && ret != -ENODATA && ret != -EAGAIN)
--		return 1;
--
--	return 0;
--}
--
--static ssize_t
--bsg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
--{
--	struct bsg_device *bd = file->private_data;
--	int ret;
--	ssize_t bytes_read;
--
--	bsg_dbg(bd, "read %zd bytes\n", count);
--
--	bsg_set_block(bd, file);
--
--	bytes_read = 0;
--	ret = __bsg_read(buf, count, bd, NULL, &bytes_read);
--	*ppos = bytes_read;
--
--	if (!bytes_read || err_block_err(ret))
--		bytes_read = ret;
--
--	return bytes_read;
--}
--
--static int __bsg_write(struct bsg_device *bd, const char __user *buf,
--		       size_t count, ssize_t *bytes_written, fmode_t mode)
--{
--	struct bsg_command *bc;
--	struct request *rq;
--	int ret, nr_commands;
--
--	if (count % sizeof(struct sg_io_v4))
--		return -EINVAL;
--
--	nr_commands = count / sizeof(struct sg_io_v4);
--	rq = NULL;
--	bc = NULL;
--	ret = 0;
--	while (nr_commands) {
--		struct request_queue *q = bd->queue;
--
--		bc = bsg_alloc_command(bd);
--		if (IS_ERR(bc)) {
--			ret = PTR_ERR(bc);
--			bc = NULL;
--			break;
--		}
--
--		if (copy_from_user(&bc->hdr, buf, sizeof(bc->hdr))) {
--			ret = -EFAULT;
--			break;
--		}
--
--		/*
--		 * get a request, fill in the blanks, and add to request queue
--		 */
--		rq = bsg_map_hdr(bd->queue, &bc->hdr, mode);
--		if (IS_ERR(rq)) {
--			ret = PTR_ERR(rq);
--			rq = NULL;
--			break;
--		}
--
--		bsg_add_command(bd, q, bc, rq);
--		bc = NULL;
--		rq = NULL;
--		nr_commands--;
--		buf += sizeof(struct sg_io_v4);
--		*bytes_written += sizeof(struct sg_io_v4);
--	}
--
--	if (bc)
--		bsg_free_command(bc);
--
--	return ret;
--}
--
--static ssize_t
--bsg_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
--{
--	struct bsg_device *bd = file->private_data;
--	ssize_t bytes_written;
--	int ret;
--
--	bsg_dbg(bd, "write %zd bytes\n", count);
--
--	if (unlikely(uaccess_kernel()))
--		return -EINVAL;
--
--	bsg_set_block(bd, file);
--
--	bytes_written = 0;
--	ret = __bsg_write(bd, buf, count, &bytes_written, file->f_mode);
--
--	*ppos = bytes_written;
--
--	/*
--	 * return bytes written on non-fatal errors
--	 */
--	if (!bytes_written || err_block_err(ret))
--		bytes_written = ret;
--
--	bsg_dbg(bd, "returning %zd\n", bytes_written);
--	return bytes_written;
--}
--
- static struct bsg_device *bsg_alloc_device(void)
- {
- 	struct bsg_device *bd;
-@@ -637,29 +243,20 @@ static struct bsg_device *bsg_alloc_device(void)
- 		return NULL;
- 
- 	spin_lock_init(&bd->lock);
--
- 	bd->max_queue = BSG_DEFAULT_CMDS;
--
--	INIT_LIST_HEAD(&bd->busy_list);
--	INIT_LIST_HEAD(&bd->done_list);
- 	INIT_HLIST_NODE(&bd->dev_list);
--
--	init_waitqueue_head(&bd->wq_free);
--	init_waitqueue_head(&bd->wq_done);
- 	return bd;
- }
- 
- static int bsg_put_device(struct bsg_device *bd)
- {
--	int ret = 0, do_free;
- 	struct request_queue *q = bd->queue;
- 
- 	mutex_lock(&bsg_mutex);
- 
--	do_free = atomic_dec_and_test(&bd->ref_count);
--	if (!do_free) {
-+	if (!atomic_dec_and_test(&bd->ref_count)) {
- 		mutex_unlock(&bsg_mutex);
--		goto out;
-+		return 0;
- 	}
- 
- 	hlist_del(&bd->dev_list);
-@@ -670,20 +267,9 @@ static int bsg_put_device(struct bsg_device *bd)
- 	/*
- 	 * close can always block
- 	 */
--	set_bit(BSG_F_BLOCK, &bd->flags);
--
--	/*
--	 * correct error detection baddies here again. it's the responsibility
--	 * of the app to properly reap commands before close() if it wants
--	 * fool-proof error detection
--	 */
--	ret = bsg_complete_all_commands(bd);
--
- 	kfree(bd);
--out:
--	if (do_free)
--		blk_put_queue(q);
--	return ret;
-+	blk_put_queue(q);
-+	return 0;
- }
- 
- static struct bsg_device *bsg_add_device(struct inode *inode,
-@@ -706,8 +292,6 @@ static struct bsg_device *bsg_add_device(struct inode *inode,
- 
- 	bd->queue = rq;
- 
--	bsg_set_block(bd, file);
--
- 	atomic_set(&bd->ref_count, 1);
- 	hlist_add_head(&bd->dev_list, bsg_dev_idx_hash(iminor(inode)));
- 
-@@ -781,24 +365,6 @@ static int bsg_release(struct inode *inode, struct file *file)
- 	return bsg_put_device(bd);
- }
- 
--static __poll_t bsg_poll(struct file *file, poll_table *wait)
--{
--	struct bsg_device *bd = file->private_data;
--	__poll_t mask = 0;
--
--	poll_wait(file, &bd->wq_done, wait);
--	poll_wait(file, &bd->wq_free, wait);
--
--	spin_lock_irq(&bd->lock);
--	if (!list_empty(&bd->done_list))
--		mask |= EPOLLIN | EPOLLRDNORM;
--	if (bd->queued_cmds < bd->max_queue)
--		mask |= EPOLLOUT;
--	spin_unlock_irq(&bd->lock);
--
--	return mask;
--}
--
- static long bsg_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct bsg_device *bd = file->private_data;
-@@ -872,9 +438,6 @@ static long bsg_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- }
- 
- static const struct file_operations bsg_fops = {
--	.read		=	bsg_read,
--	.write		=	bsg_write,
--	.poll		=	bsg_poll,
- 	.open		=	bsg_open,
- 	.release	=	bsg_release,
- 	.unlocked_ioctl	=	bsg_ioctl,
-@@ -979,21 +542,12 @@ static int __init bsg_init(void)
- 	int ret, i;
- 	dev_t devid;
- 
--	bsg_cmd_cachep = kmem_cache_create("bsg_cmd",
--				sizeof(struct bsg_command), 0, 0, NULL);
--	if (!bsg_cmd_cachep) {
--		printk(KERN_ERR "bsg: failed creating slab cache\n");
--		return -ENOMEM;
--	}
--
- 	for (i = 0; i < BSG_LIST_ARRAY_SIZE; i++)
- 		INIT_HLIST_HEAD(&bsg_device_list[i]);
- 
- 	bsg_class = class_create(THIS_MODULE, "bsg");
--	if (IS_ERR(bsg_class)) {
--		ret = PTR_ERR(bsg_class);
--		goto destroy_kmemcache;
--	}
-+	if (IS_ERR(bsg_class))
-+		return PTR_ERR(bsg_class);
- 	bsg_class->devnode = bsg_devnode;
- 
- 	ret = alloc_chrdev_region(&devid, 0, BSG_MAX_DEVS, "bsg");
-@@ -1014,8 +568,6 @@ static int __init bsg_init(void)
- 	unregister_chrdev_region(MKDEV(bsg_major, 0), BSG_MAX_DEVS);
- destroy_bsg_class:
- 	class_destroy(bsg_class);
--destroy_kmemcache:
--	kmem_cache_destroy(bsg_cmd_cachep);
- 	return ret;
- }
- 
+And this one is generic DT parsing and seems quite similar to one in apq8096.c
+Can we move these into a lib and use them instead of duplicating.
+
 -- 
-2.17.1
-
+~Vinod
