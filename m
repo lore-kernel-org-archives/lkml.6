@@ -2,104 +2,190 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C81C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5E4C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:04:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDAA020874
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:03:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDAA020874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 51C5220874
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:04:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="rgrVTdwH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cYtc1x6J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51C5220874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932973AbeFUADz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 20:03:55 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:44131 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932813AbeFUADx (ORCPT
+        id S933153AbeFUAEM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 20:04:12 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:46927 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932978AbeFUAEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 20:03:53 -0400
-Received: from mipsdag01.mipstec.com (mail1.mips.com [12.201.5.31]) by mx1414.ess.rzc.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Thu, 21 Jun 2018 00:02:23 +0000
-Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag01.mipstec.com
- (10.20.40.46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Wed, 20
- Jun 2018 17:02:22 -0700
-Received: from localhost (10.20.2.29) by mipsdag02.mipstec.com (10.20.40.47)
- with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Wed, 20 Jun
- 2018 17:02:22 -0700
-Date:   Wed, 20 Jun 2018 17:02:23 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-CC:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Matthew Wilcox <matthew@wil.cx>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Khem Raj <raj.khem@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stafford Horne <shorne@gmail.com>,
-        Gideon Israel Dsouza <gidisrael@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH 1/3] kbuild: add macro for controlling warnings to
- linux/compiler.h
-Message-ID: <20180621000223.lpiilk2f6zosouuu@pburton-laptop>
-References: <20180616005323.7938-1-paul.burton@mips.com>
- <20180616005323.7938-2-paul.burton@mips.com>
- <CAK7LNASvCha27kU4ipn23uOpNuxkzJrNzWBwYcxN4n=3xtv8SA@mail.gmail.com>
- <20180619190225.7eguhiw3ixaiwpgl@pburton-laptop>
- <CAK7LNAQRu0p8_8DqEdmUUPfc4gC60SSj90vTpz3iKaiE596-TA@mail.gmail.com>
+        Wed, 20 Jun 2018 20:04:10 -0400
+Received: by mail-yb0-f193.google.com with SMTP id s14-v6so516585ybp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 17:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=tuugBuej1vu5FSZtTuwfIlKGF1cza+lV5o8S4RQt9ZA=;
+        b=rgrVTdwHNBaqzd9UdcmXUmOcrFTgfsaqCDBdz9iesASZx8RZ2L7RVNlldirCJLnNm7
+         cvxes6U6bnVZ8C55zmBaiL/QoMYhLFB90ZsAQzQWogzzfQ2p4UE8kl8BY8BEYEasHqPb
+         qSt2FjMVwFZ+zp89fGqosfS1gp5c0U1le1jCW2Nz1VqL3X7qx3hjKtUp+mH0HG/isF94
+         nZm9EG31En6l5dTu7yBdaAbnbj2lLAgPaJSX15N5K0E7VEMKfSKQosy/P2tyzVcyIBcz
+         QAQ8U4k4M68If4ibqye14++czsBHTdLQb4t8+L0hfAX4XglZESW5BVz6gihCyDNjt7XG
+         Ixjw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=tuugBuej1vu5FSZtTuwfIlKGF1cza+lV5o8S4RQt9ZA=;
+        b=cYtc1x6JySM/S1qhEYXitsDOp3sxIfrbBctR2EdxK5eT756R40bI235+KtKSgqDsTb
+         T8inKSyQIpIh9Hzh/fhdFhNvsEB8SyidShp3DJaSlhz//2YGf9bCoYd7k84iCLx9Dwbk
+         IOcAekk4QgQxHoKC/vCMxMhk7qQjbDPKfR2F8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=tuugBuej1vu5FSZtTuwfIlKGF1cza+lV5o8S4RQt9ZA=;
+        b=XaCkDnDpFntqU9vpGN9wO/bgTgkeYEBVmRoUUOoss1Fo5YQpJaP3tZzl/jt6Gre3WL
+         PYqeZvrUAGY2x89YAU104JS/kT3BJ+mnO08d4+EeKxbUnb6yFm+hbh/mPLYMqExfqg5u
+         BYrEH5yX/PqI4GMCOkQWURMD85cgS+GtDxFDqeAIcEICZx67Fap25g5QAduFIW8ZD5zJ
+         Dq1KiJeHeeWookEYeTMk2oBvmyfFVCGdOTjAIZN3WujdeFbdyD/4sr8uZ6ld7zvK1Ju+
+         rj3YElK560PcA3DNmVqfj+XoMCHv6NOTMylI6LZ6LzHeVdjyEkUipOGf4q9qxQdRXXx7
+         otJA==
+X-Gm-Message-State: APt69E3CnYApdSO5AVBYtw8P7EH7krPIRVa3CDMoaDTtw3uipT4GBZPt
+        RV5OB/G487P8xjtWsG1IHjvnf9GKFKhXnhrlkBEw1g==
+X-Google-Smtp-Source: ADUXVKLGfRUtQRb04o9jSbCJupZfw5wmwKG4uc3nDO7f/N77QiZZO6CKivl5PiqqWb4P783fdYKbdQLm8+3AYE2fRSA=
+X-Received: by 2002:a25:ce8b:: with SMTP id x133-v6mr6018341ybe.118.1529539449226;
+ Wed, 20 Jun 2018 17:04:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQRu0p8_8DqEdmUUPfc4gC60SSj90vTpz3iKaiE596-TA@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-BESS-ID: 1529539343-531716-21951-93629-1
-X-BESS-VER: 2018.7-r1806151722
-X-BESS-Apparent-Source-IP: 12.201.5.31
-X-BESS-Envelope-From: Paul.Burton@mips.com
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194245
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-Orig-Rcpt: yamada.masahiro@socionext.com,linux-kernel@vger.kernel.org,heiko.carstens@de.ibm.com,mpe@ellerman.id.au,keescook@chromium.org,gidisrael@gmail.com,shorne@gmail.com,viro@zeniv.linux.org.uk,christophe.leroy@c-s.fr,raj.khem@gmail.com,michal.lkml@markovi.net,benh@kernel.crashing.org,zhe.he@windriver.com,mka@chromium.org,akpm@linux-foundation.org,jpoimboe@redhat.com,dianders@chromium.org,tglx@linutronix.de,matthew@wil.cx,mingo@kernel.org,linux-mips@linux-mips.org,mchehab@kernel.org,linux-kbuild@vger.kernel.org,arnd@arndb.de,paulus@samba.org,linuxppc-dev@lists.ozlabs.org
-X-BESS-BRTS-Status: 1
+Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 17:04:08
+ -0700 (PDT)
+In-Reply-To: <20180620234031.GC111712@gmail.com>
+References: <20180620190408.45104-1-keescook@chromium.org> <20180620190408.45104-6-keescook@chromium.org>
+ <20180620234031.GC111712@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 20 Jun 2018 17:04:08 -0700
+X-Google-Sender-Auth: Mt7gAamJipypjh5u_mzrsi5kAZs
+Message-ID: <CAGXu5j++uGCnAOiQd=JM139B6g7oUGTquhgniX-Fwsj8qofU9w@mail.gmail.com>
+Subject: Re: [dm-devel] [PATCH 05/11] crypto alg: Introduce max blocksize and alignmask
+To:     Eric Biggers <ebiggers3@gmail.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        qat-linux@intel.com, LKML <linux-kernel@vger.kernel.org>,
+        dm-devel@redhat.com, linux-crypto <linux-crypto@vger.kernel.org>,
+        Lars Persson <larper@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+On Wed, Jun 20, 2018 at 4:40 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> On Wed, Jun 20, 2018 at 12:04:02PM -0700, Kees Cook wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> exposes the existing upper bound on crypto block sizes for VLA removal,
+>> and introduces a new check for alignmask (current maximum in the kernel
+>> is 63 from manual inspection of all cra_alignmask settings).
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>  crypto/algapi.c        | 5 ++++-
+>>  include/linux/crypto.h | 4 ++++
+>>  2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/crypto/algapi.c b/crypto/algapi.c
+>> index c0755cf4f53f..760a412b059c 100644
+>> --- a/crypto/algapi.c
+>> +++ b/crypto/algapi.c
+>> @@ -57,7 +57,10 @@ static int crypto_check_alg(struct crypto_alg *alg)
+>>       if (alg->cra_alignmask & (alg->cra_alignmask + 1))
+>>               return -EINVAL;
+>>
+>> -     if (alg->cra_blocksize > PAGE_SIZE / 8)
+>> +     if (alg->cra_blocksize > CRYPTO_ALG_MAX_BLOCKSIZE)
+>> +             return -EINVAL;
+>> +
+>> +     if (alg->cra_alignmask > CRYPTO_ALG_MAX_ALIGNMASK)
+>>               return -EINVAL;
+>>
+>>       if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
+>> diff --git a/include/linux/crypto.h b/include/linux/crypto.h
+>> index 6eb06101089f..e76ffcbd5aa6 100644
+>> --- a/include/linux/crypto.h
+>> +++ b/include/linux/crypto.h
+>> @@ -134,6 +134,10 @@
+>>   */
+>>  #define CRYPTO_MAX_ALG_NAME          128
+>>
+>> +/* Maximum values for registered algorithms. */
+>> +#define CRYPTO_ALG_MAX_BLOCKSIZE    (PAGE_SIZE / 8)
+>> +#define CRYPTO_ALG_MAX_ALIGNMASK    63
+>> +
+>
+> How do these differ from MAX_CIPHER_BLOCKSIZE and MAX_CIPHER_ALIGNMASK, and why
+> are they declared in different places?
 
-On Thu, Jun 21, 2018 at 08:21:01AM +0900, Masahiro Yamada wrote:
-> V2 is good except one nit.
-> (I left a comment in it)
+This is what I get for staring at crypto code for so long. I entirely
+missed these checks... even though they're 8 line away:
 
-Thanks, and yes I agree with your comment that the GCC<4.6 __diag()
-definition can be removed.
+        if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
+                               CRYPTO_ALG_TYPE_CIPHER) {
+                if (alg->cra_alignmask > MAX_CIPHER_ALIGNMASK)
+                        return -EINVAL;
 
-> I can fix it up locally if it is tedious to re-spin, though.
+                if (alg->cra_blocksize > MAX_CIPHER_BLOCKSIZE)
+                        return -EINVAL;
+        }
 
-If you wouldn't mind that'd be great :)
+However, this is only checking CRYPTO_ALG_TYPE_CIPHER, and
+cra_blocksize can be used for all kinds of things.
 
-Thanks,
-    Paul
+include/crypto/algapi.h:#define MAX_CIPHER_ALIGNMASK            15
+...
+drivers/crypto/mxs-dcp.c:                       .cra_flags
+ = CRYPTO_ALG_ASYNC,
+drivers/crypto/mxs-dcp.c:                       .cra_alignmask          = 63,
+
+Is this one broken? It has no CRYPTO_ALG_TYPE_... ?
+
+For my CRYPTO_ALG_MAX_BLOCKSIZE, there is:
+
+crypto/xcbc.c:  u8 key1[CRYPTO_ALG_MAX_BLOCKSIZE];
+drivers/crypto/qat/qat_common/qat_algs.c:       char
+ipad[CRYPTO_ALG_MAX_BLOCKSIZE];
+drivers/crypto/qat/qat_common/qat_algs.c:       char
+opad[CRYPTO_ALG_MAX_BLOCKSIZE];
+
+It looks like both xcbc and qat are used with shash, so that needs a
+separate max blocksize.
+
+For my CRYPTO_ALG_MAX_ALIGNMASK, there is:
+
+crypto/shash.c: u8 ubuf[CRYPTO_ALG_MAX_ALIGNMASK]
+crypto/shash.c:         __aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
+crypto/shash.c:         __aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
+
+which is also shash.
+
+How should I rename these and best apply the registration-time sanity checks?
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
