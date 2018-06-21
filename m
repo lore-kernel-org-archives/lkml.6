@@ -2,296 +2,187 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82533C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8DAC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FE61216E6
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:53:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="4KNOrHgQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE61216E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 1C8032172D
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:54:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8032172D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933597AbeFUQxj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:53:39 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:35891 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933409AbeFUQxh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:53:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=PNjlK1Xn3wu+Xmz9AbnGqn72OqBUx/fmrOjog3za1Ag=; b=4KNOrHgQLP+bb/49sAUz6VoLBl
-        ZLRoNANZZ7Xz1/g1ryFo4Hy/PuVOKQbShITkmOZrIRfZzMhFHrPgOM2puFOs6ASIOFXCg4QV87byV
-        9C0crKEna5BH3AUHTQXJUqB559rFQ1cRmcGBZDuK5DQbhtqa9k5xWm9XxtCYU8TyeCWc33MHJWKyn
-        HLtmcshADBFGAiUcExG/Hfh6z4kJ994nmbmpfWfgLZbeOdsFwKy37YHb1h8DXxMANQAFSn+XDX23Q
-        STO1jHjvXWPRfafq4wVhSssetOOFfFkob1Of3T3XIHdiKcinvQLdPYVWBjGlQyq8iCD/txur4Anpx
-        nkDqxwpQ==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:35490 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fW2q0-003MwK-9R; Thu, 21 Jun 2018 16:53:36 +0000
-Date:   Thu, 21 Jun 2018 09:53:35 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ludovic Barre <ludovic.Barre@st.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V4 2/4] watchdog: stm32: add pclk feature for stm32mp1
-Message-ID: <20180621165335.GA4563@roeck-us.net>
-References: <1529571737-3552-1-git-send-email-ludovic.Barre@st.com>
- <1529571737-3552-3-git-send-email-ludovic.Barre@st.com>
+        id S933606AbeFUQyH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:54:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52612 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933467AbeFUQyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:54:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AF781435;
+        Thu, 21 Jun 2018 09:54:05 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.207.54])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 807B23F557;
+        Thu, 21 Jun 2018 09:54:03 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 17:54:00 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ley Foon Tan <lftan@altera.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2] PCI: controller: Move PCI_DOMAINS selection to arch
+ Kconfig
+Message-ID: <20180621165400.GB14519@e107981-ln.cambridge.arm.com>
+References: <20180619112105.14457-1-lorenzo.pieralisi@arm.com>
+ <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529571737-3552-3-git-send-email-ludovic.Barre@st.com>
+In-Reply-To: <30bb8a16-f829-a5a4-265f-2d1112d8d0bf@siemens.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 11:02:15AM +0200, Ludovic Barre wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
+On Wed, Jun 20, 2018 at 10:07:33AM +0200, Jan Kiszka wrote:
+> On 2018-06-19 13:21, Lorenzo Pieralisi wrote:
+> > Commit 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
+> > added configuration options to allow PCI host controller drivers to be
+> > compile tested on all architectures.
+> > 
+> > Some host controller drivers (eg PCIE_ALTERA) config entries select
+> > the PCI_DOMAINS config option to enable PCI domains management in
+> > the kernel. Now that host controller drivers can be compiled on
+> > all architectures, this triggers build regressions on arches that
+> > do not implement the PCI_DOMAINS required API (ie pci_domain_nr()):
+> > 
+> > drivers/ata/pata_ali.c: In function 'ali_init_chipset':
+> > drivers/ata/pata_ali.c:469:38: error:
+> >         implicit declaration of function 'pci_domain_nr';
+> >                                           did you mean 'pci_iomap_wc'?
+> > 
+> > Furthemore, some software configurations (ie Jailhouse) require a
+> > PCI_DOMAINS enabled kernel to configure multiple host controllers
+> > without having an explicit dependency on the ARM platform on which
+> > they run.
+> > 
+> > Make PCI_DOMAINS a visible configuration option on ARM so that software
+> > configurations that need it can manually select it and move the
+> > PCI_DOMAINS selection from PCI controllers configuration file to ARM
+> > sub-arch config entries that currently require it, fixing the issue.
+> > 
+> > Fixes: 51bc085d6454 ("PCI: Improve host drivers compile test coverage")
+> > Link: https://lkml.kernel.org/r/20180612170229.GA10141@roeck-us.net
+> > Reported-by: Guenter Roeck <linux@roeck-us.net>
+> > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Cc: Scott Branden <scott.branden@broadcom.com>
+> > Cc: Will Deacon <will.deacon@arm.com>
+> > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Russell King <linux@armlinux.org.uk>
+> > Cc: Jan Kiszka <jan.kiszka@siemens.com>
+> > Cc: Guenter Roeck <linux@roeck-us.net>
+> > Cc: Ley Foon Tan <lftan@altera.com>
+> > ---
+> > v1 -> v2
+> > 	- Removed ARCH_VIRT PCI_DOMAINS selection
+> > 	- Added PCI_DOMAINS visible config option
+> > 
+> > v1: https://marc.info/?l=linux-pci&m=152932092612352&w=2
+> > 
+> >  arch/arm/Kconfig               | 8 +++++++-
+> >  arch/arm/mach-bcm/Kconfig      | 1 +
+> >  arch/arm/mach-socfpga/Kconfig  | 1 +
+> >  drivers/pci/controller/Kconfig | 3 ---
+> >  4 files changed, 9 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > index 54eeb8d00bc6..843edfd000be 100644
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@ -1245,8 +1245,14 @@ config PCI
+> >  	  VESA. If you have PCI, say Y, otherwise N.
+> >  
+> >  config PCI_DOMAINS
+> > -	bool
+> > +	bool "Support for multiple PCI domains"
+> >  	depends on PCI
+> > +	help
+> > +	  Enable PCI domains kernel management. Say Y if your machine
+> > +	  has a PCI bus hierarchy that requires more than one PCI
+> > +	  domain (aka segment) to be correctly managed. Say N otherwise.
+> > +
+> > +	  If you don't know what to do here, say N.
+> >  
+> >  config PCI_DOMAINS_GENERIC
+> >  	def_bool PCI_DOMAINS
+> > diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+> > index c46a728df44e..25aac6ee2ab1 100644
+> > --- a/arch/arm/mach-bcm/Kconfig
+> > +++ b/arch/arm/mach-bcm/Kconfig
+> > @@ -20,6 +20,7 @@ config ARCH_BCM_IPROC
+> >  	select GPIOLIB
+> >  	select ARM_AMBA
+> >  	select PINCTRL
+> > +	select PCI_DOMAINS if PCI
+> >  	help
+> >  	  This enables support for systems based on Broadcom IPROC architected SoCs.
+> >  	  The IPROC complex contains one or more ARM CPUs along with common
+> > diff --git a/arch/arm/mach-socfpga/Kconfig b/arch/arm/mach-socfpga/Kconfig
+> > index d0f62eacf59d..4adb901dd5eb 100644
+> > --- a/arch/arm/mach-socfpga/Kconfig
+> > +++ b/arch/arm/mach-socfpga/Kconfig
+> > @@ -10,6 +10,7 @@ menuconfig ARCH_SOCFPGA
+> >  	select HAVE_ARM_SCU
+> >  	select HAVE_ARM_TWD if SMP
+> >  	select MFD_SYSCON
+> > +	select PCI_DOMAINS if PCI
+> >  
+> >  if ARCH_SOCFPGA
+> >  config SOCFPGA_SUSPEND
+> > diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> > index 18fa09b3ac8f..cc9fa02d32a0 100644
+> > --- a/drivers/pci/controller/Kconfig
+> > +++ b/drivers/pci/controller/Kconfig
+> > @@ -96,7 +96,6 @@ config PCI_HOST_GENERIC
+> >  	depends on OF
+> >  	select PCI_HOST_COMMON
+> >  	select IRQ_DOMAIN
+> > -	select PCI_DOMAINS
+> >  	help
+> >  	  Say Y here if you want to support a simple generic PCI host
+> >  	  controller, such as the one emulated by kvmtool.
+> > @@ -138,7 +137,6 @@ config PCI_VERSATILE
+> >  
+> >  config PCIE_IPROC
+> >  	tristate
+> > -	select PCI_DOMAINS
+> >  	help
+> >  	  This enables the iProc PCIe core controller support for Broadcom's
+> >  	  iProc family of SoCs. An appropriate bus interface driver needs
+> > @@ -176,7 +174,6 @@ config PCIE_IPROC_MSI
+> >  config PCIE_ALTERA
+> >  	bool "Altera PCIe controller"
+> >  	depends on ARM || NIOS2 || COMPILE_TEST
+> > -	select PCI_DOMAINS
+> >  	help
+> >  	  Say Y here if you want to enable PCIe controller support on Altera
+> >  	  FPGA.
+> > 
 > 
-> This patch adds compatible data to manage pclk clock by
-> compatible. Adds stm32mp1 support which requires pclk clock.
-> 
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->  drivers/watchdog/stm32_iwdg.c | 116 +++++++++++++++++++++++++++---------------
->  1 file changed, 74 insertions(+), 42 deletions(-)
-> 
-> diff --git a/drivers/watchdog/stm32_iwdg.c b/drivers/watchdog/stm32_iwdg.c
-> index c97ad56..e00e3b3 100644
-> --- a/drivers/watchdog/stm32_iwdg.c
-> +++ b/drivers/watchdog/stm32_iwdg.c
-> @@ -11,12 +11,13 @@
->  
->  #include <linux/clk.h>
->  #include <linux/delay.h>
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_device.h>
->  #include <linux/platform_device.h>
->  #include <linux/watchdog.h>
->  
-> @@ -54,11 +55,15 @@
->  #define TIMEOUT_US	100000
->  #define SLEEP_US	1000
->  
-> +#define HAS_PCLK	true
-> +
->  struct stm32_iwdg {
->  	struct watchdog_device	wdd;
->  	void __iomem		*regs;
-> -	struct clk		*clk;
-> +	struct clk		*clk_lsi;
-> +	struct clk		*clk_pclk;
->  	unsigned int		rate;
-> +	bool			has_pclk;
->  };
->  
->  static inline u32 reg_read(void __iomem *base, u32 reg)
-> @@ -133,6 +138,44 @@ static int stm32_iwdg_set_timeout(struct watchdog_device *wdd,
->  	return 0;
->  }
->  
-> +static int stm32_iwdg_clk_init(struct platform_device *pdev,
-> +			       struct stm32_iwdg *wdt)
-> +{
-> +	u32 ret;
-> +
-> +	wdt->clk_lsi = devm_clk_get(&pdev->dev, "lsi");
+> Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
 
-I just noticed a subtle difference: This used to be
-			devm_clk_get(&pdev->dev, NULL);
-which would always get the first clock, no matter how it is named.
-Can that cause problems with backward compatibility ?
+Thanks a lot. Scott, Ley Foon, does it work for you ? I would like
+to ask Bjorn to send it asap since the build on sparc is still broken.
 
 Thanks,
-Guenter
-
-> +	if (IS_ERR(wdt->clk_lsi)) {
-> +		dev_err(&pdev->dev, "Unable to get lsi clock\n");
-> +		return PTR_ERR(wdt->clk_lsi);
-> +	}
-> +
-> +	/* optional peripheral clock */
-> +	if (wdt->has_pclk) {
-> +		wdt->clk_pclk = devm_clk_get(&pdev->dev, "pclk");
-> +		if (IS_ERR(wdt->clk_pclk)) {
-> +			dev_err(&pdev->dev, "Unable to get pclk clock\n");
-> +			return PTR_ERR(wdt->clk_pclk);
-> +		}
-> +
-> +		ret = clk_prepare_enable(wdt->clk_pclk);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "Unable to prepare pclk clock\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	ret = clk_prepare_enable(wdt->clk_lsi);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Unable to prepare lsi clock\n");
-> +		clk_disable_unprepare(wdt->clk_pclk);
-> +		return ret;
-> +	}
-> +
-> +	wdt->rate = clk_get_rate(wdt->clk_lsi);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct watchdog_info stm32_iwdg_info = {
->  	.options	= WDIOF_SETTIMEOUT |
->  			  WDIOF_MAGICCLOSE |
-> @@ -147,49 +190,42 @@ static const struct watchdog_ops stm32_iwdg_ops = {
->  	.set_timeout	= stm32_iwdg_set_timeout,
->  };
->  
-> +static const struct of_device_id stm32_iwdg_of_match[] = {
-> +	{ .compatible = "st,stm32-iwdg", .data = (void *)!HAS_PCLK },
-> +	{ .compatible = "st,stm32mp1-iwdg", .data = (void *)HAS_PCLK },
-> +	{ /* end node */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, stm32_iwdg_of_match);
-> +
->  static int stm32_iwdg_probe(struct platform_device *pdev)
->  {
->  	struct watchdog_device *wdd;
-> +	const struct of_device_id *match;
->  	struct stm32_iwdg *wdt;
->  	struct resource *res;
-> -	void __iomem *regs;
-> -	struct clk *clk;
->  	int ret;
->  
-> +	match = of_match_device(stm32_iwdg_of_match, &pdev->dev);
-> +	if (!match)
-> +		return -ENODEV;
-> +
-> +	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
-> +	if (!wdt)
-> +		return -ENOMEM;
-> +
-> +	wdt->has_pclk = match->data;
-> +
->  	/* This is the timer base. */
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	regs = devm_ioremap_resource(&pdev->dev, res);
-> -	if (IS_ERR(regs)) {
-> +	wdt->regs = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(wdt->regs)) {
->  		dev_err(&pdev->dev, "Could not get resource\n");
-> -		return PTR_ERR(regs);
-> +		return PTR_ERR(wdt->regs);
->  	}
->  
-> -	clk = devm_clk_get(&pdev->dev, NULL);
-> -	if (IS_ERR(clk)) {
-> -		dev_err(&pdev->dev, "Unable to get clock\n");
-> -		return PTR_ERR(clk);
-> -	}
-> -
-> -	ret = clk_prepare_enable(clk);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Unable to prepare clock %p\n", clk);
-> +	ret = stm32_iwdg_clk_init(pdev, wdt);
-> +	if (ret)
->  		return ret;
-> -	}
-> -
-> -	/*
-> -	 * Allocate our watchdog driver data, which has the
-> -	 * struct watchdog_device nested within it.
-> -	 */
-> -	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
-> -	if (!wdt) {
-> -		ret = -ENOMEM;
-> -		goto err;
-> -	}
-> -
-> -	/* Initialize struct stm32_iwdg. */
-> -	wdt->regs = regs;
-> -	wdt->clk = clk;
-> -	wdt->rate = clk_get_rate(clk);
->  
->  	/* Initialize struct watchdog_device. */
->  	wdd = &wdt->wdd;
-> @@ -217,7 +253,8 @@ static int stm32_iwdg_probe(struct platform_device *pdev)
->  
->  	return 0;
->  err:
-> -	clk_disable_unprepare(clk);
-> +	clk_disable_unprepare(wdt->clk_lsi);
-> +	clk_disable_unprepare(wdt->clk_pclk);
->  
->  	return ret;
->  }
-> @@ -227,23 +264,18 @@ static int stm32_iwdg_remove(struct platform_device *pdev)
->  	struct stm32_iwdg *wdt = platform_get_drvdata(pdev);
->  
->  	watchdog_unregister_device(&wdt->wdd);
-> -	clk_disable_unprepare(wdt->clk);
-> +	clk_disable_unprepare(wdt->clk_lsi);
-> +	clk_disable_unprepare(wdt->clk_pclk);
->  
->  	return 0;
->  }
->  
-> -static const struct of_device_id stm32_iwdg_of_match[] = {
-> -	{ .compatible = "st,stm32-iwdg" },
-> -	{ /* end node */ }
-> -};
-> -MODULE_DEVICE_TABLE(of, stm32_iwdg_of_match);
-> -
->  static struct platform_driver stm32_iwdg_driver = {
->  	.probe		= stm32_iwdg_probe,
->  	.remove		= stm32_iwdg_remove,
->  	.driver = {
->  		.name	= "iwdg",
-> -		.of_match_table = stm32_iwdg_of_match,
-> +		.of_match_table = of_match_ptr(stm32_iwdg_of_match),
->  	},
->  };
->  module_platform_driver(stm32_iwdg_driver);
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Lorenzo
