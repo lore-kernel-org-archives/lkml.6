@@ -2,139 +2,122 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2D5C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0178C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB79F208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:03:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A31120837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 07:04:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMDpKF8F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB79F208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="FeCNOynF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A31120837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754085AbeFUHDl (ORCPT
+        id S1754206AbeFUHEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 03:03:41 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39930 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751321AbeFUHDk (ORCPT
+        Thu, 21 Jun 2018 03:04:11 -0400
+Received: from services.gouders.net ([141.101.32.176]:55745 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754104AbeFUHEJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 03:03:40 -0400
-Received: by mail-pf0-f194.google.com with SMTP id r11-v6so1049615pfl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 00:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=szKF+gnXyFXIku5VW3IbELUbDP8o2QPq0Oibn8D+kV0=;
-        b=OMDpKF8FnmTzindIV3XU62gZHNXA6nApVy4lSfU/29dt5YV2YZV0SojHimfTeVnT/O
-         ncyT1neuWXzqB4UX8qY9q9g11EpwMFCmsWSZHJ2MR8uec8Iy4Clv02S9fm/jTv5G2fb4
-         lNs5OXM7Xu45cOqkhTaZXsTyp+oTt5W6IaXri0lhKxKQP+phfc3hUJcTSH3LegGJzWaH
-         0KIQsUbzYLwJ64YyU8szK5MKx1jbypkTk4vjFx3/ljf3L/EZIEMgwy4dRuSjENh10Ojf
-         AGskvifSuzDa2YBsncesI+6CzG1iEFVODmjXi6QZ+erXWOLYmn+AVX2PEuV87MKGXkrR
-         a5nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=szKF+gnXyFXIku5VW3IbELUbDP8o2QPq0Oibn8D+kV0=;
-        b=L72XjfuIoQutOosuvcjr+CsYl8lOPiwVZe7NbF19W2wbqipRhwt+9QtRB+WfymTd4n
-         5py09/cUW+z7gUbu7oh9iWJZwTLWUkay5eJTQKAm/wi3p1wjxsCMbFUtuOPTZ5xMhscp
-         ACWIlbb5CplKtrqA/5BHnIL2sMpehLMGKpe6OD8hupq/nk78cYvgkr2nLwBZRZj8ZQdu
-         u0gvqBmIS9DOvSPyELo0LGUtazO/I8GfuBVDjT0RvB2rdHnavU3O4M34boG5LGkvDqne
-         S7eDKRKg86h0Aaiu2BXRv1UvCmrcV37S0yQ1Ls21Qbt3xw0gvhupwcomzFUGjWCrWdbU
-         86Uw==
-X-Gm-Message-State: APt69E2s9xjqZyDwC1o/mfl9zKyHyIGHJUE1J2tYf5XorQ7pm5x+4lid
-        ieFYrlFKpgaumaLqBCWN1b4=
-X-Google-Smtp-Source: ADUXVKKR5dsyFYEF0nX5/+tHzGdweS+hh1nnWXwkG4R+OfdEVhlASh+SI4n95WDFkGxLwSlYucM6Yw==
-X-Received: by 2002:a62:67c5:: with SMTP id t66-v6mr26293032pfj.20.1529564619802;
-        Thu, 21 Jun 2018 00:03:39 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:1:4413:35c0:9e91:c7fc:672])
-        by smtp.gmail.com with ESMTPSA id u1-v6sm6053427pfn.59.2018.06.21.00.03.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 00:03:39 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     akpm@linux-foundation.org, jthumshirn@suse.de, cl@linux.com,
-        kstewart@linuxfoundation.org, pombredanne@nexb.com,
-        gregkh@linuxfoundation.org, dvyukov@google.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] mm: mempool: Remove unused argument in kasan_unpoison_element() and remove_element()
-Date:   Thu, 21 Jun 2018 15:03:32 +0800
-Message-Id: <20180621070332.16633-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 21 Jun 2018 03:04:09 -0400
+Received: from localhost ([193.175.198.193])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w5L6vKep009097
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jun 2018 08:57:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1529564242; bh=pd0O7KjufViIkZ6dzFz7LpDrwA7x7lGcgg/R21Gy7hY=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date;
+        b=FeCNOynFkOyaUoMps5k10yUg01ponW8asm5RVYToSk6glAgi7PkARWoiKxj8EbV8K
+         NtjPnIFOZbLKAZ5x+ydZKQreV9oql4UffFFWc/bdOown2V7KY7Gbds5l7B8AV0akaO
+         tXr+RSWKZ1pOcXiZK7N4JN0HgT51A9dq/I96DBqI=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [RFC v8 1/1] mconf: global i-search in menu prompts
+In-Reply-To: <126839db-5cc1-7dad-5a1f-21899dc6236e@infradead.org> (Randy
+        Dunlap's message of "Wed, 20 Jun 2018 13:02:03 -0700")
+References: <20180620084217.8597-1-dirk@gouders.net>
+        <20180620084217.8597-2-dirk@gouders.net>
+        <f02cc7c6-d92e-24f3-b0ad-df9e6bf7630a@infradead.org>
+        <ghpo0l2spo.fsf@lena.gouders.net>
+        <126839db-5cc1-7dad-5a1f-21899dc6236e@infradead.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+Date:   Thu, 21 Jun 2018 08:57:12 +0200
+Message-ID: <ghin6clj93.fsf@lena.gouders.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The argument "gfp_t flags" is not used in kasan_unpoison_element() 
-and remove_element(), so remove it.
+Randy Dunlap <rdunlap@infradead.org> writes:
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- mm/mempool.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> On 06/20/2018 11:55 AM, Dirk Gouders wrote:
+>> Randy Dunlap <rdunlap@infradead.org> writes:
+>> 
+>>> Hi,
+>>>
+>>> On 06/20/2018 01:42 AM, Dirk Gouders wrote:
+>>>>
+>>>> Operation
+>>>> ---------
+>>>> The TAB key is reserved to toggle the focus between menu and bottons.
+>>>> Focus is on the buttons if one of the buttens (the active one) is
+>>>> hightlighted, otherwise it is on the menu.
+>>>>
+>>>> When the focus is on the buttons, mconf operates as before with the
+>>>> exception of the TAB key.
+>>>>
+>>>> When the focus is on the menu, mconf operates in i-search mode and the
+>>>> following input has special meaning:
+>>>>
+>>>> * <\> (backslash) can be used to search for other occurences of an
+>>>>   already entered string.  On empty search strings, nothing happens.
+>>>>
+>>>> * Any other printable character than backslash and '\n' is appended to
+>>>>   the current search string and a match is searched for.  If a match
+>>>>   is found, it is immediately navigated to.
+>>>
+>>> About that paragraph above:  I tried to search for "fs-cache", as in:
+>>>
+>>> config FSCACHE_DEBUG
+>>> 	bool "Debug FS-Cache"
+>>>
+>>> but i-search does not allow me to enter a '-' character.  Seems odd to me.
+>> 
+>> Hi Randy,
+>> 
+>> thanks for all your testing.
+>> 
+>> '-' and '+' previously had the same meaning as <KEY_UP>, <KEY_DOWN>,
+>> respectively.  If you are on the top menu item and press '-' there is
+>> nothing to scroll up so it appears as if the pressed key wasn't
+>> processed.
+>> 
+>> I-search should add those characters to the pattern but I broke that two
+>> or three versions before when I fixed another issue.
+>> 
+>> I will add this to my list of test cases so this won't happen again.
+>> 
+>> Dirk
+>> 
+>> 
+>>> Still doing other testing...
+>
+> I haven't hit any other issues.
 
-diff --git a/mm/mempool.c b/mm/mempool.c
-index 5c9dce34719b..3076ab3f7bc4 100644
---- a/mm/mempool.c
-+++ b/mm/mempool.c
-@@ -111,7 +111,7 @@ static __always_inline void kasan_poison_element(mempool_t *pool, void *element)
- 		kasan_free_pages(element, (unsigned long)pool->pool_data);
- }
- 
--static void kasan_unpoison_element(mempool_t *pool, void *element, gfp_t flags)
-+static void kasan_unpoison_element(mempool_t *pool, void *element)
- {
- 	if (pool->alloc == mempool_alloc_slab || pool->alloc == mempool_kmalloc)
- 		kasan_unpoison_slab(element);
-@@ -127,12 +127,12 @@ static __always_inline void add_element(mempool_t *pool, void *element)
- 	pool->elements[pool->curr_nr++] = element;
- }
- 
--static void *remove_element(mempool_t *pool, gfp_t flags)
-+static void *remove_element(mempool_t *pool)
- {
- 	void *element = pool->elements[--pool->curr_nr];
- 
- 	BUG_ON(pool->curr_nr < 0);
--	kasan_unpoison_element(pool, element, flags);
-+	kasan_unpoison_element(pool, element);
- 	check_element(pool, element);
- 	return element;
- }
-@@ -151,7 +151,7 @@ void mempool_destroy(mempool_t *pool)
- 		return;
- 
- 	while (pool->curr_nr) {
--		void *element = remove_element(pool, GFP_KERNEL);
-+		void *element = remove_element(pool);
- 		pool->free(element, pool->pool_data);
- 	}
- 	kfree(pool->elements);
-@@ -247,7 +247,7 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
- 	spin_lock_irqsave(&pool->lock, flags);
- 	if (new_min_nr <= pool->min_nr) {
- 		while (new_min_nr < pool->curr_nr) {
--			element = remove_element(pool, GFP_KERNEL);
-+			element = remove_element(pool);
- 			spin_unlock_irqrestore(&pool->lock, flags);
- 			pool->free(element, pool->pool_data);
- 			spin_lock_irqsave(&pool->lock, flags);
-@@ -333,7 +333,7 @@ void *mempool_alloc(mempool_t *pool, gfp_t gfp_mask)
- 
- 	spin_lock_irqsave(&pool->lock, flags);
- 	if (likely(pool->curr_nr)) {
--		element = remove_element(pool, gfp_temp);
-+		element = remove_element(pool);
- 		spin_unlock_irqrestore(&pool->lock, flags);
- 		/* paired with rmb in mempool_free(), read comment there */
- 		smp_wmb();
--- 
-2.17.0
+Thank you for testing!
+The issue concerning '-' and '+' I will fix.
 
+Dirk
