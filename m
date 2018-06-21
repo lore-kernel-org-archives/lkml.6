@@ -2,150 +2,375 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E8AC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF58C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98408204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:18:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98408204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB4B620652
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:19:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AXWIAXpL";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D6XTyR67"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4B620652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932993AbeFUJSZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:18:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47554 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932940AbeFUJSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:18:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54C5180D;
-        Thu, 21 Jun 2018 02:18:15 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 235CA3F246;
-        Thu, 21 Jun 2018 02:18:15 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 3F25F1AE101A; Thu, 21 Jun 2018 10:18:51 +0100 (BST)
-Date:   Thu, 21 Jun 2018 10:18:51 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     James Morse <james.morse@arm.com>
-Cc:     Wei Xu <xuwei5@hisilicon.com>, catalin.marinas@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
-        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>, xiexiuqi@huawei.com,
-        huangdaode <huangdaode@hisilicon.com>,
-        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
-        "Xiongfanggou (James)" <james.xiong@huawei.com>,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
-        Zhangyi ac <zhangyi.ac@huawei.com>,
-        jonathan.cameron@huawei.com,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
-        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
-        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
-        libeijian@hisilicon.com
-Subject: Re: KVM guest sometimes failed to boot because of kernel stack
- overflow if KPTI is enabled on a hisilicon ARM64 platform.
-Message-ID: <20180621091850.GA22505@arm.com>
-References: <5B2A6218.3030201@hisilicon.com>
- <20180620144257.GB27776@arm.com>
- <5B2A7832.4010502@hisilicon.com>
- <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
- <5B2A7FE1.5040607@hisilicon.com>
- <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
+        id S932855AbeFUJTW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:19:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35368 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932636AbeFUJTT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:19:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 65AA3605FD; Thu, 21 Jun 2018 09:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529572759;
+        bh=w1Q+5cMl34nqQwiso5WKRBLREhZAlfzjLAC7TlfJ81o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AXWIAXpL1LyC3BKghUyJLxG4Orugt1K1OQhMJqNaNPmeO55gfdCuGDLe/qTFojoIk
+         KA15/a/sO6ECiY0S6hXNgu98Wi6lJgPubFw7HygZIxcaLG6k7Bh7R3cdWA8pulsdsX
+         rfnaWJvBTsYi9BfwZyh2xZDsVwjx94VDmmWkZTeM=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D361D6021A;
+        Thu, 21 Jun 2018 09:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529572757;
+        bh=w1Q+5cMl34nqQwiso5WKRBLREhZAlfzjLAC7TlfJ81o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=D6XTyR67LcDak/iAJzrc6LP3l9mv8op4Q50YavD5XO06ZfHlKqoxUfwDTX/6xP9so
+         ii4H7kLb/WyrTjGQ//ZZrUKDP+yEtJHZ0WCekW4LuS7d+Y/Z95ACzH+0oCMXWCuPu0
+         ZMSVqEMNBKHLC2EpjL+SVYitDyla5sC87mHeLeZM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 21 Jun 2018 14:49:17 +0530
+From:   poza@codeaurora.org
+To:     rajatxjain@gmail.com
+Cc:     Rajat Jain <rajatja@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederick Lawler <fred@fredlawl.com>,
+        "Busch, Keith" <keith.busch@intel.com>,
+        Gabriele Paoloni <gabriele.paoloni@huawei.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Thomas Tai <thomas.tai@oracle.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jes Sorensen <jsorensen@fb.com>, Kyle McMartin <jkkm@fb.com>
+Subject: Re: [PATCH v2 5/5] Documentation/ABI: Add details of PCI AER
+ statistics
+In-Reply-To: <CAA93t1r2fG+U9av2jj8jKrVfHrc_UABOS3DVO-UfHgcsJKyv7g@mail.gmail.com>
+References: <20180522222805.80314-1-rajatja@google.com>
+ <20180523175808.28030-1-rajatja@google.com>
+ <20180523175808.28030-6-rajatja@google.com>
+ <c27290dd401bb2954db4959559c39a00@codeaurora.org>
+ <CACK8Z6EHDv0d5zwgKj2N+DyxKEj9dVkSoN2Y_HTOKv8L9p-OAg@mail.gmail.com>
+ <7e146f62d1fa82a6f37848b22efc1b97@codeaurora.org>
+ <CAA93t1r2fG+U9av2jj8jKrVfHrc_UABOS3DVO-UfHgcsJKyv7g@mail.gmail.com>
+Message-ID: <52d480b22e70713966039443931c2697@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 09:38:53AM +0100, James Morse wrote:
-> On 20/06/18 17:25, Wei Xu wrote:
-> >     [    0.042421] Insufficient stack space to handle exception!
-> >     [    0.042423] ESR: 0x96000046 -- DABT (current EL)
-> >     [    0.043730] FAR: 0xffff0000093a80e0
-> >     [    0.044714] Task stack: [0xffff0000093a8000..0xffff0000093ac000]
+On 2018-06-19 22:01, Rajat Jain wrote:
+> On Mon, Jun 18, 2018 at 11:03 PM,  <poza@codeaurora.org> wrote:
+>> On 2018-06-19 05:41, Rajat Jain wrote:
+>>> 
+>>> Hello,
+>>> 
+>>> On Sat, Jun 16, 2018 at 10:24 PM <poza@codeaurora.org> wrote:
+>>>> 
+>>>> 
+>>>> On 2018-05-23 23:28, Rajat Jain wrote:
+>>>> > Add the PCI AER statistics details to
+>>>> > Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+>>>> > and provide a pointer to it in
+>>>> > Documentation/PCI/pcieaer-howto.txt
+>>>> >
+>>>> > Signed-off-by: Rajat Jain <rajatja@google.com>
+>>>> > ---
+>>>> > v2: Move the documentation to Documentation/ABI/
+>>>> >
+>>>> >  .../testing/sysfs-bus-pci-devices-aer_stats   | 103 ++++++++++++++++++
+>>>> >  Documentation/PCI/pcieaer-howto.txt           |   5 +
+>>>> >  2 files changed, 108 insertions(+)
+>>>> >  create mode 100644
+>>>> > Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+>>>> >
+>>>> > diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+>>>> > b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+>>>> > new file mode 100644
+>>>> > index 000000000000..f55c389290ac
+>>>> > --- /dev/null
+>>>> > +++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+>>>> > @@ -0,0 +1,103 @@
+>>>> > +==========================
+>>>> > +PCIe Device AER statistics
+>>>> > +==========================
+>>>> > +These attributes show up under all the devices that are AER capable.
+>>>> > These
+>>>> > +statistical counters indicate the errors "as seen/reported by the
+>>>> > device".
+>>>> > +Note that this may mean that if an end point is causing problems, the
+>>>> > AER
+>>>> > +counters may increment at its link partner (e.g. root port) because
+>>>> > the
+>>>> > +errors will be "seen" / reported by the link partner and not the the
+>>>> > +problematic end point itself (which may report all counters as 0 as it
+>>>> > never
+>>>> > +saw any problems).
+>>>> > +
+>>>> > +Where:
+>>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_total_cor_errs
+>>>> > +Date:                May 2018
+>>>> > +Kernel Version: 4.17.0
+>>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
+>>>> > +Description: Total number of correctable errors seen and reported by
+>>>> > this
+>>>> > +             PCI device using ERR_COR.
+>>>> > +
+>>>> > +Where:
+>>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_total_fatal_errs
+>>>> > +Date:                May 2018
+>>>> > +Kernel Version: 4.17.0
+>>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
+>>>> > +Description: Total number of uncorrectable fatal errors seen and
+>>>> > reported
+>>>> > +             by this PCI device using ERR_FATAL.
+>>>> > +
+>>>> > +Where:
+>>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_total_nonfatal_errs
+>>>> > +Date:                May 2018
+>>>> > +Kernel Version: 4.17.0
+>>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
+>>>> > +Description: Total number of uncorrectable non-fatal errors seen and
+>>>> > reported
+>>>> > +             by this PCI device using ERR_NONFATAL.
+>>>> > +
+>>>> > +Where:
+>>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_correctable
+>>>> > +Date:                May 2018
+>>>> > +Kernel Version: 4.17.0
+>>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
+>>>> > +Description: Breakdown of of correctable errors seen and reported by
+>>>> > this
+>>>> > +             PCI device using ERR_COR. A sample result looks like
+>>>> > this:
+>>>> > +-----------------------------------------
+>>>> > +Receiver Error = 0x174
+>>>> > +Bad TLP = 0x19
+>>>> > +Bad DLLP = 0x3
+>>>> > +RELAY_NUM Rollover = 0x0
+>>>> > +Replay Timer Timeout = 0x1
+>>>> > +Advisory Non-Fatal = 0x0
+>>>> > +Corrected Internal Error = 0x0
+>>>> > +Header Log Overflow = 0x0
+>>>> > +-----------------------------------------
+>>>> why hex display ? decimal is easy to read as these are counters.
+>>> 
+>>> 
+>>> Have no particular preference. Since these can be potentially large
+>>> numbers, just had a random thought that hex might make it more
+>>> concise. I can change to decimal if that is preferable.
+>>> 
+>>>> > +
+>>>> > +Where:
+>>>> > /sys/bus/pci/devices/<dev>/aer_stats/dev_breakdown_uncorrectable
+>>>> > +Date:                May 2018
+>>>> > +Kernel Version: 4.17.0
+>>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
+>>>> > +Description: Breakdown of of correctable errors seen and reported by
+>>>> > this
+>>>> > +             PCI device using ERR_FATAL or ERR_NONFATAL. A sample
+>>>> > result
+>>>> > +             looks like this:
+>>>> > +-----------------------------------------
+>>>> > +Undefined = 0x0
+>>>> > +Data Link Protocol = 0x0
+>>>> > +Surprise Down Error = 0x0
+>>>> > +Poisoned TLP = 0x0
+>>>> > +Flow Control Protocol = 0x0
+>>>> > +Completion Timeout = 0x0
+>>>> > +Completer Abort = 0x0
+>>>> > +Unexpected Completion = 0x0
+>>>> > +Receiver Overflow = 0x0
+>>>> > +Malformed TLP = 0x0
+>>>> > +ECRC = 0x0
+>>>> > +Unsupported Request = 0x0
+>>>> > +ACS Violation = 0x0
+>>>> > +Uncorrectable Internal Error = 0x0
+>>>> > +MC Blocked TLP = 0x0
+>>>> > +AtomicOp Egress Blocked = 0x0
+>>>> > +TLP Prefix Blocked Error = 0x0
+>>>> > +-----------------------------------------
+>>>> > +
+>>>> > +============================
+>>>> > +PCIe Rootport AER statistics
+>>>> > +============================
+>>>> > +These attributes showup under only the rootports that are AER capable.
+>>>> > These
+>>>> > +indicate the number of error messages as "reported to" the rootport.
+>>>> > Please note
+>>>> > +that the rootports also transmit (internally) the ERR_* messages for
+>>>> > errors seen
+>>>> > +by the internal rootport PCI device, so these counters includes them
+>>>> > and are
+>>>> > +thus cumulative of all the error messages on the PCI hierarchy
+>>>> > originating
+>>>> > +at that root port.
+>>>> 
+>>>> what about switches and bridges ?
+>>> 
+>>> 
+>>> What about them? AIUI, the switches forward the ERR_ messages from
+>>> downstream devices to the rootport, like they do with standard
+>>> messages. They can potentially generate their own ERR_ message and
+>>> that would be reported no different than other end point devices.
+>> 
+>> 
+>> 
+>> yes, what I meant to ask is; the ERR_FATAL msg coming from EP, can be
+>> contained by switch
+>> and the error handling code thinks that, the error is contained by 
+>> switch
+>> irrespective of
+>> AER or DPC, and it will think that the problem could be with 
+>> Switch/bridge
+>> upstream link.
+>> 
+>> hence the pci_dev of the switch where you should be increment your 
+>> counters.
+>> of course ER_FATAL would have traversed till RP, but that doesnt meant 
+>> that
+>> you account the error there.
 > 
-> This was a level 2 translation fault on a write, to an address that is within
-> the stack....
-> 
-> 
-> >     [    0.051113] IRQ stack: [0xffff000008000000..0xffff000008004000]
-> >     [    0.057610] Overflow stack: [0xffff80003efce2f0..0xffff80003efcf2f0]
-> >     [    0.064003] CPU: 0 PID: 12 Comm: migration/0 Not tainted
-> > 4.17.0-45865-g2b31fe7-dirty #10
-> >     [    0.072201] Hardware name: linux,dummy-virt (DT)
-> 
-> >     [    0.076797] pstate: 604003c5 (nZCv DAIF +PAN -UAO)
-> >     [    0.081727] pc : el1_sync+0x0/0xb0
-> 
-> ... from the vectors.
-> 
-> 
-> >     [    0.085217] lr : kpti_install_ng_mappings+0x120/0x214
-> 
-> What I think is happening is: we come out of the kpti idmap with the stack
-> unmapped. Shortly after we access the stack, which faults. el1_sync faults as
-> well when it tries to push the registers to the stack, and we keep going until
-> we overflow the stack.
-> 
-> I can't reproduce this with kvmtool or qemu in the model.
+> In this case, for the pci_dev for the rootport:
+> - rootport_total_fatal_errors will be incremented (since it will get 
+> ERR_FATAL)
+> - dev_total_fatal_errors will not be incremented.
 
-Hmm, one thing that occurs to me is that the kpti_install_ng_mappings()
-code leaves the nG bit set in table entries, which is actually IGNORED in
-the architecture.
+ok but my confusion is: should you not be incrementing counter against 
+pci_dev of switch ? and not the RP ?
+because the problem was with upstream link of the EP (e.g. switch)
 
-Wei -- does the diff below help at all? Make sure you disable CONFIG_KASAN,
-otherwise your kernel will take an age to boot.
+> 
+> The dev_total_fatal_errors will be incremented only for the pci device
+> identified by the "Error Source Identification Register" in the PCIe
+> spec. Does this help clarify?
 
-Will
-
---->8
-
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index 5f9a73a4452c..70d9e98467ca 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -272,8 +272,8 @@ ENTRY(idmap_kpti_install_ng_mappings)
- 	add	end_pgdp, cur_pgdp, #(PTRS_PER_PGD * 8)
- do_pgd:	__idmap_kpti_get_pgtable_ent	pgd
- 	tbnz	pgd, #1, walk_puds
--next_pgd:
- 	__idmap_kpti_put_pgtable_ent_ng	pgd
-+next_pgd:
- skip_pgd:
- 	add	cur_pgdp, cur_pgdp, #8
- 	cmp	cur_pgdp, end_pgdp
-@@ -302,8 +302,8 @@ walk_puds:
- 	add	end_pudp, cur_pudp, #(PTRS_PER_PUD * 8)
- do_pud:	__idmap_kpti_get_pgtable_ent	pud
- 	tbnz	pud, #1, walk_pmds
--next_pud:
- 	__idmap_kpti_put_pgtable_ent_ng	pud
-+next_pud:
- skip_pud:
- 	add	cur_pudp, cur_pudp, 8
- 	cmp	cur_pudp, end_pudp
-@@ -323,8 +323,8 @@ walk_pmds:
- 	add	end_pmdp, cur_pmdp, #(PTRS_PER_PMD * 8)
- do_pmd:	__idmap_kpti_get_pgtable_ent	pmd
- 	tbnz	pmd, #1, walk_ptes
--next_pmd:
- 	__idmap_kpti_put_pgtable_ent_ng	pmd
-+next_pmd:
- skip_pmd:
- 	add	cur_pmdp, cur_pmdp, #8
- 	cmp	cur_pmdp, end_pmdp
+> 
+>> 
+>> 
+>>> 
+>>>> Also Can you give some idea as e.g what is the difference between
+>>>> dev_total_fatal_errs and rootport_total_fatal_errs  (assuming that 
+>>>> both
+>>>> are same pci_dev.
+>>> 
+>>> 
+>>> For a pci_dev representing the rootport:
+>>> 
+>>> dev_total_fatal_errors = how many times this PCI device *experienced*
+>>> a fatal problem on its own (i.e. either link issues while talking to
+>>> its link partner, or some internal errors).
+>>> 
+>>> rootport_total_fatal_errors = how many times this rootport was
+>>> *informed* about a problem (via ERR_* messages) in the PCI hierarchy
+>>> that originates at it (can be any link further downstream). This
+>>> includes the dev_total_fatal_errors also, because any errors detected
+>>> by the rootport are also "informed" to itself via ERR_* messages. In
+>>> reality, this is just the total number of ERR_FATAL messages received
+>>> at the rootport. This sysfs attribute will only exist for root ports.
+>>> 
+>>>> 
+>>>> rootport_total_fatal_errs gives me an idea that how many times 
+>>>> things
+>>>> have been failed under this pci_dev ?
+>>> 
+>>> 
+>>> Yes, as above.
+>>> 
+>>>> which means num of downstream link problems. but I am still trying 
+>>>> to
+>>>> make sense as how it could be used,
+>>>> since we dont have BDF information associated with the number of 
+>>>> errors
+>>>> anywhere (except these AER print messages)
+>>>> 
+>>> 
+>>> Agree. That is a limitation. The challenges being more record 
+>>> keeping,
+>>> more complicated sysfs representation, and given that PCI devices may
+>>> come and go, how do we know it is the same device before we collate
+>>> their stats etc.
+>>> 
+>>>> 
+>>>> and dev_total_fatal_errs as you mentioned above that problematic EP,
+>>>> then say root-port will report it and increment
+>>>> dev_total_fatal_errs ++
+>>>> does it also increment root-port_total_fatal_errs ++ in above 
+>>>> scenario ?
+>>> 
+>>> 
+>>> Yes, as above, it will also root-port_total_fatal_errs++ for the root
+>>> port of that hierarchy.
+>>> 
+>>> Thanks,
+>>> 
+>>> Rajat
+>>> 
+>>>> 
+>>>> > +
+>>>> > +Where:
+>>>> > /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_cor_errs
+>>>> > +Date:                May 2018
+>>>> > +Kernel Version: 4.17.0
+>>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
+>>>> > +Description: Total number of ERR_COR messages reported to rootport.
+>>>> > +
+>>>> > +Where:
+>>>> > /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_fatal_errs
+>>>> > +Date:                May 2018
+>>>> > +Kernel Version: 4.17.0
+>>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
+>>>> > +Description: Total number of ERR_FATAL messages reported to rootport.
+>>>> > +
+>>>> > +Where:
+>>>> > /sys/bus/pci/devices/<dev>/aer_stats/rootport_total_nonfatal_errs
+>>>> > +Date:                May 2018
+>>>> > +Kernel Version: 4.17.0
+>>>> > +Contact:     linux-pci@vger.kernel.org, rajatja@google.com
+>>>> > +Description: Total number of ERR_NONFATAL messages reported to
+>>>> > rootport.
+>>>> > diff --git a/Documentation/PCI/pcieaer-howto.txt
+>>>> > b/Documentation/PCI/pcieaer-howto.txt
+>>>> > index acd0dddd6bb8..91b6e677cb8c 100644
+>>>> > --- a/Documentation/PCI/pcieaer-howto.txt
+>>>> > +++ b/Documentation/PCI/pcieaer-howto.txt
+>>>> > @@ -73,6 +73,11 @@ In the example, 'Requester ID' means the ID of the
+>>>> > device who sends
+>>>> >  the error message to root port. Pls. refer to pci express specs for
+>>>> >  other fields.
+>>>> >
+>>>> > +2.4 AER Statistics / Counters
+>>>> > +
+>>>> > +When PCIe AER errors are captured, the counters / statistics are also
+>>>> > exposed
+>>>> > +in form of sysfs attributes which are documented at
+>>>> > +Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+>>>> >
+>>>> >  3. Developer Guide
