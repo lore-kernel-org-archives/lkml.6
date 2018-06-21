@@ -2,188 +2,114 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B89C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7046C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 593112159E
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:04:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593112159E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 9ED002246A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:04:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="uy2oX6tE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED002246A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933795AbeFUWEl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 18:04:41 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50206 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932899AbeFUWEj (ORCPT
+        id S933870AbeFUWEr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 18:04:47 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33224 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933807AbeFUWEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 18:04:39 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 643FD2709FF
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v3] PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.
-Date:   Fri, 22 Jun 2018 00:04:30 +0200
-Message-Id: <20180621220430.25644-1-enric.balletbo@collabora.com>
+        Thu, 21 Jun 2018 18:04:42 -0400
+Received: by mail-qt0-f196.google.com with SMTP id l10-v6so4349718qtj.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 15:04:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=Vec3g15rqX5tPpr4wXsVAyRefMb116qUxoatzMLj2BU=;
+        b=uy2oX6tEmYlWWni1O95dHTOAz3Mmfxl2JNGvGSZewuyqBETlp5AMZQktPZrqwWkxPH
+         rdWz7JhuFfXKkwU8lDOf24J8BVWi0mjhwHCOWXpYxuINv4qTOEK58tJIKnBiJm2IRo+i
+         OHLE4Rz/XRnKqn16VAdj7U6XjPaWYKSF8814pq3tVlfRhgfWbhy+vO1X7B4cF+g3x9Nb
+         11ssRjlaAHgdK/o6WPjKI2wSEVHfiY3a5VNYJR0mfKI9d2mBZlHLPI+hhUlD2X1+n+aK
+         DgaI7Dm6c2YFqmhgCrLJ+bA3umtzAz2pS8dAlklksfF/gebVsW5NpqAjFghiys5LWBsc
+         Or/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Vec3g15rqX5tPpr4wXsVAyRefMb116qUxoatzMLj2BU=;
+        b=OBLnACo/8nQOigXkFE5EReZ03BT74FV+6aZq/fD1AGkj++ROLbJuazoswBPC3lOBj4
+         2tQstUvsbvHmyCZL2SbBnBuR8xNTAELVGK+CLWDC4XvtPYtQA3LZoHlAtplhCwjaou5o
+         jG31A6tAd4TpqwXT5GymDdQv850lEroUrj7EBqNl3r+VWZlgghPWAjGVgYJLFILHmtZh
+         ndtnBvMHrBRSrwXTXuHgTP+NnfKSLYkKBJ+AuZOrlIvg5oXy0XmDm/3f0LCa1eSE4MKD
+         z43pDsxuxKulB3SybqmZffcdiRnQNYH3H/Lejn1ImLT4+s/oBnuKr5n9afLCI1QeOj6v
+         alTQ==
+X-Gm-Message-State: APt69E1YDDmowazRs/v5paID6SqdT3ffqeGOHOvH1H/+0zRJOjB6EX2p
+        JkZGt/qMfVrlEOc5Y4bIfoaGcg==
+X-Google-Smtp-Source: ADUXVKKKp4W+K8VkpE+P6hMwcE0xVw8+cGadUb3JwN9+IflyfTrZkY6y9tWA4WNDOEDMgKzhBJU0jQ==
+X-Received: by 2002:a0c:b916:: with SMTP id u22-v6mr23714477qvf.224.1529618681229;
+        Thu, 21 Jun 2018 15:04:41 -0700 (PDT)
+Received: from localhost.localdomain ([173.38.117.67])
+        by smtp.gmail.com with ESMTPSA id l73-v6sm6668473qkl.78.2018.06.21.15.04.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 15:04:40 -0700 (PDT)
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        "Tobin C . Harding" <me@tobin.cc>, Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH v4 0/4] seccomp trap to userspace
+Date:   Thu, 21 Jun 2018 16:04:12 -0600
+Message-Id: <20180621220416.5412-1-tycho@tycho.ws>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the devfreq driver and the governor driver are built as modules,
-the call to devfreq_add_device() or governor_store() fails because the
-governor driver is not loaded at the time the devfreq driver loads. The
-devfreq driver has a build dependency on the governor but also should
-have a runtime dependency. We need to make sure that the governor driver
-is loaded before the devfreq driver.
+Hi all,
 
-This patch fixes this bug by adding a try_then_request_governor()
-function. First tries to find the governor, and then, if it is not found,
-it requests the module and tries again.
+Here's v4 of the seccomp trap to userspace series. v3 is here:
+https://lkml.org/lkml/2018/5/31/527
 
-Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor using name)
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+I believe we've addressed the two burning questions I had about v3: 1.
+it seems ok not to use netlink, since there's not a great way to re-use
+the API without a lot of unnecessary code and 2. only having return
+capability for fds seems fine with people. Or at least I haven't heard
+any strong objections.
 
-Changes in v3:
-- Remove unneded change in dev_err message.
-- Fix err returned value in case to not find the governor.
+I've re-worked a bunch of things in this version based on feedback from
+the last series. See patch notes for details. At this point I'm not
+aware of anything that needs to be addressed, but of course that is
+subject to change :)
 
-Changes in v2:
-- Add a new function to request the module and call that function from
-  devfreq_add_device and governor_store.
+Tycho
 
- drivers/devfreq/devfreq.c | 65 ++++++++++++++++++++++++++++++++-------
- 1 file changed, 54 insertions(+), 11 deletions(-)
+Tycho Andersen (4):
+  seccomp: add a return code to trap to userspace
+  seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
+  seccomp: add a way to get a listener fd from ptrace
+  seccomp: add support for passing fds via USER_NOTIF
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 0b5b3abe054e..e059c431a558 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/kernel.h>
-+#include <linux/kmod.h>
- #include <linux/sched.h>
- #include <linux/errno.h>
- #include <linux/err.h>
-@@ -221,6 +222,46 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
- 	return ERR_PTR(-ENODEV);
- }
- 
-+/**
-+ * try_then_request_governor() - Try to find the governor and request the
-+ *                               module if is not found.
-+ * @name:	name of the governor
-+ *
-+ * Search the list of devfreq governors and request the module and try again
-+ * if is not found. This can happen when both drivers (the governor driver
-+ * and the driver that call devfreq_add_device) are built as modules.
-+ *
-+ * Return: The matched governor's pointer.
-+ */
-+static struct devfreq_governor *try_then_request_governor(const char *name)
-+{
-+	struct devfreq_governor *governor;
-+	int err = 0;
-+
-+	mutex_lock(&devfreq_list_lock);
-+
-+	governor = find_devfreq_governor(name);
-+	if (IS_ERR(governor)) {
-+		mutex_unlock(&devfreq_list_lock);
-+
-+		if (!strncmp(name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
-+			     DEVFREQ_NAME_LEN))
-+			err = request_module("governor_%s", "simpleondemand");
-+		else
-+			err = request_module("governor_%s", name);
-+		if (err)
-+			return NULL;
-+
-+		mutex_lock(&devfreq_list_lock);
-+
-+		governor = find_devfreq_governor(name);
-+	}
-+
-+	mutex_unlock(&devfreq_list_lock);
-+
-+	return governor;
-+}
-+
- static int devfreq_notify_transition(struct devfreq *devfreq,
- 		struct devfreq_freqs *freqs, unsigned int state)
- {
-@@ -644,17 +685,16 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 
- 	mutex_unlock(&devfreq->lock);
- 
--	mutex_lock(&devfreq_list_lock);
--	list_add(&devfreq->node, &devfreq_list);
--
--	governor = find_devfreq_governor(devfreq->governor_name);
-+	governor = try_then_request_governor(devfreq->governor_name);
- 	if (IS_ERR(governor)) {
- 		dev_err(dev, "%s: Unable to find governor for the device\n",
- 			__func__);
- 		err = PTR_ERR(governor);
--		goto err_init;
-+		goto err_unregister;
- 	}
- 
-+	mutex_lock(&devfreq_list_lock);
-+
- 	devfreq->governor = governor;
- 	err = devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_START,
- 						NULL);
-@@ -663,14 +703,16 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 			__func__);
- 		goto err_init;
- 	}
-+
-+	list_add(&devfreq->node, &devfreq_list);
-+
- 	mutex_unlock(&devfreq_list_lock);
- 
- 	return devfreq;
- 
- err_init:
--	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
--
-+err_unregister:
- 	device_unregister(&devfreq->dev);
- err_dev:
- 	if (devfreq)
-@@ -988,12 +1030,13 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 	if (ret != 1)
- 		return -EINVAL;
- 
--	mutex_lock(&devfreq_list_lock);
--	governor = find_devfreq_governor(str_governor);
-+	governor = try_then_request_governor(str_governor);
- 	if (IS_ERR(governor)) {
--		ret = PTR_ERR(governor);
--		goto out;
-+		return PTR_ERR(governor);
- 	}
-+
-+	mutex_lock(&devfreq_list_lock);
-+
- 	if (df->governor == governor) {
- 		ret = 0;
- 		goto out;
+ .../userspace-api/seccomp_filter.rst          |  79 +++
+ arch/Kconfig                                  |   7 +
+ include/linux/seccomp.h                       |  18 +-
+ include/uapi/linux/ptrace.h                   |   2 +
+ include/uapi/linux/seccomp.h                  |  23 +-
+ kernel/ptrace.c                               |   4 +
+ kernel/seccomp.c                              | 491 ++++++++++++++-
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 560 +++++++++++++++++-
+ 8 files changed, 1172 insertions(+), 12 deletions(-)
+
 -- 
 2.17.1
 
