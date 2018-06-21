@@ -2,105 +2,133 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06ACBC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C874CC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B48EE208E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:27:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tefjaqiz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B48EE208E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 88154208B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:29:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88154208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933283AbeFUP1y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:27:54 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39899 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933114AbeFUP1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:27:53 -0400
-Received: by mail-lf0-f67.google.com with SMTP id t2-v6so4918109lfd.6;
-        Thu, 21 Jun 2018 08:27:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=8dwTNHNqerDcaI9W+uVpUxbKTZ/QR7xb4AwfA/KGcjc=;
-        b=Tefjaqiza4vwbUphZNVwXH7XFiM7QT+Lq55jXE/syWpid0u12UhICkeSx0SndFn/8y
-         yqp5NRVSwEV8lhz0KUuWoAVWI17WQZROBHVS+fNULFwvD3SFI1OjaitPgIwYMC3tfH+N
-         fTJzUW0C+2jQf9Wh+NV5+GJ7I3KwqJ7a56SXRpd59s8ekLMHOQXV3qAA7FGu3BohrzBP
-         m8xFNsattH/NDcmW1pih6Uf0UfK/jOzBRqG9C0fhs8ye752Ev1jPnfqh6e4NwSP5Fu+5
-         SWijswIrQu9282sqXPgohQd7cboaFnKs4UFD/h/ngvkHBmLzOZEOiH+HwGaxycuFk0K8
-         Y9Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=8dwTNHNqerDcaI9W+uVpUxbKTZ/QR7xb4AwfA/KGcjc=;
-        b=qhYDg8Ge8wpN76kPT7Eicdx9F6QxOobD6AkPjoMLP0UcClKfJ5xjf/bqc3rgkoZnaM
-         OTIvxJGOLOPsRLxfuoWnsxddVZ1UlfY/s6OVfVVPVV61rLcKSBagpH2ttmRdPZE6pVof
-         0qtQeEGG7B/YcCEnYyk+h5EJSzl7Q9OhO/FXNBCGc4rblbFAn4Yx0fHccMmhTsSTzGah
-         QzJryYItqh9jdFIX4zCmE28SeSPTX5gtOyysR0zJhgPbev5kdp1BbCsX0FKvd6dyjen5
-         kspYbJbmZpdP4nMf1Uu5R6uyIGrHjN0pHaDTuTLPKO7/QZUjO2EbZLbOVoAcVCnbWCdt
-         ZdNg==
-X-Gm-Message-State: APt69E2psU00KWFXfGlVJnh2ic5bAP3QRA650YZzww6YqgUopadEvcD2
-        ndyPZ+MDhANoG16JAcnClyHF8zf0
-X-Google-Smtp-Source: ADUXVKKsdUlXW5eAOdN9IiO1yxAL8i6tVWlRDacMpgeAkxS8DVu+urtW5J2Loq3OhCFqNbg97LRfkQ==
-X-Received: by 2002:a19:6801:: with SMTP id d1-v6mr1687452lfc.138.1529594871479;
-        Thu, 21 Jun 2018 08:27:51 -0700 (PDT)
-Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
-        by smtp.gmail.com with ESMTPSA id n84-v6sm1007548lfi.19.2018.06.21.08.27.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 08:27:50 -0700 (PDT)
-From:   Esben Haabendal <esben.haabendal@gmail.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: spi-fsl-dspi: Fix copy-paste error in dspi_probe
-References: <20180621132209.GA27215@embeddedor.com>
-Date:   Thu, 21 Jun 2018 17:27:49 +0200
-In-Reply-To: <20180621132209.GA27215@embeddedor.com> (Gustavo A. R. Silva's
-        message of "Thu, 21 Jun 2018 08:22:09 -0500")
-Message-ID: <878t78i2h6.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S933333AbeFUP3I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 11:29:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44742 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933114AbeFUP3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 11:29:06 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C8BBC8A3AE;
+        Thu, 21 Jun 2018 15:29:05 +0000 (UTC)
+Received: from hmswarspite.think-freely.org (ovpn-121-84.rdu2.redhat.com [10.10.121.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D3509200AA40;
+        Thu, 21 Jun 2018 15:29:04 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 11:29:03 -0400
+From:   Neil Horman <nhorman@redhat.com>
+To:     Nathaniel McCallum <npmccallum@redhat.com>
+Cc:     sean.j.christopherson@intel.com, jethro@fortanix.com,
+        luto@kernel.org, jarkko.sakkinen@linux.intel.com, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, intel-sgx-kernel-dev@lists.01.org, hpa@zytor.com,
+        dvhart@infradead.org, tglx@linutronix.de, andy@infradead.org,
+        Peter Jones <pjones@redhat.com>
+Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 13/13] intel_sgx: in-kernel
+ launch enclave
+Message-ID: <20180621152903.GB1324@hmswarspite.think-freely.org>
+References: <CALCETrVp1ZhrxF5bQDSaZpLucS88tErejj5JC6Jb0fB5etWRbA@mail.gmail.com>
+ <20180611115255.GC22164@hmswarspite.think-freely.org>
+ <CALCETrX6SD0ThNzpjkbXd7CbNTguzqiQhWMomGK+tocx_DE9XQ@mail.gmail.com>
+ <20180612174535.GE19168@hmswarspite.think-freely.org>
+ <CALCETrV-4D-M2ap1EFHQiQerYf_XgwLmBAx5WMvcCUefOODjOA@mail.gmail.com>
+ <CAOASepN9t3jF4ajfKLG_odTZddOvXjY_DqLQhRPWhJ-imtjkgg@mail.gmail.com>
+ <e3f8e5b9-aa1e-20da-37ac-3c3caafa66bc@fortanix.com>
+ <b5c81504-83cd-8150-ebe4-41355026590f@fortanix.com>
+ <20180620210158.GA24328@linux.intel.com>
+ <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOASepN1AtgEhobJUVh=rcsQ_Qt8ujoEhnivV-29y=-AiyJwZQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 15:29:05 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 21 Jun 2018 15:29:05 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'nhorman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
+On Thu, Jun 21, 2018 at 08:32:25AM -0400, Nathaniel McCallum wrote:
+> On Wed, Jun 20, 2018 at 5:02 PM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > On Wed, Jun 20, 2018 at 11:39:00AM -0700, Jethro Beekman wrote:
+> > > On 2018-06-20 11:16, Jethro Beekman wrote:
+> > > > > This last bit is also repeated in different words in Table 35-2 and
+> > > > > Section 42.2.2. The MSRs are *not writable* before the write-lock bit
+> > > > > itself is locked. Meaning the MSRs are either locked with Intel's key
+> > > > > hash, or not locked at all.
+> > >
+> > > Actually, this might be a documentation bug. I have some test hardware and I
+> > > was able to configure the MSRs in the BIOS and then read the MSRs after boot
+> > > like this:
+> > >
+> > > MSR 0x3a 0x0000000000040005
+> > > MSR 0x8c 0x20180620aaaaaaaa
+> > > MSR 0x8d 0x20180620bbbbbbbb
+> > > MSR 0x8e 0x20180620cccccccc
+> > > MSR 0x8f 0x20180620dddddddd
+> > >
+> > > Since this is not production hardware, it could also be a CPU bug of course.
+> > >
+> > > If it is indeed possible to configure AND lock the MSR values to non-Intel
+> > > values, I'm very much in favor of Nathaniels proposal to treat the launch
+> > > enclave like any other firmware blob.
+> >
+> > It's not a CPU or documentation bug (though the latter is arguable).
+> > SGX has an activation step that is triggered by doing a WRMSR(0x7a)
+> > with bit 0 set.  Until SGX is activated, the SGX related bits in
+> > IA32_FEATURE_CONTROL cannot be set, i.e. SGX can't be enabled.  But,
+> > the LE hash MSRs are fully writable prior to activation, e.g. to
+> > allow firmware to lock down the LE key with a non-Intel value.
+> >
+> > So yes, it's possible to lock the MSRs to a non-Intel value.  The
+> > obvious caveat is that whatever blob is used to write the MSRs would
+> > need be executed prior to activation.
+> 
+> This implies that it should be possible to create MSR activation (and
+> an embedded launch enclave?) entirely as a UEFI module. The kernel
+> would still get to manage who has access to /dev/sgx and other
+> important non-cryptographic policy details. Users would still be able
+> to control the cryptographic policy details (via BIOS Secure Boot
+> configuration that exists today). Distributions could still control
+> cryptographic policy details via signing of the UEFI module with their
+> own Secure Boot key (or using something like shim). The UEFI module
+> (and possibly the external launch enclave) could be distributed via
+> linux-firmware.
+> 
+> Andy/Neil, does this work for you?
+> 
+I need some time to digest it.  Who in your mind is writing the UEFI module.  Is
+that the firmware vendor or IHV?
 
-> It seems that the proper structure field to use in this particular
-> case is *regmap_pushr* instead of regmap.
->
-> Addresses-Coverity-ID: 1470126 ("Copy-paste error")
-> Fixes: 58ba07ec79e6 ("spi: spi-fsl-dspi: Add support for XSPI mode registers")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/spi/spi-fsl-dspi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-> index 1f85dcd..ff7456b 100644
-> --- a/drivers/spi/spi-fsl-dspi.c
-> +++ b/drivers/spi/spi-fsl-dspi.c
-> @@ -1066,7 +1066,7 @@ static int dspi_probe(struct platform_device *pdev)
->  			dev_err(&pdev->dev,
->  				"failed to init pushr regmap: %ld\n",
->  				PTR_ERR(dspi->regmap_pushr));
-> -			ret = PTR_ERR(dspi->regmap);
-> +			ret = PTR_ERR(dspi->regmap_pushr);
->  			goto out_master_put;
->  		}
->  	}
+Neil
 
-Acked-by: Esben Haabendal <eha@deif.com>
-
+> > As for the SDM, it's a documentation... omission?  SGX activation
+> > is intentionally omitted from the SDM.  The intended usage model is
+> > that firmware will always do the activation (if it wants SGX enabled),
+> > i.e. post-firmware software will only ever "see" SGX as disabled or
+> > in the fully activated state, and so the SDM doesn't describe SGX
+> > behavior prior to activation.  I believe the activation process, or
+> > at least what is required from firmware, is documented in the BIOS
+> > writer's guide.
+> >
+> > > Jethro Beekman | Fortanix
+> > >
+> >
+> >
