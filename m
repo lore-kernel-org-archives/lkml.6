@@ -2,287 +2,138 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FABC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DF9C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4799208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:27:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4799208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 4258C2075E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:30:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BYcn5uk7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4258C2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754011AbeFUG10 (ORCPT
+        id S1754085AbeFUGap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 02:27:26 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:58102 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750789AbeFUG1Z (ORCPT
+        Thu, 21 Jun 2018 02:30:45 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40331 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751150AbeFUGan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 02:27:25 -0400
-X-UUID: af8b5259a0a042e4a6e0218141ceb0e7-20180621
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 736199359; Thu, 21 Jun 2018 14:27:17 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs03n2.mediatek.inc
- (172.21.101.182) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Thu, 21 Jun
- 2018 14:27:15 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 21 Jun 2018 14:27:13 +0800
-Message-ID: <1529562433.22229.2.camel@mhfsdcap03>
-Subject: Re: [PATCH v4] dt-bindings: mediatek: Add binding for mt2712 IOMMU
- and SMI
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        "Robin Murphy" <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Tomasz Figa" <tfiga@google.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <arnd@arndb.de>
-Date:   Thu, 21 Jun 2018 14:27:13 +0800
-In-Reply-To: <1527165331-22261-1-git-send-email-yong.wu@mediatek.com>
-References: <1527165331-22261-1-git-send-email-yong.wu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 21 Jun 2018 02:30:43 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n5-v6so3590073wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 23:30:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qetVJMR9BXAytswHwx5TeHMKsYk5lZhH0E06bN+1lvY=;
+        b=BYcn5uk7Jzas4T+3eBbGSRq0OWSfYF+2IN9Zw7mgbSQCTGVpUMzB9F94rfxADE56WJ
+         HAlahcwPTZXnmrexSgNjSPTz8p5sJ1YT4Xu2GI1CjO1gYLY3OTID75YGtk2ZEjcU4lEw
+         eo2FWUP5aknEgxvRBliJW9TJz/64+M8ciznqel+ISCRsA7k2JTAv4s1WPH9eOp1zWQr8
+         dehb1VeXxZqm3BzEz14xbHFnQXzKyCqneQZYtD6Rv8M+TnxaGsMdD32n01O9n3iyMESB
+         WxfFmRTdmKiLvw8qSIW/9pZSOxKR8kDCyxrY2i1272VatewsIZ/DXXYuwWz0ss7XyPst
+         CNOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qetVJMR9BXAytswHwx5TeHMKsYk5lZhH0E06bN+1lvY=;
+        b=M5aAf/G8m/M+5LsQUGdU8BTIyvkGVp1+R4OW9sdQzuLxfdKU1jF6SlO6E4ptCXEz2c
+         6I2ULqELMWMyX+FiGO9q2Lxi9dsydLLLxdOUCWoejzURBnCeZ0U9KoY0jk4CBVkLY2VR
+         RZhG4xp63p94JJVSpjH3jhTA50RKxd19NfUrKlMi0eyu1bu6IXiECAbVhO9c0rGc9Yx4
+         ZCwIDZPiAuEMKBn5Ru2fp4XOHnuMvWaDF8eL+hxODpqEH7CE0XefGXw9vkTFzxtffSCy
+         hcpnu0haczjg2cOC6tvd5Icb4O66ZzBkSCDXyHyYlU6Y0YfLin2iNrh7MiKQupNQZWQr
+         vtdQ==
+X-Gm-Message-State: APt69E2+/O81Awx6dyGeJi0ykIlaoPS9RaNRyixgonUCg5W20IN8JK+P
+        Tu23pml0EsuLnLkDCiTmlYBCfRA8GOABGFzbHrLHDg==
+X-Google-Smtp-Source: ADUXVKKdK4IPCBbP5D74EZ+xKSFAmE+VUpOW28GSnq9iDvgTxaR+napvYXxg6zaAhjCFEb3VO6mUKEhYnHuei9Ctan4=
+X-Received: by 2002:a1c:1c8f:: with SMTP id c137-v6mr3884950wmc.142.1529562641633;
+ Wed, 20 Jun 2018 23:30:41 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+References: <20180620224147.23777-1-shakeelb@google.com> <010001641fe92599-9006a895-d1ea-4881-a63c-f3749ff9b7b3-000000@email.amazonses.com>
+In-Reply-To: <010001641fe92599-9006a895-d1ea-4881-a63c-f3749ff9b7b3-000000@email.amazonses.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 20 Jun 2018 23:30:29 -0700
+Message-ID: <CALvZod7fgFYDY7nqE2S4a78TqoX19MC66YTFFrWqqR0h9F8iPA@mail.gmail.com>
+Subject: Re: [PATCH] slub: track number of slabs irrespective of CONFIG_SLUB_DEBUG
+To:     Christoph Lameter <cl@linux.com>
+Cc:     "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        David Rientjes <rientjes@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+On Wed, Jun 20, 2018 at 6:15 PM Christopher Lameter <cl@linux.com> wrote:
+>
+> On Wed, 20 Jun 2018, Shakeel Butt wrote:
+>
+> > For !CONFIG_SLUB_DEBUG, SLUB does not maintain the number of slabs
+> > allocated per node for a kmem_cache. Thus, slabs_node() in
+> > __kmem_cache_empty(), __kmem_cache_shrink() and __kmem_cache_destroy()
+> > will always return 0 for such config. This is wrong and can cause issues
+> > for all users of these functions.
+>
+>
+> CONFIG_SLUB_DEBUG is set by default on almost all builds. The only case
+> where CONFIG_SLUB_DEBUG is switched off is when we absolutely need to use
+> the minimum amount of memory (embedded or some such thing).
+>
+> > The right solution is to make slabs_node() work even for
+> > !CONFIG_SLUB_DEBUG. The commit 0f389ec63077 ("slub: No need for per node
+> > slab counters if !SLUB_DEBUG") had put the per node slab counter under
+> > CONFIG_SLUB_DEBUG because it was only read through sysfs API and the
+> > sysfs API was disabled on !CONFIG_SLUB_DEBUG. However the users of the
+> > per node slab counter assumed that it will work in the absence of
+> > CONFIG_SLUB_DEBUG. So, make the counter work for !CONFIG_SLUB_DEBUG.
+>
+> Please do not do this. Find a way to avoid these checks. The
+> objective of a !CONFIG_SLUB_DEBUG configuration is to not compile in
+> debuggin checks etc etc in order to reduce the code/data footprint to the
+> minimum necessary while sacrificing debuggability etc etc.
+>
+> Maybe make it impossible to disable CONFIG_SLUB_DEBUG if CGROUPs are in
+> use?
+>
 
-      A gentle ping on this.
+Copying from the other thread:
 
-On Thu, 2018-05-24 at 20:35 +0800, Yong Wu wrote:
-> This patch adds decriptions for mt2712 IOMMU and SMI.
-> 
-> In order to balance the bandwidth, mt2712 has two M4Us, two
-> smi-commons, 10 smi-larbs. and mt2712 is also MTK IOMMU gen2 which
-> uses ARM Short-Descriptor translation table format.
-> 
-> The mt2712 M4U-SMI HW diagram is as below:
-> 
->                             EMI
->                              |
->               ------------------------------------
->               |                                  |
->              M4U0                              M4U1
->               |                                  |
->          smi-common0                        smi-common1
->               |                                  |
->   -------------------------       --------------------------------
->   |     |     |     |     |       |         |        |     |     |
->   |     |     |     |     |       |         |        |     |     |
-> larb0 larb1 larb2 larb3 larb6    larb4    larb5    larb7 larb8 larb9
-> disp0 vdec  cam   venc   jpg  mdp1/disp1 mdp2/disp2 mdp3 vdo/nr tvd
-> 
-> All the connections are HW fixed, SW can NOT adjust it.
-> 
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
-> change notes:
-> v4: change the license of the new file in this patch to SPDX.
-> 
-> v3: http://lists.infradead.org/pipermail/linux-mediatek/2018-May/013279.html
-> Add a new ECO port(DISP_RDMA2) in larb0/port7.
-> 
-> v2:
-> https://lists.linuxfoundation.org/pipermail/iommu/2017-August/023848.html
-> 
-> v1:
-> https://lists.linuxfoundation.org/pipermail/iommu/2017-August/023665.html
-> ---
->  .../devicetree/bindings/iommu/mediatek,iommu.txt   |  6 +-
->  .../memory-controllers/mediatek,smi-common.txt     |  6 +-
->  .../memory-controllers/mediatek,smi-larb.txt       |  5 +-
->  include/dt-bindings/memory/mt2712-larb-port.h      | 95 ++++++++++++++++++++++
->  4 files changed, 106 insertions(+), 6 deletions(-)
->  create mode 100644 include/dt-bindings/memory/mt2712-larb-port.h
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt b/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
-> index 53c20ca..df5db73 100644
-> --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
-> @@ -40,6 +40,7 @@ video decode local arbiter, all these ports are according to the video HW.
->  Required properties:
->  - compatible : must be one of the following string:
->  	"mediatek,mt2701-m4u" for mt2701 which uses generation one m4u HW.
-> +	"mediatek,mt2712-m4u" for mt2712 which uses generation two m4u HW.
->  	"mediatek,mt8173-m4u" for mt8173 which uses generation two m4u HW.
->  - reg : m4u register base and size.
->  - interrupts : the interrupt of m4u.
-> @@ -50,8 +51,9 @@ Required properties:
->  	according to the local arbiter index, like larb0, larb1, larb2...
->  - iommu-cells : must be 1. This is the mtk_m4u_id according to the HW.
->  	Specifies the mtk_m4u_id as defined in
-> -	dt-binding/memory/mt2701-larb-port.h for mt2701 and
-> -	dt-binding/memory/mt8173-larb-port.h for mt8173
-> +	dt-binding/memory/mt2701-larb-port.h for mt2701,
-> +	dt-binding/memory/mt2712-larb-port.h for mt2712, and
-> +	dt-binding/memory/mt8173-larb-port.h for mt8173.
->  
->  Example:
->  	iommu: iommu@10205000 {
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
-> index aa614b2..615abdd 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
-> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
-> @@ -2,8 +2,9 @@ SMI (Smart Multimedia Interface) Common
->  
->  The hardware block diagram please check bindings/iommu/mediatek,iommu.txt
->  
-> -Mediatek SMI have two generations of HW architecture, mt8173 uses the second
-> -generation of SMI HW while mt2701 uses the first generation HW of SMI.
-> +Mediatek SMI have two generations of HW architecture, mt2712 and mt8173 use
-> +the second generation of SMI HW while mt2701 uses the first generation HW of
-> +SMI.
->  
->  There's slight differences between the two SMI, for generation 2, the
->  register which control the iommu port is at each larb's register base. But
-> @@ -15,6 +16,7 @@ not needed for SMI generation 2.
->  Required properties:
->  - compatible : must be one of :
->  	"mediatek,mt2701-smi-common"
-> +	"mediatek,mt2712-smi-common"
->  	"mediatek,mt8173-smi-common"
->  - reg : the register and size of the SMI block.
->  - power-domains : a phandle to the power domain of this local arbiter.
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
-> index ddf46b8..083155c 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
-> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
-> @@ -4,8 +4,9 @@ The hardware block diagram please check bindings/iommu/mediatek,iommu.txt
->  
->  Required properties:
->  - compatible : must be one of :
-> -		"mediatek,mt8173-smi-larb"
->  		"mediatek,mt2701-smi-larb"
-> +		"mediatek,mt2712-smi-larb"
-> +		"mediatek,mt8173-smi-larb"
->  - reg : the register and size of this local arbiter.
->  - mediatek,smi : a phandle to the smi_common node.
->  - power-domains : a phandle to the power domain of this local arbiter.
-> @@ -15,7 +16,7 @@ Required properties:
->  	    the register.
->    - "smi" : It's the clock for transfer data and command.
->  
-> -Required property for mt2701:
-> +Required property for mt2701 and mt2712:
->  - mediatek,larb-id :the hardware id of this larb.
->  
->  Example:
-> diff --git a/include/dt-bindings/memory/mt2712-larb-port.h b/include/dt-bindings/memory/mt2712-larb-port.h
-> new file mode 100644
-> index 0000000..6f9aa73
-> --- /dev/null
-> +++ b/include/dt-bindings/memory/mt2712-larb-port.h
-> @@ -0,0 +1,95 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2017 MediaTek Inc.
-> + * Author: Yong Wu <yong.wu@mediatek.com>
-> + */
-> +#ifndef __DTS_IOMMU_PORT_MT2712_H
-> +#define __DTS_IOMMU_PORT_MT2712_H
-> +
-> +#define MTK_M4U_ID(larb, port)		(((larb) << 5) | (port))
-> +
-> +#define M4U_LARB0_ID			0
-> +#define M4U_LARB1_ID			1
-> +#define M4U_LARB2_ID			2
-> +#define M4U_LARB3_ID			3
-> +#define M4U_LARB4_ID			4
-> +#define M4U_LARB5_ID			5
-> +#define M4U_LARB6_ID			6
-> +#define M4U_LARB7_ID			7
-> +#define M4U_LARB8_ID			8
-> +#define M4U_LARB9_ID			9
-> +
-> +/* larb0 */
-> +#define M4U_PORT_DISP_OVL0		MTK_M4U_ID(M4U_LARB0_ID, 0)
-> +#define M4U_PORT_DISP_RDMA0		MTK_M4U_ID(M4U_LARB0_ID, 1)
-> +#define M4U_PORT_DISP_WDMA0		MTK_M4U_ID(M4U_LARB0_ID, 2)
-> +#define M4U_PORT_DISP_OD_R		MTK_M4U_ID(M4U_LARB0_ID, 3)
-> +#define M4U_PORT_DISP_OD_W		MTK_M4U_ID(M4U_LARB0_ID, 4)
-> +#define M4U_PORT_MDP_RDMA0		MTK_M4U_ID(M4U_LARB0_ID, 5)
-> +#define M4U_PORT_MDP_WDMA		MTK_M4U_ID(M4U_LARB0_ID, 6)
-> +#define M4U_PORT_DISP_RDMA2		MTK_M4U_ID(M4U_LARB0_ID, 7)
-> +
-> +/* larb1 */
-> +#define M4U_PORT_HW_VDEC_MC_EXT		MTK_M4U_ID(M4U_LARB1_ID, 0)
-> +#define M4U_PORT_HW_VDEC_PP_EXT		MTK_M4U_ID(M4U_LARB1_ID, 1)
-> +#define M4U_PORT_HW_VDEC_UFO_EXT	MTK_M4U_ID(M4U_LARB1_ID, 2)
-> +#define M4U_PORT_HW_VDEC_VLD_EXT	MTK_M4U_ID(M4U_LARB1_ID, 3)
-> +#define M4U_PORT_HW_VDEC_VLD2_EXT	MTK_M4U_ID(M4U_LARB1_ID, 4)
-> +#define M4U_PORT_HW_VDEC_AVC_MV_EXT	MTK_M4U_ID(M4U_LARB1_ID, 5)
-> +#define M4U_PORT_HW_VDEC_PRED_RD_EXT	MTK_M4U_ID(M4U_LARB1_ID, 6)
-> +#define M4U_PORT_HW_VDEC_PRED_WR_EXT	MTK_M4U_ID(M4U_LARB1_ID, 7)
-> +#define M4U_PORT_HW_VDEC_PPWRAP_EXT	MTK_M4U_ID(M4U_LARB1_ID, 8)
-> +#define M4U_PORT_HW_VDEC_TILE		MTK_M4U_ID(M4U_LARB1_ID, 9)
-> +#define M4U_PORT_HW_IMG_RESZ_EXT	MTK_M4U_ID(M4U_LARB1_ID, 10)
-> +
-> +/* larb2 */
-> +#define M4U_PORT_CAM_DMA0		MTK_M4U_ID(M4U_LARB2_ID, 0)
-> +#define M4U_PORT_CAM_DMA1		MTK_M4U_ID(M4U_LARB2_ID, 1)
-> +#define M4U_PORT_CAM_DMA2		MTK_M4U_ID(M4U_LARB2_ID, 2)
-> +
-> +/* larb3 */
-> +#define M4U_PORT_VENC_RCPU		MTK_M4U_ID(M4U_LARB3_ID, 0)
-> +#define M4U_PORT_VENC_REC		MTK_M4U_ID(M4U_LARB3_ID, 1)
-> +#define M4U_PORT_VENC_BSDMA		MTK_M4U_ID(M4U_LARB3_ID, 2)
-> +#define M4U_PORT_VENC_SV_COMV		MTK_M4U_ID(M4U_LARB3_ID, 3)
-> +#define M4U_PORT_VENC_RD_COMV		MTK_M4U_ID(M4U_LARB3_ID, 4)
-> +#define M4U_PORT_VENC_CUR_CHROMA	MTK_M4U_ID(M4U_LARB3_ID, 5)
-> +#define M4U_PORT_VENC_REF_CHROMA	MTK_M4U_ID(M4U_LARB3_ID, 6)
-> +#define M4U_PORT_VENC_CUR_LUMA		MTK_M4U_ID(M4U_LARB3_ID, 7)
-> +#define M4U_PORT_VENC_REF_LUMA		MTK_M4U_ID(M4U_LARB3_ID, 8)
-> +
-> +/* larb4 */
-> +#define M4U_PORT_DISP_OVL1		MTK_M4U_ID(M4U_LARB4_ID, 0)
-> +#define M4U_PORT_DISP_RDMA1		MTK_M4U_ID(M4U_LARB4_ID, 1)
-> +#define M4U_PORT_DISP_WDMA1		MTK_M4U_ID(M4U_LARB4_ID, 2)
-> +#define M4U_PORT_DISP_OD1_R		MTK_M4U_ID(M4U_LARB4_ID, 3)
-> +#define M4U_PORT_DISP_OD1_W		MTK_M4U_ID(M4U_LARB4_ID, 4)
-> +#define M4U_PORT_MDP_RDMA1		MTK_M4U_ID(M4U_LARB4_ID, 5)
-> +#define M4U_PORT_MDP_WROT1		MTK_M4U_ID(M4U_LARB4_ID, 6)
-> +
-> +/* larb5 */
-> +#define M4U_PORT_DISP_OVL2		MTK_M4U_ID(M4U_LARB5_ID, 0)
-> +#define M4U_PORT_DISP_WDMA2		MTK_M4U_ID(M4U_LARB5_ID, 1)
-> +#define M4U_PORT_MDP_RDMA2		MTK_M4U_ID(M4U_LARB5_ID, 2)
-> +#define M4U_PORT_MDP_WROT0		MTK_M4U_ID(M4U_LARB5_ID, 3)
-> +
-> +/* larb6 */
-> +#define M4U_PORT_JPGDEC_WDMA_0		MTK_M4U_ID(M4U_LARB6_ID, 0)
-> +#define M4U_PORT_JPGDEC_WDMA_1		MTK_M4U_ID(M4U_LARB6_ID, 1)
-> +#define M4U_PORT_JPGDEC_BSDMA_0		MTK_M4U_ID(M4U_LARB6_ID, 2)
-> +#define M4U_PORT_JPGDEC_BSDMA_1		MTK_M4U_ID(M4U_LARB6_ID, 3)
-> +
-> +/* larb7 */
-> +#define M4U_PORT_MDP_RDMA3		MTK_M4U_ID(M4U_LARB7_ID, 0)
-> +#define M4U_PORT_MDP_WROT2		MTK_M4U_ID(M4U_LARB7_ID, 1)
-> +
-> +/* larb8 */
-> +#define M4U_PORT_VDO			MTK_M4U_ID(M4U_LARB8_ID, 0)
-> +#define M4U_PORT_NR			MTK_M4U_ID(M4U_LARB8_ID, 1)
-> +#define M4U_PORT_WR_CHANNEL0		MTK_M4U_ID(M4U_LARB8_ID, 2)
-> +
-> +/* larb9 */
-> +#define M4U_PORT_TVD			MTK_M4U_ID(M4U_LARB9_ID, 0)
-> +#define M4U_PORT_WR_CHANNEL1		MTK_M4U_ID(M4U_LARB9_ID, 1)
-> +
-> +#endif
+On Wed, Jun 20, 2018 at 6:22 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> On Thu, Jun 21, 2018 at 3:20 AM Christopher Lameter <cl@linux.com> wrote:
+> >
+> > NAK. Its easier to simply not allow !CONFIG_SLUB_DEBUG for cgroups based
+> > configs because in that case you certainly have enough memory to include
+> > the runtime debug code as well as the extended counters.
+> >
+>
+> FWIW, I ran into issues with a combination of KASAN+CONFIG_SLUB
+> without having CONFIG_SLUB_DEBUG, because KASAN was using functions
+> that were broken without CONFIG_SLUB_DEBUG, so while you're at it with
+> creating dependencies, you might want to also say KASAN+CONFIG_SLUB
+> ==> CONFIG_SLUB_DEBUG.
 
+KASAN is the only user of __kmem_cache_empty(). So, enforcing
+KASAN+CONFIG_SLUB => CONFIG_SLUB_DEBUG makes sense but not sure about
+cgroups or memcg. Though is it ok let __kmem_cache_shrink() &
+__kmem_cache_shutdown() be broken for !CONFIG_SLUB_DEBUG?
 
+For __kmem_cache_shutdown(), I can understand that shutting down a
+kmem_cache when there are still objects allocated from it, is broken
+and wrong. For __kmem_cache_shrink(), maybe wrong answer from it is
+tolerable.
+
+Shakeel
