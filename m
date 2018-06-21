@@ -2,184 +2,198 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2361EC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E08E6C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C37EB20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90F0520846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:56:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VV1eWXs6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37EB20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFnVD51D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F0520846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933196AbeFUKyT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:54:19 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42164 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754359AbeFUKxg (ORCPT
+        id S1754489AbeFUK45 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 06:56:57 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38636 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754190AbeFUK4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:53:36 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180621105333euoutp02ece74ff1653d85a91c262b958d45fe68~6J3aEDSdH0695306953euoutp02k
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:53:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180621105333euoutp02ece74ff1653d85a91c262b958d45fe68~6J3aEDSdH0695306953euoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1529578413;
-        bh=5kBzIvkTsPEw+hEp0zS+PUTi/qysHZz8EhyYoblemiQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=VV1eWXs6mrs95R9p7eseRa/FoSqXQ8v2+Guue890JSMTwf2fPopo041I1+cyfK3Gl
-         kFOLS90qqQ4KwMPXeD3u1z0sHUHWg0tG4VAtIzhobYgsEZVPmSX7qh8L5PX0RPThoF
-         IQZbmsRj2d0i2vnNxXZWp/gnmZ57NzTBbf58fHT8=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180621105331eucas1p2459727bc27eecb7ac318cba998afb179~6J3YdJYR83238332383eucas1p2Q;
-        Thu, 21 Jun 2018 10:53:31 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 0E.47.05700.AA38B2B5; Thu, 21
-        Jun 2018 11:53:30 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20180621105329eucas1p2b6eeacae41ec8a3468c5126214dde228~6J3WB-Iyl0596805968eucas1p2C;
-        Thu, 21 Jun 2018 10:53:29 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180621105328eusmtrp1d9a6b0ce7336959c2716d518a3a431e0~6J3VBkGi01737117371eusmtrp11;
-        Thu, 21 Jun 2018 10:53:28 +0000 (GMT)
-X-AuditID: cbfec7f2-5ffe19c000011644-5e-5b2b83aadcaf
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5E.77.04183.7A38B2B5; Thu, 21
-        Jun 2018 11:53:27 +0100 (BST)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20180621105327eusmtip28afa8020005a0e3bd5d72556ad99c3ec~6J3UohhJ80573605736eusmtip2n;
-        Thu, 21 Jun 2018 10:53:27 +0000 (GMT)
-Subject: Re: [PATCH] drm/bridge/sii8620: fix display of packed pixel modes
- in MHL2
-To:     Maciej Purski <m.purski@samsung.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Date:   Thu, 21 Jun 2018 12:53:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.8.0
+        Thu, 21 Jun 2018 06:56:55 -0400
+Received: by mail-lf0-f65.google.com with SMTP id i83-v6so4109149lfh.5;
+        Thu, 21 Jun 2018 03:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=jU9ggecRmLkohCgXGqXNxsjAZgBTgwebKbsIuldTQok=;
+        b=nFnVD51DUXupLNoXA1M73OrVaiUa9bCxwHfnZhraTCgzZQhxRXoic+HWlBplbZQORq
+         A8B/G5GrT4OlyAO4fhTdaIhFxZ1w4T7ewdX3h45K0TJjzsxUwUVRicuJJKRkVu/rRUw+
+         4B9gY77BvE7IOdAkIbxxC1zomehSIjH7GxTvFoPA5hlIVNEX53ZD87L971K3gGK9dxaU
+         SpfnACkWea6fVfZ36prCbBIVuJmSXIXLa60c3xPFaJ2grwpe1JiJCiC9TjoYb9FmuXbb
+         3AEw2Cxjiw/fjgz8/a5sM8YDwJJrury07rEkXEuOJ7VZcdeJXngcynp1+brl7ncU31Bj
+         tPNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=jU9ggecRmLkohCgXGqXNxsjAZgBTgwebKbsIuldTQok=;
+        b=An0vL6DAPuuNxv7lLQAFTJhIoxbp8Z1tZYEOfWHR3gN8Btjl4OWd740R2LPpLniIgt
+         aAnR2+V3knDeTEAEy8i83nEZQz58mVbc72nCHgyOs0Aw5BBGqOg0ncbgTH3lgzVYhFah
+         1QjXAV40zbHVCu9Lww1tcybTMNpBdc6fTgQdGdoStSAXEJ8vL4Dyj3aWBERW6y7W9reO
+         kIevdwMPIyq2DtdqB+LwqGC4Cio3Hsc5FTgGNNNMXSkFKdUDtYuWL0lz7dR4ISybyvzL
+         vVxt4op32mElsEmDExWp2QyQxRnM7buwA32/DFg2AN8JdqOnN4IznIdT5+tM3BybJYcX
+         Ul5w==
+X-Gm-Message-State: APt69E2cBmWXGS8GWlUjnhC7JBbVSoQJwhgBwg3Ts4wgSA5B7NE66wSM
+        DlzIgLcTxz8cGRu4NtcMEA==
+X-Google-Smtp-Source: ADUXVKKMglqHpdVv6V9JDhL0F7HidTU0BEEkOm5daVtppkxJS0h7M79TKbUWeQF+E0HYcZ1UgPQn3g==
+X-Received: by 2002:a19:20c1:: with SMTP id g184-v6mr16060503lfg.96.1529578613156;
+        Thu, 21 Jun 2018 03:56:53 -0700 (PDT)
+Received: from [192.168.0.4] (89-64-25-103.dynamic.chello.pl. [89.64.25.103])
+        by smtp.gmail.com with ESMTPSA id t197-v6sm203232lfe.32.2018.06.21.03.56.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 03:56:52 -0700 (PDT)
+From:   Piotr Bugalski <bugalski.piotr@gmail.com>
+X-Google-Original-From: Piotr Bugalski <elvis@carbonite>
+Date:   Thu, 21 Jun 2018 12:56:50 +0200 (CEST)
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+cc:     Piotr Bugalski <bugalski.piotr@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Cyrille Pitchen <cyrille.pitchen@microchip.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Piotr Bugalski <pbu@cryptera.com>
+Subject: Re: [RFC PATCH 2/2] dt-bindings: spi: QuadSPI driver for Atmel
+ SAMA5D2 documentation
+In-Reply-To: <20180620164741.2a8da424@bbrezillon>
+Message-ID: <alpine.DEB.2.20.1806211252390.28763@carbonite>
+References: <20180618162124.21749-1-bugalski.piotr@gmail.com> <20180618162124.21749-3-bugalski.piotr@gmail.com> <20180620164741.2a8da424@bbrezillon>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <1516706239-9104-1-git-send-email-m.purski@samsung.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7djPc7qrmrWjDS5fVLDoPXeSyaKp4y2r
-        xcYZ61ktrnx9z2bROXEJu8XlXXPYLBa8vMVisfbIXXYHDo/Lfb1MHrM7ZrJ6bP/2gNXjfvdx
-        Jo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DKOPrlA2NBN3/F6oMaDYztPF2MnBwSAiYSH+9M
-        Z+5i5OIQEljBKPH6xW8mkISQwBdGia07tCESn4ESix+wwXQ0XHvEApFYzihx5m0DlPOWUeLj
-        3jnsIFXCAiESt1vXsHYxcnCICHhKnDxVDhJmFuhgklj9sw7EZhPQlPi7+SbYUBYBVYkrD76w
-        gNiiAhESGyd8YgaxeQUEJU7OfAIW5xRwkWjbfZIZYo68xPa3c6BscYlbT+YzgdwgIbCPXWLb
-        p4lsEM1lElu2dLJDXO0isXTpa6gPhCVeHd8CFZeROD25hwXCrpdomnmFGWJQB6PEicXLoRqs
-        JQ4fvwj2DDPQ1et36YOYEgKOEitmskGYfBI33gpCnMMnMWkbKERBwrwSHW1CEDMUJe6f3coM
-        YYtLLL3wlW0Co9IsJE/OQvLYLCSPzUJYu4CRZRWjeGppcW56arFhXmq5XnFibnFpXrpecn7u
-        JkZgQjr97/inHYxfLyUdYhTgYFTi4b0RphUtxJpYVlyZe4hRgoNZSYT3nIl2tBBvSmJlVWpR
-        fnxRaU5q8SFGaQ4WJXHeOI26KCGB9MSS1OzU1ILUIpgsEwenVAOjRNk81kC37Xq3t7lE1T0y
-        ZzBi3xux1nB2V9u+b81Z4j9s/mvY7Chf+jT76dUELZaun7O/OfUUbv9TeCjcjNPhvkL+v7TX
-        pw0ZfFhkFQP0o/rq7pW87i78k6s1a6EV30ofvoIjbotPn1jfkOzFkPio4PCzNT2+c2N6NjeE
-        2D/J3v8tSq/iVJ8SS3FGoqEWc1FxIgAbEjOyRAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t/xe7rLm7WjDdZPsbToPXeSyaKp4y2r
-        xcYZ61ktrnx9z2bROXEJu8XlXXPYLBa8vMVisfbIXXYHDo/Lfb1MHrM7ZrJ6bP/2gNXjfvdx
-        Jo++LasYPT5vkgtgi9KzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnN
-        ySxLLdK3S9DLOPrlA2NBN3/F6oMaDYztPF2MnBwSAiYSDdcesYDYQgJLGSUuPcuFiItL7J7/
-        lhnCFpb4c62LrYuRC6jmNaPEjx0b2EASwgIhEvtWzmXsYuTgEBHwlDh5qhykhlmgi0li7+t3
-        7BAN0xklnu49zgjSwCagKfF3802wZl4BO4mmS4vANrAIqEpcefAF7ApRgQiJpnlr2CFqBCVO
-        znwCFucUcJFo230SrJ5ZQF3iz7xLULa8xPa3c6BscYlbT+YzTWAUmoWkfRaSlllIWmYhaVnA
-        yLKKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMjMA63Hfu5ZQdj17vgQ4wCHIxKPLw3wrSihVgT
-        y4orcw8xSnAwK4nwnjPRjhbiTUmsrEotyo8vKs1JLT7EaAr03ERmKdHkfGCKyCuJNzQ1NLew
-        NDQ3Njc2s1AS5z1vUBklJJCeWJKanZpakFoE08fEwSnVwNibypkcNmmR0I6m7LZ5Sdc2xZyb
-        vmNWau3KsnRWK67zPVKT1h/ztHX8qnhaRHvXubPnE3lzUiNE1/3b2SE7uTPS1itt9sV/nlYy
-        r1v7HRfte68da/JG0Hry51DHIt/ZHes4frtXXL3qI3uEc9+7RrX9hlI7hT99ZtEIK8yezLpk
-        3mpTtsVvFJRYijMSDbWYi4oTAZUmJmrZAgAA
-Message-Id: <20180621105329eucas1p2b6eeacae41ec8a3468c5126214dde228~6J3WB-Iyl0596805968eucas1p2C@eucas1p2.samsung.com>
-X-CMS-MailID: 20180621105329eucas1p2b6eeacae41ec8a3468c5126214dde228
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180123111735eucas1p167f4aef33d1aea781a892f5245ac1567
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180123111735eucas1p167f4aef33d1aea781a892f5245ac1567
-References: <CGME20180123111735eucas1p167f4aef33d1aea781a892f5245ac1567@eucas1p1.samsung.com>
-        <1516706239-9104-1-git-send-email-m.purski@samsung.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.01.2018 12:17, Maciej Purski wrote:
-> Currently packed pixel modes in MHL2 can't be displayed. The device
-> automatically recognizes output format, so setting format other than
-> RGB causes failure. Fix it by writing proper values to registers.
+
+Hi Boris,
+
+On Wed, 20 Jun 2018, Boris Brezillon wrote:
+
+> Hi Piotr,
 >
-> Tested on MHL1 and MHL2 using various vendors' dongles both in
-> DVI and HDMI mode.
+> On Mon, 18 Jun 2018 18:21:24 +0200
+> Piotr Bugalski <bugalski.piotr@gmail.com> wrote:
 >
-> Signed-off-by: Maciej Purski <m.purski@samsung.com>
-
-Another missed one, queued to drm-misc-fixes.
-
---
-Regards
-Andrzej
-
-> ---
->  drivers/gpu/drm/bridge/sil-sii8620.c | 17 +----------------
->  1 file changed, 1 insertion(+), 16 deletions(-)
+>> Documentation for DT-binding change.
+>>
+>> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
 >
-> diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
-> index 1718c2e..e13708d 100644
-> --- a/drivers/gpu/drm/bridge/sil-sii8620.c
-> +++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-> @@ -1005,20 +1005,11 @@ static void sii8620_stop_video(struct sii8620 *ctx)
->  
->  static void sii8620_set_format(struct sii8620 *ctx)
->  {
-> -	u8 out_fmt;
-> -
->  	if (sii8620_is_mhl3(ctx)) {
->  		sii8620_setbits(ctx, REG_M3_P0CTRL,
->  				BIT_M3_P0CTRL_MHL3_P0_PIXEL_MODE_PACKED,
->  				ctx->use_packed_pixel ? ~0 : 0);
->  	} else {
-> -		if (ctx->use_packed_pixel)
-> -			sii8620_write_seq_static(ctx,
-> -				REG_VID_MODE, BIT_VID_MODE_M1080P,
-> -				REG_MHL_TOP_CTL, BIT_MHL_TOP_CTL_MHL_PP_SEL | 1,
-> -				REG_MHLTX_CTL6, 0x60
-> -			);
-> -		else
->  			sii8620_write_seq_static(ctx,
->  				REG_VID_MODE, 0,
->  				REG_MHL_TOP_CTL, 1,
-> @@ -1026,15 +1017,9 @@ static void sii8620_set_format(struct sii8620 *ctx)
->  			);
->  	}
->  
-> -	if (ctx->use_packed_pixel)
-> -		out_fmt = VAL_TPI_FORMAT(YCBCR422, FULL) |
-> -			BIT_TPI_OUTPUT_CSCMODE709;
-> -	else
-> -		out_fmt = VAL_TPI_FORMAT(RGB, FULL);
-> -
->  	sii8620_write_seq(ctx,
->  		REG_TPI_INPUT, VAL_TPI_FORMAT(RGB, FULL),
-> -		REG_TPI_OUTPUT, out_fmt,
-> +		REG_TPI_OUTPUT, VAL_TPI_FORMAT(RGB, FULL),
->  	);
->  }
->  
+> I'm pretty sure I didn't make a single suggestion about the DT
+> bindings you use here ;-).
+>
 
+Ok, I misunderstood a bit your idea, but I think from next release this
+field will be in good place. So it was just prepared for the future ;-)
+
+>> Signed-off-by: Piotr Bugalski <pbu@cryptera.com>
+>>
+>> ---
+>>  .../devicetree/bindings/spi/spi_atmel-qspi.txt     | 41 ++++++++++++++++++++++
+>>  1 file changed, 41 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/spi/spi_atmel-qspi.txt
+>
+> I'll comment on this aspect in more details when replying to the cover
+> letter, but I think you should re-use the bindings defined in
+> Documentation/devicetree/bindings/mtd/atmel-quadspi.txt (IOW, move the
+> existing file to the Documentation/devicetree/bindings/spi directory).
+>
+> It's the same HW block, and just because you develop a new driver to
+> replace the old one doesn't mean you should have 2 different bindings in
+> parallel.
+
+I'll change it in next version.
+
+>
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/spi_atmel-qspi.txt b/Documentation/devicetree/bindings/spi/spi_atmel-qspi.txt
+>> new file mode 100644
+>> index 000000000000..d52b534c9c2b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/spi_atmel-qspi.txt
+>> @@ -0,0 +1,41 @@
+>> +* Atmel Quad Serial Peripheral Interface (QSPI)
+>> +
+>> +Required properties:
+>> +- compatible:     Should be "atmel,sama5d2-spi-qspi".
+>> +- reg:            Should contain the locations and lengths of the base registers
+>> +                  and the mapped memory.
+>> +- reg-names:      Should contain the resource reg names:
+>> +                  - qspi_base: configuration register address space
+>> +                  - qspi_mmap: memory mapped address space
+>> +- interrupts:     Should contain the interrupt for the device.
+>> +- clocks:         The phandle of the clock needed by the QSPI controller.
+>> +- #address-cells: Should be <1>.
+>> +- #size-cells:    Should be <0>.
+>> +
+>> +Example:
+>> +
+>> +qspi1: spi@f0024000 {
+>> +	compatible = "atmel,sama5d2-spi-qspi";
+>> +	reg = <0xf0024000 0x100>, <0xd8000000 0x08000000>;
+>> +	reg-names = "qspi_base", "qspi_mmap";
+>> +	interrupts = <53 IRQ_TYPE_LEVEL_HIGH 7>;
+>> +	clocks = <&qspi1_clk>;
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_qspi1_default>;
+>> +	status = "okay";
+>> +
+>> +	flash@0 {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		compatible = "winbond,w25m02gv", "spi-nand";
+>
+> "winbond,w25m02gv" is undocumented and unnecessary since SPI NANDs are
+> automatically detected. Also, maybe you should declare a SPI NOR in the
+> example since SPI NAND support has not yet been merged.
+>
+
+I was mainly focusing on NAND-flash with QSPI inteface so I took
+example from tested configuration. Next time I'll use NOR-flash.
+
+>> +		reg = <0>;
+>> +		spi-max-frequency = <83000000>;
+>> +		spi-rx-bus-width = <4>;
+>> +		spi-tx-bus-width = <4>;
+>> +
+>> +		...
+>> +	};
+>> +};
+>> +
+>
+> Regards,
+>
+> Boris
+>
+
+Thanks,
+Piotr
 
