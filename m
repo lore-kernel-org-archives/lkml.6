@@ -3,74 +3,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D84C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B089C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32FD0208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:52:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32FD0208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 31498208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:53:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31498208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933329AbeFULwH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 07:52:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48934 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933134AbeFULwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 07:52:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D9321529;
-        Thu, 21 Jun 2018 04:52:04 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6C5883F578;
-        Thu, 21 Jun 2018 04:52:04 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 90A561AE2E48; Thu, 21 Jun 2018 12:52:40 +0100 (BST)
-Date:   Thu, 21 Jun 2018 12:52:40 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [RFC PATCH] rseq: Avoid infinite recursion when delivering
- SIGSEGV
-Message-ID: <20180621115240.GE22505@arm.com>
-References: <1529512560-28007-1-git-send-email-will.deacon@arm.com>
- <10453618.15.1529513735208.JavaMail.zimbra@efficios.com>
+        id S933357AbeFULx1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 07:53:27 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:37114 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933130AbeFULxZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 07:53:25 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1fVy9M-0000ut-N3; Thu, 21 Jun 2018 19:53:16 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1fVy9I-0002Ah-Ct; Thu, 21 Jun 2018 19:53:12 +0800
+Date:   Thu, 21 Jun 2018 19:53:12 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Vinod Koul <vinod.koul@linaro.org>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
+Message-ID: <20180621115312.rfmbitrhqi44wu5w@gondor.apana.org.au>
+References: <20180618141259.23141-1-vkoul@kernel.org>
+ <20180618141259.23141-4-vkoul@kernel.org>
+ <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
+ <966e9cd4-70a3-8d54-df0f-16df3df45fb5@linaro.org>
+ <20180621101506.rnklbtapvfdev4xb@gondor.apana.org.au>
+ <e39deb02-8fa4-84ac-b33e-d692402189a1@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <10453618.15.1529513735208.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <e39deb02-8fa4-84ac-b33e-d692402189a1@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 12:55:35PM -0400, Mathieu Desnoyers wrote:
-> ----- On Jun 20, 2018, at 12:36 PM, Will Deacon will.deacon@arm.com wrote:
-> 
-> > When delivering a signal to a task that is using rseq, we call into
-> > __rseq_handle_notify_resume() so that the registers pushed in the
-> > sigframe are updated to reflect the state of the restartable sequence
-> > (for example, ensuring that the signal returns to the abort handler if
-> > necessary).
-> > 
-> > However, if the rseq management fails due to an unrecoverable fault when
-> > accessing userspace or certain combinations of RSEQ_CS_* flags, then we
-> > will attempt to deliver a SIGSEGV. This has the potential for infinite
-> > recursion if the rseq code continuously fails on signal delivery.
-> > 
-> > Avoid this problem by using force_sigsegv() instead of force_sig(), which
-> > is explicitly designed to reset the SEGV handler to SIG_DFL in the case
-> > of a recursive fault.
-> 
-> Your approach looks good. One nit below implementation-wise:
+On Thu, Jun 21, 2018 at 02:27:10PM +0300, Stanimir Varbanov wrote:
+>
+> OK, I just wanted to say that it is _not_ PRNG and the register names
+> gives us wrong impression.
 
-Nit accepted :) v2 on its way.
+So does it generate one bit of output for each bit of hardware-
+generated entropy like /dev/random? Or does it use a hardware-
+generated seed to power a PRNG?
 
-Will
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
