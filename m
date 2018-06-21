@@ -7,60 +7,61 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A42C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A869C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92F4F2255D
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC0EE22561
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:48:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="utL5JIwM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92F4F2255D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RgYI0vyW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC0EE22561
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933835AbeFUXsp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 19:48:45 -0400
-Received: from mail-qt0-f202.google.com ([209.85.216.202]:38444 "EHLO
-        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932734AbeFUXsl (ORCPT
+        id S933914AbeFUXs4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 19:48:56 -0400
+Received: from mail-it0-f74.google.com ([209.85.214.74]:57439 "EHLO
+        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933639AbeFUXso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 19:48:41 -0400
-Received: by mail-qt0-f202.google.com with SMTP id v14-v6so1164101qto.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:48:41 -0700 (PDT)
+        Thu, 21 Jun 2018 19:48:44 -0400
+Received: by mail-it0-f74.google.com with SMTP id 13-v6so295149itl.7
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:48:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:date:in-reply-to:message-id:references:subject:from:to
          :cc;
-        bh=UTo0MP31NcmRnoDiyi7jcuy8B7/IsyEAnIrtr4qanCM=;
-        b=utL5JIwMhgltwmRwSCvuL0drNH1wtImMZ0JlT7W1Fx3KlJ/gZxwE7HAZ0g/TxR6vWa
-         jvC+yBWnKES4RzUd0Zfdvd5j0fqwfiYr6ev5SoXkPYFqkr7zfVflR3IiwZ/JUZsxzhyH
-         7i5+nc9+0nzyhZ7FbvUmnwmZx2/x4UqhUo2KsLk695KGAB5qgVT1sHx5Q72DGIdJFd8b
-         QRTQpA+ebY3iH7ZGCCuyyKySEK2QGQNcthADT6DEo75zDTyPf+wkGebowT2hA4nJgsU/
-         Smmo4B+wYknczc0wpT1kHeed9/Sym8SJsAG8XVT1B7I/icRvGp+JiyzTPa0Ln1I4H4bY
-         1iuw==
+        bh=LuiekMZ5mGYd4fayhOXV0MbkpMytrPkCNiDTREQ8swU=;
+        b=RgYI0vyWgCzvsvk9eHdGNGh8Va1v+P8+h4hbE3tHmCGy6rMa1+i2/ic8XM4VwRfLeS
+         FAAUooxkY6al1S/dPIq5Y7zqc5aHGiIFYFjVL7iix97vtrWCQBaLsK3xHIKhA6bODssx
+         tb6siFtCT/SlYSU1t9UE885VncWrNTmxsuYpK/q+H80SKFI5xqXejR87SeqsoLrmkcuV
+         nXZqhObhczqebhJN905mb/2c1lVGLanoEHdumNxYo3yzjDduZrHCFne6jtnjo5noUY+U
+         P9NnmfNlaX4VFDVrKMZqQj2qR5yVrHtZacyCYOfUwrWkq97lm1ZIYMQ/p8Woftou2f4l
+         LEVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id
          :references:subject:from:to:cc;
-        bh=UTo0MP31NcmRnoDiyi7jcuy8B7/IsyEAnIrtr4qanCM=;
-        b=LIs3egX5gbV3aFgfyoz7QlzP3fMvY3W+FmEtmxZFuqto45iBaObB0EP/ZtFl6Cdmss
-         TR5CVXqtZUzQ7UxfidiuoBSFRuPOft825iYYFbxHTh9/4iL1L6vOH+kgN5xpUHBH2H2H
-         W+8VFoTLGMC3VfSLc8pyf/syM6Nl0tOo+Guwz6Au8W6ImOlc+jPiFe1ariiU2J7GHTyA
-         ath+9ShWSkzYa2hHT6ZOZdmLlhPfPAznDpQmM2uZ59gFYqZVDsMuxK6fI5bw0Dmj4tNC
-         ZT/g9JQel/lktcVbTu7s89eOE/Z1alFzHy4Hh0EtKcXKd4z+hC5kbdbdwOKua/bInRwM
-         eOOA==
-X-Gm-Message-State: APt69E1p4/uG87ILiWmohA3J8y/syHeNF4xJJuF0PAr2szz/y/BRPu30
-        Q00zIERJa7oJh35ma5ZABXpPZmGw5DNl
-X-Google-Smtp-Source: ADUXVKKjFOxzR1X3TPeZTdE91ZXsh6xPQrrbqLJlFXDo7tCdA8VKnWb1ByOookZQnJ8FIBtFLijxtzsjAsV2
+        bh=LuiekMZ5mGYd4fayhOXV0MbkpMytrPkCNiDTREQ8swU=;
+        b=ozDGWMcYzgoUkf21obZoBCTKU5DysKXN8xcinSuUaryZAk7JOdc8EnUOR1u1mO1mMr
+         8md6rnvNQn1niwgzsuZvDdXmHCnMKc0XYqzKTJQVehbT+ju0OcQK+5UimGsz4CN48v8Z
+         PvEdhwO3h/6Qveolj/sCFWl/8PMhzbXwo6SOhdNCGJPIFxWoh14S5HoOPsEcEQCsnJi9
+         hmO0tFoAzj+3MutyShT2JyMDczZ1y2Ui+buLdN7v0myPJLEhT2pAWka1x62MhBVlJn3t
+         MT720DnAqnHdIoJHVz11TKwO7yjJIr4sxsV8MIzcuEEBmCXArV7kZrlwSvF60YwTj0uy
+         v8pg==
+X-Gm-Message-State: APt69E2JkqTFo2kqwOf/kvFQNTl832TN5VY5WSVGsE/o9+lbviJAsd27
+        U356grAJco//nyXF8QNrt7cUtJa2QFFL
+X-Google-Smtp-Source: ADUXVKLOAQi1Fr2UPyJ/LLqQ2CqpPbdRnjFwatUbQuFim1cynUUc8d7BQTSWqHm76zFtmx+fYYutt3oAWkMw
 MIME-Version: 1.0
-X-Received: by 2002:a0c:8839:: with SMTP id 54-v6mr14593094qvl.24.1529624920464;
- Thu, 21 Jun 2018 16:48:40 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 16:48:26 -0700
+X-Received: by 2002:a24:b257:: with SMTP id h23-v6mr3507176iti.44.1529624924043;
+ Thu, 21 Jun 2018 16:48:44 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 16:48:27 -0700
 In-Reply-To: <20180621234829.224566-1-rajatja@google.com>
-Message-Id: <20180621234829.224566-2-rajatja@google.com>
+Message-Id: <20180621234829.224566-3-rajatja@google.com>
 References: <20180621234829.224566-1-rajatja@google.com>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH 1/4] PCI: Move pci_aer_init() and pci_no_aer() declarations to drivers/pci/pci.h
+Subject: [PATCH 2/4] PCI/AER: Define and allocate aer_stats structure for AER
+ capable devices
 From:   Rajat Jain <rajatja@google.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -85,69 +86,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since these functions are unsed only internally, move them to the PCI
-internal header file. Also, no one cares about return value of
-pci_aer_init(), so make it void.
+Define a structure to hold the AER statistics. There are 2 groups
+of statistics: dev_* counters that are to be collected for all AER
+capable devices and rootport_* counters that are collected for all
+(AER capable) rootports only. Allocate and free this structure when
+device is added or released (thus counters survive the lifetime of the
+device).
 
 Signed-off-by: Rajat Jain <rajatja@google.com>
 ---
- drivers/pci/pci.h      | 8 ++++++++
- drivers/pci/pcie/aer.c | 4 ++--
- include/linux/pci.h    | 4 ----
- 3 files changed, 10 insertions(+), 6 deletions(-)
+ drivers/pci/pci.h      |  2 ++
+ drivers/pci/pcie/aer.c | 53 ++++++++++++++++++++++++++++++++++++++++--
+ drivers/pci/probe.c    |  1 +
+ include/linux/pci.h    |  1 +
+ 4 files changed, 55 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index c358e7a07f3f..9a1af85aca77 100644
+index 9a1af85aca77..0759a7be9ef2 100644
 --- a/drivers/pci/pci.h
 +++ b/drivers/pci/pci.h
-@@ -452,4 +452,12 @@ static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
- }
+@@ -455,9 +455,11 @@ static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
+ #ifdef CONFIG_PCIEAER
+ void pci_no_aer(void);
+ void pci_aer_init(struct pci_dev *dev);
++void pci_aer_exit(struct pci_dev *dev);
+ #else
+ static inline void pci_no_aer(void) { }
+ static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
++static inline void pci_aer_exit(struct pci_dev *d) { }
  #endif
  
-+#ifdef CONFIG_PCIEAER
-+void pci_no_aer(void);
-+void pci_aer_init(struct pci_dev *dev);
-+#else
-+static inline void pci_no_aer(void) { }
-+static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
-+#endif
-+
  #endif /* DRIVERS_PCI_H */
 diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index a2e88386af28..11482669b93b 100644
+index 11482669b93b..6aa5284d5805 100644
 --- a/drivers/pci/pcie/aer.c
 +++ b/drivers/pci/pcie/aer.c
-@@ -402,10 +402,10 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
- 	return 0;
- }
+@@ -33,6 +33,9 @@
+ #define AER_ERROR_SOURCES_MAX		100
+ #define AER_MAX_MULTI_ERR_DEVICES	5	/* Not likely to have more */
  
--int pci_aer_init(struct pci_dev *dev)
-+void pci_aer_init(struct pci_dev *dev)
++#define AER_MAX_TYPEOF_COR_ERRS		16	/* as per PCI_ERR_COR_STATUS */
++#define AER_MAX_TYPEOF_UNCOR_ERRS	26	/* as per PCI_ERR_UNCOR_STATUS*/
++
+ struct aer_err_info {
+ 	struct pci_dev *dev[AER_MAX_MULTI_ERR_DEVICES];
+ 	int error_dev_num;
+@@ -76,6 +79,42 @@ struct aer_rpc {
+ 					 */
+ };
+ 
++/* AER stats for the device */
++struct aer_stats {
++
++	/*
++	 * Fields for all AER capable devices. They indicate the errors
++	 * "as seen by this device". Note that this may mean that if an
++	 * end point is causing problems, the AER counters may increment
++	 * at its link partner (e.g. root port) because the errors will be
++	 * "seen" by the link partner and not the the problematic end point
++	 * itself (which may report all counters as 0 as it never saw any
++	 * problems).
++	 */
++	/* Counters for different type of correctable errors */
++	u64 dev_cor_errs[AER_MAX_TYPEOF_COR_ERRS];
++	/* Counters for different type of fatal uncorrectable errors */
++	u64 dev_fatal_errs[AER_MAX_TYPEOF_UNCOR_ERRS];
++	/* Counters for different type of nonfatal uncorrectable errors */
++	u64 dev_nonfatal_errs[AER_MAX_TYPEOF_UNCOR_ERRS];
++	/* Total number of ERR_COR sent by this device */
++	u64 dev_total_cor_errs;
++	/* Total number of ERR_FATAL sent by this device */
++	u64 dev_total_fatal_errs;
++	/* Total number of ERR_NONFATAL sent by this device */
++	u64 dev_total_nonfatal_errs;
++
++	/*
++	 * Fields for Root ports  & root complex event collectors only, these
++	 * indicate the total number of ERR_COR, ERR_FATAL, and ERR_NONFATAL
++	 * messages received by the root port / event collector, INCLUDING the
++	 * ones that are generated internally (by the rootport itself)
++	 */
++	u64 rootport_total_cor_errs;
++	u64 rootport_total_fatal_errs;
++	u64 rootport_total_nonfatal_errs;
++};
++
+ #define AER_LOG_TLP_MASKS		(PCI_ERR_UNC_POISON_TLP|	\
+ 					PCI_ERR_UNC_ECRC|		\
+ 					PCI_ERR_UNC_UNSUP|		\
+@@ -405,9 +444,19 @@ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
+ void pci_aer_init(struct pci_dev *dev)
  {
  	dev->aer_cap = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ERR);
--	return pci_cleanup_aer_error_status_regs(dev);
-+	pci_cleanup_aer_error_status_regs(dev);
++
++	if (dev->aer_cap)
++		dev->aer_stats = kzalloc(sizeof(struct aer_stats), GFP_KERNEL);
++
+ 	pci_cleanup_aer_error_status_regs(dev);
  }
  
++void pci_aer_exit(struct pci_dev *dev)
++{
++	kfree(dev->aer_stats);
++	dev->aer_stats = NULL;
++}
++
  #define AER_AGENT_RECEIVER		0
+ #define AER_AGENT_REQUESTER		1
+ #define AER_AGENT_COMPLETER		2
+@@ -458,7 +507,7 @@ static const char *aer_error_layer[] = {
+ 	"Transaction Layer"
+ };
+ 
+-static const char *aer_correctable_error_string[] = {
++static const char *aer_correctable_error_string[AER_MAX_TYPEOF_COR_ERRS] = {
+ 	"Receiver Error",		/* Bit Position 0	*/
+ 	NULL,
+ 	NULL,
+@@ -477,7 +526,7 @@ static const char *aer_correctable_error_string[] = {
+ 	"Header Log Overflow",		/* Bit Position 15	*/
+ };
+ 
+-static const char *aer_uncorrectable_error_string[] = {
++static const char *aer_uncorrectable_error_string[AER_MAX_TYPEOF_UNCOR_ERRS] = {
+ 	"Undefined",			/* Bit Position 0	*/
+ 	NULL,
+ 	NULL,
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ac876e32de4b..48edd0c9e4bc 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2064,6 +2064,7 @@ static void pci_configure_device(struct pci_dev *dev)
+ 
+ static void pci_release_capabilities(struct pci_dev *dev)
+ {
++	pci_aer_exit(dev);
+ 	pci_vpd_release(dev);
+ 	pci_iov_release(dev);
+ 	pci_free_cap_save_buffers(dev);
 diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 340029b2fb38..b4ffea05c999 100644
+index b4ffea05c999..6bc0aa0fc33f 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
-@@ -1468,13 +1468,9 @@ static inline bool pcie_aspm_support_enabled(void) { return false; }
- #endif
- 
+@@ -299,6 +299,7 @@ struct pci_dev {
+ 	u8		hdr_type;	/* PCI header type (`multi' flag masked out) */
  #ifdef CONFIG_PCIEAER
--void pci_no_aer(void);
- bool pci_aer_available(void);
--int pci_aer_init(struct pci_dev *dev);
- #else
--static inline void pci_no_aer(void) { }
- static inline bool pci_aer_available(void) { return false; }
--static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
+ 	u16		aer_cap;	/* AER capability offset */
++	struct aer_stats *aer_stats;	/* AER stats for this device */
  #endif
- 
- #ifdef CONFIG_PCIE_ECRC
+ 	u8		pcie_cap;	/* PCIe capability offset */
+ 	u8		msi_cap;	/* MSI capability offset */
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
