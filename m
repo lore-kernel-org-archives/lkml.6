@@ -3,78 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: *
 X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5131FC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCF9C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6DC20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5490E20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:26:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGtymijq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6DC20846
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4gZcyU5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5490E20837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933164AbeFULAH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 07:00:07 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:39990 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932855AbeFULAG (ORCPT
+        id S933558AbeFUM0g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:26:36 -0400
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:40309 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933357AbeFUM0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 07:00:06 -0400
-Received: by mail-wm0-f45.google.com with SMTP id n5-v6so5151292wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 04:00:05 -0700 (PDT)
+        Thu, 21 Jun 2018 08:26:33 -0400
+Received: by mail-wr0-f172.google.com with SMTP id g18-v6so2993277wro.7
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 05:26:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vAqT2vreZfFDHsID1yRkzNBLpGjON/30LCnDn/luwMY=;
-        b=NGtymijqDoz9eIkz4YjUZaNYmk0J4cqcBbe2HUsQYkP7EKXt4o4gDnIpOUFNEYYMOH
-         oLKRcvQ2rPB2wcY0pskne5xQ3Lyu3B/oXurRX1iw++mQEpbPG896lPDbbf0RZjRVUWCf
-         8j66gFezjIP/PtVR4OewbKvU3fcX51cmyXNJvvBcPRoOu15AuzX6rX7xDfMEPsWJuJmS
-         HfiZnvJBk7+yM9yBB15Qk5kaQqWGLAORs4LAAjXo2HkLMPzd3Y9gi6OsSv10p/YEmkxf
-         6iEUq79lL+0iBQI1ooWyxjFZVRBmFMEecH7+Oxt7MGXD1TGJvSS7wZSAwT8gZRhNd7Os
-         L+qQ==
+        bh=NgQoeCznyvGft9rmv2h4RqfvdwIYINUPogGDbSQRsB4=;
+        b=U4gZcyU5xwsNyAQBpIALXDh8OELfmt5G+d4JNScLRFH35b2N0hpfn5fqmxsZuc+N7w
+         VnbyU83LPpABoO/zu5rL3JF0ylQ5QX02/WOPLTMCnLBo5JsVtZeJa/Micc6Si/uBfm2v
+         iYHgoy5FLSzNUVu+Xq+HDkYeEhANj6pO08ljNb1a/fL3SYRqxsJqMb+Fc70GIyqhqiLR
+         1CDcFUGT6Eh8UZQxI51d7F2pZomIw7po06yO7mLWLmGoL7ga+3T8n/6i9rZ1lbsnTg7p
+         xvdb4pZ1Haardw37FH+gxqR9EiKaFcH/TLwiY9ki/A1Jse8zf8KmaL5xGR2SaEC5o5v0
+         ur4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vAqT2vreZfFDHsID1yRkzNBLpGjON/30LCnDn/luwMY=;
-        b=lBHWTK+jussKUL3YwVvwLrTNqIhNmRpXrdxc5IAL2xLphOf6NXvwHGUcsAzGQv+sYy
-         55o+Ll2oxZAi7v5goMoFbSU9WtOVKnLpYDdjrhgGYX+M/YpdZwHvsaN83s1rhb1WTU6N
-         WOGgU5BuTtAWZ4JdPLYX/OI0EheW3JoiCiF3P07CGZxBOrJYNATbZAWrLMmBPZpG/QU6
-         aY3Vz/Q6SUwL/JI6UwrRjqFCPuyMefwtSsDHZUcKRHTv3qtzgAzITYoH9yUUHL8ULJVA
-         e2oGUC/oJTinHPTF9YqFvPIJnvEfhIdiGiXDEuq4ObO8BQuM8d1t1/VaxzvlHk4svahD
-         Y6GQ==
-X-Gm-Message-State: APt69E02F87eO1OJK2r4pRbf532TPjYQNrLhq7y48jrxeXMR0k391dC8
-        2EBcw64zXURQRzk5KNuBvrg=
-X-Google-Smtp-Source: ADUXVKJO4fB9iRNVEy7eiRt6ZM76k2tzRq6dNAY4YuOQe5kelkhNILh54B1KOMKw6GSU88QQaQSa6w==
-X-Received: by 2002:a1c:a010:: with SMTP id j16-v6mr4537931wme.61.1529578804994;
-        Thu, 21 Jun 2018 04:00:04 -0700 (PDT)
+        bh=NgQoeCznyvGft9rmv2h4RqfvdwIYINUPogGDbSQRsB4=;
+        b=TfbuoIegXlssf34gu4DmMPfXckLlqzJ75TYGkm9dfSw2RyRf0c7ivzaLBPixPHUubP
+         eVVRjoc14edTZ2NDRjiJi/MtOQ+/+VHxxt/e4Tf/KWE7LFxy6lj8RBn10aLkN00bUTXa
+         dhIvJs6Zn57QjwwexX8kVZUA8TbuHXfzxE+zRojOGuhCRiOE20E31lSspRrHNNHxMZIX
+         Ukx0EEivKCKLjelMC+5plw5TH9UY0BP85UPxQDbFNG9EGOVkegmMFBxlWBq3imUEw9nk
+         8f4PpVQKLnLA1N8RXf1+XxvJBy7fSFHehLRQ7j8zA4PakOSqwsVSBjJcHftYSsCYXBgr
+         QBCw==
+X-Gm-Message-State: APt69E2qgi+ZfC/WPFLh/m4Bcy06g8CFC6fwEAXHBXs/2KJy/f/slSfD
+        WL5BWRgvWFRWI6MSrKzHVXg=
+X-Google-Smtp-Source: ADUXVKLEXBMsrZsU5eviQ+jA3iF6tYON9jnzzM80mLWvTQZiDft0ds/EMV9iEojNmuap7aB2aVVz/A==
+X-Received: by 2002:adf:fd88:: with SMTP id d8-v6mr20304995wrr.276.1529583992859;
+        Thu, 21 Jun 2018 05:26:32 -0700 (PDT)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id s132-v6sm5543864wmf.5.2018.06.21.04.00.03
+        by smtp.gmail.com with ESMTPSA id v138-v6sm7099315wmd.47.2018.06.21.05.26.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 04:00:04 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 13:00:02 +0200
+        Thu, 21 Jun 2018 05:26:32 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 14:26:30 +0200
 From:   Ingo Molnar <mingo@kernel.org>
 To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, boqun.feng@gmail.com,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>
-Subject: Re: [PATCHv3 09/18] atomics/alpha: define atomic64_fetch_add_unless()
-Message-ID: <20180621110002.GA1057@gmail.com>
-References: <20180618101919.51973-1-mark.rutland@arm.com>
- <20180618101919.51973-10-mark.rutland@arm.com>
- <20180618155439.GD11612@arm.com>
- <20180618160829.5jrscmfkorjxdvod@lakrids.cambridge.arm.com>
+Cc:     will.deacon@arm.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCHv4 08/18] atomics/generic: define
+ atomic64_fetch_add_unless()
+Message-ID: <20180621122630.GA22578@gmail.com>
+References: <20180621121321.4761-1-mark.rutland@arm.com>
+ <20180621121321.4761-9-mark.rutland@arm.com>
+ <20180621122103.7k2ozjyc64b4zdjc@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180618160829.5jrscmfkorjxdvod@lakrids.cambridge.arm.com>
+In-Reply-To: <20180621122103.7k2ozjyc64b4zdjc@lakrids.cambridge.arm.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -84,32 +82,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 * Mark Rutland <mark.rutland@arm.com> wrote:
 
-> On Mon, Jun 18, 2018 at 04:54:40PM +0100, Will Deacon wrote:
-> > On Mon, Jun 18, 2018 at 11:19:10AM +0100, Mark Rutland wrote:
-> > >  /**
-> > > - * atomic64_add_unless - add unless the number is a given value
-> > > + * atomic64_fetch_add_unless - add unless the number is a given value
-> > >   * @v: pointer of type atomic64_t
-> > >   * @a: the amount to add to v...
-> > >   * @u: ...unless v is equal to u.
-> > >   *
-> > >   * Atomically adds @a to @v, so long as it was not @u.
-> > > - * Returns true iff @v was not @u.
-> > > + * Returns the old value of @v.
-> > >   */
-> > > -static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
-> > > +static __inline__ int atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
-> > 
+> On Thu, Jun 21, 2018 at 01:13:11PM +0100, Mark Rutland wrote:
+> > -	if (v->counter != u) {
+> > +	val = v->counter;
+> > +	if (val != u)
+> >  		v->counter += a;
+> > -		ret = true;
+> >  	}
 > 
-> Whoops; yes.
+> Ugh, I thought I had fixed this up and removed the trailing brace.
 > 
-> From a scan of the series, I messed that up in the instrumentation, too,
-> but the rest sems fine.
+> This will break some 32-bit arches as-is.
 > 
-> I'll fix those up and push out an updated branch.
+> Ingo, would you be hapyp to fix this up, or would you prefer that I fix
+> and resend?
 
-Please send out an updated series via email as well once it has all settled down.
+I fixed it up, no need to resend unless I find other problems in testing.
 
-Thanks!
+> Sorry about this.
+
+No problem!
+
+Thanks,
 
 	Ingo
