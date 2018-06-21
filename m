@@ -3,114 +3,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4420DC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E16C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D5F20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:40:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D5F20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EC8C20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:43:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC8C20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754374AbeFUDkf (ORCPT
+        id S1754331AbeFUDnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 23:40:35 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57825 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754236AbeFUDke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 23:40:34 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C07BFA177B61;
-        Thu, 21 Jun 2018 11:40:29 +0800 (CST)
-Received: from SZV1000284525.huawei.com (10.120.216.130) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.382.0; Thu, 21 Jun 2018 11:40:24 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>, Yunlei He <heyunlei@huawei.com>
-Subject: [PATCH] f2fs: disable f2fs_check_rb_tree_consistence
-Date:   Thu, 21 Jun 2018 11:39:36 +0800
-Message-ID: <20180621033936.108796-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Wed, 20 Jun 2018 23:43:43 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48370 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754207AbeFUDnm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 23:43:42 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fVqVU-0000gn-1A; Thu, 21 Jun 2018 03:43:36 +0000
+Date:   Thu, 21 Jun 2018 04:43:36 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     akpm@linux-foundation.org, dvyukov@google.com,
+        Greg KH <gregkh@linuxfoundation.org>, tchibo@google.com,
+        aryabinin@virtuozzo.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] kernel: kcov: a possible sleep-in-atomic-context bug in
+ kcov_ioctl()
+Message-ID: <20180621034335.GT30522@ZenIV.linux.org.uk>
+References: <ca2e4f0b-dd08-8d66-51e3-05cc69e15d65@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca2e4f0b-dd08-8d66-51e3-05cc69e15d65@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there is millions of discard entries cached in rb tree, each
-sanity check of it can cause very long latency as held cmd_lock
-blocking other lock grabbers.
+On Thu, Jun 21, 2018 at 11:20:59AM +0800, Jia-Ju Bai wrote:
+> The kernel may sleep with holding a spinlock.
+> The function call path (from bottom to top) in Linux-4.16.7 is:
+> 
+> [FUNC] vfree --> can sleep
+> kernel/kcov.c, 237: vfree in kcov_put
+> kernel/kcov.c, 396: kcov_put in kcov_ioctl_locked
+> kernel/kcov.c, 410: kcov_ioctl_locked in kcov_ioctl
+> kernel/kcov.c, 409: spin_lock in kcov_ioctl
+> 
+> This bug is found by my static analysis tool (DSAC-2) and checked by my
+> code review.
+> 
+> I do not know how to correctly fix this bug, so I just report them.
 
-In other aspect, we have enabled the check very long time, as
-we see, there is no such inconsistent condition caused by bugs.
+Assuming it's a bug in the first place, that is.  Note that
+	* we never modify task->kcov for task != current
+	* task->kcov contributes to refcount
+	* opened file contributes to refcount
+	* that kcov_put() of yours happens from ->ioctl() and removes
+current->kcov reference; it *can't* be the last reference - the one
+held by struct file used to call ->ioctl() is also there.
 
-But still we do not choose to kill it directly, instead, adding
-an flag to disable the check now, if there is related code change,
-we can reuse it to detect bugs.
-
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h    |  1 +
- fs/f2fs/segment.c | 10 +++++++---
- 2 files changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 49c687173923..412e907920c2 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -309,6 +309,7 @@ struct discard_cmd_control {
- 	atomic_t issing_discard;		/* # of issing discard */
- 	atomic_t discard_cmd_cnt;		/* # of cached cmd count */
- 	struct rb_root root;			/* root of discard rb-tree */
-+	bool rbtree_check;			/* config for consistence check */
- };
- 
- /* for the list of fsync inodes, used only during recovery */
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6dbdf2c48fba..8c1d6c546fa0 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1199,8 +1199,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
- 		mutex_lock(&dcc->cmd_lock);
- 		if (list_empty(pend_list))
- 			goto next;
--		f2fs_bug_on(sbi,
--			!f2fs_check_rb_tree_consistence(sbi, &dcc->root));
-+		if (dcc->rbtree_check)
-+			f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
-+								&dcc->root));
- 		blk_start_plug(&plug);
- 		list_for_each_entry_safe(dc, tmp, pend_list, list) {
- 			f2fs_bug_on(sbi, dc->state != D_PREP);
-@@ -1752,6 +1753,7 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
- 	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
- 	dcc->undiscard_blks = 0;
- 	dcc->root = RB_ROOT;
-+	dcc->rbtree_check = false;
- 
- 	init_waitqueue_head(&dcc->discard_wait_queue);
- 	SM_I(sbi)->dcc_info = dcc;
-@@ -2381,7 +2383,9 @@ static void __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
- 	issued = 0;
- 
- 	mutex_lock(&dcc->cmd_lock);
--	f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi, &dcc->root));
-+	if (dcc->rbtree_check)
-+		f2fs_bug_on(sbi, !f2fs_check_rb_tree_consistence(sbi,
-+								&dcc->root));
- 
- 	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
- 					NULL, start,
--- 
-2.18.0.rc1
-
+IOW, it's a false positive.
