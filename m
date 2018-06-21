@@ -3,90 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0AAC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3358C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14E7E20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:37:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14E7E20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B2ABB20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:38:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2ABB20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932813AbeFUJha (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:37:30 -0400
-Received: from foss.arm.com ([217.140.101.70]:47806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932692AbeFUJh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:37:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B9EB1435;
-        Thu, 21 Jun 2018 02:37:28 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C652A3F246;
-        Thu, 21 Jun 2018 02:37:27 -0700 (PDT)
-Subject: Re: [PATCH 3/6] coresight: Introduce support for Coresight Address
- Translation Unit
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1529319379-17895-1-git-send-email-suzuki.poulose@arm.com>
- <1529319379-17895-4-git-send-email-suzuki.poulose@arm.com>
- <20180620214157.GA20697@xps15>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <76e0bc22-468c-6215-de54-3e4ead42e17c@arm.com>
-Date:   Thu, 21 Jun 2018 10:37:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932827AbeFUJix (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:38:53 -0400
+Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:52977 "EHLO
+        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932620AbeFUJiw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 05:38:52 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp27.blacknight.com (Postfix) with ESMTPS id 26575B89AC
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:38:51 +0100 (IST)
+Received: (qmail 12912 invoked from network); 21 Jun 2018 09:38:51 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.171])
+  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 21 Jun 2018 09:38:51 -0000
+Date:   Thu, 21 Jun 2018 10:38:50 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 05/19] sched/numa: Use task faults only if numa_group
+ is not yet setup
+Message-ID: <20180621093850.h772wj5ww4uprbp7@techsingularity.net>
+References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1529514181-9842-6-git-send-email-srikar@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180620214157.GA20697@xps15>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <1529514181-9842-6-git-send-email-srikar@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
-
-On 20/06/1822:41, Mathieu Poirier wrote:
-> Hi Suzuki,
+On Wed, Jun 20, 2018 at 10:32:46PM +0530, Srikar Dronamraju wrote:
+> When numa_group faults are available, task_numa_placement only uses
+> numa_group faults to evaluate preferred node. However it still accounts
+> task faults and even evaluates the preferred node just based on task
+> faults just to discard it in favour of preferred node chosen on the
+> basis of numa_group.
 > 
-> On Mon, Jun 18, 2018 at 11:56:16AM +0100, Suzuki K Poulose wrote:
->> Add the initial support for Coresight Address Translation Unit, which
->> augments the TMC in Coresight SoC-600 by providing an improved Scatter
->> Gather mechanism. CATU is always connected to a single TMC-ETR and
->> converts the AXI address with a translated address (from a given SG
->> table with specific format). The CATU should be programmed in pass
->> through mode and enabled if the ETR doesn't translation by CATU.
+> Instead use task faults only if numa_group is not set.
 > 
-> To me this sentence look broken.
+> Running SPECjbb2005 on a 4 node machine and comparing bops/JVM
+> JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
+> 16    25549.6     25215.7     -1.30
+> 1     73190       72107       -1.47
 > 
-
-Yes, it is broken. It should have been :
-
-"The CATU should be programmed in pass through mode and enabled
-even if the ETR doesn't use the translation by CATU."
-
-
->> +static int catu_disable_hw(struct catu_drvdata *drvdata)
->> +{
->> +	int rc = 0;
->> +
->> +	if (catu_wait_for_ready(drvdata)) {
->> +		dev_info(drvdata->dev, "Timeout while waiting for READY\n");
->> +		rc = -EAGAIN;
->> +	}
->> +
->> +	catu_write_control(drvdata, 0);
+> Running SPECjbb2005 on a 16 node machine and comparing bops/JVM
+> JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
+> 8     113437      113372      -0.05
+> 1     196130      177403      -9.54
 > 
-> Is waiting for the ready bit before switching the component off comes from
-> experimentation with the HW (i.e FPGA)?  From what the reference manual
-> indicate, CONTROL.ENABLE should be set to 0 first, and then wait for
-> STATUS.READY.
+> (numbers from v1 based on v4.17-rc5)
+> Testcase       Time:         Min         Max         Avg      StdDev
+> numa01.sh      Real:      506.35      794.46      599.06      104.26
+> numa01.sh       Sys:      150.37      223.56      195.99       24.94
+> numa01.sh      User:    43450.69    61752.04    49281.50     6635.33
+> numa02.sh      Real:       60.33       62.40       61.31        0.90
+> numa02.sh       Sys:       18.12       31.66       24.28        5.89
+> numa02.sh      User:     5203.91     5325.32     5260.29       49.98
+> numa03.sh      Real:      696.47      853.62      745.80       57.28
+> numa03.sh       Sys:       85.68      123.71       97.89       13.48
+> numa03.sh      User:    55978.45    66418.63    59254.94     3737.97
+> numa04.sh      Real:      444.05      514.83      497.06       26.85
+> numa04.sh       Sys:      230.39      375.79      316.23       48.58
+> numa04.sh      User:    35403.12    41004.10    39720.80     2163.08
+> numa05.sh      Real:      423.09      460.41      439.57       13.92
+> numa05.sh       Sys:      287.38      480.15      369.37       68.52
+> numa05.sh      User:    34732.12    38016.80    36255.85     1070.51
+> 
+> Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
+> numa01.sh      Real:      478.45      565.90      515.11       30.87 	 16.29%
+> numa01.sh       Sys:      207.79      271.04      232.94       21.33 	 -15.8%
+> numa01.sh      User:    39763.93    47303.12    43210.73     2644.86 	 14.04%
+> numa02.sh      Real:       60.00       61.46       60.78        0.49 	 0.871%
+> numa02.sh       Sys:       15.71       25.31       20.69        3.42 	 17.35%
+> numa02.sh      User:     5175.92     5265.86     5235.97       32.82 	 0.464%
+> numa03.sh      Real:      776.42      834.85      806.01       23.22 	 -7.47%
+> numa03.sh       Sys:      114.43      128.75      121.65        5.49 	 -19.5%
+> numa03.sh      User:    60773.93    64855.25    62616.91     1576.39 	 -5.36%
+> numa04.sh      Real:      456.93      511.95      482.91       20.88 	 2.930%
+> numa04.sh       Sys:      178.09      460.89      356.86       94.58 	 -11.3%
+> numa04.sh      User:    36312.09    42553.24    39623.21     2247.96 	 0.246%
+> numa05.sh      Real:      393.98      493.48      436.61       35.59 	 0.677%
+> numa05.sh       Sys:      164.49      329.15      265.87       61.78 	 38.92%
+> numa05.sh      User:    33182.65    36654.53    35074.51     1187.71 	 3.368%
+> 
+> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
-You're right. It should be in the reverse order. I will fix it in the next version.
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
 
-Thanks
-Suzuki
+-- 
+Mel Gorman
+SUSE Labs
