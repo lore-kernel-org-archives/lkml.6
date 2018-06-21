@@ -6,955 +6,244 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED62C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDDFC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB7520837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:17:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB7520837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id D834420837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:19:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D834420837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754389AbeFUDRx (ORCPT
+        id S1754449AbeFUDTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 23:17:53 -0400
-Received: from mx.socionext.com ([202.248.49.38]:40937 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754184AbeFUDRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 23:17:51 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 21 Jun 2018 12:17:49 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 805746006F;
-        Thu, 21 Jun 2018 12:17:49 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 21 Jun 2018 12:17:49 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 17CFA40361;
-        Thu, 21 Jun 2018 12:17:49 +0900 (JST)
-Received: from aegis.e01.socionext.com (unknown [10.213.134.210])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id DFF4112013E;
-        Thu, 21 Jun 2018 12:17:48 +0900 (JST)
-From:   Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T demodulator driver
-Date:   Thu, 21 Jun 2018 12:17:48 +0900
-Message-Id: <20180621031748.21703-1-suzuki.katsuhiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 20 Jun 2018 23:19:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44034 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754104AbeFUDTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 23:19:06 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 67C9581663D5;
+        Thu, 21 Jun 2018 03:19:06 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-127.pek2.redhat.com [10.72.12.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8CC522156880;
+        Thu, 21 Jun 2018 03:19:02 +0000 (UTC)
+Subject: Re: [PATCH 0/4 V3] Support kdump for AMD secure memory
+ encryption(SME)
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+        iommu@lists.linux-foundation.org, dyoung@redhat.com,
+        kexec@lists.infradead.org, akpm@linux-foundation.org
+References: <20180616082714.32035-1-lijiang@redhat.com>
+ <20180621012116.GF29979@MiWiFi-R3L-srv>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <c9531007-4452-a8e1-a96a-3ec7dfb0cba0@redhat.com>
+Date:   Thu, 21 Jun 2018 11:18:58 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
+MIME-Version: 1.0
+In-Reply-To: <20180621012116.GF29979@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 21 Jun 2018 03:19:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 21 Jun 2018 03:19:06 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a frontend driver for the Socionext SC1501A series
-and Socionext MN88443x ISDB-S/T demodulators.
+在 2018年06月21日 09:21, Baoquan He 写道:
+> On 06/16/18 at 04:27pm, Lianbo Jiang wrote:
+>> It is convenient to remap the old memory encrypted to the second kernel by
+>> calling ioremap_encrypted().
+>>
+>> When sme enabled on AMD server, we also need to support kdump. Because
+>> the memory is encrypted in the first kernel, we will remap the old memory
+>> encrypted to the second kernel(crash kernel), and sme is also enabled in
+>> the second kernel, otherwise the old memory encrypted can not be decrypted.
+>> Because simply changing the value of a C-bit on a page will not
+>> automatically encrypt the existing contents of a page, and any data in the
+>> page prior to the C-bit modification will become unintelligible. A page of
+>> memory that is marked encrypted will be automatically decrypted when read
+>> from DRAM and will be automatically encrypted when written to DRAM.
+>>
+>> For the kdump, it is necessary to distinguish whether the memory is
+>> encrypted. Furthermore, we should also know which part of the memory is
+>> encrypted or decrypted. We will appropriately remap the memory according
+>> to the specific situation in order to tell cpu how to deal with the
+>> data(encrypted or decrypted). For example, when sme enabled, if the old
+>> memory is encrypted, we will remap the old memory in encrypted way, which
+>> will automatically decrypt the old memory encrypted when we read those data
+>> from the remapping address.
+>>
+>>  ----------------------------------------------
+>> | first-kernel | second-kernel | kdump support |
+>> |      (mem_encrypt=on|off)    |   (yes|no)    |
+>> |--------------+---------------+---------------|
+>> |     on       |     on        |     yes       |
+>> |     off      |     off       |     yes       |
+>> |     on       |     off       |     no        |
+> 
+> 
+>> |     off      |     on        |     no        |
+> 
+> It's not clear to me here. If 1st kernel sme is off, in 2nd kernel, when
+> you remap the old memory with non-sme mode, why did it fail?
+> 
+Thank you, Baoquan.
+For kdump, there are two cases that doesn't need to support:
 
-The maximum and minimum frequency of Socionext SC1501A comes from
-ISDB-S and ISDB-T so frequency range is the following:
-  - ISDB-S (BS/CS110 IF frequency in kHz, Local freq 10.678GHz)
-    - Min: BS-1: 1032000 => 1032.23MHz
-    - Max: ND24: 2701000 => 2070.25MHz
-  - ISDB-T (in Hz)
-    - Min: ch13: 470000000 => 470.357857MHz
-    - Max: ch62: 770000000 => 769.927857MHz
+1. SME on(first kernel), but SME off(second kernel).
+Because the old memory is encrypted, we can't decrypt the old memory if SME is off
+in the second kernel(in kdump mode).
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+2. SME off(first kernel), but SME on(second kernel)
+Maybe this situation doesn't have significance in actual deployment, furthermore, it
+will also increase the complexity of the code. It's just for testing, maybe it is
+unnecessary to support it, because the old memory is unencrypted.
 
----
+Thanks.
+Lianbo
+> And please run scripts/get_maintainer.pl and add maintainers of
+> component which is affected in patch to CC list.
+Great! I forgot CC maintainers, thanks for your reminder.
 
-Changes since v2:
-  - Fix frequency max and min
-
-Changes since v1:
-  - Fix sparse warning about type of constant
-  - Use div_s64() instead of divide operator
----
- drivers/media/dvb-frontends/Kconfig   |  10 +
- drivers/media/dvb-frontends/Makefile  |   1 +
- drivers/media/dvb-frontends/sc1501a.c | 802 ++++++++++++++++++++++++++
- drivers/media/dvb-frontends/sc1501a.h |  27 +
- 4 files changed, 840 insertions(+)
- create mode 100644 drivers/media/dvb-frontends/sc1501a.c
- create mode 100644 drivers/media/dvb-frontends/sc1501a.h
-
-diff --git a/drivers/media/dvb-frontends/Kconfig b/drivers/media/dvb-frontends/Kconfig
-index 9ecaa9d0744a..097ae3c834f2 100644
---- a/drivers/media/dvb-frontends/Kconfig
-+++ b/drivers/media/dvb-frontends/Kconfig
-@@ -739,6 +739,16 @@ config DVB_TC90522
- 	  Toshiba TC90522 2xISDB-S 8PSK + 2xISDB-T OFDM demodulator.
- 	  Say Y when you want to support this frontend.
- 
-+config DVB_SC1501A
-+	tristate "Socionext SC1501A"
-+	depends on DVB_CORE && I2C
-+	select REGMAP_I2C
-+	default m if !MEDIA_SUBDRV_AUTOSELECT
-+	help
-+	  A driver for Socionext SC1501A and Panasonic MN88443x
-+	  ISDB-S + ISDB-T demodulator.
-+	  Say Y when you want to support this frontend.
-+
- comment "Digital terrestrial only tuners/PLL"
- 	depends on DVB_CORE
- 
-diff --git a/drivers/media/dvb-frontends/Makefile b/drivers/media/dvb-frontends/Makefile
-index 67a783fd5ed0..e204502347ed 100644
---- a/drivers/media/dvb-frontends/Makefile
-+++ b/drivers/media/dvb-frontends/Makefile
-@@ -125,6 +125,7 @@ obj-$(CONFIG_DVB_AF9033) += af9033.o
- obj-$(CONFIG_DVB_AS102_FE) += as102_fe.o
- obj-$(CONFIG_DVB_GP8PSK_FE) += gp8psk-fe.o
- obj-$(CONFIG_DVB_TC90522) += tc90522.o
-+obj-$(CONFIG_DVB_SC1501A) += sc1501a.o
- obj-$(CONFIG_DVB_HORUS3A) += horus3a.o
- obj-$(CONFIG_DVB_ASCOT2E) += ascot2e.o
- obj-$(CONFIG_DVB_HELENE) += helene.o
-diff --git a/drivers/media/dvb-frontends/sc1501a.c b/drivers/media/dvb-frontends/sc1501a.c
-new file mode 100644
-index 000000000000..705529007abe
---- /dev/null
-+++ b/drivers/media/dvb-frontends/sc1501a.c
-@@ -0,0 +1,802 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Socionext SC1501A series demodulator driver for ISDB-S/ISDB-T.
-+//
-+// Copyright (c) 2018 Socionext Inc.
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
-+#include <media/dvb_math.h>
-+
-+#include "sc1501a.h"
-+
-+/* ISDB-S registers */
-+#define ATSIDU_S                                    0x2f
-+#define ATSIDL_S                                    0x30
-+#define TSSET_S                                     0x31
-+#define AGCREAD_S                                   0x5a
-+#define CPMON1_S                                    0x5e
-+#define   CPMON1_S_FSYNC                              BIT(5)
-+#define   CPMON1_S_ERRMON                             BIT(4)
-+#define   CPMON1_S_SIGOFF                             BIT(3)
-+#define   CPMON1_S_W2LOCK                             BIT(2)
-+#define   CPMON1_S_W1LOCK                             BIT(1)
-+#define   CPMON1_S_DW1LOCK                            BIT(0)
-+#define TRMON_S                                     0x60
-+#define BERCNFLG_S                                  0x68
-+#define   BERCNFLG_S_BERVRDY                          BIT(5)
-+#define   BERCNFLG_S_BERVCHK                          BIT(4)
-+#define   BERCNFLG_S_BERDRDY                          BIT(3)
-+#define   BERCNFLG_S_BERDCHK                          BIT(2)
-+#define CNRDXU_S                                    0x69
-+#define CNRDXL_S                                    0x6a
-+#define CNRDYU_S                                    0x6b
-+#define CNRDYL_S                                    0x6c
-+#define BERVRDU_S                                   0x71
-+#define BERVRDL_S                                   0x72
-+#define DOSET1_S                                    0x73
-+
-+/* Primary ISDB-T */
-+#define PLLASET1                                    0x00
-+#define PLLASET2                                    0x01
-+#define PLLBSET1                                    0x02
-+#define PLLBSET2                                    0x03
-+#define PLLSET                                      0x04
-+#define OUTCSET                                     0x08
-+#define   OUTCSET_CHDRV_8MA                           0xff
-+#define   OUTCSET_CHDRV_4MA                           0x00
-+#define PLDWSET                                     0x09
-+#define   PLDWSET_NORMAL                             0x00
-+#define   PLDWSET_PULLDOWN                           0xff
-+#define HIZSET1                                     0x0a
-+#define HIZSET2                                     0x0b
-+
-+/* Secondary ISDB-T (for MN884434 only) */
-+#define RCVSET                                      0x00
-+#define TSSET1_M                                    0x01
-+#define TSSET2_M                                    0x02
-+#define TSSET3_M                                    0x03
-+#define INTACSET                                    0x08
-+#define HIZSET3                                     0x0b
-+
-+/* ISDB-T registers */
-+#define TSSET1                                      0x05
-+#define   TSSET1_TSASEL_MASK                          GENMASK(4, 3)
-+#define   TSSET1_TSASEL_ISDBT                         (0x0 << 3)
-+#define   TSSET1_TSASEL_ISDBS                         (0x1 << 3)
-+#define   TSSET1_TSASEL_NONE                          (0x2 << 3)
-+#define   TSSET1_TSBSEL_MASK                          GENMASK(2, 1)
-+#define   TSSET1_TSBSEL_ISDBS                         (0x0 << 1)
-+#define   TSSET1_TSBSEL_ISDBT                         (0x1 << 1)
-+#define   TSSET1_TSBSEL_NONE                          (0x2 << 1)
-+#define TSSET2                                      0x06
-+#define TSSET3                                      0x07
-+#define   TSSET3_INTASEL_MASK                         GENMASK(7, 6)
-+#define   TSSET3_INTASEL_T                            (0x0 << 6)
-+#define   TSSET3_INTASEL_S                            (0x1 << 6)
-+#define   TSSET3_INTASEL_NONE                         (0x2 << 6)
-+#define   TSSET3_INTBSEL_MASK                         GENMASK(5, 4)
-+#define   TSSET3_INTBSEL_S                            (0x0 << 4)
-+#define   TSSET3_INTBSEL_T                            (0x1 << 4)
-+#define   TSSET3_INTBSEL_NONE                         (0x2 << 4)
-+#define OUTSET2                                     0x0d
-+#define PWDSET                                      0x0f
-+#define   PWDSET_OFDMPD_MASK                          GENMASK(3, 2)
-+#define   PWDSET_OFDMPD_DOWN                          BIT(3)
-+#define   PWDSET_PSKPD_MASK                           GENMASK(1, 0)
-+#define   PWDSET_PSKPD_DOWN                           BIT(1)
-+#define CLKSET1_T                                   0x11
-+#define MDSET_T                                     0x13
-+#define   MDSET_T_MDAUTO_MASK                         GENMASK(7, 4)
-+#define   MDSET_T_MDAUTO_AUTO                         (0xf << 4)
-+#define   MDSET_T_MDAUTO_MANUAL                       (0x0 << 4)
-+#define   MDSET_T_FFTS_MASK                           GENMASK(3, 2)
-+#define   MDSET_T_FFTS_MODE1                          (0x0 << 2)
-+#define   MDSET_T_FFTS_MODE2                          (0x1 << 2)
-+#define   MDSET_T_FFTS_MODE3                          (0x2 << 2)
-+#define   MDSET_T_GI_MASK                             GENMASK(1, 0)
-+#define   MDSET_T_GI_1_32                             (0x0 << 0)
-+#define   MDSET_T_GI_1_16                             (0x1 << 0)
-+#define   MDSET_T_GI_1_8                              (0x2 << 0)
-+#define   MDSET_T_GI_1_4                              (0x3 << 0)
-+#define MDASET_T                                    0x14
-+#define ADCSET1_T                                   0x20
-+#define   ADCSET1_T_REFSEL_MASK                       GENMASK(1, 0)
-+#define   ADCSET1_T_REFSEL_2V                         (0x3 << 0)
-+#define   ADCSET1_T_REFSEL_1_5V                       (0x2 << 0)
-+#define   ADCSET1_T_REFSEL_1V                         (0x1 << 0)
-+#define NCOFREQU_T                                  0x24
-+#define NCOFREQM_T                                  0x25
-+#define NCOFREQL_T                                  0x26
-+#define FADU_T                                      0x27
-+#define FADM_T                                      0x28
-+#define FADL_T                                      0x29
-+#define AGCSET2_T                                   0x2c
-+#define   AGCSET2_T_IFPOLINV_INC                      BIT(0)
-+#define   AGCSET2_T_RFPOLINV_INC                      BIT(1)
-+#define AGCV3_T                                     0x3e
-+#define MDRD_T                                      0xa2
-+#define   MDRD_T_SEGID_MASK                           GENMASK(5, 4)
-+#define   MDRD_T_SEGID_13                             (0x0 << 4)
-+#define   MDRD_T_SEGID_1                              (0x1 << 4)
-+#define   MDRD_T_SEGID_3                              (0x2 << 4)
-+#define   MDRD_T_FFTS_MASK                            GENMASK(3, 2)
-+#define   MDRD_T_FFTS_MODE1                           (0x0 << 2)
-+#define   MDRD_T_FFTS_MODE2                           (0x1 << 2)
-+#define   MDRD_T_FFTS_MODE3                           (0x2 << 2)
-+#define   MDRD_T_GI_MASK                              GENMASK(1, 0)
-+#define   MDRD_T_GI_1_32                              (0x0 << 0)
-+#define   MDRD_T_GI_1_16                              (0x1 << 0)
-+#define   MDRD_T_GI_1_8                               (0x2 << 0)
-+#define   MDRD_T_GI_1_4                               (0x3 << 0)
-+#define SSEQRD_T                                    0xa3
-+#define   SSEQRD_T_SSEQSTRD_MASK                      GENMASK(3, 0)
-+#define   SSEQRD_T_SSEQSTRD_RESET                     (0x0 << 0)
-+#define   SSEQRD_T_SSEQSTRD_TUNING                    (0x1 << 0)
-+#define   SSEQRD_T_SSEQSTRD_AGC                       (0x2 << 0)
-+#define   SSEQRD_T_SSEQSTRD_SEARCH                    (0x3 << 0)
-+#define   SSEQRD_T_SSEQSTRD_CLOCK_SYNC                (0x4 << 0)
-+#define   SSEQRD_T_SSEQSTRD_FREQ_SYNC                 (0x8 << 0)
-+#define   SSEQRD_T_SSEQSTRD_FRAME_SYNC                (0x9 << 0)
-+#define   SSEQRD_T_SSEQSTRD_SYNC                      (0xa << 0)
-+#define   SSEQRD_T_SSEQSTRD_LOCK                      (0xb << 0)
-+#define AGCRDU_T                                    0xa8
-+#define AGCRDL_T                                    0xa9
-+#define CNRDU_T                                     0xbe
-+#define CNRDL_T                                     0xbf
-+#define BERFLG_T                                    0xc0
-+#define   BERFLG_T_BERDRDY                            BIT(7)
-+#define   BERFLG_T_BERDCHK                            BIT(6)
-+#define   BERFLG_T_BERVRDYA                           BIT(5)
-+#define   BERFLG_T_BERVCHKA                           BIT(4)
-+#define   BERFLG_T_BERVRDYB                           BIT(3)
-+#define   BERFLG_T_BERVCHKB                           BIT(2)
-+#define   BERFLG_T_BERVRDYC                           BIT(1)
-+#define   BERFLG_T_BERVCHKC                           BIT(0)
-+#define BERRDU_T                                    0xc1
-+#define BERRDM_T                                    0xc2
-+#define BERRDL_T                                    0xc3
-+#define BERLENRDU_T                                 0xc4
-+#define BERLENRDL_T                                 0xc5
-+#define ERRFLG_T                                    0xc6
-+#define   ERRFLG_T_BERDOVF                            BIT(7)
-+#define   ERRFLG_T_BERVOVFA                           BIT(6)
-+#define   ERRFLG_T_BERVOVFB                           BIT(5)
-+#define   ERRFLG_T_BERVOVFC                           BIT(4)
-+#define   ERRFLG_T_NERRFA                             BIT(3)
-+#define   ERRFLG_T_NERRFB                             BIT(2)
-+#define   ERRFLG_T_NERRFC                             BIT(1)
-+#define   ERRFLG_T_NERRF                              BIT(0)
-+#define DOSET1_T                                    0xcf
-+
-+#define CLK_LOW            4000000
-+#define CLK_DIRECT         20200000
-+#define CLK_MAX            25410000
-+
-+#define S_T_FREQ           8126984 /* 512 / 63 MHz */
-+
-+struct sc1501a_spec {
-+	bool primary;
-+};
-+
-+struct sc1501a_priv {
-+	const struct sc1501a_spec *spec;
-+
-+	struct dvb_frontend fe;
-+	struct clk *mclk;
-+	struct gpio_desc *reset_gpio;
-+	u32 clk_freq;
-+	u32 if_freq;
-+
-+	/* Common */
-+	bool use_clkbuf;
-+
-+	/* ISDB-S */
-+	struct i2c_client *client_s;
-+	struct regmap *regmap_s;
-+
-+	/* ISDB-T */
-+	struct i2c_client *client_t;
-+	struct regmap *regmap_t;
-+};
-+
-+static void sc1501a_cmn_power_on(struct sc1501a_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	clk_prepare_enable(chip->mclk);
-+
-+	gpiod_set_value_cansleep(chip->reset_gpio, 1);
-+	usleep_range(100, 1000);
-+	gpiod_set_value_cansleep(chip->reset_gpio, 0);
-+
-+	if (chip->spec->primary) {
-+		regmap_write(r_t, OUTCSET, OUTCSET_CHDRV_8MA);
-+		regmap_write(r_t, PLDWSET, PLDWSET_NORMAL);
-+		regmap_write(r_t, HIZSET1, 0x80);
-+		regmap_write(r_t, HIZSET2, 0xe0);
-+	} else {
-+		regmap_write(r_t, HIZSET3, 0x8f);
-+	}
-+}
-+
-+static void sc1501a_cmn_power_off(struct sc1501a_priv *chip)
-+{
-+	gpiod_set_value_cansleep(chip->reset_gpio, 1);
-+
-+	clk_disable_unprepare(chip->mclk);
-+}
-+
-+static void sc1501a_s_sleep(struct sc1501a_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	regmap_update_bits(r_t, PWDSET, PWDSET_PSKPD_MASK,
-+			   PWDSET_PSKPD_DOWN);
-+}
-+
-+static void sc1501a_s_wake(struct sc1501a_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	regmap_update_bits(r_t, PWDSET, PWDSET_PSKPD_MASK, 0);
-+}
-+
-+static void sc1501a_s_tune(struct sc1501a_priv *chip,
-+			   struct dtv_frontend_properties *c)
-+{
-+	struct regmap *r_s = chip->regmap_s;
-+
-+	regmap_write(r_s, ATSIDU_S, c->stream_id >> 8);
-+	regmap_write(r_s, ATSIDL_S, c->stream_id);
-+	regmap_write(r_s, TSSET_S, 0);
-+}
-+
-+static int sc1501a_s_read_status(struct sc1501a_priv *chip,
-+				 struct dtv_frontend_properties *c,
-+				 enum fe_status *status)
-+{
-+	struct regmap *r_s = chip->regmap_s;
-+	u32 cpmon, tmpu, tmpl, flg;
-+	u64 tmp;
-+
-+	/* Sync detection */
-+	regmap_read(r_s, CPMON1_S, &cpmon);
-+
-+	*status = 0;
-+	if (cpmon & CPMON1_S_FSYNC)
-+		*status |= FE_HAS_VITERBI | FE_HAS_SYNC | FE_HAS_LOCK;
-+	if (cpmon & CPMON1_S_W2LOCK)
-+		*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER;
-+
-+	/* Signal strength */
-+	c->strength.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	if (*status & FE_HAS_SIGNAL) {
-+		u32 agc;
-+
-+		regmap_read(r_s, AGCREAD_S, &tmpu);
-+		agc = tmpu << 8;
-+
-+		c->strength.len = 1;
-+		c->strength.stat[0].scale = FE_SCALE_RELATIVE;
-+		c->strength.stat[0].uvalue = agc;
-+	}
-+
-+	/* C/N rate */
-+	c->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	if (*status & FE_HAS_VITERBI) {
-+		u32 cnr = 0, x, y, d;
-+		u64 d_3 = 0;
-+
-+		regmap_read(r_s, CNRDXU_S, &tmpu);
-+		regmap_read(r_s, CNRDXL_S, &tmpl);
-+		x = (tmpu << 8) | tmpl;
-+		regmap_read(r_s, CNRDYU_S, &tmpu);
-+		regmap_read(r_s, CNRDYL_S, &tmpl);
-+		y = (tmpu << 8) | tmpl;
-+
-+		/* CNR[dB]: 10 * log10(D) - 30.74 / D^3 - 3 */
-+		/*   D = x^2 / (2^15 * y - x^2) */
-+		d = (y << 15) - x * x;
-+		if (d > 0) {
-+			/* (2^4 * D)^3 = 2^12 * D^3 */
-+			/* 3.074 * 2^(12 + 24) = 211243671486 */
-+			d_3 = div_u64(16 * x * x, d);
-+			d_3 = d_3 * d_3 * d_3;
-+			if (d_3)
-+				d_3 = div_u64(211243671486ULL, d_3);
-+		}
-+
-+		if (d_3) {
-+			/* 0.3 * 2^24 = 5033164 */
-+			tmp = (s64)2 * intlog10(x) - intlog10(abs(d)) - d_3
-+				- 5033164;
-+			cnr = div_u64(tmp * 10000, 1 << 24);
-+		}
-+
-+		if (cnr) {
-+			c->cnr.len = 1;
-+			c->cnr.stat[0].scale = FE_SCALE_DECIBEL;
-+			c->cnr.stat[0].uvalue = cnr;
-+		}
-+	}
-+
-+	/* BER */
-+	c->post_bit_error.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+	c->post_bit_count.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	regmap_read(r_s, BERCNFLG_S, &flg);
-+
-+	if ((*status & FE_HAS_VITERBI) && (flg & BERCNFLG_S_BERVRDY)) {
-+		u32 bit_err, bit_cnt;
-+
-+		regmap_read(r_s, BERVRDU_S, &tmpu);
-+		regmap_read(r_s, BERVRDL_S, &tmpl);
-+		bit_err = (tmpu << 8) | tmpl;
-+		bit_cnt = (1 << 13) * 204;
-+
-+		if (bit_cnt) {
-+			c->post_bit_error.len = 1;
-+			c->post_bit_error.stat[0].scale = FE_SCALE_COUNTER;
-+			c->post_bit_error.stat[0].uvalue = bit_err;
-+			c->post_bit_count.len = 1;
-+			c->post_bit_count.stat[0].scale = FE_SCALE_COUNTER;
-+			c->post_bit_count.stat[0].uvalue = bit_cnt;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void sc1501a_t_sleep(struct sc1501a_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	regmap_update_bits(r_t, PWDSET, PWDSET_OFDMPD_MASK,
-+			   PWDSET_OFDMPD_DOWN);
-+}
-+
-+static void sc1501a_t_wake(struct sc1501a_priv *chip)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+
-+	regmap_update_bits(r_t, PWDSET, PWDSET_OFDMPD_MASK, 0);
-+}
-+
-+static bool sc1501a_t_is_valid_clk(u32 adckt, u32 if_freq)
-+{
-+	if (if_freq == DIRECT_IF_57MHZ) {
-+		if (adckt >= CLK_DIRECT && adckt <= 21000000)
-+			return true;
-+		if (adckt >= 25300000 && adckt <= CLK_MAX)
-+			return true;
-+	} else if (if_freq == DIRECT_IF_44MHZ) {
-+		if (adckt >= 25000000 && adckt <= CLK_MAX)
-+			return true;
-+	} else if (if_freq >= LOW_IF_4MHZ && if_freq < DIRECT_IF_44MHZ) {
-+		if (adckt >= CLK_DIRECT && adckt <= CLK_MAX)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int sc1501a_t_set_freq(struct sc1501a_priv *chip)
-+{
-+	struct device *dev = &chip->client_s->dev;
-+	struct regmap *r_t = chip->regmap_t;
-+	s64 adckt, nco, ad_t;
-+	u32 m, v;
-+
-+	/* Clock buffer (but not supported) or XTAL */
-+	if (chip->clk_freq >= CLK_LOW && chip->clk_freq < CLK_DIRECT) {
-+		chip->use_clkbuf = true;
-+		regmap_write(r_t, CLKSET1_T, 0x07);
-+
-+		adckt = 0;
-+	} else {
-+		chip->use_clkbuf = false;
-+		regmap_write(r_t, CLKSET1_T, 0x00);
-+
-+		adckt = chip->clk_freq;
-+	}
-+	if (!sc1501a_t_is_valid_clk(adckt, chip->if_freq)) {
-+		dev_err(dev, "Invalid clock, CLK:%d, ADCKT:%lld, IF:%d\n",
-+			chip->clk_freq, adckt, chip->if_freq);
-+		return -EINVAL;
-+	}
-+
-+	/* Direct IF or Low IF */
-+	if (chip->if_freq == DIRECT_IF_57MHZ ||
-+	    chip->if_freq == DIRECT_IF_44MHZ)
-+		nco = adckt * 2 - chip->if_freq;
-+	else
-+		nco = -((s64)chip->if_freq);
-+	nco = div_s64(nco << 24, adckt);
-+	ad_t = div_s64(adckt << 22, S_T_FREQ);
-+
-+	regmap_write(r_t, NCOFREQU_T, nco >> 16);
-+	regmap_write(r_t, NCOFREQM_T, nco >> 8);
-+	regmap_write(r_t, NCOFREQL_T, nco);
-+	regmap_write(r_t, FADU_T, ad_t >> 16);
-+	regmap_write(r_t, FADM_T, ad_t >> 8);
-+	regmap_write(r_t, FADL_T, ad_t);
-+
-+	/* Level of IF */
-+	m = ADCSET1_T_REFSEL_MASK;
-+	v = ADCSET1_T_REFSEL_1_5V;
-+	regmap_update_bits(r_t, ADCSET1_T, m, v);
-+
-+	/* Polarity of AGC */
-+	v = AGCSET2_T_IFPOLINV_INC | AGCSET2_T_RFPOLINV_INC;
-+	regmap_update_bits(r_t, AGCSET2_T, v, v);
-+
-+	/* Lower output level of AGC */
-+	regmap_write(r_t, AGCV3_T, 0x00);
-+
-+	regmap_write(r_t, MDSET_T, 0xfa);
-+
-+	return 0;
-+}
-+
-+static void sc1501a_t_tune(struct sc1501a_priv *chip,
-+			   struct dtv_frontend_properties *c)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+	u32 m, v;
-+
-+	m = MDSET_T_MDAUTO_MASK | MDSET_T_FFTS_MASK | MDSET_T_GI_MASK;
-+	v = MDSET_T_MDAUTO_AUTO | MDSET_T_FFTS_MODE3 | MDSET_T_GI_1_8;
-+	regmap_update_bits(r_t, MDSET_T, m, v);
-+
-+	regmap_write(r_t, MDASET_T, 0);
-+}
-+
-+static int sc1501a_t_read_status(struct sc1501a_priv *chip,
-+				 struct dtv_frontend_properties *c,
-+				 enum fe_status *status)
-+{
-+	struct regmap *r_t = chip->regmap_t;
-+	u32 seqrd, st, flg, tmpu, tmpm, tmpl;
-+	u64 tmp;
-+
-+	/* Sync detection */
-+	regmap_read(r_t, SSEQRD_T, &seqrd);
-+	st = seqrd & SSEQRD_T_SSEQSTRD_MASK;
-+
-+	*status = 0;
-+	if (st >= SSEQRD_T_SSEQSTRD_SYNC)
-+		*status |= FE_HAS_VITERBI | FE_HAS_SYNC | FE_HAS_LOCK;
-+	if (st >= SSEQRD_T_SSEQSTRD_FRAME_SYNC)
-+		*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER;
-+
-+	/* Signal strength */
-+	c->strength.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	if (*status & FE_HAS_SIGNAL) {
-+		u32 agc;
-+
-+		regmap_read(r_t, AGCRDU_T, &tmpu);
-+		regmap_read(r_t, AGCRDL_T, &tmpl);
-+		agc = (tmpu << 8) | tmpl;
-+
-+		c->strength.len = 1;
-+		c->strength.stat[0].scale = FE_SCALE_RELATIVE;
-+		c->strength.stat[0].uvalue = agc;
-+	}
-+
-+	/* C/N rate */
-+	c->cnr.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	if (*status & FE_HAS_VITERBI) {
-+		u32 cnr;
-+
-+		regmap_read(r_t, CNRDU_T, &tmpu);
-+		regmap_read(r_t, CNRDL_T, &tmpl);
-+
-+		if (tmpu || tmpl) {
-+			/* CNR[dB]: 10 * (log10(65536 / value) + 0.2) */
-+			/* intlog10(65536) = 80807124, 0.2 * 2^24 = 3355443 */
-+			tmp = (u64)80807124 - intlog10((tmpu << 8) | tmpl)
-+				+ 3355443;
-+			cnr = div_u64(tmp * 10000, 1 << 24);
-+		} else {
-+			cnr = 0;
-+		}
-+
-+		c->cnr.len = 1;
-+		c->cnr.stat[0].scale = FE_SCALE_DECIBEL;
-+		c->cnr.stat[0].uvalue = cnr;
-+	}
-+
-+	/* BER */
-+	c->post_bit_error.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+	c->post_bit_count.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
-+
-+	regmap_read(r_t, BERFLG_T, &flg);
-+
-+	if ((*status & FE_HAS_VITERBI) && (flg & BERFLG_T_BERVRDYA)) {
-+		u32 bit_err, bit_cnt;
-+
-+		regmap_read(r_t, BERRDU_T, &tmpu);
-+		regmap_read(r_t, BERRDM_T, &tmpm);
-+		regmap_read(r_t, BERRDL_T, &tmpl);
-+		bit_err = (tmpu << 16) | (tmpm << 8) | tmpl;
-+
-+		regmap_read(r_t, BERLENRDU_T, &tmpu);
-+		regmap_read(r_t, BERLENRDL_T, &tmpl);
-+		bit_cnt = ((tmpu << 8) | tmpl) * 203 * 8;
-+
-+		if (bit_cnt) {
-+			c->post_bit_error.len = 1;
-+			c->post_bit_error.stat[0].scale = FE_SCALE_COUNTER;
-+			c->post_bit_error.stat[0].uvalue = bit_err;
-+			c->post_bit_count.len = 1;
-+			c->post_bit_count.stat[0].scale = FE_SCALE_COUNTER;
-+			c->post_bit_count.stat[0].uvalue = bit_cnt;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int sc1501a_sleep(struct dvb_frontend *fe)
-+{
-+	struct sc1501a_priv *chip = fe->demodulator_priv;
-+
-+	sc1501a_s_sleep(chip);
-+	sc1501a_t_sleep(chip);
-+
-+	return 0;
-+}
-+
-+static int sc1501a_set_frontend(struct dvb_frontend *fe)
-+{
-+	struct sc1501a_priv *chip = fe->demodulator_priv;
-+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
-+	struct regmap *r_s = chip->regmap_s;
-+	struct regmap *r_t = chip->regmap_t;
-+	u8 tssel = 0, intsel = 0;
-+
-+	if (c->delivery_system == SYS_ISDBS) {
-+		sc1501a_s_wake(chip);
-+		sc1501a_t_sleep(chip);
-+
-+		tssel = TSSET1_TSASEL_ISDBS;
-+		intsel = TSSET3_INTASEL_S;
-+	} else if (c->delivery_system == SYS_ISDBT) {
-+		sc1501a_s_sleep(chip);
-+		sc1501a_t_wake(chip);
-+
-+		sc1501a_t_set_freq(chip);
-+
-+		tssel = TSSET1_TSASEL_ISDBT;
-+		intsel = TSSET3_INTASEL_T;
-+	}
-+
-+	regmap_update_bits(r_t, TSSET1,
-+			   TSSET1_TSASEL_MASK | TSSET1_TSBSEL_MASK,
-+			   tssel | TSSET1_TSBSEL_NONE);
-+	regmap_write(r_t, TSSET2, 0);
-+	regmap_update_bits(r_t, TSSET3,
-+			   TSSET3_INTASEL_MASK | TSSET3_INTBSEL_MASK,
-+			   intsel | TSSET3_INTBSEL_NONE);
-+
-+	regmap_write(r_t, DOSET1_T, 0x95);
-+	regmap_write(r_s, DOSET1_S, 0x80);
-+
-+	if (c->delivery_system == SYS_ISDBS)
-+		sc1501a_s_tune(chip, c);
-+	else if (c->delivery_system == SYS_ISDBT)
-+		sc1501a_t_tune(chip, c);
-+
-+	if (fe->ops.tuner_ops.set_params) {
-+		if (fe->ops.i2c_gate_ctrl)
-+			fe->ops.i2c_gate_ctrl(fe, 1);
-+		fe->ops.tuner_ops.set_params(fe);
-+		if (fe->ops.i2c_gate_ctrl)
-+			fe->ops.i2c_gate_ctrl(fe, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+static int sc1501a_get_tune_settings(struct dvb_frontend *fe,
-+				     struct dvb_frontend_tune_settings *s)
-+{
-+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
-+
-+	s->min_delay_ms = 850;
-+
-+	if (c->delivery_system == SYS_ISDBS) {
-+		s->max_drift = 30000 * 2 + 1;
-+		s->step_size = 30000;
-+	} else if (c->delivery_system == SYS_ISDBT) {
-+		s->max_drift = 142857 * 2 + 1;
-+		s->step_size = 142857 * 2;
-+	}
-+
-+	return 0;
-+}
-+
-+static int sc1501a_read_status(struct dvb_frontend *fe, enum fe_status *status)
-+{
-+	struct sc1501a_priv *chip = fe->demodulator_priv;
-+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
-+
-+	if (c->delivery_system == SYS_ISDBS)
-+		return sc1501a_s_read_status(chip, c, status);
-+
-+	if (c->delivery_system == SYS_ISDBT)
-+		return sc1501a_t_read_status(chip, c, status);
-+
-+	return -EINVAL;
-+}
-+
-+static const struct dvb_frontend_ops sc1501a_ops = {
-+	.delsys = { SYS_ISDBS, SYS_ISDBT },
-+	.info = {
-+		.name          = "Socionext SC1501A",
-+		.frequency_min = 1032000,
-+		.frequency_max = 770000000,
-+		.caps = FE_CAN_INVERSION_AUTO | FE_CAN_FEC_AUTO |
-+			FE_CAN_QAM_AUTO | FE_CAN_TRANSMISSION_MODE_AUTO |
-+			FE_CAN_GUARD_INTERVAL_AUTO | FE_CAN_HIERARCHY_AUTO,
-+	},
-+
-+	.sleep                   = sc1501a_sleep,
-+	.set_frontend            = sc1501a_set_frontend,
-+	.get_tune_settings       = sc1501a_get_tune_settings,
-+	.read_status             = sc1501a_read_status,
-+};
-+
-+static const struct regmap_config regmap_config = {
-+	.reg_bits   = 8,
-+	.val_bits   = 8,
-+	.cache_type = REGCACHE_NONE,
-+};
-+
-+static int sc1501a_probe(struct i2c_client *client,
-+			 const struct i2c_device_id *id)
-+{
-+	struct sc1501a_config *conf = client->dev.platform_data;
-+	struct sc1501a_priv *chip;
-+	struct device *dev = &client->dev;
-+	int ret;
-+
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	if (dev->of_node)
-+		chip->spec = of_device_get_match_data(dev);
-+	else
-+		chip->spec = (struct sc1501a_spec *)id->driver_data;
-+	if (!chip->spec)
-+		return -EINVAL;
-+
-+	chip->mclk = devm_clk_get(dev, "mclk");
-+	if (IS_ERR(chip->mclk) && !conf) {
-+		dev_err(dev, "Failed to request mclk: %ld\n",
-+			PTR_ERR(chip->mclk));
-+		return PTR_ERR(chip->mclk);
-+	}
-+
-+	ret = of_property_read_u32(dev->of_node, "if-frequency",
-+				   &chip->if_freq);
-+	if (ret && !conf) {
-+		dev_err(dev, "Failed to load IF frequency: %d.\n", ret);
-+		return ret;
-+	}
-+
-+	chip->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+						   GPIOD_OUT_HIGH);
-+	if (IS_ERR(chip->reset_gpio)) {
-+		dev_err(dev, "Failed to request reset_gpio: %ld\n",
-+			PTR_ERR(chip->reset_gpio));
-+		return PTR_ERR(chip->reset_gpio);
-+	}
-+
-+	if (conf) {
-+		chip->mclk = conf->mclk;
-+		chip->if_freq = conf->if_freq;
-+		chip->reset_gpio = conf->reset_gpio;
-+
-+		*conf->fe = &chip->fe;
-+	}
-+
-+	chip->client_s = client;
-+	chip->regmap_s = devm_regmap_init_i2c(chip->client_s, &regmap_config);
-+	if (IS_ERR(chip->regmap_s))
-+		return PTR_ERR(chip->regmap_s);
-+
-+	/*
-+	 * Chip has two I2C addresses for each satellite/terrestrial system.
-+	 * ISDB-T uses address ISDB-S + 4, so we register a dummy client.
-+	 */
-+	chip->client_t = i2c_new_dummy(client->adapter, client->addr + 4);
-+	if (!chip->client_t)
-+		return -ENODEV;
-+
-+	chip->regmap_t = devm_regmap_init_i2c(chip->client_t, &regmap_config);
-+	if (IS_ERR(chip->regmap_t)) {
-+		ret = PTR_ERR(chip->regmap_t);
-+		goto err_i2c_t;
-+	}
-+
-+	chip->clk_freq = clk_get_rate(chip->mclk);
-+
-+	memcpy(&chip->fe.ops, &sc1501a_ops, sizeof(sc1501a_ops));
-+	chip->fe.demodulator_priv = chip;
-+	i2c_set_clientdata(client, chip);
-+
-+	sc1501a_cmn_power_on(chip);
-+	sc1501a_s_sleep(chip);
-+	sc1501a_t_sleep(chip);
-+
-+	return 0;
-+
-+err_i2c_t:
-+	i2c_unregister_device(chip->client_t);
-+
-+	return ret;
-+}
-+
-+static int sc1501a_remove(struct i2c_client *client)
-+{
-+	struct sc1501a_priv *chip = i2c_get_clientdata(client);
-+
-+	sc1501a_cmn_power_off(chip);
-+
-+	i2c_unregister_device(chip->client_t);
-+
-+	return 0;
-+}
-+
-+static const struct sc1501a_spec sc1501a_spec_pri = {
-+	.primary = true,
-+};
-+
-+static const struct sc1501a_spec sc1501a_spec_sec = {
-+	.primary = false,
-+};
-+
-+static const struct of_device_id sc1501a_of_match[] = {
-+	{ .compatible = "socionext,mn884433",   .data = &sc1501a_spec_pri, },
-+	{ .compatible = "socionext,mn884434-0", .data = &sc1501a_spec_pri, },
-+	{ .compatible = "socionext,mn884434-1", .data = &sc1501a_spec_sec, },
-+	{ .compatible = "socionext,sc1501a",    .data = &sc1501a_spec_pri, },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, sc1501a_of_match);
-+
-+static const struct i2c_device_id sc1501a_i2c_id[] = {
-+	{ "mn884433",   (kernel_ulong_t)&sc1501a_spec_pri },
-+	{ "mn884434-0", (kernel_ulong_t)&sc1501a_spec_pri },
-+	{ "mn884434-1", (kernel_ulong_t)&sc1501a_spec_sec },
-+	{ "sc1501a",    (kernel_ulong_t)&sc1501a_spec_pri },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, sc1501a_i2c_id);
-+
-+static struct i2c_driver sc1501a_driver = {
-+	.driver = {
-+		.name = "sc1501a",
-+		.of_match_table = of_match_ptr(sc1501a_of_match),
-+	},
-+	.probe    = sc1501a_probe,
-+	.remove   = sc1501a_remove,
-+	.id_table = sc1501a_i2c_id,
-+};
-+
-+module_i2c_driver(sc1501a_driver);
-+
-+MODULE_AUTHOR("Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>");
-+MODULE_DESCRIPTION("Socionext SC1501A series demodulator driver.");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/media/dvb-frontends/sc1501a.h b/drivers/media/dvb-frontends/sc1501a.h
-new file mode 100644
-index 000000000000..7e247d44e4ac
---- /dev/null
-+++ b/drivers/media/dvb-frontends/sc1501a.h
-@@ -0,0 +1,27 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Socionext SC1501A series demodulator driver for ISDB-S/ISDB-T.
-+ *
-+ * Copyright (c) 2018 Socionext Inc.
-+ */
-+
-+#ifndef SC1501A_H
-+#define SC1501A_H
-+
-+#include <media/dvb_frontend.h>
-+
-+/* ISDB-T IF frequency */
-+#define DIRECT_IF_57MHZ    57000000
-+#define DIRECT_IF_44MHZ    44000000
-+#define LOW_IF_4MHZ        4000000
-+
-+struct sc1501a_config {
-+	struct clk *mclk;
-+	u32 if_freq;
-+	struct gpio_desc *reset_gpio;
-+
-+	/* Everything after that is returned by the driver. */
-+	struct dvb_frontend **fe;
-+};
-+
-+#endif /* SC1501A_H */
--- 
-2.17.1
-
+Lianbo
+> 
+>> |______________|_______________|_______________|
+>>
+>> This patch is only for SME kdump, it is not support SEV kdump.
+>>
+>> Test tools:
+>> makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
+>> commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
+>> Author: Lianbo Jiang <lijiang@redhat.com>
+>> Date:   Mon May 14 17:02:40 2018 +0800
+>> Note: This patch can only dump vmcore in the case of SME enabled.
+>>
+>> crash-7.2.1: https://github.com/crash-utility/crash.git
+>> commit 1e1bd9c4c1be (Fix for the "bpf" command display on Linux 4.17-rc1)
+>> Author: Dave Anderson <anderson@redhat.com>
+>> Date:   Fri May 11 15:54:32 2018 -0400
+>>
+>> Test environment:
+>> HP ProLiant DL385Gen10 AMD EPYC 7251
+>> 8-Core Processor
+>> 32768 MB memory
+>> 600 GB disk space
+>>
+>> Linux 4.17-rc7:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>> commit b04e217704b7 ("Linux 4.17-rc7")
+>> Author: Linus Torvalds <torvalds@linux-foundation.org>
+>> Date:   Sun May 27 13:01:47 2018 -0700
+>>
+>> Reference:
+>> AMD64 Architecture Programmer's Manual
+>> https://support.amd.com/TechDocs/24593.pdf
+>>
+>> Some changes:
+>> 1. remove the sme_active() check in __ioremap_caller().
+>> 2. remove the '#ifdef' stuff throughout this patch.
+>> 3. put some logic into the early_memremap_pgprot_adjust() and clean the
+>> previous unnecessary changes, for example: arch/x86/include/asm/dmi.h,
+>> arch/x86/kernel/acpi/boot.c, drivers/acpi/tables.c.
+>> 4. add a new file and modify Makefile.
+>> 5. clean compile warning in copy_device_table() and some compile error.
+>> 6. split the original patch into four patches, it will be better for
+>> review.
+>>
+>> Some known issues:
+>> 1. about SME
+>> Upstream kernel doesn't work when we use kexec in the follow command. The
+>> system will hang.
+>> (This issue doesn't matter with the kdump patch.)
+>>
+>> Reproduce steps:
+>>  # kexec -l /boot/vmlinuz-4.17.0-rc7+ --initrd=/boot/initramfs-4.17.0-rc7+.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro mem_encrypt=on rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug nokaslr"
+>>  # kexec -e (or reboot)
+>>
+>> The system will hang:
+>> [ 1248.932239] kexec_core: Starting new kernel
+>> early console in extract_kernel
+>> input_data: 0x000000087e91c3b4
+>> input_len: 0x000000000067fcbd
+>> output: 0x000000087d400000
+>> output_len: 0x0000000001b6fa90
+>> kernel_total_size: 0x0000000001a9d000
+>> trampoline_32bit: 0x0000000000099000
+>>
+>> Decompressing Linux...
+>> Parsing ELF...        [-here the system will hang]
+>>
+>> 2. about SEV
+>> Upstream kernel(Host OS) doesn't work in host side, some drivers about
+>> SEV always go wrong in host side. We can't boot SEV Guest OS to test
+>> kdump patch. Maybe it is more reasonable to improve SEV in another
+>> patch. When some drivers can work in host side and it can also boot
+>> Virtual Machine(SEV Guest OS), it will be suitable to fix SEV for kdump.
+>>
+>> [  369.426131] INFO: task systemd-udevd:865 blocked for more than 120 seconds.
+>> [  369.433177]       Not tainted 4.17.0-rc5+ #60
+>> [  369.437585] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> [  369.445783] systemd-udevd   D    0   865    813 0x80000004
+>> [  369.451323] Call Trace:
+>> [  369.453815]  ? __schedule+0x290/0x870
+>> [  369.457523]  schedule+0x32/0x80
+>> [  369.460714]  __sev_do_cmd_locked+0x1f6/0x2a0 [ccp]
+>> [  369.465556]  ? cleanup_uevent_env+0x10/0x10
+>> [  369.470084]  ? remove_wait_queue+0x60/0x60
+>> [  369.474219]  ? 0xffffffffc0247000
+>> [  369.477572]  __sev_platform_init_locked+0x2b/0x70 [ccp]
+>> [  369.482843]  sev_platform_init+0x1d/0x30 [ccp]
+>> [  369.487333]  psp_pci_init+0x40/0xe0 [ccp]
+>> [  369.491380]  ? 0xffffffffc0247000
+>> [  369.494936]  sp_mod_init+0x18/0x1000 [ccp]
+>> [  369.499071]  do_one_initcall+0x4e/0x1d4
+>> [  369.502944]  ? _cond_resched+0x15/0x30
+>> [  369.506728]  ? kmem_cache_alloc_trace+0xae/0x1d0
+>> [  369.511386]  ? do_init_module+0x22/0x220
+>> [  369.515345]  do_init_module+0x5a/0x220
+>> [  369.519444]  load_module+0x21cb/0x2a50
+>> [  369.523227]  ? m_show+0x1c0/0x1c0
+>> [  369.526571]  ? security_capable+0x3f/0x60
+>> [  369.530611]  __do_sys_finit_module+0x94/0xe0
+>> [  369.534915]  do_syscall_64+0x5b/0x180
+>> [  369.538607]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [  369.543698] RIP: 0033:0x7f708e6311b9
+>> [  369.547536] RSP: 002b:00007ffff9d32aa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>> [  369.555162] RAX: ffffffffffffffda RBX: 000055602a04c2d0 RCX: 00007f708e6311b9
+>> [  369.562346] RDX: 0000000000000000 RSI: 00007f708ef52039 RDI: 0000000000000008
+>> [  369.569801] RBP: 00007f708ef52039 R08: 0000000000000000 R09: 000055602a048b20
+>> [  369.576988] R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000000
+>> [  369.584177] R13: 000055602a075260 R14: 0000000000020000 R15: 0000000000000000
+>>
+>> Lianbo Jiang (4):
+>>   Add a function(ioremap_encrypted) for kdump when AMD sme enabled
+>>   Allocate pages for kdump without encryption when SME is enabled
+>>   Remap the device table of IOMMU in encrypted manner for kdump
+>>   Help to dump the old memory encrypted into vmcore file
+>>
+>>  arch/x86/include/asm/io.h            |  3 ++
+>>  arch/x86/kernel/Makefile             |  1 +
+>>  arch/x86/kernel/crash_dump_encrypt.c | 53 ++++++++++++++++++++++++++++++++++++
+>>  arch/x86/mm/ioremap.c                | 28 +++++++++++++------
+>>  drivers/iommu/amd_iommu_init.c       | 15 +++++++++-
+>>  fs/proc/vmcore.c                     | 20 ++++++++++----
+>>  include/linux/crash_dump.h           | 11 ++++++++
+>>  kernel/kexec_core.c                  | 12 ++++++++
+>>  8 files changed, 128 insertions(+), 15 deletions(-)
+>>  create mode 100644 arch/x86/kernel/crash_dump_encrypt.c
+>>
+>> -- 
+>> 2.9.5
+>>
+>>
+>> _______________________________________________
+>> kexec mailing list
+>> kexec@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/kexec
