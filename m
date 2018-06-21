@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 518C1C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E73C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DEA821A84
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5FF521A88
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:11:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMEEnibA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEA821A84
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXvBlJQD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FF521A88
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933382AbeFUTLE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:11:04 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33223 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754341AbeFUTKc (ORCPT
+        id S933525AbeFUTLa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 15:11:30 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:41307 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754071AbeFUTKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:10:32 -0400
-Received: by mail-lf0-f66.google.com with SMTP id y20-v6so5917716lfy.0;
-        Thu, 21 Jun 2018 12:10:30 -0700 (PDT)
+        Thu, 21 Jun 2018 15:10:24 -0400
+Received: by mail-lf0-f67.google.com with SMTP id d24-v6so5876560lfa.8;
+        Thu, 21 Jun 2018 12:10:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SNz8nlVDqilVmA28R7vdJQIe4zhv2tnGYJmTOxbNMhw=;
-        b=NMEEnibACz3xPoSCGVGWID8TtXwyUmE00q7aO/nPdhVWt3MjgFERFjr3oLv+B04Yrj
-         ODgOLGCUN9WR+nterNkc976rqh1DIkjoN7HdW3V89LDYsyPfilgGktaKnvGQbhJjl01S
-         dbzBwBvTO2jmRfY2VK2XYf0Gfnn8KMMw3S0z1g9nUZEqbQNdUgwwzQVuyy+EUYTZJRpZ
-         TDlpWal8J3uHnCaz/SdHUQFcJAFtih/2gQgUM6zcAIu/ZuUDKkxn6Z7vn1Nn3oLFETsy
-         mF+Xx9FdI0LEp+dL67VPKvvrM4c8+iuoCH7a5gl+JoYlvAaBNkfkMDuj9O80YXYV03od
-         3/LQ==
+        bh=FfkN2BRmaFMo/wJvnoikyZaoLnqmd1IN7BL7KjnftSU=;
+        b=VXvBlJQDYgnY+WHdNqnfhDFETYA0DaNcqkbhKb6ZKmnOBA6bpvy2uD26XUheORMItL
+         oNtoI1i7PDAc+7dV6DTgwtrueBXdtkfRRbkkCKJD9/HMhZugHBuFgLIsJnQ3f0IMgCgO
+         aqKXFAMqdpy+K9Bwnah7hBX1jGfBz92U5vl1TVv+8FvRtPeiurDuJNh37EgiUYyLU3RO
+         rpqjEwg4YnILiOn0iwsRerO+gLL7tfmA4EFHtXBV4/je1h+JBCETNFgM/wKKiFR14t6d
+         hPNioE0hzuK6Slw3UQWM6ez1aj/zs345JKjpQQ1eTk1xO+n7NNGOve7ysn6TF5yS0Ijc
+         vpGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SNz8nlVDqilVmA28R7vdJQIe4zhv2tnGYJmTOxbNMhw=;
-        b=RmgchdLmScKli+cS0ZGrN6kGfeOZIkeXtRAelaFq6x+ViU1z9uFXkL/W6zaRaRtqr7
-         5d7eeNBQL3N0xDyXZAhNwFCQXU1mj8OR3TilnIdoOwFbMjypUJAp+ePzsoR/SYkBN6ix
-         6YPQ8EvsaAuyu15OnnSSinZifqerJRH34SCKkn1cKlIi6eWKVal/mWy7PI29CvO5S9Bl
-         UOaJIb2qDxg7XXxSZRWkg9embg8tShvZJr21wM72oaW7Ovx6xbVuIDq+XX94l75sCF5d
-         jSw3QSRW73N0SuxGthgc1hGb83QIQSRTlyxwDMOxPMwdjcyUapI1l6gdcVCyPPytshDd
-         7c1Q==
-X-Gm-Message-State: APt69E1nXUWNOEyau01ZzZia62Lq5eetSMSt6v2JgAiA6CTRfePgjI+E
-        tF2t9TFI4nSYOqDfHY/uZcI=
-X-Google-Smtp-Source: ADUXVKJZmdVqIJ9zhogDXh97xZ8VSWHiIKEKr4qfJ1OQQPJO5p/fEhOgoapfWy6sspSYmpjOoP3XzA==
-X-Received: by 2002:a2e:21c7:: with SMTP id h68-v6mr17492560lji.108.1529608230298;
-        Thu, 21 Jun 2018 12:10:30 -0700 (PDT)
+        bh=FfkN2BRmaFMo/wJvnoikyZaoLnqmd1IN7BL7KjnftSU=;
+        b=gxqmgl2o6Qd+HTItmS6MYYW6X9J/I5YZ+BQfZk9/4XVETy8H/mj1TgtszeQ3d4Rdb3
+         yAPT5AycCZ+5QOcw1uID1QM0/rzAlGbLTXmHIGtlPm9NK6DHB0U4uWCzYl+Z/TUahHtJ
+         vv8NBnWVJSeGTxzMvTgGGIyN4lI6DQwuQtGEdY4cxBpRNbxZZFXwkd0HXRDS4UpR5tLv
+         CA2pf5fXluAIP8YnBNKg1dQJrA6FV7tmrZRvPMZ/kNSk/X21GlUvDZV4FeBPdruDta3/
+         c46h2FBD5IzOHvuHKMuA3TKrRdjqd3MgZE70350a6y4q5f9NIdVSJ5Axzp2wCfMHjU74
+         KQWg==
+X-Gm-Message-State: APt69E2/C5jlHTU/vwHQ9KGYqtleA2VIEBt6wjbEcChl/xuFZlgAGBzM
+        8VksExS/DviRO0LJrWM0nTE=
+X-Google-Smtp-Source: ADUXVKKGntEk5riyMMq2IRj5MLrL3M9058LrCC/NYJXxnKpcRBcKF1r0WSaVwNGEGM/DyHPLiBi6xQ==
+X-Received: by 2002:a2e:8151:: with SMTP id t17-v6mr17521656ljg.32.1529608222546;
+        Thu, 21 Jun 2018 12:10:22 -0700 (PDT)
 Received: from localhost.localdomain (user-94-254-170-61.play-internet.pl. [94.254.170.61])
-        by smtp.googlemail.com with ESMTPSA id u3-v6sm988036lji.4.2018.06.21.12.10.28
+        by smtp.googlemail.com with ESMTPSA id u3-v6sm988036lji.4.2018.06.21.12.10.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 21 Jun 2018 12:10:29 -0700 (PDT)
+        Thu, 21 Jun 2018 12:10:21 -0700 (PDT)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, linux@armlinux.org.uk
@@ -65,9 +65,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, xc-racer2@live.ca,
         pawel.mikolaj.chmiel@gmail.com
-Subject: [PATCH 6/7] ARM: dts: s5pv210: Add initial DTS config for SGH-T959P phone
-Date:   Thu, 21 Jun 2018 21:09:58 +0200
-Message-Id: <1529608199-5583-7-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 1/7] ARM: dts: s5pv210: Add missing interrupt-controller property to gph2
+Date:   Thu, 21 Jun 2018 21:09:53 +0200
+Message-Id: <1529608199-5583-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 References: <1529608199-5583-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
@@ -79,74 +79,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Bakker <xc-racer2@live.ca>
+Adds missing interrupt-controller property to gph2 block,
+to silence following warnings during build
+  /soc/pinctrl@e0200000/gph2: Missing interrupt-controller or interrupt-map property
 
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+It's reguired by Samsung aries boards, an S5PV210 based
+Samsung Galaxy S (i9000) and Galaxy S 4G phones, which are added in next patches.
+
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- arch/arm/boot/dts/Makefile                |  1 +
- arch/arm/boot/dts/s5pv210-fascinate4g.dts | 40 +++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
- create mode 100644 arch/arm/boot/dts/s5pv210-fascinate4g.dts
+ arch/arm/boot/dts/s5pv210-pinctrl.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 522ebdca1d3d..d00e995875bb 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -846,6 +846,7 @@ dtb-$(CONFIG_ARCH_S3C64XX) += \
- 	s3c6410-smdk6410.dtb
- dtb-$(CONFIG_ARCH_S5PV210) += \
- 	s5pv210-aquila.dtb \
-+	s5pv210-fascinate4g.dtb \
- 	s5pv210-galaxys.dtb \
- 	s5pv210-goni.dtb \
- 	s5pv210-smdkc110.dtb \
-diff --git a/arch/arm/boot/dts/s5pv210-fascinate4g.dts b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-new file mode 100644
-index 000000000000..37967f57c7b7
---- /dev/null
-+++ b/arch/arm/boot/dts/s5pv210-fascinate4g.dts
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+index 3a79feab11c3..7f0c9d447871 100644
+--- a/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
++++ b/arch/arm/boot/dts/s5pv210-pinctrl.dtsi
+@@ -258,6 +258,8 @@
+ 	gph2: gph2 {
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
 +
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "s5pv210-aries.dtsi"
-+
-+/ {
-+	model = "Samsung Galaxy S Fascinate 4G (SGH-T959P) based on S5PV210";
-+	compatible = "samsung,fascinate4g", "samsung,aries", "samsung,s5pv210";
-+
-+	chosen {
-+		bootargs = "console=ttySAC2,115200n8 root=/dev/mmcblk1p1 rw rootwait ignore_loglevel earlyprintk";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		power {
-+			label = "power";
-+			gpios = <&gph2 6 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-source;
-+		};
-+
-+		vol-down {
-+			label = "volume_down";
-+			gpios = <&gph3 2 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
-+
-+		vol-up {
-+			label = "volume_up";
-+			gpios = <&gph3 1 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+	};
-+};
++		interrupt-controller;
+ 		#interrupt-cells = <2>;
+ 	};
+ 
 -- 
 2.7.4
 
