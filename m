@@ -2,107 +2,104 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FA3C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CB4C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4580F208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F43A208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:22:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0VokU1i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4580F208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ONDWY5wt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F43A208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751022AbeFUESC (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 00:18:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750798AbeFUESA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 00:18:00 -0400
-Received: from localhost (unknown [106.200.222.147])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9311020883;
-        Thu, 21 Jun 2018 04:17:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529554680;
-        bh=RXUixn/EiPJWO3e3rDYygjv9Kmm4pjcyzUs2zCUMrhU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z0VokU1imoTvrDmS9SzyHQp4eEvM/QluDxdQFxS9stvJ+Z9XAKc8RFsm2elLneS3w
-         c9ubDSeW8Vx6LcpR1bEOoRmU/aRhOBvnzZxhnu4j6ZI1ANtEJQwfabd9haG1N9cbKk
-         V38dII/OO0vJLt2zW9q3dk9CBdWX/Zh0fMA7qyRA=
-Date:   Thu, 21 Jun 2018 09:47:51 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
-Message-ID: <20180621041751.GC27187@vkoul-mobl>
-References: <20180618141259.23141-1-vkoul@kernel.org>
- <20180618141259.23141-4-vkoul@kernel.org>
- <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
- <20180620053204.GG13316@vkoul-mobl>
- <CANc+2y5-7S_1bvMYs54X3MqCkcsha3iNe1BGa-pG=_xH5xYn1Q@mail.gmail.com>
+        id S932445AbeFUEWY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 00:22:24 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:33490 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932165AbeFUEWV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 00:22:21 -0400
+Received: by mail-it0-f66.google.com with SMTP id k17-v6so1396005ita.0;
+        Wed, 20 Jun 2018 21:22:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=nroC2DhC+7k64PkTneFeT+5OJJfb7IxRVtZ3Y/zM+8c=;
+        b=ONDWY5wt49aD4PPnjiTYwb3Ughed05l/mNqOTngKrk5adjmSW55rL5+2+p+YTdiU4/
+         fh6d49sJ3dlI6GkKrfhaTupEEmquKpgtT8vwC/DDPXaboV4Etk7S2nYIDrZtPML6wwgi
+         eP8db+RB8zNBvwZrrEPKqyRWyPTr+/F0uMdrWTUQASeYprcBTZxTqOPDacZYLs2MmLmE
+         x5GwlgfjVWHMeVuE07zGh6J9uW9/T4ECHZVsfFKAGd0N3fTEEnLplv2mxV5t5P5r2T8c
+         lESujqdYRr3uBv2rTiUhSyZrysN9ao4bV3mzFrWOSAm0qAa45jNZmasLJRBx6gxg+3eQ
+         8qmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=nroC2DhC+7k64PkTneFeT+5OJJfb7IxRVtZ3Y/zM+8c=;
+        b=suH+zDAMhT2r7wppNvqwcD9TNqxnJCVKzonSSeMam4ZsD1sjSoSfPWTNcs7PjwCkLw
+         mUH/4VWMQ4rwBeheuDbwAFXR0UIprYPkzhKgzsVG78vNgEE3K47hyjncVpPBNlqWc+EV
+         9Dssp8pvE5jsxuR8EksydFfNjQMS3JzPUyEPvrYcQ57ksfsU7IxSsaWEMxChh+sfjcrq
+         1SpQV0cCHg9XxzEAZizC59K2zfFEmoly+8mgu+gnLlhWfnFqgRzJs4XcMNOW5BZ4o0QA
+         qETOP3HPB8hgBrMsBzZt4cY7X7UfJlAiiiUvzSJbsN9b5Wz7SQ8E6wnCD6u3RNebnR4j
+         Z15A==
+X-Gm-Message-State: APt69E1ZfLJWZK5pdv4jdz+TTHkeJryY6FNlIKwjpP+ieQNW3oofUHuU
+        e5ngQ61l4IixhGsa36h7siihJsr88++FR7xoKdw=
+X-Google-Smtp-Source: ADUXVKKuLGeVoxeeRyUe6vTn9fAYclBKqXAK8bkEpEfs29OxToBblITuAJoouLlN3X6/NTN4MEkWTXcMMYp3I7XE678=
+X-Received: by 2002:a02:938a:: with SMTP id z10-v6mr19863878jah.44.1529554940834;
+ Wed, 20 Jun 2018 21:22:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANc+2y5-7S_1bvMYs54X3MqCkcsha3iNe1BGa-pG=_xH5xYn1Q@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a4f:8384:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 21:22:20
+ -0700 (PDT)
+In-Reply-To: <20180620203500.28309-1-nick@shmanahar.org>
+References: <CAOMZO5BTMRJmrjM7X3-7Qi1wuciOnLZhAUuWN27Dtoc0cZXVSA@mail.gmail.com>
+ <20180620203500.28309-1-nick@shmanahar.org>
+From:   Chris Healy <cphealy@gmail.com>
+Date:   Wed, 20 Jun 2018 21:22:20 -0700
+Message-ID: <CAFXsbZr-HJE54c0BC5=d1tStByA5ytGhSSZMirNKE03JzGCDXQ@mail.gmail.com>
+Subject: Re: [PATCH v4] ARM: dts: imx51-zii-rdu1: fix touchscreen pinctrl
+To:     Nick Dyer <nick@shmanahar.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Lucas Stach <l.stach@pengutronix.de>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi PrasannaKumar,
+On Wed, Jun 20, 2018 at 1:35 PM, Nick Dyer <nick@shmanahar.org> wrote:
+> The pinctrl settings were incorrect for the touchscreen interrupt line, causing
+> an interrupt storm. This change has been tested with both the atmel_mxt_ts and
+> RMI4 drivers on the RDU1 units.
+>
+> The value 0x4 comes from the value of register IOMUXC_SW_PAD_CTL_PAD_CSI1_D8
+> from the old vendor kernel.
+>
+> Signed-off-by: Nick Dyer <nick@shmanahar.org>
+> Fixes: ceef0396f367 ("ARM: dts: imx: add ZII RDU1 board")
+> Cc: <stable@vger.kernel.org> # 4.15+
+> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+> ---
+> Changes in v4:
+> - Add reviewed by Fabio
+> Changes in v3:
+> - Update commit message to add source of 0x4 value, fixes tag and CC stable
+> Changes in v2:
+> - Use hex, only alter IRQ line config
 
-On 20-06-18, 23:15, PrasannaKumar Muralidharan wrote:
-> Hi Vinod,
-> 
-> On 20 June 2018 at 11:02, Vinod <vkoul@kernel.org> wrote:
-> > On 19-06-18, 22:28, Herbert Xu wrote:
-> >> On Mon, Jun 18, 2018 at 07:42:59PM +0530, Vinod Koul wrote:
-> >> > Qcom 8996 and later chips support prng v2 where we need to only
-> >> > implement .read callback for hwrng.
-> >> >
-> >> > Add a new table for v2 which supports this and get version required for
-> >> > driver data.
-> >> >
-> >> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> >>
-> >> Is this really a pseudo-RNG? If so it needs to be moved over to
-> >> the algif_rng interface.
-> >>
-> >> hwrng is for true hardware RNGs only, because it may be directly
-> >> fed into /dev/random.
-> >
-> > I am trying to find how how much random output this hardware generates.
-> >
-> > Meanwhile, can you please point out examples/Documentation for algif_rng
-> > and if any test tools for this?
-> 
-> As Herbert suggested exynos rng is a good example. It was wrongly
-> using hwrng framework then switched to using crypto framework.
-> 
-> I have a patch for msm rng using crypto framework, only compile tested
-> though. You can find the patch at
-> https://pastebin.ubuntu.com/p/44r6BJgBkN/. I am having a hard time
-> sending patches via git send-email form a gmail account so I have put
-> it in pastebin. Feel free to use it if that is useful.
+Tested on an RDU1 with Synaptics touchscreen successfully.  No
+interrupt store any longer...
 
-Ah, I already started based on msm downstream implementation (they had
-one using crypto APIs too). Ideally you should have posted it and tested
-it.
-
-Thanks
--- 
-~Vinod
+Tested-by: Chris Healy <cphealy@gmail.com>
