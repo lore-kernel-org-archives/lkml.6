@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4ECC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 005E2C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C7C223FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA703223FB
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:26:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LaRzzmH8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C7C223FA
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jODceS5N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA703223FB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933755AbeFUV0g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:26:36 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:46340 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933658AbeFUV0a (ORCPT
+        id S933784AbeFUV0n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:26:43 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37454 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933760AbeFUV0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:26:30 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5LLNsbX012186;
-        Thu, 21 Jun 2018 21:25:35 GMT
+        Thu, 21 Jun 2018 17:26:39 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5LLO7YM138947;
+        Thu, 21 Jun 2018 21:25:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=hYJF+qrAoWZJa6Vd/MNqpypPSuOig7XhmwbnSWDkyiU=;
- b=LaRzzmH8CnXK1J4rIBk+PXwKvdvhCp2aQZpH8PevVVnL8QJKrIsd1yIpFfvXfVDVAHK2
- Z2xrr+y0eampvj6k2ydq79NYENncPuQzfYIl/CPKhrPPWGKO6vNlYqg5MpAmJs2jL8bO
- ZnDgWrMOunErLQ/eiBSAXyEU4+2YdK+YsCf7GPB4xO7Zppt2AYoQ2yn78JfABN8ZktQZ
- RMHyjb8rYtwmZY3Q7dDwe/Yp+t54yCu/F/4bFYzEbjv6g5cM3LVhV3GI4zSJnOgLDOI1
- t2bZzmh28+TVcOPiIzL///BdmqWJgK6JLnrtxCoJd0/zUsLBT6YrnhCyRVal9Azj4LMN AQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jmr2muvfh-1
+ bh=PhlQovQUtqxvQY7YwG/AEyhHnbXUMSQojHf+J/RT/Wo=;
+ b=jODceS5NoEmCkzGz8lZtfg1Km3Nt88dQ8aOM2S1ZytLvFFZIegNixpdOgIFs8K1PhdGU
+ yHN4bp5S1LzEQ9NmR8Nvk2zOFUoOo0e8rGe7nZn+cq/LoWJXrobyyIHMlexVOdC9kp2n
+ UlT0Mfloj66E3fobkOOpmNCTDxR+aouQB387RWB4vHSbYkWLXOqhzW+32Vkt5v1fHmy0
+ 8db/PRkjxZIOkcuo8c2Hiny4PeDtcoijCjLSY4ecfo35s55ByWzPDzd6BVqWnSuhH2hY
+ /hdULI4LJt4RNeNKTyANRZ38fkYq15K0NXDJhS/WKCuKi+LeV4zpxSgJD0gWSJG85ILx XQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2jmtgx3qdq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jun 2018 21:25:35 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5LLPYN2030826
+        Thu, 21 Jun 2018 21:25:43 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5LLPgfE003567
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Jun 2018 21:25:34 GMT
+        Thu, 21 Jun 2018 21:25:42 GMT
 Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5LLPXZM015153;
-        Thu, 21 Jun 2018 21:25:33 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5LLPfu3014094;
+        Thu, 21 Jun 2018 21:25:41 GMT
 Received: from xakep.us.oracle.com (/10.39.228.116)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 21 Jun 2018 14:25:33 -0700
+        with ESMTP ; Thu, 21 Jun 2018 14:25:41 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -59,15 +59,15 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org
-Subject: [PATCH v12 05/11] s390/time: add read_persistent_wall_and_boot_offset()
-Date:   Thu, 21 Jun 2018 17:25:12 -0400
-Message-Id: <20180621212518.19914-6-pasha.tatashin@oracle.com>
+Subject: [PATCH v12 10/11] sched: early boot clock
+Date:   Thu, 21 Jun 2018 17:25:17 -0400
+Message-Id: <20180621212518.19914-11-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180621212518.19914-1-pasha.tatashin@oracle.com>
 References: <20180621212518.19914-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8931 signatures=668703
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=849
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=945
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1805220000 definitions=main-1806210230
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,46 +75,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-read_persistent_wall_and_boot_offset() will replace read_boot_clock64()
-because on some architectures it is more convenient to read both sources
-as one may depend on the other. For s390, implementation is the same
-as read_boot_clock64() but also calling and returning value of
-read_persistent_clock64()
+Allow sched_clock() to be used before schec_clock_init() and
+sched_clock_init_late() are called. This provides us with a way to get
+early boot timestamps on machines with unstable clocks.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/s390/kernel/time.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ kernel/sched/clock.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kernel/time.c b/arch/s390/kernel/time.c
-index cf561160ea88..d1f5447d5687 100644
---- a/arch/s390/kernel/time.c
-+++ b/arch/s390/kernel/time.c
-@@ -221,6 +221,24 @@ void read_persistent_clock64(struct timespec64 *ts)
- 	ext_to_timespec64(clk, ts);
- }
- 
-+void __init read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
-+						 struct timespec64 *boot_offset)
-+{
-+	unsigned char clk[STORE_CLOCK_EXT_SIZE];
-+	struct timespec64 boot_time;
-+	__u64 delta;
-+
-+	delta = initial_leap_seconds + TOD_UNIX_EPOCH;
-+	memcpy(clk, tod_clock_base, STORE_CLOCK_EXT_SIZE);
-+	*(__u64 *)&clk[1] -= delta;
-+	if (*(__u64 *)&clk[1] > delta)
-+		clk[0]--;
-+	ext_to_timespec64(clk, &boot_time);
-+
-+	read_persistent_clock64(wall_time);
-+	*boot_offset = timespec64_sub(*wall_time, boot_time);
-+}
-+
- void read_boot_clock64(struct timespec64 *ts)
+diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
+index 10c83e73837a..f034392b0f6c 100644
+--- a/kernel/sched/clock.c
++++ b/kernel/sched/clock.c
+@@ -205,6 +205,11 @@ void clear_sched_clock_stable(void)
+  */
+ static int __init sched_clock_init_late(void)
  {
- 	unsigned char clk[STORE_CLOCK_EXT_SIZE];
++	/* Transition to unstable clock from early clock */
++	local_irq_disable();
++	__gtod_offset = sched_clock() + __sched_clock_offset - ktime_get_ns();
++	local_irq_enable();
++
+ 	sched_clock_running = 2;
+ 	/*
+ 	 * Ensure that it is impossible to not do a static_key update.
+@@ -350,8 +355,9 @@ u64 sched_clock_cpu(int cpu)
+ 	if (sched_clock_stable())
+ 		return sched_clock() + __sched_clock_offset;
+ 
+-	if (unlikely(!sched_clock_running))
+-		return 0ull;
++	/* Use early clock until sched_clock_init_late() */
++	if (unlikely(sched_clock_running < 2))
++		return sched_clock() + __sched_clock_offset;
+ 
+ 	preempt_disable_notrace();
+ 	scd = cpu_sdc(cpu);
 -- 
 2.17.1
 
