@@ -2,85 +2,111 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E257C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DA2C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4945F20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4945F20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C2ACE20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:22:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IFIeUsLK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2ACE20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932902AbeFUIWU convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:22:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54576 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932430AbeFUIWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:22:16 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F0245C057F4E;
-        Thu, 21 Jun 2018 08:22:15 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-116-35.phx2.redhat.com [10.3.116.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6563E5C54A;
-        Thu, 21 Jun 2018 08:22:07 +0000 (UTC)
-Subject: Re: [PATCH v10 3/9] cpuset: Simulate auto-off of sched.domain_root at
- cgroup removal
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1529295249-5207-1-git-send-email-longman@redhat.com>
- <1529295249-5207-4-git-send-email-longman@redhat.com>
- <20180620141144.GI2494@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <6fffa761-a4ab-9974-c6b7-8c2af9d8a875@redhat.com>
-Date:   Thu, 21 Jun 2018 16:22:05 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S932993AbeFUIW4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:22:56 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:37992 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932617AbeFUIWy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 04:22:54 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5L8EOgj136155;
+        Thu, 21 Jun 2018 08:22:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=xsJbARbok3jBB5+b3NaYkTz3DUORz2fwles4PxSDzHY=;
+ b=IFIeUsLKTzDQqKYJ+f0J+zceKs6L/zPTa3PDFRBP6ac9iP2oQT63Mg38gNP2/JSBieRQ
+ IxLKDqNmKDZngFA2h5aAoxBySgcPq9O1G4+woBRu9F6xr2BjPuI29VonXOI6X9dZYF6r
+ Z5zQwBdsmniL+5qXqCzUfs62wVpjb9sAJrG6nD4kTJTwJEx0pPXSsdr8zUAmzSGG3oaV
+ JF2dWyHMIzRjuRLXLvBGl5pf/Jyab4LtoLy8B0eOr2ZJkhwjG71sn/RamG5YVD9OLzMv
+ 676OKhLcuK59CE/SFEUB/CF1ciL+jBleP5lXSs5ARPQmED52yz074RXl2iKw3SQnGQgk PA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2jmr2mqu7e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jun 2018 08:22:37 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5L8MZ7P027043
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jun 2018 08:22:35 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5L8MYOr024377;
+        Thu, 21 Jun 2018 08:22:35 GMT
+Received: from mwanda (/41.202.241.28)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Jun 2018 01:22:34 -0700
+Date:   Thu, 21 Jun 2018 11:22:25 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chris Opperman <eklikeroomys@gmail.com>
+Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] staging: wlan-ng: improved readability of function
+ prism2_add_key
+Message-ID: <20180621082225.xuhqvm7bevbiuaso@mwanda>
+References: <1529514635-17948-1-git-send-email-eklikeroomys@gmail.com>
+ <20180620200829.qm2zxeyyl5kqh6gu@mwanda>
+ <20180621044252.GA19583@kerdev>
 MIME-Version: 1.0
-In-Reply-To: <20180620141144.GI2494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 21 Jun 2018 08:22:16 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180621044252.GA19583@kerdev>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=645
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806210093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 10:11 PM, Peter Zijlstra wrote:
-> On Mon, Jun 18, 2018 at 12:14:02PM +0800, Waiman Long wrote:
->> @@ -1058,7 +1060,12 @@ static int update_reserved_cpumask(struct cpuset *cpuset,
->>  	 * Check if any CPUs in addmask or delmask are in the effective_cpus
->>  	 * of a sibling cpuset. The implied cpu_exclusive of a scheduling
->>  	 * domain root will ensure there are no overlap in cpus_allowed.
->> +	 *
->> +	 * This check is skipped if the cpuset is dying.
-> Comments that state what the code does are mostly useless; please
-> explain _why_ if anything.
+On Thu, Jun 21, 2018 at 06:42:52AM +0200, Chris Opperman wrote:
+> Hi Dan,
+> 
+> I agree completely. I was concerned whether the preprocessor definitions in
+> p80211metadef.h were named according to some convention as there are
+> many definitions named similarly there.
+> 
 
-I  am adding more restrictions on where the domain_root can be turned on
-to make sure that there will be no surprise.
+Yeah, sure but in that case leave this code alone until we get the time
+to update all the definitions.
 
-I have a script to test the new cpuset v2 functionality and found that
-cgroup deletion may sometime failed if there was not enough time for the
-previous operation to complete. That is the reason why I relax the
-checking for dying cgroup to make my test script pass.
+> I am considering renaming this specific definition to "p80211_dot11_keyid",
+> would that be more acceptable?
 
-Cheers,
-Longman
+There is probably a normal define that wireless drivers already use, but
+I don't know networking enough to say what it is...  You should try
+asking on linux-wireless.
+
+It says in the header that the name is generated automatically?  Is that
+true?  How does that work?
+
+Probably it's better to make it upper case?  Are both the P80211 and the
+DOT11 required or is DOT11 a subset?  Anyway, I don't think it's
+possible to create a worse naming scheme than the driver already has so
+I'm likely to approve anything you send.
+
+regards,
+dan carpenter
 
