@@ -3,142 +3,427 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DA2C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E245BC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E7B20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85D7820837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:41:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="VJAv8+ej"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E7B20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A9WtU4mJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D7820837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754280AbeFUIlY (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:41:24 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50823 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751159AbeFUIlT (ORCPT
+        id S932795AbeFUIlh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:41:37 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52870 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754296AbeFUIld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:41:19 -0400
-Received: by mail-wm0-f66.google.com with SMTP id e16-v6so3745874wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 01:41:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=profitbricks-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MngMSYj/LUMoHDL8Hi+3HKaF/k/9jENECPPbHKOO+cU=;
-        b=VJAv8+ejMrXTo1ZnvakozkyT3BQRHwaDxp3AdwL8a6MSQ8nG4njgD0pctZP7J9fqXU
-         oaFvN5arv8qYf46X/BlJZgnf8YSoWH3/rreOpwMrc8OvTdDti+bZr23TwwfxRlYLeDgn
-         K5CZo4upbebNTux6XAikMs3aiYfWDRKji1zzXJrcvMHQt7FPwSypcIKSWoouNenBepEk
-         UlDvDFXYBuDBPm0tfnWSPKsTUcCX8YG5HjKBSG4rE7VDGEnRbR4u6Ki8VFQrtc6iN3et
-         HWnkWnxih6sOsDIfvkBjW5/9TNVDF3zmbTwQTyNzUa3r6PNqwnYZfTFNuOlstVrgWfEU
-         5CwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MngMSYj/LUMoHDL8Hi+3HKaF/k/9jENECPPbHKOO+cU=;
-        b=HUIMOooMg74KV33Hakd2/QezAc3Ox+vcFrwq3PNRfdFbfBaLKx03AaepAI3dijJp/+
-         SVjmq0COw6VV9PQyqSWoBYP9/vzQoc+kThny8c6CBVQ3/v43+5W/p2Jdd9PO5/LX3+Ua
-         TKu5xoJ0Wj5IWfs5mbVm77mKwVcROaUtMSp8PiwReL1KEj5ZPIbVMKtgZmcuCJMCc9XT
-         HRtFOao2WNNbj7ce2XAnjmR6Ddyx/e7zZIRer3wJFJ/ZmkO7pHWwLGZE/994dTvhLANZ
-         GU8jc6QKT+OX8PGspTtwq9dH8bwsPHshuQjBJtpdmjWvK/kFSG1hWhiPEBMbIpbmnmaE
-         FCeA==
-X-Gm-Message-State: APt69E1jdLi5/fMFl4uJSlJajpn9MkODMWAMqhIXzQlOoB7tehsaTw0G
-        vRpn7+2rQL+wVnMwos0gSYtWBY4PduUKZxOcTA5lwg==
-X-Google-Smtp-Source: ADUXVKIcgYPC6/d3E/0LCQzr4WeOhZzaIOS8634BzKE02QbjFtagchDxc0QgZLkt+GPHOe5eQ9M7OzSHbRErr2JWmQY=
-X-Received: by 2002:a50:8c41:: with SMTP id p59-v6mr21459347edp.207.1529570477920;
- Thu, 21 Jun 2018 01:41:17 -0700 (PDT)
+        Thu, 21 Jun 2018 04:41:33 -0400
+X-Greylist: delayed 1555 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Jun 2018 04:41:33 EDT
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5L8FXFI026645;
+        Thu, 21 Jun 2018 03:15:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1529568933;
+        bh=Weg7f9qi6x/8kAvKCLew8vFIGtHWXgHu+ifOV7oNdF4=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=A9WtU4mJrQU/R5TXXvS5eYiTDCqtmSIn+SirwTNSxAvKR9Q4tM04PicF4tsJmkzaN
+         ydZdI021EobwZp6OGu7cJRMTeOff1Ia5W2CsXncx0+3frVwV7txPwUhzxZhiVKdwMC
+         vECA1Rf+gR4f2dbdpHR3DcU2LcE06J1qqbmYHL0Q=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8FXx8028807;
+        Thu, 21 Jun 2018 03:15:33 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 21
+ Jun 2018 03:15:33 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 21 Jun 2018 03:15:33 -0500
+Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8FCTg025379;
+        Thu, 21 Jun 2018 03:15:31 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
+CC:     <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <j-keerthy@ti.com>, Russ Dill <Russ.Dill@ti.com>
+Subject: [PATCH v3 3/4] clk: ti: Add functions to save/restore clk context
+Date:   Thu, 21 Jun 2018 13:45:06 +0530
+Message-ID: <1529568907-19930-4-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
+References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
-Received: by 2002:a50:de8e:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 01:40:37
- -0700 (PDT)
-In-Reply-To: <20180621011656.GA15427@ming.t460p>
-References: <20180609123014.8861-1-ming.lei@redhat.com> <CAJX1YtaRtCGt7f8H0VEDrDkcOYusB0JoL-CNB_E--MYGhcvbow@mail.gmail.com>
- <20180621011656.GA15427@ming.t460p>
-From:   Gi-Oh Kim <gi-oh.kim@profitbricks.com>
-Date:   Thu, 21 Jun 2018 10:40:37 +0200
-Message-ID: <CAJX1YtbmOhXh7rfb72hY=d+EumOfacqCxUY_8t0u39+0R4emcw@mail.gmail.com>
-Subject: Re: [PATCH V6 00/30] block: support multipage bvec
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@fb.com>, hch@infradead.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>, dsterba@suse.cz,
-        ying.huang@intel.com, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, "Theodore Ts'o" <tytso@mit.edu>,
-        darrick.wong@oracle.com, colyli@suse.de,
-        Filipe Manana <fdmanana@gmail.com>, rdunlap@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 3:17 AM, Ming Lei <ming.lei@redhat.com> wrote:
-> On Fri, Jun 15, 2018 at 02:59:19PM +0200, Gi-Oh Kim wrote:
->> >
->> > - bio size can be increased and it should improve some high-bandwidth =
-IO
->> > case in theory[4].
->> >
->>
->> Hi,
->>
->> I would like to report your patch set works well on my system based on v=
-4.14.48.
->> I thought the multipage bvec could improve the performance of my system.
->> (FYI, my system has v4.14.48 and provides KVM-base virtualization servic=
-e.)
->
-> Thanks for your test!
->
->>
->> So I did back-porting your patches to v4.14.48.
->> It has done without any serious problem.
->> I only needed to cherry-pick "blk-merge: compute
->> bio->bi_seg_front_size efficiently" and
->> "block: move bio_alloc_pages() to bcache" patches before back-porting
->> to prevent conflicts.
->
-> Not sure I understand your point, you have to backport all patches.
+From: Russ Dill <Russ.Dill@ti.com>
 
-Never mind.
-I just meant I did backporting for myself and it is still working well.
+SoCs like AM43XX lose clock registers context during RTC-only
+suspend. Hence add functions to save/restore the clock registers
+context.
 
->
-> At least now, BIO_MAX_PAGES can be fixed as 256 in case of CONFIG_THP_SWA=
-P,
-> otherwise 2 pages may be allocated for holding the bvec table, so tests
-> in case of THP_SWAP may be improved.
->
-> Also filesystem may support IO to/from THP, and multipage bvec should
-> improve this case too.
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Russ Dill <Russ.Dill@ti.com>
+---
 
-OK, I got it.
-I will find something to use THP_SWAP and run the performance test with it.
-Thank you ;-)
+Changes in v2:
 
+        * Replaced clk_dflt_restore instances to clk_gate_restore_context
 
---=20
-GIOH KIM
-Linux Kernel Entwickler
+ drivers/clk/ti/clock.h    |   2 +
+ drivers/clk/ti/divider.c  |  36 ++++++++++++++
+ drivers/clk/ti/dpll.c     |   6 +++
+ drivers/clk/ti/dpll3xxx.c | 124 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/ti/gate.c     |   3 ++
+ drivers/clk/ti/mux.c      |  29 +++++++++++
+ include/linux/clk/ti.h    |   6 +++
+ 7 files changed, 206 insertions(+)
 
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
+diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+index b582780..26fbdf2 100644
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -24,6 +24,7 @@ struct clk_omap_divider {
+ 	u8			flags;
+ 	s8			latch;
+ 	const struct clk_div_table	*table;
++	u32		context;
+ };
+ 
+ #define to_clk_omap_divider(_hw) container_of(_hw, struct clk_omap_divider, hw)
+@@ -36,6 +37,7 @@ struct clk_omap_mux {
+ 	u8			shift;
+ 	s8			latch;
+ 	u8			flags;
++	u8			saved_parent;
+ };
+ 
+ #define to_clk_omap_mux(_hw) container_of(_hw, struct clk_omap_mux, hw)
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index aaa277d..4418e0d 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -268,10 +268,46 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
++/**
++ * clk_divider_save_context - Save the divider value
++ * @hw: pointer  struct clk_hw
++ *
++ * Save the divider value
++ */
++static int clk_divider_save_context(struct clk_hw *hw)
++{
++	struct clk_omap_divider *divider = to_clk_omap_divider(hw);
++	u32 val;
++
++	val = ti_clk_ll_ops->clk_readl(&divider->reg) >> divider->shift;
++	divider->context = val & div_mask(divider);
++
++	return 0;
++}
++
++/**
++ * clk_divider_restore_context - restore the saved the divider value
++ * @hw: pointer  struct clk_hw
++ *
++ * Restore the saved the divider value
++ */
++static void clk_divider_restore_context(struct clk_hw *hw)
++{
++	struct clk_omap_divider *divider = to_clk_omap_divider(hw);
++	u32 val;
++
++	val = ti_clk_ll_ops->clk_readl(&divider->reg);
++	val &= ~(div_mask(divider) << divider->shift);
++	val |= divider->context << divider->shift;
++	ti_clk_ll_ops->clk_writel(val, &divider->reg);
++}
++
+ const struct clk_ops ti_clk_divider_ops = {
+ 	.recalc_rate = ti_clk_divider_recalc_rate,
+ 	.round_rate = ti_clk_divider_round_rate,
+ 	.set_rate = ti_clk_divider_set_rate,
++	.save_context = clk_divider_save_context,
++	.restore_context = clk_divider_restore_context,
+ };
+ 
+ static struct clk *_register_divider(struct device *dev, const char *name,
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 7d33ca9..b1c4d8a 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -39,6 +39,8 @@
+ 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
+ 	.determine_rate	= &omap4_dpll_regm4xen_determine_rate,
+ 	.get_parent	= &omap2_init_dpll_parent,
++	.save_context	= &omap3_core_dpll_save_context,
++	.restore_context = &omap3_core_dpll_restore_context,
+ };
+ #else
+ static const struct clk_ops dpll_m4xen_ck_ops = {};
+@@ -62,6 +64,8 @@
+ 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
+ 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
+ 	.get_parent	= &omap2_init_dpll_parent,
++	.save_context	= &omap3_noncore_dpll_save_context,
++	.restore_context = &omap3_noncore_dpll_restore_context,
+ };
+ 
+ static const struct clk_ops dpll_no_gate_ck_ops = {
+@@ -72,6 +76,8 @@
+ 	.set_parent	= &omap3_noncore_dpll_set_parent,
+ 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
+ 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
++	.save_context	= &omap3_noncore_dpll_save_context,
++	.restore_context = &omap3_noncore_dpll_restore_context
+ };
+ #else
+ static const struct clk_ops dpll_core_ck_ops = {};
+diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
+index 4534de2..44b6b64 100644
+--- a/drivers/clk/ti/dpll3xxx.c
++++ b/drivers/clk/ti/dpll3xxx.c
+@@ -782,6 +782,130 @@ unsigned long omap3_clkoutx2_recalc(struct clk_hw *hw,
+ 	return rate;
+ }
+ 
++/**
++ * omap3_core_dpll_save_context - Save the m and n values of the divider
++ * @hw: pointer  struct clk_hw
++ *
++ * Before the dpll registers are lost save the last rounded rate m and n
++ * and the enable mask.
++ */
++int omap3_core_dpll_save_context(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	struct dpll_data *dd;
++	u32 v;
++
++	dd = clk->dpll_data;
++
++	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
++	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
++
++	if (clk->context == DPLL_LOCKED) {
++		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
++		dd->last_rounded_m = (v & dd->mult_mask) >>
++						__ffs(dd->mult_mask);
++		dd->last_rounded_n = ((v & dd->div1_mask) >>
++						__ffs(dd->div1_mask)) + 1;
++	}
++
++	return 0;
++}
++
++/**
++ * omap3_core_dpll_restore_context - restore the m and n values of the divider
++ * @hw: pointer  struct clk_hw
++ *
++ * Restore the last rounded rate m and n
++ * and the enable mask.
++ */
++void omap3_core_dpll_restore_context(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	const struct dpll_data *dd;
++	u32 v;
++
++	dd = clk->dpll_data;
++
++	if (clk->context == DPLL_LOCKED) {
++		_omap3_dpll_write_clken(clk, 0x4);
++		_omap3_wait_dpll_status(clk, 0);
++
++		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
++		v &= ~(dd->mult_mask | dd->div1_mask);
++		v |= dd->last_rounded_m << __ffs(dd->mult_mask);
++		v |= (dd->last_rounded_n - 1) << __ffs(dd->div1_mask);
++		ti_clk_ll_ops->clk_writel(v, &dd->mult_div1_reg);
++
++		_omap3_dpll_write_clken(clk, DPLL_LOCKED);
++		_omap3_wait_dpll_status(clk, 1);
++	} else {
++		_omap3_dpll_write_clken(clk, clk->context);
++	}
++}
++
++/**
++ * omap3_non_core_dpll_save_context - Save the m and n values of the divider
++ * @hw: pointer  struct clk_hw
++ *
++ * Before the dpll registers are lost save the last rounded rate m and n
++ * and the enable mask.
++ */
++int omap3_noncore_dpll_save_context(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	struct dpll_data *dd;
++	u32 v;
++
++	dd = clk->dpll_data;
++
++	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
++	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
++
++	if (clk->context == DPLL_LOCKED) {
++		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
++		dd->last_rounded_m = (v & dd->mult_mask) >>
++						__ffs(dd->mult_mask);
++		dd->last_rounded_n = ((v & dd->div1_mask) >>
++						__ffs(dd->div1_mask)) + 1;
++	}
++
++	return 0;
++}
++
++/**
++ * omap3_core_dpll_restore_context - restore the m and n values of the divider
++ * @hw: pointer  struct clk_hw
++ *
++ * Restore the last rounded rate m and n
++ * and the enable mask.
++ */
++void omap3_noncore_dpll_restore_context(struct clk_hw *hw)
++{
++	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
++	const struct dpll_data *dd;
++	u32 ctrl, mult_div1;
++
++	dd = clk->dpll_data;
++
++	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
++	mult_div1 = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
++
++	if (clk->context == ((ctrl & dd->enable_mask) >>
++			     __ffs(dd->enable_mask)) &&
++	    dd->last_rounded_m == ((mult_div1 & dd->mult_mask) >>
++				   __ffs(dd->mult_mask)) &&
++	    dd->last_rounded_n == ((mult_div1 & dd->div1_mask) >>
++				   __ffs(dd->div1_mask)) + 1) {
++		/* nothing to be done */
++		return;
++	}
++
++	if (clk->context == DPLL_LOCKED)
++		omap3_noncore_dpll_program(clk, 0);
++	else
++		_omap3_dpll_write_clken(clk, clk->context);
++}
++
+ /* OMAP3/4 non-CORE DPLL clkops */
+ const struct clk_hw_omap_ops clkhwops_omap3_dpll = {
+ 	.allow_idle	= omap3_dpll_allow_idle,
+diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
+index 935b2de..2453b36 100644
+--- a/drivers/clk/ti/gate.c
++++ b/drivers/clk/ti/gate.c
+@@ -33,6 +33,7 @@
+ 	.init		= &omap2_init_clk_clkdm,
+ 	.enable		= &omap2_clkops_enable_clkdm,
+ 	.disable	= &omap2_clkops_disable_clkdm,
++	.restore_context = clk_gate_restore_context,
+ };
+ 
+ const struct clk_ops omap_gate_clk_ops = {
+@@ -40,6 +41,7 @@
+ 	.enable		= &omap2_dflt_clk_enable,
+ 	.disable	= &omap2_dflt_clk_disable,
+ 	.is_enabled	= &omap2_dflt_clk_is_enabled,
++	.restore_context = clk_gate_restore_context,
+ };
+ 
+ static const struct clk_ops omap_gate_clk_hsdiv_restore_ops = {
+@@ -47,6 +49,7 @@
+ 	.enable		= &omap36xx_gate_clk_enable_with_hsdiv_restore,
+ 	.disable	= &omap2_dflt_clk_disable,
+ 	.is_enabled	= &omap2_dflt_clk_is_enabled,
++	.restore_context = clk_gate_restore_context,
+ };
+ 
+ /**
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 69a4308..5749b2b 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -91,10 +91,39 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	return 0;
+ }
+ 
++/**
++ * clk_mux_save_context - Save the parent selcted in the mux
++ * @hw: pointer  struct clk_hw
++ *
++ * Save the parent mux value.
++ */
++static int clk_mux_save_context(struct clk_hw *hw)
++{
++	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
++
++	mux->saved_parent = ti_clk_mux_get_parent(hw);
++	return 0;
++}
++
++/**
++ * clk_mux_restore_context - Restore the parent in the mux
++ * @hw: pointer  struct clk_hw
++ *
++ * Restore the saved parent mux value.
++ */
++static void clk_mux_restore_context(struct clk_hw *hw)
++{
++	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
++
++	ti_clk_mux_set_parent(hw, mux->saved_parent);
++}
++
+ const struct clk_ops ti_clk_mux_ops = {
+ 	.get_parent = ti_clk_mux_get_parent,
+ 	.set_parent = ti_clk_mux_set_parent,
+ 	.determine_rate = __clk_mux_determine_rate,
++	.save_context = clk_mux_save_context,
++	.restore_context = clk_mux_restore_context,
+ };
+ 
+ static struct clk *_register_mux(struct device *dev, const char *name,
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index a8faa38..c1b13bb 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -159,6 +159,7 @@ struct clk_hw_omap {
+ 	const char		*clkdm_name;
+ 	struct clockdomain	*clkdm;
+ 	const struct clk_hw_omap_ops	*ops;
++	u32			context;
+ };
+ 
+ /*
+@@ -293,6 +294,11 @@ struct ti_clk_features {
+ 
+ void ti_clk_setup_features(struct ti_clk_features *features);
+ const struct ti_clk_features *ti_clk_get_features(void);
++int omap3_noncore_dpll_save_context(struct clk_hw *hw);
++void omap3_noncore_dpll_restore_context(struct clk_hw *hw);
++
++int omap3_core_dpll_save_context(struct clk_hw *hw);
++void omap3_core_dpll_restore_context(struct clk_hw *hw);
+ 
+ extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
+ 
+-- 
+1.9.1
 
-Tel:       +49 176 2697 8962
-Fax:      +49 30 577 008 299
-Email:    gi-oh.kim@profitbricks.com
-URL:      https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Gesch=C3=A4ftsf=C3=BChrer: Achim Weiss, Matthias Steinberg, Christoph Steff=
-ens
