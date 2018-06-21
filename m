@@ -2,414 +2,138 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA1CC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792C9C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBDEF20846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:48:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBDEF20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 1FD1F20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 06:54:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="E2NctQWA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FD1F20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932799AbeFUGsJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 02:48:09 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:34790 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932481AbeFUGsI (ORCPT
+        id S932459AbeFUGyF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 02:54:05 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50988 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932430AbeFUGyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 02:48:08 -0400
-Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.53 with ESMTP; 21 Jun 2018 15:48:05 +0900
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.151 with ESMTP; 21 Jun 2018 15:48:05 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Thu, 21 Jun 2018 15:48:02 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Byungchul Park <max.byungchul.park@gmail.com>,
-        jiangshanlai@gmail.com, josh@joshtriplett.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        Joel Fernandes <joel@joelfernandes.org>, luto@kernel.org
-Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
- rcu_dynticks
-Message-ID: <20180621064802.GB28024@X58A-UD3R>
-References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
- <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
- <20180620145814.GQ3593@linux.vnet.ibm.com>
- <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
- <20180620164902.GW3593@linux.vnet.ibm.com>
- <CANrsvRPAWv8LgSvPrGgLiXnjrtK3CmpJgdpNsuu-0LZJTYeYWQ@mail.gmail.com>
- <20180620174037.GZ3593@linux.vnet.ibm.com>
- <20180621063949.GA28024@X58A-UD3R>
+        Thu, 21 Jun 2018 02:54:03 -0400
+Received: by mail-wm0-f68.google.com with SMTP id e16-v6so3232460wmd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 23:54:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5ycLaSUyNMgs92iZadFULkXZwJ4O1+yQxtTh8vI25Mw=;
+        b=E2NctQWA67MlWMMZ20O8B9qVT2cn1zuLhxRTukWzHMq0J5JMEaZq/IvNsP/UwB00+p
+         3bVzZz8z3uLgqySoI2gK0Qox6g7jkZRZ//Zy1p2BJk+J4zNl1lbNLDHMbodirut3jUHj
+         0eZh/hbk2YayL8zkvfqgv8aouVqEZEhtsv5P4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=5ycLaSUyNMgs92iZadFULkXZwJ4O1+yQxtTh8vI25Mw=;
+        b=PsUZLSK8h8dxFvmFgCKYrquF1To8wt0tnqahI0a/bcRK7rFLJV3xgz7iYHxwfCJg78
+         f6dC+NGROl2GomQg9sadBrtGW4jGCH5jCfe70J9o/vkL6H4YlPP18UiFahrEerNeKRy3
+         /LMPwD29N4qcpJwPX0/g+OrJ/0E2WIskcMzlu1QUkLgWJUyyY5PnREImVNkryiAF0O2j
+         +0BcnH86xAyMHnmEEEagxUEuURNk+/nuMYyirMlUi3XwuwqZ5rZF6hE5tut+7++Y8SVH
+         MkLN57iX1jXVBp5tz/DiYrhXNNIE2B0FFpGSaeOO6AKblgQ6TUG15shPFN/12785xAVO
+         eUNw==
+X-Gm-Message-State: APt69E0jjpYsNvg3ysv5XeanR1RVAT48/7hrmiHdkiUynhdI8+R5PWwe
+        w+NdHjn3xpHnqf4uEcr+z9iM9Q==
+X-Google-Smtp-Source: ADUXVKKNK6v8n8+JqX+kBjnw2Oc8BDbWLzhxX7k8CuGfRRc0zu1HG2uNCqwN/ydZGpo6K+J6qvANNg==
+X-Received: by 2002:a50:aada:: with SMTP id r26-v6mr20930601edc.124.1529564042506;
+        Wed, 20 Jun 2018 23:54:02 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5628:0:9802:bb08:74d1:12e1])
+        by smtp.gmail.com with ESMTPSA id d7-v6sm1590852edi.79.2018.06.20.23.54.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Jun 2018 23:54:01 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 08:54:00 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/v3d: Define the fourcc modifier for the Broadcom UIF
+ format.
+Message-ID: <20180621065359.GE19791@phenom.ffwll.local>
+Mail-Followup-To: Eric Anholt <eric@anholt.net>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20180621001703.13522-1-eric@anholt.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180621063949.GA28024@X58A-UD3R>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180621001703.13522-1-eric@anholt.net>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 03:39:49PM +0900, Byungchul Park wrote:
-> On Wed, Jun 20, 2018 at 10:40:37AM -0700, Paul E. McKenney wrote:
-> > On Thu, Jun 21, 2018 at 02:15:07AM +0900, Byungchul Park wrote:
+On Wed, Jun 20, 2018 at 05:17:03PM -0700, Eric Anholt wrote:
+> This will be used by Mesa, and potentially other drivers in the
+> future, to describe tiled buffers.
 > 
-> [...]
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>  include/uapi/drm/drm_fourcc.h | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
-> > > Totally agree with you. Sorry bothering you.
-> > 
-> > Absolutely not a problem, absolutely no need to apologize!  I am
-> > actually very happy that you are taking RCU seriously and looking at it
-> > in such depth.
-> 
-> Thanks a lot. :)
-> 
-> > My problem is that when I see a patch like this, something in the back of
-> > my head screams "WRONG!!!", and I sometimes get confused about exactly
-> > what the back of my head is screaming about, which was the case here.
-> > Hence my misguided initial complaint about NMI nesting instead of about
-> > the possibility of unpaired rcu_irq_enter() calls.
-> > 
-> > So apologies for that, but I unfortunately cannot promise that this
-> 
-> It's ok. I also made a mistake.
-> 
-> > won't happen again.  I have learned the hard way to trust the back of
-> > my head.  It sometimes makes mistakes, but less often than the rest of
-> > my head does.  ;-)
-> 
-> I believe it doesn't matter at all as everybody makes mistakes. You must
-> be much more careful in everything than others though. I believe the
-> only problem with regard to human's mistakes is the attitude never even
-> trying to communicate with others, being convinced that they've never
-> made mistakes.
-> 
-> > In the meantime, is it possible to rearrange rcu_irq_enter() and
-> > rcu_nmi_enter() (and similarly rcu_irq_exit() and rcu_nmi_exit())
-> > to avoid the conditionals (via compiler inlining) while still keeping
-> > function calls ordered properly?  I bet that you could do it by splitting
-> > rcu_nmi_enter() and rcu_nmi_exit() sort of like this:
-> > 
-> > 	static void rcu_nmi_enter_common(bool irq)
-> > 	{
-> > 		/*
-> > 		 * You fill this in.  Maybe __always_inline above.  The
-> > 		 * rcu_dynticks_task_exit() and rcu_cleanup_after_idle()
-> > 		 * calls need to be on opposite sides of the
-> > 		 * rcu_dynticks_eqs_exit() call, just like they are now.
-> > 		 */
-> > 	}
-> > 
-> > 	void rcu_nmi_enter(void)
-> > 	{
-> > 		rcu_nmi_enter_common(false);
-> > 	}
-> > 
-> > 	void rcu_irq_enter(void)
-> > 	{
-> > 		lockdep_assert_irqs_disabled();
-> > 		rcu_nmi_enter(true);
-> > 	}
-> > 
-> > Saving a couple of branches on the irq enter/exit paths seems like it
-> > just might be worth something.  ;-)
-> 
-> What about the following patch?
-> 
-> I applied what you suggested and re-named rcu_nmi_{enter,exit} to
-> rcu_irq_{enter,exit} and applied the same re-naming to
-> ->dynticks_nmi_nesting as well, since those are not things to do with
-> nmi anymore but both irq and nmi.
-> 
-> I think "irq" is better to represent both irq and nmi than "nmi".
-> Please let me know if you don't think so. I can get rid of the re-
-> naming from the patch.
-
-Or I can make this patch into two, one of which is only for the re-naming
-including ./Documentation/RCU/Design/Data-Structures/Data-Structures.html
-as well.
-
-Just let me know. I will follow your decision.
-
-> I will re-send this with a change log after getting your opinion.
-> 
-> ----->8-----
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index deb2508..413fef7 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -260,7 +260,7 @@ void rcu_bh_qs(void)
+> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> index 64bf67abff7e..d5e52350a3aa 100644
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -464,6 +464,27 @@ extern "C" {
+>  #define DRM_FORMAT_MOD_BROADCOM_SAND256 \
+>  	DRM_FORMAT_MOD_BROADCOM_SAND256_COL_HEIGHT(0)
 >  
->  static DEFINE_PER_CPU(struct rcu_dynticks, rcu_dynticks) = {
->  	.dynticks_nesting = 1,
-> -	.dynticks_nmi_nesting = DYNTICK_IRQ_NONIDLE,
-> +	.dynticks_irq_nesting = DYNTICK_IRQ_NONIDLE,
->  	.dynticks = ATOMIC_INIT(RCU_DYNTICK_CTRL_CTR),
->  };
->  
-> @@ -695,7 +695,7 @@ static struct rcu_node *rcu_get_root(struct rcu_state *rsp)
->   * Enter an RCU extended quiescent state, which can be either the
->   * idle loop or adaptive-tickless usermode execution.
->   *
-> - * We crowbar the ->dynticks_nmi_nesting field to zero to allow for
-> + * We crowbar the ->dynticks_irq_nesting field to zero to allow for
->   * the possibility of usermode upcalls having messed up our count
->   * of interrupt nesting level during the prior busy period.
->   */
-> @@ -706,7 +706,7 @@ static void rcu_eqs_enter(bool user)
->  	struct rcu_dynticks *rdtp;
->  
->  	rdtp = this_cpu_ptr(&rcu_dynticks);
-> -	WRITE_ONCE(rdtp->dynticks_nmi_nesting, 0);
-> +	WRITE_ONCE(rdtp->dynticks_irq_nesting, 0);
->  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) &&
->  		     rdtp->dynticks_nesting == 0);
->  	if (rdtp->dynticks_nesting != 1) {
-> @@ -764,43 +764,58 @@ void rcu_user_enter(void)
->  #endif /* CONFIG_NO_HZ_FULL */
->  
->  /**
-> - * rcu_nmi_exit - inform RCU of exit from NMI context
-> + * rcu_irq_exit_common - inform RCU of exit from interrupt context
->   *
-> - * If we are returning from the outermost NMI handler that interrupted an
-> - * RCU-idle period, update rdtp->dynticks and rdtp->dynticks_nmi_nesting
-> - * to let the RCU grace-period handling know that the CPU is back to
-> - * being RCU-idle.
-> + * If we are returning from the outermost interrupt handler that
-> + * interrupted an RCU-idle period, update rdtp->dynticks and
-> + * rdtp->dynticks_irq_nesting to let the RCU grace-period handling
-> + * know that the CPU is back to being RCU-idle.
->   *
-> - * If you add or remove a call to rcu_nmi_exit(), be sure to test
-> - * with CONFIG_RCU_EQS_DEBUG=y.
-> + * If you add or remove a call to rcu_irq_exit_common(), be sure to
-> + * test with CONFIG_RCU_EQS_DEBUG=y.
->   */
-> -void rcu_nmi_exit(void)
-> +static __always_inline void rcu_irq_exit_common(bool nmi)
->  {
->  	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
->  
->  	/*
-> -	 * Check for ->dynticks_nmi_nesting underflow and bad ->dynticks.
-> +	 * Check for ->dynticks_irq_nesting underflow and bad ->dynticks.
->  	 * (We are exiting an NMI handler, so RCU better be paying attention
->  	 * to us!)
->  	 */
-> -	WARN_ON_ONCE(rdtp->dynticks_nmi_nesting <= 0);
-> +	WARN_ON_ONCE(rdtp->dynticks_irq_nesting <= 0);
->  	WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs());
->  
->  	/*
->  	 * If the nesting level is not 1, the CPU wasn't RCU-idle, so
->  	 * leave it in non-RCU-idle state.
->  	 */
-> -	if (rdtp->dynticks_nmi_nesting != 1) {
-> -		trace_rcu_dyntick(TPS("--="), rdtp->dynticks_nmi_nesting, rdtp->dynticks_nmi_nesting - 2, rdtp->dynticks);
-> -		WRITE_ONCE(rdtp->dynticks_nmi_nesting, /* No store tearing. */
-> -			   rdtp->dynticks_nmi_nesting - 2);
-> +	if (rdtp->dynticks_irq_nesting != 1) {
-> +		trace_rcu_dyntick(TPS("--="), rdtp->dynticks_irq_nesting, rdtp->dynticks_irq_nesting - 2, rdtp->dynticks);
-> +		WRITE_ONCE(rdtp->dynticks_irq_nesting, /* No store tearing. */
-> +			   rdtp->dynticks_irq_nesting - 2);
->  		return;
->  	}
->  
->  	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
-> -	trace_rcu_dyntick(TPS("Startirq"), rdtp->dynticks_nmi_nesting, 0, rdtp->dynticks);
-> -	WRITE_ONCE(rdtp->dynticks_nmi_nesting, 0); /* Avoid store tearing. */
-> +	trace_rcu_dyntick(TPS("Startirq"), rdtp->dynticks_irq_nesting, 0, rdtp->dynticks);
-> +	WRITE_ONCE(rdtp->dynticks_irq_nesting, 0); /* Avoid store tearing. */
-> +
-> +	if (!nmi)
-> +		rcu_prepare_for_idle();
-> +
->  	rcu_dynticks_eqs_enter();
-> +
-> +	if (!nmi)
-> +		rcu_dynticks_task_enter();
-> +}
-> +
-> +/**
-> + * rcu_nmi_exit - inform RCU of exit from NMI context
+> +/* Broadcom UIF format
+> + *
+> + * This is the common format for the current Broadcom multimedia
+> + * blocks, including V3D 3.x and newer, newer video codecs, and
+> + * displays.
+> + *
+> + * The image consists of utiles (64b blocks), UIF blocks (2x2 utiles),
+> + * and macroblocks (4x4 UIF blocks).  Those 4x4 UIF block groups are
+> + * stored in columns, with padding between the columns to ensure that
+> + * moving from one column to the next doesn't hit the same SDRAM page
+> + * bank.
+> + *
+> + * To calculate the padding, it is assumed that each hardware block
+> + * and the software driving it knows the platform's SDRAM page size,
+> + * number of banks, and XOR address, and that it's identical between
+> + * all blocks using the format.  This tiling modifier will use XOR as
+> + * necessary to reduce the padding.  If a hardware block can't do XOR,
+> + * the assumption is that a no-XOR tiling modifier will be created.
 > + */
-> +void rcu_nmi_exit(void)
-> +{
-> +	rcu_irq_exit_common(true);
->  }
->  
->  /**
-> @@ -824,14 +839,8 @@ void rcu_nmi_exit(void)
->   */
->  void rcu_irq_exit(void)
->  {
-> -	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-> -
->  	lockdep_assert_irqs_disabled();
-> -	if (rdtp->dynticks_nmi_nesting == 1)
-> -		rcu_prepare_for_idle();
-> -	rcu_nmi_exit();
-> -	if (rdtp->dynticks_nmi_nesting == 0)
-> -		rcu_dynticks_task_enter();
-> +	rcu_irq_exit_common(false);
->  }
->  
->  /*
-> @@ -853,7 +862,7 @@ void rcu_irq_exit_irqson(void)
->   * Exit an RCU extended quiescent state, which can be either the
->   * idle loop or adaptive-tickless usermode execution.
->   *
-> - * We crowbar the ->dynticks_nmi_nesting field to DYNTICK_IRQ_NONIDLE to
-> + * We crowbar the ->dynticks_irq_nesting field to DYNTICK_IRQ_NONIDLE to
->   * allow for the possibility of usermode upcalls messing up our count of
->   * interrupt nesting level during the busy period that is just now starting.
->   */
-> @@ -876,7 +885,7 @@ static void rcu_eqs_exit(bool user)
->  	trace_rcu_dyntick(TPS("End"), rdtp->dynticks_nesting, 1, rdtp->dynticks);
->  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
->  	WRITE_ONCE(rdtp->dynticks_nesting, 1);
-> -	WRITE_ONCE(rdtp->dynticks_nmi_nesting, DYNTICK_IRQ_NONIDLE);
-> +	WRITE_ONCE(rdtp->dynticks_irq_nesting, DYNTICK_IRQ_NONIDLE);
->  }
->  
->  /**
-> @@ -914,46 +923,62 @@ void rcu_user_exit(void)
->  #endif /* CONFIG_NO_HZ_FULL */
->  
->  /**
-> - * rcu_nmi_enter - inform RCU of entry to NMI context
-> + * rcu_irq_enter_common - inform RCU of entry to interrupt context
->   *
->   * If the CPU was idle from RCU's viewpoint, update rdtp->dynticks and
-> - * rdtp->dynticks_nmi_nesting to let the RCU grace-period handling know
-> - * that the CPU is active.  This implementation permits nested NMIs, as
-> - * long as the nesting level does not overflow an int.  (You will probably
-> - * run out of stack space first.)
-> + * rdtp->dynticks_irq_nesting to let the RCU grace-period handling know
-> + * that the CPU is active.  This implementation permits nested
-> + * interrupts including NMIs, as long as the nesting level does not
-> + * overflow an int. (You will probably run out of stack space first.)
->   *
-> - * If you add or remove a call to rcu_nmi_enter(), be sure to test
-> - * with CONFIG_RCU_EQS_DEBUG=y.
-> + * If you add or remove a call to rcu_irq_enter_common(), be sure to
-> + * test with CONFIG_RCU_EQS_DEBUG=y.
->   */
-> -void rcu_nmi_enter(void)
-> +static __always_inline void rcu_irq_enter_common(bool nmi)
->  {
->  	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
->  	long incby = 2;
->  
->  	/* Complain about underflow. */
-> -	WARN_ON_ONCE(rdtp->dynticks_nmi_nesting < 0);
-> +	WARN_ON_ONCE(rdtp->dynticks_irq_nesting < 0);
->  
->  	/*
->  	 * If idle from RCU viewpoint, atomically increment ->dynticks
-> -	 * to mark non-idle and increment ->dynticks_nmi_nesting by one.
-> -	 * Otherwise, increment ->dynticks_nmi_nesting by two.  This means
-> -	 * if ->dynticks_nmi_nesting is equal to one, we are guaranteed
-> +	 * to mark non-idle and increment ->dynticks_irq_nesting by one.
-> +	 * Otherwise, increment ->dynticks_irq_nesting by two.  This means
-> +	 * if ->dynticks_irq_nesting is equal to one, we are guaranteed
->  	 * to be in the outermost NMI handler that interrupted an RCU-idle
->  	 * period (observation due to Andy Lutomirski).
->  	 */
->  	if (rcu_dynticks_curr_cpu_in_eqs()) {
+
+I think for as long as a modifier is only for a specific SoC, and not e.g.
+also meant for pci devices, it's perfectly fine to heavily rely on
+platform specific "every block agrees" language like here. We do the same
+for intel's X/Y tiling on older chips (latest gens stopped doing funky
+swizzling because the memory controllers seem to be better).
+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> +#define DRM_FORMAT_MOD_BROADCOM_UIF fourcc_mod_code(BROADCOM, 6)
 > +
-> +		if (!nmi)
-> +			rcu_dynticks_task_exit();
-> +
->  		rcu_dynticks_eqs_exit();
-> +
-> +		if (!nmi)
-> +			rcu_cleanup_after_idle();
-> +
->  		incby = 1;
->  	}
->  	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
-> -			  rdtp->dynticks_nmi_nesting,
-> -			  rdtp->dynticks_nmi_nesting + incby, rdtp->dynticks);
-> -	WRITE_ONCE(rdtp->dynticks_nmi_nesting, /* Prevent store tearing. */
-> -		   rdtp->dynticks_nmi_nesting + incby);
-> +			  rdtp->dynticks_irq_nesting,
-> +			  rdtp->dynticks_irq_nesting + incby, rdtp->dynticks);
-> +	WRITE_ONCE(rdtp->dynticks_irq_nesting, /* Prevent store tearing. */
-> +		   rdtp->dynticks_irq_nesting + incby);
->  	barrier();
+>  #if defined(__cplusplus)
 >  }
->  
->  /**
-> + * rcu_nmi_enter - inform RCU of entry to NMI context
-> + */
-> +void rcu_nmi_enter(void)
-> +{
-> +	rcu_irq_enter_common(true);
-> +}
-> +
-> +/**
->   * rcu_irq_enter - inform RCU that current CPU is entering irq away from idle
->   *
->   * Enter an interrupt handler, which might possibly result in exiting
-> @@ -977,14 +1002,8 @@ void rcu_nmi_enter(void)
->   */
->  void rcu_irq_enter(void)
->  {
-> -	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-> -
->  	lockdep_assert_irqs_disabled();
-> -	if (rdtp->dynticks_nmi_nesting == 0)
-> -		rcu_dynticks_task_exit();
-> -	rcu_nmi_enter();
-> -	if (rdtp->dynticks_nmi_nesting == 1)
-> -		rcu_cleanup_after_idle();
-> +	rcu_irq_enter_common(false);
->  }
->  
->  /*
-> @@ -1092,7 +1111,7 @@ bool rcu_lockdep_current_cpu_online(void)
->  static int rcu_is_cpu_rrupt_from_idle(void)
->  {
->  	return __this_cpu_read(rcu_dynticks.dynticks_nesting) <= 0 &&
-> -	       __this_cpu_read(rcu_dynticks.dynticks_nmi_nesting) <= 1;
-> +	       __this_cpu_read(rcu_dynticks.dynticks_irq_nesting) <= 1;
->  }
->  
->  /*
-> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-> index 4e74df7..80ba455 100644
-> --- a/kernel/rcu/tree.h
-> +++ b/kernel/rcu/tree.h
-> @@ -39,7 +39,7 @@
->   */
->  struct rcu_dynticks {
->  	long dynticks_nesting;      /* Track process nesting level. */
-> -	long dynticks_nmi_nesting;  /* Track irq/NMI nesting level. */
-> +	long dynticks_irq_nesting;  /* Track irq/NMI nesting level. */
->  	atomic_t dynticks;	    /* Even value for idle, else odd. */
->  	bool rcu_need_heavy_qs;     /* GP old, need heavy quiescent state. */
->  	unsigned long rcu_qs_ctr;   /* Light universal quiescent state ctr. */
-> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> index c1b17f5..2cd637d 100644
-> --- a/kernel/rcu/tree_plugin.h
-> +++ b/kernel/rcu/tree_plugin.h
-> @@ -1811,7 +1811,7 @@ static void print_cpu_stall_info(struct rcu_state *rsp, int cpu)
->  				"!."[!delta],
->  	       ticks_value, ticks_title,
->  	       rcu_dynticks_snap(rdtp) & 0xfff,
-> -	       rdtp->dynticks_nesting, rdtp->dynticks_nmi_nesting,
-> +	       rdtp->dynticks_nesting, rdtp->dynticks_irq_nesting,
->  	       rdp->softirq_snap, kstat_softirqs_cpu(RCU_SOFTIRQ, cpu),
->  	       READ_ONCE(rsp->n_force_qs) - rsp->n_force_qs_gpstart,
->  	       fast_no_hz);
+>  #endif
+> -- 
+> 2.17.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
