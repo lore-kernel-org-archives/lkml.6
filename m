@@ -2,219 +2,172 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52664C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E58C8C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29FA420693
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:25:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FA420693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id 966ED20875
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:30:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k/i337MG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966ED20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754563AbeFUBZY (ORCPT
+        id S1754382AbeFUBaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:25:24 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:31702 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754137AbeFUBZX (ORCPT
+        Wed, 20 Jun 2018 21:30:04 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43023 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754101AbeFUBaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 21:25:23 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w5L1OM7a036082;
-        Thu, 21 Jun 2018 09:24:22 +0800 (GMT-8)
-        (envelope-from alankao@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.1.85) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Thu, 21 Jun 2018
- 09:24:44 +0800
-From:   Alan Kao <alankao@andestech.com>
-To:     Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC:     Alan Kao <alankao@andestech.com>,
-        Greentime Hu <greentime@andestech.com>,
-        Zong Li <zong@andestech.com>
-Subject: [PATCH] riscv: Add support to no-FPU systems
-Date:   Thu, 21 Jun 2018 09:24:36 +0800
-Message-ID: <1529544276-28103-1-git-send-email-alankao@andestech.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.1.85]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w5L1OM7a036082
+        Wed, 20 Jun 2018 21:30:02 -0400
+Received: by mail-pl0-f66.google.com with SMTP id c41-v6so717586plj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:30:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=JUNWyT1fHJMPNX/hy198vkCapR8JExiNDwqcfSvq+28=;
+        b=k/i337MGQfh1S4b7+9PEpHjIFVFB/+rtsr5097CzkvsItC4DgaIy4+ejD9mfL7tYLp
+         v+F9fMRhUjLHyApITjmkNBupc6k+rZJSabouF6Jc4KPhtMWVLT9iR/jy8EX49VOoAiwQ
+         lwKHSAOG8uirpBANvA6EXJjoHuVEfXnnXeTMI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JUNWyT1fHJMPNX/hy198vkCapR8JExiNDwqcfSvq+28=;
+        b=m5RcgefSrweF3OuFFMULLGJ7gHfqKT9FYkLU/8jJiFZQUAf474c5RQZSEYKJklblMJ
+         uzn5hSobMIiJqeBsUOFJziYtHYwCcyide6VgEAkxalk4VY46bl/RekVnnaC6nchPra1k
+         zNN6jghx1eKyev7UsV1HNpNnmfjJM+SnvLJOjNCYJknCl7FZb3m5s7nUXtvhUCwEw9/e
+         hn5j42/fJokNz4WwrMeJHNjRUpDye0IdF4b+I/5gZlqfVZHMu2GXfVb1lbln8AUDqLN4
+         0f486ypo2nUs0lC/0qA+LqTdAnKWYTliDYUYzFIU4CWRVMCTukHyS9AYKf8OYNFTMrwy
+         UbQw==
+X-Gm-Message-State: APt69E0b4oZ6XgiwGVOLRg/DkG1S4MMOVYlIsPfrupu6Dw9qpXqW8C3s
+        fULftgw/bOO+ViOp72flmqtb4g==
+X-Google-Smtp-Source: ADUXVKIZP6T5stDWfzfamsNbarz6E66sR64DqJR4x8sXNlLwgpTnVEIJx2IJvNXGnRoVwDcm9j4SLQ==
+X-Received: by 2002:a17:902:5501:: with SMTP id f1-v6mr26097329pli.108.1529544601916;
+        Wed, 20 Jun 2018 18:30:01 -0700 (PDT)
+Received: from ban.mtv.corp.google.com ([2620:0:1000:1501:bc2f:3082:9938:5d41])
+        by smtp.gmail.com with ESMTPSA id f11-v6sm4073918pgq.18.2018.06.20.18.29.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 18:30:00 -0700 (PDT)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, Brian Norris <briannorris@chromium.org>
+Subject: [PATCH] cfg80211: use IDA to allocate wiphy indeces
+Date:   Wed, 20 Jun 2018 18:29:45 -0700
+Message-Id: <20180621012945.185705-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds an option, CONFIG_FPU, so that we can enable/disable
-floating procedures in kernel.
+It's annoying to see the phy index increase arbitrarily, just because a
+device got removed and re-probed (e.g., during a device reset, or due to
+probe testing). We can use the in-kernel index allocator for this,
+instead of just an increasing counter.
 
-Signed-off-by: Alan Kao <alankao@andestech.com>
-Cc: Greentime Hu <greentime@andestech.com>
-Cc: Zong Li <zong@andestech.com>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
 ---
- arch/riscv/Kconfig                 | 4 ++++
- arch/riscv/Makefile                | 4 ++++
- arch/riscv/include/asm/switch_to.h | 4 ++++
- arch/riscv/kernel/entry.S          | 3 ++-
- arch/riscv/kernel/process.c        | 6 ++++++
- arch/riscv/kernel/signal.c         | 6 ++++++
- 6 files changed, 26 insertions(+), 1 deletion(-)
+ net/wireless/core.c | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 6debcc4afc72..429d0bf777c9 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -232,6 +232,10 @@ config RISCV_BASE_PMU
+diff --git a/net/wireless/core.c b/net/wireless/core.c
+index c0fd8a85e7f7..80c108c3ca38 100644
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -8,6 +8,7 @@
  
- endmenu
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
-+config FPU
-+	bool "FPU support"
-+	default y
++#include <linux/idr.h>
+ #include <linux/if.h>
+ #include <linux/module.h>
+ #include <linux/err.h>
+@@ -380,11 +381,11 @@ static void cfg80211_propagate_cac_done_wk(struct work_struct *work)
+ 
+ /* exported functions */
+ 
++static DEFINE_IDA(wiphy_ida);
 +
- endmenu
- 
- menu "Kernel type"
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 76e958a5414a..2719e768c4dc 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -47,7 +47,11 @@ ifeq ($(CONFIG_RISCV_ISA_C),y)
- 	KBUILD_ARCH_C = c
- endif
- 
-+ifeq ($(CONFIG_FPU),y)
- KBUILD_AFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)fd$(KBUILD_ARCH_C)
-+else
-+KBUILD_AFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)$(KBUILD_ARCH_C)
-+endif
- 
- KBUILD_CFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)$(KBUILD_ARCH_C)
- KBUILD_CFLAGS += -mno-save-restore
-diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-index dd6b05bff75b..da0327a74466 100644
---- a/arch/riscv/include/asm/switch_to.h
-+++ b/arch/riscv/include/asm/switch_to.h
-@@ -18,6 +18,7 @@
- #include <asm/ptrace.h>
- #include <asm/csr.h>
- 
-+#ifdef CONFIG_FPU
- extern void __fstate_save(struct task_struct *save_to);
- extern void __fstate_restore(struct task_struct *restore_from);
- 
-@@ -54,6 +55,9 @@ static inline void __switch_to_aux(struct task_struct *prev,
- 		fstate_save(prev, regs);
- 	fstate_restore(next, task_pt_regs(next));
- }
-+#else
-+#define __switch_to_aux(__prev, __next)
-+#endif
- 
- extern struct task_struct *__switch_to(struct task_struct *,
- 				       struct task_struct *);
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 9aaf6c986771..89867c9aa4f5 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -357,6 +357,7 @@ ENTRY(__switch_to)
- 	ret
- ENDPROC(__switch_to)
- 
-+#ifdef CONFIG_FPU
- ENTRY(__fstate_save)
- 	li  a2,  TASK_THREAD_F0
- 	add a0, a0, a2
-@@ -442,7 +443,7 @@ ENTRY(__fstate_restore)
- 	csrc sstatus, t1
- 	ret
- ENDPROC(__fstate_restore)
+ struct wiphy *wiphy_new_nm(const struct cfg80211_ops *ops, int sizeof_priv,
+ 			   const char *requested_name)
+ {
+-	static atomic_t wiphy_counter = ATOMIC_INIT(0);
 -
-+#endif
+ 	struct cfg80211_registered_device *rdev;
+ 	int alloc_size;
  
- 	.section ".rodata"
- 	/* Exception vector table */
-diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-index cb209139ba53..a817046e478a 100644
---- a/arch/riscv/kernel/process.c
-+++ b/arch/riscv/kernel/process.c
-@@ -83,7 +83,11 @@ void show_regs(struct pt_regs *regs)
- void start_thread(struct pt_regs *regs, unsigned long pc,
- 	unsigned long sp)
- {
-+#ifdef CONFIG_FPU
- 	regs->sstatus = SR_SPIE /* User mode, irqs on */ | SR_FS_INITIAL;
-+#else
-+	regs->sstatus = SR_SPIE | SR_FS_OFF;
-+#endif
- 	regs->sepc = pc;
- 	regs->sp = sp;
- 	set_fs(USER_DS);
-@@ -101,7 +105,9 @@ void flush_thread(void)
+@@ -413,18 +414,12 @@ struct wiphy *wiphy_new_nm(const struct cfg80211_ops *ops, int sizeof_priv,
  
- int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- {
-+#ifdef CONFIG_FPU
- 	fstate_save(src, task_pt_regs(src));
-+#endif
- 	*dst = *src;
- 	return 0;
- }
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 718d0c984ef0..0f659c9ef465 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -37,6 +37,7 @@ struct rt_sigframe {
- 	struct ucontext uc;
- };
+ 	rdev->ops = ops;
  
-+#ifdef CONFIG_FPU
- static long restore_d_state(struct pt_regs *regs,
- 	struct __riscv_d_ext_state __user *state)
- {
-@@ -53,6 +54,7 @@ static long save_d_state(struct pt_regs *regs,
- 	fstate_save(current, regs);
- 	return __copy_to_user(state, &current->thread.fstate, sizeof(*state));
- }
-+#endif
- 
- static long restore_sigcontext(struct pt_regs *regs,
- 	struct sigcontext __user *sc)
-@@ -63,6 +65,7 @@ static long restore_sigcontext(struct pt_regs *regs,
- 	err = __copy_from_user(regs, &sc->sc_regs, sizeof(sc->sc_regs));
- 	if (unlikely(err))
- 		return err;
-+#ifdef CONFIG_FPU
- 	/* Restore the floating-point state. */
- 	err = restore_d_state(regs, &sc->sc_fpregs.d);
- 	if (unlikely(err))
-@@ -76,6 +79,7 @@ static long restore_sigcontext(struct pt_regs *regs,
- 		if (value != 0)
- 			return -EINVAL;
+-	rdev->wiphy_idx = atomic_inc_return(&wiphy_counter);
+-
++	rdev->wiphy_idx = ida_simple_get(&wiphy_ida, 0, 0, GFP_KERNEL);
+ 	if (unlikely(rdev->wiphy_idx < 0)) {
+-		/* ugh, wrapped! */
+-		atomic_dec(&wiphy_counter);
+ 		kfree(rdev);
+ 		return NULL;
  	}
-+#endif
- 	return err;
- }
  
-@@ -127,11 +131,13 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
- 	size_t i;
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
-+#ifdef CONFIG_FPU
- 	/* Save the floating-point state. */
- 	err |= save_d_state(regs, &sc->sc_fpregs.d);
- 	/* We support no other extension state at this time. */
- 	for (i = 0; i < ARRAY_SIZE(sc->sc_fpregs.q.reserved); i++)
- 		err |= __put_user(0, &sc->sc_fpregs.q.reserved[i]);
-+#endif
- 	return err;
+-	/* atomic_inc_return makes it start at 1, make it start at 0 */
+-	rdev->wiphy_idx--;
+-
+ 	/* give it a proper name */
+ 	if (requested_name && requested_name[0]) {
+ 		int rv;
+@@ -452,10 +447,8 @@ struct wiphy *wiphy_new_nm(const struct cfg80211_ops *ops, int sizeof_priv,
+ 		 * value, and use a different name if this one exists?
+ 		 */
+ 		rv = dev_set_name(&rdev->wiphy.dev, PHY_NAME "%d", rdev->wiphy_idx);
+-		if (rv < 0) {
+-			kfree(rdev);
+-			return NULL;
+-		}
++		if (rv < 0)
++			goto err;
+ 	}
+ 
+ 	INIT_LIST_HEAD(&rdev->wiphy.wdev_list);
+@@ -497,10 +490,8 @@ struct wiphy *wiphy_new_nm(const struct cfg80211_ops *ops, int sizeof_priv,
+ 				   &rdev->wiphy.dev, RFKILL_TYPE_WLAN,
+ 				   &rdev->rfkill_ops, rdev);
+ 
+-	if (!rdev->rfkill) {
+-		kfree(rdev);
+-		return NULL;
+-	}
++	if (!rdev->rfkill)
++		goto err;
+ 
+ 	INIT_WORK(&rdev->rfkill_sync, cfg80211_rfkill_sync_work);
+ 	INIT_WORK(&rdev->conn_work, cfg80211_conn_work);
+@@ -525,6 +516,11 @@ struct wiphy *wiphy_new_nm(const struct cfg80211_ops *ops, int sizeof_priv,
+ 	rdev->wiphy.max_sched_scan_plan_interval = U32_MAX;
+ 
+ 	return &rdev->wiphy;
++
++err:
++	ida_simple_remove(&wiphy_ida, rdev->wiphy_idx);
++	kfree(rdev);
++	return NULL;
+ }
+ EXPORT_SYMBOL(wiphy_new_nm);
+ 
+@@ -972,6 +968,7 @@ void cfg80211_dev_free(struct cfg80211_registered_device *rdev)
+ 	}
+ 	list_for_each_entry_safe(scan, tmp, &rdev->bss_list, list)
+ 		cfg80211_put_bss(&rdev->wiphy, &scan->pub);
++	ida_simple_remove(&wiphy_ida, rdev->wiphy_idx);
+ 	kfree(rdev);
  }
  
 -- 
-2.17.0
+2.18.0.rc1.244.gcf134e6275-goog
 
