@@ -2,154 +2,167 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=3.0 tests=BODY_8BITS,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C329BC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC957C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6876620836
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:13:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qb8N2aV7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6876620836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8955320836
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:15:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8955320836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754101AbeFUKNP (ORCPT
+        id S1754157AbeFUKPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:13:15 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34045 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751150AbeFUKNO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:13:14 -0400
-Received: by mail-it0-f67.google.com with SMTP id y127-v6so2103829itd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 03:13:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kqCgPCsa0HG7RmZUH4jCmhbwu+AkPIWWRKPET7vjdws=;
-        b=qb8N2aV7i/S2NlmR6H4ippfwq0HoyNV807sM08aauGeptDg5Q1NG2wcMNzUaiANoRb
-         0bIqxrbj3ZXlysO1S9HpHDWg2gs8R/dK1Cuvx+UgT88o2s8MMK+1lB7sSsIJ2QVmDVob
-         00sLeFsmJJeYGVbqxYvd0Q+DPUNpwYRqBCtadXQsMI/lbzzg5XAMsCVqGwpmcokD9ecm
-         3oX+E+nG9doHpiu6vyEB9n/6FgJt8bX+jfAY5p1XEo6saxlTPtmLmwwNk1ttJn+nRRpY
-         7YlFONtpCWsdd3FeMaqDITEn3uInQhwnIhvB9o/ZxBVYBC4UdTsqIdH5dzgHBuK59R9s
-         GM3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kqCgPCsa0HG7RmZUH4jCmhbwu+AkPIWWRKPET7vjdws=;
-        b=W5TWzBYbjdyyTMBNIO1DdSEEeDgF/rBO8Rrs46Ngb4UbOey89Qx8FkhMYuOQmNmvWE
-         agSHLPsGBUijAHRLdnH92MSl8ODmGSzmCoVpWKoyASa2d65R+do5CvJfwWK6EbBvjkNC
-         MmICQ+CH1oYjzi7HIZuugPNGLoRINlzqF5IIgcWHNMLT8IE09ogXYlQB8BmRhC7ParE+
-         ddF9a8kTHqWCncbODom4qSH9lRDLdmkpMFNcz0OmJMnVMdDhUJXTMf6smk4Yq6G6Vszy
-         qnl7EQ1RUF6nFkA64qJHlHNAiWQtZIpS23d6mkxxFV4xb39ZxjDPmtzYVRje9At8G7CW
-         SXgg==
-X-Gm-Message-State: APt69E12yyaZHexFwP1FbCJV8TTDQNu7yjK3/1zUqpMZjlCOgZ+bmiBp
-        xX0SCu+6z4+Pw0uUz67heyyeHa3H/ErEFe3sTNc=
-X-Google-Smtp-Source: ADUXVKJyGwwR8M/NFebKkWb0QHGxlUOYENPdRD8qe9m80zkqWS9825bsao928K0WxofhWeAz6OPnwCqGMqkqrhsUlHo=
-X-Received: by 2002:a24:e306:: with SMTP id d6-v6mr4500376ith.103.1529575993342;
- Thu, 21 Jun 2018 03:13:13 -0700 (PDT)
+        Thu, 21 Jun 2018 06:15:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8676 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751150AbeFUKPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 06:15:03 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 11A6D2337038B;
+        Thu, 21 Jun 2018 18:14:50 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.42) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.382.0; Thu, 21 Jun 2018
+ 18:14:43 +0800
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+To:     Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>
+References: <5B2A6218.3030201@hisilicon.com> <20180620144257.GB27776@arm.com>
+ <5B2A7832.4010502@hisilicon.com>
+ <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
+ <5B2A7FE1.5040607@hisilicon.com>
+ <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
+ <20180621091850.GA22505@arm.com>
+CC:     <catalin.marinas@arm.com>, <suzuki.poulose@arm.com>,
+        <dave.martin@arm.com>, <mark.rutland@arm.com>,
+        <marc.zyngier@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, <xiexiuqi@huawei.com>,
+        huangdaode <huangdaode@hisilicon.com>,
+        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        <jonathan.cameron@huawei.com>,
+        "Shameerali Kolothum Thodi" <shameerali.kolothum.thodi@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        <libeijian@hisilicon.com>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B2B7A84.8090309@hisilicon.com>
+Date:   Thu, 21 Jun 2018 11:14:28 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <cover.1529506497.git.zong@andestech.com> <37a6523947397cd72320676030b96926e373d05a.1529506497.git.zong@andestech.com>
- <20180621064322.GE19319@infradead.org>
-In-Reply-To: <20180621064322.GE19319@infradead.org>
-From:   Zong Li <zongbox@gmail.com>
-Date:   Thu, 21 Jun 2018 18:13:02 +0800
-Message-ID: <CA+ZOyagYq0Kbsbxe20MwjeArxRP-fZtQNLZUbCdM3JSPssQuvg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] RISC-V: Use fixed width integer types for 32-bit compatible
-To:     hch@infradead.org
-Cc:     Zong Li <zong@andestech.com>, linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        aou@eecs.berkeley.edu, greentime@adnestech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180621091850.GA22505@arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.42]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> =E6=96=BC 2018=E5=B9=B46=E6=9C=8821=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=882:43=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> On Thu, Jun 21, 2018 at 09:41:46AM +0800, Zong Li wrote:
-> > Use fixed width integer types for print format on 32/64 bit
-> > to fix warning about format compatible.
-> >
-> > Like inttypes.h, but more simpler for RISC-V usage.
-> >
-> > Signed-off-by: Zong Li <zong@andestech.com>
-> > ---
-> >  arch/riscv/include/asm/format.h | 20 ++++++++++++++++++++
-> >  arch/riscv/kernel/module.c      | 13 +++++++------
-> >  2 files changed, 27 insertions(+), 6 deletions(-)
-> >  create mode 100644 arch/riscv/include/asm/format.h
-> >
-> > diff --git a/arch/riscv/include/asm/format.h b/arch/riscv/include/asm/f=
-ormat.h
-> > new file mode 100644
-> > index 000000000000..9b68ca7fac46
-> > --- /dev/null
-> > +++ b/arch/riscv/include/asm/format.h
-> > @@ -0,0 +1,20 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/* Copyright (C) 2018 Andes Technology Corporation */
-> > +
-> > +#ifndef _ASM_RISCV_FORMAT_H
-> > +#define _ASM_RISCV_FORMAT_H
-> > +
-> > +#if __riscv_xlen =3D=3D 64
-> > +#define __PRI_PREFIX "ll"
-> > +#else
-> > +#define __PRI_PREFIX
-> > +#endif
-> > +
-> > +#define PRIdX        __PRI_PREFIX "d"
-> > +#define PRIiX        __PRI_PREFIX "i"
-> > +#define PRIuX        __PRI_PREFIX "u"
-> > +#define PRIoX        __PRI_PREFIX "o"
-> > +#define PRIxX        __PRI_PREFIX "x"
-> > +#define PRIXX        __PRI_PREFIX "X"
-> > +
-> > +#endif /* _ASM_RISCV_FORMAT_H */
->
-> If you want these prefixed submit them to the core kernel, not
-> under asm/ for RISC-V.
->
+Hi Will,
 
-Maybe I can move to core kernel after this patch?
-And I think I can rename the "PRIdX" to "PRIdXELF" to avoid ambiguous
-in C definition.
+On 2018/6/21 10:18, Will Deacon wrote:
+> On Thu, Jun 21, 2018 at 09:38:53AM +0100, James Morse wrote:
+>> On 20/06/18 17:25, Wei Xu wrote:
+>>>     [    0.042421] Insufficient stack space to handle exception!
+>>>     [    0.042423] ESR: 0x96000046 -- DABT (current EL)
+>>>     [    0.043730] FAR: 0xffff0000093a80e0
+>>>     [    0.044714] Task stack: [0xffff0000093a8000..0xffff0000093ac000]
+>>
+>> This was a level 2 translation fault on a write, to an address that is within
+>> the stack....
+>>
+>>
+>>>     [    0.051113] IRQ stack: [0xffff000008000000..0xffff000008004000]
+>>>     [    0.057610] Overflow stack: [0xffff80003efce2f0..0xffff80003efcf2f0]
+>>>     [    0.064003] CPU: 0 PID: 12 Comm: migration/0 Not tainted
+>>> 4.17.0-45865-g2b31fe7-dirty #10
+>>>     [    0.072201] Hardware name: linux,dummy-virt (DT)
+>>
+>>>     [    0.076797] pstate: 604003c5 (nZCv DAIF +PAN -UAO)
+>>>     [    0.081727] pc : el1_sync+0x0/0xb0
+>>
+>> ... from the vectors.
+>>
+>>
+>>>     [    0.085217] lr : kpti_install_ng_mappings+0x120/0x214
+>>
+>> What I think is happening is: we come out of the kpti idmap with the stack
+>> unmapped. Shortly after we access the stack, which faults. el1_sync faults as
+>> well when it tries to push the registers to the stack, and we keep going until
+>> we overflow the stack.
+>>
+>> I can't reproduce this with kvmtool or qemu in the model.
+> 
+> Hmm, one thing that occurs to me is that the kpti_install_ng_mappings()
+> code leaves the nG bit set in table entries, which is actually IGNORED in
+> the architecture.
+> 
+> Wei -- does the diff below help at all? Make sure you disable CONFIG_KASAN,
+> otherwise your kernel will take an age to boot.
 
+Yes, amazing! This patch resolved the issue.
+I have tested 50 times and can not reproduce the issue any more.
+Could you please tell more why this patch works?
+Thanks!
 
-> >
-> >  static int apply_r_riscv_32_rela(struct module *me, u32 *location, Elf=
-_Addr v)
-> >  {
-> >       if (v !=3D (u32)v) {
-> > -             pr_err("%s: value %016llx out of range for 32-bit field\n=
-",
-> > +             pr_err("%s: value %016" PRIxX "out of range for 32-bit fi=
-eld\n",
-> >                      me->name, v);
-> >               return -EINVAL;
->
-> But in general Linux uXX and sXX values are always the same underlying
-> fundamental C type.  What is the mismatch here?
->
+Best Regards,
+Wei
 
-This relocation type was added by  Andreas, and there is some
-discussions on the mail list
-(ref: http://lists.infradead.org/pipermail/linux-riscv/2018-June/000706.htm=
-l)
+> 
+> Will
+> 
+> --->8
+> 
+> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+> index 5f9a73a4452c..70d9e98467ca 100644
+> --- a/arch/arm64/mm/proc.S
+> +++ b/arch/arm64/mm/proc.S
+> @@ -272,8 +272,8 @@ ENTRY(idmap_kpti_install_ng_mappings)
+>  	add	end_pgdp, cur_pgdp, #(PTRS_PER_PGD * 8)
+>  do_pgd:	__idmap_kpti_get_pgtable_ent	pgd
+>  	tbnz	pgd, #1, walk_puds
+> -next_pgd:
+>  	__idmap_kpti_put_pgtable_ent_ng	pgd
+> +next_pgd:
+>  skip_pgd:
+>  	add	cur_pgdp, cur_pgdp, #8
+>  	cmp	cur_pgdp, end_pgdp
+> @@ -302,8 +302,8 @@ walk_puds:
+>  	add	end_pudp, cur_pudp, #(PTRS_PER_PUD * 8)
+>  do_pud:	__idmap_kpti_get_pgtable_ent	pud
+>  	tbnz	pud, #1, walk_pmds
+> -next_pud:
+>  	__idmap_kpti_put_pgtable_ent_ng	pud
+> +next_pud:
+>  skip_pud:
+>  	add	cur_pudp, cur_pudp, 8
+>  	cmp	cur_pudp, end_pudp
+> @@ -323,8 +323,8 @@ walk_pmds:
+>  	add	end_pmdp, cur_pmdp, #(PTRS_PER_PMD * 8)
+>  do_pmd:	__idmap_kpti_get_pgtable_ent	pmd
+>  	tbnz	pmd, #1, walk_ptes
+> -next_pmd:
+>  	__idmap_kpti_put_pgtable_ent_ng	pmd
+> +next_pmd:
+>  skip_pmd:
+>  	add	cur_pmdp, cur_pmdp, #8
+>  	cmp	cur_pmdp, end_pmdp
+> 
+> .
+> 
 
-As I see it, there is truncate situation on 64-bit system, or maybe
-there is no R_RISCV_32 relocation
-type on 64-bit system?
