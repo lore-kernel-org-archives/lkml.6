@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5892C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D445C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E47220837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:54:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E47220837
+	by mail.kernel.org (Postfix) with ESMTP id 03FD820875
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:54:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03FD820875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754722AbeFUByO (ORCPT
+        id S1754573AbeFUBxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:54:14 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40941 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754504AbeFUBxK (ORCPT
+        Wed, 20 Jun 2018 21:53:08 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34222 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754497AbeFUBxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 21:53:10 -0400
-Received: by mail-pf0-f195.google.com with SMTP id z24-v6so684116pfe.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:53:10 -0700 (PDT)
+        Wed, 20 Jun 2018 21:53:02 -0400
+Received: by mail-pl0-f67.google.com with SMTP id g20-v6so762140plq.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:53:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=uuTfTEyH7xqA35vIsTTQ8TYa2L1PgTCJf5g9yX7aHnU=;
-        b=QLhioQrrvWmhvifTp1cMrKgtZ85kjXW1tTa9dsJpq751PMt9Y2ysGW71DdqIQEHqp3
-         EmahTeWbLO0d2tdoxPNB29/nyeVUlmMFxMVxQARngoBFNZEgdr8sUMaDsYvQtnmqsvrg
-         a6vybQi+hDP6XGUXYSz+rltaB8vm22ZLghKzYqX3cYJ6bh5VrA3BF6a7cmTGcOY6qDa0
-         xjEg1LZFaUdppzFJGkzmmGeWRbKdO4tHy0j0SMC701m9Nc1eL1cPiyaAyJpYd5uS2b5q
-         NlwnsmNFXo7x2vzB/n43bO69VDbKzBWpqbMyqifAlkkGiG3zLSQc4Y1bJSl+/XlS+QI8
-         iRwg==
-X-Gm-Message-State: APt69E0Z1kEPaOxlauvM6DgGizxQoiUPOn+Yl1IaZbLa3rllC6gzNoTX
-        W4IjW62d7CSozkSRFNMyDok6rw==
-X-Google-Smtp-Source: ADUXVKIUiwAos+STz3nAXeVJAG0OrEWYe8G74hD4vWnNqmu3l0aSjJ8PpY6zmC9eVBhXq/1Nc6coeA==
-X-Received: by 2002:a62:6141:: with SMTP id v62-v6mr25164748pfb.197.1529545990064;
-        Wed, 20 Jun 2018 18:53:10 -0700 (PDT)
+        bh=SNeUZJz4pYkBDb4QdjtX1JjeXJ+DHoOrj/oQQteJr/w=;
+        b=oe4K5PX2lMPzul4ZBXYEWMEt2ep2at3SuiWNyTBVVzYlJfUxTzvBPuxfpXeVdDEZWT
+         IVkUOEWguNdIV3gWtHRwHid8ZkT5Rcv50rcTfKiooC051zYSJY+UfTclxhOuk/RkHFn+
+         YHUVyZbETrojuBv6j3uGL1DVeic6WHRgAwsZG7LQ70wLY3qEEZetU5jr/fJL/7cWVZZO
+         UuNB6iC1FdNqutwllwnSetL0mAMkJVU6cCtOxrXFwha6LMjvtYS9ivQw3z8PkcmXe3KI
+         PliDwAHzNo1kLvRpsj802+pQ6iLn7RotWAp4ZZD0qCgLVG4fPjNpb6MZNaGfO37sCdAf
+         VeKA==
+X-Gm-Message-State: APt69E3EzGkea+TUwSBspw8WrGGYrRtQ8BfBWDNrBEEu+2EYu8yinBJp
+        q+AjmvHeJXOlSk3xN+a+wzpaBA==
+X-Google-Smtp-Source: ADUXVKLjy9o8uyt4cAjpIRSpY+5hEgBEoI/NUR6+1WNwOS4XgFVlfIVYiPwGVirgx90o335V698UYw==
+X-Received: by 2002:a17:902:7295:: with SMTP id d21-v6mr928185pll.221.1529545982024;
+        Wed, 20 Jun 2018 18:53:02 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id p12-v6sm6585877pfi.175.2018.06.20.18.53.08
+        by smtp.gmail.com with ESMTPSA id p12-v6sm6585877pfi.175.2018.06.20.18.53.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 18:53:09 -0700 (PDT)
+        Wed, 20 Jun 2018 18:53:00 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
@@ -63,9 +63,9 @@ Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Benson Leung <bleung@chromium.org>,
         Olof Johansson <olof@lixom.net>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 11/12] misc: throttler: Add Chrome OS EC throttler
-Date:   Wed, 20 Jun 2018 18:52:36 -0700
-Message-Id: <20180621015237.100100-12-mka@chromium.org>
+Subject: [PATCH v4 06/12] PM / devfreq: Make update_devfreq() public
+Date:   Wed, 20 Jun 2018 18:52:31 -0700
+Message-Id: <20180621015237.100100-7-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
 In-Reply-To: <20180621015237.100100-1-mka@chromium.org>
 References: <20180621015237.100100-1-mka@chromium.org>
@@ -74,181 +74,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver subscribes to throttling events from the Chrome OS
-embedded controller and enables/disables system throttling based
-on these events.
+Currently update_devfreq() is only visible to devfreq governors outside
+of devfreq.c. Make it public to allow drivers that adjust devfreq policies
+to cause a re-evaluation of the frequency after a policy change.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Reviewed-by: Brian Norris <briannorris@chromium.org>
----
-Changes in v4:
-- adapt to parent being struct cros_ec_dev instead of struct
-  cros_ec_device
+--
+Changed in v4:
 - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
 
 Changes in v3:
-- change module license to GPL v2 as in the SPDX identifier
-- don't instantiate the throttler through the DT (instantiation
-  by CrOS EC MFD in a separate patch)
+- none
 
 Changes in v2:
-- added SPDX line instead of license boiler-plate
-- use macro to avoid splitting line
-- changed variable name for throttler from 'cte' to 'ce_thr'
-- formatting fixes
-- Kconfig: removed odd dashes around 'help'
-- added 'Reviewed-by' tag
+- added 'Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>' tag
 ---
- drivers/misc/throttler/Kconfig             |  10 ++
- drivers/misc/throttler/Makefile            |   1 +
- drivers/misc/throttler/cros_ec_throttler.c | 111 +++++++++++++++++++++
- 3 files changed, 122 insertions(+)
- create mode 100644 drivers/misc/throttler/cros_ec_throttler.c
+ drivers/devfreq/governor.h | 3 ---
+ include/linux/devfreq.h    | 8 ++++++++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
-index 8b2e63b2ef48..ef984c96f67b 100644
---- a/drivers/misc/throttler/Kconfig
-+++ b/drivers/misc/throttler/Kconfig
-@@ -20,4 +20,14 @@ menuconfig THROTTLER_DEBUG
+diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+index b81700244ce3..f53339ca610f 100644
+--- a/drivers/devfreq/governor.h
++++ b/drivers/devfreq/governor.h
+@@ -57,9 +57,6 @@ struct devfreq_governor {
+ 				unsigned int event, void *data);
+ };
  
- 	  Choose N unless you want to debug throttler drivers.
+-/* Caution: devfreq->lock must be locked before calling update_devfreq */
+-extern int update_devfreq(struct devfreq *devfreq);
+-
+ extern void devfreq_monitor_start(struct devfreq *devfreq);
+ extern void devfreq_monitor_stop(struct devfreq *devfreq);
+ extern void devfreq_monitor_suspend(struct devfreq *devfreq);
+diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+index 7c8dce96db73..c4f84a769cb5 100644
+--- a/include/linux/devfreq.h
++++ b/include/linux/devfreq.h
+@@ -222,6 +222,14 @@ extern void devm_devfreq_remove_device(struct device *dev,
+ extern int devfreq_suspend_device(struct devfreq *devfreq);
+ extern int devfreq_resume_device(struct devfreq *devfreq);
  
-+config CROS_EC_THROTTLER
-+	tristate "Throttler event monitor for the Chrome OS Embedded Controller"
-+	depends on MFD_CROS_EC
-+	help
-+	  This driver adds support to throttle the system in reaction to
-+	  Chrome OS EC events.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called cros_ec_throttler.
-+
- endif # THROTTLER
-diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
-index c8d920cee315..d9b2a77dabc9 100644
---- a/drivers/misc/throttler/Makefile
-+++ b/drivers/misc/throttler/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_THROTTLER)		+= core.o
-+obj-$(CONFIG_CROS_EC_THROTTLER)	+= cros_ec_throttler.o
-diff --git a/drivers/misc/throttler/cros_ec_throttler.c b/drivers/misc/throttler/cros_ec_throttler.c
-new file mode 100644
-index 000000000000..82a25415a264
---- /dev/null
-+++ b/drivers/misc/throttler/cros_ec_throttler.c
-@@ -0,0 +1,111 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for throttling triggered by events from the Chrome OS Embedded
-+ * Controller.
++/**
++ * update_devfreq() - Reevaluate the device and configure frequency
++ * @devfreq:	the devfreq device
 + *
-+ * Copyright (C) 2018 Google, Inc.
++ * Note: devfreq->lock must be held
 + */
++extern int update_devfreq(struct devfreq *devfreq);
 +
-+#include <linux/kernel.h>
-+#include <linux/mfd/cros_ec.h>
-+#include <linux/module.h>
-+#include <linux/notifier.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/throttler.h>
-+
-+#define nb_to_ce_thr(nb) container_of(nb, struct cros_ec_throttler, nb)
-+
-+struct cros_ec_throttler {
-+	struct cros_ec_device *ec;
-+	struct throttler *throttler;
-+	struct notifier_block nb;
-+};
-+
-+static int cros_ec_throttler_event(struct notifier_block *nb,
-+	unsigned long queued_during_suspend, void *_notify)
-+{
-+	struct cros_ec_throttler *ce_thr = nb_to_ce_thr(nb);
-+	u32 host_event;
-+
-+	host_event = cros_ec_get_host_event(ce_thr->ec);
-+	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_START)) {
-+		throttler_set_level(ce_thr->throttler, 1);
-+
-+		return NOTIFY_OK;
-+	} else if (host_event &
-+		   EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_STOP)) {
-+		throttler_set_level(ce_thr->throttler, 0);
-+
-+		return NOTIFY_OK;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int cros_ec_throttler_probe(struct platform_device *pdev)
-+{
-+	struct cros_ec_throttler *ce_thr;
-+	struct device *dev = &pdev->dev;
-+	struct cros_ec_dev *ec;
-+	int ret;
-+
-+	ce_thr = devm_kzalloc(dev, sizeof(*ce_thr), GFP_KERNEL);
-+	if (!ce_thr)
-+		return -ENOMEM;
-+
-+	ec = dev_get_drvdata(pdev->dev.parent);
-+	ce_thr->ec = ec->ec_dev;
-+
-+	/*
-+	 * The core code uses the DT node of the throttler to identify its
-+	 * throttling devices and rates. The CrOS EC throttler is a sub-device
-+	 * of the CrOS EC MFD device and doesn't have its own device node. Use
-+	 * the node of the MFD device instead.
-+	 */
-+	dev->of_node = ce_thr->ec->dev->of_node;
-+
-+	ce_thr->throttler = throttler_setup(dev);
-+	if (IS_ERR(ce_thr->throttler))
-+		return PTR_ERR(ce_thr->throttler);
-+
-+	dev_set_drvdata(dev, ce_thr);
-+
-+	ce_thr->nb.notifier_call = cros_ec_throttler_event;
-+	ret = blocking_notifier_chain_register(&ce_thr->ec->event_notifier,
-+					       &ce_thr->nb);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to register notifier\n");
-+		throttler_teardown(ce_thr->throttler);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cros_ec_throttler_remove(struct platform_device *pdev)
-+{
-+	struct cros_ec_throttler *ce_thr = platform_get_drvdata(pdev);
-+
-+	blocking_notifier_chain_unregister(&ce_thr->ec->event_notifier,
-+					   &ce_thr->nb);
-+
-+	throttler_teardown(ce_thr->throttler);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver cros_ec_throttler_driver = {
-+	.driver = {
-+		.name = "cros-ec-throttler",
-+	},
-+	.probe		= cros_ec_throttler_probe,
-+	.remove		= cros_ec_throttler_remove,
-+};
-+
-+module_platform_driver(cros_ec_throttler_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Matthias Kaehlcke <mka@chromium.org>");
-+MODULE_DESCRIPTION("Chrome OS EC Throttler");
+ /* Helper functions for devfreq user device driver with OPP. */
+ extern struct dev_pm_opp *devfreq_recommended_opp(struct device *dev,
+ 					   unsigned long *freq, u32 flags);
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
