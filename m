@@ -2,142 +2,154 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB79FC43147
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AD3C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7790A21700
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:32:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7790A21700
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E5EE21834
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:33:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="HUWEui/j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5EE21834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933626AbeFUUcz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 16:32:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54716 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933012AbeFUUcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 16:32:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AAEF1596;
-        Thu, 21 Jun 2018 13:32:52 -0700 (PDT)
-Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3DEB3F557;
-        Thu, 21 Jun 2018 13:32:51 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 15:32:50 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Hendrik =?ISO-8859-1?Q?Br=FCckner?= 
-        <brueckner@linux.vnet.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] perf test shell: make perf inet_pton test more
- portable
-Message-Id: <20180621153250.e29e7fbfbfe14b98341b68f0@arm.com>
-In-Reply-To: <20180621151800.GU20477@kernel.org>
-References: <20180619184952.dac6a3a1e39d3b1d255e7119@arm.com>
-        <20180620134622.GM20477@kernel.org>
-        <20180620194546.364cc109430ac51c5a288739@arm.com>
-        <20180621141915.GS20477@kernel.org>
-        <20180621151800.GU20477@kernel.org>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933444AbeFUUbv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 16:31:51 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:38544 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932938AbeFUUbs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 16:31:48 -0400
+Received: from localhost.localdomain (unknown [IPv6:2a02:169:34d6:10::3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 210F65C00F8;
+        Thu, 21 Jun 2018 22:31:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529613107;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=ZOiYGDLVpilqVUtPIp8cqq2ysItxXlIbvATOK+3It7A=;
+        b=HUWEui/jHhq6JH4xPQCmCPoLtl73ZXRnAsdolPE1tobOVzscTJ3mURasIqIvQHrdc3u36v
+        e1XYoUceJMhtcUpTN15WmvWxkGLuBHNAY48Xzry20lv+HKoD3+JGRm4uzTzzBoemmt2HNR
+        W9HNJU4yvW+P1LQBiqtVgN11n5C6rqM=
+From:   Stefan Agner <stefan@agner.ch>
+To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
+Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        gaireg@gaireg.de, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v6 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
+Date:   Thu, 21 Jun 2018 22:31:39 +0200
+Message-Id: <20180621203145.7628-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.17.1
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[24];
+         BAYES_HAM(-3.00)[100.00%];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:13030, ipnet:2a02:169::/32, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Jun 2018 12:18:00 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+This sixth revision only removes extra OOB byte support when using
+HW ECC. The previous implementation did place the ECC bytes at a
+different location depending on whether extra OOB bytes were written.
+This does not work well with the MTD subsystem. Since UBI/UBIFS does
+not require extra OOB bytes I descided to not provide extra OOB
+support for now.
 
-> Would be good if we had some utility that given a two files, one with
-> regexps, could tell if, line by line, those expressions matched, better,
-> one that is present in all these OSes...
+--
+Stefan
 
-I didn't find any, but given the two-file notion might be acceptable,
-hopefully you might find the following more readable/acceptable?:
+Changes since v1:
+- Split controller and NAND chip structure
+- Add BCH support
+- Allow to select algorithm and strength using device tree
+- Improve HW ECC error reporting and use DEC_STATUS_BUF only
+- Use SPDX license identifier
+- Use per algorithm mtd_ooblayout_ops
+- Use setup_data_interface callback for NAND timing configuration
 
-diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-index 263057039693..94e513e62b34 100755
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -14,35 +14,40 @@ libc=$(grep -w libc /proc/self/maps | head -1 | sed -r 's/.*[[:space:]](\/.*)/\1
- nm -Dg $libc 2>/dev/null | fgrep -q inet_pton || exit 254
- 
- trace_libc_inet_pton_backtrace() {
--	idx=0
--	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
--	expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
-+
-+	expected=`mktemp -u /tmp/expected.XXX`
-+
-+	echo "ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)" > $expected
-+	echo ".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
- 	case "$(uname -m)" in
- 	s390x)
- 		eventattr='call-graph=dwarf,max-stack=4'
--		expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
--		expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
--		expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-+		echo "gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
-+		echo "(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
-+		echo "main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 		;;
- 	*)
- 		eventattr='max-stack=3'
--		expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
--		expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
-+		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
-+		echo ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 		;;
- 	esac
- 
--	file=`mktemp -u /tmp/perf.data.XXX`
-+	perf_data=`mktemp -u /tmp/perf.data.XXX`
-+	perf_script=`mktemp -u /tmp/perf.script.XXX`
-+	perf record -e probe_libc:inet_pton/$eventattr/ -o $perf_data ping -6 -c 1 ::1 > /dev/null 2>&1
-+	perf script -i $perf_data > $perf_script
- 
--	perf record -e probe_libc:inet_pton/$eventattr/ -o $file ping -6 -c 1 ::1 > /dev/null 2>&1
--	perf script -i $file | while read line ; do
-+	exec 3<$perf_script
-+	exec 4<$expected
-+	while read line <&3 && read -r pattern <&4; do
-+		[ -z "$pattern" ] && break
- 		echo $line
--		echo "$line" | egrep -q "${expected[$idx]}"
-+		echo "$line" | egrep -q "$pattern"
- 		if [ $? -ne 0 ] ; then
--			printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${expected[$idx]}" "$line"
-+			printf "FAIL: expected backtrace entry \"%s\" got \"%s\"\n" "$pattern" "$line"
- 			exit 1
- 		fi
--		let idx+=1
--		[ -z "${expected[$idx]}" ] && break
- 	done
- 
- 	# If any statements are executed from this point onwards,
-@@ -58,6 +63,6 @@ skip_if_no_perf_probe && \
- perf probe -q $libc inet_pton && \
- trace_libc_inet_pton_backtrace
- err=$?
--rm -f ${file}
-+rm -f ${perf_data} ${perf_script} ${expected}
- perf probe -q -d probe_libc:inet_pton
- exit $err
+Changes since v2:
+- Set clock rate using assigned-clocks
+- Use BIT() macro
+- Fix and improve timing calculation
+- Improve ECC error handling
+- Store OOB layout for tag area in Tegra chip structure
+- Update/fix bindings
+- Use more specific variable names (replace "value")
+- Introduce nand-is-boot-medium
+- Choose sensible ECC strenght automatically
+- Use wait_for_completion_timeout
+- Print register dump on completion timeout
+- Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
 
-Thanks,
+Changes since v3:
+- Implement tegra_nand_(read|write)_raw using DMA
+- Implement tegra_nand_(read|write)_oob using DMA
+- Name registers according to Tegra 2 Technical Reference Manual (v02p)
+- Use wait_for_completion_io_timeout to account for IO
+- Get chip select id from device tree reg property
+- Clear interrupts and reinit wait queues in case command/DMA times out
+- Set default MTD name after nand_set_flash_node
+- Move MODULE_DEVICE_TABLE after declaration of tegra_nand_of_match
+- Make (rs|bch)_strength static
 
-Kim
+Changes since v4:
+- Pass OOB area to nand_check_erased_ecc_chunk
+- Pass algorithm specific bits_per_step to tegra_nand_get_strength
+- Store ECC layout in chip structure
+- Fix pointer assignment (use NULL)
+- Removed obsolete header delay.h
+- Fixed newlines
+- Use non-_io variant of wait_for_completion_timeout
+
+Changes since v5:
+- Drop extra OOB bytes support
+
+Lucas Stach (1):
+  ARM: dts: tegra: add Tegra20 NAND flash controller node
+
+Stefan Agner (5):
+  mtd: rawnand: add Reed-Solomon error correction algorithm
+  mtd: rawnand: add an option to specify NAND chip as a boot device
+  mtd: rawnand: tegra: add devicetree binding
+  mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+  ARM: dts: tegra: enable NAND flash on Colibri T20
+
+ .../devicetree/bindings/mtd/nand.txt          |    6 +-
+ .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
+ MAINTAINERS                                   |    7 +
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
+ arch/arm/boot/dts/tegra20.dtsi                |   15 +
+ drivers/mtd/nand/raw/Kconfig                  |    6 +
+ drivers/mtd/nand/raw/Makefile                 |    1 +
+ drivers/mtd/nand/raw/nand_base.c              |    4 +
+ drivers/mtd/nand/raw/tegra_nand.c             | 1225 +++++++++++++++++
+ include/linux/mtd/rawnand.h                   |    7 +
+ 10 files changed, 1350 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+ create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+
+-- 
+2.17.1
+
