@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F8EC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBECC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3DB22421
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF8B722428
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:33:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XFfZl2sa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3DB22421
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bjfgqofq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF8B722428
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934121AbeFUVc7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:32:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41788 "EHLO
+        id S934139AbeFUVdB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:33:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41786 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933955AbeFUV3K (ORCPT
+        with ESMTP id S933958AbeFUV3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 17:29:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,24 +30,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DgiDTYObtEDk2O8cnHX6t2kCdY4GY3B7mxCy/I7vJRQ=; b=XFfZl2saElqcS2NGS8hcA8/yN
-        tkZSfN1Q9cQSKg4+Tbe5fX4PyLmWGlQonXy4DIM804o/uS9EGjm7fBs2psUF+PShM8/a8a+ePFS6Q
-        fHBrR15RPRxhxOt3bYIHYiFcTOuaZeK5oTkzryaGHXtwcvzHp8QoRkObQUnS+Z8nru8Ewqt8rz18i
-        v+LCv9YwHxQDo6SF0wjnfqJsFlg5KerhOh/0+unZXuvIPPsC8SPlWzNKRoDYEbYQDfzUSdY/LyoGu
-        Bk7Q3jyjYnenakP7++hQr97GT+cWuFglrpWOGNYZTP7H5uNdi/DQ+lHuvsLvL8JOp9Z2QVZOMkI/1
-        2AZ8KnOkA==;
+         bh=UZLX8SnVbDLAC15aGgIwzkKSoZoL4gXIz1I11KZy8AM=; b=BjfgqofqlGN+JfjEa1scQDk0a
+        aFn9oPxJEe+69O2SJK2X0cQ8gdUpmZ3TvTrwbSHkZsyWZBfiYTBxj5tAc0Kpkin5+LeQ/qgFrGnZX
+        roiyTV2KiIur4Ioob4BSJuA61XeAvqB4Mi4JC0o5waZuzQnz2XfQHS8m7caTwakzravVxr6mNoSi0
+        OlWbstveMTJ4HiI6B+mNjM6hHmNIQdwy7BDOy44sHukGBPs0lm97T0g/r0RyxoVUmAjep1vw17YLt
+        QJHpWfTk7dHViXLNldhs14eaRCXPe3dl2td6vyegpdECGgSCrOIq//wjBrMW1p0MYvpDABbOSbVA5
+        niwl/Uwow==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78e-0001bE-I1; Thu, 21 Jun 2018 21:29:08 +0000
+        id 1fW78f-0001bl-27; Thu, 21 Jun 2018 21:29:09 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Matthew Wilcox <willy@infradead.org>,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH 09/26] osd: Convert to new IDA API
-Date:   Thu, 21 Jun 2018 14:28:18 -0700
-Message-Id: <20180621212835.5636-10-willy@infradead.org>
+        "David S. Miller" <davem@davemloft.net>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org
+Subject: [PATCH 12/26] Convert net_namespace to new IDA API
+Date:   Thu, 21 Jun 2018 14:28:21 -0700
+Message-Id: <20180621212835.5636-13-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -56,60 +58,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Slightly simpler code.
-
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- drivers/scsi/osd/osd_uld.c | 22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ net/core/net_namespace.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
-index 0e56f1eb05dc..eaf36ccf58db 100644
---- a/drivers/scsi/osd/osd_uld.c
-+++ b/drivers/scsi/osd/osd_uld.c
-@@ -423,19 +423,11 @@ static int osd_probe(struct device *dev)
- 	if (scsi_device->type != TYPE_OSD)
- 		return -ENODEV;
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index a11e03f920d3..f447cebdcea3 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -973,22 +973,18 @@ static int register_pernet_operations(struct list_head *list,
+ 	int error;
  
--	do {
--		if (!ida_pre_get(&osd_minor_ida, GFP_KERNEL))
--			return -ENODEV;
--
--		error = ida_get_new(&osd_minor_ida, &minor);
--	} while (error == -EAGAIN);
--
--	if (error)
--		return error;
--	if (minor >= SCSI_OSD_MAX_MINOR) {
--		error = -EBUSY;
--		goto err_retract_minor;
--	}
-+	minor = ida_alloc_max(&osd_minor_ida, SCSI_OSD_MAX_MINOR, GFP_KERNEL);
-+	if (minor == -ENOSPC)
-+		return -EBUSY;
-+	if (minor < 0)
-+		return -ENODEV;
- 
- 	error = -ENOMEM;
- 	oud = kzalloc(sizeof(*oud), GFP_KERNEL);
-@@ -499,7 +491,7 @@ static int osd_probe(struct device *dev)
- err_free_osd:
- 	put_device(&oud->class_dev);
- err_retract_minor:
--	ida_remove(&osd_minor_ida, minor);
-+	ida_free(&osd_minor_ida, minor);
- 	return error;
- }
- 
-@@ -514,7 +506,7 @@ static int osd_remove(struct device *dev)
+ 	if (ops->id) {
+-again:
+-		error = ida_get_new_above(&net_generic_ids, MIN_PERNET_OPS_ID, ops->id);
+-		if (error < 0) {
+-			if (error == -EAGAIN) {
+-				ida_pre_get(&net_generic_ids, GFP_KERNEL);
+-				goto again;
+-			}
++		error = ida_alloc_min(&net_generic_ids, MIN_PERNET_OPS_ID,
++				GFP_KERNEL);
++		if (error < 0)
+ 			return error;
+-		}
++		*ops->id = error;
+ 		max_gen_ptrs = max(max_gen_ptrs, *ops->id + 1);
+ 	}
+ 	error = __register_pernet_operations(list, ops);
+ 	if (error) {
+ 		rcu_barrier();
+ 		if (ops->id)
+-			ida_remove(&net_generic_ids, *ops->id);
++			ida_free(&net_generic_ids, *ops->id);
  	}
  
- 	cdev_device_del(&oud->cdev, &oud->class_dev);
--	ida_remove(&osd_minor_ida, oud->minor);
-+	ida_free(&osd_minor_ida, oud->minor);
- 	put_device(&oud->class_dev);
+ 	return error;
+@@ -999,7 +995,7 @@ static void unregister_pernet_operations(struct pernet_operations *ops)
+ 	__unregister_pernet_operations(ops);
+ 	rcu_barrier();
+ 	if (ops->id)
+-		ida_remove(&net_generic_ids, *ops->id);
++		ida_free(&net_generic_ids, *ops->id);
+ }
  
- 	return 0;
+ /**
 -- 
 2.17.1
 
