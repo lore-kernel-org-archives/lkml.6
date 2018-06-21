@@ -2,190 +2,96 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D56EC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC2CC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F993204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:30:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F993204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A2AB208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:33:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2AB208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933194AbeFUIa4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:30:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35141 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933095AbeFUIax (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:30:53 -0400
-Received: from 2.general.khfeng.us.vpn ([10.172.68.175] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1fVuzP-0002LF-QI; Thu, 21 Jun 2018 08:30:48 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     davem@davemloft.net
-Cc:     ryankao@realtek.com, hayeswang@realtek.com, hau@realtek.com,
-        hkallweit1@gmail.com, romieu@fr.zoreil.com, bhelgaas@google.com,
-        acelan.kao@canonical.com, netdev@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH net-next v4 2/2] r8169: Reinstate ASPM Support
-Date:   Thu, 21 Jun 2018 16:30:39 +0800
-Message-Id: <20180621083039.22545-2-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180621083039.22545-1-kai.heng.feng@canonical.com>
-References: <20180621083039.22545-1-kai.heng.feng@canonical.com>
+        id S932863AbeFUIdC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:33:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39416 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932687AbeFUIdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 04:33:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 30A0CAF9A;
+        Thu, 21 Jun 2018 08:32:59 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 10:32:58 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     osalvador@techadventures.net
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
+        pasha.tatashin@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>
+Subject: Re: [PATCH 0/4] Small cleanup for memoryhotplug
+Message-ID: <20180621083258.GF10465@dhcp22.suse.cz>
+References: <20180601125321.30652-1-osalvador@techadventures.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180601125321.30652-1-osalvador@techadventures.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Intel platforms (Skylake and newer), ASPM support in r8169 is the
-last missing puzzle to let CPU's Package C-State reaches PC8.  Without
-ASPM support, the CPU cannot reach beyond PC3. PC8 can save additional
-~3W in comparison with PC3 on a Coffee Lake platform, Dell G3 3779.
+[Cc Reza Arbab - I remember he was able to hit some bugs in memblock
+registration code when I was reworking that area previously]
 
-This is based on the work from Chunhao Lin <hau@realtek.com>.
+On Fri 01-06-18 14:53:17, osalvador@techadventures.net wrote:
+> From: Oscar Salvador <osalvador@suse.de>
+> 
+> 
+> Hi,
+> 
+> I wanted to give it a try and do a small cleanup in the memhotplug's code.
+> A lot more could be done, but I wanted to start somewhere.
+> I tried to unify/remove duplicated code.
+> 
+> The following is what this patchset does:
+> 
+> 1) add_memory_resource() has code to allocate a node in case it was offline.
+>    Since try_online_node has some code for that as well, I just made add_memory_resource() to
+>    use that so we can remove duplicated code..
+>    This is better explained in patch 1/4.
+> 
+> 2) register_mem_sect_under_node() will be called only from link_mem_sections()
+> 
+> 3) Get rid of link_mem_sections() in favour of walk_memory_range() with a callback to
+>    register_mem_sect_under_node()
+> 
+> 4) Drop unnecessary checks from register_mem_sect_under_node()
+> 
+> 
+> I have done some tests and I could not see anything broken because of 
+> this patchset.
+> 
+> Oscar Salvador (4):
+>   mm/memory_hotplug: Make add_memory_resource use __try_online_node
+>   mm/memory_hotplug: Call register_mem_sect_under_node
+>   mm/memory_hotplug: Get rid of link_mem_sections
+>   mm/memory_hotplug: Drop unnecessary checks from
+>     register_mem_sect_under_node
+> 
+>  drivers/base/memory.c |   2 -
+>  drivers/base/node.c   |  52 +++++---------------------
+>  include/linux/node.h  |  21 +++++------
+>  mm/memory_hotplug.c   | 101 ++++++++++++++++++++++++++------------------------
+>  4 files changed, 71 insertions(+), 105 deletions(-)
+> 
+> -- 
+> 2.13.6
+> 
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v4:
-- Improve commit message.
-- Move the empty line to where it belongs.
-
-v3:
-- Change commit message wording.
-- Rename the function to rtl_hw_aspm_clkreq_enable().
-
-v2:
-- Remove module parameter.
-- Remove pci_disable_link_state().
-
- drivers/net/ethernet/realtek/r8169.c | 39 +++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index 2bdfd25acd58..269ac7561368 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -5289,6 +5289,17 @@ static void rtl_pcie_state_l2l3_enable(struct rtl8169_private *tp, bool enable)
- 	RTL_W8(tp, Config3, data);
- }
- 
-+static void rtl_hw_aspm_clkreq_enable(struct rtl8169_private *tp, bool enable)
-+{
-+	if (enable) {
-+		RTL_W8(tp, Config2, RTL_R8(tp, Config2) | ClkReqEn);
-+		RTL_W8(tp, Config5, RTL_R8(tp, Config5) | ASPM_en);
-+	} else {
-+		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
-+		RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
-+	}
-+}
-+
- static void rtl_hw_start_8168bb(struct rtl8169_private *tp)
- {
- 	RTL_W8(tp, Config3, RTL_R8(tp, Config3) & ~Beacon_en);
-@@ -5645,9 +5656,9 @@ static void rtl_hw_start_8168g_1(struct rtl8169_private *tp)
- 	rtl_hw_start_8168g(tp);
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
--	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
-+	rtl_hw_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168g_1, ARRAY_SIZE(e_info_8168g_1));
-+	rtl_hw_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168g_2(struct rtl8169_private *tp)
-@@ -5680,9 +5691,9 @@ static void rtl_hw_start_8411_2(struct rtl8169_private *tp)
- 	rtl_hw_start_8168g(tp);
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
--	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
-+	rtl_hw_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
-+	rtl_hw_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
-@@ -5699,8 +5710,7 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
- 	};
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
--	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
-+	rtl_hw_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168h_1, ARRAY_SIZE(e_info_8168h_1));
- 
- 	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
-@@ -5779,6 +5789,8 @@ static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
- 	r8168_mac_ocp_write(tp, 0xe63e, 0x0000);
- 	r8168_mac_ocp_write(tp, 0xc094, 0x0000);
- 	r8168_mac_ocp_write(tp, 0xc09e, 0x0000);
-+
-+	rtl_hw_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
-@@ -5830,11 +5842,12 @@ static void rtl_hw_start_8168ep_1(struct rtl8169_private *tp)
- 	};
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
--	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
-+	rtl_hw_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168ep_1, ARRAY_SIZE(e_info_8168ep_1));
- 
- 	rtl_hw_start_8168ep(tp);
-+
-+	rtl_hw_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
-@@ -5846,14 +5859,15 @@ static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
- 	};
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
--	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
-+	rtl_hw_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168ep_2, ARRAY_SIZE(e_info_8168ep_2));
- 
- 	rtl_hw_start_8168ep(tp);
- 
- 	RTL_W8(tp, DLLPR, RTL_R8(tp, DLLPR) & ~PFM_EN);
- 	RTL_W8(tp, MISC_1, RTL_R8(tp, MISC_1) & ~PFM_D3COLD_EN);
-+
-+	rtl_hw_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
-@@ -5867,8 +5881,7 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
- 	};
- 
- 	/* disable aspm and clock request before access ephy */
--	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
--	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
-+	rtl_hw_aspm_clkreq_enable(tp, false);
- 	rtl_ephy_init(tp, e_info_8168ep_3, ARRAY_SIZE(e_info_8168ep_3));
- 
- 	rtl_hw_start_8168ep(tp);
-@@ -5888,6 +5901,8 @@ static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
- 	data = r8168_mac_ocp_read(tp, 0xe860);
- 	data |= 0x0080;
- 	r8168_mac_ocp_write(tp, 0xe860, data);
-+
-+	rtl_hw_aspm_clkreq_enable(tp, true);
- }
- 
- static void rtl_hw_start_8168(struct rtl8169_private *tp)
 -- 
-2.17.0
-
+Michal Hocko
+SUSE Labs
