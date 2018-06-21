@@ -2,152 +2,421 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C91C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A811DC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED8EF204EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:17:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED8EF204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 4EC68204EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:17:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cHRw81+b";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qzexztfz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC68204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932838AbeFUJRl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:17:41 -0400
-Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:41084 "EHLO
-        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932534AbeFUJRj (ORCPT
+        id S932883AbeFUJRu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:17:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33344 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932534AbeFUJRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:17:39 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp16.blacknight.com (Postfix) with ESMTPS id 545E01C28D9
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 10:17:38 +0100 (IST)
-Received: (qmail 18403 invoked from network); 21 Jun 2018 09:17:38 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.171])
-  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 21 Jun 2018 09:17:38 -0000
-Date:   Thu, 21 Jun 2018 10:17:37 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 04/19] sched/numa: Set preferred_node based on best_cpu
-Message-ID: <20180621091737.mlvjzrfxnbxkvrsg@techsingularity.net>
-References: <1529514181-9842-1-git-send-email-srikar@linux.vnet.ibm.com>
- <1529514181-9842-5-git-send-email-srikar@linux.vnet.ibm.com>
+        Thu, 21 Jun 2018 05:17:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A69226060A; Thu, 21 Jun 2018 09:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529572664;
+        bh=MQY4LXF2/6zKvzdzfpuQm+uPaMloU2dhFrsf7Ip96GE=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=cHRw81+bvdkpqnqCX39wSmXvTSOpvxKFkt+C2lG+MnNSehxpNQgEK1Gk8oOuIZtjP
+         UsRFsy5wjogax0ouU4d8hvYLGprPUosV0UBf+VH2QbG3D/kw1E7leTZl/7+6LNb81c
+         nF2wAip8EzOtUeTNJ1GU31jb/BOHeVU6HLlVFOrU=
+Received: from SAYALIL (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 934DA6021A;
+        Thu, 21 Jun 2018 09:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529572663;
+        bh=MQY4LXF2/6zKvzdzfpuQm+uPaMloU2dhFrsf7Ip96GE=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=QzexztfzkIVSAXdmlqUPT7sPPRq2Upz1yf8mP9b4JXq4UZWAGRXh/T9/aTP92zziJ
+         S7GrXQVVhDIZPomfkSalfCl4l152XXXf3fAJa3GIIBSdyWOWT8+0sj/zq1saxxsORT
+         cnwj9Nz3W12HvuV5r4ihTRqXUDXZkXgf+IK8hUW8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 934DA6021A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From:   "sayali" <sayalil@codeaurora.org>
+To:     "'Kyuho Choi'" <chlrbgh0@gmail.com>
+Cc:     <subhashj@codeaurora.org>, <cang@codeaurora.org>,
+        <vivek.gautam@codeaurora.org>, <rnayak@codeaurora.org>,
+        <vinholikatti@gmail.com>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>, <asutoshd@codeaurora.org>,
+        <evgreen@chromium.org>, <riteshh@codeaurora.org>,
+        <linux-scsi@vger.kernel.org>,
+        "'open list'" <linux-kernel@vger.kernel.org>
+References: <1528981432-23065-1-git-send-email-sayalil@codeaurora.org> <1528981432-23065-3-git-send-email-sayalil@codeaurora.org> <CAP2JTQKHsJrX4BewyfRPL0LpxTYFhW2RMpOkJCRgS1Uns2Qw+A@mail.gmail.com>
+In-Reply-To: <CAP2JTQKHsJrX4BewyfRPL0LpxTYFhW2RMpOkJCRgS1Uns2Qw+A@mail.gmail.com>
+Subject: RE: [PATCH V3 2/3] scsi: ufs: Add ufs provisioning support
+Date:   Thu, 21 Jun 2018 14:47:36 +0530
+Message-ID: <002c01d40940$b5a91120$20fb3360$@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <1529514181-9842-5-git-send-email-srikar@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQHqrwfiTmcauPZKO5758rWQ5wPzzwH9kfIcAm+N5IukGbmhgA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 10:32:45PM +0530, Srikar Dronamraju wrote:
-> Currently preferred node is set to dst_nid which is the last node in the
-> iteration whose group weight or task weight is greater than the current
-> node. However it doesn't guarantee that dst_nid has the numa capacity
-> to move. It also doesn't guarantee that dst_nid has the best_cpu which
-> is the cpu/node ideal for node migration.
-> 
-> Lets consider faults on a 4 node system with group weight numbers
-> in different nodes being in 0 < 1 < 2 < 3 proportion. Consider the task
-> is running on 3 and 0 is its preferred node but its capacity is full.
-> Consider nodes 1, 2 and 3 have capacity. Then the task should be
-> migrated to node 1. Currently the task gets moved to node 2. env.dst_nid
-> points to the last node whose faults were greater than current node.
-> 
-> Modify to set the preferred node based of best_cpu. Earlier setting
-> preferred node was skipped if nr_active_nodes is 1. This could result in
-> the task being moved out of the preferred node to a random node during
-> regular load balancing.
-> 
-> Also while modifying task_numa_migrate(), use sched_setnuma to set
-> preferred node. This ensures out numa accounting is correct.
-> 
-> Running SPECjbb2005 on a 4 node machine and comparing bops/JVM
-> JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
-> 16    25122.9     25549.6     1.698
-> 1     73850       73190       -0.89
-> 
-> Running SPECjbb2005 on a 16 node machine and comparing bops/JVM
-> JVMS  LAST_PATCH  WITH_PATCH  %CHANGE
-> 8     105930      113437      7.08676
-> 1     178624      196130      9.80047
-> 
-> (numbers from v1 based on v4.17-rc5)
-> Testcase       Time:         Min         Max         Avg      StdDev
-> numa01.sh      Real:      435.78      653.81      534.58       83.20
-> numa01.sh       Sys:      121.93      187.18      145.90       23.47
-> numa01.sh      User:    37082.81    51402.80    43647.60     5409.75
-> numa02.sh      Real:       60.64       61.63       61.19        0.40
-> numa02.sh       Sys:       14.72       25.68       19.06        4.03
-> numa02.sh      User:     5210.95     5266.69     5233.30       20.82
-> numa03.sh      Real:      746.51      808.24      780.36       23.88
-> numa03.sh       Sys:       97.26      108.48      105.07        4.28
-> numa03.sh      User:    58956.30    61397.05    60162.95     1050.82
-> numa04.sh      Real:      465.97      519.27      484.81       19.62
-> numa04.sh       Sys:      304.43      359.08      334.68       20.64
-> numa04.sh      User:    37544.16    41186.15    39262.44     1314.91
-> numa05.sh      Real:      411.57      457.20      433.29       16.58
-> numa05.sh       Sys:      230.05      435.48      339.95       67.58
-> numa05.sh      User:    33325.54    36896.31    35637.84     1222.64
-> 
-> Testcase       Time:         Min         Max         Avg      StdDev 	 %Change
-> numa01.sh      Real:      506.35      794.46      599.06      104.26 	 -10.76%
-> numa01.sh       Sys:      150.37      223.56      195.99       24.94 	 -25.55%
-> numa01.sh      User:    43450.69    61752.04    49281.50     6635.33 	 -11.43%
-> numa02.sh      Real:       60.33       62.40       61.31        0.90 	 -0.195%
-> numa02.sh       Sys:       18.12       31.66       24.28        5.89 	 -21.49%
-> numa02.sh      User:     5203.91     5325.32     5260.29       49.98 	 -0.513%
-> numa03.sh      Real:      696.47      853.62      745.80       57.28 	 4.6339%
-> numa03.sh       Sys:       85.68      123.71       97.89       13.48 	 7.3347%
-> numa03.sh      User:    55978.45    66418.63    59254.94     3737.97 	 1.5323%
-> numa04.sh      Real:      444.05      514.83      497.06       26.85 	 -2.464%
-> numa04.sh       Sys:      230.39      375.79      316.23       48.58 	 5.8343%
-> numa04.sh      User:    35403.12    41004.10    39720.80     2163.08 	 -1.153%
-> numa05.sh      Real:      423.09      460.41      439.57       13.92 	 -1.428%
-> numa05.sh       Sys:      287.38      480.15      369.37       68.52 	 -7.964%
-> numa05.sh      User:    34732.12    38016.80    36255.85     1070.51 	 -1.704%
-> 
-> Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Hi Kyuho,
 
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Comment inline.
 
-Also minor comment below;
+Thanks,
+Sayali
+-----Original Message-----
+From: Kyuho Choi [mailto:chlrbgh0@gmail.com]=20
+Sent: Friday, June 15, 2018 8:28 AM
+To: Sayali Lokhande <sayalil@codeaurora.org>
+Cc: subhashj@codeaurora.org; cang@codeaurora.org; =
+vivek.gautam@codeaurora.org; rnayak@codeaurora.org; =
+vinholikatti@gmail.com; jejb@linux.vnet.ibm.com; =
+martin.petersen@oracle.com; asutoshd@codeaurora.org; =
+evgreen@chromium.org; riteshh@codeaurora.org; =
+linux-scsi@vger.kernel.org; open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 2/3] scsi: ufs: Add ufs provisioning support
 
+Hi,
+
+On 6/14/18, Sayali Lokhande <sayalil@codeaurora.org> wrote:
+> A new api ufshcd_do_config_device() is added in driver to support UFS=20
+> provisioning at runtime. Configfs support is added to trigger=20
+> provisioning.
+> Device and Unit configurable parameters are parsed from vendor=20
+> specific provisioning data or file and passed via configfs node at=20
+> runtime to provision ufs device.
+>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 > ---
-> Changelog v1->v2:
-> Fix setting sched_setnuma under !sd pointed by Peter Zijlstra.
-> Modify commit message to describe the reason for change.
-> 
->  kernel/sched/fair.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 285d7ae..2366fda2 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1726,7 +1726,7 @@ static int task_numa_migrate(struct task_struct *p)
->  	 * elsewhere, so there is no point in (re)trying.
->  	 */
->  	if (unlikely(!sd)) {
-> -		p->numa_preferred_nid = task_node(p);
-> +		sched_setnuma(p, task_node(p));
->  		return -EINVAL;
->  	}
->  
+>  drivers/scsi/ufs/ufs.h    |  28 ++++++++
+>  drivers/scsi/ufs/ufshcd.c | 180
+> ++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h |   2 +
+>  3 files changed, 210 insertions(+)
+>
+> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h index=20
+> e15deb0..1f99904 100644
+> --- a/drivers/scsi/ufs/ufs.h
+> +++ b/drivers/scsi/ufs/ufs.h
+> @@ -333,6 +333,7 @@ enum {
+>  	UFSHCD_AMP		=3D 3,
+>  };
+>
+> +#define UFS_BLOCK_SIZE	4096
+>  #define POWER_DESC_MAX_SIZE			0x62
+>  #define POWER_DESC_MAX_ACTV_ICC_LVLS		16
+>
+> @@ -425,6 +426,33 @@ enum {
+>  	MASK_TM_SERVICE_RESP		=3D 0xFF,
+>  };
+>
+> +struct ufs_unit_desc {
+> +	u8     bLUEnable;              /* 1 for enabled LU */
+> +	u8     bBootLunID;             /* 0 for using this LU for boot */
+> +	u8     bLUWriteProtect;        /* 1 =3D power on WP, 2 =3D permanent =
+WP */
+> +	u8     bMemoryType;            /* 0 for enhanced memory type */
+> +	u32    dNumAllocUnits;         /* Number of alloc unit for this LU =
+*/
+> +	u8     bDataReliability;       /* 0 for reliable write support */
+> +	u8     bLogicalBlockSize;      /* See section 13.2.3 of UFS standard =
+*/
+> +	u8     bProvisioningType;      /* 0 for thin provisioning */
+> +	u16    wContextCapabilities;   /* refer Unit Descriptor Description =
+*/
+> +};
+> +
+> +struct ufs_config_descr {
+> +	u8     bNumberLU;              /* Total number of active LUs */
+> +	u8     bBootEnable;            /* enabling device for partial init =
+*/
+> +	u8     bDescrAccessEn;         /* desc access during partial init */
+> +	u8     bInitPowerMode;         /* Initial device power mode */
+> +	u8     bHighPriorityLUN;       /* LUN of the high priority LU */
+> +	u8     bSecureRemovalType;     /* Erase config for data removal */
+> +	u8     bInitActiveICCLevel;    /* ICC level after reset */
+> +	u16    wPeriodicRTCUpdate;     /* 0 to set a priodic RTC update rate =
+*/
+> +	u32     bConfigDescrLock;      /* 1 to lock Configation Descriptor =
+*/
+> +	u32    qVendorConfigCode;      /* Vendor specific configuration code =
+*/
+> +	struct ufs_unit_desc unit[8];
+> +	u8	lun_to_grow;
+> +};
+> +
+>  /* Task management service response */  enum {
+>  	UPIU_TASK_MANAGEMENT_FUNC_COMPL		=3D 0x00,
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c=20
+> index 4abc7ae..c0235a4 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -42,6 +42,7 @@
+>  #include <linux/nls.h>
+>  #include <linux/of.h>
+>  #include <linux/bitfield.h>
+> +#include <asm/unaligned.h>
+>  #include "ufshcd.h"
+>  #include "ufs_quirks.h"
+>  #include "unipro.h"
+> @@ -3063,6 +3064,14 @@ static inline int ufshcd_read_power_desc(struct =
 
-That looks like it had the potential to corrupt the stats managed by
-account_numa_enqueue/dequeue :/
+> ufs_hba *hba,
+>  	return ufshcd_read_desc(hba, QUERY_DESC_IDN_POWER, 0, buf, size);  }
+>
+> +static inline int ufshcd_read_geometry_desc(struct ufs_hba *hba,
+> +					 u8 *buf,
+> +					 u32 size)
+> +{
+> +	return ufshcd_read_desc(hba, QUERY_DESC_IDN_GEOMETRY, 0, buf, size); =
 
--- 
-Mel Gorman
-SUSE Labs
+> +}
+> +
+> +
+>  static int ufshcd_read_device_desc(struct ufs_hba *hba, u8 *buf, u32=20
+> size)  {
+>  	return ufshcd_read_desc(hba, QUERY_DESC_IDN_DEVICE, 0, buf, size);=20
+> @@ -6344,6 +6353,177 @@ static int ufshcd_set_dev_ref_clk(struct=20
+> ufs_hba
+> *hba)
+>  }
+>
+>  /**
+> + * ufshcd_do_config_device - API function for UFS provisioning
+> + * hba: per-adapter instance
+> + * Returns 0 for success, non-zero in case of failure.
+> + */
+> +int ufshcd_do_config_device(struct ufs_hba *hba) {
+> +	struct ufs_config_descr *cfg =3D &hba->cfgs;
+> +	int buff_len =3D QUERY_DESC_CONFIGURATION_DEF_SIZE;
+> +	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] =3D {0};
+> +	int i, ret =3D 0;
+> +	int lun_to_grow =3D -1;
+> +	u64 qTotalRawDeviceCapacity;
+> +	u16 wEnhanced1CapAdjFac, wEnhanced2CapAdjFac;
+> +	u32 dEnhanced1MaxNAllocU, dEnhanced2MaxNAllocU;
+> +	size_t alloc_units, units_to_create =3D 0;
+> +	size_t capacity_to_alloc_factor;
+> +	size_t enhanced1_units =3D 0, enhanced2_units =3D 0;
+> +	size_t conversion_ratio =3D 1;
+> +	u8 *pt;
+> +	u32 blocks_per_alloc_unit =3D 1024;
+> +	int geo_len =3D hba->desc_size.geom_desc;
+> +	u8 geo_buf[hba->desc_size.geom_desc];
+> +	unsigned int max_partitions =3D 8;
+> +
+> +	WARN_ON(!hba || !cfg);
+> +
+> +	ret =3D ufshcd_read_geometry_desc(hba, geo_buf, geo_len);
+> +	if (ret) {
+> +		dev_err(hba->dev, "%s: Failed getting geometry_desc %d\n",
+> +			__func__, ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * Get Geomtric parameters like total configurable memory
+> +	 * quantity (Offset 0x04 to 0x0b), Capacity Adjustment
+> +	 * Factors (Offset 0x30, 0x31, 0x36, 0x37), Max allocation
+> +	 * units (Offset 0x2c to 0x2f, 0x32 to 0x35) used to configure
+> +	 * the device logical units.
+> +	 */
+> +	qTotalRawDeviceCapacity =3D get_unaligned_be64(&geo_buf[0x04]);
+> +	wEnhanced1CapAdjFac =3D get_unaligned_be16(&geo_buf[0x30]);
+> +	wEnhanced2CapAdjFac =3D get_unaligned_be16(&geo_buf[0x36]);
+> +	dEnhanced1MaxNAllocU =3D get_unaligned_be32(&geo_buf[0x2c]);
+> +	dEnhanced2MaxNAllocU =3D get_unaligned_be32(&geo_buf[0x32]);
+> +
+> +	capacity_to_alloc_factor =3D
+> +		(blocks_per_alloc_unit * UFS_BLOCK_SIZE) / 512;
+> +
+> +	if (qTotalRawDeviceCapacity % capacity_to_alloc_factor !=3D 0) {
+> +		dev_err(hba->dev,
+> +			"%s: Raw capacity(%llu) not multiple of alloc factor(%zu)\n",
+> +			__func__, qTotalRawDeviceCapacity,
+> +			capacity_to_alloc_factor);
+> +		return -EINVAL;
+> +	}
+> +	alloc_units =3D (qTotalRawDeviceCapacity / =
+capacity_to_alloc_factor);
+> +	units_to_create =3D 0;
+> +	enhanced1_units =3D enhanced2_units =3D 0;
+> +
+> +	/*
+> +	 * Calculate number of allocation units to be assigned to a logical =
+unit
+> +	 * considering the capacity adjustment factor of respective memory =
+type.
+> +	 */
+> +	for (i =3D 0; i < (max_partitions - 1) &&
+> +		units_to_create <=3D alloc_units; i++) {
+> +		if ((cfg->unit[i].dNumAllocUnits % blocks_per_alloc_unit) =3D=3D 0)
+> +			cfg->unit[i].dNumAllocUnits /=3D blocks_per_alloc_unit;
+> +		else
+> +			cfg->unit[i].dNumAllocUnits =3D
+> +			cfg->unit[i].dNumAllocUnits / blocks_per_alloc_unit + 1;
+> +
+> +		if (cfg->unit[i].bMemoryType =3D=3D 0)
+> +			units_to_create +=3D cfg->unit[i].dNumAllocUnits;
+> +		else if (cfg->unit[i].bMemoryType =3D=3D 3) {
+> +			enhanced1_units +=3D cfg->unit[i].dNumAllocUnits;
+> +			cfg->unit[i].dNumAllocUnits *=3D
+> +				(wEnhanced1CapAdjFac / 0x100);
+> +			units_to_create +=3D cfg->unit[i].dNumAllocUnits;
+> +		} else if (cfg->unit[i].bMemoryType =3D=3D 4) {
+> +			enhanced2_units +=3D cfg->unit[i].dNumAllocUnits;
+> +			cfg->unit[i].dNumAllocUnits *=3D
+> +				(wEnhanced1CapAdjFac / 0x100);
+> +			units_to_create +=3D cfg->unit[i].dNumAllocUnits;
+> +		} else {
+> +			dev_err(hba->dev, "%s: Unsupported memory type %d\n",
+> +				__func__, cfg->unit[i].bMemoryType);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +	if (enhanced1_units > dEnhanced1MaxNAllocU) {
+> +		dev_err(hba->dev, "%s: size %zu exceeds max enhanced1 area size =
+%u\n",
+> +			__func__, enhanced1_units, dEnhanced1MaxNAllocU);
+> +		return -ERANGE;
+> +	}
+> +	if (enhanced2_units > dEnhanced2MaxNAllocU) {
+> +		dev_err(hba->dev, "%s: size %zu exceeds max enhanced2 area size =
+%u\n",
+> +			__func__, enhanced2_units, dEnhanced2MaxNAllocU);
+> +		return -ERANGE;
+> +	}
+> +	if (units_to_create > alloc_units) {
+> +		dev_err(hba->dev, "%s: Specified size %zu exceeds device size =
+%zu\n",
+> +			__func__, units_to_create, alloc_units);
+> +		return -ERANGE;
+> +	}
+> +	lun_to_grow =3D cfg->lun_to_grow;
+> +	if (lun_to_grow !=3D -1) {
+> +		if (cfg->unit[i].bMemoryType =3D=3D 0)
+> +			conversion_ratio =3D 1;
+> +		else if (cfg->unit[i].bMemoryType =3D=3D 3)
+> +			conversion_ratio =3D (wEnhanced1CapAdjFac / 0x100);
+> +		else if (cfg->unit[i].bMemoryType =3D=3D 4)
+> +			conversion_ratio =3D (wEnhanced2CapAdjFac / 0x100);
+> +
+> +		cfg->unit[lun_to_grow].dNumAllocUnits +=3D
+> +		((alloc_units - units_to_create) / conversion_ratio);
+> +		dev_dbg(hba->dev, "%s: conversion_ratio %zu for lun %d\n",
+> +			__func__, conversion_ratio, i);
+> +	}
+> +
+> +	/* Fill in the buffer with configuration data */
+> +	pt =3D desc_buf;
+> +	*pt++ =3D 0x90;        // bLength
+> +	*pt++ =3D 0x01;        // bDescriptorType
+> +	*pt++ =3D 0;           // Reserved in UFS2.0 and onward
+> +	*pt++ =3D cfg->bBootEnable;
+> +	*pt++ =3D cfg->bDescrAccessEn;
+> +	*pt++ =3D cfg->bInitPowerMode;
+> +	*pt++ =3D cfg->bHighPriorityLUN;
+> +	*pt++ =3D cfg->bSecureRemovalType;
+> +	*pt++ =3D cfg->bInitActiveICCLevel;
+> +	put_unaligned_be16(cfg->wPeriodicRTCUpdate, pt);
+> +	pt =3D pt + 7; // Reserved fields set to 0
+> +
+> +	/* Fill in the buffer with per logical unit data */
+> +	for (i =3D 0; i < UFS_UPIU_MAX_GENERAL_LUN; i++) {
+> +		*pt++ =3D cfg->unit[i].bLUEnable;
+> +		*pt++ =3D cfg->unit[i].bBootLunID;
+> +		*pt++ =3D cfg->unit[i].bLUWriteProtect;
+> +		*pt++ =3D cfg->unit[i].bMemoryType;
+> +		put_unaligned_be32(cfg->unit[i].dNumAllocUnits, pt);
+> +		pt =3D pt + 4;
+> +		*pt++ =3D cfg->unit[i].bDataReliability;
+> +		*pt++ =3D cfg->unit[i].bLogicalBlockSize;
+> +		*pt++ =3D cfg->unit[i].bProvisioningType;
+> +		put_unaligned_be16(cfg->unit[i].wContextCapabilities, pt);
+> +		pt =3D pt + 5; // Reserved fields set to 0
+> +	}
+> +
+> +	ret =3D ufshcd_query_descriptor_retry(hba, =
+UPIU_QUERY_OPCODE_WRITE_DESC,
+> +		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
+> +
+> +	if (ret) {
+> +		dev_err(hba->dev, "%s: Failed writing descriptor. desc_idn %d,=20
+> +opcode %x
+> ret %d\n",
+> +		__func__, QUERY_DESC_IDN_CONFIGURATION,
+> +		UPIU_QUERY_OPCODE_WRITE_DESC, ret);
+> +		return ret;
+> +	}
+
+To support stable operation and prevent race condition, how about adding =
+some functions during in runtime provisioning?.
+pm_runtime_get/put_sync and scsi_block/unblock_requests.
+How you thought?.
+[Sayali] Agreed. Will check and update in next patch set.
+
+> +
+> +	if (cfg->bConfigDescrLock =3D=3D 1) {
+> +		ret =3D ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+> +		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
+> +		if (ret)
+> +			dev_err(hba->dev, "%s: Failed writing bConfigDescrLock %d\n",
+> +				__func__, ret);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+>   * ufshcd_probe_hba - probe hba to detect device and initialize
+>   * @hba: per-adapter instance
+>   *
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h=20
+> index b026ad8..816b674 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -549,6 +549,7 @@ struct ufs_hba {
+>  	unsigned int irq;
+>  	bool is_irq_enabled;
+>  	u32 dev_ref_clk_freq;
+> +	struct ufs_config_descr cfgs;
+>
+>  	/* Interrupt aggregation support is broken */
+>  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+> @@ -866,6 +867,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba,=20
+> int desc_index,
+>
+>  int ufshcd_hold(struct ufs_hba *hba, bool async);  void=20
+> ufshcd_release(struct ufs_hba *hba);
+> +int ufshcd_do_config_device(struct ufs_hba *hba);
+>
+>  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn=20
+> desc_id,
+>  	int *desc_length);
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora=20
+> Forum, a Linux Foundation Collaborative Project
+>
+>
+
+BR,
+Kyuho Choi
+
