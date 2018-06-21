@@ -2,92 +2,110 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D44C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0871C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9C220846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:42:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=daedalean.ai header.i=@daedalean.ai header.b="CfdPMt1M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9C220846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=daedalean.ai
+	by mail.kernel.org (Postfix) with ESMTP id 5666E20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:49:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5666E20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933275AbeFULmp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 07:42:45 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38192 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933145AbeFULmn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 07:42:43 -0400
-Received: by mail-wm0-f68.google.com with SMTP id 69-v6so5430295wmf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 04:42:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daedalean.ai; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=oP9Zbwd+JjG0rjfNCbdRd4dJJazZqCLTNUZeSihFmto=;
-        b=CfdPMt1MsTYmbb5l4G+BHbXvoM5P4nG5hn3IuDk/aju1Bljw5wBm3OzHTPhb8KEh0n
-         g1pBt8QN3xhTB8p7YeAuR4EXjhpnjtSyfjqEfHZZqOer6YWJUxWgDyM00uADCzjkcrWb
-         X/i8aVR5hEllVfrVhR3Hnfqd0vGeyEj50zrK4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oP9Zbwd+JjG0rjfNCbdRd4dJJazZqCLTNUZeSihFmto=;
-        b=DseAgABVR9mRwlHU5AYW+ffU326uvWsXGuoC1e25xRs8gg828I1X7DKdbm/1mwqgEu
-         ++jYelL0sr9mGotq+Wlq89zWylebN/MizeWi6DHuzHsoKxOd2JEOi2zB92FdXHA093+I
-         5pcpyjGl9jtYK2cWtlm8eVaQGWWl98dHSc7xIrXtGk9Zm+G93R0XOMv65VeOEuUyhXH/
-         zRI24rAnBS0xRCjhhtZWq5q8nQOlTfmI9BGznQuWMNKPV+JjiHEMRU5uvMgwb8Zed1zK
-         rTNRrvyoGA3/bMSvDxCGtYPektYPR4PeJ6RYX9zsh+JNxNrqY4ZA2QNQCxI1Bc4OSEyO
-         FEhQ==
-X-Gm-Message-State: APt69E1jussbfgMIzgm9Zp+RiOOxv1tRHfmnjE/sVe2sl+EImTpTftaC
-        0LlAJZOLqVPxhZFqeNtQW5fZng==
-X-Google-Smtp-Source: ADUXVKIAZV3MsmBlTLDdzopUm/MJGsBW4/v1bwEsGBNjJ8YBOeaePyU65R1SVWYDdLamM3wmQsBdoA==
-X-Received: by 2002:a50:b832:: with SMTP id j47-v6mr21894361ede.272.1529581360622;
-        Thu, 21 Jun 2018 04:42:40 -0700 (PDT)
-Received: from xps15.office-zrh.daedalean.ai ([2a02:168:2092:1:8022:cadf:eea2:cab0])
-        by smtp.gmail.com with ESMTPSA id z44-v6sm4519310edb.72.2018.06.21.04.42.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 04:42:39 -0700 (PDT)
-From:   Bas Vermeulen <bas@daedalean.ai>
-To:     netdev@vger.kernel.org
-Cc:     bas@daedalean.ai, Madalin Bucur <madalin.bucur@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] fman: don't set node on dpaa-ethernet platform device
-Date:   Thu, 21 Jun 2018 13:42:22 +0200
-Message-Id: <20180621114222.8326-1-bas@daedalean.ai>
-X-Mailer: git-send-email 2.17.1
+        id S933258AbeFULt2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 07:49:28 -0400
+Received: from foss.arm.com ([217.140.101.70]:48908 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933130AbeFULt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 07:49:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 566331435;
+        Thu, 21 Jun 2018 04:49:26 -0700 (PDT)
+Received: from ssg-dev-vb.kfn.arm.com (unknown [10.45.48.23])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 310863F578;
+        Thu, 21 Jun 2018 04:49:24 -0700 (PDT)
+From:   Hadar Gat <hadar.gat@arm.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ofir Drang <ofir.drang@arm.com>,
+        Gilad Ben-Yossef <gilad.BenYossef@arm.com>,
+        Hadar Gat <hadar.gat@arm.com>, stable@vger.kernel.org
+Subject: [PATCH] crypto: ccree: fix finup
+Date:   Thu, 21 Jun 2018 12:47:32 +0100
+Message-Id: <1529581652-31294-1-git-send-email-hadar.gat@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Setting dev->node to the mac_node in dpaa_eth_add_device during probe
-causes the mac_probe to be called again for the dpaa-ethernet.* device
-that was just added.
+finup() operation was incorrect, padding was missing.
+Fix by setting the ccree HW to enable padding.
 
-Fix this by not setting dev->node, as it is not needed.
-
-Signed-off-by: Bas Vermeulen <bas@daedalean.ai>
+Signed-off-by: Hadar Gat <hadar.gat@arm.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/net/ethernet/freescale/fman/mac.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/crypto/ccree/cc_hash.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index 387eb4a88b72..9a265f862065 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -623,7 +623,6 @@ static struct platform_device *dpaa_eth_add_device(int fman_id,
- 		goto no_mem;
- 	}
+diff --git a/drivers/crypto/ccree/cc_hash.c b/drivers/crypto/ccree/cc_hash.c
+index 96ff777..e8bb934 100644
+--- a/drivers/crypto/ccree/cc_hash.c
++++ b/drivers/crypto/ccree/cc_hash.c
+@@ -500,8 +500,12 @@ static int cc_hash_digest(struct ahash_request *req)
+ }
  
--	pdev->dev.of_node = node;
- 	pdev->dev.parent = priv->dev;
- 	set_dma_ops(&pdev->dev, get_dma_ops(priv->dev));
+ static int cc_restore_hash(struct cc_hw_desc *desc, struct cc_hash_ctx *ctx,
+-			   struct ahash_req_ctx *state, unsigned int idx)
++			   struct ahash_req_ctx *state, unsigned int idx,
++			   bool hash_padding)
+ {
++	enum cc_hash_conf_pad pad_conf = hash_padding ? HASH_PADDING_ENABLED :
++			HASH_PADDING_DISABLED;
++
+ 	/* Restore hash digest */
+ 	hw_desc_init(&desc[idx]);
+ 	set_cipher_mode(&desc[idx], ctx->hw_mode);
+@@ -514,7 +518,7 @@ static int cc_restore_hash(struct cc_hw_desc *desc, struct cc_hash_ctx *ctx,
+ 	/* Restore hash current length */
+ 	hw_desc_init(&desc[idx]);
+ 	set_cipher_mode(&desc[idx], ctx->hw_mode);
+-	set_cipher_config1(&desc[idx], HASH_PADDING_DISABLED);
++	set_cipher_config1(&desc[idx], pad_conf);
+ 	set_din_type(&desc[idx], DMA_DLLI, state->digest_bytes_len_dma_addr,
+ 		     ctx->drvdata->hash_len_sz, NS_BIT);
+ 	set_flow_mode(&desc[idx], S_DIN_to_HASH);
+@@ -572,7 +576,7 @@ static int cc_hash_update(struct ahash_request *req)
+ 	cc_req.user_cb = cc_update_complete;
+ 	cc_req.user_arg = req;
  
+-	idx = cc_restore_hash(desc, ctx, state, idx);
++	idx = cc_restore_hash(desc, ctx, state, idx, false);
+ 
+ 	/* store the hash digest result in context */
+ 	hw_desc_init(&desc[idx]);
+@@ -644,7 +648,7 @@ static int cc_hash_finup(struct ahash_request *req)
+ 	cc_req.user_cb = cc_hash_complete;
+ 	cc_req.user_arg = req;
+ 
+-	idx = cc_restore_hash(desc, ctx, state, idx);
++	idx = cc_restore_hash(desc, ctx, state, idx, true);
+ 
+ 	if (is_hmac)
+ 		idx = cc_fin_hmac(desc, req, idx);
+@@ -704,7 +708,7 @@ static int cc_hash_final(struct ahash_request *req)
+ 	cc_req.user_cb = cc_hash_complete;
+ 	cc_req.user_arg = req;
+ 
+-	idx = cc_restore_hash(desc, ctx, state, idx);
++	idx = cc_restore_hash(desc, ctx, state, idx, false);
+ 
+ 	/* "DO-PAD" must be enabled only when writing current length to HW */
+ 	hw_desc_init(&desc[idx]);
 -- 
-2.17.1
+2.7.4
 
