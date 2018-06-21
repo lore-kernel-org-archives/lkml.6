@@ -3,84 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B683C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B41C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D96F620693
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:39:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D96F620693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id C568120875
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:39:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C568120875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754373AbeFUAjU (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 20:39:20 -0400
-Received: from gate.crashing.org ([63.228.1.57]:38967 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754251AbeFUAjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 20:39:18 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5L0clXJ010219;
-        Wed, 20 Jun 2018 19:38:48 -0500
-Message-ID: <c03e5e63fb64d2bf503bb2e00101bf352e396ceb.camel@kernel.crashing.org>
-Subject: Re: [PATCH] arch: powerpc: pci-common: fix wrong return value check
- on phd_id
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Walker <danielwa@cisco.com>,
-        "Guilherme G. Piccoli" <guilherme@gpiccoli.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        xe-kernel@external.cisco.com, linux-kernel@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Mauro Rodrigues <maurosr@linux.vnet.ibm.com>,
-        linux-pci@vger.kernel.org
-Date:   Thu, 21 Jun 2018 10:38:46 +1000
-In-Reply-To: <87in6dvv89.fsf@concordia.ellerman.id.au>
-References: <20180618165706.42679-1-danielwa@cisco.com>
-         <CALJn8nPbTy3Ne2a7L71c2YZ06Ccr2j0zs6TdptfRc7O-N9u=Yg@mail.gmail.com>
-         <c56f43f5-7902-f7c8-20e1-955ad064c4d0@cisco.com>
-         <CALJn8nM+S7STs+_MTje1qVCpa6MvnROS2+b5_GDz2wYs8etapA@mail.gmail.com>
-         <6d321d8a-432d-d41d-cc08-144764d644b2@cisco.com>
-         <87in6dvv89.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
+        id S932431AbeFUAjf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 20:39:35 -0400
+Received: from lucky1.263xmail.com ([211.157.147.131]:37038 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754443AbeFUAjd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 20:39:33 -0400
+Received: from shawn.lin?rock-chips.com (unknown [192.168.167.129])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 8B366967DB;
+        Thu, 21 Jun 2018 08:39:28 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from [172.16.12.8] (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 4E6C5331;
+        Thu, 21 Jun 2018 08:39:26 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <7aba6fb4d8ff262df4b0098ffbf36431>
+X-ATTACHMENT-NUM: 0
+X-SENDER: lintao@rock-chips.com
+X-DNS-TYPE: 0
+Received: from [172.16.12.8] (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 22848QO558A;
+        Thu, 21 Jun 2018 08:39:28 +0800 (CST)
+Cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        jesper.nilsson@axis.com, sboyd@codeaurora.org,
+        shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 02/11] PCI: Update xxx_pcie_ep_raise_irq() and
+ pci_epc_raise_irq() signatures
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        adouglas@cadence.com
+References: <cover.1529507416.git.gustavo.pimentel@synopsys.com>
+ <180c7a9743a67120e77ab198889c1373e91643b9.1529507416.git.gustavo.pimentel@synopsys.com>
+From:   Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <8fda923d-b6c3-58aa-c534-f646b134a68b@rock-chips.com>
+Date:   Thu, 21 Jun 2018 08:39:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <180c7a9743a67120e77ab198889c1373e91643b9.1529507416.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-06-21 at 10:28 +1000, Michael Ellerman wrote:
-> 
-> That's true, though I think yours is the first report we've had of
-> problems.
-> 
-> The old behaviour relied on device tree ordering in nearly all cases, so
-> you basically get whatever order your firmware happened to flatten the
-> device tree in.
-> 
-> That tends to be consistent on a single system or with a single firmware
-> version, but it's not stable in general. If your firmware changes, or
-> you kexec then the ordering can change.
-> 
-> So I'd definitely prefer we didn't go back to that behaviour, because
-> it's basically "random order".
-> 
-> If there's anything you can do on your end to cope with the ne
+On 2018/6/21 0:28, Gustavo Pimentel wrote:
 
-I think the numbering change has to be coped with. However:
+>   drivers/pci/controller/pcie-rockchip-ep.c         | 2 +-
 
-The main issue I see is that it somewhat hard wires that "reg"
-is a 64-bit property with the "interesting" bits in the bottom,
-and that "interesting" part somewhat happens to fit in 16-bits.
+Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
 
-It would have been better to get the full address out of reg (using the
-appropriate size specified in the parent #address-cells) and hash it.
-
-Cheers,
-Ben.
 
