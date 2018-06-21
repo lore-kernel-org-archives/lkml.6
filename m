@@ -5,88 +5,67 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A72C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEA5C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 370AC216C1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 370AC216C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7478A216C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:47:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7478A216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soulik.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933496AbeFUQrm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:47:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:52430 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933391AbeFUQrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:47:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C1571435;
-        Thu, 21 Jun 2018 09:47:40 -0700 (PDT)
-Received: from approximate.cambridge.arm.com (approximate.cambridge.arm.com [10.1.206.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DA8F3F5BC;
-        Thu, 21 Jun 2018 09:47:39 -0700 (PDT)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: shpchp: Fix probing logic inversion
-Date:   Thu, 21 Jun 2018 17:47:15 +0100
-Message-Id: <20180621164715.28160-1-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.17.1
+        id S933546AbeFUQrz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:47:55 -0400
+Received: from kozue.soulik.info ([108.61.200.231]:40946 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933391AbeFUQry (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:47:54 -0400
+Received: from misaki.sumomo.pri (unknown [IPv6:2001:470:b30d:2:ec4:7aff:fe92:7ff4])
+        by kozue.soulik.info (Postfix) with ESMTPA id 3E082100CDA;
+        Fri, 22 Jun 2018 01:48:33 +0900 (JST)
+From:   Randy Li <ayaka@soulik.info>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Randy Li <ayaka@soulik.info>, hjc@rock-chips.com, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        nicolas.dufresne@collabora.com, gustavo@padovan.org,
+        seanpaul@chromium.org, airlied@linux.ie
+Subject: [PATCH v3 0/2] Add support for a YUV 10bits pixel format
+Date:   Fri, 22 Jun 2018 00:47:35 +0800
+Message-Id: <20180621164737.23611-1-ayaka@soulik.info>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until recently, shpc_probe() would bail out pretty early in the
-absence of the SHPC capability. A logic change in the way the
-driver now checks that capability makes it go and probe the
-firmware anyway, with ugly consequences if the system is not
-ACPI based (my arm64 ThunderX is DT driven, and explodes in
-a spectacular way after getting a NULL root bridge from the
-non-existent ACPI tables...).
+In the last time, I got some feedback and not a clear guide on what
+I should do. So just give more comment on describing this 10bits format.
+Whether I should add bpp instead cpp in drm_format_info and update a
+numbers of functions is up to you guys.
 
-Take this opportunity to move the call to shpchp_is_native()
-back into shpc_probe(), making it clear that a non-ACPI system
-is not expected to use this driver.
+And I don't any other driver would request 10bits yuv format support,
+so I can't add the pixel format they don't use as I did a year ago.
+You would ignore those patches.
 
-Fixes: 90cc0c3cc709 ("PCI: shpchp: Add shpchp_is_native()")
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/pci/hotplug/acpi_pcihp.c  | 3 ---
- drivers/pci/hotplug/shpchp_core.c | 3 ++-
- 2 files changed, 2 insertions(+), 4 deletions(-)
+v3:
+I put a code comment in a wrong commit in the previous commit,
+move it back.
+v2:
+add more comment to describe this pixel format
 
-diff --git a/drivers/pci/hotplug/acpi_pcihp.c b/drivers/pci/hotplug/acpi_pcihp.c
-index 3979f89b250a..b57f29753a08 100644
---- a/drivers/pci/hotplug/acpi_pcihp.c
-+++ b/drivers/pci/hotplug/acpi_pcihp.c
-@@ -83,9 +83,6 @@ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *pdev)
- 	 * OSHP within the scope of the hotplug controller and its parents,
- 	 * up to the host bridge under which this controller exists.
- 	 */
--	if (shpchp_is_native(pdev))
--		return 0;
--
- 	/* If _OSC exists, we should not evaluate OSHP */
- 	host = pci_find_host_bridge(pdev->bus);
- 	root = acpi_pci_find_root(ACPI_HANDLE(&host->dev));
-diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
-index e91be287f292..8902fe18a636 100644
---- a/drivers/pci/hotplug/shpchp_core.c
-+++ b/drivers/pci/hotplug/shpchp_core.c
-@@ -275,7 +275,8 @@ static int shpc_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	int rc;
- 	struct controller *ctrl;
- 
--	if (acpi_get_hp_hw_control_from_firmware(pdev))
-+	if (!shpchp_is_native(pdev) ||
-+	    acpi_get_hp_hw_control_from_firmware(pdev))
- 		return -ENODEV;
- 
- 	ctrl = kzalloc(sizeof(*ctrl), GFP_KERNEL);
+Randy Li (2):
+  drm/fourcc: add a 10bits fully packed variant of NV12
+  drm/rockchip: Support 10 bits yuv format in vop
+
+ drivers/gpu/drm/drm_fourcc.c                |  1 +
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 27 +++++++++++++++++++++++++--
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.h |  1 +
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c |  2 ++
+ include/uapi/drm/drm_fourcc.h               |  8 ++++++++
+ 5 files changed, 37 insertions(+), 2 deletions(-)
+
 -- 
-2.17.1
+2.14.4
 
