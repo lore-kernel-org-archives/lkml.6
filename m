@@ -2,115 +2,263 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF11C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA329C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE7320989
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:44:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE7320989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 80B9E20C07
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:47:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B9E20C07
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933331AbeFUPoY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:44:24 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:45946 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933246AbeFUPoM (ORCPT
+        id S933361AbeFUPrE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 11:47:04 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:47797 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933236AbeFUPrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:44:12 -0400
-Received: from belgarion.home ([90.55.203.186])
-        by mwinf5d49 with ME
-        id 1Tk01y00E41oiFu03TkAfA; Thu, 21 Jun 2018 17:44:10 +0200
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Thu, 21 Jun 2018 17:44:10 +0200
-X-ME-IP: 90.55.203.186
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: [PATCH 2/2] ALSA: ac97: add codecs devicetree binding
-Date:   Thu, 21 Jun 2018 17:43:56 +0200
-Message-Id: <20180621154356.5438-2-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180621154356.5438-1-robert.jarzmik@free.fr>
-References: <20180621154356.5438-1-robert.jarzmik@free.fr>
+        Thu, 21 Jun 2018 11:47:02 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LshA1-1gBN451nLN-012LNs; Thu, 21 Jun 2018 17:46:48 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
+        "Yan, Zheng" <zyan@redhat.com>
+Cc:     y2038@lists.linaro.org, Yan Zheng <ukernel@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Alex Elder <elder@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Chengguang Xu <cgxu519@gmx.com>, ceph-devel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH v2 4/5] ceph: use timespec64 for r_mtime
+Date:   Thu, 21 Jun 2018 17:46:10 +0200
+Message-Id: <20180621154645.136949-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:eEIpH/oRH1wIgQJsz2C/Qclu5AAleaDzAJiwSiYUvv3ah0vxrxf
+ BT/OoKP6yjfrgpDV116FP9mFw5ZgjrHokUcUzgXvXYqxUeQR0w3NCGOy/8Vs4b67WlziwVW
+ 6CVmsSBAE0onNOsIKEP3zwX7rQdN6lUerev3weBaERmqmitmOKfU/OxPauWbi1mzdhKAXrK
+ AdcJKcYZHTvY9nq3EPL+A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Xnlb5ZrVb9Q=:kePVjtM6XDSclYvWDNxMxf
+ +73dHHlSYV30GBXvRxtVNGAcNv0qwBOeJgqDsVM7JpZx+AKCfCFbZ6pYntNuTA6fR1hz9V15y
+ 6W7aDmbFUGSOFA8cxl9hwnMs5RqgBfNmr37rBkNpWpZxHm7yauP0KduYNI2QzMxei4XIVw3Ga
+ p37lzNsvmOu1wZPygpocoX5aftcD9fL9f7f1ZW4TgLst7532+3Q+GXe4SQ9ZlOx5DVCQ33uP2
+ pSYfNtYeG25RZlvcr+xKeoduf/L9WjDO8u23lpHmNYxfPSBs5gmFoF0N2PFieno8UseSF3EU2
+ KOD5WnHipTbltfaeJSULzuegUAw0te2XyQO+/AafXLLJtk5NCk20lwj9h+jNHsaTqexpSyhm2
+ ItavjXqao1v3BgdBreRpJowC6YesAwYvGMZj7FDgHqFo4pQwPVUxkJ6b/N7YT7xYXwax0iYQC
+ xpUtbYpNqVadUpjf21mDFsqGY1CvFGiFOhYWtv+3n2lEXX7pEXzHkCeiYlnJsuSaDfLgu0bw/
+ 3rIVgx1ELShmojYKKIms+Y7pr9aW+b4OOhUy+lFEr6pZHg+shBiDgmlClhXn37W4MZH8ua/lN
+ 8zPZjd8NSx/+EOBYsZWYXUQ3PpQWcemRVA+d4Paf0JwoN/B9Kdx2kjPtTMt5G+9dAnxZFdgf7
+ 5AbgYa/1kYxyyO1bF988VGn5MMn4zW4XEyg+s+waE965boFgzcaTBv5K1nfzxE4zX3cs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a devicetree binding for codecs. This is especially useful if the
-AC97 bitclk clock is provided by the codec, as it has to be described in
-the devicetree description for the ac97 bus code to aquire it.
+The request mtime field is used all over ceph, and is currently
+represented as a 'timespec' structure in Linux. This changes it to
+timespec64 to allow times beyond 2038, modifying all users at the
+same time.
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Special review query: review the "return of_node_get(node)", which
-assumes that upon device removal, of_put_node(dev.of_node) will be
-called...
+v2: undo an unneeded change pointed out by Yan Zheng.
+    Resending only this patch for now, let me know if you
+    would like to see the entire series reposted instead.
 ---
- sound/ac97/bus.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/block/rbd.c             |  2 +-
+ fs/ceph/addr.c                  | 12 ++++++------
+ fs/ceph/file.c                  |  8 ++++----
+ include/linux/ceph/osd_client.h |  6 +++---
+ net/ceph/osd_client.c           |  8 ++++----
+ 5 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/sound/ac97/bus.c b/sound/ac97/bus.c
-index 31f858eceffc..c8e20dd8786f 100644
---- a/sound/ac97/bus.c
-+++ b/sound/ac97/bus.c
-@@ -13,6 +13,7 @@
- #include <linux/idr.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
-+#include <linux/of.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-@@ -68,6 +69,27 @@ ac97_codec_find(struct ac97_controller *ac97_ctrl, unsigned int codec_num)
- 	return ac97_ctrl->codecs[codec_num];
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index fa0729c1e776..356936333cd9 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -1452,7 +1452,7 @@ static void rbd_osd_req_format_write(struct rbd_obj_request *obj_request)
+ 	struct ceph_osd_request *osd_req = obj_request->osd_req;
+ 
+ 	osd_req->r_flags = CEPH_OSD_FLAG_WRITE;
+-	ktime_get_real_ts(&osd_req->r_mtime);
++	ktime_get_real_ts64(&osd_req->r_mtime);
+ 	osd_req->r_data_offset = obj_request->ex.oe_off;
  }
  
-+static struct device_node *
-+ac97_of_get_child_device(struct ac97_controller *ac97_ctrl, int idx,
-+			 unsigned int vendor_id)
-+{
-+	struct device_node *node;
-+	u32 reg;
-+	char compat[] = "ac97,0000,0000";
-+
-+	snprintf(compat, sizeof(compat), "ac97,%04x,%04x",
-+		 vendor_id >> 16, vendor_id & 0xffff);
-+
-+	for_each_child_of_node(ac97_ctrl->parent->of_node, node) {
-+		if ((idx != of_property_read_u32(node, "reg", &reg)) ||
-+		    !of_device_is_compatible(node, compat))
-+			continue;
-+		return of_node_get(node);
-+	}
-+
-+	return NULL;
-+}
-+
- static void ac97_codec_release(struct device *dev)
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 292b3d72d725..d44d51e69e76 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -574,7 +574,7 @@ static u64 get_writepages_data_length(struct inode *inode,
+  */
+ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
  {
- 	struct ac97_codec_device *adev;
-@@ -98,6 +120,8 @@ static int ac97_codec_add(struct ac97_controller *ac97_ctrl, int idx,
+-	struct timespec ts;
++	struct timespec64 ts;
+ 	struct inode *inode;
+ 	struct ceph_inode_info *ci;
+ 	struct ceph_fs_client *fsc;
+@@ -625,7 +625,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 		set_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
  
- 	device_initialize(&codec->dev);
- 	dev_set_name(&codec->dev, "%s:%u", dev_name(ac97_ctrl->parent), idx);
-+	codec->dev.of_node = ac97_of_get_child_device(ac97_ctrl, idx,
-+						      vendor_id);
+ 	set_page_writeback(page);
+-	ts = timespec64_to_timespec(inode->i_mtime);
++	ts = inode->i_mtime;
+ 	err = ceph_osdc_writepages(&fsc->client->osdc, ceph_vino(inode),
+ 				   &ci->i_layout, snapc, page_off, len,
+ 				   ceph_wbc.truncate_seq,
+@@ -1134,7 +1134,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 			pages = NULL;
+ 		}
  
- 	ret = device_add(&codec->dev);
- 	if (ret)
+-		req->r_mtime = timespec64_to_timespec(inode->i_mtime);
++		req->r_mtime = inode->i_mtime;
+ 		rc = ceph_osdc_start_request(&fsc->client->osdc, req, true);
+ 		BUG_ON(rc);
+ 		req = NULL;
+@@ -1734,7 +1734,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+ 		goto out;
+ 	}
+ 
+-	req->r_mtime = timespec64_to_timespec(inode->i_mtime);
++	req->r_mtime = inode->i_mtime;
+ 	err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+ 	if (!err)
+ 		err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+@@ -1776,7 +1776,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
+ 			goto out_put;
+ 	}
+ 
+-	req->r_mtime = timespec64_to_timespec(inode->i_mtime);
++	req->r_mtime = inode->i_mtime;
+ 	err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+ 	if (!err)
+ 		err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+@@ -1937,7 +1937,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
+ 				     0, false, true);
+ 	err = ceph_osdc_start_request(&fsc->client->osdc, rd_req, false);
+ 
+-	wr_req->r_mtime = timespec64_to_timespec(ci->vfs_inode.i_mtime);
++	wr_req->r_mtime = ci->vfs_inode.i_mtime;
+ 	err2 = ceph_osdc_start_request(&fsc->client->osdc, wr_req, false);
+ 
+ 	if (!err)
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index ad0bed99b1d5..2f3a30ca94bf 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -721,7 +721,7 @@ struct ceph_aio_request {
+ 	struct list_head osd_reqs;
+ 	unsigned num_reqs;
+ 	atomic_t pending_reqs;
+-	struct timespec mtime;
++	struct timespec64 mtime;
+ 	struct ceph_cap_flush *prealloc_cf;
+ };
+ 
+@@ -923,7 +923,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
+ 	int num_pages = 0;
+ 	int flags;
+ 	int ret;
+-	struct timespec mtime = timespec64_to_timespec(current_time(inode));
++	struct timespec64 mtime = current_time(inode);
+ 	size_t count = iov_iter_count(iter);
+ 	loff_t pos = iocb->ki_pos;
+ 	bool write = iov_iter_rw(iter) == WRITE;
+@@ -1131,7 +1131,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+ 	int flags;
+ 	int ret;
+ 	bool check_caps = false;
+-	struct timespec mtime = timespec64_to_timespec(current_time(inode));
++	struct timespec64 mtime = current_time(inode);
+ 	size_t count = iov_iter_count(from);
+ 
+ 	if (ceph_snap(file_inode(file)) != CEPH_NOSNAP)
+@@ -1663,7 +1663,7 @@ static int ceph_zero_partial_object(struct inode *inode,
+ 		goto out;
+ 	}
+ 
+-	req->r_mtime = timespec64_to_timespec(inode->i_mtime);
++	req->r_mtime = inode->i_mtime;
+ 	ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
+ 	if (!ret) {
+ 		ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+index 0d6ee04b4c41..2e6611c1e9a0 100644
+--- a/include/linux/ceph/osd_client.h
++++ b/include/linux/ceph/osd_client.h
+@@ -199,7 +199,7 @@ struct ceph_osd_request {
+ 	/* set by submitter */
+ 	u64 r_snapid;                         /* for reads, CEPH_NOSNAP o/w */
+ 	struct ceph_snap_context *r_snapc;    /* for writes */
+-	struct timespec r_mtime;              /* ditto */
++	struct timespec64 r_mtime;            /* ditto */
+ 	u64 r_data_offset;                    /* ditto */
+ 	bool r_linger;                        /* don't resend on failure */
+ 
+@@ -253,7 +253,7 @@ struct ceph_osd_linger_request {
+ 	struct ceph_osd_request_target t;
+ 	u32 map_dne_bound;
+ 
+-	struct timespec mtime;
++	struct timespec64 mtime;
+ 
+ 	struct kref kref;
+ 	struct mutex lock;
+@@ -508,7 +508,7 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
+ 				struct ceph_snap_context *sc,
+ 				u64 off, u64 len,
+ 				u32 truncate_seq, u64 truncate_size,
+-				struct timespec *mtime,
++				struct timespec64 *mtime,
+ 				struct page **pages, int nr_pages);
+ 
+ /* watch/notify */
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index a00c74f1154e..a87a021ca9d0 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -1978,7 +1978,7 @@ static void encode_request_partial(struct ceph_osd_request *req,
+ 	p += sizeof(struct ceph_blkin_trace_info);
+ 
+ 	ceph_encode_32(&p, 0); /* client_inc, always 0 */
+-	ceph_encode_timespec(p, &req->r_mtime);
++	ceph_encode_timespec64(p, &req->r_mtime);
+ 	p += sizeof(struct ceph_timespec);
+ 
+ 	encode_oloc(&p, end, &req->r_t.target_oloc);
+@@ -4512,7 +4512,7 @@ ceph_osdc_watch(struct ceph_osd_client *osdc,
+ 	ceph_oid_copy(&lreq->t.base_oid, oid);
+ 	ceph_oloc_copy(&lreq->t.base_oloc, oloc);
+ 	lreq->t.flags = CEPH_OSD_FLAG_WRITE;
+-	ktime_get_real_ts(&lreq->mtime);
++	ktime_get_real_ts64(&lreq->mtime);
+ 
+ 	lreq->reg_req = alloc_linger_request(lreq);
+ 	if (!lreq->reg_req) {
+@@ -4570,7 +4570,7 @@ int ceph_osdc_unwatch(struct ceph_osd_client *osdc,
+ 	ceph_oid_copy(&req->r_base_oid, &lreq->t.base_oid);
+ 	ceph_oloc_copy(&req->r_base_oloc, &lreq->t.base_oloc);
+ 	req->r_flags = CEPH_OSD_FLAG_WRITE;
+-	ktime_get_real_ts(&req->r_mtime);
++	ktime_get_real_ts64(&req->r_mtime);
+ 	osd_req_op_watch_init(req, 0, lreq->linger_id,
+ 			      CEPH_OSD_WATCH_OP_UNWATCH);
+ 
+@@ -5136,7 +5136,7 @@ int ceph_osdc_writepages(struct ceph_osd_client *osdc, struct ceph_vino vino,
+ 			 struct ceph_snap_context *snapc,
+ 			 u64 off, u64 len,
+ 			 u32 truncate_seq, u64 truncate_size,
+-			 struct timespec *mtime,
++			 struct timespec64 *mtime,
+ 			 struct page **pages, int num_pages)
+ {
+ 	struct ceph_osd_request *req;
 -- 
-2.11.0
+2.9.0
 
