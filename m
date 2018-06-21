@@ -7,60 +7,61 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA65C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7A0C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6116A208CE
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:23:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 376F62154B
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:24:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YrTPqyFV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6116A208CE
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KZDQzMmi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376F62154B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933508AbeFUQXs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:23:48 -0400
-Received: from mail-qt0-f202.google.com ([209.85.216.202]:43497 "EHLO
-        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933346AbeFUQXn (ORCPT
+        id S933578AbeFUQYX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:24:23 -0400
+Received: from mail-it0-f74.google.com ([209.85.214.74]:38359 "EHLO
+        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933421AbeFUQXi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:23:43 -0400
-Received: by mail-qt0-f202.google.com with SMTP id j2-v6so2898745qtn.10
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 09:23:42 -0700 (PDT)
+        Thu, 21 Jun 2018 12:23:38 -0400
+Received: by mail-it0-f74.google.com with SMTP id l6-v6so3043928itb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 09:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:date:in-reply-to:message-id:references:subject:from:to
          :cc;
-        bh=69zGo/r6+0irgRW+5JOoApDxQgRAUSTQ2lETVwGDrV0=;
-        b=YrTPqyFVtXsMAvvC5f5FlE1rzB5VeSdti6iX58Isa6cVmz2PRckosBrTZ5w2rs4uIj
-         hXbElK+IDt19xVxdp6+Ej58/YGBIfozLYxh4cNMmpMiK7BTcUWNRnmgP7RvhL7ut0v9w
-         THXUgfYFZ3axU7uHsYtg4A02xPDbqJ7Yp/ai0w3SHqGBfnObeJYV7cpyMMd1LtmUsY5g
-         ydsE9E5eJIAoa61wuBIoljqU6MLCCgC+mlBEe3umrKVOe9ddAGyFw+/nVP/tnjy+oj4P
-         CEVNylQy2JGqrLErk4nK+FB0hicYy5w0SbPDo4Vqt8PQc03syxJdEPDGHgCOscG95Eeq
-         et2w==
+        bh=6IRyW2+wJGByljsyTJ7DxPDfnQO8dfQWb02gEMcyb/I=;
+        b=KZDQzMmiOTmJL4Bg4c61XG5P+PkX8ExmS6RdxYMtWnQXO6tbAUV82YwTJz6bLugXjA
+         P89JHaUMiXfrhp4IO0wOxlVvQLfHWiiQxCJJ51KwExaA6jSwwHqdgs1SHoI/kkBRo9Nj
+         F1N+vNuBnoBrF5X3EQyFPo9HO6DpfYt9N0UcNjvRkE/9AWXRGOSb8l1JA7ymBehIBxH2
+         DStGEl+yPBgYCzm8jLW47ZJCcgI/OiB5i3svl0xcCzXBP7bTvpsuMMSQeis5zj96nD8Y
+         lh0AoxB90URn8e/ggtyTNj3diEmWUGbkvMbjIgYSogkL2RXCxOqiaUyMqynuBvWuIqAs
+         uYHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id
          :references:subject:from:to:cc;
-        bh=69zGo/r6+0irgRW+5JOoApDxQgRAUSTQ2lETVwGDrV0=;
-        b=swlpCede9dHUZii/PcAqepLi1q2sobt7RbZ4Qtj3btpuY8wHm9/RUTJFCg7vBlg7ne
-         gFtbPJM21bR2LhJ2KuVJi5/+lOW1eworaxtt3kvhIW6COBdGqKxAfutPHkTDXmWqXcz5
-         H4jmFSAONiGIfHAxEIboIM6dv/mIMPSPbP8ZAke/MEicpGlfAXi9bjmMv6SmGvodp4dQ
-         vn5nAsYYBVSamoLiN40xND+tTgRLqY3+nLdOfUWZZ5AO8QMHeskNIpTBFqX/3sPJMqlo
-         eO6REeqKv7vWe/zjtVphJ9FX5CTNjfggknSO8Zw/lCi68XTtZjzRjn5BKku3wxhM4UkL
-         KiDg==
-X-Gm-Message-State: APt69E2HLf8eJSPVXilCzRQ44pOfhWQS9z1QGNayPOOnq3IOfSFnxH7H
-        pewc3uHX5mwqwc9Mo01joA2WE0tQsmF3bjRuoug=
-X-Google-Smtp-Source: ADUXVKLDjcBLaZU3T6NBtD9qXhtx8YPSSonWXRKDxUZLixu0q5c66xT5K2h1Rgk/eX4EAfXz0AOTD/gjUC1MiYZGZBQ=
+        bh=6IRyW2+wJGByljsyTJ7DxPDfnQO8dfQWb02gEMcyb/I=;
+        b=UA8tqxRc7t6S6oSHZZkYFX2l2TSDzUW7JKySJC5doy3cQ5jk1FXcNyIeOpv/nn9+Lt
+         39HEUNR5eWKxiEqeAHSch7tXjOq+XGwm0p/DsubxHqa6Z0uV4MnxXzpJCobrKm/JtXyM
+         UEQ1/6W655H71we1qyy/k9AeXwJLpnxgqLmlE+OzKobhW3s+iy9Sd2lPAIuP0m2yvuzK
+         4T99gp4RIQV/7EUPAMlOdkib0vMRLfzmjtLvLD37QAeXkJSqe8rHbPsQt4hWPRwcHgnf
+         kJnqhZcXnvop3h5OiVS8lYEaLbVAwyTKLhWjRT4VbmAxwBNXosDsHU2RYaHjaKNewr1R
+         o8Kg==
+X-Gm-Message-State: APt69E2aVZEbIa7+PDbSsN4fiwFBucuklhEWWbhD74mULYEXpcdDZzOJ
+        oNndIH3Z/KQeOt1KVjuF5hN/87/esqx7DSij/j4=
+X-Google-Smtp-Source: ADUXVKJFUUPUsRNdiQoVlTdOsKnXMZ1OHQCPRT4oOKG69Pxc8FAupYvIq/39emBitL8SYG9oPiC3o/cK2cZfDUvlBPo=
 MIME-Version: 1.0
-X-Received: by 2002:a0c:89ed:: with SMTP id 42-v6mr13747177qvs.36.1529598221996;
- Thu, 21 Jun 2018 09:23:41 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 09:23:24 -0700
+X-Received: by 2002:a24:228c:: with SMTP id o134-v6mr2901471ito.30.1529598217972;
+ Thu, 21 Jun 2018 09:23:37 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 09:23:23 -0700
 In-Reply-To: <20180621162324.36656-1-ndesaulniers@google.com>
-Message-Id: <20180621162324.36656-4-ndesaulniers@google.com>
+Message-Id: <20180621162324.36656-3-ndesaulniers@google.com>
 References: <20180621162324.36656-1-ndesaulniers@google.com>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v6 3/3] x86: paravirt: make native_save_fl extern inline
+Subject: [PATCH v6 2/3] x86/asm: add _ASM_ARG* constants for argument
+ registers to <asm/asm.h>
 From:   Nick Desaulniers <ndesaulniers@google.com>
 To:     mingo@redhat.com, tglx@linutronix.de
 Cc:     akpm@linux-foundation.org, hpa@zytor.com,
@@ -81,119 +82,99 @@ Cc:     akpm@linux-foundation.org, hpa@zytor.com,
         jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
         ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
         mjg59@google.com, joe@perches.com,
-        andrea.parri@amarulasolutions.com
+        andrea.parri@amarulasolutions.com,
+        "H. Peter Anvin" <hpa@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-native_save_fl() is marked static inline, but by using it as
-a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
+From: "H. Peter Anvin" <hpa@linux.intel.com>
 
-paravirt's use of native_save_fl() also requires that no GPRs other than
-%rax are clobbered.
+i386 and x86-64 uses different registers for arguments; make them
+available so we don't have to #ifdef in the actual code.
 
-Compilers have different heuristics which they use to emit stack guard
-code, the emittance of which can break paravirt's callee saved assumption
-by clobbering %rcx.
-
-Marking a function definition extern inline means that if this version
-cannot be inlined, then the out-of-line version will be preferred. By
-having the out-of-line version be implemented in assembly, it cannot be
-instrumented with a stack protector, which might violate custom calling
-conventions that code like paravirt rely on.
-
-The semantics of extern inline has changed since gnu89. This means that
-folks using GCC versions >= 5.1 may see symbol redefinition errors at
-link time for subdirs that override KBUILD_CFLAGS (making the C standard
-used implicit) regardless of this patch. This has been cleaned up
-earlier in the patch set, but is left as a note in the commit message
-for future travelers.
-
-Reports:
-https://lkml.org/lkml/2018/5/7/534
-https://github.com/ClangBuiltLinux/linux/issues/16
-
-Discussion:
-https://bugs.llvm.org/show_bug.cgi?id=37512
-https://lkml.org/lkml/2018/5/24/1371
-
-Thanks to the many folks that participated in the discussion.
+Native size and specified size (q, l, w, b) versions are provided.
 
 Acked-by: Juergen Gross <jgross@suse.com>
-Debugged-by: Alistair Strachan <astrachan@google.com>
-Debugged-by: Matthias Kaehlcke <mka@chromium.org>
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
+Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Suggested-by: Tom Stellar <tstellar@redhat.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
 ---
- arch/x86/include/asm/irqflags.h |  2 +-
- arch/x86/kernel/Makefile        |  1 +
- arch/x86/kernel/irqflags.S      | 26 ++++++++++++++++++++++++++
- 3 files changed, 28 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/kernel/irqflags.S
+ arch/x86/include/asm/asm.h | 59 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
-index 89f08955fff7..c4fc17220df9 100644
---- a/arch/x86/include/asm/irqflags.h
-+++ b/arch/x86/include/asm/irqflags.h
-@@ -13,7 +13,7 @@
-  * Interrupt control:
-  */
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 219faaec51df..990770f9e76b 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -46,6 +46,65 @@
+ #define _ASM_SI		__ASM_REG(si)
+ #define _ASM_DI		__ASM_REG(di)
  
--static inline unsigned long native_save_fl(void)
-+extern inline unsigned long native_save_fl(void)
- {
- 	unsigned long flags;
- 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 02d6f5cf4e70..8824d01c0c35 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -61,6 +61,7 @@ obj-y			+= alternative.o i8253.o hw_breakpoint.o
- obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
- obj-y			+= pci-iommu_table.o
- obj-y			+= resource.o
-+obj-y			+= irqflags.o
- 
- obj-y				+= process.o
- obj-y				+= fpu/
-diff --git a/arch/x86/kernel/irqflags.S b/arch/x86/kernel/irqflags.S
-new file mode 100644
-index 000000000000..ddeeaac8adda
---- /dev/null
-+++ b/arch/x86/kernel/irqflags.S
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __x86_64__
++/* 32 bit */
 +
-+#include <asm/asm.h>
-+#include <asm/export.h>
-+#include <linux/linkage.h>
++#define _ASM_ARG1	_ASM_AX
++#define _ASM_ARG2	_ASM_DX
++#define _ASM_ARG3	_ASM_CX
 +
-+/*
-+ * unsigned long native_save_fl(void)
-+ */
-+ENTRY(native_save_fl)
-+	pushf
-+	pop %_ASM_AX
-+	ret
-+ENDPROC(native_save_fl)
-+EXPORT_SYMBOL(native_save_fl)
++#define _ASM_ARG1L	eax
++#define _ASM_ARG2L	edx
++#define _ASM_ARG3L	ecx
 +
-+/*
-+ * void native_restore_fl(unsigned long flags)
-+ * %eax/%rdi: flags
-+ */
-+ENTRY(native_restore_fl)
-+	push %_ASM_ARG1
-+	popf
-+	ret
-+ENDPROC(native_restore_fl)
-+EXPORT_SYMBOL(native_restore_fl)
++#define _ASM_ARG1W	ax
++#define _ASM_ARG2W	dx
++#define _ASM_ARG3W	cx
++
++#define _ASM_ARG1B	al
++#define _ASM_ARG2B	dl
++#define _ASM_ARG3B	cl
++
++#else
++/* 64 bit */
++
++#define _ASM_ARG1	_ASM_DI
++#define _ASM_ARG2	_ASM_SI
++#define _ASM_ARG3	_ASM_DX
++#define _ASM_ARG4	_ASM_CX
++#define _ASM_ARG5	r8
++#define _ASM_ARG6	r9
++
++#define _ASM_ARG1Q	rdi
++#define _ASM_ARG2Q	rsi
++#define _ASM_ARG3Q	rdx
++#define _ASM_ARG4Q	rcx
++#define _ASM_ARG5Q	r8
++#define _ASM_ARG6Q	r9
++
++#define _ASM_ARG1L	edi
++#define _ASM_ARG2L	esi
++#define _ASM_ARG3L	edx
++#define _ASM_ARG4L	ecx
++#define _ASM_ARG5L	r8d
++#define _ASM_ARG6L	r9d
++
++#define _ASM_ARG1W	di
++#define _ASM_ARG2W	si
++#define _ASM_ARG3W	dx
++#define _ASM_ARG4W	cx
++#define _ASM_ARG5W	r8w
++#define _ASM_ARG6W	r9w
++
++#define _ASM_ARG1B	dil
++#define _ASM_ARG2B	sil
++#define _ASM_ARG3B	dl
++#define _ASM_ARG4B	cl
++#define _ASM_ARG5B	r8b
++#define _ASM_ARG6B	r9b
++
++#endif
++
+ /*
+  * Macros to generate condition code outputs from inline assembly,
+  * The output operand must be type "bool".
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
