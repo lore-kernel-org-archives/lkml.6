@@ -2,104 +2,281 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DATE_IN_FUTURE_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CB4C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BA4C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F43A208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:22:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ONDWY5wt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F43A208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AB8B620883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 04:29:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB8B620883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932445AbeFUEWY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 00:22:24 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33490 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932165AbeFUEWV (ORCPT
+        id S932459AbeFUE3S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 00:29:18 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:57354 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932165AbeFUE3Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 00:22:21 -0400
-Received: by mail-it0-f66.google.com with SMTP id k17-v6so1396005ita.0;
-        Wed, 20 Jun 2018 21:22:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nroC2DhC+7k64PkTneFeT+5OJJfb7IxRVtZ3Y/zM+8c=;
-        b=ONDWY5wt49aD4PPnjiTYwb3Ughed05l/mNqOTngKrk5adjmSW55rL5+2+p+YTdiU4/
-         fh6d49sJ3dlI6GkKrfhaTupEEmquKpgtT8vwC/DDPXaboV4Etk7S2nYIDrZtPML6wwgi
-         eP8db+RB8zNBvwZrrEPKqyRWyPTr+/F0uMdrWTUQASeYprcBTZxTqOPDacZYLs2MmLmE
-         x5GwlgfjVWHMeVuE07zGh6J9uW9/T4ECHZVsfFKAGd0N3fTEEnLplv2mxV5t5P5r2T8c
-         lESujqdYRr3uBv2rTiUhSyZrysN9ao4bV3mzFrWOSAm0qAa45jNZmasLJRBx6gxg+3eQ
-         8qmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nroC2DhC+7k64PkTneFeT+5OJJfb7IxRVtZ3Y/zM+8c=;
-        b=suH+zDAMhT2r7wppNvqwcD9TNqxnJCVKzonSSeMam4ZsD1sjSoSfPWTNcs7PjwCkLw
-         mUH/4VWMQ4rwBeheuDbwAFXR0UIprYPkzhKgzsVG78vNgEE3K47hyjncVpPBNlqWc+EV
-         9Dssp8pvE5jsxuR8EksydFfNjQMS3JzPUyEPvrYcQ57ksfsU7IxSsaWEMxChh+sfjcrq
-         1SpQV0cCHg9XxzEAZizC59K2zfFEmoly+8mgu+gnLlhWfnFqgRzJs4XcMNOW5BZ4o0QA
-         qETOP3HPB8hgBrMsBzZt4cY7X7UfJlAiiiUvzSJbsN9b5Wz7SQ8E6wnCD6u3RNebnR4j
-         Z15A==
-X-Gm-Message-State: APt69E1ZfLJWZK5pdv4jdz+TTHkeJryY6FNlIKwjpP+ieQNW3oofUHuU
-        e5ngQ61l4IixhGsa36h7siihJsr88++FR7xoKdw=
-X-Google-Smtp-Source: ADUXVKKuLGeVoxeeRyUe6vTn9fAYclBKqXAK8bkEpEfs29OxToBblITuAJoouLlN3X6/NTN4MEkWTXcMMYp3I7XE678=
-X-Received: by 2002:a02:938a:: with SMTP id z10-v6mr19863878jah.44.1529554940834;
- Wed, 20 Jun 2018 21:22:20 -0700 (PDT)
+        Thu, 21 Jun 2018 00:29:16 -0400
+Received: from localhost.localdomain (10.18.20.250) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 21 Jun 2018
+ 12:29:21 +0800
+From:   Yixun Lan <yixun.lan@amlogic.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Qin <jianxin.qin@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: meson-axg: add clocks required by pcie driver
+Date:   Thu, 21 Jun 2018 12:26:20 +0000
+Message-ID: <20180621122620.13195-1-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Received: by 2002:a4f:8384:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 21:22:20
- -0700 (PDT)
-In-Reply-To: <20180620203500.28309-1-nick@shmanahar.org>
-References: <CAOMZO5BTMRJmrjM7X3-7Qi1wuciOnLZhAUuWN27Dtoc0cZXVSA@mail.gmail.com>
- <20180620203500.28309-1-nick@shmanahar.org>
-From:   Chris Healy <cphealy@gmail.com>
-Date:   Wed, 20 Jun 2018 21:22:20 -0700
-Message-ID: <CAFXsbZr-HJE54c0BC5=d1tStByA5ytGhSSZMirNKE03JzGCDXQ@mail.gmail.com>
-Subject: Re: [PATCH v4] ARM: dts: imx51-zii-rdu1: fix touchscreen pinctrl
-To:     Nick Dyer <nick@shmanahar.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Lucas Stach <l.stach@pengutronix.de>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.250]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 1:35 PM, Nick Dyer <nick@shmanahar.org> wrote:
-> The pinctrl settings were incorrect for the touchscreen interrupt line, causing
-> an interrupt storm. This change has been tested with both the atmel_mxt_ts and
-> RMI4 drivers on the RDU1 units.
->
-> The value 0x4 comes from the value of register IOMUXC_SW_PAD_CTL_PAD_CSI1_D8
-> from the old vendor kernel.
->
-> Signed-off-by: Nick Dyer <nick@shmanahar.org>
-> Fixes: ceef0396f367 ("ARM: dts: imx: add ZII RDU1 board")
-> Cc: <stable@vger.kernel.org> # 4.15+
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> ---
-> Changes in v4:
-> - Add reviewed by Fabio
-> Changes in v3:
-> - Update commit message to add source of 0x4 value, fixes tag and CC stable
-> Changes in v2:
-> - Use hex, only alter IRQ line config
+Adding clocks for pcie driver, due to the ASIC design,
+the pcie controller re-use part of the mipi clock logic,
+so the mipi clock is also required.
 
-Tested on an RDU1 with Synaptics touchscreen successfully.  No
-interrupt store any longer...
+Tested-by: Jianxin Qin <jianxin.qin@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ drivers/clk/meson/axg.c              | 145 +++++++++++++++++++++++++++
+ drivers/clk/meson/axg.h              |   6 +-
+ include/dt-bindings/clock/axg-clkc.h |   3 +
+ 3 files changed, 153 insertions(+), 1 deletion(-)
 
-Tested-by: Chris Healy <cphealy@gmail.com>
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index bd4dbc696b88..f1dc5433b69d 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -626,6 +626,137 @@ static struct clk_regmap axg_mpll3 = {
+ 	},
+ };
+ 
++static const struct pll_rate_table axg_pcie_pll_rate_table[] = {
++	{
++		.rate	= 100000000,
++		.m	= 200,
++		.n	= 3,
++		.od	= 1,
++		.od2	= 3,
++	},
++	{ /* sentinel */ },
++};
++
++static const struct reg_sequence axg_pcie_init_regs[] = {
++	{ .reg = HHI_PCIE_PLL_CNTL,	.def = 0x400106c8 },
++	{ .reg = HHI_PCIE_PLL_CNTL1,	.def = 0x0084a2aa },
++	{ .reg = HHI_PCIE_PLL_CNTL2,	.def = 0xb75020be },
++	{ .reg = HHI_PCIE_PLL_CNTL3,	.def = 0x0a47488e },
++	{ .reg = HHI_PCIE_PLL_CNTL4,	.def = 0xc000004d },
++	{ .reg = HHI_PCIE_PLL_CNTL5,	.def = 0x00078000 },
++	{ .reg = HHI_PCIE_PLL_CNTL6,	.def = 0x002323c6 },
++};
++
++static struct clk_regmap axg_pcie_pll = {
++	.data = &(struct meson_clk_pll_data){
++		.m = {
++			.reg_off = HHI_PCIE_PLL_CNTL,
++			.shift   = 0,
++			.width   = 9,
++		},
++		.n = {
++			.reg_off = HHI_PCIE_PLL_CNTL,
++			.shift   = 9,
++			.width   = 5,
++		},
++		.od = {
++			.reg_off = HHI_PCIE_PLL_CNTL,
++			.shift   = 16,
++			.width   = 2,
++		},
++		.od2 = {
++			.reg_off = HHI_PCIE_PLL_CNTL6,
++			.shift   = 6,
++			.width   = 2,
++		},
++		.frac = {
++			.reg_off = HHI_PCIE_PLL_CNTL1,
++			.shift   = 0,
++			.width   = 12,
++		},
++		.l = {
++			.reg_off = HHI_PCIE_PLL_CNTL,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = HHI_PCIE_PLL_CNTL,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.table = axg_pcie_pll_rate_table,
++		.init_regs = axg_pcie_init_regs,
++		.init_count = ARRAY_SIZE(axg_pcie_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_pll",
++		.ops = &meson_clk_pll_ops,
++		.parent_names = (const char *[]){ "xtal" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap axg_pcie_mux = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_PCIE_PLL_CNTL6,
++		.mask = 0x1,
++		.shift = 2,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_mux",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = (const char *[]){ "mpll3", "pcie_pll" },
++		.num_parents = 2,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap axg_pcie_ref = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_PCIE_PLL_CNTL6,
++		.mask = 0x1,
++		.shift = 1,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "pcie_ref",
++		.ops = &clk_regmap_mux_ops,
++		/* do not select the first partent, debug only */
++		.parent_names = (const char *[]){ "",
++			"pcie_mux" },
++		.num_parents = 2,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap axg_pcie_cml_en0 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_PCIE_PLL_CNTL6,
++		.bit_idx = 4,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "pcie_cml_en0",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "pcie_ref" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++
++	},
++};
++
++static struct clk_regmap axg_pcie_cml_en1 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = HHI_PCIE_PLL_CNTL6,
++		.bit_idx = 3,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "pcie_cml_en1",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "pcie_ref" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
+ static const char * const clk81_parent_names[] = {
+ 	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
+@@ -821,6 +952,7 @@ static MESON_GATE(axg_mmc_pclk, HHI_GCLK_MPEG2, 11);
+ static MESON_GATE(axg_vpu_intr, HHI_GCLK_MPEG2, 25);
+ static MESON_GATE(axg_sec_ahb_ahb3_bridge, HHI_GCLK_MPEG2, 26);
+ static MESON_GATE(axg_gic, HHI_GCLK_MPEG2, 30);
++static MESON_GATE(axg_mipi_enable, HHI_MIPI_CNTL0, 29);
+ 
+ /* Always On (AO) domain gates */
+ 
+@@ -910,6 +1042,13 @@ static struct clk_hw_onecell_data axg_hw_onecell_data = {
+ 		[CLKID_FCLK_DIV4_DIV]		= &axg_fclk_div4_div.hw,
+ 		[CLKID_FCLK_DIV5_DIV]		= &axg_fclk_div5_div.hw,
+ 		[CLKID_FCLK_DIV7_DIV]		= &axg_fclk_div7_div.hw,
++		[CLKID_PCIE_PLL]		= &axg_pcie_pll.hw,
++		[CLKID_PCIE_MUX]		= &axg_pcie_mux.hw,
++		[CLKID_PCIE_REF]		= &axg_pcie_ref.hw,
++		[CLKID_PCIE_CML_EN0]		= &axg_pcie_cml_en0.hw,
++		[CLKID_PCIE_CML_EN1]		= &axg_pcie_cml_en1.hw,
++		[CLKID_MIPI_ENABLE]		= &axg_mipi_enable.hw,
++
+ 		[NR_CLKS]			= NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -988,6 +1127,12 @@ static struct clk_regmap *const axg_clk_regmaps[] = {
+ 	&axg_fclk_div4,
+ 	&axg_fclk_div5,
+ 	&axg_fclk_div7,
++	&axg_pcie_pll,
++	&axg_pcie_mux,
++	&axg_pcie_ref,
++	&axg_pcie_cml_en0,
++	&axg_pcie_cml_en1,
++	&axg_mipi_enable,
+ };
+ 
+ static const struct of_device_id clkc_match_table[] = {
+diff --git a/drivers/clk/meson/axg.h b/drivers/clk/meson/axg.h
+index b421df6a7ea0..6e55ebd6c77d 100644
+--- a/drivers/clk/meson/axg.h
++++ b/drivers/clk/meson/axg.h
+@@ -16,6 +16,7 @@
+  * Register offsets from the data sheet must be multiplied by 4 before
+  * adding them to the base address to get the right value.
+  */
++#define HHI_MIPI_CNTL0			0x00
+ #define HHI_GP0_PLL_CNTL		0x40
+ #define HHI_GP0_PLL_CNTL2		0x44
+ #define HHI_GP0_PLL_CNTL3		0x48
+@@ -127,8 +128,11 @@
+ #define CLKID_FCLK_DIV4_DIV			73
+ #define CLKID_FCLK_DIV5_DIV			74
+ #define CLKID_FCLK_DIV7_DIV			75
++#define CLKID_PCIE_PLL				76
++#define CLKID_PCIE_MUX				77
++#define CLKID_PCIE_REF				78
+ 
+-#define NR_CLKS					76
++#define NR_CLKS					82
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/axg-clkc.h>
+diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
+index 555937a25504..70371228b7e0 100644
+--- a/include/dt-bindings/clock/axg-clkc.h
++++ b/include/dt-bindings/clock/axg-clkc.h
+@@ -68,5 +68,8 @@
+ #define CLKID_SD_EMMC_B_CLK0			59
+ #define CLKID_SD_EMMC_C_CLK0			60
+ #define CLKID_HIFI_PLL				69
++#define CLKID_PCIE_CML_EN0			79
++#define CLKID_PCIE_CML_EN1			80
++#define CLKID_MIPI_ENABLE			81
+ 
+ #endif /* __AXG_CLKC_H */
+-- 
+2.17.1
+
