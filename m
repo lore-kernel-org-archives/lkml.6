@@ -2,114 +2,133 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E479C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BE9C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40137210E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:59:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40137210E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 88B6E21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:01:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WsHZ0FMx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B6E21104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933383AbeFUP7M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:59:12 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:39020 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933218AbeFUP7L (ORCPT
+        id S933388AbeFUQB3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:01:29 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35507 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933253AbeFUQB1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:59:11 -0400
-Received: from ayla.of.borg ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id 1Tz71y00o3XaVaC06Tz72i; Thu, 21 Jun 2018 17:59:10 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fW1zH-0002fs-RM; Thu, 21 Jun 2018 17:59:07 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fW1zH-0003LW-Om; Thu, 21 Jun 2018 17:59:07 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Russell King <linux@armlinux.org.uk>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [RFC] arm: Replace "multiple platforms" by "common platform"
-Date:   Thu, 21 Jun 2018 17:59:06 +0200
-Message-Id: <20180621155906.12821-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Thu, 21 Jun 2018 12:01:27 -0400
+Received: by mail-lf0-f67.google.com with SMTP id i15-v6so5100347lfc.2;
+        Thu, 21 Jun 2018 09:01:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=4k+TkGgYvKQsnv+ATqUw/aqsCSYKNSWpFfcCFRZIMsM=;
+        b=WsHZ0FMxWcFeblW/c3fbydRLNzoMeAB9ib56bso6te/UfrE+ijXJ5l7f2d1UCk7JXF
+         by1k808amSzg3PqtM8S0apJrXzGVLYWf8m2LC6ZUgtcHyr/oH2Lidw2RRwnBz3il8YZk
+         Sfur6/jsV+9b4KL1AG8H5zZvj827xo3d3REyyiGrw2QEHbIydL9vj4U87AEfbkjw60xV
+         VRUAd0RbBulkcuDAibEtKQdjsIAu6fRuBU3D4GwBZUpaYGfSSjL+idPBpqkvPhOdrcOU
+         Besg7ZQJPajPVSm28R+JsCTAafs5fQMq5t2x55swEc/4IRndyzDznkorFCTJJ+/hOKrg
+         xcQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=4k+TkGgYvKQsnv+ATqUw/aqsCSYKNSWpFfcCFRZIMsM=;
+        b=A/VpwvGEVBeX2KRLQ/nD6ux/DM1nbJDk0c3s3pt7NzE+6CTwyOMU8Q4hsMb6CqXzDi
+         HX8FbMP6v5f2qdLLM7m1SFhrskEz9ijmY5azIW6CtZz9ZM4QOqC93iHDlk0oNXoh/lXu
+         Xhyxy6Sr413zpr+Sh05aCjqqeAKBvKEQC/xCthVyHTZSBA52mluY52XvyaZHTTXkS06F
+         6O9FUC3KTBZ+kSAfeMnnsLlLVFzuKewM1LBNy9hYA2OLa7mF9HcrO06w1fR9Dwl+dP0w
+         881ihHvMWO/Dr+v/5K3xN8ReEQzsnqrhRtXsjGWa6PQV7Hp77v9l4J0HJpU0SBVVO8CD
+         xr2A==
+X-Gm-Message-State: APt69E1uEZVNqAsuEOVYJW1dAa3SU+5dv56ZK/Pl2VqCx3SPEe5rwVEl
+        k0r6WzgUic1gP4WdFfjFgLPf62nUaxlfGmc7r0I=
+X-Google-Smtp-Source: ADUXVKIHFqN24HMueQxMKOcmbLEn3nal4NQSygTkc1vPP+sfvSQTSz/ImQf1hZIziPZie6t+xVpkFHaScgo8P5EbH88=
+X-Received: by 2002:a2e:40d9:: with SMTP id r86-v6mr17367950lje.19.1529596885012;
+ Thu, 21 Jun 2018 09:01:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 09:01:24
+ -0700 (PDT)
+In-Reply-To: <20180621154915.GA31947@gmail.com>
+References: <20180420120605.1612248-1-arnd@arndb.de> <20180420120605.1612248-2-arnd@arndb.de>
+ <20180621154915.GA31947@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 21 Jun 2018 18:01:24 +0200
+X-Google-Sender-Auth: x2XQWTyLUSnmAGsh2beKP9iDD7E
+Message-ID: <CAK8P3a1QYTfRNQt2+a29BpvgYM_pnSFrO=NBvVo=BdUa2q9ngQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rusage: allow 64-bit times ru_utime/ru_stime
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Paul Eggert <eggert@cs.ucla.edu>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"ARM multiplatform" has actually two meanings:
-  1. It groups platforms that follow the "ARM multiplatform" software
-     framework,
-  2. It allows to build a single kernel that can be booted on multiple
-     platforms.
+On Thu, Jun 21, 2018 at 5:49 PM, Ingo Molnar <mingo@kernel.org> wrote:
+> * Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> +int put_compat_rusage_time64(const struct __kernel_rusage *r,
+>> +                          struct compat_rusage_time64 __user *ru)
+>> +{
+>> +     struct compat_rusage_time64 r32;
+>> +     memset(&r32, 0, sizeof(r32));
+>> +     r32.ru_utime.tv_sec = r->ru_utime.tv_sec;
+>> +     r32.ru_utime.tv_usec = r->ru_utime.tv_usec;
+>> +     r32.ru_stime.tv_sec = r->ru_stime.tv_sec;
+>> +     r32.ru_stime.tv_usec = r->ru_stime.tv_usec;
+>> +     r32.ru_maxrss = r->ru_maxrss;
+>> +     r32.ru_ixrss = r->ru_ixrss;
+>> +     r32.ru_idrss = r->ru_idrss;
+>> +     r32.ru_isrss = r->ru_isrss;
+>> +     r32.ru_minflt = r->ru_minflt;
+>> +     r32.ru_majflt = r->ru_majflt;
+>> +     r32.ru_nswap = r->ru_nswap;
+>> +     r32.ru_inblock = r->ru_inblock;
+>> +     r32.ru_oublock = r->ru_oublock;
+>> +     r32.ru_msgsnd = r->ru_msgsnd;
+>> +     r32.ru_msgrcv = r->ru_msgrcv;
+>> +     r32.ru_nsignals = r->ru_nsignals;
+>> +     r32.ru_nvcsw = r->ru_nvcsw;
+>> +     r32.ru_nivcsw = r->ru_nivcsw;
+>
+> Could you please vertically align the right side of the initialization as well?
+> Much easier to check at a glance.
+...
 
-Currently support for XIP and/or NOMMU cannot be enabled on platforms
-that follow the "ARM multiplatform" framework, without duplicating their
-machine selection logic under a new Kconfig symbol.  As (in theory) all
-platforms can be used with XIP and/or NOMMU, this is not sustainable.
+> Which tabulated form made me notice the info.cause / si_code asymmetry - and a
+> brief check of the source shows that it's correct. No way would I have noticed it
+> in the jumbled up form above, so I think aligning such mass-initializations makes
+> sense.
 
-Hence clarify the meaning of ARCH_MULTIPLATFORM:
-  1. Replace "multiple platforms" by "common platform", as it allows to
-     select one or more platforms adhering to the common framework,
-  2. Note that a single kernel may not boot on all platforms if XIP or
-     NOMMU is enabled.
+Sure, no problem. Do you have an opinion on the question I raised in the
+first patch [1], i.e. whether we actually want this to be done this way in the
+kernel, or one of the other approaches I described there?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-References:
-  - "[PATCHv4 0/4] arm/versatile: no-MMU support"
-    (http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/584555.html)
+Thanks for taking a look here already!
 
-  - "[PATCH 0/2] ARM: ARMv7 (with MMU) XIP without ARCH_MULTIPLATFORM"
-    (http://lists.infradead.org/pipermail/linux-arm-kernel/2017-February/486835.html)
+      Arnd
 
- arch/arm/Kconfig | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 54eeb8d00bc62a9f..6b286c018cf748c7 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -329,7 +329,7 @@ choice
- 	default ARCH_MULTIPLATFORM if MMU
- 
- config ARCH_MULTIPLATFORM
--	bool "Allow multiple platforms to be selected"
-+	bool "Common platforms (\"multiplatform\")"
- 	depends on MMU
- 	select ARM_HAS_SG_CHAIN
- 	select ARM_PATCH_PHYS_VIRT
-@@ -342,6 +342,13 @@ config ARCH_MULTIPLATFORM
- 	select PCI_DOMAINS if PCI
- 	select SPARSE_IRQ
- 	select USE_OF
-+	help
-+	  Support for systems implemented using the common "multiplatform"
-+	  framework.
-+
-+	  Unless specialized options depending on intimate platform
-+	  details, like XIP or NOMMU, are enabled, this allows to build a
-+	  single kernel that boots on multiple platforms.
- 
- config ARM_SINGLE_ARMV7M
- 	bool "ARMv7-M based platforms (Cortex-M0/M3/M4)"
--- 
-2.17.1
-
+[1] https://patchwork.kernel.org/patch/10352507/
