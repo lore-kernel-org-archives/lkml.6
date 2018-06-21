@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C39C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B36C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3612C223D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A20F223E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ikPar9SD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3612C223D3
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uSxrMk2T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A20F223E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934039AbeFUV3R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:29:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41768 "EHLO
+        id S934026AbeFUV3P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:29:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41764 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933945AbeFUV3J (ORCPT
+        with ESMTP id S933944AbeFUV3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 17:29:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,23 +30,23 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=u8BTn218/t3eDoWCzJWmHuqJemJyGCmVAnA9recO0+4=; b=ikPar9SD/Pc79to3I5GKp7dos
-        BMLGzmyAUeG+eI9fXXrfQpYLcWEZ7U7kVGnXq9LYifa9O12tELxcuN+OFXufRwjQ0ob34MHYSZSbP
-        O869KjLB/Pc/nsdOiJFHkYUl0CHzkplIafUqIwBgd2pCH9xoHmMbUl+W0pYEJ2LPNDyb15fr4qEo8
-        TqWIPKFsUD0gkL6yd+nF57f3IuuiiIRTs8dEP1PuuF6Kp4NwQUXuakyLfikQnAizwBMY8TJNj+5N/
-        Eg76+xr8Q8p7V0rhAaVX4fip8w1AeIaI5NIU7qsspBLd9metSORtfnbm9j2ePWJTdRPmsYulSrM+h
-        5vbKWI7ZQ==;
+         bh=aN/ujayXDIeT8PvAahIwgPTtiODsoJarrTXA0pOcGs4=; b=uSxrMk2TUY65KwQgP5SLiGMRr
+        t8noaFZGZkpWzXeu/rmJPJ9D2u4SaYXa9OS1ra0B54S6RKqXjpnq+M1TkgkPiXYp9fW5Z91DQTTiO
+        ktkGUbVfUn+cyomTsBSZUKo3vsRkBBNgtqPnixcD7GOZ/vZtfxJpM1QiePP5C2KGrB5dmH4HnUe0D
+        6dOBBKxVKuJvVDIWtBxtn83Hb+3fMWsoBq6iq031TkPZdkbPewUBdpT4I4B2XKizC5/9auE0yuu6/
+        P00W7T+4wZW2J8gZRoCIh+G0B448h9uCqnfKWw8ahGKU6Awql1YppGnuf0FNZqRXApJgGMdVM4BZS
+        iIu9Sh//g==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78e-0001bW-NY; Thu, 21 Jun 2018 21:29:08 +0000
+        id 1fW78e-0001b9-89; Thu, 21 Jun 2018 21:29:08 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Matthew Wilcox <willy@infradead.org>,
-        Joshua Morris <josh.h.morris@us.ibm.com>,
-        Philip Kelleher <pjk1939@linux.vnet.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Subject: [PATCH 10/26] rsxx: Convert to new IDA API
-Date:   Thu, 21 Jun 2018 14:28:19 -0700
-Message-Id: <20180621212835.5636-11-willy@infradead.org>
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH 08/26] sd: Convert to new IDA interface
+Date:   Thu, 21 Jun 2018 14:28:17 -0700
+Message-Id: <20180621212835.5636-9-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -55,69 +55,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eliminate the custom spinlock and the call to ida_pre_get.
-Also add a call to ida_free() in the card remove routine, which I believe
-fixes a bug in this driver.
+Allows us to remove an explicit spinlock.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- drivers/block/rsxx/core.c | 21 +++++----------------
- 1 file changed, 5 insertions(+), 16 deletions(-)
+ drivers/scsi/sd.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/block/rsxx/core.c b/drivers/block/rsxx/core.c
-index b7d71914a32a..f2c631ce793c 100644
---- a/drivers/block/rsxx/core.c
-+++ b/drivers/block/rsxx/core.c
-@@ -58,7 +58,6 @@ MODULE_PARM_DESC(sync_start, "On by Default: Driver load will not complete "
- 			     "until the card startup has completed.");
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 9421d9877730..8a493e64856c 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -123,7 +123,6 @@ static void scsi_disk_release(struct device *cdev);
+ static void sd_print_sense_hdr(struct scsi_disk *, struct scsi_sense_hdr *);
+ static void sd_print_result(const struct scsi_disk *, const char *, int);
  
- static DEFINE_IDA(rsxx_disk_ida);
--static DEFINE_SPINLOCK(rsxx_ida_lock);
+-static DEFINE_SPINLOCK(sd_index_lock);
+ static DEFINE_IDA(sd_index_ida);
  
- /* --------------------Debugfs Setup ------------------- */
- 
-@@ -771,19 +770,10 @@ static int rsxx_pci_probe(struct pci_dev *dev,
- 	card->dev = dev;
- 	pci_set_drvdata(dev, card);
+ /* This semaphore is used to mediate the 0->1 reference get in the
+@@ -3339,16 +3338,8 @@ static int sd_probe(struct device *dev)
+ 	if (!gd)
+ 		goto out_free;
  
 -	do {
--		if (!ida_pre_get(&rsxx_disk_ida, GFP_KERNEL)) {
--			st = -ENOMEM;
--			goto failed_ida_get;
--		}
+-		if (!ida_pre_get(&sd_index_ida, GFP_KERNEL))
+-			goto out_put;
 -
--		spin_lock(&rsxx_ida_lock);
--		st = ida_get_new(&rsxx_disk_ida, &card->disk_id);
--		spin_unlock(&rsxx_ida_lock);
--	} while (st == -EAGAIN);
+-		spin_lock(&sd_index_lock);
+-		error = ida_get_new(&sd_index_ida, &index);
+-		spin_unlock(&sd_index_lock);
+-	} while (error == -EAGAIN);
 -
--	if (st)
-+	st = ida_alloc(&rsxx_disk_ida, GFP_KERNEL);
-+	if (st < 0)
- 		goto failed_ida_get;
-+	card->disk_id = st;
+-	if (error) {
++	index = ida_alloc(&sd_index_ida, GFP_KERNEL);
++	if (index < 0) {
+ 		sdev_printk(KERN_WARNING, sdp, "sd_probe: memory exhausted.\n");
+ 		goto out_put;
+ 	}
+@@ -3392,9 +3383,7 @@ static int sd_probe(struct device *dev)
+ 	return 0;
  
- 	st = pci_enable_device(dev);
- 	if (st)
-@@ -985,9 +975,7 @@ static int rsxx_pci_probe(struct pci_dev *dev,
- failed_dma_mask:
- 	pci_disable_device(dev);
- failed_enable:
--	spin_lock(&rsxx_ida_lock);
--	ida_remove(&rsxx_disk_ida, card->disk_id);
--	spin_unlock(&rsxx_ida_lock);
-+	ida_free(&rsxx_disk_ida, card->disk_id);
- failed_ida_get:
- 	kfree(card);
+  out_free_index:
+-	spin_lock(&sd_index_lock);
+-	ida_remove(&sd_index_ida, index);
+-	spin_unlock(&sd_index_lock);
++	ida_free(&sd_index_ida, index);
+  out_put:
+ 	put_disk(gd);
+  out_free:
+@@ -3459,9 +3448,7 @@ static void scsi_disk_release(struct device *dev)
+ 	struct scsi_disk *sdkp = to_scsi_disk(dev);
+ 	struct gendisk *disk = sdkp->disk;
+ 	
+-	spin_lock(&sd_index_lock);
+-	ida_remove(&sd_index_ida, sdkp->index);
+-	spin_unlock(&sd_index_lock);
++	ida_free(&sd_index_ida, sdkp->index);
  
-@@ -1050,6 +1038,7 @@ static void rsxx_pci_remove(struct pci_dev *dev)
- 	pci_disable_device(dev);
- 	pci_release_regions(dev);
- 
-+	ida_free(&rsxx_disk_ida, card->disk_id);
- 	kfree(card);
- }
- 
+ 	disk->private_data = NULL;
+ 	put_disk(disk);
 -- 
 2.17.1
 
