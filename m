@@ -6,55 +6,56 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7046C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13335C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED002246A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4B692246A
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:04:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="uy2oX6tE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED002246A
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="JUmYgiMw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4B692246A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933870AbeFUWEr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 18:04:47 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33224 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933807AbeFUWEm (ORCPT
+        id S933914AbeFUWEz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 18:04:55 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:35251 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933854AbeFUWEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 18:04:42 -0400
-Received: by mail-qt0-f196.google.com with SMTP id l10-v6so4349718qtj.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 15:04:41 -0700 (PDT)
+        Thu, 21 Jun 2018 18:04:46 -0400
+Received: by mail-qk0-f194.google.com with SMTP id d130-v6so2681005qkc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 15:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=Vec3g15rqX5tPpr4wXsVAyRefMb116qUxoatzMLj2BU=;
-        b=uy2oX6tEmYlWWni1O95dHTOAz3Mmfxl2JNGvGSZewuyqBETlp5AMZQktPZrqwWkxPH
-         rdWz7JhuFfXKkwU8lDOf24J8BVWi0mjhwHCOWXpYxuINv4qTOEK58tJIKnBiJm2IRo+i
-         OHLE4Rz/XRnKqn16VAdj7U6XjPaWYKSF8814pq3tVlfRhgfWbhy+vO1X7B4cF+g3x9Nb
-         11ssRjlaAHgdK/o6WPjKI2wSEVHfiY3a5VNYJR0mfKI9d2mBZlHLPI+hhUlD2X1+n+aK
-         DgaI7Dm6c2YFqmhgCrLJ+bA3umtzAz2pS8dAlklksfF/gebVsW5NpqAjFghiys5LWBsc
-         Or/g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=PsmeKqHoGCAX8hCCZKW5Vb0YycjOyzLqBbvuDEprP7A=;
+        b=JUmYgiMwrxsr4f5ASogusQ4Z8gE/eSkXqxdXni/GmJ4orVIbomiQGpzqUF0W5UWmLo
+         hwChL4m/v/Hd/rrZnJVE569OAn7D9O7GRk8afpatO3GbYLzvAY1D9urie0MdGJOnPlpt
+         /oj/GAZJgoECRotd1LHtWsvJ+j6fF0c5aSOQ7fwkA1yJFARtpZYuibC7GBM6ToKLDzCw
+         Mw+srCzHYTJsKi/NZq6muhVRKD1qEJ1pu0Jb82eydiX67fv0jIKfSuCTIkoawgtw+B03
+         IFMgsqY+/KHVeX7g+QuJ5gYhWviKwqb8VlFhlhnE9T9wnMPvZtLD4tY/ZdFYzU3ZUkL+
+         pxzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Vec3g15rqX5tPpr4wXsVAyRefMb116qUxoatzMLj2BU=;
-        b=OBLnACo/8nQOigXkFE5EReZ03BT74FV+6aZq/fD1AGkj++ROLbJuazoswBPC3lOBj4
-         2tQstUvsbvHmyCZL2SbBnBuR8xNTAELVGK+CLWDC4XvtPYtQA3LZoHlAtplhCwjaou5o
-         jG31A6tAd4TpqwXT5GymDdQv850lEroUrj7EBqNl3r+VWZlgghPWAjGVgYJLFILHmtZh
-         ndtnBvMHrBRSrwXTXuHgTP+NnfKSLYkKBJ+AuZOrlIvg5oXy0XmDm/3f0LCa1eSE4MKD
-         z43pDsxuxKulB3SybqmZffcdiRnQNYH3H/Lejn1ImLT4+s/oBnuKr5n9afLCI1QeOj6v
-         alTQ==
-X-Gm-Message-State: APt69E1YDDmowazRs/v5paID6SqdT3ffqeGOHOvH1H/+0zRJOjB6EX2p
-        JkZGt/qMfVrlEOc5Y4bIfoaGcg==
-X-Google-Smtp-Source: ADUXVKKKp4W+K8VkpE+P6hMwcE0xVw8+cGadUb3JwN9+IflyfTrZkY6y9tWA4WNDOEDMgKzhBJU0jQ==
-X-Received: by 2002:a0c:b916:: with SMTP id u22-v6mr23714477qvf.224.1529618681229;
-        Thu, 21 Jun 2018 15:04:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=PsmeKqHoGCAX8hCCZKW5Vb0YycjOyzLqBbvuDEprP7A=;
+        b=ietPHHnI1m47l0pz0fDiGHNKBV5SFivjFpLUWAM8ibc/sehEwx/6L2WNWFFDQk3vTl
+         X6DMNM7jM6nGBjDVGM7TujeG3Gjd1LJowYfWvqLcz4U1vAbCHOu4TlJqo3YMuFAMJyM5
+         jGO3NBFl6F+mxr4owP9/1B1ueHO9f6s2j0CfJimyvrGnytcmzaYYaMV3wS+tkMfEWwhx
+         Vo5XUJ0f/Qx5msMdP2EmXFzcEn9sAACCYkaEBbK3LMEDSAbBMmzEyXwfJYoU6fB3GzPB
+         0rfDlWduXJ7ivZ+5sRmaU536qFeDrj0aITemOTEIQb+MRx2vXyomLJaiHk7Ryhtj7h+M
+         gbfA==
+X-Gm-Message-State: APt69E35x80Xc4eIk6+xD3bwEF94DGTq288Pwl3gUNXhc3l7TfaA5r0q
+        bT0+v573eh8iQOiIWHnQHzTCO4Khr9w=
+X-Google-Smtp-Source: ADUXVKLwD5iJe6R4UwjQwkFxIqd+K4bbDChg7qsN0L/EWY2aJbDy82y0dylvBmkH0szP66D4LT0XhQ==
+X-Received: by 2002:a37:15aa:: with SMTP id 42-v6mr3344405qkv.428.1529618685788;
+        Thu, 21 Jun 2018 15:04:45 -0700 (PDT)
 Received: from localhost.localdomain ([173.38.117.67])
-        by smtp.gmail.com with ESMTPSA id l73-v6sm6668473qkl.78.2018.06.21.15.04.39
+        by smtp.gmail.com with ESMTPSA id l73-v6sm6668473qkl.78.2018.06.21.15.04.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 15:04:40 -0700 (PDT)
+        Thu, 21 Jun 2018 15:04:44 -0700 (PDT)
 From:   Tycho Andersen <tycho@tycho.ws>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -67,49 +68,70 @@ Cc:     linux-kernel@vger.kernel.org,
         Tyler Hicks <tyhicks@canonical.com>,
         Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
         "Tobin C . Harding" <me@tobin.cc>, Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH v4 0/4] seccomp trap to userspace
-Date:   Thu, 21 Jun 2018 16:04:12 -0600
-Message-Id: <20180621220416.5412-1-tycho@tycho.ws>
+Subject: [PATCH v4 2/4] seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
+Date:   Thu, 21 Jun 2018 16:04:14 -0600
+Message-Id: <20180621220416.5412-3-tycho@tycho.ws>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180621220416.5412-1-tycho@tycho.ws>
+References: <20180621220416.5412-1-tycho@tycho.ws>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+In the next commit we'll use this same mnemonic to get a listener for the
+nth filter, so we need it available outside of CHECKPOINT_RESTORE. This is
+slightly looser than necessary, because it really could be
+CHECKPOINT_RESTORE || USER_NOTIFICATION, but it's declared static and this
+complicates the code less, so hopefully it's ok.
 
-Here's v4 of the seccomp trap to userspace series. v3 is here:
-https://lkml.org/lkml/2018/5/31/527
+v2: new in v2
+v3: no changes
 
-I believe we've addressed the two burning questions I had about v3: 1.
-it seems ok not to use netlink, since there's not a great way to re-use
-the API without a lot of unnecessary code and 2. only having return
-capability for fds seems fine with people. Or at least I haven't heard
-any strong objections.
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+CC: Kees Cook <keescook@chromium.org>
+CC: Andy Lutomirski <luto@amacapital.net>
+CC: Oleg Nesterov <oleg@redhat.com>
+CC: Eric W. Biederman <ebiederm@xmission.com>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Christian Brauner <christian.brauner@ubuntu.com>
+CC: Tyler Hicks <tyhicks@canonical.com>
+CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+---
+ kernel/seccomp.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I've re-worked a bunch of things in this version based on feedback from
-the last series. See patch notes for details. At this point I'm not
-aware of anything that needs to be addressed, but of course that is
-subject to change :)
-
-Tycho
-
-Tycho Andersen (4):
-  seccomp: add a return code to trap to userspace
-  seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
-  seccomp: add a way to get a listener fd from ptrace
-  seccomp: add support for passing fds via USER_NOTIF
-
- .../userspace-api/seccomp_filter.rst          |  79 +++
- arch/Kconfig                                  |   7 +
- include/linux/seccomp.h                       |  18 +-
- include/uapi/linux/ptrace.h                   |   2 +
- include/uapi/linux/seccomp.h                  |  23 +-
- kernel/ptrace.c                               |   4 +
- kernel/seccomp.c                              | 491 ++++++++++++++-
- tools/testing/selftests/seccomp/seccomp_bpf.c | 560 +++++++++++++++++-
- 8 files changed, 1172 insertions(+), 12 deletions(-)
-
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index 24949478a812..bbc24938c51d 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -1184,7 +1184,7 @@ long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
+ 	return do_seccomp(op, 0, uargs);
+ }
+ 
+-#if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_CHECKPOINT_RESTORE)
++#if defined(CONFIG_SECCOMP_FILTER)
+ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
+ 					     unsigned long filter_off)
+ {
+@@ -1231,6 +1231,7 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
+ 	return filter;
+ }
+ 
++#if defined(CONFIG_CHECKPOINT_RESTORE)
+ long seccomp_get_filter(struct task_struct *task, unsigned long filter_off,
+ 			void __user *data)
+ {
+@@ -1303,7 +1304,8 @@ long seccomp_get_metadata(struct task_struct *task,
+ 	__put_seccomp_filter(filter);
+ 	return ret;
+ }
+-#endif
++#endif /* CONFIG_CHECKPOINT_RESTORE */
++#endif /* CONFIG_SECCOMP_FILTER */
+ 
+ #ifdef CONFIG_SYSCTL
+ 
 -- 
 2.17.1
 
