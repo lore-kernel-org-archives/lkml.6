@@ -2,144 +2,143 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB544C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 759EFC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 654ED21A6F
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:06:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="llpBIIQV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654ED21A6F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id 26FF521A75
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:08:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26FF521A75
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754269AbeFUTG2 (ORCPT
+        id S1754253AbeFUTI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:06:28 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38539 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754065AbeFUTG0 (ORCPT
+        Thu, 21 Jun 2018 15:08:29 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:47932 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754079AbeFUTI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:06:26 -0400
-Received: by mail-wm0-f67.google.com with SMTP id 69-v6so8055422wmf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 12:06:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1D91HEkEL7ItFtVWmy2vtnB10Y1driE1hTKVMXkjfrE=;
-        b=llpBIIQVSfJGrIQ4upSC+Saezilm4QZyYKak+NgZW80TOlcvEV8nDBz2VaIwbkQVoB
-         zLSk3hG11Q7GFUUVb4m34W2Jf4XHARgxRhepWKUNlZkxiVXN5z+tpJzt4kLQfj7plDvh
-         kvjs36WgmKzij3Ll5lgDKIrAqowZ85y3wn/ulMLrEv7F1VMHGdg7enBr+cCubUDjTMZR
-         8gJLzitEVDZijLTEkJhDUikRcknnyV6YUlq40yuZzqkI/i1tzH2zr3fdjGwaDri6RqUl
-         DpTyrVpnNlH8gA2AMaYVjQbMAum7dsBdx0S2HIQ8PtqxTGyB7uLaCs0NU9uJaW8exRgs
-         f4uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1D91HEkEL7ItFtVWmy2vtnB10Y1driE1hTKVMXkjfrE=;
-        b=sIXi5VpwahSkI++v/cDp5sNN6oxRK8QkSVciFEkZgdaoAjl3f7BDEhxRAY2e+WIuq2
-         8rG6AR4UCw5lJniqfa1tVaH3I9xmaNsEwMeRKS3D4AeFPsBxZJ8J1DyfWh/ftrU3+z0B
-         x/ba24qhq3jzlMfPO2v9Gv4JAG4XvKxl69uBfionrLpVaJe0DgaevBZpc9FYKbSaFYXa
-         TE27jubvN/liPS0mF5QLcuMQ4q22JFX5H41zaAgyVvDSg6g+otbm0rvIb1OgAM0jDaG3
-         t0K0utC5Yeq5+1kxJ59nn7miM2EK31LJIuf1c8SGgrt4h/kw28eo+jNmXBg/JH+Try3K
-         lsMg==
-X-Gm-Message-State: APt69E1eUxmUCfCphuYbptkmSXkv9WOMi2hnQAEfE5NpCAlPRu7BJbFY
-        Rau9p2SxI5aAc16hkSJP60kKTA==
-X-Google-Smtp-Source: ADUXVKLdGwBzDPSa1LqxIBOFsiaN+pZ61pW7Ot11AE5gkqb+UtnK3Et1qIc0JEqlMXUjS7kaQpJnyQ==
-X-Received: by 2002:a1c:f513:: with SMTP id t19-v6mr6494394wmh.50.1529607984932;
-        Thu, 21 Jun 2018 12:06:24 -0700 (PDT)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id r10-v6sm10608884wrm.66.2018.06.21.12.06.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 12:06:24 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1fW4uS-0002bn-Iu; Thu, 21 Jun 2018 13:06:20 -0600
-Date:   Thu, 21 Jun 2018 13:06:20 -0600
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] tpm: Implement tpm_chip_find() and tpm_chip_put()
- for other subsystems
-Message-ID: <20180621190620.GE19270@ziepe.ca>
-References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
- <20180620204236.1572523-2-stefanb@linux.vnet.ibm.com>
- <20180621171518.GI11859@linux.intel.com>
- <95b2970f-b71b-4cfc-c188-7ae7e8cb94c5@linux.vnet.ibm.com>
- <20180621175601.GC19270@ziepe.ca>
- <743f606f-b3eb-6917-33bb-5b080f76fe3f@linux.vnet.ibm.com>
+        Thu, 21 Jun 2018 15:08:27 -0400
+Received: from mipsdag02.mipstec.com (mail2.mips.com [12.201.5.32]) by mx1403.ess.rzc.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Thu, 21 Jun 2018 19:07:22 +0000
+Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag02.mipstec.com
+ (10.20.40.47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Thu, 21
+ Jun 2018 12:07:21 -0700
+Received: from localhost (10.20.2.29) by mipsdag02.mipstec.com (10.20.40.47)
+ with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Thu, 21 Jun
+ 2018 12:07:21 -0700
+Date:   Thu, 21 Jun 2018 12:07:21 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     Daniel Vacek <neelx@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH] Revert "mm: page_alloc: skip over regions of invalid
+ pfns where possible"
+Message-ID: <20180621190721.bdr42xmp6f2uba7x@pburton-laptop>
+References: <20180316143855.29838-1-neelx@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <743f606f-b3eb-6917-33bb-5b080f76fe3f@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180316143855.29838-1-neelx@redhat.com>
+User-Agent: NeoMutt/20180512
+X-BESS-ID: 1529608042-321459-32393-17165-1
+X-BESS-VER: 2018.7-r1806151722
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Envelope-From: Paul.Burton@mips.com
+X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194295
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.50 BSF_RULE7568M          META: Custom Rule 7568M 
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-Orig-Rcpt: neelx@redhat.com,linux-kernel@vger.kernel.org,linux-mm@kvack.org,ard.biesheuvel@linaro.org,akpm@linux-foundation.org,mhocko@suse.com,vbabka@suse.cz,mgorman@techsingularity.net,pasha.tatashin@oracle.com,stable@vger.kernel.org
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 02:19:44PM -0400, Stefan Berger wrote:
-> On 06/21/2018 01:56 PM, Jason Gunthorpe wrote:
-> >On Thu, Jun 21, 2018 at 01:45:03PM -0400, Stefan Berger wrote:
-> >>On 06/21/2018 01:15 PM, Jarkko Sakkinen wrote:
-> >>>On Wed, Jun 20, 2018 at 04:42:33PM -0400, Stefan Berger wrote:
-> >>>>Implement tpm_chip_find() for other subsystems to find a TPM chip and
-> >>>>get a reference to that chip. Once done with using the chip, the reference
-> >>>>is released using tpm_chip_put().
-> >>>>
-> >>>>Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> >>>You should sort this out in a way that we don't end up with duplicate
-> >>>functions.
-> >>Do you want me to create a function *like* tpm_chip_find_get() that takes an
-> >>additional parameter whether to get the ops semaphore and have that function
-> >>called by the existing tpm_chip_find_get() and the new tpm_chip_find(). The
-> >>latter would then not get the ops semphore. I didn't want to do this since
-> >>one time the function returns with a lock held and the other time not.
-> >Another option, and I haven't looked, is to revise the callers of
-> >tpm_chip_find_get to not require it to hold the ops semaphore for
-> >them.
-> 
-> We have tpm_chip_unregister calling tpm_del_char_device to set the ops to
-> NULL once a chip is unregistered. All existing callers, if they pass in a
-> tpm_chip != NULL, currently fail if the ops are NULL. (If they pass in
-> tpm_chip = NULL, they shouldn't find a chip once ops are null and it has
-> been removed from the IDR). I wouldn't change that since IMA will call in
-> with a tpm_chip != NULL and we want to protect the ops. All existing code
-> within the tpm subsystem does seem to call tpm_chip_find_get() with a NULL
-> pointer, though. Also trusted keys seems to pass in a NULL pointer every
-> time.
-> 
-> >
-> >Either by giving them an API to do it, or revising the TPM entry
-> >points to do it.
-> >
-> >I didn't look, but how did the ops semaphore get grabbed in your
-> >revised patches? They do grab it, right?
-> 
-> The revised patches do not touch the existing code much but will call
-> tpm_chip_find_get() and get that semaphore every time before the ops are
-> used. IMA is the only caller of tpm_chip_find() that now gets an additional
-> reference to the tpm_chip and these APIs get called like this from IMA:
-> 
-> ima init: chip = tpm_chip_find()
-> 
-> ima::tpm: tpm_chip_find_get(chip) ... tpm_put_ops(chip)
-> 
-> ima::tpm: tpm_chip_find_get(chip) ... tpm_put_ops(chip)
-> 
-> [repeat]
-> 
-> ima shutdown: tpm_chip_put(chip)
+Hi Daniel,
 
-Maybe just change tpm_chip_find_get() into tpm_get_ops(chip) and
-convert all callers?
+Hmm... I only just noticed this because you CC'd an email address that
+is no longer functional. I presume you're not using .mailmap, which
+would have given you my current email address.
 
-Jason
+On Fri, Mar 16, 2018 at 03:38:55PM +0100, Daniel Vacek wrote:
+> This reverts commit b92df1de5d289c0b5d653e72414bf0850b8511e0. The commit
+> is meant to be a boot init speed up skipping the loop in memmap_init_zone()
+> for invalid pfns. But given some specific memory mapping on x86_64 (or more
+> generally theoretically anywhere but on arm with CONFIG_HAVE_ARCH_PFN_VALID)
+
+My patch definitely wasn't ARM-specific & I have never tested it on ARM.
+It was motivated by a MIPS platform with an extremely sparse memory map.
+Could you explain why you think it depends on ARM or
+CONFIG_HAVE_ARCH_PFN_VALID?
+
+> the implementation also skips valid pfns which is plain wrong and causes
+> 'kernel BUG at mm/page_alloc.c:1389!'
+
+Which VM_BUG_ON is that? I don't see one on line 1389 as of commit
+b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns where
+possible") or any mainline final release since.
+
+> crash> log | grep -e BUG -e RIP -e Call.Trace -e move_freepages_block -e rmqueue -e freelist -A1
+> kernel BUG at mm/page_alloc.c:1389!
+> invalid opcode: 0000 [#1] SMP
+> --
+> RIP: 0010:[<ffffffff8118833e>]  [<ffffffff8118833e>] move_freepages+0x15e/0x160
+> RSP: 0018:ffff88054d727688  EFLAGS: 00010087
+> --
+> Call Trace:
+>  [<ffffffff811883b3>] move_freepages_block+0x73/0x80
+>  [<ffffffff81189e63>] __rmqueue+0x263/0x460
+>  [<ffffffff8118c781>] get_page_from_freelist+0x7e1/0x9e0
+>  [<ffffffff8118caf6>] __alloc_pages_nodemask+0x176/0x420
+> --
+> RIP  [<ffffffff8118833e>] move_freepages+0x15e/0x160
+>  RSP <ffff88054d727688>
+> 
+> crash> page_init_bug -v | grep RAM
+> <struct resource 0xffff88067fffd2f8>          1000 -        9bfff       System RAM (620.00 KiB)
+> <struct resource 0xffff88067fffd3a0>        100000 -     430bffff       System RAM (  1.05 GiB = 1071.75 MiB = 1097472.00 KiB)
+> <struct resource 0xffff88067fffd410>      4b0c8000 -     4bf9cfff       System RAM ( 14.83 MiB = 15188.00 KiB)
+> <struct resource 0xffff88067fffd480>      4bfac000 -     646b1fff       System RAM (391.02 MiB = 400408.00 KiB)
+> <struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff       System RAM (480.00 KiB)
+> <struct resource 0xffff88067fffd640>     100000000 -    67fffffff       System RAM ( 22.00 GiB)
+> 
+> crash> page_init_bug | head -6
+> <struct resource 0xffff88067fffd560>      7b788000 -     7b7fffff       System RAM (480.00 KiB)
+> <struct page 0xffffea0001ede200>   1fffff00000000  0 <struct pglist_data 0xffff88047ffd9000> 1 <struct zone 0xffff88047ffd9800> DMA32          4096    1048575
+> <struct page 0xffffea0001ede200> 505736 505344 <struct page 0xffffea0001ed8000> 505855 <struct page 0xffffea0001edffc0>
+> <struct page 0xffffea0001ed8000>                0  0 <struct pglist_data 0xffff88047ffd9000> 0 <struct zone 0xffff88047ffd9000> DMA               1       4095
+> <struct page 0xffffea0001edffc0>   1fffff00000400  0 <struct pglist_data 0xffff88047ffd9000> 1 <struct zone 0xffff88047ffd9800> DMA32          4096    1048575
+> BUG, zones differ!
+> 
+> crash> kmem -p 77fff000 78000000 7b5ff000 7b600000 7b787000 7b788000
+>       PAGE        PHYSICAL      MAPPING       INDEX CNT FLAGS
+> ffffea0001e00000  78000000                0        0  0 0
+> ffffea0001ed7fc0  7b5ff000                0        0  0 0
+> ffffea0001ed8000  7b600000                0        0  0 0       <<<<
+> ffffea0001ede1c0  7b787000                0        0  0 0
+> ffffea0001ede200  7b788000                0        0  1 1fffff00000000
+
+I'm not really sure what I'm looking at here. I presume you're saying
+that memmap_init_zone() didn't initialize the struct page for
+phys=0x7b788000?
+
+Could you describe the memblock region list, and what ranges
+memmap_init_zone() skipped over?
+
+Thanks,
+    Paul
