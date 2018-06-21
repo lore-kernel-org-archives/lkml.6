@@ -3,189 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5E4C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60512C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51C5220874
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:04:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E2D420874
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 00:06:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="rgrVTdwH";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cYtc1x6J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51C5220874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rIhu6Xwc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E2D420874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933153AbeFUAEM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 20:04:12 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:46927 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932978AbeFUAEK (ORCPT
+        id S933160AbeFUAF6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 20:05:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59860 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932475AbeFUAF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 20:04:10 -0400
-Received: by mail-yb0-f193.google.com with SMTP id s14-v6so516585ybp.13
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 17:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=tuugBuej1vu5FSZtTuwfIlKGF1cza+lV5o8S4RQt9ZA=;
-        b=rgrVTdwHNBaqzd9UdcmXUmOcrFTgfsaqCDBdz9iesASZx8RZ2L7RVNlldirCJLnNm7
-         cvxes6U6bnVZ8C55zmBaiL/QoMYhLFB90ZsAQzQWogzzfQ2p4UE8kl8BY8BEYEasHqPb
-         qSt2FjMVwFZ+zp89fGqosfS1gp5c0U1le1jCW2Nz1VqL3X7qx3hjKtUp+mH0HG/isF94
-         nZm9EG31En6l5dTu7yBdaAbnbj2lLAgPaJSX15N5K0E7VEMKfSKQosy/P2tyzVcyIBcz
-         QAQ8U4k4M68If4ibqye14++czsBHTdLQb4t8+L0hfAX4XglZESW5BVz6gihCyDNjt7XG
-         Ixjw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=tuugBuej1vu5FSZtTuwfIlKGF1cza+lV5o8S4RQt9ZA=;
-        b=cYtc1x6JySM/S1qhEYXitsDOp3sxIfrbBctR2EdxK5eT756R40bI235+KtKSgqDsTb
-         T8inKSyQIpIh9Hzh/fhdFhNvsEB8SyidShp3DJaSlhz//2YGf9bCoYd7k84iCLx9Dwbk
-         IOcAekk4QgQxHoKC/vCMxMhk7qQjbDPKfR2F8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=tuugBuej1vu5FSZtTuwfIlKGF1cza+lV5o8S4RQt9ZA=;
-        b=XaCkDnDpFntqU9vpGN9wO/bgTgkeYEBVmRoUUOoss1Fo5YQpJaP3tZzl/jt6Gre3WL
-         PYqeZvrUAGY2x89YAU104JS/kT3BJ+mnO08d4+EeKxbUnb6yFm+hbh/mPLYMqExfqg5u
-         BYrEH5yX/PqI4GMCOkQWURMD85cgS+GtDxFDqeAIcEICZx67Fap25g5QAduFIW8ZD5zJ
-         Dq1KiJeHeeWookEYeTMk2oBvmyfFVCGdOTjAIZN3WujdeFbdyD/4sr8uZ6ld7zvK1Ju+
-         rj3YElK560PcA3DNmVqfj+XoMCHv6NOTMylI6LZ6LzHeVdjyEkUipOGf4q9qxQdRXXx7
-         otJA==
-X-Gm-Message-State: APt69E3CnYApdSO5AVBYtw8P7EH7krPIRVa3CDMoaDTtw3uipT4GBZPt
-        RV5OB/G487P8xjtWsG1IHjvnf9GKFKhXnhrlkBEw1g==
-X-Google-Smtp-Source: ADUXVKLGfRUtQRb04o9jSbCJupZfw5wmwKG4uc3nDO7f/N77QiZZO6CKivl5PiqqWb4P783fdYKbdQLm8+3AYE2fRSA=
-X-Received: by 2002:a25:ce8b:: with SMTP id x133-v6mr6018341ybe.118.1529539449226;
- Wed, 20 Jun 2018 17:04:09 -0700 (PDT)
+        Wed, 20 Jun 2018 20:05:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OivHKFXCx70TsH566UELf91Znq0D4VmF2tUjmpKJy7U=; b=rIhu6XwcUUpB1iUip4lDNwPTL
+        cNWCDZ5VGV1tposkQoBPujFRAZWJlwxIzhcrWwoQ4u6DyYPZ3bpf0GmA4s7AdHZisJPwS6AtMwTWM
+        oksGg4b5vt1uv40aPc3PcBECWzj1gdxaeWb3ccySngnsY7M2G89xVHNlanTcoDxneN+b4QDggakM0
+        8gQ4n/FWo1sxkP5YPkNbdBlQ4LDRmrCzKRJ8xsZ+Kzl9mKVAO1QnS+jnqxeYl2ODiCwGhZUrw7/yA
+        ZktQFd2gWmLSykMb4401CIKnjUxDHjY6giNjdR/Vk/Pd9OwOa+weWm/FxADoCS/dP27BCaaI3aX25
+        /NKEh8Mww==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fVn6g-0002Up-Ej; Thu, 21 Jun 2018 00:05:46 +0000
+To:     USB list <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kbuild test robot <lkp@intel.com>,
+        ShuFan Lee <shufan_lee@richtek.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>, kbuild-all@01.org
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] staging/typec: fix tcpci_rt1711h build errors
+Message-ID: <f344e5f3-4e92-1fd0-ef4d-7b96065466b8@infradead.org>
+Date:   Wed, 20 Jun 2018 17:05:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 20 Jun 2018 17:04:08
- -0700 (PDT)
-In-Reply-To: <20180620234031.GC111712@gmail.com>
-References: <20180620190408.45104-1-keescook@chromium.org> <20180620190408.45104-6-keescook@chromium.org>
- <20180620234031.GC111712@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 20 Jun 2018 17:04:08 -0700
-X-Google-Sender-Auth: Mt7gAamJipypjh5u_mzrsi5kAZs
-Message-ID: <CAGXu5j++uGCnAOiQd=JM139B6g7oUGTquhgniX-Fwsj8qofU9w@mail.gmail.com>
-Subject: Re: [dm-devel] [PATCH 05/11] crypto alg: Introduce max blocksize and alignmask
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        qat-linux@intel.com, LKML <linux-kernel@vger.kernel.org>,
-        dm-devel@redhat.com, linux-crypto <linux-crypto@vger.kernel.org>,
-        Lars Persson <larper@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 20, 2018 at 4:40 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Wed, Jun 20, 2018 at 12:04:02PM -0700, Kees Cook wrote:
->> In the quest to remove all stack VLA usage from the kernel[1], this
->> exposes the existing upper bound on crypto block sizes for VLA removal,
->> and introduces a new check for alignmask (current maximum in the kernel
->> is 63 from manual inspection of all cra_alignmask settings).
->>
->> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  crypto/algapi.c        | 5 ++++-
->>  include/linux/crypto.h | 4 ++++
->>  2 files changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/crypto/algapi.c b/crypto/algapi.c
->> index c0755cf4f53f..760a412b059c 100644
->> --- a/crypto/algapi.c
->> +++ b/crypto/algapi.c
->> @@ -57,7 +57,10 @@ static int crypto_check_alg(struct crypto_alg *alg)
->>       if (alg->cra_alignmask & (alg->cra_alignmask + 1))
->>               return -EINVAL;
->>
->> -     if (alg->cra_blocksize > PAGE_SIZE / 8)
->> +     if (alg->cra_blocksize > CRYPTO_ALG_MAX_BLOCKSIZE)
->> +             return -EINVAL;
->> +
->> +     if (alg->cra_alignmask > CRYPTO_ALG_MAX_ALIGNMASK)
->>               return -EINVAL;
->>
->>       if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
->> diff --git a/include/linux/crypto.h b/include/linux/crypto.h
->> index 6eb06101089f..e76ffcbd5aa6 100644
->> --- a/include/linux/crypto.h
->> +++ b/include/linux/crypto.h
->> @@ -134,6 +134,10 @@
->>   */
->>  #define CRYPTO_MAX_ALG_NAME          128
->>
->> +/* Maximum values for registered algorithms. */
->> +#define CRYPTO_ALG_MAX_BLOCKSIZE    (PAGE_SIZE / 8)
->> +#define CRYPTO_ALG_MAX_ALIGNMASK    63
->> +
->
-> How do these differ from MAX_CIPHER_BLOCKSIZE and MAX_CIPHER_ALIGNMASK, and why
-> are they declared in different places?
+From: Randy Dunlap <rdunlap@infradead.org>
 
-This is what I get for staring at crypto code for so long. I entirely
-missed these checks... even though they're 8 line away:
+Fix Kconfig warning and build errors in staging/typec/rt1711h.c.
+The driver uses I2C interfaces so it should depend on I2C.
 
-        if (!alg->cra_type && (alg->cra_flags & CRYPTO_ALG_TYPE_MASK) ==
-                               CRYPTO_ALG_TYPE_CIPHER) {
-                if (alg->cra_alignmask > MAX_CIPHER_ALIGNMASK)
-                        return -EINVAL;
+WARNING: unmet direct dependencies detected for TYPEC_TCPCI
+  Depends on [m]: STAGING [=y] && TYPEC_TCPM [=y] && I2C [=m]
+  Selected by [y]:
+  - TYPEC_RT1711H [=y] && STAGING [=y] && TYPEC_TCPM [=y]
 
-                if (alg->cra_blocksize > MAX_CIPHER_BLOCKSIZE)
-                        return -EINVAL;
-        }
+and then:
+drivers/staging/typec/tcpci.o: In function `tcpci_probe':
+../drivers/staging/typec/tcpci.c:536: undefined reference to `__devm_regmap_init_i2c'
+drivers/staging/typec/tcpci.o: In function `tcpci_i2c_driver_init':
+../drivers/staging/typec/tcpci.c:593: undefined reference to `i2c_register_driver'
+drivers/staging/typec/tcpci.o: In function `tcpci_i2c_driver_exit':
+../drivers/staging/typec/tcpci.c:593: undefined reference to `i2c_del_driver'
+drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_check_revision':
+../drivers/staging/typec/tcpci_rt1711h.c:218: undefined reference to `i2c_smbus_read_word_data'
+../drivers/staging/typec/tcpci_rt1711h.c:225: undefined reference to `i2c_smbus_read_word_data'
+drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_probe':
+../drivers/staging/typec/tcpci_rt1711h.c:251: undefined reference to `__devm_regmap_init_i2c'
+drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_i2c_driver_init':
+../drivers/staging/typec/tcpci_rt1711h.c:308: undefined reference to `i2c_register_driver'
+drivers/staging/typec/tcpci_rt1711h.o: In function `rt1711h_i2c_driver_exit':
+../drivers/staging/typec/tcpci_rt1711h.c:308: undefined reference to `i2c_del_driver'
 
-However, this is only checking CRYPTO_ALG_TYPE_CIPHER, and
-cra_blocksize can be used for all kinds of things.
+Fixes: ce08eaeb6388 ("staging: typec: rt1711h typec chip driver")
 
-include/crypto/algapi.h:#define MAX_CIPHER_ALIGNMASK            15
-...
-drivers/crypto/mxs-dcp.c:                       .cra_flags
- = CRYPTO_ALG_ASYNC,
-drivers/crypto/mxs-dcp.c:                       .cra_alignmask          = 63,
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: ShuFan Lee <shufan_lee@richtek.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: kbuild-all@01.org
+---
+ drivers/staging/typec/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-Is this one broken? It has no CRYPTO_ALG_TYPE_... ?
+--- lnx-418-rc1.orig/drivers/staging/typec/Kconfig
++++ lnx-418-rc1/drivers/staging/typec/Kconfig
+@@ -11,6 +11,7 @@ config TYPEC_TCPCI
+ 
+ config TYPEC_RT1711H
+ 	tristate "Richtek RT1711H Type-C chip driver"
++	depends on I2C
+ 	select TYPEC_TCPCI
+ 	help
+ 	  Richtek RT1711H Type-C chip driver that works with
 
-For my CRYPTO_ALG_MAX_BLOCKSIZE, there is:
 
-crypto/xcbc.c:  u8 key1[CRYPTO_ALG_MAX_BLOCKSIZE];
-drivers/crypto/qat/qat_common/qat_algs.c:       char
-ipad[CRYPTO_ALG_MAX_BLOCKSIZE];
-drivers/crypto/qat/qat_common/qat_algs.c:       char
-opad[CRYPTO_ALG_MAX_BLOCKSIZE];
-
-It looks like both xcbc and qat are used with shash, so that needs a
-separate max blocksize.
-
-For my CRYPTO_ALG_MAX_ALIGNMASK, there is:
-
-crypto/shash.c: u8 ubuf[CRYPTO_ALG_MAX_ALIGNMASK]
-crypto/shash.c:         __aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
-crypto/shash.c:         __aligned(CRYPTO_ALG_MAX_ALIGNMASK + 1);
-
-which is also shash.
-
-How should I rename these and best apply the registration-time sanity checks?
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
