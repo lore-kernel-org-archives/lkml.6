@@ -3,101 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23D1C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1B1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B38D222463
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:01:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B38D222463
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CD2122466
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:02:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CD2122466
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933797AbeFUWBm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 18:01:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36126 "EHLO mail.bootlin.com"
+        id S933835AbeFUWCp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 18:02:45 -0400
+Received: from mga05.intel.com ([192.55.52.43]:49420 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933490AbeFUWBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 18:01:41 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2B683206D8; Fri, 22 Jun 2018 00:01:39 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 935F4203B0;
-        Fri, 22 Jun 2018 00:01:28 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 00:01:28 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, dev@lynxeye.de,
-        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
-        krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
-        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mirza.krak@gmail.com, gaireg@gaireg.de,
-        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/6] mtd: rawnand: add NVIDIA Tegra NAND Flash
- controller driver
-Message-ID: <20180622000128.3ea45ef7@bbrezillon>
-In-Reply-To: <20180621203145.7628-5-stefan@agner.ch>
-References: <20180621203145.7628-1-stefan@agner.ch>
-        <20180621203145.7628-5-stefan@agner.ch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S933559AbeFUWCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 18:02:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 15:02:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,253,1526367600"; 
+   d="scan'208";a="59214081"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Jun 2018 15:02:43 -0700
+Received: from orsmsx160.amr.corp.intel.com (10.22.226.43) by
+ ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 21 Jun 2018 15:02:40 -0700
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.228]) by
+ ORSMSX160.amr.corp.intel.com ([10.22.226.43]) with mapi id 14.03.0319.002;
+ Thu, 21 Jun 2018 15:02:39 -0700
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "willy@infradead.org" <willy@infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Van De Ven, Arjan" <arjan.van.de.ven@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH 1/3] vmalloc: Add __vmalloc_node_try_addr function
+Thread-Topic: [PATCH 1/3] vmalloc: Add __vmalloc_node_try_addr function
+Thread-Index: AQHUCONfAlQUZg38/kWgL4xqEcpAaaRqLyWAgAGLogA=
+Date:   Thu, 21 Jun 2018 22:02:39 +0000
+Message-ID: <1529618574.29548.207.camel@intel.com>
+References: <1529532570-21765-1-git-send-email-rick.p.edgecombe@intel.com>
+         <1529532570-21765-2-git-send-email-rick.p.edgecombe@intel.com>
+         <20180620222653.GC11479@bombadil.infradead.org>
+In-Reply-To: <20180620222653.GC11479@bombadil.infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.7.197.56]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FBF7B1AD2130BB4D8BDEDBD442B31691@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
-
-On Thu, 21 Jun 2018 22:31:43 +0200
-Stefan Agner <stefan@agner.ch> wrote:
-
-> Add support for the NAND flash controller found on NVIDIA
-> Tegra 2 SoCs. This implementation does not make use of the
-> command queue feature. Regular operations using ->exec_op()
-> use PIO mode for data transfers. Raw, ECC and OOB read/writes
-> make use of the DMA mode for data transfer.
-> 
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  MAINTAINERS                       |    7 +
->  drivers/mtd/nand/raw/Kconfig      |    6 +
->  drivers/mtd/nand/raw/Makefile     |    1 +
->  drivers/mtd/nand/raw/tegra_nand.c | 1225 +++++++++++++++++++++++++++++
->  4 files changed, 1239 insertions(+)
->  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
-
-I think we're almost good. No big issues spotted in this version.
-Can you fix the CHECKs/WARNINGs reported by checkpatch --strict (most
-of them are valid)?
-
-> +
-> +static int tegra_nand_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_nand_controller *ctrl = platform_get_drvdata(pdev);
-> +
-> +	nand_release(nand_to_mtd(ctrl->chip));
-
-Use mtd_device_unregister() + nand_cleanup() instead of nand_release().
-nand_release() is broken in that it does not check the return code of
-mtd_device_unregister() before calling nand_cleanup(), and does not
-propagate mtd_device_unregister() ret code to its caller. 
-
-> +
-> +	clk_disable_unprepare(ctrl->clk);
-> +
-> +	return 0;
-> +}
-
-Thanks for the great work you've done! Yay, another driver implementing
-->exec_op()!
-
-Boris
+T24gV2VkLCAyMDE4LTA2LTIwIGF0IDE1OjI2IC0wNzAwLCBNYXR0aGV3IFdpbGNveCB3cm90ZToN
+Cj4gTm90IG5lZWRlZDoNCj4gDQo+IHZvaWQgd2Fybl9hbGxvYyhnZnBfdCBnZnBfbWFzaywgbm9k
+ZW1hc2tfdCAqbm9kZW1hc2ssIGNvbnN0IGNoYXINCj4gKmZtdCwgLi4uKQ0KPiB7DQo+IC4uLg0K
+PiDCoMKgwqDCoMKgwqDCoMKgaWYgKChnZnBfbWFzayAmIF9fR0ZQX05PV0FSTikgfHwgIV9fcmF0
+ZWxpbWl0KCZub3BhZ2VfcnMpKQ0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJl
+dHVybjsNCj4gDQpZZXMsIHRoYW5rcyE=
