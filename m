@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 070A5C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F8EC43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC36A22421
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:32:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E3DB22421
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:33:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XUW3s9pF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC36A22421
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XFfZl2sa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3DB22421
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934095AbeFUVc4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:32:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41794 "EHLO
+        id S934121AbeFUVc7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:32:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41788 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933962AbeFUV3K (ORCPT
+        with ESMTP id S933955AbeFUV3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 21 Jun 2018 17:29:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,27 +30,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=u4pWhv/Ox/6vMdukP9HQnAGQXeBsSLLtCnwBKGoq2GQ=; b=XUW3s9pFjzZ8uvOrslZPfk+j5
-        VohCz8aDrwdeiLEhWQcGRzIIhJjcjzr6xjd3Wvyg02dV0TLdf+grz8ONMAg3y2b4wjrb04bEWBW70
-        I7JLyipi7mr56+q7Xp0gAVQXuPrXD93OMg3MqLG73NKcTrdQ+huwBHy9rkiOPgi9JfHkJ0PqwgFjY
-        6Li+FZZVuMrn4xCm5EetXF/EILy83ikPwm2CtofdI0ZAFI4V4JWrS9kPzWWzfRUPlZsVxM961YUcH
-        O8nmUVFCiWV7ZD6+zZ8hzNMb1gRoraOLi2t6JISZq3qaKk2PM4vNJVxVbBwaTRpBuZ9ULL2Y1VQeR
-        2Jqz9lOXg==;
+         bh=DgiDTYObtEDk2O8cnHX6t2kCdY4GY3B7mxCy/I7vJRQ=; b=XFfZl2saElqcS2NGS8hcA8/yN
+        tkZSfN1Q9cQSKg4+Tbe5fX4PyLmWGlQonXy4DIM804o/uS9EGjm7fBs2psUF+PShM8/a8a+ePFS6Q
+        fHBrR15RPRxhxOt3bYIHYiFcTOuaZeK5oTkzryaGHXtwcvzHp8QoRkObQUnS+Z8nru8Ewqt8rz18i
+        v+LCv9YwHxQDo6SF0wjnfqJsFlg5KerhOh/0+unZXuvIPPsC8SPlWzNKRoDYEbYQDfzUSdY/LyoGu
+        Bk7Q3jyjYnenakP7++hQr97GT+cWuFglrpWOGNYZTP7H5uNdi/DQ+lHuvsLvL8JOp9Z2QVZOMkI/1
+        2AZ8KnOkA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78f-0001br-87; Thu, 21 Jun 2018 21:29:09 +0000
+        id 1fW78e-0001bE-I1; Thu, 21 Jun 2018 21:29:08 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Matthew Wilcox <willy@infradead.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 13/26] ppc: Convert mmu context allocation to new IDA API
-Date:   Thu, 21 Jun 2018 14:28:22 -0700
-Message-Id: <20180621212835.5636-14-willy@infradead.org>
+        Boaz Harrosh <ooo@electrozaur.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH 09/26] osd: Convert to new IDA API
+Date:   Thu, 21 Jun 2018 14:28:18 -0700
+Message-Id: <20180621212835.5636-10-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -59,96 +56,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ida_alloc_range is the perfect fit for this use case.  Eliminates
-a custom spinlock, a call to ida_pre_get and a local check for the
-allocated ID exceeding a maximum.
+Slightly simpler code.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- arch/powerpc/mm/mmu_context_book3s64.c | 44 +++-----------------------
- 1 file changed, 4 insertions(+), 40 deletions(-)
+ drivers/scsi/osd/osd_uld.c | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
-diff --git a/arch/powerpc/mm/mmu_context_book3s64.c b/arch/powerpc/mm/mmu_context_book3s64.c
-index f3d4b4a0e561..5a0cf2cc8ba0 100644
---- a/arch/powerpc/mm/mmu_context_book3s64.c
-+++ b/arch/powerpc/mm/mmu_context_book3s64.c
-@@ -26,48 +26,16 @@
- #include <asm/mmu_context.h>
- #include <asm/pgalloc.h>
+diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
+index 0e56f1eb05dc..eaf36ccf58db 100644
+--- a/drivers/scsi/osd/osd_uld.c
++++ b/drivers/scsi/osd/osd_uld.c
+@@ -423,19 +423,11 @@ static int osd_probe(struct device *dev)
+ 	if (scsi_device->type != TYPE_OSD)
+ 		return -ENODEV;
  
--static DEFINE_SPINLOCK(mmu_context_lock);
- static DEFINE_IDA(mmu_context_ida);
- 
- static int alloc_context_id(int min_id, int max_id)
- {
--	int index, err;
--
--again:
--	if (!ida_pre_get(&mmu_context_ida, GFP_KERNEL))
--		return -ENOMEM;
--
--	spin_lock(&mmu_context_lock);
--	err = ida_get_new_above(&mmu_context_ida, min_id, &index);
--	spin_unlock(&mmu_context_lock);
--
--	if (err == -EAGAIN)
--		goto again;
--	else if (err)
--		return err;
--
--	if (index > max_id) {
--		spin_lock(&mmu_context_lock);
--		ida_remove(&mmu_context_ida, index);
--		spin_unlock(&mmu_context_lock);
--		return -ENOMEM;
--	}
--
--	return index;
-+	return ida_alloc_range(&mmu_context_ida, min_id, max_id, GFP_KERNEL);
- }
- 
- void hash__reserve_context_id(int id)
- {
--	int rc, result = 0;
--
 -	do {
--		if (!ida_pre_get(&mmu_context_ida, GFP_KERNEL))
--			break;
+-		if (!ida_pre_get(&osd_minor_ida, GFP_KERNEL))
+-			return -ENODEV;
 -
--		spin_lock(&mmu_context_lock);
--		rc = ida_get_new_above(&mmu_context_ida, id, &result);
--		spin_unlock(&mmu_context_lock);
--	} while (rc == -EAGAIN);
-+	int result = ida_alloc_range(&mmu_context_ida, id, id, GFP_KERNEL);
+-		error = ida_get_new(&osd_minor_ida, &minor);
+-	} while (error == -EAGAIN);
+-
+-	if (error)
+-		return error;
+-	if (minor >= SCSI_OSD_MAX_MINOR) {
+-		error = -EBUSY;
+-		goto err_retract_minor;
+-	}
++	minor = ida_alloc_max(&osd_minor_ida, SCSI_OSD_MAX_MINOR, GFP_KERNEL);
++	if (minor == -ENOSPC)
++		return -EBUSY;
++	if (minor < 0)
++		return -ENODEV;
  
- 	WARN(result != id, "mmu: Failed to reserve context id %d (rc %d)\n", id, result);
+ 	error = -ENOMEM;
+ 	oud = kzalloc(sizeof(*oud), GFP_KERNEL);
+@@ -499,7 +491,7 @@ static int osd_probe(struct device *dev)
+ err_free_osd:
+ 	put_device(&oud->class_dev);
+ err_retract_minor:
+-	ida_remove(&osd_minor_ida, minor);
++	ida_free(&osd_minor_ida, minor);
+ 	return error;
  }
-@@ -172,9 +140,7 @@ int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
  
- void __destroy_context(int context_id)
- {
--	spin_lock(&mmu_context_lock);
--	ida_remove(&mmu_context_ida, context_id);
--	spin_unlock(&mmu_context_lock);
-+	ida_free(&mmu_context_ida, context_id);
- }
- EXPORT_SYMBOL_GPL(__destroy_context);
- 
-@@ -182,13 +148,11 @@ static void destroy_contexts(mm_context_t *ctx)
- {
- 	int index, context_id;
- 
--	spin_lock(&mmu_context_lock);
- 	for (index = 0; index < ARRAY_SIZE(ctx->extended_id); index++) {
- 		context_id = ctx->extended_id[index];
- 		if (context_id)
--			ida_remove(&mmu_context_ida, context_id);
-+			ida_free(&mmu_context_ida, context_id);
+@@ -514,7 +506,7 @@ static int osd_remove(struct device *dev)
  	}
--	spin_unlock(&mmu_context_lock);
- }
  
- static void pte_frag_destroy(void *pte_frag)
+ 	cdev_device_del(&oud->cdev, &oud->class_dev);
+-	ida_remove(&osd_minor_ida, oud->minor);
++	ida_free(&osd_minor_ida, oud->minor);
+ 	put_device(&oud->class_dev);
+ 
+ 	return 0;
 -- 
 2.17.1
 
