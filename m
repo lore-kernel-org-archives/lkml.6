@@ -2,102 +2,103 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FB2C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DABA1C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A2922543
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:19:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A2922543
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 78B3922544
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 23:21:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="aK76BrRT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B3922544
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932875AbeFUXT3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 19:19:29 -0400
-Received: from anholt.net ([50.246.234.109]:58986 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932170AbeFUXT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 19:19:28 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id A7ADC10A1642;
-        Thu, 21 Jun 2018 16:19:27 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id jRHQjpbrf1Yk; Thu, 21 Jun 2018 16:19:26 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 6D47A10A0D3A;
-        Thu, 21 Jun 2018 16:19:26 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id CB9062FE21D0; Thu, 21 Jun 2018 16:19:25 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     Kevin Quigley <kevin@kquigley.co.uk>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "dri-devel\@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        James Hughes <james.hughes@raspberrypi.org>,
-        Archit Taneja <architt@codeaurora.org>
-Subject: RE: [PATCH] drm/vc4: Enable the DSI module and link before other enables.
-In-Reply-To: <C15157EF5067BD40AA5332C0BEB5F4D3079020E596F6@quiclu02.quigley.local>
-References: <CGME20180604194448epcas1p29627759e2d8c0b1388c6700a7da77a45@epcas1p2.samsung.com> <20180604194437.13790-1-eric@anholt.net> <20180605082532eucas1p21328ec5bea7d588c81480829f862bdfd~1NhnMydDJ0562405624eucas1p2l@eucas1p2.samsung.com> <C15157EF5067BD40AA5332C0BEB5F4D3079020E596F6@quiclu02.quigley.local>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Thu, 21 Jun 2018 16:19:24 -0700
-Message-ID: <87a7rnenib.fsf@anholt.net>
+        id S932963AbeFUXVV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 19:21:21 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:32934 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932170AbeFUXVU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 19:21:20 -0400
+Received: by mail-pg0-f66.google.com with SMTP id e11-v6so2097658pgq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 16:21:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KzHhBFRNexS9vHEkpQXOL5Nfy7fbIr6pAQnkT/S9/gU=;
+        b=aK76BrRTUi8WX6THnrrhwI0rlClRuIpkew1/Ffju1Hj001Y+4t4NOLOPfYbreesJ6Q
+         D9WwXqp/elZaVGoQCeSuwADpVkf5SLZypehesDj8jlVNSwVPLhaUbfQndN/a5HDrQKzg
+         yW3rHSi/WezckBbhjiAP+jVlEPeQz9G7QdPqPyN4XSV6CFLIKnIaFL3qlDB3VR0XxXie
+         L3Sgp5d5SFDPepW3bM8QLwAg/wUIDMEmNRCwkr+mr7QUfs5v1fzoznUGKXYrUtexKrHD
+         9StzodvYTgJekg+0yNz5EE6UFAnbaKrHMJ5FEWwyRpB3JMaV0Ydp1DrSUXB9zuK1SIBO
+         sFbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KzHhBFRNexS9vHEkpQXOL5Nfy7fbIr6pAQnkT/S9/gU=;
+        b=bs20Lf4zsjH803ZniZfH9gMAaza5y/wmfOUkG/YQkTQ+8BBY9TECxXvvcI8h0k4zdn
+         /tM6U1zRJJ8whmw12npWEQK5kYAORBAA5baVSPf+VqWAaKniV322ttR/85j0W2sB2g6p
+         Ny945iXUnoLzKwBAabTlT//xA0eU7j8fyQt51ZOYrYs/z6lMaaUHjo9KqAN46rK6hRjJ
+         j9cS6bWbFzfZL2oZ4r9rLXRQwQbiLNP3enkbXSsPHynXsjv7YP9J3fw4MdKktc/VzC2N
+         Zgl0bRZ7NkAVPRCwZsW9wuATZDbd049FGg3oeFPydbyvR2+JwCvDVqjLIJhybhmbVCr9
+         CrEQ==
+X-Gm-Message-State: APt69E2PxcRBykHArdM8SdDylgZ4HjT+6b6CDnxKcWoI59eWnSkV7Ydj
+        ylfcYlSLiR3AvFHIL0OpGSO6rQ==
+X-Google-Smtp-Source: ADUXVKI+JF+S6N5Im6X8dOjKnScPZhCl6ziTlO2CMezrS4/mFHyBekLzxdiK/Dl8oaR2xyL5itCyCw==
+X-Received: by 2002:a63:bf0b:: with SMTP id v11-v6mr23392143pgf.29.1529623279614;
+        Thu, 21 Jun 2018 16:21:19 -0700 (PDT)
+Received: from xeon-e3 (204-195-35-107.wavecable.com. [204.195.35.107])
+        by smtp.gmail.com with ESMTPSA id m5-v6sm20632884pfa.93.2018.06.21.16.21.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 16:21:19 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 16:21:16 -0700
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     garrmcnu@gmail.com, netdev@vger.kernel.org, jiri@resnulli.us,
+        nikolay@cumulusnetworks.com, bridge@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: bridge: fix potential null pointer dereference on
+ return from br_port_get_rtnl()
+Message-ID: <20180621162116.7f424648@xeon-e3>
+In-Reply-To: <20180622.072056.1223319763674661318.davem@davemloft.net>
+References: <20180621201427.4961-1-garrmcnu@gmail.com>
+        <20180622.072056.1223319763674661318.davem@davemloft.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Fri, 22 Jun 2018 07:20:56 +0900 (KST)
+David Miller <davem@davemloft.net> wrote:
 
-Kevin Quigley <kevin@kquigley.co.uk> writes:
+> From: Garry McNulty <garrmcnu@gmail.com>
+> Date: Thu, 21 Jun 2018 21:14:27 +0100
+> 
+> > br_port_get_rtnl() can return NULL if the network device is not a bridge
+> > port (IFF_BRIDGE_PORT flag not set). br_port_slave_changelink() and
+> > br_port_fill_slave_info() callbacks dereference this pointer without
+> > checking. Currently this is not a problem because slave devices always
+> > set this flag. Add null check in case these conditions ever change.
+> > 
+> > Detected by CoverityScan, CID 1339613 ("Dereference null return value")
+> > 
+> > Signed-off-by: Garry McNulty <garrmcnu@gmail.com>  
+> 
+> I don't think this is reasonable.
+> 
+> The bridge code will never, ever, install a slave that doesn't have
+> that bit set.  It's the most fundamental aspect of how these objects
+> are managed.
 
-> Hi,
->
-> When we talk about control bus enable and video transfer enable for
-> DSI, there is a mode in which control commands can be sent,
-> interleaved with the video.  This is often done at the end-of-frame
-> and/or end of line.  I've seen this handled in some other DSI device
-> drivers.  In these cases, the driver has to look at the frame timing
-> in the video and carefully select the number of control bytes which
-> can be sent during the blanking periods.  The number of bytes which
-> can be sent, is very much dependant on the panel-size and clock
-> frequencies... (which determines the blanking time).  I'm not sure how
-> widely this is a feature in the DSI encoder HW, and/or implemented
-> purely in the drivers.
-
-That scheduling is done by the VC4 DSI encoder.
-
-> To conclude: I think that DSI encoder devices need to be able to
-> support sending control data (LPDA) - concurrently with video frames.
-
-I believe that should work already.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlssMnwACgkQtdYpNtH8
-nuj6XhAAgldBul9TX+OY/OhzeAsWa+81VWWIec9ruWi5He5U4/UaCRIcr0/wKhop
-U3eAYS4E0X8OTcC+s/RqaVHRcmHfTOyoR23OXF2onfyvjibtYfapJ2XJUuGzPpLx
-inBoU0XvgONM7LyzkaxaAJ/Y40dQ5+vgOLZEy18W0Mu5QFUHvGu7mqSaI3Fg1LMh
-C3HCUJQKZMUuIwFaBfokZ1hPy7tq8SYnb6V5y3QjDntOF+4HYIYUfCZOejHQNw9M
-LFxyqf1khrrhgc6sVJYWqasEUPx2lssCGkUHPMeEhXHtV1k5Gpov87QU9gJG5tBQ
-M19pGRYAmG+2I5NYTMCWO6KxaGL31bX10KubPgz96FpgBMl/tfnU6/7M4fjvKC/O
-+RhK/SFtec5abOk7O3LCM5bEBywWSk8xXYDOoaYh38z8glDUydm4qwIxGFODJwBK
-TzkQfkgxirq7ElGjmAFgqWOWPTad0t/pUe+oQOu9YP2iAKVKS+XftpsGXImFvK/V
-2l7JxzNkHRe+y7Pq1KZBUMZQNG91a2Z7P1hUjbmcFYDDR/cLCb9qpkJi+iWdVWN6
-Eq9MpqXQKv3VwkAjsoSW5M7M+rZe+/jogQXaz4kWMJDgjjm2J3O86uBXfFsU1oAu
-Q1zEMuwe4Q4Qs22R4xvEmvsGRAx5jIz/9nwBTbmqH9s0nYN9528=
-=Hm3m
------END PGP SIGNATURE-----
---=-=-=--
+Agree with dave. Workarounds for static tools are ok if they don't introduce
+other paths. But if your fix introduces another error path which can never
+be reached, it is hurting not helping.
