@@ -2,222 +2,137 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CA8C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6CBC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F45320883
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:54:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F45320883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AA14520883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:58:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYmqEaKl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA14520883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933375AbeFULyG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 07:54:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:48958 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933130AbeFULyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 07:54:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F5881435;
-        Thu, 21 Jun 2018 04:54:05 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 004E43F578;
-        Thu, 21 Jun 2018 04:54:05 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 24CFB1AE2E48; Thu, 21 Jun 2018 12:54:41 +0100 (BST)
-From:   Will Deacon <will.deacon@arm.com>
-To:     linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com
-Cc:     peterz@infradead.org, paulmck@linux.vnet.ibm.com,
-        boqun.feng@gmail.com, mingo@redhat.com,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2] rseq: Avoid infinite recursion when delivering SIGSEGV
-Date:   Thu, 21 Jun 2018 12:54:40 +0100
-Message-Id: <1529582080-31430-1-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
+        id S933297AbeFUL6c (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 07:58:32 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:32768 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933130AbeFUL6a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 07:58:30 -0400
+Received: by mail-wm0-f65.google.com with SMTP id z6-v6so2931949wma.0;
+        Thu, 21 Jun 2018 04:58:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lI/z+yKhhFOkL1kzRd55CKW4Yhq8MBfhB4UVprsjI94=;
+        b=YYmqEaKly5AfIHq25H010eo2FvAp4Pgxs4L1LsmAN/+w5MxNprV25rcoYuLUiflS5D
+         wDrBLGqPNXBE5EJ15DtJRYJJoM8/EKD7ZInckd5KkmDo18YWLWUG7iwbKJo+P3BWK3ov
+         rw8Sr2M3jXGhf5yrsRJEgQkESQms8hBjnKw7h2PnXrxSllr0incul+I6ALZxcY5whryh
+         75c5ihidy7FD20umPOkpW42+AG2sZVV6KpUNaTwq1/9kxEoP/F4UD71cJ06Pj0R4JyNh
+         brvIvy1Uh3eRce6fDjcfErndwLmoesiEWoEQdG+pmwq2EiF6WrcGj50NZJ1etLQlYWNq
+         ciUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lI/z+yKhhFOkL1kzRd55CKW4Yhq8MBfhB4UVprsjI94=;
+        b=OZlpUTzLOzHi/s8n7eF5kgikqH7vXDROMZY5MaZn+sqHpHhhUwqNxQmEzz/vDwacre
+         czvMxhhZO5M40mPepBKUtIy9lo/4i4xMV8I0cDeVP0VE0nyXlTAR6tYoj6S5Mcry1x9c
+         dB+JKU8qnAONfIf7Lc3fWz1yhhnD0L2HrHKRQeJ5bu7fgjQuScxXjozxOce+iFhjwDB2
+         /0xaS35YvROwp/ItYFEpJA6Z39xnnM8B0SY/WCYSOjvtn9Gxr3ehnpbM1Z5dg4SbVGGM
+         uFubKcHa43wxjEaBtZwCxVVdWb+AejD82fMyp5Z7YCyzO9D4rvK6e/l8152JtRSUPQXE
+         gdGg==
+X-Gm-Message-State: APt69E0KiFpIIwFwPe3PATpL86me1OnxuvCTxU7rOm7RhvSRrvRXUvJt
+        dU3kCy4oD/9lN5NsnsoxkiQ=
+X-Google-Smtp-Source: ADUXVKJErvMGErQUP9yfH+BT3D6axs3H8uzfOmaoU4K80n+ZWHoot/NSvu6Z4O4NxPITPMhc0+kcCw==
+X-Received: by 2002:a1c:9788:: with SMTP id z130-v6mr5136377wmd.88.1529582309584;
+        Thu, 21 Jun 2018 04:58:29 -0700 (PDT)
+Received: from NewMoon.iit.local ([90.147.180.254])
+        by smtp.gmail.com with ESMTPSA id e188-v6sm13779773wmf.21.2018.06.21.04.58.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 04:58:28 -0700 (PDT)
+From:   Andrea Merello <andrea.merello@gmail.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com,
+        michal.simek@xilinx.com, appana.durga.rao@xilinx.com,
+        dmaengine@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH v2 1/5] dmaengine: xilinx_dma: in axidma slave_sg and dma_cyclic mode align split descriptors
+Date:   Thu, 21 Jun 2018 13:58:18 +0200
+Message-Id: <20180621115822.20058-1-andrea.merello@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When delivering a signal to a task that is using rseq, we call into
-__rseq_handle_notify_resume() so that the registers pushed in the
-sigframe are updated to reflect the state of the restartable sequence
-(for example, ensuring that the signal returns to the abort handler if
-necessary).
+Whenever a single or cyclic transaction is prepared, the driver
+could eventually split it over several SG descriptors in order
+to deal with the HW maximum transfer length.
 
-However, if the rseq management fails due to an unrecoverable fault when
-accessing userspace or certain combinations of RSEQ_CS_* flags, then we
-will attempt to deliver a SIGSEGV. This has the potential for infinite
-recursion if the rseq code continuously fails on signal delivery.
+This could end up in DMA operations starting from a misaligned
+address. This seems fatal for the HW if DRE is not enabled.
 
-Avoid this problem by using force_sigsegv() instead of force_sig(), which
-is explicitly designed to reset the SEGV handler to SIG_DFL in the case
-of a recursive fault. In doing so, remove rseq_signal_deliver() from the
-internal rseq API and have an optional struct ksignal * parameter to
-rseq_handle_notify_resume() instead.
+This patch eventually adjusts the transfer size in order to make sure
+all operations start from an aligned address.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
 ---
+Changes in v2:
+	- don't introduce copy_mask field, rather rely on already-esistent
+	  copy_align field. Suggested by Radhey Shyam Pandey
+	- reword title
+---
+ drivers/dma/xilinx/xilinx_dma.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-RFC v1 -> v2: Kill rseq_signal_deliver()
-
- arch/arm/kernel/signal.c     |  4 ++--
- arch/powerpc/kernel/signal.c |  4 ++--
- arch/x86/entry/common.c      |  2 +-
- arch/x86/kernel/signal.c     |  2 +-
- include/linux/sched.h        | 27 ++++++++++++---------------
- kernel/rseq.c                |  7 ++++---
- 6 files changed, 22 insertions(+), 24 deletions(-)
-
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index f09e9d66d605..184f69dcb9f2 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -544,7 +544,7 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
- 	 * Increment event counter and perform fixup for the pre-signal
- 	 * frame.
- 	 */
--	rseq_signal_deliver(regs);
-+	rseq_handle_notify_resume(ksig, regs);
+diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
+index 27b523530c4a..22d7a6b85e65 100644
+--- a/drivers/dma/xilinx/xilinx_dma.c
++++ b/drivers/dma/xilinx/xilinx_dma.c
+@@ -1789,10 +1789,15 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_slave_sg(
  
- 	/*
- 	 * Set up the stack frame
-@@ -666,7 +666,7 @@ do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
- 			} else {
- 				clear_thread_flag(TIF_NOTIFY_RESUME);
- 				tracehook_notify_resume(regs);
--				rseq_handle_notify_resume(regs);
-+				rseq_handle_notify_resume(NULL, regs);
- 			}
- 		}
- 		local_irq_disable();
-diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
-index 17fe4339ba59..88bdf243a5bd 100644
---- a/arch/powerpc/kernel/signal.c
-+++ b/arch/powerpc/kernel/signal.c
-@@ -134,7 +134,7 @@ static void do_signal(struct task_struct *tsk)
- 	/* Re-enable the breakpoints for the signal stack */
- 	thread_change_pc(tsk, tsk->thread.regs);
+ 			/*
+ 			 * Calculate the maximum number of bytes to transfer,
+-			 * making sure it is less than the hw limit
++			 * making sure it is less than the hw limit and that
++			 * the next chunck start address is aligned
+ 			 */
+-			copy = min_t(size_t, sg_dma_len(sg) - sg_used,
+-				     XILINX_DMA_MAX_TRANS_LEN);
++			copy = sg_dma_len(sg) - sg_used;
++			if (copy > XILINX_DMA_MAX_TRANS_LEN &&
++			    chan->xdev->common.copy_align)
++				copy = rounddown(XILINX_DMA_MAX_TRANS_LEN,
++					 (1 << chan->xdev->common.copy_align));
++
+ 			hw = &segment->hw;
  
--	rseq_signal_deliver(tsk->thread.regs);
-+	rseq_handle_notify_resume(&ksig, tsk->thread.regs);
+ 			/* Fill in the descriptor */
+@@ -1894,10 +1899,15 @@ static struct dma_async_tx_descriptor *xilinx_dma_prep_dma_cyclic(
  
- 	if (is32) {
-         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
-@@ -170,7 +170,7 @@ void do_notify_resume(struct pt_regs *regs, unsigned long thread_info_flags)
- 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
- 		clear_thread_flag(TIF_NOTIFY_RESUME);
- 		tracehook_notify_resume(regs);
--		rseq_handle_notify_resume(regs);
-+		rseq_handle_notify_resume(NULL, regs);
- 	}
- 
- 	user_enter();
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 92190879b228..3b2490b81918 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -164,7 +164,7 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
- 		if (cached_flags & _TIF_NOTIFY_RESUME) {
- 			clear_thread_flag(TIF_NOTIFY_RESUME);
- 			tracehook_notify_resume(regs);
--			rseq_handle_notify_resume(regs);
-+			rseq_handle_notify_resume(NULL, regs);
- 		}
- 
- 		if (cached_flags & _TIF_USER_RETURN_NOTIFY)
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 445ca11ff863..8affeeb74935 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -692,7 +692,7 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
- 	 * Increment event counter and perform fixup for the pre-signal
- 	 * frame.
- 	 */
--	rseq_signal_deliver(regs);
-+	rseq_handle_notify_resume(ksig, regs);
- 
- 	/* Set up the stack frame */
- 	if (is_ia32_frame(ksig)) {
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 87bf02d93a27..fd23a540cd8d 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1799,20 +1799,19 @@ static inline void rseq_set_notify_resume(struct task_struct *t)
- 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
- }
- 
--void __rseq_handle_notify_resume(struct pt_regs *regs);
-+void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
- 
--static inline void rseq_handle_notify_resume(struct pt_regs *regs)
-+static inline void rseq_handle_notify_resume(struct ksignal *ksig,
-+					     struct pt_regs *regs)
- {
--	if (current->rseq)
--		__rseq_handle_notify_resume(regs);
--}
-+	if (ksig) {
-+		preempt_disable();
-+		__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
-+		preempt_enable();
-+	}
- 
--static inline void rseq_signal_deliver(struct pt_regs *regs)
--{
--	preempt_disable();
--	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
--	preempt_enable();
--	rseq_handle_notify_resume(regs);
-+	if (current->rseq)
-+		__rseq_handle_notify_resume(ksig, regs);
- }
- 
- /* rseq_preempt() requires preemption to be disabled. */
-@@ -1864,10 +1863,8 @@ static inline void rseq_execve(struct task_struct *t)
- static inline void rseq_set_notify_resume(struct task_struct *t)
- {
- }
--static inline void rseq_handle_notify_resume(struct pt_regs *regs)
--{
--}
--static inline void rseq_signal_deliver(struct pt_regs *regs)
-+static inline void rseq_handle_notify_resume(struct ksignal *ksig,
-+					     struct pt_regs *regs)
- {
- }
- static inline void rseq_preempt(struct task_struct *t)
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index ae306f90c514..22b6acf1ad63 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -251,10 +251,10 @@ static int rseq_ip_fixup(struct pt_regs *regs)
-  * respect to other threads scheduled on the same CPU, and with respect
-  * to signal handlers.
-  */
--void __rseq_handle_notify_resume(struct pt_regs *regs)
-+void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
- {
- 	struct task_struct *t = current;
--	int ret;
-+	int ret, sig;
- 
- 	if (unlikely(t->flags & PF_EXITING))
- 		return;
-@@ -268,7 +268,8 @@ void __rseq_handle_notify_resume(struct pt_regs *regs)
- 	return;
- 
- error:
--	force_sig(SIGSEGV, t);
-+	sig = ksig ? ksig->sig : 0;
-+	force_sigsegv(sig, t);
- }
- 
- #ifdef CONFIG_DEBUG_RSEQ
+ 			/*
+ 			 * Calculate the maximum number of bytes to transfer,
+-			 * making sure it is less than the hw limit
++			 * making sure it is less than the hw limit and that
++			 * the next chunck start address is aligned
+ 			 */
+-			copy = min_t(size_t, period_len - sg_used,
+-				     XILINX_DMA_MAX_TRANS_LEN);
++			copy = period_len - sg_used;
++			if (copy > XILINX_DMA_MAX_TRANS_LEN &&
++			    chan->xdev->common.copy_align)
++				copy = rounddown(XILINX_DMA_MAX_TRANS_LEN,
++					 (1 << chan->xdev->common.copy_align));
++
+ 			hw = &segment->hw;
+ 			xilinx_axidma_buf(chan, hw, buf_addr, sg_used,
+ 					  period_len * i);
 -- 
-2.1.4
+2.17.1
 
