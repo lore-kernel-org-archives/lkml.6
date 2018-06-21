@@ -3,113 +3,252 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3A7C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5892C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08FB20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08FB20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E47220837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:54:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E47220837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754694AbeFUBxj (ORCPT
+        id S1754722AbeFUByO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:53:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50740 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754626AbeFUBxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 21:53:12 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 47788401EF17;
-        Thu, 21 Jun 2018 01:53:12 +0000 (UTC)
-Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D376E2A0C;
-        Thu, 21 Jun 2018 01:53:09 +0000 (UTC)
-Date:   Thu, 21 Jun 2018 09:53:06 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Lianbo Jiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
-        iommu@lists.linux-foundation.org, dyoung@redhat.com,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH 2/4 V3] Allocate pages for kdump without encryption when
- SME is enabled
-Message-ID: <20180621015306.GG29979@MiWiFi-R3L-srv>
-References: <20180616082714.32035-1-lijiang@redhat.com>
- <20180616082714.32035-3-lijiang@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180616082714.32035-3-lijiang@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 21 Jun 2018 01:53:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 21 Jun 2018 01:53:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+        Wed, 20 Jun 2018 21:54:14 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40941 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754504AbeFUBxK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 21:53:10 -0400
+Received: by mail-pf0-f195.google.com with SMTP id z24-v6so684116pfe.7
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:53:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=uuTfTEyH7xqA35vIsTTQ8TYa2L1PgTCJf5g9yX7aHnU=;
+        b=QLhioQrrvWmhvifTp1cMrKgtZ85kjXW1tTa9dsJpq751PMt9Y2ysGW71DdqIQEHqp3
+         EmahTeWbLO0d2tdoxPNB29/nyeVUlmMFxMVxQARngoBFNZEgdr8sUMaDsYvQtnmqsvrg
+         a6vybQi+hDP6XGUXYSz+rltaB8vm22ZLghKzYqX3cYJ6bh5VrA3BF6a7cmTGcOY6qDa0
+         xjEg1LZFaUdppzFJGkzmmGeWRbKdO4tHy0j0SMC701m9Nc1eL1cPiyaAyJpYd5uS2b5q
+         NlwnsmNFXo7x2vzB/n43bO69VDbKzBWpqbMyqifAlkkGiG3zLSQc4Y1bJSl+/XlS+QI8
+         iRwg==
+X-Gm-Message-State: APt69E0Z1kEPaOxlauvM6DgGizxQoiUPOn+Yl1IaZbLa3rllC6gzNoTX
+        W4IjW62d7CSozkSRFNMyDok6rw==
+X-Google-Smtp-Source: ADUXVKIUiwAos+STz3nAXeVJAG0OrEWYe8G74hD4vWnNqmu3l0aSjJ8PpY6zmC9eVBhXq/1Nc6coeA==
+X-Received: by 2002:a62:6141:: with SMTP id v62-v6mr25164748pfb.197.1529545990064;
+        Wed, 20 Jun 2018 18:53:10 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id p12-v6sm6585877pfi.175.2018.06.20.18.53.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 20 Jun 2018 18:53:09 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v4 11/12] misc: throttler: Add Chrome OS EC throttler
+Date:   Wed, 20 Jun 2018 18:52:36 -0700
+Message-Id: <20180621015237.100100-12-mka@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
+In-Reply-To: <20180621015237.100100-1-mka@chromium.org>
+References: <20180621015237.100100-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/16/18 at 04:27pm, Lianbo Jiang wrote:
-> When SME is enabled in the first kernel, we will allocate pages
-> for kdump without encryption in order to be able to boot the
-> second kernel in the same manner as kexec, which helps to keep
-> the same code style.
-> 
-> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-> ---
->  kernel/kexec_core.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> index 20fef1a..3c22a9b 100644
-> --- a/kernel/kexec_core.c
-> +++ b/kernel/kexec_core.c
-> @@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
->  		}
->  	}
->  
-> +	if (pages) {
-> +		unsigned int count, i;
-> +
-> +		pages->mapping = NULL;
-> +		set_page_private(pages, order);
-> +		count = 1 << order;
-> +		for (i = 0; i < count; i++)
-> +			SetPageReserved(pages + i);
+The driver subscribes to throttling events from the Chrome OS
+embedded controller and enables/disables system throttling based
+on these events.
 
-I guess you might imitate the kexec case, however kexec get pages from
-buddy. Crash pages are reserved in memblock, these codes might make no sense.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+---
+Changes in v4:
+- adapt to parent being struct cros_ec_dev instead of struct
+  cros_ec_device
+- added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
 
-> +		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
-> +	}
->  	return pages;
->  }
->  
-> @@ -865,6 +875,7 @@ static int kimage_load_crash_segment(struct kimage *image,
->  			result  = -ENOMEM;
->  			goto out;
->  		}
-> +		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
->  		ptr = kmap(page);
->  		ptr += maddr & ~PAGE_MASK;
->  		mchunk = min_t(size_t, mbytes,
-> @@ -882,6 +893,7 @@ static int kimage_load_crash_segment(struct kimage *image,
->  			result = copy_from_user(ptr, buf, uchunk);
->  		kexec_flush_icache_page(page);
->  		kunmap(page);
-> +		arch_kexec_pre_free_pages(page_address(page), 1);
->  		if (result) {
->  			result = -EFAULT;
->  			goto out;
-> -- 
-> 2.9.5
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+Changes in v3:
+- change module license to GPL v2 as in the SPDX identifier
+- don't instantiate the throttler through the DT (instantiation
+  by CrOS EC MFD in a separate patch)
+
+Changes in v2:
+- added SPDX line instead of license boiler-plate
+- use macro to avoid splitting line
+- changed variable name for throttler from 'cte' to 'ce_thr'
+- formatting fixes
+- Kconfig: removed odd dashes around 'help'
+- added 'Reviewed-by' tag
+---
+ drivers/misc/throttler/Kconfig             |  10 ++
+ drivers/misc/throttler/Makefile            |   1 +
+ drivers/misc/throttler/cros_ec_throttler.c | 111 +++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/misc/throttler/cros_ec_throttler.c
+
+diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
+index 8b2e63b2ef48..ef984c96f67b 100644
+--- a/drivers/misc/throttler/Kconfig
++++ b/drivers/misc/throttler/Kconfig
+@@ -20,4 +20,14 @@ menuconfig THROTTLER_DEBUG
+ 
+ 	  Choose N unless you want to debug throttler drivers.
+ 
++config CROS_EC_THROTTLER
++	tristate "Throttler event monitor for the Chrome OS Embedded Controller"
++	depends on MFD_CROS_EC
++	help
++	  This driver adds support to throttle the system in reaction to
++	  Chrome OS EC events.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called cros_ec_throttler.
++
+ endif # THROTTLER
+diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
+index c8d920cee315..d9b2a77dabc9 100644
+--- a/drivers/misc/throttler/Makefile
++++ b/drivers/misc/throttler/Makefile
+@@ -1 +1,2 @@
+ obj-$(CONFIG_THROTTLER)		+= core.o
++obj-$(CONFIG_CROS_EC_THROTTLER)	+= cros_ec_throttler.o
+diff --git a/drivers/misc/throttler/cros_ec_throttler.c b/drivers/misc/throttler/cros_ec_throttler.c
+new file mode 100644
+index 000000000000..82a25415a264
+--- /dev/null
++++ b/drivers/misc/throttler/cros_ec_throttler.c
+@@ -0,0 +1,111 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for throttling triggered by events from the Chrome OS Embedded
++ * Controller.
++ *
++ * Copyright (C) 2018 Google, Inc.
++ */
++
++#include <linux/kernel.h>
++#include <linux/mfd/cros_ec.h>
++#include <linux/module.h>
++#include <linux/notifier.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/throttler.h>
++
++#define nb_to_ce_thr(nb) container_of(nb, struct cros_ec_throttler, nb)
++
++struct cros_ec_throttler {
++	struct cros_ec_device *ec;
++	struct throttler *throttler;
++	struct notifier_block nb;
++};
++
++static int cros_ec_throttler_event(struct notifier_block *nb,
++	unsigned long queued_during_suspend, void *_notify)
++{
++	struct cros_ec_throttler *ce_thr = nb_to_ce_thr(nb);
++	u32 host_event;
++
++	host_event = cros_ec_get_host_event(ce_thr->ec);
++	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_START)) {
++		throttler_set_level(ce_thr->throttler, 1);
++
++		return NOTIFY_OK;
++	} else if (host_event &
++		   EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_STOP)) {
++		throttler_set_level(ce_thr->throttler, 0);
++
++		return NOTIFY_OK;
++	}
++
++	return NOTIFY_DONE;
++}
++
++static int cros_ec_throttler_probe(struct platform_device *pdev)
++{
++	struct cros_ec_throttler *ce_thr;
++	struct device *dev = &pdev->dev;
++	struct cros_ec_dev *ec;
++	int ret;
++
++	ce_thr = devm_kzalloc(dev, sizeof(*ce_thr), GFP_KERNEL);
++	if (!ce_thr)
++		return -ENOMEM;
++
++	ec = dev_get_drvdata(pdev->dev.parent);
++	ce_thr->ec = ec->ec_dev;
++
++	/*
++	 * The core code uses the DT node of the throttler to identify its
++	 * throttling devices and rates. The CrOS EC throttler is a sub-device
++	 * of the CrOS EC MFD device and doesn't have its own device node. Use
++	 * the node of the MFD device instead.
++	 */
++	dev->of_node = ce_thr->ec->dev->of_node;
++
++	ce_thr->throttler = throttler_setup(dev);
++	if (IS_ERR(ce_thr->throttler))
++		return PTR_ERR(ce_thr->throttler);
++
++	dev_set_drvdata(dev, ce_thr);
++
++	ce_thr->nb.notifier_call = cros_ec_throttler_event;
++	ret = blocking_notifier_chain_register(&ce_thr->ec->event_notifier,
++					       &ce_thr->nb);
++	if (ret < 0) {
++		dev_err(dev, "failed to register notifier\n");
++		throttler_teardown(ce_thr->throttler);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int cros_ec_throttler_remove(struct platform_device *pdev)
++{
++	struct cros_ec_throttler *ce_thr = platform_get_drvdata(pdev);
++
++	blocking_notifier_chain_unregister(&ce_thr->ec->event_notifier,
++					   &ce_thr->nb);
++
++	throttler_teardown(ce_thr->throttler);
++
++	return 0;
++}
++
++static struct platform_driver cros_ec_throttler_driver = {
++	.driver = {
++		.name = "cros-ec-throttler",
++	},
++	.probe		= cros_ec_throttler_probe,
++	.remove		= cros_ec_throttler_remove,
++};
++
++module_platform_driver(cros_ec_throttler_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Matthias Kaehlcke <mka@chromium.org>");
++MODULE_DESCRIPTION("Chrome OS EC Throttler");
+-- 
+2.18.0.rc2.346.g013aa6912e-goog
+
