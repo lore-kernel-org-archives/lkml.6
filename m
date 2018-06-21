@@ -6,100 +6,143 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E845C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA3AC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA1820837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA1820837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 2269E208A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:12:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2269E208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933576AbeFUNGZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:06:25 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:64675 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933096AbeFUNGX (ORCPT
+        id S932719AbeFUNMP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:12:15 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46128 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbeFUNMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:06:23 -0400
-X-IronPort-AV: E=Sophos;i="5.51,252,1526342400"; 
-   d="scan'208";a="58221534"
-Subject: Re: [PATCH 4.4 059/268] xen-netfront: Fix race between device setup
- and open
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-CC:     <stable@vger.kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180528100202.045206534@linuxfoundation.org>
- <20180528100208.647996715@linuxfoundation.org>
- <1528727372.2289.120.camel@codethink.co.uk>
-From:   Ross Lagerwall <ross.lagerwall@citrix.com>
-Message-ID: <c7846023-b7cd-2c65-7203-f5a0b44a7c98@citrix.com>
-Date:   Thu, 21 Jun 2018 14:05:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Thu, 21 Jun 2018 09:12:13 -0400
+Received: from 79.184.254.22.ipv4.supernova.orange.pl (79.184.254.22) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id c8e7fd08c0638708; Thu, 21 Jun 2018 15:12:11 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Ravi Chandra Sadineni <ravisadineni@google.com>
+Cc:     Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Len Brown <lenb@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Todd Broch <tbroch@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Rajat Jain <rajatja@google.com>,
+        Benson Leung <bleung@google.com>,
+        Furquan Shaikh <furquan@chromium.org>
+Subject: Re: [PATCH V2] ACPI LID: increment wakeup count only when notified.
+Date:   Thu, 21 Jun 2018 15:11:00 +0200
+Message-ID: <1626382.ruNcc2KUiW@aspire.rjw.lan>
+In-Reply-To: <CAOGSYL371YSqpqdzqHUC+UxvMtxTc0q=YFPRcT-SeSHO5Pepeg@mail.gmail.com>
+References: <CAJZ5v0gXqyKQ5yTtqFYzv=KW2o+b4vGiUYiWWn+iT=zY-mU9xw@mail.gmail.com> <20180611175759.181681-1-ravisadineni@chromium.org> <CAOGSYL371YSqpqdzqHUC+UxvMtxTc0q=YFPRcT-SeSHO5Pepeg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1528727372.2289.120.camel@codethink.co.uk>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 03:29 PM, Ben Hutchings wrote:
-> On Mon, 2018-05-28 at 12:00 +0200, Greg Kroah-Hartman wrote:
->> 4.4-stable review patch.  If anyone has any objections, please let me know.
->>
->> ------------------
->>
->> From: Ross Lagerwall <ross.lagerwall@citrix.com>
->>
->> [ Upstream commit f599c64fdf7d9c108e8717fb04bc41c680120da4 ]
-> [...]
->> --- a/drivers/net/xen-netfront.c
->> +++ b/drivers/net/xen-netfront.c
-> [...]
->> @@ -1839,6 +1824,7 @@ static int talk_to_netback(struct xenbus
->>   		goto out;
+On Wednesday, June 20, 2018 5:45:50 PM CEST Ravi Chandra Sadineni wrote:
+> Hi Rafael,
 > 
-> This "goto out" is outside the locked section...
+> Is this good to be merged ?
+
+Not for 4.18, so please give me some time here.
+
+> If you see any problem with the patch, can you
+> please let me know.
+
+I will.
+
+Thanks,
+Rafael
+
+
+> On Mon, Jun 11, 2018 at 10:57 AM, Ravi Chandra Sadineni <
+> ravisadineni@chromium.org> wrote:
 > 
->>   	}
->>   
->> +	rtnl_lock();
->>   	if (info->queues)
->>   		xennet_destroy_queues(info);
->>   
->> @@ -1849,6 +1835,7 @@ static int talk_to_netback(struct xenbus
->>   		info->queues = NULL;
->>   		goto out;
->>   	}
->> +	rtnl_unlock();
->>   
->>   	/* Create shared ring, alloc event channel -- for each queue */
->>   	for (i = 0; i < num_queues; ++i) {
->> @@ -1945,8 +1932,10 @@ abort_transaction_no_dev_fatal:
->>   	xenbus_transaction_end(xbt, 1);
->>    destroy_ring:
->>   	xennet_disconnect_backend(info);
->> +	rtnl_lock();
->>   	xennet_destroy_queues(info);
->>    out:
->> +	rtnl_unlock();
-> 
-> ...so this will be an unmatched unlock.
-> 
-> You need to add another label below the rtnl_unlock().
+> > Currently ACPI LID increments wakeup count irrespective of the wake source.
+> > This is because we call acpi_lid_initialize_state on every resume.
+> > Userland deamons using wakeup_count to identify the potential wake
+> > source for the last wake will be thrown off by this. Instead increment
+> > the wakeup count only when there is a FIXED_HARDWARE/NOTFIY_STATUS event.
+> >
+> > Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+> > ---
+> >  V2: Increment the wakeup count only when the lid is open.
+> >
+> >  drivers/acpi/button.c | 13 +++++++------
+> >  1 file changed, 7 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/acpi/button.c b/drivers/acpi/button.c
+> > index 2345a5ee2dbbc..d2fe03e4faf05 100644
+> > --- a/drivers/acpi/button.c
+> > +++ b/drivers/acpi/button.c
+> > @@ -235,9 +235,6 @@ static int acpi_lid_notify_state(struct acpi_device
+> > *device, int state)
+> >                 button->last_time = ktime_get();
+> >         }
+> >
+> > -       if (state)
+> > -               acpi_pm_wakeup_event(&device->dev);
+> > -
+> >         ret = blocking_notifier_call_chain(&acpi_lid_notifier, state,
+> > device);
+> >         if (ret == NOTIFY_DONE)
+> >                 ret = blocking_notifier_call_chain(&acpi_lid_notifier,
+> > state,
+> > @@ -366,7 +363,8 @@ int acpi_lid_open(void)
+> >  }
+> >  EXPORT_SYMBOL(acpi_lid_open);
+> >
+> > -static int acpi_lid_update_state(struct acpi_device *device)
+> > +static int acpi_lid_update_state(struct acpi_device *device,
+> > +                                bool is_notification)
+> >  {
+> >         int state;
+> >
+> > @@ -374,6 +372,9 @@ static int acpi_lid_update_state(struct acpi_device
+> > *device)
+> >         if (state < 0)
+> >                 return state;
+> >
+> > +       if (state && is_notification)
+> > +               acpi_pm_wakeup_event(&device->dev);
+> > +
+> >         return acpi_lid_notify_state(device, state);
+> >  }
+> >
+> > @@ -384,7 +385,7 @@ static void acpi_lid_initialize_state(struct
+> > acpi_device *device)
+> >                 (void)acpi_lid_notify_state(device, 1);
+> >                 break;
+> >         case ACPI_BUTTON_LID_INIT_METHOD:
+> > -               (void)acpi_lid_update_state(device);
+> > +               (void)acpi_lid_update_state(device, false);
+> >                 break;
+> >         case ACPI_BUTTON_LID_INIT_IGNORE:
+> >         default:
+> > @@ -409,7 +410,7 @@ static void acpi_button_notify(struct acpi_device
+> > *device, u32 event)
+> >                         users = button->input->users;
+> >                         mutex_unlock(&button->input->mutex);
+> >                         if (users)
+> > -                               acpi_lid_update_state(device);
+> > +                               acpi_lid_update_state(device, true);
+> >                 } else {
+> >                         int keycode;
+> >
+> > --
+> > 2.18.0.rc1.242.g61856ae69a-goog
+> >
+> >
 > 
 
-Thanks for spotting this. I've sent patches to the list to fix this and 
-another issue with the original patch.
 
-Regards,
--- 
-Ross Lagerwall
