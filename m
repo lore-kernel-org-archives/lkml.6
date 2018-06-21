@@ -2,123 +2,148 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A0DC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAABC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 794C421C66
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E935421C66
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:51:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TMJYgyDN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794C421C66
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ghN8Sm4r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E935421C66
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933365AbeFUUu5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 16:50:57 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44423 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932670AbeFUUu4 (ORCPT
+        id S933433AbeFUUvM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 16:51:12 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37270 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933385AbeFUUvK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 16:50:56 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z9-v6so2287118plk.11
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 13:50:55 -0700 (PDT)
+        Thu, 21 Jun 2018 16:51:10 -0400
+Received: by mail-wm0-f68.google.com with SMTP id r125-v6so8468526wmg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 13:51:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=MT/4jSlCXNBkWzNStXSryJrC2bf9fR3cmEv9RTBBxmI=;
-        b=TMJYgyDNZugso9pQ5RPWt2nhXtOHQO5yHDQZ3mDt8RBNv4KqnbSG+ZSrqvtH7zL9MY
-         EqFEan2p01CsHtDrW3xJXlklp+27bFfF4DC+CDHfZ2KWiWBouq+/GLME7ZMtbmqGqA4M
-         s2gfG4ZSeMc35YhHxJ2X6dZV1QWsw5etbDAK05TYCNbi5nusid4FdWRrvgbpUH5vb9kc
-         2GmT08Tcm/823lffoUwgT6p9X0W2J1DF6zbAV4CqVBHGPLGtiMCvRZd35OKQIsf+UeWB
-         SS6pzLj/YsnBfFmm3kxnSlS/UoorB1xKRQn3Qz3vjf1zSxTDUY5RJLeJ6liOX53KMXXZ
-         OADg==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nUtZDsp1C+7/cA8GwNwGu00uy8s6wYq8L/NTyithdkA=;
+        b=ghN8Sm4rqeTEO3d1QJE+Kstzr6GcRJd3HVI2wVf5XAmlsTfVYtlkJ2BYcIrMpdTBz4
+         MpgnmDpjZ6IhUbMUL0yfbXLGxls2Gut3V1iX+RhVILDjjyDFR63S6QL2IHNdnbPm/IDV
+         asrE/gq6iR88G32TeTjVxggk9T+2fkoMWgHPoWp5r74eIgadgR810NgsyYBqYW1vz8ky
+         6lAm2i3uQN5ZYXHmFkaYvRq7FIUHHs21JawUDDZPRkfBfBo3Ri1WFvU8VGhSh7b5AcLg
+         LD23g8wU0RoYBnzhSCSjbxhZPay2/aGK8n2ptoA5W9ifEoq4TgNpt/9g9f+rlF658T8O
+         InbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=MT/4jSlCXNBkWzNStXSryJrC2bf9fR3cmEv9RTBBxmI=;
-        b=X73WxWte6wr/JyNDGH9uHI8Zr0EMFwpQle3oUjbNxa8rHsDepPNz/l2u79yL75VdbM
-         TLDc/oSiRLaml10U1ur738kt7ILz8zRMro5P/gDtXW3Oi6NbTm9ADa0YetsSxbg/NTDD
-         HXdoQunVj8zMLkHtttYyYOnJJtU1N6nNveq/543GlaSR+uQ3L+y9vJrUDdkrt9dvNHqE
-         4ZnorrCX1gIvo/tA1/wPB3c7FKu4CEI5irogUcgNQ92DUa7CIb3aVs0qWFEA24KqZjdT
-         /jz/EGPsSKzQVca2TSiVDs1uZC8SEv8+9gTuubM6maCVS4MLH0mXd2u0B54zhHvOfkL+
-         6y9Q==
-X-Gm-Message-State: APt69E0U3tA5X6BM/9agGNs7BF1NPHCVak/1+EkePiqGJg+XtfkPz0/s
-        bchXCe72S59QDjfYhtPb3kG6LA==
-X-Google-Smtp-Source: ADUXVKKTunhif7p5WZpo9HD77+ad8Sw43/OFHzUmWz/+Nw26g5DB5bpzuNocuiEAYX4n4KyDLHtZvg==
-X-Received: by 2002:a17:902:7202:: with SMTP id ba2-v6mr29508604plb.119.1529614255134;
-        Thu, 21 Jun 2018 13:50:55 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id g78-v6sm10481809pfe.39.2018.06.21.13.50.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 13:50:54 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 13:50:53 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch] mm, oom: fix unnecessary killing of additional
- processes
-In-Reply-To: <20180621074537.GC10465@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1806211347050.213939@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com> <alpine.DEB.2.21.1806141339580.4543@chino.kir.corp.google.com> <20180615065541.GA24039@dhcp22.suse.cz> <alpine.DEB.2.21.1806151559360.49038@chino.kir.corp.google.com>
- <20180619083316.GB13685@dhcp22.suse.cz> <20180620130311.GM13685@dhcp22.suse.cz> <alpine.DEB.2.21.1806201325330.158126@chino.kir.corp.google.com> <20180621074537.GC10465@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nUtZDsp1C+7/cA8GwNwGu00uy8s6wYq8L/NTyithdkA=;
+        b=I4+Tgoc8RxGW4pXX+nX3Ex/dlGJ4nYjctkRZA5TKCTSQkXXXr3mM2cBJidbs/HnZRz
+         eSMWfWe4Gw03fY3hsh3ebZw6/4XLVm2iolEr1adWHtnNoRX+PWWc3ITWARUKOLKaHcBe
+         zMy6Nz2rNegclH9NGiZHtsbKGmccjk9ZF5p/4XDYvHGSIWKUN7dc+iQXgDhm5n8QSRxm
+         9YPjO6H2GEiwbdt6xl+LG0ZWClmLhAlw4t8yTKGl24WwKn3/v4Y4+yFwrMf2kE5JVEYe
+         OPNid15KKHsbgsjtGsZtUDwMWHdErr7LSpw0k4sgrfn+VsiwE8pPNjBpnSIBLgl0viIK
+         aj+g==
+X-Gm-Message-State: APt69E2K6WsJGlM2wWkDGyB1qSQjkQF2CNh6N4GQOR23s2CONc7ULLmy
+        td+wpMEF0Odp1ld5OKm8vo3Gww==
+X-Google-Smtp-Source: ADUXVKIyWyPn6qn74ar3SDN9VcxoVjnVdhoRXFPuLsi1BH4Q8ohHrAEM8lOqWBCWxHU23Q2FNyQUYQ==
+X-Received: by 2002:a1c:eb08:: with SMTP id j8-v6mr6995895wmh.160.1529614269126;
+        Thu, 21 Jun 2018 13:51:09 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id a8-v6sm7782648wrc.18.2018.06.21.13.51.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 13:51:08 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fW6Xo-0006xk-TV; Thu, 21 Jun 2018 14:51:04 -0600
+Date:   Thu, 21 Jun 2018 14:51:04 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] tpm: Implement tpm_chip_find() and tpm_chip_put()
+ for other subsystems
+Message-ID: <20180621205104.GA19151@ziepe.ca>
+References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
+ <20180620204236.1572523-2-stefanb@linux.vnet.ibm.com>
+ <20180621171518.GI11859@linux.intel.com>
+ <95b2970f-b71b-4cfc-c188-7ae7e8cb94c5@linux.vnet.ibm.com>
+ <20180621175601.GC19270@ziepe.ca>
+ <743f606f-b3eb-6917-33bb-5b080f76fe3f@linux.vnet.ibm.com>
+ <20180621190620.GE19270@ziepe.ca>
+ <9fd8786e-f223-0b06-ce31-78c828348e83@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9fd8786e-f223-0b06-ce31-78c828348e83@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 21 Jun 2018, Michal Hocko wrote:
-
-> > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > index 6bcecc325e7e..ac08f5d711be 100644
-> > > --- a/arch/x86/kvm/x86.c
-> > > +++ b/arch/x86/kvm/x86.c
-> > > @@ -7203,8 +7203,9 @@ static void vcpu_load_eoi_exitmap(struct kvm_vcpu *vcpu)
-> > >  	kvm_x86_ops->load_eoi_exitmap(vcpu, eoi_exit_bitmap);
-> > >  }
-> > >  
-> > > -void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-> > > -		unsigned long start, unsigned long end)
-> > > +int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-> > > +		unsigned long start, unsigned long end,
-> > > +		bool blockable)
-> > >  {
-> > >  	unsigned long apic_address;
-> > >  
-> > > @@ -7215,6 +7216,8 @@ void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-> > >  	apic_address = gfn_to_hva(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
-> > >  	if (start <= apic_address && apic_address < end)
-> > >  		kvm_make_all_cpus_request(kvm, KVM_REQ_APIC_PAGE_RELOAD);
-> > > +
-> > > +	return 0;
-> > >  }
-> > >  
-> > >  void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu)
-> > 
-> > Auditing the first change in the patch, this is incorrect because 
-> > kvm_make_all_cpus_request() for KVM_REQ_APIC_PAGE_RELOAD can block in 
-> > kvm_kick_many_cpus() and that is after kvm_make_request() has been done.
+On Thu, Jun 21, 2018 at 04:14:46PM -0400, Stefan Berger wrote:
+> On 06/21/2018 03:06 PM, Jason Gunthorpe wrote:
+> >On Thu, Jun 21, 2018 at 02:19:44PM -0400, Stefan Berger wrote:
+> >>On 06/21/2018 01:56 PM, Jason Gunthorpe wrote:
+> >>>On Thu, Jun 21, 2018 at 01:45:03PM -0400, Stefan Berger wrote:
+> >>>>On 06/21/2018 01:15 PM, Jarkko Sakkinen wrote:
+> >>>>>On Wed, Jun 20, 2018 at 04:42:33PM -0400, Stefan Berger wrote:
+> >>>>>>Implement tpm_chip_find() for other subsystems to find a TPM chip and
+> >>>>>>get a reference to that chip. Once done with using the chip, the reference
+> >>>>>>is released using tpm_chip_put().
+> >>>>>>
+> >>>>>>Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> >>>>>You should sort this out in a way that we don't end up with duplicate
+> >>>>>functions.
+> >>>>Do you want me to create a function *like* tpm_chip_find_get() that takes an
+> >>>>additional parameter whether to get the ops semaphore and have that function
+> >>>>called by the existing tpm_chip_find_get() and the new tpm_chip_find(). The
+> >>>>latter would then not get the ops semphore. I didn't want to do this since
+> >>>>one time the function returns with a lock held and the other time not.
+> >>>Another option, and I haven't looked, is to revise the callers of
+> >>>tpm_chip_find_get to not require it to hold the ops semaphore for
+> >>>them.
+> >>We have tpm_chip_unregister calling tpm_del_char_device to set the ops to
+> >>NULL once a chip is unregistered. All existing callers, if they pass in a
+> >>tpm_chip != NULL, currently fail if the ops are NULL. (If they pass in
+> >>tpm_chip = NULL, they shouldn't find a chip once ops are null and it has
+> >>been removed from the IDR). I wouldn't change that since IMA will call in
+> >>with a tpm_chip != NULL and we want to protect the ops. All existing code
+> >>within the tpm subsystem does seem to call tpm_chip_find_get() with a NULL
+> >>pointer, though. Also trusted keys seems to pass in a NULL pointer every
+> >>time.
+> >>
+> >>>Either by giving them an API to do it, or revising the TPM entry
+> >>>points to do it.
+> >>>
+> >>>I didn't look, but how did the ops semaphore get grabbed in your
+> >>>revised patches? They do grab it, right?
+> >>The revised patches do not touch the existing code much but will call
+> >>tpm_chip_find_get() and get that semaphore every time before the ops are
+> >>used. IMA is the only caller of tpm_chip_find() that now gets an additional
+> >>reference to the tpm_chip and these APIs get called like this from IMA:
+> >>
+> >>ima init: chip = tpm_chip_find()
+> >>
+> >>ima::tpm: tpm_chip_find_get(chip) ... tpm_put_ops(chip)
+> >>
+> >>ima::tpm: tpm_chip_find_get(chip) ... tpm_put_ops(chip)
+> >>
+> >>[repeat]
+> >>
+> >>ima shutdown: tpm_chip_put(chip)
+> >Maybe just change tpm_chip_find_get() into tpm_get_ops(chip) and
+> >convert all callers?
 > 
-> I would have to check the code closer. But doesn't
-> kvm_make_all_cpus_request call get_cpu which is preempt_disable? I
-> definitely plan to talk to respective maintainers about these changes of
-> course.
-> 
+> And then re-introduce tpm_chip_find_get() for IMA to call ?
 
-preempt_disable() is required because it calls kvm_kick_many_cpus() with 
-wait == true because KVM_REQ_APIC_PAGE_RELOAD sets KVM_REQUEST_WAIT and 
-thus the smp_call_function_many() is going to block until all cpus can run 
-ack_flush().
+You could keep it as 'tpm_chip_find', that seems like a fine name to
+me
+
+Jason
