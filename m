@@ -2,267 +2,120 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFF5C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FD6C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB04720837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2619720837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:24:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vv2jxnRD";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="affvvvRE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB04720837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qM3CkoXI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2619720837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933522AbeFUMYT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:24:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43408 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933186AbeFUMYQ (ORCPT
+        id S933563AbeFUMYr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:24:47 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37699 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933186AbeFUMYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:24:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A3D6260714; Thu, 21 Jun 2018 12:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529583855;
-        bh=MGMS5nUq485DhDHCUhIEJ+I47Rtfa7lyO4zGhvG17p4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vv2jxnRDg86NGNgnz+Zkw1tMjb1+A2RoEVpgtjnjUCOIZoxf0XB0LwtARLQDxUmu+
-         I/PrbETmYNqA9KIsaY/vPA156nfB6RH86Xf7AMdeIKbxx9Ou0TFviR6GftDsMnnZ/7
-         a8Ds+fomGCoXg5SYisPoRd3MQ0llNwUm6WndxjLU=
-Received: from hydcbspbld03.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vviswana@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 610F7604A6;
-        Thu, 21 Jun 2018 12:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529583854;
-        bh=MGMS5nUq485DhDHCUhIEJ+I47Rtfa7lyO4zGhvG17p4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=affvvvREbXtgoC9j6/DrVwsGBgvanlsx/+2gIlpZmtQ5YdEIlVMHTkmOakHITHVfp
-         DoM4qnLvZdlNGhLZJ5YAHDmZHSeg64y/+w+h7+GMfe5Djzq6YMi1W4+YccxwlTtSZ3
-         grGJjG1bVxqfV+8JS/iVXNAaHR+UQJEtEGpLDrJk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 610F7604A6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-From:   Vijay Viswanath <vviswana@codeaurora.org>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
-        asutoshd@codeaurora.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, jeremymc@redhat.com,
-        vviswana@codeaurora.org, bjorn.andersson@linaro.org,
-        riteshh@codeaurora.org, vbadigan@codeaurora.org,
-        dianders@google.com, sayalil@codeaurora.org
-Subject: [PATCH RFC 2/2] mmc: sdhci-msm: Use internal voltage control
-Date:   Thu, 21 Jun 2018 17:53:46 +0530
-Message-Id: <1529583826-42020-3-git-send-email-vviswana@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529583826-42020-1-git-send-email-vviswana@codeaurora.org>
-References: <1529583826-42020-1-git-send-email-vviswana@codeaurora.org>
+        Thu, 21 Jun 2018 08:24:46 -0400
+Received: by mail-pg0-f67.google.com with SMTP id r21-v6so1365360pgv.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 05:24:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oQbUkjCsw+O4Rjuxbdst4jHMEvMxiP4RWuC8y/i2vpw=;
+        b=qM3CkoXIt8Kc9nVughH9y4LI71S0afGMHhnrSP5GHF/4l8PnNNLDlE6T03QVtTD3S+
+         rltSq8u83TEy/stMjVahikLvgI33U8q1Ai0iaMDeivMvY19qZq6MIehCP1VFE/xf3Qmh
+         XOB3U2cx/6C6FlTejYMUIvsN3e/AcEkxw/2gKE6dXWpYz5RFkXrvf1tOQa9/26Jq+Dv3
+         K8eVw0c7/AhC/G6GM571Xa16rlaN+2PA+0K3agA/dFNe7nJlyS3nLQoAnWS3GB57fYDM
+         P+16IDEC2GeFLHZmLH5UzclwVp15f/+1A++U4bsgZooaFgldnlCBPG0puRmnaDOz8V8k
+         FZ5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=oQbUkjCsw+O4Rjuxbdst4jHMEvMxiP4RWuC8y/i2vpw=;
+        b=fFXclBwsuDGx8f6oijZLKt82lDZY+cQDqokrpWGn5T2pdQrcElThbXLRTyFXEFkY2m
+         +XplxrDYQ7nz3N9401j5plbIEX8qFjM8XcUobgFWwxLDNq3rwdZLUMjtyqkD5ngj9cDg
+         Neun0BFtiqI4JK3MOxHOLPx/PLRhnsA8nCCsSt84JI+NleUMiteVObPOCAD1ceELgNAX
+         8We1HcMzlmDLV/LytHH2BhZVOHdmJLZTGXT7vm1M/np9dznbLXrFJpTNjDfHQRlGBWmI
+         TniSZIIqPBF6AW/Rw50t1qNfIAXHxsy8hvVJAOt7xAxcwZFCxPAirQDOvArbKomHxjlL
+         wyjQ==
+X-Gm-Message-State: APt69E1HgqFbhLM6Ixu1weAPlDaHknGtJ04XtXiqBt/SnVprxon+8Zov
+        4pcj8usJW1o7hVE1f5IOeW8=
+X-Google-Smtp-Source: ADUXVKL2zjNDq4s2+iTDcRXLXUHiyOHJowgcRvh4AO1sfRymd3g6ubcUmFDFGo2tI9rcLHsvg8P82w==
+X-Received: by 2002:a62:4e07:: with SMTP id c7-v6mr27340433pfb.149.1529583885768;
+        Thu, 21 Jun 2018 05:24:45 -0700 (PDT)
+Received: from toy ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id w7-v6sm5885374pgr.82.2018.06.21.05.24.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 05:24:45 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 20:24:36 +0800
+From:   Jun Yao <yaojun8558363@gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH 1/1] arm64/mm: move
+ {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata section
+Message-ID: <20180621122436.GA19014@toy>
+Mail-Followup-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        james.morse@arm.com, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <20180620085755.20045-1-yaojun8558363@gmail.com>
+ <20180620085755.20045-2-yaojun8558363@gmail.com>
+ <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
+ <20180621025141.GB11276@toy>
+ <CAKv+Gu_3Cfuq-qQuRHkYCB2uTPOK=KVeVh4OKmtu2MDYwfOtTA@mail.gmail.com>
+ <70ebe6d7-0745-5606-ae89-8a7b2fb62008@arm.com>
+ <CAKv+Gu-t5ErL89J=sxeVRYzDNrB1Ejdj+XOggAMWk-gY7ewsOg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-t5ErL89J=sxeVRYzDNrB1Ejdj+XOggAMWk-gY7ewsOg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some sdhci-msm controllers require that voltage switching be done after
-the HW is ready for it. The HW informs its readiness through power irq.
-The voltage switching should happen only then.
+On Thu, Jun 21, 2018 at 11:29:52AM +0200, Ard Biesheuvel wrote:
+> On 21 June 2018 at 10:59, James Morse <james.morse@arm.com> wrote:
+> > On 21/06/18 07:39, Ard Biesheuvel wrote:
+> >> On 21 June 2018 at 04:51, Jun Yao <yaojun8558363@gmail.com> wrote:
+> >>> On Wed, Jun 20, 2018 at 12:09:49PM +0200, Ard Biesheuvel wrote:
+> >>>> On 20 June 2018 at 10:57, Jun Yao <yaojun8558363@gmail.com> wrote:
+> >>>> As for swapper_pg_dir, it would indeed be nice if we could keep those
+> >>>> mappings read-only most of the time, but I'm not sure how useful this
+> >>>> is if we apply it to the root level only.
+> >>>
+> >>> The purpose of it is to make 'KSMA' harder, where an single arbitrary
+> >>> write is used to add a block mapping to the page-tables, giving the
+> >>> attacker full access to kernel memory. That's why we just apply it to
+> >>> the root level only. If the attacker can arbitrary write multiple times,
+> >>> I think it's hard to defend.
+> >>>
+> >>
+> >> So the assumption is that the root level is more easy to find?
+> >> Otherwise, I'm not sure I understand why being able to write a level 0
+> >> entry is so harmful, given that we don't have block mappings at that
+> >> level.
+> >
+> > I think this thing assumes 3-level page tables with 39bit VA.
+> >
+> 
+> The attack, you mean? Because this code is unlikely to build with that
+> configuration, given that __pgd_populate() BUILD_BUG()s in that case.
 
-Use the quirk for internal voltage switching and then control the
-voltage switching using power irq.
-
-Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
----
- drivers/mmc/host/sdhci-msm.c | 99 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 87 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index a0dc3e1..ebdde29 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -43,7 +43,9 @@
- #define CORE_PWRCTL_IO_LOW	BIT(2)
- #define CORE_PWRCTL_IO_HIGH	BIT(3)
- #define CORE_PWRCTL_BUS_SUCCESS BIT(0)
-+#define CORE_PWRCTL_BUS_FAIL    BIT(1)
- #define CORE_PWRCTL_IO_SUCCESS	BIT(2)
-+#define CORE_PWRCTL_IO_FAIL     BIT(3)
- #define REQ_BUS_OFF		BIT(0)
- #define REQ_BUS_ON		BIT(1)
- #define REQ_IO_LOW		BIT(2)
-@@ -258,6 +260,7 @@ struct sdhci_msm_host {
- 	bool mci_removed;
- 	const struct sdhci_msm_variant_ops *var_ops;
- 	const struct sdhci_msm_offset *offset;
-+	bool pltfm_init_done;
- };
- 
- static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
-@@ -1314,8 +1317,9 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+	struct mmc_host *mmc = host->mmc;
- 	u32 irq_status, irq_ack = 0;
--	int retry = 10;
-+	int retry = 10, ret = 0;
- 	u32 pwr_state = 0, io_level = 0;
- 	u32 config;
- 	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
-@@ -1351,14 +1355,59 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 
- 	/* Handle BUS ON/OFF*/
- 	if (irq_status & CORE_PWRCTL_BUS_ON) {
--		pwr_state = REQ_BUS_ON;
--		io_level = REQ_IO_HIGH;
--		irq_ack |= CORE_PWRCTL_BUS_SUCCESS;
-+		if (mmc->supply.vmmc) {
-+			ret = regulator_set_load(mmc->supply.vmmc, 800000);
-+			ret |= mmc_regulator_set_ocr(mmc, mmc->supply.vmmc,
-+					mmc->ios.vdd);
-+			if (ret)
-+				pr_err("%s: vmmc enable failed: %d\n",
-+						mmc_hostname(mmc), ret);
-+		}
-+		if (mmc->supply.vqmmc && !ret) {
-+			ret = regulator_set_load(mmc->supply.vqmmc, 22000);
-+			ret |= mmc_regulator_set_ocr(mmc, mmc->supply.vqmmc,
-+					mmc->ios.vdd);
-+			if (!ret)
-+				ret = regulator_enable(mmc->supply.vqmmc);
-+			if (ret)
-+				pr_err("%s: vqmmc enable failed: %d\n",
-+						mmc_hostname(mmc), ret);
-+		}
-+		if (!ret) {
-+			pwr_state = REQ_BUS_ON;
-+			io_level = REQ_IO_HIGH;
-+			irq_ack |= CORE_PWRCTL_BUS_SUCCESS;
-+		} else {
-+			pr_err("%s: BUS_ON req failed(%d). irq_status: 0x%08x\n",
-+					mmc_hostname(mmc), ret, irq_status);
-+			irq_ack |= CORE_PWRCTL_BUS_FAIL;
-+		}
- 	}
- 	if (irq_status & CORE_PWRCTL_BUS_OFF) {
--		pwr_state = REQ_BUS_OFF;
--		io_level = REQ_IO_LOW;
--		irq_ack |= CORE_PWRCTL_BUS_SUCCESS;
-+		if (mmc->supply.vmmc && msm_host->pltfm_init_done) {
-+			ret = regulator_set_load(mmc->supply.vmmc, 0);
-+			ret |= mmc_regulator_set_ocr(mmc, mmc->supply.vmmc,
-+					mmc->ios.vdd);
-+			if (ret)
-+				pr_err("%s: vqmmc disabling failed: %d\n",
-+						mmc_hostname(mmc), ret);
-+		}
-+		if (mmc->supply.vqmmc && msm_host->pltfm_init_done && !ret) {
-+			ret = regulator_set_load(mmc->supply.vqmmc, 0);
-+			ret |= regulator_disable(mmc->supply.vqmmc);
-+			if (ret)
-+				pr_err("%s: vqmmc disabling failed: %d\n",
-+						mmc_hostname(mmc), ret);
-+		}
-+		if (!ret) {
-+			pwr_state = REQ_BUS_OFF;
-+			io_level = REQ_IO_LOW;
-+			irq_ack |= CORE_PWRCTL_BUS_SUCCESS;
-+		} else {
-+			pr_err("%s: BUS_ON req failed(%d). irq_status: 0x%08x\n",
-+					mmc_hostname(mmc), ret, irq_status);
-+			irq_ack |= CORE_PWRCTL_BUS_FAIL;
-+		}
- 	}
- 	/* Handle IO LOW/HIGH */
- 	if (irq_status & CORE_PWRCTL_IO_LOW) {
-@@ -1370,6 +1419,15 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 		irq_ack |= CORE_PWRCTL_IO_SUCCESS;
- 	}
- 
-+	if (io_level && mmc->supply.vqmmc && !pwr_state) {
-+		ret = mmc_regulator_set_vqmmc(mmc, &mmc->ios);
-+		if (ret)
-+			pr_err("%s: IO_level setting failed(%d). signal_voltage: %d, vdd: %d irq_status: 0x%08x\n",
-+					mmc_hostname(mmc), ret,
-+					mmc->ios.signal_voltage, mmc->ios.vdd,
-+					irq_status);
-+	}
-+
- 	/*
- 	 * The driver has to acknowledge the interrupt, switch voltages and
- 	 * report back if it succeded or not to this register. The voltage
-@@ -1415,10 +1473,9 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 		msm_host->curr_pwr_state = pwr_state;
- 	if (io_level)
- 		msm_host->curr_io_level = io_level;
--
- 	pr_debug("%s: %s: Handled IRQ(%d), irq_status=0x%x, ack=0x%x\n",
--		mmc_hostname(msm_host->mmc), __func__, irq, irq_status,
--		irq_ack);
-+			mmc_hostname(msm_host->mmc), __func__,
-+			irq, irq_status, irq_ack);
- }
- 
- static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
-@@ -1605,6 +1662,19 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
- 	pr_debug("%s: supported caps: 0x%08x\n", mmc_hostname(mmc), caps);
- }
- 
-+static int sdhci_msm_register_vreg(struct sdhci_msm_host *msm_host)
-+{
-+	int ret = 0;
-+
-+	ret = mmc_regulator_get_supply(msm_host->mmc);
-+	if (ret)
-+		return ret;
-+	sdhci_msm_set_regulator_caps(msm_host);
-+
-+	return 0;
-+
-+}
-+
- static const struct sdhci_msm_variant_ops mci_var_ops = {
- 	.msm_readl_relaxed = sdhci_msm_mci_variant_readl_relaxed,
- 	.msm_writel_relaxed = sdhci_msm_mci_variant_writel_relaxed,
-@@ -1650,7 +1720,8 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
- 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
- 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-+		   SDHCI_QUIRK2_INTERNAL_PWR_CTL,
- 	.ops = &sdhci_msm_ops,
- };
- 
-@@ -1819,6 +1890,10 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 				msm_offset->core_vendor_spec_capabilities0);
- 	}
- 
-+	ret = sdhci_msm_register_vreg(msm_host);
-+	if (ret == -EPROBE_DEFER)
-+		goto clk_disable;
-+
- 	/*
- 	 * Power on reset state may trigger power irq if previous status of
- 	 * PWRCTL was either BUS_ON or IO_HIGH_V. So before enabling pwr irq
-@@ -1867,7 +1942,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
- 	ret = sdhci_add_host(host);
- 	if (ret)
- 		goto pm_runtime_disable;
--	sdhci_msm_set_regulator_caps(msm_host);
-+	msm_host->pltfm_init_done = true;
- 
- 	pm_runtime_mark_last_busy(&pdev->dev);
- 	pm_runtime_put_autosuspend(&pdev->dev);
--- 
- Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+I think this configuration may be ok. I find that the kernel on Google
+pixel 2 XL is built with 3-level page tables with 39-bit VA.
