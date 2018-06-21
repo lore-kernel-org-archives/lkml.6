@@ -5,244 +5,108 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E9EC43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3745BC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E821208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:28:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E821208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id E208A208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:29:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E208A208A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933227AbeFUL2I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 07:28:08 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:53023 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932902AbeFUL2G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 07:28:06 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5LBRomZ085893;
-        Thu, 21 Jun 2018 20:27:50 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Thu, 21 Jun 2018 20:27:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5LBRiNl085821
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 21 Jun 2018 20:27:50 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm,oom: Bring OOM notifier callbacks to outside of OOM
- killer.
-To:     Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-References: <1529493638-6389-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <alpine.DEB.2.21.1806201528490.16984@chino.kir.corp.google.com>
- <20180621073142.GA10465@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <2d8c3056-1bc2-9a32-d745-ab328fd587a1@i-love.sakura.ne.jp>
-Date:   Thu, 21 Jun 2018 20:27:41 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180621073142.GA10465@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S933178AbeFUL3S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 07:29:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60788 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932481AbeFUL3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 07:29:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 175C5ADFE;
+        Thu, 21 Jun 2018 11:29:16 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 13:29:15 +0200
+Message-ID: <s5hzhzojs38.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc:     Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+In-Reply-To: <20180621112407.fxwnkdvgtxwifryd@pali>
+References: <s5hk1r01acc.wl-tiwai@suse.de>
+        <20180615190959.pqipwnm6a3tf3lxc@pali>
+        <s5hmuvvtdmi.wl-tiwai@suse.de>
+        <20180616154309.ualrx2py6ndr5xgz@pali>
+        <s5hh8m2u3cp.wl-tiwai@suse.de>
+        <20180618102806.vwm4rhvxhn6hi43z@pali>
+        <s5ha7rsz8i8.wl-tiwai@suse.de>
+        <20180618112121.cl76a3oozsbbbqnb@pali>
+        <20180619083712.dwb4d357sfxcgrre@pali>
+        <s5ho9g7dv6j.wl-tiwai@suse.de>
+        <20180621112407.fxwnkdvgtxwifryd@pali>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/06/21 7:36, David Rientjes wrote:
->> @@ -1010,6 +1010,33 @@ int unregister_oom_notifier(struct notifier_block *nb)
->>  EXPORT_SYMBOL_GPL(unregister_oom_notifier);
->>  
->>  /**
->> + * try_oom_notifier - Try to reclaim memory from OOM notifier list.
->> + *
->> + * Returns non-zero if notifier callbacks released something, zero otherwise.
->> + */
->> +unsigned long try_oom_notifier(void)
+On Thu, 21 Jun 2018 13:24:07 +0200,
+Pali Rohár wrote:
 > 
-> It certainly is tried, but based on its usage it would probably be better 
-> to describe what is being returned (it's going to set *did_some_progress, 
-> which is a page count).
-
-Well, it depends on what the callbacks are doing. Currently, we have 5 users.
-
-  arch/powerpc/platforms/pseries/cmm.c
-  arch/s390/mm/cmm.c
-  drivers/gpu/drm/i915/i915_gem_shrinker.c
-  drivers/virtio/virtio_balloon.c
-  kernel/rcu/tree_plugin.h
-
-Speak of rcu_oom_notify() in kernel/rcu/tree_plugin.h , we can't tell whether
-the callback helped releasing memory, for it does not update the "freed" argument.
-
->> +{
->> +	static DEFINE_MUTEX(oom_notifier_lock);
->> +	unsigned long freed = 0;
->> +
->> +	/*
->> +	 * Since OOM notifier callbacks must not depend on __GFP_DIRECT_RECLAIM
->> +	 * && !__GFP_NORETRY memory allocation, waiting for mutex here is safe.
->> +	 * If lockdep reports possible deadlock dependency, it will be a bug in
->> +	 * OOM notifier callbacks.
->> +	 *
->> +	 * If SIGKILL is pending, it is likely that current thread was selected
->> +	 * as an OOM victim. In that case, current thread should return as soon
->> +	 * as possible using memory reserves.
->> +	 */
->> +	if (mutex_lock_killable(&oom_notifier_lock))
->> +		return 0;
->> +	blocking_notifier_call_chain(&oom_notify_list, 0, &freed);
->> +	mutex_unlock(&oom_notifier_lock);
->> +	return freed;
->> +}
+> On Tuesday 19 June 2018 10:42:12 Takashi Iwai wrote:
+> > On Tue, 19 Jun 2018 10:37:12 +0200,
+> > Pali Rohár wrote:
+> > > Interesting is this part:
+> > > 
+> > > $ head /proc/asound/card0/codec#0
+> > > Codec: Realtek ALC257
+> > > Address: 0
+> > > AFG Function Id: 0x1 (unsol 1)
+> > > Vendor Id: 0x10ec0257
+> > > Subsystem Id: 0x17aa2258
+> > > Revision Id: 0x100001
+> > > No Modem Function Group found
+> > > Default PCM:
+> > >     rates [0x560]: 44100 48000 96000 192000
+> > >         bits [0xe]: 16 20 24
+> > > 
+> > > It uses vendor id 0x10ec0257 and support for it was added into
+> > > snd-hda-codec-realtek in commit f429e7e494 which was introduced in
+> > > version v4.15.
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f429e7e494afaded76e62c6f98211a635aa03098
+> > > 
+> > > I applied this patch to Debian's 4.9 kernel and mute & mic mute leds
+> > > started working. This one patch was enough.
+> > > 
+> > > Takashi, it is possible to backport this patch into -stable trees?
+> > 
+> > It has already a Cc-to-stable, so it should have been backported.
+> > Maybe it wasn't applicable at that time due to lack of other dependent
+> > patches...
+> > 
+> > In anyway, feel free to ping Greg for including it to 4.9.x if it
+> > works for you now.
 > 
-> If __blocking_notifier_call_chain() used down_read_killable(), could we 
-> eliminate oom_notifier_lock?
+> I sent email to Greg, but it was eaten by "email-bot of Greg
+> Kroah-Hartman's inbox". So I sent another patch email to stable ML.
 
-I don't think we can eliminate it now, for it is a serialization lock
-(while trying to respond to SIGKILL as soon as possible) which is currently
-achieved by mutex_trylock(&oom_lock).
+Better to put '[PATCH 4.9.y]' prefix in the subject to make clear that
+it's only for 4.9.y.
 
-(1) rcu_oom_notify() in kernel/rcu/tree_plugin.h is not prepared for being
-    called concurrently.
+Also, the line indicating the upstream commit id is:
 
-----------
-static int rcu_oom_notify(struct notifier_block *self,
-			  unsigned long notused, void *nfreed)
-{
-	int cpu;
+  commit $ID upstream.
 
-	/* Wait for callbacks from earlier instance to complete. */
-	wait_event(oom_callback_wq, atomic_read(&oom_callback_count) == 0); // <= Multiple threads can pass this line at the same time.
-	smp_mb(); /* Ensure callback reuse happens after callback invocation. */
-
-	/*
-	 * Prevent premature wakeup: ensure that all increments happen
-	 * before there is a chance of the counter reaching zero.
-	 */
-	atomic_set(&oom_callback_count, 1); // <= Multiple threads can execute this line at the same time.
-
-	for_each_online_cpu(cpu) {
-		smp_call_function_single(cpu, rcu_oom_notify_cpu, NULL, 1);
-		cond_resched_tasks_rcu_qs();
-	}
-
-	/* Unconditionally decrement: no need to wake ourselves up. */
-	atomic_dec(&oom_callback_count); // <= Multiple threads can execute this line at the same time, making oom_callback_count < 0 ?
-
-	return NOTIFY_OK;
-}
-----------
-
-    The counter inconsistency problem could be fixed by
-
--	atomic_set(&oom_callback_count, 1);
-+	atomic_inc(&oom_callback_count);
-
-    but who becomes happy if rcu_oom_notify() became ready to be called
-    concurrently? We want to wait for the callback to complete before
-    proceeding to the OOM killer. I think that we should save CPU resource
-    by serializing concurrent callers.
-
-(2) i915_gem_shrinker_oom() in drivers/gpu/drm/i915/i915_gem_shrinker.c depends
-    on mutex_trylock() from shrinker_lock() from i915_gem_shrink() from
-    i915_gem_shrink_all() to return 1 (i.e. succeed) before need_resched()
-    becomes true in order to avoid returning without reclaiming memory.
-
-> This patch is certainly an improvement because it does the last 
-> get_page_from_freelist() call after invoking the oom notifiers that can 
-> free memory and we've otherwise pointlessly redirected it elsewhere.
-
-Thanks, but this patch might break subtle balance which is currently
-achieved by mutex_trylock(&oom_lock) serialization/exclusion.
-
-(3) virtballoon_oom_notify() in drivers/virtio/virtio_balloon.c by default
-    tries to release 256 pages. Since this value is configurable, one might
-    set 1048576 pages. If virtballoon_oom_notify() is concurrently called by
-    many threads, it might needlessly deflate the memory balloon.
-
-We might want to remember and reuse the last result among serialized callers
-(feedback mechanism) like
-
-{
-	static DEFINE_MUTEX(oom_notifier_lock);
-	static unsigned long last_freed;
-	unsigned long freed = 0;
-	if (mutex_trylock(&oom_notifier_lock)) {
-		blocking_notifier_call_chain(&oom_notify_list, 0, &freed);
-		last_freed = freed;
-	} else {
-		mutex_lock(&oom_notifier_lock);
-		freed = last_freed;
-	}
-	mutex_unlock(&oom_notifier_lock);
-	return freed;
-
-}
-
-or
-
-{
-	static DEFINE_MUTEX(oom_notifier_lock);
-	static unsigned long last_freed;
-	unsigned long freed = 0;
-	if (mutex_lock_killable(&oom_notifier_lock)) {
-		freed = last_freed;
-		last_freed >>= 1;
-		return freed;
-	} else if (last_freed) {
-		freed = last_freed;
-		last_freed >>= 1;
-	} else {
-		blocking_notifier_call_chain(&oom_notify_list, 0, &freed);
-		last_freed = freed;
-	}
-	mutex_unlock(&oom_notifier_lock);
-	return freed;
-}
-
-. Without feedback mechanism, mutex_lock_killable(&oom_notifier_lock) serialization
-could still needlessly deflate the memory balloon compared to mutex_trylock(&oom_lock)
-serialization/exclusion. Maybe virtballoon_oom_notify() (and two CMM users) would
-implement feedback mechanism themselves, by examining watermark from OOM notifier
-hooks.
+Last but not least, if you resubmit the patch, you must give your own
+sign-off, too.
 
 
+thanks,
 
-On 2018/06/21 16:31, Michal Hocko wrote:
-> On Wed 20-06-18 15:36:45, David Rientjes wrote:
-> [...]
->> That makes me think that "oom_notify_list" isn't very intuitive: it can 
->> free memory as a last step prior to oom kill.  OOM notify, to me, sounds 
->> like its only notifying some callbacks about the condition.  Maybe 
->> oom_reclaim_list and then rename this to oom_reclaim_pages()?
-> 
-> Yes agreed and that is the reason I keep saying we want to get rid of
-> this yet-another-reclaim mechanism. We already have shrinkers which are
-> the main source of non-lru pages reclaim. Why do we even need
-> oom_reclaim_pages? What is fundamentally different here? Sure those
-> pages should be reclaimed as the last resort but we already do have
-> priority for slab shrinking so we know that the system is struggling
-> when reaching the lowest priority. Isn't that enough to express the need
-> for current oom notifier implementations?
-> 
-
-Even if we update OOM notifier users to use shrinker hooks, they will need a
-subtle balance which is currently achieved by mutex_trylock(&oom_lock).
-
-Removing OOM notifier is not doable right now. It is not suitable as a regression
-fix for commit 27ae357fa82be5ab ("mm, oom: fix concurrent munlock and oom reaper
-unmap, v3"). What we could afford for this regression is
-https://patchwork.kernel.org/patch/9842889/ which is exactly what you suggested
-in a thread at https://www.spinics.net/lists/linux-mm/msg117896.html .
-
+Takashi
