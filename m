@@ -5,72 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6742C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4378DC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7475621797
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:16:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7475621797
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 02B2B217B9
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 17:17:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B2B217B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932792AbeFURQu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 13:16:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46485 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753972AbeFURQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 13:16:48 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fW3CQ-0007W5-A3; Thu, 21 Jun 2018 17:16:46 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: ethernet: ti: davinci_cpdma: make function cpdma_desc_pool_create static
-Date:   Thu, 21 Jun 2018 18:16:45 +0100
-Message-Id: <20180621171645.29734-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S932936AbeFURRw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 13:17:52 -0400
+Received: from mga18.intel.com ([134.134.136.126]:30223 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932800AbeFURRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 13:17:51 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2018 10:17:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,252,1526367600"; 
+   d="scan'208";a="51190584"
+Received: from lmrad-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.46])
+  by orsmga008.jf.intel.com with ESMTP; 21 Jun 2018 10:17:46 -0700
+Date:   Thu, 21 Jun 2018 20:17:46 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, philip.b.tricca@intel.com,
+        James.Bottomley@HansenPartnership.com,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>
+Subject: Re: [PATCH v3 0/2] tpm: add support for nonblocking operation
+Message-ID: <20180621171746.GJ11859@linux.intel.com>
+References: <152882630662.30206.8805136953394285180.stgit@tstruk-mobl1.jf.intel.com>
+ <20180619131046.GC5609@linux.intel.com>
+ <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e402d3d0-d9de-35a9-d434-d472d8f68e62@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Jun 19, 2018 at 05:45:35PM -0700, Tadeusz Struk wrote:
+> Hi Jarkko,
+> Thanks for reviewing the patch.
+> There are applications/frameworks where a worker thread is not an option.
+> Take for example the IoT use-cases and frameworks like IoT.js, or "Node.js for IoT".
+> They are all single threaded, event-driven frameworks, using non-blocking I/O as the base of their processing model.
+> Similarly embedded applications, which are basically just a single threaded event loop, quite often don't use threads because of resources constrains.
+> 
+> If your concern is that user space will not adopt to this, I can say that TSS library [1] is currently blocked on this feature, and we can not enable some of the use-cases mentioned above because of this.
+> 
+> Thanks,
+> Tadeusz
+> 
+> [1] https://github.com/tpm2-software/tpm2-tss
 
-The function cpdma_desc_pool_create is local to the source and does not
-need to be in global scope, so make it static.
+I put this into "mathematical" terms. TPM is by nature is blocking. It
+does not scale this way so you are essentially just simulating
+non-blocking behaviour.
 
-Cleans up sparse warning:
-warning: symbol 'cpdma_desc_pool_create' was not declared. Should it
-be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/ti/davinci_cpdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/ti/davinci_cpdma.c b/drivers/net/ethernet/ti/davinci_cpdma.c
-index cdbddf16dd29..4f1267477aa4 100644
---- a/drivers/net/ethernet/ti/davinci_cpdma.c
-+++ b/drivers/net/ethernet/ti/davinci_cpdma.c
-@@ -205,7 +205,7 @@ static void cpdma_desc_pool_destroy(struct cpdma_ctlr *ctlr)
-  * devices (e.g. cpsw switches) use plain old memory.  Descriptor pools
-  * abstract out these details
-  */
--int cpdma_desc_pool_create(struct cpdma_ctlr *ctlr)
-+static int cpdma_desc_pool_create(struct cpdma_ctlr *ctlr)
- {
- 	struct cpdma_params *cpdma_params = &ctlr->params;
- 	struct cpdma_desc_pool *pool;
--- 
-2.17.0
-
+/Jarkko
