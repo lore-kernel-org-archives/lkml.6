@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 108A0C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13961C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B213A21A82
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC3F321B35
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:08:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TG7Dfor3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B213A21A82
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNQA3Cb9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC3F321B35
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933766AbeFUVIp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:08:45 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:38102 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933364AbeFUVIl (ORCPT
+        id S933780AbeFUVI4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:08:56 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:32799 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933364AbeFUVIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:08:41 -0400
-Received: by mail-yw0-f195.google.com with SMTP id w13-v6so1672826ywa.5;
-        Thu, 21 Jun 2018 14:08:41 -0700 (PDT)
+        Thu, 21 Jun 2018 17:08:53 -0400
+Received: by mail-yw0-f196.google.com with SMTP id u124-v6so1678419ywg.0;
+        Thu, 21 Jun 2018 14:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BtiNSIqI/RoeMxqgEMRsgrcPVJ6BM+TlUKL1e42nYek=;
-        b=TG7Dfor3ioEr472TeOITMQJXfjlrDDhD7eF6OjPwSme8lxZy3dwC/PcOPFQYsrx9I1
-         mn77US38clCJysWBkN8mjODLGvBHV7NMpgxHeckbJ/p7MiXmPYdgr2k0+eRslcMKRCvh
-         opLCXA2YSEVeaWdoVycZEDQFzz7/ibbQaOALwc3o6nbZFpJr2rGBmeydUOimSXS1e1tj
-         kLkxZ+huWI+GZbtNs8j4gLfbR4SWT6X9fUj2Y+RzTIe2bde8/mXE6gNvNHGDNIE50jsJ
-         WWwHd8PhiRfU3xeTkccU13qVjys95i2gBifP/D1mFRcYT/yR5jx3jIWm8h9OCTacKIwA
-         2wJQ==
+        bh=SWaClR3Wg4/J3G8r0roO4yBYAtrD1JsLysnioixSMiI=;
+        b=fNQA3Cb9GqAMl2vAp20CpBnOXRiWiEw1O2FR9P/MFq4+4VHHET/J9qRncyyBpwd0k0
+         s08zGQFgvEkzcCjtvsetJiooZ2Og3ExIZhCje+tyMnLav7sE62WQa0dMuJKx7ZwrekaN
+         3MAYA3SMfRqri/UsupMvAS0/AVvI5UtwLPQAmWSBUL7nX7RXbSSX2+QeedMwwc+lqI1m
+         nlrpXn5iePbZ07BaFgRt95fuSXzUQtpwMWcDE9lb4PJfT9ovyx0nPgHpjppq5PFYs0yj
+         H4Ox/3AZqG/WrtDCCTPxAYuDydgNUQNavEk9T0M/ABsbFK72IgdSQmhUW7ensVlXDetf
+         8jfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=BtiNSIqI/RoeMxqgEMRsgrcPVJ6BM+TlUKL1e42nYek=;
-        b=UO0MyE13Bs96KmdbYhRIhSE3NEcS2MhfmsF6LHle5g7+MB+LclppCjcj82BemxsRA+
-         OSuGPygqlQFz1GpzZiVjCMy3F/kQW7QFSm+kXbcFNhJc2sbvmSq7tm0JQRMDo46HDwPs
-         usRUAh1MHm2RHmD9gDQ5XCMWOD2463+qUA3MMWKzjdzw44isZJXa2J1Q6IqQHSkquFkk
-         puD8BTi8sbw57uuLDRsSxLzyWONkimU71DoUeDFTQ+a+mfaN/ZJMH6K3Ebg8yB8xwadL
-         px6CmsJxZReIKNjsKY1JevE/mMqTAN+gZPb86Cvv/8zpXP2FIDX7qQXaZQgr1N2S9t1V
-         9B4w==
-X-Gm-Message-State: APt69E3VflH1xFpUNMMTvd2aVGPhj6RCHSWY95CYotYbOqLEHG0yKrj5
-        bZ9BudHbGVV9VCGz4Ma0nN8=
-X-Google-Smtp-Source: ADUXVKJE0BZty6+aFwh052FJSCJlWU6nRBH0JLxderYUjXVk7KzjsDW32MWDsD9CHdlMJDPq4HEWcA==
-X-Received: by 2002:a0d:e742:: with SMTP id q63-v6mr13527819ywe.514.1529615321032;
-        Thu, 21 Jun 2018 14:08:41 -0700 (PDT)
+        bh=SWaClR3Wg4/J3G8r0roO4yBYAtrD1JsLysnioixSMiI=;
+        b=qne9SOY7R5TqtE1S1/GMGBEfm6ORzFVO5PlvllxEdOrHdmJJPbLaErk2JoquT21xxM
+         Nk9+aq+gM5Xy2zeVfWW8O7n8i4J45i2J9K/AzIrBWChYoxX0QZ7X8f9IxpzsQOibuzke
+         VbKQ7X2NKLLZeNBw5TxcZesQgCwfB8oHeOlaKnoVTi3WDxvNvyZmApMCxW5ioopJr6zw
+         iBK6bN4MldsICKYXaheBLQjLnYNlachLG5+zUQFQl2vSCdrinkr4YErAiJhIWf3oNom3
+         sOy8ZP19+6uvxBHenq4HgqpUq1tSq9q/EOskZzA/MSTB5ZVA+qb2rrM8/aRqQJMLYd96
+         Qlyw==
+X-Gm-Message-State: APt69E20ID81+Ae0DFhOjt6XJxc65xTQFbDW3NG5AzyTGP15knNKFFAQ
+        DIiEVySyfZJJSI42jcvaXDAzVQ==
+X-Google-Smtp-Source: ADUXVKK9RCI/8LD4ikFAjlqyQMLo2xqfyPrhPiREpzEm15lGZj1MwtfZEJRtAZTIXudx9+rulw7sOw==
+X-Received: by 2002:a0d:f404:: with SMTP id d4-v6mr12592646ywf.461.1529615332620;
+        Thu, 21 Jun 2018 14:08:52 -0700 (PDT)
 Received: from localhost ([72.188.97.40])
-        by smtp.gmail.com with ESMTPSA id v127-v6sm2102526ywf.101.2018.06.21.14.08.40
+        by smtp.gmail.com with ESMTPSA id m144-v6sm2164961ywd.8.2018.06.21.14.08.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 14:08:40 -0700 (PDT)
+        Thu, 21 Jun 2018 14:08:52 -0700 (PDT)
 From:   William Breathitt Gray <vilhelm.gray@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     jic23@kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -65,9 +65,9 @@ Cc:     jic23@kernel.org, linux-arm-kernel@lists.infradead.org,
         benjamin.gaignard@st.com, robh+dt@kernel.org, knaack.h@gmx.de,
         lars@metafoo.de, pmeerw@pmeerw.net, mark.rutland@arm.com,
         William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v7 07/10] dt-bindings: counter: Document stm32 quadrature encoder
-Date:   Thu, 21 Jun 2018 17:08:34 -0400
-Message-Id: <c1cc3d567d0a5799c3afe6e24ca9ec3b1547224e.1529607879.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v7 08/10] counter: stm32-lptimer: add counter device
+Date:   Thu, 21 Jun 2018 17:08:46 -0400
+Message-Id: <e7a693fc6d716f8f948737be23375c8c92be3590.1529607879.git.vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1529607879.git.vilhelm.gray@gmail.com>
 References: <cover.1529607879.git.vilhelm.gray@gmail.com>
@@ -76,82 +76,569 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Gaignard <benjamin.gaignard@st.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-Add bindings for STM32 Timer quadrature encoder.
-It is a sub-node of STM32 Timer which implement the
-quadratic encoder part of the hardware.
+Add support for new counter device to stm32-lptimer.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- .../bindings/counter/stm32-timer-cnt.txt      | 31 +++++++++++++++++++
- .../devicetree/bindings/mfd/stm32-timers.txt  |  7 +++++
- 2 files changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
+ drivers/counter/Kconfig                       |  10 +
+ drivers/counter/Makefile                      |   1 +
+ drivers/{iio => }/counter/stm32-lptimer-cnt.c | 361 ++++++++++++++++--
+ drivers/iio/Kconfig                           |   1 -
+ drivers/iio/Makefile                          |   1 -
+ drivers/iio/counter/Kconfig                   |  17 -
+ drivers/iio/counter/Makefile                  |   7 -
+ 7 files changed, 350 insertions(+), 48 deletions(-)
+ rename drivers/{iio => }/counter/stm32-lptimer-cnt.c (48%)
+ delete mode 100644 drivers/iio/counter/Kconfig
+ delete mode 100644 drivers/iio/counter/Makefile
 
-diff --git a/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
-new file mode 100644
-index 000000000000..c52fcdd4bf6c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/counter/stm32-timer-cnt.txt
-@@ -0,0 +1,31 @@
-+STMicroelectronics STM32 Timer quadrature encoder
-+
-+STM32 Timer provides quadrature encoder to detect
-+angular position and direction of rotary elements,
-+from IN1 and IN2 input signals.
-+
-+Must be a sub-node of an STM32 Timer device tree node.
-+See ../mfd/stm32-timers.txt for details about the parent node.
-+
-+Required properties:
-+- compatible:		Must be "st,stm32-timer-counter".
-+- pinctrl-names: 	Set to "default".
-+- pinctrl-0: 		List of phandles pointing to pin configuration nodes,
-+			to set CH1/CH2 pins in mode of operation for STM32
-+			Timer input on external pin.
-+
-+Example:
-+	timers@40010000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "st,stm32-timers";
-+		reg = <0x40010000 0x400>;
-+		clocks = <&rcc 0 160>;
-+		clock-names = "int";
-+
-+		counter {
-+			compatible = "st,stm32-timer-counter";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&tim1_in_pins>;
-+		};
-+	};
-diff --git a/Documentation/devicetree/bindings/mfd/stm32-timers.txt b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-index 1db6e0057a63..ff9c14ada30b 100644
---- a/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-+++ b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
-@@ -23,6 +23,7 @@ Optional parameters:
- Optional subnodes:
- - pwm:			See ../pwm/pwm-stm32.txt
- - timer:		See ../iio/timer/stm32-timer-trigger.txt
-+- counter:		See ../counter/stm32-timer-cnt.txt
+diff --git a/drivers/counter/Kconfig b/drivers/counter/Kconfig
+index fcfbaa935122..fc072b97e5d2 100644
+--- a/drivers/counter/Kconfig
++++ b/drivers/counter/Kconfig
+@@ -46,4 +46,14 @@ config STM32_TIMER_CNT
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called stm32-timer-cnt.
  
- Example:
- 	timers@40010000 {
-@@ -43,4 +44,10 @@ Example:
- 			compatible = "st,stm32-timer-trigger";
- 			reg = <0>;
- 		};
++config STM32_LPTIMER_CNT
++	tristate "STM32 LP Timer encoder counter driver"
++	depends on (MFD_STM32_LPTIMER || COMPILE_TEST) && IIO
++	help
++	  Select this option to enable STM32 Low-Power Timer quadrature encoder
++	  and counter driver.
 +
-+		counter {
-+			compatible = "st,stm32-timer-counter";
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&tim1_in_pins>;
-+		};
- 	};
++	  To compile this driver as a module, choose M here: the
++	  module will be called stm32-lptimer-cnt.
++
+ endif # COUNTER
+diff --git a/drivers/counter/Makefile b/drivers/counter/Makefile
+index ff024259fb46..8ff19b32022b 100644
+--- a/drivers/counter/Makefile
++++ b/drivers/counter/Makefile
+@@ -9,3 +9,4 @@ counter-y := generic-counter.o
+ 
+ obj-$(CONFIG_104_QUAD_8)	+= 104-quad-8.o
+ obj-$(CONFIG_STM32_TIMER_CNT)	+= stm32-timer-cnt.o
++obj-$(CONFIG_STM32_LPTIMER_CNT)	+= stm32-lptimer-cnt.o
+diff --git a/drivers/iio/counter/stm32-lptimer-cnt.c b/drivers/counter/stm32-lptimer-cnt.c
+similarity index 48%
+rename from drivers/iio/counter/stm32-lptimer-cnt.c
+rename to drivers/counter/stm32-lptimer-cnt.c
+index 42fb8ba67090..80fc883f84e7 100644
+--- a/drivers/iio/counter/stm32-lptimer-cnt.c
++++ b/drivers/counter/stm32-lptimer-cnt.c
+@@ -11,16 +11,18 @@
+  */
+ 
+ #include <linux/bitfield.h>
++#include <linux/counter.h>
+ #include <linux/iio/iio.h>
+ #include <linux/mfd/stm32-lptimer.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ 
+ struct stm32_lptim_cnt {
++	struct counter_device counter;
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	struct clk *clk;
+-	u32 preset;
++	u32 ceiling;
+ 	u32 polarity;
+ 	u32 quadrature_mode;
+ };
+@@ -54,7 +56,7 @@ static int stm32_lptim_set_enable_state(struct stm32_lptim_cnt *priv,
+ 	}
+ 
+ 	/* LP timer must be enabled before writing CMP & ARR */
+-	ret = regmap_write(priv->regmap, STM32_LPTIM_ARR, priv->preset);
++	ret = regmap_write(priv->regmap, STM32_LPTIM_ARR, priv->ceiling);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -247,44 +249,57 @@ static const struct iio_enum stm32_lptim_cnt_polarity_en = {
+ 	.set = stm32_lptim_cnt_set_polarity,
+ };
+ 
+-static ssize_t stm32_lptim_cnt_get_preset(struct iio_dev *indio_dev,
+-					  uintptr_t private,
+-					  const struct iio_chan_spec *chan,
+-					  char *buf)
++static ssize_t stm32_lptim_cnt_get_ceiling(struct stm32_lptim_cnt *priv,
++					   char *buf)
+ {
+-	struct stm32_lptim_cnt *priv = iio_priv(indio_dev);
+-
+-	return snprintf(buf, PAGE_SIZE, "%u\n", priv->preset);
++	return snprintf(buf, PAGE_SIZE, "%u\n", priv->ceiling);
+ }
+ 
+-static ssize_t stm32_lptim_cnt_set_preset(struct iio_dev *indio_dev,
+-					  uintptr_t private,
+-					  const struct iio_chan_spec *chan,
+-					  const char *buf, size_t len)
++static ssize_t stm32_lptim_cnt_set_ceiling(struct stm32_lptim_cnt *priv,
++					   const char *buf, size_t len)
+ {
+-	struct stm32_lptim_cnt *priv = iio_priv(indio_dev);
+ 	int ret;
+ 
+ 	if (stm32_lptim_is_enabled(priv))
+ 		return -EBUSY;
+ 
+-	ret = kstrtouint(buf, 0, &priv->preset);
++	ret = kstrtouint(buf, 0, &priv->ceiling);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (priv->preset > STM32_LPTIM_MAX_ARR)
++	if (priv->ceiling > STM32_LPTIM_MAX_ARR)
+ 		return -EINVAL;
+ 
+ 	return len;
+ }
+ 
++static ssize_t stm32_lptim_cnt_get_preset_iio(struct iio_dev *indio_dev,
++					      uintptr_t private,
++					      const struct iio_chan_spec *chan,
++					      char *buf)
++{
++	struct stm32_lptim_cnt *priv = iio_priv(indio_dev);
++
++	return stm32_lptim_cnt_get_ceiling(priv, buf);
++}
++
++static ssize_t stm32_lptim_cnt_set_preset_iio(struct iio_dev *indio_dev,
++					      uintptr_t private,
++					      const struct iio_chan_spec *chan,
++					      const char *buf, size_t len)
++{
++	struct stm32_lptim_cnt *priv = iio_priv(indio_dev);
++
++	return stm32_lptim_cnt_set_ceiling(priv, buf, len);
++}
++
+ /* LP timer with encoder */
+ static const struct iio_chan_spec_ext_info stm32_lptim_enc_ext_info[] = {
+ 	{
+ 		.name = "preset",
+ 		.shared = IIO_SEPARATE,
+-		.read = stm32_lptim_cnt_get_preset,
+-		.write = stm32_lptim_cnt_set_preset,
++		.read = stm32_lptim_cnt_get_preset_iio,
++		.write = stm32_lptim_cnt_set_preset_iio,
+ 	},
+ 	IIO_ENUM("polarity", IIO_SEPARATE, &stm32_lptim_cnt_polarity_en),
+ 	IIO_ENUM_AVAILABLE("polarity", &stm32_lptim_cnt_polarity_en),
+@@ -309,8 +324,8 @@ static const struct iio_chan_spec_ext_info stm32_lptim_cnt_ext_info[] = {
+ 	{
+ 		.name = "preset",
+ 		.shared = IIO_SEPARATE,
+-		.read = stm32_lptim_cnt_get_preset,
+-		.write = stm32_lptim_cnt_set_preset,
++		.read = stm32_lptim_cnt_get_preset_iio,
++		.write = stm32_lptim_cnt_set_preset_iio,
+ 	},
+ 	IIO_ENUM("polarity", IIO_SEPARATE, &stm32_lptim_cnt_polarity_en),
+ 	IIO_ENUM_AVAILABLE("polarity", &stm32_lptim_cnt_polarity_en),
+@@ -327,11 +342,293 @@ static const struct iio_chan_spec stm32_lptim_cnt_channels = {
+ 	.indexed = 1,
+ };
+ 
++/**
++ * stm32_lptim_cnt_function - enumerates stm32 LPTimer counter & encoder modes
++ * @STM32_LPTIM_COUNTER_INCREASE: up count on IN1 rising, falling or both edges
++ * @STM32_LPTIM_ENCODER_BOTH_EDGE: count on both edges (IN1 & IN2 quadrature)
++ */
++enum stm32_lptim_cnt_function {
++	STM32_LPTIM_COUNTER_INCREASE,
++	STM32_LPTIM_ENCODER_BOTH_EDGE,
++};
++
++static enum count_function stm32_lptim_cnt_functions[] = {
++	[STM32_LPTIM_COUNTER_INCREASE] = COUNT_FUNCTION_INCREASE,
++	[STM32_LPTIM_ENCODER_BOTH_EDGE] = COUNT_FUNCTION_QUADRATURE_X4,
++};
++
++enum stm32_lptim_synapse_action {
++	STM32_LPTIM_SYNAPSE_ACTION_RISING_EDGE,
++	STM32_LPTIM_SYNAPSE_ACTION_FALLING_EDGE,
++	STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES,
++	STM32_LPTIM_SYNAPSE_ACTION_NONE,
++};
++
++static enum synapse_action stm32_lptim_cnt_synapse_actions[] = {
++	/* Index must match with stm32_lptim_cnt_polarity[] (priv->polarity) */
++	[STM32_LPTIM_SYNAPSE_ACTION_RISING_EDGE] = SYNAPSE_ACTION_RISING_EDGE,
++	[STM32_LPTIM_SYNAPSE_ACTION_FALLING_EDGE] = SYNAPSE_ACTION_FALLING_EDGE,
++	[STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES] = SYNAPSE_ACTION_BOTH_EDGES,
++	[STM32_LPTIM_SYNAPSE_ACTION_NONE] = SYNAPSE_ACTION_NONE,
++};
++
++static int stm32_lptim_cnt_read(struct counter_device *counter,
++				struct counter_count *count,
++				struct count_read_value *val)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++	u32 cnt;
++	int ret;
++
++	ret = regmap_read(priv->regmap, STM32_LPTIM_CNT, &cnt);
++	if (ret)
++		return ret;
++
++	count_read_value_set(val, COUNT_POSITION, &cnt);
++
++	return 0;
++}
++
++static int stm32_lptim_cnt_function_get(struct counter_device *counter,
++					struct counter_count *count,
++					size_t *function)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++
++	if (!priv->quadrature_mode) {
++		*function = STM32_LPTIM_COUNTER_INCREASE;
++		return 0;
++	}
++
++	if (priv->polarity == STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES) {
++		*function = STM32_LPTIM_ENCODER_BOTH_EDGE;
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static int stm32_lptim_cnt_function_set(struct counter_device *counter,
++					struct counter_count *count,
++					size_t function)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++
++	if (stm32_lptim_is_enabled(priv))
++		return -EBUSY;
++
++	switch (function) {
++	case STM32_LPTIM_COUNTER_INCREASE:
++		priv->quadrature_mode = 0;
++		return 0;
++	case STM32_LPTIM_ENCODER_BOTH_EDGE:
++		priv->quadrature_mode = 1;
++		priv->polarity = STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES;
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static ssize_t stm32_lptim_cnt_enable_read(struct counter_device *counter,
++					   struct counter_count *count,
++					   void *private, char *buf)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++	int ret;
++
++	ret = stm32_lptim_is_enabled(priv);
++	if (ret < 0)
++		return ret;
++
++	return scnprintf(buf, PAGE_SIZE, "%u\n", ret);
++}
++
++static ssize_t stm32_lptim_cnt_enable_write(struct counter_device *counter,
++					    struct counter_count *count,
++					    void *private,
++					    const char *buf, size_t len)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++	bool enable;
++	int ret;
++
++	ret = kstrtobool(buf, &enable);
++	if (ret)
++		return ret;
++
++	/* Check nobody uses the timer, or already disabled/enabled */
++	ret = stm32_lptim_is_enabled(priv);
++	if ((ret < 0) || (!ret && !enable))
++		return ret;
++	if (enable && ret)
++		return -EBUSY;
++
++	ret = stm32_lptim_setup(priv, enable);
++	if (ret)
++		return ret;
++
++	ret = stm32_lptim_set_enable_state(priv, enable);
++	if (ret)
++		return ret;
++
++	return len;
++}
++
++static ssize_t stm32_lptim_cnt_ceiling_read(struct counter_device *counter,
++					    struct counter_count *count,
++					    void *private, char *buf)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++
++	return stm32_lptim_cnt_get_ceiling(priv, buf);
++}
++
++static ssize_t stm32_lptim_cnt_ceiling_write(struct counter_device *counter,
++					     struct counter_count *count,
++					     void *private,
++					     const char *buf, size_t len)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++
++	return stm32_lptim_cnt_set_ceiling(priv, buf, len);
++}
++
++static const struct counter_count_ext stm32_lptim_cnt_ext[] = {
++	{
++		.name = "enable",
++		.read = stm32_lptim_cnt_enable_read,
++		.write = stm32_lptim_cnt_enable_write
++	},
++	{
++		.name = "ceiling",
++		.read = stm32_lptim_cnt_ceiling_read,
++		.write = stm32_lptim_cnt_ceiling_write
++	},
++};
++
++static int stm32_lptim_cnt_action_get(struct counter_device *counter,
++				      struct counter_count *count,
++				      struct counter_synapse *synapse,
++				      size_t *action)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++	size_t function;
++	int err;
++
++	err = stm32_lptim_cnt_function_get(counter, count, &function);
++	if (err)
++		return err;
++
++	switch (function) {
++	case STM32_LPTIM_COUNTER_INCREASE:
++		/* LP Timer acts as up-counter on input 1 */
++		if (synapse->signal->id == count->synapses[0].signal->id)
++			*action = priv->polarity;
++		else
++			*action = STM32_LPTIM_SYNAPSE_ACTION_NONE;
++		return 0;
++	case STM32_LPTIM_ENCODER_BOTH_EDGE:
++		*action = priv->polarity;
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static int stm32_lptim_cnt_action_set(struct counter_device *counter,
++				      struct counter_count *count,
++				      struct counter_synapse *synapse,
++				      size_t action)
++{
++	struct stm32_lptim_cnt *const priv = counter->priv;
++	size_t function;
++	int err;
++
++	if (stm32_lptim_is_enabled(priv))
++		return -EBUSY;
++
++	err = stm32_lptim_cnt_function_get(counter, count, &function);
++	if (err)
++		return err;
++
++	/* only set polarity when in counter mode (on input 1) */
++	if (function == STM32_LPTIM_COUNTER_INCREASE
++	    && synapse->signal->id == count->synapses[0].signal->id) {
++		switch (action) {
++		case STM32_LPTIM_SYNAPSE_ACTION_RISING_EDGE:
++		case STM32_LPTIM_SYNAPSE_ACTION_FALLING_EDGE:
++		case STM32_LPTIM_SYNAPSE_ACTION_BOTH_EDGES:
++			priv->polarity = action;
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++
++static const struct counter_ops stm32_lptim_cnt_ops = {
++	.count_read = stm32_lptim_cnt_read,
++	.function_get = stm32_lptim_cnt_function_get,
++	.function_set = stm32_lptim_cnt_function_set,
++	.action_get = stm32_lptim_cnt_action_get,
++	.action_set = stm32_lptim_cnt_action_set,
++};
++
++static struct counter_signal stm32_lptim_cnt_signals[] = {
++	{
++		.id = 0,
++		.name = "Channel 1 Quadrature A"
++	},
++	{
++		.id = 1,
++		.name = "Channel 1 Quadrature B"
++	}
++};
++
++static struct counter_synapse stm32_lptim_cnt_synapses[] = {
++	{
++		.actions_list = stm32_lptim_cnt_synapse_actions,
++		.num_actions = ARRAY_SIZE(stm32_lptim_cnt_synapse_actions),
++		.signal = &stm32_lptim_cnt_signals[0]
++	},
++	{
++		.actions_list = stm32_lptim_cnt_synapse_actions,
++		.num_actions = ARRAY_SIZE(stm32_lptim_cnt_synapse_actions),
++		.signal = &stm32_lptim_cnt_signals[1]
++	}
++};
++
++/* LP timer with encoder */
++static struct counter_count stm32_lptim_enc_counts = {
++	.id = 0,
++	.name = "LPTimer Count",
++	.functions_list = stm32_lptim_cnt_functions,
++	.num_functions = ARRAY_SIZE(stm32_lptim_cnt_functions),
++	.synapses = stm32_lptim_cnt_synapses,
++	.num_synapses = ARRAY_SIZE(stm32_lptim_cnt_synapses),
++	.ext = stm32_lptim_cnt_ext,
++	.num_ext = ARRAY_SIZE(stm32_lptim_cnt_ext)
++};
++
++/* LP timer without encoder (counter only) */
++static struct counter_count stm32_lptim_in1_counts = {
++	.id = 0,
++	.name = "LPTimer Count",
++	.functions_list = stm32_lptim_cnt_functions,
++	.num_functions = 1,
++	.synapses = stm32_lptim_cnt_synapses,
++	.num_synapses = 1,
++	.ext = stm32_lptim_cnt_ext,
++	.num_ext = ARRAY_SIZE(stm32_lptim_cnt_ext)
++};
++
+ static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+ {
+ 	struct stm32_lptimer *ddata = dev_get_drvdata(pdev->dev.parent);
+ 	struct stm32_lptim_cnt *priv;
+ 	struct iio_dev *indio_dev;
++	int ret;
+ 
+ 	if (IS_ERR_OR_NULL(ddata))
+ 		return -EINVAL;
+@@ -344,8 +641,9 @@ static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+ 	priv->dev = &pdev->dev;
+ 	priv->regmap = ddata->regmap;
+ 	priv->clk = ddata->clk;
+-	priv->preset = STM32_LPTIM_MAX_ARR;
++	priv->ceiling = STM32_LPTIM_MAX_ARR;
+ 
++	/* Initialize IIO device */
+ 	indio_dev->name = dev_name(&pdev->dev);
+ 	indio_dev->dev.parent = &pdev->dev;
+ 	indio_dev->dev.of_node = pdev->dev.of_node;
+@@ -356,9 +654,28 @@ static int stm32_lptim_cnt_probe(struct platform_device *pdev)
+ 		indio_dev->channels = &stm32_lptim_cnt_channels;
+ 	indio_dev->num_channels = 1;
+ 
++	/* Initialize Counter device */
++	priv->counter.name = dev_name(&pdev->dev);
++	priv->counter.parent = &pdev->dev;
++	priv->counter.ops = &stm32_lptim_cnt_ops;
++	if (ddata->has_encoder) {
++		priv->counter.counts = &stm32_lptim_enc_counts;
++		priv->counter.num_signals = ARRAY_SIZE(stm32_lptim_cnt_signals);
++	} else {
++		priv->counter.counts = &stm32_lptim_in1_counts;
++		priv->counter.num_signals = 1;
++	}
++	priv->counter.num_counts = 1;
++	priv->counter.signals = stm32_lptim_cnt_signals;
++	priv->counter.priv = priv;
++
+ 	platform_set_drvdata(pdev, priv);
+ 
+-	return devm_iio_device_register(&pdev->dev, indio_dev);
++	ret = devm_iio_device_register(&pdev->dev, indio_dev);
++	if (ret)
++		return ret;
++
++	return devm_counter_register(&pdev->dev, &priv->counter);
+ }
+ 
+ static const struct of_device_id stm32_lptim_cnt_of_match[] = {
+diff --git a/drivers/iio/Kconfig b/drivers/iio/Kconfig
+index d08aeb41cd07..ac764840483a 100644
+--- a/drivers/iio/Kconfig
++++ b/drivers/iio/Kconfig
+@@ -74,7 +74,6 @@ source "drivers/iio/afe/Kconfig"
+ source "drivers/iio/amplifiers/Kconfig"
+ source "drivers/iio/chemical/Kconfig"
+ source "drivers/iio/common/Kconfig"
+-source "drivers/iio/counter/Kconfig"
+ source "drivers/iio/dac/Kconfig"
+ source "drivers/iio/dummy/Kconfig"
+ source "drivers/iio/frequency/Kconfig"
+diff --git a/drivers/iio/Makefile b/drivers/iio/Makefile
+index cb5993251381..bff682ad1cfb 100644
+--- a/drivers/iio/Makefile
++++ b/drivers/iio/Makefile
+@@ -20,7 +20,6 @@ obj-y += amplifiers/
+ obj-y += buffer/
+ obj-y += chemical/
+ obj-y += common/
+-obj-y += counter/
+ obj-y += dac/
+ obj-y += dummy/
+ obj-y += gyro/
+diff --git a/drivers/iio/counter/Kconfig b/drivers/iio/counter/Kconfig
+deleted file mode 100644
+index eeb358122cbe..000000000000
+--- a/drivers/iio/counter/Kconfig
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#
+-# Counter devices
+-#
+-# When adding new entries keep the list in alphabetical order
+-
+-menu "Counters"
+-
+-config STM32_LPTIMER_CNT
+-	tristate "STM32 LP Timer encoder counter driver"
+-	depends on MFD_STM32_LPTIMER || COMPILE_TEST
+-	help
+-	  Select this option to enable STM32 Low-Power Timer quadrature encoder
+-	  and counter driver.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called stm32-lptimer-cnt.
+-endmenu
+diff --git a/drivers/iio/counter/Makefile b/drivers/iio/counter/Makefile
+deleted file mode 100644
+index 93933ba49280..000000000000
+--- a/drivers/iio/counter/Makefile
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#
+-# Makefile for IIO counter devices
+-#
+-
+-# When adding new entries keep the list in alphabetical order
+-
+-obj-$(CONFIG_STM32_LPTIMER_CNT)	+= stm32-lptimer-cnt.o
 -- 
 2.17.1
 
