@@ -2,179 +2,142 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7A0C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BEB6C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376F62154B
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:24:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F33232156E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:25:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KZDQzMmi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376F62154B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YftxJyB2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33232156E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933578AbeFUQYX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:24:23 -0400
-Received: from mail-it0-f74.google.com ([209.85.214.74]:38359 "EHLO
-        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933421AbeFUQXi (ORCPT
+        id S933525AbeFUQZj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:25:39 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40687 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933399AbeFUQZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:23:38 -0400
-Received: by mail-it0-f74.google.com with SMTP id l6-v6so3043928itb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 09:23:38 -0700 (PDT)
+        Thu, 21 Jun 2018 12:25:36 -0400
+Received: by mail-lf0-f65.google.com with SMTP id q11-v6so5197451lfc.7;
+        Thu, 21 Jun 2018 09:25:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
-         :cc;
-        bh=6IRyW2+wJGByljsyTJ7DxPDfnQO8dfQWb02gEMcyb/I=;
-        b=KZDQzMmiOTmJL4Bg4c61XG5P+PkX8ExmS6RdxYMtWnQXO6tbAUV82YwTJz6bLugXjA
-         P89JHaUMiXfrhp4IO0wOxlVvQLfHWiiQxCJJ51KwExaA6jSwwHqdgs1SHoI/kkBRo9Nj
-         F1N+vNuBnoBrF5X3EQyFPo9HO6DpfYt9N0UcNjvRkE/9AWXRGOSb8l1JA7ymBehIBxH2
-         DStGEl+yPBgYCzm8jLW47ZJCcgI/OiB5i3svl0xcCzXBP7bTvpsuMMSQeis5zj96nD8Y
-         lh0AoxB90URn8e/ggtyTNj3diEmWUGbkvMbjIgYSogkL2RXCxOqiaUyMqynuBvWuIqAs
-         uYHQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=9bcM/pdQ4wj5ddn+TVzLqOchy5cc8fazWzkq63E6zSA=;
+        b=YftxJyB2mWX4L17UARFPXNrlg9ITGJ85FWxJPBa7PBGMFL60lls9utBOGtsurJYrXL
+         LN9JT8Ri1TPkUx9RDef6SvgWzUZ4pImyUe6CvE/v7oLE/G51DhXu7ITeQInghXaEXpqo
+         FevEMc97DlPUxYpA+zQyPRPTC7Bw5DHBZuwxezJG16fW3dQNXA4lNClxdbskoGQCw34M
+         X8jyUWiHD/fK6U36xcfdOBuFc7O+FRedo0bOj2CuuqITqY7/lPG7Oj3gODEt9LPZytli
+         0nip4h9gOmnf9lxfwDJQO5z56zsDB29YYwvZodOUo/tcuERsftUYs2zeOqLERwLZ1yt0
+         sUtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
-         :references:subject:from:to:cc;
-        bh=6IRyW2+wJGByljsyTJ7DxPDfnQO8dfQWb02gEMcyb/I=;
-        b=UA8tqxRc7t6S6oSHZZkYFX2l2TSDzUW7JKySJC5doy3cQ5jk1FXcNyIeOpv/nn9+Lt
-         39HEUNR5eWKxiEqeAHSch7tXjOq+XGwm0p/DsubxHqa6Z0uV4MnxXzpJCobrKm/JtXyM
-         UEQ1/6W655H71we1qyy/k9AeXwJLpnxgqLmlE+OzKobhW3s+iy9Sd2lPAIuP0m2yvuzK
-         4T99gp4RIQV/7EUPAMlOdkib0vMRLfzmjtLvLD37QAeXkJSqe8rHbPsQt4hWPRwcHgnf
-         kJnqhZcXnvop3h5OiVS8lYEaLbVAwyTKLhWjRT4VbmAxwBNXosDsHU2RYaHjaKNewr1R
-         o8Kg==
-X-Gm-Message-State: APt69E2aVZEbIa7+PDbSsN4fiwFBucuklhEWWbhD74mULYEXpcdDZzOJ
-        oNndIH3Z/KQeOt1KVjuF5hN/87/esqx7DSij/j4=
-X-Google-Smtp-Source: ADUXVKJFUUPUsRNdiQoVlTdOsKnXMZ1OHQCPRT4oOKG69Pxc8FAupYvIq/39emBitL8SYG9oPiC3o/cK2cZfDUvlBPo=
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=9bcM/pdQ4wj5ddn+TVzLqOchy5cc8fazWzkq63E6zSA=;
+        b=JWS5XubDozYefU8/xMqdK9SXg9/xkElDzFwr6ktwO6UiLgsW5aiheAxI+FuN9hQaFR
+         6oPgq/lVimMw2QDSu34VE3Fkd05WGTsV+Vdvzv2e6ZLaTj/KJ1A5cA23Zf5wA7hyouqf
+         7bqgURTjTLuo4WiCxSeS9EzI/F2rVnRua2C0Hyf8OjQPYyhOWfd/7FluTKGJrJV8V6Bs
+         VnS2kHyUsVAHGl43TvVWrv4PmzUelvDcoS7RpfADRsGOBpE2ITSEQOw7r4NdkvMylgfO
+         CIPmkWSVKoit5k90em0gF/yq2UXBVuqpZlYpcqFEClOQYHzBsMoqgs5/uIumFKC5QfwR
+         Hn0Q==
+X-Gm-Message-State: APt69E1aRuyVTh6Dgd+Q0atu4iQNz214X6rUGu2OWJq1F3/RBT462ER8
+        vJRqH9bZnWGbOedjBGVBYCVQgzyMuP2WId+6QNNVuwYX
+X-Google-Smtp-Source: ADUXVKL+c8DKxKxhvY9j7pkKxO3Rekgl+GwMObOVIcrOI8RcvtojX8lyzNjvECx22kkcm6YwCVaZ4s3qz45IavxqOn8=
+X-Received: by 2002:a2e:40d9:: with SMTP id r86-v6mr17420637lje.19.1529598334172;
+ Thu, 21 Jun 2018 09:25:34 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:228c:: with SMTP id o134-v6mr2901471ito.30.1529598217972;
- Thu, 21 Jun 2018 09:23:37 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 09:23:23 -0700
-In-Reply-To: <20180621162324.36656-1-ndesaulniers@google.com>
-Message-Id: <20180621162324.36656-3-ndesaulniers@google.com>
-References: <20180621162324.36656-1-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
-Subject: [PATCH v6 2/3] x86/asm: add _ASM_ARG* constants for argument
- registers to <asm/asm.h>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     mingo@redhat.com, tglx@linutronix.de
-Cc:     akpm@linux-foundation.org, hpa@zytor.com,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
-        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
-        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
-        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        ard.biesheuvel@linaro.org, akataria@vmware.com,
-        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
-        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
-        mjg59@google.com, joe@perches.com,
-        andrea.parri@amarulasolutions.com,
-        "H. Peter Anvin" <hpa@linux.intel.com>
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 09:25:33
+ -0700 (PDT)
+In-Reply-To: <20180621161121.GB7222@gmail.com>
+References: <20180420120605.1612248-1-arnd@arndb.de> <20180420120605.1612248-2-arnd@arndb.de>
+ <20180621154915.GA31947@gmail.com> <CAK8P3a1QYTfRNQt2+a29BpvgYM_pnSFrO=NBvVo=BdUa2q9ngQ@mail.gmail.com>
+ <20180621161121.GB7222@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 21 Jun 2018 18:25:33 +0200
+X-Google-Sender-Auth: z0uKCW387Muhvu2AYO4yEdhCnIk
+Message-ID: <CAK8P3a1mx16S+DhEMQA6WBJ7efdhN5YaKKVHU6n+E6kfifM-Qg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rusage: allow 64-bit times ru_utime/ru_stime
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Paul Eggert <eggert@cs.ucla.edu>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org,
+        Deepa Dinamani <deepa.kernel@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "H. Peter Anvin" <hpa@linux.intel.com>
+On Thu, Jun 21, 2018 at 6:11 PM, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> Sure, no problem. Do you have an opinion on the question I raised in the
+>> first patch [1], i.e. whether we actually want this to be done this way in the
+>> kernel, or one of the other approaches I described there?
+>
+> So this looks like the most forward looking variant:
+>
+>> a) deprecate the wait4() and getrusage() system calls, and create
+>>    a set of kernel interfaces based around a newly defined structure that
+>>    could solve multiple problems at once, e.g. provide more fine-grained
+>>    timestamps. The C library could then implement the posix interfaces
+>>    on top of the new system calls.
+>
+> ... but given the pretty long propagation time of new ABIs, is this a good
+> solution? What would the limitations/trade-offs be on old-ABI systems?
 
-i386 and x86-64 uses different registers for arguments; make them
-available so we don't have to #ifdef in the actual code.
+The main purpose of this is to enable consistent 64-bit time_t interfaces in
+user space, and for most users this would not change anything as the
+existing glibc (both 64-bit and 32-bit) can continue calling the same
+interfaces as before.
 
-Native size and specified size (q, l, w, b) versions are provided.
+For those users that are interested in 64-bit time_t on 32-bit binaries,
+the first step would be to change the glibc implementation to emulate
+the existing interfaces with the new time_t on top of the new syscall
+rather than the old (unsafe) syscall. Those users already require both
+a new kernel and a new glibc version.
 
-Acked-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- arch/x86/include/asm/asm.h | 59 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+If the new kernel interfaces offer a real benefit, others could start
+using them directly as soon as they have updated the libc version.
+Note that glibc has not updated their kernel headers version for
+a long time, they still allow building with linux-3.2 header files.
+However, the glibc maintainers have indicated that they would
+probably update that requirement to the then-latest version
+when adding support to the new 64-bit time_t syscalls, so this
+would become available immediately to all users of the new glibc
+version.
 
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 219faaec51df..990770f9e76b 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -46,6 +46,65 @@
- #define _ASM_SI		__ASM_REG(si)
- #define _ASM_DI		__ASM_REG(di)
- 
-+#ifndef __x86_64__
-+/* 32 bit */
-+
-+#define _ASM_ARG1	_ASM_AX
-+#define _ASM_ARG2	_ASM_DX
-+#define _ASM_ARG3	_ASM_CX
-+
-+#define _ASM_ARG1L	eax
-+#define _ASM_ARG2L	edx
-+#define _ASM_ARG3L	ecx
-+
-+#define _ASM_ARG1W	ax
-+#define _ASM_ARG2W	dx
-+#define _ASM_ARG3W	cx
-+
-+#define _ASM_ARG1B	al
-+#define _ASM_ARG2B	dl
-+#define _ASM_ARG3B	cl
-+
-+#else
-+/* 64 bit */
-+
-+#define _ASM_ARG1	_ASM_DI
-+#define _ASM_ARG2	_ASM_SI
-+#define _ASM_ARG3	_ASM_DX
-+#define _ASM_ARG4	_ASM_CX
-+#define _ASM_ARG5	r8
-+#define _ASM_ARG6	r9
-+
-+#define _ASM_ARG1Q	rdi
-+#define _ASM_ARG2Q	rsi
-+#define _ASM_ARG3Q	rdx
-+#define _ASM_ARG4Q	rcx
-+#define _ASM_ARG5Q	r8
-+#define _ASM_ARG6Q	r9
-+
-+#define _ASM_ARG1L	edi
-+#define _ASM_ARG2L	esi
-+#define _ASM_ARG3L	edx
-+#define _ASM_ARG4L	ecx
-+#define _ASM_ARG5L	r8d
-+#define _ASM_ARG6L	r9d
-+
-+#define _ASM_ARG1W	di
-+#define _ASM_ARG2W	si
-+#define _ASM_ARG3W	dx
-+#define _ASM_ARG4W	cx
-+#define _ASM_ARG5W	r8w
-+#define _ASM_ARG6W	r9w
-+
-+#define _ASM_ARG1B	dil
-+#define _ASM_ARG2B	sil
-+#define _ASM_ARG3B	dl
-+#define _ASM_ARG4B	cl
-+#define _ASM_ARG5B	r8b
-+#define _ASM_ARG6B	r9b
-+
-+#endif
-+
- /*
-  * Macros to generate condition code outputs from inline assembly,
-  * The output operand must be type "bool".
--- 
-2.18.0.rc2.346.g013aa6912e-goog
+However, the other question that has to be asked then is whether
+there is anything wrong with wait4()/waitid() and getrusuage() that
+we want to change beyond the time value passing. We have
+answered a similar question with 'yes' for stat(), which has led
+to the introduction of statx(), but so far I expect all other syscalls
+to start compatible. See [1] for my current list. In that list, I have
+currently marked waitid() and getrusuage() as not to be addressed,
+i.e. my approach c) of applying only the first of the two patches but
+not the second.
 
+       Arnd
+
+[1] https://docs.google.com/spreadsheets/d/1HCYwHXxs48TsTb6IGUduNjQnmfRvMPzCN6T_0YiQwis/edit#gid=0
