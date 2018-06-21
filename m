@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BE0C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A2CC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C05F20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C05F20837
+	by mail.kernel.org (Postfix) with ESMTP id 591D620837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 591D620837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754651AbeFUBxN (ORCPT
+        id S1754675AbeFUBxP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:53:13 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38190 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754428AbeFUBw7 (ORCPT
+        Wed, 20 Jun 2018 21:53:15 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42439 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754460AbeFUBxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 21:52:59 -0400
-Received: by mail-pl0-f67.google.com with SMTP id d10-v6so755572plo.5
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:52:59 -0700 (PDT)
+        Wed, 20 Jun 2018 21:53:01 -0400
+Received: by mail-pf0-f195.google.com with SMTP id w7-v6so681366pfn.9
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:53:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TLgio68mdM4aQhQYC7wGkC/DNWgUqIeTAV+SVL/553I=;
-        b=O8K54Pbgcdr8sPNo0JGpPT4HwO2SkNxuooJQ4ia/Gof5y9Y7V4Sm0GlDHqi/ymwUxE
-         mWHFbCYm52cnjwUZ5gZrZkR3W88YjxUWEexHjg20QU6+xCS0lOxxtJRrPfOcv9i9cYBh
-         ioEyqaH8P0vk6nP6U9XcVjsXjd+MSmt7gDHvrsZ6oB3SYeu9KXANq1lH4FMgDXCS5Ho1
-         k/LCeYYDf1YlT5h98vc0uMUvhg8x4KRW3P7Aaov6giTjo7t1FiHnkZWouWPbqbrPi8IX
-         smC/ELx06tMKsFimJaWzrX5S4VCfSQk8aMexGyxsRnFipbzrorjnao0cZIGfTSAiHpxy
-         eDpw==
-X-Gm-Message-State: APt69E1niLDB6wT4TnyoBiXL/uo3XxaS1ESSGUW/TE1iF5me36ZCcpvA
-        NLLd/EWza8Fm09TdnUfnHil8lQ==
-X-Google-Smtp-Source: ADUXVKKeE1vZTO8tMzF6qZc2UguR/NYIVxVYV/6jV9yu1Uv+8LRAeo38052ewGm2n5o0ToqfX8meDA==
-X-Received: by 2002:a17:902:6bc7:: with SMTP id m7-v6mr26764301plt.162.1529545978411;
-        Wed, 20 Jun 2018 18:52:58 -0700 (PDT)
+        bh=93CgxeywGrGMB06DUJT8XMEVmNlriJEOmS/HPBt2YBc=;
+        b=JHsTbmm++cZuCecCK2daH2+xD2LD7lqVWeBxE6E3/XSTTBu++YGKkgMCJ35nNLm+W5
+         kbCYxHHQHPBjbM2fKzv5cWs/EwllMBy6hHnvZYNYMvw5RLGi4MWzpmt6dnDPMDevU9Fx
+         /UeJMuIhPKFQkpMDU5RUYIUJd7OodPHhkKWfdJssg8rXoPmk0D72vflNtgvR2CIUV8M7
+         qy3VP7pu30rZUtOctFG66VGujtVxnK7b7Qobr9aGPlKTZemNcjYeD48oVMkxCikzndEN
+         mtNcjyWz8ubq7hir8VB+y+YsCMsyW0rfQSQK2C7pb0CIjwopVqBaArfz+6Nihtc+FV6S
+         Emug==
+X-Gm-Message-State: APt69E2VC9b8yqASdybd6+r466ef89M6OLWMwn0E53GuFwKzuaTWrl+Y
+        dtnEy5xCRjq7tPzkBj1FY9Up3g==
+X-Google-Smtp-Source: ADUXVKLSJF7h7JssCKbm2JsiFnaXjRRs+aA4qlpspCr0NyPkdvtep50oh4m5LQbpOEX5kj1s8VMzRA==
+X-Received: by 2002:aa7:80cf:: with SMTP id a15-v6mr5735220pfn.19.1529545979993;
+        Wed, 20 Jun 2018 18:52:59 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id p12-v6sm6585877pfi.175.2018.06.20.18.52.56
+        by smtp.gmail.com with ESMTPSA id p12-v6sm6585877pfi.175.2018.06.20.18.52.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 18:52:57 -0700 (PDT)
+        Wed, 20 Jun 2018 18:52:59 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
@@ -63,9 +63,9 @@ Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Benson Leung <bleung@chromium.org>,
         Olof Johansson <olof@lixom.net>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 04/12] PM / devfreq: Add struct devfreq_policy
-Date:   Wed, 20 Jun 2018 18:52:29 -0700
-Message-Id: <20180621015237.100100-5-mka@chromium.org>
+Subject: [PATCH v4 05/12] PM / devfreq: Add support for policy notifiers
+Date:   Wed, 20 Jun 2018 18:52:30 -0700
+Message-Id: <20180621015237.100100-6-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
 In-Reply-To: <20180621015237.100100-1-mka@chromium.org>
 References: <20180621015237.100100-1-mka@chromium.org>
@@ -74,547 +74,262 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move variables related with devfreq policy changes from struct devfreq
-to the new struct devfreq_policy and add a policy field to struct devfreq.
+Policy notifiers are called before a frequency change and may narrow
+the min/max frequency range in devfreq_policy, which is used to adjust
+the target frequency if it is beyond this range.
 
-The following variables are moved:
-
-df->min/max_freq           =>   p->user.min/max_freq
-df->scaling_min/max_freq   =>   p->devinfo.min/max_freq
-df->governor               =>   p->governor
-df->governor_name          =>   p->governor_name
+Also add a few helpers:
+ - devfreq_verify_within_[dev_]limits()
+    - should be used by the notifiers for policy adjustments.
+ - dev_to_devfreq()
+    - lookup a devfreq strict from a device pointer
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Reviewed-by: Brian Norris <briannorris@chromium.org>
 ---
 Changes in v4:
+- Fixed typo in commit message: devfreg => devfreq
 - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
 
 Changes in v3:
-- none
+- devfreq.h: fixed misspelling of struct devfreq_policy
 
 Changes in v2:
 - performance, powersave and simpleondemand governors don't need changes
   with "PM / devfreq: Don't adjust to user limits in governors"
 - formatting fixes
 ---
- drivers/devfreq/devfreq.c          | 137 ++++++++++++++++-------------
- drivers/devfreq/governor_passive.c |   4 +-
- include/linux/devfreq.h            |  38 +++++---
- 3 files changed, 103 insertions(+), 76 deletions(-)
+ drivers/devfreq/devfreq.c | 48 ++++++++++++++++++++++-------
+ include/linux/devfreq.h   | 65 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 102 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 6f604f8b2b81..21604d6ae2b8 100644
+index 21604d6ae2b8..4cbaa7ad1972 100644
 --- a/drivers/devfreq/devfreq.c
 +++ b/drivers/devfreq/devfreq.c
-@@ -255,6 +255,7 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
-  */
- int update_devfreq(struct devfreq *devfreq)
+@@ -72,6 +72,21 @@ static struct devfreq *find_device_devfreq(struct device *dev)
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
++/**
++ * dev_to_devfreq() - find devfreq struct using device pointer
++ * @dev:	device pointer used to lookup device devfreq.
++ */
++struct devfreq *dev_to_devfreq(struct device *dev)
++{
++	struct devfreq *devfreq;
++
++	mutex_lock(&devfreq_list_lock);
++	devfreq = find_device_devfreq(dev);
++	mutex_unlock(&devfreq_list_lock);
++
++	return devfreq;
++}
++
+ static unsigned long find_available_min_freq(struct devfreq *devfreq)
  {
-+	struct devfreq_policy *policy = &devfreq->policy;
- 	struct devfreq_freqs freqs;
- 	unsigned long freq, cur_freq, min_freq, max_freq;
- 	int err = 0;
-@@ -265,11 +266,11 @@ int update_devfreq(struct devfreq *devfreq)
- 		return -EINVAL;
- 	}
- 
--	if (!devfreq->governor)
-+	if (!policy->governor)
+ 	struct dev_pm_opp *opp;
+@@ -269,20 +284,21 @@ int update_devfreq(struct devfreq *devfreq)
+ 	if (!policy->governor)
  		return -EINVAL;
  
++	policy->min = policy->devinfo.min_freq;
++	policy->max = policy->devinfo.max_freq;
++
++	srcu_notifier_call_chain(&devfreq->policy_notifier_list,
++				DEVFREQ_ADJUST, policy);
++
  	/* Reevaluate the proper frequency */
--	err = devfreq->governor->get_target_freq(devfreq, &freq);
-+	err = policy->governor->get_target_freq(devfreq, &freq);
+ 	err = policy->governor->get_target_freq(devfreq, &freq);
  	if (err)
  		return err;
  
-@@ -280,8 +281,8 @@ int update_devfreq(struct devfreq *devfreq)
- 	 * max_freq
- 	 * min_freq
- 	 */
--	max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
--	min_freq = MAX(devfreq->scaling_min_freq, devfreq->min_freq);
-+	max_freq = MIN(policy->devinfo.max_freq, policy->user.max_freq);
-+	min_freq = MAX(policy->devinfo.min_freq, policy->user.min_freq);
+-	/*
+-	 * Adjust the frequency with user freq, QoS and available freq.
+-	 *
+-	 * List from the highest priority
+-	 * max_freq
+-	 * min_freq
+-	 */
+-	max_freq = MIN(policy->devinfo.max_freq, policy->user.max_freq);
+-	min_freq = MAX(policy->devinfo.min_freq, policy->user.min_freq);
++	/* Adjust the frequency */
++
++	max_freq = MIN(policy->max, policy->user.max_freq);
++	min_freq = MAX(policy->min, policy->user.min_freq);
  
  	if (freq < min_freq) {
  		freq = min_freq;
-@@ -493,18 +494,19 @@ static int devfreq_notifier_call(struct notifier_block *nb, unsigned long type,
- 				 void *devp)
- {
- 	struct devfreq *devfreq = container_of(nb, struct devfreq, nb);
-+	struct devfreq_policy *policy = &devfreq->policy;
- 	int ret;
+@@ -645,6 +661,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 	devfreq->last_stat_updated = jiffies;
  
- 	mutex_lock(&devfreq->lock);
+ 	srcu_init_notifier_head(&devfreq->transition_notifier_list);
++	srcu_init_notifier_head(&devfreq->policy_notifier_list);
  
--	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
--	if (!devfreq->scaling_min_freq) {
-+	policy->devinfo.min_freq = find_available_min_freq(devfreq);
-+	if (!policy->devinfo.min_freq) {
- 		mutex_unlock(&devfreq->lock);
- 		return -EINVAL;
- 	}
+ 	mutex_unlock(&devfreq->lock);
  
--	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
--	if (!devfreq->scaling_max_freq) {
-+	policy->devinfo.max_freq = find_available_max_freq(devfreq);
-+	if (!policy->devinfo.max_freq) {
- 		mutex_unlock(&devfreq->lock);
- 		return -EINVAL;
- 	}
-@@ -524,6 +526,7 @@ static int devfreq_notifier_call(struct notifier_block *nb, unsigned long type,
- static void devfreq_dev_release(struct device *dev)
- {
- 	struct devfreq *devfreq = to_devfreq(dev);
-+	struct devfreq_policy *policy = &devfreq->policy;
- 
- 	mutex_lock(&devfreq_list_lock);
- 	if (IS_ERR(find_device_devfreq(devfreq->dev.parent))) {
-@@ -534,9 +537,9 @@ static void devfreq_dev_release(struct device *dev)
- 	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
- 
--	if (devfreq->governor)
--		devfreq->governor->event_handler(devfreq,
--						 DEVFREQ_GOV_STOP, NULL);
-+	if (policy->governor)
-+		policy->governor->event_handler(devfreq,
-+						DEVFREQ_GOV_STOP, NULL);
- 
- 	if (devfreq->profile->exit)
- 		devfreq->profile->exit(devfreq->dev.parent);
-@@ -559,6 +562,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 				   void *data)
- {
- 	struct devfreq *devfreq;
-+	struct devfreq_policy *policy;
- 	struct devfreq_governor *governor;
- 	static atomic_t devfreq_no = ATOMIC_INIT(-1);
- 	int err = 0;
-@@ -584,13 +588,14 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		goto err_out;
- 	}
- 
-+	policy = &devfreq->policy;
- 	mutex_init(&devfreq->lock);
- 	mutex_lock(&devfreq->lock);
- 	devfreq->dev.parent = dev;
- 	devfreq->dev.class = devfreq_class;
- 	devfreq->dev.release = devfreq_dev_release;
- 	devfreq->profile = profile;
--	strncpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
-+	strncpy(policy->governor_name, governor_name, DEVFREQ_NAME_LEN);
- 	devfreq->previous_freq = profile->initial_freq;
- 	devfreq->last_status.current_frequency = profile->initial_freq;
- 	devfreq->data = data;
-@@ -604,21 +609,21 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		mutex_lock(&devfreq->lock);
- 	}
- 
--	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
--	if (!devfreq->scaling_min_freq) {
-+	policy->devinfo.min_freq = find_available_min_freq(devfreq);
-+	if (!policy->devinfo.min_freq) {
- 		mutex_unlock(&devfreq->lock);
- 		err = -EINVAL;
- 		goto err_dev;
- 	}
--	devfreq->min_freq = devfreq->scaling_min_freq;
-+	policy->user.min_freq = policy->devinfo.min_freq;
- 
--	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
--	if (!devfreq->scaling_max_freq) {
-+	policy->devinfo.max_freq = find_available_max_freq(devfreq);
-+	if (!policy->devinfo.max_freq) {
- 		mutex_unlock(&devfreq->lock);
- 		err = -EINVAL;
- 		goto err_dev;
- 	}
--	devfreq->max_freq = devfreq->scaling_max_freq;
-+	policy->user.max_freq = policy->devinfo.max_freq;
- 
- 	dev_set_name(&devfreq->dev, "devfreq%d",
- 				atomic_inc_return(&devfreq_no));
-@@ -646,7 +651,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	mutex_lock(&devfreq_list_lock);
- 	list_add(&devfreq->node, &devfreq_list);
- 
--	governor = find_devfreq_governor(devfreq->governor_name);
-+	governor = find_devfreq_governor(policy->governor_name);
- 	if (IS_ERR(governor)) {
- 		dev_err(dev, "%s: Unable to find governor for the device\n",
- 			__func__);
-@@ -654,9 +659,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 		goto err_init;
- 	}
- 
--	devfreq->governor = governor;
--	err = devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_START,
--						NULL);
-+	policy->governor = governor;
-+	err = policy->governor->event_handler(devfreq, DEVFREQ_GOV_START,
-+					      NULL);
- 	if (err) {
- 		dev_err(dev, "%s: Unable to start governor for the device\n",
- 			__func__);
-@@ -817,10 +822,10 @@ int devfreq_suspend_device(struct devfreq *devfreq)
- 	if (!devfreq)
- 		return -EINVAL;
- 
--	if (!devfreq->governor)
-+	if (!devfreq->policy.governor)
- 		return 0;
- 
--	return devfreq->governor->event_handler(devfreq,
-+	return devfreq->policy.governor->event_handler(devfreq,
- 				DEVFREQ_GOV_SUSPEND, NULL);
- }
- EXPORT_SYMBOL(devfreq_suspend_device);
-@@ -838,10 +843,10 @@ int devfreq_resume_device(struct devfreq *devfreq)
- 	if (!devfreq)
- 		return -EINVAL;
- 
--	if (!devfreq->governor)
-+	if (!devfreq->policy.governor)
- 		return 0;
- 
--	return devfreq->governor->event_handler(devfreq,
-+	return devfreq->policy.governor->event_handler(devfreq,
- 				DEVFREQ_GOV_RESUME, NULL);
- }
- EXPORT_SYMBOL(devfreq_resume_device);
-@@ -875,30 +880,31 @@ int devfreq_add_governor(struct devfreq_governor *governor)
- 	list_for_each_entry(devfreq, &devfreq_list, node) {
- 		int ret = 0;
- 		struct device *dev = devfreq->dev.parent;
-+		struct devfreq_policy *policy = &devfreq->policy;
- 
--		if (!strncmp(devfreq->governor_name, governor->name,
-+		if (!strncmp(policy->governor_name, governor->name,
- 			     DEVFREQ_NAME_LEN)) {
- 			/* The following should never occur */
--			if (devfreq->governor) {
-+			if (policy->governor) {
- 				dev_warn(dev,
- 					 "%s: Governor %s already present\n",
--					 __func__, devfreq->governor->name);
--				ret = devfreq->governor->event_handler(devfreq,
-+					 __func__, policy->governor->name);
-+				ret = policy->governor->event_handler(devfreq,
- 							DEVFREQ_GOV_STOP, NULL);
- 				if (ret) {
- 					dev_warn(dev,
- 						 "%s: Governor %s stop = %d\n",
- 						 __func__,
--						 devfreq->governor->name, ret);
-+						 policy->governor->name, ret);
- 				}
- 				/* Fall through */
- 			}
--			devfreq->governor = governor;
--			ret = devfreq->governor->event_handler(devfreq,
-+			policy->governor = governor;
-+			ret = policy->governor->event_handler(devfreq,
- 						DEVFREQ_GOV_START, NULL);
- 			if (ret) {
- 				dev_warn(dev, "%s: Governor %s start=%d\n",
--					 __func__, devfreq->governor->name,
-+					 __func__, policy->governor->name,
- 					 ret);
- 			}
- 		}
-@@ -937,24 +943,25 @@ int devfreq_remove_governor(struct devfreq_governor *governor)
- 	list_for_each_entry(devfreq, &devfreq_list, node) {
- 		int ret;
- 		struct device *dev = devfreq->dev.parent;
-+		struct devfreq_policy *policy = &devfreq->policy;
- 
--		if (!strncmp(devfreq->governor_name, governor->name,
-+		if (!strncmp(policy->governor_name, governor->name,
- 			     DEVFREQ_NAME_LEN)) {
- 			/* we should have a devfreq governor! */
--			if (!devfreq->governor) {
-+			if (!policy->governor) {
- 				dev_warn(dev, "%s: Governor %s NOT present\n",
- 					 __func__, governor->name);
- 				continue;
- 				/* Fall through */
- 			}
--			ret = devfreq->governor->event_handler(devfreq,
-+			ret = policy->governor->event_handler(devfreq,
- 						DEVFREQ_GOV_STOP, NULL);
- 			if (ret) {
- 				dev_warn(dev, "%s: Governor %s stop=%d\n",
--					 __func__, devfreq->governor->name,
-+					 __func__, policy->governor->name,
- 					 ret);
- 			}
--			devfreq->governor = NULL;
-+			policy->governor = NULL;
- 		}
- 	}
- 
-@@ -969,16 +976,17 @@ EXPORT_SYMBOL(devfreq_remove_governor);
- static ssize_t governor_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
- {
--	if (!to_devfreq(dev)->governor)
-+	if (!to_devfreq(dev)->policy.governor)
- 		return -EINVAL;
- 
--	return sprintf(buf, "%s\n", to_devfreq(dev)->governor->name);
-+	return sprintf(buf, "%s\n", to_devfreq(dev)->policy.governor->name);
- }
- 
- static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 			      const char *buf, size_t count)
- {
- 	struct devfreq *df = to_devfreq(dev);
-+	struct devfreq_policy *policy = &df->policy;
- 	int ret;
- 	char str_governor[DEVFREQ_NAME_LEN + 1];
- 	struct devfreq_governor *governor;
-@@ -993,29 +1001,30 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 		ret = PTR_ERR(governor);
- 		goto out;
- 	}
--	if (df->governor == governor) {
-+	if (policy->governor == governor) {
- 		ret = 0;
- 		goto out;
--	} else if ((df->governor && df->governor->immutable) ||
-+	} else if ((policy->governor && policy->governor->immutable) ||
- 					governor->immutable) {
+@@ -1445,7 +1462,7 @@ EXPORT_SYMBOL(devm_devfreq_unregister_opp_notifier);
+  * devfreq_register_notifier() - Register a driver with devfreq
+  * @devfreq:	The devfreq object.
+  * @nb:		The notifier block to register.
+- * @list:	DEVFREQ_TRANSITION_NOTIFIER.
++ * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
+  */
+ int devfreq_register_notifier(struct devfreq *devfreq,
+ 				struct notifier_block *nb,
+@@ -1461,6 +1478,10 @@ int devfreq_register_notifier(struct devfreq *devfreq,
+ 		ret = srcu_notifier_chain_register(
+ 				&devfreq->transition_notifier_list, nb);
+ 		break;
++	case DEVFREQ_POLICY_NOTIFIER:
++		ret = srcu_notifier_chain_register(
++				&devfreq->policy_notifier_list, nb);
++		break;
+ 	default:
  		ret = -EINVAL;
- 		goto out;
  	}
- 
--	if (df->governor) {
--		ret = df->governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
-+	if (policy->governor) {
-+		ret = policy->governor->event_handler(df, DEVFREQ_GOV_STOP,
-+						      NULL);
- 		if (ret) {
- 			dev_warn(dev, "%s: Governor %s not stopped(%d)\n",
--				 __func__, df->governor->name, ret);
-+				 __func__, policy->governor->name, ret);
- 			goto out;
- 		}
+@@ -1473,7 +1494,7 @@ EXPORT_SYMBOL(devfreq_register_notifier);
+  * devfreq_unregister_notifier() - Unregister a driver with devfreq
+  * @devfreq:	The devfreq object.
+  * @nb:		The notifier block to be unregistered.
+- * @list:	DEVFREQ_TRANSITION_NOTIFIER.
++ * @list:	DEVFREQ_TRANSITION_NOTIFIER or DEVFREQ_POLICY_NOTIFIER.
+  */
+ int devfreq_unregister_notifier(struct devfreq *devfreq,
+ 				struct notifier_block *nb,
+@@ -1489,6 +1510,11 @@ int devfreq_unregister_notifier(struct devfreq *devfreq,
+ 		ret = srcu_notifier_chain_unregister(
+ 				&devfreq->transition_notifier_list, nb);
+ 		break;
++	case DEVFREQ_POLICY_NOTIFIER:
++		ret = srcu_notifier_chain_unregister(
++				&devfreq->policy_notifier_list, nb);
++		break;
++
+ 	default:
+ 		ret = -EINVAL;
  	}
--	df->governor = governor;
--	strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
--	ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
-+	policy->governor = governor;
-+	strncpy(policy->governor_name, governor->name, DEVFREQ_NAME_LEN);
-+	ret = policy->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
- 	if (ret)
- 		dev_warn(dev, "%s: Governor %s not started(%d)\n",
--			 __func__, df->governor->name, ret);
-+			 __func__, policy->governor->name, ret);
- out:
- 	mutex_unlock(&devfreq_list_lock);
- 
-@@ -1030,6 +1039,7 @@ static ssize_t available_governors_show(struct device *d,
- 					char *buf)
- {
- 	struct devfreq *df = to_devfreq(d);
-+	struct devfreq_policy *policy = &df->policy;
- 	ssize_t count = 0;
- 
- 	mutex_lock(&devfreq_list_lock);
-@@ -1038,9 +1048,9 @@ static ssize_t available_governors_show(struct device *d,
- 	 * The devfreq with immutable governor (e.g., passive) shows
- 	 * only own governor.
- 	 */
--	if (df->governor->immutable) {
-+	if (policy->governor->immutable) {
- 		count = scnprintf(&buf[count], DEVFREQ_NAME_LEN,
--				   "%s ", df->governor_name);
-+				   "%s ", policy->governor_name);
- 	/*
- 	 * The devfreq device shows the registered governor except for
- 	 * immutable governors such as passive governor .
-@@ -1100,17 +1110,18 @@ static ssize_t polling_interval_store(struct device *dev,
- 				      const char *buf, size_t count)
- {
- 	struct devfreq *df = to_devfreq(dev);
-+	struct devfreq_policy *policy = &df->policy;
- 	unsigned int value;
- 	int ret;
- 
--	if (!df->governor)
-+	if (!policy->governor)
- 		return -EINVAL;
- 
- 	ret = sscanf(buf, "%u", &value);
- 	if (ret != 1)
- 		return -EINVAL;
- 
--	df->governor->event_handler(df, DEVFREQ_GOV_INTERVAL, &value);
-+	policy->governor->event_handler(df, DEVFREQ_GOV_INTERVAL, &value);
- 	ret = count;
- 
- 	return ret;
-@@ -1132,7 +1143,7 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
- 	mutex_lock(&df->lock);
- 
- 	if (value) {
--		if (value > df->max_freq) {
-+		if (value > df->policy.user.max_freq) {
- 			ret = -EINVAL;
- 			goto unlock;
- 		}
-@@ -1145,7 +1156,7 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
- 			value = freq_table[df->profile->max_state - 1];
- 	}
- 
--	df->min_freq = value;
-+	df->policy.user.min_freq = value;
- 	update_devfreq(df);
- 	ret = count;
- unlock:
-@@ -1156,9 +1167,10 @@ static ssize_t min_freq_store(struct device *dev, struct device_attribute *attr,
- static ssize_t min_freq_show(struct device *dev, struct device_attribute *attr,
- 			     char *buf)
- {
--	struct devfreq *df = to_devfreq(dev);
-+	struct devfreq_policy *policy = &to_devfreq(dev)->policy;
- 
--	return sprintf(buf, "%lu\n", MAX(df->scaling_min_freq, df->min_freq));
-+	return sprintf(buf, "%lu\n",
-+		       MAX(policy->devinfo.min_freq, policy->user.min_freq));
- }
- 
- static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
-@@ -1176,7 +1188,7 @@ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
- 	mutex_lock(&df->lock);
- 
- 	if (value) {
--		if (value < df->min_freq) {
-+		if (value < df->policy.user.min_freq) {
- 			ret = -EINVAL;
- 			goto unlock;
- 		}
-@@ -1189,7 +1201,7 @@ static ssize_t max_freq_store(struct device *dev, struct device_attribute *attr,
- 			value = freq_table[0];
- 	}
- 
--	df->max_freq = value;
-+	df->policy.user.max_freq = value;
- 	update_devfreq(df);
- 	ret = count;
- unlock:
-@@ -1201,9 +1213,10 @@ static DEVICE_ATTR_RW(min_freq);
- static ssize_t max_freq_show(struct device *dev, struct device_attribute *attr,
- 			     char *buf)
- {
--	struct devfreq *df = to_devfreq(dev);
-+	struct devfreq_policy *policy = &to_devfreq(dev)->policy;
- 
--	return sprintf(buf, "%lu\n", MIN(df->scaling_max_freq, df->max_freq));
-+	return sprintf(buf, "%lu\n",
-+		       MIN(policy->devinfo.max_freq, policy->user.max_freq));
- }
- static DEVICE_ATTR_RW(max_freq);
- 
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index 3bc29acbd54e..e0987c749ec2 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -99,12 +99,12 @@ static int update_devfreq_passive(struct devfreq *devfreq, unsigned long freq)
- {
- 	int ret;
- 
--	if (!devfreq->governor)
-+	if (!devfreq->policy.governor)
- 		return -EINVAL;
- 
- 	mutex_lock_nested(&devfreq->lock, SINGLE_DEPTH_NESTING);
- 
--	ret = devfreq->governor->get_target_freq(devfreq, &freq);
-+	ret = devfreq->policy.governor->get_target_freq(devfreq, &freq);
- 	if (ret < 0)
- 		goto out;
- 
 diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index 3aae5b3af87c..9bf23b976f4d 100644
+index 9bf23b976f4d..7c8dce96db73 100644
 --- a/include/linux/devfreq.h
 +++ b/include/linux/devfreq.h
-@@ -109,6 +109,30 @@ struct devfreq_dev_profile {
- 	unsigned int max_state;
+@@ -33,6 +33,10 @@
+ #define	DEVFREQ_PRECHANGE		(0)
+ #define DEVFREQ_POSTCHANGE		(1)
+ 
++#define DEVFREQ_POLICY_NOTIFIER		1
++
++#define	DEVFREQ_ADJUST			0
++
+ struct devfreq;
+ struct devfreq_governor;
+ 
+@@ -121,12 +125,16 @@ struct devfreq_freq_limits {
+ 
+ /**
+  * struct devfreq_policy - Devfreq policy
++ * @min:	minimum frequency (adjustable by policy notifiers)
++ * @min:	maximum frequency (adjustable by policy notifiers)
+  * @user:	frequency limits requested by the user
+  * @devinfo:	frequency limits of the device (available OPPs)
+  * @governor:	method how to choose frequency based on the usage.
+  * @governor_name:	devfreq governor name for use with this devfreq
+  */
+ struct devfreq_policy {
++	unsigned long min;
++	unsigned long max;
+ 	struct devfreq_freq_limits user;
+ 	struct devfreq_freq_limits devinfo;
+ 	const struct devfreq_governor *governor;
+@@ -155,6 +163,7 @@ struct devfreq_policy {
+  * @time_in_state:	Statistics of devfreq states
+  * @last_stat_updated:	The last time stat updated
+  * @transition_notifier_list: list head of DEVFREQ_TRANSITION_NOTIFIER notifier
++ * @policy_notifier_list: list head of DEVFREQ_POLICY_NOTIFIER notifier
+  *
+  * This structure stores the devfreq information for a give device.
+  *
+@@ -188,6 +197,7 @@ struct devfreq {
+ 	unsigned long last_stat_updated;
+ 
+ 	struct srcu_notifier_head transition_notifier_list;
++	struct srcu_notifier_head policy_notifier_list;
  };
  
+ struct devfreq_freqs {
+@@ -240,6 +250,45 @@ extern void devm_devfreq_unregister_notifier(struct device *dev,
+ extern struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
+ 						int index);
+ 
 +/**
-+ * struct devfreq_freq_limits - Devfreq frequency limits
-+ * @min_freq:	minimum frequency
-+ * @max_freq:	maximum frequency
++ * devfreq_verify_within_limits() - Adjust a devfreq policy if needed to make
++ *                                  sure its min/max values are within a
++ *                                  specified range.
++ * @policy:	the policy
++ * @min:	the minimum frequency
++ * @max:	the maximum frequency
 + */
-+struct devfreq_freq_limits {
-+	unsigned long min_freq;
-+	unsigned long max_freq;
-+};
++static inline void devfreq_verify_within_limits(struct devfreq_policy *policy,
++		unsigned int min, unsigned int max)
++{
++	if (policy->min < min)
++		policy->min = min;
++	if (policy->max < min)
++		policy->max = min;
++	if (policy->min > max)
++		policy->min = max;
++	if (policy->max > max)
++		policy->max = max;
++	if (policy->min > policy->max)
++		policy->min = policy->max;
++}
 +
 +/**
-+ * struct devfreq_policy - Devfreq policy
-+ * @user:	frequency limits requested by the user
-+ * @devinfo:	frequency limits of the device (available OPPs)
-+ * @governor:	method how to choose frequency based on the usage.
-+ * @governor_name:	devfreq governor name for use with this devfreq
++ * devfreq_verify_within_dev_limits() - Adjust a devfreq policy if needed to
++ *                                      make sure its min/max values are within
++ *                                      the frequency range supported by the
++ *                                      device.
++ * @policy:	the policy
 + */
-+struct devfreq_policy {
-+	struct devfreq_freq_limits user;
-+	struct devfreq_freq_limits devinfo;
-+	const struct devfreq_governor *governor;
-+	char governor_name[DEVFREQ_NAME_LEN];
-+};
++static inline void
++devfreq_verify_within_dev_limits(struct devfreq_policy *policy)
++{
++	devfreq_verify_within_limits(policy, policy->devinfo.min_freq,
++			policy->devinfo.max_freq);
++}
 +
++struct devfreq *dev_to_devfreq(struct device *dev);
++
+ #if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)
  /**
-  * struct devfreq - Device devfreq structure
-  * @node:	list node - contains the devices with devfreq that have been
-@@ -117,8 +141,6 @@ struct devfreq_dev_profile {
-  * @dev:	device registered by devfreq class. dev.parent is the device
-  *		using devfreq.
-  * @profile:	device-specific devfreq profile
-- * @governor:	method how to choose frequency based on the usage.
-- * @governor_name:	devfreq governor name for use with this devfreq
-  * @nb:		notifier block used to notify devfreq object that it should
-  *		reevaluate operable frequencies. Devfreq users may use
-  *		devfreq.nb to the corresponding register notifier call chain.
-@@ -126,10 +148,7 @@ struct devfreq_dev_profile {
-  * @previous_freq:	previously configured frequency value.
-  * @data:	Private data of the governor. The devfreq framework does not
-  *		touch this.
-- * @min_freq:	Limit minimum frequency requested by user (0: none)
-- * @max_freq:	Limit maximum frequency requested by user (0: none)
-- * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
-- * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
-+ * @policy:		Policy for frequency adjustments
-  * @stop_polling:	 devfreq polling status of a device.
-  * @total_trans:	Number of devfreq transitions
-  * @trans_table:	Statistics of devfreq transitions
-@@ -151,8 +170,6 @@ struct devfreq {
- 	struct mutex lock;
- 	struct device dev;
- 	struct devfreq_dev_profile *profile;
--	const struct devfreq_governor *governor;
--	char governor_name[DEVFREQ_NAME_LEN];
- 	struct notifier_block nb;
- 	struct delayed_work work;
+  * struct devfreq_simple_ondemand_data - void *data fed to struct devfreq
+@@ -394,10 +443,26 @@ static inline struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
+ 	return ERR_PTR(-ENODEV);
+ }
  
-@@ -161,10 +178,7 @@ struct devfreq {
++static inline void devfreq_verify_within_limits(struct devfreq_policy *policy,
++		unsigned int min, unsigned int max)
++{
++}
++
++static inline void
++devfreq_verify_within_dev_limits(struct devfreq_policy *policy)
++{
++}
++
+ static inline int devfreq_update_stats(struct devfreq *df)
+ {
+ 	return -EINVAL;
+ }
++
++static inline struct devfreq *dev_to_devfreq(struct device *dev)
++{
++	return NULL;
++}
++
+ #endif /* CONFIG_PM_DEVFREQ */
  
- 	void *data; /* private data for governors */
- 
--	unsigned long min_freq;
--	unsigned long max_freq;
--	unsigned long scaling_min_freq;
--	unsigned long scaling_max_freq;
-+	struct devfreq_policy policy;
- 	bool stop_polling;
- 
- 	/* information for device frequency transition */
+ #endif /* __LINUX_DEVFREQ_H__ */
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
