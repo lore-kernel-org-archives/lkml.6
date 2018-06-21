@@ -2,119 +2,95 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4C4C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E59C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D57721EA4
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A5B521EA4
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:16:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddIpZeRc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D57721EA4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HMkr5awR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5B521EA4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933283AbeFUUO6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 16:14:58 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35644 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933131AbeFUUOy (ORCPT
+        id S933291AbeFUUQg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 16:16:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59418 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932670AbeFUUQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 16:14:54 -0400
-Received: by mail-wr0-f196.google.com with SMTP id l8-v6so4447969wrr.2;
-        Thu, 21 Jun 2018 13:14:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=PBJi5chp3HZzw5kkLKHlKCBDe5LsJc9Lk7cWakQM+Uc=;
-        b=ddIpZeRccOMiiKGlwy/00tO4UnBlZYaBk1i7ZlgEKakiRkplbpjCC0+k+l2VrPnDIL
-         CfSF2AU4YzzHLrnZiZIhQsGMe8LxbITzbZJnqGvAppFomDXGYn5Rm9YoXtcb6Kv5DHnA
-         k+lch0MmFzOClMzqT0FmImfFxAeKiDyFeR40rMRzNau6Q5aqmdNOo0F4finASRN14bY2
-         R7B09W2VZJk8yz2I6661X8yw63+N62fhVWtoei6QV0w+YnvCY8Dv6XN9GfyCZgBpe/vQ
-         etS2lIKiUvLMQzHr1BdBFmKhUkEfNhFzT1OiaLYDCPWmeKmFCpTBrJhMOoy7KxnMoIxo
-         q78w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=PBJi5chp3HZzw5kkLKHlKCBDe5LsJc9Lk7cWakQM+Uc=;
-        b=FPFgIIbeYRJGEV0hn5QlHoqqVddlRMMkvUxjiLgdhfiTrETPy9LPsxQbLpE1cPzfDG
-         vNIRYUaniJrcu2pf7ORCE4nOrlW7NyvBZJIhdRwB6K7TloqfZMgNdKcwZq2YKwkPY2V/
-         S9NFPlUdhnobujy1NVwXTT7lwghUg/BpHaJPVDHQIrkRjQPMjOJv6gufhYzB7GPN4eer
-         se/r0NDEYqSwQBcqLfz054wMy6iANTXvIrt0/2Qvms8nMwzwUA4RzlMsM34pkgnIDTzn
-         HoBQMpWJsukxFlR1njg7TyV1i6nXD0lQ/vSQHAdbxRiuWNcl9q/fh+o+j7IBuEGq25YP
-         CvDg==
-X-Gm-Message-State: APt69E33h+7S18WN0MACsxLFYZiiJIt5fOqu0KsxTAt9cZlBEJz+DMyt
-        JmGjIo9Xxl0q9xGHXKzXTkww6JI=
-X-Google-Smtp-Source: ADUXVKLMuz2bPjQrsSwpqBTfVip26/HNrMvx6UdYkNAfq7l64Dyi1j09yxzUd0PASODoxbexDxiX9Q==
-X-Received: by 2002:adf:f546:: with SMTP id j6-v6mr21779774wrp.241.1529612092687;
-        Thu, 21 Jun 2018 13:14:52 -0700 (PDT)
-Received: from localhost.Home ([2a02:c7d:9bd5:a300:d0b3:e272:20b0:ca8a])
-        by smtp.gmail.com with ESMTPSA id n18-v6sm8950136wrj.58.2018.06.21.13.14.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 13:14:52 -0700 (PDT)
-From:   Garry McNulty <garrmcnu@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     stephen@networkplumber.org, davem@davemloft.net, jiri@resnulli.us,
-        nikolay@cumulusnetworks.com, bridge@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Garry McNulty <garrmcnu@gmail.com>
-Subject: [PATCH] net: bridge: fix potential null pointer dereference on return from br_port_get_rtnl()
-Date:   Thu, 21 Jun 2018 21:14:27 +0100
-Message-Id: <20180621201427.4961-1-garrmcnu@gmail.com>
-X-Mailer: git-send-email 2.9.5
+        Thu, 21 Jun 2018 16:16:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7vB18Trb7LuGl4lIKg/xu3zHWfWIoaygPnp88cl8TuU=; b=HMkr5awRwnrw7JsFHTOuSDqdZ
+        zjfH274Sq35s1SxA/vjluK/wIm1uhdG3iGRIgFqzE9rK5zd3pnYGBjA00yd1hK+rbSfVCR83MR1fA
+        fRvZkUd1r7Weh+G3go+BNJrK3csxiPItZoJoTDJ7EF2fdZ+SKHLtFQ2h4zrPbMY406wEPSAlZBElk
+        reJshwU7QEe7R754Tz1okfcDBfV/wZYwYMRCGsG2nkoXj2namooKIMClTgjYQpWjL0xbspKXrGOHm
+        zyRrgQ3dbu+yJbmW7eGD7JRVJvxalUAmESGirOc67UKJ9xZjQjwncy0GaLnYKHpbJqFEmkRmmv0Z2
+        hJ+SX+x+A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fW60Q-0007h7-Bp; Thu, 21 Jun 2018 20:16:34 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8BEFC2029FA0A; Thu, 21 Jun 2018 22:16:32 +0200 (CEST)
+Date:   Thu, 21 Jun 2018 22:16:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com
+Subject: Re: [PATCH v1 4/6] perf: Allow using AUX data in perf samples
+Message-ID: <20180621201632.GE27616@hirez.programming.kicks-ass.net>
+References: <20180612075117.65420-1-alexander.shishkin@linux.intel.com>
+ <20180612075117.65420-5-alexander.shishkin@linux.intel.com>
+ <20180614202022.GC12217@hirez.programming.kicks-ass.net>
+ <20180619104725.bqvs7uwzhb4ihyxy@um.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180619104725.bqvs7uwzhb4ihyxy@um.fi.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-br_port_get_rtnl() can return NULL if the network device is not a bridge
-port (IFF_BRIDGE_PORT flag not set). br_port_slave_changelink() and
-br_port_fill_slave_info() callbacks dereference this pointer without
-checking. Currently this is not a problem because slave devices always
-set this flag. Add null check in case these conditions ever change.
+On Tue, Jun 19, 2018 at 01:47:25PM +0300, Alexander Shishkin wrote:
+> On Thu, Jun 14, 2018 at 10:20:22PM +0200, Peter Zijlstra wrote:
 
-Detected by CoverityScan, CID 1339613 ("Dereference null return value")
+> > More yuck...
+> > 
+> > You rreally should not be calling these pmu::methods, they're meant to
+> > be used from _interrupt_ not NMI context. Using them like this is asking
+> > for tons of trouble.
+> 
+> Right, the SW stuff may then race with event_function_call() stuff. Hmm.
+> For the HW stuff, I'm hoping that some kind of a sleight of hand may
+> suffice. Let me think some more.
 
-Signed-off-by: Garry McNulty <garrmcnu@gmail.com>
----
- net/bridge/br_netlink.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+I currently don't see how the SW driven snapshot can ever work, see my
+comment on the last patch.
 
-diff --git a/net/bridge/br_netlink.c b/net/bridge/br_netlink.c
-index 9f5eb05b0373..b3ad135b7157 100644
---- a/net/bridge/br_netlink.c
-+++ b/net/bridge/br_netlink.c
-@@ -947,13 +947,14 @@ static int br_port_slave_changelink(struct net_device *brdev,
- 				    struct netlink_ext_ack *extack)
- {
- 	struct net_bridge *br = netdev_priv(brdev);
-+	struct net_bridge_port *p = br_port_get_rtnl(dev);
- 	int ret;
- 
--	if (!data)
-+	if (!data || !p)
- 		return 0;
- 
- 	spin_lock_bh(&br->lock);
--	ret = br_setport(br_port_get_rtnl(dev), data);
-+	ret = br_setport(p, data);
- 	spin_unlock_bh(&br->lock);
- 
- 	return ret;
-@@ -963,7 +964,9 @@ static int br_port_fill_slave_info(struct sk_buff *skb,
- 				   const struct net_device *brdev,
- 				   const struct net_device *dev)
- {
--	return br_port_fill_attrs(skb, br_port_get_rtnl(dev));
-+	struct net_bridge_port *p = br_port_get_rtnl(dev);
-+
-+	return p ? br_port_fill_attrs(skb, p) : -EINVAL;
- }
- 
- static size_t br_port_get_slave_size(const struct net_device *brdev,
--- 
-2.14.4
+> > Why can't you just snapshot the current location and let the thing
+> > 'run' ?
+> 
+> Because the buffer will overwrite itself and the location will be useless.
 
+Not if it's large enough ;-)
+
+> We don't write the AUX data out in this 'mode' at all, only the samples,
+> which allows for much less data in the resulting perf.data, less work for
+> the consumer, less IO bandwidth etc, and as a bonus, no AUX-related
+> interrupts.
+> 
+> But actually, even to snapshot the location we need to stop the event.
+
+Maybe new methods that should only be called from NMI context? 
