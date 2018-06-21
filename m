@@ -2,110 +2,151 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB578C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B9CC43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 625CA208A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:40:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cS9mevEH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UbzuZ2Gl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 625CA208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A1D5F208A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 13:41:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D5F208A1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933417AbeFUNkT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 09:40:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57508 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932944AbeFUNkR (ORCPT
+        id S933389AbeFUNlW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 09:41:22 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41683 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932918AbeFUNlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 09:40:17 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9459C60B15; Thu, 21 Jun 2018 13:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529588416;
-        bh=ewoDM6+ahfHGLVI/LYEtcO3kwRPcMLZgk79KVB64P8s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cS9mevEHHvNZO+pk1Q2enWoqu087kbeE5Qb34c+yzSeMVrNLwCRxfNusa5lZmR6A8
-         ahdSTESXmz26KYM8eKPozRmqcVYx98FCU1EGoib4BV/CNBuwSFp1vjXNd2vljqRyUR
-         gOgUXR9axI0Z7h8W1z2NCbiRVblQgc0oA0Y2jbNk=
-Received: from [10.204.78.68] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: gkohli@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83836604A6;
-        Thu, 21 Jun 2018 13:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529588415;
-        bh=ewoDM6+ahfHGLVI/LYEtcO3kwRPcMLZgk79KVB64P8s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UbzuZ2GlNcc8luEGz9C9yHprBudde09lNWlS4ZMdZfvLCdMyOzo65EVlnYhIBQ8Y9
-         m32eo7BA+/tANe3bFmE7wqHw6MXUbLmOy/oXF/hq7CSPIHb0o0ANmlMuIlvC7YvELF
-         LQ4AkQUDYKOG3ETi2GHfwOq3k9nVlB1twEtWzqCc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83836604A6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-Subject: Re: [PATCH 4.16 161/279] kthread, sched/wait: Fix kthread_parkme()
- completion issue
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-References: <20180618080608.851973560@linuxfoundation.org>
- <20180618080615.492002239@linuxfoundation.org>
- <7ef9ee41-877b-0cc3-bd2d-f495b1d354bb@codeaurora.org>
- <20180620185138.GD32326@kroah.com>
-From:   "Kohli, Gaurav" <gkohli@codeaurora.org>
-Message-ID: <37979107-e550-61b4-1e7a-d331584af9fa@codeaurora.org>
-Date:   Thu, 21 Jun 2018 19:10:11 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 21 Jun 2018 09:41:20 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v12-v6so269018ljj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 06:41:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/E6pIjXYo0X7FrBgWrDJ1hiO9AfD9QApx8/CmEai3Tk=;
+        b=JNyww6y1ewoDCWqprip645Tehv+PDT3qeWwIhOG1HUnxc20zpu+/Px0ydowJbZ09Up
+         TYWQzfJO7xtrJB3C0j6DE4wbRajRcI8OAXXM4ouvgDfyxdWqdyisKQ5vjg83qMCYZoJi
+         NCYn2a27TR+AK4o84Zqcr+tzkQAWVuNxwaqDVVXTePURfal6WjQ2VQRFF/3LjO/tBx+M
+         7DAAlLH7wvSrhO1Nlu/+Nm+Rt35ZLJaj8laTeZyQJvxnq7cDnxfsnX3btfVONnLGoQEw
+         9mfTE4clAbJ622eMQIyRqwWu/baULqTH1B9tXLoKWSiDCPPyM8Ebc1qx8dduve1tOZ+Y
+         HZPQ==
+X-Gm-Message-State: APt69E2b86oAPScyEti5oXkq18k0/SU4A89bTiq1VTAbWFaJPBmIFe3R
+        gnl34GYOg6Le/8HZHATCy3YKkArMei7iQUcT+ThV50ZEerU=
+X-Google-Smtp-Source: ADUXVKJPiRqLvPQaqZ8wN4r8lcTfEFo2BpeEoM2gEI3kZPlKiy/6hSyXVTusj5NYahXwwtXSK8T0Lwi6R4cE/ttWyYk=
+X-Received: by 2002:a2e:4189:: with SMTP id d9-v6mr16626375ljf.36.1529588479489;
+ Thu, 21 Jun 2018 06:41:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180620185138.GD32326@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180620.213540.214945910722071226.davem@davemloft.net> <20180621084510.GA22870@gmail.com>
+In-Reply-To: <20180621084510.GA22870@gmail.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Thu, 21 Jun 2018 13:40:43 +0000
+Message-ID: <CAGnkfhxGAYZNhJp7eyg+_j3LY31w7muFqerhQp7jGqQ02iFxkg@mail.gmail.com>
+Subject: Re: [GIT] Networking
+To:     mingo@kernel.org
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        alexei.starovoitov@gmail.com, sfr@canb.auug.org.au,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Greg,
+On Thu, Jun 21, 2018 at 8:46 AM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * David Miller <davem@davemloft.net> wrote:
+>
+> > 1) Fix crash on bpf_prog_load() errors, from Daniel Borkmann.
+>
+> > Daniel Borkmann (4):
+> >       Merge branch 'bpf-misc-fixes'
+> >       bpf: fix panic in prog load calls cleanup
+> >       bpf: reject any prog that failed read-only lock
+> >       bpf, xdp, i40e: fix i40e_build_skb skb reserve and truesize
+>
+> JFYI, I'm still seeing this BPF build error upstream, on a 32-bit allyesconfig I'm
+> getting:
+>
+>   LD      vmlinux.o
+>   ld: i386:x86-64 architecture of input file `net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
+>   Makefile:1010: recipe for target 'vmlinux' failed
+>   make: *** [vmlinux] Error 1
+>
+> A similar looking build bug was reported by sfr three weeks ago:
+>
+> > Subject: linux-next: build failure after merge of the net-next tree
+> >
+> > ...
+> >
+> > x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfilter_umh.o'
+> > is incompatible with i386:x86-64 output
+> >
+> > Caused by commit
+> >
+> >  d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+> >
+> > In my builds, the host is PowerPC 64 LE ...
+> >
+> > I have reverted that commit along with
+> >
+> >  61a552eb487f ("bpfilter: fix build dependency")
+> >  13405468f49d ("bpfilter: don't pass O_CREAT when opening console for debug")
+> >
+> > for today.
+>
+> Is there a fix I could try?
+>
+> Thanks,
+>
+>         Ingo
 
-Yes more patches related to this are coming,
-https://lkml.org/lkml/2018/6/7/317
+Hi Ingo,
 
-So i thought, if all go together then it is good.
+are you compiling a 32 bit kernel on an x86_64 host? I tried to
+compile an i386 bit kernel on an i386 host and I have no issue,
+running objdump by hand produces correct output:
 
-Regards
-Gaurav
+$ uname -a
+Linux debian32 4.16.0-2-686-pae #1 SMP Debian 4.16.16-1 (2018-06-19)
+i686 GNU/Linux
+$ objdump -f net/bpfilter/bpfilter_umh |awk -F' |,' '/file
+format/{print "-O",$NF} /^architecture:/{print "-B",$2}'
+-O elf32-i386
+-B i386
 
-On 6/21/2018 12:21 AM, Greg Kroah-Hartman wrote:
-> On Wed, Jun 20, 2018 at 12:10:31PM +0530, Kohli, Gaurav wrote:
->> Hi Greg,
->>
->> As more patches related to this are coming in 4.17, so it is better if all
->> go together on different branches, plz suggest.
-> 
-> I do not understand, sorry.  What is wrong with this as-is?  If I need
-> to take other patches as well, please let me know what commits and what
-> stable tree(s) they belong on.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+then I tried to compile an i386 kernel on an x86_64 host and I get the
+same error:
 
+$ make -j8 ARCH=i386
+...
+  LD      vmlinux.o
+ld: i386:x86-64 architecture of input file
+`net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
+make: *** [Makefile:1015: vmlinux] Error 1
+
+the problem seems to be that bpfilter_umh is compiled with host flags,
+and so it's a 64 bit binary in my case:
+
+gcc  -static -o net/bpfilter/bpfilter_umh net/bpfilter/main.o
+objcopy -I binary `LC_ALL=C objdump -f net/bpfilter/bpfilter_umh |awk
+-F' |,' '/file format/{print "-O",$NF} /^architecture:/{print
+"-B",$2}'` --rename-section .data=.init.rodata
+net/bpfilter/bpfilter_umh net/bpfilter/bpfilter_umh.o
+ld -m elf_i386 -r -o vmlinux.o --whole-archive built-in.a
+--no-whole-archive --start-group lib/lib.a arch/x86/lib/lib.a
+--end-group
+ld: i386:x86-64 architecture of input file
+`net/bpfilter/bpfilter_umh.o' is incompatible with i386 output
+
+Any idea how to fix it without building it twice, for host and target?
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, 
-Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Matteo Croce
+per aspera ad upstream
