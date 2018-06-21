@@ -2,97 +2,103 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85937C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E044BC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41E8F21537
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:30:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E8F21537
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 72B6E2075E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 16:38:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="jBdtvX++"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B6E2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933482AbeFUQao (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 12:30:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47100 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933297AbeFUQam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 12:30:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E87C1ACFA;
-        Thu, 21 Jun 2018 16:30:37 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 159351E325D; Thu, 21 Jun 2018 18:30:36 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 18:30:36 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-Message-ID: <20180621163036.jvdbsv3t2lu34pdl@quack2.suse.cz>
-References: <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
- <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
- <CAPcyv4iRBzmwWn_9zDvqdfVmTZL_Gn7uA_26A1T-kJib=84tvA@mail.gmail.com>
- <0e6053b3-b78c-c8be-4fab-e8555810c732@nvidia.com>
- <20180619082949.wzoe42wpxsahuitu@quack2.suse.cz>
- <20180619090255.GA25522@bombadil.infradead.org>
- <20180619104142.lpilc6esz7w3a54i@quack2.suse.cz>
- <70001987-3938-d33e-11e0-de5b19ca3bdf@nvidia.com>
- <20180620120824.bghoklv7qu2z5wgy@quack2.suse.cz>
- <151edbf3-66ff-df0c-c1cc-5998de50111e@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <151edbf3-66ff-df0c-c1cc-5998de50111e@nvidia.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S933454AbeFUQid (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 12:38:33 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:50548 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933297AbeFUQib (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 12:38:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Akt8sTdtxhWD51na/Xw+RURO9049zr72RiMQ40/1W+o=; b=jBdtvX++Ler4UxjqzfA7lO9KXS
+        v9FGYNd47g7Am3Vmilv1H5QUwyMMxOyaRFdD/6DRkX/Y39xnnsQlrgDd/jbgEO5xw4ewP6xoayEH0
+        eygKudildnwv2FtpgpN5jHaqX/rDYq1Nw/3TNgHY7Xw/tO+oIg95Eq27C8l3RzcAr4nK2/TPg2rAh
+        DEtimzmKzg61pLzl+V0qmFoMBbw5+cZOkZApJyFMVvGV6XqcVe5R+j7VK7PYRTdUtqdPA+NoGZmWO
+        ed7yRXHG0/3qKOh1asLpLEUJHHKpMmDYbXJpynDkPw7bvOGlLms68iWW7Pq3jnZfNq4E/yIM3Ngq/
+        q0mmVtgw==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:35444 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fW2bP-00302N-Du; Thu, 21 Jun 2018 16:38:31 +0000
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v4.18-rc2
+Date:   Thu, 21 Jun 2018 09:38:30 -0700
+Message-Id: <1529599110-4073-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 20-06-18 15:55:41, John Hubbard wrote:
-> On 06/20/2018 05:08 AM, Jan Kara wrote:
-> > On Tue 19-06-18 11:11:48, John Hubbard wrote:
-> >> On 06/19/2018 03:41 AM, Jan Kara wrote:
-> >>> On Tue 19-06-18 02:02:55, Matthew Wilcox wrote:
-> >>>> On Tue, Jun 19, 2018 at 10:29:49AM +0200, Jan Kara wrote:
-> [...]
-> >>> I'm also still pondering the idea of inserting a "virtual" VMA into vma
-> >>> interval tree in the inode - as the GUP references are IMHO closest to an
-> >>> mlocked mapping - and that would achieve all the functionality we need as
-> >>> well. I just didn't have time to experiment with it.
-> >>
-> >> How would this work? Would it have the same virtual address range? And how
-> >> does it avoid the problems we've been discussing? Sorry to be a bit slow
-> >> here. :)
-> > 
-> > The range covered by the virtual mapping would be the one sent to
-> > get_user_pages() to get page references. And then we would need to teach
-> > page_mkclean() to check for these virtual VMAs and block / skip / report
-> > (different situations would need different behavior) such page. But this
-> > second part is the same regardless how we identify a page that is pinned by
-> > get_user_pages().
-> 
-> 
-> OK. That neatly avoids the need a new page flag, I think. But of course it is 
-> somewhat more extensive to implement. Sounds like something to keep in mind,
-> in case it has better tradeoffs than the direction I'm heading so far.
+Hi Linus,
 
-Yes, the changes needed are somewhat more intrusive. I'm looking into this
-approach now to see how the result will look like...
+Please pull hwmon fixes for Linux v4.18-rc2 from signed tag:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-linus-v4.18-rc2
+
+Thanks,
+Guenter
+------
+
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-linus-v4.18-rc2
+
+for you to fetch changes up to 91bb8f45f73f19a0150c233c0f11cdeb6d71d1e9:
+
+  hwmon: (nct6775) Fix loop limit (2018-06-16 16:40:36 -0700)
+
+----------------------------------------------------------------
+hwmon fixes for v4.18-rc2
+
+- Fix a loop limit in nct6775 driver
+- Disable fan support for Dell XPS13 9333
+
+----------------------------------------------------------------
+Guenter Roeck (1):
+      hwmon: (nct6775) Fix loop limit
+
+Helge Eichelberg (1):
+      hwmon: (dell-smm) Disable fan support for Dell XPS13 9333
+
+ drivers/hwmon/dell-smm-hwmon.c | 7 +++++++
+ drivers/hwmon/nct6775.c        | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
