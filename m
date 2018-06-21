@@ -2,106 +2,121 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF373C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACC2C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D23020874
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:07:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TghLfkHh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D23020874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A2F920874
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 03:09:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A2F920874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754646AbeFUDHo (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 23:07:44 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:40150 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754451AbeFUDHn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 23:07:43 -0400
-Received: by mail-pg0-f66.google.com with SMTP id w8-v6so715734pgp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 20:07:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=BlI6sZ67WAPyiOAfEubsTr6KMfHjrMipPMRsWQXJc3k=;
-        b=TghLfkHhWYW4CwOlqK7TFn4cWjaZf1kOZwQW5vaM03ST7LRYT5M9lgDkMNLQtrxZF+
-         prppjXovV8tpYVB9sfrdmx03N3HQ6s9yblgQ6TD+AmY0MURicwMZc0O0RTx7v8fd+WNp
-         13w+CPTeE/0Evx4//Ii/xLvVOjrx3yvXGPe2NzTtZSFk/8OyaKNxmJV7pisn6p6TS1BW
-         AMMm9nt6iiMIeWoSl/oI6MxdXzEChIA2ZRw9M501QZgn/pT/ic43XsC5QtNaSNtvbMgv
-         v1YU6YtmrPwv1h1uQ0DKgVJv7SVfgs6rJWn35zw3YetUl5dgI17n6sSvMCRh97TawdqH
-         0PJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BlI6sZ67WAPyiOAfEubsTr6KMfHjrMipPMRsWQXJc3k=;
-        b=Yw/TQ8lkp3ah6LirdWsfGvxK70+wmup2lSyvuUY7GgqcMdyelZYLVIVJhNBPt5nEab
-         N0PbqGB00wR0WTB4UkB86EEUDhAjsFfByKllFuYrAoz9YO543d+XblMM+DN46xZqlmk/
-         +yajo0wJeYQFt10SpSz9qgDvNiERGaW5V1ifUNjgjC+SRbwyeWdA7SYsC+MZyB41P1Nq
-         uApXxuV7niX3VS96NV/w7ElOrc+6CKinTD4A0svEqY8Q03tOz3y4sisqPh+D0npQqEYs
-         qftxZYV96ALS607HF1QmkuCgvdj/NMUcIUYz0on5x/Z+3ixAGqRgfFLUd3QoLoelEXSt
-         EjaA==
-X-Gm-Message-State: APt69E02hp8J/PodLkod9qsasMu/i01fuWoPdD+6ZjGg6F1ILOtOB/9U
-        xCbtJquklCftNoZTSnjsloc=
-X-Google-Smtp-Source: ADUXVKJPZQIh9pHA0WOSsqwXcZva5fB9jX5MSOEPgz8ZGdaInDSZ5k4rvTiJVYTgtGS12kRJIIyneg==
-X-Received: by 2002:a62:4a0c:: with SMTP id x12-v6mr25567975pfa.142.1529550462769;
-        Wed, 20 Jun 2018 20:07:42 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:1:4413:35c0:9e91:c7fc:672])
-        by smtp.gmail.com with ESMTPSA id o66-v6sm6296117pfi.157.2018.06.20.20.07.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 20:07:42 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     akpm@linux-foundation.org, dvyukov@google.com,
-        gregkh@linuxfoundation.org, jthumshirn@suse.de,
-        pombredanne@nexb.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] mm: mempool: Fix a possible sleep-in-atomic-context bug in mempool_resize()
-Date:   Thu, 21 Jun 2018 11:07:14 +0800
-Message-Id: <20180621030714.10368-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S932366AbeFUDJI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 20 Jun 2018 23:09:08 -0400
+Received: from mx.socionext.com ([202.248.49.38]:40843 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754071AbeFUDJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 20 Jun 2018 23:09:07 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 21 Jun 2018 12:09:06 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 04EB2180237;
+        Thu, 21 Jun 2018 12:09:06 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 21 Jun 2018 12:09:06 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 6491940361;
+        Thu, 21 Jun 2018 12:09:05 +0900 (JST)
+Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 3233912013E;
+        Thu, 21 Jun 2018 12:09:05 +0900 (JST)
+From:   "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
+To:     "Abylay Ospan" <aospan@netup.ru>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        <linux-media@vger.kernel.org>
+Cc:     "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
+        "Jassi Brar" <jaswinder.singh@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        =?iso-2022-jp?B?U3V6dWtpLCBLYXRzdWhpcm8vGyRCTmtMWhsoQiAbJEI+IUduGyhC?= 
+        <suzuki.katsuhiro@socionext.com>
+References: <20180529010920.20320-1-suzuki.katsuhiro@socionext.com>
+In-Reply-To: <20180529010920.20320-1-suzuki.katsuhiro@socionext.com>
+Subject: Re: [RESEND PATCH] media: helene: fix xtal frequency setting at power on
+Date:   Thu, 21 Jun 2018 12:09:01 +0900
+Message-ID: <001f01d4090d$34a04310$9de0c930$@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHT9umtSSa4XH16V0CMcjXSHW020qRqK2tg
+Content-Language: ja
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: POLICY180220
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel may sleep with holding a spinlock.
-The function call path (from bottom to top) in Linux-4.16.7 is:
+Hello Mauro,
 
-[FUNC] remove_element(GFP_KERNEL)
-mm/mempool.c, 250: remove_element in mempool_resize
-mm/mempool.c, 247: _raw_spin_lock_irqsave in mempool_resize
+Ping...
 
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC.
+If I got some mistake, please comment it...
 
-This bug is found by my static analysis tool (DSAC-2) and checked by
-my code review.
+Regards,
+--
+Katsuhiro Suzuki
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- mm/mempool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/mempool.c b/mm/mempool.c
-index 5c9dce34719b..d33bd5d622e7 100644
---- a/mm/mempool.c
-+++ b/mm/mempool.c
-@@ -247,7 +247,7 @@ int mempool_resize(mempool_t *pool, int new_min_nr)
- 	spin_lock_irqsave(&pool->lock, flags);
- 	if (new_min_nr <= pool->min_nr) {
- 		while (new_min_nr < pool->curr_nr) {
--			element = remove_element(pool, GFP_KERNEL);
-+			element = remove_element(pool, GFP_ATOMIC);
- 			spin_unlock_irqrestore(&pool->lock, flags);
- 			pool->free(element, pool->pool_data);
- 			spin_lock_irqsave(&pool->lock, flags);
--- 
-2.17.0
+> -----Original Message-----
+> From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> Sent: Tuesday, May 29, 2018 10:09 AM
+> To: Abylay Ospan <aospan@netup.ru>; Mauro Carvalho Chehab
+> <mchehab+samsung@kernel.org>; linux-media@vger.kernel.org
+> Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>; Jassi Brar
+> <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org; Suzuki, Katsuhiro/鈴木 勝博
+> <suzuki.katsuhiro@socionext.com>
+> Subject: [RESEND PATCH] media: helene: fix xtal frequency setting at power on
+> 
+> This patch fixes crystal frequency setting when power on this device.
+> 
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> Acked-by: Abylay Ospan <aospan@netup.ru>
+> 
+> ---
+> 
+> Changes from before:
+>   - Add Abylay's Ack
+> 
+> ---
+>  drivers/media/dvb-frontends/helene.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/dvb-frontends/helene.c
+> b/drivers/media/dvb-frontends/helene.c
+> index 0a4f312c4368..8fcf7a00782a 100644
+> --- a/drivers/media/dvb-frontends/helene.c
+> +++ b/drivers/media/dvb-frontends/helene.c
+> @@ -924,7 +924,10 @@ static int helene_x_pon(struct helene_priv *priv)
+>  	helene_write_regs(priv, 0x99, cdata, sizeof(cdata));
+> 
+>  	/* 0x81 - 0x94 */
+> -	data[0] = 0x18; /* xtal 24 MHz */
+> +	if (priv->xtal == SONY_HELENE_XTAL_16000)
+> +		data[0] = 0x10; /* xtal 16 MHz */
+> +	else
+> +		data[0] = 0x18; /* xtal 24 MHz */
+>  	data[1] = (uint8_t)(0x80 | (0x04 & 0x1F)); /* 4 x 25 = 100uA */
+>  	data[2] = (uint8_t)(0x80 | (0x26 & 0x7F)); /* 38 x 0.25 = 9.5pF */
+>  	data[3] = 0x80; /* REFOUT signal output 500mVpp */
+> --
+> 2.17.0
+
+
 
