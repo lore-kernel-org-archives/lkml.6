@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5905C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8ABC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B5AA223E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A166F2240E
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 21:30:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A7NrMiN9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B5AA223E7
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SF6QeT79"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A166F2240E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933782AbeFUVaM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 17:30:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41882 "EHLO
+        id S933734AbeFUVae (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 17:30:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41860 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934006AbeFUV3N (ORCPT
+        with ESMTP id S933993AbeFUV3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 17:29:13 -0400
+        Thu, 21 Jun 2018 17:29:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EN+3nD/qkYtsCpyrBJQJHos/PxRh9YXP5by2XKfq/1Y=; b=A7NrMiN9CBkS8Ge8q6QN/nBAD
-        XgUyzPMSVPdEv066QgRq4iNiC49SEJOSJGWfomrh4BpaYEWsbnezypgDc4YPh6yxQxn9OybHaNau7
-        PhizBI1hvbTmzBv06uhaBxrZZkm0IhiNh+waOfDKf8S1X+3hobeKUa4eo34umSSkQqxFJTL7Qs3jV
-        /47TmUhqZYbk6cpPyJRcsurCmlNNISTte8+1meQfKSOvy55p+Iuw2l1d784WXjkRI9Zcx7yRaZIw2
-        W8FS8RDdGuSi1vXajEuwevPEke8zoYErNBTGV+Ndtd01NxbK5bj0ONE2UMZUapmJM7LKVX/hqhsZc
-        2u7vbaSjg==;
+         bh=nYeeoWQ+885jk0DIMw6lrAOaIXXaNbz0ItnLOxhvbs8=; b=SF6QeT79doMSajD0g7kJyL8o0
+        WWx/6Lz89Q/nBZOC2mAVHqsh0HPjMVkbID0DxvC9EReVwv67Ydm5cb3eqZP25lq8TsOMI3h8/lcnp
+        oDoBDqDgSAT36+4kVV8C7JV52QNOHJSrHZsYFKMkxrGuWLHJYLKgVMYHpZVySv4Ror2tIid/KMfOb
+        8MGIbS2mB6reydyR9XBoeix+RtedZzxS9Fl3q4n3VQtwa8fCZ5Ok5eJl+Um3SDZQaQkYWAdB1lAxd
+        PsZaKQ9U7fXFcGrNlXoDvRN2Gj/UL6JGFaIGFxVrCDwVu8nW44rnVowHFC313sjlT71UPecayOhsP
+        kmELAK4yw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW78f-0001c0-J4; Thu, 21 Jun 2018 21:29:09 +0000
+        id 1fW78h-0001dT-NX; Thu, 21 Jun 2018 21:29:11 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Matthew Wilcox <willy@infradead.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 15/26] ppc: Convert vas ID allocation to new IDA API
-Date:   Thu, 21 Jun 2018 14:28:24 -0700
-Message-Id: <20180621212835.5636-16-willy@infradead.org>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris Mi <chrism@mellanox.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 26/26] ida: Change ida_get_new_above to return the id
+Date:   Thu, 21 Jun 2018 14:28:35 -0700
+Message-Id: <20180621212835.5636-27-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180621212835.5636-1-willy@infradead.org>
 References: <20180621212835.5636-1-willy@infradead.org>
@@ -56,56 +57,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removes a custom spinlock and simplifies the code.
+This calling convention makes more sense for the implementation as well
+as the callers.  It even shaves 32 bytes off the compiled code size.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- arch/powerpc/platforms/powernv/vas-window.c | 26 ++++-----------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+ lib/idr.c | 30 ++++++++++++------------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/platforms/powernv/vas-window.c
-index ff9f48812331..2a5e68a2664d 100644
---- a/arch/powerpc/platforms/powernv/vas-window.c
-+++ b/arch/powerpc/platforms/powernv/vas-window.c
-@@ -515,35 +515,17 @@ int init_winctx_regs(struct vas_window *window, struct vas_winctx *winctx)
- 	return 0;
- }
+diff --git a/lib/idr.c b/lib/idr.c
+index 1dc52191acb6..fab2fd5bc326 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -363,7 +363,7 @@ EXPORT_SYMBOL(idr_replace);
  
--static DEFINE_SPINLOCK(vas_ida_lock);
--
- static void vas_release_window_id(struct ida *ida, int winid)
+ #define IDA_MAX (0x80000000U / IDA_BITMAP_BITS - 1)
+ 
+-static int ida_get_new_above(struct ida *ida, int start, int *id)
++static int ida_get_new_above(struct ida *ida, int start)
  {
--	spin_lock(&vas_ida_lock);
--	ida_remove(ida, winid);
--	spin_unlock(&vas_ida_lock);
-+	ida_free(ida, winid);
- }
+ 	struct radix_tree_root *root = &ida->ida_rt;
+ 	void __rcu **slot;
+@@ -402,8 +402,8 @@ static int ida_get_new_above(struct ida *ida, int start, int *id)
+ 			if (ebit < BITS_PER_LONG) {
+ 				tmp |= 1UL << ebit;
+ 				rcu_assign_pointer(*slot, (void *)tmp);
+-				*id = new + ebit - RADIX_TREE_EXCEPTIONAL_SHIFT;
+-				return 0;
++				return new + ebit -
++					RADIX_TREE_EXCEPTIONAL_SHIFT;
+ 			}
+ 			bitmap = this_cpu_xchg(ida_bitmap, NULL);
+ 			if (!bitmap)
+@@ -434,8 +434,7 @@ static int ida_get_new_above(struct ida *ida, int start, int *id)
+ 						RADIX_TREE_EXCEPTIONAL_ENTRY);
+ 				radix_tree_iter_replace(root, &iter, slot,
+ 						bitmap);
+-				*id = new;
+-				return 0;
++				return new;
+ 			}
+ 			bitmap = this_cpu_xchg(ida_bitmap, NULL);
+ 			if (!bitmap)
+@@ -444,8 +443,7 @@ static int ida_get_new_above(struct ida *ida, int start, int *id)
+ 			radix_tree_iter_replace(root, &iter, slot, bitmap);
+ 		}
  
- static int vas_assign_window_id(struct ida *ida)
- {
--	int rc, winid;
--
--	do {
--		rc = ida_pre_get(ida, GFP_KERNEL);
--		if (!rc)
--			return -EAGAIN;
--
--		spin_lock(&vas_ida_lock);
--		rc = ida_get_new(ida, &winid);
--		spin_unlock(&vas_ida_lock);
--	} while (rc == -EAGAIN);
--
--	if (rc)
--		return rc;
-+	int winid = ida_alloc_max(ida, VAX_WINDOWS_PER_CHIP, GFP_KERNEL);
- 
--	if (winid > VAS_WINDOWS_PER_CHIP) {
--		pr_err("Too many (%d) open windows\n", winid);
--		vas_release_window_id(ida, winid);
-+	if (winid == -ENOSPC) {
-+		pr_err("Too many (%d) open windows\n", VAX_WINDOWS_PER_CHIP);
- 		return -EAGAIN;
+-		*id = new;
+-		return 0;
++		return new;
  	}
+ }
+ 
+@@ -534,7 +532,7 @@ EXPORT_SYMBOL(ida_destroy);
+ int ida_alloc_range(struct ida *ida, unsigned int min, unsigned int max,
+ 			gfp_t gfp)
+ {
+-	int ret, id = 0;
++	int id = 0;
+ 	unsigned long flags;
+ 
+ 	if ((int)min < 0)
+@@ -545,24 +543,20 @@ int ida_alloc_range(struct ida *ida, unsigned int min, unsigned int max,
+ 
+ again:
+ 	xa_lock_irqsave(&ida->ida_rt, flags);
+-	ret = ida_get_new_above(ida, min, &id);
+-	if (!ret) {
+-		if (id > max) {
+-			ida_remove(ida, id);
+-			ret = -ENOSPC;
+-		} else {
+-			ret = id;
+-		}
++	id = ida_get_new_above(ida, min);
++	if (id > (int)max) {
++		ida_remove(ida, id);
++		id = -ENOSPC;
+ 	}
+ 	xa_unlock_irqrestore(&ida->ida_rt, flags);
+ 
+-	if (unlikely(ret == -EAGAIN)) {
++	if (unlikely(id == -EAGAIN)) {
+ 		if (!ida_pre_get(ida, gfp))
+ 			return -ENOMEM;
+ 		goto again;
+ 	}
+ 
+-	return ret;
++	return id;
+ }
+ EXPORT_SYMBOL(ida_alloc_range);
  
 -- 
 2.17.1
