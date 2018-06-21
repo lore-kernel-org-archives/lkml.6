@@ -2,159 +2,99 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A56FC43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC37EC43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E1F21A07
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:33:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E37E21ADE
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:37:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="U0KlIOA0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E1F21A07
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PLdSb5Sf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E37E21ADE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933525AbeFUUdc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 16:33:32 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:38624 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933179AbeFUUbu (ORCPT
+        id S933191AbeFUUhD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 16:37:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44484 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932721AbeFUUhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 16:31:50 -0400
-Received: from localhost.localdomain (unknown [IPv6:2a02:169:34d6:10::3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 652635C17EF;
-        Thu, 21 Jun 2018 22:31:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529613108;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bt9OXWD9awlzOzrT4ScG14b67Yoi4Jiyx30D5CWU1CQ=;
-        b=U0KlIOA0eXFcEZYLD3VifuJH9iJu0jD/09xk99XvyYygTSwrTya7A7sqcs6PekRnunSeUZ
-        8ou3/lQ+cEhmo9seSGVxU4fHooqqgZEkSIoZ67x1KWGMvvYec897VxkrjmwW4M3TUG3s8V
-        iJL8CoD0/cLMuQbubhMXOwFZQsnKANg=
-From:   Stefan Agner <stefan@agner.ch>
-To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
-        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
-        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
-        gaireg@gaireg.de, linux-mtd@lists.infradead.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v6 3/6] mtd: rawnand: tegra: add devicetree binding
-Date:   Thu, 21 Jun 2018 22:31:42 +0200
-Message-Id: <20180621203145.7628-4-stefan@agner.ch>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180621203145.7628-1-stefan@agner.ch>
-References: <20180621203145.7628-1-stefan@agner.ch>
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[24];
-         BAYES_HAM(-3.00)[100.00%];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:13030, ipnet:2a02:169::/32, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+        Thu, 21 Jun 2018 16:37:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sGhY4WTm00CET9wC8aqetxlub3+aTf80pa+yUUBsLK0=; b=PLdSb5SfWQt4/fOWwB7NX0XJt
+        PJJqSZAVVRnKs5eAkE/a41GnI2SPa60IdaPprHaMp848BZ6DmtsqGwSKD6AWnvbA720rTSaomYxjx
+        N5Bcb4ZVvgNv4rFznqmQAqrAvkS4av2A/alOlH9WEPhirnyW3sY2gXYKU57X0YUxhNNJZRffJusXL
+        DOe2NCBpvsroQfXDNhyOrAz2yaQ4wxk6YLupB5hvzLPeiSQgT9oRVi8i7w8mZoLK5yn/M9rkZgOwX
+        Dw9817nqlpFSga49TfGIWuzVdQpGlylJuKdbpamitXwpOtx1ebfSgPMXU2HMKhqs4PvFGQgohQEHp
+        AQGL9/whg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fW6KA-0004Ud-DY; Thu, 21 Jun 2018 20:36:58 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D854F2029FA0E; Thu, 21 Jun 2018 22:36:56 +0200 (CEST)
+Date:   Thu, 21 Jun 2018 22:36:56 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 00/16] x86/split_lock: Enable #AC exception for split
+ locked accesses
+Message-ID: <20180621203656.GF27616@hirez.programming.kicks-ass.net>
+References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
+ <20180621193738.GA13636@worktop.programming.kicks-ass.net>
+ <20180621201851.GC114883@romley-ivt3.sc.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180621201851.GC114883@romley-ivt3.sc.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the devicetree binding for the Tegra 2 NAND flash
-controller.
+On Thu, Jun 21, 2018 at 01:18:52PM -0700, Fenghua Yu wrote:
+> On Thu, Jun 21, 2018 at 09:37:38PM +0200, Peter Zijlstra wrote:
+> > On Sun, May 27, 2018 at 08:45:49AM -0700, Fenghua Yu wrote:
+> > > Currently we can trace split lock event counter for debug purpose. But
+> > 
+> > How? A while ago I actually tried that, but I could not find a suitable
+> > perf event.
+> 
+> The event name is called sq_misc.split_lock. It's been supported in perf
+> already.
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/mtd/nvidia-tegra20-nand.txt      | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+Thanks.
 
-diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-new file mode 100644
-index 0000000000000..1c351362f3a96
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
-@@ -0,0 +1,64 @@
-+NVIDIA Tegra NAND Flash controller
-+
-+Required properties:
-+- compatible: Must be one of:
-+  - "nvidia,tegra20-nand"
-+- reg: MMIO address range
-+- interrupts: interrupt output of the NFC controller
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - nand
-+- resets: Must contain an entry for each entry in reset-names.
-+  See ../reset/reset.txt for details.
-+- reset-names: Must include the following entries:
-+  - nand
-+
-+Optional children nodes:
-+Individual NAND chips are children of the NAND controller node. Currently
-+only one NAND chip supported.
-+
-+Required children node properties:
-+- reg: An integer ranging from 1 to 6 representing the CS line to use.
-+
-+Optional children node properties:
-+- nand-ecc-mode: String, operation mode of the NAND ecc mode. Currently only
-+		 "hw" is supported.
-+- nand-ecc-algo: string, algorithm of NAND ECC.
-+		 Supported values with "hw" ECC mode are: "rs", "bch".
-+- nand-bus-width : See nand.txt
-+- nand-on-flash-bbt: See nand.txt
-+- nand-ecc-strength: integer representing the number of bits to correct
-+		     per ECC step (always 512). Supported strength using HW ECC
-+		     modes are:
-+		     - RS: 4, 6, 8
-+		     - BCH: 4, 8, 14, 16
-+- nand-ecc-maximize: See nand.txt
-+- nand-is-boot-medium: Makes sure only ECC strengths supported by the boot ROM
-+		       are choosen.
-+- wp-gpios: GPIO specifier for the write protect pin.
-+
-+Optional child node of NAND chip nodes:
-+Partitions: see partition.txt
-+
-+  Example:
-+	nand-controller@70008000 {
-+		compatible = "nvidia,tegra20-nand";
-+		reg = <0x70008000 0x100>;
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-+		clock-names = "nand";
-+		resets = <&tegra_car 13>;
-+		reset-names = "nand";
-+
-+		nand@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			nand-bus-width = <8>;
-+			nand-on-flash-bbt;
-+			nand-ecc-algo = "bch";
-+			nand-ecc-strength = <8>;
-+			wp-gpios = <&gpio TEGRA_GPIO(S, 0) GPIO_ACTIVE_LOW>;
-+		};
-+	};
--- 
-2.17.1
+> > > Intel introduces mechanism to detect split lock via alignment
+> > > check exception in Tremont and other future processors. If split lock is
+> > > from user process, #AC handler can kill the process or re-execute faulting
+> > > instruction depending on configuration. 
+> > 
+> > Ideally it would #AC any unaligned (implied) LOCK prefix instruction,
+> > not just across lines.
+> 
+> This feature only triggers #AC for unaligned cache line access, not for
+> other aligned (4 bytes, 8 bytes, etc). This is not explicitly said in
+> ISE. I can add this info in next version of patches.
+
+It was clear; what I'm saying it I'd like #AC to happen for any actual
+unaligned LOCK access, not just across lines.
 
