@@ -2,95 +2,108 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D28C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3094C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7227D20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:25:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="b5sQFNBD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7227D20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
+	by mail.kernel.org (Postfix) with ESMTP id A834F20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 12:26:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A834F20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933477AbeFUMZx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 08:25:53 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:32812 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933186AbeFUMZv (ORCPT
+        id S933592AbeFUM0B (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 08:26:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58945 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933186AbeFUMZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 08:25:51 -0400
-Received: by mail-ua0-f196.google.com with SMTP id m21-v6so1905262uan.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 05:25:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FeGaMAdD9a/9voXGk5Mi+oRN+npJtPtlCPyvWiIMt5Y=;
-        b=b5sQFNBD+atQ2AIiD9bAzzXo1ZnMlY6Bklr6Bv+9hU2Ga+AxB/CF9W2+Mmv+MixBoB
-         +2R08dxUVgtQhEBPkKhn+8y9wJBV0/EsiFLQHwBcXTfNucli4Wzdh+deYbhKw3QO6sci
-         Zl9n4y6NvNN/VsGc5h6Cyd8WtHQECJ55KlylIe2MDr33jfajQkNtCctPHhF7Ud7tmck1
-         0Titt+DP22eK9BlDBabJ/6XmSkt/G2/5c3oEbPtx+06nJ4QP5rxZbWzpx7ezwKPFQWE2
-         qCAd0/o0nNj9DIGLPT2JPEHSznagztjWN6b/cB/6CwdRV6X58Da6Qcz16Qf1tXb12GuC
-         CeSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FeGaMAdD9a/9voXGk5Mi+oRN+npJtPtlCPyvWiIMt5Y=;
-        b=jD92bwpH6oqcoogeiEmn2O7JcR7lgY6u/wGHUfwEHvja1JksqHv2eUxx/Uxx28+Alq
-         uA7yDAea0iqFm1b0q1nKwVxR+vsKjXsJEJDLrV+FHLzpVHWZbGQjNrYfy1ezy/HuO8lu
-         JgymxfZHSVPptF5UAAIOT+RfRYbTvFpcDnrQk8cktFaHvFrbeieP6tDLyGbECdpbfw37
-         yJlbBRldzCNlP/re7wt1HFmxxPnxIPFyoALnkjejGPNTbnI71VZZJzEbtE8yvAjRKBUI
-         gl5KI8VrOu4fxlnRv9OmNXd1HG/a3xFTHdVtqPANmV+OUf+8dX2TysbWLjkLeg89ucAV
-         OD6A==
-X-Gm-Message-State: APt69E2cg8HAKfQrxPA2zLyU8LQayLo/7sQfqKD1zCe/zXCWxOucb/21
-        rt6hYvIV1So+A8QqUWmNc0eoowss3tSoWL7rWJYDVQ==
-X-Google-Smtp-Source: ADUXVKISG+YnedINKOxDrAGziH5/1jWVsR4a1Qrb04R7fGTDZK5h7vMG66F0vCRK2P7WUDdSZbytmiJJOJW4txiBGIw=
-X-Received: by 2002:ab0:50f0:: with SMTP id d45-v6mr16082551uaa.45.1529583950476;
- Thu, 21 Jun 2018 05:25:50 -0700 (PDT)
+        Thu, 21 Jun 2018 08:25:59 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5LCOm9j3880232
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 21 Jun 2018 05:24:48 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5LCOlcC3880229;
+        Thu, 21 Jun 2018 05:24:47 -0700
+Date:   Thu, 21 Jun 2018 05:24:47 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Kosina <tipbot@zytor.com>
+Message-ID: <tip-6cb2b08ff92460290979de4be91363e5d1b6cec1@git.kernel.org>
+Cc:     mlatimer@suse.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        mingo@kernel.org, jgross@suse.com, tglx@linutronix.de,
+        jkosina@suse.cz, bp@suse.de
+Reply-To: bp@suse.de, jkosina@suse.cz, tglx@linutronix.de,
+          mingo@kernel.org, jgross@suse.com, hpa@zytor.com,
+          mlatimer@suse.com, linux-kernel@vger.kernel.org
+In-Reply-To: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/pti: Don't report XenPV as vulnerable
+Git-Commit-ID: 6cb2b08ff92460290979de4be91363e5d1b6cec1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Received: by 2002:ab0:3c4:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 05:25:50 -0700 (PDT)
-X-Originating-IP: [217.140.96.140]
-In-Reply-To: <1529581652-31294-1-git-send-email-hadar.gat@arm.com>
-References: <1529581652-31294-1-git-send-email-hadar.gat@arm.com>
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-Date:   Thu, 21 Jun 2018 15:25:50 +0300
-Message-ID: <CAOtvUMc0j+5+uYZH9=kwV=Ptx_df=qSRceGsuouf-FuV7Mkw0w@mail.gmail.com>
-Subject: Re: [PATCH] crypto: ccree: fix finup
-To:     Hadar Gat <hadar.gat@arm.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Gilad Ben-Yossef <gilad.BenYossef@arm.com>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 2:47 PM, Hadar Gat <hadar.gat@arm.com> wrote:
-> finup() operation was incorrect, padding was missing.
-> Fix by setting the ccree HW to enable padding.
->
-> Signed-off-by: Hadar Gat <hadar.gat@arm.com>
-> Cc: stable@vger.kernel.org
+Commit-ID:  6cb2b08ff92460290979de4be91363e5d1b6cec1
+Gitweb:     https://git.kernel.org/tip/6cb2b08ff92460290979de4be91363e5d1b6cec1
+Author:     Jiri Kosina <jkosina@suse.cz>
+AuthorDate: Mon, 18 Jun 2018 09:59:54 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 21 Jun 2018 14:14:52 +0200
 
-Acked-by: Gilad Ben-Yossef <gilad@benyossef.com>
+x86/pti: Don't report XenPV as vulnerable
 
-Gilad
+Xen PV domain kernel is not by design affected by meltdown as it's
+enforcing split CR3 itself. Let's not report such systems as "Vulnerable"
+in sysfs (we're also already forcing PTI to off in X86_HYPER_XEN_PV cases);
+the security of the system ultimately depends on presence of mitigation in
+the Hypervisor, which can't be easily detected from DomU; let's report
+that.
 
+Reported-and-tested-by: Mike Latimer <mlatimer@suse.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Juergen Gross <jgross@suse.com>
+Cc: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm
+[ Merge the user-visible string into a single line. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/cpu/bugs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---=20
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-values of =CE=B2 will give rise to dom!
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index cd0fda1fff6d..404df26b7de8 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -27,6 +27,7 @@
+ #include <asm/pgtable.h>
+ #include <asm/set_memory.h>
+ #include <asm/intel-family.h>
++#include <asm/hypervisor.h>
+ 
+ static void __init spectre_v2_select_mitigation(void);
+ static void __init ssb_select_mitigation(void);
+@@ -664,6 +665,9 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
+ 		if (boot_cpu_has(X86_FEATURE_PTI))
+ 			return sprintf(buf, "Mitigation: PTI\n");
+ 
++		if (hypervisor_is_type(X86_HYPER_XEN_PV))
++			return sprintf(buf, "Unknown (XEN PV detected, hypervisor mitigation required)\n");
++
+ 		break;
+ 
+ 	case X86_BUG_SPECTRE_V1:
