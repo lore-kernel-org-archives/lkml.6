@@ -2,137 +2,139 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4730C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3E8C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63C1220846
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:24:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C1220846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id B178820846
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:24:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZFshUI2n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B178820846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933204AbeFUIYG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:24:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38696 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932795AbeFUIXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:23:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 13127AD8B;
-        Thu, 21 Jun 2018 08:23:43 +0000 (UTC)
-Subject: Re: [PATCH 3/3] btrfs: use timespec64 for i_otime
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Sterba <dsterba@suse.cz>, Chris Mason <clm@fb.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Omar Sandoval <osandov@fb.com>, Liu Bo <bo.li.liu@oracle.com>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180620143448.44388-1-arnd@arndb.de>
- <20180620143448.44388-3-arnd@arndb.de> <20180620163804.GE24375@twin.jikos.cz>
- <263b1bc6-0efb-8803-fb9a-68a1393d35b2@suse.com>
- <CAK8P3a01n5shWS9x6q8Camd0WyuSfSRftthmUBQHYgPLOBUTWQ@mail.gmail.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <aa84ce19-3fce-e5cd-dbea-1d106dfa59c8@suse.com>
-Date:   Thu, 21 Jun 2018 11:23:39 +0300
+        id S933216AbeFUIY1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:24:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42580 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932727AbeFUIXm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 04:23:42 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5L8J0Np070589;
+        Thu, 21 Jun 2018 08:23:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=eKd5og1v0k8mCl8ffVvgqUQEddKm4YwxgFUMXfvgac8=;
+ b=ZFshUI2ni/ca2kRLvTM9POk1V+VbX0nxCrc0m1UImouornu30O4Bwysy9Sjk6vnEroiP
+ ofEC8kMFjwN9FYMSpt9Pnv/EWZoWxnwF2LKTep16oAqsQi3AICoJbnqKTGKxTyERrICt
+ d/EqyU48DE/GXy0nAFfzcWOE4A7eGJ3yXiWkU44nnaNMITPXnlp3RoBgVJDxJFufVoLD
+ gRAH88+nn+HX86SnMKxlrJogyBW7/6kUWo9JBhGYj/0y92/h9k1gUJUOql2fooZtBPZA
+ ZZGgDnJg6BPcC679qxWd+iySI2O09hvCdJtQgjyTIejhlH6xWXJIbutQU4qq/9GCrPeP hQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2jmtgwypds-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jun 2018 08:23:39 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5L8NcNX032260
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 21 Jun 2018 08:23:38 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5L8NcWY027575;
+        Thu, 21 Jun 2018 08:23:38 GMT
+Received: from [10.182.70.180] (/10.182.70.180)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 21 Jun 2018 01:23:38 -0700
+Subject: Re: [PATCH] blk-mq: use mutex_trylock to avoid lock inversion
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+References: <1529391637-1704-1-git-send-email-jianchao.w.wang@oracle.com>
+ <2409013d789ca266879d24c815b76c2193e23fe3.camel@wdc.com>
+ <d528a730-8e44-225b-2a35-3544160761dc@oracle.com>
+ <2c2003ff1baac05688495677f67239d52f6d9527.camel@wdc.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <2a1dda06-5c7c-b75b-c1ae-75d1a2a49694@oracle.com>
+Date:   Thu, 21 Jun 2018 16:23:58 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a01n5shWS9x6q8Camd0WyuSfSRftthmUBQHYgPLOBUTWQ@mail.gmail.com>
+In-Reply-To: <2c2003ff1baac05688495677f67239d52f6d9527.camel@wdc.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8930 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=393
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806210094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Bart
 
-
-On 20.06.2018 22:41, Arnd Bergmann wrote:
-> On Wed, Jun 20, 2018 at 9:34 PM, Nikolay Borisov <nborisov@suse.com> wrote:
+On 06/21/2018 12:18 AM, Bart Van Assche wrote:
+> On Wed, 2018-06-20 at 10:09 +0800, jianchao.wang wrote:
+>> It is very easy to reproduce with following scripts.
 >>
+>> script 0
+>> while true
+>> do
+>> 	modprobe null_blk queue_mode=2 shared_tags=1
+>> 	sleep 0.1
+>> 	rmmod null_blk
+>> 	sleep 0.1
+>> done
 >>
->> On 20.06.2018 19:38, David Sterba wrote:
->>> On Wed, Jun 20, 2018 at 04:34:34PM +0200, Arnd Bergmann wrote:
->>>> While the regular inode timestamps all use timespec64 now, the
->>>> i_otime field is btrfs specific and still needs to be converted
->>>> to correctly represent times beyond 2038.
->>>>
->>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>>
->>> This patch addresses the remaining type conversions, so I'm going to
->>> merge it, thanks.
->>>
->>
->> Actually for the sake of consistency we might want to merge this series
->> altogether. As it stands we now use ktime_get_seconds and
->> ktime_get_real_seconds (from Allen's patch). I haven't dug to see what's
->> the difference (if any) between the two .
+>> script 1
+>> file0="/sys/block/nullb0/mq/0/nr_tags"
+>> file1="/sys/block/nullb0/mq/0/cpu0/rq_list"
+>> while true;
+>> do
+>> 	if [ -e $file0 ];then
+>> 		cat $file0
+>> 	fi
+>> 	if [ -e $file1 ];then
+>> 		cat $file1
+>> 	fi
+>> done
 > 
-> I just checked again and see that Allen's patch addresses the first two
-> of my three patches, but he picked a different approach for
-> transaction_kthread(): My patch moved to CLOCK_MONOTONIC,
-> while his version only changed the to time64_t but kept the
-> CLOCK_REALTIME behavior. It's a small difference, but I think
-> my version is slightly better. My patch 2/3 is identical to his version.
-
-I agree, in the transaction_kthread we are only interested in knowing
-whether a fixed time windows (commit_internval) has passed. So monotonic
-makes more sense here.
+> Hello Jianchao,
 > 
-> If you like, I can also rebase my patch 1/3 on top of his patch and
-> change it to CLOCK_MONOTONIC.
-
-Please do.
-
+> Thanks for having shared a reproducer. However, the approach of the patch you
+> posted doesn't seem like the right approach to me. I propose to proceed as
+> follows:
+> * Convert the reproducer into a blktests test and submit is as a patch to the
+>   blktests project (https://urldefense.proofpoint.com/v2/url?u=https-3A__github.com_osandov_blktests&d=DwIGaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=_TjwODcX-0o-OZfrVTFMpvbS0QbYxoya17aHM9pZAXw&s=wdVpTkE6PJX3GXvjXNwEup3opdflyCGY324CAYXSixY&e=).
+> * Remove the mutex_lock/unlock(&sysfs_lock) calls from blk_cleanup_queue().
+>   These calls are useless.  Block drivers are required to call del_gendisk()
+>   before calling blk_cleanup_queue(). That means that sysfs attributes are
+>   removed synchronously before blk_cleanup_queue() is called. The following
+>   statement in blk_cleanup_queue() verifies that:
+>     WARN_ON_ONCE(q->kobj.state_in_sysfs);
+>   BTW, this also means that the blk_queue_dying() checks in various show and
+>   store methods are superfluous.
+> * Introduce a new mutex to serialize blk_mq_register_dev() and
+>   blk_mq_sysfs_register() and blk_mq_sysfs_unregister(). I think it is wrong
+>   that these functions use sysfs_mutex.
+> * Document the purpose of sysfs_mutex in include/linux/blkdev.h, namely to
+>   serialize the sysfs .show() and .store() callback functions and also to
+>   serialize elevator changes.
 > 
->          Arnd
+
+Really appreciate your kindly and detailed directive.
+I will post the V2 version based on your suggestions later.
+
+Thanks
+Jianchao
+> 
+> 
 > 
