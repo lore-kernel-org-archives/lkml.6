@@ -8,56 +8,56 @@ X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27B3C43143
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E55E6C43142
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 934B8224DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92AC2224DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 22:42:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nvTE71xc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 934B8224DA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZ63TdOG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92AC2224DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933978AbeFUWmR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 18:42:17 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40940 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933653AbeFUWmP (ORCPT
+        id S934019AbeFUWmY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 18:42:24 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40949 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933653AbeFUWmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 18:42:15 -0400
-Received: by mail-lf0-f66.google.com with SMTP id q11-v6so6615317lfc.7;
-        Thu, 21 Jun 2018 15:42:14 -0700 (PDT)
+        Thu, 21 Jun 2018 18:42:20 -0400
+Received: by mail-lf0-f68.google.com with SMTP id q11-v6so6615562lfc.7;
+        Thu, 21 Jun 2018 15:42:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IkWEj4MJxmai4vzpckcnzaQtnDAXgiUEdfdEKzLaXHw=;
-        b=nvTE71xcUSgZPqP7M+tYjjtVkemrE7M/AazT9wt5E6tM0cp4H1EBWTjTdnG6jOwVZn
-         /LwpkBx4zkBpBSIEl7EVQNZulyewyIHl6A2iFV/lA8IsrcdTXLO2jznutx2DOdzXpBAZ
-         cdLGDBCdGv0sGeN0fpWesHL2Q6tf9tyVYHYN+h7JA7sYHIKVSmR9SugpGQLjOhv2rAvA
-         YHotBmByEoSbhg6nWmvIbKD60rWL6rNE8qOQ9luQa1iyKUFRfkSXDf2YpagRkbLP8mvm
-         r0ZSImNPS+GLFnRSKZFxXbXtkNIbw9Ux7tHezJEQjEwnJrudifqI1UuItWLJYwiH5BQj
-         q0ZA==
+        bh=F9ysB4Cbjshf6qs8F/TSKDs5HPuEza9KpDPqxVwbYiI=;
+        b=OZ63TdOGsYWs0E+LXdd6tZH2lOr6B231rgRuHC1C3QzQbL3eb2p+Uzpza7LDb7cYmb
+         k3xMSHFFPahxMnAJOZSDRaDgYw9lYHBmMHXa+9tVOQI5JCOUOgwl5GksvdjKuto0izjF
+         iCjiunwnC5qls8Fs1a7XS4eH/9BYPummtvY1cHyeaXgT0j23jore92BS3zt+4f3/u6f9
+         bi6qWR3cd9DQ8ByK7RDJ9raO4dHFFgTErwvPZRZ6mJmj9KIrt/qKgt4EIfww1LB9W4ga
+         pcRI7TMtpV3rdN2sTzGpk8qAbUZmWbO4/3bra6PdeebFbwFiAdsF77PX/LhD934Mj4aB
+         P7lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=IkWEj4MJxmai4vzpckcnzaQtnDAXgiUEdfdEKzLaXHw=;
-        b=cyrTgObVaLjpwkAwFERBR6X1WCK0UfIbvX+tiFENmqmmt9vE+DnARAoNKc3QAc1+8h
-         WC9XIggK7MoS0YIJbOHPzbIBi9KL+0C0XDY0EE+Awdqobw6SZo00ZA0wPiX+P6PiV7Jn
-         RQuBNdCOMeTHiWKFUZU2D+QODozXofErObta4yYEgFxtG5ASL+2LYwta2QBoqH1288iP
-         6X16vlSRk8uMbkgM3sbOtN+vsgb/jDmBHufA2oN4A7A3wQIacD+HxR3TwPhsgAyUB48f
-         U+uWHWezyVtPbiqfNudoI9pevAldCQugPO1Y1HnEZgsSHUj90hUM5ZRYXTnapfHC/jJk
-         Sb2g==
-X-Gm-Message-State: APt69E0jf9JJV7wA0rQDQDHdW8NZIbKfnIlq+lR2rBza3/deu7ksMJeX
-        Sog2mVpLo0lS/0gwBBpZCT4=
-X-Google-Smtp-Source: ADUXVKKyt73FhuBnG2oHHXpDygyglzT8zH0+YtqSv56qLszEJgOodRSmm1OJz+vTBTmI9HZHw6v9Lw==
-X-Received: by 2002:a2e:6e19:: with SMTP id j25-v6mr18941369ljc.61.1529620933308;
-        Thu, 21 Jun 2018 15:42:13 -0700 (PDT)
+        bh=F9ysB4Cbjshf6qs8F/TSKDs5HPuEza9KpDPqxVwbYiI=;
+        b=rrPdrGNOGSy0VRXExyRRIC+ie2TiCKRp1EqwM+WF2i7OIS/JS97imEugUPfE7t9Dh6
+         AfoOt7LOJoLuTR11bpQW0++SWpkex1nr4shdnppVQPQM5fwTzSGpCfblkl4Sk+/4TFH6
+         3bGaPP4p0Tu8GHpJgtkeeYBF6LjxNeMRl866AlWIhrNj0tdtZj3ZIig0K70yqRsYZTJf
+         BYuIbzmkBYEvBj1fBQpTZEFT+jjKmK80LZUAklF8OXs64LaOSpdBwJV4LJJzXgOCGPFA
+         CqvdhURk+vCb5aAOcJucnuOFYpzIXGTiESUmU39vaxxLbn+1sNgbKUIavU9q9P04irQh
+         SCyw==
+X-Gm-Message-State: APt69E2OSB9ZnaBIHCxQf+/S2q6kS71RWz/QgiVSitv7OVOLko1gnOm6
+        yNJFOnbjas07UrXvzuAEhrI=
+X-Google-Smtp-Source: ADUXVKIY+2irZ6fsf5HEpPI5zpFO8DzpyrQZXGtO/O4WG/4cLNt3TrQ0UnOOKcyeEyuyrjK4J+BJog==
+X-Received: by 2002:a19:99c7:: with SMTP id b190-v6mr5672867lfe.53.1529620938296;
+        Thu, 21 Jun 2018 15:42:18 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id t6-v6sm1046153lje.18.2018.06.21.15.42.11
+        by smtp.gmail.com with ESMTPSA id t6-v6sm1046153lje.18.2018.06.21.15.42.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 15:42:12 -0700 (PDT)
+        Thu, 21 Jun 2018 15:42:17 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Tony Lindgren <tony@atomide.com>,
@@ -74,9 +74,9 @@ Cc:     "David S . Miller " <davem@davemloft.net>,
         linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v2 02/10] Input: ams_delta_serio: convert to platform driver
-Date:   Fri, 22 Jun 2018 00:41:20 +0200
-Message-Id: <20180621224128.17623-2-jmkrzyszt@gmail.com>
+Subject: [PATCH v2 03/10] Input: ams_delta_serio: use private structure
+Date:   Fri, 22 Jun 2018 00:41:21 +0200
+Message-Id: <20180621224128.17623-3-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180621224128.17623-1-jmkrzyszt@gmail.com>
 References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
@@ -86,134 +86,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the driver to an "ams-delta-serio" platform driver.  For it to
-be used with Amstrad Delta, register an "ams-delta-serio" platform
-device from the board init file.
+Introduce a driver private structure and allocate it on device probe.
+For now, use it instead of a static variable for storing a pointer to
+serio structure.  Subsequent patches will populate it with more members
+as needed.
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
 Changelog:
 v2: rebased on v4.18-rc1, no conflicts
 
- arch/arm/mach-omap1/board-ams-delta.c |  6 ++++++
- drivers/input/serio/ams_delta_serio.c | 34 +++++++++++++++++++++-------------
- 2 files changed, 27 insertions(+), 13 deletions(-)
+ drivers/input/serio/ams_delta_serio.c | 69 ++++++++++++++++++++++-------------
+ 1 file changed, 43 insertions(+), 26 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index 18e0ff437b27..2119d2d3ba84 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -504,12 +504,18 @@ static struct platform_device cx20442_codec_device = {
- 	.id     = -1,
- };
- 
-+static struct platform_device ams_delta_serio_device = {
-+	.name		= "ams-delta-serio",
-+	.id		= PLATFORM_DEVID_NONE,
-+};
-+
- static struct platform_device *ams_delta_devices[] __initdata = {
- 	&latch1_gpio_device,
- 	&latch2_gpio_device,
- 	&ams_delta_kp_device,
- 	&ams_delta_camera_device,
- 	&ams_delta_audio_device,
-+	&ams_delta_serio_device,
- };
- 
- static struct platform_device *late_devices[] __initdata = {
 diff --git a/drivers/input/serio/ams_delta_serio.c b/drivers/input/serio/ams_delta_serio.c
-index 3df501c3421b..a2a7fa19bf49 100644
+index a2a7fa19bf49..551a4fa73fe4 100644
 --- a/drivers/input/serio/ams_delta_serio.c
 +++ b/drivers/input/serio/ams_delta_serio.c
-@@ -22,15 +22,17 @@
-  */
- #include <linux/gpio.h>
- #include <linux/irq.h>
-+#include <linux/platform_device.h>
- #include <linux/serio.h>
- #include <linux/slab.h>
- #include <linux/module.h>
- 
--#include <asm/mach-types.h>
- #include <mach/board-ams-delta.h>
- 
- #include <mach/ams-delta-fiq.h>
- 
-+#define DRIVER_NAME	"ams-delta-serio"
-+
- MODULE_AUTHOR("Matt Callow");
+@@ -37,17 +37,17 @@ MODULE_AUTHOR("Matt Callow");
  MODULE_DESCRIPTION("AMS Delta (E3) keyboard port driver");
  MODULE_LICENSE("GPL");
-@@ -126,13 +128,10 @@ static const struct gpio ams_delta_gpios[] __initconst_or_module = {
- 	},
- };
  
--static int __init ams_delta_serio_init(void)
-+static int ams_delta_serio_init(struct platform_device *pdev)
+-static struct serio *ams_delta_serio;
++struct ams_delta_serio {
++	struct serio *serio;
++};
+ 
+-static int check_data(int data)
++static int check_data(struct serio *serio, int data)
  {
+ 	int i, parity = 0;
+ 
+ 	/* check valid stop bit */
+ 	if (!(data & 0x400)) {
+-		dev_warn(&ams_delta_serio->dev,
+-				"invalid stop bit, data=0x%X\n",
+-				data);
++		dev_warn(&serio->dev, "invalid stop bit, data=0x%X\n", data);
+ 		return SERIO_FRAME;
+ 	}
+ 	/* calculate the parity */
+@@ -57,9 +57,9 @@ static int check_data(int data)
+ 	}
+ 	/* it should be odd */
+ 	if (!(parity & 0x01)) {
+-		dev_warn(&ams_delta_serio->dev,
+-				"parity check failed, data=0x%X parity=0x%X\n",
+-				data, parity);
++		dev_warn(&serio->dev,
++			 "parity check failed, data=0x%X parity=0x%X\n", data,
++			 parity);
+ 		return SERIO_PARITY;
+ 	}
+ 	return 0;
+@@ -67,6 +67,7 @@ static int check_data(int data)
+ 
+ static irqreturn_t ams_delta_serio_interrupt(int irq, void *dev_id)
+ {
++	struct ams_delta_serio *priv = dev_id;
+ 	int *circ_buff = &fiq_buffer[FIQ_CIRC_BUFF];
+ 	int data, dfl;
+ 	u8 scancode;
+@@ -84,9 +85,9 @@ static irqreturn_t ams_delta_serio_interrupt(int irq, void *dev_id)
+ 		if (fiq_buffer[FIQ_HEAD_OFFSET] == fiq_buffer[FIQ_BUF_LEN])
+ 			fiq_buffer[FIQ_HEAD_OFFSET] = 0;
+ 
+-		dfl = check_data(data);
++		dfl = check_data(priv->serio, data);
+ 		scancode = (u8) (data >> 1) & 0xFF;
+-		serio_interrupt(ams_delta_serio, scancode, dfl);
++		serio_interrupt(priv->serio, scancode, dfl);
+ 	}
+ 	return IRQ_HANDLED;
+ }
+@@ -130,21 +131,14 @@ static const struct gpio ams_delta_gpios[] __initconst_or_module = {
+ 
+ static int ams_delta_serio_init(struct platform_device *pdev)
+ {
++	struct ams_delta_serio *priv;
++	struct serio *serio;
  	int err;
  
--	if (!machine_is_ams_delta())
--		return -ENODEV;
--
- 	ams_delta_serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
- 	if (!ams_delta_serio)
+-	ams_delta_serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+-	if (!ams_delta_serio)
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
  		return -ENOMEM;
-@@ -142,22 +141,22 @@ static int __init ams_delta_serio_init(void)
- 	ams_delta_serio->close = ams_delta_serio_close;
- 	strlcpy(ams_delta_serio->name, "AMS DELTA keyboard adapter",
- 			sizeof(ams_delta_serio->name));
--	strlcpy(ams_delta_serio->phys, "GPIO/serio0",
-+	strlcpy(ams_delta_serio->phys, dev_name(&pdev->dev),
- 			sizeof(ams_delta_serio->phys));
-+	ams_delta_serio->dev.parent = &pdev->dev;
  
+-	ams_delta_serio->id.type = SERIO_8042;
+-	ams_delta_serio->open = ams_delta_serio_open;
+-	ams_delta_serio->close = ams_delta_serio_close;
+-	strlcpy(ams_delta_serio->name, "AMS DELTA keyboard adapter",
+-			sizeof(ams_delta_serio->name));
+-	strlcpy(ams_delta_serio->phys, dev_name(&pdev->dev),
+-			sizeof(ams_delta_serio->phys));
+-	ams_delta_serio->dev.parent = &pdev->dev;
+-
  	err = gpio_request_array(ams_delta_gpios,
  				ARRAY_SIZE(ams_delta_gpios));
  	if (err) {
--		pr_err("ams_delta_serio: Couldn't request gpio pins\n");
-+		dev_err(&pdev->dev, "Couldn't request gpio pins\n");
- 		goto serio;
- 	}
+@@ -154,7 +148,7 @@ static int ams_delta_serio_init(struct platform_device *pdev)
  
  	err = request_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
  			ams_delta_serio_interrupt, IRQ_TYPE_EDGE_RISING,
--			"ams-delta-serio", 0);
-+			DRIVER_NAME, 0);
+-			DRIVER_NAME, 0);
++			DRIVER_NAME, priv);
  	if (err < 0) {
--		pr_err("ams_delta_serio: couldn't request gpio interrupt %d\n",
--				gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK));
-+		dev_err(&pdev->dev, "IRQ request failed (%d)\n", err);
+ 		dev_err(&pdev->dev, "IRQ request failed (%d)\n", err);
  		goto gpio;
- 	}
- 	/*
-@@ -179,13 +178,22 @@ static int __init ams_delta_serio_init(void)
- 	kfree(ams_delta_serio);
+@@ -167,21 +161,44 @@ static int ams_delta_serio_init(struct platform_device *pdev)
+ 	irq_set_handler(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
+ 			handle_simple_irq);
+ 
+-	serio_register_port(ams_delta_serio);
+-	dev_info(&ams_delta_serio->dev, "%s\n", ams_delta_serio->name);
++	serio = kzalloc(sizeof(*serio), GFP_KERNEL);
++	if (!serio) {
++		err = -ENOMEM;
++		goto irq;
++	}
++
++	priv->serio = serio;
++
++	serio->id.type = SERIO_8042;
++	serio->open = ams_delta_serio_open;
++	serio->close = ams_delta_serio_close;
++	strlcpy(serio->name, "AMS DELTA keyboard adapter", sizeof(serio->name));
++	strlcpy(serio->phys, dev_name(&pdev->dev), sizeof(serio->phys));
++	serio->dev.parent = &pdev->dev;
++	serio->port_data = priv;
++
++	serio_register_port(serio);
++
++	platform_set_drvdata(pdev, priv);
++
++	dev_info(&serio->dev, "%s\n", serio->name);
+ 
+ 	return 0;
++
++irq:
++	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), priv);
+ gpio:
+ 	gpio_free_array(ams_delta_gpios,
+ 			ARRAY_SIZE(ams_delta_gpios));
+ serio:
+-	kfree(ams_delta_serio);
  	return err;
  }
--module_init(ams_delta_serio_init);
  
--static void __exit ams_delta_serio_exit(void)
-+static int ams_delta_serio_exit(struct platform_device *pdev)
+ static int ams_delta_serio_exit(struct platform_device *pdev)
  {
- 	serio_unregister_port(ams_delta_serio);
+-	serio_unregister_port(ams_delta_serio);
++	struct ams_delta_serio *priv = platform_get_drvdata(pdev);
++
++	serio_unregister_port(priv->serio);
  	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), 0);
  	gpio_free_array(ams_delta_gpios,
  			ARRAY_SIZE(ams_delta_gpios));
-+
-+	return 0;
- }
--module_exit(ams_delta_serio_exit);
-+
-+static struct platform_driver ams_delta_serio_driver = {
-+	.probe	= ams_delta_serio_init,
-+	.remove	= ams_delta_serio_exit,
-+	.driver	= {
-+		.name	= DRIVER_NAME
-+	},
-+};
-+module_platform_driver(ams_delta_serio_driver);
 -- 
 2.16.4
 
