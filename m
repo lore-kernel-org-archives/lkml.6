@@ -2,263 +2,94 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA329C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B5EC43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B9E20C07
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:47:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B9E20C07
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 986A920C07
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:55:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lk6QEKpE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 986A920C07
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933361AbeFUPrE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:47:04 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:47797 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933236AbeFUPrC (ORCPT
+        id S933353AbeFUPzZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 11:55:25 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:40723 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933218AbeFUPzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:47:02 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LshA1-1gBN451nLN-012LNs; Thu, 21 Jun 2018 17:46:48 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>,
-        "Yan, Zheng" <zyan@redhat.com>
-Cc:     y2038@lists.linaro.org, Yan Zheng <ukernel@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Alex Elder <elder@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Chengguang Xu <cgxu519@gmx.com>, ceph-devel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH v2 4/5] ceph: use timespec64 for r_mtime
-Date:   Thu, 21 Jun 2018 17:46:10 +0200
-Message-Id: <20180621154645.136949-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:eEIpH/oRH1wIgQJsz2C/Qclu5AAleaDzAJiwSiYUvv3ah0vxrxf
- BT/OoKP6yjfrgpDV116FP9mFw5ZgjrHokUcUzgXvXYqxUeQR0w3NCGOy/8Vs4b67WlziwVW
- 6CVmsSBAE0onNOsIKEP3zwX7rQdN6lUerev3weBaERmqmitmOKfU/OxPauWbi1mzdhKAXrK
- AdcJKcYZHTvY9nq3EPL+A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Xnlb5ZrVb9Q=:kePVjtM6XDSclYvWDNxMxf
- +73dHHlSYV30GBXvRxtVNGAcNv0qwBOeJgqDsVM7JpZx+AKCfCFbZ6pYntNuTA6fR1hz9V15y
- 6W7aDmbFUGSOFA8cxl9hwnMs5RqgBfNmr37rBkNpWpZxHm7yauP0KduYNI2QzMxei4XIVw3Ga
- p37lzNsvmOu1wZPygpocoX5aftcD9fL9f7f1ZW4TgLst7532+3Q+GXe4SQ9ZlOx5DVCQ33uP2
- pSYfNtYeG25RZlvcr+xKeoduf/L9WjDO8u23lpHmNYxfPSBs5gmFoF0N2PFieno8UseSF3EU2
- KOD5WnHipTbltfaeJSULzuegUAw0te2XyQO+/AafXLLJtk5NCk20lwj9h+jNHsaTqexpSyhm2
- ItavjXqao1v3BgdBreRpJowC6YesAwYvGMZj7FDgHqFo4pQwPVUxkJ6b/N7YT7xYXwax0iYQC
- xpUtbYpNqVadUpjf21mDFsqGY1CvFGiFOhYWtv+3n2lEXX7pEXzHkCeiYlnJsuSaDfLgu0bw/
- 3rIVgx1ELShmojYKKIms+Y7pr9aW+b4OOhUy+lFEr6pZHg+shBiDgmlClhXn37W4MZH8ua/lN
- 8zPZjd8NSx/+EOBYsZWYXUQ3PpQWcemRVA+d4Paf0JwoN/B9Kdx2kjPtTMt5G+9dAnxZFdgf7
- 5AbgYa/1kYxyyO1bF988VGn5MMn4zW4XEyg+s+waE965boFgzcaTBv5K1nfzxE4zX3cs=
+        Thu, 21 Jun 2018 11:55:24 -0400
+Received: by mail-wm0-f54.google.com with SMTP id n5-v6so7052084wmc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 08:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N1wLaDHlwUfDM6O9aqAHWjLWWZb5lL1Xjq4I4qcXtf8=;
+        b=Lk6QEKpEpKqsW9CkPyQQ6hSWIbp5+udW1x2YBW4tTo64m/cKFFraRQ2u748LgR4j0P
+         5/YRW4XA9CGGHUzCIZBhrlpPdqSCrPMrjcZR4ij9BJViYqt1lBzBf7i+YFglIEE0MHwy
+         ry2Z0zDZP2M2VB48F7v5nlB3LGUOiw+qO5n9NiqPZv5EbuVs8G/lWbVVAgULcI8tsZUD
+         NN9ho1IS5FSbjfY+7Yu9iNpTrZr9SXzTqgm6MW+q3c1upZmMnzE3+QoT2hsA0ArFHAEO
+         uHBh6YuMl3IYOWEF571EBj3uNE7tbzrNJVvFu0LHDyukXEnA94ST+lm7KuzP7QTPSTja
+         VN0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N1wLaDHlwUfDM6O9aqAHWjLWWZb5lL1Xjq4I4qcXtf8=;
+        b=mTmABgLDMsrBsGp1A1/ag785HvF/xE9q7wGRAsPWZoNKeXRVEtWZArQIhyt1FQiAHi
+         kFgaqmmh53Q8e5In6oDMflqdGnOVjlDjyLZ9lsczkIhn42b80g8GrdsqVVVQ3SABzDzD
+         O/1y9NF+7x67zhUkSqCi2ytnDo9LXY+rJZROn+IQBkxgl9bgqCwEYUqRMOZBo2Bpp4+k
+         9KkXgUpHhABlmkdhSDEnicMTUH68u9WpzUDKTmX5TdsKwRz8vK9pWpioRJEl3uNlirnB
+         q5kvXllUlEo0moh0PwSa2vcQnOoR4v2z1o91Lb6hCZ2shqcjTSUGtvJ1NespdWdgeEOK
+         d8yg==
+X-Gm-Message-State: APt69E3FlvG+G9tS1ESx58shtNpe+Ewb3T0DmHyrTQQ8em7qF0IWmQYU
+        kCaWUBI7qdJaRXh3On/woDA=
+X-Google-Smtp-Source: ADUXVKLCepfjfXQWMW0WuYyZEkZY+zyht/3KFIQIIkVTQV0m3/gUj022fXujBrk5Ad5c/VHWu/tYBw==
+X-Received: by 2002:a1c:e546:: with SMTP id c67-v6mr5445953wmh.108.1529596523020;
+        Thu, 21 Jun 2018 08:55:23 -0700 (PDT)
+Received: from localhost (8ta-151-217-222.telkomadsl.co.za. [41.151.217.222])
+        by smtp.gmail.com with ESMTPSA id b16-v6sm8470155wrm.15.2018.06.21.08.55.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 21 Jun 2018 08:55:22 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 17:53:52 +0200
+From:   Chris Opperman <eklikeroomys@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] staging: wlan-ng: improved readability of function
+ prism2_add_key
+Message-ID: <20180621155352.GA20712@kerdev>
+References: <1529514635-17948-1-git-send-email-eklikeroomys@gmail.com>
+ <20180620200829.qm2zxeyyl5kqh6gu@mwanda>
+ <20180621044252.GA19583@kerdev>
+ <20180621082225.xuhqvm7bevbiuaso@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180621082225.xuhqvm7bevbiuaso@mwanda>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The request mtime field is used all over ceph, and is currently
-represented as a 'timespec' structure in Linux. This changes it to
-timespec64 to allow times beyond 2038, modifying all users at the
-same time.
+Hi Dan,
+The header also states "DO NOT EDIT OR MODIFY". As you suggested, I
+will rather leave this patch for now.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: undo an unneeded change pointed out by Yan Zheng.
-    Resending only this patch for now, let me know if you
-    would like to see the entire series reposted instead.
----
- drivers/block/rbd.c             |  2 +-
- fs/ceph/addr.c                  | 12 ++++++------
- fs/ceph/file.c                  |  8 ++++----
- include/linux/ceph/osd_client.h |  6 +++---
- net/ceph/osd_client.c           |  8 ++++----
- 5 files changed, 18 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index fa0729c1e776..356936333cd9 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -1452,7 +1452,7 @@ static void rbd_osd_req_format_write(struct rbd_obj_request *obj_request)
- 	struct ceph_osd_request *osd_req = obj_request->osd_req;
- 
- 	osd_req->r_flags = CEPH_OSD_FLAG_WRITE;
--	ktime_get_real_ts(&osd_req->r_mtime);
-+	ktime_get_real_ts64(&osd_req->r_mtime);
- 	osd_req->r_data_offset = obj_request->ex.oe_off;
- }
- 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 292b3d72d725..d44d51e69e76 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -574,7 +574,7 @@ static u64 get_writepages_data_length(struct inode *inode,
-  */
- static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
- {
--	struct timespec ts;
-+	struct timespec64 ts;
- 	struct inode *inode;
- 	struct ceph_inode_info *ci;
- 	struct ceph_fs_client *fsc;
-@@ -625,7 +625,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
- 		set_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
- 
- 	set_page_writeback(page);
--	ts = timespec64_to_timespec(inode->i_mtime);
-+	ts = inode->i_mtime;
- 	err = ceph_osdc_writepages(&fsc->client->osdc, ceph_vino(inode),
- 				   &ci->i_layout, snapc, page_off, len,
- 				   ceph_wbc.truncate_seq,
-@@ -1134,7 +1134,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 			pages = NULL;
- 		}
- 
--		req->r_mtime = timespec64_to_timespec(inode->i_mtime);
-+		req->r_mtime = inode->i_mtime;
- 		rc = ceph_osdc_start_request(&fsc->client->osdc, req, true);
- 		BUG_ON(rc);
- 		req = NULL;
-@@ -1734,7 +1734,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
- 		goto out;
- 	}
- 
--	req->r_mtime = timespec64_to_timespec(inode->i_mtime);
-+	req->r_mtime = inode->i_mtime;
- 	err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
- 	if (!err)
- 		err = ceph_osdc_wait_request(&fsc->client->osdc, req);
-@@ -1776,7 +1776,7 @@ int ceph_uninline_data(struct file *filp, struct page *locked_page)
- 			goto out_put;
- 	}
- 
--	req->r_mtime = timespec64_to_timespec(inode->i_mtime);
-+	req->r_mtime = inode->i_mtime;
- 	err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
- 	if (!err)
- 		err = ceph_osdc_wait_request(&fsc->client->osdc, req);
-@@ -1937,7 +1937,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
- 				     0, false, true);
- 	err = ceph_osdc_start_request(&fsc->client->osdc, rd_req, false);
- 
--	wr_req->r_mtime = timespec64_to_timespec(ci->vfs_inode.i_mtime);
-+	wr_req->r_mtime = ci->vfs_inode.i_mtime;
- 	err2 = ceph_osdc_start_request(&fsc->client->osdc, wr_req, false);
- 
- 	if (!err)
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index ad0bed99b1d5..2f3a30ca94bf 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -721,7 +721,7 @@ struct ceph_aio_request {
- 	struct list_head osd_reqs;
- 	unsigned num_reqs;
- 	atomic_t pending_reqs;
--	struct timespec mtime;
-+	struct timespec64 mtime;
- 	struct ceph_cap_flush *prealloc_cf;
- };
- 
-@@ -923,7 +923,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
- 	int num_pages = 0;
- 	int flags;
- 	int ret;
--	struct timespec mtime = timespec64_to_timespec(current_time(inode));
-+	struct timespec64 mtime = current_time(inode);
- 	size_t count = iov_iter_count(iter);
- 	loff_t pos = iocb->ki_pos;
- 	bool write = iov_iter_rw(iter) == WRITE;
-@@ -1131,7 +1131,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
- 	int flags;
- 	int ret;
- 	bool check_caps = false;
--	struct timespec mtime = timespec64_to_timespec(current_time(inode));
-+	struct timespec64 mtime = current_time(inode);
- 	size_t count = iov_iter_count(from);
- 
- 	if (ceph_snap(file_inode(file)) != CEPH_NOSNAP)
-@@ -1663,7 +1663,7 @@ static int ceph_zero_partial_object(struct inode *inode,
- 		goto out;
- 	}
- 
--	req->r_mtime = timespec64_to_timespec(inode->i_mtime);
-+	req->r_mtime = inode->i_mtime;
- 	ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
- 	if (!ret) {
- 		ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index 0d6ee04b4c41..2e6611c1e9a0 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -199,7 +199,7 @@ struct ceph_osd_request {
- 	/* set by submitter */
- 	u64 r_snapid;                         /* for reads, CEPH_NOSNAP o/w */
- 	struct ceph_snap_context *r_snapc;    /* for writes */
--	struct timespec r_mtime;              /* ditto */
-+	struct timespec64 r_mtime;            /* ditto */
- 	u64 r_data_offset;                    /* ditto */
- 	bool r_linger;                        /* don't resend on failure */
- 
-@@ -253,7 +253,7 @@ struct ceph_osd_linger_request {
- 	struct ceph_osd_request_target t;
- 	u32 map_dne_bound;
- 
--	struct timespec mtime;
-+	struct timespec64 mtime;
- 
- 	struct kref kref;
- 	struct mutex lock;
-@@ -508,7 +508,7 @@ extern int ceph_osdc_writepages(struct ceph_osd_client *osdc,
- 				struct ceph_snap_context *sc,
- 				u64 off, u64 len,
- 				u32 truncate_seq, u64 truncate_size,
--				struct timespec *mtime,
-+				struct timespec64 *mtime,
- 				struct page **pages, int nr_pages);
- 
- /* watch/notify */
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index a00c74f1154e..a87a021ca9d0 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -1978,7 +1978,7 @@ static void encode_request_partial(struct ceph_osd_request *req,
- 	p += sizeof(struct ceph_blkin_trace_info);
- 
- 	ceph_encode_32(&p, 0); /* client_inc, always 0 */
--	ceph_encode_timespec(p, &req->r_mtime);
-+	ceph_encode_timespec64(p, &req->r_mtime);
- 	p += sizeof(struct ceph_timespec);
- 
- 	encode_oloc(&p, end, &req->r_t.target_oloc);
-@@ -4512,7 +4512,7 @@ ceph_osdc_watch(struct ceph_osd_client *osdc,
- 	ceph_oid_copy(&lreq->t.base_oid, oid);
- 	ceph_oloc_copy(&lreq->t.base_oloc, oloc);
- 	lreq->t.flags = CEPH_OSD_FLAG_WRITE;
--	ktime_get_real_ts(&lreq->mtime);
-+	ktime_get_real_ts64(&lreq->mtime);
- 
- 	lreq->reg_req = alloc_linger_request(lreq);
- 	if (!lreq->reg_req) {
-@@ -4570,7 +4570,7 @@ int ceph_osdc_unwatch(struct ceph_osd_client *osdc,
- 	ceph_oid_copy(&req->r_base_oid, &lreq->t.base_oid);
- 	ceph_oloc_copy(&req->r_base_oloc, &lreq->t.base_oloc);
- 	req->r_flags = CEPH_OSD_FLAG_WRITE;
--	ktime_get_real_ts(&req->r_mtime);
-+	ktime_get_real_ts64(&req->r_mtime);
- 	osd_req_op_watch_init(req, 0, lreq->linger_id,
- 			      CEPH_OSD_WATCH_OP_UNWATCH);
- 
-@@ -5136,7 +5136,7 @@ int ceph_osdc_writepages(struct ceph_osd_client *osdc, struct ceph_vino vino,
- 			 struct ceph_snap_context *snapc,
- 			 u64 off, u64 len,
- 			 u32 truncate_seq, u64 truncate_size,
--			 struct timespec *mtime,
-+			 struct timespec64 *mtime,
- 			 struct page **pages, int num_pages)
- {
- 	struct ceph_osd_request *req;
--- 
-2.9.0
-
+P.S. Please advise if there is anything specific I can help out with, or I'll 
+keep looking for more obvious fixes I can make while I'm learning the
+ropes.
+Kind Regards,
+Chris Opperman
