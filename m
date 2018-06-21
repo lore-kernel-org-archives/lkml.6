@@ -3,67 +3,221 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B089C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CA8C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31498208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:53:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31498208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 4F45320883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 11:54:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F45320883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933357AbeFULx1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 07:53:27 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:37114 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933130AbeFULxZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 07:53:25 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fVy9M-0000ut-N3; Thu, 21 Jun 2018 19:53:16 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fVy9I-0002Ah-Ct; Thu, 21 Jun 2018 19:53:12 +0800
-Date:   Thu, 21 Jun 2018 19:53:12 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Vinod Koul <vinod.koul@linaro.org>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
-Message-ID: <20180621115312.rfmbitrhqi44wu5w@gondor.apana.org.au>
-References: <20180618141259.23141-1-vkoul@kernel.org>
- <20180618141259.23141-4-vkoul@kernel.org>
- <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
- <966e9cd4-70a3-8d54-df0f-16df3df45fb5@linaro.org>
- <20180621101506.rnklbtapvfdev4xb@gondor.apana.org.au>
- <e39deb02-8fa4-84ac-b33e-d692402189a1@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e39deb02-8fa4-84ac-b33e-d692402189a1@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S933375AbeFULyG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 07:54:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:48958 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933130AbeFULyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 07:54:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F5881435;
+        Thu, 21 Jun 2018 04:54:05 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 004E43F578;
+        Thu, 21 Jun 2018 04:54:05 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 24CFB1AE2E48; Thu, 21 Jun 2018 12:54:41 +0100 (BST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com
+Cc:     peterz@infradead.org, paulmck@linux.vnet.ibm.com,
+        boqun.feng@gmail.com, mingo@redhat.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v2] rseq: Avoid infinite recursion when delivering SIGSEGV
+Date:   Thu, 21 Jun 2018 12:54:40 +0100
+Message-Id: <1529582080-31430-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 02:27:10PM +0300, Stanimir Varbanov wrote:
->
-> OK, I just wanted to say that it is _not_ PRNG and the register names
-> gives us wrong impression.
+When delivering a signal to a task that is using rseq, we call into
+__rseq_handle_notify_resume() so that the registers pushed in the
+sigframe are updated to reflect the state of the restartable sequence
+(for example, ensuring that the signal returns to the abort handler if
+necessary).
 
-So does it generate one bit of output for each bit of hardware-
-generated entropy like /dev/random? Or does it use a hardware-
-generated seed to power a PRNG?
+However, if the rseq management fails due to an unrecoverable fault when
+accessing userspace or certain combinations of RSEQ_CS_* flags, then we
+will attempt to deliver a SIGSEGV. This has the potential for infinite
+recursion if the rseq code continuously fails on signal delivery.
 
-Cheers,
+Avoid this problem by using force_sigsegv() instead of force_sig(), which
+is explicitly designed to reset the SEGV handler to SIG_DFL in the case
+of a recursive fault. In doing so, remove rseq_signal_deliver() from the
+internal rseq API and have an optional struct ksignal * parameter to
+rseq_handle_notify_resume() instead.
+
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+
+RFC v1 -> v2: Kill rseq_signal_deliver()
+
+ arch/arm/kernel/signal.c     |  4 ++--
+ arch/powerpc/kernel/signal.c |  4 ++--
+ arch/x86/entry/common.c      |  2 +-
+ arch/x86/kernel/signal.c     |  2 +-
+ include/linux/sched.h        | 27 ++++++++++++---------------
+ kernel/rseq.c                |  7 ++++---
+ 6 files changed, 22 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index f09e9d66d605..184f69dcb9f2 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -544,7 +544,7 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
+ 	 * Increment event counter and perform fixup for the pre-signal
+ 	 * frame.
+ 	 */
+-	rseq_signal_deliver(regs);
++	rseq_handle_notify_resume(ksig, regs);
+ 
+ 	/*
+ 	 * Set up the stack frame
+@@ -666,7 +666,7 @@ do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
+ 			} else {
+ 				clear_thread_flag(TIF_NOTIFY_RESUME);
+ 				tracehook_notify_resume(regs);
+-				rseq_handle_notify_resume(regs);
++				rseq_handle_notify_resume(NULL, regs);
+ 			}
+ 		}
+ 		local_irq_disable();
+diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+index 17fe4339ba59..88bdf243a5bd 100644
+--- a/arch/powerpc/kernel/signal.c
++++ b/arch/powerpc/kernel/signal.c
+@@ -134,7 +134,7 @@ static void do_signal(struct task_struct *tsk)
+ 	/* Re-enable the breakpoints for the signal stack */
+ 	thread_change_pc(tsk, tsk->thread.regs);
+ 
+-	rseq_signal_deliver(tsk->thread.regs);
++	rseq_handle_notify_resume(&ksig, tsk->thread.regs);
+ 
+ 	if (is32) {
+         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+@@ -170,7 +170,7 @@ void do_notify_resume(struct pt_regs *regs, unsigned long thread_info_flags)
+ 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
+ 		clear_thread_flag(TIF_NOTIFY_RESUME);
+ 		tracehook_notify_resume(regs);
+-		rseq_handle_notify_resume(regs);
++		rseq_handle_notify_resume(NULL, regs);
+ 	}
+ 
+ 	user_enter();
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index 92190879b228..3b2490b81918 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -164,7 +164,7 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
+ 		if (cached_flags & _TIF_NOTIFY_RESUME) {
+ 			clear_thread_flag(TIF_NOTIFY_RESUME);
+ 			tracehook_notify_resume(regs);
+-			rseq_handle_notify_resume(regs);
++			rseq_handle_notify_resume(NULL, regs);
+ 		}
+ 
+ 		if (cached_flags & _TIF_USER_RETURN_NOTIFY)
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 445ca11ff863..8affeeb74935 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -692,7 +692,7 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 	 * Increment event counter and perform fixup for the pre-signal
+ 	 * frame.
+ 	 */
+-	rseq_signal_deliver(regs);
++	rseq_handle_notify_resume(ksig, regs);
+ 
+ 	/* Set up the stack frame */
+ 	if (is_ia32_frame(ksig)) {
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 87bf02d93a27..fd23a540cd8d 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1799,20 +1799,19 @@ static inline void rseq_set_notify_resume(struct task_struct *t)
+ 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+ }
+ 
+-void __rseq_handle_notify_resume(struct pt_regs *regs);
++void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+ 
+-static inline void rseq_handle_notify_resume(struct pt_regs *regs)
++static inline void rseq_handle_notify_resume(struct ksignal *ksig,
++					     struct pt_regs *regs)
+ {
+-	if (current->rseq)
+-		__rseq_handle_notify_resume(regs);
+-}
++	if (ksig) {
++		preempt_disable();
++		__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
++		preempt_enable();
++	}
+ 
+-static inline void rseq_signal_deliver(struct pt_regs *regs)
+-{
+-	preempt_disable();
+-	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
+-	preempt_enable();
+-	rseq_handle_notify_resume(regs);
++	if (current->rseq)
++		__rseq_handle_notify_resume(ksig, regs);
+ }
+ 
+ /* rseq_preempt() requires preemption to be disabled. */
+@@ -1864,10 +1863,8 @@ static inline void rseq_execve(struct task_struct *t)
+ static inline void rseq_set_notify_resume(struct task_struct *t)
+ {
+ }
+-static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+-{
+-}
+-static inline void rseq_signal_deliver(struct pt_regs *regs)
++static inline void rseq_handle_notify_resume(struct ksignal *ksig,
++					     struct pt_regs *regs)
+ {
+ }
+ static inline void rseq_preempt(struct task_struct *t)
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index ae306f90c514..22b6acf1ad63 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -251,10 +251,10 @@ static int rseq_ip_fixup(struct pt_regs *regs)
+  * respect to other threads scheduled on the same CPU, and with respect
+  * to signal handlers.
+  */
+-void __rseq_handle_notify_resume(struct pt_regs *regs)
++void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+ {
+ 	struct task_struct *t = current;
+-	int ret;
++	int ret, sig;
+ 
+ 	if (unlikely(t->flags & PF_EXITING))
+ 		return;
+@@ -268,7 +268,8 @@ void __rseq_handle_notify_resume(struct pt_regs *regs)
+ 	return;
+ 
+ error:
+-	force_sig(SIGSEGV, t);
++	sig = ksig ? ksig->sig : 0;
++	force_sigsegv(sig, t);
+ }
+ 
+ #ifdef CONFIG_DEBUG_RSEQ
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.1.4
+
