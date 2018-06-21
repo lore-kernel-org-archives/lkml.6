@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF73C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80F8C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F4E20837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F4E20837
+	by mail.kernel.org (Postfix) with ESMTP id 6C1DC20837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 01:53:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1DC20837
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754624AbeFUBxM (ORCPT
+        id S1754712AbeFUBxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 20 Jun 2018 21:53:12 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:40070 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754420AbeFUBxE (ORCPT
+        Wed, 20 Jun 2018 21:53:41 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:38322 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754625AbeFUBxM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 20 Jun 2018 21:53:04 -0400
-Received: by mail-pg0-f66.google.com with SMTP id w8-v6so639124pgp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:53:04 -0700 (PDT)
+        Wed, 20 Jun 2018 21:53:12 -0400
+Received: by mail-pf0-f195.google.com with SMTP id b74-v6so687068pfl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Jun 2018 18:53:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6Nsp0g8YXr2r0a/RUnmIzUqht+fwpZClvdZQU3BCvCY=;
-        b=Gx0RX88YCixHx+bFFgFAHWMPOcF/tIOX4kO8nSr+ubFFb/jUI/m+Z50zQqzWoV5akv
-         KMWtn5EiCRMJHzLO1Y/IGHiq3ZM9NZg02pCOyZhk239AwlFCHm+0cTJWGpvFziaDtrrB
-         SLbD2N3Xt79VktuS5iKaKrmJs9rAKlpavB0F0Luaf5+WAaLQNV9vPqRyk+LKWE2ZbzmN
-         cWJejaXgRzTtPytH1DIEb4C51a6WLi5HrJKPWFXGOJ4lKPtzRU4FfiOk9vouJdFGypi3
-         1FWpX3qsZXB34LOs9Kd5J6EXjA/wdvsdBHvY7YW3s47emxxs2hS/1JnN1/CiewmkMwsC
-         uOQw==
-X-Gm-Message-State: APt69E1LzcV7mtLOloAkx8xnK/bCXeWt+wDPcH7hN0KuqTgUEaHuKNvS
-        1naEhurXx2cbI3hUTYwatY51YA==
-X-Google-Smtp-Source: ADUXVKLUlDpx9rB6bF8Ra/Sp6wLJqRq8lLMW6cIjVHsi/Ysat69kLRcOrU8XN+EmLivnzCcemihvRA==
-X-Received: by 2002:a62:ca99:: with SMTP id y25-v6mr25075350pfk.187.1529545983551;
-        Wed, 20 Jun 2018 18:53:03 -0700 (PDT)
+        bh=eNU51yjQ+sbmP/gaQ7xE6DCoKhrY5SF7m+blOGUlUtA=;
+        b=Y4CLRb4RVESdYLRdhxxqczpk4Gz6b13ZFlUn7m/gg/V9ujZ6MLbKNdofAlkGqGtmcz
+         6CCBbkgHiXiVJd3feikuHLR/ZpCpWI94BtzoQfAcWV/R46UJqpVpl7KqdP0BhDfIhMNe
+         H21vFEz4EmqYv2jM1BeTNtQ8bcLZK0LTYZ2xTatMR6dJqitfqw4yNwjqrDp7i7Vo8l1G
+         1ndQP9DrYOK9eWP1gn3xmu2fJ629g8VZAfqHE/es+BXcfgNDzmTFhHil4KelFfxuyInL
+         Pah0khO4e1SNORxouYi/7WBYcoTrruSoSbkElPeiQH52vdGW+H3/Kx2F/zymoNRYEeX6
+         /XeA==
+X-Gm-Message-State: APt69E1VJjN2E00inVuCE8VO6AK3MdaMMPaKkIgTxSIWjHSjZBZ12U58
+        kUNd+Lido2dN4orrprmlvsayZQ==
+X-Google-Smtp-Source: ADUXVKLq8W+PyONR2JwsWMZfNSqXD8+Xul6LUSPgcIkQ1QBQEy4znZYd7AIEUqmfLH0buGz9yAymhQ==
+X-Received: by 2002:a65:6141:: with SMTP id o1-v6mr20520172pgv.409.1529545991617;
+        Wed, 20 Jun 2018 18:53:11 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id p12-v6sm6585877pfi.175.2018.06.20.18.53.02
+        by smtp.gmail.com with ESMTPSA id p12-v6sm6585877pfi.175.2018.06.20.18.53.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Jun 2018 18:53:02 -0700 (PDT)
+        Wed, 20 Jun 2018 18:53:10 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
@@ -63,9 +63,9 @@ Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Benson Leung <bleung@chromium.org>,
         Olof Johansson <olof@lixom.net>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 07/12] PM / devfreq: export devfreq_class
-Date:   Wed, 20 Jun 2018 18:52:32 -0700
-Message-Id: <20180621015237.100100-8-mka@chromium.org>
+Subject: [PATCH v4 12/12] mfd: cros_ec: Add throttler sub-device
+Date:   Wed, 20 Jun 2018 18:52:37 -0700
+Message-Id: <20180621015237.100100-13-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.rc2.346.g013aa6912e-goog
 In-Reply-To: <20180621015237.100100-1-mka@chromium.org>
 References: <20180621015237.100100-1-mka@chromium.org>
@@ -74,53 +74,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Exporting the device class allows other parts of the kernel to enumerate
-the devfreq devices and receive notification when a devfreq device is
-added or removed.
+Instantiate the CrOS EC throttler if it is enabled in the kernel
+configuration.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
 ---
 Changes in v4:
-- added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
+- register throttler in cros_ec_dev.c instead of cros_ec.c
 
 Changes in v3:
-- none
-
-Changes in v2:
 - patch added to series
 ---
- drivers/devfreq/devfreq.c | 3 ++-
- include/linux/devfreq.h   | 2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/mfd/cros_ec_dev.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 4cbaa7ad1972..38b90b64fc6e 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -31,7 +31,8 @@
- #define MAX(a,b)	((a > b) ? a : b)
- #define MIN(a,b)	((a < b) ? a : b)
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index eafd06f62a3a..9e56c2793075 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -383,6 +383,22 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
+ 	kfree(msg);
+ }
  
--static struct class *devfreq_class;
-+struct class *devfreq_class;
-+EXPORT_SYMBOL_GPL(devfreq_class);
- 
- /*
-  * devfreq core provides delayed work based load monitoring helper
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index c4f84a769cb5..964e064a951f 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -206,6 +206,8 @@ struct devfreq_freqs {
- };
- 
- #if defined(CONFIG_PM_DEVFREQ)
-+extern struct class *devfreq_class;
++static const struct mfd_cell ec_throttler_cells[] = {
++	{ .name = "cros-ec-throttler" }
++};
 +
- extern struct devfreq *devfreq_add_device(struct device *dev,
- 				  struct devfreq_dev_profile *profile,
- 				  const char *governor_name,
++static void cros_ec_throttler_register(struct cros_ec_dev *ec)
++{
++	int ret;
++
++	ret = mfd_add_devices(ec->dev, 0, ec_throttler_cells,
++			      ARRAY_SIZE(ec_throttler_cells),
++			      NULL, 0, NULL);
++	if (ret)
++		dev_err(ec->dev,
++			"failed to add cros-ec-throttler device: %d\n", ret);
++}
++
+ static int ec_device_probe(struct platform_device *pdev)
+ {
+ 	int retval = -ENOMEM;
+@@ -422,6 +438,9 @@ static int ec_device_probe(struct platform_device *pdev)
+ 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE))
+ 		cros_ec_sensors_register(ec);
+ 
++	if (IS_ENABLED(CONFIG_CROS_EC_THROTTLER))
++		cros_ec_throttler_register(ec);
++
+ 	/* Take control of the lightbar from the EC. */
+ 	lb_manual_suspend_ctrl(ec, 1);
+ 
 -- 
 2.18.0.rc2.346.g013aa6912e-goog
 
