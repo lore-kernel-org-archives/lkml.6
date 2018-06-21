@@ -2,101 +2,260 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE21C43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B12C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D28208A5
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15DDA208A5
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 15:18:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qgsdy+a+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qgsdy+a+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D28208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNQq5zpc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15DDA208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933262AbeFUPRU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 11:17:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53196 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932847AbeFUPRS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 11:17:18 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D022D605BD; Thu, 21 Jun 2018 15:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529594237;
-        bh=KrXvSLn0XNU+G48byX8Rk2mvBzAjFGIy54DTqXih5X4=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Qgsdy+a+BAYGItP7FmJZ52GyOx329j8hh+DEcx1lif6CFx4H33nGQJj4dRqt3cjP4
-         jo7eE0u2irO2vU56RRiiHb8cbjgzarfGzmPM7efkRQF4jwwkTMKALlG9f1dCH6bC8h
-         x31PvdbVfApejWxOD+yuUy1lAE2DrUmv/SVXG1d4=
-Received: from mail-oi0-f48.google.com (mail-oi0-f48.google.com [209.85.218.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S933351AbeFUPSG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 11:18:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933277AbeFUPSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 11:18:03 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: timur@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2486660AFF;
-        Thu, 21 Jun 2018 15:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529594237;
-        bh=KrXvSLn0XNU+G48byX8Rk2mvBzAjFGIy54DTqXih5X4=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Qgsdy+a+BAYGItP7FmJZ52GyOx329j8hh+DEcx1lif6CFx4H33nGQJj4dRqt3cjP4
-         jo7eE0u2irO2vU56RRiiHb8cbjgzarfGzmPM7efkRQF4jwwkTMKALlG9f1dCH6bC8h
-         x31PvdbVfApejWxOD+yuUy1lAE2DrUmv/SVXG1d4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2486660AFF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=timur@codeaurora.org
-Received: by mail-oi0-f48.google.com with SMTP id c6-v6so3288248oiy.0;
-        Thu, 21 Jun 2018 08:17:17 -0700 (PDT)
-X-Gm-Message-State: APt69E3aJzKS5qV9kgabzwL9d7+A7P/uzxKxCQk3PuetMCmKYrNtUHOt
-        06t4y4VIX9nIGyjm3XKxMxFBqARUFB4WGMb6zZI=
-X-Google-Smtp-Source: ADUXVKKm+Yz7ZcRHXuOBWJ8jwuoY2i5S7YxRTYyobXkgs9hzdZqgZeCXyVAsx3WG4QqrwObxySnCZSqZTgV/eZnt5Nw=
-X-Received: by 2002:aca:605:: with SMTP id 5-v6mr15110192oig.297.1529594236494;
- Thu, 21 Jun 2018 08:17:16 -0700 (PDT)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51C90208B3;
+        Thu, 21 Jun 2018 15:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529594282;
+        bh=dcueS+kf0phV7Sm/ORsErYMKTpTAeh5PBLkPmVHx/aI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qNQq5zpc9xsc2o6NGSOFA0LnV7GiNfiPJsbzY9mNhudRJNIDtdMsryM2LZmVK4h2p
+         1sUTS6359nuvmg1cQ2E3qHmXTCQOQuwMRYq6tgDICAScQBWEx1nnQ5sqMuaMaheDvk
+         V9rWNRKbmLAbUF2daurU9J1B4SzVRLzloq6Rcw/E=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 48BEA1401E5; Thu, 21 Jun 2018 12:18:00 -0300 (-03)
+Date:   Thu, 21 Jun 2018 12:18:00 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Kim Phillips <kim.phillips@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Hendrik =?iso-8859-1?Q?Br=FCckner?= 
+        <brueckner@linux.vnet.ibm.com>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>
+Subject: Re: [PATCH 2/2] perf test shell: make perf inet_pton test more
+ portable
+Message-ID: <20180621151800.GU20477@kernel.org>
+References: <20180619184952.dac6a3a1e39d3b1d255e7119@arm.com>
+ <20180620134622.GM20477@kernel.org>
+ <20180620194546.364cc109430ac51c5a288739@arm.com>
+ <20180621141915.GS20477@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a9d:4b11:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 08:17:15
- -0700 (PDT)
-In-Reply-To: <20180619095430.26358-1-vkoul@kernel.org>
-References: <20180619095430.26358-1-vkoul@kernel.org>
-From:   Timur Tabi <timur@codeaurora.org>
-Date:   Thu, 21 Jun 2018 10:17:15 -0500
-X-Gmail-Original-Message-ID: <CAOZdJXUgYpLT=xMos4wKxMOTOZb8rV8is48YjGB8_9okZsuvhQ@mail.gmail.com>
-Message-ID: <CAOZdJXUgYpLT=xMos4wKxMOTOZb8rV8is48YjGB8_9okZsuvhQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] hwrng: Add support for qcpm v2 hwrng
-To:     Vinod Koul <vinod.koul@linaro.org>
-Cc:     linux-crypto@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180621141915.GS20477@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 4:54 AM, Vinod Koul <vinod.koul@linaro.org> wrote:
-> This series adds support for newer version of hwrng as found in
-> Qualcomm SoCs. To do that add new v2 compatible string and driver_data
-> values for v2.
+Em Thu, Jun 21, 2018 at 11:19:15AM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, Jun 20, 2018 at 07:45:46PM -0500, Kim Phillips escreveu:
+> > On Wed, 20 Jun 2018 10:46:22 -0300
+> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > 
+> > > Em Tue, Jun 19, 2018 at 06:49:52PM -0500, Kim Phillips escreveu:
+> > > > Debian based systems such as Ubuntu have dash as their default shell.
+> > > > Even if the normal or root user's shell is bash, certain scripts still
+> > > > call /bin/sh, which points to dash, so we fix this perf test by
+> > > > rewriting it in a more portable way.
+> > > 
+> > > Isn't it better to just make /bin/bash a requirement for these tests?
+> > 
+> > Perf is more bug-prone in distributions other than its main developers'
+> > distributions, and when its own built-in tests start depending on those
+> > same (primary) distributions' preferences, tests start to get skipped
+> > on the secondary ones, which start to get subsequently ignored and
+> 
+> That is a valid concern, I test build it on many, many distros, running
+> 'perf test' in all of them was always in the backlog, I guess this is
+> the time for me to try and have it running on them all, running
+> privileged containers so that all the tests can run there, perhaps some
+> will need to be tweaked to skip when running on a container environment,
+> hopefully not.
+> 
+> For reference, before pushing upstream all these environments are test
+> built, many with all the devel libraries to exercise building with all
+> the features present in the codebase, both with and without libelf, with
+> gcc and when available, with clang as well:
+> 
+>    1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
+>    2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
+>    3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
+>    4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+>    5 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
+>    6 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11)
+>    7 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+>    8 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+>    9 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+>   10 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+>   11 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
+>   12 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
+>   13 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
+>   14 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
+>   15 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+>   16 debian:experimental           : Ok   gcc (Debian 7.3.0-15) 7.3.0
+>   17 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 7.3.0-15) 7.3.0
+>   18 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 7.3.0-19) 7.3.0
+>   19 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 7.3.0-18) 7.3.0
+>   20 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 7.3.0-20) 7.3.0
+>   21 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
+>   22 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
+>   23 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+>   24 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+>   25 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
+>   26 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
+>   27 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+>   28 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+>   29 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+>   30 fedora:28                     : Ok   gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
+>   31 fedora:rawhide                : Ok   gcc (GCC) 8.0.1 20180324 (Red Hat 8.0.1-0.20)
+>   32 gentoo-stage3-amd64:latest    : Ok   gcc (Gentoo 6.4.0-r1 p1.3) 6.4.0
+>   33 mageia:5                      : Ok   gcc (GCC) 4.9.2
+>   34 mageia:6                      : Ok   gcc (Mageia 5.5.0-1.mga6) 5.5.0
+>   35 opensuse:42.1                 : Ok   gcc (SUSE Linux) 4.8.5
+>   36 opensuse:42.2                 : Ok   gcc (SUSE Linux) 4.8.5
+>   37 opensuse:42.3                 : Ok   gcc (SUSE Linux) 4.8.5
+>   38 opensuse:tumbleweed           : Ok   gcc (SUSE Linux) 7.3.1 20180323 [gcc-7-branch revision 258812]
+>   39 oraclelinux:6                 : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18.0.7)
+>   40 oraclelinux:7                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28.0.1)
+>   41 ubuntu:12.04.5                : Ok   gcc (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3
+>   42 ubuntu:14.04.4                : Ok   gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4
+>   43 ubuntu:14.04.4-x-linaro-arm64 : Ok   aarch64-linux-gnu-gcc (Linaro GCC 5.4-2017.05) 5.4.1 20170404
+>   44 ubuntu:15.04                  : Ok   gcc (Ubuntu 4.9.2-10ubuntu13) 4.9.2
+>   45 ubuntu:16.04                  : Ok   gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>   46 ubuntu:16.04-x-arm            : Ok   arm-linux-gnueabihf-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>   47 ubuntu:16.04-x-arm64          : Ok   aarch64-linux-gnu-gcc (Ubuntu/Linaro 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>   48 ubuntu:16.04-x-powerpc        : Ok   powerpc-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>   49 ubuntu:16.04-x-powerpc64      : Ok   powerpc64-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>   50 ubuntu:16.04-x-powerpc64el    : Ok   powerpc64le-linux-gnu-gcc (Ubuntu/IBM 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>   51 ubuntu:16.04-x-s390           : Ok   s390x-linux-gnu-gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+>   52 ubuntu:16.10                  : Ok   gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
+>   53 ubuntu:17.04                  : Ok   gcc (Ubuntu 6.3.0-12ubuntu2) 6.3.0 20170406
+>   54 ubuntu:17.10                  : Ok   gcc (Ubuntu 7.2.0-8ubuntu3.2) 7.2.0
+>   55 ubuntu:18.04                  : Ok   gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0
+> 
+> So I'll try running it on the non-cross-builds (x-something) containers,
+> because so far I'm just running these on x86_64 as the host machine.
+> 
+> > become acceptable to testers, which is a whole pattern I'd like to
+> > avoid if at all possible.  I'd eventually like to see the real perf run
+> 
+> Agreed.
+> 
+> > on Android, for example, and adding bash to Android is nontrivial,
+> > AFAICT.
+> 
+> Fair enough.
+>  
+> > > I think the alternative is cryptic :-\
+> > 
+> > I think that's because of the fake array stuff, which technically isn't
+> > needed by design.  How about something like the following?
+> 
+> Thanks for trying to address my concern, looking...
+>  
+> > diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+> > index 263057039693..d5cceaeba42d 100755
+> > --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+> > +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+> > @@ -14,20 +14,21 @@ libc=$(grep -w libc /proc/self/maps | head -1 | sed -r 's/.*[[:space:]](\/.*)/\1
+> >  nm -Dg $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+> >  
+> >  trace_libc_inet_pton_backtrace() {
+> > +       newline='\n'
+> >         idx=0
+> > -       expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
+> > -       expected[1]=".*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+> > +       expected="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
+> > +       expected="${expected}${newline}.*inet_pton\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
 
-It's amazing you're sending this now, because I also have a PRNG
-patchset that I'm sending out today that adds support for v2 chips on
-an ACPI platform.
+Ok, seems to be the common ground, unfortunately expected+="${newline}..."
+is not present in dash :-\
 
-I'll send my patches as-is, and we'll just have to work to resolve the
-merge conflicts.
+[root@jouet ~]# a="AA "
+[root@jouet ~]# a+="BB "
+[root@jouet ~]# echo $a
+AA BB
+[root@jouet ~]# dash
+# a="AA "
+# a+="BB "
+dash: 2: a+=BB : not found
+# let a+="BB "
+dash: 3: let: not found
+# a="AA "
+# a="${a} BB "
+# echo $a
+AA BB
+# 
 
-I will probably need you to test my patches as my last day at Qualcomm
-is the 26th.
+Would be good if we had some utility that given a two files, one with
+regexps, could tell if, line by line, those expressions matched, better,
+one that is present in all these OSes...
 
--- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+- Arnaldo
+
+> >         case "$(uname -m)" in
+> >         s390x)
+> >                 eventattr='call-graph=dwarf,max-stack=4'
+> > -               expected[2]="gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+> > -               expected[3]="(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+> > -               expected[4]="main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+> > +               expected="${expected}${newline}gaih_inet.*\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+> > +               expected="${expected}${newline}(__GI_)?getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$"
+> > +               expected="${expected}${newline}main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+> >                 ;;
+> >         *)
+> >                 eventattr='max-stack=3'
+> > -               expected[2]="getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
+> > -               expected[3]=".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+> > +               expected="${expected}${newline}getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$"
+> > +               expected="${expected}${newline}.*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
+> >                 ;;
+> >         esac
+> >  
+> > @@ -35,14 +36,16 @@ trace_libc_inet_pton_backtrace() {
+> >  
+> >         perf record -e probe_libc:inet_pton/$eventattr/ -o $file ping -6 -c 1 ::1 > /dev/null 2>&1
+> >         perf script -i $file | while read line ; do
+> > +               [ -z "${line}" ] && break
+> >                 echo $line
+> > -               echo "$line" | egrep -q "${expected[$idx]}"
+> > +               idx=$((idx + 1))
+> > +               first="$(echo ${expected} | head -$idx | tail -1)"
+> > +               [ -z "${first}" ] && break
+> > +               echo "$line" | egrep -q "$first"
+> >                 if [ $? -ne 0 ] ; then
+> > -                       printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${expected[$idx]}" "$line"
+> > +                       printf "FAIL: expected backtrace entry %d \"%s\" got \"%s\"\n" $idx "${first}" "$line"
+> >                         exit 1
+> >                 fi
+> > -               let idx+=1
+> > -               [ -z "${expected[$idx]}" ] && break
+> >         done
+> >  
+> >         # If any statements are executed from this point onwards,
+> > 
+> > Thanks,
+> > 
+> > Kim
