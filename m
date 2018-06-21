@@ -2,87 +2,166 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D739C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47872C43140
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C698320652
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:27:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA60320652
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 09:29:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HuhiMKTw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C698320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WWo/2kkx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA60320652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932764AbeFUJ1o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 05:27:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54596 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932534AbeFUJ1m (ORCPT
+        id S932799AbeFUJ3z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 05:29:55 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54452 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932534AbeFUJ3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 05:27:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JSOZVtQOypHIPrxa8fKJl9JPZDlOm7if4F1KKmt8WwI=; b=HuhiMKTwtH2WKvve7v73eWhCu
-        c3hRhtjagvoQlXzwr7WIIY6/ZwFoj9ulGutKtuQ/uLQ+cjuWlxtvEmETS8eakjotcpcnio/S/pp4e
-        G2NRjB6jh2DhkhqAutO6RMndfH8sDjBbdGM3AekW7HS7S08WcwIkrWHE8C3mdDtokYvdX+8f2tVbg
-        Cy8o9M9gUk9GdxMKRWhbgiuSkZ8yrpB4ubxsk9ay0OR0LwCpbKoUpAIHtE9j7+qNIaDLATUSdva8U
-        5/QyufwXlgftgwDkWWoFKrTzAatdkSCabLAPQAq/akL1IFgblbOiLF0Da1XwKYfazdMwjjaiMyer5
-        KpUSr69FQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fVvsH-0002e6-Rr; Thu, 21 Jun 2018 09:27:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2C90C2029F1DB; Thu, 21 Jun 2018 11:27:28 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 11:27:28 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v10 2/9] cpuset: Add new v2 cpuset.sched.domain_root flag
-Message-ID: <20180621092728.GV2494@hirez.programming.kicks-ass.net>
-References: <1529295249-5207-1-git-send-email-longman@redhat.com>
- <1529295249-5207-3-git-send-email-longman@redhat.com>
- <20180620142735.GM2494@hirez.programming.kicks-ass.net>
- <b44b0748-9fec-6bb0-7665-435487e5d8b3@redhat.com>
+        Thu, 21 Jun 2018 05:29:53 -0400
+Received: by mail-it0-f66.google.com with SMTP id 76-v6so3702387itx.4
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 02:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=dC8DNJaqPwhJQ7xfiFD6iJvkx6tGtJNjBiI9Ip9ri+I=;
+        b=WWo/2kkx9xCPWvRokPs29r0W3rmZnE+h3gmaIUtygN12rgto6geNYWWrKheBG3zjdn
+         9bCGbmUzW0Qc99wwmHCJR7mtCeUxKUoMRKAzXaoLSSdguF4GqBYDTF3CNlWjgV9bw486
+         aPLOcsmLTc45DkjOmydK2oM1Fh6kCd447s0/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=dC8DNJaqPwhJQ7xfiFD6iJvkx6tGtJNjBiI9Ip9ri+I=;
+        b=jxwqm+Gy+Y0i96JQw0WZ6CsMFEJg6KYIi5xfiDJrVCNtEewhd3g7YC4SnVaHqbKX3D
+         eb/fRiTKIEtO1SzUCJp62RSlz4IddeCs6qjl0DzVFIrOKXEuxZhFNJnhvZjAaS5RK9rS
+         UO6o3mN9l2BKmgXqcXbjhwzx57hOjdZJ2bhhebC3lp+ld5JxKIgo1csIYaGcNBrrkn2K
+         RfxoLxzu4LmHcVm+v9cZP5mJ23UEKksikx2tvmsloyU7pXTsbrAhn+u0CLyjT9onjTvi
+         fqznW/e0VJ5npurKc20WHGJNpNlCe+V0jSpa6gNdpYBnaVLdXs/3zzjVUswgBGLYQcnA
+         kTEw==
+X-Gm-Message-State: APt69E2KuIxSgtwgNnOa0D8VyZt55XUX5Eg515nubGVUmY8L13h8leCY
+        X77EeYd83KNnWMkfS/Pnpkejhbhnehqs2ZMOBCqg0Q==
+X-Google-Smtp-Source: ADUXVKLN+mn858Vcau9zVAtsj/W+bE51xnNO5+kNfzGPXFSo2Izg3kgbEYBIzYPALH8LKEXYOOVkpunB/7kiwHQLBGI=
+X-Received: by 2002:a02:6001:: with SMTP id i1-v6mr20558209jac.5.1529573393042;
+ Thu, 21 Jun 2018 02:29:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b44b0748-9fec-6bb0-7665-435487e5d8b3@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 21 Jun 2018 02:29:52
+ -0700 (PDT)
+In-Reply-To: <70ebe6d7-0745-5606-ae89-8a7b2fb62008@arm.com>
+References: <20180620085755.20045-1-yaojun8558363@gmail.com>
+ <20180620085755.20045-2-yaojun8558363@gmail.com> <CAKv+Gu8_=uTJFDXr0GpGMc=9WZ9tbz305CE6i=qbnqRB=suRVA@mail.gmail.com>
+ <20180621025141.GB11276@toy> <CAKv+Gu_3Cfuq-qQuRHkYCB2uTPOK=KVeVh4OKmtu2MDYwfOtTA@mail.gmail.com>
+ <70ebe6d7-0745-5606-ae89-8a7b2fb62008@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 21 Jun 2018 11:29:52 +0200
+Message-ID: <CAKv+Gu-t5ErL89J=sxeVRYzDNrB1Ejdj+XOggAMWk-gY7ewsOg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] arm64/mm: move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir}
+ to .rodata section
+To:     James Morse <james.morse@arm.com>
+Cc:     Jun Yao <yaojun8558363@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 03:58:06PM +0800, Waiman Long wrote:
-> On 06/20/2018 10:27 PM, Peter Zijlstra wrote:
-> > On Mon, Jun 18, 2018 at 12:14:01PM +0800, Waiman Long wrote:
-> >> +  cpuset.sched.domain_root
-> > Why are we calling this a domain_root and not a partition?
-> 
-> A partition can consist of several cgroups in a tree structure. That
-> flag should only be set at the root of a partition. I will change the
-> name to partition_root if you think this name is acceptable.
+On 21 June 2018 at 10:59, James Morse <james.morse@arm.com> wrote:
+> Hi guys,
+>
+> On 21/06/18 07:39, Ard Biesheuvel wrote:
+>> On 21 June 2018 at 04:51, Jun Yao <yaojun8558363@gmail.com> wrote:
+>>> On Wed, Jun 20, 2018 at 12:09:49PM +0200, Ard Biesheuvel wrote:
+>>>> On 20 June 2018 at 10:57, Jun Yao <yaojun8558363@gmail.com> wrote:
+>>>>> Move {idmap_pg_dir,tramp_pg_dir,swapper_pg_dir} to .rodata
+>>>>> section. And update the swapper_pg_dir by fixmap.
+>>>>>
+>>>>
+>>>> I think we may be able to get away with not mapping idmap_pg_dir and
+>>>> tramp_pg_dir at all.
+>>>
+>>> I think we need to move tramp_pg_dir to .rodata. The attacker can write
+>>> a block-mapping(AP=01) to tramp_pg_dir and then he can access kernel
+>>> memory.
+>
+>> Why does it need to be mapped at all? When do we ever access it from the code?
+>
+> (We would want to make its fixmap entry read-only too)
+>
 
-The flag indicates the 'effective_cpus' things of the current group is a
-partition. The fact that it can have sub-partitions doesn't really
-matter does it.
+It already is.
 
-Just call it 'partition', leave out the whole root stuff, all of cgroup
-is hierarchical and you can have sub-groups we don't go around calling
-everything a root.
+>
+>>>> As for swapper_pg_dir, it would indeed be nice if we could keep those
+>>>> mappings read-only most of the time, but I'm not sure how useful this
+>>>> is if we apply it to the root level only.
+>>>
+>>> The purpose of it is to make 'KSMA' harder, where an single arbitrary
+>>> write is used to add a block mapping to the page-tables, giving the
+>>> attacker full access to kernel memory. That's why we just apply it to
+>>> the root level only. If the attacker can arbitrary write multiple times,
+>>> I think it's hard to defend.
+>>>
+>>
+>> So the assumption is that the root level is more easy to find?
+>> Otherwise, I'm not sure I understand why being able to write a level 0
+>> entry is so harmful, given that we don't have block mappings at that
+>> level.
+>
+> I think this thing assumes 3-level page tables with 39bit VA.
+>
+
+The attack, you mean? Because this code is unlikely to build with that
+configuration, given that __pgd_populate() BUILD_BUG()s in that case.
+
+>
+>>>>> @@ -417,12 +421,22 @@ static void __init __map_memblock(pgd_t *pgdp, phys_addr_t start,
+>>>>>
+>>>>>  void __init mark_linear_text_alias_ro(void)
+>>>>>  {
+>
+>>>>> +       size = (unsigned long)__init_begin - (unsigned long)swapper_pg_end;
+>>>>> +       update_mapping_prot(__pa_symbol(swapper_pg_end),
+>>>>> +                           (unsigned long)lm_alias(swapper_pg_end),
+>>>>> +                           size, PAGE_KERNEL_RO);
+>>>>
+>>>> I don't think this is necessary. Even if some pages are freed, it
+>>>> doesn't harm to keep a read-only alias of them here since the new
+>>>> owner won't access them via this mapping anyway. So we can keep
+>>>> .rodata as a single region.
+>>>
+>>> To be honest, I didn't think of this issue at first. I later found a
+>>> problem when testing the code on qemu:
+>>
+>> OK, you're right. I missed the fact that this operates on the linear
+>> alias, not the kernel mapping itself.
+>>
+>> What I don't like is that we lose the ability to use block mappings
+>> for the entire .rodata section this way. Isn't it possible to move
+>> these pgdirs to the end of the .rodata segment, perhaps by using a
+>> separate input section name and placing that explicitly? We could even
+>> simply forget about freeing those pages, given that [on 4k pages] the
+>> benefit of freeing 12 KB of space is likely to get lost in the
+>> rounding noise anyway [segments are rounded up to 64 KB in size]
+>
+> I assumed that to move swapper_pg_dir into the .rodata section we would need to
+> break it up. Today its ~3 levels, which we setup in head.S, then do a dance in
+> paging_init() so that swapper_pg_dir is always the top level.
+>
+> We could generate all leves of the 'init_pg_dir' in the __initdata section, then
+> copy only the top level into swapper_pg_dir into the rodata section during
+> paging_init().
+>
+
+Is that complexity truly justified for a security sensitive piece of
+code? Can't we just drop the memblock_free() and be done with it?
