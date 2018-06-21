@@ -2,428 +2,142 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E245BC43141
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:41:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A188C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D7820837
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:41:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A9WtU4mJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D7820837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 2185920837
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 08:42:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2185920837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932795AbeFUIlh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 04:41:37 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52870 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754296AbeFUIld (ORCPT
+        id S932819AbeFUIm4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 04:42:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46762 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932636AbeFUImx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 04:41:33 -0400
-X-Greylist: delayed 1555 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Jun 2018 04:41:33 EDT
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5L8FXFI026645;
-        Thu, 21 Jun 2018 03:15:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529568933;
-        bh=Weg7f9qi6x/8kAvKCLew8vFIGtHWXgHu+ifOV7oNdF4=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=A9WtU4mJrQU/R5TXXvS5eYiTDCqtmSIn+SirwTNSxAvKR9Q4tM04PicF4tsJmkzaN
-         ydZdI021EobwZp6OGu7cJRMTeOff1Ia5W2CsXncx0+3frVwV7txPwUhzxZhiVKdwMC
-         vECA1Rf+gR4f2dbdpHR3DcU2LcE06J1qqbmYHL0Q=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8FXx8028807;
-        Thu, 21 Jun 2018 03:15:33 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 21
- Jun 2018 03:15:33 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 21 Jun 2018 03:15:33 -0500
-Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5L8FCTg025379;
-        Thu, 21 Jun 2018 03:15:31 -0500
-From:   Keerthy <j-keerthy@ti.com>
-To:     <t-kristo@ti.com>, <sboyd@kernel.org>, <tony@atomide.com>
-CC:     <linux-clk@vger.kernel.org>, <d-gerlach@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>, Russ Dill <Russ.Dill@ti.com>
-Subject: [PATCH v3 3/4] clk: ti: Add functions to save/restore clk context
-Date:   Thu, 21 Jun 2018 13:45:06 +0530
-Message-ID: <1529568907-19930-4-git-send-email-j-keerthy@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
-References: <1529568907-19930-1-git-send-email-j-keerthy@ti.com>
+        Thu, 21 Jun 2018 04:42:53 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id C9B33277A40
+Subject: Re: [PATCH v2 2/2] cros_ec: Move cros_ec_dev module to drivers/mfd
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Guenter Roeck <groeck@google.com>,
+        lkml <linux-kernel@vger.kernel.org>, thierry.escande@linaro.org,
+        Gwendal Grignou <gwendal@chromium.org>
+References: <1511194526-3729-1-git-send-email-thierry.escande@collabora.com>
+ <1511194526-3729-3-git-send-email-thierry.escande@collabora.com>
+ <CAKdAkRRtv41c-s7vunaBde9Oj8L5b5YdfHcOFEueGYenHV=byg@mail.gmail.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <bb1bc51a-3ff9-a885-7037-55306d1af564@collabora.com>
+Date:   Thu, 21 Jun 2018 10:42:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <CAKdAkRRtv41c-s7vunaBde9Oj8L5b5YdfHcOFEueGYenHV=byg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russ Dill <Russ.Dill@ti.com>
+Hi Dmitry,
 
-SoCs like AM43XX lose clock registers context during RTC-only
-suspend. Hence add functions to save/restore the clock registers
-context.
+I think I can answer some of your questions (not all).
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Russ Dill <Russ.Dill@ti.com>
----
+cc'ing the new Thierry's address and Gwendal.
 
-Changes in v2:
+On 21/06/18 01:05, Dmitry Torokhov wrote:
+> On Mon, Nov 20, 2017 at 8:18 AM Thierry Escande
+> <thierry.escande@collabora.com> wrote:
+>>
+>> The cros_ec_dev module is responsible for registering the MFD devices
+>> attached to the ChromeOS EC. This patch moves this module to drivers/mfd
+>> so calls to mfd_add_devices() are not done from outside the MFD subtree
+>> anymore.
+> 
+> I am quite a bit late to the party, but what's the rationale for not
+> using mfd_add_devices() from outside of MFD tree? We do allow
+> registering i2c clients from outside of i2c core, and spi from outside
+> of spi core, etc, etc.
+> 
 
-        * Replaced clk_dflt_restore instances to clk_gate_restore_context
+What I can say here is that when I tried to use mfd_add_devices outside the mfd
+Lee has the preference to not to do this. That's the main reason why we moved
+cros_ec_dev to mfd subsystem. The origin of this discussion started here [1] and
+iirc after talk with Lee via irc he was not agree to use mfd_add_devices outside
+the mfd subsystem (Lee correct me if I am wrong). So, is Lee who can add the
+reasoning here.
 
- drivers/clk/ti/clock.h    |   2 +
- drivers/clk/ti/divider.c  |  36 ++++++++++++++
- drivers/clk/ti/dpll.c     |   6 +++
- drivers/clk/ti/dpll3xxx.c | 124 ++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/ti/gate.c     |   3 ++
- drivers/clk/ti/mux.c      |  29 +++++++++++
- include/linux/clk/ti.h    |   6 +++
- 7 files changed, 206 insertions(+)
+[1] https://www.spinics.net/lists/kernel/msg2465099.html
 
-diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
-index b582780..26fbdf2 100644
---- a/drivers/clk/ti/clock.h
-+++ b/drivers/clk/ti/clock.h
-@@ -24,6 +24,7 @@ struct clk_omap_divider {
- 	u8			flags;
- 	s8			latch;
- 	const struct clk_div_table	*table;
-+	u32		context;
- };
- 
- #define to_clk_omap_divider(_hw) container_of(_hw, struct clk_omap_divider, hw)
-@@ -36,6 +37,7 @@ struct clk_omap_mux {
- 	u8			shift;
- 	s8			latch;
- 	u8			flags;
-+	u8			saved_parent;
- };
- 
- #define to_clk_omap_mux(_hw) container_of(_hw, struct clk_omap_mux, hw)
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index aaa277d..4418e0d 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -268,10 +268,46 @@ static int ti_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
-+/**
-+ * clk_divider_save_context - Save the divider value
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Save the divider value
-+ */
-+static int clk_divider_save_context(struct clk_hw *hw)
-+{
-+	struct clk_omap_divider *divider = to_clk_omap_divider(hw);
-+	u32 val;
-+
-+	val = ti_clk_ll_ops->clk_readl(&divider->reg) >> divider->shift;
-+	divider->context = val & div_mask(divider);
-+
-+	return 0;
-+}
-+
-+/**
-+ * clk_divider_restore_context - restore the saved the divider value
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the saved the divider value
-+ */
-+static void clk_divider_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_omap_divider *divider = to_clk_omap_divider(hw);
-+	u32 val;
-+
-+	val = ti_clk_ll_ops->clk_readl(&divider->reg);
-+	val &= ~(div_mask(divider) << divider->shift);
-+	val |= divider->context << divider->shift;
-+	ti_clk_ll_ops->clk_writel(val, &divider->reg);
-+}
-+
- const struct clk_ops ti_clk_divider_ops = {
- 	.recalc_rate = ti_clk_divider_recalc_rate,
- 	.round_rate = ti_clk_divider_round_rate,
- 	.set_rate = ti_clk_divider_set_rate,
-+	.save_context = clk_divider_save_context,
-+	.restore_context = clk_divider_restore_context,
- };
- 
- static struct clk *_register_divider(struct device *dev, const char *name,
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 7d33ca9..b1c4d8a 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -39,6 +39,8 @@
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap4_dpll_regm4xen_determine_rate,
- 	.get_parent	= &omap2_init_dpll_parent,
-+	.save_context	= &omap3_core_dpll_save_context,
-+	.restore_context = &omap3_core_dpll_restore_context,
- };
- #else
- static const struct clk_ops dpll_m4xen_ck_ops = {};
-@@ -62,6 +64,8 @@
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
- 	.get_parent	= &omap2_init_dpll_parent,
-+	.save_context	= &omap3_noncore_dpll_save_context,
-+	.restore_context = &omap3_noncore_dpll_restore_context,
- };
- 
- static const struct clk_ops dpll_no_gate_ck_ops = {
-@@ -72,6 +76,8 @@
- 	.set_parent	= &omap3_noncore_dpll_set_parent,
- 	.set_rate_and_parent	= &omap3_noncore_dpll_set_rate_and_parent,
- 	.determine_rate	= &omap3_noncore_dpll_determine_rate,
-+	.save_context	= &omap3_noncore_dpll_save_context,
-+	.restore_context = &omap3_noncore_dpll_restore_context
- };
- #else
- static const struct clk_ops dpll_core_ck_ops = {};
-diff --git a/drivers/clk/ti/dpll3xxx.c b/drivers/clk/ti/dpll3xxx.c
-index 4534de2..44b6b64 100644
---- a/drivers/clk/ti/dpll3xxx.c
-+++ b/drivers/clk/ti/dpll3xxx.c
-@@ -782,6 +782,130 @@ unsigned long omap3_clkoutx2_recalc(struct clk_hw *hw,
- 	return rate;
- }
- 
-+/**
-+ * omap3_core_dpll_save_context - Save the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Before the dpll registers are lost save the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+int omap3_core_dpll_save_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		dd->last_rounded_m = (v & dd->mult_mask) >>
-+						__ffs(dd->mult_mask);
-+		dd->last_rounded_n = ((v & dd->div1_mask) >>
-+						__ffs(dd->div1_mask)) + 1;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * omap3_core_dpll_restore_context - restore the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+void omap3_core_dpll_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	const struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		_omap3_dpll_write_clken(clk, 0x4);
-+		_omap3_wait_dpll_status(clk, 0);
-+
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		v &= ~(dd->mult_mask | dd->div1_mask);
-+		v |= dd->last_rounded_m << __ffs(dd->mult_mask);
-+		v |= (dd->last_rounded_n - 1) << __ffs(dd->div1_mask);
-+		ti_clk_ll_ops->clk_writel(v, &dd->mult_div1_reg);
-+
-+		_omap3_dpll_write_clken(clk, DPLL_LOCKED);
-+		_omap3_wait_dpll_status(clk, 1);
-+	} else {
-+		_omap3_dpll_write_clken(clk, clk->context);
-+	}
-+}
-+
-+/**
-+ * omap3_non_core_dpll_save_context - Save the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Before the dpll registers are lost save the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+int omap3_noncore_dpll_save_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	struct dpll_data *dd;
-+	u32 v;
-+
-+	dd = clk->dpll_data;
-+
-+	v = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	clk->context = (v & dd->enable_mask) >> __ffs(dd->enable_mask);
-+
-+	if (clk->context == DPLL_LOCKED) {
-+		v = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+		dd->last_rounded_m = (v & dd->mult_mask) >>
-+						__ffs(dd->mult_mask);
-+		dd->last_rounded_n = ((v & dd->div1_mask) >>
-+						__ffs(dd->div1_mask)) + 1;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * omap3_core_dpll_restore_context - restore the m and n values of the divider
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the last rounded rate m and n
-+ * and the enable mask.
-+ */
-+void omap3_noncore_dpll_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_hw_omap *clk = to_clk_hw_omap(hw);
-+	const struct dpll_data *dd;
-+	u32 ctrl, mult_div1;
-+
-+	dd = clk->dpll_data;
-+
-+	ctrl = ti_clk_ll_ops->clk_readl(&dd->control_reg);
-+	mult_div1 = ti_clk_ll_ops->clk_readl(&dd->mult_div1_reg);
-+
-+	if (clk->context == ((ctrl & dd->enable_mask) >>
-+			     __ffs(dd->enable_mask)) &&
-+	    dd->last_rounded_m == ((mult_div1 & dd->mult_mask) >>
-+				   __ffs(dd->mult_mask)) &&
-+	    dd->last_rounded_n == ((mult_div1 & dd->div1_mask) >>
-+				   __ffs(dd->div1_mask)) + 1) {
-+		/* nothing to be done */
-+		return;
-+	}
-+
-+	if (clk->context == DPLL_LOCKED)
-+		omap3_noncore_dpll_program(clk, 0);
-+	else
-+		_omap3_dpll_write_clken(clk, clk->context);
-+}
-+
- /* OMAP3/4 non-CORE DPLL clkops */
- const struct clk_hw_omap_ops clkhwops_omap3_dpll = {
- 	.allow_idle	= omap3_dpll_allow_idle,
-diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-index 935b2de..2453b36 100644
---- a/drivers/clk/ti/gate.c
-+++ b/drivers/clk/ti/gate.c
-@@ -33,6 +33,7 @@
- 	.init		= &omap2_init_clk_clkdm,
- 	.enable		= &omap2_clkops_enable_clkdm,
- 	.disable	= &omap2_clkops_disable_clkdm,
-+	.restore_context = clk_gate_restore_context,
- };
- 
- const struct clk_ops omap_gate_clk_ops = {
-@@ -40,6 +41,7 @@
- 	.enable		= &omap2_dflt_clk_enable,
- 	.disable	= &omap2_dflt_clk_disable,
- 	.is_enabled	= &omap2_dflt_clk_is_enabled,
-+	.restore_context = clk_gate_restore_context,
- };
- 
- static const struct clk_ops omap_gate_clk_hsdiv_restore_ops = {
-@@ -47,6 +49,7 @@
- 	.enable		= &omap36xx_gate_clk_enable_with_hsdiv_restore,
- 	.disable	= &omap2_dflt_clk_disable,
- 	.is_enabled	= &omap2_dflt_clk_is_enabled,
-+	.restore_context = clk_gate_restore_context,
- };
- 
- /**
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index 69a4308..5749b2b 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -91,10 +91,39 @@ static int ti_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
- 
-+/**
-+ * clk_mux_save_context - Save the parent selcted in the mux
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Save the parent mux value.
-+ */
-+static int clk_mux_save_context(struct clk_hw *hw)
-+{
-+	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
-+
-+	mux->saved_parent = ti_clk_mux_get_parent(hw);
-+	return 0;
-+}
-+
-+/**
-+ * clk_mux_restore_context - Restore the parent in the mux
-+ * @hw: pointer  struct clk_hw
-+ *
-+ * Restore the saved parent mux value.
-+ */
-+static void clk_mux_restore_context(struct clk_hw *hw)
-+{
-+	struct clk_omap_mux *mux = to_clk_omap_mux(hw);
-+
-+	ti_clk_mux_set_parent(hw, mux->saved_parent);
-+}
-+
- const struct clk_ops ti_clk_mux_ops = {
- 	.get_parent = ti_clk_mux_get_parent,
- 	.set_parent = ti_clk_mux_set_parent,
- 	.determine_rate = __clk_mux_determine_rate,
-+	.save_context = clk_mux_save_context,
-+	.restore_context = clk_mux_restore_context,
- };
- 
- static struct clk *_register_mux(struct device *dev, const char *name,
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index a8faa38..c1b13bb 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -159,6 +159,7 @@ struct clk_hw_omap {
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
- 	const struct clk_hw_omap_ops	*ops;
-+	u32			context;
- };
- 
- /*
-@@ -293,6 +294,11 @@ struct ti_clk_features {
- 
- void ti_clk_setup_features(struct ti_clk_features *features);
- const struct ti_clk_features *ti_clk_get_features(void);
-+int omap3_noncore_dpll_save_context(struct clk_hw *hw);
-+void omap3_noncore_dpll_restore_context(struct clk_hw *hw);
-+
-+int omap3_core_dpll_save_context(struct clk_hw *hw);
-+void omap3_core_dpll_restore_context(struct clk_hw *hw);
- 
- extern const struct clk_hw_omap_ops clkhwops_omap2xxx_dpll;
- 
--- 
-1.9.1
+> Right now I see cros_ec being split, quite haphazardly, between
+> drivers/platform/chrome and drivers/mfd, with some transport drivers
+> (i2C, SPI) and some interfaces living in MFD, while LPC transport and
+> host of other stuff living in drivers/platform. On top of that we have
+> cros_ec_keyb in input, RTC drivers, CEC, and god knows what else
+> spread across various subsystems:
+> 
 
+Move the transport driver to platform/chrome is on my TODO, I didn't send the
+patches to upstream yet, sorry about that.
+
+About having the driver spread across various subsystem I don't have a hard
+opinion. I suppose that this is because is the common way for mfd cells,
+although, in this case, it is true that the drivers are very ChromeOS specific,
+so maybe has sense have all in platform/chrome. On the other side, if you put
+all in platform/chrome you will probably lost the advantage of have the
+maintainer of the subsytem reviewing the patches (just because he filters the
+drivers that doesn't go their subsystem).
+
+> dtor@dtor-ws:~/kernel/linus $ find -name 'cros_ec*.c'
+> ./drivers/iio/light/cros_ec_light_prox.c
+> ./drivers/iio/accel/cros_ec_accel_legacy.c
+> ./drivers/iio/pressure/cros_ec_baro.c
+> ./drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> ./drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
+> ./drivers/mfd/cros_ec_spi.c
+> ./drivers/mfd/cros_ec.c
+> ./drivers/mfd/cros_ec_i2c.c
+> ./drivers/mfd/cros_ec_dev.c
+> ./drivers/input/keyboard/cros_ec_keyb.c
+> ./drivers/platform/chrome/cros_ec_vbc.c
+> ./drivers/platform/chrome/cros_ec_debugfs.c
+> ./drivers/platform/chrome/cros_ec_lpc.c
+> ./drivers/platform/chrome/cros_ec_lightbar.c
+> ./drivers/platform/chrome/cros_ec_lpc_reg.c
+> ./drivers/platform/chrome/cros_ec_proto.c
+> ./drivers/platform/chrome/cros_ec_lpc_mec.c
+> ./drivers/platform/chrome/cros_ec_sysfs.c
+> 
+> The fact that sysfs/debugfs code is in platform but we instantiate it
+> from MFD is pure madness (it's driver private data, there is no reason
+> why it should be exported to nclude/linux/mfd/cros_ec.h). This all
+> creates unnecessary friction and I would love to move most of the code
+> into drivers/platform/chrome.
+> 
+
+Ack.
+
+> I see the wisdom of having code that could potentially be used in
+> several systems in respective subsystems code (pretty much majority of
+> drivers/mfd/ drivers are for chips/IP blocks that are used and reused
+> by different systems and boards), but I think cros ec is quite
+> different in that regard as it is only used by ChromeOS devices and
+> has little to no chance to be useful anywhere else.
+> 
+> Thanks.
+> 
+
+Cheers,
+ Enric
