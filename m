@@ -2,108 +2,123 @@ Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0A5C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 616E4C43143
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D49C82238A
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:21:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D49C82238A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id F2E2821EEF
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 20:23:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E2821EEF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933292AbeFUUVu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 16:21:50 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39738 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932686AbeFUUVt (ORCPT
+        id S933379AbeFUUXo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 16:23:44 -0400
+Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:45053 "EHLO
+        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932940AbeFUUXn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 16:21:49 -0400
-Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fW65R-00042S-8x; Thu, 21 Jun 2018 22:21:45 +0200
-Date:   Thu, 21 Jun 2018 22:21:44 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Lukas Wunner <lukas@wunner.de>
-cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] genirq: Synchronize only with single thread on
- free_irq()
-In-Reply-To: <8f770886632640321592873e4c902218d42c436b.1527194314.git.lukas@wunner.de>
-Message-ID: <alpine.DEB.2.21.1806212217571.1591@nanos.tec.linutronix.de>
-References: <8f770886632640321592873e4c902218d42c436b.1527194314.git.lukas@wunner.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 21 Jun 2018 16:23:43 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail03.adl2.internode.on.net with ESMTP; 22 Jun 2018 05:53:40 +0930
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1fW67I-0000UY-18; Fri, 22 Jun 2018 06:23:40 +1000
+Date:   Fri, 22 Jun 2018 06:23:40 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        y2038@lists.linaro.org, Andi Kleen <andi.kleen@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jeff Layton <jlayton@redhat.com>, Jan Kara <jack@suse.cz>,
+        Brian Foster <bfoster@redhat.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: replace current_kernel_time64 with ktime equivalent
+Message-ID: <20180621202339.GC13748@dastard>
+References: <20180620150138.49380-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620150138.49380-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 May 2018, Lukas Wunner wrote:
->  static int irq_wait_for_interrupt(struct irqaction *action)
+On Wed, Jun 20, 2018 at 05:01:24PM +0200, Arnd Bergmann wrote:
+> current_time is one of the few callers of current_kernel_time64(), which
+> is a wrapper around ktime_get_coarse_real_ts64(). This calls the latter
+> directly for consistency with the rest of the kernel that is moving to
+> the ktime_get_ family of time accessors.
+> 
+> An open questions is whether we may want to actually call the more
+> accurate ktime_get_real_ts64() for file systems that save high-resolution
+> timestamps in their on-disk format. This would add a small but measurable
+> overhead to each update of the inode stamps but lead to inode timestamps
+> to actually have a usable resolution better than one jiffy (1 to 10
+> milliseconds normally).
+> 
+> I traced the original addition of the current_kernel_time() call to set
+> the nanosecond fields back to linux-2.5.48, where Andi Kleen added a
+> patch with subject "nanosecond stat timefields". This adds the original
+> call to current_kernel_time and the truncation to the resolution of the
+> file system, but makes no mention of the intended accuracy.  At the time,
+> we had a do_gettimeofday() interface that on some architectures could
+> return a microsecond-resolution timestamp, but there was no interface
+> for getting an accurate timestamp in nanosecond resolution, neither inside
+> the kernel nor from user space. This makes me suspect that the use of
+> coarse timestamps was never really a conscious decision but instead
+> a result of whatever API was available 16 years ago.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  fs/inode.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 2c300e981796..e27bd9334939 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2133,7 +2133,9 @@ EXPORT_SYMBOL(timespec64_trunc);
+>   */
+>  struct timespec64 current_time(struct inode *inode)
 >  {
-> -	set_current_state(TASK_INTERRUPTIBLE);
-> +	for (;;) {
-> +		set_current_state(TASK_INTERRUPTIBLE);
->  
-> -	while (!kthread_should_stop()) {
-> +		if (kthread_should_stop()) {
-> +			/* may need to run one last time. */
-> +			if (test_and_clear_bit(IRQTF_RUNTHREAD,
-> +					       &action->thread_flags)) {
-> +				__set_current_state(TASK_RUNNING);
-> +				return 0;
-> +			}
-> +			__set_current_state(TASK_RUNNING);
-> +			return -1;
-> +		}
->  
->  		if (test_and_clear_bit(IRQTF_RUNTHREAD,
->  				       &action->thread_flags)) {
-> @@ -766,10 +776,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
->  			return 0;
->  		}
->  		schedule();
-> -		set_current_state(TASK_INTERRUPTIBLE);
->  	}
-> -	__set_current_state(TASK_RUNNING);
-> -	return -1;
->  }
->  
->  /*
-> @@ -990,7 +997,7 @@ static int irq_thread(void *data)
->  	/*
->  	 * This is the regular exit path. __free_irq() is stopping the
->  	 * thread via kthread_stop() after calling
-> -	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
-> +	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
->  	 * oneshot mask bit can be set. We cannot verify that as we
->  	 * cannot touch the oneshot mask at this point anymore as
->  	 * __setup_irq() might have given out currents thread_mask
-> @@ -1595,7 +1602,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
->  	unregister_handler_proc(irq, action);
->  
->  	/* Make sure it's not being used on another CPU: */
-> -	synchronize_irq(irq);
-> +	synchronize_hardirq(irq);
+> -	struct timespec64 now = current_kernel_time64();
+> +	struct timespec64 now;
+> +
+> +	ktime_get_coarse_real_ts64(&now);
 
-So after that, action can be freed and when the thread above tries to
-access it. Nice Use After Free. That needs more thought.
+Can I just say as a filesystem dev who has no idea at all about
+kernel timer implementations: this is an awful API change.  There
+are hundreds of callers of current_time(), so I'm not going to be
+the only person looking at this function who has no clue about WTF
+"ktime_get_coarse_real" actually means or does. Further, this
+function is not documented, and jumps straight into internal time
+implementation stuff, so I'm lost straight away if somebody asks me
+"what does that function do"?. i.e. I have *no clue* what this
+function returns or why this code uses it.
 
-Thanks,
+i.e. the function goes from an obvious self documenting name that
+has been blessed as the current kernel timestamp to something that
+only people who work on the time subsystem understand and know when
+to use. It might make sense to you, but it sucks for everyone
+else....
 
-	tglx
+Keep the wrapper, please. Change it to ktime_get_current(), if you
+really must change the function namespace...
 
+Cheers,
 
-
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
