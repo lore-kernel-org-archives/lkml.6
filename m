@@ -6,68 +6,66 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C54C43140
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 365C5C43141
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 180EF208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:15:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180EF208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id DDC9F20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 10:21:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC9F20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754252AbeFUKPT (ORCPT
+        id S1754104AbeFUKVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 06:15:19 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:37096 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752799AbeFUKPR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 06:15:17 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fVwcR-00081g-1W; Thu, 21 Jun 2018 18:15:11 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fVwcM-00024c-S0; Thu, 21 Jun 2018 18:15:06 +0800
-Date:   Thu, 21 Jun 2018 18:15:06 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Vinod Koul <vinod.koul@linaro.org>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
-Message-ID: <20180621101506.rnklbtapvfdev4xb@gondor.apana.org.au>
-References: <20180618141259.23141-1-vkoul@kernel.org>
- <20180618141259.23141-4-vkoul@kernel.org>
- <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
- <966e9cd4-70a3-8d54-df0f-16df3df45fb5@linaro.org>
+        Thu, 21 Jun 2018 06:21:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53325 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751691AbeFUKVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 06:21:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A031EACEE;
+        Thu, 21 Jun 2018 10:21:21 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Zong Li <zong@andestech.com>, palmer@sifive.com,
+        aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, greentime@adnestech.com
+Subject: Re: [PATCH 5/5] RISC-V: Use fixed width integer types for 32-bit compatible
+References: <cover.1529506497.git.zong@andestech.com>
+        <37a6523947397cd72320676030b96926e373d05a.1529506497.git.zong@andestech.com>
+        <20180621064322.GE19319@infradead.org>
+X-Yow:  Do you need any MOUTH-TO-MOUTH resuscitation?
+Date:   Thu, 21 Jun 2018 12:21:19 +0200
+In-Reply-To: <20180621064322.GE19319@infradead.org> (Christoph Hellwig's
+        message of "Wed, 20 Jun 2018 23:43:22 -0700")
+Message-ID: <mvmwousjv8g.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <966e9cd4-70a3-8d54-df0f-16df3df45fb5@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 12:56:34PM +0300, Stanimir Varbanov wrote:
+On Jun 20 2018, Christoph Hellwig <hch@infradead.org> wrote:
+
+>>  static int apply_r_riscv_32_rela(struct module *me, u32 *location, Elf_Addr v)
+>>  {
+>>  	if (v != (u32)v) {
+>> -		pr_err("%s: value %016llx out of range for 32-bit field\n",
+>> +		pr_err("%s: value %016" PRIxX "out of range for 32-bit field\n",
+>>  		       me->name, v);
+>>  		return -EINVAL;
 >
-> > Is this really a pseudo-RNG? If so it needs to be moved over to
-> > the algif_rng interface.
-> 
-> Despite the register name (PRNG_ registers prefix) the IP is using FIPS
-> approved algorithm and we can claim that this is true hardware entropy
-> generator.
+> But in general Linux uXX and sXX values are always the same underlying
+> fundamental C type.  What is the mismatch here?
 
-Whether your RNG is a PRNG or not has nothing to do with the
-algorithm you use.  No algorithm can generate entropy out of thin
-air.
+The mismatch is that v is Elf_Addr, not u32.
 
-Cheers,
+Andreas.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
