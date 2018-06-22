@@ -2,157 +2,75 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F467C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DA1C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 328422450A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:38:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328422450A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D0C4B2450D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:39:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="JK0cR6d3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C4B2450D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934272AbeFVPin (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:38:43 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:46548 "EHLO extserv.mm-sol.com"
+        id S934294AbeFVPjD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:39:03 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:52931 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933985AbeFVPeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:34:08 -0400
-Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 930144F88B;
-        Fri, 22 Jun 2018 18:33:59 +0300 (EEST)
-From:   Todor Tomov <todor.tomov@linaro.org>
-To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 19/32] media: camss: csiphy: Unify lane handling
-Date:   Fri, 22 Jun 2018 18:33:28 +0300
-Message-Id: <1529681621-9682-20-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
-References: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
+        id S933977AbeFVPjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:39:00 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c85d39f4;
+        Fri, 22 Jun 2018 15:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id; s=mail; bh=rYikv6ptkzdE6TLr0Amjt+aPpRw
+        =; b=JK0cR6d3IT4+2/pv2Yo7tkcdok28iWOqd8DZdVTzi9N6Q5CTih5ortiG4kS
+        1Y5qe92FO6OkxyTb0U1xTxFXxEj0bEs7aQohwzepg/ypPMcg/fFZM+7iHL4vRGY8
+        xTNuYU3j9WFzc7M3E0NjWCpJXGO8G1i3EHaae4/zHF3LkjTBFa23BmMaT87lPxtB
+        zCI9zdFZK6GIfr6N0iR4z9iCBvjE4TRKUwvFDFHqk27DKQpsXz+2SUVVfkWe45EZ
+        4l3k67Zn1rTqYz2OyKw6EkqoEvCnl3D+5uQEJcn5jVirvOvILMPu1ICpmB8iYt7D
+        zXvGkp56RTVg9KUlyvIVf7ZCLYg==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 21ec1527 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Fri, 22 Jun 2018 15:32:43 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     jeyu@kernel.org, linux-kernel@vger.kernel.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH] module: print sensible error code
+Date:   Fri, 22 Jun 2018 17:38:50 +0200
+Message-Id: <20180622153850.24240-1-Jason@zx2c4.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Restructure lane configuration so it is simpler and will allow
-similar (although not the same) handling for different hardware
-versions.
+Printing "err 0" to the user in the warning message is not particularly
+useful, especially when this gets transformed into a -ENOENT for the
+remainder of the call chain.
 
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 ---
- .../platform/qcom/camss/camss-csiphy-2ph-1-0.c     | 48 ++++++++++++----------
- drivers/media/platform/qcom/camss/camss-csiphy.c   |  4 +-
- drivers/media/platform/qcom/camss/camss-csiphy.h   |  3 +-
- 3 files changed, 29 insertions(+), 26 deletions(-)
+ kernel/module.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-index 7325906..5f499be 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy-2ph-1-0.c
-@@ -86,7 +86,7 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
- {
- 	struct csiphy_lanes_cfg *c = &cfg->csi2->lane_cfg;
- 	u8 settle_cnt;
--	u8 val;
-+	u8 val, l = 0;
- 	int i = 0;
+diff --git a/kernel/module.c b/kernel/module.c
+index f475f30eed8c..c666ab4139f4 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2282,9 +2282,9 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
+ 			if (!ksym && ELF_ST_BIND(sym[i].st_info) == STB_WEAK)
+ 				break;
  
- 	settle_cnt = csiphy_settle_cnt_calc(pixel_clock, bpp, c->num_data,
-@@ -104,34 +104,38 @@ static void csiphy_lanes_enable(struct csiphy_device *csiphy,
- 	val = cfg->combo_mode << 4;
- 	writel_relaxed(val, csiphy->base + CAMSS_CSI_PHY_GLBL_RESET);
+-			pr_warn("%s: Unknown symbol %s (err %li)\n",
+-				mod->name, name, PTR_ERR(ksym));
+ 			ret = PTR_ERR(ksym) ?: -ENOENT;
++			pr_warn("%s: Unknown symbol %s (err %d)\n",
++				mod->name, name, ret);
+ 			break;
  
--	while (lane_mask) {
--		if (lane_mask & 0x1) {
--			writel_relaxed(0x10, csiphy->base +
--				       CAMSS_CSI_PHY_LNn_CFG2(i));
--			writel_relaxed(settle_cnt, csiphy->base +
--				       CAMSS_CSI_PHY_LNn_CFG3(i));
--			writel_relaxed(0x3f, csiphy->base +
--				       CAMSS_CSI_PHY_INTERRUPT_MASKn(i));
--			writel_relaxed(0x3f, csiphy->base +
--				       CAMSS_CSI_PHY_INTERRUPT_CLEARn(i));
--		}
--
--		lane_mask >>= 1;
--		i++;
-+	for (i = 0; i <= c->num_data; i++) {
-+		if (i == c->num_data)
-+			l = c->clk.pos;
-+		else
-+			l = c->data[i].pos;
-+
-+		writel_relaxed(0x10, csiphy->base +
-+			       CAMSS_CSI_PHY_LNn_CFG2(l));
-+		writel_relaxed(settle_cnt, csiphy->base +
-+			       CAMSS_CSI_PHY_LNn_CFG3(l));
-+		writel_relaxed(0x3f, csiphy->base +
-+			       CAMSS_CSI_PHY_INTERRUPT_MASKn(l));
-+		writel_relaxed(0x3f, csiphy->base +
-+			       CAMSS_CSI_PHY_INTERRUPT_CLEARn(l));
- 	}
- }
- 
--static void csiphy_lanes_disable(struct csiphy_device *csiphy, u8 lane_mask)
-+static void csiphy_lanes_disable(struct csiphy_device *csiphy,
-+				 struct csiphy_config *cfg)
- {
-+	struct csiphy_lanes_cfg *c = &cfg->csi2->lane_cfg;
-+	u8 l = 0;
- 	int i = 0;
- 
--	while (lane_mask) {
--		if (lane_mask & 0x1)
--			writel_relaxed(0x0, csiphy->base +
--				       CAMSS_CSI_PHY_LNn_CFG2(i));
-+	for (i = 0; i <= c->num_data; i++) {
-+		if (i == c->num_data)
-+			l = c->clk.pos;
-+		else
-+			l = c->data[i].pos;
- 
--		lane_mask >>= 1;
--		i++;
-+		writel_relaxed(0x0, csiphy->base +
-+			       CAMSS_CSI_PHY_LNn_CFG2(l));
- 	}
- 
- 	writel_relaxed(0x0, csiphy->base + CAMSS_CSI_PHY_GLBL_PWR_CFG);
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index 14a9a66..99686f9 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -292,9 +292,7 @@ static int csiphy_stream_on(struct csiphy_device *csiphy)
-  */
- static void csiphy_stream_off(struct csiphy_device *csiphy)
- {
--	u8 lane_mask = csiphy_get_lane_mask(&csiphy->cfg.csi2->lane_cfg);
--
--	csiphy->ops->lanes_disable(csiphy, lane_mask);
-+	csiphy->ops->lanes_disable(csiphy, &csiphy->cfg);
- }
- 
- 
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.h b/drivers/media/platform/qcom/camss/camss-csiphy.h
-index 8f61b7d..07e5906 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.h
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.h
-@@ -51,7 +51,8 @@ struct csiphy_hw_ops {
- 	void (*lanes_enable)(struct csiphy_device *csiphy,
- 			     struct csiphy_config *cfg,
- 			     u32 pixel_clock, u8 bpp, u8 lane_mask);
--	void (*lanes_disable)(struct csiphy_device *csiphy, u8 lane_mask);
-+	void (*lanes_disable)(struct csiphy_device *csiphy,
-+			      struct csiphy_config *cfg);
- 	irqreturn_t (*isr)(int irq, void *dev);
- };
- 
+ 		default:
 -- 
-2.7.4
+2.17.1
 
