@@ -2,76 +2,93 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9439C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D91BC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8971924266
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8971924266
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9B46C24266
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:06:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B46C24266
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754067AbeFVNG0 (ORCPT
+        id S1754172AbeFVNGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:06:26 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33768 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750853AbeFVNGY (ORCPT
+        Fri, 22 Jun 2018 09:06:55 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:55713 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750853AbeFVNGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:06:24 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fWLlJ-0000R6-1z; Fri, 22 Jun 2018 13:06:01 +0000
-Date:   Fri, 22 Jun 2018 14:06:01 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the vfs tree
-Message-ID: <20180622130600.GY30522@ZenIV.linux.org.uk>
-References: <e6a26908-67b2-e32e-06b5-d2e62acce305@intel.com>
- <20180622115346.1e9cc433@canb.auug.org.au>
- <29411.1529671523@warthog.procyon.org.uk>
+        Fri, 22 Jun 2018 09:06:53 -0400
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5MD6p7s081828;
+        Fri, 22 Jun 2018 22:06:51 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
+ Fri, 22 Jun 2018 22:06:51 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5MD6kQC081787
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 22 Jun 2018 22:06:51 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: inject caller information into the body of
+ message
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180524021451.GA23443@jagdpanzerIV>
+ <CACT4Y+brbqfBWntjVaj-Ri2WhBdXpkA_PYs59qgLZ0vtepZEtw@mail.gmail.com>
+ <CACT4Y+ZGSefrYL9xtQs=yPMRNFsOUumuJXsShJPhCOBSLySxuw@mail.gmail.com>
+ <20180620083126.GA477@jagdpanzerIV>
+ <CACT4Y+YMubTm1xduj+XCbQnNwQxYFLjBT33cFKisN1HyeaBpZw@mail.gmail.com>
+ <20180620090413.GA444@jagdpanzerIV> <20180620091541.GB444@jagdpanzerIV>
+ <CACT4Y+bcp4fSBBq3F86T-C4+n-YkeXUGMqpvkJ6vj6mK-TU2EA@mail.gmail.com>
+ <20180620110759.GD444@jagdpanzerIV>
+ <CACT4Y+aER3O2x2ApM=MVFoFXhp_T_rUeyG9CBx031qyH0voSRg@mail.gmail.com>
+ <20180620130628.GA1000@tigerII.localdomain>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <197be25e-c841-bf3c-7081-61f0a9653c8c@i-love.sakura.ne.jp>
+Date:   Fri, 22 Jun 2018 22:06:45 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29411.1529671523@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180620130628.GA1000@tigerII.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 01:45:23PM +0100, David Howells wrote:
-> Reinette Chatre <reinette.chatre@intel.com> wrote:
+On 2018/06/20 22:06, Sergey Senozhatsky wrote:
+> On (06/20/18 13:32), Dmitry Vyukov wrote:
+>>> So, if we could get rid of pr_cont() from the most important parts
+>>> (instruction dumps, etc) then I would just vote to leave pr_cont()
+>>> alone and avoid any handling of it in printk context tracking. Simply
+>>> because we wouldn't care about pr_cont(). This also could simplify
+>>> Tetsuo's patch significantly.
+>>
+>> Sounds good to me.
 > 
-> > Thomas and David, please let me know what I can do from my side to help
-> > with this.
-> 
-> You could try basing on Al Viro's for-next tree which has the mount API
-> changes in it.
+> Awesome. If you and Fengguang can combine forces and lead the
+> whole thing towards "we couldn't care of pr_cont() less", it
+> would be really huuuuuge. Go for it!
 
-Umm...  That would be a massive headache for everyone involved; the changes
-in there have very little in common with what you are doing in rdt_mount(),
-so it might make sense to start with a minimal never-rebased branch that
-would
-	* define rdt_pseudo_lock_init as 0
-	* define rdt_pseudo_lock_release as empty
-	* do the rdt_mount() part of a3dbd01e6c9d
-	* have commit message along the lines of
-"hooks in rdt_mount() for rdt_pseudo_lock to use
-
-Functionally a no-op right now; the only reason for having that
-as a never-rebased branch to get rdt_pseudo_lock and mount series
-out of each other's hair"
-
-Base that on -rc1, then pull it into your rdt branch and David could pull the
-same into his.
+Can't we have seq_printf()-like one which flushes automatically upon seeing '\n'
+or buffer full? Printing memory information is using a lot of pr_cont(), even in
+function names (e.g. http://lkml.kernel.org/r/20180622083949.GR10465@dhcp22.suse.cz ).
+Since OOM killer code is serialized by oom_lock, we can use static buffer for
+OOM killer messages.
