@@ -2,102 +2,129 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBADC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BA8C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:44:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D2F243E6
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C938243E9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:44:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="HEmPvvNR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D2F243E6
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFW/MGmM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C938243E9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933604AbeFVOnr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:43:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49644 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932752AbeFVOnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:43:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yVsXhlmaw5nNWNh/i8zsPZu5iSO7+FFoWqchtuq6SVM=; b=HEmPvvNRkTkwCZAnDHWM1lfh2
-        HpQB5jBkdIckhD0HnLhZTN8/6gwX4x52kuY0XqmQkz2Q4+QCQnT8fglqsrh5QBaBEtD5h0Lj+PI/P
-        oNhagZrTCHb+33136kKXxJvGv294w7lpi13FGORQkHvPClAuY9l9rY6HLWlaupzsvlUIY=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fWNHm-0003u0-Kl; Fri, 22 Jun 2018 14:43:38 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fWNHl-0002FS-PA; Fri, 22 Jun 2018 15:43:37 +0100
-Date:   Fri, 22 Jun 2018 15:43:37 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ALSA: ac97: add codecs devicetree binding
-Message-ID: <20180622144337.GB15386@sirena.org.uk>
-References: <20180621154356.5438-1-robert.jarzmik@free.fr>
- <20180621154356.5438-2-robert.jarzmik@free.fr>
- <s5ha7rnditx.wl-tiwai@suse.de>
- <874lhvnlx1.fsf@belgarion.home>
- <s5h8t77hz8y.wl-tiwai@suse.de>
+        id S933644AbeFVOoC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:44:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932752AbeFVOoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:44:01 -0400
+Received: from mail-wm0-f41.google.com (mail-wm0-f41.google.com [74.125.82.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0504243EA
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 14:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529678641;
+        bh=ZkLqmeu2Y1QB+HsnAWu68umZ11V/oCejOZjq3XE7gFE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CFW/MGmMzWw5EkeNWEKn2kPpDm5ahT5zRpxxSBOzUS5xKkO/MR6qURpYk432TcjyD
+         3Q//MbNQu5bbrLUBxXPiXnUO9vZ7y0rdG8OorbkHqGh5oRQKwdFqOR3aIggSP5gGO5
+         6zuscTds+gG/OdbIBINxPIBcK2X1YARYMcKB7mkw=
+Received: by mail-wm0-f41.google.com with SMTP id v16-v6so2494764wmh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 07:44:00 -0700 (PDT)
+X-Gm-Message-State: APt69E2zOO8zYlgHxVp8F9F2ixkIdB2FyrwF3+GBxEa9Q5S/Cb9j6Ylj
+        iN+NF4od1pbnGRKGB3jHX2UktLP5JGfIbnwxMyopWg==
+X-Google-Smtp-Source: ADUXVKLtjOkm580aHKbcncQUlbqtqq4M77+MIbxs2fjCYatA7KfG5H/e9C8XGYaYQnwNhVzulv7+nZcpkmfvz2G1pxA=
+X-Received: by 2002:a1c:f30f:: with SMTP id q15-v6mr1880126wmq.36.1529678639477;
+ Fri, 22 Jun 2018 07:43:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
-Content-Disposition: inline
-In-Reply-To: <s5h8t77hz8y.wl-tiwai@suse.de>
-X-Cookie: Kiss your keyboard goodbye!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180621211754.12757-1-h.peter.anvin@intel.com> <20180621211754.12757-7-h.peter.anvin@intel.com>
+In-Reply-To: <20180621211754.12757-7-h.peter.anvin@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 22 Jun 2018 07:43:47 -0700
+X-Gmail-Original-Message-ID: <CALCETrV-cmjyFmuf-AdrdZU4J1Gq88cEC3JLKme3oxm9Jy_PMQ@mail.gmail.com>
+Message-ID: <CALCETrV-cmjyFmuf-AdrdZU4J1Gq88cEC3JLKme3oxm9Jy_PMQ@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] x86/tls,ptrace: provide regset access to the GDT
+To:     "H. Peter Anvin" <h.peter.anvin@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 21, 2018 at 2:18 PM H. Peter Anvin, Intel
+<h.peter.anvin@intel.com> wrote:
+>
+> From: "H. Peter Anvin" <hpa@linux.intel.com>
+>
+> Provide access to the user-visible part of the GDT via a regset in
+> ptrace().  Note that we already provide a regset for the TLS area part
+> of the GDT; these can trivially be unified by looking at the contents
+> of the regset structure, especially since the TLS area is the only
+> user-modifiable part of the GDT.
 
---98e8jtXdkpgskNou
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This seems reasonable, although I'm not sure I see the point of making
+REGSET_GDT writable.  (I see the point of making the LDT writable, but
+that's a different story.)
 
-On Fri, Jun 22, 2018 at 12:49:49PM +0200, Takashi Iwai wrote:
+> +static int gdt_get(struct task_struct *target,
+> +                  const struct user_regset *regset,
+> +                  unsigned int pos, unsigned int count,
+> +                  void *kbuf, void __user *ubuf)
+> +{
+> +       struct desc_struct gdt_copy[GDT_LAST_USER + 1];
+> +       const struct desc_struct *p;
+> +       struct user_desc udesc;
+> +       unsigned int index, endindex;
+> +       int err;
+> +
+> +       if (pos % sizeof(struct user_desc))
+> +               return -EINVAL;
+> +
+> +       /* Get a snapshot of the GDT from an arbitrary CPU */
+> +       memcpy(gdt_copy, get_current_gdt_ro(), sizeof(gdt_copy));
+> +
+> +       /* Copy over the TLS area */
+> +       memcpy(&gdt_copy[GDT_ENTRY_TLS_MIN], target->thread.tls_array,
+> +              sizeof(target->thread.tls_array));
+> +
+> +       /* Descriptor zero is never accessible */
+> +       memset(&gdt_copy[0], 0, sizeof(gdt_copy[0]));
 
-> Hm, some of these users (e.g. drivers/usb/core/*) do call
-> of_node_put() properly at releasing, but some look leaking to me.
-> I don't think we have the common code in the driver core to release
-> dev->of_node, at least.
+I think you should also mask out all system segments and all RPL != 3 segments.
 
-> If any, this should be done in ac97_codec_release(), I suppose.
+> +static int gdt_active(struct task_struct  *target,
+> +                     const struct user_regset *regset)
+> +{
+> +       (void)target;
+> +       return GDT_LAST_USER + 1;
+> +}
 
-Yeah, I'd expect this to be handled in each bus.
+I can't find the code, if any, that calls ->active.  But, if it
+exists, is the result exposed to user space at all?  If so, I think
+this should return the maximum theoretical size of the GDT.
 
---98e8jtXdkpgskNou
-Content-Type: application/pgp-signature; name="signature.asc"
+> +       [REGSET_GDT] = {
+> +               .core_note_type = NT_X86_GDT,
+> +               .n = LDT_ENTRIES, /* Theoretical maximum */
+> +               .size = sizeof(struct user_desc),
+> +               .align = sizeof(struct user_desc),
+> +               .active = gdt_active,
+> +               .get = gdt_get, .set = regset_gdt_set
 
------BEGIN PGP SIGNATURE-----
+As above, barring a reason why it's useful, I think that removing .set
+would make sense.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlstCxkACgkQJNaLcl1U
-h9Bbdwf/TnACvLBod1Z4z6L39QVRhG7Gud/6osipDCfZHAgnSaNdm9uGXovl16FB
-LfjKnlRib6KOmA6yzImHzyZpFxYCbRYBWCxC7ZSDl7Pi60EZOuaxPflBF4h7Ywzs
-UQmbrnAl+ihLp+bLWy8k1frZ19z0e+J7UkZvNJrFf2FQP1c6dY+ugG4cGZvl95rj
-ezI+rUamPBjwvZ123qSqXsvdp2j8iHYcRYv32M0Jm5t5+jyrDR0lo4MXxPKj/lR4
-mYLtL0tF9HdkgD3B+Xvg4aJ3716XY4TKnnj6XCyAyvCNwTNZMOXHZ6tMLLltdOrO
-lA1LJiSK/9/l9Jk0Day9uFNUPD2uCg==
-=x2fN
------END PGP SIGNATURE-----
-
---98e8jtXdkpgskNou--
+--Andy
