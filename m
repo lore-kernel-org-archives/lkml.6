@@ -2,169 +2,138 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 487DDC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 871C3C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D81B923F07
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:33:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81B923F07
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C9C423F0A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:34:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fCfsrTDv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9C423F0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753941AbeFVIdz (ORCPT
+        id S1754129AbeFVIe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:33:55 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8722 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751243AbeFVIdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:33:51 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 01E00D3A24CCC;
-        Fri, 22 Jun 2018 16:33:36 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.42) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.382.0; Fri, 22 Jun 2018
- 16:33:20 +0800
-Subject: Re: KVM guest sometimes failed to boot because of kernel stack
- overflow if KPTI is enabled on a hisilicon ARM64 platform.
-To:     Will Deacon <will.deacon@arm.com>
-References: <5B2A6218.3030201@hisilicon.com> <20180620144257.GB27776@arm.com>
- <5B2A7832.4010502@hisilicon.com>
- <ebfabb8f-dcd9-3fb4-3655-368a882d8f09@arm.com>
- <5B2A7FE1.5040607@hisilicon.com>
- <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
- <20180621091850.GA22505@arm.com> <5B2B7A84.8090309@hisilicon.com>
- <20180621105404.GB22505@arm.com>
-CC:     James Morse <james.morse@arm.com>, <catalin.marinas@arm.com>,
-        <suzuki.poulose@arm.com>, <dave.martin@arm.com>,
-        <mark.rutland@arm.com>, <marc.zyngier@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>, <xiexiuqi@huawei.com>,
-        huangdaode <huangdaode@hisilicon.com>,
-        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
-        "Xiongfanggou (James)" <james.xiong@huawei.com>,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
-        Zhangyi ac <zhangyi.ac@huawei.com>,
-        <jonathan.cameron@huawei.com>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
-        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
-        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
-        <libeijian@hisilicon.com>, <zhangbin011@hisilicon.com>
-From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5B2CB440.8040705@hisilicon.com>
-Date:   Fri, 22 Jun 2018 09:33:04 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Fri, 22 Jun 2018 04:34:56 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43819 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751198AbeFVIew (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 04:34:52 -0400
+Received: by mail-ed1-f68.google.com with SMTP id d16-v6so766561edp.10
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:34:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xaDWqX895g71QcxGX/1yFpjjxxuVEn5blDe7CIiOWvg=;
+        b=fCfsrTDv5Bk9VCU4DUBeM4ZlaQPt+KnwnTwuXeipwjtRuM6zhAQOXasDgsT6OmNId7
+         HuMT0SGxCs0tfCPhe3BvvPZ96ghhiSpsnB63K7VCyxei5/ALAHa1DlsGWEloT20/ueeU
+         GM/qzhfcBvjTFK0cHNNMB6buMnHOfQxT84mEQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=xaDWqX895g71QcxGX/1yFpjjxxuVEn5blDe7CIiOWvg=;
+        b=CJs9TicoLcnqum9S7/AKJP0QpfvdZiBvYjb0LvNUUKFZdYMwq+2AdMzxrayuAG7btO
+         0m/d/rDOP/653chkTuD1h+Qf+tiZvOUGfBLMC8LIvlBOPOTCirXU924bcfPY9el0uGVg
+         BBMDP2fjROreClPP5zBxPS5qkqqc5T1TzjVkanWnSpnqshLr29vAKEYz+EV3j2hVOxY7
+         jlx/KTE87G0NhAEKCKFKHAx43smmldUj5LQk85FB+ywlLUNWQjNTvK7el4sQfxwimZMe
+         3DnSeFofM8B3XNx6FYrO8AbYklJI5DXlO5W8YCksbtD5TxT6gLLii29pC5idBmjDtOgY
+         GGtQ==
+X-Gm-Message-State: APt69E0jxWQlvAPlA8qCm8Ek7ZGJkNnII3cdCpyogltg5BJf20siH5Ou
+        FF6gi4KvNk9B6NOJ3e9JqCxUiDvY
+X-Google-Smtp-Source: ADUXVKKnbqPprTIYkXv3Ia8uLKA7PeQBrhlfDPTGN2m75rdctCOT8hN/NZoJenCOT5b7TAozFMOrPA==
+X-Received: by 2002:a50:b942:: with SMTP id m60-v6mr1029250ede.20.1529656491638;
+        Fri, 22 Jun 2018 01:34:51 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
+        by smtp.gmail.com with ESMTPSA id c46-v6sm3658374edc.34.2018.06.22.01.34.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 01:34:50 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 10:34:48 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [RFC][PATCH] drm: kirin: Remove useless "Scale not support"
+ error message
+Message-ID: <20180622083448.GH2958@phenom.ffwll.local>
+Mail-Followup-To: John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        David Airlie <airlied@linux.ie>,
+        Peter Griffin <peter.griffin@linaro.org>,
+        dri-devel@lists.freedesktop.org
+References: <1529622076-20386-1-git-send-email-john.stultz@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180621105404.GB22505@arm.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.42]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529622076-20386-1-git-send-email-john.stultz@linaro.org>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+On Thu, Jun 21, 2018 at 04:01:16PM -0700, John Stultz wrote:
+> The driver doesn't support scaling, but when an atomic test is done
+> it repeatedly spits out this warning which isn't particularly useful.
+> 
+> So just remove the error message.
+> 
+> Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
+> Cc: Rongrong Zou <zourongrong@gmail.com>
+> Cc: Xinwei Kong <kong.kongxinwei@hisilicon.com>
+> Cc: Chen Feng <puck.chen@hisilicon.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Peter Griffin <peter.griffin@linaro.org>
+> Cc: dri-devel@lists.freedesktop.org
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
 
-On 2018/6/21 11:54, Will Deacon wrote:
-> Hi Wei,
-> 
-> On Thu, Jun 21, 2018 at 11:14:28AM +0100, Wei Xu wrote:
->> On 2018/6/21 10:18, Will Deacon wrote:
->>> On Thu, Jun 21, 2018 at 09:38:53AM +0100, James Morse wrote:
->>>> On 20/06/18 17:25, Wei Xu wrote:
->>>>>     [    0.042421] Insufficient stack space to handle exception!
->>>>>     [    0.042423] ESR: 0x96000046 -- DABT (current EL)
->>>>>     [    0.043730] FAR: 0xffff0000093a80e0
->>>>>     [    0.044714] Task stack: [0xffff0000093a8000..0xffff0000093ac000]
->>>>
->>>> This was a level 2 translation fault on a write, to an address that is within
->>>> the stack....
->>>>
->>>>
->>>>>     [    0.051113] IRQ stack: [0xffff000008000000..0xffff000008004000]
->>>>>     [    0.057610] Overflow stack: [0xffff80003efce2f0..0xffff80003efcf2f0]
->>>>>     [    0.064003] CPU: 0 PID: 12 Comm: migration/0 Not tainted
->>>>> 4.17.0-45865-g2b31fe7-dirty #10
->>>>>     [    0.072201] Hardware name: linux,dummy-virt (DT)
->>>>
->>>>>     [    0.076797] pstate: 604003c5 (nZCv DAIF +PAN -UAO)
->>>>>     [    0.081727] pc : el1_sync+0x0/0xb0
->>>>
->>>> ... from the vectors.
->>>>
->>>>
->>>>>     [    0.085217] lr : kpti_install_ng_mappings+0x120/0x214
->>>>
->>>> What I think is happening is: we come out of the kpti idmap with the stack
->>>> unmapped. Shortly after we access the stack, which faults. el1_sync faults as
->>>> well when it tries to push the registers to the stack, and we keep going until
->>>> we overflow the stack.
->>>>
->>>> I can't reproduce this with kvmtool or qemu in the model.
->>>
->>> Hmm, one thing that occurs to me is that the kpti_install_ng_mappings()
->>> code leaves the nG bit set in table entries, which is actually IGNORED in
->>> the architecture.
->>>
->>> Wei -- does the diff below help at all? Make sure you disable CONFIG_KASAN,
->>> otherwise your kernel will take an age to boot.
->>
->> Yes, amazing! This patch resolved the issue.
-> 
-> Great...
-> 
->> I have tested 50 times and can not reproduce the issue any more.
->> Could you please tell more why this patch works?
-> 
-> You might need to ask your CPU design team ;)
-> 
-> Without this patch, the code in idmap_kpti_install_ng_mappings() sets
-> bit 11 in table descriptors so that we can keep track of which parts of
-> the page table we've visited. With this patch, we don't bother tracking
-> and potentially rewalk parts of the page table (which takes a very long
-> time if KASAN is enabled).
+Makes sense, applied to drm-misc-next. This code should probably use
+drm_atomic_helper_check_plane_state() anyway, which also comes with a
+useful set of opt-in debug output to replace this.
+-Daniel
 
-Got it. Thanks!
-
+> ---
+>  drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> The architecture documents I've looked at are clear that bit 11 is IGNORED
-> by the CPU, which:
-> 
->   "Indicates that the architecture guarantees that the bit or field is not
->    interpreted or modified by hardware."
-> 
-> Please can you double-check that your CPU is indeed ignoring bit 11 in
-> non-leaf (table) descriptors?
-
-Do the non-leaf(table) descriptors mean the table descriptors
-of the section D4.3.1 "VMSAv8-64 translation table level 0, level 1, and level 2 descriptor formats"
-in the ARM Architecture Reference Manual ARMv8 for ARMv8-A(DDI0487C_a_armv8_arm.pdf)?
-
-If yes, our hardware does ignore it(not interpret or modify).
-
-Is there any other possible reason cause this?
-Thanks!
-
-Best Regards,
-Wei
-
-> 
-> Thanks,
-> 
-> Will
-> 
-> .
+> diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
+> index 2269be9..bb77420 100644
+> --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
+> +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
+> @@ -859,7 +859,6 @@ static int ade_plane_atomic_check(struct drm_plane *plane,
+>  		return PTR_ERR(crtc_state);
+>  
+>  	if (src_w != crtc_w || src_h != crtc_h) {
+> -		DRM_ERROR("Scale not support!!!\n");
+>  		return -EINVAL;
+>  	}
+>  
+> -- 
+> 2.7.4
 > 
 
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
