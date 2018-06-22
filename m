@@ -2,214 +2,198 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEB5C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F218C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:56:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB6C023F3A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:56:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB6C023F3A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 5775123F3E
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:56:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="OqrBVYm+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5775123F3E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751326AbeFVI4Z (ORCPT
+        id S1751375AbeFVI4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:56:25 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:52456 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751057AbeFVI4W (ORCPT
+        Fri, 22 Jun 2018 04:56:38 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43240 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbeFVI4f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:56:22 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41Bsqm6kwGz1qwC5;
-        Fri, 22 Jun 2018 10:56:20 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41Bsqm5RRYz1r3lb;
-        Fri, 22 Jun 2018 10:56:20 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id MIPmv5cR5Xyd; Fri, 22 Jun 2018 10:56:19 +0200 (CEST)
-X-Auth-Info: K+reR86bJPxDHCTyNlJSinVblTW52nDj2zDA1CUTplQ=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 22 Jun 2018 10:56:19 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 10:56:05 +0200
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] display: panel: Add KOE tx14d24vm1bpa display
- support (320x240)
-Message-ID: <20180622105605.3018453c@jawa>
-In-Reply-To: <20180529150528.22136-1-lukma@denx.de>
-References: <20180412143715.6828-1-lukma@denx.de>
-        <20180529150528.22136-1-lukma@denx.de>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 22 Jun 2018 04:56:35 -0400
+Received: by mail-wr0-f196.google.com with SMTP id d2-v6so5863385wrm.10
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CscDHABnPX/8unneFqUexvLkrTWF55xHuWlgniYLer0=;
+        b=OqrBVYm+SGg2+XMLjImRdXtRJT1Gcbsw9ZkCScMVrGN7Zhm65R+7wrLFfckTf8abPf
+         G2PCl0ycQhARQSIADYRGlSeNzC8+ND94LtrF8lXsFhsGD6Tp9dDcFCEdWfCMdwln5ube
+         02pHZSIvzx3uWgEUBGNHbPyjoUyB8q+SXWlic=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CscDHABnPX/8unneFqUexvLkrTWF55xHuWlgniYLer0=;
+        b=nVtye67ogdCfKK0s5wnqLV9rOmhTntg+y4O5bX5ozY0FiuP8baWZTE99UxGvNAfVai
+         s/a92YVAPso0vggYgGL4y+tAA6yXOBVGtRQCZ3sTJUMadftuGdrHGGWcdcyeFv0A7PCf
+         9ViAbK/T6pmMZEn+2i2TeIyCAHDeRCTkuvEvA/vJxHT1NF5/ujmI94hbpU+pTuYLuPb2
+         t89nMbauINnrvKIixFN00ToXTrPzsrnMiEuHiTpVJpiTOyM58MwPTV+WNNjGrtdYu3jl
+         +N0llxzPvEAona4QrOcgN3KcrgGh3R5WjQgjQKdqF/o26iFXjrvv442Ldf4ijkM8ZOJw
+         WPpA==
+X-Gm-Message-State: APt69E0KF6D29ntz1jI+mxJ2+7HJFhchAwQsXP34cACm9Mmiql0BYfFg
+        Oyrd1iEVDek3RugosCu2IVtiLQvV
+X-Google-Smtp-Source: ADUXVKJKvBGGeaPQFo8hPX0sVx70JdReVWUs4huYarVx0ysa/hp8qfrNsUC4UUc0vCf/trWoGiD8hQ==
+X-Received: by 2002:a5d:4204:: with SMTP id n4-v6mr759011wrq.55.1529657793915;
+        Fri, 22 Jun 2018 01:56:33 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id i14-v6sm4331079wrp.24.2018.06.22.01.56.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 01:56:33 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 10:56:27 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] tools/memory-model: Change rel-rfi-acq ordering to
+ (rel-rf-acq-po & int)
+Message-ID: <20180622085627.GA6933@andrea>
+References: <Pine.LNX.4.44L0.1806211315550.2381-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ve=Gn5zIf4rJpd+mqZ9Yc51"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1806211315550.2381-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ve=Gn5zIf4rJpd+mqZ9Yc51
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 21, 2018 at 01:26:49PM -0400, Alan Stern wrote:
+> This patch changes the LKMM rule which says that an acquire which
+> reads from an earlier release must be executed after that release (in
+> other words, the release cannot be forwarded to the acquire).  This is
+> not true on PowerPC, for example.
+> 
+> What is true instead is that any instruction following the acquire
+> must be executed after the release.  On some architectures this is
+> because a write-release cannot be forwarded to a read-acquire; on
+> others (including PowerPC) it is because the implementation of
+> smp_load_acquire() places a memory barrier immediately after the
+> load.
+> 
+> This change to the model does not cause any change to the model's
+> predictions.  This is because any link starting from a load must be an
+> instance of either po or fr.  In the po case, the new rule will still
+> provide ordering.  In the fr case, we also have ordering because there
+> must be a co link to the same destination starting from the
+> write-release.
+> 
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 
-Hi Thierry,
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-> This commit adds support for KOE's 5.7" display.
->=20
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+  Andrea
+
+
+> 
 > ---
-> Changes for v2:
-> - Add Reviewed-by tag
-
-Could you apply this patch to your tree?
-
-Thanks in advance,
-=C5=81ukasz
-
->=20
-> ---
->  .../bindings/display/panel/koe,tx14d24vm1bpa.txt   | 42
-> ++++++++++++++++++++++
-> drivers/gpu/drm/panel/panel-simple.c               | 26
-> ++++++++++++++ 2 files changed, 68 insertions(+) create mode 100644
-> Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
->=20
-> diff --git
-> a/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
-> b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
-> new file mode 100644 index 000000000000..be7ac666807b --- /dev/null
-> +++
-> b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
-> @@ -0,0 +1,42 @@ +Kaohsiung Opto-Electronics Inc. 5.7" QVGA (320 x
-> 240) TFT LCD panel +
-> +Required properties:
-> +- compatible: should be "koe,tx14d24vm1bpa"
-> +- backlight: phandle of the backlight device attached to the panel
-> +- power-supply: single regulator to provide the supply voltage
+> 
+> 
+> [as1870]
+> 
+> 
+>  tools/memory-model/Documentation/explanation.txt |   35 ++++++++++++-----------
+>  tools/memory-model/linux-kernel.cat              |    6 +--
+>  2 files changed, 22 insertions(+), 19 deletions(-)
+> 
+> Index: usb-4.x/tools/memory-model/linux-kernel.cat
+> ===================================================================
+> --- usb-4.x.orig/tools/memory-model/linux-kernel.cat
+> +++ usb-4.x/tools/memory-model/linux-kernel.cat
+> @@ -38,7 +38,7 @@ let strong-fence = mb | gp
+>  (* Release Acquire *)
+>  let acq-po = [Acquire] ; po ; [M]
+>  let po-rel = [M] ; po ; [Release]
+> -let rfi-rel-acq = [Release] ; rfi ; [Acquire]
+> +let rel-rf-acq-po = [Release] ; rf ; [Acquire] ; po
+>  
+>  (**********************************)
+>  (* Fundamental coherence ordering *)
+> @@ -60,9 +60,9 @@ let dep = addr | data
+>  let rwdep = (dep | ctrl) ; [W]
+>  let overwrite = co | fr
+>  let to-w = rwdep | (overwrite & int)
+> -let to-r = addr | (dep ; rfi) | rfi-rel-acq
+> +let to-r = addr | (dep ; rfi)
+>  let fence = strong-fence | wmb | po-rel | rmb | acq-po
+> -let ppo = to-r | to-w | fence
+> +let ppo = to-r | to-w | fence | (rel-rf-acq-po & int)
+>  
+>  (* Propagation: Ordering from release operations and strong fences. *)
+>  let A-cumul(r) = rfe? ; r
+> Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
+> ===================================================================
+> --- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
+> +++ usb-4.x/tools/memory-model/Documentation/explanation.txt
+> @@ -1067,27 +1067,30 @@ allowing out-of-order writes like this t
+>  violating the write-write coherence rule by requiring the CPU not to
+>  send the W write to the memory subsystem at all!)
+>  
+> -There is one last example of preserved program order in the LKMM: when
+> -a load-acquire reads from an earlier store-release.  For example:
+> +There is one last example of preserved program order in the LKMM; it
+> +applies to instructions po-after a load-acquire which reads from an
+> +earlier store-release.  For example:
+>  
+>  	smp_store_release(&x, 123);
+>  	r1 = smp_load_acquire(&x);
+> +	WRITE_ONCE(&y, 246);
+>  
+>  If the smp_load_acquire() ends up obtaining the 123 value that was
+> -stored by the smp_store_release(), the LKMM says that the load must be
+> -executed after the store; the store cannot be forwarded to the load.
+> -This requirement does not arise from the operational model, but it
+> -yields correct predictions on all architectures supported by the Linux
+> -kernel, although for differing reasons.
+> -
+> -On some architectures, including x86 and ARMv8, it is true that the
+> -store cannot be forwarded to the load.  On others, including PowerPC
+> -and ARMv7, smp_store_release() generates object code that starts with
+> -a fence and smp_load_acquire() generates object code that ends with a
+> -fence.  The upshot is that even though the store may be forwarded to
+> -the load, it is still true that any instruction preceding the store
+> -will be executed before the load or any following instructions, and
+> -the store will be executed before any instruction following the load.
+> +written by the smp_store_release(), the LKMM says that the store to y
+> +must be executed after the store to x.  In fact, the only way this
+> +could fail would be if the store-release was forwarded to the
+> +load-acquire; the LKMM says it holds even in that case.  This
+> +requirement does not arise from the operational model, but it yields
+> +correct predictions on all architectures supported by the Linux
+> +kernel, although for differing reasons:
 > +
-> +Required nodes:
-> +- port: Parallel port mapping to connect this display
-> +
-> +This panel needs single power supply voltage. Its backlight is
-> conntrolled +via PWM signal.
-> +
-> +Example:
-> +--------
-> +
-> +Example device-tree definition when connected to iMX53 based board
-> +
-> +	lcd_panel: lcd-panel {
-> +		compatible =3D "koe,tx14d24vm1bpa";
-> +		backlight =3D <&backlight_lcd>;
-> +		power-supply =3D <&reg_3v3>;
-> +
-> +		port {
-> +			lcd_panel_in: endpoint {
-> +				remote-endpoint =3D <&lcd_display_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +Then one needs to extend the dispX node:
-> +
-> +	lcd_display: disp1 {
-> +
-> +		port@1 {
-> +			reg =3D <1>;
-> +
-> +			lcd_display_out: endpoint {
-> +				remote-endpoint =3D <&lcd_panel_in>;
-> +			};
-> +		};
-> +	};
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c
-> b/drivers/gpu/drm/panel/panel-simple.c index
-> d9984bdb5bb5..103b43ce7dee 100644 ---
-> a/drivers/gpu/drm/panel/panel-simple.c +++
-> b/drivers/gpu/drm/panel/panel-simple.c @@ -1268,6 +1268,29 @@ static
-> const struct panel_desc innolux_zj070na_01p =3D { },
->  };
-> =20
-> +static const struct display_timing koe_tx14d24vm1bpa_timing =3D {
-> +	.pixelclock =3D { 5580000, 5850000, 6200000 },
-> +	.hactive =3D { 320, 320, 320 },
-> +	.hfront_porch =3D { 30, 30, 30 },
-> +	.hback_porch =3D { 30, 30, 30 },
-> +	.hsync_len =3D { 1, 5, 17 },
-> +	.vactive =3D { 240, 240, 240 },
-> +	.vfront_porch =3D { 6, 6, 6 },
-> +	.vback_porch =3D { 5, 5, 5 },
-> +	.vsync_len =3D { 1, 2, 11 },
-> +	.flags =3D DISPLAY_FLAGS_DE_HIGH,
-> +};
-> +
-> +static const struct panel_desc koe_tx14d24vm1bpa =3D {
-> +	.timings =3D &koe_tx14d24vm1bpa_timing,
-> +	.num_timings =3D 1,
-> +	.bpc =3D 6,
-> +	.size =3D {
-> +		.width =3D 115,
-> +		.height =3D 86,
-> +	},
-> +};
-> +
->  static const struct display_timing koe_tx31d200vm0baa_timing =3D {
->  	.pixelclock =3D { 39600000, 43200000, 48000000 },
->  	.hactive =3D { 1280, 1280, 1280 },
-> @@ -2204,6 +2227,9 @@ static const struct of_device_id
-> platform_of_match[] =3D { .compatible =3D "innolux,zj070na-01p",
->  		.data =3D &innolux_zj070na_01p,
->  	}, {
-> +		.compatible =3D "koe,tx14d24vm1bpa",
-> +		.data =3D &koe_tx14d24vm1bpa,
-> +	}, {
->  		.compatible =3D "koe,tx31d200vm0baa",
->  		.data =3D &koe_tx31d200vm0baa,
->  	}, {
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/ve=Gn5zIf4rJpd+mqZ9Yc51
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlssuaUACgkQAR8vZIA0
-zr1B8AgAgQ9gEpUy+yOfpgwF+O5MBD9fJkSXUwJf34Eae3SXVeUjdkRXi5794FBV
-8HaqddGXris9dLQk1I3mbKlgAu0bUctJB73e88ZECaXeOtR+H7teAwkDEJhGkG88
-PZGRvA5Sf7z8efPfJzXLCjLYWje/6cP12162xQKuS+lDl0qKC+0kl1RMtWA4S9uC
-S+gSN8doTyjg4SGrukKIsN734zHYpqo7GAkEgc3jMRcn63kFBbEMAg3dngOXpuN7
-aGUuHi7AjwOSK+J6EdB06BC53hiFWkRkZMtZCwFbKjmoast3YRhDeaBwj2ey5/2F
-m/C91SMvdIJhN7YAcDWQZ+QzeM3TCA==
-=CQCq
------END PGP SIGNATURE-----
-
---Sig_/ve=Gn5zIf4rJpd+mqZ9Yc51--
+> +On some architectures, including x86 and ARMv8, a store-release cannot
+> +be forwarded to a load-acquire.  On others, including PowerPC and
+> +ARMv7, smp_load_acquire() generates object code that ends with a
+> +fence.  The result is that even though the store-release may be
+> +forwarded to the load-acquire, it is still true that the store-release
+> +(and all preceding instructions) will be executed before any
+> +instruction following the load-acquire.
+>  
+>  
+>  AND THEN THERE WAS ALPHA
+> 
