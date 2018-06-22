@@ -1,158 +1,143 @@
 Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6EBC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54D7C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F43323C29
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:58:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPdCwylE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F43323C29
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 48EFD22C9B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:03:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48EFD22C9B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owl.eu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934333AbeFVB65 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 21:58:57 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53766 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934244AbeFVB6z (ORCPT
+        id S934285AbeFVCDz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:03:55 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:43795 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934184AbeFVCDy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 21:58:55 -0400
-Received: by mail-wm0-f66.google.com with SMTP id x6-v6so549646wmc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 18:58:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iZGWmSsqob4UebOy5XsVOPy1aYICOQVGw4aRi5H71Wk=;
-        b=hPdCwylEJpBBmixeOrRDMmdhSaBLulordH55qYNyivSJC1O5WKPNxgTO0dqTjoI1KH
-         /vqhOdu3qLA0C3yP/2/lsVp99FmPbB2rPnJkZItVQ4+WQSBrzxkJFn8iyJjgE6DBXbw0
-         lAvWY+kNnnQao5kjQRZskWUTE8C8GVRpN9CU+c+kA+kONGKQrpMOKPRuc6DaO0KYzhAl
-         r11N/tvcFH+5wxt11zt1JefPm8E/FLaedjOCHNYJ7Bs1eqDn87iUtt+Jo95TScjRAuK/
-         JuuhyBvZ89K7cq3KdxlhYxvkeEqRCFI8Losfdqq9ir8FsZyPpfEVdex2hGVxtj7LFQzW
-         IZjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iZGWmSsqob4UebOy5XsVOPy1aYICOQVGw4aRi5H71Wk=;
-        b=rNxnHiRHq8wzNr64V400CcH+AqKfErtuFV6lD7anQXHMgxxYuWAl08JEaTMr+b8/Ki
-         opTbxWk8fxrsdMtIc61RTW2WiKDvA2uiivciQpauHBrsUG/U20/y0LBhPSk3t2yqdPMD
-         HZDkItMn/KE+AaRgXuKqyH1kbdl/Y/kfOq+MJZNAKbDFa+qkiSjrtyqkaF4yE+dpJgsr
-         audENg+ex6L3TbRQpyB1/tveOEgl5fLpSvVEVsI24kMFRAflmsEaTKazOa6d0SO7BhZN
-         jToEfM+m6xv57H6VVml+5jpa7bFiQ68YDY3WMl74JbmNfbMvd7rfbgRQJJ4XNYCWxYf7
-         PVxA==
-X-Gm-Message-State: APt69E1KvUfAB6eYJkwB3vpH79gAF/aztbtMvBZMeDxr9C3rWRWK+1tU
-        7L5gqaOfX/gPmZkuLCaesp8=
-X-Google-Smtp-Source: ADUXVKKB9zerfXxG5gqkg0tfQlrnNKUp2l10kvB+UGJixWYl8ye67dPnUzwCUBNaWIo/AIHdzonU4g==
-X-Received: by 2002:a1c:8893:: with SMTP id k141-v6mr13496wmd.133.1529632734135;
-        Thu, 21 Jun 2018 18:58:54 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id d102-v6sm685057wma.10.2018.06.21.18.58.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 18:58:53 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 03:58:51 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "H. Peter Anvin, Intel" <h.peter.anvin@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        "Markus T . Metzger" <markus.t.metzger@intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v3 0/7] x86/ptrace: regset access to the GDT and LDT
-Message-ID: <20180622015851.GA10254@gmail.com>
-References: <20180621211754.12757-1-h.peter.anvin@intel.com>
+        Thu, 21 Jun 2018 22:03:54 -0400
+X-Originating-IP: 70.80.172.8
+Received: from localhost (modemcable008.172-80-70.mc.videotron.ca [70.80.172.8])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 82BFAC0002;
+        Fri, 22 Jun 2018 02:03:53 +0000 (UTC)
+Date:   Thu, 21 Jun 2018 22:03:45 -0400
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Marcus Wolf <marcus.wolf@smarthome-wolf.de>
+Cc:     Valentin Vidic <Valentin.Vidic@CARNet.hr>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: rf69_set_deviation in rf69.c (pi433 driver)
+Message-ID: <20180622020345.GA1914@hle-laptop.local>
+References: <20180605031120.GB1981@hle-laptop.local>
+ <50c4e6ee-e5fb-1d27-4e73-1e82080036b3@smarthome-wolf.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Content-Disposition: inline
-In-Reply-To: <20180621211754.12757-1-h.peter.anvin@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <50c4e6ee-e5fb-1d27-4e73-1e82080036b3@smarthome-wolf.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* H. Peter Anvin, Intel <h.peter.anvin@intel.com> wrote:
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: "H. Peter Anvin" <hpa@linux.intel.com>
-> 
-> Give a debugger access to the visible part of the GDT and LDT.  This
-> allows a debugger to find out what a particular segment descriptor
-> corresponds to; e.g. if %cs is 16, 32, or 64 bits.
-> 
-> v3:
-> 	Requalify LDT segments for selectors that have actually changed.
-> 
-> v2:
-> 	Add missing change to elf.h for the very last patch.
-> 
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Chang S. Bae <chang.seok.bae@intel.com>
-> Cc: Markus T. Metzger <markus.t.metzger@intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> 
->  arch/x86/Kconfig               |   4 +
->  arch/x86/include/asm/desc.h    |  24 +++-
->  arch/x86/include/asm/ldt.h     |  16 +++
->  arch/x86/include/asm/segment.h |  10 ++
->  arch/x86/kernel/Makefile       |   3 +-
->  arch/x86/kernel/ldt.c          | 283 ++++++++++++++++++++++++++++++++---------
->  arch/x86/kernel/ptrace.c       | 103 ++++++++++++++-
->  arch/x86/kernel/tls.c          | 102 +++++----------
->  arch/x86/kernel/tls.h          |   8 +-
->  include/uapi/linux/elf.h       |   2 +
->  10 files changed, 413 insertions(+), 142 deletions(-)
+Hi Marcus,
 
-Ok, this looks mostly good to me at a quick glance, but could you please do one 
-more iteration and more explicitly describe where you change/extend existing ABIs?
+> > According to the datasheet[0], the deviation should always be smaller
+> > than 300kHz, and the following equation should be respected:
+> >=20
+> >   (1) FDA + BRF/2 =3D< 500 kHz
+> >=20
+> > Why did you choose 500kHz as max for FDA, instead of 300kHz ? It looks =
+like
+> > a bug to me.
+>=20
+> My focus was always on OOK and ASK. PSK was only used for a few
+> measurements in the laboratory, I engaged to check CE compliance.
+> Most probably 500kHz was a value, that's common for PSK and I didn't pay
+> any attention to the datasheet. So I think, you are right: This is a bug
+> and could be revised.
+> Never the less: While using it in the lab, the transmission was fine and
+> the signals over air have been clean and fitted to the recommondations
+> of the CE.
+> >=20
+> > Concerning the TODO, I can see two solutions currently:
+> >=20
+> > 1. Introduce a new rf69_get_bit_rate function which reads REG_BITRATE_M=
+SB
+> >    and REG_BITRATE_LSB and returns reconstructed BRF.
+> >    We could use this function in rf69_set_deviation to retrieve the BRF.
+> >=20
+> > + clean
+> > + intuitive
+> > - heavy / slow
+>=20
+> Why not: I like clean and intuitive implementations. Since it's used
+> during configuration, we shouldn't be that squeezed in time, that we
+> need to hurry.
+> >=20
+> > 2. Store BRF somewhere in rf69.c, initialize it with the default value
+> >    (4.8 kb/s) and update it when rf69_set_bit_rate is called.
+> >=20
+> > + easy
+> > - dirty, doesn't fit well with the design of rf69.c (do not store
+> >   anything, simply expose API)
+>=20
+> Up to my experience, storing reg values is always a bit problematic,
+> since the value may be outdated. And if you update the value every time
+> you want to use it to be sure, it's correct, there is no win in having
+> the copy of the reg value.
+> So this wouldn't be my favourite.
+> >=20
+> > I'd really prefer going for the first one, but I wanted to have your op=
+inion
+> > on this.
+>=20
+> Agree.
 
-I.e. instead of a terse and somewhat vague summary:
+I'll prepare a patch addressing both issues. However I don't own test devic=
+es
+so it would be really great if you could test it !
 
-> x86/tls,ptrace: provide regset access to the GDT
->
-> Give a debugger access to the visible part of the GDT and LDT.  This
-> allows a debugger to find out what a particular segment descriptor
-> corresponds to; e.g. if %cs is 16, 32, or 64 bits.
+I'm currently thinking of adapting this driver for other HopeRf modules like
+RFM69HCW or RFM12 so I will probably try to find some test equipement in the
+future.
 
-Please make it really explicit how the ABI is affected, both in the title and in 
-the description, and also _explain_ how this helps us over what we had before, 
-plus also list limitations of the new ABI.
+Thanks for your answer !
 
-I.e. something like:
+Regards,
+ Hugo
 
-   x86/tls, ptrace: Extend the ptrace ABI with the new REGSET_GDT method
+--=20
+             Hugo Lefeuvre (hle)    |    www.owl.eu.com
+4096/ 9C4F C8BF A4B0 8FC5 48EB 56B8 1962 765B B9A8 BACA
 
-   Add the new REGSET_GDT ptrace variant to PTRACE_{GET|SET}REGSET,
-   to give read and write access to the GDT:
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-   - Previously only certain parts of the GDT were visible, and only via random
-     ABIs and instructions - there was no architectured access to all of it.
+-----BEGIN PGP SIGNATURE-----
 
-   - The SETREGSET variant is only allowed to change the TLS area of the GDT.
+iQEzBAABCgAdFiEE5LpPtQuYJzvmooL3LVy48vb3khkFAlssWN8ACgkQLVy48vb3
+khk+4wf/dxQ7iek1tuNRV9EgLvngsFySzxiqc7jDgyID2B0eNKMS/63B9U2RJHPY
+hDNT3CCK6m28luL9nyPTT9gLvGYJ+9c2pOINaEq5VfmVn1EzaWut0uqaVO+UySdK
+jubtPgflwyjT48n16T8hQrzdmDkj4xsIPEF5Wjh6CdYB44he4y1JOIg4UOjkhjtD
+/DPC4YUJfxkwYaVJQoXMbgH9+DBw7z5W4svGESukB70PAA/9YGCfBgeTx1OV9O3e
+YeqdmWWbntqfSTZnP12C8VtbPbq1O65TvNvz7UKCU6AubIvipwIdA9Foqgh/59ow
+OR+xXxpOJpHzQueEX5zptm2mtcaXnA==
+=9VOC
+-----END PGP SIGNATURE-----
 
-(or so.)
-
-This is important not just for documentation and library support purposes, but 
-also to be able to review it properly, to match 'intent' to 'implementation'.
-
-(It might also help later on in finding bugs/quirks, if any.)
-
-Please do this for all patches in the series that change the ABI.
-
-Thanks,
-
-	Ingo
+--yrj/dFKFPuw6o+aM--
