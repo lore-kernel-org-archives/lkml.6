@@ -2,142 +2,214 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B81C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFEB5C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C92123F3A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:54:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzPsO/lb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C92123F3A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id AB6C023F3A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:56:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB6C023F3A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751300AbeFVIyo (ORCPT
+        id S1751326AbeFVI4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:54:44 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:32883 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751057AbeFVIyl (ORCPT
+        Fri, 22 Jun 2018 04:56:25 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:52456 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbeFVI4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:54:41 -0400
-Received: by mail-lf0-f68.google.com with SMTP id y20-v6so8018726lfy.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=whkiTy35XYo8CtN6OJMFj+r2+FYW++9LhorEotSDIQk=;
-        b=UzPsO/lbvluelctY7g2wNoHCHYZcZQ0TXII76f3yVHNWXJNkiGd8K++t/rNvdd0Prl
-         1jg94nDatUltwLE5ikTimiPpcMKT8kLfe/ST7XRVQmnSne3XZOQdi4faziICfsuHAiMA
-         sN/pNZtMHkRcA4Hcw8KuI34AC/IBCVd/zTgw/rKCRTnxtrt3wJ3fhl0cgfjKGzUZhWeI
-         NH/9/PHLOnEPFJpUReYh/lrWCBNM4yIyr+0KE6QlXZRKOp6f90BKpmzHMBiRlVjh05tD
-         jQf7XbiIn5L+jbkTVDJZe93nu8sHoh0Gk1j+NvEwXkO7OO2aR1x4WuCIs3LEYeRqCuB+
-         UImA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=whkiTy35XYo8CtN6OJMFj+r2+FYW++9LhorEotSDIQk=;
-        b=Jy30A6V0ov8zHoGELho2rSXPOju/WyQ5kEhS6FUNZt5aRzYUCIyQo+adJNAMZGriZl
-         bBDhQR3vs41rR1secX3S+Sb+v3ROOFRTXgVZRY3N+KEQEhxtmMkfD6eFelPpcQww03VU
-         YyBtk9I5xFQnWlcUumeyI+7RXTomNuunToaWVtqyD9wTkmLHeSyAqWMN5rn85MmMK9ta
-         3LlKBpSEK3VYOAe4HW/+ZY2rsmTPA1DFZYtqtXN7XqIaGxLEK4tDLTFoA7RZ3vLz3YSB
-         D3TOljeH3rV0U6ueIt5YzCEdL1/pUM8N4SlMb1tQmgY5iSul4eXaK78/IzXiIec+vrr+
-         btPA==
-X-Gm-Message-State: APt69E0Pl0v4CIFjLm9UCaBwe5NQ+KkBWF5FG2nmBeWgpPXiJh8c6pG/
-        iShKyPOyhGNjZWzNEKypu6MSRxqKeB6hv7SCNRg=
-X-Google-Smtp-Source: ADUXVKJnTmJnh7eIIzwJAZF+3uhK5mTIWy29k5nHQrpEN0wK5RvkWit9UJQV+4MFFOpyYA7iE2oT449BbeSju4SpuXU=
-X-Received: by 2002:a19:c203:: with SMTP id l3-v6mr691524lfc.55.1529657680480;
- Fri, 22 Jun 2018 01:54:40 -0700 (PDT)
+        Fri, 22 Jun 2018 04:56:22 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41Bsqm6kwGz1qwC5;
+        Fri, 22 Jun 2018 10:56:20 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41Bsqm5RRYz1r3lb;
+        Fri, 22 Jun 2018 10:56:20 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id MIPmv5cR5Xyd; Fri, 22 Jun 2018 10:56:19 +0200 (CEST)
+X-Auth-Info: K+reR86bJPxDHCTyNlJSinVblTW52nDj2zDA1CUTplQ=
+Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri, 22 Jun 2018 10:56:19 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 10:56:05 +0200
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] display: panel: Add KOE tx14d24vm1bpa display
+ support (320x240)
+Message-ID: <20180622105605.3018453c@jawa>
+In-Reply-To: <20180529150528.22136-1-lukma@denx.de>
+References: <20180412143715.6828-1-lukma@denx.de>
+        <20180529150528.22136-1-lukma@denx.de>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 01:54:39
- -0700 (PDT)
-In-Reply-To: <alpine.LNX.2.21.1806221455570.14@nippy.intranet>
-References: <20180619140229.3615110-1-arnd@arndb.de> <20180619140229.3615110-2-arnd@arndb.de>
- <alpine.LNX.2.21.1806221455570.14@nippy.intranet>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 22 Jun 2018 10:54:39 +0200
-X-Google-Sender-Auth: NDqHyjZ3tKNmCdVyj6WG23vVQ6M
-Message-ID: <CAK8P3a2chXVhz+UJ+ujg8QMqyMmJ4zGj9XKuFZ+MsJ=dGqb3eg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] [v2] m68k: mac: use time64_t in RTC handling
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Meelis Roos <mroos@linux.ee>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ve=Gn5zIf4rJpd+mqZ9Yc51"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 7:26 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> On Tue, 19 Jun 2018, Arnd Bergmann wrote:
->
->> The real-time clock on m68k (and powerpc) mac systems uses an unsigned
->> 32-bit value starting in 1904, which overflows in 2040, about two years
->> later than everyone else, but this gets wrapped around in the Linux code
->> in 2038 already because of the deprecated usage of time_t and/or long in
->> the conversion.
->>
->> Getting rid of the deprecated interfaces makes it work until 2040 as
->> documented, and it could be easily extended by reinterpreting the
->> resulting time64_t as a positive number. For the moment, I'm adding a
->> WARN_ON() that triggers if we encounter a time before 1970 or after 2040
->> (the two are indistinguishable).
->>
->
-> I really don't like the WARN_ON(), but I'd prefer to address that in a
-> separate patch rather than impede the progress of this patch (or of this
-> series, since 3/3 seems to be unrelated).
->
-> BTW, have you considered using the same wrap-around test (i.e. YY < 70)
-> that we use for the year register in the other RTC chips?
+--Sig_/ve=Gn5zIf4rJpd+mqZ9Yc51
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-That wrap-around test would have the same effect as the my original
-version (aside from the two bugs I now fixed), doing rougly
+Hi Thierry,
 
--        return time - RTC_OFFSET;
-+        return (u32)(time - RTC_OFFSET);
+> This commit adds support for KOE's 5.7" display.
+>=20
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> Changes for v2:
+> - Add Reviewed-by tag
 
-or some other variation of that will give us an RTC that supports all dates
-between 1970 and 2106. I don't think anyone so far had a strong
-preference here, so I went with what Mathieu suggested and kept the
-original Mac behavior, but added the WARN_ON().
+Could you apply this patch to your tree?
 
->> This brings it in line with the corresponding code that we have on
->> powerpc macintosh.
->>
->
-> Your recent patches to the Mac RTC routines (which are duplicated under
-> arch/m68k and arch/powerpc) conflict with my recent patch that
-> deduplicates the same code. So I will rebase and resubmit after someone
-> merges these fixes.
->
-> Apparently the PowerMac routines work now, which is sufficient testing for
-> me; the PowerMac routines will get tested on m68k Macs when that code gets
-> deduplicated again.
+Thanks in advance,
+=C5=81ukasz
 
-Sorry about introducing that conflict, and thanks for bearing with me on the
-rebase. One thing to watch out for (if you haven't noticed already) is that the
-powerpc version now depends on rtc_time64_to_tm/rtc_tm_to_time64 which
-are only available if CONFIG_RTC_LIB is enabled but simplifies the code a
-bit. I did not want to introduce that as a global dependency on m68k which
-is rather limited on code size already, but it probably doesn't hurt to require
-RTC_LIB on m68k-mac.
+>=20
+> ---
+>  .../bindings/display/panel/koe,tx14d24vm1bpa.txt   | 42
+> ++++++++++++++++++++++
+> drivers/gpu/drm/panel/panel-simple.c               | 26
+> ++++++++++++++ 2 files changed, 68 insertions(+) create mode 100644
+> Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+>=20
+> diff --git
+> a/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+> b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+> new file mode 100644 index 000000000000..be7ac666807b --- /dev/null
+> +++
+> b/Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt
+> @@ -0,0 +1,42 @@ +Kaohsiung Opto-Electronics Inc. 5.7" QVGA (320 x
+> 240) TFT LCD panel +
+> +Required properties:
+> +- compatible: should be "koe,tx14d24vm1bpa"
+> +- backlight: phandle of the backlight device attached to the panel
+> +- power-supply: single regulator to provide the supply voltage
+> +
+> +Required nodes:
+> +- port: Parallel port mapping to connect this display
+> +
+> +This panel needs single power supply voltage. Its backlight is
+> conntrolled +via PWM signal.
+> +
+> +Example:
+> +--------
+> +
+> +Example device-tree definition when connected to iMX53 based board
+> +
+> +	lcd_panel: lcd-panel {
+> +		compatible =3D "koe,tx14d24vm1bpa";
+> +		backlight =3D <&backlight_lcd>;
+> +		power-supply =3D <&reg_3v3>;
+> +
+> +		port {
+> +			lcd_panel_in: endpoint {
+> +				remote-endpoint =3D <&lcd_display_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +Then one needs to extend the dispX node:
+> +
+> +	lcd_display: disp1 {
+> +
+> +		port@1 {
+> +			reg =3D <1>;
+> +
+> +			lcd_display_out: endpoint {
+> +				remote-endpoint =3D <&lcd_panel_in>;
+> +			};
+> +		};
+> +	};
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c
+> b/drivers/gpu/drm/panel/panel-simple.c index
+> d9984bdb5bb5..103b43ce7dee 100644 ---
+> a/drivers/gpu/drm/panel/panel-simple.c +++
+> b/drivers/gpu/drm/panel/panel-simple.c @@ -1268,6 +1268,29 @@ static
+> const struct panel_desc innolux_zj070na_01p =3D { },
+>  };
+> =20
+> +static const struct display_timing koe_tx14d24vm1bpa_timing =3D {
+> +	.pixelclock =3D { 5580000, 5850000, 6200000 },
+> +	.hactive =3D { 320, 320, 320 },
+> +	.hfront_porch =3D { 30, 30, 30 },
+> +	.hback_porch =3D { 30, 30, 30 },
+> +	.hsync_len =3D { 1, 5, 17 },
+> +	.vactive =3D { 240, 240, 240 },
+> +	.vfront_porch =3D { 6, 6, 6 },
+> +	.vback_porch =3D { 5, 5, 5 },
+> +	.vsync_len =3D { 1, 2, 11 },
+> +	.flags =3D DISPLAY_FLAGS_DE_HIGH,
+> +};
+> +
+> +static const struct panel_desc koe_tx14d24vm1bpa =3D {
+> +	.timings =3D &koe_tx14d24vm1bpa_timing,
+> +	.num_timings =3D 1,
+> +	.bpc =3D 6,
+> +	.size =3D {
+> +		.width =3D 115,
+> +		.height =3D 86,
+> +	},
+> +};
+> +
+>  static const struct display_timing koe_tx31d200vm0baa_timing =3D {
+>  	.pixelclock =3D { 39600000, 43200000, 48000000 },
+>  	.hactive =3D { 1280, 1280, 1280 },
+> @@ -2204,6 +2227,9 @@ static const struct of_device_id
+> platform_of_match[] =3D { .compatible =3D "innolux,zj070na-01p",
+>  		.data =3D &innolux_zj070na_01p,
+>  	}, {
+> +		.compatible =3D "koe,tx14d24vm1bpa",
+> +		.data =3D &koe_tx14d24vm1bpa,
+> +	}, {
+>  		.compatible =3D "koe,tx31d200vm0baa",
+>  		.data =3D &koe_tx31d200vm0baa,
+>  	}, {
 
-        Arnd
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/ve=Gn5zIf4rJpd+mqZ9Yc51
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlssuaUACgkQAR8vZIA0
+zr1B8AgAgQ9gEpUy+yOfpgwF+O5MBD9fJkSXUwJf34Eae3SXVeUjdkRXi5794FBV
+8HaqddGXris9dLQk1I3mbKlgAu0bUctJB73e88ZECaXeOtR+H7teAwkDEJhGkG88
+PZGRvA5Sf7z8efPfJzXLCjLYWje/6cP12162xQKuS+lDl0qKC+0kl1RMtWA4S9uC
+S+gSN8doTyjg4SGrukKIsN734zHYpqo7GAkEgc3jMRcn63kFBbEMAg3dngOXpuN7
+aGUuHi7AjwOSK+J6EdB06BC53hiFWkRkZMtZCwFbKjmoast3YRhDeaBwj2ey5/2F
+m/C91SMvdIJhN7YAcDWQZ+QzeM3TCA==
+=CQCq
+-----END PGP SIGNATURE-----
+
+--Sig_/ve=Gn5zIf4rJpd+mqZ9Yc51--
