@@ -2,92 +2,153 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAA4C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA05C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A4022B43
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:15:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A4022B43
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id D870C22B4B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:16:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s+1n/L/w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D870C22B4B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933864AbeFVAPS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 20:15:18 -0400
-Received: from anholt.net ([50.246.234.109]:59314 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932397AbeFVAPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 20:15:17 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id EFEDE10A1642;
-        Thu, 21 Jun 2018 17:15:16 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id YFRHnFVmk26n; Thu, 21 Jun 2018 17:15:15 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id CEA3A10A1128;
-        Thu, 21 Jun 2018 17:15:15 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 4F1552FE21D0; Thu, 21 Jun 2018 17:15:15 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] arm: bcm2835: Add the PMU to the devicetree.
-In-Reply-To: <1804311797.71726.1526929189594@email.1und1.de>
-References: <20180521183907.27563-1-eric@anholt.net> <1804311797.71726.1526929189594@email.1und1.de>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Thu, 21 Jun 2018 17:15:14 -0700
-Message-ID: <8736xfekx9.fsf@anholt.net>
+        id S933919AbeFVAQi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 20:16:38 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40157 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932397AbeFVAQg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 20:16:36 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t12-v6so2528037plo.7;
+        Thu, 21 Jun 2018 17:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4JBZPpPX15gRLq7QH5Mcmip3+N6iKZsEuFVrdgm8Jcg=;
+        b=s+1n/L/wfKn0CaHUW+MKVsQdYKGh31l6EH7ti10O1swOxrfxucdXPabzjWRV6hJbw6
+         FgtvC502v6vfJzvEIddkZ/qsZIW/zgy38Ap+5V8ZrNI3bbUYYjXWUmm4snTLdtvOQ4cO
+         87kT3j0knV20rcBjWqKO9KrjxSJfc6xJf8MgAgXiYOu5yPpZ9G91Eg976l8ymaR58zBR
+         mpKzSwLyglgkvpvWvB7ct7oFxwuqrfMitK+uZfXegpd2hvKB7Vo3LhwHu/XBdcJF2B2n
+         AVLCHAAeGkKMGQDVZ/XgKqXUGbZF3q7L7hc80f/5OYvRn9Rio2bpKoJVJfCH9Lqg4f0n
+         XLzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4JBZPpPX15gRLq7QH5Mcmip3+N6iKZsEuFVrdgm8Jcg=;
+        b=j+9zVXDUTGyvXfUAZXQykVQ/bQfx7+VvkUHs5c9c7sboCFYRFnaG5Zm5rro87zm4iF
+         ZbIZ7jZ84zDBhSrLYhz/Yi/t/XtvL5YaueUmxeoy3sqQp7YPDtXl74oYvLJjt4aH1Stm
+         uVN3vYeRtQV05b52x/XGBTWAKRkH1n3cP+bgH8vq5gnRFgs/nQmMQgib+64FYGgEMPCM
+         6rk+qFevPaa2WPUSsLDRDV6Ok5KU1mcy2FXP5zWEZPJ+QMwvUiM/mpGt3kiXUsrNZuPP
+         63k0l7UAEjkfIhnBNVvKuEKDMmNNiAkhxqwEfYfL5J/kvALWNQxA6M7W24osoIcBQuMv
+         dFpQ==
+X-Gm-Message-State: APt69E1WfwscjW0yuO/CMH32Ai1dIzI47MJPzSJbrrlPasW0/TxqkEFp
+        lOHyEf8Y+l4iG3JqmeGhqR0=
+X-Google-Smtp-Source: ADUXVKJITb837kut5xnNjZ9J4BTyz5XP7wmQP7TgbT+q+i2ReQ3X2DqmqTtrnGyi/2N3AUZa5BAIGg==
+X-Received: by 2002:a17:902:d807:: with SMTP id a7-v6mr3369082plz.92.1529626595431;
+        Thu, 21 Jun 2018 17:16:35 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id w10-v6sm9607769pfa.135.2018.06.21.17.16.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 17:16:34 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 17:16:32 -0700
+From:   'Dmitry Torokhov' <dmitry.torokhov@gmail.com>
+To:     =?utf-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        ulrik.debie-os@e2big.org, phoenix@emc.com.tw,
+        aaron.ma@canonical.com, josh.chen@emc.com.tw
+Subject: Re: [PATCH] Input: elantech - Fix V4 report decoding for module with
+ middle key
+Message-ID: <20180622001632.GI79890@dtor-ws>
+References: <1527507182-3858-1-git-send-email-kt.liao@emc.com.tw>
+ <20180529180506.GB167092@dtor-ws>
+ <000301d3f7e4$5c9e51c0$15daf540$@emc.com.tw>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <000301d3f7e4$5c9e51c0$15daf540$@emc.com.tw>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 30, 2018 at 03:03:50PM +0800, 廖崇榮 wrote:
+> Hi Dmitry,
+> 
+> -----Original Message-----
+> From: Dmitry Torokhov [mailto:dmitry.torokhov@gmail.com] 
+> Sent: Wednesday, May 30, 2018 2:05 AM
+> To: KT Liao
+> Cc: linux-kernel@vger.kernel.org; linux-input@vger.kernel.org;
+> ulrik.debie-os@e2big.org; phoenix@emc.com.tw; aaron.ma@canonical.com;
+> josh.chen@emc.com.tw
+> Subject: Re: [PATCH] Input: elantech - Fix V4 report decoding for module
+> with middle key
+> 
+> Hi KT,
+> 
+> On Mon, May 28, 2018 at 07:33:02PM +0800, KT Liao wrote:
+> > Some touchpad has middle key and it will be indicated in bit 2 of
+> packet[0].
+> > We need to fix V4 formation's byte mask to prevent error decoding.
+> 
+> Could you please let me know what devices this patch fixes? Are they
+> released or new hardware?
+> 
+> 
+> The primary target is Lenovo thinkpad P52 and it will be released in 6/M.
+> 
+> force_crc_enabled will fix the issue too because less bit-check in the
+> specific byte. 
+> I guess Fujitsu H730/H760 in elantech_dmi_force_crc_enabled may have the
+> same issue.
+> I leave them in DMI table because I am not sure of it.
 
-Stefan Wahren <stefan.wahren@i2se.com> writes:
+OK, thank you for the info. Applied.
 
->> Eric Anholt <eric@anholt.net> hat am 21. Mai 2018 um 20:39 geschrieben:
->>=20
->>=20
->> This only probes on arm64 so far, but hopefully that driver will be
->> generalized soon.
->>=20
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->
-> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+> 
+> Thanks
+> KT
+> > 
+> > Signed-off-by: KT Liao <kt.liao@emc.com.tw>
+> > ---
+> >  drivers/input/mouse/elantech.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/input/mouse/elantech.c 
+> > b/drivers/input/mouse/elantech.c index fb4d902..f39dc66 100644
+> > --- a/drivers/input/mouse/elantech.c
+> > +++ b/drivers/input/mouse/elantech.c
+> > @@ -799,7 +799,7 @@ static int elantech_packet_check_v4(struct psmouse
+> *psmouse)
+> >  	else if (ic_version == 7 && etd->info.samples[1] == 0x2A)
+> >  		sanity_check = ((packet[3] & 0x1c) == 0x10);
+> >  	else
+> > -		sanity_check = ((packet[0] & 0x0c) == 0x04 &&
+> > +		sanity_check = ((packet[0] & 0x08) == 0x00 &&
+> >  				(packet[3] & 0x1c) == 0x10);
+> >  
+> >  	if (!sanity_check)
+> > --
+> > 2.7.4
+> > 
+> 
+> Thanks.
+> 
+> -- 
+> Dmitry
+> 
 
-Merged to bcm2835-dt-next.  Thanks!
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlssP5MACgkQtdYpNtH8
-nujzOA//aCzDTiAyku0uEMFrUwBUDh6ENrsq/ydFcG6rfK9wm9xcvuMO8VmMS9jL
-5ZR0HtVvUfmoKi72ShuJLcoJTmwX0aWpxK484qt/RSSt1TS0t7CtrHZyPGIdWZXQ
-zTNTPZzO2ZEN4RD+wRsZuWpSL+LRuOa3ryL1PQ5Gakv+hVbSYRlVGtKDocHorr0P
-7V8JvL16DZg5YgCnx0IxOxhk0Pig25uFF5arvtyIV30r6vGTc0z+tSfRqPqo1YxH
-hrSrmQ8NSBuGMtpUXXNYg8qhRlQVkhzgcSkLUEPVJbDLL9gmV/CoE4LQo9s0sj6j
-eJTuacVc63ZCuTrpTO2dtf/oWJFRPO/v1ieRq1/hwKvAkdib62Z8gi+4l9HFgIZ3
-Gm4H2GmfTcV6A4AH7ZvjQdDNdAw+cyeL+45tDYNUlRu7mjsmoJz9pufmy7WrvEw3
-e0WY1gVWaVVCAGx2jjGlnCxw0u+tGBFEPXYn4sDvYAnO9I5tOa+ffXOBAHlNuqYc
-ux4uUEfDEEM8h8NjE3voDiLym6SSO+t+fkRhwuQVGg3yTjztGJZHj/Kqnc0xv9+6
-072V1mcZGX2IYD29aIik5Q7K7BLu5mq9EcLQkCVFPBItYYUxmYWSobzts7vTKk14
-G1LAz15Ohye8KpFIYpOJ77TpZ/FeHDdbh3uelHQ3VVw9PmcC47w=
-=Eg2c
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Dmitry
