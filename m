@@ -2,150 +2,136 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5CDC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0ADC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6D0224156
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:40:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6D0224156
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3754724158
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:41:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGyRc1B/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3754724158
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751370AbeFVLkq (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 07:40:46 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33178 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751291AbeFVLko (ORCPT
+        id S932170AbeFVLlJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 07:41:09 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43742 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbeFVLlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 07:40:44 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5MBdxsx121294
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 07:40:44 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jrxynu2wj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 07:40:44 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Fri, 22 Jun 2018 07:40:40 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 22 Jun 2018 07:40:38 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5MBeblW2294092
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 22 Jun 2018 11:40:37 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6435112065;
-        Fri, 22 Jun 2018 07:40:33 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B07D1112064;
-        Fri, 22 Jun 2018 07:40:33 -0400 (EDT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 22 Jun 2018 07:40:33 -0400 (EDT)
-Subject: Re: [PATCH v2 3/4] ima: Use tpm_chip_find() and access TPM functions
- using it
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        linux-kernel@vger.kernel.org
-References: <20180620204236.1572523-1-stefanb@linux.vnet.ibm.com>
- <20180620204236.1572523-4-stefanb@linux.vnet.ibm.com>
- <1529614425.23843.20.camel@linux.vnet.ibm.com>
- <f4af7347-a9dd-1683-5c2c-faeb45750e2e@linux.vnet.ibm.com>
- <20180622032536.GB19151@ziepe.ca>
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date:   Fri, 22 Jun 2018 07:40:37 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 07:41:08 -0400
+Received: by mail-lf0-f66.google.com with SMTP id l15-v6so1807055lfc.10
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 04:41:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=S1zF2DXhw0CBTg+MRVflO5OfRtBBzi4iCO3JHfpmOSU=;
+        b=VGyRc1B/+8qKednTHBmebc3PplqpxP/3aGUf2TqLa7IKA4mWHfsTnmaONKg4U7Y+ov
+         W9KOyldpUf7JTShmQHf+7K+q+PGqtiJtFX/G/yVq4zPIHBQDd5CPETnxAgwp5VrLsHJQ
+         coCqZi4RNXAg3I+9L1tNAgZkbFB1pkhlv7q9nXb5lZ7u9b9rRwwETw8qQDQuxCPJxlR9
+         g/TNT3eX29oeqeAdl5wNyl6z+x63iJF26emOho0JLW21FJ4UEcRjBP+psUlTPLhUhFR9
+         XjRMpMIdk+8YaLM2DfwbM1dbwuTIqMHHASXig5GV/czn8W6ZAji/ch71dViS/bG8+BB0
+         QtAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=S1zF2DXhw0CBTg+MRVflO5OfRtBBzi4iCO3JHfpmOSU=;
+        b=dC/uAZEWNxcvk6hbhGfoZHewUQU33wM6+zUStvuKsbzRzbRJRs99xe1bO1ilUqsW4r
+         5yU6+Sj2xtW2550dzKJzaDkHzTOTXPD7RHHoJ930vYL1KQC9c+J8B/FyOZsm4Zxiyk0g
+         qKOzVGXAiXWJMdlYjfrNzcdZeDkqg9mPJlQaI8ojU0OGjFcwHvmBFe0U5Ygm2Qxmsxm4
+         QfELpeqzgmecPBVlov+BTarnOyyzJ4H4OnWetk7CZZWP2q+vL8e8Fj5pqHApeo0OcVKn
+         HfJZUkO/qdEz69bXozFUTdTvC7Ky1k4C9qEJry3bxcKGATwGktdnMqNO8spuaPR2WkBz
+         QteQ==
+X-Gm-Message-State: APt69E3WePnhOY5P8yMe2uIYPFCw3X3XrWc5EdWHMDbCeKhO1aX69B6R
+        YCwtvjObl6NLvjTw3JMvXhn5LLEBW1PKvsCRaXY=
+X-Google-Smtp-Source: ADUXVKLhZmVD1Emf0IIYV7gwdlv1L8nnpuDlpxsi/HZaDYzidBU9Qw/J2iV7maw2WM69cb9AECRbNg3M85oK6ZE6Wt0=
+X-Received: by 2002:a2e:12dc:: with SMTP id 89-v6mr1010623ljs.63.1529667666873;
+ Fri, 22 Jun 2018 04:41:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180622032536.GB19151@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18062211-0068-0000-0000-0000030CC99C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009238; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01050649; UDB=6.00538454; IPR=6.00829619;
- MB=3.00021804; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-22 11:40:39
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062211-0069-0000-0000-000044C588B8
-Message-Id: <495fdcf7-b5b9-0341-796b-66fdf537811b@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806220133
+References: <1529056341-16182-1-git-send-email-ufo19890607@gmail.com>
+ <20180622083949.GR10465@dhcp22.suse.cz> <CAHCio2jkE2FGc2g48jm+ddvEbN3hEOoohBM+-871v32N2i2gew@mail.gmail.com>
+ <20180622104217.GV10465@dhcp22.suse.cz>
+In-Reply-To: <20180622104217.GV10465@dhcp22.suse.cz>
+From:   =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Date:   Fri, 22 Jun 2018 19:40:54 +0800
+Message-ID: <CAHCio2j-z5y8sQrZ9ENLH2sOzuoH=vsC+q9Nj5DbSXUnQK-uPw@mail.gmail.com>
+Subject: Re: [PATCH v9] Refactor part of the oom report in dump_header
+To:     mhocko@kernel.org
+Cc:     akpm@linux-foundation.org, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21/2018 11:25 PM, Jason Gunthorpe wrote:
-> On Thu, Jun 21, 2018 at 04:59:55PM -0400, Stefan Berger wrote:
->> On 06/21/2018 04:53 PM, Mimi Zohar wrote:
->>> On Wed, 2018-06-20 at 16:42 -0400, Stefan Berger wrote:
->>>> Rather than accessing the TPM functions using a NULL pointer, which
->>>> causes a lookup for a suitable chip every time, get a hold of a tpm_chip
->>>> and access the TPM functions using this chip. We call the tpm_chip
->>>> ima_tpm_chip and protect it, once initialization is done, using a
->>>> rw_semaphore called ima_tpm_chip_lock.
->>>>
->>>> Use ima_shutdown to release the tpm_chip.
->>>>
->>>> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
->>>>   security/integrity/ima/ima.h        |  3 +++
->>>>   security/integrity/ima/ima_crypto.c | 12 ++++++++++--
->>>>   security/integrity/ima/ima_init.c   | 19 ++++++++++++-------
->>>>   security/integrity/ima/ima_queue.c  |  7 +++++--
->>>>   4 files changed, 30 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>>> index 354bb5716ce3..53a88d578ca5 100644
->>>> +++ b/security/integrity/ima/ima.h
->>>> @@ -24,6 +24,7 @@
->>>>   #include <linux/hash.h>
->>>>   #include <linux/tpm.h>
->>>>   #include <linux/audit.h>
->>>> +#include <linux/rwsem.h>
->>>>   #include <crypto/hash_info.h>
->>>>
->>>>   #include "../integrity.h"
->>>> @@ -56,6 +57,8 @@ extern int ima_policy_flag;
->>>>   extern int ima_used_chip;
->>>>   extern int ima_hash_algo;
->>>>   extern int ima_appraise;
->>>> +extern struct rw_semaphore ima_tpm_chip_lock;
->>>> +extern struct tpm_chip *ima_tpm_chip;
->>> ima_add_templatE_entry() synchronizes appending a measurement to the
->>> measurement list and extending the TPM by taking a lock.  Do we really
->>> need to introduce another lock?
->> This lock protects the ima_tpm_chip from going from != NULL to NULL in the
->> ima_shutdown function. Basically, a global pointer accessed by concurrent
->> threads should be protected if its value can change. However, in this case
->> ima_shutdown would be called so late that there shouldn't be concurrency
->> anymore. Though, I found it better to protect it. Maybe someone else has an
->> opinion?
-> Why have a shutdown block? There is no harm in holding a kref if the
-> machine is shutting down.
+Hi Michal
+> You misunderstood my suggestion. Let me be more specific. Please
+> separate the whole new oom_constraint including its _usage_.
 
-Looking around at other drivers' usage of the reboot notifier, I find 
-other drivers as well that use spinlocks or mutexes during the shutdown. 
-Besides that, we do have the shutdown block already when device_shutdown 
-calls tpm_class_shutdown() and we get the ops_sem.
-
-     Stefan
+Sorry for misunderstanding your words. I think you want me to separate
+enum oom_constraint and static const char * const
+oom_constraint_text[] to two parts, am I right ?
+Michal Hocko <mhocko@kernel.org> =E4=BA=8E2018=E5=B9=B46=E6=9C=8822=E6=97=
+=A5=E5=91=A8=E4=BA=94 =E4=B8=8B=E5=8D=886:42=E5=86=99=E9=81=93=EF=BC=9A
 >
-> Jason
+> On Fri 22-06-18 17:33:12, =E7=A6=B9=E8=88=9F=E9=94=AE wrote:
+> > Hi Michal
+> > > diff --git a/include/linux/oom.h b/include/linux/oom.h
+> > > index 6adac113e96d..5bed78d4bfb8 100644
+> > > --- a/include/linux/oom.h
+> > > +++ b/include/linux/oom.h
+> > > @@ -15,6 +15,20 @@ struct notifier_block;
+> > >  struct mem_cgroup;
+> > >  struct task_struct;
+> > >
+> > > +enum oom_constraint {
+> > > +     CONSTRAINT_NONE,
+> > > +     CONSTRAINT_CPUSET,
+> > > +     CONSTRAINT_MEMORY_POLICY,
+> > > +     CONSTRAINT_MEMCG,
+> > > +};
+> > > +
+> > > +static const char * const oom_constraint_text[] =3D {
+> > > +     [CONSTRAINT_NONE] =3D "CONSTRAINT_NONE",
+> > > +     [CONSTRAINT_CPUSET] =3D "CONSTRAINT_CPUSET",
+> > > +     [CONSTRAINT_MEMORY_POLICY] =3D "CONSTRAINT_MEMORY_POLICY",
+> > > +     [CONSTRAINT_MEMCG] =3D "CONSTRAINT_MEMCG",
+> > > +};
+> >
+> > > I've suggested that this should be a separate patch.
+> > I've separate this part in patch v7.
+> >
+> > [PATCH v7 1/2] Add an array of const char and enum oom_constraint in
+> > memcontrol.h
+> > On Sat 02-06-18 19:58:51, ufo19890607@gmail.com wrote:
+> > >> From: yuzhoujian <yuzhoujian@didichuxing.com>
+> > >>
+> > >> This patch will make some preparation for the follow-up patch: Refac=
+tor
+> > >> part of the oom report in dump_header. It puts enum oom_constraint i=
+n
+> > >> memcontrol.h and adds an array of const char for each constraint.
+> >
+> > > I do not get why you separate this specific part out.
+> > > oom_constraint_text is not used in the patch. It is almost always
+> > > preferable to have a user of newly added functionality.
+> >
+> > So do I need to separate this part ?
 >
-
+> You misunderstood my suggestion. Let me be more specific. Please
+> separate the whole new oom_constraint including its _usage_.
+> --
+> Michal Hocko
+> SUSE Labs
