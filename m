@@ -2,112 +2,144 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A201BC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9656BC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6031F2412C
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:26:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="LwwnoD6S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6031F2412C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C07924133
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C07924133
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751338AbeFVL0C (ORCPT
+        id S1751362AbeFVL3Q convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 07:26:02 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44106 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751191AbeFVL0B (ORCPT
+        Fri, 22 Jun 2018 07:29:16 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:45933 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751191AbeFVL3O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 07:26:01 -0400
-Received: by mail-wr0-f193.google.com with SMTP id p12-v6so4730922wrn.11
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 04:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=C0KzWf+zEU3XSMoJL5Q33CEk8TLAG+TRW0TBcIn/UPA=;
-        b=LwwnoD6S4tukVUc4gYe0u4lxiuucDsnm7mkODloW6lWemOyrs7BQmXLM2GoXm2ox/K
-         m1cV3/5AbuqhS0qFGUbsTrG1KbINWVs2U2EojUyEfbfi6Ry40NqZYOm5Mx/wQ6OYM7s7
-         9MyVuCus2PQ8Ba6guZMyjk8L9AP3ypyihwjps=
+        Fri, 22 Jun 2018 07:29:14 -0400
+Received: by mail-ot0-f193.google.com with SMTP id a5-v6so7100869otf.12
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 04:29:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C0KzWf+zEU3XSMoJL5Q33CEk8TLAG+TRW0TBcIn/UPA=;
-        b=Gdr+lWLojh9iaQ8kZKJiv1oiChTJGlu2MN30o2T5xcDcg/Nyf4+AiENC+XwseSIMXI
-         jVcPVjhPjPHiMBduLv/kz2ruXuJkRfNt7lHkMVuUczOZX/KAm3Unc/RAhAlcNMaZPzN/
-         fhg2cY4bhLS9nJCcVLw5ONJFVMB8Wm7CiwONJIAqcxnTs/lUH40tuxhiMXklLGzkKgbp
-         8AkZeoI4JmyAkDBrt3JGkKhIwf0U3IqqFpm3hp2VQwZQP7Ogp+diRY3Wwcgqn2z3s5Nd
-         3BtNvyqzqkdnv05vfruWqgUQiUgF4ei6wad33qoQk1A+w5g17GeylppCyZmjog05ZC9Y
-         w3yQ==
-X-Gm-Message-State: APt69E2hAZKnyjAZHHIl2JIZEGTGclCFqS9S61QtAq9htqc/8PIaDuFR
-        mo+1uN+IXvYqWOjbo9u+O5S4PQ==
-X-Google-Smtp-Source: AAOMgpdXC+Vpyg5/Kug+4gINwQgv8S9AtSZ++KWUr4ibD+3W9f79w4OrgbLnJ55/uRSRDA0UrdFErw==
-X-Received: by 2002:adf:8af5:: with SMTP id z50-v6mr1257010wrz.22.1529666760407;
-        Fri, 22 Jun 2018 04:26:00 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id v10-v6sm10807079wrn.97.2018.06.22.04.25.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 04:25:59 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 13:25:53 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-Message-ID: <20180622112553.GA10658@andrea>
-References: <Pine.LNX.4.44L0.1806211322160.2381-100000@iolanthe.rowland.org>
- <20180622080928.GB7601@arm.com>
- <20180622095547.GE7601@arm.com>
- <20180622103129.GQ2476@hirez.programming.kicks-ass.net>
- <20180622103838.GF7601@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DmGSeCdjffrcnTc4AF9BmHBEuUkkB61WLfe5OIN/e4Y=;
+        b=A2c5rRjX7x1qn2KTNrWl6mfrrTtt1x0YbLmk2nnTuIXdbExxe9kk/lvQp0QtjDm3zO
+         E+TIrPXP2Xv2K3RNp0DKEEbW9r1wwEWnAX8fX/5QQJGlGFS/zzC8BfTKI9jBAXga5SYH
+         yVuILb5PgHxH0+BsQTP3zYdd+x+U+ClS5fh4oq/DtjiRk1Whd4EV9n+Utmg79L14M46p
+         dl2YpjJrlXqnYTOfwKbLDCkwEc54ri4t5IRutAXtlXAyekVq3/aPcCrI96mIXzzSsIfx
+         WvwaHXCloYcDXO8v9JwgfTTZI1A1s1csFdYfy4wP6HgE9A0236qcNPBWME0baMgZNW/l
+         1zqQ==
+X-Gm-Message-State: APt69E1l6B4lLv93RTIHvl4Tt8NvSMbhyr3DjEyc/Kz8tH9B4VoEjQFa
+        hUuROalUeN8LvwkNtP38tMwkW3/4K6jmFTM552A=
+X-Google-Smtp-Source: ADUXVKI1/AMpyA0+7z2Qv5Cts5iUh8bcf2G1TL2Xj+13HRRgadZs9dkfHCePa0ZSquBCbFtRZMDbTeryYFjJWdZmasw=
+X-Received: by 2002:a9d:56ec:: with SMTP id b41-v6mr629379otj.339.1529666954319;
+ Fri, 22 Jun 2018 04:29:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622103838.GF7601@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180322202007.23088-8-malat@debian.org> <20180328193935.1338-1-malat@debian.org>
+In-Reply-To: <20180328193935.1338-1-malat@debian.org>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Fri, 22 Jun 2018 13:29:03 +0200
+Message-ID: <CA+7wUsxL=r6hip9hwt9xsrFYAZeqqFBmf89N37sPVeMdOsJjGw@mail.gmail.com>
+Subject: Re: [PATCH v2 07/19] powerpc/powermac: Make some functions static
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > I also just realised that this prevents Power from using ctrl+isync to
-> > > implement acquire, should they wish to do so.
-> > 
-> > They in fact do so on chips lacking LWSYNC, see how PPC_ACQUIRE_BARRIER
-> > (as used by atomic_*_acquire) turns into ISYNC (note however that they
-> > do not use PPC_ACQUIRE_BARRIER for smp_load_acquire -- because there's
-> > no CTRL there).
-> 
-> Right, so the example in the commit message is broken on PPC then. I think
-> it's also broken on RISC-V, despite the claim.
+This one should also be good to go.
 
-I agree for RISC-V (and I missed it in my earlier review): the 2nd
-snippet from the commit message would map to something like
-
-   fence rw, w
-   STORE #1,[x]
-   LOAD  [x]
-   fence r ,rw
-   STORE #1,[y]
-
-and there would be no guarantee that the stores to x and y will be
-propagated in program order to another CPU, AFAICT.  Thank you for
-pointing this out.
-
-  Andrea
+On Wed, Mar 28, 2018 at 9:39 PM Mathieu Malaterre <malat@debian.org> wrote:
+>
+> These functions can all be static, make it so. Fix warnings treated as
+> errors with W=1:
+>
+>   arch/powerpc/platforms/powermac/pci.c:1022:6: error: no previous prototype for ‘pmac_pci_fixup_ohci’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/pci.c:1057:6: error: no previous prototype for ‘pmac_pci_fixup_cardbus’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/pci.c:1094:6: error: no previous prototype for ‘pmac_pci_fixup_pciata’ [-Werror=missing-prototypes]
+>
+> Remove has_address declaration and assignment since not used. Also add gcc
+> attribute unused to fix a warning treated as error with W=1:
+>
+>   arch/powerpc/platforms/powermac/pci.c:784:19: error: variable ‘has_address’ set but not used [-Werror=unused-but-set-variable]
+>   arch/powerpc/platforms/powermac/pci.c:907:22: error: variable ‘ht’ set but not used [-Werror=unused-but-set-variable]
+>
+> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+> v2: remove has_address variable since not used
+>  arch/powerpc/platforms/powermac/pci.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
+> index 0b8174a79993..67c497093e0a 100644
+> --- a/arch/powerpc/platforms/powermac/pci.c
+> +++ b/arch/powerpc/platforms/powermac/pci.c
+> @@ -781,12 +781,12 @@ static int __init pmac_add_bridge(struct device_node *dev)
+>         struct resource rsrc;
+>         char *disp_name;
+>         const int *bus_range;
+> -       int primary = 1, has_address = 0;
+> +       int primary = 1;
+>
+>         DBG("Adding PCI host bridge %pOF\n", dev);
+>
+>         /* Fetch host bridge registers address */
+> -       has_address = (of_address_to_resource(dev, 0, &rsrc) == 0);
+> +       of_address_to_resource(dev, 0, &rsrc);
+>
+>         /* Get bus range if any */
+>         bus_range = of_get_property(dev, "bus-range", &len);
+> @@ -904,7 +904,7 @@ static int pmac_pci_root_bridge_prepare(struct pci_host_bridge *bridge)
+>  void __init pmac_pci_init(void)
+>  {
+>         struct device_node *np, *root;
+> -       struct device_node *ht = NULL;
+> +       struct device_node *ht __maybe_unused = NULL;
+>
+>         pci_set_flags(PCI_CAN_SKIP_ISA_ALIGN);
+>
+> @@ -1019,7 +1019,7 @@ static bool pmac_pci_enable_device_hook(struct pci_dev *dev)
+>         return true;
+>  }
+>
+> -void pmac_pci_fixup_ohci(struct pci_dev *dev)
+> +static void pmac_pci_fixup_ohci(struct pci_dev *dev)
+>  {
+>         struct device_node *node = pci_device_to_OF_node(dev);
+>
+> @@ -1054,7 +1054,7 @@ void __init pmac_pcibios_after_init(void)
+>         }
+>  }
+>
+> -void pmac_pci_fixup_cardbus(struct pci_dev* dev)
+> +static void pmac_pci_fixup_cardbus(struct pci_dev *dev)
+>  {
+>         if (!machine_is(powermac))
+>                 return;
+> @@ -1091,7 +1091,7 @@ void pmac_pci_fixup_cardbus(struct pci_dev* dev)
+>
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_TI, PCI_ANY_ID, pmac_pci_fixup_cardbus);
+>
+> -void pmac_pci_fixup_pciata(struct pci_dev* dev)
+> +static void pmac_pci_fixup_pciata(struct pci_dev *dev)
+>  {
+>         u8 progif = 0;
+>
+> --
+> 2.11.0
+>
