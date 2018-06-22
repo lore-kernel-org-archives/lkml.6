@@ -3,74 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D10FC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 737F0C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E522F243FB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:51:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E522F243FB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 2B3AA243FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:51:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B3AA243FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933871AbeFVOvL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:51:11 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:38332 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933542AbeFVOvJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:51:09 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fWNOn-0007QQ-HF; Fri, 22 Jun 2018 22:50:53 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fWNOi-0003Tr-17; Fri, 22 Jun 2018 22:50:48 +0800
-Date:   Fri, 22 Jun 2018 22:50:48 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Vinod <vkoul@kernel.org>, Stephan Mueller <smueller@chronox.de>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
-Message-ID: <20180622145047.dqyxwptttivaca2s@gondor.apana.org.au>
-References: <20180618141259.23141-1-vkoul@kernel.org>
- <20180618141259.23141-4-vkoul@kernel.org>
- <20180619142853.wgi5easw4zv6ttrb@gondor.apana.org.au>
- <966e9cd4-70a3-8d54-df0f-16df3df45fb5@linaro.org>
- <20180621101506.rnklbtapvfdev4xb@gondor.apana.org.au>
- <e39deb02-8fa4-84ac-b33e-d692402189a1@linaro.org>
- <20180621115312.rfmbitrhqi44wu5w@gondor.apana.org.au>
- <6782b1c0-ea94-b07c-2fae-3fe3223bb22a@linaro.org>
- <20180622143829.rd2ys6ci7q3aupst@gondor.apana.org.au>
- <20180622144809.GP27187@vkoul-mobl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622144809.GP27187@vkoul-mobl>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S933888AbeFVOvS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:51:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44026 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933542AbeFVOvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:51:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 082C2ABDD;
+        Fri, 22 Jun 2018 14:51:14 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com
+Subject: [GIT PULL] xen: fixes for 4.18-rc2
+Date:   Fri, 22 Jun 2018 16:51:12 +0200
+Message-Id: <20180622145112.21586-1-jgross@suse.com>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 08:18:09PM +0530, Vinod wrote:
->
-> Okay I am doing the port taking the exynos-rng as a ref.
-> Question is how to test it, how is one supposed to exercise the rng, any
-> test utils/apps for that? Sorry for noob question, new to crypto
-> interfaces.
+Linus,
 
-algif_rng is available through the af_alg socket interface.
+Please git pull the following tag:
 
-Ccing Stephan as he has a library that may help you.
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.18-rc2-tag
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+xen: fixes for 4.18-rc2
+
+It contains the following fixes/cleanups:
+
+- the removal of a BUG_ON() which wasn't necessary and which could
+  trigger now due to a recent change
+
+- a correction of a long standing bug happening very rarely in Xen
+  dom0 when a hypercall buffer from user land was not accessible by
+  the hypervisor for very short periods of time due to e.g. page
+  migration or compaction
+
+- usage of EXPORT_SYMBOL_GPL() instead EXPORT_SYMBOL() in a Xen-related
+  driver (no breakage possible as using those symbols without others
+  already exported via EXPORT-SYMBOL_GPL() wouldn't make any sense)
+
+- a simplification for Xen PVH or Xen ARM guests
+
+- some additional error handling for callers of xenbus_printf()
+
+
+Thanks.
+
+Juergen
+
+ arch/arm/xen/enlighten.c         |   7 +-
+ arch/x86/xen/enlighten.c         |   7 ++
+ arch/x86/xen/enlighten_pv.c      |   1 +
+ arch/x86/xen/enlighten_pvh.c     |   1 +
+ drivers/scsi/xen-scsifront.c     |  33 ++++--
+ drivers/xen/Makefile             |   2 +-
+ drivers/xen/events/events_base.c |   2 -
+ drivers/xen/grant-table.c        |   4 +-
+ drivers/xen/manage.c             |  18 +++-
+ drivers/xen/privcmd-buf.c        | 210 +++++++++++++++++++++++++++++++++++++++
+ drivers/xen/privcmd.c            |   9 ++
+ drivers/xen/privcmd.h            |   3 +
+ drivers/xen/xen-scsiback.c       |  16 ++-
+ include/xen/xen.h                |   6 +-
+ 14 files changed, 297 insertions(+), 22 deletions(-)
+
+Boris Ostrovsky (1):
+      xen: Remove unnecessary BUG_ON from __unbind_from_irq()
+
+Juergen Gross (2):
+      xen: add new hypercall buffer mapping device
+
+Oleksandr Andrushchenko (1):
+      xen/grant-table: Export gnttab_{alloc|free}_pages as GPL
+
+Roger Pau Monne (1):
+      xen: share start flags between PV and PVH
+
+Zhouyang Jia (3):
+      xen: add error handling for xenbus_printf
+      scsi: xen-scsifront: add error handling for xenbus_printf
+      xen/scsiback: add error handling for xenbus_printf
