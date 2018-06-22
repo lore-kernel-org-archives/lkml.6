@@ -2,116 +2,222 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD513C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00EDFC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D79124082
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:44:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HeFnNsYe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D79124082
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id A819424085
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:44:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A819424085
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932968AbeFVKoa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 06:44:30 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:59002 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751329AbeFVKo2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 06:44:28 -0400
-X-Greylist: delayed 1677 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Jun 2018 06:44:28 EDT
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5MAGPm9044071;
-        Fri, 22 Jun 2018 05:16:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1529662585;
-        bh=56ekOV6VA3aR+GHFwQWLfnVzLudJ+eyQsWjORFa8TqM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=HeFnNsYeuwRAQ3IiXrM00ooSqYg9Zj6OQS63I/4P3VO2UfXFQXJjg3iUl6Y5BATb8
-         bxiXWdFBMjS1ZFtiRbPbQy1LexCRzfmQO7ILLiDZYukWH3RACpa5FoZrh5E6c941mb
-         sGpC6ToO4rWtCbS5UvueFhgtVko99VbryRkYAAXo=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5MAGO3f011819;
-        Fri, 22 Jun 2018 05:16:25 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 22
- Jun 2018 05:16:24 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 22 Jun 2018 05:16:24 -0500
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5MAGI3T032544;
-        Fri, 22 Jun 2018 05:16:22 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>, <kishon@ti.com>
-CC:     <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
-Subject: [PATCH RESEND 1/3] ARM: dts: keystone-k2g-evm: Add "vqmmc-supply" property for mmc0/mmc1
-Date:   Fri, 22 Jun 2018 15:46:15 +0530
-Message-ID: <20180622101617.11157-2-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180622101617.11157-1-kishon@ti.com>
-References: <20180622101617.11157-1-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1754313AbeFVKog (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 06:44:36 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33232 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752688AbeFVKoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 06:44:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B029B14;
+        Fri, 22 Jun 2018 03:44:31 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7EDFF3F557;
+        Fri, 22 Jun 2018 03:44:31 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id E9B591AE2E48; Fri, 22 Jun 2018 11:45:07 +0100 (BST)
+From:   Will Deacon <will.deacon@arm.com>
+To:     linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com
+Cc:     peterz@infradead.org, paulmck@linux.vnet.ibm.com,
+        boqun.feng@gmail.com, mingo@redhat.com,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v3] rseq: Avoid infinite recursion when delivering SIGSEGV
+Date:   Fri, 22 Jun 2018 11:45:07 +0100
+Message-Id: <1529664307-983-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "vqmmc-supply" property for mmc0/mmc1 to indicate the supply connected
-to the IO lines. Also add dt node for ldo1 regulator required for mmc1
-vqmmc-supply.
+When delivering a signal to a task that is using rseq, we call into
+__rseq_handle_notify_resume() so that the registers pushed in the
+sigframe are updated to reflect the state of the restartable sequence
+(for example, ensuring that the signal returns to the abort handler if
+necessary).
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+However, if the rseq management fails due to an unrecoverable fault when
+accessing userspace or certain combinations of RSEQ_CS_* flags, then we
+will attempt to deliver a SIGSEGV. This has the potential for infinite
+recursion if the rseq code continuously fails on signal delivery.
+
+Avoid this problem by using force_sigsegv() instead of force_sig(), which
+is explicitly designed to reset the SEGV handler to SIG_DFL in the case
+of a recursive fault. In doing so, remove rseq_signal_deliver() from the
+internal rseq API and have an optional struct ksignal * parameter to
+rseq_handle_notify_resume() instead.
+
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm/boot/dts/keystone-k2g-evm.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/keystone-k2g-evm.dts b/arch/arm/boot/dts/keystone-k2g-evm.dts
-index 154fdd7a7022..ba030c496f51 100644
---- a/arch/arm/boot/dts/keystone-k2g-evm.dts
-+++ b/arch/arm/boot/dts/keystone-k2g-evm.dts
-@@ -37,6 +37,14 @@
- 		regulator-max-microvolt = <3300000>;
- 		regulator-always-on;
- 	};
-+
-+	vcc1v8_ldo1_reg: fixedregulator-vcc1v8-ldo1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ldo1";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
- };
+v2 -> v3: Reintroduce rseq_signal_deliver()
+
+ arch/arm/kernel/signal.c     |  4 ++--
+ arch/powerpc/kernel/signal.c |  4 ++--
+ arch/x86/entry/common.c      |  2 +-
+ arch/x86/kernel/signal.c     |  2 +-
+ include/linux/sched.h        | 18 +++++++++++-------
+ kernel/rseq.c                |  7 ++++---
+ 6 files changed, 21 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index f09e9d66d605..dec130e7078c 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -544,7 +544,7 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
+ 	 * Increment event counter and perform fixup for the pre-signal
+ 	 * frame.
+ 	 */
+-	rseq_signal_deliver(regs);
++	rseq_signal_deliver(ksig, regs);
  
- &k2g_pinctrl {
-@@ -144,6 +152,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
- 	vmmc-supply = <&vcc3v3_dcin_reg>;
-+	vqmmc-supply = <&vcc3v3_dcin_reg>;
- 	cd-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
-@@ -152,6 +161,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
- 	vmmc-supply = <&vcc3v3_dcin_reg>; /* VCC3V3_EMMC is connected to VCC3V3_DCIN */
-+	vqmmc-supply = <&vcc1v8_ldo1_reg>;
- 	ti,non-removable;
- 	status = "okay";
- };
+ 	/*
+ 	 * Set up the stack frame
+@@ -666,7 +666,7 @@ do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
+ 			} else {
+ 				clear_thread_flag(TIF_NOTIFY_RESUME);
+ 				tracehook_notify_resume(regs);
+-				rseq_handle_notify_resume(regs);
++				rseq_handle_notify_resume(NULL, regs);
+ 			}
+ 		}
+ 		local_irq_disable();
+diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+index 17fe4339ba59..b3e8db376ecd 100644
+--- a/arch/powerpc/kernel/signal.c
++++ b/arch/powerpc/kernel/signal.c
+@@ -134,7 +134,7 @@ static void do_signal(struct task_struct *tsk)
+ 	/* Re-enable the breakpoints for the signal stack */
+ 	thread_change_pc(tsk, tsk->thread.regs);
+ 
+-	rseq_signal_deliver(tsk->thread.regs);
++	rseq_signal_deliver(&ksig, tsk->thread.regs);
+ 
+ 	if (is32) {
+         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+@@ -170,7 +170,7 @@ void do_notify_resume(struct pt_regs *regs, unsigned long thread_info_flags)
+ 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
+ 		clear_thread_flag(TIF_NOTIFY_RESUME);
+ 		tracehook_notify_resume(regs);
+-		rseq_handle_notify_resume(regs);
++		rseq_handle_notify_resume(NULL, regs);
+ 	}
+ 
+ 	user_enter();
+diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
+index 92190879b228..3b2490b81918 100644
+--- a/arch/x86/entry/common.c
++++ b/arch/x86/entry/common.c
+@@ -164,7 +164,7 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
+ 		if (cached_flags & _TIF_NOTIFY_RESUME) {
+ 			clear_thread_flag(TIF_NOTIFY_RESUME);
+ 			tracehook_notify_resume(regs);
+-			rseq_handle_notify_resume(regs);
++			rseq_handle_notify_resume(NULL, regs);
+ 		}
+ 
+ 		if (cached_flags & _TIF_USER_RETURN_NOTIFY)
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 445ca11ff863..92a3b312a53c 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -692,7 +692,7 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
+ 	 * Increment event counter and perform fixup for the pre-signal
+ 	 * frame.
+ 	 */
+-	rseq_signal_deliver(regs);
++	rseq_signal_deliver(ksig, regs);
+ 
+ 	/* Set up the stack frame */
+ 	if (is_ia32_frame(ksig)) {
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 87bf02d93a27..c54dda3cd9e5 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1799,20 +1799,22 @@ static inline void rseq_set_notify_resume(struct task_struct *t)
+ 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+ }
+ 
+-void __rseq_handle_notify_resume(struct pt_regs *regs);
++void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+ 
+-static inline void rseq_handle_notify_resume(struct pt_regs *regs)
++static inline void rseq_handle_notify_resume(struct ksignal *ksig,
++					     struct pt_regs *regs)
+ {
+ 	if (current->rseq)
+-		__rseq_handle_notify_resume(regs);
++		__rseq_handle_notify_resume(ksig, regs);
+ }
+ 
+-static inline void rseq_signal_deliver(struct pt_regs *regs)
++static inline void rseq_signal_deliver(struct ksignal *ksig,
++				       struct pt_regs *regs)
+ {
+ 	preempt_disable();
+ 	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
+ 	preempt_enable();
+-	rseq_handle_notify_resume(regs);
++	rseq_handle_notify_resume(ksig, regs);
+ }
+ 
+ /* rseq_preempt() requires preemption to be disabled. */
+@@ -1864,10 +1866,12 @@ static inline void rseq_execve(struct task_struct *t)
+ static inline void rseq_set_notify_resume(struct task_struct *t)
+ {
+ }
+-static inline void rseq_handle_notify_resume(struct pt_regs *regs)
++static inline void rseq_handle_notify_resume(struct ksignal *ksig,
++					     struct pt_regs *regs)
+ {
+ }
+-static inline void rseq_signal_deliver(struct pt_regs *regs)
++static inline void rseq_signal_deliver(struct ksignal *ksig,
++				       struct pt_regs *regs)
+ {
+ }
+ static inline void rseq_preempt(struct task_struct *t)
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index ae306f90c514..22b6acf1ad63 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -251,10 +251,10 @@ static int rseq_ip_fixup(struct pt_regs *regs)
+  * respect to other threads scheduled on the same CPU, and with respect
+  * to signal handlers.
+  */
+-void __rseq_handle_notify_resume(struct pt_regs *regs)
++void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+ {
+ 	struct task_struct *t = current;
+-	int ret;
++	int ret, sig;
+ 
+ 	if (unlikely(t->flags & PF_EXITING))
+ 		return;
+@@ -268,7 +268,8 @@ void __rseq_handle_notify_resume(struct pt_regs *regs)
+ 	return;
+ 
+ error:
+-	force_sig(SIGSEGV, t);
++	sig = ksig ? ksig->sig : 0;
++	force_sigsegv(sig, t);
+ }
+ 
+ #ifdef CONFIG_DEBUG_RSEQ
 -- 
-2.17.1
+2.1.4
 
