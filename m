@@ -1,149 +1,136 @@
 Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13865C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABFBC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE2EE23D88
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:52:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2EE23D88
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A257023D96
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 05:57:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="NGxXt8By"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A257023D96
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751256AbeFVFwF (ORCPT
+        id S1750985AbeFVF5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 01:52:05 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:41574 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbeFVFwC (ORCPT
+        Fri, 22 Jun 2018 01:57:02 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36288 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeFVF5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 01:52:02 -0400
-Received: by mail-it0-f69.google.com with SMTP id h26-v6so881025itj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 22:52:02 -0700 (PDT)
+        Fri, 22 Jun 2018 01:57:01 -0400
+Received: by mail-pg0-f67.google.com with SMTP id m5-v6so2480680pgd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 22:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M4CmSoGOyfjxK1VLs9xSjx7mW5J/v48ecLBzt8CKuPE=;
+        b=NGxXt8ByiOtYH9eDDksGgYU6+0KFdDFuuaO3g16dzchMf+uG9v4+nSFt++a96seIdd
+         v8zA+lunwD53cyv9KBKQbwDsrtK4RKqcRLfCYUBAjwQuHuymO+EBohiFcMonEGtoz/rz
+         sAX67AfA0RD+7lOL6dfdQsV6n7pHwWTqJbhJQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=zimLOM0joMQIpaIER/jggMH5WndIxBZ15NOHlgK0JxU=;
-        b=Ax8CUheKsU7zcyfaLgEeKdpAb58HhGcAI0l4c2PdooOAZQ60W3s/S9r2AEaX9GruxB
-         Q9PkO9lFn6NzCL9AGGMwjQk7b/BYGLWHkjfk9lTgyocmFMYBvpCdRP+EHbenypCSdt1r
-         MksTVy6iPZ8RCwfyCeX4ts+zam4N7A6TekQhlDyG30aSHcmSJdcZCXmOmoZcfG0vNWOV
-         u/CnH6JLcdakg132DOdGs/y1y2Ia2GjHWT6381/DcAltpgPJFMUrQwHJkxNFHATyl7zq
-         Yg4Sf/nsD1Z6n06cyQ7rn+R15ynFr8wJvJ/WhP+XjIMbJB5/Vm0/Xys0OimkCxHLBZ2L
-         Jh9A==
-X-Gm-Message-State: APt69E1O3JApcr9+jSY9+sr0JMrEwdtyM24/zWqXUDiSNparszEGdhlx
-        PAdqBTnemYJaix2nKt09pRPGEo8UpL735lo29GcX0ONRxsHh
-X-Google-Smtp-Source: AAOMgpdKvtsSmY2221P11yf1kYjM5A+KTmOixsYW5UYSYgxlfmoXmUNqWsTGCxV2NA236WLDlUHstGwKaVFwvsC17CwIUSpsnaGd
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M4CmSoGOyfjxK1VLs9xSjx7mW5J/v48ecLBzt8CKuPE=;
+        b=ImnqNO9dx+W+9aL9N90xpm7dEA8fN2LofMEI39qzLCnYKOxqFOrTSr1n8AktHTHapC
+         +ng4YYeRifi7V+9HXY7IUfXn+F1VHAxdO4bR+njXZdUXfQ00/RcEKRcENoGs6VAuxb3W
+         zDRSofwb68CflsIc+6McA/ABLemrOcKxyCzBX+2S2vOs3mKzqVqoeS8dJM48Kg8jYDKZ
+         qb9uYvCOKWV39uPDgRm9e4BtWHWBIc+pwp3igq/5CEYaj7T9hd979QG/aamYBwoIzODW
+         Sqg/ZTkBam/omql7Iwbtr03YV07B3f1fAPKXASQh83c5gvDsUZ4PSHxkcItCssZYJJ5U
+         txrw==
+X-Gm-Message-State: APt69E3nzumQ+YU/5UUrKCaZ/Bj2R2MHqAUgNwwmqomKL09crFKJHdB2
+        4itlni4tdRq7qZSUocY0yQrTeQ==
+X-Google-Smtp-Source: ADUXVKLdF1jQ88WihSDJ3pBRHGm7EMtqROwLktGI82GOYc2Cw98q+O++/jy3bfw5jOcjzky+CTNwaA==
+X-Received: by 2002:a65:4a4d:: with SMTP id a13-v6mr172704pgu.161.1529647020466;
+        Thu, 21 Jun 2018 22:57:00 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id y23-v6sm14151342pfa.73.2018.06.21.22.56.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 22:56:59 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 22:56:59 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Byungchul Park <max.byungchul.park@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        jiangshanlai@gmail.com, josh@joshtriplett.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com, luto@kernel.org
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
+ rcu_dynticks
+Message-ID: <20180622055659.GA255098@joelaf.mtv.corp.google.com>
+References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
+ <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
+ <20180620145814.GQ3593@linux.vnet.ibm.com>
+ <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
+ <20180620164902.GW3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:8e0a:: with SMTP id q10-v6mr67210iod.2.1529646722044;
- Thu, 21 Jun 2018 22:52:02 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 22:52:02 -0700
-In-Reply-To: <000000000000c66d94056a84011d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007fdef5056f34a108@google.com>
-Subject: Re: KMSAN: uninit-value in ip_vs_lblc_check_expire
-From:   syzbot <syzbot+3e9695f147fb529aa9bc@syzkaller.appspotmail.com>
-To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        horms@verge.net.au, ja@ssi.bg, kadlec@blackhole.kfki.hu,
-        linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
-        wensong@linux-vs.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180620164902.GW3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Hi Paul,
 
-HEAD commit:    123906095e30 kmsan: introduce kmsan_interrupt_enter()/kmsa..
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=134ad890400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=848e40757852af3e
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e9695f147fb529aa9bc
-compiler:       clang version 7.0.0 (trunk 334104)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11505218400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1168a490400000
+On Wed, Jun 20, 2018 at 09:49:02AM -0700, Paul E. McKenney wrote:
+> On Thu, Jun 21, 2018 at 01:05:22AM +0900, Byungchul Park wrote:
+> > On Wed, Jun 20, 2018 at 11:58 PM, Paul E. McKenney
+> > <paulmck@linux.vnet.ibm.com> wrote:
+> > > On Wed, Jun 20, 2018 at 05:47:20PM +0900, Byungchul Park wrote:
+> > >> Hello folks,
+> > >>
+> > >> I'm careful in saying that ->dynticks_nmi_nesting can be removed but I
+> > >> think it's possible since the only thing we are interested in with
+> > >> regard to ->dynticks_nesting or ->dynticks_nmi_nesting is whether rcu is
+> > >> idle or not.
+> > >
+> > > Please keep in mind that NMIs cannot be masked, which means that the
+> > > rcu_nmi_enter() and rcu_nmi_exit() pair can be invoked at any point in
+> > > the process, between any consecutive pair of instructions.  The saving
+> 
+> And yes, I should have looked at this patch more closely before replying.
+> But please see below.
+> 
+> > I believe I understand what NMI is and why you introduced
+> > ->dynticks_nmi_nesting. Or am I missing something?
+> 
+> Perhaps the fact that there are architectures that can enter interrupt
+> handlers and never leave them when the CPU is non-idle.  One example of
+> this is the usermode upcalls in the comment that you removed.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3e9695f147fb529aa9bc@syzkaller.appspotmail.com
+I spent some time tonight and last night trying to understand this concept of
+never leaving an interrupt, I hope you don't mind me asking this dumb
+question... perhaps I will learn something : Could you let me know how is it
+possible that an interrupt never exits?
 
-==================================================================
-BUG: KMSAN: uninit-value in ip_vs_lblc_check_expire+0xe62/0xf10  
-net/netfilter/ipvs/ip_vs_lblc.c:315
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.17.0+ #9
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1125
-  __msan_warning_32+0x70/0xc0 mm/kmsan/kmsan_instr.c:620
-  ip_vs_lblc_check_expire+0xe62/0xf10 net/netfilter/ipvs/ip_vs_lblc.c:315
-  call_timer_fn+0x280/0x5d0 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0xd96/0x11b0 kernel/time/timer.c:1666
-  run_timer_softirq+0x43/0x70 kernel/time/timer.c:1692
-  __do_softirq+0x592/0x979 kernel/softirq.c:285
-  invoke_softirq kernel/softirq.c:365 [inline]
-  irq_exit+0x202/0x240 kernel/softirq.c:405
-  exiting_irq+0xe/0x10 arch/x86/include/asm/apic.h:525
-  smp_apic_timer_interrupt+0x64/0x90 arch/x86/kernel/apic/apic.c:1055
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:866
-  </IRQ>
-RIP: 0010:native_safe_halt arch/x86/include/asm/irqflags.h:55 [inline]
-RIP: 0010:arch_safe_halt arch/x86/include/asm/irqflags.h:97 [inline]
-RIP: 0010:default_idle+0x20b/0x3e0 arch/x86/kernel/process.c:500
-RSP: 0018:ffff8801d8e5fdf0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: ffff8801fd432f18 RBX: 0000000000000000 RCX: ffff880000000000
-RDX: ffff8801fd032f18 RSI: aaaaaaaaaaaab000 RDI: ffffea0000000000
-RBP: ffff8801d8e5fe28 R08: 0000000001080020 R09: 0000000000000002
-R10: 00000030de3d75c0 R11: ffffffff89fef830 R12: ffff8801d8e5fe8f
-R13: ffff8801d8da57c0 R14: ffff8801d8e5fe8c R15: ffff8801d8da6098
-  arch_cpu_idle+0x26/0x30 arch/x86/kernel/process.c:491
-  default_idle_call kernel/sched/idle.c:93 [inline]
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x36d/0x830 kernel/sched/idle.c:262
-  cpu_startup_entry+0x45/0x50 kernel/sched/idle.c:368
-  start_secondary+0x3c6/0x490 arch/x86/kernel/smpboot.c:272
-  secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+Typically an interrupt never exiting sounds like a hard-lockup. This is how
+hardlock detector works: Since regular interrupts in linux can't nest, the
+hardlockup detector checks if hrtimer interrupts are being handled and if
+not, then it throws a splat, panics the kernel etc. So I am a bit troubled by
+this interrupt never exiting concept..
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:282 [inline]
-  kmsan_alloc_meta_for_pages+0x161/0x3a0 mm/kmsan/kmsan.c:819
-  kmsan_alloc_page+0x82/0xe0 mm/kmsan/kmsan.c:889
-  __alloc_pages_nodemask+0xf7b/0x5cc0 mm/page_alloc.c:4402
-  alloc_pages_current+0x6b1/0x970 mm/mempolicy.c:2093
-  alloc_pages include/linux/gfp.h:494 [inline]
-  kmalloc_order mm/slab_common.c:1148 [inline]
-  kmalloc_order_trace+0xbb/0x390 mm/slab_common.c:1159
-  kmalloc_large include/linux/slab.h:446 [inline]
-  __kmalloc+0x335/0x350 mm/slub.c:3805
-  kmalloc include/linux/slab.h:517 [inline]
-  ip_vs_lblc_init_svc+0x57/0x310 net/netfilter/ipvs/ip_vs_lblc.c:355
-  ip_vs_bind_scheduler+0xa9/0x1f0 net/netfilter/ipvs/ip_vs_sched.c:51
-  ip_vs_add_service+0xa9d/0x1d90 net/netfilter/ipvs/ip_vs_ctl.c:1265
-  do_ip_vs_set_ctl+0x2aa9/0x2cd0 net/netfilter/ipvs/ip_vs_ctl.c:2462
-  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-  nf_setsockopt+0x47c/0x4e0 net/netfilter/nf_sockopt.c:115
-  ip_setsockopt+0x24b/0x2b0 net/ipv4/ip_sockglue.c:1251
-  udp_setsockopt+0x108/0x1b0 net/ipv4/udp.c:2416
-  ipv6_setsockopt+0x311/0x350 net/ipv6/ipv6_sockglue.c:917
-  tcp_setsockopt+0x1c0/0x1f0 net/ipv4/tcp.c:2891
-  sock_common_setsockopt+0x13b/0x170 net/core/sock.c:3039
-  __sys_setsockopt+0x496/0x540 net/socket.c:1903
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0x15c/0x1c0 net/socket.c:1911
-  do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-==================================================================
+Further since an interrupt is an atomic context, it cannot sleep or schedule
+into usermode so how are these upcalls handled from the interrupt?
+
+Lastly, can you point me to an example how the rcu_nmi_enter/exit() pair can go
+out sync? That is they aren't paired and nested properly? In my mind they
+always should be but I may be missing the usecase. I'm happy to try and
+reproduce and trace this if you can let me know how to so that I can study
+it better. 
+
+Thanks a lot Paul for your help,
+
+ - Joel
 
