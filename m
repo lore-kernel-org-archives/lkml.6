@@ -3,35 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63D5C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C54A8C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6812524507
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:37:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6812524507
+	by mail.kernel.org (Postfix) with ESMTP id 878D22445A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:38:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878D22445A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934056AbeFVPhx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:37:53 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:46424 "EHLO extserv.mm-sol.com"
+        id S934154AbeFVPiL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:38:11 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:46550 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933991AbeFVPeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:34:09 -0400
+        id S933989AbeFVPeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:34:08 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id D4B9B4F892;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 9F0674F88D;
         Fri, 22 Jun 2018 18:33:59 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 26/32] media: camss: vfe: Different format support on source pad
-Date:   Fri, 22 Jun 2018 18:33:35 +0300
-Message-Id: <1529681621-9682-27-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH 21/32] media: camss: csid: Add support for 8x96
+Date:   Fri, 22 Jun 2018 18:33:30 +0300
+Message-Id: <1529681621-9682-22-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
 References: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
@@ -40,228 +40,155 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rework the format selection on the source pad. Make the format
-on the source pad selectable amongst a list of formats. This
-list can be different for each sink pad format.
+CSID hardware modules on 8x16 and 8x96 are similar. There is no
+need to duplicate the code by adding separate versions. Just
+update the register macros to return the correct register
+addresses.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/platform/qcom/camss/camss-vfe.c | 170 ++++++++++++++++++++------
- 1 file changed, 134 insertions(+), 36 deletions(-)
+ drivers/media/platform/qcom/camss/camss-csid.c | 60 ++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 6fc2be5..21bcfb2 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -127,6 +127,131 @@ static u8 vfe_get_bpp(const struct vfe_format *formats,
- 	return formats[0].bpp;
- }
+diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
+index ea2b0ba..ff0e0d5 100644
+--- a/drivers/media/platform/qcom/camss/camss-csid.c
++++ b/drivers/media/platform/qcom/camss/camss-csid.c
+@@ -27,21 +27,26 @@
+ #define CAMSS_CSID_HW_VERSION		0x0
+ #define CAMSS_CSID_CORE_CTRL_0		0x004
+ #define CAMSS_CSID_CORE_CTRL_1		0x008
+-#define CAMSS_CSID_RST_CMD		0x00c
+-#define CAMSS_CSID_CID_LUT_VC_n(n)	(0x010 + 0x4 * (n))
+-#define CAMSS_CSID_CID_n_CFG(n)		(0x020 + 0x4 * (n))
+-#define CAMSS_CSID_IRQ_CLEAR_CMD	0x060
+-#define CAMSS_CSID_IRQ_MASK		0x064
+-#define CAMSS_CSID_IRQ_STATUS		0x068
+-#define CAMSS_CSID_TG_CTRL		0x0a0
++#define CAMSS_CSID_RST_CMD(v)		((v) == CAMSS_8x16 ? 0x00c : 0x010)
++#define CAMSS_CSID_CID_LUT_VC_n(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x010 : 0x014) + 0x4 * (n))
++#define CAMSS_CSID_CID_n_CFG(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x020 : 0x024) + 0x4 * (n))
++#define CAMSS_CSID_IRQ_CLEAR_CMD(v)	((v) == CAMSS_8x16 ? 0x060 : 0x064)
++#define CAMSS_CSID_IRQ_MASK(v)		((v) == CAMSS_8x16 ? 0x064 : 0x068)
++#define CAMSS_CSID_IRQ_STATUS(v)	((v) == CAMSS_8x16 ? 0x068 : 0x06c)
++#define CAMSS_CSID_TG_CTRL(v)		((v) == CAMSS_8x16 ? 0x0a0 : 0x0a8)
+ #define CAMSS_CSID_TG_CTRL_DISABLE	0xa06436
+ #define CAMSS_CSID_TG_CTRL_ENABLE	0xa06437
+-#define CAMSS_CSID_TG_VC_CFG		0x0a4
++#define CAMSS_CSID_TG_VC_CFG(v)		((v) == CAMSS_8x16 ? 0x0a4 : 0x0ac)
+ #define CAMSS_CSID_TG_VC_CFG_H_BLANKING		0x3ff
+ #define CAMSS_CSID_TG_VC_CFG_V_BLANKING		0x7f
+-#define CAMSS_CSID_TG_DT_n_CGG_0(n)	(0x0ac + 0xc * (n))
+-#define CAMSS_CSID_TG_DT_n_CGG_1(n)	(0x0b0 + 0xc * (n))
+-#define CAMSS_CSID_TG_DT_n_CGG_2(n)	(0x0b4 + 0xc * (n))
++#define CAMSS_CSID_TG_DT_n_CGG_0(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x0ac : 0x0b4) + 0xc * (n))
++#define CAMSS_CSID_TG_DT_n_CGG_1(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x0b0 : 0x0b8) + 0xc * (n))
++#define CAMSS_CSID_TG_DT_n_CGG_2(v, n)	\
++			(((v) == CAMSS_8x16 ? 0x0b4 : 0x0bc) + 0xc * (n))
  
-+static u32 vfe_find_code(u32 *code, unsigned int n_code,
-+			 unsigned int index, u32 req_code)
-+{
-+	int i;
-+
-+	if (!req_code && (index >= n_code))
-+		return 0;
-+
-+	for (i = 0; i < n_code; i++)
-+		if (req_code) {
-+			if (req_code == code[i])
-+				return req_code;
-+		} else {
-+			if (i == index)
-+				return code[i];
-+		}
-+
-+	return code[0];
-+}
-+
-+static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
-+			    unsigned int index, u32 src_req_code)
-+{
-+	struct vfe_device *vfe = to_vfe(line);
-+
-+	if (vfe->camss->version == CAMSS_8x16)
-+		switch (sink_code) {
-+		case MEDIA_BUS_FMT_YUYV8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_YUYV8_2X8,
-+				MEDIA_BUS_FMT_YUYV8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_YVYU8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_YVYU8_2X8,
-+				MEDIA_BUS_FMT_YVYU8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_UYVY8_2X8,
-+				MEDIA_BUS_FMT_UYVY8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_VYUY8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_VYUY8_2X8,
-+				MEDIA_BUS_FMT_VYUY8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		default:
-+			if (index > 0)
-+				return 0;
-+
-+			return sink_code;
-+		}
-+	else if (vfe->camss->version == CAMSS_8x96)
-+		switch (sink_code) {
-+		case MEDIA_BUS_FMT_YUYV8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_YUYV8_2X8,
-+				MEDIA_BUS_FMT_YUYV8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_YVYU8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_YVYU8_2X8,
-+				MEDIA_BUS_FMT_YVYU8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_UYVY8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_UYVY8_2X8,
-+				MEDIA_BUS_FMT_UYVY8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		case MEDIA_BUS_FMT_VYUY8_2X8:
-+		{
-+			u32 src_code[] = {
-+				MEDIA_BUS_FMT_VYUY8_2X8,
-+				MEDIA_BUS_FMT_VYUY8_1_5X8,
-+			};
-+
-+			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
-+					     index, src_req_code);
-+		}
-+		default:
-+			if (index > 0)
-+				return 0;
-+
-+			return sink_code;
-+		}
-+	else
-+		return 0;
-+}
-+
- /*
-  * vfe_reset - Trigger reset on VFE module and wait to complete
-  * @vfe: VFE device
-@@ -1387,11 +1512,9 @@ static void vfe_try_format(struct vfe_line *line,
- 
- 	case MSM_VFE_PAD_SRC:
- 		/* Set and return a format same as sink pad */
--
- 		code = fmt->code;
- 
--		*fmt = *__vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
--					 which);
-+		*fmt = *__vfe_get_format(line, cfg, MSM_VFE_PAD_SINK, which);
- 
- 		if (line->id == VFE_LINE_PIX) {
- 			struct v4l2_rect *rect;
-@@ -1401,33 +1524,7 @@ static void vfe_try_format(struct vfe_line *line,
- 			fmt->width = rect->width;
- 			fmt->height = rect->height;
- 
--			switch (fmt->code) {
--			case MEDIA_BUS_FMT_YUYV8_2X8:
--				if (code == MEDIA_BUS_FMT_YUYV8_1_5X8)
--					fmt->code = MEDIA_BUS_FMT_YUYV8_1_5X8;
--				else
--					fmt->code = MEDIA_BUS_FMT_YUYV8_2X8;
--				break;
--			case MEDIA_BUS_FMT_YVYU8_2X8:
--				if (code == MEDIA_BUS_FMT_YVYU8_1_5X8)
--					fmt->code = MEDIA_BUS_FMT_YVYU8_1_5X8;
--				else
--					fmt->code = MEDIA_BUS_FMT_YVYU8_2X8;
--				break;
--			case MEDIA_BUS_FMT_UYVY8_2X8:
--			default:
--				if (code == MEDIA_BUS_FMT_UYVY8_1_5X8)
--					fmt->code = MEDIA_BUS_FMT_UYVY8_1_5X8;
--				else
--					fmt->code = MEDIA_BUS_FMT_UYVY8_2X8;
--				break;
--			case MEDIA_BUS_FMT_VYUY8_2X8:
--				if (code == MEDIA_BUS_FMT_VYUY8_1_5X8)
--					fmt->code = MEDIA_BUS_FMT_VYUY8_1_5X8;
--				else
--					fmt->code = MEDIA_BUS_FMT_VYUY8_2X8;
--				break;
--			}
-+			fmt->code = vfe_src_pad_code(line, fmt->code, 0, code);
- 		}
- 
- 		break;
-@@ -1531,7 +1628,6 @@ static int vfe_enum_mbus_code(struct v4l2_subdev *sd,
- 			      struct v4l2_subdev_mbus_code_enum *code)
+ #define DATA_TYPE_EMBEDDED_DATA_8BIT	0x12
+ #define DATA_TYPE_YUV422_8BIT		0x1e
+@@ -203,10 +208,11 @@ static const struct csid_fmts *csid_get_fmt_entry(u32 code)
+ static irqreturn_t csid_isr(int irq, void *dev)
  {
- 	struct vfe_line *line = v4l2_get_subdevdata(sd);
--	struct v4l2_mbus_framefmt *format;
+ 	struct csid_device *csid = dev;
++	enum camss_version ver = csid->camss->version;
+ 	u32 value;
  
- 	if (code->pad == MSM_VFE_PAD_SINK) {
- 		if (code->index >= line->nformats)
-@@ -1539,13 +1635,15 @@ static int vfe_enum_mbus_code(struct v4l2_subdev *sd,
+-	value = readl_relaxed(csid->base + CAMSS_CSID_IRQ_STATUS);
+-	writel_relaxed(value, csid->base + CAMSS_CSID_IRQ_CLEAR_CMD);
++	value = readl_relaxed(csid->base + CAMSS_CSID_IRQ_STATUS(ver));
++	writel_relaxed(value, csid->base + CAMSS_CSID_IRQ_CLEAR_CMD(ver));
  
- 		code->code = line->formats[code->index].code;
+ 	if ((value >> 11) & 0x1)
+ 		complete(&csid->reset_complete);
+@@ -289,7 +295,8 @@ static int csid_reset(struct csid_device *csid)
+ 
+ 	reinit_completion(&csid->reset_complete);
+ 
+-	writel_relaxed(0x7fff, csid->base + CAMSS_CSID_RST_CMD);
++	writel_relaxed(0x7fff, csid->base +
++		       CAMSS_CSID_RST_CMD(csid->camss->version));
+ 
+ 	time = wait_for_completion_timeout(&csid->reset_complete,
+ 		msecs_to_jiffies(CSID_RESET_TIMEOUT_MS));
+@@ -370,6 +377,7 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ {
+ 	struct csid_device *csid = v4l2_get_subdevdata(sd);
+ 	struct csid_testgen_config *tg = &csid->testgen;
++	enum camss_version ver = csid->camss->version;
+ 	u32 val;
+ 
+ 	if (enable) {
+@@ -402,13 +410,14 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ 			/* 1:0 VC */
+ 			val = ((CAMSS_CSID_TG_VC_CFG_V_BLANKING & 0xff) << 24) |
+ 			      ((CAMSS_CSID_TG_VC_CFG_H_BLANKING & 0x7ff) << 13);
+-			writel_relaxed(val, csid->base + CAMSS_CSID_TG_VC_CFG);
++			writel_relaxed(val, csid->base +
++				       CAMSS_CSID_TG_VC_CFG(ver));
+ 
+ 			/* 28:16 bytes per lines, 12:0 num of lines */
+ 			val = ((num_bytes_per_line & 0x1fff) << 16) |
+ 			      (num_lines & 0x1fff);
+ 			writel_relaxed(val, csid->base +
+-				       CAMSS_CSID_TG_DT_n_CGG_0(0));
++				       CAMSS_CSID_TG_DT_n_CGG_0(ver, 0));
+ 
+ 			dt = csid_get_fmt_entry(
+ 				csid->fmt[MSM_CSID_PAD_SRC].code)->data_type;
+@@ -416,12 +425,12 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ 			/* 5:0 data type */
+ 			val = dt;
+ 			writel_relaxed(val, csid->base +
+-				       CAMSS_CSID_TG_DT_n_CGG_1(0));
++				       CAMSS_CSID_TG_DT_n_CGG_1(ver, 0));
+ 
+ 			/* 2:0 output test pattern */
+ 			val = tg->payload_mode;
+ 			writel_relaxed(val, csid->base +
+-				       CAMSS_CSID_TG_DT_n_CGG_2(0));
++				       CAMSS_CSID_TG_DT_n_CGG_2(ver, 0));
+ 
+ 			df = csid_get_fmt_entry(
+ 				csid->fmt[MSM_CSID_PAD_SRC].code)->decode_format;
+@@ -450,22 +459,27 @@ static int csid_set_stream(struct v4l2_subdev *sd, int enable)
+ 
+ 		dt_shift = (cid % 4) * 8;
+ 
+-		val = readl_relaxed(csid->base + CAMSS_CSID_CID_LUT_VC_n(vc));
++		val = readl_relaxed(csid->base +
++				    CAMSS_CSID_CID_LUT_VC_n(ver, vc));
+ 		val &= ~(0xff << dt_shift);
+ 		val |= dt << dt_shift;
+-		writel_relaxed(val, csid->base + CAMSS_CSID_CID_LUT_VC_n(vc));
++		writel_relaxed(val, csid->base +
++			       CAMSS_CSID_CID_LUT_VC_n(ver, vc));
+ 
+ 		val = (df << 4) | 0x3;
+-		writel_relaxed(val, csid->base + CAMSS_CSID_CID_n_CFG(cid));
++		writel_relaxed(val, csid->base +
++			       CAMSS_CSID_CID_n_CFG(ver, cid));
+ 
+ 		if (tg->enabled) {
+ 			val = CAMSS_CSID_TG_CTRL_ENABLE;
+-			writel_relaxed(val, csid->base + CAMSS_CSID_TG_CTRL);
++			writel_relaxed(val, csid->base +
++				       CAMSS_CSID_TG_CTRL(ver));
+ 		}
  	} else {
--		if (code->index > 0)
--			return -EINVAL;
-+		struct v4l2_mbus_framefmt *sink_fmt;
- 
--		format = __vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
--					  code->which);
-+		sink_fmt = __vfe_get_format(line, cfg, MSM_VFE_PAD_SINK,
-+					    code->which);
- 
--		code->code = format->code;
-+		code->code = vfe_src_pad_code(line, sink_fmt->code,
-+					      code->index, 0);
-+		if (!code->code)
-+			return -EINVAL;
+ 		if (tg->enabled) {
+ 			val = CAMSS_CSID_TG_CTRL_DISABLE;
+-			writel_relaxed(val, csid->base + CAMSS_CSID_TG_CTRL);
++			writel_relaxed(val, csid->base +
++				       CAMSS_CSID_TG_CTRL(ver));
+ 		}
  	}
  
- 	return 0;
 -- 
 2.7.4
 
