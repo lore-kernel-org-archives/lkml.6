@@ -2,140 +2,190 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F44C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3AEC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96C1224436
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:56:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C1224436
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 38C2924442
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:57:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="KQbNoz9R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C2924442
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933774AbeFVO4q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:56:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933572AbeFVO4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:56:23 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2E95E8A703;
-        Fri, 22 Jun 2018 14:56:23 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D02011166E1;
-        Fri, 22 Jun 2018 14:56:21 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] x86/hyper-v: rename ipi_arg_{ex,non_ex} structures
-Date:   Fri, 22 Jun 2018 16:56:15 +0200
-Message-Id: <20180622145616.5851-3-vkuznets@redhat.com>
-In-Reply-To: <20180622145616.5851-1-vkuznets@redhat.com>
-References: <20180622145616.5851-1-vkuznets@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 22 Jun 2018 14:56:23 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 22 Jun 2018 14:56:23 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+        id S933626AbeFVO52 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:57:28 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44536 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933310AbeFVO51 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:57:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=SrvmSt5d4b5wKDZoJ+2BnyoVMzwkaE6AxH5cMqpScA8=; b=KQbNoz9RiLRa
+        khvwmEIQjWuKK8vyxjbGOrZsRQ3cjzk5RnHhIGaFr7ztgukX7CEnXMk5Opivk0rs0u7wzxq1Sl/C9
+        p77PpruuMSJtcz8psU3061TBP0+WExKdVUMOFMTJcl9I0+wdsvVvUZZqtMVj3KbPszSbiecUKOccv
+        RqzeA=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fWNV0-0003w5-8V; Fri, 22 Jun 2018 14:57:18 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fWNUz-0003N1-F3; Fri, 22 Jun 2018 15:57:17 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jiada Wang <jiada_wang@mentor.com>
+Cc:     Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        jiada_wang@mentor.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: soc-pcm: DPCM cares BE channel constraint" to the asoc tree
+In-Reply-To:  <20180620092520.14101-1-jiada_wang@mentor.com>
+Message-Id: <E1fWNUz-0003N1-F3@debutante>
+Date:   Fri, 22 Jun 2018 15:57:17 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These structures are going to be used from KVM code so let's make
-their names reflect their Hyper-V origin.
+The patch
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+   ASoC: soc-pcm: DPCM cares BE channel constraint
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f4c277b817cc9489fffabffb4e15d2f3b686056c Mon Sep 17 00:00:00 2001
+From: Jiada Wang <jiada_wang@mentor.com>
+Date: Wed, 20 Jun 2018 18:25:20 +0900
+Subject: [PATCH] ASoC: soc-pcm: DPCM cares BE channel constraint
+
+Current DPCM is caring only FE channel configuration. Sometimes
+it will be trouble if user selects channel which isn't supported
+by BE.
+
+This patch adds new .dpcm_merged_chan on struct snd_soc_dai_link.
+DPCM will use FE / BE merged channel if struct snd_soc_dai_link
+has it.
+
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/x86/hyperv/hv_apic.c          | 12 ++++++------
- arch/x86/include/asm/hyperv-tlfs.h | 16 +++++++++-------
- 2 files changed, 15 insertions(+), 13 deletions(-)
+ include/sound/soc.h |  2 ++
+ sound/soc/soc-pcm.c | 46 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 48 insertions(+)
 
-diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
-index f68855499391..cb17168e6263 100644
---- a/arch/x86/hyperv/hv_apic.c
-+++ b/arch/x86/hyperv/hv_apic.c
-@@ -93,14 +93,14 @@ static void hv_apic_eoi_write(u32 reg, u32 val)
-  */
- static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
- {
--	struct ipi_arg_ex **arg;
--	struct ipi_arg_ex *ipi_arg;
-+	struct hv_send_ipi_ex **arg;
-+	struct hv_send_ipi_ex *ipi_arg;
- 	unsigned long flags;
- 	int nr_bank = 0;
- 	int ret = 1;
+diff --git a/include/sound/soc.h b/include/sound/soc.h
+index 1378dcd2128a..f7579f82cc00 100644
+--- a/include/sound/soc.h
++++ b/include/sound/soc.h
+@@ -957,6 +957,8 @@ struct snd_soc_dai_link {
  
- 	local_irq_save(flags);
--	arg = (struct ipi_arg_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
-+	arg = (struct hv_send_ipi_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
+ 	/* DPCM used FE & BE merged format */
+ 	unsigned int dpcm_merged_format:1;
++	/* DPCM used FE & BE merged channel */
++	unsigned int dpcm_merged_chan:1;
  
- 	ipi_arg = *arg;
- 	if (unlikely(!ipi_arg))
-@@ -128,8 +128,8 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
- static bool __send_ipi_mask(const struct cpumask *mask, int vector)
- {
- 	int cur_cpu, vcpu;
--	struct ipi_arg_non_ex **arg;
--	struct ipi_arg_non_ex *ipi_arg;
-+	struct hv_send_ipi **arg;
-+	struct hv_send_ipi *ipi_arg;
- 	int ret = 1;
- 	unsigned long flags;
+ 	/* pmdown_time is ignored at stop */
+ 	unsigned int ignore_pmdown_time:1;
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index 45b52f7b9690..19ebfc958b9d 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -1715,6 +1715,46 @@ static u64 dpcm_runtime_base_format(struct snd_pcm_substream *substream)
+ 	return formats;
+ }
  
-@@ -146,7 +146,7 @@ static bool __send_ipi_mask(const struct cpumask *mask, int vector)
- 		return __send_ipi_mask_ex(mask, vector);
- 
- 	local_irq_save(flags);
--	arg = (struct ipi_arg_non_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
-+	arg = (struct hv_send_ipi **)this_cpu_ptr(hyperv_pcpu_input_arg);
- 
- 	ipi_arg = *arg;
- 	if (unlikely(!ipi_arg))
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index b8c89265baf0..b52c9604b20d 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -723,19 +723,21 @@ struct hv_enlightened_vmcs {
- #define HV_STIMER_AUTOENABLE		(1ULL << 3)
- #define HV_STIMER_SINT(config)		(__u8)(((config) >> 16) & 0x0F)
- 
--struct ipi_arg_non_ex {
--	u32 vector;
--	u32 reserved;
--	u64 cpu_mask;
--};
--
- struct hv_vpset {
- 	u64 format;
- 	u64 valid_bank_mask;
- 	u64 bank_contents[];
- };
- 
--struct ipi_arg_ex {
-+/* HvCallSendSyntheticClusterIpi hypercall */
-+struct hv_send_ipi {
-+	u32 vector;
-+	u32 reserved;
-+	u64 cpu_mask;
-+};
++static void dpcm_runtime_base_chan(struct snd_pcm_substream *substream,
++				   unsigned int *channels_min,
++				   unsigned int *channels_max)
++{
++	struct snd_soc_pcm_runtime *fe = substream->private_data;
++	struct snd_soc_dpcm *dpcm;
++	int stream = substream->stream;
 +
-+/* HvCallSendSyntheticClusterIpiEx hypercall */
-+struct hv_send_ipi_ex {
- 	u32 vector;
- 	u32 reserved;
- 	struct hv_vpset vp_set;
++	if (!fe->dai_link->dpcm_merged_chan)
++		return;
++
++	*channels_min = 0;
++	*channels_max = UINT_MAX;
++
++	/*
++	 * It returns merged BE codec channel;
++	 * if FE want to use it (= dpcm_merged_chan)
++	 */
++
++	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
++		struct snd_soc_pcm_runtime *be = dpcm->be;
++		struct snd_soc_dai_driver *codec_dai_drv;
++		struct snd_soc_pcm_stream *codec_stream;
++		int i;
++
++		for (i = 0; i < be->num_codecs; i++) {
++			codec_dai_drv = be->codec_dais[i]->driver;
++			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
++				codec_stream = &codec_dai_drv->playback;
++			else
++				codec_stream = &codec_dai_drv->capture;
++
++			*channels_min = max(*channels_min,
++					    codec_stream->channels_min);
++			*channels_max = min(*channels_max,
++					    codec_stream->channels_max);
++		}
++	}
++}
++
+ static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+@@ -1722,11 +1762,17 @@ static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+ 	struct snd_soc_dai_driver *cpu_dai_drv = cpu_dai->driver;
+ 	u64 format = dpcm_runtime_base_format(substream);
++	unsigned int channels_min = 0, channels_max = UINT_MAX;
+ 
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+ 		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->playback, format);
+ 	else
+ 		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->capture, format);
++
++	dpcm_runtime_base_chan(substream, &channels_min, &channels_max);
++
++	runtime->hw.channels_min = max(channels_min, runtime->hw.channels_min);
++	runtime->hw.channels_max = min(channels_max, runtime->hw.channels_max);
+ }
+ 
+ static int dpcm_fe_dai_do_trigger(struct snd_pcm_substream *substream, int cmd);
 -- 
-2.14.4
+2.18.0.rc2
 
