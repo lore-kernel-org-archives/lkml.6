@@ -2,240 +2,125 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 204C6C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A428C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCE97242C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:34:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE97242C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E583242CB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:34:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="LJaMFb9c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E583242CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751916AbeFVNej (ORCPT
+        id S1754080AbeFVNe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:34:39 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47996 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750853AbeFVNeh (ORCPT
+        Fri, 22 Jun 2018 09:34:56 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:31862 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751389AbeFVNey (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:34:37 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5MDYUhI063620
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:34:37 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jrxynyhae-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:34:36 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 22 Jun 2018 09:34:33 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 22 Jun 2018 09:34:30 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5MDYTGf2032168
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 22 Jun 2018 13:34:29 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1189CB2068;
-        Fri, 22 Jun 2018 09:34:29 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CEF16B2066;
-        Fri, 22 Jun 2018 09:34:28 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.197.125])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 22 Jun 2018 09:34:28 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id ACDFD16C9E49; Fri, 22 Jun 2018 06:36:31 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 06:36:31 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     Byungchul Park <max.byungchul.park@gmail.com>,
-        jiangshanlai@gmail.com, josh@joshtriplett.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        Joel Fernandes <joel@joelfernandes.org>, luto@kernel.org
-Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
- rcu_dynticks
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
- <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
- <20180620145814.GQ3593@linux.vnet.ibm.com>
- <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
- <20180620164902.GW3593@linux.vnet.ibm.com>
- <CANrsvRPAWv8LgSvPrGgLiXnjrtK3CmpJgdpNsuu-0LZJTYeYWQ@mail.gmail.com>
- <20180620174037.GZ3593@linux.vnet.ibm.com>
- <20180621063949.GA28024@X58A-UD3R>
- <20180621150407.GE3593@linux.vnet.ibm.com>
- <20180622030032.GB17010@X58A-UD3R>
+        Fri, 22 Jun 2018 09:34:54 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie2.idc.renesas.com with ESMTP; 22 Jun 2018 22:34:53 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 81C0C6F8A0;
+        Fri, 22 Jun 2018 22:34:53 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,257,1526310000"; 
+   d="scan'208";a="283302258"
+Received: from mail-ty1jpn01lp0176.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.176])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 22 Jun 2018 22:34:53 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/e433mrwu2QQczIe82d/Q0irpUV4l8A+wNPdtiXTb3A=;
+ b=LJaMFb9cHuN7DOZ7wAx2qPcews8m0/Fro6udUWF+NaIEJWrJmsCbfLOay4lGE7j9Md/miyvfOFXnrsLVC6jaLY0Ey1hxKRH/N8wZ24KF85E0quWWuAOawMC9Bj5tA/ZSMjumYcGec7zItvaya7OoSocTd5hsrFtsMeymM2oymtU=
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.162.18) by
+ TY1PR01MB0222.jpnprd01.prod.outlook.com (10.161.135.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.19; Fri, 22 Jun 2018 13:34:48 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::d5ba:9747:d01f:427c]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::d5ba:9747:d01f:427c%4]) with mapi id 15.20.0884.021; Fri, 22 Jun 2018
+ 13:34:48 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     Greg Ungerer <gerg@linux-m68k.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] [RFC] arm: Replace "multiple platforms" by "common
+ platform"
+Thread-Topic: [PATCH] [RFC] arm: Replace "multiple platforms" by "common
+ platform"
+Thread-Index: AQHUCXjQN59bwBmqP0OuNzrNny+ALKRsAk6AgABFZMA=
+Date:   Fri, 22 Jun 2018 13:34:47 +0000
+Message-ID: <TY1PR01MB1562CCB1FAC3AFA20CDBC9958A750@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180621155906.12821-1-geert+renesas@glider.be>
+ <20180622092305.GS17671@n2100.armlinux.org.uk>
+In-Reply-To: <20180622092305.GS17671@n2100.armlinux.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [75.60.247.61]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB0222;7:ptDF3ZTarl99Jsi3u+Z4vP1tOfYpVpB1g24XpPRFSJoY8wP1ScCwauI4Oqy2/9t8dV2MO2nFuuAbkuHIshdSLV2ytUFED5pDbDDqdzkbpvj9Ye2eASctDkt+i1yyTIvK1vNiWMKeAA6a+e3rq1n8S3oE5mMn78C8FNCykZGz981QSdMYTXWBHKI5qwixEOHbnqYVyYSU654YeFXsZaor9vmWzPRgeyZ/ii5iBexZhI58xiqiAnfcG4DOphWJDlDT;20:gtlam6/6yk+gzuP/uKwy68IcZ/YR6ETXXmogmP+cK7hBOEUAJKEI4N/3HsMYg8AA5CpJYhANKxeFkR/RWbG5IMiJ238sCPs4iNqP7ysQjyTxTBa32z7jXlbjLeP59XmjZNI2/n+IsLLpCB/k/GorrEXhGTBXukIcoZc+5fb0QhY=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d6455c9d-b189-477c-bbb0-08d5d844ec89
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB0222;
+x-ms-traffictypediagnostic: TY1PR01MB0222:
+x-microsoft-antispam-prvs: <TY1PR01MB02222DDD3E54CBE7537FCA418A750@TY1PR01MB0222.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(788757137089);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:TY1PR01MB0222;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB0222;
+x-forefront-prvs: 071156160B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(39860400002)(39380400002)(396003)(199004)(189003)(69234005)(81166006)(5250100002)(6306002)(81156014)(6116002)(66066001)(2900100001)(3846002)(3660700001)(966005)(6436002)(8936002)(14454004)(9686003)(3280700002)(33656002)(53936002)(72206003)(6246003)(97736004)(68736007)(478600001)(2906002)(6506007)(74316002)(102836004)(446003)(106356001)(4326008)(11346002)(26005)(110136005)(86362001)(39060400002)(7736002)(186003)(5660300001)(105586002)(229853002)(7416002)(55016002)(54906003)(8676002)(76176011)(7696005)(476003)(486006)(305945005)(25786009)(99286004)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB0222;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: B83jkWK1U4azghrph9Z6ZmOEKjmYE8F1/82DtQhrnJvoDZ3KvN1dX0189Fy8zU2N9+HgywYGdpeR55P8HTxRhwINjb+zjcVmhQNIDF2hC1iU3xP0ZJZT+LIEJjsXrjmgAOTTqGOIC34SdwuP9wC74YkGwWymgdRpO2e9bod1N4BHHve3wmvOXYS4QFfPk77ygGV/u6LsiJmJty/fdXwKPos/PzNMB6RtDfHbkShoOi4oR/M4k9KtP7I4OlLVS3spmeZt6rk1cUaX+66vzkuOiQMXBn7shj1yYiMpcK/gUl2bstXuHMY53bnoJAKrGutfDTcMgRYvC1O6YgSxGfNMWw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622030032.GB17010@X58A-UD3R>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18062213-0052-0000-0000-00000302AF60
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009238; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01050687; UDB=6.00538476; IPR=6.00829657;
- MB=3.00021805; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-22 13:34:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062213-0053-0000-0000-00005D1A7611
-Message-Id: <20180622133631.GO3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=969 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806220152
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6455c9d-b189-477c-bbb0-08d5d844ec89
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2018 13:34:47.8456
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB0222
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 12:00:32PM +0900, Byungchul Park wrote:
-> On Thu, Jun 21, 2018 at 08:04:07AM -0700, Paul E. McKenney wrote:
-> 
-> > Nothing quite like concurrent programming to help one see one's own
-> > mistakes.  ;-)
-> 
-> Haha.
-> 
-> > Your reasoning has merit, but the nice thing about keeping "nmi" is
-> > that it helps casual readers see that NMIs must be handled.  If we
-> > rename this to "irq", we lose that hint and probably leave some
-> > readers wondering why the strange increment-by-2 code is there.
-> > So let's please keep the current names.
-> 
-> Got it. I will.
-> 
-> > >  /**
-> > > - * rcu_nmi_exit - inform RCU of exit from NMI context
-> > > + * rcu_irq_exit_common - inform RCU of exit from interrupt context
-> > >   *
-> > > - * If we are returning from the outermost NMI handler that interrupted an
-> > > - * RCU-idle period, update rdtp->dynticks and rdtp->dynticks_nmi_nesting
-> > > - * to let the RCU grace-period handling know that the CPU is back to
-> > > - * being RCU-idle.
-> > > + * If we are returning from the outermost interrupt handler that
-> > > + * interrupted an RCU-idle period, update rdtp->dynticks and
-> > > + * rdtp->dynticks_irq_nesting to let the RCU grace-period handling
-> > > + * know that the CPU is back to being RCU-idle.
-> > >   *
-> > > - * If you add or remove a call to rcu_nmi_exit(), be sure to test
-> > > - * with CONFIG_RCU_EQS_DEBUG=y.
-> > > + * If you add or remove a call to rcu_irq_exit_common(), be sure to
-> > > + * test with CONFIG_RCU_EQS_DEBUG=y.
-> > >   */
-> > > -void rcu_nmi_exit(void)
-> > > +static __always_inline void rcu_irq_exit_common(bool nmi)
-> > 
-> > However, I suggest making this function's parameter "irq" because ...
-> 
-> I will.
-> 
-> > Does the generated code really get rid of the conditional branches?
-> > I would hope that it wouild, but it is always good to check.  This
-> > should be easy to find in the assembly-language output because of the
-> > calls to rcu_prepare_for_idle() and rcu_dynticks_task_enter().
-> 
-> Good! It works as we expect, I did it only with x86_64 tho.
+On Friday, June 22, 2018, Russell King - ARM Linux wrote:
+> We've worked around the issues with "multi-platform" XIP/NOMMU by
+> using things such as "ARM_SINGLE_V7M" to cover all V7M platforms
+> (which must, by definition) have compatible physical layouts.
+> Exactly the same approach should be adopted for other XIP/NOMMU
+> platforms, and _not_ reusing ARCH_MULTIPLATFORM, which will lead
+> to lots of non-bootable kernels.
 
-I suspect that it would be similar for most other architectures running
-the same compiler version.  Might be worth firing up a cross-compiler
-to check one or two more, though.
 
->                                                             Let me show
-> you the part we are interested in. The rest are almost same.
-> 
-> <rcu_nmi_exit>:
-> 	5b                   	pop    %rbx
-> 	5d                   	pop    %rbp
-> 	41 5c                	pop    %r12
-> 	41 5d                	pop    %r13
-> 	41 5e                	pop    %r14
-> 	41 5f                	pop    %r15
-> 	e9 0f 75 ff ff       	jmpq   ffffffff810bb440 <rcu_dynticks_eqs_enter>
-> 
-> <rcu_irq_exit>:
-> 	e8 e6 e5 ff ff       	callq  ffffffff810c26a0 <rcu_prepare_for_idle>
-> 	e8 81 73 ff ff       	callq  ffffffff810bb440 <rcu_dynticks_eqs_enter>
-> 	e8 ec 3a 2b 00       	callq  ffffffff81377bb0 <debug_smp_processor_id>
-> 	65 48 8b 14 25 00 4d 	mov    %gs:0x14d00,%rdx
-> 	01 00 
-> 	89 82 94 03 00 00    	mov    %eax,0x394(%rdx)
-> 	5b                   	pop    %rbx
-> 	5d                   	pop    %rbp
-> 	41 5c                	pop    %r12
-> 	41 5d                	pop    %r13
-> 	41 5e                	pop    %r14
-> 	41 5f                	pop    %r15
-> 	c3                   	retq
+FYI, I already submitted at patch like that:
 
-This is a summary view focusing on the function calls, correct?
-(I am guessing this based on your "the part we are interested in".)
+https://patchwork.kernel.org/patch/9563975/
 
-> Even though they return in a little bit different way, anyway I can see
-> all the branchs we are interested in were removed by compiler!
 
-Yes, very nice!
-
-The reason for the difference is that the compiler applied tail
-recursion to rcu_nmi_exit()'s call to rcu_dynticks_eqs_enter(), and
-inlined rcu_irq_exit()'s call to rcu_dynticks_task_enter().
-
-> > >  {
-> > >  	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-> > >  	long incby = 2;
-> > > 
-> > >  	/* Complain about underflow. */
-> > > -	WARN_ON_ONCE(rdtp->dynticks_nmi_nesting < 0);
-> > > +	WARN_ON_ONCE(rdtp->dynticks_irq_nesting < 0);
-> > > 
-> > >  	/*
-> > >  	 * If idle from RCU viewpoint, atomically increment ->dynticks
-> > > -	 * to mark non-idle and increment ->dynticks_nmi_nesting by one.
-> > > -	 * Otherwise, increment ->dynticks_nmi_nesting by two.  This means
-> > > -	 * if ->dynticks_nmi_nesting is equal to one, we are guaranteed
-> > > +	 * to mark non-idle and increment ->dynticks_irq_nesting by one.
-> > > +	 * Otherwise, increment ->dynticks_irq_nesting by two.  This means
-> > > +	 * if ->dynticks_irq_nesting is equal to one, we are guaranteed
-> > >  	 * to be in the outermost NMI handler that interrupted an RCU-idle
-> > >  	 * period (observation due to Andy Lutomirski).
-> > >  	 */
-> > >  	if (rcu_dynticks_curr_cpu_in_eqs()) {
-> > > +
-> > > +		if (!nmi)
-> > > +			rcu_dynticks_task_exit();
-> > > +
-> > >  		rcu_dynticks_eqs_exit();
-> > > +
-> > > +		if (!nmi)
-> > 
-> > ... and checking for branches here.
-> 
-> Also good! The following is the only different part.
-> 
-> <rcu_nmi_enter>:
-> 	e8 dc 81 ff ff       	callq  ffffffff810bc450 <rcu_dynticks_eqs_exit>
-> 
-> <rcu_irq_enter>:
-> 	65 48 8b 04 25 00 4d 	mov    %gs:0x14d00,%rax
-> 	01 00 
-> 	c7 80 94 03 00 00 ff 	movl   $0xffffffff,0x394(%rax)
-> 	ff ff ff 
-> 	e8 b9 80 ff ff       	callq  ffffffff810bc450 <rcu_dynticks_eqs_exit>
-> 	e8 d4 b9 ff ff       	callq  ffffffff810bfd70 <rcu_cleanup_after_idle>
-
-Also looks good, so please do send the patches!
-
-							Thanx, Paul
-
+Chris
