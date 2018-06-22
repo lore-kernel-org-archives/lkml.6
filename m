@@ -6,94 +6,86 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1CCC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65EC8C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C05323DC8
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:34:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C05323DC8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EC2123DCF
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:36:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC2123DCF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751193AbeFVGed (ORCPT
+        id S1751228AbeFVGgM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 02:34:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43588 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750826AbeFVGeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 02:34:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B5D4FAF55;
-        Fri, 22 Jun 2018 06:34:29 +0000 (UTC)
-Subject: Re: [PATCH] xen: Remove unnecessary BUG_ON from __unbind_from_irq()
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc:     ben.hutchings@codethink.co.uk, roger.pau@citrix.com,
-        stable@vger.kernel.org
-References: <1529602184-2861-1-git-send-email-boris.ostrovsky@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4f71ffde-2c0c-795f-665e-8b90076dd923@suse.com>
-Date:   Fri, 22 Jun 2018 08:34:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 02:36:12 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:36588 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeFVGgL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 02:36:11 -0400
+Received: by mail-vk0-f68.google.com with SMTP id o138-v6so3314179vkd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 23:36:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CZFXLjcwpbOjNgE1NcyPLQZw4nLN57Jsr4M5Xqz7ZeA=;
+        b=K3xMAQHz5UUKSGqz1r/ZkKTXwbqW/cFyDQU/P0vG2JkSG3Xx8C8yCCrMZwYW1QNOFh
+         bNoVFRK96pu935BABuJ2F7UJspSy7/utPt8oU6Pbsd9ISrjr+zVGwFcsUXU6VCRgqMG6
+         E4d4eY2TEdscasFStOp39miKstXYTI1+MGTm54VHRPP1X4ix9ifUY8VBNLEiEKqB0Ea5
+         aHfJWfcur/viRN24lYpUr8xt0ii86yi21Fw+zAX/WPEyD0zE/cZQeSOs/b/iPdr+tKGB
+         Tny+GZHpPt/p9VFExB3xnVy6KjvCAWokdrmko5SSWA4KvLMLQUD7yZQyo1Orz2LDRWin
+         d33Q==
+X-Gm-Message-State: APt69E1etehTwkFa4P4Z4EFJbE5UDXtYBFcyBAWQtRWUaUbcsWXDZ3W9
+        UaPco6UK4UXhFJ+XsSYCC+UxOUo22RU1iHJJ0DD3tQ==
+X-Google-Smtp-Source: ADUXVKImk7FyPleHhqyM9qq+6v0tJ3UfxXa80bkl5TRzwcj4Cfbjmz2dQCXONbvo/WC8ag4qUADiBin6ueRiaMvEuZY=
+X-Received: by 2002:a1f:eecc:: with SMTP id m195-v6mr196564vkh.50.1529649370403;
+ Thu, 21 Jun 2018 23:36:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1529602184-2861-1-git-send-email-boris.ostrovsky@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+References: <20180621203053.32047-1-geert@linux-m68k.org> <ecdf3bdf-6453-0c5f-1a72-b4df7148c867@linux-m68k.org>
+In-Reply-To: <ecdf3bdf-6453-0c5f-1a72-b4df7148c867@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 22 Jun 2018 08:35:58 +0200
+Message-ID: <CAMuHMdUhauqTLrjvrypfA+k=Sg7w4aJp53jeXHML0Gk3V_ynwA@mail.gmail.com>
+Subject: Re: [PATCH v2] m68knommu: Fix typos in Coldfire 5272 DMA debug code
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/06/18 19:29, Boris Ostrovsky wrote:
-> Commit 910f8befdf5b ("xen/pirq: fix error path cleanup when binding
-> MSIs") fixed a couple of errors in error cleanup path of
-> xen_bind_pirq_msi_to_irq(). This cleanup allowed a call to
-> __unbind_from_irq() with an unbound irq, which would result in
-> triggering the BUG_ON there.
-> 
-> Since there is really no reason for the BUG_ON (xen_free_irq() can
-> operate on unbound irqs) we can remove it.
-> 
-> Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: stable@vger.kernel.org
+Hi Greg,
 
-Pushed to xen/tip.git for-linus-4.18
+On Fri, Jun 22, 2018 at 2:20 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
+> On 22/06/18 06:30, Geert Uytterhoeven wrote:
+> > If DEBUG_DMA is defined:
+> >
+> >      include/asm/dma.h: In function ‘set_dma_mode’:
+> >      include/asm/dma.h:393: error: ‘dmabp’ undeclared (first use in this function)
+> >      include/asm/dma.h:393: error: (Each undeclared identifier is reported only once
+> >      include/asm/dma.h:393: error: for each function it appears in.)
+> >      include/asm/dma.h: In function ‘set_dma_addr’:
+> >      include/asm/dma.h:424: error: ‘dmawp’ undeclared (first use in this function)
+> >
+> > Reported-by: kbuild test robot <fengguang.wu@intel.com>
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+>
+> Do you want me to take this via the m68knommu git tree?
 
+Yes please. Thx!
 
-Juergen
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
