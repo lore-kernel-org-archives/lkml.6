@@ -3,106 +3,132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B331C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDA0C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF9C524465
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:09:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9C524465
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A57AE24475
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:10:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57AE24475
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754296AbeFVPJd (ORCPT
+        id S1754420AbeFVPKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:09:33 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41579 "EHLO mga02.intel.com"
+        Fri, 22 Jun 2018 11:10:14 -0400
+Received: from mga04.intel.com ([192.55.52.120]:45065 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754236AbeFVPJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:09:31 -0400
+        id S1754363AbeFVPKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:10:11 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 08:09:22 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 08:10:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,257,1526367600"; 
-   d="scan'208";a="66382474"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.254.80.177]) ([10.254.80.177])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Jun 2018 08:09:21 -0700
-Subject: Re: linux-next: manual merge of the tip tree with the vfs tree
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <e6a26908-67b2-e32e-06b5-d2e62acce305@intel.com>
- <20180622115346.1e9cc433@canb.auug.org.au>
- <29411.1529671523@warthog.procyon.org.uk>
- <20180622130600.GY30522@ZenIV.linux.org.uk>
- <alpine.DEB.2.21.1806221537570.2402@nanos.tec.linutronix.de>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <5462d90a-0cac-ca10-1633-275a9836ad41@intel.com>
-Date:   Fri, 22 Jun 2018 08:09:21 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+   d="scan'208";a="51089334"
+Received: from rshibano-mobl.amr.corp.intel.com (HELO [10.252.132.223]) ([10.252.132.223])
+  by orsmga007.jf.intel.com with ESMTP; 22 Jun 2018 08:10:09 -0700
+Subject: Re: [PATCH 1/7] mm: allocate mm_cpumask dynamically based on
+ nr_cpu_ids
+To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
+References: <20180620195652.27251-1-riel@surriel.com>
+ <20180620195652.27251-2-riel@surriel.com>
+Cc:     luto@kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        efault@gmx.de, songliubraving@fb.com, kernel-team@fb.com
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <cc686b67-73f4-606b-9df3-3fe63d85195a@linux.intel.com>
+Date:   Fri, 22 Jun 2018 08:10:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1806221537570.2402@nanos.tec.linutronix.de>
+In-Reply-To: <20180620195652.27251-2-riel@surriel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On 06/20/2018 12:56 PM, Rik van Riel wrote:
+>  	/*
+> -	 * FIXME! The "sizeof(struct mm_struct)" currently includes the
+> -	 * whole struct cpumask for the OFFSTACK case. We could change
+> -	 * this to *only* allocate as much of it as required by the
+> -	 * maximum number of CPU's we can ever have.  The cpumask_allocation
+> -	 * is at the end of the structure, exactly for that reason.
+> +	 * The mm_cpumask is located at the end of mm_struct, and is
+> +	 * dynamically sized based on nr_cpu_ids.
+>  	 */
+> +	mm_size = sizeof(struct mm_struct) + cpumask_size();
+> +
+>  	mm_cachep = kmem_cache_create_usercopy("mm_struct",
+> -			sizeof(struct mm_struct), ARCH_MIN_MMSTRUCT_ALIGN,
+> +			mm_size, ARCH_MIN_MMSTRUCT_ALIGN,
 
-On 6/22/2018 6:39 AM, Thomas Gleixner wrote:
-> On Fri, 22 Jun 2018, Al Viro wrote:
->> On Fri, Jun 22, 2018 at 01:45:23PM +0100, David Howells wrote:
->>> Reinette Chatre <reinette.chatre@intel.com> wrote:
->>>
->>>> Thomas and David, please let me know what I can do from my side to help
->>>> with this.
->>>
->>> You could try basing on Al Viro's for-next tree which has the mount API
->>> changes in it.
->>
->> Umm...  That would be a massive headache for everyone involved; the changes
->> in there have very little in common with what you are doing in rdt_mount(),
->> so it might make sense to start with a minimal never-rebased branch that
->> would
->> 	* define rdt_pseudo_lock_init as 0
->> 	* define rdt_pseudo_lock_release as empty
->> 	* do the rdt_mount() part of a3dbd01e6c9d
->> 	* have commit message along the lines of
->> "hooks in rdt_mount() for rdt_pseudo_lock to use
->>
->> Functionally a no-op right now; the only reason for having that
->> as a never-rebased branch to get rdt_pseudo_lock and mount series
->> out of each other's hair"
->>
->> Base that on -rc1, then pull it into your rdt branch and David could pull the
->> same into his.
-> 
-> Yes, that works.
-> 
-> Reinette, can you please look into creating that ordering. Then we just zap
-> the existing branch and redo it with this scheme.
+Could you add a bit to that comment, like "dynamically sized based on
+nr_cpu_ids" ... which is sized based on the number of possible CPUs.
 
-Will do. How would you prefer to consume this to make the branches
-simple to create? Is it ok if I create a new patch series with Al's
-suggestion above as the first commit?
+I found myself wondering how that interacts with hotplug.
 
-The original pseudo-locking patch series consisted out of two sections
-with the pseudo-locking specific parts starting in the middle. If I
-create a new series with the above change then it will not be cleanly
-separate anymore. Is that ok?
+t mm_struct, saved_auxv),
+> diff --git a/mm/init-mm.c b/mm/init-mm.c
+> index f94d5d15ebc0..20fe222fe4c0 100644
+> --- a/mm/init-mm.c
+> +++ b/mm/init-mm.c
+> @@ -15,6 +15,15 @@
+>  #define INIT_MM_CONTEXT(name)
+>  #endif
+>  
+> +/*
+> + * For dynamically allocated mm_structs, there is a dynamically sized cpumask
+> + * at the end of the structure, the size of which depends on nr_cpu_ids. That...
 
-Reinette
-
+Similar nit.  Instead of calling out the variable alone, could we just
+say what it means logically and then reference the variable?
