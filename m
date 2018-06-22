@@ -2,176 +2,124 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E18C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D229DC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFA7249D6
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:33:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B8E724A0B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:40:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kqb1TCDj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFA7249D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="t8gdJ7xk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B8E724A0B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934177AbeFVXdQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 19:33:16 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34768 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934030AbeFVXdO (ORCPT
+        id S934178AbeFVXkz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 19:40:55 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:40858 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933816AbeFVXkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 19:33:14 -0400
-Received: by mail-wm0-f68.google.com with SMTP id l15-v6so7438992wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 16:33:13 -0700 (PDT)
+        Fri, 22 Jun 2018 19:40:53 -0400
+Received: by mail-qt0-f193.google.com with SMTP id j20-v6so825591qtn.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 16:40:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2qy3+0q/fVBbc2dAVUxya1AwaevtUb1eg2jOOr+xBLU=;
-        b=kqb1TCDjJXLWckIe4SKVZu7TK6ahDjUWu7JvsQSBLChnkm3xxH2vTpAF0/TzKWnNXY
-         qvmlvR11ADhDSvDiviImtRvSY+oYcgJOtj7PpUuwmuNm+BHp/YCqj/u/XXuLZ2R3dxZZ
-         sXLrbUwpWPvnUbgwC81J75gS89vk52KwUizgF7ryvuBArBsPze318WDSjiFhpu/yCQ9U
-         JEfpI2ueMEqDUoyY4XGGAQ2yWIUObZWyesH6idVlFaJqFkePYjn95r+ztnuSBUf63vav
-         drh1bJG24m8hTicK4j3EBvwA79caaLQPRNG12fv8U1Mu/8rw/aoWTxKCddyO9LS1qJj3
-         Oo6Q==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=gYja3w8tNCXTv8jxC1dnLtY9/e2awhcDEG3Qo+rdcoA=;
+        b=t8gdJ7xk3MAur4unKFi8aHTYA4kfuY9PKwdHsuEIyGU7pudBOUN/q1onxZjAI9r3Lg
+         Ri2GivMe9oyAuyexYj8ET2I3J/AoHMb811+uiNcopK6YdTTjhynFoC7fpGb9XuNky/se
+         41SjqD9jkL8p62TaUc9ctIfZ+hjc88tv1epHf/Fk04kaj5xp+tmPsyS6FUcK2qRPJfaj
+         C5Q/7vqk8vCOaZQzJpjRCmJNt5i5Z/ZMtq09Xim4I7kcfGdhyE5EglBGXb/+at7slGzR
+         uflkw+uO1uIo8iQGRknNp1vB5V0qYZSZcq6r+5iV454gXQB01WbRFbyTXgA2+Scaz2lL
+         rUgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2qy3+0q/fVBbc2dAVUxya1AwaevtUb1eg2jOOr+xBLU=;
-        b=qUw3bhUlkyCibjHJAXGc9O3FGOpQRcRtEtR47Iew9rkmK8GJk5GXDB/vRtqXwK1YxR
-         DzdU4zlwUimwvJvB53ZFrlX5VpO//6HH4LLEBbd87gr19rovik7MNWbbxTdJF3c8agpq
-         6z2BGSJ3Y36lIjn1tHVp3BMqJ7G43QTQ51IKq5q72P5yJpeyEPa9KzV8XfVuOkzY+HTs
-         0h2HYxTq0hG3Bo3UY6qqJN1RuaJbhOVi/lXJcinIBqu8jYh2rzHVsdJnXfiFu8ZVPwAX
-         zZUDv77gEk1OFgdPEymduNbdq6OIz3q+szk64bOUMA20kle2LQZWba1YuOSg1QYLYgqp
-         4bvg==
-X-Gm-Message-State: APt69E3DSngOTleDcAErrFiKf0AjIlwzWwjKjYjHMmE9tksL2K6sLYRQ
-        IqJ+wdrewSGQwrKUDhZMakzEhi9XZL484XIgIICLHg==
-X-Google-Smtp-Source: ADUXVKJlIGTGUDysa4TZrkbzgLzJyLRa3wF1u275voxRNu5x6ZqCJjZyl6wW8hS8ZmPAnNI/jCX8lYQWBR92bOb4mDY=
-X-Received: by 2002:a1c:6744:: with SMTP id b65-v6mr2935936wmc.9.1529710392516;
- Fri, 22 Jun 2018 16:33:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=gYja3w8tNCXTv8jxC1dnLtY9/e2awhcDEG3Qo+rdcoA=;
+        b=VsP2gxqaQg4w2T6PagEhhoQPTZMhB72Ry+RHpobwmRRITXr4zJYMurdTWsARf0bPk6
+         86cCIqaxpMT2GPyYUQ2Rhy6Udiza5IWFM8U3SY/syNvWfiSVtsFaVd735nF4PWx7Uupe
+         cGTwbJqrwrF39DBwnD0l+S8uDqs4UNrR+E0euq/9YZeO0l0NAb6zKt2pY2bVR72G6vEW
+         FE21fTCsswko4Qh7r2s+FeA3maKkdhd4rxr9f/aqFhnuDE9ekUhUorihyEsQ/443fJJv
+         0IYlTEu0yTzaew/3jxQ/9IJ9nzIYAY+d6ey3lZrbzZELYsdtrZUowGM8S6V2el5Wjgsk
+         vlmQ==
+X-Gm-Message-State: APt69E1LRnwL9gzj18vc0K5bbj6gArtq6WRFO4vZ1/yY08dUjaYezHsO
+        KyJ7y9JwBWbq84YdJveS6mSj5Q==
+X-Google-Smtp-Source: AAOMgpeqH9gyXysKNEUC3b9hu3iWcr1NSmx0xGMu97eextkZ5JHwfuQN8RlKxlN6pQ3y0/bAa/XV+g==
+X-Received: by 2002:ac8:1a3b:: with SMTP id v56-v6mr3191418qtj.316.1529710852720;
+        Fri, 22 Jun 2018 16:40:52 -0700 (PDT)
+Received: from cakuba.netronome.com ([75.53.12.129])
+        by smtp.gmail.com with ESMTPSA id x53-v6sm1126583qtx.20.2018.06.22.16.40.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 16:40:52 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 16:40:48 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Martin KaFai Lau <kafai@fb.com>
+Cc:     Okash Khawaja <osk@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
+        "Alexei Starovoitov" <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 2/3] bpf: btf: add btf json print functionality
+Message-ID: <20180622164048.6283b469@cakuba.netronome.com>
+In-Reply-To: <20180622231940.fvkxfqccvyf5uewk@kafai-mbp.dhcp.thefacebook.com>
+References: <20180621145935.41ff8974@cakuba.netronome.com>
+        <20180621225117.dhrkrtmkfbeihbe4@kafai-mbp.dhcp.thefacebook.com>
+        <20180621160719.2cfb4b58@cakuba.netronome.com>
+        <20180621235746.dfq6kdtkogftw3ws@kafai-mbp.dhcp.thefacebook.com>
+        <20180621172523.6cd00ed1@cakuba.netronome.com>
+        <20180622012052.htkvholi674x6i4f@kafai-mbp.dhcp.thefacebook.com>
+        <20180622114032.162b2a76@cakuba.netronome.com>
+        <20180622205535.c6vjhdwt5er4wc32@kafai-mbp.dhcp.thefacebook.com>
+        <20180622142743.2b890d0f@cakuba.netronome.com>
+        <20180622144952.353d50c0@cakuba.netronome.com>
+        <20180622231940.fvkxfqccvyf5uewk@kafai-mbp.dhcp.thefacebook.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-References: <20180619051327.149716-1-shakeelb@google.com> <20180619051327.149716-4-shakeelb@google.com>
- <20180619162741.GC27423@cmpxchg.org> <20180619174040.GA4304@castle.DHCP.thefacebook.com>
- <CALvZod5_0_LuqWpri=uviE5hHhTMPT0VQOZDgHtTtLhvcCtb3A@mail.gmail.com> <20180619195525.GA19193@castle>
-In-Reply-To: <20180619195525.GA19193@castle>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 22 Jun 2018 16:33:00 -0700
-Message-ID: <CALvZod7G-ggYTpmdDsNeQRf4upYa34ccOerVmEkEkLOVFrBr2w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] fs, mm: account buffer_head to kmemcg
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jan Kara <jack@suse.com>, Greg Thelen <gthelen@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 19, 2018 at 12:55 PM Roman Gushchin <guro@fb.com> wrote:
->
-> On Tue, Jun 19, 2018 at 12:51:15PM -0700, Shakeel Butt wrote:
-> > On Tue, Jun 19, 2018 at 10:41 AM Roman Gushchin <guro@fb.com> wrote:
-> > >
-> > > On Tue, Jun 19, 2018 at 12:27:41PM -0400, Johannes Weiner wrote:
-> > > > On Mon, Jun 18, 2018 at 10:13:27PM -0700, Shakeel Butt wrote:
-> > > > > The buffer_head can consume a significant amount of system memory and
-> > > > > is directly related to the amount of page cache. In our production
-> > > > > environment we have observed that a lot of machines are spending a
-> > > > > significant amount of memory as buffer_head and can not be left as
-> > > > > system memory overhead.
-> > > > >
-> > > > > Charging buffer_head is not as simple as adding __GFP_ACCOUNT to the
-> > > > > allocation. The buffer_heads can be allocated in a memcg different from
-> > > > > the memcg of the page for which buffer_heads are being allocated. One
-> > > > > concrete example is memory reclaim. The reclaim can trigger I/O of pages
-> > > > > of any memcg on the system. So, the right way to charge buffer_head is
-> > > > > to extract the memcg from the page for which buffer_heads are being
-> > > > > allocated and then use targeted memcg charging API.
-> > > > >
-> > > > > Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> > > > > Cc: Jan Kara <jack@suse.cz>
-> > > > > Cc: Greg Thelen <gthelen@google.com>
-> > > > > Cc: Michal Hocko <mhocko@kernel.org>
-> > > > > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > > > > Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> > > > > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > > ---
-> > > > >  fs/buffer.c                | 14 +++++++++++++-
-> > > > >  include/linux/memcontrol.h |  7 +++++++
-> > > > >  mm/memcontrol.c            | 21 +++++++++++++++++++++
-> > > > >  3 files changed, 41 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/fs/buffer.c b/fs/buffer.c
-> > > > > index 8194e3049fc5..26389b7a3cab 100644
-> > > > > --- a/fs/buffer.c
-> > > > > +++ b/fs/buffer.c
-> > > > > @@ -815,10 +815,17 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
-> > > > >     struct buffer_head *bh, *head;
-> > > > >     gfp_t gfp = GFP_NOFS;
-> > > > >     long offset;
-> > > > > +   struct mem_cgroup *old_memcg;
-> > > > > +   struct mem_cgroup *memcg = get_mem_cgroup_from_page(page);
-> > > > >
-> > > > >     if (retry)
-> > > > >             gfp |= __GFP_NOFAIL;
-> > > > >
-> > > > > +   if (memcg) {
-> > > > > +           gfp |= __GFP_ACCOUNT;
-> > > > > +           old_memcg = memalloc_memcg_save(memcg);
-> > > > > +   }
-> > > >
-> > > > Please move the get_mem_cgroup_from_page() call out of the
-> > > > declarations and down to right before the if (memcg) branch.
-> > > >
-> > > > >     head = NULL;
-> > > > >     offset = PAGE_SIZE;
-> > > > >     while ((offset -= size) >= 0) {
-> > > > > @@ -835,6 +842,11 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
-> > > > >             /* Link the buffer to its page */
-> > > > >             set_bh_page(bh, page, offset);
-> > > > >     }
-> > > > > +out:
-> > > > > +   if (memcg) {
-> > > > > +           memalloc_memcg_restore(old_memcg);
-> > > > > +#ifdef CONFIG_MEMCG
-> > > > > +           css_put(&memcg->css);
-> > > > > +#endif
-> > > >
-> > > > Please add a put_mem_cgroup() ;)
-> > >
-> > > I've added such helper by commit 8a34a8b7fd62 ("mm, oom: cgroup-aware OOM killer").
-> > > It's in the mm tree.
-> > >
-> >
-> > I was using mem_cgroup_put() defined by Roman's patch but there were a
-> > lot of build failure reports where someone was taking this series
-> > without Roman's series or applying the series out of order. Andrew
-> > asked me to keep it like this and then he will convert these callsites
-> > into mem_cgroup_put() after making making sure Roman's series is
-> > applied in mm tree. I will recheck with him, how he wants to handle it
-> > now.
->
-> I can also split the introduction of mem_cgroup_put() into a separate commit,
-> as it seems to be usable not only by the cgroup oom stuff.
-> Please, let me know, if it's a preferred way to go.
->
+On Fri, 22 Jun 2018 16:19:40 -0700, Martin KaFai Lau wrote:
+> On Fri, Jun 22, 2018 at 02:49:52PM -0700, Jakub Kicinski wrote:
+> > On Fri, 22 Jun 2018 14:27:43 -0700, Jakub Kicinski wrote:  
+> > > BTF in JSON is very useful, and will help people who writes simple
+> > > orchestration/scripts based on bpftool *a* *lot*.  I really appreciate
+> > > this addition to bpftool and will start using it myself as soon as it
+> > > lands.  I'm not sure why the reluctance to slightly change the output
+> > > format?  
+> > 
+> > Ohh, maybe that's the misunderstanding, you only implemented JSON so
+> > you wanted it to be as readable and clean as possible.  Hence the hex
+> > output and cutting out the old cruft!  That perspective makes sense!
+> > But I think we should keep JSON for machines (but including BTF
+> > formatted values) and let's make the plain text output nice and clean,
+> > agreed.  
+> Right, it is what my earlier comment meant on "this ascii output is
+> for human".  We merely call it json because we are reusing
+> the json's meaning on {}, [] and int since it fits nicely
+> on what we want to achieve, readability.  Other than that,
+> it does not have to follow other json's requirements.
+> We can call it whatever except json to avoid wrong
+> user expectation.  Putting it under "-j"/"-p" was a mistake.
+> Hence, I said this patch belongs to the 'plaintext" output.
 
-Oh I forgot to reply. Yes, let's do that, a separate patch to
-introduce mem_cgroup_put() which can used by remote charging and memcg
-aware oom-killer patches.
+Yes, that were the confusion came from, right.  I'm personally not sold
+on JSON as "human readable" but I'm very far from a UI guru so up to
+you :)  
 
-Shakeel
+I think it may be good to intentionally do non-JSON things, like use
+hex integers, don't put quotes around strings, or always add a comma
+after value, so people can't use it as JSON even if they try.
+
+Basic printer is trivial to write, I'm concerned that the reuse of JSON
+writer to create a user-readable output will bite us on the posterior
+later on...
