@@ -6,176 +6,117 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A3BC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09425C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5CB23D08
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:23:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC5CB23D08
+	by mail.kernel.org (Postfix) with ESMTP id C2B49245FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:24:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2B49245FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934192AbeFVRXk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:23:40 -0400
-Received: from mga01.intel.com ([192.55.52.88]:32270 "EHLO mga01.intel.com"
+        id S934212AbeFVRYA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 13:24:00 -0400
+Received: from mga01.intel.com ([192.55.52.88]:32277 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932721AbeFVRXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:23:36 -0400
+        id S1754264AbeFVRX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 13:23:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 10:23:35 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 10:23:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,258,1526367600"; 
-   d="scan'208";a="66857334"
-Received: from asotoma-mobl1.amr.corp.intel.com (HELO [10.7.201.147]) ([10.7.201.147])
-  by orsmga001.jf.intel.com with ESMTP; 22 Jun 2018 10:23:26 -0700
-Subject: Re: [PATCH 5/7] x86,tlb: only send page table free TLB flush to lazy
- TLB CPUs
-To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-References: <20180620195652.27251-1-riel@surriel.com>
- <20180620195652.27251-6-riel@surriel.com>
-Cc:     86@vger.kernel.org, luto@kernel.org, mingo@kernel.org,
-        tglx@linutronix.de, efault@gmx.de, songliubraving@fb.com,
-        kernel-team@fb.com
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <3c63a064-eeb1-0013-c345-a9fb71006357@linux.intel.com>
-Date:   Fri, 22 Jun 2018 10:23:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+   d="scan'208";a="49146568"
+Received: from haiyuewa-mobl1.ccr.corp.intel.com (HELO [10.249.173.233]) ([10.249.173.233])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Jun 2018 10:23:56 -0700
+Subject: Re: [PATCH ] ipmi: kcs_bmc: fix IRQ exception if the channel is not
+ open
+To:     minyard@acm.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Cc:     luis.a.silva@dell.com, avi.fishman@nuvoton.com,
+        openbmc@lists.ozlabs.org
+References: <1529636218-280096-1-git-send-email-haiyue.wang@linux.intel.com>
+ <ea0a4cd3-2973-7ac8-c4a1-26379d9066cc@acm.org>
+From:   "Wang, Haiyue" <haiyue.wang@linux.intel.com>
+Message-ID: <980bbe06-afa6-67b0-a3d3-c5fd921dcfbd@linux.intel.com>
+Date:   Sat, 23 Jun 2018 01:23:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180620195652.27251-6-riel@surriel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <ea0a4cd3-2973-7ac8-c4a1-26379d9066cc@acm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 12:56 PM, Rik van Riel wrote:
-> CPUs in TLBSTATE_OK have either received TLB flush IPIs earlier on during
-> the munmap (when the user memory was unmapped), or have context switched
-> and reloaded during that stage of the munmap.
-> 
-> Page table free TLB flushes only need to be sent to CPUs in lazy TLB
-> mode, which TLB contents might not yet be up to date yet.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Tested-by: Song Liu <songliubraving@fb.com>
-> ---
->  arch/x86/mm/tlb.c | 26 +++++++++++++++++++++++---
->  1 file changed, 23 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 4b27d8469848..40b00055c883 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -752,11 +752,31 @@ void tlb_flush_remove_tables_local(void *arg)
->  void tlb_flush_remove_tables(struct mm_struct *mm)
->  {
->  	int cpu = get_cpu();
-> +	cpumask_var_t varmask;
-> +
-> +	if (cpumask_any_but(mm_cpumask(mm), cpu) >= nr_cpu_ids)
-> +		return;
-
-Oh, man, we need a wrapper for that little nugget.  I was really
-scratching my head about what this was doing until I saw the
-cpumask_any_but() comment:
-
-	 * Returns >= nr_cpu_ids if no cpus set.
 
 
-> +	if (!zalloc_cpumask_var(&varmask, GFP_ATOMIC)) {
-> +		/* Flush the TLB on all CPUs that have this mm loaded. */
-> +		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
-> +	}
+On 2018-06-22 20:43, Corey Minyard wrote:
+>> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+>> ---
+>> Hi Corey,
+>>
+>> This patch looks introducing BIG modification, it should be easily
+>> understandable, and makes code clean & fix an error design, which
+>> is introduced by misunderstanding the IRQ return value.
+>
+> I'm having a little trouble understanding your text above, so let me 
+> try to repeat
+> back to you what I'm thinking you are saying...
+>
+Sorry for my bad writing.... :(
+> You have two (or more) devices using the same interrupt, and at least 
+> one is an
+> IPMI KCS device.  And interrupt comes in to the other device when the 
+> IPMI KCS
+> device is not running.  The original code issues an abort when that 
+> happens,
+> which is obviously incorrect.  It then returns -ENODATA, .
+>
+> When the interrupt comes in for the abort handling, the driver will 
+> then issue
+> another abort, and again returns -ENODATA.  This time neither driver 
+> handles
+> the interrupt, resulting in the logs.
+>
+> In general, I think the change you have here is good.  You don't want to
+> issue an abort in this case.  But...
+>
 
-Maybe:
+> If I am right, this fix doesn't completely solve the problem.  It does 
+> solve this
+> immediate problem, but what if there is an OS on the other end of the
+> KCS interface that sets the IBF flag?  The same situation will occur.  
+> In fact
+> it will occur even if there is only one handler for the interrupt.
+>
+> Maybe it's best to have the interrupt disabled unless the device is open.
+> You have to handle the interrupt disable race on a close, but with the
+> sync functions that shouldn't be too hard.
+>
+In fact, in BMC chip design, the LPC controller has many devices, such as
+Port 80 snoop, BT, KCS etc, they shares the same interrupt. :)
 
-	/*
-	 * If the cpumask allocation fails, do a brute-force
-	 * flush on all CPUs that have this mm loaded.
-	 */
+Take AST2500 BMC as an example, please search the keyword 'interrupts = 
+<8>' in
+this file:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/aspeed-g5.dtsi?h=v4.18-rc1
 
-Also, don't you need a return inside the if(){} block here?
+And may have 4 KCS channels:
+https://patchwork.kernel.org/patch/10318877/
+This patch just enables kcs3 & kcs4, which use the same interrupt number 8.
 
->  	/*
-> -	 * XXX: this really only needs to be called for CPUs in lazy TLB mode.
-> +	 * CPUs in TLBSTATE_OK either received a TLB flush IPI while the user
-> +	 * pages in this address range were unmapped, or have context switched
-> +	 * and reloaded %CR3 since then.
-> +	 *
-> +	 * Shootdown IPIs at page table freeing time only need to be sent to
-> +	 * CPUs that may have out of date TLB contents.
->  	 */
-> -	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
-> -		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
-> +	for_each_cpu(cpu, mm_cpumask(mm)) {
-> +		if (per_cpu(cpu_tlbstate.state, cpu) != TLBSTATE_OK)
-> +			cpumask_set_cpu(cpu, varmask);
-> +	}
-> +
-> +	smp_call_function_many(varmask, tlb_flush_remove_tables_local, (void *)mm, 1);
-> +	free_cpumask_var(varmask);
->  }
+So the interrupt should be enabled always.
 
-Would this look any better if you wrapped the mask manipulation in a:
+And this IRQ issue root cause it that the IRQ handler just return IRQ_NONE
+if it is not opened. And for abort actions, I just put it under its 
+related channel
+IBF is set. Because only IBF is set, aborting makes sense.
 
-void mm_fill_lazy_tlb_cpu_mask(struct mm_struct *mm,
-			       cpumask_var_t *varmask)
-
-helper, including the explanation comments?
-
-	cpumask_var_t lazy_cpus;
-	
-	... cpumask allocation/fallback here
-
-	mm_fill_lazy_tlb_cpu_mask(mm, &lazy_cpus);
-	smp_call_function_many(lazy_cpus, tlb_flush_remove_...
+> -corey
 
