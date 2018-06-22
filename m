@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81298C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CC7C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E92723FC9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:53:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E92723FC9
+	by mail.kernel.org (Postfix) with ESMTP id 1BFF323FC9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:53:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BFF323FC9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754204AbeFVJxE (ORCPT
+        id S1754344AbeFVJxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 05:53:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:60798 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753219AbeFVJxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 05:53:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60778 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751307AbeFVJxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:53:02 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 566A51596;
-        Fri, 22 Jun 2018 02:53:02 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C415515AB;
+        Fri, 22 Jun 2018 02:53:03 -0700 (PDT)
 Received: from approximate.cambridge.arm.com (approximate.cambridge.arm.com [10.1.206.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 230AE3F819;
-        Fri, 22 Jun 2018 02:53:00 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92D523F819;
+        Fri, 22 Jun 2018 02:53:02 -0700 (PDT)
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>
@@ -35,48 +35,52 @@ Cc:     linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Yang Yingliang <yangyingliang@huawei.com>,
         Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v2 0/7]  irqchip: v4.18-rc1 fixes
-Date:   Fri, 22 Jun 2018 10:52:47 +0100
-Message-Id: <20180622095254.5906-1-marc.zyngier@arm.com>
+Subject: [PATCH v2 1/7] genirq/debugfs: Add missing IRQCHIP_SUPPORTS_LEVEL_MSI debug
+Date:   Fri, 22 Jun 2018 10:52:48 +0100
+Message-Id: <20180622095254.5906-2-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180622095254.5906-1-marc.zyngier@arm.com>
+References: <20180622095254.5906-1-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+We're missing the IRQCHIP_SUPPORTS_LEVEL_MSI debug entry, making
+debugfs slightly less useful. Take this opportunity to also add
+a missing comment in the definition of IRQCHIP_SUPPORTS_LEVEL_MSI.
 
-Here's a handful of patches I've accumulated over the merge
-window. The only interesting thing is the issue that Yang found on a
-bizarrely configured NUMA system, which prompted me to add more code
-to detect similar situations (just in case). The rest is pretty dull.
+Fixes: 6988e0e0d283 ("genirq/msi: Limit level-triggered MSI to platform devices")
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ include/linux/irq.h  | 1 +
+ kernel/irq/debugfs.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-Thanks,
-
-	M.
-
-* From v1:
-  - Much better fix for the ls-scfg driver (thanks to Thomas)
-  - New patch fixing a CPU hotplug regression on GICv3
-
-Marc Zyngier (6):
-  genirq/debugfs: Add missing IRQCHIP_SUPPORTS_LEVEL_MSI debug
-  irqchip/ls-scfg-msi: Fix MSI affinity handling
-  irqchip/gic-v2m: Fix SPI release on error path
-  irqchip/gic-v3-its: Only emit SYNC if targetting a valid collection
-  irqchip/gic-v3-its: Only emit VSYNC if targetting a valid collection
-  irqchip/gic-v3-its: Fix reprogramming of redistributors on CPU hotplug
-
-Yang Yingliang (1):
-  irqchip/gic-v3-its: Don't bind LPI to unavailable NUMA node
-
- drivers/irqchip/irq-gic-v2m.c     |  2 +-
- drivers/irqchip/irq-gic-v3-its.c  | 62 +++++++++++++++++++++++++------
- drivers/irqchip/irq-ls-scfg-msi.c | 10 +++--
- include/linux/irq.h               |  1 +
- kernel/irq/debugfs.c              |  1 +
- 5 files changed, 60 insertions(+), 16 deletions(-)
-
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index 4bd2f34947f4..201de12a9957 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -503,6 +503,7 @@ struct irq_chip {
+  * IRQCHIP_SKIP_SET_WAKE:	Skip chip.irq_set_wake(), for this irq chip
+  * IRQCHIP_ONESHOT_SAFE:	One shot does not require mask/unmask
+  * IRQCHIP_EOI_THREADED:	Chip requires eoi() on unmask in threaded mode
++ * IRQCHIP_SUPPORTS_LEVEL_MSI	Chip can provide two doorbells for Level MSIs
+  */
+ enum {
+ 	IRQCHIP_SET_TYPE_MASKED		= (1 <<  0),
+diff --git a/kernel/irq/debugfs.c b/kernel/irq/debugfs.c
+index 4dadeb3d6666..6f636136cccc 100644
+--- a/kernel/irq/debugfs.c
++++ b/kernel/irq/debugfs.c
+@@ -55,6 +55,7 @@ static const struct irq_bit_descr irqchip_flags[] = {
+ 	BIT_MASK_DESCR(IRQCHIP_SKIP_SET_WAKE),
+ 	BIT_MASK_DESCR(IRQCHIP_ONESHOT_SAFE),
+ 	BIT_MASK_DESCR(IRQCHIP_EOI_THREADED),
++	BIT_MASK_DESCR(IRQCHIP_SUPPORTS_LEVEL_MSI),
+ };
+ 
+ static void
 -- 
 2.17.1
 
