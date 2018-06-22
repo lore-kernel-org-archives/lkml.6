@@ -2,101 +2,98 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55511C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2717C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064DB21722
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8577E21722
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:19:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YLyijwEK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064DB21722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITlEtCQq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8577E21722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752151AbeFVITf (ORCPT
+        id S1753987AbeFVIT4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:19:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35796 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751053AbeFVITc (ORCPT
+        Fri, 22 Jun 2018 04:19:56 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45004 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752464AbeFVITy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:19:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=A4U8hP6rw2wgMEe57XXxeN238PMayIt6TYvvhA3Tv24=; b=YLyijwEKN65RCFrriLFB+CcSC
-        vdCDY2tSD+6LtLkV/NYzAfC779vECcG+NfHErFLY9ChVVYAwpGC2PwaROOE7+33CignF1UkZ+qzIA
-        dToo6r1NloaGHp6e2PNmm+wTnc4HlFRzCnmuszVE2+CA+UA0BccyWeC6pXRSLZ/If/AfebVOp8luR
-        V9tgPp61O26NWu47h8quAMcVn90UeP0tfiPp3uf2AtMh6fCwXshFoE26aJvbWYow8WVbilXJeCRB9
-        cHDgqEIz/tgc2aNIwng+wfL1ds3z7LrwzNmP8G5qRcMbu+Lkhezk9A04E+A4eqj1v1iqw6tmNN7yK
-        TU2I4Dx6Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWHHy-0002Yg-Lq; Fri, 22 Jun 2018 08:19:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F28BB2029F1D5; Fri, 22 Jun 2018 10:19:24 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 10:19:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 00/16] x86/split_lock: Enable #AC exception for split
- locked accesses
-Message-ID: <20180622081924.GH2494@hirez.programming.kicks-ass.net>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <20180621193738.GA13636@worktop.programming.kicks-ass.net>
- <20180621201851.GC114883@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806212223480.1591@nanos.tec.linutronix.de>
- <20180621220003.GD114883@romley-ivt3.sc.intel.com>
- <20180621221006.GC2494@hirez.programming.kicks-ass.net>
- <20180621230501.GC18979@romley-ivt3.sc.intel.com>
+        Fri, 22 Jun 2018 04:19:54 -0400
+Received: by mail-lj1-f193.google.com with SMTP id t12-v6so934927ljc.11
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Njt7jcepfDhoRsfWskcm1WgxpOAtqsJvlnQTNa2O78s=;
+        b=ITlEtCQqpRZvwpasoLGjIVrk7puOKKMLNafkFJr5BH55UH46PoRmfvLNFRI1vg4gz1
+         HxblcodhgwSj0V9lL4jb7sllSbu6kAo+pM8lIoHZScyJd0tWSluM+AGwjvywwN9Ys2yW
+         4IfPF52F+ILHrcFOK/nMLtM5WmLrx9RNtPT4lL67HL4tq1CVkVJWm4jMSEvbCo5hOC3y
+         V+orfOEUgmddai0QkN8LTvdhunpibkWQ/aj+ZlNmN0Lt/iyoc02PU1r+FP6d1xveAZEu
+         r292InRRb6n6VpIpSJPIG2IQXybdR00Rrtn/wmBBR46gBK4+0USHTSYzXT83VqBO1VOX
+         9XYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=Njt7jcepfDhoRsfWskcm1WgxpOAtqsJvlnQTNa2O78s=;
+        b=ToPW3/Ma0nhRZbrjMmhWWCfBeo2uSeAmS8yxXEK3vXWXNHQzbvbIk1+gdF1GInr2EF
+         hOmL2PEtgmi1KTtSbUgQQzUnzZnVndxSzlzR0/m+UERTbA2WQXnI7/tiL542jhGINNJH
+         /Qs6kmo77rHJUJBQhnK3oRxB5OIbqZgtPZ9A/KAMzATSW98wc5Nrmn+xckqfHRLr8aTu
+         uuULC71/bnqyqmlvr613NVe/WDyAFHvIPIYGROyL3M8INOUXxHMW7nllxizHRqa/zIrt
+         G5BfLCnhTkfQuGBPK7cV+UEN2YPMV7a/AJa+MrmJYhwDB+p2nqGjR2QXdfIWefSA0MFu
+         onOg==
+X-Gm-Message-State: APt69E20/ne0dYmdci4uh6gsDDoxoFjLc3aMopDypXmGmAyLiaYD/VAB
+        FB/+r/8hWAqT6V4ZUVMdyibMnSLk+dtAIwTSWIpsaA==
+X-Google-Smtp-Source: ADUXVKLFq/ojvRo2hgOATo6fWL1v5Nl4AAdg6KvLnf6QK1BIJAZnL0n8Dz2VtLJN7rRhE+vfpnz17of0xQB6JhaBbZw=
+X-Received: by 2002:a2e:804c:: with SMTP id p12-v6mr551477ljg.22.1529655592718;
+ Fri, 22 Jun 2018 01:19:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621230501.GC18979@romley-ivt3.sc.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 01:19:51
+ -0700 (PDT)
+In-Reply-To: <20180622075421.16001-1-geert@linux-m68k.org>
+References: <20180622075421.16001-1-geert@linux-m68k.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 22 Jun 2018 10:19:51 +0200
+X-Google-Sender-Auth: ap4f3oXu6pDEMpgueVKRGDH2jWM
+Message-ID: <CAK8P3a3OHT-tEHoh7MbGMU5m-L3mNkBVf=L5YgwgP4jQVV9SCA@mail.gmail.com>
+Subject: Re: [PATCH v2] time: Make sure jiffies_to_msecs() preserves non-zero
+ time periods
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 04:05:02PM -0700, Fenghua Yu wrote:
+On Fri, Jun 22, 2018 at 9:54 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> For the common cases where 1000 is a multiple of HZ, or HZ is a multiple
+> of 1000, jiffies_to_msecs() never returns zero when passed a non-zero
+> time period.
+>
+> However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 1024 or
+> 1200, as used on alpha and DECstation), jiffies_to_msecs() may return
+> zero for small non-zero time periods.  This may break code that relies
+> on receiving back a non-zero value.
+>
+> jiffies_to_usecs() does not need such a fix, as <linux/jiffies.h> does
+> not support values of HZ larger than 12287, thus rejecting any
+> problematic huge values of HZ.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
 
-> But in a real case, when I enable #AC for split lock in kernel, reboot
-> hits #AC because of split lock in firmware code and firmware handles #AC
-> as fatal error and stops continuing to run.
-> 
-> It will take long time/forever for firmware to fix the split lock issue.
-> Before the firmware issue is fixed, reboot or S4 cannot run if the feature
-> is enabled by kernel.
+Looks good to me,
 
-Then it will take a long time / forever for people to use their machines
-as they need. Don't you see that is a problem?
-
-Either you take this real-time stuff serious and force BIOS monkeys to
-get with the act, this includes no #AC but also very much force them
-into abandoning SMM as a fail^Wfeature-platform.
-
-Or it's all a joke and we'll continue to complain and shame..
-
-> And if unlucky, I'm afraid the patch set even has no chance to be merged to
-> upstream if maintainer's test machine has firmware split lock issue and the
-> machine simply cannot reboot or go to S4 if the feature is enabled.
-
-Well, then you'd better get those BIOS monkeys on board and fixing their
-crap.
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
