@@ -2,98 +2,96 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A1EC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D1CC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F052F24078
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:42:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UtjVc5Se"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F052F24078
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 175722407B
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:42:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175722407B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933310AbeFVKmO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 06:42:14 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37736 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751338AbeFVKmM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 06:42:12 -0400
-Received: by mail-wr0-f193.google.com with SMTP id k6-v6so6225451wrp.4
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 03:42:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8R6n2xRXdqtFq28V7vY2JJ5kpFftemgMVw/Ft2cGQVY=;
-        b=UtjVc5Selq7t0TxXuCeBGJf4V5RN9kOqjthEcNijGjSdU5VGklunUS9rkoVfzXYB30
-         A/dqE0KbykrijpwFFPDiv4fPCc9qUmClVLkZXM0rgin/QVAGbEGaF7hznF7Kbb46SLXG
-         y03c81Xb7Lr6Ys4GSStIdbX1FvlwWwV67wUhaEKEDCwv6vrtEz/UwmFLKgAON7RMAd3k
-         SBSVpzcaQR9yWS49Ccbv1s7/KNnfXlflnbBvCXIfgZOFEVr7LEFqy/5iuxEYuXTmHgNz
-         8T+4cBRkxL3vlQErQQyH2CQBt68fd3P9XJLOCZRZ2gjsdGyUKkTlEzYTODWt+7KjKokO
-         Dvog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8R6n2xRXdqtFq28V7vY2JJ5kpFftemgMVw/Ft2cGQVY=;
-        b=Lp83D5SDBJpZ4XvVbsnwGO75pRsgLNDxVPENsyGpv6rIsS6Ewxfj1IML1HJJUshsxo
-         GP5Pza6n8Z7lEqF1tytt9Qk2/rBIKoExJcoaHDFzN5if0zbDX0O78JbwB7AfnprRfSw4
-         n9CxHVN8Ugd8OoYE6kdNDnH/YV2dztFs/onOWjKxdD5PjPhTOKQ6PTIAaviuOgXR1xbc
-         2wp2NQUtFJDqx2VuhkjgbYSB17GJPHBTqd0eKa7sPcPbt+cUn/N6gCYi128CNMfZanHU
-         M4im7LWHB25ABegIk/DsVEDVwQNR4Ld2JH/oSY8Q2hYcINM+lGCuMsNgxXBG7NRhv3cN
-         nXFg==
-X-Gm-Message-State: APt69E1giOHxHJSugbP2rkaUP7hQ4oEyUBbskN9yPf2JlKmVXhpeTQrS
-        SfpdlCvUOnuMHNYaEsKmJQjGcA==
-X-Google-Smtp-Source: AAOMgpeVwvKc/qM4vOWDlU1Fv7t9sYcK/X+RiumD+dPFRWbi0KBKG+rF6hnU3KDyawzQgk8cA4F0wA==
-X-Received: by 2002:adf:8e50:: with SMTP id n74-v6mr1169520wrb.100.1529664131523;
-        Fri, 22 Jun 2018 03:42:11 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c10-v6sm8076072wrs.6.2018.06.22.03.42.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 03:42:10 -0700 (PDT)
-Message-ID: <1529664130.2900.5.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson: remove obsolete register access
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 22 Jun 2018 12:42:10 +0200
-In-Reply-To: <0e57617b-0ece-3c6d-f124-6197ef82b1c7@baylibre.com>
-References: <20180619160050.26958-1-jbrunet@baylibre.com>
-         <0e57617b-0ece-3c6d-f124-6197ef82b1c7@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933465AbeFVKmX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 06:42:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33493 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751338AbeFVKmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 06:42:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 490C3AC6A;
+        Fri, 22 Jun 2018 10:42:19 +0000 (UTC)
+Date:   Fri, 22 Jun 2018 12:42:17 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Cc:     akpm@linux-foundation.org, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
+Subject: Re: [PATCH v9] Refactor part of the oom report in dump_header
+Message-ID: <20180622104217.GV10465@dhcp22.suse.cz>
+References: <1529056341-16182-1-git-send-email-ufo19890607@gmail.com>
+ <20180622083949.GR10465@dhcp22.suse.cz>
+ <CAHCio2jkE2FGc2g48jm+ddvEbN3hEOoohBM+-871v32N2i2gew@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCio2jkE2FGc2g48jm+ddvEbN3hEOoohBM+-871v32N2i2gew@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-20 at 10:31 +0200, Neil Armstrong wrote:
-> On 19/06/2018 18:00, Jerome Brunet wrote:
-> > The legacy method to access the hhi register space is not longer used.
-> > We can safely drop it now.
-> > 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  drivers/clk/meson/axg.c  | 37 ++-----------------------------------
-> >  drivers/clk/meson/gxbb.c | 36 ++----------------------------------
-> >  2 files changed, 4 insertions(+), 69 deletions(-)
-> > 
-> > 
-
-[...]
-
+On Fri 22-06-18 17:33:12, 禹舟键 wrote:
+> Hi Michal
+> > diff --git a/include/linux/oom.h b/include/linux/oom.h
+> > index 6adac113e96d..5bed78d4bfb8 100644
+> > --- a/include/linux/oom.h
+> > +++ b/include/linux/oom.h
+> > @@ -15,6 +15,20 @@ struct notifier_block;
+> >  struct mem_cgroup;
+> >  struct task_struct;
+> >
+> > +enum oom_constraint {
+> > +     CONSTRAINT_NONE,
+> > +     CONSTRAINT_CPUSET,
+> > +     CONSTRAINT_MEMORY_POLICY,
+> > +     CONSTRAINT_MEMCG,
+> > +};
+> > +
+> > +static const char * const oom_constraint_text[] = {
+> > +     [CONSTRAINT_NONE] = "CONSTRAINT_NONE",
+> > +     [CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
+> > +     [CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
+> > +     [CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
+> > +};
 > 
-> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> > I've suggested that this should be a separate patch.
+> I've separate this part in patch v7.
+> 
+> [PATCH v7 1/2] Add an array of const char and enum oom_constraint in
+> memcontrol.h
+> On Sat 02-06-18 19:58:51, ufo19890607@gmail.com wrote:
+> >> From: yuzhoujian <yuzhoujian@didichuxing.com>
+> >>
+> >> This patch will make some preparation for the follow-up patch: Refactor
+> >> part of the oom report in dump_header. It puts enum oom_constraint in
+> >> memcontrol.h and adds an array of const char for each constraint.
+> 
+> > I do not get why you separate this specific part out.
+> > oom_constraint_text is not used in the patch. It is almost always
+> > preferable to have a user of newly added functionality.
+> 
+> So do I need to separate this part ?
 
-Applied for next
+You misunderstood my suggestion. Let me be more specific. Please
+separate the whole new oom_constraint including its _usage_.
+-- 
+Michal Hocko
+SUSE Labs
