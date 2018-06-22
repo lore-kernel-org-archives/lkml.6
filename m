@@ -2,108 +2,121 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FA6C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F71DC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E584247E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:28:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B59B2247D8
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:29:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tXdCvmsl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E584247E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FXRTsUra"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59B2247D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934448AbeFVT17 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:27:59 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51189 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933382AbeFVT16 (ORCPT
+        id S934401AbeFVT3j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:29:39 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34156 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934096AbeFVT3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:27:58 -0400
-Received: by mail-wm0-f68.google.com with SMTP id e16-v6so3232393wmd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:27:57 -0700 (PDT)
+        Fri, 22 Jun 2018 15:29:37 -0400
+Received: by mail-io0-f193.google.com with SMTP id e15-v6so7102526iog.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:29:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=GoLP/NxL54n0S0izYjVS6o6CtwhirjK8Je/kF6aG740=;
-        b=tXdCvmslB7+9r5d7A6HKJWdpE2Wby7yLE+bqHH1SURqkG2YNe4rDf6Xo/GQ3moc46w
-         A9g57IMyzinQ+JFFpsjy+mgL3HFDeDgBhXdpN9eiJg8J8Zt/AIM0s5UrHESU9SmXTHfU
-         orA6InTKxKR7rxlUmVr1JsvV8h4BED8yuTl0oIcrxPmGaraExV6rYnGXRarnITYpQ3Ji
-         hiDFXkHLnITm9g1TrEKh/ir1wlNgaGW0iqah0JDZgSBrLf3uN473jxw0qITLz+PT4dhy
-         Ht9aJNlavDp0xth7aT1mROnhnVYO6NZa3fBJFj6iqKTBABcD8WDqzn5RyYFODQfSIfPY
-         XvsQ==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WMDq+L0tubcQXI1TGHGYC+SxhWjyO8vN9496uuCbCZY=;
+        b=FXRTsUra5ec6Ev4HqrTmjjQGbtJrJxJyfsDjGRffu7u1jhsqJB+HWctxhM99vQkUbN
+         lVUzW9X0iHX4bzzChTpmuMc0yKM5pL0d1aFx2qQqjjCFELNVXm9ZA1LM1yl4NpPmj2JT
+         XD1qUDY4GcSqLtFLEvVCaUUoyF9leFaNB5s+k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=GoLP/NxL54n0S0izYjVS6o6CtwhirjK8Je/kF6aG740=;
-        b=DvKGLL9wz4bFRcc7uJcJLuUBpnwnxWdeGSZBfEUOqDH4vR0PZIPDF8MBkyRijSEKn4
-         9bu+RvpPiJCNopi/2TzJ/ee5k7i7NEHM+HPO0ADLf/m/P33vbxcNLs5O9uToCkdGo5NC
-         q2n//Pohwx+GayBmi0mN0BumYYU8L+6QwTA9RF7pzdyVneQj0KHIygDHLZySKxt0NRmW
-         L9wkDN0nZs6TIOJejVcXLJVms2aQwy5pk7Y1piAWr7CnRSFMCi3soz9TkqEEWLOb6735
-         gL1nQeH4hsSr7tydZSg6jsR4oHC1VlG9mIif3UlO9W4lAEJTYT0u2dzueVxK+pedvPYC
-         gxvQ==
-X-Gm-Message-State: APt69E2GavzgVsEfo1cN9I8PlV6jGdVRkqJLMaxvOVPz48ejHb3Uw4rs
-        2hHYnhZSbHIJ9s3S3GWpYbo=
-X-Google-Smtp-Source: AAOMgpd7eeco6G/XwGVITTKQltbbXU1bGyDzN5YW1bWM5B4AZtnWbpmIgRCNklnI6fUovVGD5HLtRw==
-X-Received: by 2002:a1c:c208:: with SMTP id s8-v6mr2677723wmf.29.1529695676961;
-        Fri, 22 Jun 2018 12:27:56 -0700 (PDT)
-Received: from macbookpro.malat.net (bru31-1-78-225-226-121.fbx.proxad.net. [78.225.226.121])
-        by smtp.gmail.com with ESMTPSA id v68-v6sm2784455wmd.12.2018.06.22.12.27.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 12:27:56 -0700 (PDT)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 6C97710C0452; Fri, 22 Jun 2018 21:27:55 +0200 (CEST)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] =?UTF-8?q?powerpc/mm:=20remove=20warning=20about=20?= =?UTF-8?q?=E2=80=98type=E2=80=99=20being=20set?=
-Date:   Fri, 22 Jun 2018 21:27:47 +0200
-Message-Id: <20180622192749.24954-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WMDq+L0tubcQXI1TGHGYC+SxhWjyO8vN9496uuCbCZY=;
+        b=lRK+yNMVSl2AcRLx2xrVacWusDRGUCuJi3K0O+oqtHxoWo0/VNbFOp63BIgCwlNnvX
+         2Uu5jg9m17UhHghJ62oWh8kvpfIM9A/mI69JrjI6lZewXjPA8lJYH7+tclwC4AFdC7q5
+         4XtQ+FMuXiR/wDC2Abxdnc8TH5BZ/bGQ8PbjXLASHjgLIpO+Sco3+rrd6zBWnjKAbgn4
+         TuimfTyH6Je3biPC5IkrkGFVPfR8dXcHFpsegcGUhj5oxfBcNTz1JyuX1q6Dt6awjBxZ
+         rI35D24vtYn2tgxbnIQPg1TL0f4scG6ROuC3D5fxErNxubA6DGBdFqgip+4rlREpZVJm
+         q2yQ==
+X-Gm-Message-State: APt69E3s2lEw+HU/Umi43MWxYUERHY8iXdcK/vtXSXbZpz2Am9bu5CcP
+        TT6vZMZOqk5htTmKLCzSS0v1M9t+xIanICM6WNvl2Q==
+X-Google-Smtp-Source: AAOMgpenu0J45c/P2tp93FoF13d/siBMQsuolRZH2XfAGB1+fVWWS+GXoj2cIIp5cl+HZT7Wq2WNr/FY9h4Xv76kRwc=
+X-Received: by 2002:a6b:520d:: with SMTP id g13-v6mr2548353iob.60.1529695776796;
+ Fri, 22 Jun 2018 12:29:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 12:29:36
+ -0700 (PDT)
+In-Reply-To: <37289a27-eb99-6a73-4d32-4a75edd11dcd@codeaurora.org>
+References: <1526653072-7153-1-git-send-email-okaya@codeaurora.org>
+ <1526653072-7153-2-git-send-email-okaya@codeaurora.org> <20180619222921.GA90490@bhelgaas-glaptop.roam.corp.google.com>
+ <CAKv+Gu_voOZ7YUL8pckww4mTt4PVcu7y69mf-z7ZZe1bJ81Shw@mail.gmail.com>
+ <2a805337-c0b5-e134-7695-5a543ecaa26a@codeaurora.org> <CAKv+Gu9HAJRHwjYLNjf+gg=1vFoFu3BJphifKKE-aR4o_MW84A@mail.gmail.com>
+ <CAKv+Gu-WXLXqHSmiS2MmAMXHLKK_kg+3EK6L2rvO0SzN-c0UMg@mail.gmail.com> <37289a27-eb99-6a73-4d32-4a75edd11dcd@codeaurora.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 22 Jun 2018 21:29:36 +0200
+Message-ID: <CAKv+Gu-bwCFhCKiA7P1amMLeBaSxsjk0d6aPjAr9nCvOBPJA6w@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] efi/fb: Convert PCI bus address to resource if
+ translated by the bridge
+To:     Sinan Kaya <okaya@codeaurora.org>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
+        Peter Jones <pjones@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-‘type’ is only used when CONFIG_DEBUG_HIGHMEM is set. So add a possibly
-unused tag to variable. Remove warning treated as error with W=1:
+On 22 June 2018 at 20:30, Sinan Kaya <okaya@codeaurora.org> wrote:
+> On 6/22/2018 2:01 PM, Ard Biesheuvel wrote:
+>>> Yes, it is part of the PCI I/O protocol definition. FrameBufferBase is
+>>> described as
+>>>
+>>> """
+>>> Base address of graphics linear frame buffer. Info contains
+>>> information required to allow software to draw directly to the
+>>> frame buffer without using Blt().Offset zero in
+>>> FrameBufferBase represents the upper left pixel of the
+>>> display.
+>>> """
+>> I just tried AMD Radeon and NVidia graphics cards on a system with
+>> non-1:1 mapped MMIO windows, and in both cases, the GOP protocol
+>> structure is populated correctly, i.e., using the CPU address not the
+>> PCIe address.
+>>
+>> EDK2 only recently gained support for MMIO translation in the host
+>> bridge driver, so I so wonder if this is a platform issue rather than
+>> a driver issue. It may be worth a try to dump the results of
+>> GetBarAttributes() of all PCI I/O protocol instances (either in UEFI
+>> or in the stub), to double check that the correct values are returned.
+>>
+>
+> Thanks for checking out other platforms. I'll mark the issue as a BIOS
+> issue and bounce your feedback to the BIOS provider.
+>
 
-  arch/powerpc/mm/highmem.c:59:6: error: variable ‘type’ set but not used [-Werror=unused-but-set-variable]
+I screwed up my testing, unfortunately. Both the public AMD GOP driver
+I tried, and the Nvidia GT218 under x86 emulation break when using
+MMIO translation. However, GraphicsOutputDxe in the EDK2 tree gets it
+right, and uses PciIo->GetBarAttributes() to get the address of the
+framebuffer region, which will return the CPU address not the PCI
+address.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- arch/powerpc/mm/highmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Let's hold onto this patch for the moment.
+>
 
-diff --git a/arch/powerpc/mm/highmem.c b/arch/powerpc/mm/highmem.c
-index 668e87d03f9e..82a0e37557a5 100644
---- a/arch/powerpc/mm/highmem.c
-+++ b/arch/powerpc/mm/highmem.c
-@@ -56,7 +56,7 @@ EXPORT_SYMBOL(kmap_atomic_prot);
- void __kunmap_atomic(void *kvaddr)
- {
- 	unsigned long vaddr = (unsigned long) kvaddr & PAGE_MASK;
--	int type;
-+	int type __maybe_unused;
- 
- 	if (vaddr < __fix_to_virt(FIX_KMAP_END)) {
- 		pagefault_enable();
--- 
-2.11.0
-
+Yes. I'd like to get this resolved as well, but if the drivers are
+dereferencing BAR values as CPU addresses, this is unlikely to be the
+only thing that is broken under outbound translation.
