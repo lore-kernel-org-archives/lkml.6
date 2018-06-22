@@ -2,97 +2,112 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0142C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C45BC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 996DD247CF
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:25:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 996DD247CF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id DE2C9247D4
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:27:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcmoqPi/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE2C9247D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934373AbeFVTZC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:25:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34917 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933382AbeFVTZB (ORCPT
+        id S934349AbeFVT1F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 15:27:05 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36753 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933382AbeFVT1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:25:01 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5MJOqSq184188
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 22 Jun 2018 12:24:52 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5MJOpEb184185;
-        Fri, 22 Jun 2018 12:24:51 -0700
-Date:   Fri, 22 Jun 2018 12:24:51 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Suravee Suthikulpanit <tipbot@zytor.com>
-Message-ID: <tip-964d978433a4b9aa1368ff71227ca0027dd1e32f@git.kernel.org>
-Cc:     suravee.suthikulpanit@amd.com, tglx@linutronix.de, bp@suse.de,
-        mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org
-Reply-To: bp@suse.de, hpa@zytor.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, suravee.suthikulpanit@amd.com,
-          tglx@linutronix.de
-In-Reply-To: <1528915390-30533-1-git-send-email-suravee.suthikulpanit@amd.com>
-References: <1528915390-30533-1-git-send-email-suravee.suthikulpanit@amd.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/CPU/AMD: Fix LLC ID bit-shift calculation
-Git-Commit-ID: 964d978433a4b9aa1368ff71227ca0027dd1e32f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 22 Jun 2018 15:27:04 -0400
+Received: by mail-wm0-f67.google.com with SMTP id v131-v6so3786989wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yvvvSbx0/lqHcUeMeexa3pxT0FD18SDoSNhBteFCioY=;
+        b=ZcmoqPi/rI4ofXERWdmKiDA/gzM5r/ZYRs7t6Uxcufo4HRmB5mX3Q0N5uBEsl78Arb
+         /KjMUKSkzVN1Wb1I4+c6GVx7cUC6Ovrxr0i029vZu7oTCORlL1yslDq92usxSKVv3C01
+         ab++T2A+kvoR7PbdipM3OJ6bIAC2S3ErPylThvllnOPv6OjvPcW3vKUIaL6ifzxWyqN4
+         554vUkcLUR2L7kO2kq0io++7KGX45AtA41HLjBTm1xhxZz1O2pYU+TxcFbfJKLUfotcb
+         QLdz3HrovlkEeelm/AaX/K4WEygbJcLhp9CXojk1wsgcZhI4+RvsCr8b1A/0yt0Q2vn0
+         Guvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=yvvvSbx0/lqHcUeMeexa3pxT0FD18SDoSNhBteFCioY=;
+        b=YjuwHF1pPaBreg4WTqI54ufpimsvsV2KYqLKhfyunaKZjzHL9Wuz50Iw5aLZnVJSLH
+         5/fZQj06OWCLoE+2AK5Yu/rs0xrjxdv7GuyltMp8Ix0z1Uc5bkKSIsscM8zbrUl3T7eY
+         J2PCm9lPUGO/cNj966k/mQ6Eto98Tqxd7sKJG7/a0tfJD/RibJoG7k9+m9o/IiO2G2TB
+         XmSGPTndwJx0Euq6nOZ2XjUBUdtxvjlB5j5MxPr5yGizH2x02a1Y1yg1FcGdXcpYPSrC
+         Aaoibi+fLdXjqEGXrid4ohJEKzbC9UJZQ2YM1LyuPr0KPz1i5ny1e8HE659pB4dK/TiZ
+         XlTw==
+X-Gm-Message-State: APt69E0vrSJu5c4m0Th787Zus0B5jxAzKV/70VS3CdsBUrI+QdeusGmi
+        DCeONJk4RJfS/6iG0vqazAE=
+X-Google-Smtp-Source: ADUXVKL4pjRuQcKqnjRtFnVytuPvAoxyx8Hn6YuNOxDLkUP8L1JArh3Hocsx6mRCNJyxkFvfLwyBXw==
+X-Received: by 2002:a1c:b5c7:: with SMTP id e190-v6mr760792wmf.118.1529695623348;
+        Fri, 22 Jun 2018 12:27:03 -0700 (PDT)
+Received: from macbookpro.malat.net (bru31-1-78-225-226-121.fbx.proxad.net. [78.225.226.121])
+        by smtp.gmail.com with ESMTPSA id s17-v6sm1628939wmc.34.2018.06.22.12.27.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 12:27:01 -0700 (PDT)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 718F810C0452; Fri, 22 Jun 2018 21:27:00 +0200 (CEST)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: include setup.h header file to fix warnings
+Date:   Fri, 22 Jun 2018 21:26:53 +0200
+Message-Id: <20180622192655.23464-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  964d978433a4b9aa1368ff71227ca0027dd1e32f
-Gitweb:     https://git.kernel.org/tip/964d978433a4b9aa1368ff71227ca0027dd1e32f
-Author:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-AuthorDate: Wed, 13 Jun 2018 13:43:10 -0500
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 22 Jun 2018 21:21:49 +0200
+Make sure to include setup.h to provide the following prototypes:
 
-x86/CPU/AMD: Fix LLC ID bit-shift calculation
+- irqstack_early_init
+- setup_power_save
+- initialize_cache_info
 
-The current logic incorrectly calculates the LLC ID from the APIC ID.
+Fix the following warnings (treated as error in W=1):
 
-Unless specified otherwise, the LLC ID should be calculated by removing
-the Core and Thread ID bits from the least significant end of the APIC
-ID. For more info, see "ApicId Enumeration Requirements" in any Fam17h
-PPR document.
+  arch/powerpc/kernel/setup_32.c:198:13: error: no previous prototype for ‘irqstack_early_init’ [-Werror=missing-prototypes]
+  arch/powerpc/kernel/setup_32.c:238:13: error: no previous prototype for ‘setup_power_save’ [-Werror=missing-prototypes]
+  arch/powerpc/kernel/setup_32.c:253:13: error: no previous prototype for ‘initialize_cache_info’ [-Werror=missing-prototypes]
 
-[ bp: Improve commit message. ]
-
-Fixes: 68091ee7ac3c ("Calculate last level cache ID from number of sharing threads")
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1528915390-30533-1-git-send-email-suravee.suthikulpanit@amd.com
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/setup_32.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 38354c66df81..0c5fcbd998cf 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -671,7 +671,7 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
- 			num_sharing_cache = ((eax >> 14) & 0xfff) + 1;
+diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
+index 74457485574b..9827b6b3aaaa 100644
+--- a/arch/powerpc/kernel/setup_32.c
++++ b/arch/powerpc/kernel/setup_32.c
+@@ -41,6 +41,8 @@
+ #include <asm/cpu_has_feature.h>
+ #include <asm/asm-prototypes.h>
  
- 		if (num_sharing_cache) {
--			int bits = get_count_order(num_sharing_cache) - 1;
-+			int bits = get_count_order(num_sharing_cache);
++#include "setup.h"
++
+ #define DBG(fmt...)
  
- 			per_cpu(cpu_llc_id, cpu) = c->apicid >> bits;
- 		}
+ extern void bootx_init(unsigned long r4, unsigned long phys);
+-- 
+2.11.0
+
