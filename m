@@ -6,85 +6,66 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C637DC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B4FC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D59A23FD1
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:54:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D59A23FD1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BC80E23FE2
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:54:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC80E23FE2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754650AbeFVJyM (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:54:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60812 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754278AbeFVJxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:53:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4001515BE;
-        Fri, 22 Jun 2018 02:53:05 -0700 (PDT)
-Received: from approximate.cambridge.arm.com (approximate.cambridge.arm.com [10.1.206.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DE753F819;
-        Fri, 22 Jun 2018 02:53:03 -0700 (PDT)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v2 2/7] irqchip/ls-scfg-msi: Fix MSI affinity handling
-Date:   Fri, 22 Jun 2018 10:52:49 +0100
-Message-Id: <20180622095254.5906-3-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180622095254.5906-1-marc.zyngier@arm.com>
-References: <20180622095254.5906-1-marc.zyngier@arm.com>
+        id S932938AbeFVJyd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 05:54:33 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:41260 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754585AbeFVJyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 05:54:31 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id zRBYdmCpUg53; Fri, 22 Jun 2018 11:54:30 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BCF3400329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:3400:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 983DE1EC0236;
+        Fri, 22 Jun 2018 11:54:30 +0200 (CEST)
+From:   Borislav Petkov <bp@alien8.de>
+To:     X86 ML <x86@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/7] RAS queue
+Date:   Fri, 22 Jun 2018 11:54:21 +0200
+Message-Id: <20180622095428.626-1-bp@alien8.de>
+X-Mailer: git-send-email 2.17.0.582.gccdcbd54c
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ls-scfs-msi driver is not dealing with the effective affinity
-as it should. Let's fix that, and make it clear that the effective
-affinity is restricted to a single CPU. Also prevent the driver from
-messing with the internals of the affinity setting infrastructure.
+From: Borislav Petkov <bp@suse.de>
 
-Reported-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/irq-ls-scfg-msi.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Hi guys,
 
-diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
-index 1ec3bfe56693..c671b3212010 100644
---- a/drivers/irqchip/irq-ls-scfg-msi.c
-+++ b/drivers/irqchip/irq-ls-scfg-msi.c
-@@ -93,8 +93,12 @@ static void ls_scfg_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
- 	msg->address_lo = lower_32_bits(msi_data->msiir_addr);
- 	msg->data = data->hwirq;
- 
--	if (msi_affinity_flag)
--		msg->data |= cpumask_first(data->common->affinity);
-+	if (msi_affinity_flag) {
-+		const struct cpumask *mask;
-+
-+		mask = irq_data_get_effective_affinity_mask(data);
-+		msg->data |= cpumask_first(mask);
-+	}
- 
- 	iommu_dma_map_msi_msg(data->irq, msg);
- }
-@@ -121,7 +125,7 @@ static int ls_scfg_msi_set_affinity(struct irq_data *irq_data,
- 		return -EINVAL;
- 	}
- 
--	cpumask_copy(irq_data->common->affinity, mask);
-+	irq_data_update_effective_affinity(irq_data, cpumask_of(cpu));
- 
- 	return IRQ_SET_MASK_OK;
- }
+please queue on tip:ras/core.
+
+Thx.
+
+Arnd Bergmann (1):
+  x86/mce: Always use 64-bit timestamps
+
+Borislav Petkov (5):
+  x86/mce: Carve out the crashing_cpu check
+  x86/mce: Remove !banks check
+  x86/mce: Carve out bank scanning code
+  x86/mce: Cleanup __mc_scan_banks()
+  x86/mce: Do not overwrite MCi_STATUS in mce_no_way_out()
+
+Tony Luck (1):
+  x86/mce: Fix incorrect "Machine check from unknown source" message
+
+ arch/x86/kernel/cpu/mcheck/mce.c | 244 +++++++++++++++++--------------
+ 1 file changed, 134 insertions(+), 110 deletions(-)
+
 -- 
-2.17.1
+2.17.0.582.gccdcbd54c
 
