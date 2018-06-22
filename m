@@ -2,104 +2,133 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74A1C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71030C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76AD5246C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:27:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTOpBE/I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76AD5246C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 193F0246C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:28:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 193F0246C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934010AbeFVR1h (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:27:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933200AbeFVR1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:27:35 -0400
-Received: from localhost (unknown [150.199.191.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05C7E246BC;
-        Fri, 22 Jun 2018 17:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529688455;
-        bh=9EVKOURewIDTrohhIROu1nmkNE/tgNlzdNn38Pk+IpY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uTOpBE/IeLsHNA4jgBYW1DLhCWllL+ybRV7em0hDVvA+J3jw6M87DoDbUlKzKT1In
-         6b/z8K2JQngeKtz1lgE+hklBC8XeD7ZIduGXoFn7AmrSXdAFFqSiRiaCUAEdI0toq7
-         mXFGzr1eNIIzMsMK1wZNxyfqndyf6VkU1L5fX+6g=
-Date:   Fri, 22 Jun 2018 12:27:34 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Tyler Baicar <tbaicar@codeaurora.org>
-Cc:     rajatxjain@gmail.com, Rajat Jain <rajatja@google.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frederick Lawler <fred@fredlawl.com>,
-        Oza Pawandeep <poza@codeaurora.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Thomas Tai <thomas.tai@oracle.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jes Sorensen <jsorensen@fb.com>, Kyle McMartin <jkkm@fb.com>
-Subject: Re: [PATCH v5 3/5] PCI/AER: Add sysfs attributes to provide
- breakdown of AERs
-Message-ID: <20180622172734.GA215961@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180522222805.80314-1-rajatja@google.com>
- <20180620234147.48438-1-rajatja@google.com>
- <20180620234147.48438-3-rajatja@google.com>
- <20180621184822.GB14136@bhelgaas-glaptop.roam.corp.google.com>
- <CAA93t1rz6YGmvvORDB0ehr7Gwp-W+0HDYxEDgjtgYmGm3qMgCw@mail.gmail.com>
- <a16746f0-351f-276e-2a66-3ebf2c267507@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a16746f0-351f-276e-2a66-3ebf2c267507@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S934011AbeFVR2z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 13:28:55 -0400
+Received: from smtprelay0088.hostedemail.com ([216.40.44.88]:54124 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932752AbeFVR2y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 13:28:54 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 52F831811F04B;
+        Fri, 22 Jun 2018 17:28:53 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: leg12_4cb736c2b4754
+X-Filterd-Recvd-Size: 4329
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 22 Jun 2018 17:28:47 +0000 (UTC)
+Message-ID: <36a7227189b8c7602dd9ffd21a5369b7029e61f1.camel@perches.com>
+Subject: Re: [PATCH] staging: rtl8723bs: do not use assignment in if
+ condition
+From:   Joe Perches <joe@perches.com>
+To:     Michael Straube <michael.straube@posteo.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 22 Jun 2018 10:28:45 -0700
+In-Reply-To: <28dd699b-3013-c42c-07d5-1117d7ab3622@posteo.de>
+References: <20180621182230.27823-1-michael.straube@posteo.de>
+         <20180622104007.ob5nt2rip2fu436h@mwanda>
+         <d6f21cd91d4e6482b5c5d125607ed75c25e9c7a0.camel@perches.com>
+         <20180622105719.pt3lh6fqi2nziqsz@mwanda>
+         <28dd699b-3013-c42c-07d5-1117d7ab3622@posteo.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 12:38:50PM -0400, Tyler Baicar wrote:
-> On 6/21/2018 5:25 PM, Rajat Jain wrote:
-> > On Thu, Jun 21, 2018 at 11:48 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > [+cc Tyler for AER dmesg decoding]
+On Fri, 2018-06-22 at 14:48 +0200, Michael Straube wrote:
+> On 06/22/18 12:57, Dan Carpenter wrote:
+> > On Fri, Jun 22, 2018 at 03:54:22AM -0700, Joe Perches wrote:
+> > > On Fri, 2018-06-22 at 13:40 +0300, Dan Carpenter wrote:
+> > > > On Thu, Jun 21, 2018 at 08:22:30PM +0200, Michael Straube wrote:
+> > > > > Fix checkpatch error 'do not use assignment in if condition'.
+> > > []
+> > > > > diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+> > > > > index e55895632921..87a4ced41028 100644
+> > > > > --- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+> > > > > +++ b/
+> > > > > @@ -1181,9 +1181,8 @@ void rtw_macaddr_cfg(struct device *dev, u8 *mac_addr)
+> > > > >   	     (mac[3] == 0xff) && (mac[4] == 0xff) && (mac[5] == 0xff)) ||
+> > > > >   	    ((mac[0] == 0x00) && (mac[1] == 0x00) && (mac[2] == 0x00) &&
+> > > > >   	     (mac[3] == 0x00) && (mac[4] == 0x00) && (mac[5] == 0x00))) {
 > > > 
-> > > - Tyler posted a patch [1] to update those dmesg strings so they match
-> > >    the way lspci decodes them.  I really liked that update, but we
-> > >    never quite finished it.  If we're going to do that, it would be
-> > >    nice to do it first, so we don't publish new sysfs files, then
-> > >    immediately change the labels used in them.
-> > Sure, I guess you can push them in the right order.
-> The way the prints are handled has already been unified in 4.18rc1:
-> 
-> https://elixir.bootlin.com/linux/v4.18-rc1/source/drivers/pci/pcie/aer.c#L636
-> 
-> So that patch isn't needed anymore in it's entirety.
-> > > - IIRC, Tyler's patch had the nice property of changing the strings so
-> > >    each error name had no spaces, which would make it a little easier
-> > >    to parse this sysfs file: each line would be a single identifier
-> > >    followed by a single number (I would probably remove the "=" from
-> > >    the middle).
+> > > Should also use is_broadcast_ether_addr and is_zero_ether_addr
+> > > 
+> > > > > -		if (np &&
+> > > > > -		    (addr = of_get_property(np, "local-mac-address", &len)) &&
+> > > > > -		    len == ETH_ALEN) {
+> > > > > +		addr = of_get_property(np, "local-mac-address", &len);
+> > > > > +		if (np && addr && len == ETH_ALEN) {
+> > > > 
+> > > > You can remove the "np" check.
+> > > > 
+> > > > 		if (addr && len == ETH_ALEN) {
+> > > 
+> > > It looks more like the rewrite is incorrect
+> > > as np is tested before of_get_property
+> > > 
 > > 
-> > Will do.
-> Would you like me to send a patch with just the string changes?
+> > That's what I was worried about too, but if "np" is NULL then
+> > of_get_property() just returns NULL so it's fine.
+> 
+> So it should be this?
+> 
+>          if (((mac[0] == 0xff) && (mac[1] == 0xff) && (mac[2] == 0xff) &&
+>               (mac[3] == 0xff) && (mac[4] == 0xff) && (mac[5] == 0xff)) ||
+>              ((mac[0] == 0x00) && (mac[1] == 0x00) && (mac[2] == 0x00) &&
+>               (mac[3] == 0x00) && (mac[4] == 0x00) && (mac[5] == 0x00)) &&
+>              (is_broadcast_ether_addr(mac) || is_zero_ether_addr(mac))) {
 
-That would be awesome!  Sorry, I didn't realize that half of that got
-done via another route.
+No as the mac[] tests are the same as is_<foo>_ether_addr
+and there's nothing really objectionable about embedding
+the assignment in the if here.
 
-Bjorn
+Output from checkpatch is not gospel and can be ignored
+whenever appropriate.
+
+I think the below is ok:
+
+	if ((is_broadcast_ether_addr(mac) || is_zero_ether_addr(mac)) &&
+	    ((addr = of_get_property(np, "local-mac-address", &len)) &&
+	     len == ETH_ALEN))
+		memcpy(mac_addr, addr, ETH_ALEN);
+	else
+		memcpy(mac_addr, ""\x00\xe0\x4c\x87\x00\x00", ETH_ALEN);
+
+Although the last memcpy of a fixed mac address could
+probably use eth_random_addr to reduce the likelihood
+of mac address collision so maybe
+
+	if ((is_broadcast_ether_addr(mac) || is_zero_ether_addr(mac)) &&
+	    ((addr = of_get_property(np, "local-mac-address", &len)) &&
+	
+     len == ETH_ALEN))
+		memcpy(mac_addr, addr, ETH_ALEN);
+	else
+		eth_random_addr(mac_addr);
+
+> If yes, I'm not sure how to proceed as these are the very first patches I send.
+> Should I send a v2 patch with both changes or just a v2 with "np" removed and
+> another one for adding 'is_broadcast_ether_addr' and 'is_zero_ether_addr' checks?
+
+I'd send 1 patch.
+
