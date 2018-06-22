@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0FAC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6992C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4E0244E4
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F4E0244E4
+	by mail.kernel.org (Postfix) with ESMTP id 7776C244DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7776C244DE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933975AbeFVPeD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:34:03 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:46341 "EHLO extserv.mm-sol.com"
+        id S934041AbeFVPeM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:34:12 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:46412 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933908AbeFVPeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:34:00 -0400
+        id S933983AbeFVPeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:34:08 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id A3511CD37;
-        Fri, 22 Jun 2018 18:33:58 +0300 (EEST)
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id A7E8E4F88E;
+        Fri, 22 Jun 2018 18:33:59 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 02/32] media: v4l: Add new 2X8 10-bit grayscale media bus code
-Date:   Fri, 22 Jun 2018 18:33:11 +0300
-Message-Id: <1529681621-9682-3-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH 22/32] media: camss: ispif: Add support for 8x96
+Date:   Fri, 22 Jun 2018 18:33:31 +0300
+Message-Id: <1529681621-9682-23-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
 References: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
@@ -40,122 +40,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code will be called MEDIA_BUS_FMT_Y10_2X8_PADHI_LE.
-It is similar to MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE
-but MEDIA_BUS_FMT_Y10_2X8_PADHI_LE describes grayscale
-data.
+ISPIF hardware modules on 8x16 and 8x96 are similar. However on
+8x96 the ISPIF routes data to two VFE hardware modules. Add
+separate interrupt handler for 8x96 to handle the additional
+interrupts.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- Documentation/media/uapi/v4l/subdev-formats.rst | 72 +++++++++++++++++++++++++
- include/uapi/linux/media-bus-format.h           |  3 +-
- 2 files changed, 74 insertions(+), 1 deletion(-)
+ drivers/media/platform/qcom/camss/camss-ispif.c | 76 ++++++++++++++++++++++++-
+ 1 file changed, 73 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/media/uapi/v4l/subdev-formats.rst b/Documentation/media/uapi/v4l/subdev-formats.rst
-index 9fcabe7..c4fb0bf 100644
---- a/Documentation/media/uapi/v4l/subdev-formats.rst
-+++ b/Documentation/media/uapi/v4l/subdev-formats.rst
-@@ -4315,6 +4315,78 @@ the following codes.
-       - y\ :sub:`2`
-       - y\ :sub:`1`
-       - y\ :sub:`0`
-+    * .. _MEDIA-BUS-FMT-Y10-2X8-PADHI_LE:
+diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/media/platform/qcom/camss/camss-ispif.c
+index 8b04f8a..b124cd3 100644
+--- a/drivers/media/platform/qcom/camss/camss-ispif.c
++++ b/drivers/media/platform/qcom/camss/camss-ispif.c
+@@ -116,13 +116,77 @@ static const u32 ispif_formats[] = {
+ };
+ 
+ /*
+- * ispif_isr - ISPIF module interrupt handler
++ * ispif_isr_8x96 - ISPIF module interrupt handler for 8x96
+  * @irq: Interrupt line
+  * @dev: ISPIF device
+  *
+  * Return IRQ_HANDLED on success
+  */
+-static irqreturn_t ispif_isr(int irq, void *dev)
++static irqreturn_t ispif_isr_8x96(int irq, void *dev)
++{
++	struct ispif_device *ispif = dev;
++	u32 value0, value1, value2, value3, value4, value5;
 +
-+      - MEDIA_BUS_FMT_Y10_2X8_PADHI_LE
-+      - 0x202c
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      - y\ :sub:`7`
-+      - y\ :sub:`6`
-+      - y\ :sub:`5`
-+      - y\ :sub:`4`
-+      - y\ :sub:`3`
-+      - y\ :sub:`2`
-+      - y\ :sub:`1`
-+      - y\ :sub:`0`
-+    * -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - y\ :sub:`9`
-+      - y\ :sub:`8`
-     * .. _MEDIA-BUS-FMT-UYVY10-2X10:
- 
-       - MEDIA_BUS_FMT_UYVY10_2X10
-diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
-index 9e35117..d6a5a3b 100644
---- a/include/uapi/linux/media-bus-format.h
-+++ b/include/uapi/linux/media-bus-format.h
-@@ -62,7 +62,7 @@
- #define MEDIA_BUS_FMT_RGB121212_1X36		0x1019
- #define MEDIA_BUS_FMT_RGB161616_1X48		0x101a
- 
--/* YUV (including grey) - next is	0x202c */
-+/* YUV (including grey) - next is	0x202d */
- #define MEDIA_BUS_FMT_Y8_1X8			0x2001
- #define MEDIA_BUS_FMT_UV8_1X8			0x2015
- #define MEDIA_BUS_FMT_UYVY8_1_5X8		0x2002
-@@ -74,6 +74,7 @@
- #define MEDIA_BUS_FMT_YUYV8_2X8			0x2008
- #define MEDIA_BUS_FMT_YVYU8_2X8			0x2009
- #define MEDIA_BUS_FMT_Y10_1X10			0x200a
-+#define MEDIA_BUS_FMT_Y10_2X8_PADHI_LE		0x202c
- #define MEDIA_BUS_FMT_UYVY10_2X10		0x2018
- #define MEDIA_BUS_FMT_VYUY10_2X10		0x2019
- #define MEDIA_BUS_FMT_YUYV10_2X10		0x200b
++	value0 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_0(0));
++	value1 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_1(0));
++	value2 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_2(0));
++	value3 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_0(1));
++	value4 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_1(1));
++	value5 = readl_relaxed(ispif->base + ISPIF_VFE_m_IRQ_STATUS_2(1));
++
++	writel_relaxed(value0, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_0(0));
++	writel_relaxed(value1, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_1(0));
++	writel_relaxed(value2, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_2(0));
++	writel_relaxed(value3, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_0(1));
++	writel_relaxed(value4, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_1(1));
++	writel_relaxed(value5, ispif->base + ISPIF_VFE_m_IRQ_CLEAR_2(1));
++
++	writel(0x1, ispif->base + ISPIF_IRQ_GLOBAL_CLEAR_CMD);
++
++	if ((value0 >> 27) & 0x1)
++		complete(&ispif->reset_complete);
++
++	if (unlikely(value0 & ISPIF_VFE_m_IRQ_STATUS_0_PIX0_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 pix0 overflow\n");
++
++	if (unlikely(value0 & ISPIF_VFE_m_IRQ_STATUS_0_RDI0_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 rdi0 overflow\n");
++
++	if (unlikely(value1 & ISPIF_VFE_m_IRQ_STATUS_1_PIX1_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 pix1 overflow\n");
++
++	if (unlikely(value1 & ISPIF_VFE_m_IRQ_STATUS_1_RDI1_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 rdi1 overflow\n");
++
++	if (unlikely(value2 & ISPIF_VFE_m_IRQ_STATUS_2_RDI2_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE0 rdi2 overflow\n");
++
++	if (unlikely(value3 & ISPIF_VFE_m_IRQ_STATUS_0_PIX0_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 pix0 overflow\n");
++
++	if (unlikely(value3 & ISPIF_VFE_m_IRQ_STATUS_0_RDI0_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 rdi0 overflow\n");
++
++	if (unlikely(value4 & ISPIF_VFE_m_IRQ_STATUS_1_PIX1_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 pix1 overflow\n");
++
++	if (unlikely(value4 & ISPIF_VFE_m_IRQ_STATUS_1_RDI1_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 rdi1 overflow\n");
++
++	if (unlikely(value5 & ISPIF_VFE_m_IRQ_STATUS_2_RDI2_OVERFLOW))
++		dev_err_ratelimited(to_device(ispif), "VFE1 rdi2 overflow\n");
++
++	return IRQ_HANDLED;
++}
++
++/*
++ * ispif_isr_8x16 - ISPIF module interrupt handler for 8x16
++ * @irq: Interrupt line
++ * @dev: ISPIF device
++ *
++ * Return IRQ_HANDLED on success
++ */
++static irqreturn_t ispif_isr_8x16(int irq, void *dev)
+ {
+ 	struct ispif_device *ispif = dev;
+ 	u32 value0, value1, value2;
+@@ -954,8 +1018,14 @@ int msm_ispif_subdev_init(struct ispif_device *ispif,
+ 	ispif->irq = r->start;
+ 	snprintf(ispif->irq_name, sizeof(ispif->irq_name), "%s_%s",
+ 		 dev_name(dev), MSM_ISPIF_NAME);
+-	ret = devm_request_irq(dev, ispif->irq, ispif_isr,
++	if (to_camss(ispif)->version == CAMSS_8x16)
++		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x16,
+ 			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
++	else if (to_camss(ispif)->version == CAMSS_8x96)
++		ret = devm_request_irq(dev, ispif->irq, ispif_isr_8x96,
++			       IRQF_TRIGGER_RISING, ispif->irq_name, ispif);
++	else
++		ret = -EINVAL;
+ 	if (ret < 0) {
+ 		dev_err(dev, "request_irq failed: %d\n", ret);
+ 		return ret;
 -- 
 2.7.4
 
