@@ -6,96 +6,98 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07160C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA2C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2D27241F1
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:46:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2D27241F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id CF2CD241FA
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:47:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2CD241FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754184AbeFVMqC (ORCPT
+        id S1751401AbeFVMrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 08:46:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50647 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751315AbeFVMqA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:46:00 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5MCjkjN071735
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 22 Jun 2018 05:45:46 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5MCjkvT071732;
-        Fri, 22 Jun 2018 05:45:46 -0700
-Date:   Fri, 22 Jun 2018 05:45:46 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
-Message-ID: <tip-0218c766263e70795c5eaa17d75ed54bca350950@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        zhenzhong.duan@oracle.com, bp@suse.de, srinivas.eeda@oracle.com,
-        hpa@zytor.com
-Reply-To: hpa@zytor.com, bp@suse.de, srinivas.eeda@oracle.com,
-          mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, zhenzhong.duan@oracle.com
-In-Reply-To: <888102f0-fd22-459d-b090-a1bd8a00cb2b@default>
-References: <888102f0-fd22-459d-b090-a1bd8a00cb2b@default>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/microcode/intel: Fix memleak in
- save_microcode_patch()
-Git-Commit-ID: 0218c766263e70795c5eaa17d75ed54bca350950
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Fri, 22 Jun 2018 08:47:22 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:57138 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751198AbeFVMrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 08:47:21 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 2943962ECA;
+        Fri, 22 Jun 2018 12:47:08 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
+Date:   Fri, 22 Jun 2018 20:45:35 +0800
+Message-Id: <20180622124540.56203-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0218c766263e70795c5eaa17d75ed54bca350950
-Gitweb:     https://git.kernel.org/tip/0218c766263e70795c5eaa17d75ed54bca350950
-Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-AuthorDate: Fri, 22 Jun 2018 13:51:26 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 22 Jun 2018 14:42:59 +0200
+All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64 SoC to
+be claimed, otherwise the whole DE2 space is inaccessible.
 
-x86/microcode/intel: Fix memleak in save_microcode_patch()
+Add a device tree binding of the DE2 part as a sub-bus.
 
-Free useless ucode_patch entry when it's replaced.
-
-[ bp: Drop the memfree_patch() two-liner. ]
-
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Srinivas REDDY Eeda <srinivas.eeda@oracle.com>
-Link: http://lkml.kernel.org/r/888102f0-fd22-459d-b090-a1bd8a00cb2b@default
-
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- arch/x86/kernel/cpu/microcode/intel.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+No changes since v1.
 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index 1c2cfa0644aa..97ccf4c3b45b 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -190,8 +190,11 @@ static void save_microcode_patch(void *data, unsigned int size)
- 			p = memdup_patch(data, size);
- 			if (!p)
- 				pr_err("Error allocating buffer %p\n", data);
--			else
-+			else {
- 				list_replace(&iter->plist, &p->plist);
-+				kfree(iter->data);
-+				kfree(iter);
-+			}
- 		}
- 	}
- 
+ .../bindings/bus/sun50i-de2-bus.txt           | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+
+diff --git a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+new file mode 100644
+index 000000000000..87dfb33fb3be
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+@@ -0,0 +1,37 @@
++Device tree bindings for Allwinner A64 DE2 bus
++
++The Allwinner A64 DE2 is on a special bus, which needs a SRAM region (SRAM C)
++to be claimed for enabling the access.
++
++Required properties:
++
++ - compatible:		Should contain "allwinner,sun50i-a64-de2"
++ - reg:			A resource specifier for the register space
++ - #address-cells:	Must be set to 1
++ - #size-cells:		Must be set to 1
++ - ranges:		Must be set up to map the address space inside the
++			DE2, for the sub-blocks of DE2.
++ - allwinner,sram:	the SRAM that needs to be claimed
++
++Example:
++
++	de2@1000000 {
++		compatible = "allwinner,sun50i-a64-de2";
++		reg = <0x1000000 0x400000>;
++		allwinner,sram = <&de2_sram 1>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1000000 0x400000>;
++
++		display_clocks: clock@0 {
++			compatible = "allwinner,sun50i-a64-de2-clk";
++			reg = <0x0 0x100000>;
++			clocks = <&ccu CLK_DE>,
++				 <&ccu CLK_BUS_DE>;
++			clock-names = "mod",
++				      "bus";
++			resets = <&ccu RST_BUS_DE>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++	};
+-- 
+2.17.1
+
