@@ -3,288 +3,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8700C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A67FC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B2322478E
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:56:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B2322478E
+	by mail.kernel.org (Postfix) with ESMTP id D17212478F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:57:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17212478F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934425AbeFVS43 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 14:56:29 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:33260 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933900AbeFVS40 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 14:56:26 -0400
-Received: by mail-qk0-f196.google.com with SMTP id c131-v6so4249170qkb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 11:56:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc:date
-         :in-reply-to:references:organization:mime-version
-         :content-transfer-encoding;
-        bh=3jwqZE100+77uSixG+GwQrGTrBlj3nCWJbm82qTzzFM=;
-        b=r/WobGXe0Kf02ZYQk00k6xsh3CBjFzKJdZy4jGbT6DsYP3EeHWvWzLC31gpDIMiA9K
-         w1W0XAONqQPcuyoBq0+A+fx0H29stTImHNBwYswAB70AKN9MF1MC1yMH10n8Hfn4hly0
-         kqyTJmyFHtahrZARSKx5kmL14nypqmGayiGYohBb48mJkoLkRcG/WWWJBKY8b9QiL+c2
-         kBy9koBtM1uxexGQGHvvmg8mnjCKkFfC4+OdBCtsC+plfE6DggI5OBhtpb0R55Cx7ZkX
-         wibezJOfHP2grxCXA8gf/GnAOGGn5Opljt5+guJ7OLGbqZMI3q2OeWEHkAHF+5ywJlsU
-         KNSQ==
-X-Gm-Message-State: APt69E0+b7R4DEa+sAlSR7pvvzspJaGuX8aULGY+3ksIadvqv2n1322f
-        gRnvLXWgIu0p3HJU1C7xOvtXhA==
-X-Google-Smtp-Source: ADUXVKJaw/7XruF0pJtcZERi2FSW7M8W+mFlAZ28KIFwK9gRX+yLWxoXeJRRzqxABhp7M2rPnbFlhg==
-X-Received: by 2002:a37:a204:: with SMTP id l4-v6mr2378462qke.144.1529693786003;
-        Fri, 22 Jun 2018 11:56:26 -0700 (PDT)
-Received: from whitewolf.lyude.net (pool-72-74-165-95.bstnma.fios.verizon.net. [72.74.165.95])
-        by smtp.gmail.com with ESMTPSA id x14-v6sm6370175qtk.33.2018.06.22.11.56.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 11:56:25 -0700 (PDT)
-Message-ID: <80f2a6d864cb7febb7465c4dfe6c2ba1753237c1.camel@redhat.com>
-Subject: Re: [PATCH] drm/amdgpu: Count disabled CRTCs in commit tail earlier
-From:   Lyude Paul <lyude@redhat.com>
-Reply-To: lyude@redhat.com
-To:     Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
-        amd-gfx@lists.freedesktop.org
-Cc:     Michel =?ISO-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Tony Cheng <Tony.Cheng@amd.com>,
-        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
-        Shirish S <shirish.s@amd.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 22 Jun 2018 14:56:23 -0400
-In-Reply-To: <fe73a505-e4c6-a53f-b1e7-52b22457cd3b@amd.com>
-References: <20180621204832.22448-1-lyude@redhat.com>
-         <fe73a505-e4c6-a53f-b1e7-52b22457cd3b@amd.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S934450AbeFVS5M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:57:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34384 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934307AbeFVS5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 14:57:10 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6551C7B4A7;
+        Fri, 22 Jun 2018 18:57:10 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4828F2156889;
+        Fri, 22 Jun 2018 18:57:10 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5MIvASc016973;
+        Fri, 22 Jun 2018 14:57:10 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5MIvAcN016969;
+        Fri, 22 Jun 2018 14:57:10 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Fri, 22 Jun 2018 14:57:10 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     jing xia <jing.xia.mail@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+In-Reply-To: <20180622130524.GZ10465@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1806221447050.2717@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1806150724260.15022@file01.intranet.prod.int.rdu2.redhat.com> <20180615115547.GH24039@dhcp22.suse.cz> <alpine.LRH.2.02.1806150832100.26650@file01.intranet.prod.int.rdu2.redhat.com> <20180615130925.GI24039@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806181003560.4201@file01.intranet.prod.int.rdu2.redhat.com> <20180619104312.GD13685@dhcp22.suse.cz> <alpine.LRH.2.02.1806191228110.25656@file01.intranet.prod.int.rdu2.redhat.com> <20180622090151.GS10465@dhcp22.suse.cz>
+ <20180622090935.GT10465@dhcp22.suse.cz> <alpine.LRH.2.02.1806220845190.8072@file01.intranet.prod.int.rdu2.redhat.com> <20180622130524.GZ10465@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 22 Jun 2018 18:57:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 22 Jun 2018 18:57:10 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-22 at 13:34 -0400, Andrey Grodzovsky wrote:
+
+
+On Fri, 22 Jun 2018, Michal Hocko wrote:
+
+> On Fri 22-06-18 08:52:09, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Fri, 22 Jun 2018, Michal Hocko wrote:
+> > 
+> > > On Fri 22-06-18 11:01:51, Michal Hocko wrote:
+> > > > On Thu 21-06-18 21:17:24, Mikulas Patocka wrote:
+> > > [...]
+> > > > > What about this patch? If __GFP_NORETRY and __GFP_FS is not set (i.e. the 
+> > > > > request comes from a block device driver or a filesystem), we should not 
+> > > > > sleep.
+> > > > 
+> > > > Why? How are you going to audit all the callers that the behavior makes
+> > > > sense and moreover how are you going to ensure that future usage will
+> > > > still make sense. The more subtle side effects gfp flags have the harder
+> > > > they are to maintain.
+> > > 
+> > > So just as an excercise. Try to explain the above semantic to users. We
+> > > currently have the following.
+> > > 
+> > >  * __GFP_NORETRY: The VM implementation will try only very lightweight
+> > >  *   memory direct reclaim to get some memory under memory pressure (thus
+> > >  *   it can sleep). It will avoid disruptive actions like OOM killer. The
+> > >  *   caller must handle the failure which is quite likely to happen under
+> > >  *   heavy memory pressure. The flag is suitable when failure can easily be
+> > >  *   handled at small cost, such as reduced throughput
+> > > 
+> > >  * __GFP_FS can call down to the low-level FS. Clearing the flag avoids the
+> > >  *   allocator recursing into the filesystem which might already be holding
+> > >  *   locks.
+> > > 
+> > > So how are you going to explain gfp & (__GFP_NORETRY | ~__GFP_FS)? What
+> > > is the actual semantic without explaining the whole reclaim or force
+> > > users to look into the code to understand that? What about GFP_NOIO |
+> > > __GFP_NORETRY? What does it mean to that "should not sleep". Do all
+> > > shrinkers have to follow that as well?
+> > 
+> > My reasoning was that there is broken code that uses __GFP_NORETRY and 
+> > assumes that it can't fail - so conditioning the change on !__GFP_FS would 
+> > minimize the diruption to the broken code.
+> > 
+> > Anyway - if you want to test only on __GFP_NORETRY (and fix those 16 
+> > broken cases that assume that __GFP_NORETRY can't fail), I'm OK with that.
 > 
-> On 06/21/2018 04:48 PM, Lyude Paul wrote:
-> > This fixes a regression I accidentally reduced that was picked up by
-> > kasan, where we were checking the CRTC atomic states after DRM's helpers
-> > had already freed them. Example:
-> > 
-> > ==================================================================
-> > BUG: KASAN: use-after-free in
-> > amdgpu_dm_atomic_commit_tail.cold.50+0x13d/0x15a [amdgpu]
-> > Read of size 1 at addr ffff8803a697b071 by task kworker/u16:0/7
-> > 
-> > CPU: 7 PID: 7 Comm: kworker/u16:0 Tainted: G           O      4.18.0-
-> > rc1Lyude-Upstream+ #1
-> > Hardware name: HP HP ZBook 15 G4/8275, BIOS P70 Ver. 01.21 05/02/2018
-> > Workqueue: events_unbound commit_work [drm_kms_helper]
-> > Call Trace:
-> >   dump_stack+0xc1/0x169
-> >   ? dump_stack_print_info.cold.1+0x42/0x42
-> >   ? kmsg_dump_rewind_nolock+0xd9/0xd9
-> >   ? printk+0x9f/0xc5
-> >   ? amdgpu_dm_atomic_commit_tail.cold.50+0x13d/0x15a [amdgpu]
-> >   print_address_description+0x6c/0x23c
-> >   ? amdgpu_dm_atomic_commit_tail.cold.50+0x13d/0x15a [amdgpu]
-> >   kasan_report.cold.6+0x241/0x2fd
-> >   amdgpu_dm_atomic_commit_tail.cold.50+0x13d/0x15a [amdgpu]
-> >   ? commit_planes_to_stream.constprop.45+0x13b0/0x13b0 [amdgpu]
-> >   ? cpu_load_update_active+0x290/0x290
-> >   ? finish_task_switch+0x2bd/0x840
-> >   ? __switch_to_asm+0x34/0x70
-> >   ? read_word_at_a_time+0xe/0x20
-> >   ? strscpy+0x14b/0x460
-> >   ? drm_atomic_helper_wait_for_dependencies+0x47d/0x7e0 [drm_kms_helper]
-> >   commit_tail+0x96/0xe0 [drm_kms_helper]
-> >   process_one_work+0x88a/0x1360
-> >   ? create_worker+0x540/0x540
-> >   ? __sched_text_start+0x8/0x8
-> >   ? move_queued_task+0x760/0x760
-> >   ? call_rcu_sched+0x20/0x20
-> >   ? vsnprintf+0xcda/0x1350
-> >   ? wait_woken+0x1c0/0x1c0
-> >   ? mutex_unlock+0x1d/0x40
-> >   ? init_timer_key+0x190/0x230
-> >   ? schedule+0xea/0x390
-> >   ? __schedule+0x1ea0/0x1ea0
-> >   ? need_to_create_worker+0xe4/0x210
-> >   ? init_worker_pool+0x700/0x700
-> >   ? try_to_del_timer_sync+0xbf/0x110
-> >   ? del_timer+0x120/0x120
-> >   ? __mutex_lock_slowpath+0x10/0x10
-> >   worker_thread+0x196/0x11f0
-> >   ? flush_rcu_work+0x50/0x50
-> >   ? __switch_to_asm+0x34/0x70
-> >   ? __switch_to_asm+0x34/0x70
-> >   ? __switch_to_asm+0x40/0x70
-> >   ? __switch_to_asm+0x34/0x70
-> >   ? __switch_to_asm+0x40/0x70
-> >   ? __switch_to_asm+0x34/0x70
-> >   ? __switch_to_asm+0x40/0x70
-> >   ? __schedule+0x7d6/0x1ea0
-> >   ? migrate_swap_stop+0x850/0x880
-> >   ? __sched_text_start+0x8/0x8
-> >   ? save_stack+0x8c/0xb0
-> >   ? kasan_kmalloc+0xbf/0xe0
-> >   ? kmem_cache_alloc_trace+0xe4/0x190
-> >   ? kthread+0x98/0x390
-> >   ? ret_from_fork+0x35/0x40
-> >   ? ret_from_fork+0x35/0x40
-> >   ? deactivate_slab.isra.67+0x3c4/0x5c0
-> >   ? kthread+0x98/0x390
-> >   ? kthread+0x98/0x390
-> >   ? set_track+0x76/0x120
-> >   ? schedule+0xea/0x390
-> >   ? __schedule+0x1ea0/0x1ea0
-> >   ? wait_woken+0x1c0/0x1c0
-> >   ? kasan_unpoison_shadow+0x30/0x40
-> >   ? parse_args.cold.15+0x17a/0x17a
-> >   ? flush_rcu_work+0x50/0x50
-> >   kthread+0x2d4/0x390
-> >   ? kthread_create_worker_on_cpu+0xc0/0xc0
-> >   ret_from_fork+0x35/0x40
-> > 
-> > Allocated by task 1124:
-> >   kasan_kmalloc+0xbf/0xe0
-> >   kmem_cache_alloc_trace+0xe4/0x190
-> >   dm_crtc_duplicate_state+0x78/0x130 [amdgpu]
-> >   drm_atomic_get_crtc_state+0x147/0x410 [drm]
-> >   page_flip_common+0x57/0x230 [drm_kms_helper]
-> >   drm_atomic_helper_page_flip+0xa6/0x110 [drm_kms_helper]
-> >   drm_mode_page_flip_ioctl+0xc4b/0x10a0 [drm]
-> >   drm_ioctl_kernel+0x1d4/0x260 [drm]
-> >   drm_ioctl+0x433/0x920 [drm]
-> >   amdgpu_drm_ioctl+0x11d/0x290 [amdgpu]
-> >   do_vfs_ioctl+0x1a1/0x13d0
-> >   ksys_ioctl+0x60/0x90
-> >   __x64_sys_ioctl+0x6f/0xb0
-> >   do_syscall_64+0x147/0x440
-> >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > 
-> > Freed by task 1124:
-> >   __kasan_slab_free+0x12e/0x180
-> >   kfree+0x92/0x1a0
-> >   drm_atomic_state_default_clear+0x315/0xc40 [drm]
-> >   __drm_atomic_state_free+0x35/0xd0 [drm]
-> >   drm_atomic_helper_update_plane+0xac/0x350 [drm_kms_helper]
-> >   __setplane_internal+0x2d6/0x840 [drm]
-> >   drm_mode_cursor_universal+0x41e/0xbe0 [drm]
-> >   drm_mode_cursor_common+0x49f/0x880 [drm]
-> >   drm_mode_cursor_ioctl+0xd8/0x130 [drm]
-> >   drm_ioctl_kernel+0x1d4/0x260 [drm]
-> >   drm_ioctl+0x433/0x920 [drm]
-> >   amdgpu_drm_ioctl+0x11d/0x290 [amdgpu]
-> >   do_vfs_ioctl+0x1a1/0x13d0
-> >   ksys_ioctl+0x60/0x90
-> >   __x64_sys_ioctl+0x6f/0xb0
-> >   do_syscall_64+0x147/0x440
-> >   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > 
-> > The buggy address belongs to the object at ffff8803a697b068
-> >   which belongs to the cache kmalloc-1024 of size 1024
-> > The buggy address is located 9 bytes inside of
-> >   1024-byte region [ffff8803a697b068, ffff8803a697b468)
-> > The buggy address belongs to the page:
-> > page:ffffea000e9a5e00 count:1 mapcount:0 mapping:ffff88041e00efc0 index:0x0
-> > compound_mapcount: 0
-> > flags: 0x8000000000008100(slab|head)
-> > raw: 8000000000008100 ffffea000ecbc208 ffff88041e000c70 ffff88041e00efc0
-> > raw: 0000000000000000 0000000000170017 00000001ffffffff 0000000000000000
-> > page dumped because: kasan: bad access detected
-> > 
-> > Memory state around the buggy address:
-> >   ffff8803a697af00: fb fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> >   ffff8803a697af80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > ffff8803a697b000: fc fc fc fc fc fc fc fc fc fc fc fc fc fb fb fb
-> > 
-> >                                                               ^
-> >   ffff8803a697b080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >   ffff8803a697b100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ==================================================================
-> > 
-> > So, we fix this by counting the number of CRTCs this atomic commit disabled
-> > early on in the function before their atomic states have been freed, then
-> > use
-> > that count later to do the appropriate number of RPM puts at the end of the
-> > function.
+> As I've already said, this is a subtle change which is really hard to
+> reason about. Throttling on congestion has its meaning and reason. Look
+> at why we are doing that in the first place. You cannot simply say this
+
+So - explain why is throttling needed. You support throttling, I don't, so 
+you have to explain it :)
+
+> is ok based on your specific usecase. We do have means to achieve that.
+> It is explicit and thus it will be applied only where it makes sense.
+> You keep repeating that implicit behavior change for everybody is
+> better.
+
+I don't want to change it for everybody. I want to change it for block 
+device drivers. I don't care what you do with non-block drivers.
+
+> I guess we will not agree on that part. I consider it a hack
+> rather than a systematic solution. I can easily imagine that we just
+> find out other call sites that would cause over reclaim or similar
+
+If a __GFP_NORETRY allocation does overreclaim - it could be fixed by 
+returning NULL instead of doing overreclaim. The specification says that 
+callers must handle failure of __GFP_NORETRY allocations.
+
+So yes - if you think that just skipping throttling on __GFP_NORETRY could 
+cause excessive CPU consumption trying to reclaim unreclaimable pages or 
+something like that - then you can add more points where the __GFP_NORETRY 
+is failed with NULL to avoid the excessive CPU consumption.
+
+> problems because they are not throttled on too many dirty pages due to
+> congested storage. What are we going to then? Add another magic gfp
+> flag? Really, try to not add even more subtle side effects for gfp
+> flags. We _do_ have ways to accomplish what your particular usecase
+> requires.
 > 
-> I am a bit not clear, are you saying that the problem was the 'in the 
-> middle' commit (cursor ioctl) doing
-> 
-> drm_atomic_state_default_clear->dm_crtc_destroy_state->kfree(state)
-> 
-> where the state is the one you access from from the non blocking part of 
-> page flip though old_crtc_state->active?
-The problem is that (see the comment in drivers/gpu/drm/drm_atomic_helper.c:2065
-) it's unsafe to touch any of the old_crtc_state structures after
-drm_atomic_helper_commit_hw_done() is called, as it's likely that they've been
-freed already.
-> 
-> Andrey
-> > 
-> > Fixes: 97028037a38ae ("drm/amdgpu: Grab/put runtime PM references in
-> > atomic_commit_tail()")
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Michel Dänzer <michel@daenzer.net>
-> > Reported-by: Michel Dänzer <michel@daenzer.net>
-> > ---
-> >   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 ++++++----
-> >   1 file changed, 6 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > index f9add85157e7..689dbdf44bbf 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> > @@ -4206,6 +4206,7 @@ static void amdgpu_dm_atomic_commit_tail(struct
-> > drm_atomic_state *state)
-> >   	struct drm_connector *connector;
-> >   	struct drm_connector_state *old_con_state, *new_con_state;
-> >   	struct dm_crtc_state *dm_old_crtc_state, *dm_new_crtc_state;
-> > +	int crtc_disable_count = 0;
-> >   
-> >   	drm_atomic_helper_update_legacy_modeset_state(dev, state);
-> >   
-> > @@ -4410,6 +4411,9 @@ static void amdgpu_dm_atomic_commit_tail(struct
-> > drm_atomic_state *state)
-> >   		struct amdgpu_crtc *acrtc = to_amdgpu_crtc(crtc);
-> >   		bool modeset_needed;
-> >   
-> > +		if (old_crtc_state->active && !new_crtc_state->active)
-> > +			crtc_disable_count++;
-> > +
-> >   		dm_new_crtc_state = to_dm_crtc_state(new_crtc_state);
-> >   		dm_old_crtc_state = to_dm_crtc_state(old_crtc_state);
-> >   		modeset_needed = modeset_required(
-> > @@ -4463,11 +4467,9 @@ static void amdgpu_dm_atomic_commit_tail(struct
-> > drm_atomic_state *state)
-> >   	 * so we can put the GPU into runtime suspend if we're not driving
-> > any
-> >   	 * displays anymore
-> >   	 */
-> > +	for (i = 0; i < crtc_disable_count; i++)
-> > +		pm_runtime_put_autosuspend(dev->dev);
-> >   	pm_runtime_mark_last_busy(dev->dev);
-> > -	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state,
-> > new_crtc_state, i) {
-> > -		if (old_crtc_state->active && !new_crtc_state->active)
-> > -			pm_runtime_put_autosuspend(dev->dev);
-> > -	}
-> >   }
-> >   
-> >   
-> 
-> 
+> -- 
+> Michal Hocko
+> SUSE Labs
+
+Mikulas
