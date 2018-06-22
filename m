@@ -2,116 +2,168 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D64C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD450C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1086B24737
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:30:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A71E24737
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:31:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OBaZRU2W";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Y660YBLu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1086B24737
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZGVo17N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A71E24737
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934311AbeFVSaP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 14:30:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56098 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933869AbeFVSaN (ORCPT
+        id S934328AbeFVSbT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:31:19 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40587 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933869AbeFVSbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 14:30:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3C723605FD; Fri, 22 Jun 2018 18:30:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529692213;
-        bh=NGNVyJ911kbzoMmhxApHbrIbCJ9QBNpGiW+3BSmTLFc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OBaZRU2W4gSNz+q2az/2kKLOfQsJwveqSmPvQLTgO/r8IpS3YGPBDpntHI48hEDhi
-         tG8QUQ4oFhwKbFXUZJRDCoYUlLs7kw1k6spgIg+KkgGKnflyTygi0FiQ4dWb00IOME
-         xjEAt4YDucxe56eQ774bGNboQZJ3wfYOluFpoOt8=
-Received: from [10.177.57.83] (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: okaya@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 67094605FD;
-        Fri, 22 Jun 2018 18:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529692212;
-        bh=NGNVyJ911kbzoMmhxApHbrIbCJ9QBNpGiW+3BSmTLFc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Y660YBLuyIXoPNYClP0BArYM5RJCK6xA1dBJts4RrrfZ8+dEdanHUfiIdaKt4XffZ
-         7AYddq2t9l/GuLPaxptJEyJp54PLgWJqNFi0wir8wJhwTGBQetVMLeHRSBur6wQ5eU
-         cPy29IQ4GYJ9WIyd9OaD9dDfMjDDuAFn/YPZIQL0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67094605FD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V2 2/2] efi/fb: Convert PCI bus address to resource if
- translated by the bridge
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
-        Peter Jones <pjones@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <1526653072-7153-1-git-send-email-okaya@codeaurora.org>
- <1526653072-7153-2-git-send-email-okaya@codeaurora.org>
- <20180619222921.GA90490@bhelgaas-glaptop.roam.corp.google.com>
- <CAKv+Gu_voOZ7YUL8pckww4mTt4PVcu7y69mf-z7ZZe1bJ81Shw@mail.gmail.com>
- <2a805337-c0b5-e134-7695-5a543ecaa26a@codeaurora.org>
- <CAKv+Gu9HAJRHwjYLNjf+gg=1vFoFu3BJphifKKE-aR4o_MW84A@mail.gmail.com>
- <CAKv+Gu-WXLXqHSmiS2MmAMXHLKK_kg+3EK6L2rvO0SzN-c0UMg@mail.gmail.com>
-From:   Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <37289a27-eb99-6a73-4d32-4a75edd11dcd@codeaurora.org>
-Date:   Fri, 22 Jun 2018 14:30:10 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 14:31:17 -0400
+Received: by mail-pf0-f195.google.com with SMTP id z24-v6so3594493pfe.7;
+        Fri, 22 Jun 2018 11:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Dnlmeh0ETRyTeQmQmJpCWaYnEVSEN/4h7gHXw6oj92o=;
+        b=XZGVo17NoLaFqAfuKkuTDWfQhoF/O6wM5fndQLT2HlHWP26x2HTVUOlKonsPA6teZi
+         vQI2aIzVeVMegWKww5aUEU81iom64CVwEgMHCY1AN+055kWK1MMkKzE75WJYxmXQk0QT
+         I5OS8ZQZ/G3nqGs1auXk4Pi5f9e3/r3+VW78BV421Q49CyBFSLItwb7TwdXzOWRmlzaZ
+         tO7NPe7SOOzeqhFL4YknY5wdoRjvbWbg1fDzmz4U6Pvh//Rwg+FJNidbcRNnx51JCfD/
+         X4x8p2yG+k06PjxfEMmOQagZW0PJPQ9MCIFtF6bk04iQRRZKxexLJICB8KgD7MdtoRmj
+         kSyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Dnlmeh0ETRyTeQmQmJpCWaYnEVSEN/4h7gHXw6oj92o=;
+        b=nQymIxNy7cH3xcAit6iw0kdX3BQtNU3Zg8PnPSExqkGEYAtUOftnRopCdulwF561hA
+         df5Q9Y88ihEn1NVi6HrZvJdTQFCmxzjlUU7LUuEG4rGNZVDauQiTv/otXvX/g8gHI1NH
+         /cDhdqehrYVJUTSxk7xl2hoTSZ8MNTY1lTE0LrRS27WkJHW7oUepL99gF6BQ2V0AEFHv
+         4q/Ig9og4h0vMWGmOV1xATtpmr3UHWbdY8QAvX9Acilj+uNCbcF62FuQUogM3eEtfG0r
+         j4t4j/XOpHIM48vCLYdRzm3LMbm1PT1sEWxZQzeOR+MZm0qkqHOzjSfEPJCNNDgcY7fw
+         aPAg==
+X-Gm-Message-State: APt69E3l4IGtsg2zCf+WzaqVuW0913ltcInsCuZamLDEJx9RIr57RbQK
+        6VI+Z25OMu8zHDsCZ7KD4DyGsevd
+X-Google-Smtp-Source: ADUXVKLWK6fSB6VMB8pTJvG0eYbXanKfPHbMESmANTrhEuzzu59X1diupblMBtkjjpjKbXCwuyDp4Q==
+X-Received: by 2002:a63:7d4c:: with SMTP id m12-v6mr2361286pgn.201.1529692277076;
+        Fri, 22 Jun 2018 11:31:17 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id r3-v6sm4380740pfl.162.2018.06.22.11.31.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 11:31:16 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 11:31:14 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     chen.zhong@mediatek.com, lee.jones@linaro.org,
+        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Matthias Brugger <mbrugger@suse.com>
+Subject: Re: [PATCH] input: mtk-pmic-keys: Fix probe when no DT node present
+Message-ID: <20180622183114.GA92912@dtor-ws>
+References: <20180622114228.8619-1-matthias.bgg@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-WXLXqHSmiS2MmAMXHLKK_kg+3EK6L2rvO0SzN-c0UMg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622114228.8619-1-matthias.bgg@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/22/2018 2:01 PM, Ard Biesheuvel wrote:
->> Yes, it is part of the PCI I/O protocol definition. FrameBufferBase is
->> described as
->>
->> """
->> Base address of graphics linear frame buffer. Info contains
->> information required to allow software to draw directly to the
->> frame buffer without using Blt().Offset zero in
->> FrameBufferBase represents the upper left pixel of the
->> display.
->> """
-> I just tried AMD Radeon and NVidia graphics cards on a system with
-> non-1:1 mapped MMIO windows, and in both cases, the GOP protocol
-> structure is populated correctly, i.e., using the CPU address not the
-> PCIe address.
+On Fri, Jun 22, 2018 at 01:42:28PM +0200, Matthias Brugger wrote:
+> The drivers gets probed from a mfd devices. So the driver runs
+> probe although no DT node exists. This leads to a NULL pointer
+> dereference in the probe function. Check if a node exists and
+> error out in case none is present.
+
+Hmm, if a cell specifies of_compatible and no such node is present in DT
+maybe we should bail out in mfd_add_device() instead of pushing the
+check into individual drivers? Something like:
+
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index 94e3f32ce935..36a5fd98000d 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -137,6 +137,18 @@ static inline void mfd_acpi_add_device(const struct mfd_cell *cell,
+ }
+ #endif
+ 
++static struct device_node *mfd_get_node_for_cell(struct device *parent,
++						 const struct mfd_cell *cell)
++{
++	struct device_node *np;
++
++	for_each_child_of_node(parent->of_node, np)
++		if (of_device_is_compatible(np, cell->of_compatible))
++			return np;
++
++	return NULL;
++}
++
+ static int mfd_add_device(struct device *parent, int id,
+ 			  const struct mfd_cell *cell, atomic_t *usage_count,
+ 			  struct resource *mem_base,
+@@ -144,7 +156,6 @@ static int mfd_add_device(struct device *parent, int id,
+ {
+ 	struct resource *res;
+ 	struct platform_device *pdev;
+-	struct device_node *np = NULL;
+ 	int ret = -ENOMEM;
+ 	int platform_id;
+ 	int r;
+@@ -176,11 +187,11 @@ static int mfd_add_device(struct device *parent, int id,
+ 		goto fail_res;
+ 
+ 	if (parent->of_node && cell->of_compatible) {
+-		for_each_child_of_node(parent->of_node, np) {
+-			if (of_device_is_compatible(np, cell->of_compatible)) {
+-				pdev->dev.of_node = np;
+-				break;
+-			}
++		pdev->dev.of_node = mfd_get_node_for_cell(parent, cell);
++		if (!pdev->dev.of_node) {
++			dev_err(parent, "unable to locate node for %s (%s)\n",
++				cell->name, cell->of_compatible);
++			goto fail_res;
+ 		}
+ 	}
+ 
+Lee?
+
 > 
-> EDK2 only recently gained support for MMIO translation in the host
-> bridge driver, so I so wonder if this is a platform issue rather than
-> a driver issue. It may be worth a try to dump the results of
-> GetBarAttributes() of all PCI I/O protocol instances (either in UEFI
-> or in the stub), to double check that the correct values are returned.
+> Fixes: 3e9f0b3e2b27 ("input: Add MediaTek PMIC keys support")
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> ---
+>  drivers/input/keyboard/mtk-pmic-keys.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
+> index 02c67a1749fc..388043e1939c 100644
+> --- a/drivers/input/keyboard/mtk-pmic-keys.c
+> +++ b/drivers/input/keyboard/mtk-pmic-keys.c
+> @@ -257,6 +257,9 @@ static int mtk_pmic_keys_probe(struct platform_device *pdev)
+>  	const struct of_device_id *of_id =
+>  		of_match_device(of_mtk_pmic_keys_match_tbl, &pdev->dev);
+>  
+> +	if (of_id == NULL)
+> +		return -ENODEV;
+> +
+>  	keys = devm_kzalloc(&pdev->dev, sizeof(*keys), GFP_KERNEL);
+>  	if (!keys)
+>  		return -ENOMEM;
+> -- 
+> 2.17.1
 > 
 
-Thanks for checking out other platforms. I'll mark the issue as a BIOS
-issue and bounce your feedback to the BIOS provider.
-
-Let's hold onto this patch for the moment.
+Thanks.
 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Dmitry
