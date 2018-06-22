@@ -2,141 +2,157 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656DBC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFAFC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FEF123ABC
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:05:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pD0N948P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FEF123ABC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1419323ABF
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:11:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1419323ABF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934079AbeFVBFz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 21:05:55 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37451 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933129AbeFVBFx (ORCPT
+        id S934094AbeFVBLs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 21:11:48 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50934 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933129AbeFVBLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 21:05:53 -0400
-Received: by mail-pg0-f68.google.com with SMTP id r21-v6so2190237pgv.4;
-        Thu, 21 Jun 2018 18:05:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qVrSMSTzq4VvSXGmgKzIb6xy8AllvSOZgPH/9DmD/dQ=;
-        b=pD0N948PCcbOB83x9QMfu9uUzbw9MzQFFa6AY9FMiXQlxy7wNyFYlkydt3UY8k5JSg
-         pGfNwMvTAdAjANqEEh2WwC0Jua3Ck+vc0CKSnvgSPqSJhBod+ywkSCNjZyrpqZ4k+Ovj
-         htaMGkI+5E2jsi9ql3sCJy36aWqndAkz+H5kGyUtGYHf+uoGntyNgRI94eYiKv4ULmSr
-         e169nASI0pnJgaMJHDZSSbAL8nNvp1/cJsy7Zcjr0oShPhHOmOS+GiLPOIrFauBH5HLy
-         yHNbNAZqJkZN6LWoV/BPPKYLe27CVYwuv7lHXEcBz/NI5f9K5lb5iH998tDJbP0MmdOs
-         V3Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qVrSMSTzq4VvSXGmgKzIb6xy8AllvSOZgPH/9DmD/dQ=;
-        b=eBj+KbY1qVBiQfpnbrRH50yZ/SwGMu5hNIrBowpB4hPIe8vFIYmhR88GvSQ1km221M
-         eqS8x6w6Ei0cX7mByyM53BTv+dhKQG0oBF+15WWySMoJ2wYHmcF1LPqPNzHln5CVXI69
-         0E0zAihfOIPvRBuXtyaGSjr4bksOWE8Wa7uO1+9GZfVl7pbEe0nolrdm3riIlMkf49SM
-         CVOWC+7wYkrSLgL+n3z8iX0v+yjboZqmA9IGK0wCUifsSvNLgaBU4wnjnd856sn2S3Nz
-         UZmfMuJL2XkSCnrLbcMrjmkV27cp3tUcU/8pvcG6OJUepFkjrhs8OUf963H12SHq5CF+
-         ikaw==
-X-Gm-Message-State: APt69E3fH45Wd9JWZ+E2+Lq4MmmJDR6p1YLJz+7XjoXn6g4zLVj1v273
-        DaTDePB+RGCcaNj7MLHKgp4=
-X-Google-Smtp-Source: ADUXVKJDX4fYoFn7x9Gm69sn58VzEDUj+6xyDV+aePpbJq9DEWmW4Rx57us7jaIF2uEmKdqEvbFO2Q==
-X-Received: by 2002:a63:7d1b:: with SMTP id y27-v6mr24126180pgc.418.1529629553347;
-        Thu, 21 Jun 2018 18:05:53 -0700 (PDT)
-Received: from [10.10.3.96] (s169.156.222.122.fls.vectant.ne.jp. [122.222.156.169])
-        by smtp.gmail.com with ESMTPSA id p20-v6sm9114910pfn.181.2018.06.21.18.05.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Jun 2018 18:05:52 -0700 (PDT)
-Subject: Re: [PATCH] base: fix order of OF initialization
-To:     Christoph Hellwig <hch@lst.de>, gregkh@linuxfoundation.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Wesley W. Terpstra" <wesley@sifive.com>
-References: <20180621133737.14397-1-hch@lst.de>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <ed030f7c-ba4d-e20a-352e-aaad45cda792@gmail.com>
-Date:   Thu, 21 Jun 2018 18:05:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180621133737.14397-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 21 Jun 2018 21:11:46 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id D852C28952E
+Message-ID: <0383b4a703a0b619023c0654a4a7637419c72ebd.camel@collabora.com>
+Subject: Re: [PATCH v3] PM / devfreq: Fix devfreq_add_device() when drivers
+ are built as modules.
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-pm@vger.kernel.org
+Date:   Thu, 21 Jun 2018 22:11:36 -0300
+In-Reply-To: <20180621220430.25644-1-enric.balletbo@collabora.com>
+References: <20180621220430.25644-1-enric.balletbo@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2-1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21/18 06:37, Christoph Hellwig wrote:
-> From: "Wesley W. Terpstra" <wesley@sifive.com>
+Hey Enric,
+
+On Fri, 2018-06-22 at 00:04 +0200, Enric Balletbo i Serra wrote:
+> When the devfreq driver and the governor driver are built as modules,
+> the call to devfreq_add_device() or governor_store() fails because
+> the
+> governor driver is not loaded at the time the devfreq driver loads.
+> The
+> devfreq driver has a build dependency on the governor but also should
+> have a runtime dependency. We need to make sure that the governor
+> driver
+> is loaded before the devfreq driver.
 > 
-> This fixes: [    0.010000] cpu cpu0: Error -2 creating of_node link
-> ... which you get for every CPU on all architectures that use
-> CONFIG_GENERIC_CPU_DEVICES.
+> This patch fixes this bug by adding a try_then_request_governor()
+> function. First tries to find the governor, and then, if it is not
+> found,
+> it requests the module and tries again.
 > 
-> In that case, driver_init() calls cpu_dev_init() before calling
-> of_core_init(). Then we get the callchain:
-> 
->   cpu_dev_init()
->     -> cpu_dev_register_generic()
->     -> register_cpu(cpu, i)
->     -> device_register(&cpu->dev)
->     -> device_add(dev)
->     -> device_add_class_symlinks(dev)
-> 
-> ... in device_add_class_symlinks, we we dev->of_node, and call
-> sysfs_create_link(), which fails because we haven't called
-> of_core_init() to register the sysfs devicetree directory yet.
-> 
-> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> [hch: updated the changelog based on review feedback]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> Acked-by: Frank Rowand <frowand.list@gmail.com>
+> Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor
+> using name)
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > ---
 > 
-> In case anyone is wondering why I send out this patch - I'm digging
-> through the RISC-V tree and trying to the patches required to let
-> a RISC-V kernel boot on qemu upstream.  I also got the previously
-> missing signoff from Wes offlist.
+> Changes in v3:
+> - Remove unneded change in dev_err message.
+> - Fix err returned value in case to not find the governor.
 > 
->  drivers/base/init.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v2:
+> - Add a new function to request the module and call that function
+> from
+>   devfreq_add_device and governor_store.
 > 
-> diff --git a/drivers/base/init.c b/drivers/base/init.c
-> index dd85b05a6a16..908e6520e804 100644
-> --- a/drivers/base/init.c
-> +++ b/drivers/base/init.c
-> @@ -30,9 +30,9 @@ void __init driver_init(void)
->  	/* These are also core pieces, but must come after the
->  	 * core core pieces.
->  	 */
-> +	of_core_init();
->  	platform_bus_init();
->  	cpu_dev_init();
->  	memory_dev_init();
->  	container_dev_init();
-> -	of_core_init();
->  }
+>  drivers/devfreq/devfreq.c | 65 ++++++++++++++++++++++++++++++++-----
+> --
+[snip snip]
+> -	governor = find_devfreq_governor(devfreq->governor_name);
+> +	governor = try_then_request_governor(devfreq-
+> >governor_name);
+>  	if (IS_ERR(governor)) {
+>  		dev_err(dev, "%s: Unable to find governor for the
+> device\n",
+>  			__func__);
+>  		err = PTR_ERR(governor);
+> -		goto err_init;
+> +		goto err_unregister;
+>  	}
+>  
+> +	mutex_lock(&devfreq_list_lock);
+> +
+
+I know it's not something we are introducing in this patch,
+but still... calling a hook with a mutex held looks
+fishy to me.
+
+This lock should only protect the list, unless I am missing
+something.
+
+>  	devfreq->governor = governor;
+>  	err = devfreq->governor->event_handler(devfreq,
+> DEVFREQ_GOV_START,
+>  						NULL);
+> @@ -663,14 +703,16 @@ struct devfreq *devfreq_add_device(struct
+> device *dev,
+>  			__func__);
+>  		goto err_init;
+>  	}
+> +
+> +	list_add(&devfreq->node, &devfreq_list);
+> +
+>  	mutex_unlock(&devfreq_list_lock);
+>  
+>  	return devfreq;
+>  
+>  err_init:
+> -	list_del(&devfreq->node);
+>  	mutex_unlock(&devfreq_list_lock);
+> -
+> +err_unregister:
+>  	device_unregister(&devfreq->dev);
+>  err_dev:
+>  	if (devfreq)
+> @@ -988,12 +1030,13 @@ static ssize_t governor_store(struct device
+> *dev, struct device_attribute *attr,
+>  	if (ret != 1)
+>  		return -EINVAL;
+>  
+> -	mutex_lock(&devfreq_list_lock);
+> -	governor = find_devfreq_governor(str_governor);
+> +	governor = try_then_request_governor(str_governor);
+>  	if (IS_ERR(governor)) {
+> -		ret = PTR_ERR(governor);
+> -		goto out;
+> +		return PTR_ERR(governor);
+>  	}
+> +
+> +	mutex_lock(&devfreq_list_lock);
+> +
+>  	if (df->governor == governor) {
+>  		ret = 0;
+>  		goto out;
+> -- 
+> 2.17.1
+> 
 > 
 
-The updated patch comment looks good.  It would be good to get this into
--next while we are still early in the release cycle.
 
-For those trying to find the previous version of this patch, it was cced
-to the devicetree list on 06/07/17.
-
--Frank
+Regards,
+Eze
