@@ -2,133 +2,135 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3FFC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF85FC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 781E1246FC
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56BB324704
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:01:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="debUvxWP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781E1246FC
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgPjat0S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56BB324704
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934032AbeFVR4S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:56:18 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43025 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932973AbeFVR4Q (ORCPT
+        id S933962AbeFVSBG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:01:06 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37347 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751335AbeFVSBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:56:16 -0400
-Received: by mail-pf0-f196.google.com with SMTP id y8-v6so3553628pfm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 10:56:16 -0700 (PDT)
+        Fri, 22 Jun 2018 14:01:04 -0400
+Received: by mail-it0-f67.google.com with SMTP id l6-v6so4070881iti.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 11:01:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GuK5akyC11ueEqylpVazGP75t3BmgmkmespSzdAWnRY=;
-        b=debUvxWPP/DIwQeSSkYewK43PUiwGfqDZDEE9mA1EWWkJQhhEOoXHQ00108G5TWudQ
-         /+dqEYZ8BK2qJA7gTO5pIh6H94pIdYk+LtCsHKw3qnNrSPfSyNGnlTMdqWjjeivqYcnn
-         kONXnt3nMS0v6WFoFwQ1dyTjnDOphN3H4fFnw=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=KEdGV6+AyiWnfpT6r1DkrHtSM8ImMpvre4v8Ood9jXo=;
+        b=fgPjat0SDn60HlGdEI8UoCVWZW3E3RhGF6v0e2Vv+HX8Viau/mTp2V1Udy1BRg/U+S
+         uJu5NmwQwscE/lYBQyXfglJCPLYSm7z0Ohk/osx+qokyqM95oeO8kL15ldZcBDjAK2du
+         Lxf3NwXVKgoeWv6pODixeisA1njbHBGwGlLdU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GuK5akyC11ueEqylpVazGP75t3BmgmkmespSzdAWnRY=;
-        b=n75AppgMFkjKA48yTXlKp7SW07iYHvpJ5Wn97hTQuQZthrvEg8BU/3ZYplrrIKy9mE
-         HUqWomvCmfoUabMakscDgYvh+DKqn6OndwMxXTke9ZwVdTPYMy0BoXfiYmYnY7xhjmGl
-         z/jFy2V8l0ISXKWuv7lGC5g6TGexuFl6VImlfFSqCULrvhvY0NeceCPmewQLidYbJOsf
-         kVI30WdI9prnYpt3XPXx+x4n3L14cOU/TwXyEcOT0GkOloRnA2/RExYl7ePm8O6olPgv
-         w7go7IQ+n5zuRDsBypNeA0DiC3ZcEf8nZpCd584daWd9G4E3Qr/LXucdKivfa1T5MEwB
-         9euQ==
-X-Gm-Message-State: APt69E09WHlA7iX/tQO1eWS/vIg8tM0otTyZ1pGJ7XOZlFmnlyke71Eb
-        lPDVMX7rQrsddincNOJyll5cDQ==
-X-Google-Smtp-Source: ADUXVKKNpJ1BalFg+Ybf9uyfEsI2gMDKF0Oit/cWFA+rmocPWSY2+8/fgE5he+msgfqo45sJ56QNIw==
-X-Received: by 2002:a62:993:: with SMTP id 19-v6mr2766237pfj.105.1529690175922;
-        Fri, 22 Jun 2018 10:56:15 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p73-v6sm21911411pfa.142.2018.06.22.10.56.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 10:56:14 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 10:58:36 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with
- gpio_request()
-Message-ID: <20180622175836.GC3402@tuxbook-pro>
-References: <20180618205255.246104-1-swboyd@chromium.org>
- <20180618205255.246104-3-swboyd@chromium.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=KEdGV6+AyiWnfpT6r1DkrHtSM8ImMpvre4v8Ood9jXo=;
+        b=oywSRwxtKlIzPeAHtdhFWBCnO9WuY5OuYG3icAYwScQKyOSyzFeeZ2/EtVm51vtu95
+         CScPpRnKGDv47tVqPNJEw+R7KH0eLLnaxSMC+pAX4pYP+RHjrCl46V1KAyREal7h13Sq
+         UCgyz8DWLzJCQsNeAryPhBL7hcS/svE/bfWLJ02qSzuvQpOvGRjqeeaWxrXNIB/Jt8td
+         2q8XJE8E9Fxa713WcYTVbyTlXA4d3aOYzE92IEWbAIPDfFFNyWEKyWuxSjXxwanNCb2U
+         gdDOtdrLz176+1jfR1U6w4DxZNBNgFWTbw57wbk7XpPRKxV9+hAi9BV1pTjZMclg5wOU
+         481g==
+X-Gm-Message-State: APt69E0QFIqsTVqZ7fllfEToFg1q95rOSQU8G2X94xe8ydPPukMZDA8A
+        gzCuTszXpXc7pez08Fbq4vLSV8XGk084a5b8YiQ4Pg==
+X-Google-Smtp-Source: ADUXVKKlGbTByzXRfV8QJ2aB27xy6PFC44nV+ZE3dDfK0z/27SjQXChy975zXfw0bN07dsntretZSs0M7pchxbyYq1Y=
+X-Received: by 2002:a24:6196:: with SMTP id s144-v6mr142241itc.68.1529690463817;
+ Fri, 22 Jun 2018 11:01:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618205255.246104-3-swboyd@chromium.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 11:01:03
+ -0700 (PDT)
+In-Reply-To: <CAKv+Gu9HAJRHwjYLNjf+gg=1vFoFu3BJphifKKE-aR4o_MW84A@mail.gmail.com>
+References: <1526653072-7153-1-git-send-email-okaya@codeaurora.org>
+ <1526653072-7153-2-git-send-email-okaya@codeaurora.org> <20180619222921.GA90490@bhelgaas-glaptop.roam.corp.google.com>
+ <CAKv+Gu_voOZ7YUL8pckww4mTt4PVcu7y69mf-z7ZZe1bJ81Shw@mail.gmail.com>
+ <2a805337-c0b5-e134-7695-5a543ecaa26a@codeaurora.org> <CAKv+Gu9HAJRHwjYLNjf+gg=1vFoFu3BJphifKKE-aR4o_MW84A@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 22 Jun 2018 20:01:03 +0200
+Message-ID: <CAKv+Gu-WXLXqHSmiS2MmAMXHLKK_kg+3EK6L2rvO0SzN-c0UMg@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] efi/fb: Convert PCI bus address to resource if
+ translated by the bridge
+To:     Sinan Kaya <okaya@codeaurora.org>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
+        Peter Jones <pjones@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 18 Jun 13:52 PDT 2018, Stephen Boyd wrote:
+On 22 June 2018 at 15:55, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 22 June 2018 at 15:52, Sinan Kaya <okaya@codeaurora.org> wrote:
+>> Hi Ard,
+>>
+>> On 6/22/2018 7:21 AM, Ard Biesheuvel wrote:
+>>> Apologies for only bringing this up now, but I think this patch is
+>>> wrong after all.
+>>>
+>>> screen_info.lfb_base is supposed to be a CPU address, and so
+>>> translating it like this is wrong. If you end up with a PCI address
+>>> here, you have made a mistake in hacking support for PCI outbound
+>>> translations into UEFI. Other users such as UEFI itself or GRUB will
+>>> treat this as a CPU physical address as well, so the kernel should not
+>>> treat it any differently.
+>>
+>> The behavior I'm seeing is from a UEFI BIOS vendor. I did not write the
+>> code for it...
+>>
+>> I was asked to debug it.
+>>
+>> I'd like to dive into your statement about UEFI and GRUB using this address
+>> as physical addresses.
+>>
+>> AFAIK, all PCI outbound requests go through PCI IO protocol in UEFI and the
+>> translation information is hidden inside the UEFI PCI Host Bridge driver.
+>> Drivers are not allowed to access PCI resources directly especially as a
+>> memory mapped address.
+>>
+>> This particular vendor is programming the BAR address into the GOP protocol.
+>> Since the host bridge driver is doing a translation, we are hitting this
+>> issue.
+>>
+>> Is there a UEFI spec reference about the definition of this field?
+>>
+>
+> Yes, it is part of the PCI I/O protocol definition. FrameBufferBase is
+> described as
+>
+> """
+> Base address of graphics linear frame buffer. Info contains
+> information required to allow software to draw directly to the
+> frame buffer without using Blt().Offset zero in
+> FrameBufferBase represents the upper left pixel of the
+> display.
+> """
 
-> We rely on devices to use pinmuxing configurations in DT to select the
-> GPIO function (function 0) if they're going to use the gpio in GPIO
-> mode. Let's simplify things for driver authors by implementing
-> gpio_request_enable() for this pinctrl driver to mux out the GPIO
-> function when the gpio is use from gpiolib.
-> 
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+I just tried AMD Radeon and NVidia graphics cards on a system with
+non-1:1 mapped MMIO windows, and in both cases, the GOP protocol
+structure is populated correctly, i.e., using the CPU address not the
+PCIe address.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 3563c4394837..eacfc5b85f7f 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -176,11 +176,27 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
->  	return 0;
->  }
->  
-> +static int msm_pinmux_request_gpio(struct pinctrl_dev *pctldev,
-> +				   struct pinctrl_gpio_range *range,
-> +				   unsigned offset)
-> +{
-> +	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-> +	const struct msm_pingroup *g = &pctrl->soc->groups[offset];
-> +
-> +	/* No funcs? Probably ACPI so can't do anything here */
-> +	if (!g->nfuncs)
-> +		return 0;
-> +
-> +	/* For now assume function 0 is GPIO because it always is */
-> +	return msm_pinmux_set_mux(pctldev, 0, offset);
-> +}
-> +
->  static const struct pinmux_ops msm_pinmux_ops = {
->  	.request		= msm_pinmux_request,
->  	.get_functions_count	= msm_get_functions_count,
->  	.get_function_name	= msm_get_function_name,
->  	.get_function_groups	= msm_get_function_groups,
-> +	.gpio_request_enable	= msm_pinmux_request_gpio,
->  	.set_mux		= msm_pinmux_set_mux,
->  };
->  
-> -- 
-> Sent by a computer through tubes
-> 
+EDK2 only recently gained support for MMIO translation in the host
+bridge driver, so I so wonder if this is a platform issue rather than
+a driver issue. It may be worth a try to dump the results of
+GetBarAttributes() of all PCI I/O protocol instances (either in UEFI
+or in the stub), to double check that the correct values are returned.
