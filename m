@@ -2,221 +2,125 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165BFC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C01C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE3A322CB4
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51DFD23BFF
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 01:22:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ZIHZJKoI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3A322CB4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HFnPOHii"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DFD23BFF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934176AbeFVBV2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 21:21:28 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40736 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933129AbeFVBV1 (ORCPT
+        id S934209AbeFVBWL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 21:22:11 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41509 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934114AbeFVBWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 21:21:27 -0400
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5M1CN0g022309;
-        Thu, 21 Jun 2018 18:21:02 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=facebook; bh=36fYjbmvJUYny6POnRUVlJ50+3gU3zAVjvlFWvzmH5I=;
- b=ZIHZJKoIxA6NR4JMXabd7Y2Vv2IWd7wTfoRHei0DeadYxK/vwiso21Vj7ZghD6nUPQDM
- RHlhOAG0366HYfLkD8f5SxDYXdwwLeygolvanObqygJ1zAm52mKyVUp6r7hC0qUAmOSR
- R/GyNNC+RknW6AawuaMXG4xOD5GzyUKUOZY= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2jrp8d04dt-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 21 Jun 2018 18:21:02 -0700
-Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
- mail.thefacebook.com (192.168.16.16) with Microsoft SMTP Server (TLS) id
- 14.3.361.1; Thu, 21 Jun 2018 18:20:56 -0700
-Date:   Thu, 21 Jun 2018 18:20:52 -0700
-From:   Martin KaFai Lau <kafai@fb.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-CC:     Okash Khawaja <osk@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
-        "Alexei Starovoitov" <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next 2/3] bpf: btf: add btf json print functionality
-Message-ID: <20180622012052.htkvholi674x6i4f@kafai-mbp.dhcp.thefacebook.com>
-References: <20180620203051.223156973@fb.com>
- <20180620203703.101156292@fb.com>
- <20180621145935.41ff8974@cakuba.netronome.com>
- <20180621225117.dhrkrtmkfbeihbe4@kafai-mbp.dhcp.thefacebook.com>
- <20180621160719.2cfb4b58@cakuba.netronome.com>
- <20180621235746.dfq6kdtkogftw3ws@kafai-mbp.dhcp.thefacebook.com>
- <20180621172523.6cd00ed1@cakuba.netronome.com>
+        Thu, 21 Jun 2018 21:22:08 -0400
+Received: by mail-pg0-f66.google.com with SMTP id l65-v6so2201943pgl.8
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 18:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=nfC6TwPQVsRQsz8Xy3Tl2RBz6ARKXkeR9VJnNIMrfro=;
+        b=HFnPOHiiskyDh9yyn3MYhoP6pxV9oqRJGiURzQqlEu49ACCp3MRb+DB0L+PMUDSXN9
+         r12NgGFpx1n0+hC2hg4olJj+XftpqFq06hkWFlm89xsEWJ1QsUsOg4UAVwv2BhblT2Td
+         W5L+pI8tDxpam4aycvax3W+RtIt3fCtNK9leM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=nfC6TwPQVsRQsz8Xy3Tl2RBz6ARKXkeR9VJnNIMrfro=;
+        b=bjiF0z8y3OD6ZAdaIiKfit96+7+QhXG2rVzSEZ6J+HGXlM+W5Br4oXgWgsypglvNyc
+         +RLXTFoufFSoKcfErCBEP1jyP9A2igoiTTCOO/M0BKkNysLFdGyOGc2GwehCjCDjFC0l
+         O5QZpXfOPguAWIy8s+p4eJjB9Sg/BAX+RiStLJWmaeB8S1AAoKRFh/4q6l4h9LIzfc5X
+         PMds0bEwUVaPlOIYGnm1P7AG+b1hgZMJYxqGqZlDu0dKd/0WR/AQtFxixxYks8XSsjcm
+         tzaQC2Dj3P49qKI5GOC70a9MHWGsKWc+1S+KYWtJMx2ZaTKLIRZuKs0iZ5QGW+2p/lp5
+         egjw==
+X-Gm-Message-State: APt69E1Of3wXDqwpGanHEew2FED7X2Ojf2ROwHAfFC+Cq0mlQFs2aSUQ
+        IBZlUQPmtnPJNhIoe47ccpxN3g==
+X-Google-Smtp-Source: ADUXVKIpz9vd0XqlOPelYCFciI6l4cy8Vldvh8guTsBoMqNKlkhVhMqN2cr7nm7/WcoKIgqFePoD1Q==
+X-Received: by 2002:a62:1855:: with SMTP id 82-v6mr29745801pfy.132.1529630527756;
+        Thu, 21 Jun 2018 18:22:07 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
+        by smtp.gmail.com with ESMTPSA id 67-v6sm10988078pfm.171.2018.06.21.18.22.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 21 Jun 2018 18:22:07 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180621172523.6cd00ed1@cakuba.netronome.com>
-User-Agent: NeoMutt/20180512
-X-Originating-IP: [192.168.52.123]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-21_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Transfer-Encoding: quoted-printable
+To:     Vinod <vkoul@kernel.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180620133725.GB27187@vkoul-mobl>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org
+References: <20180619095430.26358-1-vkoul@kernel.org>
+ <20180619095430.26358-3-vkoul@kernel.org>
+ <152947431955.16708.15247307054260887941@swboyd.mtv.corp.google.com>
+ <20180620133725.GB27187@vkoul-mobl>
+Message-ID: <152963052624.16708.17133633012075809772@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 2/2] hwrng: msm - Add support for prng v2
+Date:   Thu, 21 Jun 2018 18:22:06 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 05:25:23PM -0700, Jakub Kicinski wrote:
-> On Thu, 21 Jun 2018 16:58:15 -0700, Martin KaFai Lau wrote:
-> > On Thu, Jun 21, 2018 at 04:07:19PM -0700, Jakub Kicinski wrote:
-> > > On Thu, 21 Jun 2018 15:51:17 -0700, Martin KaFai Lau wrote:  
-> > > > On Thu, Jun 21, 2018 at 02:59:35PM -0700, Jakub Kicinski wrote:  
-> > > > > On Wed, 20 Jun 2018 13:30:53 -0700, Okash Khawaja wrote:    
-> > > > > > $ sudo bpftool map dump -p id 14
-> > > > > > [{
-> > > > > >         "key": 0
-> > > > > >     },{
-> > > > > >         "value": {
-> > > > > >             "m": 1,
-> > > > > >             "n": 2,
-> > > > > >             "o": "c",
-> > > > > >             "p": [15,16,17,18,15,16,17,18
-> > > > > >             ],
-> > > > > >             "q": [[25,26,27,28,25,26,27,28
-> > > > > >                 ],[35,36,37,38,35,36,37,38
-> > > > > >                 ],[45,46,47,48,45,46,47,48
-> > > > > >                 ],[55,56,57,58,55,56,57,58
-> > > > > >                 ]
-> > > > > >             ],
-> > > > > >             "r": 1,
-> > > > > >             "s": 0x7ffff6f70568,
-> > > > > >             "t": {
-> > > > > >                 "x": 5,
-> > > > > >                 "y": 10
-> > > > > >             },
-> > > > > >             "u": 100,
-> > > > > >             "v": 20,
-> > > > > >             "w1": 0x7,
-> > > > > >             "w2": 0x3
-> > > > > >         }
-> > > > > >     }
-> > > > > > ]    
-> > > > > 
-> > > > > I don't think this format is okay, JSON output is an API you shouldn't
-> > > > > break.  You can change the non-JSON output whatever way you like, but
-> > > > > JSON must remain backwards compatible.
-> > > > > 
-> > > > > The dump today has object per entry, e.g.:
-> > > > > 
-> > > > > {
-> > > > >         "key":["0x00","0x00","0x00","0x00",
-> > > > >         ],
-> > > > >         "value": ["0x02","0x00","0x00","0x00","0x00","0x00","0x00","0x00"
-> > > > >         ]
-> > > > > }
-> > > > > 
-> > > > > This format must remain, you may only augment it with new fields.  E.g.:
-> > > > > 
-> > > > > {
-> > > > >         "key":["0x00","0x00","0x00","0x00",
-> > > > >         ],
-> > > > > 	"key_struct":{
-> > > > > 		"index":0
-> > > > > 	},
-Got a few questions.
+Quoting Vinod (2018-06-20 06:37:25)
+> On 19-06-18, 22:58, Stephen Boyd wrote:
+> > Quoting Vinod Koul (2018-06-19 02:54:30)
+> > > Qcom 8996 and later chips support prng v2 which requires to
+> > > implement only .read callback for hwrng.
+> > > =
 
-When we support hashtab later, the key could be int
-but reusing the name as "index" is weird.
-The key could also be a struct (e.g. a struct to describe ip:port).
-Can you suggest how the "key_struct" will look like?
+> > > This version of chip has multiple Execution Environments (EE) and
+> > > secure world is typically responsible for configuring the prng.
+> > =
 
-> > > > >         "value": ["0x02","0x00","0x00","0x00","0x00","0x00","0x00","0x00"
-> > > > >         ],
-> > > > > 	"value_struct":{
-> > > > > 		"src_ip":2,
-If for the same map the user changes the "src_ip" to an array of int[4]
-later (e.g. to support ipv6), it will become "src_ip": [1, 2, 3, 4].
-Is it breaking backward compat?
-i.e.
-struct five_tuples {
--	int src_ip;
-+	int src_ip[4];
-/* ... */
-};
+> > Sometimes secure world is not configuring the rng though. I prefer we
+> > have a DT flag for this to indicate if secure world has configured it or
+> > not and then skip the init logic when the bool property is present in
+> > DT. Then the DT property can be set on firmwares that are making things
+> > blow up when we try to read the 'configured' register. I'd also file a
+> > bug to qcom to tell them to unlock that config register for reads so
+> > that things can work simpler, but who knows how that will work out.
+> =
 
-> > > > > 		"dst_ip:0
-> > > > > 	}
-> > > > > }    
-> > > > I am not sure how useful to have both "key|value" and "(key|value)_struct"
-> > > > while most people would prefer "key_struct"/"value_struct" if it is
-> > > > available.  
-> > > 
-> > > Agreed, it's not that useful, especially with the string-hex debacle :(
-> > > It's just about the backwards compat.
-> > >   
-> > > > How about introducing a new option, like "-b", to print the
-> > > > map with BTF (if available) such that it won't break the existing
-> > > > one (-j or -p) while the "-b" output can keep using the "key"
-> > > > and "value".
-> > > > 
-> > > > The existing json can be kept as is.  
-> > > 
-> > > That was my knee jerk reaction too, but on reflection it doesn't sound
-> > > that great.  We expect people with new-enough bpftool to use btf, so it
-> > > should be available in the default output, without hiding it behind a
-> > > switch.  We could add a switch to hide the old output, but that doesn't
-> > > give us back the names...  What about Key and Value or k and v?  Or
-> > > key_fields and value_fields?  
-> > I thought the current default output is "plain" ;)
-> > Having said that, yes, the btf is currently printed in json.
-> > 
-> > Ideally, the default json output should do what most people want:
-> > print btf and btf only (if it is available).
-> > but I don't see a way out without new option if we need to
-> > be backward compat :(
-> > 
-> > Agree that showing the btf in the existing json output will be useful (e.g.
-> > to hint people that BTF is available).  If btf is showing in old json,
-> > also agree that the names should be the same with the new json.
-> > key_fields and value_fields may hint it has >1 fields though.
-> > May be "formatted_key" and "formatted_value"?
-> 
-> SGTM!  Or even maybe as a "formatted" object?:
-> 
-> {
->          "key":["0x00","0x00","0x00","0x00",
->          ],
->          "value": ["0x02","0x00","0x00","0x00","0x00","0x00","0x00","0x00"
->          ],
-> 	"formatted":{
-> 	 	"key":{
->  			"index":0
-> 	 	},
-> 	 	"value":{
->  			"src_ip":2,
->  			"dst_ip:0
-> 	 	}
-> 	}
-hmm... that is an extra indentation (keep in mind that the "value" could
-already have a few nested structs which itself consumes a few indentations)
-but I guess adding another one may be ok-ish.
+> I dont feel that would be required. See below..
+> =
 
-> }  
-> 
-> > > > > The name XYZ_struct may not be the best, perhaps you can come up with a
-> > > > > better one?  
-> > > > > 
-> > > > > Does that make sense?  Am I missing what you're doing here?
-> > > > > 
-> > > > > One process note - please make sure you run checkpatch.pl --strict on
-> > > > > bpftool patches before posting.
-> > > > > 
-> > > > > Thanks for working on this!    
-> 
+> > It really sounds like the hardware isn't actually different, just the
+> > firmware has decided to be more strict about making reads fail now.
+> =
+
+> So in this case base hw block seems similar but consists of multiple
+> Execution Environment (EEs) and all of these contain only data
+> registers. Only secure environment has configuration. Each one has its
+> own register space.
+> =
+
+> In a case where we dont have secure world, we can point to secure
+> environment with v1 ops, so driver shall configure and run.
+
+Are you saying that there are multiple "frames" that each EE can read
+from? And then only one of those frames is the "real" one that can also
+configure the hardware to actually give us random data?
+
+That sounds like it would work, but then the compatible string should
+probably be more like qcom,prng-ee-frame or something like that to
+indicate that this is a window into the real hardware, instead of
+tacking on a -v2 and making everyone think it's new hardware.
+
