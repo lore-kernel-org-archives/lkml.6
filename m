@@ -2,145 +2,118 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F44AC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8706C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205C423FAD
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:46:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205C423FAD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 7687E23FAF
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:48:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7687E23FAF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754157AbeFVJqq (ORCPT
+        id S1754206AbeFVJsP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:46:46 -0400
-Received: from verein.lst.de ([213.95.11.211]:55611 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751242AbeFVJqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:46:44 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id B806168AA6; Fri, 22 Jun 2018 11:56:08 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 11:56:08 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     kernel test robot <xiaolong.ye@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LKP <lkp@01.org>
-Subject: Re: [lkp-robot] [fs] 3deb642f0d: will-it-scale.per_process_ops
-        -8.8% regression
-Message-ID: <20180622095608.GA12263@lst.de>
-References: <20180622082752.GX11011@yexl-desktop> <CA+55aFw5ghByk_zCN25G6rPPSAQma3Mh0t4s18CtLg=h6U9+Zg@mail.gmail.com>
+        Fri, 22 Jun 2018 05:48:15 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:45619 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbeFVJsN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 05:48:13 -0400
+Received: by mail-ot0-f194.google.com with SMTP id a5-v6so6823348otf.12
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 02:48:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=b2kF+WQOiC8RO3ptapIhdhEln8LhkXJfim1zJwlF7Eg=;
+        b=dz7Avr8BlvJ1HjLtW1AXve7cMXSw7GT3DN/EUlz3OPw8AHe9+rRJk+VZFb/mI3oHsK
+         EA0rL/3ByAtLsbRGgH6DQvUggD6eZdMU/tILAJxrWK3+xPxrGCLHegMn9K+gLgTFVtkK
+         Muw8bwaa1IxKRvEAdaSjeAKpmh8g708oE4yKnMnW8TTWpWRAVwPZE3ene+kGUWTS/84p
+         8w8o318/WAk64pgF0UHM/HmrMAwMf9muyju2wswknK0UltlOoBe5VsQzI/Bt3RxWoDAJ
+         pBiW0lbUplpoA+Yx7NN6kZfjalQW2GIJ4atSmPhDh3g5Nacfnrk/S/7zpVI+TXwhf/ai
+         fbMw==
+X-Gm-Message-State: APt69E3FdwKY1uP7JBTUuLliHVLV8AifA71kSZOxE92v4NAIWrlrKHYq
+        oSg84DUukfI+KNjh04GaPCm8nzfK+GAu8Q5YGFg=
+X-Google-Smtp-Source: ADUXVKICJzdoLc0TCD1a3eFU5AB8fZH3vCNuxl/DF4eWsHVgkD0A4j5V/8o7ahvvFTv0Slf6ox2W6LdBRKIWoHpd/HE=
+X-Received: by 2002:a9d:27a6:: with SMTP id c35-v6mr526155otb.56.1529660893214;
+ Fri, 22 Jun 2018 02:48:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFw5ghByk_zCN25G6rPPSAQma3Mh0t4s18CtLg=h6U9+Zg@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20180328193307.978-1-malat@debian.org> <20180404200836.27446-1-malat@debian.org>
+In-Reply-To: <20180404200836.27446-1-malat@debian.org>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Fri, 22 Jun 2018 11:48:02 +0200
+Message-ID: <CA+7wUswQGhQS6FTdRkGhhJKFbfoVpmzwWdT_9GoOicEF0OXFPQ@mail.gmail.com>
+Subject: Re: [PATCH v3 03/19] powerpc: Move `path` variable inside DEBUG_PROM
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 06:25:45PM +0900, Linus Torvalds wrote:
-> What was the alleged advantage of the new poll methods again? Because
-> it sure isn't obvious - not from the numbers, and not from the commit
-> messages.
+This one should be ok.
 
-The primary goal is that we can implement a race-free aio poll,
-the primary benefit is that we can get rid of the currently racy
-and bug prone way we do in-kernel poll-like calls for things like
-eventfd.  The first is clearly is in 4.18-rc and provides massive
-performance advantanges if used, the second is not there yet,
-more on that below.
-
-> I was assuming there  was a good reason for it, but looking closer I
-> see absolutely nothing but negatives. The argument that keyed wake-ups
-> somehow make multiple wake-queues irrelevant doesn't hold water when
-> the code is more complex and apparently slower. It's not like anybody
-> ever *had* to use multiple wait-queues, but the old code was both
-> simpler and cleaner and *allowed* you to use multiple queues if you
-> wanted to.
-
-It wasn't cleaner at all if you aren't poll or select, and even
-for those it isn't exactly clean, see the whole mess around ->qproc.
-
-> The disadvantages are obvious: every poll event now causes *two*
-> indirect branches to the low-level filesystem or driver - one to get
-> he poll head, and one to get the mask. Add to that all the new "do we
-> have the new-style or old sane poll interface" tests, and poll is
-> obviously more complicated.
-
-It already caused two, and now we have three thanks to ->qproc.  One
-of the advantages of the new code is that we can eventually get rid
-of ->qproc once all users of a non-default qproc are switched away
-from vfs_poll.  Which requires a little more work, but I have the
-patches for that to be posted soon.
-
-> If we could get the poll head by just having a direct pointer in the
-> 'struct file', maybe that would be one thing. As it is, this all
-> literally just adds overhead for no obvious reason. It replaced one
-> simple direct call with two dependent but separate ones.
-
-People are doing weird things with their poll heads, so we can't do
-that unconditionally.  We could however offer a waitqueue pointer
-in struct file and most users would be very happy with that.
-
-In the meantime below is an ugly patch that removes the _qproc
-indirect for ->poll only (similar patch is possible for select
-assuming the code uses select).  And for next merge window I plan
-to kill it off entirely.
-
-How can we get this thrown into the will it scale run?
-
----
-From 50ca47fdcfec0a1af56aac6db8a168bb678308a5 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri, 22 Jun 2018 11:36:26 +0200
-Subject: fs: optimize away ->_qproc indirection for poll_mask based polling
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/select.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/fs/select.c b/fs/select.c
-index bc3cc0f98896..54406e0ad23e 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -845,7 +845,25 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
- 	/* userland u16 ->events contains POLL... bitmap */
- 	filter = demangle_poll(pollfd->events) | EPOLLERR | EPOLLHUP;
- 	pwait->_key = filter | busy_flag;
--	mask = vfs_poll(f.file, pwait);
-+	if (f.file->f_op->poll) {
-+		mask = f.file->f_op->poll(f.file, pwait);
-+	} else if (file_has_poll_mask(f.file)) {
-+		struct wait_queue_head *head;
-+
-+		head = f.file->f_op->get_poll_head(f.file, pwait->_key);
-+		if (!head) {
-+			mask = DEFAULT_POLLMASK;
-+		} else if (IS_ERR(head)) {
-+			mask = EPOLLERR;
-+		} else {
-+			if (pwait->_qproc)
-+				__pollwait(f.file, head, pwait);
-+			mask = f.file->f_op->poll_mask(f.file, pwait->_key);
-+		}
-+	} else {
-+		mask = DEFAULT_POLLMASK;
-+	}
-+
- 	if (mask & busy_flag)
- 		*can_busy_poll = true;
- 	mask &= filter;		/* Mask out unneeded events. */
--- 
-2.17.1
-
+On Wed, Apr 4, 2018 at 10:08 PM Mathieu Malaterre <malat@debian.org> wrote:
+>
+> Add gcc attribute unused for two variables. Fix warnings treated as errors
+> with W=1:
+>
+>   arch/powerpc/kernel/prom_init.c:1388:8: error: variable ‘path’ set but not used [-Werror=unused-but-set-variable]
+>
+> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+> v3: really move path within ifdef DEBUG_PROM
+> v2: move path within ifdef DEBUG_PROM
+>
+>  arch/powerpc/kernel/prom_init.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+> index acf4b2e0530c..223b35acbbdd 100644
+> --- a/arch/powerpc/kernel/prom_init.c
+> +++ b/arch/powerpc/kernel/prom_init.c
+> @@ -603,7 +603,7 @@ static void __init early_cmdline_parse(void)
+>         const char *opt;
+>
+>         char *p;
+> -       int l = 0;
+> +       int l __maybe_unused = 0;
+>
+>         prom_cmd_line[0] = 0;
+>         p = prom_cmd_line;
+> @@ -1385,7 +1385,10 @@ static void __init reserve_mem(u64 base, u64 size)
+>  static void __init prom_init_mem(void)
+>  {
+>         phandle node;
+> -       char *path, type[64];
+> +#ifdef DEBUG_PROM
+> +       char *path;
+> +#endif
+> +       char type[64];
+>         unsigned int plen;
+>         cell_t *p, *endp;
+>         __be32 val;
+> @@ -1406,7 +1409,9 @@ static void __init prom_init_mem(void)
+>         prom_debug("root_size_cells: %x\n", rsc);
+>
+>         prom_debug("scanning memory:\n");
+> +#ifdef DEBUG_PROM
+>         path = prom_scratch;
+> +#endif
+>
+>         for (node = 0; prom_next_node(&node); ) {
+>                 type[0] = 0;
+> --
+> 2.11.0
+>
