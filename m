@@ -1,119 +1,119 @@
 Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02100C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E562FC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A308F23C51
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:24:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NU9DUKNl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A308F23C51
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A862D23C56
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:25:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A862D23C56
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934071AbeFVCYK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 22:24:10 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51711 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933353AbeFVCYH (ORCPT
+        id S934217AbeFVCZS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:25:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33167 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934084AbeFVCZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 22:24:07 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r15-v6so597747wmc.1;
-        Thu, 21 Jun 2018 19:24:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JxQq/b7G04uSwQ9MALz1PIC6SE5Him6XGkLoJiyR1+M=;
-        b=NU9DUKNlBgASM4HUbdAtIte1J8N47Eb2z/vJKhawD6ld/um+taVFgIVpEkzJa5Dwh0
-         gsOQBoZKPn1dBiKhze4SDBKLH2IlVPBghiVeysvM4VxPdUWGA5BXF3w5XPgPfZqViWzo
-         SSzGnaXIQh3jHjWm5RHuOnqdHw0wdlMjYEPu4R1am2C0Br1yBIpbq2XipFnRHjbujBBO
-         BbzB6rBRficqAXTxIu2t0gOFloLW5Hj0+o8mWmVuf/8pdxLm5xoHnKz/uO2I7kK+R1rw
-         m0csQiLx8/ShafdZ+CSszH5O2HjLj5lEgImceDywm6tkeR7h41JDVc1uetJVrql52QDn
-         MyzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JxQq/b7G04uSwQ9MALz1PIC6SE5Him6XGkLoJiyR1+M=;
-        b=VE/QmwTRQzEfdx+puNSkcyz3v9+h1C7ZzXecPneVraoVk7yTelB+cuGkWmOVK39DRX
-         1QJ1ykFGQ4+XIQEtbCNBzaJELfwuay7VNd50j8xLMn4ZRYgsffgwUSZ277RM8N1KQn+v
-         gnrzyOwcIg1bjnFMUoA82PARz5nDDuLjGvCOamkqYj9dzo9YbItXMyOP4QxYAbVUYZEz
-         ibB92fghS84RdFnz4o2tykmDCT+SwhxDZ8hseHGol3nr5QzTKQPkFoXLVtXnk2DuYnKM
-         GoUgGYwR52j+yTphTf/DR4aGoGSpsnv2PbHzEf1s0UOvdNe2bxD1kihZqU4WQZKMMaCw
-         hmKQ==
-X-Gm-Message-State: APt69E3yF25nfGjI1r0myKl8Qoi+lje2H4nqOj+rlPXspdGaqsDs9j3R
-        6dPd9jiXt//cpgbc5h4PvtM=
-X-Google-Smtp-Source: AAOMgpcLXj9Zw9gfp+NDidWpWk7RkZGesU7K+z08fnRRW8kln1MRbyy/W/dVeUjD1clCH+4HWwe0OA==
-X-Received: by 2002:a1c:108b:: with SMTP id 133-v6mr70515wmq.136.1529634246225;
-        Thu, 21 Jun 2018 19:24:06 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id e14-v6sm453111wmh.17.2018.06.21.19.24.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 19:24:05 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 04:24:02 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     mingo@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org,
-        hpa@zytor.com, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        virtualization@lists.linux-foundation.org, astrachan@google.com,
-        manojgupta@google.com, ghackmann@google.com, sedat.dilek@gmail.com,
-        tstellar@redhat.com, keescook@google.com,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
-        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
-        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
-        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
-        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        ard.biesheuvel@linaro.org, akataria@vmware.com,
-        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
-        thomas.lendacky@amd.com, tweek@google.com, mjg59@google.com,
-        joe@perches.com, andrea.parri@amarulasolutions.com
-Subject: Re: [PATCH v6 3/3] x86: paravirt: make native_save_fl extern inline
-Message-ID: <20180622022402.GA24194@gmail.com>
-References: <20180621162324.36656-1-ndesaulniers@google.com>
- <20180621162324.36656-4-ndesaulniers@google.com>
+        Thu, 21 Jun 2018 22:25:17 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5M2OnLg4103900
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 21 Jun 2018 19:24:49 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5M2OneE4103897;
+        Thu, 21 Jun 2018 19:24:49 -0700
+Date:   Thu, 21 Jun 2018 19:24:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Steven Rostedt (VMware)" <tipbot@zytor.com>
+Message-ID: <tip-6cc65be4f6f2a7186af8f3e09900787c7912dad2@git.kernel.org>
+Cc:     tglx@linutronix.de, will.deacon@arm.com, rostedt@goodmis.org,
+        akpm@linux-foundation.org, longman@redhat.com,
+        linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        mingo@kernel.org, hpa@zytor.com
+Reply-To: boqun.feng@gmail.com, linux-kernel@vger.kernel.org,
+          longman@redhat.com, peterz@infradead.org, hpa@zytor.com,
+          mingo@kernel.org, torvalds@linux-foundation.org,
+          tglx@linutronix.de, akpm@linux-foundation.org,
+          will.deacon@arm.com, rostedt@goodmis.org
+In-Reply-To: <20180621203526.172ab5c4@vmware.local.home>
+References: <20180621203526.172ab5c4@vmware.local.home>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/urgent] locking/qspinlock: Fix build for anonymous
+ union in older GCC compilers
+Git-Commit-ID: 6cc65be4f6f2a7186af8f3e09900787c7912dad2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180621162324.36656-4-ndesaulniers@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  6cc65be4f6f2a7186af8f3e09900787c7912dad2
+Gitweb:     https://git.kernel.org/tip/6cc65be4f6f2a7186af8f3e09900787c7912dad2
+Author:     Steven Rostedt (VMware) <rostedt@goodmis.org>
+AuthorDate: Thu, 21 Jun 2018 20:35:26 -0400
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 22 Jun 2018 04:19:16 +0200
 
-* Nick Desaulniers <ndesaulniers@google.com> wrote:
+locking/qspinlock: Fix build for anonymous union in older GCC compilers
 
-> native_save_fl() is marked static inline, but by using it as
-> a function pointer in arch/x86/kernel/paravirt.c, it MUST be outlined.
+One of my tests compiles the kernel with gcc 4.5.3, and I hit the
+following build error:
 
-> --- a/arch/x86/include/asm/irqflags.h
-> +++ b/arch/x86/include/asm/irqflags.h
-> @@ -13,7 +13,7 @@
->   * Interrupt control:
->   */
->  
-> -static inline unsigned long native_save_fl(void)
-> +extern inline unsigned long native_save_fl(void)
->  {
->  	unsigned long flags;
->  
+  include/linux/semaphore.h: In function 'sema_init':
+  include/linux/semaphore.h:35:17: error: unknown field 'val' specified in initializer
+  include/linux/semaphore.h:35:17: warning: missing braces around initializer
+  include/linux/semaphore.h:35:17: warning: (near initialization for '(anonymous).raw_lock.<anonymous>.val')
 
-What's the code generation effect of this on say a defconfig kernel vmlinux with 
-paravirt enabled?
+I bisected it down to:
 
-Thanks,
+ 625e88be1f41 ("locking/qspinlock: Merge 'struct __qspinlock' into 'struct qspinlock'")
 
-	Ingo
+... which makes qspinlock have an anonymous union, which makes initializing it special
+for older compilers. By adding strategic brackets, it makes the build
+happy again.
+
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Waiman Long <longman@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Fixes: 625e88be1f41 ("locking/qspinlock: Merge 'struct __qspinlock' into 'struct qspinlock'")
+Link: http://lkml.kernel.org/r/20180621203526.172ab5c4@vmware.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/asm-generic/qspinlock_types.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/asm-generic/qspinlock_types.h b/include/asm-generic/qspinlock_types.h
+index 0763f065b975..d10f1e7d6ba8 100644
+--- a/include/asm-generic/qspinlock_types.h
++++ b/include/asm-generic/qspinlock_types.h
+@@ -63,7 +63,7 @@ typedef struct qspinlock {
+ /*
+  * Initializier
+  */
+-#define	__ARCH_SPIN_LOCK_UNLOCKED	{ .val = ATOMIC_INIT(0) }
++#define	__ARCH_SPIN_LOCK_UNLOCKED	{ { .val = ATOMIC_INIT(0) } }
+ 
+ /*
+  * Bitfields in the atomic value:
