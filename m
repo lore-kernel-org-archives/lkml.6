@@ -2,134 +2,121 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6812C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 04:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090D8C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 04:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A394723D15
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 04:32:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A394723D15
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id A55D823D26
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 04:38:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iXgxgxCQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A55D823D26
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751242AbeFVEcC (ORCPT
+        id S1751129AbeFVEiT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 00:32:02 -0400
-Received: from gate.crashing.org ([63.228.1.57]:60869 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751041AbeFVEcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 00:32:00 -0400
-Received: from pasglop.ozlabs.ibm.com (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5M4VZ5Z007407;
-        Thu, 21 Jun 2018 23:31:40 -0500
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     openbmc@lists.ozlabs.org
-Cc:     linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: [RFC PATCH 01/14] devres: Add devm_of_iomap()
-Date:   Fri, 22 Jun 2018 14:31:21 +1000
-Message-Id: <20180622043134.18238-2-benh@kernel.crashing.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180622043134.18238-1-benh@kernel.crashing.org>
-References: <20180622043134.18238-1-benh@kernel.crashing.org>
+        Fri, 22 Jun 2018 00:38:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33052 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750779AbeFVEiS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 00:38:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pI3/H+VocM9pXxC4tlm4I7EA74TtdEIYh6Pnm1Ll934=; b=iXgxgxCQy1OJ14oyiNOkeYS1X
+        HLAMnVaFJEkfOpy2MlgWLkxS/wtgmKjb9Fk8CyVfqekMuv4hIqhdY8dlLwuhNdenQncgsA+KcbTf/
+        vPBB9ZThudy7enIX1AY1/AD5rN4kArt4KTSQJoqhjuy6CaSanyXLMMYiX0lSl3k15CqYu8xaW0LbM
+        HVRcLCfAM7uj7gKRXfLzTIeGDooyLWerbS+AzT3rVXbGFOEIr6SgDW1KUz/XI3FWXMR9nJ0mm7C8P
+        khv4pGjA6hN6ESFu+elpeF0r3NJkvNIIgRZif6XO3c94mEvma2iOH9y33gIjNeCtlDfaKVBKklKV8
+        ZfiKsYVhw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fWDpw-0000iq-80; Fri, 22 Jun 2018 04:38:16 +0000
+Date:   Thu, 21 Jun 2018 21:38:15 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Ram Pai <linuxram@us.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 13/26] ppc: Convert mmu context allocation to new IDA API
+Message-ID: <20180622043815.GA31255@bombadil.infradead.org>
+References: <20180621212835.5636-1-willy@infradead.org>
+ <20180621212835.5636-14-willy@infradead.org>
+ <20180622121511.00ae9d00@roar.ozlabs.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622121511.00ae9d00@roar.ozlabs.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are still quite a few cases where a device might want
-to get to a different node of the device-tree, obtain the
-resources and map them.
+On Fri, Jun 22, 2018 at 12:15:11PM +1000, Nicholas Piggin wrote:
+> On Thu, 21 Jun 2018 14:28:22 -0700
+> Matthew Wilcox <willy@infradead.org> wrote:
+> >  static int alloc_context_id(int min_id, int max_id)
+...
+> > -	spin_lock(&mmu_context_lock);
+> > -	err = ida_get_new_above(&mmu_context_ida, min_id, &index);
+> > -	spin_unlock(&mmu_context_lock);
+...
+> > @@ -182,13 +148,11 @@ static void destroy_contexts(mm_context_t *ctx)
+> >  {
+> >  	int index, context_id;
+> >  
+> > -	spin_lock(&mmu_context_lock);
+> >  	for (index = 0; index < ARRAY_SIZE(ctx->extended_id); index++) {
+> >  		context_id = ctx->extended_id[index];
+> >  		if (context_id)
+> > -			ida_remove(&mmu_context_ida, context_id);
+> > +			ida_free(&mmu_context_ida, context_id);
+> >  	}
+> > -	spin_unlock(&mmu_context_lock);
+> >  }
+> >  
+> >  static void pte_frag_destroy(void *pte_frag)
+> 
+> This hunk should be okay because the mmu_context_lock does not protect
+> the extended_id array, right Aneesh?
 
-We have of_iomap() and of_io_request_and_map() but they both
-have shortcomings, such as not returning the size of the
-resource found (which can be useful) and not being "managed".
+That's my understanding.  The code today does this:
 
-This adds a devm_of_iomap() that provides all of these and
-should probably replace uses of the above in most drivers.
+static inline int alloc_extended_context(struct mm_struct *mm,
+                                         unsigned long ea)
+{
+        int context_id;
 
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
----
- include/linux/device.h |  4 ++++
- lib/devres.c           | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+        int index = ea >> MAX_EA_BITS_PER_CONTEXT;
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 477956990f5e..96249d790374 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -688,6 +688,10 @@ extern void devm_free_pages(struct device *dev, unsigned long addr);
- 
- void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
- 
-+void __iomem *devm_of_iomap(struct device *dev,
-+			    struct device_node *node, int index,
-+			    resource_size_t *size);
-+
- /* allows to add/remove a custom action to devres stack */
- int devm_add_action(struct device *dev, void (*action)(void *), void *data);
- void devm_remove_action(struct device *dev, void (*action)(void *), void *data);
-diff --git a/lib/devres.c b/lib/devres.c
-index 5bec1120b392..faccf1a037d0 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -4,6 +4,7 @@
- #include <linux/io.h>
- #include <linux/gfp.h>
- #include <linux/export.h>
-+#include <linux/of_address.h>
- 
- enum devm_ioremap_type {
- 	DEVM_IOREMAP = 0,
-@@ -162,6 +163,41 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
- }
- EXPORT_SYMBOL(devm_ioremap_resource);
- 
-+/*
-+ * devm_of_iomap - Requests a resource and maps the memory mapped IO
-+ *		   for a given device_node managed by a given device
-+ *
-+ * Checks that a resource is a valid memory region, requests the memory
-+ * region and ioremaps it. All operations are managed and will be undone
-+ * on driver detach of the device.
-+ *
-+ * This is to be used when a device requests/maps resources described
-+ * by other device tree nodes (children or otherwise).
-+ *
-+ * @dev:	The device "managing" the resource
-+ * @node:       The device-tree node where the resource resides
-+ * @index:	index of the MMIO range in the "reg" property
-+ * @size:	Returns the size of the resource (pass NULL if not needed)
-+ * Returns a pointer to the requested and mapped memory or an ERR_PTR() encoded
-+ * error code on failure. Usage example:
-+ *
-+ *	base = devm_of_iomap(&pdev->dev, node, 0, NULL);
-+ *	if (IS_ERR(base))
-+ *		return PTR_ERR(base);
-+ */
-+void __iomem *devm_of_iomap(struct device *dev, struct device_node *node, int index,
-+			    resource_size_t *size)
-+{
-+	struct resource res;
-+
-+	if (of_address_to_resource(node, index, &res))
-+		return IOMEM_ERR_PTR(-EINVAL);
-+	if (size)
-+		*size = resource_size(&res);
-+	return devm_ioremap_resource(dev, &res);
-+}
-+EXPORT_SYMBOL(devm_of_iomap);
-+
- #ifdef CONFIG_HAS_IOPORT_MAP
- /*
-  * Generic iomap devres
--- 
-2.17.1
+        context_id = hash__alloc_context_id();
+        if (context_id < 0)
+                return context_id;
 
+        VM_WARN_ON(mm->context.extended_id[index]);
+        mm->context.extended_id[index] = context_id;
+
+so it's not currently protected by this lock.  I suppose we are currently
+protected from destroy_contexts() being called twice simultaneously, but
+you'll notice that we don't zero the array elements in destroy_contexts(),
+so if we somehow had a code path which could call it concurrently, we'd
+be seeing warnings when the second caller tried to remove the context
+IDs from the IDA.  I deduced that something else must be preventing
+this situation from occurring (like, oh i don't know, this function only
+being called on process exit, so implicitly only called once per context).
+
+> Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+
+Thanks.
