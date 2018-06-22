@@ -2,111 +2,95 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7426C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E69C5C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3A4242B9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:29:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3A4242B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F604242B9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:30:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jYgD8EKM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F604242B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932719AbeFVN3o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:29:44 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:33218 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751266AbeFVN3m (ORCPT
+        id S1753272AbeFVNaD (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 09:30:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55284 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751326AbeFVNaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:29:42 -0400
-Received: by mail-ua0-f194.google.com with SMTP id m21-v6so4289478uan.0;
-        Fri, 22 Jun 2018 06:29:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=brv17cAYi9W+9YCvhKMUCNrcwYATZwZOiwB4c6G+enQ=;
-        b=Rvnkbc2E0psrPKnlYJM0CFf93ISP5GlSLkqki2uJvpXomJmmzkgAQzOku8IILAKQqV
-         EMEGGyAmStJRJ3yKDb/NnJX1dxt/JACo92pmgbKFbtuLA8ZvktOSSO200gPOghEBt4Yj
-         r2sxctLPC/IzslJva+aq2aQnQUFTAlICq+HBFUEN17+RLO0Ady44JMP1ZY8sirHfU+4i
-         6b7+bGiIn1ETtxtJz1EHXV5HZxETen/ToV1CfsjI7WYcMkoCAclxiNj3y1dsA5lJ5PZo
-         oaIZUbbNrO24zO8/WuYKxLtXqsRNc1G893ghssbhWKJixuvmlXoDWySk2V3RzEsB/568
-         bbLA==
-X-Gm-Message-State: APt69E3+dA5V4lmkIKH/Yi0p/aMRIpKUJLGg1A2uWh/fPQhgj1brRpLU
-        F2Vygd3uVSxN4IHG+adloUTRaWvImP7VDpYnE4k=
-X-Google-Smtp-Source: AAOMgpf4y/BXL+Use6aExtiYSaaPeLaSAi2xx3xyLiOxGe6qx9tWNn6qwhidczgMTM866tWul385NcFpDymJwWHkRZI=
-X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr1064377uae.12.1529674181408;
- Fri, 22 Jun 2018 06:29:41 -0700 (PDT)
+        Fri, 22 Jun 2018 09:30:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LT7ImzVWiBZpgym+tQ+mOnSxLR2LXR8uiW+BKlQtmtk=; b=jYgD8EKMUlBcg1ToI6foZFrdl
+        PUzkTomfrFrlFdfBHWWateCDmOj8uxog8AiKRIcTq1KYFE0qoLhJgsPlTRsDKlc5pwlW0YsTRcsa0
+        0q2/BPBVZIdQXb8vKBTMwLD9moTQ5i5jNl5oRYnqQNDesbSgVnAlna+xSkGtKFIEkvQP3zlSU04+g
+        gCSsD0KgdFewNVTsGNhqLdwlJrNNJ3qY6BJ2z5322fMNMA8ffleJ6V6AbqQeXhdKAtgDzpm55SVQR
+        ownrTl3wyXGG+lYAN0XlxaFBEc6FrRE4gtClPw8Us0a4XrhA4bh4KQb5R9lLvOhQMgGgdruIIbW9T
+        QMjA9xOsw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fWM8R-0005nZ-2d; Fri, 22 Jun 2018 13:29:55 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9219E2029F1D7; Fri, 22 Jun 2018 15:29:53 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 15:29:53 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com, patrick.bellasi@arm.com,
+        joel@joelfernandes.org, daniel.lezcano@linaro.org,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v6 04/11] cpufreq/schedutil: use rt utilization tracking
+Message-ID: <20180622132953.GM2494@hirez.programming.kicks-ass.net>
+References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
+ <1528459794-13066-5-git-send-email-vincent.guittot@linaro.org>
+ <20180621184524.GB27616@hirez.programming.kicks-ass.net>
+ <20180622075853.GC23168@e108498-lin.cambridge.arm.com>
+ <20180622113713.GJ2494@hirez.programming.kicks-ass.net>
+ <20180622125433.GA26461@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-6-git-send-email-michel.pollet@bp.renesas.com>
-In-Reply-To: <1528973829-25493-6-git-send-email-michel.pollet@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jun 2018 15:29:30 +0200
-Message-ID: <CAMuHMdUin=CjcWvR=nCm9vN-8VWaNXbFt+3k_MUEOmqpKoe2mA@mail.gmail.com>
-Subject: Re: [PATCH v9 5/5] clk: renesas: Renesas R9A06G032 clock driver
-To:     Michel Pollet <michel.pollet@bp.renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622125433.GA26461@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
+On Fri, Jun 22, 2018 at 01:54:34PM +0100, Quentin Perret wrote:
+> On Friday 22 Jun 2018 at 13:37:13 (+0200), Peter Zijlstra wrote:
+> > That is true.. So we could limit the scaling to the case where there is
+> > no idle time, something like:
+> > 
+> > 	util = sg_cpu->util_cfs;
+> > 
+> > 	cap_cfs = (1024 - (sg_cpu->util_rt + ...));
+> > 	if (util == cap_cfs)
+> > 		util = sg_cpu->max;
+> > 
+> > That specifically handles the '0% idle -> 100% freq' case, but I don't
+> > realy like edge behaviour like that. If for some reason it all doesn't
+> > quite align you're left with bits.
+> > 
+> > And the linear scaling is the next simplest thing that avoids the hard
+> > boundary case.
+> 
+> Right, so maybe we'll get something smoother by just summing the signals
+> as Vincent is proposing ? 
 
-On Thu, Jun 14, 2018 at 1:03 PM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This provides a clock driver for the Renesas R09A06G032.
-> This uses a structure derived from both the RCAR gen2 driver as well as
-> the renesas-cpg-mssr driver.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+Sure, but see my previous mail just now, that has the problem of
+u_{rt,dl} distoting f_{rt,dl} even when there is no u_cfs.
 
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-
-> +static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
-> +{
-
-[...]
-
-> +       error = of_clk_add_provider(np, of_clk_src_onecell_get, &clocks->data);
-> +       if (error)
-> +               return error;
-> +
-> +       error = devm_add_action_or_reset(
-> +                       dev, r9a06g032_clocks_del_clk_provider, np);
-> +
-> +       return error;
-
-This could just be "return devm_add_action_or_reset(...);".
-
-Queuing in clk-renesas-for-v4.19 with the above small change.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
