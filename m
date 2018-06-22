@@ -2,77 +2,102 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8922BC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497AFC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453552493D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453552493D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E7F252493D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:10:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="dBuHxUGG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F252493D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933847AbeFVWJK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:09:10 -0400
-Received: from mga09.intel.com ([134.134.136.24]:52472 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754451AbeFVWIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 18:08:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:08:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
-   d="scan'208";a="59478919"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Jun 2018 15:08:43 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id DA80B1F6; Sat, 23 Jun 2018 01:08:44 +0300 (EEST)
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 2/2] x86/mm: Fix 'no5lvl' handling
-Date:   Sat, 23 Jun 2018 01:08:41 +0300
-Message-Id: <20180622220841.54135-3-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180622220841.54135-1-kirill.shutemov@linux.intel.com>
-References: <20180622220841.54135-1-kirill.shutemov@linux.intel.com>
+        id S933730AbeFVWKn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 18:10:43 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42415 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754283AbeFVWKl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 18:10:41 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w17-v6so4072676pll.9
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 15:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QOpBfd6WbJYYUbUtAgySrcMekdEEwRXGbrDW4hUOvmE=;
+        b=dBuHxUGGGaU+srF78Oiiv6lSlMrIQSdLWz0P13iiGqA1LXSvyVYQKhyaJPoN/YpzrT
+         lN4n+g632XPb15myxENSTPqV7pmd6HYJskBk+pSxfo/dLjyMWSdv8BInz9bIkaeDRbEc
+         fWtjqv3XLBsHfHSgQGzPyceZtxGnhlh6L0iGFUvJb0QbP+qK88Z6qmbBLHw+nuG3fpfM
+         0zuRmz5x6njVHQJOdSpzpphGxBG+smuQE4hMNsGql6R/xQnefJrmOlRX1wfURd95h+A7
+         yVTD5iG1bp3q8Ao4JzPoPvfr7LZOyvkp8LUXGCCcRq6eCg8lXTZERutyOJ+DVlz4f+gD
+         XwiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QOpBfd6WbJYYUbUtAgySrcMekdEEwRXGbrDW4hUOvmE=;
+        b=GNYL9+BP9AY+yue2SaJCT6tH8nj7i2FpuLp2bPNJQe7k53VfS+TpZPw0JQuXr4rAy5
+         XJjoGvnNvmkLxLsFzRidHm4WT3x/3CRrne8lsBUkNzKoUAmUwsRdwPMtRgoJ06BWQHdM
+         sneFq0QMiYeuImoPVlvSi/N+6MMNU5aKT6smCUTfclgiesj8hAR/t72htGRPqPPo4jIc
+         JxETQTQh7P8VmGvjos0RxiafchtzXH+yqriXhHqyJN8PTcc5qL0W7R7laKOGu47hyT/P
+         /TVYUCQtn7ZktTZWTfh5A6rG+yVJiJi/toAbtIxgnf6TNo9sr6TbaaCIUKA8CvaC6rBa
+         SfQQ==
+X-Gm-Message-State: APt69E3PzCWRjXxBSDlT+wNsPEETX9lcXGBLoXbA6s4abI8YjSJxm36Z
+        ebrL2OxHsp2gRFfhc7/kTWtqLg==
+X-Google-Smtp-Source: ADUXVKKflGWwTm2SXODp9G7ZJXaxMWWk4HVuITzgRL+Ld4rQ0/l++SGdQfrOD3QJ0YCu7PENJ/yURQ==
+X-Received: by 2002:a17:902:5a09:: with SMTP id q9-v6mr3280213pli.300.1529705441114;
+        Fri, 22 Jun 2018 15:10:41 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.45])
+        by smtp.gmail.com with ESMTPSA id q82-v6sm18144127pfg.170.2018.06.22.15.10.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 15:10:40 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id CA3F0300610; Sat, 23 Jun 2018 01:10:36 +0300 (+03)
+Date:   Sat, 23 Jun 2018 01:10:36 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     hughd@google.com, kirill.shutemov@linux.intel.com, vbabka@suse.cz,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v3 PATCH] mm: thp: register mm for khugepaged when merging vma
+ for shmem
+Message-ID: <20180622221036.va5vmdcnxny3fhxu@kshutemo-mobl1>
+References: <1529697791-6950-1-git-send-email-yang.shi@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529697791-6950-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-early_identify_cpu() has to use early version of pgtable_l5_enabled()
-that doesn't rely on cpu_feature_enabled().
+On Sat, Jun 23, 2018 at 04:03:11AM +0800, Yang Shi wrote:
+> When merging anonymous page vma, if the size of vma can fit in at least
+> one hugepage, the mm will be registered for khugepaged for collapsing
+> THP in the future.
+> 
+> But, it skips shmem vma. Doing so for shmem too, but not file-private
+> mapping, when merging vma in order to increase the odd to collapse
+> hugepage by khugepaged.
+> 
+> hugepage_vma_check() sounds like a good fit to do the check. And, moved
+> the definition of it before khugepaged_enter_vma_merge() to suppress
+> build error.
+> 
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Defining USE_EARLY_PGTABLE_L5 before all includes does the trick.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-I lost the define in one of reworks of the original patch.
-
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Fixes: 372fddf70904 ("x86/mm: Introduce the 'no5lvl' kernel parameter")
----
- arch/x86/kernel/cpu/common.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 0df7151cfef4..eb4cb3efd20e 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1,3 +1,6 @@
-+/* cpu_feature_enabled() cannot be used this early */
-+#define USE_EARLY_PGTABLE_L5
-+
- #include <linux/bootmem.h>
- #include <linux/linkage.h>
- #include <linux/bitops.h>
 -- 
-2.17.1
-
+ Kirill A. Shutemov
