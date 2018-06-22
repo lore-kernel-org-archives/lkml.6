@@ -5,134 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEBEC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC3DC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9562F24767
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:46:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9562F24767
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 361F024768
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:47:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 361F024768
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934343AbeFVSqe convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 14:46:34 -0400
-Received: from mga03.intel.com ([134.134.136.65]:7323 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933878AbeFVSqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 14:46:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 11:46:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,258,1526367600"; 
-   d="scan'208";a="61417239"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga003.jf.intel.com with ESMTP; 22 Jun 2018 11:46:31 -0700
-Received: from fmsmsx152.amr.corp.intel.com (10.18.125.5) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 22 Jun 2018 11:46:31 -0700
-Received: from crsmsx102.amr.corp.intel.com (172.18.63.137) by
- FMSMSX152.amr.corp.intel.com (10.18.125.5) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Fri, 22 Jun 2018 11:46:31 -0700
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.79]) by
- CRSMSX102.amr.corp.intel.com ([169.254.2.58]) with mapi id 14.03.0319.002;
- Fri, 22 Jun 2018 12:46:29 -0600
-From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "Ingo Molnar" <mingo@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 6/7] x86/vdso: Introduce CPU number helper functions
-Thread-Topic: [PATCH v4 6/7] x86/vdso: Introduce CPU number helper functions
-Thread-Index: AQHUCOybRPGJl8Bq10OSvRa4GMCSkqRsygwA///TMoI=
-Date:   Fri, 22 Jun 2018 18:46:28 +0000
-Message-ID: <C9BB696F3A938947B10DCAD29FAB8FFA66BDB8A6@CRSMSX101.amr.corp.intel.com>
-References: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com>
- <1529536506-26237-7-git-send-email-chang.seok.bae@intel.com>,<alpine.DEB.2.21.1806221644090.2402@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1806221644090.2402@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.3.86.137]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S934391AbeFVSrA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:47:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33528 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933878AbeFVSq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 14:46:59 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6194E87AAC;
+        Fri, 22 Jun 2018 18:46:59 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43D352026D6C;
+        Fri, 22 Jun 2018 18:46:59 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5MIkxMG015041;
+        Fri, 22 Jun 2018 14:46:59 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5MIkwf7015037;
+        Fri, 22 Jun 2018 14:46:58 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Fri, 22 Jun 2018 14:46:58 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     jing xia <jing.xia.mail@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+In-Reply-To: <20180622131013.GA10465@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1806221445310.2717@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180615073201.GB24039@dhcp22.suse.cz> <alpine.LRH.2.02.1806150724260.15022@file01.intranet.prod.int.rdu2.redhat.com> <20180615115547.GH24039@dhcp22.suse.cz> <alpine.LRH.2.02.1806150832100.26650@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180615130925.GI24039@dhcp22.suse.cz> <alpine.LRH.2.02.1806181003560.4201@file01.intranet.prod.int.rdu2.redhat.com> <20180619104312.GD13685@dhcp22.suse.cz> <alpine.LRH.2.02.1806191228110.25656@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180622090151.GS10465@dhcp22.suse.cz> <alpine.LRH.2.02.1806220828040.8072@file01.intranet.prod.int.rdu2.redhat.com> <20180622131013.GA10465@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 22 Jun 2018 18:46:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 22 Jun 2018 18:46:59 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, 22 Jun 2018, Thomas Gleixner wrote: 
-> On Wed, 20 Jun 2018, Chang S. Bae wrote:
-> > CPU number initialization in vDSO is now a bit cleaned up by
-> > the new helper functions. The helper functions will take
-> > care of combing CPU and node number and reading each from
-
-> s/combing/combining/ please
-
-Will fix.
-
-> > @@ -18,9 +18,9 @@ __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
-> >       p = __getcpu();
-
-> While we are touching this, can we please as a first step change __getcpu()
-> to something else? I've tripped over this several times in the past and
-> confused it with a (nonexisting) variant of get_cpu().
-
-How about __vdso_get_cpudata()?
-
-> >  #ifdef CONFIG_NUMA
-> >       node = cpu_to_node(cpu);
-> >  #endif
-
-> While at it please get rid of the ifdeffery. If CONFIG_NUMA=n then
-> cpu_to_node(cpu) resolves to (0).
-
-Okay, will fix this.
 
 
-> >
-> >       if (cpu)
-> > -             *cpu = p & VGETCPU_CPU_MASK;
-> > +             *cpu = lsl_tscp_to_cpu(p);
-> >
-> >       if (node)
-> > -             *node = p >> 12;
-> > +             *node = lsl_tscp_to_node(p);
->
-> Are these new helpers going to be used at some other place than this? If
-> not, then there is really no point at all. Then just go and make this:
->
-> __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
-> {
->         vdso_read_cpu_and_node(cpu, node);
->         return 0;
-> }
+On Fri, 22 Jun 2018, Michal Hocko wrote:
 
-> > @@ -340,19 +340,19 @@ static void vgetcpu_cpu_init(void *arg)
-> >       int cpu = smp_processor_id();
-> >       struct desc_struct d = { };
-> >       unsigned long node = 0;
-> > +     unsigned long cpu_number = 0;
->
-> That's hardly a CPU number. It's encoded CPU and node information.
->
-> > +     cpu_number = make_lsl_tscp(cpu, node);
->
-> So the whole thing can be reduced to:
->
->         u64 cpudata = vdso_encode_cpu_and_node(cpu, cpu_to_node(cpu));
->
-> Or some other sensible function name.
+> On Fri 22-06-18 08:44:52, Mikulas Patocka wrote:
+> > On Fri, 22 Jun 2018, Michal Hocko wrote:
+> [...]
+> > > Why? How are you going to audit all the callers that the behavior makes
+> > > sense and moreover how are you going to ensure that future usage will
+> > > still make sense. The more subtle side effects gfp flags have the harder
+> > > they are to maintain.
+> > 
+> > I did audit them - see the previous email in this thread: 
+> > https://www.redhat.com/archives/dm-devel/2018-June/thread.html
+> 
+> I do not see any mention about throttling expectations for those users.
+> You have focused only on the allocation failure fallback AFAIR
 
-Now, for these helper function renaming, I would like to check it from Andy.
+How should the callers be analyzed with respect to throttling?
 
-Thanks, 
-Chang
+Mikulas
