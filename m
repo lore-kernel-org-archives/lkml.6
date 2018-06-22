@@ -2,97 +2,111 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C7BC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7426C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC381242A8
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:27:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="MOS0Wr5n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC381242A8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=posteo.de
+	by mail.kernel.org (Postfix) with ESMTP id 7F3A4242B9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:29:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3A4242B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753279AbeFVN1w (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:27:52 -0400
-Received: from mout01.posteo.de ([185.67.36.65]:59816 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751315AbeFVN1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:27:51 -0400
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id E65B920E33
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 15:27:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1529674069; bh=9te1GlP18roQlxEE10FWJg39nxorUk+bQpniiOa9dFo=;
-        h=Subject:To:Cc:From:Date:From;
-        b=MOS0Wr5n6y2MxlNdgFChxDXyh5hkXvn9zi76XU8e2lBf3iKfY6K9DteAvpbFV8HIp
-         quCCjPAkKML9bfMuJeU4AP92qNEEGg0qWYRWRlwZS6SFz6IfPI07OatsDgO5QcN0H7
-         1uGcGS9BRLe7CdJhlxHHoWsXmA73zqoE3WZ171oQ4ZtvIhWKIlYsPFLfeG2hiqizuX
-         OMavlW5EOt3+0n/lIbs6UXEAXFhOadwoiNnu4LsX4OGTefZPskgkXaLSOYjBEdGaR3
-         I2k4fibIDi8Jkmqxb8zss1TkCeYGuqwOJHbEAjtY9BizFIps+SLLphZ5vqSFTqewBg
-         WYEkXN/s1LsWg==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 41Bzry6qydz9rxK;
-        Fri, 22 Jun 2018 15:27:46 +0200 (CEST)
-Subject: Re: [PATCH] staging: rtl8723bs: fix brace coding style issues
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-References: <20180621182155.27769-1-michael.straube@posteo.de>
- <20180622102800.4p6wabmte4yf4rtp@mwanda>
-From:   Michael Straube <michael.straube@posteo.de>
-Message-ID: <bc244970-498d-c6e7-7ed0-3c3d77777ccc@posteo.de>
-Date:   Fri, 22 Jun 2018 15:27:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932719AbeFVN3o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 09:29:44 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:33218 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751266AbeFVN3m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 09:29:42 -0400
+Received: by mail-ua0-f194.google.com with SMTP id m21-v6so4289478uan.0;
+        Fri, 22 Jun 2018 06:29:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=brv17cAYi9W+9YCvhKMUCNrcwYATZwZOiwB4c6G+enQ=;
+        b=Rvnkbc2E0psrPKnlYJM0CFf93ISP5GlSLkqki2uJvpXomJmmzkgAQzOku8IILAKQqV
+         EMEGGyAmStJRJ3yKDb/NnJX1dxt/JACo92pmgbKFbtuLA8ZvktOSSO200gPOghEBt4Yj
+         r2sxctLPC/IzslJva+aq2aQnQUFTAlICq+HBFUEN17+RLO0Ady44JMP1ZY8sirHfU+4i
+         6b7+bGiIn1ETtxtJz1EHXV5HZxETen/ToV1CfsjI7WYcMkoCAclxiNj3y1dsA5lJ5PZo
+         oaIZUbbNrO24zO8/WuYKxLtXqsRNc1G893ghssbhWKJixuvmlXoDWySk2V3RzEsB/568
+         bbLA==
+X-Gm-Message-State: APt69E3+dA5V4lmkIKH/Yi0p/aMRIpKUJLGg1A2uWh/fPQhgj1brRpLU
+        F2Vygd3uVSxN4IHG+adloUTRaWvImP7VDpYnE4k=
+X-Google-Smtp-Source: AAOMgpf4y/BXL+Use6aExtiYSaaPeLaSAi2xx3xyLiOxGe6qx9tWNn6qwhidczgMTM866tWul385NcFpDymJwWHkRZI=
+X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr1064377uae.12.1529674181408;
+ Fri, 22 Jun 2018 06:29:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180622102800.4p6wabmte4yf4rtp@mwanda>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com> <1528973829-25493-6-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1528973829-25493-6-git-send-email-michel.pollet@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 22 Jun 2018 15:29:30 +0200
+Message-ID: <CAMuHMdUin=CjcWvR=nCm9vN-8VWaNXbFt+3k_MUEOmqpKoe2mA@mail.gmail.com>
+Subject: Re: [PATCH v9 5/5] clk: renesas: Renesas R9A06G032 clock driver
+To:     Michel Pollet <michel.pollet@bp.renesas.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/22/18 12:28, Dan Carpenter wrote:
->>   	if (count < 1)
->>   		return -EFAULT;
->>   
->> -	if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp))) {
->> +	if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp)))
->>   		sscanf(tmp, "%u", &g_wait_hiq_empty);
->> -	}
-> 
-> 
-> The original code is kind of bad.  The NULL check isn't required.
+Hi Michel,
 
-Just for clarification, NULL check refers to checking if buffer != NULL in the
-if condition?
+On Thu, Jun 14, 2018 at 1:03 PM Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This provides a clock driver for the Renesas R09A06G032.
+> This uses a structure derived from both the RCAR gen2 driver as well as
+> the renesas-cpg-mssr driver.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-        if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp)))
-            ~~~~~~
+Thanks for your patch!
 
-> The sscanf call should have error checking.  The error code is wrong if
-> the copy from user fails.  The tmp buffer isn't NUL terminated.
-> 
-> 	if (copy_from_user(tmp, buffer, sizeof(tmp)))
-> 		return -EFAULT;
-> 	tmp[sizeof(tmp) - 1] = '\0';
-> 
-> 	if (sscanf(tmp, "%u", &g_wait_hiq_empty) != 1)
-> 		return -EINVAL;
-> 
-> 	return count;
-> 
-> regards,
-> dan carpenter
-> 
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
 
-Regards,
-Michael
+> +static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+> +{
+
+[...]
+
+> +       error = of_clk_add_provider(np, of_clk_src_onecell_get, &clocks->data);
+> +       if (error)
+> +               return error;
+> +
+> +       error = devm_add_action_or_reset(
+> +                       dev, r9a06g032_clocks_del_clk_provider, np);
+> +
+> +       return error;
+
+This could just be "return devm_add_action_or_reset(...);".
+
+Queuing in clk-renesas-for-v4.19 with the above small change.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
