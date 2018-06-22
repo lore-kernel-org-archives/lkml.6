@@ -2,111 +2,161 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2AEC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF6DC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA2572405B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:36:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GZ+f5FPC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B3XIy7Al"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA2572405B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 013CA24004
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013CA24004
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeFVKg0 (ORCPT
+        id S1754071AbeFVKiE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 06:36:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51554 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751301AbeFVKgY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 06:36:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F390560714; Fri, 22 Jun 2018 10:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529663784;
-        bh=7y7AAtEhg1NPPztWkyAYrWW2du4Xfs0eXX9tfhLu9DY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GZ+f5FPCLzP3q/9Le7MITjPrVIFTaG4Bvtc3h3I7LwdseHa+qOyQ0NImNpljjDxmG
-         +ewxyOg517HJpmV8xsCVL6daUeoSOVjN7jm0IveSykUMC/RxJPDqTUXKpsgbb3F7ks
-         8Jp3N/fMY+vg0HtVEodjyMcVxQF9ftz+Czi/8P74=
-Received: from [10.204.110.13] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3347E604A6;
-        Fri, 22 Jun 2018 10:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529663783;
-        bh=7y7AAtEhg1NPPztWkyAYrWW2du4Xfs0eXX9tfhLu9DY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=B3XIy7AlCBu1ercfR06rwpAg6cxHxeimbsJGByiYAALyif0YlbTZN2udlndpc09X9
-         HU9h29O8JXsOhAK+QXn3eYq9NL4L26VFOmxIGeL9e1r1qyQfm7zyW0ituvsqUCbPPV
-         z1iW6ykoMPSbml1fognsNVHGnVAxHDeGidPB3f2U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3347E604A6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH v2 2/2] ASoC: qcom: add sdm845 sound card
- support
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Vinod <vkoul@kernel.org>
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
-        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
-        lgirdwood@gmail.com, robh+dt@kernel.org, broonie@kernel.org
-References: <1529578399-3633-1-git-send-email-rohitkr@codeaurora.org>
- <1529578399-3633-3-git-send-email-rohitkr@codeaurora.org>
- <20180621123503.GD27187@vkoul-mobl>
- <46f1a6af-a180-2568-d203-87323379c2fd@linaro.org>
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <58db39ee-d2a7-1cdf-c7e2-eea020c8a2c6@codeaurora.org>
-Date:   Fri, 22 Jun 2018 16:06:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 06:38:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33134 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751377AbeFVKiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 06:38:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99E411A9;
+        Fri, 22 Jun 2018 03:38:02 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6A6BE3F557;
+        Fri, 22 Jun 2018 03:38:02 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id D57AD1AE3632; Fri, 22 Jun 2018 11:38:38 +0100 (BST)
+Date:   Fri, 22 Jun 2018 11:38:38 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
+ release-acquire and by locks
+Message-ID: <20180622103838.GF7601@arm.com>
+References: <Pine.LNX.4.44L0.1806211322160.2381-100000@iolanthe.rowland.org>
+ <20180622080928.GB7601@arm.com>
+ <20180622095547.GE7601@arm.com>
+ <20180622103129.GQ2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <46f1a6af-a180-2568-d203-87323379c2fd@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622103129.GQ2476@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Peter,
+
+On Fri, Jun 22, 2018 at 12:31:29PM +0200, Peter Zijlstra wrote:
+> On Fri, Jun 22, 2018 at 10:55:47AM +0100, Will Deacon wrote:
+> > On Fri, Jun 22, 2018 at 09:09:28AM +0100, Will Deacon wrote:
+> > > On Thu, Jun 21, 2018 at 01:27:12PM -0400, Alan Stern wrote:
+> > > > More than one kernel developer has expressed the opinion that the LKMM
+> > > > should enforce ordering of writes by release-acquire chains and by
+> > > > locking.  In other words, given the following code:
+> > > > 
+> > > > 	WRITE_ONCE(x, 1);
+> > > > 	spin_unlock(&s):
+> > > > 	spin_lock(&s);
+> > > > 	WRITE_ONCE(y, 1);
+> 
+> So this is the one I'm relying on and really want sorted.
+
+Agreed, and I think this one makes a lot of sense.
+
+> 
+> > > > or the following:
+> > > > 
+> > > > 	smp_store_release(&x, 1);
+> > > > 	r1 = smp_load_acquire(&x);	// r1 = 1
+> > > > 	WRITE_ONCE(y, 1);
+> 
+> Reading back some of the old threads [1], it seems the direct
+> translation of the first into acquire-release would be:
+> 
+> 	WRITE_ONCE(x, 1);
+> 	smp_store_release(&s, 1);
+> 	r1 = smp_load_acquire(&s);
+> 	WRITE_ONCE(y, 1);
+> 
+> Which is I think easier to make happen than the second example you give.
+
+It's easier, but it will still break on architectures with native support
+for RCpc acquire/release. For example, using LDAPR again:
 
 
-On 6/21/2018 8:39 PM, Srinivas Kandagatla wrote:
->
->
-> On 21/06/18 13:35, Vinod wrote:
->> And this one is generic DT parsing and seems quite similar to one in 
->> apq8096.c
->> Can we move these into a lib and use them instead of duplicating.
-> I totally agree with Vinod, We should probably come up with a library 
-> functions something like common.c so that we do not duplicate code.
-> This code is going be exactly same for most of the SoCs using qdsp.
->
-Sure, I will add a new file, qcom_snd_common.c, which will have these 
-common functions and will update apq8096 and sdm845 machine driver to use
-APIs exposed by qcom_snd_common.c
+AArch64 MP+popl-rfilq-poqp+poap
+"PodWWPL RfiLQ PodRWQP RfePA PodRRAP Fre"
+Generator=diyone7 (version 7.46+3)
+Prefetch=0:x=F,0:z=W,1:z=F,1:x=T
+Com=Rf Fr
+Orig=PodWWPL RfiLQ PodRWQP RfePA PodRRAP Fre
+{
+0:X1=x; 0:X3=y; 0:X6=z;
+1:X1=z; 1:X3=x;
+}
+ P0            | P1           ;
+ MOV W0,#1     | LDAR W0,[X1] ;
+ STR W0,[X1]   | LDR W2,[X3]  ;
+ MOV W2,#1     |              ;
+ STLR W2,[X3]  |              ;
+ LDAPR W4,[X3] |              ;
+ MOV W5,#1     |              ;
+ STR W5,[X6]   |              ;
+exists
+(0:X4=1 /\ 1:X0=1 /\ 1:X2=0)
 
-> thanks,
-> srini
->
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
 
-Regards,
-Rohit
+then this is permitted on arm64.
 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+> > > > the stores to x and y should be propagated in order to all other CPUs,
+> > > > even though those other CPUs might not access the lock s or be part of
+> > > > the release-acquire chain.  In terms of the memory model, this means
+> > > > that rel-rf-acq-po should be part of the cumul-fence relation.
+> > > > 
+> > > > All the architectures supported by the Linux kernel (including RISC-V)
+> > > > do behave this way, albeit for varying reasons.  Therefore this patch
+> > > > changes the model in accordance with the developers' wishes.
+> > > 
+> > > Interesting...
+> > > 
+> > > I think the second example would preclude us using LDAPR for load-acquire,
+> > > so I'm surprised that RISC-V is ok with this. For example, the first test
+> > > below is allowed on arm64.
+> > > 
+> > > I also think this would break if we used DMB LD to implement load-acquire
+> > > (second test below).
+> > > 
+> > > So I'm not a big fan of this change, and I'm surprised this works on all
+> > > architectures. What's the justification?
+> > 
+> > I also just realised that this prevents Power from using ctrl+isync to
+> > implement acquire, should they wish to do so.
+> 
+> They in fact do so on chips lacking LWSYNC, see how PPC_ACQUIRE_BARRIER
+> (as used by atomic_*_acquire) turns into ISYNC (note however that they
+> do not use PPC_ACQUIRE_BARRIER for smp_load_acquire -- because there's
+> no CTRL there).
 
+Right, so the example in the commit message is broken on PPC then. I think
+it's also broken on RISC-V, despite the claim.
+
+Could we drop the acquire/release stuff from the patch and limit this change
+to locking instead?
+
+Will
