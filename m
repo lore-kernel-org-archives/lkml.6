@@ -3,190 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BC3C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F9FC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C247F24689
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:14:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C247F24689
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id CA1A924690
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:16:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA1A924690
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933576AbeFVROH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:14:07 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54898 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754497AbeFVROD (ORCPT
+        id S933596AbeFVRQD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 13:16:03 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:60220 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754291AbeFVRQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:14:03 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id B822C276E5D
-Message-ID: <1e792d3c972998f92109c127886243e32c4cde71.camel@collabora.com>
-Subject: Re: [PATCH v3] PM / devfreq: Fix devfreq_add_device() when drivers
- are built as modules.
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Akhil P Oommen <akhilpo@codeaurora.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Fri, 22 Jun 2018 13:16:02 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fWPfE-0001EU-Rj; Fri, 22 Jun 2018 13:16:00 -0400
+Message-ID: <1529687760.7898.200.camel@surriel.com>
+Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+From:   Rik van Riel <riel@surriel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-pm@vger.kernel.org
-Date:   Fri, 22 Jun 2018 14:13:53 -0300
-In-Reply-To: <addc4280-729f-85d7-a314-35afbb7c8bb1@codeaurora.org>
-References: <20180621220430.25644-1-enric.balletbo@collabora.com>
-         <0383b4a703a0b619023c0654a4a7637419c72ebd.camel@collabora.com>
-         <addc4280-729f-85d7-a314-35afbb7c8bb1@codeaurora.org>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2-1 
+Cc:     x86@kernel.org, luto@kernel.org, mingo@kernel.org,
+        tglx@linutronix.de, efault@gmx.de, songliubraving@fb.com,
+        kernel-team@fb.com
+Date:   Fri, 22 Jun 2018 13:16:00 -0400
+In-Reply-To: <187ad4e2-d72b-2267-df40-dfb178ab0e47@linux.intel.com>
+References: <20180620195652.27251-1-riel@surriel.com>
+         <20180620195652.27251-5-riel@surriel.com>
+         <187ad4e2-d72b-2267-df40-dfb178ab0e47@linux.intel.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-+GVLtYbPYUpEmsSDSx4S"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Akhil,
 
-On Fri, 2018-06-22 at 12:33 +0530, Akhil P Oommen wrote:
-> On 6/22/2018 6:41 AM, Ezequiel Garcia wrote:
-> > Hey Enric,
-> > 
-> > On Fri, 2018-06-22 at 00:04 +0200, Enric Balletbo i Serra wrote:
-> > > When the devfreq driver and the governor driver are built as
-> > > modules,
-> > > the call to devfreq_add_device() or governor_store() fails
-> > > because
-> > > the
-> > > governor driver is not loaded at the time the devfreq driver
-> > > loads.
-> > > The
-> > > devfreq driver has a build dependency on the governor but also
-> > > should
-> > > have a runtime dependency. We need to make sure that the governor
-> > > driver
-> > > is loaded before the devfreq driver.
-> > > 
-> > > This patch fixes this bug by adding a try_then_request_governor()
-> > > function. First tries to find the governor, and then, if it is
-> > > not
-> > > found,
-> > > it requests the module and tries again.
-> > > 
-> > > Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to
-> > > governor
-> > > using name)
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.c
-> > > om>
-> > > ---
-> > > 
-> > > Changes in v3:
-> > > - Remove unneded change in dev_err message.
-> > > - Fix err returned value in case to not find the governor.
-> > > 
-> > > Changes in v2:
-> > > - Add a new function to request the module and call that function
-> > > from
-> > >    devfreq_add_device and governor_store.
-> > > 
-> > >   drivers/devfreq/devfreq.c | 65
-> > > ++++++++++++++++++++++++++++++++-----
-> > > --
-> > 
-> > [snip snip]
-> > > -	governor = find_devfreq_governor(devfreq-
-> > > >governor_name);
-> > > +	governor = try_then_request_governor(devfreq-
-> > > > governor_name);
-> > > 
-> > >   	if (IS_ERR(governor)) {
-> > >   		dev_err(dev, "%s: Unable to find governor for
-> > > the
-> > > device\n",
-> > >   			__func__);
-> > >   		err = PTR_ERR(governor);
-> > > -		goto err_init;
-> > > +		goto err_unregister;
-> > >   	}
-> > >   
-> > > +	mutex_lock(&devfreq_list_lock);
-> > > +
-> > 
-> > I know it's not something we are introducing in this patch,
-> > but still... calling a hook with a mutex held looks
-> > fishy to me.
-> > 
-> > This lock should only protect the list, unless I am missing
-> > something.
-> > 
-> > >   	devfreq->governor = governor;
-> > >   	err = devfreq->governor->event_handler(devfreq,
-> > > DEVFREQ_GOV_START,
-> > >   						NULL);
-> > > @@ -663,14 +703,16 @@ struct devfreq *devfreq_add_device(struct
-> > > device *dev,
-> > >   			__func__);
-> > >   		goto err_init;
-> > >   	}
-> > > +
-> > > +	list_add(&devfreq->node, &devfreq_list);
-> > > +
-> > >   	mutex_unlock(&devfreq_list_lock);
-> > >   
-> > >   	return devfreq;
-> > >   
-> > >   err_init:
-> > > -	list_del(&devfreq->node);
-> > >   	mutex_unlock(&devfreq_list_lock);
-> > > -
-> > > +err_unregister:
-> > >   	device_unregister(&devfreq->dev);
-> > >   err_dev:
-> > >   	if (devfreq)
-> > > @@ -988,12 +1030,13 @@ static ssize_t governor_store(struct
-> > > device
-> > > *dev, struct device_attribute *attr,
-> > >   	if (ret != 1)
-> > >   		return -EINVAL;
-> > >   
-> > > -	mutex_lock(&devfreq_list_lock);
-> > > -	governor = find_devfreq_governor(str_governor);
-> > > +	governor = try_then_request_governor(str_governor);
-> > >   	if (IS_ERR(governor)) {
-> > > -		ret = PTR_ERR(governor);
-> > > -		goto out;
-> > > +		return PTR_ERR(governor);
-> > >   	}
-> > > +
-> > > +	mutex_lock(&devfreq_list_lock);
-> > > +
-> > >   	if (df->governor == governor) {
-> > >   		ret = 0;
-> > >   		goto out;
-> > > -- 
-> > > 2.17.1
-> > > 
-> > > 
-> > 
-> > Regards,
-> > Eze
-> 
-> Adding to Ezequiel's point, shouldn't we take more granular lock 
-> (devfreq->lock) first and then call devfreq_list_lock at the time of 
-> adding to the list?
-> 
+--=-+GVLtYbPYUpEmsSDSx4S
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Not sure why we should do that. devfreq->lock should be used to
-protect the struct devfreq state, while the devfreq_list_lock
-is apparently protecting the two lists (which seem unrelated
-lists).
+On Fri, 2018-06-22 at 10:05 -0700, Dave Hansen wrote:
+> On 06/20/2018 12:56 PM, Rik van Riel wrote:
+> > This patch deals with that issue by introducing a third TLB state,
+> > TLBSTATE_FLUSH, which causes %CR3 to be reloaded at the next
+> > context
+> > switch.
+>=20
+> With PCIDs, do we need to be a bit more explicit about what kind of
+> %CR3
+> reload we have?  Because, with PCIDs, we do have non-TLB-flushing
+> %CR3
+> writes.
 
-So, the two locks are not correlated.
+Probably not in this patch series, because switch_mm_irqs_off
+calls choose_new_asid, which figures all of this out for us
+already.
 
-Regards,
-Eze
+Specifically, it has this bit of code to figure out whether
+we need a flush:
+
+                *need_flush =3D
+(this_cpu_read(cpu_tlbstate.ctxs[asid].tlb_gen) <
+                               next_tlb_gen);
+
+As long as we get the memory ordering right, we should be
+able to rely on that to switch back from lazy to non-lazy
+TLB mode.
+
+--=20
+All Rights Reversed.
+--=-+GVLtYbPYUpEmsSDSx4S
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlstLtAACgkQznnekoTE
+3oN93wf+KW+bpoRkPGv3Yoe6I7v2+tr/QwCuu+74/jc54x8rDGs/E1ZO4gFZX4uQ
+q/uDMwq7+JyiXPBtxPXdBAgq/An4743IPzTyrHzwwTiPI8G/A3sl6gpD0Wjm5W4x
+qVvZ0I009GSI3enFk07nD8F9d6qSXdW7lQCma+cPnaEiWifmS/bHsqxsuZqriYqM
+8SegQwXEiXmb0AFw7/aEnId6AnPyVfN0OUstD36N1OpEqH66rcZVLjy9IrPUrbw5
+p3v8Z01w51oMaKk7DFTNcZSfSrMQwDdWhz3383klY5Ym9iF9FYu8vmt2Q6hE9Hmc
+qlVowUSaPMQIFBMSyteUT3XsZ2du1A==
+=ZQ7O
+-----END PGP SIGNATURE-----
+
+--=-+GVLtYbPYUpEmsSDSx4S--
+
