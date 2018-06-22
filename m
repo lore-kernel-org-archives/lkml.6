@@ -2,96 +2,116 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D1CC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD513C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175722407B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:42:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175722407B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7D79124082
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:44:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HeFnNsYe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D79124082
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933465AbeFVKmX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 06:42:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33493 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751338AbeFVKmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 06:42:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 490C3AC6A;
-        Fri, 22 Jun 2018 10:42:19 +0000 (UTC)
-Date:   Fri, 22 Jun 2018 12:42:17 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     =?utf-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-Cc:     akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
-Subject: Re: [PATCH v9] Refactor part of the oom report in dump_header
-Message-ID: <20180622104217.GV10465@dhcp22.suse.cz>
-References: <1529056341-16182-1-git-send-email-ufo19890607@gmail.com>
- <20180622083949.GR10465@dhcp22.suse.cz>
- <CAHCio2jkE2FGc2g48jm+ddvEbN3hEOoohBM+-871v32N2i2gew@mail.gmail.com>
+        id S932968AbeFVKoa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 06:44:30 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59002 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751329AbeFVKo2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 06:44:28 -0400
+X-Greylist: delayed 1677 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Jun 2018 06:44:28 EDT
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w5MAGPm9044071;
+        Fri, 22 Jun 2018 05:16:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1529662585;
+        bh=56ekOV6VA3aR+GHFwQWLfnVzLudJ+eyQsWjORFa8TqM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=HeFnNsYeuwRAQ3IiXrM00ooSqYg9Zj6OQS63I/4P3VO2UfXFQXJjg3iUl6Y5BATb8
+         bxiXWdFBMjS1ZFtiRbPbQy1LexCRzfmQO7ILLiDZYukWH3RACpa5FoZrh5E6c941mb
+         sGpC6ToO4rWtCbS5UvueFhgtVko99VbryRkYAAXo=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5MAGO3f011819;
+        Fri, 22 Jun 2018 05:16:25 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 22
+ Jun 2018 05:16:24 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 22 Jun 2018 05:16:24 -0500
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5MAGI3T032544;
+        Fri, 22 Jun 2018 05:16:22 -0500
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Santosh Shilimkar <ssantosh@kernel.org>, <kishon@ti.com>
+CC:     <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
+Subject: [PATCH RESEND 1/3] ARM: dts: keystone-k2g-evm: Add "vqmmc-supply" property for mmc0/mmc1
+Date:   Fri, 22 Jun 2018 15:46:15 +0530
+Message-ID: <20180622101617.11157-2-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180622101617.11157-1-kishon@ti.com>
+References: <20180622101617.11157-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHCio2jkE2FGc2g48jm+ddvEbN3hEOoohBM+-871v32N2i2gew@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 22-06-18 17:33:12, 禹舟键 wrote:
-> Hi Michal
-> > diff --git a/include/linux/oom.h b/include/linux/oom.h
-> > index 6adac113e96d..5bed78d4bfb8 100644
-> > --- a/include/linux/oom.h
-> > +++ b/include/linux/oom.h
-> > @@ -15,6 +15,20 @@ struct notifier_block;
-> >  struct mem_cgroup;
-> >  struct task_struct;
-> >
-> > +enum oom_constraint {
-> > +     CONSTRAINT_NONE,
-> > +     CONSTRAINT_CPUSET,
-> > +     CONSTRAINT_MEMORY_POLICY,
-> > +     CONSTRAINT_MEMCG,
-> > +};
-> > +
-> > +static const char * const oom_constraint_text[] = {
-> > +     [CONSTRAINT_NONE] = "CONSTRAINT_NONE",
-> > +     [CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
-> > +     [CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
-> > +     [CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
-> > +};
-> 
-> > I've suggested that this should be a separate patch.
-> I've separate this part in patch v7.
-> 
-> [PATCH v7 1/2] Add an array of const char and enum oom_constraint in
-> memcontrol.h
-> On Sat 02-06-18 19:58:51, ufo19890607@gmail.com wrote:
-> >> From: yuzhoujian <yuzhoujian@didichuxing.com>
-> >>
-> >> This patch will make some preparation for the follow-up patch: Refactor
-> >> part of the oom report in dump_header. It puts enum oom_constraint in
-> >> memcontrol.h and adds an array of const char for each constraint.
-> 
-> > I do not get why you separate this specific part out.
-> > oom_constraint_text is not used in the patch. It is almost always
-> > preferable to have a user of newly added functionality.
-> 
-> So do I need to separate this part ?
+Add "vqmmc-supply" property for mmc0/mmc1 to indicate the supply connected
+to the IO lines. Also add dt node for ldo1 regulator required for mmc1
+vqmmc-supply.
 
-You misunderstood my suggestion. Let me be more specific. Please
-separate the whole new oom_constraint including its _usage_.
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+ arch/arm/boot/dts/keystone-k2g-evm.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/keystone-k2g-evm.dts b/arch/arm/boot/dts/keystone-k2g-evm.dts
+index 154fdd7a7022..ba030c496f51 100644
+--- a/arch/arm/boot/dts/keystone-k2g-evm.dts
++++ b/arch/arm/boot/dts/keystone-k2g-evm.dts
+@@ -37,6 +37,14 @@
+ 		regulator-max-microvolt = <3300000>;
+ 		regulator-always-on;
+ 	};
++
++	vcc1v8_ldo1_reg: fixedregulator-vcc1v8-ldo1 {
++		compatible = "regulator-fixed";
++		regulator-name = "ldo1";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
+ };
+ 
+ &k2g_pinctrl {
+@@ -144,6 +152,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
+ 	vmmc-supply = <&vcc3v3_dcin_reg>;
++	vqmmc-supply = <&vcc3v3_dcin_reg>;
+ 	cd-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ };
+@@ -152,6 +161,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc1_pins>;
+ 	vmmc-supply = <&vcc3v3_dcin_reg>; /* VCC3V3_EMMC is connected to VCC3V3_DCIN */
++	vqmmc-supply = <&vcc1v8_ldo1_reg>;
+ 	ti,non-removable;
+ 	status = "okay";
+ };
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
