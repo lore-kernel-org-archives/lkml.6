@@ -2,223 +2,100 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AD0C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208E6C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 202AD244EE
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:43:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 202AD244EE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D3D24244EE
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:44:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3D24244EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934189AbeFVPnv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:43:51 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:46337 "EHLO extserv.mm-sol.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933923AbeFVPeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:34:00 -0400
-Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 9B8C7CD36;
-        Fri, 22 Jun 2018 18:33:58 +0300 (EEST)
-From:   Todor Tomov <todor.tomov@linaro.org>
-To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
-        linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 01/32] doc-rst: Add packed Bayer raw14 pixel formats
-Date:   Fri, 22 Jun 2018 18:33:10 +0300
-Message-Id: <1529681621-9682-2-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
-References: <1529681621-9682-1-git-send-email-todor.tomov@linaro.org>
+        id S934017AbeFVPom (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:44:42 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42065 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933738AbeFVPol (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 11:44:41 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fWOEO-0007wV-Or; Fri, 22 Jun 2018 17:44:12 +0200
+Date:   Fri, 22 Jun 2018 17:44:12 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Reinette Chatre <reinette.chatre@intel.com>
+cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the vfs tree
+In-Reply-To: <5462d90a-0cac-ca10-1633-275a9836ad41@intel.com>
+Message-ID: <alpine.DEB.2.21.1806221742280.2402@nanos.tec.linutronix.de>
+References: <e6a26908-67b2-e32e-06b5-d2e62acce305@intel.com> <20180622115346.1e9cc433@canb.auug.org.au> <29411.1529671523@warthog.procyon.org.uk> <20180622130600.GY30522@ZenIV.linux.org.uk> <alpine.DEB.2.21.1806221537570.2402@nanos.tec.linutronix.de>
+ <5462d90a-0cac-ca10-1633-275a9836ad41@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+On Fri, 22 Jun 2018, Reinette Chatre wrote:
+> On 6/22/2018 6:39 AM, Thomas Gleixner wrote:
+> > On Fri, 22 Jun 2018, Al Viro wrote:
+> >> On Fri, Jun 22, 2018 at 01:45:23PM +0100, David Howells wrote:
+> >>> Reinette Chatre <reinette.chatre@intel.com> wrote:
+> >>>
+> >>>> Thomas and David, please let me know what I can do from my side to help
+> >>>> with this.
+> >>>
+> >>> You could try basing on Al Viro's for-next tree which has the mount API
+> >>> changes in it.
+> >>
+> >> Umm...  That would be a massive headache for everyone involved; the changes
+> >> in there have very little in common with what you are doing in rdt_mount(),
+> >> so it might make sense to start with a minimal never-rebased branch that
+> >> would
+> >> 	* define rdt_pseudo_lock_init as 0
+> >> 	* define rdt_pseudo_lock_release as empty
+> >> 	* do the rdt_mount() part of a3dbd01e6c9d
+> >> 	* have commit message along the lines of
+> >> "hooks in rdt_mount() for rdt_pseudo_lock to use
+> >>
+> >> Functionally a no-op right now; the only reason for having that
+> >> as a never-rebased branch to get rdt_pseudo_lock and mount series
+> >> out of each other's hair"
+> >>
+> >> Base that on -rc1, then pull it into your rdt branch and David could pull the
+> >> same into his.
+> > 
+> > Yes, that works.
+> > 
+> > Reinette, can you please look into creating that ordering. Then we just zap
+> > the existing branch and redo it with this scheme.
+> 
+> Will do. How would you prefer to consume this to make the branches
+> simple to create? Is it ok if I create a new patch series with Al's
+> suggestion above as the first commit?
+> 
+> The original pseudo-locking patch series consisted out of two sections
+> with the pseudo-locking specific parts starting in the middle. If I
+> create a new series with the above change then it will not be cleanly
+> separate anymore. Is that ok?
 
-These formats are compressed 14-bit raw bayer formats with four different
-pixel orders. They are similar to 10-bit variants. The formats added by
-this patch are
+That's fine. Just mention it clearly in the changelog of that first one or
+two patches you need for that.
 
-	V4L2_PIX_FMT_SBGGR14P
-	V4L2_PIX_FMT_SGBRG14P
-	V4L2_PIX_FMT_SGRBG14P
-	V4L2_PIX_FMT_SRGGB14P
+Thanks,
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
----
- Documentation/media/uapi/v4l/pixfmt-rgb.rst      |   1 +
- Documentation/media/uapi/v4l/pixfmt-srggb14p.rst | 127 +++++++++++++++++++++++
- include/uapi/linux/videodev2.h                   |   5 +
- 3 files changed, 133 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
-
-diff --git a/Documentation/media/uapi/v4l/pixfmt-rgb.rst b/Documentation/media/uapi/v4l/pixfmt-rgb.rst
-index cf2ef7d..1f9a7e3 100644
---- a/Documentation/media/uapi/v4l/pixfmt-rgb.rst
-+++ b/Documentation/media/uapi/v4l/pixfmt-rgb.rst
-@@ -19,4 +19,5 @@ RGB Formats
-     pixfmt-srggb10-ipu3
-     pixfmt-srggb12
-     pixfmt-srggb12p
-+    pixfmt-srggb14p
-     pixfmt-srggb16
-diff --git a/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst b/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
-new file mode 100644
-index 0000000..88d20c0
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-srggb14p.rst
-@@ -0,0 +1,127 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _V4L2-PIX-FMT-SRGGB14P:
-+.. _v4l2-pix-fmt-sbggr14p:
-+.. _v4l2-pix-fmt-sgbrg14p:
-+.. _v4l2-pix-fmt-sgrbg14p:
-+
-+*******************************************************************************************************************************
-+V4L2_PIX_FMT_SRGGB14P ('pRCC'), V4L2_PIX_FMT_SGRBG14P ('pgCC'), V4L2_PIX_FMT_SGBRG14P ('pGCC'), V4L2_PIX_FMT_SBGGR14P ('pBCC'),
-+*******************************************************************************************************************************
-+
-+*man V4L2_PIX_FMT_SRGGB14P(2)*
-+
-+V4L2_PIX_FMT_SGRBG14P
-+V4L2_PIX_FMT_SGBRG14P
-+V4L2_PIX_FMT_SBGGR14P
-+14-bit packed Bayer formats
-+
-+
-+Description
-+===========
-+
-+These four pixel formats are packed raw sRGB / Bayer formats with 14
-+bits per colour. Every four consecutive samples are packed into seven
-+bytes. Each of the first four bytes contain the eight high order bits
-+of the pixels, and the three following bytes contains the six least
-+significants bits of each pixel, in the same order.
-+
-+Each n-pixel row contains n/2 green samples and n/2 blue or red samples,
-+with alternating green-red and green-blue rows. They are conventionally
-+described as GRGR... BGBG..., RGRG... GBGB..., etc. Below is an example
-+of one of these formats:
-+
-+**Byte Order.**
-+Each cell is one byte.
-+
-+
-+
-+.. flat-table::
-+    :header-rows:  0
-+    :stub-columns: 0
-+    :widths:       2 1 1 1 1 1 1 1
-+
-+
-+    -  .. row 1
-+
-+       -  start + 0:
-+
-+       -  B\ :sub:`00high`
-+
-+       -  G\ :sub:`01high`
-+
-+       -  B\ :sub:`02high`
-+
-+       -  G\ :sub:`03high`
-+
-+       -  G\ :sub:`01low bits 1--0`\ (bits 7--6)
-+	  B\ :sub:`00low bits 5--0`\ (bits 5--0)
-+
-+       -  R\ :sub:`02low bits 3--0`\ (bits 7--4)
-+	  G\ :sub:`01low bits 5--2`\ (bits 3--0)
-+
-+       -  G\ :sub:`03low bits 5--0`\ (bits 7--2)
-+	  R\ :sub:`02low bits 5--4`\ (bits 1--0)
-+
-+    -  .. row 2
-+
-+       -  start + 7:
-+
-+       -  G\ :sub:`00high`
-+
-+       -  R\ :sub:`01high`
-+
-+       -  G\ :sub:`02high`
-+
-+       -  R\ :sub:`03high`
-+
-+       -  R\ :sub:`01low bits 1--0`\ (bits 7--6)
-+	  G\ :sub:`00low bits 5--0`\ (bits 5--0)
-+
-+       -  G\ :sub:`02low bits 3--0`\ (bits 7--4)
-+	  R\ :sub:`01low bits 5--2`\ (bits 3--0)
-+
-+       -  R\ :sub:`03low bits 5--0`\ (bits 7--2)
-+	  G\ :sub:`02low bits 5--4`\ (bits 1--0)
-+
-+    -  .. row 3
-+
-+       -  start + 14
-+
-+       -  B\ :sub:`20high`
-+
-+       -  G\ :sub:`21high`
-+
-+       -  B\ :sub:`22high`
-+
-+       -  G\ :sub:`23high`
-+
-+       -  G\ :sub:`21low bits 1--0`\ (bits 7--6)
-+	  B\ :sub:`20low bits 5--0`\ (bits 5--0)
-+
-+       -  R\ :sub:`22low bits 3--0`\ (bits 7--4)
-+	  G\ :sub:`21low bits 5--2`\ (bits 3--0)
-+
-+       -  G\ :sub:`23low bits 5--0`\ (bits 7--2)
-+	  R\ :sub:`22low bits 5--4`\ (bits 1--0)
-+
-+    -  .. row 4
-+
-+       -  start + 21
-+
-+       -  G\ :sub:`30high`
-+
-+       -  R\ :sub:`31high`
-+
-+       -  G\ :sub:`32high`
-+
-+       -  R\ :sub:`33high`
-+
-+       -  R\ :sub:`31low bits 1--0`\ (bits 7--6)
-+	  G\ :sub:`30low bits 5--0`\ (bits 5--0)
-+
-+       -  G\ :sub:`32low bits 3--0`\ (bits 7--4)
-+	  R\ :sub:`31low bits 5--2`\ (bits 3--0)
-+
-+       -  R\ :sub:`33low bits 5--0`\ (bits 7--2)
-+	  G\ :sub:`32low bits 5--4`\ (bits 1--0)
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 600877b..a15e03b 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -609,6 +609,11 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_SGBRG12P v4l2_fourcc('p', 'G', 'C', 'C')
- #define V4L2_PIX_FMT_SGRBG12P v4l2_fourcc('p', 'g', 'C', 'C')
- #define V4L2_PIX_FMT_SRGGB12P v4l2_fourcc('p', 'R', 'C', 'C')
-+	/* 14bit raw bayer packed, 7 bytes for every 4 pixels */
-+#define V4L2_PIX_FMT_SBGGR14P v4l2_fourcc('p', 'B', 'E', 'E')
-+#define V4L2_PIX_FMT_SGBRG14P v4l2_fourcc('p', 'G', 'E', 'E')
-+#define V4L2_PIX_FMT_SGRBG14P v4l2_fourcc('p', 'g', 'E', 'E')
-+#define V4L2_PIX_FMT_SRGGB14P v4l2_fourcc('p', 'R', 'E', 'E')
- #define V4L2_PIX_FMT_SBGGR16 v4l2_fourcc('B', 'Y', 'R', '2') /* 16  BGBG.. GRGR.. */
- #define V4L2_PIX_FMT_SGBRG16 v4l2_fourcc('G', 'B', '1', '6') /* 16  GBGB.. RGRG.. */
- #define V4L2_PIX_FMT_SGRBG16 v4l2_fourcc('G', 'R', '1', '6') /* 16  GRGR.. BGBG.. */
--- 
-2.7.4
-
+	tglx
