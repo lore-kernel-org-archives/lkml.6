@@ -6,44 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 638DAC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDFCC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28CF6246AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:25:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28CF6246AF
+	by mail.kernel.org (Postfix) with ESMTP id 48FFD246B3
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:25:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48FFD246B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934326AbeFVRZU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:25:20 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:11295 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933285AbeFVRWn (ORCPT
+        id S934346AbeFVRZh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 13:25:37 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:17636 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933095AbeFVRWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 13:22:43 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 22 Jun 2018 10:22:34 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Fri, 22 Jun 2018 10:22:04 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 191A24061B;
-        Fri, 22 Jun 2018 10:22:42 -0700 (PDT)
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id D222E40614;
+        Fri, 22 Jun 2018 10:22:41 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC:     Nadav Amit <namit@vmware.com>, Alok Kataria <akataria@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        <virtualization@lists.linux-foundation.org>
-Subject: [PATCH v6 6/9] x86: prevent inline distortion by paravirt ops
-Date:   Fri, 22 Jun 2018 10:22:09 -0700
-Message-ID: <20180622172212.199633-7-namit@vmware.com>
+CC:     Nadav Amit <namit@vmware.com>, Christopher Li <sparse@chrisli.org>,
+        <linux-sparse@vger.kernel.org>
+Subject: [PATCH v6 2/9] x86: objtool: use asm macro for better compiler decisions
+Date:   Fri, 22 Jun 2018 10:22:05 -0700
+Message-ID: <20180622172212.199633-3-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180622172212.199633-1-namit@vmware.com>
 References: <20180622172212.199633-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -56,147 +53,120 @@ the block in time and space. This data is distorted by the kernel code,
 which puts information in alternative sections. As a result, the
 compiler may perform incorrect inlining and branch optimizations.
 
-The solution is to set an assembly macro and call it from the inlined
+In the case of objtool, this distortion is extreme, since anyhow the
+annotations of objtool are discarded during linkage.
+
+The solution is to set an assembly macro and call it from the inline
 assembly block. As a result GCC considers the inline assembly block as
 a single instruction.
 
-The effect of the patch is a more aggressive inlining, which also
-causes a size increase of kernel.
+This patch slightly increases the kernel size.
 
    text	   data	    bss	    dec	    hex	filename
-18147336 10226688 2957312 31331336 1de1408 ./vmlinux before
-18162555 10226288 2957312 31346155 1de4deb ./vmlinux after (+14819)
+18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
+18140970 10225412 2957312 31323694 1ddf62e ./vmlinux after (+829)
 
 Static text symbols:
-Before:	40053
-After:	39942	(-111)
+Before:	40321
+After:	40302	(-19)
 
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: virtualization@lists.linux-foundation.org
+Cc: Christopher Li <sparse@chrisli.org>
+Cc: linux-sparse@vger.kernel.org
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/paravirt_types.h | 56 +++++++++++++--------------
- arch/x86/kernel/macros.S              |  1 +
- 2 files changed, 28 insertions(+), 29 deletions(-)
+ arch/x86/kernel/macros.S |  2 ++
+ include/linux/compiler.h | 56 ++++++++++++++++++++++++++++++----------
+ 2 files changed, 45 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 180bc0bff0fb..dd55d3d1c32a 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -343,23 +343,11 @@ extern struct pv_lock_ops pv_lock_ops;
- #define paravirt_clobber(clobber)		\
- 	[paravirt_clobber] "i" (clobber)
- 
--/*
-- * Generate some code, and mark it as patchable by the
-- * apply_paravirt() alternate instruction patcher.
-- */
--#define _paravirt_alt(insn_string, type, clobber)	\
--	"771:\n\t" insn_string "\n" "772:\n"		\
--	".pushsection .parainstructions,\"a\"\n"	\
--	_ASM_ALIGN "\n"					\
--	_ASM_PTR " 771b\n"				\
--	"  .byte " type "\n"				\
--	"  .byte 772b-771b\n"				\
--	"  .short " clobber "\n"			\
--	".popsection\n"
--
- /* Generate patchable code, with the default asm parameters. */
--#define paravirt_alt(insn_string)					\
--	_paravirt_alt(insn_string, "%c[paravirt_typenum]", "%c[paravirt_clobber]")
-+#define paravirt_call							\
-+	"PARAVIRT_CALL type=\"%c[paravirt_typenum]\""			\
-+	" clobber=\"%c[paravirt_clobber]\""				\
-+	" pv_opptr=\"%c[paravirt_opptr]\";"
- 
- /* Simple instruction patching code. */
- #define NATIVE_LABEL(a,x,b) "\n\t.globl " a #x "_" #b "\n" a #x "_" #b ":\n\t"
-@@ -387,16 +375,6 @@ unsigned native_patch(u8 type, u16 clobbers, void *ibuf,
- 
- int paravirt_disable_iospace(void);
- 
--/*
-- * This generates an indirect call based on the operation type number.
-- * The type number, computed in PARAVIRT_PATCH, is derived from the
-- * offset into the paravirt_patch_template structure, and can therefore be
-- * freely converted back into a structure offset.
-- */
--#define PARAVIRT_CALL					\
--	ANNOTATE_RETPOLINE_SAFE				\
--	"call *%c[paravirt_opptr];"
--
- /*
-  * These macros are intended to wrap calls through one of the paravirt
-  * ops structs, so that they can be later identified and patched at
-@@ -534,7 +512,7 @@ int paravirt_disable_iospace(void);
- 		/* since this condition will never hold */		\
- 		if (sizeof(rettype) > sizeof(unsigned long)) {		\
- 			asm volatile(pre				\
--				     paravirt_alt(PARAVIRT_CALL)	\
-+				     paravirt_call			\
- 				     post				\
- 				     : call_clbr, ASM_CALL_CONSTRAINT	\
- 				     : paravirt_type(op),		\
-@@ -544,7 +522,7 @@ int paravirt_disable_iospace(void);
- 			__ret = (rettype)((((u64)__edx) << 32) | __eax); \
- 		} else {						\
- 			asm volatile(pre				\
--				     paravirt_alt(PARAVIRT_CALL)	\
-+				     paravirt_call			\
- 				     post				\
- 				     : call_clbr, ASM_CALL_CONSTRAINT	\
- 				     : paravirt_type(op),		\
-@@ -571,7 +549,7 @@ int paravirt_disable_iospace(void);
- 		PVOP_VCALL_ARGS;					\
- 		PVOP_TEST_NULL(op);					\
- 		asm volatile(pre					\
--			     paravirt_alt(PARAVIRT_CALL)		\
-+			     paravirt_call				\
- 			     post					\
- 			     : call_clbr, ASM_CALL_CONSTRAINT		\
- 			     : paravirt_type(op),			\
-@@ -691,6 +669,26 @@ struct paravirt_patch_site {
- extern struct paravirt_patch_site __parainstructions[],
- 	__parainstructions_end[];
- 
-+#else	/* __ASSEMBLY__ */
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index cfc1c7d1a6eb..cee28c3246dc 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -5,3 +5,5 @@
+  * commonly used. The macros are precompiled into assmebly file which is later
+  * assembled together with each compiled file.
+  */
 +
-+/*
-+ * This generates an indirect call based on the operation type number.
-+ * The type number, computed in PARAVIRT_PATCH, is derived from the
-+ * offset into the paravirt_patch_template structure, and can therefore be
-+ * freely converted back into a structure offset.
-+ */
-+.macro PARAVIRT_CALL type:req clobber:req pv_opptr:req
-+771:	ANNOTATE_RETPOLINE_SAFE
-+	call *\pv_opptr
-+772:	.pushsection .parainstructions,"a"
-+	_ASM_ALIGN
-+	_ASM_PTR 771b
-+	.byte \type
-+	.byte 772b-771b
-+	.short \clobber
++#include <linux/compiler.h>
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 42506e4d1f53..2688f0d826e9 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -99,22 +99,13 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+  * unique, to convince GCC not to merge duplicate inline asm statements.
+  */
+ #define annotate_reachable() ({						\
+-	asm volatile("%c0:\n\t"						\
+-		     ".pushsection .discard.reachable\n\t"		\
+-		     ".long %c0b - .\n\t"				\
+-		     ".popsection\n\t" : : "i" (__COUNTER__));		\
++	asm volatile("ANNOTATE_REACHABLE counter=%c0"			\
++		     : : "i" (__COUNTER__));				\
+ })
+ #define annotate_unreachable() ({					\
+-	asm volatile("%c0:\n\t"						\
+-		     ".pushsection .discard.unreachable\n\t"		\
+-		     ".long %c0b - .\n\t"				\
+-		     ".popsection\n\t" : : "i" (__COUNTER__));		\
++	asm volatile("ANNOTATE_UNREACHABLE counter=%c0"			\
++		     : : "i" (__COUNTER__));				\
+ })
+-#define ASM_UNREACHABLE							\
+-	"999:\n\t"							\
+-	".pushsection .discard.unreachable\n\t"				\
+-	".long 999b - .\n\t"						\
+-	".popsection\n\t"
+ #else
+ #define annotate_reachable()
+ #define annotate_unreachable()
+@@ -280,6 +271,45 @@ unsigned long read_word_at_a_time(const void *addr)
+ 
+ #endif /* __KERNEL__ */
+ 
++#else /* __ASSEMBLY__ */
++
++#ifdef __KERNEL__
++#ifndef LINKER_SCRIPT
++
++#ifdef CONFIG_STACK_VALIDATION
++.macro ANNOTATE_UNREACHABLE counter:req
++\counter:
++	.pushsection .discard.unreachable
++	.long \counter\()b -.
 +	.popsection
 +.endm
 +
- #endif	/* __ASSEMBLY__ */
++.macro ANNOTATE_REACHABLE counter:req
++\counter:
++	.pushsection .discard.reachable
++	.long \counter\()b -.
++	.popsection
++.endm
++
++.macro ASM_UNREACHABLE
++999:
++	.pushsection .discard.unreachable
++	.long 999b - .
++	.popsection
++.endm
++#else /* CONFIG_STACK_VALIDATION */
++.macro ANNOTATE_UNREACHABLE counter:req
++.endm
++
++.macro ANNOTATE_REACHABLE counter:req
++.endm
++
++.macro ASM_UNREACHABLE
++.endm
++#endif /* CONFIG_STACK_VALIDATION */
++
++#endif /* LINKER_SCRIPT */
++#endif /* __KERNEL__ */
+ #endif /* __ASSEMBLY__ */
  
- #endif	/* _ASM_X86_PARAVIRT_TYPES_H */
-diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
-index 66ccb8e823b1..71d8b716b111 100644
---- a/arch/x86/kernel/macros.S
-+++ b/arch/x86/kernel/macros.S
-@@ -10,3 +10,4 @@
- #include <asm/refcount.h>
- #include <asm/alternative-asm.h>
- #include <asm/bug.h>
-+#include <asm/paravirt.h>
+ #ifndef __optimize
 -- 
 2.17.1
 
