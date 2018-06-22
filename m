@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEC4C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 728FFC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA359240A0
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:49:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA359240A0
+	by mail.kernel.org (Postfix) with ESMTP id 15F15240A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:49:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15F15240A4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933548AbeFVKtv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 06:49:51 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49364 "EHLO mail.bootlin.com"
+        id S933578AbeFVKty (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 06:49:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49401 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932918AbeFVKtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 06:49:46 -0400
+        id S933285AbeFVKtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 06:49:47 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 60B9520DC3; Fri, 22 Jun 2018 12:49:43 +0200 (CEST)
+        id B6000206FF; Fri, 22 Jun 2018 12:49:44 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A4FC4206D8;
-        Fri, 22 Jun 2018 12:49:32 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 065B220719;
+        Fri, 22 Jun 2018 12:49:34 +0200 (CEST)
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
@@ -54,156 +54,311 @@ Cc:     Przemyslaw Sroka <psroka@cadence.com>,
         linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
         Przemyslaw Gaj <pgaj@cadence.com>,
         Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH v5 00/10] Add the I3C subsystem
-Date:   Fri, 22 Jun 2018 12:49:20 +0200
-Message-Id: <20180622104930.32050-1-boris.brezillon@bootlin.com>
+Subject: [PATCH v5 02/10] docs: driver-api: Add I3C documentation
+Date:   Fri, 22 Jun 2018 12:49:22 +0200
+Message-Id: <20180622104930.32050-3-boris.brezillon@bootlin.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180622104930.32050-1-boris.brezillon@bootlin.com>
+References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series is a proposal for a new I3C subsystem.
+Add the I3C documentation describing the protocol, the master driver API
+and the device driver API.
 
-This infrastructure is not complete yet and will be extended over
-time.
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+---
+Changes in v5:
+- Remove useless conf.py file
+- Add SPDX headers
 
-There are a few design choices that are worth mentioning because they
-impact the way I3C device drivers can interact with their devices:
-
-- all functions used to send I3C/I2C frames must be called in
-  non-atomic context. Mainly done this way to ease implementation, but
-  this is still open to discussion. Please let me know if you think it's
-  worth considering an asynchronous model here
-- the bus element is a separate object and is not implicitly described
-  by the master (as done in I2C). The reason is that I want to be able
-  to handle multiple master connected to the same bus and visible to
-  Linux.
-  In this situation, we should only have one instance of the device and
-  not one per master, and sharing the bus object would be part of the
-  solution to gracefully handle this case.
-  I'm not sure if we will ever need to deal with multiple masters
-  controlling the same bus and exposed under Linux, but separating the
-  bus and master concept is pretty easy, hence the decision to do it
-  now, just in case we need it some day.
-  The other benefit of separating the bus and master concepts is that
-  master devices appear under the bus directory in sysfs.
-- I2C backward compatibility has been designed to be transparent to I2C
-  drivers and the I2C subsystem. The I3C master just registers an I2C
-  adapter which creates a new I2C bus. I'd say that, from a
-  representation PoV it's not ideal because what should appear as a
-  single I3C bus exposing I3C and I2C devices here appears as 2
-  different busses connected to each other through the parenting (the
-  I3C master is the parent of the I2C and I3C busses).
-  On the other hand, I don't see a better solution if we want something
-  that is not invasive.
-
-Missing features in this preliminary version:
-- support for HDR modes (has been removed because of lack of real users)
-- no support for multi-master and the associated concepts (mastership
-  handover, support for secondary masters, ...)
-- I2C devices can only be described using DT because this is the only
-  use case I have. However, the framework can easily be extended with
-  ACPI and board info support
-- I3C slave framework. This has been completely omitted, but shouldn't
-  have a huge impact on the I3C framework because I3C slaves don't see
-  the whole bus, it's only about handling master requests and generating
-  IBIs. Some of the struct, constant and enum definitions could be
-  shared, but most of the I3C slave framework logic will be different
-
-Only minor things have changes since v3, you can go check the changelog
-in each patch for more details.
-
-Main changes between v2 and v3 are:
-- Reworked the DT bindings as suggested by Rob
-- Reworked the bus initialization step as suggested by Vitor
-- Added a driver for an I3C GPIO expander
-
-Main changes between the initial RFC and this v2 are:
-- Add a generic infrastructure to support IBIs. It's worth mentioning
-  that I tried exposing IBIs as a regular IRQs, but after several
-  attempts and a discussion with Mark Zyngier, it appeared that it was
-  not really fitting in the Linux IRQ model (the fact that you have
-  payload attached to IBIs, the fact that most of the time an IBI will
-  generate a transfer on the bus which has to be done in an atomic
-  context, ...)
-  The counterpart of this decision is the latency induced by the
-  workqueue approach, but since I don't have real use cases, I don't
-  know if this can be a problem or not. 
-- Add helpers to support Hot Join
-- Add support for IBIs and Hot Join in Cadence I3C master driver
-- Address several issues in how I was using the device model
-
-Thanks,
-
-Boris
-
-Boris Brezillon (10):
-  i3c: Add core I3C infrastructure
-  docs: driver-api: Add I3C documentation
-  i3c: Add sysfs ABI spec
-  dt-bindings: i3c: Document core bindings
-  dt-bindings: i3c: Add macros to help fill I3C/I2C device's reg
-    property
-  MAINTAINERS: Add myself as the I3C subsystem maintainer
-  i3c: master: Add driver for Cadence IP
-  dt-bindings: i3c: Document Cadence I3C master bindings
-  gpio: Add a driver for Cadence I3C GPIO expander
-  dt-bindings: gpio: Add bindings for Cadence I3C gpio expander
-
- Documentation/ABI/testing/sysfs-bus-i3c            |   95 ++
- .../devicetree/bindings/gpio/gpio-cdns-i3c.txt     |   39 +
- .../devicetree/bindings/i3c/cdns,i3c-master.txt    |   44 +
- Documentation/devicetree/bindings/i3c/i3c.txt      |  140 ++
- Documentation/driver-api/i3c/device-driver-api.rst |    9 +
- Documentation/driver-api/i3c/index.rst             |   11 +
- Documentation/driver-api/i3c/master-driver-api.rst |   10 +
- Documentation/driver-api/i3c/protocol.rst          |  203 +++
- Documentation/driver-api/index.rst                 |    1 +
- MAINTAINERS                                        |   10 +
- drivers/Kconfig                                    |    2 +
- drivers/Makefile                                   |    2 +-
- drivers/gpio/Kconfig                               |   11 +
- drivers/gpio/Makefile                              |    1 +
- drivers/gpio/gpio-cdns-i3c.c                       |  411 +++++
- drivers/i3c/Kconfig                                |   24 +
- drivers/i3c/Makefile                               |    4 +
- drivers/i3c/core.c                                 |  620 +++++++
- drivers/i3c/device.c                               |  294 ++++
- drivers/i3c/internals.h                            |   28 +
- drivers/i3c/master.c                               | 1722 ++++++++++++++++++++
- drivers/i3c/master/Kconfig                         |    5 +
- drivers/i3c/master/Makefile                        |    1 +
- drivers/i3c/master/i3c-master-cdns.c               | 1651 +++++++++++++++++++
- include/dt-bindings/i3c/i3c.h                      |   28 +
- include/linux/i3c/ccc.h                            |  382 +++++
- include/linux/i3c/device.h                         |  307 ++++
- include/linux/i3c/master.h                         |  587 +++++++
- include/linux/mod_devicetable.h                    |   17 +
- 29 files changed, 6658 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
- create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
- create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
+Changes in v2:
+- Moved out of patch "i3c: Add core I3C infrastructure"
+- Add link to the I3C spec
+- Move rst files in Documentation/driver-api/i3c/
+---
+ Documentation/driver-api/i3c/device-driver-api.rst |   9 +
+ Documentation/driver-api/i3c/index.rst             |  11 ++
+ Documentation/driver-api/i3c/master-driver-api.rst |  10 +
+ Documentation/driver-api/i3c/protocol.rst          | 203 +++++++++++++++++++++
+ Documentation/driver-api/index.rst                 |   1 +
+ 5 files changed, 234 insertions(+)
  create mode 100644 Documentation/driver-api/i3c/device-driver-api.rst
  create mode 100644 Documentation/driver-api/i3c/index.rst
  create mode 100644 Documentation/driver-api/i3c/master-driver-api.rst
  create mode 100644 Documentation/driver-api/i3c/protocol.rst
- create mode 100644 drivers/gpio/gpio-cdns-i3c.c
- create mode 100644 drivers/i3c/Kconfig
- create mode 100644 drivers/i3c/Makefile
- create mode 100644 drivers/i3c/core.c
- create mode 100644 drivers/i3c/device.c
- create mode 100644 drivers/i3c/internals.h
- create mode 100644 drivers/i3c/master.c
- create mode 100644 drivers/i3c/master/Kconfig
- create mode 100644 drivers/i3c/master/Makefile
- create mode 100644 drivers/i3c/master/i3c-master-cdns.c
- create mode 100644 include/dt-bindings/i3c/i3c.h
- create mode 100644 include/linux/i3c/ccc.h
- create mode 100644 include/linux/i3c/device.h
- create mode 100644 include/linux/i3c/master.h
 
+diff --git a/Documentation/driver-api/i3c/device-driver-api.rst b/Documentation/driver-api/i3c/device-driver-api.rst
+new file mode 100644
+index 000000000000..85bc3381cd3e
+--- /dev/null
++++ b/Documentation/driver-api/i3c/device-driver-api.rst
+@@ -0,0 +1,9 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=====================
++I3C device driver API
++=====================
++
++.. kernel-doc:: include/linux/i3c/device.h
++
++.. kernel-doc:: drivers/i3c/device.c
+diff --git a/Documentation/driver-api/i3c/index.rst b/Documentation/driver-api/i3c/index.rst
+new file mode 100644
+index 000000000000..783d6dad054b
+--- /dev/null
++++ b/Documentation/driver-api/i3c/index.rst
+@@ -0,0 +1,11 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=============
++I3C subsystem
++=============
++
++.. toctree::
++
++   protocol
++   device-driver-api
++   master-driver-api
+diff --git a/Documentation/driver-api/i3c/master-driver-api.rst b/Documentation/driver-api/i3c/master-driver-api.rst
+new file mode 100644
+index 000000000000..bb19264aa239
+--- /dev/null
++++ b/Documentation/driver-api/i3c/master-driver-api.rst
+@@ -0,0 +1,10 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++================================
++I3C master controller driver API
++================================
++
++.. kernel-doc:: drivers/i3c/master.c
++
++.. kernel-doc:: include/linux/i3c/master.h
++
+diff --git a/Documentation/driver-api/i3c/protocol.rst b/Documentation/driver-api/i3c/protocol.rst
+new file mode 100644
+index 000000000000..a768afa7f12a
+--- /dev/null
++++ b/Documentation/driver-api/i3c/protocol.rst
+@@ -0,0 +1,203 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++============
++I3C protocol
++============
++
++Disclaimer
++==========
++
++This chapter will focus on aspects that matter to software developers. For
++everything hardware related (like how things are transmitted on the bus, how
++collisions are prevented, ...) please have a look at the I3C specification.
++
++This document is just a brief introduction to the I3C protocol and the concepts
++it brings on the table. If you need more information, please refer to the MIPI
++I3C specification (can be downloaded here
++http://resources.mipi.org/mipi-i3c-v1-download).
++
++Introduction
++============
++
++The I3C (pronounced 'eye-three-see') is a MIPI standardized protocol designed
++to overcome I2C limitations (limited speed, external signals needed for
++interrupts, no automatic detection of the devices connected to the bus, ...)
++while remaining power-efficient.
++
++I3C Bus
++=======
++
++An I3C bus is made of several I3C devices and possibly some I2C devices as
++well, but let's focus on I3C devices for now.
++
++An I3C device on the I3C bus can have one of the following roles:
++
++* Master: the device is driving the bus. It's the one in charge of initiating
++  transactions or deciding who is allowed to talk on the bus (slave generated
++  events are possible in I3C, see below).
++* Slave: the device acts as a slave, and is not able to send frames to another
++  slave on the bus. The device can still send events to the master on
++  its own initiative if the master allowed it.
++
++I3C is a multi-master protocol, so there might be several masters on a bus,
++though only one device can act as a master at a given time. In order to gain
++bus ownership, a master has to follow a specific procedure.
++
++Each device on the I3C bus has to be assigned a dynamic address to be able to
++communicate. Until this is done, the device should only respond to a limited
++set of commands. If it has a static address (also called legacy I2C address),
++the device can reply to I2C transfers.
++
++In addition to these per-device addresses, the protocol defines a broadcast
++address in order to address all devices on the bus.
++
++Once a dynamic address has been assigned to a device, this address will be used
++for any direct communication with the device. Note that even after being
++assigned a dynamic address, the device should still process broadcast messages.
++
++I3C Device discovery
++====================
++
++The I3C protocol defines a mechanism to automatically discover devices present
++on the bus, their capabilities and the functionalities they provide. In this
++regard I3C is closer to a discoverable bus like USB than it is to I2C or SPI.
++
++The discovery mechanism is called DAA (Dynamic Address Assignment), because it
++not only discovers devices but also assigns them a dynamic address.
++
++During DAA, each I3C device reports 3 important things:
++
++* BCR: Bus Characteristic Register. This 8-bit register describes the device bus
++  related capabilities
++* DCR: Device Characteristic Register. This 8-bit register describes the
++  functionalities provided by the device
++* Provisional ID: A 48-bit unique identifier. On a given bus there should be no
++  Provisional ID collision, otherwise the discovery mechanism may fail.
++
++I3C slave events
++================
++
++The I3C protocol allows slaves to generate events on their own, and thus allows
++them to take temporary control of the bus.
++
++This mechanism is called IBI for In Band Interrupts, and as stated in the name,
++it allows devices to generate interrupts without requiring an external signal.
++
++During DAA, each device on the bus has been assigned an address, and this
++address will serve as a priority identifier to determine who wins if 2 different
++devices are generating an interrupt at the same moment on the bus (the lower the
++dynamic address the higher the priority).
++
++Masters are allowed to inhibit interrupts if they want to. This inhibition
++request can be broadcasted (applies to all devices) or sent to a specific
++device.
++
++I3C Hot-Join
++============
++
++The Hot-Join mechanism is similart to USB hotplug. This mechanism allows
++slaves to join the bus after it has been initialized by the master.
++
++This covers the following use cases:
++
++* the device is not powered when the bus is probed
++* the device is hotplugged on the bus through an extension board
++
++This mechanism is relying on slave events to inform the master that a new
++device joined the bus and is waiting for a dynamic address.
++
++The master is then free to address the request as it wishes: ignore it or
++assign a dynamic address to the slave.
++
++I3C transfer types
++==================
++
++If you omit SMBus (which is just a standardization on how to access registers
++exposed by I2C devices), I2C has only one transfer type.
++
++I3C defines 3 different classes of transfer in addition to I2C transfers which
++are here for backward compatibility with I2C devices.
++
++I3C CCC commands
++----------------
++
++CCC (Common Command Code) commands are meant to be used for anything that is
++related to bus management and all features that are common to a set of devices.
++
++CCC commands contain an 8-bit CCC id describing the command that is executed.
++The MSB of this id specifies whether this is a broadcast command (bit7 = 0) or a
++unicast one (bit7 = 1).
++
++The command ID can be followed by a payload. Depending on the command, this
++payload is either sent by the master sending the command (write CCC command),
++or sent by the slave receiving the command (read CCC command). Of course, read
++accesses only apply to unicast commands.
++Note that, when sending a CCC command to a specific device, the device address
++is passed in the first byte of the payload.
++
++The payload length is not explicitly passed on the bus, and should be extracted
++from the CCC id.
++
++Note that vendors can use a dedicated range of CCC ids for their own commands
++(0x61-0x7f and 0xe0-0xef).
++
++I3C Private SDR transfers
++-------------------------
++
++Private SDR (Single Data Rate) transfers should be used for anything that is
++device specific and does not require high transfer speed.
++
++It is the equivalent of I2C transfers but in the I3C world. Each transfer is
++passed the device address (dynamic address assigned during DAA), a payload
++and a direction.
++
++The only difference with I2C is that the transfer is much faster (typical SCL
++frequency is 12.5MHz).
++
++I3C HDR commands
++----------------
++
++HDR commands should be used for anything that is device specific and requires
++high transfer speed.
++
++The first thing attached to an HDR command is the HDR mode. There are currently
++3 different modes defined by the I3C specification (refer to the specification
++for more details):
++
++* HDR-DDR: Double Data Rate mode
++* HDR-TSP: Ternary Symbol Pure. Only usable on busses with no I2C devices
++* HDR-TSL: Ternary Symbol Legacy. Usable on busses with I2C devices
++
++When sending an HDR command, the whole bus has to enter HDR mode, which is done
++using a broadcast CCC command.
++Once the bus has entered a specific HDR mode, the master sends the HDR command.
++An HDR command is made of:
++
++* one 16-bits command word
++* N 16-bits data words
++
++Those words may be wrapped with specific preambles/post-ambles which depend on
++the chosen HDR mode and are detailed here (see the specification for more
++details).
++
++The 16-bits command word is made of:
++
++* bit[15]: direction bit, read is 1 write is 0
++* bit[14:8]: command code. Identifies the command being executed, the amount of
++  data words and their meaning
++* bit[7:1]: I3C address of the device this command is addressed to
++* bit[0]: reserved/parity-bit
++
++Backward compatibility with I2C devices
++=======================================
++
++The I3C protocol has been designed to be backward compatible with I2C devices.
++This backward compatibility allows one to connect a mix of I2C and I3C devices
++on the same bus, though, in order to be really efficient, I2C devices should
++be equipped with 50 ns spike filters.
++
++I2C devices can't be discovered like I3C ones and have to be statically
++declared. In order to let the master know what these devices are capable of
++(both in terms of bus related limitations and functionalities), the software
++has to provide some information, which is done through the LVR (Legacy I2C
++Virtual Register).
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index 6d9f2f9fe20e..cc6a33f232ea 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -32,6 +32,7 @@ available subsections can be seen below.
+    pci
+    spi
+    i2c
++   i3c/index
+    hsi
+    edac
+    scsi
 -- 
 2.14.1
 
