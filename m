@@ -2,135 +2,105 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8C9C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F6EC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4F32477D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:52:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4F32477D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DA6A24788
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 18:55:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAYdZSn1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DA6A24788
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934290AbeFVSwo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 14:52:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49912 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934079AbeFVSwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 14:52:41 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E1AF8D753;
-        Fri, 22 Jun 2018 18:52:41 +0000 (UTC)
-Received: from flask (unknown [10.43.2.80])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2B3E62156889;
-        Fri, 22 Jun 2018 18:52:39 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Fri, 22 Jun 2018 20:52:38 +0200
-Date:   Fri, 22 Jun 2018 20:52:38 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     KVM <kvm@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] x86/kvm: Implement MSR_HWCR support
-Message-ID: <20180622185237.GC5549@flask>
-References: <20180622095101.32587-1-bp@alien8.de>
- <20180622095101.32587-3-bp@alien8.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622095101.32587-3-bp@alien8.de>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 22 Jun 2018 18:52:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 22 Jun 2018 18:52:41 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
+        id S934345AbeFVSzs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 14:55:48 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:39567 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934096AbeFVSzq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 14:55:46 -0400
+Received: by mail-pg0-f66.google.com with SMTP id w12-v6so3344139pgc.6;
+        Fri, 22 Jun 2018 11:55:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mwS8CJyZeke6ueAm4WhBxu/Zk4s5vmR018Z8mY4mHOs=;
+        b=VAYdZSn125zXZE3tkcqOFmfO1Pk7BTMGYRCatlqYSgr4eUs4vn68l1wB89xusC4lbx
+         l6gEa5XW3CWT+c0RqYez7cErRaCI1JutgWptlvDO4zsyBRDGRW62GcNUt4Nu9NXrguZ7
+         rYdclYvgcGDpaFGCHgskNJ5yQ7CXuLSi4dM/cBXBWhjiqS+Kqmk/mkW55RLc0QuYHHAJ
+         h0st/CiYKUctWlSTt+UWf+awdRVGYb5mqNiEcAzk/cgH18baaCN2bJKEnlPbf59vKurZ
+         eztleO3MmgtiQEU3rvIbuCBdAC0GbGtblEijhQd8BgvreHD/roNvVpN8AakvFjdH7zHN
+         lJbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mwS8CJyZeke6ueAm4WhBxu/Zk4s5vmR018Z8mY4mHOs=;
+        b=RUjP2/0oBilv03EtXRf6J9DO/T5mnbwS7184uXpYC65JCi20yhi0UZzDYGaF6cOJ3U
+         2LI7MaOv1Bje+515gPYpHwswWWFcIEeEIHyYOI0C/KWR4/qk/QxJNAVyjDWYyv70VZcT
+         /b8l2PVsHJgxBt7/4dbPjGQxXL49WdA6289jvwwsQjfBfRIHFjgyP/wvfgbvgbx3b9Hz
+         T7rRPbGaupHF0L0WnfEeAn1JhfbmtWqEpWbnhsd55P1NrHoELRJja0dANZ0CwvwL0nm6
+         SzFtwFOC8HFH7kNkVZ7Pv6YoJKJCgtPc3tkQdJbATGQn+4V7IH0G78BrKOoPM9WQtPdv
+         Y8Fg==
+X-Gm-Message-State: APt69E175ge3AKdHZ6PgxzUSqdp6GCEn9Oe9cS8yA5kjZUdZdKW98IYy
+        4W0yjtuKYbbpwcR3ZnHCLVTuNWdp
+X-Google-Smtp-Source: ADUXVKIzMD5BMJdxyKkprY85KagW6G3fcxT9/LCj47rBLmmcb1Oa0oYvJ9UZIZWRkFVMaAyP2hHaFw==
+X-Received: by 2002:a62:a30e:: with SMTP id s14-v6mr3027828pfe.168.1529693745531;
+        Fri, 22 Jun 2018 11:55:45 -0700 (PDT)
+Received: from localhost.localdomain ([122.174.152.149])
+        by smtp.gmail.com with ESMTPSA id p73-v6sm22061389pfa.142.2018.06.22.11.55.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 11:55:45 -0700 (PDT)
+From:   Jeffrin Jose T <ahiliation@gmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Jeffrin Jose T <ahiliation@gmail.com>
+Subject: [PATCH] selftests: bpf: notification about privilege required to run test_lirc_mode2.sh testing script
+Date:   Sat, 23 Jun 2018 00:24:17 +0530
+Message-Id: <20180622185417.3452-1-ahiliation@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-22 11:51+0200, Borislav Petkov:
-> From: Borislav Petkov <bp@suse.de>
-> 
-> The hardware configuration register has some useful bits which can be
-> used by guests. Implement McStatusWrEn which can be used by guests when
-> injecting MCEs with the in-kernel mce-inject module.
-> 
-> For that, we need to set bit 18 - McStatusWrEn - first, before writing
-> the MCi_STATUS registers (otherwise we #GP).
-> 
-> Add the required machinery to do so.
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> ---
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> @@ -2146,6 +2146,30 @@ static void kvmclock_sync_fn(struct work_struct *work)
->  					KVMCLOCK_SYNC_PERIOD);
->  }
->  
-> +/*
-> + * On AMD, HWCR[McStatusWrEn] controls whether setting MCi_STATUS results in #GP.
-> + */
-> +static bool __set_mci_status(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-> +{
-> +	if (guest_cpuid_is_amd(vcpu)) {
-> +		struct msr_data tmp;
-> +
-> +		tmp.index = MSR_K7_HWCR;
-> +
-> +		if (kvm_x86_ops->get_msr(vcpu, &tmp))
-> +			return false;
-> +
-> +		/* McStatusWrEn enabled? */
-> +		if (tmp.data & BIT_ULL(18))
-> +			return true;
-> +	}
-> +
-> +	if (!msr_info->host_initiated && msr_info->data != 0)
-> +		return false;
+The test_lirc_mode2.sh script require root privilege for the successful
+execution of the test.
 
-msr_info->host_initiated is always going to return true, so it would be
-better to put it outside of __set_mci_status.
+This patch is to notify the user about the privilege the script
+demands for the successful execution of the test.
 
-Maybe we could just write the whole logic inline, otherwise I'd call it
-something like mci_status_is_writeable.
+Signed-off-by: Jeffrin Jose T (Rajagiri SET) <ahiliation@gmail.com>
+---
+ tools/testing/selftests/bpf/test_lirc_mode2.sh | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
->  static int set_msr_mce(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  {
->  	u64 mcg_cap = vcpu->arch.mcg_cap;
-> @@ -2176,9 +2200,13 @@ static int set_msr_mce(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  			if ((offset & 0x3) == 0 &&
->  			    data != 0 && (data | (1 << 10)) != ~(u64)0)
->  				return -1;
-> -			if (!msr_info->host_initiated &&
-> -				(offset & 0x3) == 1 && data != 0)
-> -				return -1;
-> +
-> +			/* MCi_STATUS */
-> +			if ((offset & 0x3) == 1) {
-> +				if (!__set_mci_status(vcpu, msr_info))
-> +					return -1;
-> +			}
+diff --git a/tools/testing/selftests/bpf/test_lirc_mode2.sh b/tools/testing/selftests/bpf/test_lirc_mode2.sh
+index ce2e15e4f976..51184f8f9e64 100755
+--- a/tools/testing/selftests/bpf/test_lirc_mode2.sh
++++ b/tools/testing/selftests/bpf/test_lirc_mode2.sh
+@@ -1,6 +1,15 @@
+ #!/bin/bash
+ # SPDX-License-Identifier: GPL-2.0
+ 
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++msg="skip all tests:"
++if [ $UID != 0 ]; then
++    echo $msg please run this as root >&2
++    exit $ksft_skip
++fi
++
+ GREEN='\033[0;92m'
+ RED='\033[0;31m'
+ NC='\033[0m' # No Color
+-- 
+2.17.0
 
-			if (!msr_info->host_initiated &&
-			    (offset & 0x3) == 1 && data != 0) {
-				struct msr_data tmp = {.index = MSR_K7_HWCR};
-
-				if (!guest_cpuid_is_amd(vcpu) ||
-				    !kvm_x86_ops->get_msr(vcpu, &tmp) ||
-				    !(tmp.data & BIT_ULL(18)))
-					return -1;
-			}
-
-> +
->  			vcpu->arch.mce_banks[offset] = data;
->  			break;
->  		}
-> -- 
-> 2.17.0.582.gccdcbd54c
-> 
