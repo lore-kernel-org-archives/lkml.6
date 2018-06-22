@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AACBC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23FDC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9FFF22AF7
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C23E22B1D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 00:10:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fw1+u8M5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FFF22AF7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTnyjfSn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C23E22B1D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934007AbeFVAKJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 20:10:09 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46857 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932397AbeFVAKG (ORCPT
+        id S934019AbeFVAKv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 20:10:51 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:34987 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932397AbeFVAKt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 20:10:06 -0400
-Received: by mail-pf0-f196.google.com with SMTP id q1-v6so2294949pff.13;
-        Thu, 21 Jun 2018 17:10:06 -0700 (PDT)
+        Thu, 21 Jun 2018 20:10:49 -0400
+Received: by mail-pg0-f65.google.com with SMTP id i7-v6so2142457pgp.2;
+        Thu, 21 Jun 2018 17:10:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=mvw/fg7hmw0EJse7BBOVnLmNj4lIYkSTqH69Z4Xmlh0=;
-        b=Fw1+u8M5mGk9KRdw5+ZsHyFNaI2nnLjgO+38PTXRerU3JrTy41C0UyV2aYQvJieL7E
-         nU82jYLHDX4TKqON+SX3UW44x9KAzoet5+vZA6czcI0zEWKjo/UiWID4qaKbGhl81Vwj
-         zZyTw/nFG8agwGbvQPnbP7IUaKI16/YXOD8vsb6b1RkmrQMJKDeOG0Z7//1f12Qd3UIq
-         kwU20EObG8OEjqqBiZXe0nUhtmaYQHaQAbshV7wAglKKZOrZ0N/kOFIiN2SppNty4v0K
-         LwcOXYAadquoup068iY2ruyNNwKT3lbAjBiUEe3QxjYb2kH7HpvrrnZWoLf6kzJ+tgq+
-         28wQ==
+        bh=LoNwnwjhzkIfFcFAKQj5YTewPTc3MQqiXhMifvXqAQY=;
+        b=jTnyjfSnnOzs/OC9gmCGUSoMy+jV+AtThwyk+4WKIhTD7odajlYoLehwlGPprF1jqw
+         Uu8zRmIOXhyyzdfzwIXPqz/P6YvZjydUofCkRakrTQg8T/W61I60eveWKcNRpgWwmrDK
+         3zVUoDoMZnaz+ou8OFgRBAy/8RZGOIdayn5RnnosXUl0M+mb+Cf1MN4+cUHjyUAmSyXi
+         DANw5U7MaUvkXgGkKhSCKkEcJlT3bZx7NJuUsmEld9Jv0QlgIMrzzSRHlVk0HdWnxxtV
+         4irB7bnr1HXaVBPilFLT0N1FJf/UQM8+Cjgb9/EZjFokYa7iIYxpJOfGwkyBhblPv4zc
+         aV3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mvw/fg7hmw0EJse7BBOVnLmNj4lIYkSTqH69Z4Xmlh0=;
-        b=r4w+aasJLHsklSmMy93Bs1Sgm7tgOK/F4buH/Q/VVtngvIbWeQfXo4pxYbokvR7I7g
-         Lrcg53Vd0L2rYmIOR5ZSaGX8BoVgy58lL7E1JfXR5h76N4TefB4/zv3sayb6IOZzhX5D
-         eDPWlXcuPZZCY2Wf2JmFE8m2rSFM4K4Sa/CuPnY1c0eW3Oe8FDWfF+RP5AvFmQRTYCbC
-         iRMnab398OdKsKehEjlw3dnQvNWXpIivizLB9w5+/94eJrYuUi/Wwl1HkNqsVjqIAn3T
-         UoQOqtF/2nV6YZ2oih0Q3ilDOBE4kqOArvNdqQPEFPjUd/o18DNYY5Mg/QOY43P1Zkqe
-         wrGg==
-X-Gm-Message-State: APt69E0V/GTNuSPJ9RNjVccGSia/Pbmc4mnpZuOJfVuCBvZ4PFqqCQ45
-        vw1o9Ji5RUq3GRKO4erex54=
-X-Google-Smtp-Source: ADUXVKIM7x5FSPy4F1Pm3P+Nptpoax0N+W5S3YztM0tpZ724ymAuzIzGnOc1C2KLWPFqzxYXMnccjQ==
-X-Received: by 2002:a63:6ac5:: with SMTP id f188-v6mr24029547pgc.195.1529626205790;
-        Thu, 21 Jun 2018 17:10:05 -0700 (PDT)
+        bh=LoNwnwjhzkIfFcFAKQj5YTewPTc3MQqiXhMifvXqAQY=;
+        b=q/+qi7a9rAVxQYBnWkf/J3r3QTZH4uliwxrQuYfPk+SDJ5uA4iGn3KwU8hGc0fsB7/
+         39YreymvsAICEiavm9hPH0ENk3q5UMQyRCs+Vb7+q4zPaGqzO8q1HJyJPbixoxHCmeTb
+         P78spNa9e/6umbhwYv2cjT8esHhzabT1hFXc/IJieoGPpC6bCE4gSU77JIS2m0EcD7iK
+         Oe1WuL5AmXiEMWicOGUdm6T6N2XjSslsG71mNAVJ0Jg6Ml1tlfw+Nn/nQw2Lx87GlBIZ
+         IZHZqlC9AbfJGCZrd6Cwbg8oRVxhvBL9Dvqa8d2lzbHBLhO66T5xb+eVSBbB2juzVFkn
+         RDyA==
+X-Gm-Message-State: APt69E1AW5rPCPQ4EjDYDnCW0VeGBM3TkaWQVImkw4q6ZyOW9fEPaGTG
+        2cySL8fguMeP9DDfS6esY4WfLq6e
+X-Google-Smtp-Source: ADUXVKLRC7gyKSSemXEMbr9Rhfab/3TW7KcHDbEYGVZTs7tpgvvW8FhDriJAc9bSqYjk5fs0XGQ84Q==
+X-Received: by 2002:a63:7f4f:: with SMTP id p15-v6mr24409944pgn.312.1529626248211;
+        Thu, 21 Jun 2018 17:10:48 -0700 (PDT)
 Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
-        by smtp.gmail.com with ESMTPSA id t13-v6sm6788719pgv.43.2018.06.21.17.10.04
+        by smtp.gmail.com with ESMTPSA id y18-v6sm8670149pfl.122.2018.06.21.17.10.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 21 Jun 2018 17:10:04 -0700 (PDT)
-Date:   Thu, 21 Jun 2018 17:10:02 -0700
+        Thu, 21 Jun 2018 17:10:46 -0700 (PDT)
+Date:   Thu, 21 Jun 2018 17:10:44 -0700
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
 Cc:     Tony Lindgren <tony@atomide.com>,
@@ -74,30 +74,30 @@ Cc:     Tony Lindgren <tony@atomide.com>,
         linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/10] ARM: OMAP1: ams-delta FIQ: Keep serio input
- GPIOs requested
-Message-ID: <20180622001002.GD79890@dtor-ws>
+Subject: Re: [PATCH v2 08/10] ARM: OMAP1: Get rid of <mach/ams-delta-fiq.h>
+Message-ID: <20180622001044.GE79890@dtor-ws>
 References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
  <20180621224128.17623-1-jmkrzyszt@gmail.com>
- <20180621224128.17623-7-jmkrzyszt@gmail.com>
+ <20180621224128.17623-8-jmkrzyszt@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180621224128.17623-7-jmkrzyszt@gmail.com>
+In-Reply-To: <20180621224128.17623-8-jmkrzyszt@gmail.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 12:41:25AM +0200, Janusz Krzysztofik wrote:
-> From the very beginning, input GPIO pins of ams-delta serio port have
-> been used by FIQ handler, not serio driver.
+On Fri, Jun 22, 2018 at 12:41:26AM +0200, Janusz Krzysztofik wrote:
+> Split the header file into two parts and move them to directories where
+> they belong.
 > 
-> Don't request those pins from the ams-delta-serio driver any longer,
-> instead keep them requested and initialized by the FIQ initialization
-> routine which already requests them and releases while identifying GPIO
-> IRQs.
+> Information on internal structure of FIQ buffer is moved to
+> <linux/platform_data/ams-delta-fiq.h> for ams-delta-serio driver use.
+> 
+> Other information used by ams-delta board init file and FIQ code is
+> made local to mach-omap1 root directory.
 > 
 > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
@@ -109,180 +109,215 @@ Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 > Changelog:
 > v2: rebased on v4.18-rc1, no conflicts
 > 
->  arch/arm/mach-omap1/ams-delta-fiq.c   | 42 ++++++++++++++++++++++++++++++-----
->  drivers/input/serio/ams_delta_serio.c | 30 ++-----------------------
->  2 files changed, 39 insertions(+), 33 deletions(-)
+>  MAINTAINERS                                        |  1 +
+>  arch/arm/mach-omap1/ams-delta-fiq-handler.S        |  5 +--
+>  arch/arm/mach-omap1/ams-delta-fiq.c                |  7 ++--
+>  arch/arm/mach-omap1/ams-delta-fiq.h                | 41 ++++++++++++++++++++++
+>  arch/arm/mach-omap1/board-ams-delta.c              |  2 +-
+>  drivers/input/serio/ams_delta_serio.c              |  3 +-
+>  .../linux/platform_data}/ams-delta-fiq.h           | 27 +++-----------
+>  7 files changed, 56 insertions(+), 30 deletions(-)
+>  create mode 100644 arch/arm/mach-omap1/ams-delta-fiq.h
+>  rename {arch/arm/mach-omap1/include/mach => include/linux/platform_data}/ams-delta-fiq.h (71%)
 > 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9d5eeff51b5f..c78b7dc42a81 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10391,6 +10391,7 @@ F:	arch/arm/plat-omap/
+>  F:	arch/arm/configs/omap1_defconfig
+>  F:	drivers/i2c/busses/i2c-omap.c
+>  F:	include/linux/platform_data/i2c-omap.h
+> +F:	include/linux/platform_data/ams-delta-fiq.h
+>  
+>  OMAP2+ SUPPORT
+>  M:	Tony Lindgren <tony@atomide.com>
+> diff --git a/arch/arm/mach-omap1/ams-delta-fiq-handler.S b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
+> index bf608441b357..ddc27638ba2a 100644
+> --- a/arch/arm/mach-omap1/ams-delta-fiq-handler.S
+> +++ b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
+> @@ -14,11 +14,12 @@
+>   */
+>  
+>  #include <linux/linkage.h>
+> -#include <asm/assembler.h>
+> +#include <linux/platform_data/ams-delta-fiq.h>
+>  
+> +#include <asm/assembler.h>
+>  #include <mach/board-ams-delta.h>
+> -#include <mach/ams-delta-fiq.h>
+>  
+> +#include "ams-delta-fiq.h"
+>  #include "iomap.h"
+>  #include "soc.h"
+>  
 > diff --git a/arch/arm/mach-omap1/ams-delta-fiq.c b/arch/arm/mach-omap1/ams-delta-fiq.c
-> index 1d54a6177f14..5a6c59ac9b5f 100644
+> index 5a6c59ac9b5f..e72935034d42 100644
 > --- a/arch/arm/mach-omap1/ams-delta-fiq.c
 > +++ b/arch/arm/mach-omap1/ams-delta-fiq.c
-> @@ -45,6 +45,11 @@ static struct irq_chip *irq_chip;
->  static struct irq_data *irq_data[16];
->  static unsigned int irq_counter[16];
+> @@ -19,12 +19,13 @@
+>  #include <linux/irq.h>
+>  #include <linux/module.h>
+>  #include <linux/io.h>
+> +#include <linux/platform_data/ams-delta-fiq.h>
 >  
-> +static const char *pin_name[16] __initconst = {
-> +	[AMS_DELTA_GPIO_PIN_KEYBRD_DATA]	= "keybrd_data",
-> +	[AMS_DELTA_GPIO_PIN_KEYBRD_CLK]		= "keybrd_clk",
-> +};
+>  #include <mach/board-ams-delta.h>
+>  
+>  #include <asm/fiq.h>
+>  
+> -#include <mach/ams-delta-fiq.h>
+> +#include "ams-delta-fiq.h"
+>  
+>  static struct fiq_handler fh = {
+>  	.name	= "ams-delta-fiq"
+> @@ -35,8 +36,8 @@ static struct fiq_handler fh = {
+>   * The FIQ and IRQ isrs can both read and write it.
+>   * It is structured as a header section several 32bit slots,
+>   * followed by the circular buffer where the FIQ isr stores
+> - * keystrokes received from the qwerty keyboard.
+> - * See ams-delta-fiq.h for details of offsets.
+> + * keystrokes received from the qwerty keyboard.  See
+> + * <linux/platform_data/ams-delta-fiq.h> for details of offsets.
+>   */
+>  unsigned int fiq_buffer[1024];
+>  EXPORT_SYMBOL(fiq_buffer);
+> diff --git a/arch/arm/mach-omap1/ams-delta-fiq.h b/arch/arm/mach-omap1/ams-delta-fiq.h
+> new file mode 100644
+> index 000000000000..3f691d68aa62
+> --- /dev/null
+> +++ b/arch/arm/mach-omap1/ams-delta-fiq.h
+> @@ -0,0 +1,41 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 > +
->  static irqreturn_t deferred_fiq(int irq, void *dev_id)
->  {
->  	struct irq_data *d;
-> @@ -80,7 +85,7 @@ static irqreturn_t deferred_fiq(int irq, void *dev_id)
->  
->  void __init ams_delta_init_fiq(struct gpio_chip *chip)
->  {
-> -	struct gpio_desc *gpiod;
-> +	struct gpio_desc *gpiod, *data = NULL, *clk = NULL;
->  	void *fiqhandler_start;
->  	unsigned int fiqhandler_length;
->  	struct pt_regs FIQ_regs;
-> @@ -96,7 +101,7 @@ void __init ams_delta_init_fiq(struct gpio_chip *chip)
->  	}
->  
->  	for (i = 0; i < ARRAY_SIZE(irq_data); i++) {
-> -		gpiod = gpiochip_request_own_desc(chip, i, NULL);
-> +		gpiod = gpiochip_request_own_desc(chip, i, pin_name[i]);
->  		if (IS_ERR(gpiod)) {
->  			pr_err("%s: failed to get GPIO pin %d (%ld)\n",
->  			       __func__, i, PTR_ERR(gpiod));
-> @@ -105,8 +110,27 @@ void __init ams_delta_init_fiq(struct gpio_chip *chip)
->  		/* Store irq_data location for IRQ handler use */
->  		irq_data[i] = irq_get_irq_data(gpiod_to_irq(gpiod));
->  
-> -		gpiochip_free_own_desc(gpiod);
-> +		/*
-> +		 * FIQ handler takes full control over serio data and clk GPIO
-> +		 * pins.  Initiaize them and keep requested so nobody can
-> +		 * interfere.  Fail if any of those two couldn't be requested.
-> +		 */
-> +		switch (i) {
-> +		case AMS_DELTA_GPIO_PIN_KEYBRD_DATA:
-> +			data = gpiod;
-> +			gpiod_direction_input(data);
-> +			break;
-> +		case AMS_DELTA_GPIO_PIN_KEYBRD_CLK:
-> +			clk = gpiod;
-> +			gpiod_direction_input(clk);
-> +			break;
-> +		default:
-> +			gpiochip_free_own_desc(gpiod);
-> +			break;
-> +		}
->  	}
-> +	if (!data || !clk)
-> +		goto out_gpio;
->  
->  	fiqhandler_start = &qwerty_fiqin_start;
->  	fiqhandler_length = &qwerty_fiqin_end - &qwerty_fiqin_start;
-> @@ -117,7 +141,7 @@ void __init ams_delta_init_fiq(struct gpio_chip *chip)
->  	if (retval) {
->  		pr_err("ams_delta_init_fiq(): couldn't claim FIQ, ret=%d\n",
->  				retval);
-> -		return;
-> +		goto out_gpio;
->  	}
->  
->  	retval = request_irq(INT_DEFERRED_FIQ, deferred_fiq,
-> @@ -125,7 +149,7 @@ void __init ams_delta_init_fiq(struct gpio_chip *chip)
->  	if (retval < 0) {
->  		pr_err("Failed to get deferred_fiq IRQ, ret=%d\n", retval);
->  		release_fiq(&fh);
-> -		return;
-> +		goto out_gpio;
->  	}
->  	/*
->  	 * Since no set_type() method is provided by OMAP irq chip,
-> @@ -175,4 +199,12 @@ void __init ams_delta_init_fiq(struct gpio_chip *chip)
->  	offset = IRQ_ILR0_REG_OFFSET + (INT_GPIO_BANK1 - NR_IRQS_LEGACY) * 0x4;
->  	val = omap_readl(OMAP_IH1_BASE + offset) | 1;
->  	omap_writel(val, OMAP_IH1_BASE + offset);
+> +/*
+> + * arch/arm/mach-omap1/ams-delta-fiq.h
+> + *
+> + * Taken from the original Amstrad modifications to fiq.h
+> + *
+> + * Copyright (c) 2004 Amstrad Plc
+> + * Copyright (c) 2006 Matt Callow
+> + * Copyright (c) 2010 Janusz Krzysztofik
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +#ifndef __AMS_DELTA_FIQ_H
+> +#define __AMS_DELTA_FIQ_H
 > +
-> +	return;
+> +#include <mach/irqs.h>
 > +
-> +out_gpio:
-> +	if (data)
-> +		gpiochip_free_own_desc(data);
-> +	if (clk)
-> +		gpiochip_free_own_desc(clk);
->  }
+> +/*
+> + * Interrupt number used for passing control from FIQ to IRQ.
+> + * IRQ12, described as reserved, has been selected.
+> + */
+> +#define INT_DEFERRED_FIQ	INT_1510_RES12
+> +/*
+> + * Base address of an interrupt handler that the INT_DEFERRED_FIQ belongs to.
+> + */
+> +#if (INT_DEFERRED_FIQ < IH2_BASE)
+> +#define DEFERRED_FIQ_IH_BASE	OMAP_IH1_BASE
+> +#else
+> +#define DEFERRED_FIQ_IH_BASE	OMAP_IH2_BASE
+> +#endif
+> +
+> +#ifndef __ASSEMBLER__
+> +extern unsigned char qwerty_fiqin_start, qwerty_fiqin_end;
+> +
+> +extern void __init ams_delta_init_fiq(struct gpio_chip *chip);
+> +#endif
+> +
+> +#endif
+> diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+> index f15c0793c34b..fe9a3e7cbfeb 100644
+> --- a/arch/arm/mach-omap1/board-ams-delta.c
+> +++ b/arch/arm/mach-omap1/board-ams-delta.c
+> @@ -41,10 +41,10 @@
+>  #include <mach/mux.h>
+>  
+>  #include <mach/hardware.h>
+> -#include <mach/ams-delta-fiq.h>
+>  #include "camera.h"
+>  #include <mach/usb.h>
+>  
+> +#include "ams-delta-fiq.h"
+>  #include "iomap.h"
+>  #include "common.h"
+>  
 > diff --git a/drivers/input/serio/ams_delta_serio.c b/drivers/input/serio/ams_delta_serio.c
-> index b955c6a72e99..7952a29f9540 100644
+> index 7952a29f9540..2602f7cff5ae 100644
 > --- a/drivers/input/serio/ams_delta_serio.c
 > +++ b/drivers/input/serio/ams_delta_serio.c
-> @@ -110,19 +110,6 @@ static void ams_delta_serio_close(struct serio *serio)
->  	regulator_disable(priv->vcc);
->  }
+> @@ -22,6 +22,7 @@
+>   */
+>  #include <linux/gpio.h>
+>  #include <linux/irq.h>
+> +#include <linux/platform_data/ams-delta-fiq.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/serio.h>
+> @@ -30,8 +31,6 @@
 >  
-> -static const struct gpio ams_delta_gpios[] __initconst_or_module = {
-> -	{
-> -		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_DATA,
-> -		.flags	= GPIOF_DIR_IN,
-> -		.label	= "serio-data",
-> -	},
-> -	{
-> -		.gpio	= AMS_DELTA_GPIO_PIN_KEYBRD_CLK,
-> -		.flags	= GPIOF_DIR_IN,
-> -		.label	= "serio-clock",
-> -	},
-> -};
+>  #include <mach/board-ams-delta.h>
+>  
+> -#include <mach/ams-delta-fiq.h>
 > -
->  static int ams_delta_serio_init(struct platform_device *pdev)
->  {
->  	struct ams_delta_serio *priv;
-> @@ -133,13 +120,6 @@ static int ams_delta_serio_init(struct platform_device *pdev)
->  	if (!priv)
->  		return -ENOMEM;
+>  #define DRIVER_NAME	"ams-delta-serio"
 >  
-> -	err = gpio_request_array(ams_delta_gpios,
-> -				ARRAY_SIZE(ams_delta_gpios));
-> -	if (err) {
-> -		dev_err(&pdev->dev, "Couldn't request gpio pins\n");
-> -		goto serio;
-> -	}
+>  MODULE_AUTHOR("Matt Callow");
+> diff --git a/arch/arm/mach-omap1/include/mach/ams-delta-fiq.h b/include/linux/platform_data/ams-delta-fiq.h
+> similarity index 71%
+> rename from arch/arm/mach-omap1/include/mach/ams-delta-fiq.h
+> rename to include/linux/platform_data/ams-delta-fiq.h
+> index a9769ff396bc..dc0f835ea918 100644
+> --- a/arch/arm/mach-omap1/include/mach/ams-delta-fiq.h
+> +++ b/include/linux/platform_data/ams-delta-fiq.h
+> @@ -1,5 +1,7 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+>  /*
+> - * arch/arm/mach-omap1/include/ams-delta-fiq.h
+> + * include/linux/platform_data/ams-delta-fiq.h
+>   *
+>   * Taken from the original Amstrad modifications to fiq.h
+>   *
+> @@ -11,24 +13,8 @@
+>   * it under the terms of the GNU General Public License version 2 as
+>   * published by the Free Software Foundation.
+>   */
+> -#ifndef __AMS_DELTA_FIQ_H
+> -#define __AMS_DELTA_FIQ_H
 > -
->  	priv->vcc = devm_regulator_get(&pdev->dev, "vcc");
->  	if (IS_ERR(priv->vcc)) {
->  		err = PTR_ERR(priv->vcc);
-> @@ -157,7 +137,7 @@ static int ams_delta_serio_init(struct platform_device *pdev)
->  		 */
->  		if (err == -ENODEV)
->  			err = -EPROBE_DEFER;
-> -		goto gpio;
-> +		return err;
->  	}
+> -#include <mach/irqs.h>
+> -
+> -/*
+> - * Interrupt number used for passing control from FIQ to IRQ.
+> - * IRQ12, described as reserved, has been selected.
+> - */
+> -#define INT_DEFERRED_FIQ	INT_1510_RES12
+> -/*
+> - * Base address of an interrupt handler that the INT_DEFERRED_FIQ belongs to.
+> - */
+> -#if (INT_DEFERRED_FIQ < IH2_BASE)
+> -#define DEFERRED_FIQ_IH_BASE	OMAP_IH1_BASE
+> -#else
+> -#define DEFERRED_FIQ_IH_BASE	OMAP_IH2_BASE
+> -#endif
+> +#ifndef __LINUX_PLATFORM_DATA_AMS_DELTA_FIQ_H
+> +#define __LINUX_PLATFORM_DATA_AMS_DELTA_FIQ_H
 >  
->  	err = request_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
-> @@ -165,7 +145,7 @@ static int ams_delta_serio_init(struct platform_device *pdev)
->  			DRIVER_NAME, priv);
->  	if (err < 0) {
->  		dev_err(&pdev->dev, "IRQ request failed (%d)\n", err);
-> -		goto gpio;
-> +		return err;
->  	}
->  	/*
->  	 * Since GPIO register handling for keyboard clock pin is performed
-> @@ -201,10 +181,6 @@ static int ams_delta_serio_init(struct platform_device *pdev)
+>  /*
+>   * These are the offsets from the beginning of the fiq_buffer. They are put here
+> @@ -71,9 +57,6 @@
 >  
->  irq:
->  	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), priv);
-> -gpio:
-> -	gpio_free_array(ams_delta_gpios,
-> -			ARRAY_SIZE(ams_delta_gpios));
-> -serio:
->  	return err;
->  }
+>  #ifndef __ASSEMBLER__
+>  extern unsigned int fiq_buffer[];
+> -extern unsigned char qwerty_fiqin_start, qwerty_fiqin_end;
+> -
+> -extern void __init ams_delta_init_fiq(struct gpio_chip *chip);
+>  #endif
 >  
-> @@ -214,8 +190,6 @@ static int ams_delta_serio_exit(struct platform_device *pdev)
->  
->  	serio_unregister_port(priv->serio);
->  	free_irq(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK), 0);
-> -	gpio_free_array(ams_delta_gpios,
-> -			ARRAY_SIZE(ams_delta_gpios));
->  
->  	return 0;
->  }
+>  #endif
 > -- 
 > 2.16.4
 > 
