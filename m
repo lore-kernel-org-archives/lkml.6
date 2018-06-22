@@ -2,148 +2,78 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5590C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E642AC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FBF924413
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:52:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FBF924413
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 6204A2439A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:53:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6204A2439A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933898AbeFVOwd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:52:33 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54356 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933346AbeFVOwc (ORCPT
+        id S933854AbeFVOxD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:53:03 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37084 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932973AbeFVOxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:52:32 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id D0E90288FEE
-From:   Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Subject: [PATCH 1/1] ARM: dts: imx53: PPD: Add fixed-regulator information
-Date:   Fri, 22 Jun 2018 16:52:25 +0200
-Message-Id: <20180622145225.17883-1-sebastian.reichel@collabora.co.uk>
-X-Mailer: git-send-email 2.17.1
+        Fri, 22 Jun 2018 10:53:00 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fWNQp-0002hD-7B; Fri, 22 Jun 2018 14:52:59 +0000
+Date:   Fri, 22 Jun 2018 15:52:59 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LKLM <linux-kernel@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>
+Subject: Re: 4.18-rc1 regression in /proc/self xattr handling
+Message-ID: <20180622145259.GZ30522@ZenIV.linux.org.uk>
+References: <020be8a4-961b-b92f-7ee9-3c439d629338@schaufler-ca.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <020be8a4-961b-b92f-7ee9-3c439d629338@schaufler-ca.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add information about 3V3 power rail to avoid kernel warnings,
-that dummy regulators have been added.
+On Fri, Jun 22, 2018 at 07:37:00AM -0700, Casey Schaufler wrote:
+> There is a regression in behavior regarding xattrs in /proc after:
+> 
+> commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
+> Author: Al Viro <viro@zeniv.linux.org.uk>
+> Date:   Wed May 2 21:26:16 2018 -0400
+> 
+>     procfs: get rid of ancient BS in pid_revalidate() uses
+>     
+> 
+> Prior to this change lgetxattr() would provide the correct attributes
+> for entries in /proc. With this change I see that while the behavior
+> remains correct if the procid is specified, it is not when "self" is
+> used. On a system with Smack enabled, where the shell has the Smack label
+> "Crackle" I see: 
+> 
+> [root@localhost linux]# attr -S -g SMACK64 /proc/self/attr/current
+> Attribute "SMACK64" had a 1 byte value for /proc/self/attr/current:
+> _
+> [root@localhost linux]# attr -S -g SMACK64 /proc/$BASHPID/attr/current
+> Attribute "SMACK64" had a 7 byte value for /proc/1716/attr/current:
+> Crackle
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
----
- arch/arm/boot/dts/imx53-ppd.dts | 37 +++++++++++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 2 deletions(-)
+Wait a sec - the former will be that of attr, the latter - of bash;
+it's not the same file at all.
 
-diff --git a/arch/arm/boot/dts/imx53-ppd.dts b/arch/arm/boot/dts/imx53-ppd.dts
-index 4ddef5abda56..e0bbb70b42c6 100644
---- a/arch/arm/boot/dts/imx53-ppd.dts
-+++ b/arch/arm/boot/dts/imx53-ppd.dts
-@@ -140,6 +140,26 @@
- 		regulator-always-on;
- 	};
- 
-+	reg_3v3: regulator-3v3 {
-+		/* TPS54320 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	reg_3v3_lcd: regulator-3v3-lcd {
-+		/* MIC2009 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "LCD_3V3";
-+		vin-supply = <&reg_3v3>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	pwm_bl: backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm2 0 50000>;
-@@ -154,6 +174,7 @@
- 				     234 237 239 242 244 247 249 252 255>;
- 		default-brightness-level = <0>;
- 		enable-gpios = <&gpio5 29 GPIO_ACTIVE_HIGH>;
-+		power-supply = <&reg_3v3_lcd>;
- 	};
- 
- 	leds {
-@@ -198,8 +219,9 @@
- 		};
- 	};
- 
--	usbphy2: usbphy2 {
-+	usbphy2: usbphy-2 {
- 		compatible = "usb-nop-xceiv";
-+		vcc-supply = <&reg_3v3>;
- 		reset-gpios = <&gpio4 4 GPIO_ACTIVE_LOW>;
- 		clock-names = "main_clk";
- 		clock-frequency = <24000000>;
-@@ -208,8 +230,9 @@
- 		assigned-clock-parents = <&clks IMX5_CLK_OSC>;
- 	};
- 
--	usbphy3: usbphy3 {
-+	usbphy3: usbphy-3 {
- 		compatible = "usb-nop-xceiv";
-+		vcc-supply = <&reg_3v3>;
- 		reset-gpios = <&gpio2 19 GPIO_ACTIVE_LOW>;
- 		clock-names = "main_clk";
- 
-@@ -221,6 +244,7 @@
- 
- 	panel-lvds0 {
- 		compatible = "nvd,9128";
-+		power-supply = <&reg_3v3_lcd>;
- 
- 		port {
- 			panel_in_lvds0: endpoint {
-@@ -230,6 +254,14 @@
- 	};
- };
- 
-+&usbphy0 {
-+	vcc-supply = <&reg_3v3>;
-+};
-+
-+&usbphy1 {
-+	vcc-supply = <&reg_3v3>;
-+};
-+
- &audmux {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_audmux>;
-@@ -409,6 +441,7 @@
- &fec {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_fec>;
-+	phy-supply = <&reg_3v3>;
- 	phy-mode = "rmii";
- 	phy-reset-gpios = <&gpio2 16 GPIO_ACTIVE_LOW>;
- 	status = "okay";
--- 
-2.17.1
+> These should be the same, and in the past have been. I don't know
+> what SELinux expects as far as attributes in /proc, so I can't say
+> if the problem is manifest with SELinux.
 
+Very interesting...  About the only thing changed here seems to be
+the relative order of smack_d_instantiate() and smack_task_to_inode()...
+
+Would setting SMK_INODE_INSTANT in isp->smk_flags in smack_task_to_inode()
+be the right thing to do, anyway?
