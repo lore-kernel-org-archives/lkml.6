@@ -6,30 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B24C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA60C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBD01215E6
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBD01215E6
+	by mail.kernel.org (Postfix) with ESMTP id 6AE8022441
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:43:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AE8022441
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934016AbeFVWnA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:43:00 -0400
-Received: from mga17.intel.com ([192.55.52.151]:52517 "EHLO mga17.intel.com"
+        id S1754706AbeFVWni (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 18:43:38 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22312 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933780AbeFVWmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 18:42:49 -0400
+        id S933780AbeFVWnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 18:43:00 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
-   d="scan'208";a="234843381"
+   d="scan'208";a="234843467"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:47 -0700
+  by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:48 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
 To:     tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -37,29 +38,31 @@ Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V7 11/41] x86/intel_rdt: Making CBM name and type more explicit
-Date:   Fri, 22 Jun 2018 15:42:02 -0700
-Message-Id: <5e29cf0209ea2deac9beacd35cbe5239a50959fb.1529706536.git.reinette.chatre@intel.com>
+Subject: [PATCH V7 39/41] x86/intel_rdt: Limit C-states dynamically when pseudo-locking active
+Date:   Fri, 22 Jun 2018 15:42:30 -0700
+Message-Id: <1ef4f99dd6ba12fa6fb44c5a1141e75f952b9cd9.1529706536.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1529706536.git.reinette.chatre@intel.com>
 References: <cover.1529706536.git.reinette.chatre@intel.com>
+MIME-Version: 1.0
 In-Reply-To: <cover.1529706536.git.reinette.chatre@intel.com>
 References: <cover.1529706536.git.reinette.chatre@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cbm_validate() receives a pointer to the variable that will be initialized
-with a validated capacity bitmask. The pointer points to a variable of type
-unsigned long that is immediately assigned to a variable of type u32 by the
-caller on return from cbm_validate().
+Deeper C-states impact cache content through shrinking of the cache or
+flushing entire cache to memory before reducing power to the cache.
+Deeper C-states will thus negatively impact the pseudo-locked regions.
 
-Let cbm_validate() initialize a variable of type u32 directly.
-
-At this time also change tha variable name "data" within parse_cbm() to a
-name more reflective of the content: "cbm_val". This frees up the generic
-"data" to be used later when it is indeed used for a collection of input.
+To avoid impacting pseudo-locked regions C-states are limited on
+pseudo-locked region creation so that cores associated with the
+pseudo-locked region are prevented from entering deeper C-states.
+This is accomplished by requesting a CPU latency target which will
+prevent the core from entering C6 across all supported platforms.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -70,45 +73,193 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/d08cc1fa859f5751fd815ed8ef5499170badc9e5.1527593970.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/1282e07cd1a5291bc42dfcd117be12916e538ff2.1527593971.git.reinette.chatre@intel.com
 ---
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ Documentation/x86/intel_rdt_ui.txt          |  4 +-
+ arch/x86/kernel/cpu/intel_rdt.h             |  2 +
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 85 ++++++++++++++++++++-
+ 3 files changed, 87 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index 2c23bb136ccc..b3da5b981dd8 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -87,7 +87,7 @@ int parse_bw(char *buf, struct rdt_resource *r, struct rdt_domain *d)
-  *	are allowed (e.g. FFFFH, 0FF0H, 003CH, etc.).
-  * Additionally Haswell requires at least two bits set.
-  */
--static bool cbm_validate(char *buf, unsigned long *data, struct rdt_resource *r)
-+static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
- {
- 	unsigned long first_bit, zero_bit, val;
- 	unsigned int cbm_len = r->cache.cbm_len;
-@@ -128,16 +128,17 @@ static bool cbm_validate(char *buf, unsigned long *data, struct rdt_resource *r)
-  */
- int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d)
- {
--	unsigned long data;
-+	u32 cbm_val;
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index bcd0a6d2fcf8..acac30b67c62 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -461,8 +461,8 @@ in the cache via carefully configuring the CAT feature and controlling
+ application behavior. There is no guarantee that data is placed in
+ cache. Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict
+ “locked” data from cache. Power management C-states may shrink or
+-power off cache. It is thus recommended to limit the processor maximum
+-C-state, for example, by setting the processor.max_cstate kernel parameter.
++power off cache. Deeper C-states will automatically be restricted on
++pseudo-locked region creation.
  
- 	if (d->have_new_ctrl) {
- 		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
- 		return -EINVAL;
+ It is required that an application using a pseudo-locked region runs
+ with affinity to the cores (or a subset of the cores) associated
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index b8e490a43290..2d9cbb9d7a58 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -142,6 +142,7 @@ struct mongroup {
+  *			region
+  * @debugfs_dir:	pointer to this region's directory in the debugfs
+  *			filesystem
++ * @pm_reqs:		Power management QoS requests related to this region
+  */
+ struct pseudo_lock_region {
+ 	struct rdt_resource	*r;
+@@ -155,6 +156,7 @@ struct pseudo_lock_region {
+ 	void			*kmem;
+ 	unsigned int		minor;
+ 	struct dentry		*debugfs_dir;
++	struct list_head	pm_reqs;
+ };
+ 
+ /**
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 17ed2e9d4551..0d44dc1f7146 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -17,6 +17,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/kthread.h>
+ #include <linux/mman.h>
++#include <linux/pm_qos.h>
+ #include <linux/slab.h>
+ #include <asm/cacheflush.h>
+ #include <asm/intel-family.h>
+@@ -172,6 +173,76 @@ static struct rdtgroup *region_find_by_minor(unsigned int minor)
+ 	return rdtgrp_match;
+ }
+ 
++/**
++ * pseudo_lock_pm_req - A power management QoS request list entry
++ * @list:	Entry within the @pm_reqs list for a pseudo-locked region
++ * @req:	PM QoS request
++ */
++struct pseudo_lock_pm_req {
++	struct list_head list;
++	struct dev_pm_qos_request req;
++};
++
++static void pseudo_lock_cstates_relax(struct pseudo_lock_region *plr)
++{
++	struct pseudo_lock_pm_req *pm_req, *next;
++
++	list_for_each_entry_safe(pm_req, next, &plr->pm_reqs, list) {
++		dev_pm_qos_remove_request(&pm_req->req);
++		list_del(&pm_req->list);
++		kfree(pm_req);
++	}
++}
++
++/**
++ * pseudo_lock_cstates_constrain - Restrict cores from entering C6
++ *
++ * To prevent the cache from being affected by power management entering
++ * C6 has to be avoided. This is accomplished by requesting a latency
++ * requirement lower than lowest C6 exit latency of all supported
++ * platforms as found in the cpuidle state tables in the intel_idle driver.
++ * At this time it is possible to do so with a single latency requirement
++ * for all supported platforms.
++ *
++ * Since Goldmont is supported, which is affected by X86_BUG_MONITOR,
++ * the ACPI latencies need to be considered while keeping in mind that C2
++ * may be set to map to deeper sleep states. In this case the latency
++ * requirement needs to prevent entering C2 also.
++ */
++static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
++{
++	struct pseudo_lock_pm_req *pm_req;
++	int cpu;
++	int ret;
++
++	for_each_cpu(cpu, &plr->d->cpu_mask) {
++		pm_req = kzalloc(sizeof(*pm_req), GFP_KERNEL);
++		if (!pm_req) {
++			rdt_last_cmd_puts("fail allocating mem for PM QoS\n");
++			ret = -ENOMEM;
++			goto out_err;
++		}
++		ret = dev_pm_qos_add_request(get_cpu_device(cpu),
++					     &pm_req->req,
++					     DEV_PM_QOS_RESUME_LATENCY,
++					     30);
++		if (ret < 0) {
++			rdt_last_cmd_printf("fail to add latency req cpu%d\n",
++					    cpu);
++			kfree(pm_req);
++			ret = -1;
++			goto out_err;
++		}
++		list_add(&pm_req->list, &plr->pm_reqs);
++	}
++
++	return 0;
++
++out_err:
++	pseudo_lock_cstates_relax(plr);
++	return ret;
++}
++
+ /**
+  * pseudo_lock_region_init - Initialize pseudo-lock region information
+  * @plr: pseudo-lock region
+@@ -239,6 +310,7 @@ static int pseudo_lock_init(struct rdtgroup *rdtgrp)
+ 		return -ENOMEM;
+ 
+ 	init_waitqueue_head(&plr->lock_thread_wq);
++	INIT_LIST_HEAD(&plr->pm_reqs);
+ 	rdtgrp->plr = plr;
+ 	return 0;
+ }
+@@ -1132,6 +1204,12 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = pseudo_lock_cstates_constrain(plr);
++	if (ret < 0) {
++		ret = -EINVAL;
++		goto out_region;
++	}
++
+ 	plr->thread_done = 0;
+ 
+ 	thread = kthread_create_on_node(pseudo_lock_fn, rdtgrp,
+@@ -1140,7 +1218,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	if (IS_ERR(thread)) {
+ 		ret = PTR_ERR(thread);
+ 		rdt_last_cmd_printf("locking thread returned error %d\n", ret);
+-		goto out_region;
++		goto out_cstates;
  	}
  
--	if(!cbm_validate(buf, &data, r))
-+	if (!cbm_validate(buf, &cbm_val, r))
- 		return -EINVAL;
--	d->new_ctrl = data;
-+
-+	d->new_ctrl = cbm_val;
- 	d->have_new_ctrl = true;
+ 	kthread_bind(thread, plr->cpu);
+@@ -1158,7 +1236,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 		 * empty pseudo-locking loop.
+ 		 */
+ 		rdt_last_cmd_puts("locking thread interrupted\n");
+-		goto out_region;
++		goto out_cstates;
+ 	}
  
- 	return 0;
+ 	if (!IS_ERR_OR_NULL(debugfs_resctrl)) {
+@@ -1219,6 +1297,8 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	pseudo_lock_minor_release(new_minor);
+ out_debugfs:
+ 	debugfs_remove_recursive(plr->debugfs_dir);
++out_cstates:
++	pseudo_lock_cstates_relax(plr);
+ out_region:
+ 	pseudo_lock_region_clear(plr);
+ out:
+@@ -1252,6 +1332,7 @@ void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp)
+ 		goto free;
+ 	}
+ 
++	pseudo_lock_cstates_relax(plr);
+ 	debugfs_remove_recursive(rdtgrp->plr->debugfs_dir);
+ 	device_destroy(pseudo_lock_class, MKDEV(pseudo_lock_major, plr->minor));
+ 	pseudo_lock_minor_release(plr->minor);
 -- 
 2.17.0
 
