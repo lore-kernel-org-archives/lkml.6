@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB9EC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E1BC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55FA12453F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:44:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55FA12453F
+	by mail.kernel.org (Postfix) with ESMTP id BF2152455D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:44:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF2152455D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754805AbeFVWom (ORCPT
+        id S1754787AbeFVWok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:44:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:22310 "EHLO mga02.intel.com"
+        Fri, 22 Jun 2018 18:44:40 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22311 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933974AbeFVWmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933977AbeFVWmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 18:42:55 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +28,7 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
-   d="scan'208";a="234843451"
+   d="scan'208";a="234843454"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:48 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -38,9 +38,9 @@ Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V7 34/41] x86/intel_rdt: Create resctrl debug area
-Date:   Fri, 22 Jun 2018 15:42:25 -0700
-Message-Id: <9f553faf30866a6317f1aaaa2fe9f92de66a10d2.1529706536.git.reinette.chatre@intel.com>
+Subject: [PATCH V7 35/41] x86/intel_rdt: Create debugfs files for pseudo-locking testing
+Date:   Fri, 22 Jun 2018 15:42:26 -0700
+Message-Id: <6b2ea76181099d1b79ccfa7d3be24497ab2d1a45.1529706536.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1529706536.git.reinette.chatre@intel.com>
 References: <cover.1529706536.git.reinette.chatre@intel.com>
@@ -51,16 +51,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for support of debugging of RDT sub features the user can
-now enable a RDT debugfs region.
+There is no simple yes/no test to determine if pseudo-locking was
+successful. In order to test pseudo-locking we expose a debugfs file for
+each pseudo-locked region that will record the latency of reading the
+pseudo-locked memory at a stride of 32 bytes (hardcoded). These numbers
+will give us an idea of locking was successful or not since they will
+reflect cache hits and cache misses (hardware prefetching is disabled
+during the test).
 
-The debug area is always enabled when CONFIG_DEBUG_FS is set as advised in
-http://lkml.kernel.org/r/20180523080501.GA6822@kroah.com
+The new debugfs file "pseudo_lock_measure" will, when the
+pseudo_lock_mem_latency tracepoint is enabled, record the latency of
+accessing each cache line twice.
 
-Also from same discussion in above linked email, no error checking on the
-debugfs creation return value since code should not behave differently when
-debugging passes or fails. Even on failure the returned value can be passed
-safely to other debugfs calls.
+Kernel tracepoints offer us histograms (when CONFIG_HIST_TRIGGERS is
+enabled) that is a simple way to visualize the memory access latency
+and immediately see any cache misses. For example, the hist trigger
+below before trigger of the measurement will display the memory access
+latency and instances at each latency:
+echo 'hist:keys=latency' > /sys/kernel/debug/tracing/events/resctrl/\
+                           pseudo_lock_mem_latency/trigger
+echo 1 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/enable
+echo 1 > /sys/kernel/debug/resctrl/<newlock>/pseudo_lock_measure
+echo 0 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/enable
+cat /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/hist
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -71,84 +84,304 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/1200798a50791186cd959d75aa3145409ca5151a.1527593971.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/a2bb234d1eb60957c9644ae1b8d9d95659a739e3.1527593971.git.reinette.chatre@intel.com
 ---
- arch/x86/kernel/cpu/intel_rdt.h          |  2 ++
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 27 ++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ arch/x86/kernel/cpu/Makefile                  |   1 +
+ arch/x86/kernel/cpu/intel_rdt.h               |   3 +
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c   | 176 +++++++++++++++++-
+ .../kernel/cpu/intel_rdt_pseudo_lock_event.h  |  23 +++
+ 4 files changed, 202 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
 
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index c4e02555563a..347137e80bf5 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -37,6 +37,7 @@ obj-$(CONFIG_CPU_SUP_UMC_32)		+= umc.o
+ 
+ obj-$(CONFIG_INTEL_RDT)	+= intel_rdt.o intel_rdt_rdtgroup.o intel_rdt_monitor.o
+ obj-$(CONFIG_INTEL_RDT)	+= intel_rdt_ctrlmondata.o intel_rdt_pseudo_lock.o
++CFLAGS_intel_rdt_pseudo_lock.o = -I$(src)
+ 
+ obj-$(CONFIG_X86_MCE)			+= mcheck/
+ obj-$(CONFIG_MTRR)			+= mtrr/
 diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index c948266d59c8..bd3050c1ab6c 100644
+index bd3050c1ab6c..9112290f08fb 100644
 --- a/arch/x86/kernel/cpu/intel_rdt.h
 +++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -432,6 +432,8 @@ extern struct rdt_resource rdt_resources_all[];
- extern struct rdtgroup rdtgroup_default;
- DECLARE_STATIC_KEY_FALSE(rdt_alloc_enable_key);
+@@ -138,6 +138,8 @@ struct mongroup {
+  * @line_size:		size of the cache lines
+  * @size:		size of pseudo-locked region in bytes
+  * @kmem:		the kernel memory associated with pseudo-locked region
++ * @debugfs_dir:	pointer to this region's directory in the debugfs
++ *			filesystem
+  */
+ struct pseudo_lock_region {
+ 	struct rdt_resource	*r;
+@@ -149,6 +151,7 @@ struct pseudo_lock_region {
+ 	unsigned int		line_size;
+ 	unsigned int		size;
+ 	void			*kmem;
++	struct dentry		*debugfs_dir;
+ };
  
-+extern struct dentry *debugfs_resctrl;
-+
- enum {
- 	RDT_RESOURCE_L3,
- 	RDT_RESOURCE_L3DATA,
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 75fe5f2719be..ab8d394eb24d 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -22,6 +22,7 @@
- 
+ /**
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 7e1926748356..7b0ff5017455 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -14,6 +14,7 @@
  #include <linux/cacheinfo.h>
  #include <linux/cpu.h>
+ #include <linux/cpumask.h>
 +#include <linux/debugfs.h>
- #include <linux/fs.h>
- #include <linux/sysfs.h>
- #include <linux/kernfs.h>
-@@ -56,6 +57,8 @@ static struct kernfs_node *kn_mondata;
- static struct seq_buf last_cmd_status;
- static char last_cmd_status_buf[512];
+ #include <linux/kthread.h>
+ #include <linux/slab.h>
+ #include <asm/cacheflush.h>
+@@ -21,6 +22,9 @@
+ #include <asm/intel_rdt_sched.h>
+ #include "intel_rdt.h"
  
-+struct dentry *debugfs_resctrl;
++#define CREATE_TRACE_POINTS
++#include "intel_rdt_pseudo_lock_event.h"
 +
- void rdt_last_cmd_clear(void)
- {
- 	lockdep_assert_held(&rdtgroup_mutex);
-@@ -2828,6 +2831,29 @@ int __init rdtgroup_init(void)
- 	if (ret)
- 		goto cleanup_mountpoint;
+ /*
+  * MSR_MISC_FEATURE_CONTROL register enables the modification of hardware
+  * prefetcher state. Details about this register can be found in the MSR
+@@ -176,6 +180,7 @@ static void pseudo_lock_region_clear(struct pseudo_lock_region *plr)
+ 		plr->d->plr = NULL;
+ 	plr->d = NULL;
+ 	plr->cbm = 0;
++	plr->debugfs_dir = NULL;
+ }
  
+ /**
+@@ -692,6 +697,161 @@ bool rdtgroup_pseudo_locked_in_hierarchy(struct rdt_domain *d)
+ 	return ret;
+ }
+ 
++/**
++ * measure_cycles_lat_fn - Measure cycle latency to read pseudo-locked memory
++ * @_plr: pseudo-lock region to measure
++ *
++ * There is no deterministic way to test if a memory region is cached. One
++ * way is to measure how long it takes to read the memory, the speed of
++ * access is a good way to learn how close to the cpu the data was. Even
++ * more, if the prefetcher is disabled and the memory is read at a stride
++ * of half the cache line, then a cache miss will be easy to spot since the
++ * read of the first half would be significantly slower than the read of
++ * the second half.
++ *
++ * Return: 0. Waiter on waitqueue will be woken on completion.
++ */
++static int measure_cycles_lat_fn(void *_plr)
++{
++	struct pseudo_lock_region *plr = _plr;
++	u64 start, end;
++	u64 i;
++#ifdef CONFIG_KASAN
 +	/*
-+	 * Adding the resctrl debugfs directory here may not be ideal since
-+	 * it would let the resctrl debugfs directory appear on the debugfs
-+	 * filesystem before the resctrl filesystem is mounted.
-+	 * It may also be ok since that would enable debugging of RDT before
-+	 * resctrl is mounted.
-+	 * The reason why the debugfs directory is created here and not in
-+	 * rdt_mount() is because rdt_mount() takes rdtgroup_mutex and
-+	 * during the debugfs directory creation also &sb->s_type->i_mutex_key
-+	 * (the lockdep class of inode->i_rwsem). Other filesystem
-+	 * interactions (eg. SyS_getdents) have the lock ordering:
-+	 * &sb->s_type->i_mutex_key --> &mm->mmap_sem
-+	 * During mmap(), called with &mm->mmap_sem, the rdtgroup_mutex
-+	 * is taken, thus creating dependency:
-+	 * &mm->mmap_sem --> rdtgroup_mutex for the latter that can cause
-+	 * issues considering the other two lock dependencies.
-+	 * By creating the debugfs directory here we avoid a dependency
-+	 * that may cause deadlock (even though file operations cannot
-+	 * occur until the filesystem is mounted, but I do not know how to
-+	 * tell lockdep that).
++	 * The registers used for local register variables are also used
++	 * when KASAN is active. When KASAN is active we use a regular
++	 * variable to ensure we always use a valid pointer to access memory.
++	 * The cost is that accessing this pointer, which could be in
++	 * cache, will be included in the measurement of memory read latency.
 +	 */
-+	debugfs_resctrl = debugfs_create_dir("resctrl", NULL);
++	void *mem_r;
++#else
++#ifdef CONFIG_X86_64
++	register void *mem_r asm("rbx");
++#else
++	register void *mem_r asm("ebx");
++#endif /* CONFIG_X86_64 */
++#endif /* CONFIG_KASAN */
 +
- 	return 0;
++	local_irq_disable();
++	/*
++	 * The wrmsr call may be reordered with the assignment below it.
++	 * Call wrmsr as directly as possible to avoid tracing clobbering
++	 * local register variable used for memory pointer.
++	 */
++	__wrmsr(MSR_MISC_FEATURE_CONTROL, prefetch_disable_bits, 0x0);
++	mem_r = plr->kmem;
++	/*
++	 * Dummy execute of the time measurement to load the needed
++	 * instructions into the L1 instruction cache.
++	 */
++	start = rdtsc_ordered();
++	for (i = 0; i < plr->size; i += 32) {
++		start = rdtsc_ordered();
++		asm volatile("mov (%0,%1,1), %%eax\n\t"
++			     :
++			     : "r" (mem_r), "r" (i)
++			     : "%eax", "memory");
++		end = rdtsc_ordered();
++		trace_pseudo_lock_mem_latency((u32)(end - start));
++	}
++	wrmsr(MSR_MISC_FEATURE_CONTROL, 0x0, 0x0);
++	local_irq_enable();
++	plr->thread_done = 1;
++	wake_up_interruptible(&plr->lock_thread_wq);
++	return 0;
++}
++
++/**
++ * pseudo_lock_measure_cycles - Trigger latency measure to pseudo-locked region
++ *
++ * The measurement of latency to access a pseudo-locked region should be
++ * done from a cpu that is associated with that pseudo-locked region.
++ * Determine which cpu is associated with this region and start a thread on
++ * that cpu to perform the measurement, wait for that thread to complete.
++ *
++ * Return: 0 on success, <0 on failure
++ */
++static int pseudo_lock_measure_cycles(struct rdtgroup *rdtgrp)
++{
++	struct pseudo_lock_region *plr = rdtgrp->plr;
++	struct task_struct *thread;
++	unsigned int cpu;
++	int ret;
++
++	cpus_read_lock();
++	mutex_lock(&rdtgroup_mutex);
++
++	if (rdtgrp->flags & RDT_DELETED) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	plr->thread_done = 0;
++	cpu = cpumask_first(&plr->d->cpu_mask);
++	if (!cpu_online(cpu)) {
++		ret = -ENODEV;
++		goto out;
++	}
++
++	thread = kthread_create_on_node(measure_cycles_lat_fn, plr,
++					cpu_to_node(cpu),
++					"pseudo_lock_measure/%u", cpu);
++	if (IS_ERR(thread)) {
++		ret = PTR_ERR(thread);
++		goto out;
++	}
++	kthread_bind(thread, cpu);
++	wake_up_process(thread);
++
++	ret = wait_event_interruptible(plr->lock_thread_wq,
++				       plr->thread_done == 1);
++	if (ret < 0)
++		goto out;
++
++	ret = 0;
++
++out:
++	mutex_unlock(&rdtgroup_mutex);
++	cpus_read_unlock();
++	return ret;
++}
++
++static ssize_t pseudo_lock_measure_trigger(struct file *file,
++					   const char __user *user_buf,
++					   size_t count, loff_t *ppos)
++{
++	struct rdtgroup *rdtgrp = file->private_data;
++	size_t buf_size;
++	char buf[32];
++	int ret;
++	bool bv;
++
++	buf_size = min(count, (sizeof(buf) - 1));
++	if (copy_from_user(buf, user_buf, buf_size))
++		return -EFAULT;
++
++	buf[buf_size] = '\0';
++	ret = strtobool(buf, &bv);
++	if (ret == 0 && bv) {
++		ret = debugfs_file_get(file->f_path.dentry);
++		if (ret)
++			return ret;
++		ret = pseudo_lock_measure_cycles(rdtgrp);
++		if (ret == 0)
++			ret = count;
++		debugfs_file_put(file->f_path.dentry);
++	}
++
++	return ret;
++}
++
++static const struct file_operations pseudo_measure_fops = {
++	.write = pseudo_lock_measure_trigger,
++	.open = simple_open,
++	.llseek = default_llseek,
++};
++
+ /**
+  * rdtgroup_pseudo_lock_create - Create a pseudo-locked region
+  * @rdtgrp: resource group to which pseudo-lock region belongs
+@@ -747,6 +907,15 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 		goto out_region;
+ 	}
  
- cleanup_mountpoint:
-@@ -2840,6 +2866,7 @@ int __init rdtgroup_init(void)
- 
- void __exit rdtgroup_exit(void)
++	if (!IS_ERR_OR_NULL(debugfs_resctrl)) {
++		plr->debugfs_dir = debugfs_create_dir(rdtgrp->kn->name,
++						      debugfs_resctrl);
++		if (!IS_ERR_OR_NULL(plr->debugfs_dir))
++			debugfs_create_file("pseudo_lock_measure", 0200,
++					    plr->debugfs_dir, rdtgrp,
++					    &pseudo_measure_fops);
++	}
++
+ 	rdtgrp->mode = RDT_MODE_PSEUDO_LOCKED;
+ 	closid_free(rdtgrp->closid);
+ 	ret = 0;
+@@ -774,12 +943,17 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+  */
+ void rdtgroup_pseudo_lock_remove(struct rdtgroup *rdtgrp)
  {
-+	debugfs_remove_recursive(debugfs_resctrl);
- 	unregister_filesystem(&rdt_fs_type);
- 	sysfs_remove_mount_point(fs_kobj, "resctrl");
- 	kernfs_destroy_root(rdt_root);
+-	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP)
++	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+ 		/*
+ 		 * Default group cannot be a pseudo-locked region so we can
+ 		 * free closid here.
+ 		 */
+ 		closid_free(rdtgrp->closid);
++		goto free;
++	}
++
++	debugfs_remove_recursive(rdtgrp->plr->debugfs_dir);
+ 
++free:
+ 	pseudo_lock_free(rdtgrp);
+ }
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
+new file mode 100644
+index 000000000000..3cd0fa27d5fe
+--- /dev/null
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock_event.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM resctrl
++
++#if !defined(_TRACE_PSEUDO_LOCK_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_PSEUDO_LOCK_H
++
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(pseudo_lock_mem_latency,
++	    TP_PROTO(u32 latency),
++	    TP_ARGS(latency),
++	    TP_STRUCT__entry(__field(u32, latency)),
++	    TP_fast_assign(__entry->latency = latency),
++	    TP_printk("latency=%u", __entry->latency)
++	   );
++
++#endif /* _TRACE_PSEUDO_LOCK_H */
++
++#undef TRACE_INCLUDE_PATH
++#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_FILE intel_rdt_pseudo_lock_event
++#include <trace/define_trace.h>
 -- 
 2.17.0
 
