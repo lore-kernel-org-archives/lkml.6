@@ -2,89 +2,104 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8833CC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F284BC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30039247B3
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 19:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CBA024850
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:02:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="GbsVl35K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30039247B3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEp7k2WY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CBA024850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934507AbeFVTvr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 15:51:47 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35335 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934257AbeFVTvp (ORCPT
+        id S934518AbeFVUCG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 16:02:06 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41396 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934393AbeFVUCE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 15:51:45 -0400
-Received: by mail-pf0-f193.google.com with SMTP id c22-v6so3684802pfi.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:51:45 -0700 (PDT)
+        Fri, 22 Jun 2018 16:02:04 -0400
+Received: by mail-pg0-f67.google.com with SMTP id l65-v6so3411859pgl.8;
+        Fri, 22 Jun 2018 13:02:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bV8rnbz9SCxm58JrOH1gWj8azW+P+qn4qIclNhAqMTg=;
-        b=GbsVl35K3SiYeYpjhHcTSbXEDaVDGs5R0R1Ja9VnJz+vBLlgiEQAN60kMWbog8jiWO
-         yYYNlyHt/OfvTC5DOfGCBcWYlF1G7WQ31qD35/nB3FsBkQHg6OoaRKX852Gr1XHTuCnl
-         tuzBa9z+tdWrDTnL45u5HyK7Kgt2HDypAmi7wtNBYFnBz8eFI2orTlJSCIpPxod+DQGV
-         RdyvC0y8Ct+ZTKBGWHLCATZmhasDZ+6mk2UZmvvxkNIjwcgFeYc9i8dqXIV4N2AvpCyw
-         9Cd22jVaLw38eTwsKzv/gPQdLlwuOP/5GE5ZvGKy98BBwy1CfxhvZ8+xrVUHsVmITbnZ
-         4L+Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZarrWeOtfLOvtpADNHhMMYBFW0YiDE+qy2ObmHNx7M0=;
+        b=ZEp7k2WYbxCFqK8VU0uc24LMKAAphO7lttaA34xKvsQ/rqGYRzP885Pj6O8Z8EqM/M
+         YnMKP3NjB4Q153c+6HhWWXVRZm3gOE4OHtazqIV1pWPdCE2BhEQ+ZWXuSHbHIVINB2n5
+         15sVD1evtOo+R1ImBfd4Ho3rmKiALGjmsh/BrtsLt+otMvIWqOzr6v1bCIW2N+MyNJip
+         krYwsZOkNPBaSKke+nln8it5nePBIJIPAT2W2xxsR87in7542buInZC7jg/wp99/j8Qn
+         jL8NfCe0orIixEUYxuK6NBPiYMHfM6zRGWSZveR+DtTB8GmDoJ3OhVtSMVYimlhGC/Hm
+         Kncg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bV8rnbz9SCxm58JrOH1gWj8azW+P+qn4qIclNhAqMTg=;
-        b=lI4BeLK5h+HprAKAvU0ZRgSz86Nv4Ja1kRZjSSP3Ux641zVUw1lVyMbwrbDRkbDkeV
-         vKgDpRoWgqxbXthzzCvdYLEO5tDyx9d8pGrLra7d6nPgQHHik6gWA/qWHgt0JkCZ+E9z
-         DN89euQEXlAuvKsK8FG+2IqotMZKgtJXc4vud7FECh1sqE527zN4guZGkIA2aeFST/jw
-         w7Y3e5hsbypTEK3FmwdvEcmbWofCruQYhbHfpZdAtk69L3UMeIpIOpBMkicLOD1A2dv5
-         YcH4mfQXy0WPTs3qRAu4S7zDFeIgZ2ZshLz43P7tfn/jU/WY87DTizcrdVtyukMWNKD6
-         8kuw==
-X-Gm-Message-State: APt69E1CqKgAtWgz5ajzWbopetFse2KlnBs0v/ZamU4mGoHOH2VcRXrO
-        3x7GtkJKIksDgjohT2CPv2aQfdJsgEk=
-X-Google-Smtp-Source: ADUXVKL0A3760/mYSMcsufZKid1SJ2MJaRncRCDXbEDC13XfequH1W6chHUgemAEZYWwHA017IdxRw==
-X-Received: by 2002:a65:5c02:: with SMTP id u2-v6mr2591307pgr.304.1529697104886;
-        Fri, 22 Jun 2018 12:51:44 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c081:1132::1032? ([2620:10d:c090:180::1:981b])
-        by smtp.gmail.com with ESMTPSA id l85-v6sm16245154pfk.79.2018.06.22.12.51.43
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZarrWeOtfLOvtpADNHhMMYBFW0YiDE+qy2ObmHNx7M0=;
+        b=MNOiA7lWcm38jnX73M5g1ebaAc1qz62AWlJACY/fFTcP2MgYNeiSu4YF9LNqn6WWQO
+         NoUd06ZbVnsFouKQpgcNtBdhYxvf5N8Abcyv+x7hrCMFmtBnjvzCjcvmfUZI4zMDo5mK
+         LeCgvDK4+FN8DWBYXYRdkx/nAIHhYld+3QCujkswWHYpRe7Pri6HgTb5E2Nt5lwu4wVj
+         4qZ+JiuqsZVYwCWgs883OPmojwXA7E2QU29Wgv4GqhBeFW+ZeUBhIPVIrvC+zT7dpH+5
+         36qxVV5NJt6iWogj6iiaZ3C7/2ucL3bsdD/RJhnrYvt2A7WlpjDy7grIW9oUwAYFO9vh
+         yO/g==
+X-Gm-Message-State: APt69E1h4Znp0UcDFiUtOmr5+sLqKykUgqpu9qbzH48zeUN9spOK5OQJ
+        Tws/dG9GoLrLalTPGI450PHBtdR2
+X-Google-Smtp-Source: ADUXVKLqWBc6ZytmTcsrWhruzv+zlM0GEGzEvpui40r76Bqhp7kQ7sER2mw3DuQDTkGx/al3g9CVJw==
+X-Received: by 2002:a63:41c1:: with SMTP id o184-v6mr2651038pga.323.1529697724350;
+        Fri, 22 Jun 2018 13:02:04 -0700 (PDT)
+Received: from localhost.localdomain ([122.174.152.149])
+        by smtp.gmail.com with ESMTPSA id m21-v6sm10352370pgv.27.2018.06.22.13.02.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 12:51:43 -0700 (PDT)
-Subject: Re: [PATCH 3/3] block: Change simple_strtol() to kstrtol()
-To:     Kitone Elvis Peter <elviskitone@gmail.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180622113918.GA6633@kitone-HP-ProBook-4530s>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <58db0446-1e25-d2ba-3d47-33d5e19beecc@kernel.dk>
-Date:   Fri, 22 Jun 2018 13:51:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180622113918.GA6633@kitone-HP-ProBook-4530s>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 22 Jun 2018 13:02:03 -0700 (PDT)
+From:   Jeffrin Jose T <ahiliation@gmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Jeffrin Jose T <ahiliation@gmail.com>
+Subject: [PATCH] selftests: bpf: notification about privilege required to run test_lwt_seg6local.sh testing script
+Date:   Sat, 23 Jun 2018 01:30:53 +0530
+Message-Id: <20180622200053.4957-1-ahiliation@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/22/18 5:39 AM, Kitone Elvis Peter wrote:
-> The usage of simple_strtol is discouraged, because
-> strtol() is obsolete. Instead kstrtol() should be 
-> used to convert a string into a long integer.
+This test_lwt_seg6local.sh will execute with root privilege.
 
-My patience is running pretty thin with you. Don't send untested
-crap, you haven't even compiled this.
+This patch is atleast used to notify the user about the privilege
+required related to smooth execution of the script.
 
+Signed-off-by: Jeffrin Jose T (Rajagiri SET) <ahiliation@gmail.com>
+---
+ tools/testing/selftests/bpf/test_lwt_seg6local.sh | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/tools/testing/selftests/bpf/test_lwt_seg6local.sh b/tools/testing/selftests/bpf/test_lwt_seg6local.sh
+index 1c77994b5e71..30575577a8b2 100755
+--- a/tools/testing/selftests/bpf/test_lwt_seg6local.sh
++++ b/tools/testing/selftests/bpf/test_lwt_seg6local.sh
+@@ -21,6 +21,15 @@
+ # An UDP datagram is sent from fb00::1 to fb00::6. The test succeeds if this
+ # datagram can be read on NS6 when binding to fb00::6.
+ 
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++msg="skip all tests:"
++if [ $UID != 0 ]; then
++    echo $msg please run this as root >&2
++    exit $ksft_skip
++fi
++
+ TMP_FILE="/tmp/selftest_lwt_seg6local.txt"
+ 
+ cleanup()
 -- 
-Jens Axboe
+2.17.0
 
