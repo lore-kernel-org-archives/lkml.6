@@ -2,101 +2,146 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36089C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A14C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E189324159
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:41:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y367eCua"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E189324159
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8322B2415A
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 11:41:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8322B2415A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932892AbeFVLlr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 07:41:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43468 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeFVLlq (ORCPT
+        id S933095AbeFVLl4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 07:41:56 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:34281 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751191AbeFVLly (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 07:41:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5MN0SZgppIDiwe/mlbWis94Yafr8/1ciCK+E11wzIig=; b=Y367eCuadrKBvA2ybeYrbDOTd
-        mAyh8s4DMkeQaoqpyr7XASif+Jv/XRDba7jeK2rFrGukf2kvdtH6HKzfILnxZoEffMA2bYDdn+nD+
-        aeGhD08TzMUzz5K6tJRnpqMlRRccdDPidrSviNXwuPgKAcQxMQmzOlpXPW80xYGInXk9I0wmIwKh/
-        ElfF3RinH+afIfbPQdh9Bk5mNhbI3oFoiq1TA4iPeDqCRGEbpzVNXFe9vLDdNdA3pVuIql+DSnqso
-        NYSF9y8z5Fn6Rgl1A9GRCG661sLzanSYfAz0ecTLqPeGqn1slJOfFQjAK8iohjr05JXiyaaqHd44S
-        +V/MEWyOQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWKRf-0006oB-DS; Fri, 22 Jun 2018 11:41:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 34BBA2029FA0A; Fri, 22 Jun 2018 13:41:38 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 13:41:38 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v6 04/11] cpufreq/schedutil: use rt utilization tracking
-Message-ID: <20180622114138.GK2494@hirez.programming.kicks-ass.net>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-5-git-send-email-vincent.guittot@linaro.org>
- <20180621184524.GB27616@hirez.programming.kicks-ass.net>
- <20180621185706.GA4900@worktop.programming.kicks-ass.net>
- <CAKfTPtA=iWQc3RB2dgJf2LT2e0XezLzGKbQNx=w1xYEPFDEsQQ@mail.gmail.com>
+        Fri, 22 Jun 2018 07:41:54 -0400
+Received: by mail-vk0-f67.google.com with SMTP id q135-v6so3745930vkh.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 04:41:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Gwk/bJwN5KcFTvb4KILTH7fFo83lidYj2LE2lgoUwjQ=;
+        b=p/KymncnqJQtaxrdVg3OFP7V8TLUn8hStxi/zBrdTo/C3J/ZfJ/aUGMKK45nGShlTq
+         T5eMjJ/9EKGrIEvacHOqI1MAEtad0Ttg1a8kxbFgc5ipvQUva0/Edcp9OffhROb27cJW
+         tU/WV2yuosX+DnxzhitcYj+rkF6Cl4T+7lr8gqGFffVbvUwULZyUY2dGb9AoqfZ40qke
+         D22xJ1Ky2jkGU8rY4oloiA76/K3OaDa69dHorwqKDB3seSgyMt8CUqfR24WCBDoYVIBF
+         v/XrY+TvcvHh2tLxmLSPqoISYmyawaV4lPo8cx1Uv0MRyQvU1YpdX18UWCC8kqxRJi8h
+         0S6w==
+X-Gm-Message-State: APt69E1ekPpFhiU8HZCeN2Okk8PxDV0X0kpMjyscmZCbPbFcIKuGU19d
+        HL9FmEcm3J59RvREejYtnCLlNLEwp6EYD1KgELE=
+X-Google-Smtp-Source: ADUXVKJIGjjbJtADxpuI2MU+T4mEXZ/PnO6pinX0BP+uOQ8E6VwzB6ISyXXfB1vh48jjpPAF4Z4CuMvFkq3jEDVFeA4=
+X-Received: by 2002:a1f:e92:: with SMTP id 140-v6mr731745vko.90.1529667713558;
+ Fri, 22 Jun 2018 04:41:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtA=iWQc3RB2dgJf2LT2e0XezLzGKbQNx=w1xYEPFDEsQQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180621155906.12821-1-geert+renesas@glider.be> <20180622092305.GS17671@n2100.armlinux.org.uk>
+In-Reply-To: <20180622092305.GS17671@n2100.armlinux.org.uk>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 22 Jun 2018 13:41:37 +0200
+Message-ID: <CAMuHMdUqBhR4Ra=hF0TZKxgQHaE_KBUYh04ZTTmg1pRWtjveoQ@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] arm: Replace "multiple platforms" by "common platform"
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 10:10:32AM +0200, Vincent Guittot wrote:
-> On Thu, 21 Jun 2018 at 20:57, Peter Zijlstra <peterz@infradead.org> wrote:
+Hi Russell,
+
+Thanks for your comments!
+
+On Fri, Jun 22, 2018 at 11:23 AM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> On Thu, Jun 21, 2018 at 05:59:06PM +0200, Geert Uytterhoeven wrote:
+> > "ARM multiplatform" has actually two meanings:
+> >   1. It groups platforms that follow the "ARM multiplatform" software
+> >      framework,
+> >   2. It allows to build a single kernel that can be booted on multiple
+> >      platforms.
 > >
-> > > So this (and the dl etc. equivalents) result in exactly the problems
-> > > complained about last time, no?
-> > >
-> > > What I proposed was something along the lines of:
-> > >
-> > >       util = 1024 * sg_cpu->util_cfs;
-> > >       util /= (1024 - (sg_cpu->util_rt + sg_cpu->util_dl + ...));
-> > >
-> > >       return min(sg_cpu->max, util + sg_cpu->bw_dl);
-> 
-> I see that you use sg_cpu->util_dl and sg_cpu->bw_dl in your equation
-> above but this patch 04 only adds rt util_avg and the dl util_avg has
-> not been added yet.
->  dl util_avg is added in patch 6
-> So for this patch, we are only using sg_cpu->bw_dl
+> > Currently support for XIP and/or NOMMU cannot be enabled on platforms
+> > that follow the "ARM multiplatform" framework, without duplicating their
+> > machine selection logic under a new Kconfig symbol.  As (in theory) all
+> > platforms can be used with XIP and/or NOMMU, this is not sustainable.
+>
+> The reason for that has nothing to do with the way this option is named,
+> and even after reading your commit message, I can't come up with any
+> reason for this change other than "personally don't like the existing
+> wording" which IMHO is not a good enough reason to randomly go around
+> rewording stuff in the kernel.
+>
+> The reason that XIP and NOMMU can't be enabled with a multi-platform
+> kernel is that there are often issues with different layouts of the
+> physical memory space which can not be taken into account.
+>
+> Multi-platform works around that by (a) using the MMU to abstract
+> away the differences on RAM, and (b) modifying the kernel text to
+> adjust the virtual to physical translations.  The latter is not
+> possible with XIP, and the former should not be used with NOMMU.
+> That means the kernel must be built to accomodate the physical
+> layout on the target platform, and so building a kernel supporting
+> multiple platforms with differing memory layouts makes no sense.
+>
+> This is exactly why I really don't like the idea of ARCH_MULTIPLATFORM
+> being hijacked for NOMMU/XIP support.
 
-Yeah, not the point really.
+That's multiplatform meaning #2.
 
-It is about how we're going to use the (rt,dl,irq etc..) util values,
-more than which particular one was introduced here.
+But as long as MMU=y and XIP_KERNEL=n, nothing would change.
 
-I'm just not a big fan of the whole: freq := cfs_util + rt_util thing
-(as would be obvious by now). 
+> We've worked around the issues with "multi-platform" XIP/NOMMU by
+> using things such as "ARM_SINGLE_V7M" to cover all V7M platforms
+> (which must, by definition) have compatible physical layouts.
+> Exactly the same approach should be adopted for other XIP/NOMMU
+> platforms, and _not_ reusing ARCH_MULTIPLATFORM, which will lead
+> to lots of non-bootable kernels.
+
+So we need ARM_SINGLE_ARMV7A, and let all subarchitectures depend on
+ARCH_MULTIPLATFORM || ARM_SINGLE_ARMV7M, to avoid duplicating
+their SoC entry?
+
+I had a quick look. So we have e.g. MACH_STM32F746 under ARM_SINGLE_ARMV7M,
+and MACH_STM32MP157 under ARCH_MULTI_V7.
+But according to stm32mp157c-ed1.dts and stm32746g-eval.dts both have
+memory at the same address, so it should be possible to run the same nommu
+kernel on the STM32MP157?
+
+MACH_STM32F469 is also under ARM_SINGLE_ARMV7M, but according to
+stm32f469-disco.dts, memory may be at a completely different address?
+Doesn't that lead to unbootable kernels, too?
+
+> Another problems for NOMMU is that the kernel has to be linked for
+> a specific _physical_ address.  When you have ARCH_MULTIPLATFORM
+> enabled, there is no facility to select that address.
+
+That can be easily solved with Kconfig symbols that depend on !MMU,
+can't it?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
