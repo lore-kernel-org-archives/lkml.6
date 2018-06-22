@@ -2,95 +2,106 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69C5C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD53C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F604242B9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:30:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jYgD8EKM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F604242B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A9A36242B9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:31:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A36242B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753272AbeFVNaD (ORCPT
+        id S1754071AbeFVNa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:30:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55284 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751326AbeFVNaC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:30:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LT7ImzVWiBZpgym+tQ+mOnSxLR2LXR8uiW+BKlQtmtk=; b=jYgD8EKMUlBcg1ToI6foZFrdl
-        PUzkTomfrFrlFdfBHWWateCDmOj8uxog8AiKRIcTq1KYFE0qoLhJgsPlTRsDKlc5pwlW0YsTRcsa0
-        0q2/BPBVZIdQXb8vKBTMwLD9moTQ5i5jNl5oRYnqQNDesbSgVnAlna+xSkGtKFIEkvQP3zlSU04+g
-        gCSsD0KgdFewNVTsGNhqLdwlJrNNJ3qY6BJ2z5322fMNMA8ffleJ6V6AbqQeXhdKAtgDzpm55SVQR
-        ownrTl3wyXGG+lYAN0XlxaFBEc6FrRE4gtClPw8Us0a4XrhA4bh4KQb5R9lLvOhQMgGgdruIIbW9T
-        QMjA9xOsw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWM8R-0005nZ-2d; Fri, 22 Jun 2018 13:29:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9219E2029F1D7; Fri, 22 Jun 2018 15:29:53 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 15:29:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
-        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
-        valentin.schneider@arm.com, patrick.bellasi@arm.com,
-        joel@joelfernandes.org, daniel.lezcano@linaro.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v6 04/11] cpufreq/schedutil: use rt utilization tracking
-Message-ID: <20180622132953.GM2494@hirez.programming.kicks-ass.net>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-5-git-send-email-vincent.guittot@linaro.org>
- <20180621184524.GB27616@hirez.programming.kicks-ass.net>
- <20180622075853.GC23168@e108498-lin.cambridge.arm.com>
- <20180622113713.GJ2494@hirez.programming.kicks-ass.net>
- <20180622125433.GA26461@e108498-lin.cambridge.arm.com>
+        Fri, 22 Jun 2018 09:30:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:35172 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750853AbeFVNa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 09:30:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D3712F;
+        Fri, 22 Jun 2018 06:30:58 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0BF9C3F2EA;
+        Fri, 22 Jun 2018 06:30:58 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 7AA621AE3719; Fri, 22 Jun 2018 14:31:34 +0100 (BST)
+Date:   Fri, 22 Jun 2018 14:31:34 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Wei Xu <xuwei5@hisilicon.com>
+Cc:     James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        suzuki.poulose@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
+        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linuxarm <linuxarm@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, xiexiuqi@huawei.com,
+        huangdaode <huangdaode@hisilicon.com>,
+        "Chenxin (Charles)" <charles.chenxin@huawei.com>,
+        "Xiongfanggou (James)" <james.xiong@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        jonathan.cameron@huawei.com,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
+        "Liyuan (Larry, Turing Solution)" <Larry.T@huawei.com>,
+        libeijian@hisilicon.com, zhangbin011@hisilicon.com
+Subject: Re: KVM guest sometimes failed to boot because of kernel stack
+ overflow if KPTI is enabled on a hisilicon ARM64 platform.
+Message-ID: <20180622133133.GA1802@arm.com>
+References: <5B2A7FE1.5040607@hisilicon.com>
+ <e701eaa8-dcb9-777c-2211-67ee27b43acb@arm.com>
+ <20180621091850.GA22505@arm.com>
+ <5B2B7A84.8090309@hisilicon.com>
+ <20180621105404.GB22505@arm.com>
+ <5B2CB440.8040705@hisilicon.com>
+ <20180622092330.GD7601@arm.com>
+ <5B2CD33B.9020702@hisilicon.com>
+ <20180622111614.GA1150@arm.com>
+ <5B2CF723.7010600@hisilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180622125433.GA26461@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <5B2CF723.7010600@hisilicon.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 01:54:34PM +0100, Quentin Perret wrote:
-> On Friday 22 Jun 2018 at 13:37:13 (+0200), Peter Zijlstra wrote:
-> > That is true.. So we could limit the scaling to the case where there is
-> > no idle time, something like:
-> > 
-> > 	util = sg_cpu->util_cfs;
-> > 
-> > 	cap_cfs = (1024 - (sg_cpu->util_rt + ...));
-> > 	if (util == cap_cfs)
-> > 		util = sg_cpu->max;
-> > 
-> > That specifically handles the '0% idle -> 100% freq' case, but I don't
-> > realy like edge behaviour like that. If for some reason it all doesn't
-> > quite align you're left with bits.
-> > 
-> > And the linear scaling is the next simplest thing that avoids the hard
-> > boundary case.
-> 
-> Right, so maybe we'll get something smoother by just summing the signals
-> as Vincent is proposing ? 
+Hi again, Wei,
 
-Sure, but see my previous mail just now, that has the problem of
-u_{rt,dl} distoting f_{rt,dl} even when there is no u_cfs.
+On Fri, Jun 22, 2018 at 09:18:27PM +0800, Wei Xu wrote:
+> On 2018/6/22 19:16, Will Deacon wrote:
+> >On Fri, Jun 22, 2018 at 06:45:15PM +0800, Wei Xu wrote:
+> >>On 2018/6/22 17:23, Will Deacon wrote:
+> >>>Perhaps just writing back the table entries is enough to cause the issue,
+> >>>although I really can't understand why that would be the case. Can you try
+> >>>the diff below (without my previous change), please?
+> >>Thanks!
+> >>But it does not resolve the issue(only apply this patch based on 4.17.0).
+> >Thanks, that's a useful data point. It means that it still crashes even if
+> >we write back the same table entries, so it's the fact that we're writing
+> >them at all which causes the problem, not the value that we write.
+> >
+> >Whilst looking at the code, we noticed a missing DMB. On the off-chance
+> >that it helps, can you try this instead please?
+> Thanks!
+> Only apply below patch based on 4.17.0, we still got the crash.
 
+Oh well, it was worth a shot (and that's still a fix worth having). Please
+can you provide the complete disassembly for kpti_install_ng_mappings()
+(I'm referring to the C function in cpufeature.c) along with a corresponding
+crash log so that we can correlate the instruction stream with the crash?
+
+Thanks,
+
+Will
