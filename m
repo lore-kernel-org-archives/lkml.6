@@ -2,105 +2,251 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD74AC43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9DDC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6A22465E
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:05:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C6A22465E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BEF3224665
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 17:05:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X3uV005w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF3224665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754790AbeFVRF2 (ORCPT
+        id S1754798AbeFVRFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 13:05:28 -0400
-Received: from mga06.intel.com ([134.134.136.31]:53367 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754580AbeFVRF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 13:05:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 10:05:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,257,1526367600"; 
-   d="scan'208";a="66853834"
-Received: from asotoma-mobl1.amr.corp.intel.com (HELO [10.7.201.147]) ([10.7.201.147])
-  by orsmga001.jf.intel.com with ESMTP; 22 Jun 2018 10:05:18 -0700
-Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
-To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-References: <20180620195652.27251-1-riel@surriel.com>
- <20180620195652.27251-5-riel@surriel.com>
-Cc:     86@vger.kernel.org, luto@kernel.org, mingo@kernel.org,
-        tglx@linutronix.de, efault@gmx.de, songliubraving@fb.com,
-        kernel-team@fb.com
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <187ad4e2-d72b-2267-df40-dfb178ab0e47@linux.intel.com>
-Date:   Fri, 22 Jun 2018 10:05:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 13:05:36 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35099 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754681AbeFVRF1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 13:05:27 -0400
+Received: by mail-pl0-f66.google.com with SMTP id k1-v6so3777875plt.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 10:05:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=oojYCtlqfGgofVAl4JUaUHBzV145OsUX15+f0Wh1s6s=;
+        b=X3uV005wF1fZa94HepkH+zj6lren+50DhjccLw6XMha6NndH/fvKW5f8ofiyKCN5gA
+         tAmScptxJ6nC7mLwoMQ9R16Q6R7WEJDya9hLA1tZikDPElQMsHcMmUWytFeNDHMwHjFt
+         8AwG2LhUrsFo39FbwMdxWwN1qtSx4vyyhM47Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oojYCtlqfGgofVAl4JUaUHBzV145OsUX15+f0Wh1s6s=;
+        b=fcdZQPsDdbK32uO06PeUV742fJZBp+wd0b45wE0+QW4H9N/khXnzUZERJwbhh5LQu7
+         WCaCze/E2Tl/vmhTa3N6C2pdxFFWB+dOiN0PKyXU/yB9ymYdi+IFjwmto6UF2h3ipQG5
+         G9aohjFcoTxqrP4IpQtwwkE/gVwM576Le3ClWuw5GS6UvaeTsVV6U4zFiE9hIUrIwJg4
+         H7feC/EF13kTDiJ531MvZOJHt4zjWVx25WqrmSWY9cMUD0IVwihucQVd/AWfzqJJ+ggV
+         H850Q5tv8+0Aj4c0l8BDksWW60017YcDCqLJ6pdqfAzCTVqmKaYS64VZlDjdtnEnfHfx
+         triQ==
+X-Gm-Message-State: APt69E1Z8ECFWbPp+hZacdV7MthFksmhI6EnccjmQXPSnNuMvziXvrJn
+        2xMwNLBvbUYGRw46v2j5aH9gAA==
+X-Google-Smtp-Source: ADUXVKK1j2JBXmC8nWYwrVGXri1DHYEgyMW3nfmMrgAS6+p6l60gNFAGVJXPVR0c7yNILe2QkRY1Vw==
+X-Received: by 2002:a17:902:22:: with SMTP id 31-v6mr2555032pla.332.1529687126415;
+        Fri, 22 Jun 2018 10:05:26 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id k10-v6sm22130712pfj.29.2018.06.22.10.05.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 10:05:25 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 10:05:23 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Raju P L S S S N <rplsssn@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, evgreen@chromium.org, dianders@chromium.org,
+        mka@chromium.org, ilina@codeaurora.org
+Subject: Re: [PATCH v13 00/10] drivers/qcom: add RPMH communication support
+Message-ID: <20180622170523.GG10336@builder>
+References: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180620195652.27251-5-riel@surriel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529501227-27163-1-git-send-email-rplsssn@codeaurora.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2018 12:56 PM, Rik van Riel wrote:
-> This patch deals with that issue by introducing a third TLB state,
-> TLBSTATE_FLUSH, which causes %CR3 to be reloaded at the next context
-> switch.
+On Wed 20 Jun 06:26 PDT 2018, Raju P L S S S N wrote:
 
-With PCIDs, do we need to be a bit more explicit about what kind of %CR3
-reload we have?  Because, with PCIDs, we do have non-TLB-flushing %CR3
-writes.
+> From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+> 
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> Changes in v13:
+> - Add missing Signed-off-by in commit text 
+> 
+> Changes in v12:
+> - Rename ctrlr to client in rsc_drv
+> - Fix Bot reported errors - 'err' may be used uninitialized
+> - Rebase on top of v4.18-rc1 
+> 
+> Changes in v11:
+> - move rpmh_request to rpmh-internal.h
+> - Associate rpmh_ctrl to rsc_drv
+> - Remove EXPORT_SYMBOL for rpmh_tx_done
+> - Remove IS_ERR check for ctrlr
+> - Remove rsc_drv instance from rpmh_ctrlr
+> - Initialize cache & batch cache in probe
+> 
+> Changes in v10:
+> - Remove export.h inclusion as suggested by Doug
+> - Remove rsc_drv_list
+> - Add EXPORT_SYMBOL
+> - Remove wait_count as suggested by Doug
+> - Free memory if cache_batch returns error as suggested by Doug
+> - Add batch requests to list and simplify error handling as
+> - return ERR_PTR if invalidate fails
+> 
+> Changes in v9:
+> - Remove EXPORT_SYMBOL as suggested by Doug
+> - Add Reviewed-by tags
+> - Rename lock variable as suggested by Doug
+> - Add WARN_ON if completion timeout occurs as suggested by Doug
+> - Fix the bound checks as suggested by Matthias
+> - Improve comments as suggested by Doug
+> - Add check for freeing dynamically allocated request object
+> - Rename label as suggested by Doug
+> - Fix IS_ERR_OR_NULL check to IS_ERR as suggested by Doug
+> - Add check to call rpmh_rsc_invalidate if -EAGAIN is retured
+>   as suggested by Doug
+> 
+> Changes in v8:
+> - Bounds check for cmd_cache
+> - Describe interrupts to other DRVs in DT bindings
+> - Rebase on top of 4.17-rc3
+> 
+> Changes in v7:
+> - Rename 'm' and 'n' and use tcs_id and cmd_id instead
+> - Bug fix in find_match() and other review comments from Matthias
+> - Spinlock around get_rpmh_ctrlr()
+> - DT documentation example fixes
+> - Rebase on top of 4.16-rc2
+> 
+> Changes in v6:
+> - Remove tasklet in rpmh-rsc.c
+> - Remove rpmh_client and use struct device * instead
+> - Variable changes and bug fixes
+> - DT binding changes to describe all DRVs in the RSC
+> - Documentation and comment fixes
+> 
+> Changes in v5:
+> - Add Reviewed-by tags
+> - Rebase on top of 4.16
+> 
+> Changes in v4:
+> - Rename variables as suggested by Stephen and Evan
+> - Lot of minor syntax and style fixes
+> - Fix FTRACE compilation error
+> - Improve doc comments and DT description
+> 
+> Changes in v3:
+> - Address Steven's comments in FTRACE
+> - Fix DT documentation as suggested by Rob H
+> - Fix error handling in IRQ handler as suggested by Evan
+> - Remove locks in rpmh_flush()
+> - Improve comments
+> 
+> Changes in v2:
+> - Added sleep/wake, async and batch requests support
+> - Addressed Bjorn's comments
+> - Private FTRACE for drivers/soc/qcom as suggested by Steven
+> - Sparse checked on these patches
+> - Use SPDX license commenting sytle
+> 
+> This set of patches add the ability for platform drivers to make use of shared
+> resources in newer Qualcomm SoCs like SDM845. Resources that are shared between
+> multiple processors in a SoC are generally controlled by a dedicated remote
+> processor. The remote processor (Resource Power Manager or RPM in previous QCOM
+> SoCs) receives requests for resource state from other processors using the
+> shared resource, aggregates the request and applies the result on the shared
+> resource. SDM845 advances this concept and uses h/w (hardened I/P) blocks for
+> aggregating requests and applying the result on the resource. The resources
+> could be clocks, regulators or bandwidth requests for buses. This new
+> architecture is called RPM-hardened or RPMH in short.
+> 
+> Since this communication mechanism is completely hardware driven without a
+> processor intervention on the remote end, existing mechanisms like RPM-SMD are
+> no longer useful. Also, there is no serialization of data or is data is written
+> to a shared memory in this new format. The data used is different, unsigned 32
+> bits are used for representing an address, data and header. Each resource's
+> property is a unique u32 address and have pre-defined set of property specific
+> valid values. A request that comprises of <header, addr, data> is sent by
+> writing to a set of registers from Linux and transmitted to the remote slave
+> through an internal bus. The remote end aggregates this request along with
+> requests from other processors for the <addr> and applies the result.
+> 
+> The hardware block that houses this functionality is called Resource State
+> Coordinator or RSC. Inside the RSC are set of slots for sending RPMH requests
+> called Trigger Commands Sets (TCS). The set of patches are for writing the
+> requests into these TCSes and sending them to hardened IP blocks.
+> 
+> The driver design is split into two components. The RSC driver housed in
+> rpmh-rsc.c and the set of library functions in rpmh.c that frame the request and
+> transmit it using the controller. This first set of patches allow a simple
+> synchronous request to be made by the platform drivers. Future patches will add
+> more functionality that cater to complex drivers and use cases.
+> 
+> Please consider reviewing this patchset.
+> 
+> v1: https://www.spinics.net/lists/devicetree/msg210980.html
+> v2: https://lkml.org/lkml/2018/2/15/852
+> v3: https://lkml.org/lkml/2018/3/2/801
+> v4: https://lkml.org/lkml/2018/3/9/979
+> v5: https://lkml.org/lkml/2018/4/5/480
+> v6: https://lkml.org/lkml/2018/4/19/914
+> v7: https://lkml.org/lkml/2018/5/2/779
+> v8: https://lkml.org/lkml/2018/5/9/729
+> v9: https://lkml.org/lkml/2018/5/24/530
+> v10: https://lkml.org/lkml/2018/6/11/542
+> v11: https://lkml.org/lkml/2018/6/18/860
+> v12: https://lkml.org/lkml/2018/6/19/535
+> 
+> Lina Iyer (10):
+>   drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
+>   dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
+>   drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+>   drivers: qcom: rpmh: add RPMH helper functions
+>   drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+>   drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
+>   drivers: qcom: rpmh: cache sleep/wake state requests
+>   drivers: qcom: rpmh: allow requests to be sent asynchronously
+>   drivers: qcom: rpmh: add support for batch RPMH request
+>   drivers: qcom: rpmh-rsc: allow active requests from wake TCS
+> 
+>  .../devicetree/bindings/soc/qcom/rpmh-rsc.txt      | 137 +++++
+>  drivers/soc/qcom/Kconfig                           |  10 +
+>  drivers/soc/qcom/Makefile                          |   4 +
+>  drivers/soc/qcom/rpmh-internal.h                   | 114 ++++
+>  drivers/soc/qcom/rpmh-rsc.c                        | 682 +++++++++++++++++++++
+>  drivers/soc/qcom/rpmh.c                            | 513 ++++++++++++++++
+>  drivers/soc/qcom/trace-rpmh.h                      |  82 +++
+>  include/dt-bindings/soc/qcom,rpmh-rsc.h            |  14 +
+>  include/soc/qcom/rpmh.h                            |  51 ++
+>  include/soc/qcom/tcs.h                             |  56 ++
+>  10 files changed, 1663 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+>  create mode 100644 drivers/soc/qcom/rpmh-internal.h
+>  create mode 100644 drivers/soc/qcom/rpmh-rsc.c
+>  create mode 100644 drivers/soc/qcom/rpmh.c
+>  create mode 100644 drivers/soc/qcom/trace-rpmh.h
+>  create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
+>  create mode 100644 include/soc/qcom/rpmh.h
+>  create mode 100644 include/soc/qcom/tcs.h
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+> 
