@@ -2,184 +2,113 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53813C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F6BC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C72923C7D
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:00:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C72923C7D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 5AAEE23C7F
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 03:01:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XE7XALWK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AAEE23C7F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934370AbeFVDAi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 23:00:38 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:49566 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934278AbeFVDAh (ORCPT
+        id S934380AbeFVDBL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 23:01:11 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:40393 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934078AbeFVDBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 23:00:37 -0400
-Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
-        by 156.147.23.51 with ESMTP; 22 Jun 2018 12:00:35 +0900
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.222.33)
-        by 156.147.1.127 with ESMTP; 22 Jun 2018 12:00:35 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Fri, 22 Jun 2018 12:00:32 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Byungchul Park <max.byungchul.park@gmail.com>,
-        jiangshanlai@gmail.com, josh@joshtriplett.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        Joel Fernandes <joel@joelfernandes.org>, luto@kernel.org
-Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
- rcu_dynticks
-Message-ID: <20180622030032.GB17010@X58A-UD3R>
-References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
- <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
- <20180620145814.GQ3593@linux.vnet.ibm.com>
- <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
- <20180620164902.GW3593@linux.vnet.ibm.com>
- <CANrsvRPAWv8LgSvPrGgLiXnjrtK3CmpJgdpNsuu-0LZJTYeYWQ@mail.gmail.com>
- <20180620174037.GZ3593@linux.vnet.ibm.com>
- <20180621063949.GA28024@X58A-UD3R>
- <20180621150407.GE3593@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621150407.GE3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Thu, 21 Jun 2018 23:01:10 -0400
+Received: by mail-pf0-f196.google.com with SMTP id z24-v6so2477927pfe.7
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Jun 2018 20:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=br27qigXAuSSoszsGJOL/ASyAImutwIY1+PKrGzqiXw=;
+        b=XE7XALWKAU9fJ3H7r7Nnf/kBm0w75Np6OUuMmGlVvSoJoMYVhZx9WFe7cryUjdH67f
+         7PNkvGt+9ayKlawKEZL6tXC/81b/5M0awMJGSEIQ4wz5tqYKxNhDxUfvb96GerjKya/K
+         v/GcbfRljMIUPgYlqfoK3/5bZzdBrZ9fEZLD/zkqQG4Auxx7cCrPw2/zu2yfxT/mShHR
+         ME8RLHz0y8TQ54L3lgze8qXHxZSt98nh0DM2QTeIkVr5K/NDY6HXP0MwdlQHpJsy6R+/
+         Gs/eGFDvV9LLDo6E7wumyZVvEQtqhLghDnvNgwWPItqqVUDv4VTxcetl0WGhBa3ePQOV
+         xMkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=br27qigXAuSSoszsGJOL/ASyAImutwIY1+PKrGzqiXw=;
+        b=Ggvf/LOAwou9RyDyGqE/uaq8BW/Ur+jCCwkx1jRSFp1di4GK9UFWVgjn9tC+xP7L7c
+         +PrHqwq+TnVNsMcVoIq+XuDrvpjG+5M7a5f90THXIMUDut7XC8LopAkqHAk5JOMkapTl
+         GY7oehNq1Lgz1qKZPtgMqDR1chCVsU0KP8HQU1cpOOIE4fBsMxCwf2pbXa2hhsFyqv9N
+         oQQLpb1cZbYVIIWb7dlQvVadBx//ahKAZqEUCN249sF+AooeY9CFmNFiZuTCFHjxVeSz
+         OFQe9qKnAT1uZyfV7lgwlbuyqNwbfQjoXjrn6aXhoBf6RX4TeMoJltOOkX5m6jZAxFj3
+         8tEg==
+X-Gm-Message-State: APt69E2ovop28/r1/nRzzsBHmVpd0AkiU7FtFUPqyMXHnixbHpbFrIcf
+        HDwDuHHrOzoIjqiTMtVOvfY=
+X-Google-Smtp-Source: ADUXVKIzTY+0qqSrho2HblY8f2NUDYVAjFfhKaPMznyBiGSn5efJczBTa5X7riTb/8LhaKd3NnKAuA==
+X-Received: by 2002:a65:6190:: with SMTP id c16-v6mr23851182pgv.405.1529636469469;
+        Thu, 21 Jun 2018 20:01:09 -0700 (PDT)
+Received: from localhost.localdomain ([115.97.186.211])
+        by smtp.gmail.com with ESMTPSA id c4-v6sm12890783pfe.53.2018.06.21.20.01.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 21 Jun 2018 20:01:08 -0700 (PDT)
+From:   Chakra Divi <2chakrass@gmail.com>
+X-Google-Original-From: Chakra Divi <chakra@openedev.com>
+To:     Robin van der Gracht <robin@protonic.nl>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Chakra Divi <chakra@openedev.com>
+Subject: [PATCH] Fix for clk disable issue on imx6ul
+Date:   Fri, 22 Jun 2018 08:25:19 +0530
+Message-Id: <1529636119-4076-1-git-send-email-chakra@openedev.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 08:04:07AM -0700, Paul E. McKenney wrote:
+isiot engicam board is not booting after the
+commit cf091ee994ec266e33c3a305d6fc8c5ccb1f8acd
+done by <robin@protonic.nl>. Modified the
+commit to support imx6ul based SOMs too along
+with imx6ull processors
 
-> Nothing quite like concurrent programming to help one see one's own
-> mistakes.  ;-)
+Signed-off-by: Chakra Divi <chakra@openedev.com>
+---
+ drivers/clk/imx/clk-imx6ul.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Haha.
-
-> Your reasoning has merit, but the nice thing about keeping "nmi" is
-> that it helps casual readers see that NMIs must be handled.  If we
-> rename this to "irq", we lose that hint and probably leave some
-> readers wondering why the strange increment-by-2 code is there.
-> So let's please keep the current names.
-
-Got it. I will.
-
-> >  /**
-> > - * rcu_nmi_exit - inform RCU of exit from NMI context
-> > + * rcu_irq_exit_common - inform RCU of exit from interrupt context
-> >   *
-> > - * If we are returning from the outermost NMI handler that interrupted an
-> > - * RCU-idle period, update rdtp->dynticks and rdtp->dynticks_nmi_nesting
-> > - * to let the RCU grace-period handling know that the CPU is back to
-> > - * being RCU-idle.
-> > + * If we are returning from the outermost interrupt handler that
-> > + * interrupted an RCU-idle period, update rdtp->dynticks and
-> > + * rdtp->dynticks_irq_nesting to let the RCU grace-period handling
-> > + * know that the CPU is back to being RCU-idle.
-> >   *
-> > - * If you add or remove a call to rcu_nmi_exit(), be sure to test
-> > - * with CONFIG_RCU_EQS_DEBUG=y.
-> > + * If you add or remove a call to rcu_irq_exit_common(), be sure to
-> > + * test with CONFIG_RCU_EQS_DEBUG=y.
-> >   */
-> > -void rcu_nmi_exit(void)
-> > +static __always_inline void rcu_irq_exit_common(bool nmi)
-> 
-> However, I suggest making this function's parameter "irq" because ...
-
-I will.
-
-> Does the generated code really get rid of the conditional branches?
-> I would hope that it wouild, but it is always good to check.  This
-> should be easy to find in the assembly-language output because of the
-> calls to rcu_prepare_for_idle() and rcu_dynticks_task_enter().
-
-Good! It works as we expect, I did it only with x86_64 tho. Let me show
-you the part we are interested in. The rest are almost same.
-
-<rcu_nmi_exit>:
-	5b                   	pop    %rbx
-	5d                   	pop    %rbp
-	41 5c                	pop    %r12
-	41 5d                	pop    %r13
-	41 5e                	pop    %r14
-	41 5f                	pop    %r15
-	e9 0f 75 ff ff       	jmpq   ffffffff810bb440 <rcu_dynticks_eqs_enter>
-
-<rcu_irq_exit>:
-	e8 e6 e5 ff ff       	callq  ffffffff810c26a0 <rcu_prepare_for_idle>
-	e8 81 73 ff ff       	callq  ffffffff810bb440 <rcu_dynticks_eqs_enter>
-	e8 ec 3a 2b 00       	callq  ffffffff81377bb0 <debug_smp_processor_id>
-	65 48 8b 14 25 00 4d 	mov    %gs:0x14d00,%rdx
-	01 00 
-	89 82 94 03 00 00    	mov    %eax,0x394(%rdx)
-	5b                   	pop    %rbx
-	5d                   	pop    %rbp
-	41 5c                	pop    %r12
-	41 5d                	pop    %r13
-	41 5e                	pop    %r14
-	41 5f                	pop    %r15
-	c3                   	retq
-
-Even though they return in a little bit different way, anyway I can see
-all the branchs we are interested in were removed by compiler!
-
-> >  {
-> >  	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-> >  	long incby = 2;
-> > 
-> >  	/* Complain about underflow. */
-> > -	WARN_ON_ONCE(rdtp->dynticks_nmi_nesting < 0);
-> > +	WARN_ON_ONCE(rdtp->dynticks_irq_nesting < 0);
-> > 
-> >  	/*
-> >  	 * If idle from RCU viewpoint, atomically increment ->dynticks
-> > -	 * to mark non-idle and increment ->dynticks_nmi_nesting by one.
-> > -	 * Otherwise, increment ->dynticks_nmi_nesting by two.  This means
-> > -	 * if ->dynticks_nmi_nesting is equal to one, we are guaranteed
-> > +	 * to mark non-idle and increment ->dynticks_irq_nesting by one.
-> > +	 * Otherwise, increment ->dynticks_irq_nesting by two.  This means
-> > +	 * if ->dynticks_irq_nesting is equal to one, we are guaranteed
-> >  	 * to be in the outermost NMI handler that interrupted an RCU-idle
-> >  	 * period (observation due to Andy Lutomirski).
-> >  	 */
-> >  	if (rcu_dynticks_curr_cpu_in_eqs()) {
-> > +
-> > +		if (!nmi)
-> > +			rcu_dynticks_task_exit();
-> > +
-> >  		rcu_dynticks_eqs_exit();
-> > +
-> > +		if (!nmi)
-> 
-> ... and checking for branches here.
-
-Also good! The following is the only different part.
-
-<rcu_nmi_enter>:
-	e8 dc 81 ff ff       	callq  ffffffff810bc450 <rcu_dynticks_eqs_exit>
-
-<rcu_irq_enter>:
-	65 48 8b 04 25 00 4d 	mov    %gs:0x14d00,%rax
-	01 00 
-	c7 80 94 03 00 00 ff 	movl   $0xffffffff,0x394(%rax)
-	ff ff ff 
-	e8 b9 80 ff ff       	callq  ffffffff810bc450 <rcu_dynticks_eqs_exit>
-	e8 d4 b9 ff ff       	callq  ffffffff810bfd70 <rcu_cleanup_after_idle>
-
---
-Thanks,
-Byungchul
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index ba563ba..69ec9f0 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -80,7 +80,7 @@ static struct clk *clks[IMX6UL_CLK_END];
+ static struct clk_onecell_data clk_data;
+ 
+ static int const clks_init_on[] __initconst = {
+-	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2,
++	IMX6UL_CLK_AIPSTZ1, IMX6UL_CLK_AIPSTZ2, IMX6UL_CLK_AIPSTZ3,
+ 	IMX6UL_CLK_AXI, IMX6UL_CLK_ARM, IMX6UL_CLK_ROM,
+ 	IMX6UL_CLK_MMDC_P0_FAST, IMX6UL_CLK_MMDC_P0_IPG,
+ };
+@@ -358,7 +358,9 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6UL_CLK_GPT2_SERIAL]	= imx_clk_gate2("gpt2_serial",	"perclk",	base + 0x68,	26);
+ 	clks[IMX6UL_CLK_UART2_IPG]	= imx_clk_gate2("uart2_ipg",	"ipg",		base + 0x68,	28);
+ 	clks[IMX6UL_CLK_UART2_SERIAL]	= imx_clk_gate2("uart2_serial",	"uart_podf",	base + 0x68,	28);
+-	if (clk_on_imx6ull())
++	if (clk_on_imx6ul())
++		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		base + 0x68,	30);
++	else if (clk_on_imx6ull())
+ 		clks[IMX6UL_CLK_AIPSTZ3]	= imx_clk_gate2("aips_tz3",	"ahb",		 base + 0x80,	18);
+ 
+ 	/* CCGR1 */
+-- 
+2.7.4
 
