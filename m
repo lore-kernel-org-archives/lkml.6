@@ -6,114 +6,138 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E562FC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41102C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A862D23C56
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A862D23C56
+	by mail.kernel.org (Postfix) with ESMTP id 0480F23C57
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 02:26:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0480F23C57
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934217AbeFVCZS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 22:25:18 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33167 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934084AbeFVCZR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 22:25:17 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5M2OnLg4103900
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 21 Jun 2018 19:24:49 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5M2OneE4103897;
-        Thu, 21 Jun 2018 19:24:49 -0700
-Date:   Thu, 21 Jun 2018 19:24:49 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Steven Rostedt (VMware)" <tipbot@zytor.com>
-Message-ID: <tip-6cc65be4f6f2a7186af8f3e09900787c7912dad2@git.kernel.org>
-Cc:     tglx@linutronix.de, will.deacon@arm.com, rostedt@goodmis.org,
-        akpm@linux-foundation.org, longman@redhat.com,
-        linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
-        peterz@infradead.org, torvalds@linux-foundation.org,
-        mingo@kernel.org, hpa@zytor.com
-Reply-To: boqun.feng@gmail.com, linux-kernel@vger.kernel.org,
-          longman@redhat.com, peterz@infradead.org, hpa@zytor.com,
-          mingo@kernel.org, torvalds@linux-foundation.org,
-          tglx@linutronix.de, akpm@linux-foundation.org,
-          will.deacon@arm.com, rostedt@goodmis.org
-In-Reply-To: <20180621203526.172ab5c4@vmware.local.home>
-References: <20180621203526.172ab5c4@vmware.local.home>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/urgent] locking/qspinlock: Fix build for anonymous
- union in older GCC compilers
-Git-Commit-ID: 6cc65be4f6f2a7186af8f3e09900787c7912dad2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S934253AbeFVCZ6 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 21 Jun 2018 22:25:58 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47825 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933864AbeFVCZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 21 Jun 2018 22:25:56 -0400
+Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w5M2PkbK4103957
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 21 Jun 2018 19:25:47 -0700
+Date:   Thu, 21 Jun 2018 19:25:39 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180622015851.GA10254@gmail.com>
+References: <20180621211754.12757-1-h.peter.anvin@intel.com> <20180622015851.GA10254@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v3 0/7] x86/ptrace: regset access to the GDT and LDT
+To:     Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin, Intel" <h.peter.anvin@intel.com>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        "Markus T . Metzger" <markus.t.metzger@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+From:   hpa@zytor.com
+Message-ID: <D4F62A3D-1DE1-4FB3-A46A-A9928BB290F7@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6cc65be4f6f2a7186af8f3e09900787c7912dad2
-Gitweb:     https://git.kernel.org/tip/6cc65be4f6f2a7186af8f3e09900787c7912dad2
-Author:     Steven Rostedt (VMware) <rostedt@goodmis.org>
-AuthorDate: Thu, 21 Jun 2018 20:35:26 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 22 Jun 2018 04:19:16 +0200
+On June 21, 2018 6:58:51 PM PDT, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>* H. Peter Anvin, Intel <h.peter.anvin@intel.com> wrote:
+>
+>> From: "H. Peter Anvin" <hpa@linux.intel.com>
+>> 
+>> Give a debugger access to the visible part of the GDT and LDT.  This
+>> allows a debugger to find out what a particular segment descriptor
+>> corresponds to; e.g. if %cs is 16, 32, or 64 bits.
+>> 
+>> v3:
+>> 	Requalify LDT segments for selectors that have actually changed.
+>> 
+>> v2:
+>> 	Add missing change to elf.h for the very last patch.
+>> 
+>> Cc: Ingo Molnar <mingo@kernel.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Cc: Chang S. Bae <chang.seok.bae@intel.com>
+>> Cc: Markus T. Metzger <markus.t.metzger@intel.com>
+>> Cc: H. Peter Anvin <hpa@zytor.com>
+>> 
+>>  arch/x86/Kconfig               |   4 +
+>>  arch/x86/include/asm/desc.h    |  24 +++-
+>>  arch/x86/include/asm/ldt.h     |  16 +++
+>>  arch/x86/include/asm/segment.h |  10 ++
+>>  arch/x86/kernel/Makefile       |   3 +-
+>>  arch/x86/kernel/ldt.c          | 283
+>++++++++++++++++++++++++++++++++---------
+>>  arch/x86/kernel/ptrace.c       | 103 ++++++++++++++-
+>>  arch/x86/kernel/tls.c          | 102 +++++----------
+>>  arch/x86/kernel/tls.h          |   8 +-
+>>  include/uapi/linux/elf.h       |   2 +
+>>  10 files changed, 413 insertions(+), 142 deletions(-)
+>
+>Ok, this looks mostly good to me at a quick glance, but could you
+>please do one 
+>more iteration and more explicitly describe where you change/extend
+>existing ABIs?
+>
+>I.e. instead of a terse and somewhat vague summary:
+>
+>> x86/tls,ptrace: provide regset access to the GDT
+>>
+>> Give a debugger access to the visible part of the GDT and LDT.  This
+>> allows a debugger to find out what a particular segment descriptor
+>> corresponds to; e.g. if %cs is 16, 32, or 64 bits.
+>
+>Please make it really explicit how the ABI is affected, both in the
+>title and in 
+>the description, and also _explain_ how this helps us over what we had
+>before, 
+>plus also list limitations of the new ABI.
+>
+>I.e. something like:
+>
+>  x86/tls, ptrace: Extend the ptrace ABI with the new REGSET_GDT method
+>
+>   Add the new REGSET_GDT ptrace variant to PTRACE_{GET|SET}REGSET,
+>   to give read and write access to the GDT:
+>
+>- Previously only certain parts of the GDT were visible, and only via
+>random
+>ABIs and instructions - there was no architectured access to all of it.
+>
+>- The SETREGSET variant is only allowed to change the TLS area of the
+>GDT.
+>
+>(or so.)
+>
+>This is important not just for documentation and library support
+>purposes, but 
+>also to be able to review it properly, to match 'intent' to
+>'implementation'.
+>
+>(It might also help later on in finding bugs/quirks, if any.)
+>
+>Please do this for all patches in the series that change the ABI.
+>
+>Thanks,
+>
+>	Ingo
 
-locking/qspinlock: Fix build for anonymous union in older GCC compilers
-
-One of my tests compiles the kernel with gcc 4.5.3, and I hit the
-following build error:
-
-  include/linux/semaphore.h: In function 'sema_init':
-  include/linux/semaphore.h:35:17: error: unknown field 'val' specified in initializer
-  include/linux/semaphore.h:35:17: warning: missing braces around initializer
-  include/linux/semaphore.h:35:17: warning: (near initialization for '(anonymous).raw_lock.<anonymous>.val')
-
-I bisected it down to:
-
- 625e88be1f41 ("locking/qspinlock: Merge 'struct __qspinlock' into 'struct qspinlock'")
-
-... which makes qspinlock have an anonymous union, which makes initializing it special
-for older compilers. By adding strategic brackets, it makes the build
-happy again.
-
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Acked-by: Waiman Long <longman@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Fixes: 625e88be1f41 ("locking/qspinlock: Merge 'struct __qspinlock' into 'struct qspinlock'")
-Link: http://lkml.kernel.org/r/20180621203526.172ab5c4@vmware.local.home
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/asm-generic/qspinlock_types.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/asm-generic/qspinlock_types.h b/include/asm-generic/qspinlock_types.h
-index 0763f065b975..d10f1e7d6ba8 100644
---- a/include/asm-generic/qspinlock_types.h
-+++ b/include/asm-generic/qspinlock_types.h
-@@ -63,7 +63,7 @@ typedef struct qspinlock {
- /*
-  * Initializier
-  */
--#define	__ARCH_SPIN_LOCK_UNLOCKED	{ .val = ATOMIC_INIT(0) }
-+#define	__ARCH_SPIN_LOCK_UNLOCKED	{ { .val = ATOMIC_INIT(0) } }
- 
- /*
-  * Bitfields in the atomic value:
+ACK.
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
