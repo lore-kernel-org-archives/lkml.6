@@ -2,141 +2,173 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67441C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2A5C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B83C245DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:36:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hUF9qbic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B83C245DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 73CA9245DC
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:38:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73CA9245DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934312AbeFVQg5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:36:57 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51874 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934119AbeFVQgz (ORCPT
+        id S934323AbeFVQix (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:38:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40502 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933376AbeFVQiw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:36:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IkJ+MlMnfgQLbR3ylk0md3pCcZ0B9p8NMOxXP6J33Hw=; b=hUF9qbicshOdOO9nhO+fdXQvs
-        4P2zhO7E+wKrqBTMy3DqElHdaSVGNpBZNTsez7ykkNu2wBX/DEJfSmaQd0G8ey3qAcW3ieFAfUPbC
-        dFS+iAqaqgW6MWOu5nJVTU+ar6Wpo2GbupjgfjRGp+c0rLI0Uf2dNI7Mv3nAMiXGBoD0QLHA1nV1j
-        VaBFzgfGSBl5MYllQLaxON98tWSooIbPtvYjui1az0oBuooY7TVnbdkTGl9DgDgRR71Q6nKWxKGhp
-        v5Io8Y5IApyloaZf2HC5guCSOK3DRAFRn77sqkVfn6ssMu9lEG2zOJCODybJzu7v4oYI9Nxo/ej8k
-        GuI4rSB/A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWP3D-00021z-Fl; Fri, 22 Jun 2018 16:36:44 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1623F2029F1D9; Fri, 22 Jun 2018 18:36:35 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 18:36:35 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH REBASED RESEND] x86/cpu: Move early cpu initialization
- into a separate translation unit
-Message-ID: <20180622163635.GO2494@hirez.programming.kicks-ass.net>
-References: <20180612103657.18041-1-kirill.shutemov@linux.intel.com>
- <alpine.DEB.2.21.1806221603150.2402@nanos.tec.linutronix.de>
- <20180622151446.lqqmk6nkzzkb6lew@black.fi.intel.com>
- <alpine.DEB.2.21.1806221720500.2402@nanos.tec.linutronix.de>
- <20180622155824.npfinfnpidplufad@black.fi.intel.com>
- <alpine.DEB.2.21.1806221809070.2402@nanos.tec.linutronix.de>
+        Fri, 22 Jun 2018 12:38:52 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5MGcpLc028442
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:38:51 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2js2hq6rm7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:38:51 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 22 Jun 2018 12:38:50 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 22 Jun 2018 12:38:46 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5MGcjPS5439880
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 Jun 2018 16:38:45 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27E58B2064;
+        Fri, 22 Jun 2018 12:38:45 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F019FB2070;
+        Fri, 22 Jun 2018 12:38:44 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 22 Jun 2018 12:38:44 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 3B3DF16C3888; Fri, 22 Jun 2018 09:40:48 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 09:40:48 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
+ release-acquire and by locks
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <Pine.LNX.4.44L0.1806211322160.2381-100000@iolanthe.rowland.org>
+ <20180622080928.GB7601@arm.com>
+ <20180622095547.GE7601@arm.com>
+ <20180622103129.GQ2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806221809070.2402@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180622103129.GQ2476@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062216-0052-0000-0000-00000302C120
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009239; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01050748; UDB=6.00538514; IPR=6.00829718;
+ MB=3.00021808; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-22 16:38:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062216-0053-0000-0000-00005D1AD9FE
+Message-Id: <20180622164048.GR3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=814 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806220185
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 06:16:05PM +0200, Thomas Gleixner wrote:
-> On Fri, 22 Jun 2018, Kirill A. Shutemov wrote:
-> > On Fri, Jun 22, 2018 at 03:35:18PM +0000, Thomas Gleixner wrote:
-
-> > > How is that supposed to work correctly?
-> > > 
-> > > start_kernel()
-> > >   ....
-> > >   trap_init()
-> > >     cpu_init()
-> > > 
-> > >   ....
-> > >   check_bugs()
-> > >     alternative_instructions()
-> > > 
-> > > So the first invocation of cpu_init() on the boot CPU will then use
-> > > static_cpu_has() which is not yet initialized proper.
-> > 
-> > Ouch.
-> > 
-> > Is there a way to catch such improper static_cpu_has() users?
-> > Silent misbehaviour is risky.
+On Fri, Jun 22, 2018 at 12:31:29PM +0200, Peter Zijlstra wrote:
+> On Fri, Jun 22, 2018 at 10:55:47AM +0100, Will Deacon wrote:
+> > On Fri, Jun 22, 2018 at 09:09:28AM +0100, Will Deacon wrote:
+> > > On Thu, Jun 21, 2018 at 01:27:12PM -0400, Alan Stern wrote:
+> > > > More than one kernel developer has expressed the opinion that the LKMM
+> > > > should enforce ordering of writes by release-acquire chains and by
+> > > > locking.  In other words, given the following code:
+> > > > 
+> > > > 	WRITE_ONCE(x, 1);
+> > > > 	spin_unlock(&s):
+> > > > 	spin_lock(&s);
+> > > > 	WRITE_ONCE(y, 1);
 > 
-> Yes, it is. I don't think we have something in place right now, but we
-> should add it definitely. PeterZ ????
+> So this is the one I'm relying on and really want sorted.
+> 
+> > > > or the following:
+> > > > 
+> > > > 	smp_store_release(&x, 1);
+> > > > 	r1 = smp_load_acquire(&x);	// r1 = 1
+> > > > 	WRITE_ONCE(y, 1);
+> 
+> Reading back some of the old threads [1], it seems the direct
+> translation of the first into acquire-release would be:
+> 
+> 	WRITE_ONCE(x, 1);
+> 	smp_store_release(&s, 1);
+> 	r1 = smp_load_acquire(&s);
+> 	WRITE_ONCE(y, 1);
+> 
+> Which is I think easier to make happen than the second example you give.
+> 
+> > > > the stores to x and y should be propagated in order to all other CPUs,
+> > > > even though those other CPUs might not access the lock s or be part of
+> > > > the release-acquire chain.  In terms of the memory model, this means
+> > > > that rel-rf-acq-po should be part of the cumul-fence relation.
+> > > > 
+> > > > All the architectures supported by the Linux kernel (including RISC-V)
+> > > > do behave this way, albeit for varying reasons.  Therefore this patch
+> > > > changes the model in accordance with the developers' wishes.
+> > > 
+> > > Interesting...
+> > > 
+> > > I think the second example would preclude us using LDAPR for load-acquire,
+> > > so I'm surprised that RISC-V is ok with this. For example, the first test
+> > > below is allowed on arm64.
+> > > 
+> > > I also think this would break if we used DMB LD to implement load-acquire
+> > > (second test below).
+> > > 
+> > > So I'm not a big fan of this change, and I'm surprised this works on all
+> > > architectures. What's the justification?
+> > 
+> > I also just realised that this prevents Power from using ctrl+isync to
+> > implement acquire, should they wish to do so.
+> 
+> They in fact do so on chips lacking LWSYNC, see how PPC_ACQUIRE_BARRIER
+> (as used by atomic_*_acquire) turns into ISYNC (note however that they
+> do not use PPC_ACQUIRE_BARRIER for smp_load_acquire -- because there's
+> no CTRL there).
 
-So static_cpu_has() _should_ work. That thing is mightily convoluted,
-but behold:
+PowerPC -could- use a load-compare-branch-isync sequence to implement
+smp_load_acquire(), but as you say it instead uses lwsync, falling
+back to sync on CPUs not implementing lwsync.
 
-| static __always_inline __pure bool _static_cpu_has(u16 bit)
-| {
-|         asm_volatile_goto("1: jmp 6f\n"
-|                  "2:\n"
-|                  ".skip -(((5f-4f) - (2b-1b)) > 0) * "
-|                          "((5f-4f) - (2b-1b)),0x90\n"
+Locking should work either way because even if lock acquisition uses isync
+(leveraging the fact that the "stcwx." instruction affects condition
+codes and branches back when someone else already holds the lock),
+lock release still uses lwsync (or sync on systems not having lwsync).
 
-<snip magic shite>
+							Thanx, Paul
 
-|                  ".section .altinstr_aux,\"ax\"\n"
-|                  "6:\n"
-|                  " testb %[bitnum],%[cap_byte]\n"
-|                  " jnz %l[t_yes]\n"
-|                  " jmp %l[t_no]\n"
-|                  ".previous\n"
-|                  : : [feature]  "i" (bit),
-|                      [always]   "i" (X86_FEATURE_ALWAYS),
-|                      [bitnum]   "i" (1 << (bit & 7)),
-|                      [cap_byte] "m" (((const char *)boot_cpu_data.x86_capability)[bit >> 3])
-|                  : : t_yes, t_no);
-| t_yes:
-|         return true;
-| t_no:
-|         return false;
-| }
+> [1] https://lkml.kernel.org/r/20171128095850.rhtnx6e2qxep5npa@hirez.programming.kicks-ass.net
+> 
 
-So by default that emits, before patching:
-
-	jmp 6f
-	'however many single byte NOPs are needed'
-
-	.section.altinstr_aux
-	6: testb %[bitnum],%[cap_byte]
-	   jnz %l[t_yes]
-	   jmp %l[t_no]
-	.previous
-
-Which is a dynamic test for the bit in the bitmask. Which always works,
-irrespective of the alternative patching.
-
-The magic, which I cut out, will rewrite the "jmp 6f, nops" thing to
-"jmp %l[y_{yes,no}]" at the alternative patching and we'll loose the
-dynamic test, pinning the condition forever more.
