@@ -6,126 +6,98 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 792DEC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0D2C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28A2924940
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD4BD24943
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:05:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jvZ6Cast"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A2924940
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wiQrO+zS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD4BD24943
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754600AbeFVWDw (ORCPT
+        id S1754638AbeFVWFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:03:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49596 "EHLO mail.kernel.org"
+        Fri, 22 Jun 2018 18:05:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754134AbeFVWDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 18:03:51 -0400
-Received: from mail-wr0-f173.google.com (mail-wr0-f173.google.com [209.85.128.173])
+        id S1754134AbeFVWFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 18:05:38 -0400
+Received: from mail-wr0-f177.google.com (mail-wr0-f177.google.com [209.85.128.177])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 557852494B
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 22:03:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F88924941
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 22:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529705030;
-        bh=y2LfsOkUy0geQhJWzpS7qq05B7nz1ufctTY8cqGV6Y4=;
+        s=default; t=1529705137;
+        bh=ldloDqJES8jcoqHuScDh4Q4lGYRkLiW7aoEw38ZRClM=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jvZ6CastbE5+5FAryMQz3aEWMrVoOY2tzDD9CqWEXeb5W0NzCzIb4jW6vqU+RBwt/
-         6MxgGRK4InS4ImaL132sab/ibqgzXsD9EFxr46m9UvIrAWD9qzk1qImkJgl/BUPEVq
-         kEznuQbGq9k0qai+w+qAWLVtoaLTnKq08RRgRa64=
-Received: by mail-wr0-f173.google.com with SMTP id k6-v6so7997628wrp.4
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 15:03:50 -0700 (PDT)
-X-Gm-Message-State: APt69E3YDpk99EDNeufN82uIU6L2RrYaFeXLuXstJ8pXSyo38w1TFIOV
-        eI0jODSUfCACEX7t8vUcjOePSYavs5cXyQz0s+9rLA==
-X-Google-Smtp-Source: ADUXVKKkL/I0vjbienj+53b72sbyFMNUtGWkanjcG8mLioTcjIJTjL5H0eepKVh8i+cnPQZnSzCcrA8wKsObRWvZBdc=
-X-Received: by 2002:adf:85ec:: with SMTP id 41-v6mr2905158wru.120.1529705028785;
- Fri, 22 Jun 2018 15:03:48 -0700 (PDT)
+        b=wiQrO+zSS5PfS6qic1BH3MWhD/pcwZcVK8rIJdqI56x0sWAiFTThY/sPXTWQOcJQe
+         LOwuSgkOqovfYK0SrCZ+SxhfViUqmImitbbIKK3si3s4pVfvlloslie3J4Ioj5Xztj
+         Vo2ilO0JWyAaxwUlT/wKItse+VR61WVNSchCK4Do=
+Received: by mail-wr0-f177.google.com with SMTP id g18-v6so7997687wro.7
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 15:05:37 -0700 (PDT)
+X-Gm-Message-State: APt69E0Hj87H27liepRm1TMbhd8zthpSFMzpQQ4MwlIZHFAimil10zei
+        xZSUm1U2URWlg5BeonrBq7WKwyEhjTVwL5Mi5kuoKA==
+X-Google-Smtp-Source: AAOMgpcKTtnIsoU/cJP8yqme39XZ/3uuVefaL7BZg8RZmVbZ1bAzEppAawMwgnVon6uk5g6lZRcGJCK4vuym97eC+po=
+X-Received: by 2002:adf:fe4c:: with SMTP id m12-v6mr2796733wrs.171.1529705136159;
+ Fri, 22 Jun 2018 15:05:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
- <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
- <20180620145814.GQ3593@linux.vnet.ibm.com> <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
- <20180620164902.GW3593@linux.vnet.ibm.com> <20180622055659.GA255098@joelaf.mtv.corp.google.com>
- <20180622132843.GN3593@linux.vnet.ibm.com> <20180622181916.GA13628@joelaf.mtv.corp.google.com>
- <20180622205813.GV3593@linux.vnet.ibm.com> <20180622170042.4adfbe21@gandalf.local.home>
- <20180622211600.GX3593@linux.vnet.ibm.com>
-In-Reply-To: <20180622211600.GX3593@linux.vnet.ibm.com>
+References: <20180620195652.27251-1-riel@surriel.com> <20180620195652.27251-8-riel@surriel.com>
+ <CALCETrXfHhPNe9J0NEabxdtKGRV+XOX=n6vtL7rbOY6e2GXMqA@mail.gmail.com>
+ <1529682813.7898.195.camel@surriel.com> <CALCETrXJzhwXkEi5oC9XY58B8fYT26WhMT+KBt-8m2M+foQvsw@mail.gmail.com>
+ <1529698739.7898.206.camel@surriel.com>
+In-Reply-To: <1529698739.7898.206.camel@surriel.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 22 Jun 2018 15:03:35 -0700
-X-Gmail-Original-Message-ID: <CALCETrUqe_1dg=3KYOswGQv5i=_5WFYpcn27Z6oa2D7-nBa+Jw@mail.gmail.com>
-Message-ID: <CALCETrUqe_1dg=3KYOswGQv5i=_5WFYpcn27Z6oa2D7-nBa+Jw@mail.gmail.com>
-Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct rcu_dynticks
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, joel@joelfernandes.org,
-        max.byungchul.park@gmail.com,
-        Byungchul Park <byungchul.park@lge.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com,
-        Andrew Lutomirski <luto@kernel.org>
+Date:   Fri, 22 Jun 2018 15:05:24 -0700
+X-Gmail-Original-Message-ID: <CALCETrX9PZEHs9bj476bj5qEb1aXtiH0K8G998t1+CbUuiaGmg@mail.gmail.com>
+Message-ID: <CALCETrX9PZEHs9bj476bj5qEb1aXtiH0K8G998t1+CbUuiaGmg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] x86,idle: do not leave mm in idle state
+To:     Rik van Riel <riel@surriel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Galbraith <efault@gmx.de>, songliubraving@fb.com,
+        kernel-team <kernel-team@fb.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 2:14 PM Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
+On Fri, Jun 22, 2018 at 1:19 PM Rik van Riel <riel@surriel.com> wrote:
 >
-> On Fri, Jun 22, 2018 at 05:00:42PM -0400, Steven Rostedt wrote:
-> > On Fri, 22 Jun 2018 13:58:13 -0700
-> > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> >
-> > > Something like this:
-> > >
-> > >     IRQ entered
-> > >
-> > > And never exited.  Ever.  I actually saw this in 2011.
-> >
-> > I still believe this was actually a bug. And perhaps you made the RCU
-> > code robust enough to handle this bug ;-)
+> On Fri, 2018-06-22 at 09:01 -0700, Andy Lutomirski wrote:
+> > Hmm, fair enough.  I think a better heuristic would be if the
+> > estimated idle duration is more than, say, 10ms.  I *think* the code
+> > has been cleaned up enough that this is easy now.  (Using time
+> > instead
+> > of C6 will make it a lot less dependent on which idle driver is in
+> > use.)
 >
-> Welcome to my world!
+> This particular bit of code is only in intel_idle
+> though, and not every cpuidle governor estimates
+> an idle duration, nor does it get passed up the
+> stack (presumably because it not always exists).
 >
-> But I recall it being used in several places, so if it was a bug, it
-> was an intentional bug.  Probably the worst kind.
+> I will just drop this patch for now, and see if
+> adding back in the patch that skips manipulation
+> of the mm_cpumask(&init_mm), since that might make
+> leave_mm() a little cheaper.
 >
-> Sort of like nested NMIs and interrupts within NMI handlers.  ;-)
+> We would still have excess manipulation of the
+> bitmask when re-entering the task from what should
+> have been lazy TLB mode, but total cache line
+> contention would likely still be down from where
+> it is before that patch.
 >
-> > > Or something like this:
-> > >
-> > >     IRQ exited
-> > >
-> > > Without a corresponding IRQ enter.
-> > >
-> > > The current code handles both of these situations, at least assuming
-> > > that the interrupt entry/exit happens during a non-idle period.
-> > >
-> > > > > So why this function-call structure?  Well, you see, NMI handlers can
-> > > > > take what appear to RCU to be normal interrupts...
-> > > > >
-> > > > > (And I just added that fun fact to Requirements.html.)
-> > > >
-> > > > Yes, I'll definitely go through all the interrupt requirements in the doc and
-> > > > thanks for referring me to it.
-> > >
-> > > My concern may well be obsolete.  It would be good if it was!  ;-)
-> >
-> > I'd love to mandate that irq_enter() must be paired with irq_exit(). I
-> > don't really see any rationale for it to be otherwise. If there is a
-> > case, perhaps it needs to be fixed.
->
-> Given that the usermode helpers now look to be common code using
-> workqueues, kthreads, and calls to do_execve(), it might well be that
-> the days of half-interrupts are behind us.
->
-> But how to actually validate this?  My offer of adding a WARN_ON_ONCE()
-> and waiting a few years still stands, but perhaps you have a better
-> approach.
 
-I think you should add a WARN_ON_ONCE().  Let's get the bugs fixed.
+Agreed.
 
---Andy
+I think the right solution if you want that last little bit of
+performance is to get rid of the code in intel_idle and to add it in
+the core idle code.  We have fancy scheduler code to estimate the idle
+time, and we should use it here IMO.
