@@ -2,91 +2,134 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0585CC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEDCC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F9E24473
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:13:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUt3uhcg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F9E24473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3DF1224477
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 15:14:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DF1224477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933652AbeFVPNk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 11:13:40 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:52023 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933606AbeFVPNe (ORCPT
+        id S933713AbeFVPOP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 11:14:15 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41972 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933354AbeFVPOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 11:13:34 -0400
-Received: by mail-wm0-f45.google.com with SMTP id r15-v6so2598607wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 08:13:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lYOfYLLq5xp7yD+iW4SG+jZNiGxVWxmtMC2LAko9y7Q=;
-        b=MUt3uhcg/si7xlquGqnW/mQjTVj2suq6A9Ye9ap+mQzL3fYtFnf1y9b/mC+hdkp8FW
-         KI2rXCIJaLK2xn/Q7eSUi1nN49/VGVqnWHMnyM4gPJ01rs+ZUxs+liQBu1Zz9bpRJ/lu
-         I12427ZgQ+9f0DQCZNuwe7pMb1FRWLVkvqS+PqRtpJlsZ6KrrWFIw7czG9Sjf28mCnOy
-         kMYQHu/cBY6havt5x7y5GHu5J0PUUQ5qK9iIZAsd5c2MIPhs6SPVvySYN4VCH1X2yaAN
-         ft4xRDc9JVil+T7CZyhre0UU5Kx+B4CQ8GXJL/KZ83vLHF/nQ1Oe5eA5KOI6bN2B9H3G
-         Lo3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lYOfYLLq5xp7yD+iW4SG+jZNiGxVWxmtMC2LAko9y7Q=;
-        b=STps6Qn68A9yf9tojqLbk1cdTrRon/HexMWknd2lQnaz5DOAcKn6WVgCkE0IPGy6wz
-         vAGV3uZGobOXa0PAchUHfMWU2ynnHVguHT3iq9EKualeju7CZgufWOVXEdayY3i/oQQl
-         Gd7DYZbyzjz3z2+sB2RYA7xNeBAYfBWgaN9/VDBiaJxXI5HP5j/bZS9ncj+YWe0mXzLT
-         c0Fa0Rmibm922HkcsO2QCw9e6yiDVyEMQEuK5bd4LPU5CVL0Ic8VwPwmXaLlcRinGmiM
-         M7Akd0YARquhXRqawkTMiuJOiZaoMIkIJpjZS9w2821y+Da/P8zpWuGh9hKf41pNf4TM
-         g4hA==
-X-Gm-Message-State: APt69E0hjmflEYVUUsgkYlO/VHj1hwi8nwvjCDgCc564I31g8VAFv3Jg
-        MBXYItxkRDqJDZ9FkirisYM=
-X-Google-Smtp-Source: ADUXVKKDImlvGXinosiQgbOWdxAEuBos/Y59sQTHdtDvkDXeJmZVgcqiZBaN3mYiYxDLhisS9o474w==
-X-Received: by 2002:a1c:8b52:: with SMTP id n79-v6mr2009583wmd.148.1529680412672;
-        Fri, 22 Jun 2018 08:13:32 -0700 (PDT)
-Received: from localhost ([165.165.77.132])
-        by smtp.gmail.com with ESMTPSA id b16-v6sm12553494wrm.15.2018.06.22.08.13.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Jun 2018 08:13:32 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 17:12:03 +0200
-From:   Chris Opperman <eklikeroomys@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] staging: wlan-ng: improved readability of function
- prism2_add_key
-Message-ID: <20180622151203.GA23248@kerdev>
-References: <1529514635-17948-1-git-send-email-eklikeroomys@gmail.com>
- <20180620200829.qm2zxeyyl5kqh6gu@mwanda>
- <20180621044252.GA19583@kerdev>
- <20180621082225.xuhqvm7bevbiuaso@mwanda>
- <20180621155352.GA20712@kerdev>
- <20180622104654.2snozuvc7sc6tk76@mwanda>
+        Fri, 22 Jun 2018 11:14:14 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fWNlF-0007G3-AD; Fri, 22 Jun 2018 17:14:05 +0200
+Date:   Fri, 22 Jun 2018 17:14:04 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Chang S. Bae" <chang.seok.bae@intel.com>
+cc:     Andy Lutomirski <luto@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 6/7] x86/vdso: Introduce CPU number helper functions
+In-Reply-To: <1529536506-26237-7-git-send-email-chang.seok.bae@intel.com>
+Message-ID: <alpine.DEB.2.21.1806221644090.2402@nanos.tec.linutronix.de>
+References: <1529536506-26237-1-git-send-email-chang.seok.bae@intel.com> <1529536506-26237-7-git-send-email-chang.seok.bae@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622104654.2snozuvc7sc6tk76@mwanda>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Okay, in that case I will fix and resend the patch.
+On Wed, 20 Jun 2018, Chang S. Bae wrote:
 
-Kind Regards,
-Chris Opperman
+> CPU number initialization in vDSO is now a bit cleaned up by
+> the new helper functions. The helper functions will take
+> care of combing CPU and node number and reading each from
+
+s/combing/combining/ please
+
+> the combined value.
+> 
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Acked-by: Andy Lutomirski <luto@kernel.org>
+> ---
+>  arch/x86/entry/vdso/vgetcpu.c  |  4 ++--
+>  arch/x86/entry/vdso/vma.c      | 16 ++++++++--------
+>  arch/x86/include/asm/segment.h | 28 ++++++++++++++++++++++++++++
+>  arch/x86/include/asm/vgtod.h   |  2 --
+>  4 files changed, 38 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/entry/vdso/vgetcpu.c b/arch/x86/entry/vdso/vgetcpu.c
+> index 8ec3d1f..3284069 100644
+> --- a/arch/x86/entry/vdso/vgetcpu.c
+> +++ b/arch/x86/entry/vdso/vgetcpu.c
+> @@ -18,9 +18,9 @@ __vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
+>  	p = __getcpu();
+
+While we are touching this, can we please as a first step change __getcpu()
+to something else? I've tripped over this several times in the past and
+confused it with a (nonexisting) variant of get_cpu().
+
+>  
+>  	if (cpu)
+> -		*cpu = p & VGETCPU_CPU_MASK;
+> +		*cpu = lsl_tscp_to_cpu(p);
+>
+>  	if (node)
+> -		*node = p >> 12;
+> +		*node = lsl_tscp_to_node(p);
+
+Are these new helpers going to be used at some other place than this? If
+not, then there is really no point at all. Then just go and make this:
+
+__vdso_getcpu(unsigned *cpu, unsigned *node, struct getcpu_cache *unused)
+{
+	vdso_read_cpu_and_node(cpu, node);
+	return 0;
+}
+
+> diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+> index 833e229..1fc93da 100644
+> --- a/arch/x86/entry/vdso/vma.c
+> +++ b/arch/x86/entry/vdso/vma.c
+> @@ -340,19 +340,19 @@ static void vgetcpu_cpu_init(void *arg)
+>  	int cpu = smp_processor_id();
+>  	struct desc_struct d = { };
+>  	unsigned long node = 0;
+> +	unsigned long cpu_number = 0;
+
+That's hardly a CPU number. It's encoded CPU and node information.
+
+>  #ifdef CONFIG_NUMA
+>  	node = cpu_to_node(cpu);
+>  #endif
+
+While at it please get rid of the ifdeffery. If CONFIG_NUMA=n then
+cpu_to_node(cpu) resolves to (0).
+
+> +	cpu_number = make_lsl_tscp(cpu, node);
+
+So the whole thing can be reduced to:
+
+        u64 cpudata = vdso_encode_cpu_and_node(cpu, cpu_to_node(cpu));
+
+Or some other sensible function name.
+
+Thanks,
+
+	tglx
