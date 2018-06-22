@@ -2,161 +2,72 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF6DC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD101C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013CA24004
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:38:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013CA24004
+	by mail.kernel.org (Postfix) with ESMTP id A18AD23FB2
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 10:38:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A18AD23FB2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754071AbeFVKiE (ORCPT
+        id S1754253AbeFVKih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 06:38:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33134 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751377AbeFVKiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 06:38:03 -0400
+        Fri, 22 Jun 2018 06:38:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:33152 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751325AbeFVKig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 06:38:36 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 99E411A9;
-        Fri, 22 Jun 2018 03:38:02 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6A6BE3F557;
-        Fri, 22 Jun 2018 03:38:02 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id D57AD1AE3632; Fri, 22 Jun 2018 11:38:38 +0100 (BST)
-Date:   Fri, 22 Jun 2018 11:38:38 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-Message-ID: <20180622103838.GF7601@arm.com>
-References: <Pine.LNX.4.44L0.1806211322160.2381-100000@iolanthe.rowland.org>
- <20180622080928.GB7601@arm.com>
- <20180622095547.GE7601@arm.com>
- <20180622103129.GQ2476@hirez.programming.kicks-ass.net>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 531FA1A9;
+        Fri, 22 Jun 2018 03:38:36 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 688883F557;
+        Fri, 22 Jun 2018 03:38:35 -0700 (PDT)
+Subject: Re: Supporting more IRQs than NR_IRQS + 8196 on ARM64 server
+To:     Yang Yingliang <yangyingliang@huawei.com>
+Cc:     Hanjun Guo <guohanjun@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, xuehuahu@hisilicon.com
+References: <5B2CB5C7.1020801@huawei.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <d9fb69e1-6a25-a3a8-8073-c556f7ebcb92@arm.com>
+Date:   Fri, 22 Jun 2018 11:38:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622103129.GQ2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <5B2CB5C7.1020801@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Hi Yang,
 
-On Fri, Jun 22, 2018 at 12:31:29PM +0200, Peter Zijlstra wrote:
-> On Fri, Jun 22, 2018 at 10:55:47AM +0100, Will Deacon wrote:
-> > On Fri, Jun 22, 2018 at 09:09:28AM +0100, Will Deacon wrote:
-> > > On Thu, Jun 21, 2018 at 01:27:12PM -0400, Alan Stern wrote:
-> > > > More than one kernel developer has expressed the opinion that the LKMM
-> > > > should enforce ordering of writes by release-acquire chains and by
-> > > > locking.  In other words, given the following code:
-> > > > 
-> > > > 	WRITE_ONCE(x, 1);
-> > > > 	spin_unlock(&s):
-> > > > 	spin_lock(&s);
-> > > > 	WRITE_ONCE(y, 1);
-> 
-> So this is the one I'm relying on and really want sorted.
+On 22/06/18 09:39, Yang Yingliang wrote:
+> Hi, Marc
+> Current system only supports (NR_IRQS + 8196) interrupts. It's not 
+> enough on ARM64 server, on D06 we have several pcie devices and each
+> device supports 256 VMs and each VM uses 64 interrupts. Can we set> NR_IRQS to a bigger value to support more interrupts ?
+You could, but it feels quite hackish, and not future proof at all. It
+would unnecessarily affect smaller systems that do not need the overhead.
 
-Agreed, and I think this one makes a lot of sense.
+I'd rather we offer the architecture a way to buy into a more dynamic
+scheme which wouldn't be limited by a bitmap, or at least made the
+bitmap extensible.
 
-> 
-> > > > or the following:
-> > > > 
-> > > > 	smp_store_release(&x, 1);
-> > > > 	r1 = smp_load_acquire(&x);	// r1 = 1
-> > > > 	WRITE_ONCE(y, 1);
-> 
-> Reading back some of the old threads [1], it seems the direct
-> translation of the first into acquire-release would be:
-> 
-> 	WRITE_ONCE(x, 1);
-> 	smp_store_release(&s, 1);
-> 	r1 = smp_load_acquire(&s);
-> 	WRITE_ONCE(y, 1);
-> 
-> Which is I think easier to make happen than the second example you give.
+I'll have a think about it.
 
-It's easier, but it will still break on architectures with native support
-for RCpc acquire/release. For example, using LDAPR again:
+Thanks,
 
-
-AArch64 MP+popl-rfilq-poqp+poap
-"PodWWPL RfiLQ PodRWQP RfePA PodRRAP Fre"
-Generator=diyone7 (version 7.46+3)
-Prefetch=0:x=F,0:z=W,1:z=F,1:x=T
-Com=Rf Fr
-Orig=PodWWPL RfiLQ PodRWQP RfePA PodRRAP Fre
-{
-0:X1=x; 0:X3=y; 0:X6=z;
-1:X1=z; 1:X3=x;
-}
- P0            | P1           ;
- MOV W0,#1     | LDAR W0,[X1] ;
- STR W0,[X1]   | LDR W2,[X3]  ;
- MOV W2,#1     |              ;
- STLR W2,[X3]  |              ;
- LDAPR W4,[X3] |              ;
- MOV W5,#1     |              ;
- STR W5,[X6]   |              ;
-exists
-(0:X4=1 /\ 1:X0=1 /\ 1:X2=0)
-
-
-then this is permitted on arm64.
-
-> > > > the stores to x and y should be propagated in order to all other CPUs,
-> > > > even though those other CPUs might not access the lock s or be part of
-> > > > the release-acquire chain.  In terms of the memory model, this means
-> > > > that rel-rf-acq-po should be part of the cumul-fence relation.
-> > > > 
-> > > > All the architectures supported by the Linux kernel (including RISC-V)
-> > > > do behave this way, albeit for varying reasons.  Therefore this patch
-> > > > changes the model in accordance with the developers' wishes.
-> > > 
-> > > Interesting...
-> > > 
-> > > I think the second example would preclude us using LDAPR for load-acquire,
-> > > so I'm surprised that RISC-V is ok with this. For example, the first test
-> > > below is allowed on arm64.
-> > > 
-> > > I also think this would break if we used DMB LD to implement load-acquire
-> > > (second test below).
-> > > 
-> > > So I'm not a big fan of this change, and I'm surprised this works on all
-> > > architectures. What's the justification?
-> > 
-> > I also just realised that this prevents Power from using ctrl+isync to
-> > implement acquire, should they wish to do so.
-> 
-> They in fact do so on chips lacking LWSYNC, see how PPC_ACQUIRE_BARRIER
-> (as used by atomic_*_acquire) turns into ISYNC (note however that they
-> do not use PPC_ACQUIRE_BARRIER for smp_load_acquire -- because there's
-> no CTRL there).
-
-Right, so the example in the commit message is broken on PPC then. I think
-it's also broken on RISC-V, despite the claim.
-
-Could we drop the acquire/release stuff from the patch and limit this change
-to locking instead?
-
-Will
+	M.
+-- 
+Jazz is not dead. It just smells funny...
