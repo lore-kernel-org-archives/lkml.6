@@ -2,82 +2,111 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A67C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618E1C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B4423EAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:09:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IOK7jFrY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B4423EAE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 2568C23EAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:09:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2568C23EAE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753279AbeFVII6 (ORCPT
+        id S1754104AbeFVIJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:08:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55716 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752688AbeFVIIz (ORCPT
+        Fri, 22 Jun 2018 04:09:15 -0400
+Received: from bmailout2.hostsharing.net ([83.223.90.240]:51291 "EHLO
+        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751258AbeFVIJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:08:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6lpv1DR9EJb2W+A0NEZo0plEU+zEWD0pngecRP1iWYA=; b=IOK7jFrYmnPymFgTsUFU9aLwY
-        pMj4xijNm6EYJtTHF/TGYgocii6TtDfH26VM65lrRS+fIoVwCNnhHmB29IrQuRbyDsJfve2CmQIY7
-        s0Wmn6i8zNkxsKl7TP5Zsl41uLdJuCYDTCk/7FyJM7VRS4xzchRciUvG/8IC9Tt+jcdsKlZ94IXff
-        +FykqQgRTTmYMoj5YwX0a4M8IDTToKAHQUyBCvZIWrpmo0GhxjvnMRpgUpTPQe+hyDLfCiza9n4YM
-        KQiZHmcjnAD+1vWc7pvQm91FocVHdjfWHYYwz24acFnTAoolzvVEnaRZoU6TPtk//yfRt64qiAPnv
-        PNsMtsVjw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWH7c-0006Et-Lo; Fri, 22 Jun 2018 08:08:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 69E7E2029F1D5; Fri, 22 Jun 2018 10:08:42 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 10:08:42 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by
- release-acquire and by locks
-Message-ID: <20180622080842.GF2494@hirez.programming.kicks-ass.net>
-References: <Pine.LNX.4.44L0.1806211322160.2381-100000@iolanthe.rowland.org>
- <20180621180422.GF3452@worktop.programming.kicks-ass.net>
- <20180622033440.GM3593@linux.vnet.ibm.com>
+        Fri, 22 Jun 2018 04:09:12 -0400
+X-Greylist: delayed 465 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Jun 2018 04:09:12 EDT
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 3F0782800B1DB;
+        Fri, 22 Jun 2018 10:01:26 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id D2A3C1C038; Fri, 22 Jun 2018 10:01:25 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 10:01:25 +0200
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] genirq: Synchronize only with single thread on free_irq()
+Message-ID: <20180622080125.GA13709@wunner.de>
+References: <8f770886632640321592873e4c902218d42c436b.1527194314.git.lukas@wunner.de>
+ <alpine.DEB.2.21.1806212217571.1591@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180622033440.GM3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <alpine.DEB.2.21.1806212217571.1591@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 08:34:40PM -0700, Paul E. McKenney wrote:
-> (Peter, if you meant to ack both, please let me know.)
+On Thu, Jun 21, 2018 at 10:21:44PM +0200, Thomas Gleixner wrote:
+> On Thu, 24 May 2018, Lukas Wunner wrote:
+> >  static int irq_wait_for_interrupt(struct irqaction *action)
+> >  {
+> > -	set_current_state(TASK_INTERRUPTIBLE);
+> > +	for (;;) {
+> > +		set_current_state(TASK_INTERRUPTIBLE);
+> >  
+> > -	while (!kthread_should_stop()) {
+> > +		if (kthread_should_stop()) {
+> > +			/* may need to run one last time. */
+> > +			if (test_and_clear_bit(IRQTF_RUNTHREAD,
+> > +					       &action->thread_flags)) {
+> > +				__set_current_state(TASK_RUNNING);
+> > +				return 0;
+> > +			}
+> > +			__set_current_state(TASK_RUNNING);
+> > +			return -1;
+> > +		}
+> >  
+> >  		if (test_and_clear_bit(IRQTF_RUNTHREAD,
+> >  				       &action->thread_flags)) {
+> > @@ -766,10 +776,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
+> >  			return 0;
+> >  		}
+> >  		schedule();
+> > -		set_current_state(TASK_INTERRUPTIBLE);
+> >  	}
+> > -	__set_current_state(TASK_RUNNING);
+> > -	return -1;
+> >  }
+> >  
+> >  /*
+> > @@ -990,7 +997,7 @@ static int irq_thread(void *data)
+> >  	/*
+> >  	 * This is the regular exit path. __free_irq() is stopping the
+> >  	 * thread via kthread_stop() after calling
+> > -	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
+> > +	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
+> >  	 * oneshot mask bit can be set. We cannot verify that as we
+> >  	 * cannot touch the oneshot mask at this point anymore as
+> >  	 * __setup_irq() might have given out currents thread_mask
+> > @@ -1595,7 +1602,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
+> >  	unregister_handler_proc(irq, action);
+> >  
+> >  	/* Make sure it's not being used on another CPU: */
+> > -	synchronize_irq(irq);
+> > +	synchronize_hardirq(irq);
+> 
+> So after that, action can be freed and when the thread above tries to
+> access it. Nice Use After Free. That needs more thought.
 
-I sadly have not had the time to go through all that fancy cat language
-stuff, so while I can read and mostly understand the Changelog, I don't
-feel qualified to actually say anything much about that first patch ;-)
+No, after that, kthread_stop() is called which blocks until the IRQ
+thread has completed.  Only then is the action freed.
 
-At some distant point in the past I mostly grokked the cat stuffs, but
-then things happened and I've not looked at it in more than a year and
-the brain just doesn't want to remember... :/ Some day..
+Thanks,
+
+Lukas
