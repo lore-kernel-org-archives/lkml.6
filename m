@@ -2,114 +2,97 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E920CC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982CAC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92933249A7
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:17:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XS+XFZN2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92933249A7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4C16B249AD
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 23:18:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C16B249AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754737AbeFVXRR (ORCPT
+        id S1754738AbeFVXSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 19:17:17 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44761 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754576AbeFVXRP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 19:17:15 -0400
-Received: by mail-pg0-f66.google.com with SMTP id g26-v6so3570551pgn.11
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 16:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FT+1Nv04SJ0jUXi8OeHnHbrEw29/JKq1HiupH1TfUS4=;
-        b=XS+XFZN24LciDcjLyG0YYALt5DgjqRNO+Vzy4dEQKhONEqoSBxx3y+cK5d6DvaD8+e
-         lU64s+jOtP+OVru1S5qyhNsOWtpY8G4lPHRG0iyw5XLuc/DFQ+VVRU/fcpHaczIqD2TE
-         BZ6MQ8jt2dpvR9llR5nuvDOOqD12HzMKR9Qf0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FT+1Nv04SJ0jUXi8OeHnHbrEw29/JKq1HiupH1TfUS4=;
-        b=eS5eL9EXVc7/LtVCe0oNVmsKSgEARe17oNtsds8AW6e3bERAS0TpOjRsmqWUXjl7D4
-         venj2po1ozTxPwAUF8HTXuPzzrlBNFE/xXXHUgStYhiyUVFY4n2yIJhG0tOu+iCY1jtQ
-         PUcT8brNVnmYGQrM+UtthkpVrPpOApkW8nHMh8+55YU8x71U1Sw6AqM0/Bo+NiD2YMsE
-         gCnkbsnva11ogHi3gaZsaLIOiuprtdDaT+AZRIQPSfr3c/knRZdJLxkuhoozy1tp6XWq
-         1wO6e+NzB79beKXp5nuRJaUUibvlOxDdlONzezT9G5j+bkJMEzV8Zx+tV0W4TkG96ZtJ
-         V1rA==
-X-Gm-Message-State: APt69E2QC2JWU6Aa9AkgYHOrazdfRLjwzR6Xl9EJqfXV0Asf+sCeb3V1
-        J0xEt5eyHEZF5qF4KrNoJmvCCg==
-X-Google-Smtp-Source: ADUXVKIBvGSQ1RieMGRcOCuto1XAcbgwdkDJAykTFr9eNfE+Y1XxUO6t7OxRDHP/plcUJO+fNByn2w==
-X-Received: by 2002:a62:e208:: with SMTP id a8-v6mr3623031pfi.6.1529709434604;
-        Fri, 22 Jun 2018 16:17:14 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s22-v6sm9486037pgs.34.2018.06.22.16.17.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Jun 2018 16:17:13 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 16:19:34 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, andy.gross@linaro.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Subject: Re: [PATCH v2 3/5] venus: add check to make scm calls
-Message-ID: <20180622231934.GO3402@tuxbook-pro>
-References: <1527884768-22392-1-git-send-email-vgarodia@codeaurora.org>
- <1527884768-22392-4-git-send-email-vgarodia@codeaurora.org>
- <CAAFQd5BSgB0OoqUFckJLXto9FNMYCTQ8ubDftaC-LvFm+A-gxA@mail.gmail.com>
+        Fri, 22 Jun 2018 19:18:45 -0400
+Received: from mga18.intel.com ([134.134.136.126]:18093 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754552AbeFVXSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 19:18:44 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 16:18:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
+   d="scan'208";a="61474460"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga003.jf.intel.com with ESMTP; 22 Jun 2018 16:18:43 -0700
+Date:   Fri, 22 Jun 2018 16:18:13 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [RFC PATCH 02/16] x86/split_lock: Handle #AC exception for split
+ lock in kernel mode
+Message-ID: <20180622231813.GE18979@romley-ivt3.sc.intel.com>
+References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
+ <1527435965-202085-3-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1806212301590.1591@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1806221334150.2402@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAFQd5BSgB0OoqUFckJLXto9FNMYCTQ8ubDftaC-LvFm+A-gxA@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <alpine.DEB.2.21.1806221334150.2402@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 04 Jun 05:58 PDT 2018, Tomasz Figa wrote:
-
-> Hi Vikash,
+On Fri, Jun 22, 2018 at 01:59:44PM +0200, Thomas Gleixner wrote:
+> On Fri, 22 Jun 2018, Thomas Gleixner wrote:
+> > The whole thing is simply:
+> > 
+> > handle_ac()
+> > {
+> > 	if (user_mode(regs)) {
+> > 		 do_trap(AC, SIGBUS, ...);
+> > 	} else {
+> > 		disable_ac_on_local_cpu();
+> > 		WARN_ONCE(1);
+> > 	}
+> > }
+> > 
+> > That wants #AC enabled as early as possible so the kernel gets as much
+> > coverage as it can. If it trips in the kernel it's a bug and needs to be
+> > fixed and we can them fix ONE by ONE.
 > 
-> On Sat, Jun 2, 2018 at 5:27 AM Vikash Garodia <vgarodia@codeaurora.org> wrote:
-> [snip]
-> > +int venus_boot(struct venus_core *core)
-> > +{
-> > +       phys_addr_t mem_phys;
-> > +       size_t mem_size;
-> > +       int ret;
-> > +       struct device *dev;
-> > +
-> > +       if (!IS_ENABLED(CONFIG_QCOM_MDT_LOADER))
-> > +               return -EPROBE_DEFER;
+> That said, #AC is just yet another badly defined and hastily bolted on
+> (mis)feature. This should have been:
 > 
-> Why are we deferring probe here? The option will not magically become
-> enabled after probe is retried.
+>   Bit A:	   Enable #AC if CPL < 3
+>   Bit B:	   Enable #AC if CPL == 3
 > 
+> But that would have been too useful and would allow sensible use of #AC
+> without creating software trainwrecks.
+>
 
-The original code should have read:
+The two bits would be ideal.
 
-	if (IS_ENABLED(CONFIG_QCOM_MDT_LOADER) && !qcom_scm_is_available())
-		return -EPROBE_DEFER;
+So I will do SIGBUG for user and WARN/disable for kernel in the next version.
 
-The code does depend on CONFIG_QCOM_MDT_LOADER regardless of it using
-scm for firmware verification.
+Thanks.
 
-Regards,
-Bjorn
+-Fenghua
