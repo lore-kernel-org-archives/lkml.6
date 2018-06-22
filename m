@@ -6,21 +6,20 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBEBC43142
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA16C43144
 	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545E724983
+	by mail.kernel.org (Postfix) with ESMTP id 8D3EE24984
 	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:47:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545E724983
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D3EE24984
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755015AbeFVWrA (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:47:00 -0400
-Received: from mga02.intel.com ([134.134.136.20]:22312 "EHLO mga02.intel.com"
+        id S933968AbeFVWrB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 18:47:01 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22310 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933903AbeFVWmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754672AbeFVWmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 18:42:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +27,7 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
-   d="scan'208";a="234843371"
+   d="scan'208";a="234843409"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:47 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -38,9 +37,9 @@ Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V7 08/41] x86/intel_rdt: Initialize new resource group with sane defaults
-Date:   Fri, 22 Jun 2018 15:41:59 -0700
-Message-Id: <c468ed79340b63024111978e01430bb9589d85c0.1529706536.git.reinette.chatre@intel.com>
+Subject: [PATCH V7 20/41] x86/intel_rdt: Add utility to restrict/restore access to resctrl files
+Date:   Fri, 22 Jun 2018 15:42:11 -0700
+Message-Id: <7afdbf5551b2f93cd45d61fbf5e01d87331f529a.1529706536.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1529706536.git.reinette.chatre@intel.com>
 References: <cover.1529706536.git.reinette.chatre@intel.com>
@@ -51,31 +50,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently when a new resource group is created its allocations would be
-those that belonged to the resource group to which its closid belonged
-previously.
+When a resource group is used for Cache Pseudo-Locking then the region of
+cache ends up being orphaned with no class of service referring to it. The
+resctrl files intended to manage how the classes of services are utilized
+thus become irrelevant.
 
-That is, we can encounter a case like:
-mkdir newgroup
-cat newgroup/schemata
-L2:0=ff;1=ff
-echo 'L2:0=0xf0;1=0xf0' > newgroup/schemata
-cat newgroup/schemata
-L2:0=0xf0;1=0xf0
-rmdir newgroup
-mkdir newnewgroup
-cat newnewgroup/schemata
-L2:0=0xf0;1=0xf0
+The fact that a resctrl file is not relevant can be communicated to the
+user by setting all of its permissions to zero. That is, its read, write,
+and execute permissions are unset for all users.
 
-When the new group is created it would be reasonable to expect its
-allocations to be initialized with all regions that it can possibly use.
-At this time these regions would be all that are shareable by other
-resource groups as well as regions that are not currently used.
-If the available cache region is found to be non-contiguous the
-available region is adjusted to enforce validity.
-
-When a new resource group is created the hardware is initialized with
-these new default allocations.
+Introduce two utilities, rdtgroup_kn_mode_restrict() and
+rdtgroup_kn_mode_restore(), that can be used to restrict and restore the
+permissions of a file or directory belonging to a resource group.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -86,165 +72,131 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/44af4ecef879e88ec1b74c5decbf5dccaf998866.1528405422.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/d4782f79e0bf2cd7a438a45c46bf4427c9d813aa.1527593970.git.reinette.chatre@intel.com
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 115 ++++++++++++++++++++++-
- 1 file changed, 112 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h          |  2 +
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 95 ++++++++++++++++++++++++
+ 2 files changed, 97 insertions(+)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 10a1539cbec6..c9b8d3d1d413 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -469,6 +469,8 @@ void rdt_last_cmd_printf(const char *fmt, ...);
+ void rdt_ctrl_update(void *arg);
+ struct rdtgroup *rdtgroup_kn_lock_live(struct kernfs_node *kn);
+ void rdtgroup_kn_unlock(struct kernfs_node *kn);
++int rdtgroup_kn_mode_restrict(struct rdtgroup *r, const char *name);
++int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name);
+ struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
+ 				   struct list_head **pos);
+ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 5bb09612eb97..7c2487cd74b5 100644
+index 5a2a34d68722..c17d5399b9f1 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -133,7 +133,7 @@ void closid_free(int closid)
-  * Return: true if @closid is currently associated with a resource group,
-  * false if @closid is free
-  */
--static bool __attribute__ ((unused)) closid_allocated(unsigned int closid)
-+static bool closid_allocated(unsigned int closid)
- {
- 	return (closid_free_map & (1 << closid)) == 0;
- }
-@@ -1816,6 +1816,110 @@ static int mkdir_mondata_all(struct kernfs_node *parent_kn,
+@@ -1290,6 +1290,101 @@ static int rdtgroup_add_files(struct kernfs_node *kn, unsigned long fflags)
  	return ret;
  }
  
 +/**
-+ * cbm_ensure_valid - Enforce validity on provided CBM
-+ * @_val:	Candidate CBM
-+ * @r:		RDT resource to which the CBM belongs
++ * rdtgroup_kn_mode_restrict - Restrict user access to named resctrl file
++ * @r: The resource group with which the file is associated.
++ * @name: Name of the file
 + *
-+ * The provided CBM represents all cache portions available for use. This
-+ * may be represented by a bitmap that does not consist of contiguous ones
-+ * and thus be an invalid CBM.
-+ * Here the provided CBM is forced to be a valid CBM by only considering
-+ * the first set of contiguous bits as valid and clearing all bits.
-+ * The intention here is to provide a valid default CBM with which a new
-+ * resource group is initialized. The user can follow this with a
-+ * modification to the CBM if the default does not satisfy the
-+ * requirements.
++ * The permissions of named resctrl file, directory, or link are modified
++ * to not allow read, write, or execute by any user.
++ *
++ * WARNING: This function is intended to communicate to the user that the
++ * resctrl file has been locked down - that it is not relevant to the
++ * particular state the system finds itself in. It should not be relied
++ * on to protect from user access because after the file's permissions
++ * are restricted the user can still change the permissions using chmod
++ * from the command line.
++ *
++ * Return: 0 on success, <0 on failure.
 + */
-+static void cbm_ensure_valid(u32 *_val, struct rdt_resource *r)
++int rdtgroup_kn_mode_restrict(struct rdtgroup *r, const char *name)
 +{
-+	/*
-+	 * Convert the u32 _val to an unsigned long required by all the bit
-+	 * operations within this function. No more than 32 bits of this
-+	 * converted value can be accessed because all bit operations are
-+	 * additionally provided with cbm_len that is initialized during
-+	 * hardware enumeration using five bits from the EAX register and
-+	 * thus never can exceed 32 bits.
-+	 */
-+	unsigned long *val = (unsigned long *)_val;
-+	unsigned int cbm_len = r->cache.cbm_len;
-+	unsigned long first_bit, zero_bit;
++	struct iattr iattr = {.ia_valid = ATTR_MODE,};
++	struct kernfs_node *kn;
++	int ret = 0;
 +
-+	if (*val == 0)
-+		return;
++	kn = kernfs_find_and_get_ns(r->kn, name, NULL);
++	if (!kn)
++		return -ENOENT;
 +
-+	first_bit = find_first_bit(val, cbm_len);
-+	zero_bit = find_next_zero_bit(val, cbm_len, first_bit);
++	switch (kernfs_type(kn)) {
++	case KERNFS_DIR:
++		iattr.ia_mode = S_IFDIR;
++		break;
++	case KERNFS_FILE:
++		iattr.ia_mode = S_IFREG;
++		break;
++	case KERNFS_LINK:
++		iattr.ia_mode = S_IFLNK;
++		break;
++	}
 +
-+	/* Clear any remaining bits to ensure contiguous region */
-+	bitmap_clear(val, zero_bit, cbm_len - zero_bit);
++	ret = kernfs_setattr(kn, &iattr);
++	kernfs_put(kn);
++	return ret;
 +}
 +
 +/**
-+ * rdtgroup_init_alloc - Initialize the new RDT group's allocations
++ * rdtgroup_kn_mode_restore - Restore user access to named resctrl file
++ * @r: The resource group with which the file is associated.
++ * @name: Name of the file
 + *
-+ * A new RDT group is being created on an allocation capable (CAT)
-+ * supporting system. Set this group up to start off with all usable
-+ * allocations. That is, all shareable and unused bits.
++ * Restore the permissions of the named file. If @name is a directory the
++ * permissions of its parent will be used.
 + *
-+ * All-zero CBM is invalid. If there are no more shareable bits available
-+ * on any domain then the entire allocation will fail.
++ * Return: 0 on success, <0 on failure.
 + */
-+static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
++int rdtgroup_kn_mode_restore(struct rdtgroup *r, const char *name)
 +{
-+	u32 used_b = 0, unused_b = 0;
-+	u32 closid = rdtgrp->closid;
-+	struct rdt_resource *r;
-+	enum rdtgrp_mode mode;
-+	struct rdt_domain *d;
-+	int i, ret;
-+	u32 *ctrl;
++	struct iattr iattr = {.ia_valid = ATTR_MODE,};
++	struct kernfs_node *kn, *parent;
++	struct rftype *rfts, *rft;
++	int ret, len;
 +
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		list_for_each_entry(d, &r->domains, list) {
-+			d->have_new_ctrl = false;
-+			d->new_ctrl = r->cache.shareable_bits;
-+			used_b = r->cache.shareable_bits;
-+			ctrl = d->ctrl_val;
-+			for (i = 0; i < r->num_closid; i++, ctrl++) {
-+				if (closid_allocated(i) && i != closid) {
-+					mode = rdtgroup_mode_by_closid(i);
-+					used_b |= *ctrl;
-+					if (mode == RDT_MODE_SHAREABLE)
-+						d->new_ctrl |= *ctrl;
-+				}
-+			}
-+			unused_b = used_b ^ (BIT_MASK(r->cache.cbm_len) - 1);
-+			unused_b &= BIT_MASK(r->cache.cbm_len) - 1;
-+			d->new_ctrl |= unused_b;
-+			/*
-+			 * Force the initial CBM to be valid, user can
-+			 * modify the CBM based on system availability.
-+			 */
-+			cbm_ensure_valid(&d->new_ctrl, r);
-+			if (bitmap_weight((unsigned long *) &d->new_ctrl,
-+					  r->cache.cbm_len) <
-+					r->cache.min_cbm_bits) {
-+				rdt_last_cmd_printf("no space on %s:%d\n",
-+						    r->name, d->id);
-+				return -ENOSPC;
-+			}
-+			d->have_new_ctrl = true;
-+		}
++	rfts = res_common_files;
++	len = ARRAY_SIZE(res_common_files);
++
++	for (rft = rfts; rft < rfts + len; rft++) {
++		if (!strcmp(rft->name, name))
++			iattr.ia_mode = rft->mode;
 +	}
 +
-+	for_each_alloc_enabled_rdt_resource(r) {
-+		ret = update_domains(r, rdtgrp->closid);
-+		if (ret < 0) {
-+			rdt_last_cmd_puts("failed to initialize allocations\n");
-+			return ret;
++	kn = kernfs_find_and_get_ns(r->kn, name, NULL);
++	if (!kn)
++		return -ENOENT;
++
++	switch (kernfs_type(kn)) {
++	case KERNFS_DIR:
++		parent = kernfs_get_parent(kn);
++		if (parent) {
++			iattr.ia_mode |= parent->mode;
++			kernfs_put(parent);
 +		}
-+		rdtgrp->mode = RDT_MODE_SHAREABLE;
++		iattr.ia_mode |= S_IFDIR;
++		break;
++	case KERNFS_FILE:
++		iattr.ia_mode |= S_IFREG;
++		break;
++	case KERNFS_LINK:
++		iattr.ia_mode |= S_IFLNK;
++		break;
 +	}
 +
-+	return 0;
++	ret = kernfs_setattr(kn, &iattr);
++	kernfs_put(kn);
++	return ret;
 +}
 +
- static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
- 			     struct kernfs_node *prgrp_kn,
- 			     const char *name, umode_t mode,
-@@ -1974,6 +2078,10 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
- 	ret = 0;
- 
- 	rdtgrp->closid = closid;
-+	ret = rdtgroup_init_alloc(rdtgrp);
-+	if (ret < 0)
-+		goto out_id_free;
-+
- 	list_add(&rdtgrp->rdtgroup_list, &rdt_all_groups);
- 
- 	if (rdt_mon_capable) {
-@@ -1984,15 +2092,16 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
- 		ret = mongroup_create_dir(kn, NULL, "mon_groups", NULL);
- 		if (ret) {
- 			rdt_last_cmd_puts("kernfs subdir error\n");
--			goto out_id_free;
-+			goto out_del_list;
- 		}
- 	}
- 
- 	goto out_unlock;
- 
-+out_del_list:
-+	list_del(&rdtgrp->rdtgroup_list);
- out_id_free:
- 	closid_free(closid);
--	list_del(&rdtgrp->rdtgroup_list);
- out_common_fail:
- 	mkdir_rdt_prepare_clean(rdtgrp);
- out_unlock:
+ static int rdtgroup_mkdir_info_resdir(struct rdt_resource *r, char *name,
+ 				      unsigned long fflags)
+ {
 -- 
 2.17.0
 
