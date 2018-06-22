@@ -2,94 +2,98 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2148C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1CCC43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5079923DB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:33:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5079923DB9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C05323DC8
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 06:34:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C05323DC8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751352AbeFVGdb (ORCPT
+        id S1751193AbeFVGed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 02:33:31 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:19178 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751047AbeFVGd3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 02:33:29 -0400
-X-UUID: baf8e7adb53f46d6a5075439345d8db4-20180622
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 156758884; Fri, 22 Jun 2018 14:33:24 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Fri, 22 Jun 2018 14:33:22 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Fri, 22 Jun 2018 14:33:21 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 2/2] usb: core: phy: fix return value checking about devm_of_phy_get_by_index()
-Date:   Fri, 22 Jun 2018 14:33:06 +0800
-Message-ID: <644d00edd2932c1a0d0a1bf368dd25427d1d9f64.1529647619.git.chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <4c338a129ab14ab41949da5e3c21aed0d77dff8d.1529647619.git.chunfeng.yun@mediatek.com>
-References: <4c338a129ab14ab41949da5e3c21aed0d77dff8d.1529647619.git.chunfeng.yun@mediatek.com>
+        Fri, 22 Jun 2018 02:34:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43588 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750826AbeFVGeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 02:34:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B5D4FAF55;
+        Fri, 22 Jun 2018 06:34:29 +0000 (UTC)
+Subject: Re: [PATCH] xen: Remove unnecessary BUG_ON from __unbind_from_irq()
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     ben.hutchings@codethink.co.uk, roger.pau@citrix.com,
+        stable@vger.kernel.org
+References: <1529602184-2861-1-git-send-email-boris.ostrovsky@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <4f71ffde-2c0c-795f-665e-8b90076dd923@suse.com>
+Date:   Fri, 22 Jun 2018 08:34:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <1529602184-2861-1-git-send-email-boris.ostrovsky@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. use IS_ERR() but not IS_ERR_OR_NULL() because devm_of_phy_get_by_index()
-    never return NULL value;
-2. devm_of_phy_get_by_index() should not fail for a valid index
+On 21/06/18 19:29, Boris Ostrovsky wrote:
+> Commit 910f8befdf5b ("xen/pirq: fix error path cleanup when binding
+> MSIs") fixed a couple of errors in error cleanup path of
+> xen_bind_pirq_msi_to_irq(). This cleanup allowed a call to
+> __unbind_from_irq() with an unbound irq, which would result in
+> triggering the BUG_ON there.
+> 
+> Since there is really no reason for the BUG_ON (xen_free_irq() can
+> operate on unbound irqs) we can remove it.
+> 
+> Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: stable@vger.kernel.org
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
- drivers/usb/core/phy.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+Pushed to xen/tip.git for-linus-4.18
 
-diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
-index 9879767..0f972e1 100644
---- a/drivers/usb/core/phy.c
-+++ b/drivers/usb/core/phy.c
-@@ -23,14 +23,11 @@ static int usb_phy_roothub_add_phy(struct device *dev, int index,
- 				   struct list_head *list)
- {
- 	struct usb_phy_roothub *roothub_entry;
--	struct phy *phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
-+	struct phy *phy;
- 
--	if (IS_ERR_OR_NULL(phy)) {
--		if (!phy || PTR_ERR(phy) == -ENODEV)
--			return 0;
--		else
--			return PTR_ERR(phy);
--	}
-+	phy = devm_of_phy_get_by_index(dev, dev->of_node, index);
-+	if (IS_ERR(phy))
-+		return PTR_ERR(phy);
- 
- 	roothub_entry = devm_kzalloc(dev, sizeof(*roothub_entry), GFP_KERNEL);
- 	if (!roothub_entry)
--- 
-1.9.1
 
+Juergen
