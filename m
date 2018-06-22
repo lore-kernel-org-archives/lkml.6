@@ -2,120 +2,248 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDA7C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE86C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C404D23ED1
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:13:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C404D23ED1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E44B23EDB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:14:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QGn5hNib"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E44B23EDB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754299AbeFVINb (ORCPT
+        id S1754324AbeFVIOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:13:31 -0400
-Received: from regular1.263xmail.com ([211.150.99.139]:36334 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeFVIN1 (ORCPT
+        Fri, 22 Jun 2018 04:14:06 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41368 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751289AbeFVIJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:13:27 -0400
-Received: from david.wu?rock-chips.com (unknown [192.168.167.84])
-        by regular1.263xmail.com (Postfix) with ESMTP id 00D4355EE;
-        Fri, 22 Jun 2018 16:13:16 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from [172.16.12.172] (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 1BDC33D7;
-        Fri, 22 Jun 2018 16:13:14 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: david.wu@rock-chips.com
-X-FST-TO: elaine.zhang@rock-chips.com
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: david.wu@rock-chips.com
-X-UNIQUE-TAG: <c3c720331cf91369ddd6fb2019ec5c44>
-X-ATTACHMENT-NUM: 0
-X-SENDER: wdc@rock-chips.com
-X-DNS-TYPE: 0
-Received: from [172.16.12.172] (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 67744R4ZY7;
-        Fri, 22 Jun 2018 16:13:17 +0800 (CST)
-Subject: Re: [PATCH v2] net: ethernet: stmmac: dwmac-rk: Add GMAC support for
- PX30
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        huangtao@rock-chips.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?B?5byg5pm0?= <elaine.zhang@rock-chips.com>
-References: <1528956927-32440-1-git-send-email-david.wu@rock-chips.com>
- <2582999.2hZx6CH9S6@diego>
- <157ecfc9-d0e6-7782-1cbc-d0fb76c81edb@rock-chips.com>
- <18221590.FEDROxemCD@phil>
-From:   David Wu <david.wu@rock-chips.com>
-Message-ID: <7baeda9c-d7c4-e491-e18d-30afefa98c96@rock-chips.com>
-Date:   Fri, 22 Jun 2018 16:13:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <18221590.FEDROxemCD@phil>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Fri, 22 Jun 2018 04:09:56 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w8-v6so3108290ply.8
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 01:09:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=EvEb9AghybtdnkxHfKvMzouMMdmNPOMDUDXqyHf1hyQ=;
+        b=QGn5hNibPxZvcY+B8cCrU5jZegOWBsI956F5lIQd0q/RYra2/LPc3P3vKd0X+NluHy
+         KZTAe8xCyRJ2WMB1dhZRc9RbFoVXeOcqJLyuEctmn8SZWc3HzEahke5m+2vuneWhUvsx
+         md4VioeOYEhWs6eyTgyvTih1QRbzRA2P2mVdY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=EvEb9AghybtdnkxHfKvMzouMMdmNPOMDUDXqyHf1hyQ=;
+        b=Ge6oe4K86ObbzxjGkPL5Qd0VSgL9lPtNesNcftIgA7TZeHso6XDeKQdDVAzS8pa6L0
+         lrbej6+Og7qpQzlcvyttS7V3r/Xx2JjGxpbbRzPTTcoIE45P/+Zdd8UvaXgRhMVpUQMk
+         WXaDcbTVI9PO3g/zz+Mocb598wHXPfWwMzKiVheFQ+Uil0prm0h6m4T6238fqA70Yu8Z
+         0aX54hV3cxvJw5qvo1PpqGNgf73xWApVNBE6U57qNaoxKWuwBL0jhAY73U27ymmwY4A5
+         X2nSnUmxD1phJO4NrgY7KkvgCgtO4R/wyuPuX7dihlNmFyoavFGWJnPh990Dic2i7hEK
+         7E7g==
+X-Gm-Message-State: APt69E0TdFE4KmE7mGnFXlYDqnpa00FdzUrSSESM+Y6XAzx/Blgkjqns
+        r0JGiOqgUk7O6J7vcFGJaozDnw==
+X-Google-Smtp-Source: ADUXVKIy9vbNtjAnhPrNRhEEEGjUIuatZF+kBJ6478TfN6Ql0uMSMG0OJLFIm35YoX6rEv4r3HkG1Q==
+X-Received: by 2002:a17:902:6bc7:: with SMTP id m7-v6mr633780plt.162.1529654996417;
+        Fri, 22 Jun 2018 01:09:56 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id i65-v6sm22656131pfd.17.2018.06.22.01.09.54
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 22 Jun 2018 01:09:55 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org, broonie@kernel.org
+Cc:     baolin.wang@linaro.org, linux-spi@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/8] hwspinlock: Add devm_xxx() APIs to request/free hwlock
+Date:   Fri, 22 Jun 2018 16:08:59 +0800
+Message-Id: <f75f8ab18e2e27077536692ae35e3dd707920238.1529654288.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+References: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+In-Reply-To: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
+References: <c23ed23d6d355e80401abce6242523f32ce480fd.1529654288.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heiko,
+This patch introduces some devm_xxx() APIs to help to request or free
+the hwlocks, which will help to simplify the cleanup code for drivers
+requesting one hwlock, ensuring that the hwlock is automatically freed
+whenever the device is unbound.
 
-在 2018年06月22日 15:30, Heiko Stuebner 写道:
-> Hi David,
-> 
-> Am Mittwoch, 20. Juni 2018, 04:40:35 CEST schrieb David Wu:
->> 在 2018年06月14日 16:30, Heiko Stübner 写道:
->>> Am Donnerstag, 14. Juni 2018, 10:14:31 CEST schrieb David Wu:
->>>> Hi Heiko,
->>>>
->>>> 在 2018年06月14日 15:54, Heiko Stübner 写道:
->>>>> I don't see that new clock documented in the dt-binding.
->>>>> Also, which clock from the clock-controller does this connect to?
->>>>
->>>> The clock is the "SCLK_GMAC_RMII" at the clock-controller, which could
->>>> be set rate by the link speed.
->>>
->>> Hmm, while these huge number of clocks are somewhat strange,
->>> shouldn't it be named something with _rmii instead of _speed then?
->>
->> Okay, it is better to be named _speed.
->>
->>>
->>> Also, I don't see any clk_enable action for that new clock, so you could
->>> end up with being off?
->>
->> The new speed is the parent of the clk_tx_rx, to enable/disable
->> clk_tx_rx, the new clock would be also enabled/disabled.
-> 
-> Still it is nicer to really enable it, so that the clock-framework can keep
-> track of usage counts.
-> 
-> Because also no-one hinders the chip-designer from putting a gate in
-> between in one of the next socs ;-)
-> 
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/hwspinlock/hwspinlock_core.c |  110 ++++++++++++++++++++++++++++++++++
+ include/linux/hwspinlock.h           |   22 +++++++
+ 2 files changed, 132 insertions(+)
 
-Okay, i will add the enable/disable for clk_mac_speed.
-  ;-)
-
-> 
-> Heiko
-> 
-> 
-> 
-> 
-> 
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index bea3586..d542b6f 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -735,6 +735,116 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ }
+ EXPORT_SYMBOL_GPL(hwspin_lock_free);
+ 
++static int devm_hwspin_lock_match(struct device *dev, void *res, void *data)
++{
++	struct hwspinlock **hwlock = res;
++
++	if (WARN_ON(!hwlock || !*hwlock))
++		return 0;
++
++	return *hwlock == data;
++}
++
++static void devm_hwspin_lock_release(struct device *dev, void *res)
++{
++	hwspin_lock_free(*(struct hwspinlock **)res);
++}
++
++/**
++ * devm_hwspin_lock_free() - free a specific hwspinlock for a managed device
++ * @dev: the device to free the specific hwspinlock
++ * @hwlock: the specific hwspinlock to free
++ *
++ * This function mark @hwlock as free again.
++ * Should only be called with an @hwlock that was retrieved from
++ * an earlier call to hwspin_lock_request{_specific}.
++ *
++ * Should be called from a process context (might sleep)
++ *
++ * Returns 0 on success, or an appropriate error code on failure
++ */
++int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock)
++{
++	int ret;
++
++	ret = devres_release(dev, devm_hwspin_lock_release,
++			     devm_hwspin_lock_match, hwlock);
++	WARN_ON(ret);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(devm_hwspin_lock_free);
++
++/**
++ * devm_hwspin_lock_request() - request an hwspinlock for a managed device
++ * @dev: the device to request an hwspinlock
++ *
++ * This function should be called by users of the hwspinlock device,
++ * in order to dynamically assign them an unused hwspinlock.
++ * Usually the user of this lock will then have to communicate the lock's id
++ * to the remote core before it can be used for synchronization (to get the
++ * id of a given hwlock, use hwspin_lock_get_id()).
++ *
++ * Should be called from a process context (might sleep)
++ *
++ * Returns the address of the assigned hwspinlock, or NULL on error
++ */
++struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
++{
++	struct hwspinlock **ptr, *hwlock;
++
++	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	hwlock = hwspin_lock_request();
++	if (!IS_ERR(hwlock)) {
++		*ptr = hwlock;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return hwlock;
++}
++EXPORT_SYMBOL_GPL(devm_hwspin_lock_request);
++
++/**
++ * devm_hwspin_lock_request_specific() - request for a specific hwspinlock for
++ *					 a managed device
++ * @dev: the device to request the specific hwspinlock
++ * @id: index of the specific hwspinlock that is requested
++ *
++ * This function should be called by users of the hwspinlock module,
++ * in order to assign them a specific hwspinlock.
++ * Usually early board code will be calling this function in order to
++ * reserve specific hwspinlock ids for predefined purposes.
++ *
++ * Should be called from a process context (might sleep)
++ *
++ * Returns the address of the assigned hwspinlock, or NULL on error
++ */
++struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
++						     unsigned int id)
++{
++	struct hwspinlock **ptr, *hwlock;
++
++	ptr = devres_alloc(devm_hwspin_lock_release, sizeof(*ptr), GFP_KERNEL);
++	if (!ptr)
++		return ERR_PTR(-ENOMEM);
++
++	hwlock = hwspin_lock_request_specific(id);
++	if (!IS_ERR(hwlock)) {
++		*ptr = hwlock;
++		devres_add(dev, ptr);
++	} else {
++		devres_free(ptr);
++	}
++
++	return hwlock;
++}
++EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
++
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("Hardware spinlock interface");
+ MODULE_AUTHOR("Ohad Ben-Cohen <ohad@wizery.com>");
+diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+index 2b6f389..dfd0593 100644
+--- a/include/linux/hwspinlock.h
++++ b/include/linux/hwspinlock.h
+@@ -67,6 +67,10 @@ int __hwspin_lock_timeout(struct hwspinlock *, unsigned int, int,
+ int __hwspin_trylock(struct hwspinlock *, int, unsigned long *);
+ void __hwspin_unlock(struct hwspinlock *, int, unsigned long *);
+ int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name);
++int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock);
++struct hwspinlock *devm_hwspin_lock_request(struct device *dev);
++struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
++						     unsigned int id);
+ 
+ #else /* !CONFIG_HWSPINLOCK */
+ 
+@@ -132,6 +136,24 @@ int of_hwspin_lock_get_id_byname(struct device_node *np, const char *name)
+ 	return 0;
+ }
+ 
++static inline
++int devm_hwspin_lock_free(struct device *dev, struct hwspinlock *hwlock)
++{
++	return 0;
++}
++
++static inline struct hwspinlock *devm_hwspin_lock_request(struct device *dev)
++{
++	return ERR_PTR(-ENODEV);
++}
++
++static inline
++struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
++						     unsigned int id)
++{
++	return ERR_PTR(-ENODEV);
++}
++
+ #endif /* !CONFIG_HWSPINLOCK */
+ 
+ /**
+-- 
+1.7.9.5
 
