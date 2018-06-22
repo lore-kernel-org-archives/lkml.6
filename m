@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8B3C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB46C43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C1B249BB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:51:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C1B249BB
+	by mail.kernel.org (Postfix) with ESMTP id 8AFD7249C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 22:52:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AFD7249C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754732AbeFVWvw (ORCPT
+        id S1754679AbeFVWvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 18:51:52 -0400
-Received: from mga17.intel.com ([192.55.52.151]:52514 "EHLO mga17.intel.com"
+        Fri, 22 Jun 2018 18:51:50 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22310 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754633AbeFVWms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754630AbeFVWms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 22 Jun 2018 18:42:48 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:47 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2018 15:42:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,259,1526367600"; 
-   d="scan'208";a="234843352"
+   d="scan'208";a="234843406"
 Received: from rchatre-s.jf.intel.com ([10.54.70.76])
   by orsmga005.jf.intel.com with ESMTP; 22 Jun 2018 15:42:47 -0700
 From:   Reinette Chatre <reinette.chatre@intel.com>
@@ -38,9 +38,9 @@ Cc:     gavin.hindman@intel.com, jithu.joseph@intel.com,
         dave.hansen@intel.com, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V7 02/41] x86/intel_rdt: Document new mode, size, and bit_usage
-Date:   Fri, 22 Jun 2018 15:41:53 -0700
-Message-Id: <f03a3059ec40ae719be6f3fba9f446bb055e0064.1529706536.git.reinette.chatre@intel.com>
+Subject: [PATCH V7 19/41] x86/intel_rdt: Add utility to test if tasks assigned to resource group
+Date:   Fri, 22 Jun 2018 15:42:10 -0700
+Message-Id: <be9ea3969ffd731dfd90c0ebcd5a0e0a2d135bb2.1529706536.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1529706536.git.reinette.chatre@intel.com>
 References: <cover.1529706536.git.reinette.chatre@intel.com>
@@ -51,21 +51,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default resource groups allow sharing of their cache allocations.  There
-is nothing that prevents a resource group from configuring a cache
-allocation that overlaps with that of an existing resource group.
+In considering changes to a resource group it becomes necessary to know
+whether tasks have been assigned to the resource group in question.
 
-To enable resource groups to specify that their cache allocations cannot be
-shared a resource group "mode" is introduced to support two possible modes:
-"shareable" and "exclusive". A "shareable" resource group allows sharing of
-its cache allocations, an "exclusive" resource group does not. A new
-resctrl file "mode" associated with each resource group is used to
-communicate its (the associated resource group's) mode setting and allow
-the mode to be changed.  The new "mode" file as well as two other resctrl
-files, "bit_usage" and "size", are introduced in this series.
-
-Add documentation for the three new resctrl files as well as one example
-demonstrating their use.
+Introduce a new utility that can be used to check if any tasks have been
+assigned to a particular resource group.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -76,142 +66,61 @@ Cc: gavin.hindman@intel.com
 Cc: jithu.joseph@intel.com
 Cc: dave.hansen@intel.com
 Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/cc1e6234f80e07eef65529bd6c25db0a688bba12.1527593970.git.reinette.chatre@intel.com
+Link: https://lkml.kernel.org/r/9149005d01de4b197bae13a45e6efdb536383ca1.1527593970.git.reinette.chatre@intel.com
 ---
- Documentation/x86/intel_rdt_ui.txt | 99 +++++++++++++++++++++++++++++-
- 1 file changed, 97 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h          |  1 +
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 26 ++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
-index a16aa2113840..de913e00e922 100644
---- a/Documentation/x86/intel_rdt_ui.txt
-+++ b/Documentation/x86/intel_rdt_ui.txt
-@@ -65,6 +65,27 @@ related to allocation:
- 			some platforms support devices that have their
- 			own settings for cache use which can over-ride
- 			these bits.
-+"bit_usage":		Annotated capacity bitmasks showing how all
-+			instances of the resource are used. The legend is:
-+			"0" - Corresponding region is unused. When the system's
-+			      resources have been allocated and a "0" is found
-+			      in "bit_usage" it is a sign that resources are
-+			      wasted.
-+			"H" - Corresponding region is used by hardware only
-+			      but available for software use. If a resource
-+			      has bits set in "shareable_bits" but not all
-+			      of these bits appear in the resource groups'
-+			      schematas then the bits appearing in
-+			      "shareable_bits" but no resource group will
-+			      be marked as "H".
-+			"X" - Corresponding region is available for sharing and
-+			      used by hardware and software. These are the
-+			      bits that appear in "shareable_bits" as
-+			      well as a resource group's allocation.
-+			"S" - Corresponding region is used by software
-+			      and available for sharing.
-+			"E" - Corresponding region is used exclusively by
-+			      one resource group. No sharing allowed.
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index bda87f5ef7bc..10a1539cbec6 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -480,6 +480,7 @@ bool rdtgroup_cbm_overlaps(struct rdt_resource *r, struct rdt_domain *d,
+ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_domain *d,
+ 				  u32 cbm);
+ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid);
++int rdtgroup_tasks_assigned(struct rdtgroup *r);
+ struct rdt_domain *get_domain_from_cpu(int cpu, struct rdt_resource *r);
+ int update_domains(struct rdt_resource *r, int closid);
+ void closid_free(int closid);
+diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 352475a6cf43..5a2a34d68722 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@ -564,6 +564,32 @@ static int __rdtgroup_move_task(struct task_struct *tsk,
+ 	return ret;
+ }
  
- Memory bandwitdh(MB) subdirectory contains the following files
- with respect to allocation:
-@@ -163,6 +184,16 @@ When control is enabled all CTRL_MON groups will also contain:
- 	A list of all the resources available to this group.
- 	Each resource has its own line and format - see below for details.
- 
-+"size":
-+	Mirrors the display of the "schemata" file to display the size in
-+	bytes of each allocation instead of the bits representing the
-+	allocation.
++/**
++ * rdtgroup_tasks_assigned - Test if tasks have been assigned to resource group
++ * @r: Resource group
++ *
++ * Return: 1 if tasks have been assigned to @r, 0 otherwise
++ */
++int rdtgroup_tasks_assigned(struct rdtgroup *r)
++{
++	struct task_struct *p, *t;
++	int ret = 0;
 +
-+"mode":
-+	The "mode" of the resource group dictates the sharing of its
-+	allocations. A "shareable" resource group allows sharing of its
-+	allocations while an "exclusive" resource group does not.
++	lockdep_assert_held(&rdtgroup_mutex);
 +
- When monitoring is enabled all MON groups will also contain:
- 
- "mon_data":
-@@ -502,7 +533,71 @@ siblings and only the real time threads are scheduled on the cores 4-7.
- 
- # echo F0 > p0/cpus
- 
--4) Locking between applications
-+Example 4
-+---------
++	rcu_read_lock();
++	for_each_process_thread(p, t) {
++		if ((r->type == RDTCTRL_GROUP && t->closid == r->closid) ||
++		    (r->type == RDTMON_GROUP && t->rmid == r->mon.rmid)) {
++			ret = 1;
++			break;
++		}
++	}
++	rcu_read_unlock();
 +
-+The resource groups in previous examples were all in the default "shareable"
-+mode allowing sharing of their cache allocations. If one resource group
-+configures a cache allocation then nothing prevents another resource group
-+to overlap with that allocation.
++	return ret;
++}
 +
-+In this example a new exclusive resource group will be created on a L2 CAT
-+system with two L2 cache instances that can be configured with an 8-bit
-+capacity bitmask. The new exclusive resource group will be configured to use
-+25% of each cache instance.
-+
-+# mount -t resctrl resctrl /sys/fs/resctrl/
-+# cd /sys/fs/resctrl
-+
-+First, we observe that the default group is configured to allocate to all L2
-+cache:
-+
-+# cat schemata
-+L2:0=ff;1=ff
-+
-+We could attempt to create the new resource group at this point, but it will
-+fail because of the overlap with the schemata of the default group:
-+# mkdir p0
-+# echo 'L2:0=0x3;1=0x3' > p0/schemata
-+# cat p0/mode
-+shareable
-+# echo exclusive > p0/mode
-+-sh: echo: write error: Invalid argument
-+# cat info/last_cmd_status
-+schemata overlaps
-+
-+To ensure that there is no overlap with another resource group the default
-+resource group's schemata has to change, making it possible for the new
-+resource group to become exclusive.
-+# echo 'L2:0=0xfc;1=0xfc' > schemata
-+# echo exclusive > p0/mode
-+# grep . p0/*
-+p0/cpus:0
-+p0/mode:exclusive
-+p0/schemata:L2:0=03;1=03
-+p0/size:L2:0=262144;1=262144
-+
-+A new resource group will on creation not overlap with an exclusive resource
-+group:
-+# mkdir p1
-+# grep . p1/*
-+p1/cpus:0
-+p1/mode:shareable
-+p1/schemata:L2:0=fc;1=fc
-+p1/size:L2:0=786432;1=786432
-+
-+The bit_usage will reflect how the cache is used:
-+# cat info/L2/bit_usage
-+0=SSSSSSEE;1=SSSSSSEE
-+
-+A resource group cannot be forced to overlap with an exclusive resource group:
-+# echo 'L2:0=0x1;1=0x1' > p1/schemata
-+-sh: echo: write error: Invalid argument
-+# cat info/last_cmd_status
-+overlaps with exclusive group
-+
-+Locking between applications
-+----------------------------
- 
- Certain operations on the resctrl filesystem, composed of read/writes
- to/from multiple files, must be atomic.
-@@ -510,7 +605,7 @@ to/from multiple files, must be atomic.
- As an example, the allocation of an exclusive reservation of L3 cache
- involves:
- 
--  1. Read the cbmmasks from each directory
-+  1. Read the cbmmasks from each directory or the per-resource "bit_usage"
-   2. Find a contiguous set of bits in the global CBM bitmask that is clear
-      in any of the directory cbmmasks
-   3. Create a new directory
+ static int rdtgroup_task_write_permission(struct task_struct *task,
+ 					  struct kernfs_open_file *of)
+ {
 -- 
 2.17.0
 
