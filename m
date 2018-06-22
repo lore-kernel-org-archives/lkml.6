@@ -2,140 +2,176 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0BFC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8F3C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 426EC242A5
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:26:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LiM0zkhk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 426EC242A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1D70B242A8
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 13:26:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D70B242A8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932960AbeFVN0i (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 09:26:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52934 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeFVN0h (ORCPT
+        id S933164AbeFVN0t (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 09:26:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51392 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751389AbeFVN0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 09:26:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5ar/Vx2yrQ8WlQEFQZKc05qbmR8uflTmIltrEwNYQVg=; b=LiM0zkhkw+KE22Ymt1Zgst0cM
-        GRoXocdfFI6AQUi1AgSfo67t/bVyM45G9/2QC6i9V9QJQKy27LGFaqhaa1J8y87/QO5Essj+HW6at
-        tZhTZHnOv96tZnrZ5dljURfgszprawditzzyqUA3EFIBbELja1QP6Dk/V+hYs52N4M+ststuk7SPd
-        nhD/RUeaiNZ0pVSJ65MPDEN1tbOdELwIqBR1mCheQojlliU+UZ8GO+mIXuCabB2E8IM+VmQ8hbDRT
-        hSvLVLDtW6uNyKOWZ5c1OaDSPQVbo2ARY6B9on5+ho8dkAD0WUJlppgcua6wEXZpHku/HHtsogqig
-        H8mIupB9Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWM54-0004nf-Hw; Fri, 22 Jun 2018 13:26:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 870982029FA0E; Fri, 22 Jun 2018 15:26:24 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 15:26:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Quentin Perret <quentin.perret@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH v6 04/11] cpufreq/schedutil: use rt utilization tracking
-Message-ID: <20180622132624.GL2494@hirez.programming.kicks-ass.net>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-5-git-send-email-vincent.guittot@linaro.org>
- <20180621184524.GB27616@hirez.programming.kicks-ass.net>
- <20180622075853.GC23168@e108498-lin.cambridge.arm.com>
- <20180622113713.GJ2494@hirez.programming.kicks-ass.net>
- <CAKfTPtC5HLD=3W-w0XgwMrzhLfgE8onE4RmGTXyCWx6F=-uVhw@mail.gmail.com>
+        Fri, 22 Jun 2018 09:26:46 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5MDOLu5047788
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:26:46 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jrx6mtbc2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:26:46 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 22 Jun 2018 09:26:45 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 22 Jun 2018 09:26:41 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5MDQfjf14025020
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 22 Jun 2018 13:26:41 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 95C1DB2064;
+        Fri, 22 Jun 2018 09:26:40 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5B01CB2065;
+        Fri, 22 Jun 2018 09:26:40 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.197.125])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 22 Jun 2018 09:26:40 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 354E616C9E49; Fri, 22 Jun 2018 06:28:43 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 06:28:43 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Byungchul Park <max.byungchul.park@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        jiangshanlai@gmail.com, josh@joshtriplett.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com, luto@kernel.org
+Subject: Re: [RFC 2/2] rcu: Remove ->dynticks_nmi_nesting from struct
+ rcu_dynticks
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1529484440-20634-1-git-send-email-byungchul.park@lge.com>
+ <1529484440-20634-2-git-send-email-byungchul.park@lge.com>
+ <20180620145814.GQ3593@linux.vnet.ibm.com>
+ <CANrsvRMYc5u3L53nnnGC6p-QcjBTfLPjkJGZyubGWAPauc-W8w@mail.gmail.com>
+ <20180620164902.GW3593@linux.vnet.ibm.com>
+ <20180622055659.GA255098@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfTPtC5HLD=3W-w0XgwMrzhLfgE8onE4RmGTXyCWx6F=-uVhw@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180622055659.GA255098@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18062213-0068-0000-0000-0000030CD513
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009238; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01050684; UDB=6.00538475; IPR=6.00829654;
+ MB=3.00021805; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-22 13:26:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18062213-0069-0000-0000-000044C5BFEB
+Message-Id: <20180622132843.GN3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1806220150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 02:23:22PM +0200, Vincent Guittot wrote:
-> On Fri, 22 Jun 2018 at 13:37, Peter Zijlstra <peterz@infradead.org> wrote:
-> > I suppose we can make it more complicated, something like:
-> >
-> >              u           u
-> >   f := u + (--- - u) * (---)^n
-> >             1-r         1-r
-> >
-> > Where: u := cfs util
-> >        r := \Sum !cfs util
-> >        f := frequency request
-> >
-> > That would still satisfy all criteria I think:
-> >
-> >   r = 0      -> f := u
-> >   u = (1-r)  -> f := 1
-> >
-> > and in particular:
-> >
-> >   u << (1-r) -> f ~= u
-> >
-> > which casuses less inflation than the linear thing where there is idle
-> > time.
+On Thu, Jun 21, 2018 at 10:56:59PM -0700, Joel Fernandes wrote:
+> Hi Paul,
+> 
+> On Wed, Jun 20, 2018 at 09:49:02AM -0700, Paul E. McKenney wrote:
+> > On Thu, Jun 21, 2018 at 01:05:22AM +0900, Byungchul Park wrote:
+> > > On Wed, Jun 20, 2018 at 11:58 PM, Paul E. McKenney
+> > > <paulmck@linux.vnet.ibm.com> wrote:
+> > > > On Wed, Jun 20, 2018 at 05:47:20PM +0900, Byungchul Park wrote:
+> > > >> Hello folks,
+> > > >>
+> > > >> I'm careful in saying that ->dynticks_nmi_nesting can be removed but I
+> > > >> think it's possible since the only thing we are interested in with
+> > > >> regard to ->dynticks_nesting or ->dynticks_nmi_nesting is whether rcu is
+> > > >> idle or not.
+> > > >
+> > > > Please keep in mind that NMIs cannot be masked, which means that the
+> > > > rcu_nmi_enter() and rcu_nmi_exit() pair can be invoked at any point in
+> > > > the process, between any consecutive pair of instructions.  The saving
+> > 
+> > And yes, I should have looked at this patch more closely before replying.
+> > But please see below.
+> > 
+> > > I believe I understand what NMI is and why you introduced
+> > > ->dynticks_nmi_nesting. Or am I missing something?
+> > 
+> > Perhaps the fact that there are architectures that can enter interrupt
+> > handlers and never leave them when the CPU is non-idle.  One example of
+> > this is the usermode upcalls in the comment that you removed.
+> 
+> I spent some time tonight and last night trying to understand this concept of
+> never leaving an interrupt, I hope you don't mind me asking this dumb
+> question... perhaps I will learn something : Could you let me know how is it
+> possible that an interrupt never exits?
+> 
+> Typically an interrupt never exiting sounds like a hard-lockup. This is how
+> hardlock detector works: Since regular interrupts in linux can't nest, the
+> hardlockup detector checks if hrtimer interrupts are being handled and if
+> not, then it throws a splat, panics the kernel etc. So I am a bit troubled by
+> this interrupt never exiting concept..
+> 
+> Further since an interrupt is an atomic context, it cannot sleep or schedule
+> into usermode so how are these upcalls handled from the interrupt?
 
-> And we are not yet at the right value for quentin's example as we need
-> something around 0.75 for is example
+It has been some years since I traced the code flow, but what happened
+back then is that it switches itself from an interrupt handler to not
+without actually returning from the interrupt.  This can only happen when
+interrupting a non-idle process, thankfully, and RCU's dyntick-idle code
+relies on this restriction.  If I remember correctly, the code ends up
+executing in the context of the interrupted process, but it has been some
+years, so please apply appropriate skepticism.
 
-$ bc -l
-define f (u,r,n) { return u + ((u/(1-r)) - u) * (u/(1-r))^n; }
-f(.2,.7,0)
-.66666666666666666666
-f(.2,.7,2)
-.40740740740740740739
-f(.2,.7,4)
-.29218106995884773661
+Please take a look at the "Interrupts and NMIs" section of the file
+Documentation/RCU/Design/Requirements/Requirements.html for a bit
+more information.
 
-So at 10% idle time, we've only inflated what should be 20% to 40%, that
-is entirely reasonable I think. The linear case gave us 66%.  But feel
-free to increase @n if you feel that helps, 4 is only one mult more than
-2 and gets us down to 29%.
+> Lastly, can you point me to an example how the rcu_nmi_enter/exit() pair can go
+> out sync? That is they aren't paired and nested properly? In my mind they
+> always should be but I may be missing the usecase. I'm happy to try and
+> reproduce and trace this if you can let me know how to so that I can study
+> it better. 
 
-> The non linearity only comes from dl so if we want to use the equation
-> above, u should be (cfs + rt) and r = dl
+I have never seen NMIs be unpaired or improperly nested.  However,
+given that rcu_irq_enter() invokes rcu_nmi_enter() and rcu_irq_exit()
+invokes rcu_nmi_exit(), it is definitely the case that rcu_nmi_enter()
+and rcu_nmi_exit() need to deal with unpaired and improperly nested
+invocations.
 
-Right until we allow RT to run at anything other than f=1. Once we allow
-rt util capping, either through Patrick's thing or CBS servers or
-whatever, we get:
+So why this function-call structure?  Well, you see, NMI handlers can
+take what appear to RCU to be normal interrupts...
 
-  f = min(1, f_rt + f_dl + f_cfs)
+(And I just added that fun fact to Requirements.html.)
 
-And then u_rt does want to be part of r. And while we do run RT at f=1,
-it doesn't matter either way around I think.
+> Thanks a lot Paul for your help,
 
-> But this also means that we will start to inflate the utilization to
-> get higher OPP even if there is idle time and lost the interest of
-> using dl bw
+Please feel free to take a look at Requirements.html.  There are a lot
+more surprising RCU facts of life recorded there.  ;-)
 
-You get _some_ inflation, but only if there is actual cfs utilization to
-begin with.
-
-And that is my objection to that straight sum thing; there the dl util
-distorts the computed dl bandwidth thing even if there is no cfs
-utilization.
+							Thanx, Paul
 
