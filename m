@@ -6,123 +6,101 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B31C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1C1C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BEEA2420B
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:49:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BEEA2420B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 0EC6E2420E
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 12:49:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC6E2420E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753170AbeFVMte (ORCPT
+        id S1754136AbeFVMtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 08:49:34 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:57261 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751213AbeFVMtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 08:49:32 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 67A9F630E4;
-        Fri, 22 Jun 2018 12:49:23 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 5/7] arm64: allwinner: a64: add necessary device tree nodes for DE2 CCU
-Date:   Fri, 22 Jun 2018 20:45:38 +0800
-Message-Id: <20180622124540.56203-4-icenowy@aosc.io>
-In-Reply-To: <20180622124540.56203-1-icenowy@aosc.io>
-References: <20180622124540.56203-1-icenowy@aosc.io>
+        Fri, 22 Jun 2018 08:49:47 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41512 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751345AbeFVMtq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 08:49:46 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fWLVX-0005GU-4A; Fri, 22 Jun 2018 14:49:43 +0200
+Date:   Fri, 22 Jun 2018 14:49:42 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+cc:     John Stultz <john.stultz@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] time: Make sure jiffies_to_msecs() preserves non-zero
+ time periods
+In-Reply-To: <20180622075421.16001-1-geert@linux-m68k.org>
+Message-ID: <alpine.DEB.2.21.1806221446230.2402@nanos.tec.linutronix.de>
+References: <20180622075421.16001-1-geert@linux-m68k.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we have all necessary parts to enable the DE2 CCU on the Allwinner
-A64 SoC, add the needed device tree nodes, including the DE2 CCU itself
-and the DE2 bus.
+On Fri, 22 Jun 2018, Geert Uytterhoeven wrote:
+> For the common cases where 1000 is a multiple of HZ, or HZ is a multiple
+> of 1000, jiffies_to_msecs() never returns zero when passed a non-zero
+> time period.
+> 
+> However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 1024 or
+> 1200, as used on alpha and DECstation), jiffies_to_msecs() may return
+> zero for small non-zero time periods.  This may break code that relies
+> on receiving back a non-zero value.
+> 
+> jiffies_to_usecs() does not need such a fix, as <linux/jiffies.h> does
+> not support values of HZ larger than 12287, thus rejecting any
+> problematic huge values of HZ.
 
-The "mixer0-lcd0" simplefb device node is updated to use the DE2 CCU.
+Sorry, I'm not understanding that sentence at all.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Drop SRAM controller device tree node addition (as it's already added
-  as part of syscon change.)
-- Fix the clock reference in LCD SimpleFB.
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 30 +++++++++++++++----
- 1 file changed, 24 insertions(+), 6 deletions(-)
+This lacks a stable tag, right?
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index ff2ddde1e117..318c4ba8ae9f 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -43,9 +43,11 @@
-  */
- 
- #include <dt-bindings/clock/sun50i-a64-ccu.h>
-+#include <dt-bindings/clock/sun8i-de2.h>
- #include <dt-bindings/clock/sun8i-r-ccu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/sun50i-a64-ccu.h>
-+#include <dt-bindings/reset/sun8i-de2.h>
- #include <dt-bindings/reset/sun8i-r-ccu.h>
- 
- / {
-@@ -58,17 +60,12 @@
- 		#size-cells = <1>;
- 		ranges;
- 
--/*
-- * The pipeline mixer0-lcd0 depends on clock CLK_MIXER0 from DE2 CCU.
-- * However there is no support for this clock on A64 yet, so we depend
-- * on the upstream clocks here to keep them (and thus CLK_MIXER0) up.
-- */
- 		simplefb_lcd: framebuffer-lcd {
- 			compatible = "allwinner,simple-framebuffer",
- 				     "simple-framebuffer";
- 			allwinner,pipeline = "mixer0-lcd0";
- 			clocks = <&ccu CLK_TCON0>,
--				 <&ccu CLK_DE>, <&ccu CLK_BUS_DE>;
-+				 <&display_clocks CLK_MIXER0>;
- 			status = "disabled";
- 		};
- 	};
-@@ -169,6 +166,27 @@
- 		#size-cells = <1>;
- 		ranges;
- 
-+		de2@1000000 {
-+			compatible = "allwinner,sun50i-a64-de2";
-+			reg = <0x1000000 0x400000>;
-+			allwinner,sram = <&de2_sram 1>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x1000000 0x400000>;
-+
-+			display_clocks: clock@0 {
-+				compatible = "allwinner,sun50i-a64-de2-clk";
-+				reg = <0x0 0x100000>;
-+				clocks = <&ccu CLK_DE>,
-+					 <&ccu CLK_BUS_DE>;
-+				clock-names = "mod",
-+					      "bus";
-+				resets = <&ccu RST_BUS_DE>;
-+				#clock-cells = <1>;
-+				#reset-cells = <1>;
-+			};
-+		};
-+
- 		syscon: syscon@1c00000 {
- 			compatible = "allwinner,sun50i-a64-system-control";
- 			reg = <0x01c00000 0x1000>;
--- 
-2.17.1
-
+> ---
+> v2:
+>   - Add examples of affected systems,
+>   - Use DIV_ROUND_UP().
+> ---
+>  kernel/time/time.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/time/time.c b/kernel/time/time.c
+> index 6fa99213fc720e4b..2b41e8e2d31db26f 100644
+> --- a/kernel/time/time.c
+> +++ b/kernel/time/time.c
+> @@ -28,6 +28,7 @@
+>   */
+>  
+>  #include <linux/export.h>
+> +#include <linux/kernel.h>
+>  #include <linux/timex.h>
+>  #include <linux/capability.h>
+>  #include <linux/timekeeper_internal.h>
+> @@ -314,9 +315,10 @@ unsigned int jiffies_to_msecs(const unsigned long j)
+>  	return (j + (HZ / MSEC_PER_SEC) - 1)/(HZ / MSEC_PER_SEC);
+>  #else
+>  # if BITS_PER_LONG == 32
+> -	return (HZ_TO_MSEC_MUL32 * j) >> HZ_TO_MSEC_SHR32;
+> +	return (HZ_TO_MSEC_MUL32 * j + (1ULL << HZ_TO_MSEC_SHR32) - 1) >>
+> +	       HZ_TO_MSEC_SHR32;
+>  # else
+> -	return (j * HZ_TO_MSEC_NUM) / HZ_TO_MSEC_DEN;
+> +	return DIV_ROUND_UP(j * HZ_TO_MSEC_NUM, HZ_TO_MSEC_DEN);
+>  # endif
+>  #endif
+>  }
+> -- 
+> 2.17.1
+> 
+> 
