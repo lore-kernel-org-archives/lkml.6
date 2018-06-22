@@ -2,116 +2,113 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA18C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0474C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 706E223EC7
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:12:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oZHqfsN6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706E223EC7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9BD0423EC9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 08:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD0423EC9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933257AbeFVIMH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 04:12:07 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41236 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751527AbeFVIMC (ORCPT
+        id S933291AbeFVIMQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 04:12:16 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:40959 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751515AbeFVIMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 04:12:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=51DIVPjuAJ+iNSAkcrS8UwWpiAFFC1duZrFh6dYE3zk=; b=oZHqfsN6GY1/RxP1flfmNJvT4
-        mDjq+IZLPqXmODHnzHFGWzblPUNh6le3Kmq0DO4uLuVnAkOnV1Jj28V3/aaRHi/B6zQqxu2/xSoxo
-        HIRTGqU/K3m6CfRmuJrJ7upRMebg1dIoacYl7lV5MdbvBdwIdis3zqeC79TV276o3pbUSuCP36Jnh
-        ABh0hQmdUMKK0jVFTbGbgu5Di5saTsMMVbI65S6vuSiLEAvzXr0utPmviz85Na3sOsyt4s0k+sD7B
-        /kRf3vXH811j2r9SwnwdxNhsU1PDSoHZam18S1f693PwufYKI9/w/zxzdBFfXKPlsrSPOMTD/zWSn
-        GRKQl7ffw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWHAa-0005qk-M1; Fri, 22 Jun 2018 08:11:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 283E32029F1D5; Fri, 22 Jun 2018 10:11:46 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 10:11:46 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 00/16] x86/split_lock: Enable #AC exception for split
- locked accesses
-Message-ID: <20180622081146.GG2494@hirez.programming.kicks-ass.net>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <20180621193738.GA13636@worktop.programming.kicks-ass.net>
- <20180621201851.GC114883@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1806212223480.1591@nanos.tec.linutronix.de>
- <20180621220003.GD114883@romley-ivt3.sc.intel.com>
- <20180621220844.GB2494@hirez.programming.kicks-ass.net>
- <6fbff2df-96c9-db51-371b-a23d1a84d070@intel.com>
- <20180621224203.GA18979@romley-ivt3.sc.intel.com>
+        Fri, 22 Jun 2018 04:12:10 -0400
+Received: by mail-ua0-f195.google.com with SMTP id l11-v6so3765384uak.7;
+        Fri, 22 Jun 2018 01:12:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PFvWEvBE+tER3NesNR5rnNKEpD8RVlHJ9UN8uppk4Pw=;
+        b=lH89e9jZJ8lLa6I0LJS70kMFUhJmymeWN8Vs7o236biBLmd4PEa1RooXC5FeFhn/+q
+         33CbT1GfuDbjUJrOejNYDD3yPVymt7AyWDz8KbboIXNtU8fF7ZFWNODaYaZhXP85bb9C
+         IS2zhpNF4aNBqU29dfSCJkI3aR0l9Um1x5khi0RY3oqb4G+dILjSnkv1o5WTkd9IHn7a
+         ix0yiqr7p9r26OOAEXwz8/IgXUv+XojrQ+OCNUH9nEBeM/HwOSNfLw9B4L9whdrsH0vx
+         CIiGWS80lvbx5JF12GGWnY2Qnwf/gkEWCFuvfbgblvvp4TFtOX8RAY+aSAJV3lmyiD3T
+         GfoQ==
+X-Gm-Message-State: APt69E3GMu/5gz04joAMEIkILnnpp4yEcnrFbxszH8IqayMUd9DOpp9k
+        BGZsnkxnOKfErNRgxJZSIridmQkMAgYx/3kzGAc=
+X-Google-Smtp-Source: ADUXVKLXsF4H1J8j777N4NQqFQU9Z8FzUWj/b57ALmtinnRV5Q0T7z2kNaUqTsZTDVxCqqMuQbfq+yu6CiAz8aNrtrA=
+X-Received: by 2002:ab0:5b18:: with SMTP id u24-v6mr396210uae.72.1529655129263;
+ Fri, 22 Jun 2018 01:12:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180621224203.GA18979@romley-ivt3.sc.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180622075421.16001-1-geert@linux-m68k.org>
+In-Reply-To: <20180622075421.16001-1-geert@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 22 Jun 2018 10:11:58 +0200
+Message-ID: <CAMuHMdWhFyiAhA=bdjxSSmopJ=yJMXqMmOAD8hWUHWpiz0t4kA@mail.gmail.com>
+Subject: Re: [PATCH v2] time: Make sure jiffies_to_msecs() preserves non-zero
+ time periods
+To:     John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux MIPS Mailing List <linux-mips@linux-mips.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 21, 2018 at 03:42:03PM -0700, Fenghua Yu wrote:
-> On Thu, Jun 21, 2018 at 03:18:19PM -0700, Dave Hansen wrote:
-> > On 06/21/2018 03:08 PM, Peter Zijlstra wrote:
-> > > On Thu, Jun 21, 2018 at 03:00:03PM -0700, Fenghua Yu wrote:
-> > >> The control knob for kernel is to choose re-executing the faulting
-> > >> instruction (default) or kernel panic. Kernel panic may be useful in hard
-> > >> real time which has less tolerant to bad performance.
-> > > The kernel should never trigger this, ever. Any #AC is a plain bug and
-> > > should be fixed. So unconditional WARN+disable is suffient.
-> > 
-> > It sounds like we need to start with that functionality and then if
-> > Fenghua wants to do more, we have add-on patches that can be evaluated
-> > by themselves.
-> 
-> For split lock in kernel, by default, I just do warning, disable feature
-> in #AC handler, continue to execute the faulting instruction, and re-enable
-> #AC for split lock after a delay. This is the default behavior in the
-> current patches.
-> 
-> By "WAR+disable", you mean I just do this default behavior and remove the
-> control knob?
+CC alpha, mips
 
-No, remove all that broken delay crap, remove the knob. Basically remove
-everything.
-
-The handler really should be:
-
-do_handle_ac_trap()
-{
-	if (user_mode(regs)) {
-		send_signal(SIGBUS);
-		return;
-	}
-
-	WARN_ON(1);
-	disable_ac_on_all_cpus();
-}
-
-done. No broken delay code, no nothing.
+On Fri, Jun 22, 2018 at 9:54 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> For the common cases where 1000 is a multiple of HZ, or HZ is a multiple
+> of 1000, jiffies_to_msecs() never returns zero when passed a non-zero
+> time period.
+>
+> However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 1024 or
+> 1200, as used on alpha and DECstation), jiffies_to_msecs() may return
+> zero for small non-zero time periods.  This may break code that relies
+> on receiving back a non-zero value.
+>
+> jiffies_to_usecs() does not need such a fix, as <linux/jiffies.h> does
+> not support values of HZ larger than 12287, thus rejecting any
+> problematic huge values of HZ.
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> v2:
+>   - Add examples of affected systems,
+>   - Use DIV_ROUND_UP().
+> ---
+>  kernel/time/time.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/time/time.c b/kernel/time/time.c
+> index 6fa99213fc720e4b..2b41e8e2d31db26f 100644
+> --- a/kernel/time/time.c
+> +++ b/kernel/time/time.c
+> @@ -28,6 +28,7 @@
+>   */
+>
+>  #include <linux/export.h>
+> +#include <linux/kernel.h>
+>  #include <linux/timex.h>
+>  #include <linux/capability.h>
+>  #include <linux/timekeeper_internal.h>
+> @@ -314,9 +315,10 @@ unsigned int jiffies_to_msecs(const unsigned long j)
+>         return (j + (HZ / MSEC_PER_SEC) - 1)/(HZ / MSEC_PER_SEC);
+>  #else
+>  # if BITS_PER_LONG == 32
+> -       return (HZ_TO_MSEC_MUL32 * j) >> HZ_TO_MSEC_SHR32;
+> +       return (HZ_TO_MSEC_MUL32 * j + (1ULL << HZ_TO_MSEC_SHR32) - 1) >>
+> +              HZ_TO_MSEC_SHR32;
+>  # else
+> -       return (j * HZ_TO_MSEC_NUM) / HZ_TO_MSEC_DEN;
+> +       return DIV_ROUND_UP(j * HZ_TO_MSEC_NUM, HZ_TO_MSEC_DEN);
+>  # endif
+>  #endif
+>  }
+> --
+> 2.17.1
