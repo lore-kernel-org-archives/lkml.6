@@ -3,101 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 215A5C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E435AC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C589524877
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:14:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C589524877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 8ED8D2487D
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 20:19:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED8D2487D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933047AbeFVUOy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 16:14:54 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:41517 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751445AbeFVUOw (ORCPT
+        id S1754331AbeFVUTG (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 16:19:06 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:60500 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751406AbeFVUTF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 16:14:52 -0400
-Received: by mail-ua0-f195.google.com with SMTP id a5-v6so5046973uao.8;
-        Fri, 22 Jun 2018 13:14:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DnH51KZqoNTDjvy8pu7ivy0w7vw3RQxx9fBREhvBqvM=;
-        b=qP6tDBJr9ZbvPeGIifb7Giqg14eNNSy9IwRqCq1ou4LK4n7inpKbiYVIsBWkQd739/
-         MUSkIASNrvHaiJOr04p6AxBcpJ/7bq72UazZxqq72DWYr73mRbNQwMvJvGEUAujTI7/L
-         Z+RGiYpXn6mXPTRIaIorvuVlTUafJqVkFC5k7GCwSyy8uNM3i9gr+JlQOpn737Z7sheq
-         0GQ2mU07gopUTjZfPZ4b4Xl7+qggKLLtH45ReXDvVnTUMsLdgvkstHzgYBsGNlIORjEV
-         FwwzoeMZ1xrEEtSbYumq5lxF4agnpCFIFnfwcAlJVoMXy0mSaCaIssyg6m4mWzSjNIfl
-         mDng==
-X-Gm-Message-State: APt69E32a5GlPQXVcxRomTKQstfqANxpAODU+Gvrf89cwd456Gt2kcxc
-        RO0OEdFZnFJvuqntpVWfEVj5tZ4hTYRh9GvW7m/FYQ==
-X-Google-Smtp-Source: ADUXVKIyBK2jVwDKuv9bFZ4C5jZcB3HYO8LH7jPt1QvnSutu+alF/jOHkUBtx6Q1qQRk57XLwIRiSUsNI28mPlPsYlQ=
-X-Received: by 2002:ab0:265:: with SMTP id 92-v6mr2169854uas.26.1529698492137;
- Fri, 22 Jun 2018 13:14:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180622100820.29616-1-geert@linux-m68k.org> <alpine.DEB.2.21.1806221753560.2402@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1806221753560.2402@nanos.tec.linutronix.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jun 2018 22:14:40 +0200
-Message-ID: <CAMuHMdVkg3gOkykbZOzW2CpCd+WRdyKqehs9_WKQ8nbtSgwVgw@mail.gmail.com>
-Subject: Re: [PATCH v4] MAINTAINERS: Add file patterns for x86 device tree bindings
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 22 Jun 2018 16:19:05 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fWSWJ-0003Kn-Ir; Fri, 22 Jun 2018 16:18:59 -0400
+Message-ID: <1529698739.7898.206.camel@surriel.com>
+Subject: Re: [PATCH 7/7] x86,idle: do not leave mm in idle state
+From:   Rik van Riel <riel@surriel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Galbraith <efault@gmx.de>, songliubraving@fb.com,
+        kernel-team <kernel-team@fb.com>
+Date:   Fri, 22 Jun 2018 16:18:59 -0400
+In-Reply-To: <CALCETrXJzhwXkEi5oC9XY58B8fYT26WhMT+KBt-8m2M+foQvsw@mail.gmail.com>
+References: <20180620195652.27251-1-riel@surriel.com>
+         <20180620195652.27251-8-riel@surriel.com>
+         <CALCETrXfHhPNe9J0NEabxdtKGRV+XOX=n6vtL7rbOY6e2GXMqA@mail.gmail.com>
+         <1529682813.7898.195.camel@surriel.com>
+         <CALCETrXJzhwXkEi5oC9XY58B8fYT26WhMT+KBt-8m2M+foQvsw@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-FOgcyJ4rmpbsNcsMzLOR"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
 
-On Fri, Jun 22, 2018 at 5:57 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Fri, 22 Jun 2018, Geert Uytterhoeven wrote:
-> > Submitters of device tree binding documentation may forget to CC
-> > the subsystem maintainer if this is missing.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > ---
-> > v3:
-> >   - Update for next-20180622,
-> >
-> > v2:
-> >   - No changes.
-> >
-> > Impact on "scripts/get_maintainer.pl -f Documentation/devicetree/bindings/x86/":
-> >
-> > -Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS,commit_signer:1/1=100%)
-> > +Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
->
-> I assume there is no way to make sure that Rob and the device tree folks
-> are on top of that list? While it's somehow x86 related most of the
-> devicetree details are way over my head. :)
+--=-FOgcyJ4rmpbsNcsMzLOR
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I think the order is from most-specific to least-specific.
+On Fri, 2018-06-22 at 09:01 -0700, Andy Lutomirski wrote:
+> Hmm, fair enough.  I think a better heuristic would be if the
+> estimated idle duration is more than, say, 10ms.  I *think* the code
+> has been cleaned up enough that this is easy now.  (Using time
+> instead
+> of C6 will make it a lot less dependent on which idle driver is in
+> use.)
 
-> I'll pick it up nevertheless
+This particular bit of code is only in intel_idle
+though, and not every cpuidle governor estimates
+an idle duration, nor does it get passed up the
+stack (presumably because it not always exists).
 
-Thanks!
+I will just drop this patch for now, and see if
+adding back in the patch that skips manipulation
+of the mm_cpumask(&init_mm), since that might make
+leave_mm() a little cheaper.
 
-Gr{oetje,eeting}s,
+We would still have excess manipulation of the
+bitmask when re-entering the task from what should
+have been lazy TLB mode, but total cache line
+contention would likely still be down from where
+it is before that patch.
 
-                        Geert
+--=20
+All Rights Reversed.
+--=-FOgcyJ4rmpbsNcsMzLOR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlstWbMACgkQznnekoTE
+3oPXIwf/YCCJ5jn5eqnX+bve6nrCkkiTM/403Blkcna9riUkVfjr0QjYIWlMIQnl
+d3z44p1v1ZdtYYP3cqCXJignzKwc9PFjjKw51VEVyJnOecyJra3HvX9bfl+/c2eb
+K+LhHlf8nmpnCXnwTbDshzIZ151QNbIdnS8Oi+gj26B/tBiwsR2I5/NLXMzuW33q
+QJAOZ47W/gIWZ98ClnNgT9Ig4PizRrNi0yfPdXOXF/hm43joC0N+riDqDaetIdSA
++k+Imj1ip+8zqCrrrf0wN8+6mLrq4Kj+6EcjGpf2igc324LCLCgq+qjdk8nMNqcr
+E4sH0axuzOMA91wMOjQbMglXQcRsiQ==
+=17gQ
+-----END PGP SIGNATURE-----
+
+--=-FOgcyJ4rmpbsNcsMzLOR--
+
