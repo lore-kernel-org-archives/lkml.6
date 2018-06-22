@@ -3,57 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8706C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9EAC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7687E23FAF
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:48:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7687E23FAF
+	by mail.kernel.org (Postfix) with ESMTP id A0A5123FAD
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:50:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A5123FAD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754206AbeFVJsP convert rfc822-to-8bit (ORCPT
+        id S1752652AbeFVJuC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:48:15 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:45619 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751284AbeFVJsN (ORCPT
+        Fri, 22 Jun 2018 05:50:02 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33466 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751242AbeFVJuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:48:13 -0400
-Received: by mail-ot0-f194.google.com with SMTP id a5-v6so6823348otf.12
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 02:48:13 -0700 (PDT)
+        Fri, 22 Jun 2018 05:50:01 -0400
+Received: by mail-ot0-f196.google.com with SMTP id h6-v6so6872338otj.0;
+        Fri, 22 Jun 2018 02:50:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=b2kF+WQOiC8RO3ptapIhdhEln8LhkXJfim1zJwlF7Eg=;
-        b=dz7Avr8BlvJ1HjLtW1AXve7cMXSw7GT3DN/EUlz3OPw8AHe9+rRJk+VZFb/mI3oHsK
-         EA0rL/3ByAtLsbRGgH6DQvUggD6eZdMU/tILAJxrWK3+xPxrGCLHegMn9K+gLgTFVtkK
-         Muw8bwaa1IxKRvEAdaSjeAKpmh8g708oE4yKnMnW8TTWpWRAVwPZE3ene+kGUWTS/84p
-         8w8o318/WAk64pgF0UHM/HmrMAwMf9muyju2wswknK0UltlOoBe5VsQzI/Bt3RxWoDAJ
-         pBiW0lbUplpoA+Yx7NN6kZfjalQW2GIJ4atSmPhDh3g5Nacfnrk/S/7zpVI+TXwhf/ai
-         fbMw==
-X-Gm-Message-State: APt69E3FdwKY1uP7JBTUuLliHVLV8AifA71kSZOxE92v4NAIWrlrKHYq
-        oSg84DUukfI+KNjh04GaPCm8nzfK+GAu8Q5YGFg=
-X-Google-Smtp-Source: ADUXVKICJzdoLc0TCD1a3eFU5AB8fZH3vCNuxl/DF4eWsHVgkD0A4j5V/8o7ahvvFTv0Slf6ox2W6LdBRKIWoHpd/HE=
-X-Received: by 2002:a9d:27a6:: with SMTP id c35-v6mr526155otb.56.1529660893214;
- Fri, 22 Jun 2018 02:48:13 -0700 (PDT)
+        bh=4z78ZTinj+MQvYO0TTtI/xZWXHuutMfmsU/LTy1MT9w=;
+        b=VR/IwjjW0kw5LXlDuU7dL3WXGV1blB9GDrBpjTXki5uD9CUofJcE12dYVo8SmkwvpD
+         MZ+tc3dP2cf4Qccq23WWTMiFBtuLcLAHOlLu+LrlV2fiPFfFkeoJUs/SypfHHcYBhcGx
+         KoEQymcXc53aG7uRxC1lrJCVY5zhua7ExzNH78wnB4p2vkonkiPqEv+5I4xpAm0d06B3
+         GMa2AObAIArU0sf6YILB/WS8SC7fRUXMl3K/r0rZiHn4rR3QG72QwTaBc7eg15vhGgyr
+         H9L1dDMzefJgTWxM95SPjrJuCCZ/UCjp0vPpoW2y327IOKNDmbSWOqGk6D5SNl07sOud
+         hAHg==
+X-Gm-Message-State: APt69E0Rk+8A6118o2uZvovIaBkl7OrgTtBr40E1u+lPDQeCTangsjkA
+        nU4T77Wr0mth4pRtKqiknAce23t3sepp2Z4VMHs=
+X-Google-Smtp-Source: ADUXVKJkuXFzq5R4T/AjJUDDkedzUTp08l/Frz2ey2irMrCoi+Oi2b0bm6YpfbM8N5msdJQMHJj7zanWEtcWa4ujl0U=
+X-Received: by 2002:a9d:56ec:: with SMTP id b41-v6mr442505otj.339.1529661000396;
+ Fri, 22 Jun 2018 02:50:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180328193307.978-1-malat@debian.org> <20180404200836.27446-1-malat@debian.org>
-In-Reply-To: <20180404200836.27446-1-malat@debian.org>
+References: <20180322202007.23088-1-malat@debian.org> <20180322202007.23088-17-malat@debian.org>
+In-Reply-To: <20180322202007.23088-17-malat@debian.org>
 From:   Mathieu Malaterre <malat@debian.org>
-Date:   Fri, 22 Jun 2018 11:48:02 +0200
-Message-ID: <CA+7wUswQGhQS6FTdRkGhhJKFbfoVpmzwWdT_9GoOicEF0OXFPQ@mail.gmail.com>
-Subject: Re: [PATCH v3 03/19] powerpc: Move `path` variable inside DEBUG_PROM
+Date:   Fri, 22 Jun 2018 11:49:49 +0200
+Message-ID: <CA+7wUsxFJqjnygdg0a84QYktFGMUYeSiGD6=Ld3O06QsZkgG9g@mail.gmail.com>
+Subject: Re: [PATCH 16/19] powerpc/powermac: Add missing include of header pmac.h
 To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Christophe LEROY <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>, kvm-ppc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,59 +59,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This one should be ok.
+This one is also ok.
 
-On Wed, Apr 4, 2018 at 10:08 PM Mathieu Malaterre <malat@debian.org> wrote:
+On Thu, Mar 22, 2018 at 9:21 PM Mathieu Malaterre <malat@debian.org> wrote:
 >
-> Add gcc attribute unused for two variables. Fix warnings treated as errors
-> with W=1:
+> The header `pmac.h` was not included, leading to the following warnings,
+> treated as error with W=1:
 >
->   arch/powerpc/kernel/prom_init.c:1388:8: error: variable ‘path’ set but not used [-Werror=unused-but-set-variable]
+>   arch/powerpc/platforms/powermac/time.c:69:13: error: no previous prototype for ‘pmac_time_init’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:207:15: error: no previous prototype for ‘pmac_get_boot_time’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:222:6: error: no previous prototype for ‘pmac_get_rtc_time’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:240:5: error: no previous prototype for ‘pmac_set_rtc_time’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:259:12: error: no previous prototype for ‘via_calibrate_decr’ [-Werror=missing-prototypes]
+>   arch/powerpc/platforms/powermac/time.c:311:13: error: no previous prototype for ‘pmac_calibrate_decr’ [-Werror=missing-prototypes]
 >
-> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> The function `via_calibrate_decr` was made static to silence a warning.
+>
 > Signed-off-by: Mathieu Malaterre <malat@debian.org>
 > ---
-> v3: really move path within ifdef DEBUG_PROM
-> v2: move path within ifdef DEBUG_PROM
+>  arch/powerpc/platforms/powermac/time.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 >
->  arch/powerpc/kernel/prom_init.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
+> index 274af6fa388e..5cc6fa40fcc4 100644
+> --- a/arch/powerpc/platforms/powermac/time.c
+> +++ b/arch/powerpc/platforms/powermac/time.c
+> @@ -34,6 +34,8 @@
+>  #include <asm/nvram.h>
+>  #include <asm/smu.h>
 >
-> diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-> index acf4b2e0530c..223b35acbbdd 100644
-> --- a/arch/powerpc/kernel/prom_init.c
-> +++ b/arch/powerpc/kernel/prom_init.c
-> @@ -603,7 +603,7 @@ static void __init early_cmdline_parse(void)
->         const char *opt;
+> +#include "pmac.h"
+> +
+>  #undef DEBUG
 >
->         char *p;
-> -       int l = 0;
-> +       int l __maybe_unused = 0;
->
->         prom_cmd_line[0] = 0;
->         p = prom_cmd_line;
-> @@ -1385,7 +1385,10 @@ static void __init reserve_mem(u64 base, u64 size)
->  static void __init prom_init_mem(void)
+>  #ifdef DEBUG
+> @@ -256,7 +258,7 @@ int pmac_set_rtc_time(struct rtc_time *tm)
+>   * Calibrate the decrementer register using VIA timer 1.
+>   * This is used both on powermacs and CHRP machines.
+>   */
+> -int __init via_calibrate_decr(void)
+> +static int __init via_calibrate_decr(void)
 >  {
->         phandle node;
-> -       char *path, type[64];
-> +#ifdef DEBUG_PROM
-> +       char *path;
-> +#endif
-> +       char type[64];
->         unsigned int plen;
->         cell_t *p, *endp;
->         __be32 val;
-> @@ -1406,7 +1409,9 @@ static void __init prom_init_mem(void)
->         prom_debug("root_size_cells: %x\n", rsc);
->
->         prom_debug("scanning memory:\n");
-> +#ifdef DEBUG_PROM
->         path = prom_scratch;
-> +#endif
->
->         for (node = 0; prom_next_node(&node); ) {
->                 type[0] = 0;
+>         struct device_node *vias;
+>         volatile unsigned char __iomem *via;
 > --
 > 2.11.0
 >
