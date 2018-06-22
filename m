@@ -2,114 +2,116 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE1FC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A6EC43144
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7271E243BB
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7271E243BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id D67B7243CB
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 14:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67B7243CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933603AbeFVOeF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 10:34:05 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:44640 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751551AbeFVOeD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 10:34:03 -0400
-Received: from ayla.of.borg ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id 1qa21y0083XaVaC06qa2Gs; Fri, 22 Jun 2018 16:34:02 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ayla.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fWN8U-00055H-1q; Fri, 22 Jun 2018 16:34:02 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fWN8T-0001xf-W1; Fri, 22 Jun 2018 16:34:02 +0200
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        stable@vger.kernel.org
-Subject: [PATCH v3] time: Make sure jiffies_to_msecs() preserves non-zero time periods
-Date:   Fri, 22 Jun 2018 16:33:57 +0200
-Message-Id: <20180622143357.7495-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        id S933552AbeFVOga (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 10:36:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36072 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751284AbeFVOg3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 10:36:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C669280D;
+        Fri, 22 Jun 2018 07:36:28 -0700 (PDT)
+Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D9103F2EA;
+        Fri, 22 Jun 2018 07:36:27 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 15:36:24 +0100
+From:   Morten Rasmussen <morten.rasmussen@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, valentin.schneider@arm.com,
+        dietmar.eggemann@arm.com, vincent.guittot@linaro.org,
+        gaku.inami.xh@renesas.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/9] sched: Add static_key for asymmetric cpu capacity
+ optimizations
+Message-ID: <20180622143624.GD8461@e105550-lin.cambridge.arm.com>
+References: <1529485549-5191-1-git-send-email-morten.rasmussen@arm.com>
+ <1529485549-5191-2-git-send-email-morten.rasmussen@arm.com>
+ <20180622082222.GD23168@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180622082222.GD23168@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the common cases where 1000 is a multiple of HZ, or HZ is a multiple
-of 1000, jiffies_to_msecs() never returns zero when passed a non-zero
-time period.
+On Fri, Jun 22, 2018 at 09:22:22AM +0100, Quentin Perret wrote:
+> Hi Morten,
+> 
+> On Wednesday 20 Jun 2018 at 10:05:41 (+0100), Morten Rasmussen wrote:
+> > +static void update_asym_cpucapacity(int cpu)
+> > +{
+> > +	int enable = false;
+> > +
+> > +	rcu_read_lock();
+> > +	if (lowest_flag_domain(cpu, SD_ASYM_CPUCAPACITY))
+> > +		enable = true;
+> > +	rcu_read_unlock();
+> > +
+> > +	if (enable) {
+> > +		/* This expects to be hotplug-safe */
+> > +		static_branch_enable_cpuslocked(&sched_asym_cpucapacity);
+> > +	}
+> > +}
+> 
+> What would happen if you hotplugged an entire cluster ? You'd loose the
+> SD_ASYM_CPUCAPACITY flag but keep the static key is that right ? Should
+> we care ?
 
-However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 1024 or
-1200, as used on alpha and DECstation), jiffies_to_msecs() may return
-zero for small non-zero time periods.  This may break code that relies
-on receiving back a non-zero value.
+I don't think we should care. The static key enables additional checks
+and tweaks but AFAICT none of them requires the SD_ASYM_CPUCAPACITY to
+be set and they should all be have no effect if that is the case. I
+added the static key just avoid the overhead on systems where they would
+have no effect. At least that is intention, I could course have broken
+things by mistake.
 
-jiffies_to_usecs() does not need such a fix: one jiffy can only be
-less than one µs if HZ > 1000000, and such large values of HZ are
-already rejected at build time, twice:
-  - include/linux/jiffies.h does #error if HZ >= 12288,
-  - kernel/time/time.c has BUILD_BUG_ON(HZ > USEC_PER_SEC).
+> And also, Peter mentioned an issue with the EAS patches with multiple
+> root_domains. Does that apply here as well ? What if you had a
+> configuration with big and little CPUs in different root_domains for ex?
+> 
+> Should we disable the static key in the above cases ?
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Cc: stable@vger.kernel.org
----
-Broken since forever.
+Exclusive cpusets are more tricky as the flags will be the same for
+sched_domains at the same level. So we can't set the flag correctly if
+someone configures the exclusive cpusets such that you have one
+root_domain spanning big and a subset of little, and one spanning the
+remaining little cpus if all topology levels are preserved. If we
+imagine a three cluster system where 0-3 and 4-7 little clusters, and
+8-11 is a big cluster with cpusets configured as 0-5 and 6-11. The first
+set should _not_ have SD_ASYM_CPUCAPACITY set, while the second should.
 
-v3:
-  - Add Reviewed-by,
-  - Cc stable,
-  - Explain better why jiffies_to_usecs() does not need a fix,
+I'm tempted to say we shouldn't care in this situation. Setting the
+flags correctly in the three cluster example would require knowledge
+about the cpuset configuration which we don't have in the arch code so
+SD_ASYM_CPUCAPACITY flag detection would have be done by the
+sched_domain build code. However, not setting the flag according to the
+actual members of the exclusive cpuset means that homogeneous
+sched_domains might have SD_ASYM_CPUCAPACITY set enabling potentially
+wrong scheduling decisions.
 
-v2:
-  - Add examples of affected systems,
-  - Use DIV_ROUND_UP().
----
- kernel/time/time.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+We can actually end up with this problem just by hotplugging too. If you
+unplug the entire big cluster in the three cluster example above, you
+preserve DIE level which would have SD_ASYM_CPUCAPACITY set even though
+we only have little cpus left.
 
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 6fa99213fc720e4b..2b41e8e2d31db26f 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -28,6 +28,7 @@
-  */
- 
- #include <linux/export.h>
-+#include <linux/kernel.h>
- #include <linux/timex.h>
- #include <linux/capability.h>
- #include <linux/timekeeper_internal.h>
-@@ -314,9 +315,10 @@ unsigned int jiffies_to_msecs(const unsigned long j)
- 	return (j + (HZ / MSEC_PER_SEC) - 1)/(HZ / MSEC_PER_SEC);
- #else
- # if BITS_PER_LONG == 32
--	return (HZ_TO_MSEC_MUL32 * j) >> HZ_TO_MSEC_SHR32;
-+	return (HZ_TO_MSEC_MUL32 * j + (1ULL << HZ_TO_MSEC_SHR32) - 1) >>
-+	       HZ_TO_MSEC_SHR32;
- # else
--	return (j * HZ_TO_MSEC_NUM) / HZ_TO_MSEC_DEN;
-+	return DIV_ROUND_UP(j * HZ_TO_MSEC_NUM, HZ_TO_MSEC_DEN);
- # endif
- #endif
- }
--- 
-2.17.1
+As I see it, we have two choices: 1) Set the flags correctly for
+exclusive cpusets which means some additional "fun" in the sched_domain
+hierarchy set up, or 2) ignore it and make sure that setting
+SD_ASYM_CPUCAPACITY on homogeneous sched_domains works fairly okay. The
+latter seems easier.
 
+Morten
