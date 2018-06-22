@@ -2,139 +2,100 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D67C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96D0C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE0123F9F
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8815A23F88
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:44:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iu4NQT8M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE0123F9F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAgKLwL6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8815A23F88
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751806AbeFVJnG (ORCPT
+        id S1754190AbeFVJoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:43:06 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:42580 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751242AbeFVJnF (ORCPT
+        Fri, 22 Jun 2018 05:44:06 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36177 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751329AbeFVJoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:43:05 -0400
-Received: by mail-pg0-f66.google.com with SMTP id c10-v6so2739978pgu.9
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 02:43:05 -0700 (PDT)
+        Fri, 22 Jun 2018 05:44:04 -0400
+Received: by mail-wr0-f193.google.com with SMTP id f16-v6so6059727wrm.3;
+        Fri, 22 Jun 2018 02:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=VIbHO1n8Ck+tsnNQ3bM9bs9ZRj12A8qeyH4fAyNytms=;
-        b=iu4NQT8M0ElCkvvy6iQzRe+gjeGqyzO/i1BEnOQ5VMib7MV7r0zXoieneaI3GRPR39
-         o+To/bio9q9iXM6fb55mYnH+BPlM6K/9qHJnbnYEocrJktLCFofGY2Z/fB4bmi6NDpgD
-         Yj58gh8vtCuWGS0TmMmN4ll/tGRKaIdZWuXdoYLEigLBeOq/5cDeDhZSMJDfmyOYCMe3
-         7VISftUympM5Dzsh7DBmT4zjjAbS6DDLSj17/Vpi+Yf0/qrIPSJMzx09d+qDgjpk7gRJ
-         fK549tATIBJUq0TH3UMrzgshE5QwFmL3U49DXm+Q1ecdrvibS/bS3QowlVH5B2sz4vL/
-         E18g==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=rRZYKkBnukFeUbvmXo6GNjDeV1VIxGMvd61S1K1RgFA=;
+        b=IAgKLwL6tzVd6jkBe/sCxdNDdhpfvWsGR+YHaEbz4ku1JeoiciZLZxNnRmfsITdoLu
+         9WLNPYp+6MZ1FdtZoAmHuqJhRIUmKseMzptWuMcIcNciEPUXYJ5OxDtf60wiGRzuEcjL
+         t1Kf0MWZrFtTO7CXdO9lffEphlHcZBgyzlwjDJgQz6h68oYloTFX/FFlv7pe1h3MPwT4
+         e3NXIB+nIq1qpapxb8Cnky5w2XYMw0PsXlVehGE4izvbWLfuGi6PPMkR1YpocEhike+r
+         7AcRyRDc4Azmxx/Y5FXu2Z8v5Zn+tPN4VrK+QURCz70mAPXydURREPtC9ENk5l4ZMsYk
+         T2/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=VIbHO1n8Ck+tsnNQ3bM9bs9ZRj12A8qeyH4fAyNytms=;
-        b=Bl2r2Ekql1icbPVQWuGBGBKp98qSMjo4No4be4YheY7SZN3bWeGmyNIerB997nJPlJ
-         ACeCiECoCeDxiinhOd857oayNBaQe33VhP6ijHqt8SoPVE7xQ4EIyABCAyBjZLR2Yf8h
-         vIFG6wJauK0SiNnKZxlSyUId14v4oehkFso2F93QvmUhH8xMTAUfXAPNAeWSMw0Tw9GM
-         0sZVDNtuj3ss4YRSixTbX5OHMlFsZzl56tJLgnzbU+yNmlZdflokIp6WENIvvX/SRnFH
-         VIVGrZZYVsln8DFI6CEU1abdaySC76V41gLeZcYGZy/MBMBQnP/qdE/u/Sn+lWaYW6t2
-         MEuQ==
-X-Gm-Message-State: APt69E2R86/coFHGf0GuHqKeTHIX/q8wiGsBObXXbN+s4xX6gT0fgSjo
-        HG5+34Ce0WRASVfIEhRcwKYvnYdvg7StLLsP1tn/zQ==
-X-Google-Smtp-Source: ADUXVKIw4iuzhZWgPyHTF4JFIsIFpmO65woLHBv8b6SwfOuyS6YpwdPd55BzEm58bvOsEy8Zadh84lZqXvZN5pYYxdw=
-X-Received: by 2002:a65:490d:: with SMTP id p13-v6mr754291pgs.84.1529660584364;
- Fri, 22 Jun 2018 02:43:04 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=rRZYKkBnukFeUbvmXo6GNjDeV1VIxGMvd61S1K1RgFA=;
+        b=OrGxtdvkbrzhd8eWbJ5Tddi6eCZQFauakLDtZFI3vhHG2viSiSMBPg/QejRsWM/aae
+         ef0BNjzhX0K7YY6/pypzc8VGN5Yt3PAIorHZJn4qvL0/RsRvVRZTXSo0O9SXztuAyy2R
+         BYFVvUDZxFNLH0HPkhDFzfnIp7O6nB2GHn4p1iYKoJiH47Q4Tw5/Lp1+gS8BfcMGKfHG
+         bgY+4HteLr8iP8Y/ywS54i8Gjclgmg8K54+U202mzVlGax0lUdyiP2WHZ9y/3BoyPq3G
+         fld1o/fyLQ1CxlCmP/azm7w5SizOrrzy4pRN/9RBD6ZhNtvNLGkz/oH/s9jMKjmtR6vs
+         nnUQ==
+X-Gm-Message-State: APt69E11AJWRTVAiY+BPi8vATOAwgwNaDwoyf9JncKpGUYaseOMjZNMD
+        6J1BqGcHWlJXEpDrXlVUw1I=
+X-Google-Smtp-Source: AAOMgpe8njMnO5oKoXiAdAbIBG6KFPjAuuAfcdsZu24KRkpE6g2h+D5ASRIvHTaOfIFNEDvXUOCiMw==
+X-Received: by 2002:adf:a285:: with SMTP id s5-v6mr925474wra.114.1529660643238;
+        Fri, 22 Jun 2018 02:44:03 -0700 (PDT)
+Received: from kitone-HP-ProBook-4530s ([196.43.135.103])
+        by smtp.gmail.com with ESMTPSA id v68-v6sm1375591wmd.12.2018.06.22.02.44.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Jun 2018 02:44:02 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 14:39:19 +0300
+From:   Kitone Elvis Peter <elviskitone@gmail.com>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] block: Change simple_strtol() to kstrtol()
+Message-ID: <20180622113918.GA6633@kitone-HP-ProBook-4530s>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Fri, 22 Jun 2018 02:42:43
- -0700 (PDT)
-In-Reply-To: <1529659626-12660-1-git-send-email-thunder.leizhen@huawei.com>
-References: <1529659626-12660-1-git-send-email-thunder.leizhen@huawei.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 22 Jun 2018 11:42:43 +0200
-Message-ID: <CACT4Y+Y3cLwVroPri8kKE+wG+YCMOynfzJcL_CjXRXn1omRF_Q@mail.gmail.com>
-Subject: Re: [PATCH 1/1] kasan: fix shadow_size calculation error in kasan_module_alloc
-To:     Zhen Lei <thunder.leizhen@huawei.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        linux-mm <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 11:27 AM, Zhen Lei <thunder.leizhen@huawei.com> wrote:
-> There is a special case that the size is "(N << KASAN_SHADOW_SCALE_SHIFT)
-> Pages plus X", the value of X is [1, KASAN_SHADOW_SCALE_SIZE-1]. The
-> operation "size >> KASAN_SHADOW_SCALE_SHIFT" will drop X, and the roundup
-> operation can not retrieve the missed one page. For example: size=0x28006,
-> PAGE_SIZE=0x1000, KASAN_SHADOW_SCALE_SHIFT=3, we will get
-> shadow_size=0x5000, but actually we need 6 pages.
->
-> shadow_size = round_up(size >> KASAN_SHADOW_SCALE_SHIFT, PAGE_SIZE);
->
-> This can lead kernel to be crashed, when kasan is enabled and the value
-> of mod->core_layout.size or mod->init_layout.size is like above. Because
-> the shadow memory of X has not been allocated and mapped.
->
-> move_module:
-> ptr = module_alloc(mod->core_layout.size);
-> ...
-> memset(ptr, 0, mod->core_layout.size);          //crashed
->
-> Unable to handle kernel paging request at virtual address ffff0fffff97b000
-> ......
-> Call trace:
-> [<ffff8000004694d4>] __asan_storeN+0x174/0x1a8
-> [<ffff800000469844>] memset+0x24/0x48
-> [<ffff80000025cf28>] layout_and_allocate+0xcd8/0x1800
-> [<ffff80000025dbe0>] load_module+0x190/0x23e8
-> [<ffff8000002601e8>] SyS_finit_module+0x148/0x180
->
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->  mm/kasan/kasan.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/kasan/kasan.c b/mm/kasan/kasan.c
-> index 81a2f45..f5ac4ac 100644
-> --- a/mm/kasan/kasan.c
-> +++ b/mm/kasan/kasan.c
-> @@ -427,12 +427,13 @@ void kasan_kfree_large(const void *ptr)
->  int kasan_module_alloc(void *addr, size_t size)
->  {
->         void *ret;
-> +       size_t scaled_size;
->         size_t shadow_size;
->         unsigned long shadow_start;
->
->         shadow_start = (unsigned long)kasan_mem_to_shadow(addr);
-> -       shadow_size = round_up(size >> KASAN_SHADOW_SCALE_SHIFT,
-> -                       PAGE_SIZE);
-> +       scaled_size = (size + KASAN_SHADOW_MASK) >> KASAN_SHADOW_SCALE_SHIFT;
-> +       shadow_size = round_up(scaled_size, PAGE_SIZE);
->
->         if (WARN_ON(!PAGE_ALIGNED(shadow_start)))
->                 return -EINVAL;
+The usage of simple_strtol is discouraged, because
+strtol() is obsolete. Instead kstrtol() should be 
+used to convert a string into a long integer.  
 
+Signed-off-by: Kitone Elvis Peter <elviskitone@gmail.com>
+---
+ drivers/block/brd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Zhen,
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index e2a1278..4b7a28e 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -351,7 +351,7 @@ MODULE_ALIAS("rd");
+ /* Legacy boot options - nonmodular */
+ static int __init ramdisk_size(char *str)
+ {
+-	rd_size = simple_strtol(str, NULL, 0);
++	rd_size = kstrtol(str, NULL, 0);
+ 	return 1;
+ }
+ __setup("ramdisk_size=", ramdisk_size);
+-- 
+2.7.4
 
-Yes, this is a bug. Thanks for fixing it!
-
-Reviewed-by: Dmitriy Vyukov <dvyukov@google.com>
