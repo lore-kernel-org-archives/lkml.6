@@ -1,199 +1,156 @@
 Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7602C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CA7C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 912E524608
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:47:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912E524608
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E91A2460E
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:48:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="phNl8mD9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E91A2460E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754313AbeFVQrp (ORCPT
+        id S1754428AbeFVQsb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:47:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934349AbeFVQqV (ORCPT
+        Fri, 22 Jun 2018 12:48:31 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39261 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754336AbeFVQs2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:46:21 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5MGi5u3046832
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:46:21 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2js1ne8mba-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 12:46:20 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Fri, 22 Jun 2018 12:46:20 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 22 Jun 2018 12:46:17 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5MGkGVv40829048
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 22 Jun 2018 16:46:16 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1EF511206B;
-        Fri, 22 Jun 2018 12:46:12 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9A18112063;
-        Fri, 22 Jun 2018 12:46:12 -0400 (EDT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 22 Jun 2018 12:46:12 -0400 (EDT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.vnet.ibm.com
-Cc:     jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH v3 1/4] tpm: rename tpm_chip_find_get() to tpm_get_ops()
-Date:   Fri, 22 Jun 2018 12:46:10 -0400
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180622164613.1609313-1-stefanb@linux.vnet.ibm.com>
-References: <20180622164613.1609313-1-stefanb@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18062216-0072-0000-0000-000003733BD8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009240; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01050751; UDB=6.00538515; IPR=6.00829721;
- MB=3.00021808; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-22 16:46:19
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18062216-0073-0000-0000-000048738051
-Message-Id: <20180622164613.1609313-2-stefanb@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-22_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1806220186
+        Fri, 22 Jun 2018 12:48:28 -0400
+Received: by mail-lf0-f68.google.com with SMTP id t2-v6so9527025lfd.6;
+        Fri, 22 Jun 2018 09:48:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZSgN+PceKA6df1xtbLmUze7vVw38PPqUkZDC0Rqtv3g=;
+        b=phNl8mD9BDIzFIFlQBw0QY6W3o0wkWapR7XLq/3djiYP+wEPPrNQW4fsPvmQaNKmUM
+         LzUZ8K0G+K3v9J8UAKcqiKRi+ydrhOPRSg2xBqnFB21+h2RgcvJ5N6xWEOMWZwhXhM9J
+         9cUsLzmqihucHbu04LSJmSkedFigmv6o/E62tsee/BoKyVP2mbFEoTyDWCCVWu6kRpl4
+         ctpDB1Op3mL7WoqpO3/hvbb5+KS2+HN//T4zfoo0IaAxyzJzBnVuIik+A8SQC9zbqVqs
+         Jq2BBS5fzBMwE2MO7FmnckOet5SLpibQhZJgnGAPSGaJozTOePpScCKqu+nDZKPc7VWG
+         dG/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZSgN+PceKA6df1xtbLmUze7vVw38PPqUkZDC0Rqtv3g=;
+        b=XTuGiNSoYPB5MUTN3aJQymvIcAvSCTE8khGSdcQL/SfHescbkc5WHQJTintLWyed+3
+         2b3kaNs1w4QkSx0zE+a5pFzS+JbyvsRH4GXkl/O5NDuw8sQ4uLwfYliOBhq5cDow71rm
+         ymGedAUstJDhIYsLSZquroxNAlK9Uv1BohgQuyblu3kof3zs9eq6Nc/RSIBmWkCy6kf/
+         HCT9EcqzD7lyXTIwXqyxjbqihzEJcLosBawe4fAEaR6oYGLriJZfviaYzW7AcNpuj9s5
+         OIz/tuGkZZDUwxJjSzkNm2INWCFAMw4gzgwu/b5+ywuLTt8za568zZos5tEdDKUOkfrL
+         2k6Q==
+X-Gm-Message-State: APt69E1FQ39F8NEoTsvmKIXXQ+XKVAKT3+6r1sDrPTa7/GQ6ITf9JR5S
+        IYKcoNjMs8mRlzx/gfRfsWY=
+X-Google-Smtp-Source: ADUXVKJ+dP23u+zB/6NDiW+PIw44iU490Ugt3nsreMmeECr/LmM/py62l8EpC0b7LR9+/UASv1FXVw==
+X-Received: by 2002:a19:8fd4:: with SMTP id s81-v6mr96107lfk.118.1529686107113;
+        Fri, 22 Jun 2018 09:48:27 -0700 (PDT)
+Received: from gmail.com (213-238-244-10.customers.ownit.se. [213.238.244.10])
+        by smtp.gmail.com with ESMTPSA id b204-v6sm1672273lfb.12.2018.06.22.09.48.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 09:48:25 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 18:48:23 +0200
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, davem@davemloft.net,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] usb: gadget: ccid: add support for USB CCID
+ Gadget Device
+Message-ID: <20180622164823.GA5351@gmail.com>
+References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+ <87r2ltcopp.fsf@linux.intel.com>
+ <20180530140415.GE2939@gmail.com>
+ <20180608185443.GB874@gmail.com>
+ <87efh4zeqb.fsf@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87efh4zeqb.fsf@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename tpm_chip_find_get() to tpm_get_ops(). This now matches
-the name of its counter part tpm_put_ops() better.
+Hi Filipe,
 
-Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
----
- drivers/char/tpm/tpm-chip.c      |  4 ++--
- drivers/char/tpm/tpm-interface.c | 14 +++++++-------
- drivers/char/tpm/tpm.h           |  2 +-
- 3 files changed, 10 insertions(+), 10 deletions(-)
+On Mon, Jun 18, 2018 at 11:22:04AM +0300, Felipe Balbi wrote:
+> 
+> Hi,
+> 
+> Marcus Folkesson <marcus.folkesson@gmail.com> writes:
+> > Hi Felipe,
+> >
+> > Should I send out v4 or what do you think?
+> 
+> sorry for the delay, have been busy with other tasks.
+> 
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0a62c19937b6..4e83695af068 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -81,7 +81,7 @@ void tpm_put_ops(struct tpm_chip *chip)
- EXPORT_SYMBOL_GPL(tpm_put_ops);
- 
- /**
-- * tpm_chip_find_get() - find and reserve a TPM chip
-+ * tpm_get_ops() - find and reserve a TPM chip
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-  *
-  * Finds a TPM chip and reserves its class device and operations. The chip must
-@@ -92,7 +92,7 @@ EXPORT_SYMBOL_GPL(tpm_put_ops);
-  * %NULL if a chip is not found.
-  * %NULL if the chip is not available.
-  */
--struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip)
-+struct tpm_chip *tpm_get_ops(struct tpm_chip *chip)
- {
- 	struct tpm_chip *res = NULL;
- 	int chip_num = 0;
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index c43a9e28995e..fde731df838b 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -929,7 +929,7 @@ int tpm_is_tpm2(struct tpm_chip *chip)
- {
- 	int rc;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
-@@ -953,7 +953,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- {
- 	int rc;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-@@ -1012,7 +1012,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
- 	u32 count = 0;
- 	int i;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
-@@ -1141,7 +1141,7 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
- {
- 	int rc;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
-@@ -1261,7 +1261,7 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
- 	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
- 		return -EINVAL;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
-@@ -1323,7 +1323,7 @@ int tpm_seal_trusted(struct tpm_chip *chip, struct trusted_key_payload *payload,
- {
- 	int rc;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_get_ops(chip);
- 	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
- 		return -ENODEV;
- 
-@@ -1351,7 +1351,7 @@ int tpm_unseal_trusted(struct tpm_chip *chip,
- {
- 	int rc;
- 
--	chip = tpm_chip_find_get(chip);
-+	chip = tpm_get_ops(chip);
- 	if (!chip || !(chip->flags & TPM_CHIP_FLAG_TPM2))
- 		return -ENODEV;
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 7f2d0f489e9c..9d2ad67778b5 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -535,7 +535,7 @@ static inline void tpm_msleep(unsigned int delay_msec)
- 		     delay_msec * 1000);
- };
- 
--struct tpm_chip *tpm_chip_find_get(struct tpm_chip *chip);
-+struct tpm_chip *tpm_get_ops(struct tpm_chip *chip);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
- void tpm_put_ops(struct tpm_chip *chip);
- 
--- 
-2.13.6
+It is no hurry :-)
+
+> > On Wed, May 30, 2018 at 04:04:15PM +0200, Marcus Folkesson wrote:
+> >> Hi Filipe,
+> >> 
+> >> On Wed, May 30, 2018 at 03:28:18PM +0300, Felipe Balbi wrote:
+> >> > Marcus Folkesson <marcus.folkesson@gmail.com> writes:
+> >> > 
+> >> > > Chip Card Interface Device (CCID) protocol is a USB protocol that
+> >> > > allows a smartcard device to be connected to a computer via a card
+> >> > > reader using a standard USB interface, without the need for each manufacturer
+> >> > > of smartcards to provide its own reader or protocol.
+> >> > >
+> >> > > This gadget driver makes Linux show up as a CCID device to the host and let a
+> >> > > userspace daemon act as the smartcard.
+> >> > >
+> >> > > This is useful when the Linux gadget itself should act as a cryptographic
+> >> > > device or forward APDUs to an embedded smartcard device.
+> >> > >
+> >> > > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> >> > 
+> >> > this could be done entirely in userspace with functionfs, why do we need
+> >> > this part in the kernel? It does very little.
+> >> 
+> >> Andrzej pointed this out, and I actually do not have any good answer
+> >> more than that the userspace application could be kept small and the
+> >> important configuration of the CCID device is done with well (I hope)
+> >> documented configfs attributes.
+> 
+> can we use existing open source applications without modification by
+> accepting this glue layer?
+
+
+If you mean existing open source application to talk to the "daemon", the answer is
+yes. I have been using PCSC-lite and OpenSC on Linux, and PCSC on
+Windows to communicate with the smartcard.
+
+If you mean existing application as the "daemon", the answer is probably
+no.
+
+> 
+> -- 
+> balbi
+
+Thanks,
+
+Best regards
+Marcus Folkesson
+
 
