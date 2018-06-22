@@ -2,98 +2,107 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF35C43144
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070B5C43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E833024624
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E833024624
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B4FC124627
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 16:56:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfOLHcCv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FC124627
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933647AbeFVQ4K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 12:56:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:38368 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754279AbeFVQ4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 12:56:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13C0E14;
-        Fri, 22 Jun 2018 09:56:08 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1E5F3F557;
-        Fri, 22 Jun 2018 09:56:06 -0700 (PDT)
-Date:   Fri, 22 Jun 2018 17:55:59 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Hurley <peter@hurleysoftware.com>
-Subject: Re: [PATCH 1/7] atomics/tty: add missing atomic_long_t * cast
-Message-ID: <20180622165535.w3jvdzc6aykkiq5m@lakrids.cambridge.arm.com>
-References: <20180529180746.29684-1-mark.rutland@arm.com>
- <20180529180746.29684-2-mark.rutland@arm.com>
- <20180605120021.GH12258@hirez.programming.kicks-ass.net>
- <20180605142051.GB12925@kroah.com>
- <20180605144304.GW12180@hirez.programming.kicks-ass.net>
- <20180605145334.GA12235@hirez.programming.kicks-ass.net>
- <20180606140042.GA8865@kroah.com>
+        id S933908AbeFVQ4j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 22 Jun 2018 12:56:39 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:42069 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933472AbeFVQ4h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 12:56:37 -0400
+Received: by mail-pg0-f68.google.com with SMTP id c10-v6so3222508pgu.9
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 09:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uplf+FY22xsVmutCHVqJElx8IqHhtMdktBTBDdjS/XM=;
+        b=gfOLHcCvKCWTXrW36xibcKriVsFSsL+A2n84+1gkJoYPLiDr8I1AFJKO4doRyHq0cC
+         fWnLICo2QiGReL7uM0K81rqOyMllZPrWUtkz7Fwu9hbLoooqe3Vhn/TsFkuctJ8e8ncZ
+         tz+WFMUgV6Zq2kvZ5LknDugCzHt/Jovdmkhws=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uplf+FY22xsVmutCHVqJElx8IqHhtMdktBTBDdjS/XM=;
+        b=NsPnL40KNa8zvGWz1PIvcxLH9vA53SgY7VszrC4Tf1KCKTSKvlJwKKk9QxIv+4jddl
+         1e7TLL5V3VQdu6+0HzE0TCKzaMh9yBhsTmhhn++OfaX4TNZQG57UipIhd2MbDUbCiPxz
+         TRviFAY4hRMYWNsOc/RAl5IFS8OAvQDh0B+wUrbgKEHMAX01MhsVWomugu1COAmogi8Y
+         OEzQgDo5aIQL7GuNRJ3FHUKUVjtkJ+Alo8Vbc/uoofbNjbglPR23K8GepUiZ/ZNpDch7
+         AwI7fJ58Xlv+onO9jkCWXWg1tbc4CqNmyPiB05SlkzGOJYYpMUKf2QoJRVMOGtvcJWMY
+         bm/g==
+X-Gm-Message-State: APt69E3Ixny79rxA+fi7z6GRSPN51+MKtO0iVl2GxHqakDgmcPyilhFn
+        yzJjMvOiKz3T+nfji/5S6x+Htg==
+X-Google-Smtp-Source: ADUXVKIwR2RcMMuWhHTxPLxkNPiaIQmuby12lNwhv0nRRb1S98e8OvyMHD0q+/rADrxT3J/8Syh6pg==
+X-Received: by 2002:a65:4c4d:: with SMTP id l13-v6mr2162968pgr.211.1529686596589;
+        Fri, 22 Jun 2018 09:56:36 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id x14-v6sm7555065pge.85.2018.06.22.09.56.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Jun 2018 09:56:35 -0700 (PDT)
+Date:   Fri, 22 Jun 2018 09:56:34 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: Add pmu node to sdm845
+Message-ID: <20180622165634.GB10336@builder>
+References: <20180522062352.151257-1-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180606140042.GA8865@kroah.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180522062352.151257-1-swboyd@chromium.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon 21 May 23:23 PDT 2018, Stephen Boyd wrote:
 
-On Wed, Jun 06, 2018 at 04:00:42PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Jun 05, 2018 at 04:53:34PM +0200, Peter Zijlstra wrote:
-> > On Tue, Jun 05, 2018 at 04:43:04PM +0200, Peter Zijlstra wrote:
-> > 
-> > > I can make a proper patch, hold on.
-> > 
-> > ---
-> > Subject: atomic/tty: Fix up atomic abuse in ldsem
-> > 
-> > Mark found ldsem_cmpxchg() needed an (atomic_long_t *) cast to keep
-> > working after making the atomic_long interface type safe.
-> > 
-> > Needing casts is bad form, which made me look at the code. There are no
-> > ld_semaphore::count users outside of these functions so there is no
-> > reason why it can not be an atomic_long_t in the first place, obviating
-> > the need for this cast.
-> > 
-> > That also ensures the loads use atomic_long_read(), which implies (at
-> > least) READ_ONCE() in order to guarantee single-copy-atomic loads.
-> > 
-> > When using atomic_long_try_cmpxchg() the ldsem_cmpxchg() wrapper gets
-> > very thin (the only difference is not changing *old on success, which
-> > most callers don't seem to care about).
-> > 
-> > So rework the whole thing to use atomic_long_t and its accessors
-> > directly.
-> > 
-> > While there, fixup all the horrible comment styles.
-> > 
-> > Cc: Peter Hurley <peter@hurleysoftware.com>
-> > Reported-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Add the CPU PMU on sdm845 to get perf support for hardware events.
 > 
-> Looks good, I'll queue this up after 4.18-rc1 is out, thanks.
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Now that v4.18-rc1 is out, I thought I'd ping so that this doesn't get
-forgotten.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Have a good weekend!
+Regards,
+Bjorn
 
-Mark.
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index 7c85e7c596db..93a62c2be86c 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -152,6 +152,11 @@
+>  		};
+>  	};
+>  
+> +	pmu {
+> +		compatible = "arm,armv8-pmuv3";
+> +		interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +
+>  	timer {
+>  		compatible = "arm,armv8-timer";
+>  		interrupts = <GIC_PPI 1 IRQ_TYPE_LEVEL_LOW>,
+> -- 
+> Sent by a computer through tubes
+> 
