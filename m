@@ -6,93 +6,86 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36BFC43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E239C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A75C02249A
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:41:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75C02249A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 54A1F224E8
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 07:41:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A1F224E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751313AbeFVHlp (ORCPT
+        id S1751357AbeFVHly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 03:41:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48678 "EHLO mx2.suse.de"
+        Fri, 22 Jun 2018 03:41:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44078 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751042AbeFVHlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 03:41:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E215BAE8C;
-        Fri, 22 Jun 2018 07:41:42 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7EC191E34BE; Fri, 22 Jun 2018 09:41:42 +0200 (CEST)
-Date:   Fri, 22 Jun 2018 09:41:42 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.com>, y2038@lists.linaro.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] jbd2: replace current_kernel_time64 with ktime
- equivalent
-Message-ID: <20180622074142.kjs6sozf3it42wef@quack2.suse.cz>
-References: <20180620153322.54221-1-arnd@arndb.de>
- <20180620153322.54221-5-arnd@arndb.de>
+        id S1751209AbeFVHlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 03:41:45 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3E790207EB; Fri, 22 Jun 2018 09:41:43 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0F1B820794;
+        Fri, 22 Jun 2018 09:41:43 +0200 (CEST)
+Date:   Fri, 22 Jun 2018 09:41:43 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Emmanuel Vadot <manu@freebsd.org>
+Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: allwinner: a64-sopine: Add cd-gpios to mmc0 node
+Message-ID: <20180622074143.kaobrlvqplq25gry@flea>
+References: <20180620093055.10928-1-manu@freebsd.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="shrrj3he6isqmzjs"
 Content-Disposition: inline
-In-Reply-To: <20180620153322.54221-5-arnd@arndb.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180620093055.10928-1-manu@freebsd.org>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 20-06-18 17:33:02, Arnd Bergmann wrote:
-> jbd2 is one of the few callers of current_kernel_time64(), which
-> is a wrapper around ktime_get_coarse_real_ts64(). This calls the
-> latter directly for consistency with the rest of the kernel that
-> is moving to the ktime_get_ family of time accessors.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Looks good. You can add:
+--shrrj3he6isqmzjs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+On Wed, Jun 20, 2018 at 11:30:55AM +0200, Emmanuel Vadot wrote:
+> The card detect GPIO for Sopine and Pine64-LTS is PF6.
+> Add this to the dts.
+>=20
+> Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
 
-								Honza
+Applied, thanks!
+Maxime
 
-> ---
->  fs/jbd2/commit.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> index 8de0e7723316..150cc030b4d7 100644
-> --- a/fs/jbd2/commit.c
-> +++ b/fs/jbd2/commit.c
-> @@ -121,7 +121,7 @@ static int journal_submit_commit_record(journal_t *journal,
->  	struct commit_header *tmp;
->  	struct buffer_head *bh;
->  	int ret;
-> -	struct timespec64 now = current_kernel_time64();
-> +	struct timespec64 now;
->  
->  	*cbh = NULL;
->  
-> @@ -134,6 +134,7 @@ static int journal_submit_commit_record(journal_t *journal,
->  		return 1;
->  
->  	tmp = (struct commit_header *)bh->b_data;
-> +	ktime_get_coarse_real_ts64(&now);
->  	tmp->h_commit_sec = cpu_to_be64(now.tv_sec);
->  	tmp->h_commit_nsec = cpu_to_be32(now.tv_nsec);
->  
-> -- 
-> 2.9.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--shrrj3he6isqmzjs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlssqDYACgkQ0rTAlCFN
+r3QH+BAAhZchcfL4tkTEe5+AitB50zpXGUyOSiQ1s7Mr86YDSliI8eNS+R3/KKUT
+XumhwGexwJUAq47Mh3tNhT2yurVb52wDl4x5h5yNcWChYcG0zi9NvfImjxKprqd6
+8dTJ9v3xnIQdgwRllaOgonNVCaVUdXp+7LA1yeb0yes5EcpJ8vk7lMCUMZIotMEk
+fCVSJcCLMIBeqggH9QzDSvIefO4VuVyWVyWzav7ZhD89Il8fSvxa3209D05xLsTH
+XMQyHnRFn2gFMSxYIVIq1G+/iQF24et2tjKoXAOQavLdqw4BMl/qZJVyWLDgwWOo
+hzXl3qZNWadiakd+cmYalZkuzD8aUKyb0Nrg9y5uRl19yC1HapqaUePrO06AFh5M
+dGWSPXiCtycXvLgiGYK3ju1O7XBMID6Ndl2dXS+qHjMpTkfRiHS5rXhFSyj/ctYR
+x6wa+p8/e/jEB8UTIbGKYdMJDzFfsbePX72laCa3ScAYfqdeFP7KfHtTXclNjCUC
+j25XzWxHeMUrpXbIBWYh1P1GKu6dm9wQJBGUcPM5MuXNp61o2SVZuAVfRU8atFtO
+VUvoTdVtw10Y3dH15Nz4TA4H8EwQNK4Doww6cdYNWlvrDx/hWgFY0/QhyLwNFIFG
+R6JJTTw/3wfW2Cwc2LrDP1VmIWELRQMYOefIRKq/f45+3ZY59bw=
+=RgX7
+-----END PGP SIGNATURE-----
+
+--shrrj3he6isqmzjs--
