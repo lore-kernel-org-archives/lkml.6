@@ -3,102 +3,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48596C43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 21:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2EAC43142
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 21:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E319E24914
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 21:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEA1F24915
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 21:34:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M9KEqXNV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E319E24914
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="sJ5Uxe7R";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ReHE6s+u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA1F24915
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754567AbeFVVeI (ORCPT
+        id S1754586AbeFVVeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 17:34:08 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55974 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754134AbeFVVeG (ORCPT
+        Fri, 22 Jun 2018 17:34:15 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:35810 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754260AbeFVVeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 17:34:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=nYoyN7z+/+WJooMrgbxAKjwS+KtK+SiQ3FsbsSCRLpI=; b=M9KEqXNV3Wl5ibaA5Q/mo79C2D
-        WY1vZH9OpKJCdJhNRUi1nMu+AdV8X1NJB9Ti0i6p87BDEWW8/iRE7pNQXNQB/IY+LkaXgjglU0WAJ
-        Vq76hXGgrJ/bmaTf8nPkaYlWIqNN8bsWOwEjXJ+pH3EVR6wpytkFIF2dDQHP3lCPh5+g56BZYQrcx
-        g7+SM2ujtsCIi4q35i+EQ6SAfQF15QMgSadqVmnHEB0ednqqeXcKAIDTZEZ1DHv+ktDXiKr6H6xOU
-        ISfU7XJO42ZCgc+YCKrsuBWtSu32XMzd/Nv+LR8845aKMFRaJolejD3+rcN2qZedJFItsJXjNDmPw
-        lSDmszwQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fWTga-0003ea-Bm; Fri, 22 Jun 2018 21:33:40 +0000
-Subject: Re: [PATCH v4 2/3] PCI: Allow specifying devices using a base bus and
- path of devfns
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20180622194315.10475-1-logang@deltatee.com>
- <20180622194315.10475-3-logang@deltatee.com>
- <c1278ab2-63a8-19b6-9c8d-fed0b4f94c11@infradead.org>
- <7e5b459d-f083-286c-bd6c-87cf62cc7541@deltatee.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f4bbe0f2-1087-c626-7776-a4fb6b5457c8@infradead.org>
-Date:   Fri, 22 Jun 2018 14:33:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 22 Jun 2018 17:34:12 -0400
+Received: by mail-yb0-f193.google.com with SMTP id a16-v6so3067549ybm.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Jun 2018 14:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=XcTQLODXHU+wDft7pZx8MkvnuuW8RHYGuB1TSeattTg=;
+        b=sJ5Uxe7R7ugy8yUsy/k1pO5b458f2b++cVBBCm/EBxjzF6rJ7sO+XgJRgLACp1DRtD
+         LlMMaAysn5kp8U4VAjAcPExewDqHq5D/aOi+PQ5PrsvwXnW58Ds1IM59A5tqICMySkO5
+         JkKLWFrRvTXN3FC/MrZVTF6QUBLUYEC24w4CcfZyH/8bZNho8EBkaB1QE7i4AJjmkjrK
+         YBpPKja7R6BrnlhQapRM+j8zI2TGE1pdnwmXn+B0gViWqsPrgpN9SBECiGFjfzza/18Z
+         8ajwOY7g9/E3+P7YXxlpi+vtDVmWPfi6KwMbb2E/XK+hnmrzCwF9vtPYgk2HLlnxSCOF
+         Jh/w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=XcTQLODXHU+wDft7pZx8MkvnuuW8RHYGuB1TSeattTg=;
+        b=ReHE6s+usK1J93txfi8hqj0ry9ft+lxMpZCFjQ+kUsJLmKq47COHHkw6doS1JfxYaK
+         /6EkKSRY2imC95FWhpK+O5hX9uwTryMlXRDoPFUAjjf7ymFVCxufw7c8Ja1da+YuU6qj
+         FbMvw/iieGiihPA0SJTfjxavwReKgpKDAm18E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=XcTQLODXHU+wDft7pZx8MkvnuuW8RHYGuB1TSeattTg=;
+        b=R33ceY3dl5tvpacsPKRJ/riEqHsNa6ykwm5n9cu3+zMB8vRxP365R3j5pSm9dgCFCx
+         D/+SQcXkYM1tVQym+X1PntCdNDywpbCpZa/EHUjbqxBq9RI+7EpNBBe/oAHAmimsBT81
+         Qj4UZBrziVuWlJjn5BXDV2HHxpWuOrh49pwvo3ErfoCRc6TfvgQBjiLrJXlYEEkj3f4G
+         UVsxfC1dFz/FCJG/H0i0bNrpMA6QZhlkMFlkMQBt8KW6RyiMtE8pCCzr+bUW1TQXJ/dI
+         1947vjeRSWoqGFZdbAWjuPHkwM/PHRVnf73baDNbIHuS9Gtg3Qlp4m4DlbFGBTpKUkuz
+         6tyQ==
+X-Gm-Message-State: APt69E31tQgjRifi6BtxPzbg4sYBS8RHp4ReG7HbcyBBapdOR9Vg/8PY
+        7RzqS/lCv4Be5eQXlkOGkJvbps9QyqGjgxzeKo4WNw==
+X-Google-Smtp-Source: ADUXVKJyfZNtYlvm/U+1UAhH98Hd2T3bnO1v5FFeQZgRDLt2TH0kLBAEvemKASWdYBcH/riL3J2MOIPOJ/Kk+Pu4ANQ=
+X-Received: by 2002:a5b:b4e:: with SMTP id b14-v6mr1836407ybr.463.1529703251677;
+ Fri, 22 Jun 2018 14:34:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7e5b459d-f083-286c-bd6c-87cf62cc7541@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Fri, 22 Jun 2018 14:34:11
+ -0700 (PDT)
+In-Reply-To: <CACO55ttzvFZqUjXNut5n0ENR9e2+N2WfWnKnjfaWgNesspQ9UA@mail.gmail.com>
+References: <20180524172436.GA17738@beast> <CACO55ttzvFZqUjXNut5n0ENR9e2+N2WfWnKnjfaWgNesspQ9UA@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 22 Jun 2018 14:34:11 -0700
+X-Google-Sender-Auth: Y5VGWqqoBwedmf8cxM2Ybua16Q0
+Message-ID: <CAGXu5jL3GyJxd9EJ=gKb+SY98t2h2Q4VMt0b0fYt8KBBuP2_9Q@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH] drm/nouveau/secboot/acr: Remove VLA usage
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ben Skeggs <bskeggs@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/22/2018 01:50 PM, Logan Gunthorpe wrote:
-> 
-> 
-> On 22/06/18 02:01 PM, Randy Dunlap wrote:
->>> Thus, we add an option to specify devices in the following format:
->>>
->>> [<domain>:]<bus>:<slot>.<func>[/<slot>.<func>]*
+On Fri, Jun 22, 2018 at 10:50 AM, Karol Herbst <kherbst@redhat.com> wrote:
+> On Thu, May 24, 2018 at 7:24 PM, Kees Cook <keescook@chromium.org> wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> allocates the working buffers before starting the writing so it won't
+>> abort in the middle. This needs an initial walk of the lists to figure
+>> out how large the buffer should be.
 >>
->> Please explain the trailing '*'.  I looked thru the code and it doesn't
->> seem to look for it or care.
-> 
-> This was Willy's suggestion and I liked it. It's similar to regular
-> expression syntax: the '*' indicating you may have any number of the
-> expression repeated in the square brackets.
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>  .../nouveau/nvkm/subdev/secboot/acr_r352.c    | 25 ++++++++++++++++---
+>>  .../nouveau/nvkm/subdev/secboot/acr_r367.c    | 16 +++++++++++-
+>>  2 files changed, 37 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+>> index a721354249ce..d02e183717dc 100644
+>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/secboot/acr_r352.c
+>> @@ -414,6 +414,20 @@ acr_r352_ls_write_wpr(struct acr_r352 *acr, struct list_head *imgs,
+>>  {
+>>         struct ls_ucode_img *_img;
+>>         u32 pos = 0;
+>> +       u32 max_desc_size = 0;
+>> +       u8 *gdesc;
+>> +
+>> +       /* Figure out how large we need gdesc to be. */
+>> +       list_for_each_entry(_img, imgs, node) {
+>> +               const struct acr_r352_ls_func *ls_func =
+>> +                                           acr->func->ls_func[_img->falcon_id];
+>> +
+>> +               max_desc_size = max(max_desc_size, ls_func->bl_desc_size);
+>> +       }
+>> +
+>> +       gdesc = kmalloc(max_desc_size, GFP_KERNEL);
+>> +       if (!gdesc)
+>> +               return -ENOMEM;
+>>
+>>         nvkm_kmap(wpr_blob);
+>>
+>> @@ -421,7 +435,6 @@ acr_r352_ls_write_wpr(struct acr_r352 *acr, struct list_head *imgs,
+>>                 struct ls_ucode_img_r352 *img = ls_ucode_img_r352(_img);
+>>                 const struct acr_r352_ls_func *ls_func =
+>>                                             acr->func->ls_func[_img->falcon_id];
+>> -               u8 gdesc[ls_func->bl_desc_size];
+>>
+>
+> if there are no guarantees that (ls_func->bl_desc_size & 0x4 == 0),
+> then we need to memset a bit more, because 4 bytes at the time are
+> actually copied inside nvkm_gpuobj_memcpy_to later in that code, but
+> the last 4 bytes are only partly memset to 0.
 
-Oh, OK.  I can do that syntax, I just didn't know that this was
-using that notation.
+I think this is unchanged from the original code, yes? The memset() is
+always against bl_desc_size; I haven't changed that.
 
-Hopefully admins can read it that way.
+> If ls_func->bl_desc_size is always a multiple of 0x4, then it isn't as
+> important, but still better to be fixed. Or maybe
+> nvkm_gpuobj_memcpy_to should do that handling and check if the size is
+> a multiple of 0x4 and otherwise handle that case?
+>
+> Same is valid for the changes in the r367 file.
+
+Should I resend with both the allocation and the memset getting
+rounded up to the next multiple of 4?
+
+-Kees
 
 -- 
-~Randy
+Kees Cook
+Pixel Security
