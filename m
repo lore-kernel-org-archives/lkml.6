@@ -2,125 +2,81 @@ Return-Path: <SRS0=QLNC=JI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6584FC43142
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81298C43143
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28C6023FC2
-	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:52:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28C6023FC2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 3E92723FC9
+	for <linux-kernel@archiver.kernel.org>; Fri, 22 Jun 2018 09:53:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E92723FC9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754541AbeFVJwA (ORCPT
+        id S1754204AbeFVJxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 22 Jun 2018 05:52:00 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:41138 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754177AbeFVJvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 22 Jun 2018 05:51:16 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 69WrBG1Jg2ba; Fri, 22 Jun 2018 11:51:15 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BCF3400329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:3400:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 59F0C1EC0236;
-        Fri, 22 Jun 2018 11:51:15 +0200 (CEST)
-From:   Borislav Petkov <bp@alien8.de>
-To:     KVM <kvm@vger.kernel.org>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] kvm/x86: Move MSR_K7_HWCR to svm.c
-Date:   Fri, 22 Jun 2018 11:50:59 +0200
-Message-Id: <20180622095101.32587-2-bp@alien8.de>
-X-Mailer: git-send-email 2.17.0.582.gccdcbd54c
-In-Reply-To: <20180622095101.32587-1-bp@alien8.de>
-References: <20180622095101.32587-1-bp@alien8.de>
+        Fri, 22 Jun 2018 05:53:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60778 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751307AbeFVJxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 22 Jun 2018 05:53:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 566A51596;
+        Fri, 22 Jun 2018 02:53:02 -0700 (PDT)
+Received: from approximate.cambridge.arm.com (approximate.cambridge.arm.com [10.1.206.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 230AE3F819;
+        Fri, 22 Jun 2018 02:53:00 -0700 (PDT)
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH v2 0/7]  irqchip: v4.18-rc1 fixes
+Date:   Fri, 22 Jun 2018 10:52:47 +0100
+Message-Id: <20180622095254.5906-1-marc.zyngier@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+Hi all,
 
-This is an AMD-specific MSR. Put it where it belongs.
+Here's a handful of patches I've accumulated over the merge
+window. The only interesting thing is the issue that Yang found on a
+bizarrely configured NUMA system, which prompted me to add more code
+to detect similar situations (just in case). The rest is pretty dull.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
----
- arch/x86/kvm/svm.c | 14 ++++++++++++++
- arch/x86/kvm/x86.c | 12 ------------
- 2 files changed, 14 insertions(+), 12 deletions(-)
+Thanks,
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index f059a73f0fd0..72e60daf3ab8 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -4153,6 +4153,9 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case MSR_F10H_DECFG:
- 		msr_info->data = svm->msr_decfg;
- 		break;
-+	case MSR_K7_HWCR:
-+		msr_info->data = 0;
-+		break;
- 	default:
- 		return kvm_get_msr_common(vcpu, msr_info);
- 	}
-@@ -4357,6 +4360,17 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 		svm->msr_decfg = data;
- 		break;
- 	}
-+	case MSR_K7_HWCR:
-+		data &= ~(u64)0x40;	/* ignore flush filter disable */
-+		data &= ~(u64)0x100;	/* ignore ignne emulation enable */
-+		data &= ~(u64)0x8;	/* ignore TLB cache disable */
-+		data &= ~(u64)0x40000;  /* ignore Mc status write enable */
-+		if (data != 0) {
-+			vcpu_unimpl(vcpu, "unimplemented HWCR wrmsr: 0x%llx\n",
-+				    data);
-+			return 1;
-+		}
-+		break;
- 	case MSR_IA32_APICBASE:
- 		if (kvm_vcpu_apicv_active(vcpu))
- 			avic_update_vapic_bar(to_svm(vcpu), data);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 0046aa70205a..3bf721c22124 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2317,17 +2317,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		break;
- 	case MSR_EFER:
- 		return set_efer(vcpu, data);
--	case MSR_K7_HWCR:
--		data &= ~(u64)0x40;	/* ignore flush filter disable */
--		data &= ~(u64)0x100;	/* ignore ignne emulation enable */
--		data &= ~(u64)0x8;	/* ignore TLB cache disable */
--		data &= ~(u64)0x40000;  /* ignore Mc status write enable */
--		if (data != 0) {
--			vcpu_unimpl(vcpu, "unimplemented HWCR wrmsr: 0x%llx\n",
--				    data);
--			return 1;
--		}
--		break;
- 	case MSR_FAM10H_MMIO_CONF_BASE:
- 		if (data != 0) {
- 			vcpu_unimpl(vcpu, "unimplemented MMIO_CONF_BASE wrmsr: "
-@@ -2597,7 +2586,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 	case MSR_K8_SYSCFG:
- 	case MSR_K8_TSEG_ADDR:
- 	case MSR_K8_TSEG_MASK:
--	case MSR_K7_HWCR:
- 	case MSR_VM_HSAVE_PA:
- 	case MSR_K8_INT_PENDING_MSG:
- 	case MSR_AMD64_NB_CFG:
+	M.
+
+* From v1:
+  - Much better fix for the ls-scfg driver (thanks to Thomas)
+  - New patch fixing a CPU hotplug regression on GICv3
+
+Marc Zyngier (6):
+  genirq/debugfs: Add missing IRQCHIP_SUPPORTS_LEVEL_MSI debug
+  irqchip/ls-scfg-msi: Fix MSI affinity handling
+  irqchip/gic-v2m: Fix SPI release on error path
+  irqchip/gic-v3-its: Only emit SYNC if targetting a valid collection
+  irqchip/gic-v3-its: Only emit VSYNC if targetting a valid collection
+  irqchip/gic-v3-its: Fix reprogramming of redistributors on CPU hotplug
+
+Yang Yingliang (1):
+  irqchip/gic-v3-its: Don't bind LPI to unavailable NUMA node
+
+ drivers/irqchip/irq-gic-v2m.c     |  2 +-
+ drivers/irqchip/irq-gic-v3-its.c  | 62 +++++++++++++++++++++++++------
+ drivers/irqchip/irq-ls-scfg-msi.c | 10 +++--
+ include/linux/irq.h               |  1 +
+ kernel/irq/debugfs.c              |  1 +
+ 5 files changed, 60 insertions(+), 16 deletions(-)
+
 -- 
-2.17.0.582.gccdcbd54c
+2.17.1
 
